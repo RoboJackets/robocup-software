@@ -1,5 +1,4 @@
 import unittest
-import evaluation.window_evaluator
 import main
 import robocup
 import constants
@@ -22,7 +21,7 @@ class TestWindowEvaluator(unittest.TestCase):
 
         shot_from = robocup.Point(0, constants.Field.Length / 2.0)
 
-        win_eval = evaluation.window_evaluator.WindowEvaluator()
+        win_eval = robocup.WindowEvaluator(main.system_state())
         windows, best = win_eval.eval_pt_to_opp_goal(shot_from)
 
         # the obstacle should split our shot into two windows

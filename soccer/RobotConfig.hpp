@@ -58,6 +58,7 @@ public:
     // magniude, but greater than zero, we scale the velocity up to this
     // magnitude.
     ConfigDouble *minEffectiveVelocity;
+    ConfigDouble *minEffectiveAngularSpeed;
 
 	///	we multiply this by the bot's acceleration and add this to the output targetVel
 	ConfigDouble *accelerationMultiplier;
