@@ -1,4 +1,6 @@
 MAKE_FLAGS=--no-print-directory
+TEST = *
+
 all:
 	mkdir -p build
 	cd build; cmake .. -Wno-dev && make $(MAKE_FLAGS)
@@ -19,10 +21,10 @@ tests: test-cpp test-python
 test-cpp: test-soccer test-firmware
 test-soccer:
 	mkdir -p build
-	cd build && cmake --target test-soccer .. && make $(MAKE_FLAGS) test-soccer && cd .. && run/test-soccer
+	cd build && cmake --target test-soccer .. && make $(MAKE_FLAGS) test-soccer && cd .. && run/test-soccer --gtest_filter=$(TEST)
 test-firmware:
 	mkdir -p build
-	cd build && cmake --target test-firmware .. && make $(MAKE_FLAGS) test-firmware && cd .. && run/test-firmware
+	cd build && cmake --target test-firmware .. && make $(MAKE_FLAGS) test-firmware && cd .. && run/test-firmware --gtest_filter=$(TEST)
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
