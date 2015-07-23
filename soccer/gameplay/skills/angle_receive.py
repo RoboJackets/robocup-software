@@ -19,8 +19,20 @@ import skills.pass_receive
 class AngleReceive(skills.pass_receive.PassReceive):
 
     def __init__(self):
-        self.kick_power = 1
         super().__init__()
+        self._target_point = None
+        self.kick_power = 1
+        self.target_point = constants.Field.TheirGoalSegment.center()
+
+    ## The point that the receiver should expect the ball to hit it's mouth
+    # Default: constants.Field.TheirGoalSegment.center()
+    @property
+    def target_point(self):
+        return self._target_point
+    @target_point.setter
+    def target_point(self, value):
+        self._target_point = value
+        self.recalculate()
 
     ## Returns an adjusted angle with account for ball speed
     #
@@ -51,7 +63,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
     # self._y_error
     def recalculate(self):
         # can't do squat if we don't know what we're supposed to do
-        if self.receive_point == None or self.robot == None:
+        if self.receive_point == None or self.robot == None or self.target_point == None:
             return
 
 
@@ -62,20 +74,20 @@ class AngleReceive(skills.pass_receive.PassReceive):
             self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel*10)
 
             # After kicking, apply angle calculations
-            target_angle_rad = self.adjust_angle((self.get_target_point() - self.robot.pos).angle())
+            target_angle_rad = self.adjust_angle((self.target_point - self.robot.pos).angle())
             # Removes angle adjustment
-            # target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
+            # target_angle_rad = (self.target_point - self.robot.pos).angle()
 
             self._kick_line = robocup.Line(self.robot.pos, robocup.Point(self.robot.pos.x + math.cos(self.robot.angle) * 10, self.robot.pos.y + math.sin(self.robot.angle) * 10))
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
             # Assume ball is kicked at max speed and is coming from the ball point to the location of our robot. Then average this with the target angle.
-            target_angle_rad = self.adjust_angle((self.get_target_point() - self.robot.pos).angle(), (self.robot.pos - main.ball().pos).angle(), constants.Robot.MaxKickSpeed)
+            target_angle_rad = self.adjust_angle((self.target_point - self.robot.pos).angle(), (self.robot.pos - main.ball().pos).angle(), constants.Robot.MaxKickSpeed)
             # TODO make this faster by caching the .angle() part
-            target_angle_rad = (target_angle_rad + (self.get_target_point() - self.robot.pos).angle()) / 2
+            target_angle_rad = (target_angle_rad + (self.target_point - self.robot.pos).angle()) / 2
 
-            self._kick_line = robocup.Line(self.receive_point, self.get_target_point())
+            self._kick_line = robocup.Line(self.receive_point, self.target_point)
 
         self._angle_facing =  target_angle_rad
         angle_rad = self.robot.angle
@@ -105,10 +117,6 @@ class AngleReceive(skills.pass_receive.PassReceive):
         self._y_error = self._target_pos.y - self.robot.pos.y
 
 
-    def get_target_point(self):
-        # Gets the point the robot will be facing when receiving the ball
-        return constants.Field.TheirGoalSegment.center()
-
     def execute_running(self):
         super().execute_running()
 
@@ -123,3 +131,5 @@ class AngleReceive(skills.pass_receive.PassReceive):
         # Kick the ball!
         self.robot.kick(self.kick_power)
 
+        if self.target_point != None:
+            main.system_state().draw_circle(self.target_point, 0.03, constants.Colors.Blue, "Target")

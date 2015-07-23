@@ -99,7 +99,7 @@ def eval_best_receive_point(kick_point, evaluation_zone=None, ignore_robots=[]):
     bestChance = None
 
     for segment in segments:
-        main.system_state().draw_line(segment, constants.Colors.Blue, "PivotKick")
+        main.system_state().draw_line(segment, constants.Colors.Blue, "Candidate Lines")
         _, best = win_eval.eval_pt_to_seg(kick_point, segment)
         if best == None: continue
 

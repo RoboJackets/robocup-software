@@ -7,7 +7,7 @@ import constants
 import main
 import skills.angle_receive
 import evaluation.touchpass_positioning
-from enum import Enum
+import enum
 
 ## A tactic that causes a robot to pass to another one,
 # who scores on the goal as fast as possible.
@@ -18,7 +18,7 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
     tpass = evaluation.touchpass_positioning
     receivePointChangeThreshold = 0.15 # 15%
 
-    class State(Enum):
+    class State(enum.Enum):
         passing = 1
 
     def __init__(self):
@@ -47,14 +47,17 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
                 'Touchpass failed!')
 
     def reset_receive_point(self):
+        angle_receive = skills.angle_receive.AngleReceive()
+
         pass_bhvr = self.subbehavior_with_name('pass')
-        receive_pt, _, probability = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
+        receive_pt, target_point, probability = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
         # only change if increase of beyond the threshold.
-        if self.force_reevauation == True or pass_bhvr.receive_point == None or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos, pass_bhvr.receive_point, pass_bhvr.get_robots()) + OneTouchPass.receivePointChangeThreshold:
+        if self.force_reevauation == True or pass_bhvr.receive_point == None or pass_bhvr.target_point == None or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos, pass_bhvr.receive_point, pass_bhvr.get_robots()) + OneTouchPass.receivePointChangeThreshold:
             pass_bhvr.receive_point = receive_pt
+            angle_receive.target_point = target_point
             self.force_reevauation = False
 
-        pass_bhvr.skillreceiver = skills.angle_receive.AngleReceive()
+        pass_bhvr.skillreceiver = angle_receive
 
     def on_enter_passing(self):
         pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
