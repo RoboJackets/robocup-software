@@ -128,8 +128,7 @@ public:
 	}
 
 	friend std::ostream& operator<< (std::ostream& stream, const Robot* robot) {
-		stream << robot->to_string();
-		return stream;
+        return stream << *robot;
 	}
 
 private:

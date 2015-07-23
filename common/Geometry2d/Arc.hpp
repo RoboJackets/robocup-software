@@ -2,8 +2,7 @@
 // Created by matt on 7/19/15.
 //
 
-#ifndef GT_ROBOJACKETS_ROBOCUP_SECTOR_H
-#define GT_ROBOJACKETS_ROBOCUP_SECTOR_H
+#pragma once
 
 #include "Point.hpp"
 #include "Line.hpp"
@@ -72,6 +71,3 @@ namespace Geometry2d {
     float _end_angle;
   };
 }
-
-
-#endif //GT_ROBOJACKETS_ROBOCUP_SECTOR_H
