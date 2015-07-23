@@ -22,7 +22,8 @@ import evaluation.passing
 # Takes a current ball position/initial kick position (robocup.Point)
 def generate_default_rectangle(kick_point):
     offset_from_edge = 0.25
-    offset_from_ball = 0.7
+    offset_from_ball = 0.4
+    # offset_from_ball = 0.7
 
     if kick_point.x > 0:
         # Ball is on right side of field
@@ -34,22 +35,28 @@ def generate_default_rectangle(kick_point):
                 robocup.Point(constants.Field.Width / 2 - offset_from_edge, min(constants.Field.Length * 3 / 4, main.ball().pos.y - 2)))
     return toReturn
 
-## Returns a list of robocup.Point object that represent candidate points. Takes in a robocup.Rect
-def get_points_from_rect(rect, threshold=0.75):
+## Returns a list of robocup.Segment object that represent candidate lines. Takes in a robocup.Rect.
+#
+# These lines will be evaluated later by the window_evaluator.
+def get_segments_from_rect(rect, threshold=0.75):
     outlist = []
     currentx = rect.min_x()
     currenty = rect.max_y()
 
     # Loop through from top left to bottom right
 
-    while currenty > rect.min_y():
-        while currentx < rect.max_x():
-            candiate = robocup.Point(currentx, currenty)
-            if not constants.Field.TheirGoalShape.contains_point(candiate):
-                outlist.extend([candiate])
-            currentx = currentx + threshold
-        currenty = currenty - threshold
-        currentx = rect.min_x()
+    while currentx <= rect.max_x():
+        currenty = rect.max_y()
+        # Don't include goal area.
+        if constants.Field.TheirGoalShape.contains_point(robocup.Point(currentx, rect.min_y())):
+            continue
+        while constants.Field.TheirGoalShape.contains_point(robocup.Point(currentx, currenty)):
+            currenty = currenty - threshold
+
+        candiate = robocup.Segment(robocup.Point(currentx, rect.min_y()), robocup.Point(currentx, currenty))
+        outlist.extend([candiate])
+        currentx = currentx + threshold
+    currentx = rect.min_x()
     return outlist
 
 ## Evaluates a single point, and returns the probability of it making it.
@@ -58,7 +65,11 @@ def get_points_from_rect(rect, threshold=0.75):
 # multiplied by the probability that a goal can be scored from receive_point. This probablity will be between 0 and 1.
 def eval_single_point(kick_point, receive_point, ignore_robots=[]):
     if kick_point is None:
-        kick_point = main.ball().pos
+        if main.ball().valid:
+            kick_point = main.ball().pos
+        else:
+            return None
+
     currentChance = evaluation.passing.eval_pass(kick_point, receive_point, ignore_robots)
     # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
     targetPoint = constants.Field.TheirGoalSegment.center()
@@ -70,26 +81,42 @@ def eval_single_point(kick_point, receive_point, ignore_robots=[]):
 #
 # Takes in an initial kick point and an optional evaluation zone.
 def eval_best_receive_point(kick_point, evaluation_zone=None, ignore_robots=[]):
+    win_eval = robocup.WindowEvaluator(main.system_state())
+    for r in ignore_robots:
+        win_eval.add_excluded_robot(r)
+
+    targetSeg = constants.Field.TheirGoalSegment
     # Autogenerate kick point
     if evaluation_zone == None:
         evaluation_zone = generate_default_rectangle(kick_point)
 
-    points = get_points_from_rect(evaluation_zone)
+    segments = get_segments_from_rect(evaluation_zone)
 
-    if points == None or len(points) == 0:
+    if segments == None or len(segments) == 0:
         # We can't do anything.
         return None
 
-    best = points[0]
-    bestChance = 0
+    bestChance = None
 
-    for point in points:
-        currentChance = evaluation.passing.eval_pass(kick_point, point, ignore_robots)
+    for segment in segments:
+        main.system_state().draw_line(segment, constants.Colors.Blue, "PivotKick")
+        _, best = win_eval.eval_pt_to_seg(kick_point, segment)
+        if best == None: continue
+
+        currentChance = best.shot_success
         # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
-        targetPoint = constants.Field.TheirGoalSegment.center()
-        currentChance = currentChance * evaluation.passing.eval_pass(point, targetPoint, ignore_robots)
-        if currentChance > bestChance:
-            bestChance = currentChance
-            best = point
+        receivePt = best.segment.center()
 
-    return best, targetPoint, bestChance
+        _, best = win_eval.eval_pt_to_seg(receivePt, targetSeg)
+        if best == None: continue
+
+        currentChance = currentChance * best.shot_success
+        if bestChance == None or currentChance > bestChance:
+            bestChance = currentChance
+            targetPoint = best.segment.center()
+            bestpt = receivePt
+
+    if bestpt == None:
+        return None
+
+    return bestpt, targetPoint, bestChance
