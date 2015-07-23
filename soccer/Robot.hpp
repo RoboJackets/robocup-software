@@ -219,7 +219,8 @@ public:
 
 
 	/**
-	 * @brief Move to a given point using the default RRT planner
+	 * @brief Move to a given point bypassing the RRT Path planner. This will plan a direct path ignoring 
+	 *			all obstacles and the starting velocity	
 	 * @param endSpeed - the speed we should be going when we reach the end of the path
 	 */
 	void moveDirect(const Geometry2d::Point &goal, float endSpeed = 0);
