@@ -1,4 +1,6 @@
-FROM jgkamat/robocup-baseimage
+
+# 'latest' is the latest tagged on the machine, which should be the one created by the baseimage script.
+FROM jgkamat/robocup-baseimage:latest
 MAINTAINER Jay Kamat
 
 WORKDIR /home/developer/robocup-software
@@ -9,8 +11,6 @@ RUN rm -rf .git
 ADD .git/ .
 RUN git reset --hard
 RUN git clean -f
-
-RUN util/ubuntu-setup --firmware -y && sudo apt-get clean
 
 # Build
 RUN make
