@@ -5,8 +5,9 @@ import robocup
 import evaluation.window_evaluator
 import constants
 import time
+import math
 
-# This isn't a real play, but it's pretty useful
+# This isn't a real play, but it's pretty usefug
 # Turn it on and we'll draw the window evaluator stuff on-screen from the ball to our goal
 class DebugWindowEvaluator(play.Play):
 

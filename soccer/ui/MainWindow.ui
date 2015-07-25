@@ -220,6 +220,13 @@
             <number>15</number>
            </property>
            <item>
+            <widget class="QLabel" name="logTime">
+             <property name="text">
+              <string>00:00</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -1617,7 +1624,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1405</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">

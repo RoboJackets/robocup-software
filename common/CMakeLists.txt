@@ -4,6 +4,7 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/protobuf")
 
 set(COMMON_SRC
     "Field_Dimensions.cpp"
+    "Geometry2d/Arc.cpp"
     "Geometry2d/Circle.cpp"
     "Geometry2d/Line.cpp"
     "Geometry2d/Rect.cpp"

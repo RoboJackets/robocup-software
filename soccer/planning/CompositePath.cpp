@@ -8,14 +8,6 @@ namespace Planning
 		append(std::move(path));
 	}
 
-	CompositePath::CompositePath(Path *path) {
-		append(path);
-	}
-
-	void CompositePath::append(Path *path) {
-		append(std::unique_ptr<Path>(path));
-	}
-
 	void CompositePath::append(unique_ptr<Path> path) {
 		if (duration < numeric_limits<float>::infinity()) {
 			float pathDuration = path->getDuration();
@@ -30,12 +22,13 @@ namespace Planning
 		}
 	}
 
-	bool CompositePath::evaluate(float t, Point &targetPosOut, Point &targetVelOut) const 
+	bool CompositePath::evaluate(float t, MotionInstant &targetMotionInstant) const
 	{
-		if (paths.empty()) {
-			return false;
-		}
 		if (t<0) {
+			debugThrow(invalid_argument("A time less than 0 was entered for time t."));
+		}
+
+		if (paths.empty()) {
 			return false;
 		}
 		for (const std::unique_ptr<Path> &path: paths)
@@ -44,42 +37,52 @@ namespace Planning
 			t -= timeLength;
 			if (t<=0 || timeLength == -1) {
 				t += timeLength;
-				path->evaluate(t, targetPosOut, targetVelOut);
+				path->evaluate(t, targetMotionInstant);
 				return true;
 			}
 		}
-		targetPosOut = destination().get();
-		targetVelOut = Point(0,0);
+		targetMotionInstant = destination().get();
 		return false;
 	}
 
-	bool CompositePath::hit(const CompositeShape &shape, float startTime) const
+	bool CompositePath::hit(const CompositeShape &shape, float &hitTime, float startTime) const
 	{
 		if (paths.empty()) {
 			return false;
 		}
 		int start = 0;
+		float totalTime = 0;
 		for (const std::unique_ptr<Path> &path: paths)
 		{
 			start++;
 			float timeLength = path->getDuration();
-			if (timeLength == -1) {
-				return path->hit(shape, startTime);
+			if (timeLength == std::numeric_limits<float>::infinity()) {
+				if (path->hit(shape, hitTime, startTime)) {
+					hitTime += totalTime;
+					return true;
+				} else {
+					return false;
+				}
 			}
 			startTime -= timeLength;
 			if (startTime<=0) {
 				startTime += timeLength;
-				if (path->hit(shape, startTime)) {
+				if (path->hit(shape, hitTime, startTime)) {
+					hitTime += totalTime;
 					return true;
 				}
+				totalTime += timeLength;
 				break;
 			}
+			totalTime += timeLength;
 		}
 
 		for (;start<paths.size(); start++) {
-			if (paths[start]->hit(shape)) {
+			if (paths[start]->hit(shape, hitTime, 0)) {
+				hitTime += totalTime;
 				return true;
 			}
+			totalTime += paths[start]->getDuration();
 		}
 		return false;
 	}
@@ -97,7 +100,7 @@ namespace Planning
 		return duration;
 	}
 	
-	boost::optional<Point> CompositePath::destination() const
+	boost::optional<MotionInstant> CompositePath::destination() const
 	{
 		if (paths.empty()) {
 			return boost::none;

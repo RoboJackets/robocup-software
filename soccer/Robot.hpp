@@ -9,13 +9,17 @@
 #include <QColor>
 #include <Eigen/Geometry>
 #include <Constants.hpp>
-#include "MotionConstraints.hpp"
 #include <Utils.hpp>
+
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
+#include "planning/MotionConstraints.hpp"
+#include "planning/MotionCommand.hpp"
+
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+
 
 class SystemState;
 class RobotConfig;
@@ -189,8 +193,13 @@ public:
 		return _motionConstraints;
 	}
 
+	/**
+	 * Returns a temporary observing pointer to the path of the robot.
+	 * This is only currently supported for legacy reasons.
+	 * Saving the pointer may lead to seg faults as it may be deleted by the Robot who owns it.
+	 */
 	const Planning::Path* path() const {
-		return _path;
+		return _path.get();
 	}
 
 	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
@@ -206,7 +215,14 @@ public:
 	 * @brief Move to a given point using the default RRT planner
 	 * @param endSpeed - the speed we should be going when we reach the end of the path
 	 */
-	void move(const Geometry2d::Point &goal, float endSpeed = 0);
+	void move(const Geometry2d::Point &goal, Geometry2d::Point endVelocity = Geometry2d::Point());
+
+
+	/**
+	 * @brief Move to a given point using the default RRT planner
+	 * @param endSpeed - the speed we should be going when we reach the end of the path
+	 */
+	void moveDirect(const Geometry2d::Point &goal, float endSpeed = 0);
 
 	Time pathStartTime() const {
 		return _pathStartTime;
@@ -409,6 +425,10 @@ public:
 		return _radioRx;
 	}
 
+	const Planning::MotionCommand motionCommand() const {
+		return _motionCommand;
+	}
+
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
@@ -433,6 +453,7 @@ public:
 		radioTx.set_sing(true);
 	}
 
+	bool isPenaltyKicker = false;
 
 	static void createConfiguration(Configuration *cfg);
 
@@ -449,18 +470,22 @@ protected:
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
 	float _avoidBallRadius; /// radius of ball obstacle
 
+	Planning::MotionCommand _motionCommand;
+	Planning::MotionCommand::CommandType _lastCommandType;
 	MotionConstraints _motionConstraints;
 
-	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
+	std::shared_ptr<Planning::PathPlanner> _planner;	/// single-robot RRT planner
 
-	void setPath(Planning::Path *path);
+	void setPath(std::unique_ptr<Planning::Path> path);
 
-	Planning::Path *_path;	/// latest path
+	std::unique_ptr<Planning::Path> _path;	/// latest path
+
+
+
 	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
 	bool _pathInvalidated;
-
 
 	/**
 	 * Creates a set of obstacles from a given robot team mask,
