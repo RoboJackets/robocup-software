@@ -51,11 +51,11 @@ namespace Planning {
 			return points.front();
 	}
 
-	boost::optional<Geometry2d::Point> InterpolatedPath::destination() const {
+	boost::optional<MotionInstant> InterpolatedPath::destination() const {
 		if (points.empty())
 			return boost::none;
 		else
-			return points.back();
+			return MotionInstant(points.back(), vels.back());
 	}
 
 	// Returns the index of the point in this path nearest to pt.
@@ -78,8 +78,8 @@ namespace Planning {
 		return index;
 	}
 
-	bool InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float startTime) const {
-		int start = 0;
+	bool InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float &hitTime, float startTime) const {
+		size_t start = 0;
 		for (float t: times) {
 			start++;
 			if (t > startTime) {
@@ -93,8 +93,7 @@ namespace Planning {
 			return false;
 		}
 
-		//This code disreguards obstacles if which we start in. This the robot to move out a obstacle if it is already in one.
-		// The set of obstacles the starting point was inside of
+		//This code disregards obstacles which the robot starts in. This allows the robot to move out a obstacle if it is already in one.
 		std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
 		obstacles.hit(points[start], startHitSet);
 
@@ -102,8 +101,9 @@ namespace Planning {
 			std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
 			if (obstacles.hit(Geometry2d::Segment(points[i], points[i+1]), newHitSet)) {
 				for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
-					//If it hits something, check if the hit was in hte origional hitSet
+					//If it hits something, check if the hit was in the origional hitSet
 					if (startHitSet.find(hit) == startHitSet.end()) {
+						hitTime = times[i];
 						return true;
 					}
 				}
@@ -261,8 +261,10 @@ namespace Planning {
 		return;
 	}
 
-	bool InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosOut,
-											  Geometry2d::Point &targetVelOut) const {
+	bool InterpolatedPath::evaluate(float t, MotionInstant &targetMotionInstant) const {
+		if (t<0) {
+			debugThrow(invalid_argument("A time less than 0 was entered for time t."));
+		}
 		/*
 		float linearPos;
 		float linearSpeed;
@@ -284,46 +286,37 @@ namespace Planning {
 		targetVelOut = direction * linearSpeed;
 		*/
 		if (times.size() == 0) {
-			targetPosOut = Geometry2d::Point(0, 0);
-			targetVelOut = Geometry2d::Point(0, 0);
+			targetMotionInstant = MotionInstant();
 			return false;
-		}
-		if (times.size() == 1) {
-			targetPosOut = points[0];
-			targetVelOut = Geometry2d::Point(0, 0);
+		} else if (times.size() == 1) {
+			targetMotionInstant = MotionInstant(points[0], vels[0]);
 			return false;
 		}
 		if (t < times[0]) {
-			targetPosOut = points[0];
-			targetVelOut = vels[0];
-			return false;
+			debugThrow(invalid_argument("The start time should not be less than zero"));
 		}
 
 		int i = 0;
 		while (times[i] <= t) {
 			if (times[i] == t) {
-				targetPosOut = points[i];
-				targetVelOut = vels[i];
+				targetMotionInstant = MotionInstant(points[i], vels[i]);
 				return true;
 			}
 			i++;
 			if (i == size()) {
-				targetPosOut = points[i - 1];
-				targetVelOut = vels[i - 1];
+				targetMotionInstant = MotionInstant(points[i - 1], vels[i - 1]);
 				return false;
 			}
 		}
 		float deltaT = (times[i] - times[i - 1]);
 		if (deltaT == 0) {
-			targetPosOut = points[i];
-			targetVelOut = vels[i];
+			targetMotionInstant = MotionInstant(points[i], vels[i]);
 			return true;
 		}
 		float constant = (t - times[i - 1]) / deltaT;
 
-		targetPosOut = points[i - 1] * (1 - constant) + points[i] * (constant);
-		targetVelOut = vels[i - 1] * (1 - constant) + vels[i] * (constant);
-
+		targetMotionInstant = MotionInstant(points[i - 1] * (1 - constant) + points[i] * (constant),
+											vels[i - 1] * (1 - constant) + vels[i] * (constant));
 		return true;
 	}
 

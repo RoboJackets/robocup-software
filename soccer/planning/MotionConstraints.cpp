@@ -1,5 +1,5 @@
 
-#include "MotionConstraints.hpp"
+#include "planning/MotionConstraints.hpp"
 
 
 REGISTER_CONFIGURABLE(MotionConstraints);

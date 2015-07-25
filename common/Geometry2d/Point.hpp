@@ -38,7 +38,7 @@ namespace Geometry2d
 				this->x = x;
 				this->y = y;
 			}
-			
+
 			template<class T>
 			Point(const T &other)
 			{

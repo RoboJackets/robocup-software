@@ -21,6 +21,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # TODO: make this easier to specify when running `make` on the command-line
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
+# Turn some compiler warnings into errors
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
+
 # Qt5
 if(APPLE)
     # look for the homebrew-installed version of Qt5
@@ -75,7 +78,7 @@ endif()
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIR})
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # libusb
 find_package(libusb-1.0 REQUIRED)

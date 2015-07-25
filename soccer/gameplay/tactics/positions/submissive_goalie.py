@@ -162,7 +162,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         reqs = super().role_requirements()
 
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
-            req.required_shell_id = self.shell_id
+            req.required_shell_id = self.shell_id if self.shell_id != None else -1
         return reqs
 
 
