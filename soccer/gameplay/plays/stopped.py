@@ -9,7 +9,7 @@ import robocup
 import constants
 
 
-# when we get the Stopped command from the referee,
+## When we get the Stopped command from the referee,
 # we run this play.  See the rules to see what we're allowed to do while the game is stopped
 class Stopped(play.Play):
 
@@ -30,12 +30,12 @@ class Stopped(play.Play):
 
         self.add_transition(Stopped.State.normal,
             Stopped.State.center,
-            lambda: self.isInCenter(),
+            lambda: self.is_in_center(),
             'Switched into center mode')
 
         self.add_transition(Stopped.State.center,
             Stopped.State.normal,
-            lambda: not self.isInCenter(),
+            lambda: not self.is_in_center(),
             'Switched into normal mode')
 
 
@@ -48,7 +48,7 @@ class Stopped(play.Play):
     def handles_goalie(self):
         return True
 
-    def isInCenter(self):
+    def is_in_center(self):
         if main.ball().valid:
             return robocup.Circle(constants.Field.CenterPoint, constants.Field.CenterRadius).contains_point(main.ball().pos)
         return False
