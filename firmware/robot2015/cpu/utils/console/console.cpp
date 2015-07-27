@@ -53,7 +53,10 @@ const string COMMAND_BREAK_MSG = "*BREAK*";
  */
 const uint16_t BAUD_RATE = 57600;//9600;
 
-shared_ptr<Console> &Console::Instance()
+/**
+ *
+ */
+shared_ptr<Console> &Console::Instance(void)
 {
 	if (instance.get() == nullptr)
 		instance.reset(new Console);
@@ -61,8 +64,10 @@ shared_ptr<Console> &Console::Instance()
 	return instance;
 }
 
-
-void Console::Init()
+/**
+ * [Console::Init description]
+ */
+void Console::Init(void)
 {
 	auto instance = Instance();
 
@@ -95,22 +100,22 @@ void Console::Init()
 	Flush();
 }
 
-void Console::ClearRXBuffer()
+void Console::ClearRXBuffer(void)
 {
 	memset(rxBuffer, '\0', BUFFER_LENGTH);
 }
 
-void Console::ClearTXBuffer()
+void Console::ClearTXBuffer(void)
 {
 	memset(txBuffer, '\0', BUFFER_LENGTH);
 }
 
-void Console::Flush()
+void Console::Flush(void)
 {
 	fflush(stdout);
 }
 
-void Console::RXCallback()
+void Console::RXCallback(void)
 {
 	//if for some reason more than one character is in the buffer when the
 	//interrupt is called, handle them all.
@@ -206,7 +211,7 @@ void Console::RXCallback()
 	}
 }
 
-void Console::TXCallback()
+void Console::TXCallback(void)
 {
 	NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
@@ -227,12 +232,12 @@ void Console::ConComCheck(void)
 	return;
 }
 
-void Console::RequestSystemStop()
+void Console::RequestSystemStop(void)
 {
 	Instance()->sysStopReq = true;
 }
 
-bool Console::IsSystemStopRequested()
+bool Console::IsSystemStopRequested(void)
 {
 	return Instance()->sysStopReq;
 }

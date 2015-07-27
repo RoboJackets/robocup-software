@@ -2,39 +2,32 @@
 #include "radio.hpp"
 #include <memory>
 
-/*
- * forward delarations
- */
-void radioThreadHandler(void const* args);
 
+/*
+ * Forward delarations.
+ */
+void radioThreadHandler(void const *args);
 std::unique_ptr<Thread> radioThread;
 
+
 /**
- * call to initialize radio
+ * Call to initialize radio.
  */
 int initRadio(void)
 {
-	radioThread.reset(new Thread(radioThreadHandler));
-
-	return 0;
+    radioThread.reset(new Thread(radioThreadHandler));
+    return 0;
 }
 
-DigitalOut ledThree(LED3);
-DigitalOut ledFour(LED4);
 
-void radioThreadHandler(void const* args)
+void radioThreadHandler(void const *args)
 {
-	while (true)
-	{
-		Thread::wait(500);
-    ledThree = !ledThree;
-    ledFour = !ledThree;
-	}
+    while (true)
+        Thread::wait(500);
 }
+
 
 /*
-#include "robot.hpp"
-
 #define PACKETS_PER_SEC 60
 #define BULK_TRANSMITTER_EN 0
 
@@ -103,13 +96,13 @@ int main()
 // Enable watchdog timer
     //Watchdog watchdog;
     //watchdog.set(RJ_WATCHDOG_TIMER_VALUE);
-    
+
     led1 = 1;
-    
+
     while(1) {
 
         led1 = !led1;
-        
+
         DigitalOut tx_led(LED2, 0);
 
 #if BULK_TRANSMITTER_EN == 1

@@ -1,9 +1,9 @@
 #include "firmware-check.hpp"
 
 /**
- * sets the string to the cortex firmware verison
+ * Sets the string to the cortex firmware verison. This is taken from the `mbed interface` chip.
  */
-void firmware_version(std::string& version)
+void firmware_version(std::string &version)
 {
     FILE *fwp = fopen("/local/MBED.HTM", "r");  // open the mbed's default file to determine the mbed firmware version
     char temp_buf[300];
@@ -11,11 +11,12 @@ void firmware_version(std::string& version)
     version.clear();    // clear the passed string to ensure it's empty
 
     uint16_t line_nbr = 0;
-    while( (fgets(temp_buf, 300, fwp) != NULL) & (line_nbr < 30) ) {
+
+    while ( (fgets(temp_buf, 300, fwp) != NULL) & (line_nbr < 30) ) {
         std::string temp_string(temp_buf);
         line_nbr++;
 
-        if( temp_string.find("<meta ") != std::string::npos ) {
+        if ( temp_string.find("<meta ") != std::string::npos ) {
 
             // the word that we need to find the position of
             std::string search_word( "&firmware=" );
@@ -34,7 +35,7 @@ void firmware_version(std::string& version)
             break;
         }
     }
-    
+
     // close the file handle
     fclose(fwp);
 }

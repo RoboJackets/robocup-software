@@ -1,5 +1,6 @@
 #pragma once
 
+
 #define COMPETITION_DEPLOY 0
 
 #define ARM_MATH_CM3
@@ -210,4 +211,3 @@
 #include "CC1201Radio.hpp"
 #include "DS2411.hpp"
 #include "git_version.hpp"
-

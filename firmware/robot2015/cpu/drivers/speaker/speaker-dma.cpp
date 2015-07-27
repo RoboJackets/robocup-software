@@ -2,6 +2,10 @@
 
 #include "speaker-dma.hpp"
 
+
+/**
+ *
+ */
 Speaker::Speaker(void)
 {
     isInit = false;
@@ -10,11 +14,20 @@ Speaker::Speaker(void)
     isInit = true;
 }
 
+
+/**
+ *
+ */
 Speaker::~Speaker(void)
 {
     isInit = false;
 }
 
+
+/**
+ * [Speaker::Init Setup the FPGA interface]
+ * @return  [The initialization error code.]
+ */
 ERR_t Speaker::Init(void)
 {
     volatile int life_counter = 0;
@@ -96,7 +109,9 @@ ERR_t Speaker::Init(void)
 }
 
 
-// Configuration callback on TC
+/**
+ * [Speaker::TC0_callback description]
+ */
 void Speaker::TC0_callback(void)
 {
     // Get configuration pointer.
@@ -114,7 +129,9 @@ void Speaker::TC0_callback(void)
 }
 
 
-// Configuration callback on TC
+/**
+ * [Speaker::TC1_callback description]
+ */
 void Speaker::TC1_callback(void)
 {
     // Get configuration pointer.
@@ -132,7 +149,9 @@ void Speaker::TC1_callback(void)
 }
 
 
-// Configuration callback on Error
+/**
+ * [Speaker::ERR0_callback description]
+ */
 void Speaker::ERR0_callback(void)
 {
     dma_err(void);
@@ -152,4 +171,4 @@ void Speaker::dma_err(void)
     log(SEVERE, "SPEAKER DMA", "Unable to successfully configure the DMA for use with the speaker pin's output.");
 }
 
-#endif
+#endif  // COMPILE_WITH_DMA

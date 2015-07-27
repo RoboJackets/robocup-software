@@ -1,5 +1,9 @@
 #include "system.hpp"
 
+
+/**
+ *
+ */
 System::System(void)
 {
     isInit = false;
@@ -7,11 +11,20 @@ System::System(void)
     isInit = true;
 }
 
+
+/**
+ *
+ */
 System::~System(void)
 {
     isInit = false;
 }
 
+
+/**
+ * [System::Init Setup the FPGA interface]
+ * @return  [The initialization error code.]
+ */
 ERR_t System::Init(void)
 {
     if (isInit)
@@ -19,4 +32,3 @@ ERR_t System::Init(void)
 
     isInit = true;
 }
-

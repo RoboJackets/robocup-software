@@ -1,19 +1,23 @@
 #pragma once
 
+
 #include <string>
 #include <array>
 #include <vector>
+#include <algorithm>
+
 
 /**
- * max number of command aliases
+ * Max number of command aliases.
  */
-const uint8_t MAX_ALIASES = 4;
+static const uint8_t MAX_ALIASES = 4;
+
 
 /**
  * max command args safety check. Args are now vector based upon creation, so
  * this can be changed in size safely.
  */
-const uint8_t MAX_COMMAND_ARGS = 16;
+static const uint8_t MAX_COMMAND_ARGS = 16;
 
 /**
  * command structure
@@ -46,13 +50,15 @@ typedef struct {
 	const std::string usage;
 } command_t;
 
+
 /*
- * command functions
+ * Command functions.
  */
 void executeCommand(char *rawCommand);
 bool isExecutingIterativeCommand(void);
 void cancelIterativeCommand(void);
 void executeIterativeCommand(void);
+
 
 /*
  * Command definitions. Some command functions have circular definitions.

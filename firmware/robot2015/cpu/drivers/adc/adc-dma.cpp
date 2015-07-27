@@ -1,22 +1,36 @@
 #ifdef COMPILE_WITH_DMA
 
+
 #include "adc-dma.hpp"
 
+
+/**
+ *
+ */
 ADCDMA::ADCDMA(void)
 {
     isInit = false;
     dmaTransferComplete = false;
+
     // do stuff
+    // 
     isInit = true;
 }
 
 
+/**
+ *
+ */
 ADCDMA::~ADCDMA(void)
 {
     isInit = false;
 }
 
 
+/**
+ * [ADCDMA::Init Setup the FPGA interface]
+ * @return  [The initialization error code.]
+ */
 ERR_t ADCDMA::Init(void)
 {
     // Create a buffer to hold the ADC samples and clear it.
@@ -81,6 +95,10 @@ ERR_t ADCDMA::Init(void)
 }
 
 
+/**
+ * [ADCDMA::Check Poll a DMA transfer for completion.]
+ * @return  [Returns TRUE when the DMA transfer was complete & the function retreived the values.]
+ */
 bool ADCDMA::Check(void)
 {
     // When transfer complete do this block.
@@ -103,7 +121,9 @@ bool ADCDMA::Check(void)
 }
 
 
-// Configuration callback on TC
+/**
+ * [ADCDMA::TC0_callback The callback method for DMA transfers.]
+ */
 void ADCDMA::TC0_callback(void)
 {
     MODDMA_Config *config = dma.getConfig();
@@ -128,13 +148,14 @@ void ADCDMA::TC0_callback(void)
 }
 
 
-// Configuration callback on Error
+/**
+ * [ADCDMA::ERR0_callback The callback method for DMA related errors.]
+ */
 void ADCDMA::ERR0_callback(void)
 {
     // Switch off burst conversions.
     LPC_ADC->ADCR |= ~(1UL << 16);
     LPC_ADC->ADINTEN = 0;
-
     log(SEVERE, "ADC DMA", "Unable to successfully configure the DMA for use with the ADC pins.");
 }
 

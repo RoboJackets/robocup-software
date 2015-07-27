@@ -1,52 +1,56 @@
 #include "../../config/robot.hpp"
-#include "git_version.hpp"
-
-#include <algorithm>
 
 
 using namespace std;
 
+
 /**
  * error message when a typed command isn't found
  */
-const string COMMAND_NOT_FOUND_MSG = "Command not found.";
+static const string COMMAND_NOT_FOUND_MSG = "Command not found.";
+
 
 /**
  * error message when too many args are provided
  */
-const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
+static const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
+
 
 /**
  * indicates if the command held in "iterativeCommand"
  */
 volatile bool executingIterativeCommand = false;
 
+
 /**
  * current iterative command args
  */
 vector<string> iterativeCommandArgs;
+
 
 /**
  * the current iterative command handler
  */
 void (*iterativeCommandHandler)(const vector<string> &args);
 
+
 // Create an object to help find files
 LocalFileSystem local("local");
 
+
 /**
- * commands list. Add command handlers to commands.hpp.
+ * Commands list. Add command handlers to commands.hpp.
  *
- * Alphabetical order please (here addition and in handler function declaration)
+ * Alphabetical order please (here addition and in handler function declaration).
  */
 const vector<command_t> commands = {
-	// COMMAND TEMPALATE
-	// {
-	// 	{"<alias>", "<alias2>", "<alias...>"},
-	// 	is the command iterative,
-	// 	command handler function,
-	// 	"description",
-	// 	"usage"},
+	/* COMMAND TEMPALATE
+	{
+		{"<alias>", "<alias2>", "<alias...>"},
+		is the command iterative,
+		command handler function,
+		"description",
+		"usage"}, */
 	{
 		{"alias"},
 		false,
@@ -112,13 +116,15 @@ const vector<command_t> commands = {
 	}
 };
 
+
 /**
- * lists aliases for commands, if args are present, it will only list aliases
- * for those commands
- */
+* Lists aliases for commands, if args are present, it will only list aliases
+* for those commands.
+*/
+
 void cmd_alias(const vector<string> &args)
 {
-	//if no args given, list all aliases
+//if no args given, list all aliases
 	if (args.size() == 0) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
 			printf("%s:\r\n", commands[i].aliases[0].c_str());
@@ -186,17 +192,19 @@ void cmd_alias(const vector<string> &args)
 	Console::Flush();
 }
 
+
 /**
- * clears the console
- */
+* Clears the console.
+*/
 void cmd_clear(const vector<string> &args)
 {
 	printf(CLEAR_SCREEN_SEQ.c_str());
 	Console::Flush();
 }
 
+
 /**
- * echos text
+ * Echos text.
  */
 void cmd_echo(const vector<string> &args)
 {
@@ -208,24 +216,26 @@ void cmd_echo(const vector<string> &args)
 	Console::Flush();
 }
 
+
 /**
- * requests a system stop. (breaks main loop, or whatever implementation this
- * links to)
+ * Requests a system stop. (breaks main loop, or whatever implementation this
+ * links to).
  */
 void cmd_exitSys(const vector<string> &args)
 {
 	Console::RequestSystemStop();
 }
 
+
 /**
- * prints command help
+ * Prints command help.
  */
 void cmd_help(const vector<string> &args)
 {
 	printf("\nCtrl + C stops iterative commands\r\n\r\n");
 	Console::Flush();
 
-	//prints all commands, with details
+	// Prints all commands, with details
 	if (args.size() == 0) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
 			printf("%s:\r\n",
@@ -299,8 +309,9 @@ void cmd_help(const vector<string> &args)
 	}
 }
 
+
 /**
- * console responsiveness test
+ * Console responsiveness test.
  */
 void cmd_ping(const vector<string> &args)
 {
@@ -308,16 +319,18 @@ void cmd_ping(const vector<string> &args)
 	Console::Flush();
 }
 
+
 /**
- * Resets the mbed (should be the equivalent of pressing the reset button)
+ * Resets the mbed (should be the equivalent of pressing the reset button).
  */
 void cmd_resetMbed(const vector<string> &args)
 {
 	mbed_reset();
 }
 
+
 /**
- * Lists files
+ * Lists files.
  */
 void cmd_ls(const vector<string> &args)
 {
@@ -346,7 +359,7 @@ void cmd_ls(const vector<string> &args)
 
 
 /**
- * prints info
+ * Prints system info.
  */
 void cmd_info(const vector<string> &args)
 {
@@ -379,10 +392,11 @@ void cmd_info(const vector<string> &args)
 	Console::Flush();
 }
 
+
 /**
- * command executor
+ * Command executor.
  *
- * much of this taken from console.c under old robot firmware
+ * Much of this taken from `console.c` from the old robot firmware (2011).
  */
 void executeCommand(char *rawCommand)
 {
@@ -394,23 +408,20 @@ void executeCommand(char *rawCommand)
 	char *pch = strtok(rawCommand, " ");
 
 	while (pch != NULL) {
-		//check args length
+
+		// Check args length
 		if (argc > MAX_COMMAND_ARGS) {
 			printf("%s\r\n", TOO_MANY_ARGS_MSG.c_str());
 			break;
 		}
 
-		//set command name
-		if (argc == 0) {
+		// Set command name
+		if (argc == 0)
 			cmdName = string(pch);
-		}
-		//set args
-		else {
+		else
 			args.push_back(pch);
-		}
 
 		argc++;
-
 		pch = strtok(NULL, " ");
 	}
 
@@ -458,27 +469,29 @@ void executeCommand(char *rawCommand)
 	}
 }
 
+
 /**
- * returns if an iterative command is active
+ * Returns if an iterative command is active.
  */
 bool isExecutingIterativeCommand(void)
 {
 	return executingIterativeCommand;
 }
 
+
 /**
- * executes iterative commands, and is nonblocking regardless
+ * Executes iterative commands, and is nonblocking regardless
  * of if an iterative command is not running or not.
  */
 void executeIterativeCommand(void)
 {
-	if (executingIterativeCommand) {
+	if (executingIterativeCommand)
 		iterativeCommandHandler(iterativeCommandArgs);
-	}
 }
 
+
 /**
- * halts iterative command execution. It should be called by
+ * Halts iterative command execution. It should be called by
  * the console when a break sequence is sent.
  */
 void cancelIterativeCommand(void)

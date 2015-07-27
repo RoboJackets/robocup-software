@@ -1,5 +1,9 @@
 #include "fpga.hpp"
 
+
+/**
+ * 
+ */
 FPGA::FPGA(void)
 {
     isInit = false;
@@ -7,11 +11,20 @@ FPGA::FPGA(void)
     isInit = true;
 }
 
+
+/**
+ * 
+ */
 FPGA::~FPGA(void)
 {
     isInit = false;
 }
 
+
+/**
+ * [FPGA::Init Setup the FPGA interface]
+ * @return  [The initialization error code.]
+ */
 ERR_t FPGA::Init(void)
 {
 

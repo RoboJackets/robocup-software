@@ -1,7 +1,9 @@
 #pragma once
 
+
 #include "mbed.h"
 #include "error_type.hpp"
+
 
 class System
 {
@@ -9,7 +11,13 @@ class System
     System(void);
     ~System(void);
 
+
+    /**
+     * [System::Init Setup the FPGA interface]
+     * @return  [The initialization error code.]
+     */
     ERR_t Init(void);
+
     void Start(void);
     bool SelfTest(void);
     long GetTime(void);

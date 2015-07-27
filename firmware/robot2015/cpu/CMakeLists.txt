@@ -7,38 +7,38 @@
 set(DRIVERS_ROOT_DIR drivers)
 set(MODULES_ROOT_DIR modules)
 set(UTILS_ROOT_DIR utils)
-set(USR_CONFIG_DIR config)
 set(USR_LIB_DIR lib)
-set(SECTION_ROOT_DIRS ${DRIVERS_ROOT_DIR} ${MODULES_ROOT_DIR} ${UTILS_ROOT_DIR} ${USR_CONFIG_DIR})
 
 # set variables for each subdirectory of the above sections of the firmware
-set(DRIVERS cc1101 cc1201 cc1201/cfg ds2411)
-set(MODULES CommLink CommModule)
-set(UTILS firmware-check logger rtos-mgmt watchdog console assert)
+set(DRIVERS ${DRIVERS_ROOT_DIR})
+set(MODULES ${MODULES_ROOT_DIR})
+set(UTILS ${UTILS_ROOT_DIR})
+list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg ds2411 fpga radio speaker)
+list(APPEND ${MODULES} CommLink CommModule system)
+list(APPEND ${UTILS} assert console firmware-check logger rtos-mgmt watchdog)
+set(SUB_DIRS_LIST ${DRIVERS} ${MODULES} ${UTILS})
 
 # generate the list of all directories that are needed
-set(DIRS_LIST ${SECTION_ROOT_DIRS})
-
-foreach(SUB_DIR ${DRIVERS})
-    list(APPEND DIRS_LIST ${DRIVERS_ROOT_DIR}/${SUB_DIR})
-endforeach(SUB_DIR)
-
-foreach(SUB_DIR ${MODULES})
-    list(APPEND DIRS_LIST ${MODULES_ROOT_DIR}/${SUB_DIR})
-endforeach(SUB_DIR)
-
-foreach(SUB_DIR ${UTILS})
-    list(APPEND DIRS_LIST ${UTILS_ROOT_DIR}/${SUB_DIR})
-endforeach(SUB_DIR)
-
-# include all of the specified areas of the firmware between the two sets of set variables from above
 message("\n===== Adding firmware directories =====")
-foreach(path ${DIRS_LIST})
-    message(STATUS "adding '${path}'")
-    include_directories(${path})
-endforeach(path)
-list(LENGTH DIRS_LIST listLen)
-message("done. ${listLen} total directories added.\n=======================================\n")
+set(total_subdirs 0)
+foreach(sub_dirs ${SUB_DIRS_LIST})
+    # get the name of the directory root for each specific section of firmware
+    list(GET sub_dirs 0 root_dir_name)
+    list(REMOVE_ITEM sub_dirs root_dir_name)
+    message(STATUS "adding '${root_dir_name}'")
+    include_directories(${root_dir_name})
+    MATH( EXPR total_subdirs "${total_subdirs} + 1")
+
+    # loop through all subdirectories for each section
+    foreach(sub_dir_name ${${sub_dirs}})
+        message(STATUS "       '${root_dir_name}/${sub_dir_name}'")
+        include_directories(${root_dir_name}/${sub_dir_name})
+        MATH( EXPR total_subdirs "${total_subdirs} + 1")
+    endforeach()
+    message(STATUS "")
+endforeach()
+message("done. ${total_subdirs} total directories added.\n=======================================\n")
+unset(total_subdirs)
 
 # set the arm toolchain
 message("\n======== Adding ARM toolchain =========")

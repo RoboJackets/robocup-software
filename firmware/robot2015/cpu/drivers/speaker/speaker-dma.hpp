@@ -2,10 +2,12 @@
 
 #pragma once
 
+
 #include "mbed.h"
-#include "../../utils/logger/logger.hpp"
+#include "utils/logger/logger.hpp"
 #include "MODDMA.hpp"
 #include "error_type.hpp"
+
 
 // Make the buffer size match the number of degrees
 // in a circle since we are going to output a sinewave.
@@ -13,11 +15,18 @@
 #define SAMPLES_PER_READ 3
 #define DAC_POWER_MODE  (1 << 16)
 
+
 class Speaker
 {
   public:
     Speaker::Speaker(void);
     Speaker::~Speaker(void);
+
+
+    /**
+    * [Speaker::Init Setup the FPGA interface]
+    * @return  [The initialization error code.]
+    */
     ERR_t Init(void);
 
   protected:
@@ -31,7 +40,7 @@ class Speaker
 
     MODDMA dma;
     MODDMA_Config *conf0, *conf1;
-    
+
     uint32_t speaker_buf[SAMPLES_PER_READ][BUFFER_SIZE];
     volatile int life_counter;
     void dma_err(void);
