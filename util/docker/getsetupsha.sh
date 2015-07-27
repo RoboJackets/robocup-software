@@ -1,5 +1,6 @@
 #!/bin/bash
-DIR=$(dirname "${BASH_SOURCE}")
+
+DIR=$(cd $(dirname $0) ; pwd -P)
 ROBOCUP_ROOT="${DIR}/../../"
 
 cd ${ROBOCUP_ROOT}/util

@@ -1,0 +1,13 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+      # Login to docker
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - ./util/docker/baseimage/buildbaseimage.sh
+
+test:
+  override:
+    - ./util/docker/circle/buildcircle.sh
