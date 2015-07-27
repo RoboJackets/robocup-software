@@ -160,22 +160,8 @@ void CommLink::ready(void)
 
 void CommLink::sendPacket(RTP_t *p)
 {
-<<<<<<< HEAD
-    p->payload_size += 2;
-    uint8_t size = p->payload_size + 1;
-    sendData(p->raw, size);
-
-/*
-    log(INF1, "PKT", "==========");
-    for(int i=0; i<size; i++)
-        log(INF1, "PKT", "0x%02X", p->raw[i]);
-
-    log(INF1, "PKT", "==========\n");
-    */
-=======
     p->payload_size = p->total_size - 1; // fixup factor for headers. Exclude the `size` byte from being counted
     sendData(p->raw, p->total_size);
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 }
 
 

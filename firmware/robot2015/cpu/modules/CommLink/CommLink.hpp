@@ -1,5 +1,4 @@
-#ifndef COMMUNICATION_LINK_H
-#define COMMUNICATION_LINK_H
+#pragma once
 
 #include "mbed.h"
 #include "cmsis_os.h"
@@ -111,5 +110,3 @@ private:
 
     CommModule     *_comm_module;
 };
-
-#endif  // COMMUNICATION_LINK_H

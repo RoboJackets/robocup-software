@@ -3,7 +3,7 @@
 /**
  * The Watchdog class is used for automatically resetting the microcontroller if it is not reset within a set time period
  */
-class Watchdog {
+class watchdog {
 public:
     /// Load timeout value and enable the timer
     void set(float s) {

@@ -27,14 +27,17 @@ CommModule::CommModule() :
     _txID = osThreadCreate(&_txDef, (void*)this);
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 
-<<<<<<< HEAD
-    _txH_called = false;
-    _rxH_called = false;
-=======
+
+    for (int i=0; i < COMM_MODULE_NBR_PORTS; i++) {
+        _txH_called[i] = false;
+        _rxH_called[i] = false;
+    }
+
+/*
     // Initialize boolean arrays
     memset(_txH_called, 0, COMM_MODULE_NBR_PORTS);
     memset(_rxH_called, 0, COMM_MODULE_NBR_PORTS);
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
+*/
 }
 
 CommModule::~CommModule()
@@ -50,7 +53,7 @@ void CommModule::txThread(void const *arg)
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    log(LOG_LEVEL::INFO, "CommModule", "TX Communication Module Ready!");
+    log(INF1, "CommModule", "TX Communication Module Ready!");
 
     while(1) {
 
@@ -65,11 +68,7 @@ void CommModule::txThread(void const *arg)
             // Send the packet on the active communication link
             inst->_tx_handles[p->port].call(p);
 
-<<<<<<< HEAD
             log(INF2, "CommModule", "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
-=======
-            log(LOG_LEVEL::INFO, "CommModule", "Transmission:  Port: %u  Subclass: %u  Bytes: %u  Flags: SFS[%c], ACK[%c]\r\n", p->port, p->subclass, p->payload_size, (p->sfs ? 'X':' '), (p->ack ? 'X':' '));
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 
             // Release the allocated memory once data is sent
             osMailFree(inst->_txQueue, p);
@@ -84,7 +83,7 @@ void CommModule::rxThread(void const *arg)
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    log(LOG_LEVEL::INFO, "CommModule", "RX Communication Module Ready!");
+    log(INF1, "CommModule", "RX Communication Module Ready!");
 
     RTP_t *p;
     osEvent  evt;
@@ -104,11 +103,7 @@ void CommModule::rxThread(void const *arg)
                 inst->_rx_handles[p->port].call(p);
             }
 
-<<<<<<< HEAD
             log(INF2, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
-=======
-            log(LOG_LEVEL::INFO, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 
             osMailFree(inst->_rxQueue, p);  // free memory allocated for mail
         }
@@ -124,11 +119,7 @@ void CommModule::TxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 
 void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 {
-<<<<<<< HEAD
-    _rxH_called = true;
-=======
     _rxH_called[portNbr] = true;
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
     ready();
     _rx_handles[portNbr].attach(ptr);
 }
@@ -140,27 +131,23 @@ void CommModule::RxHandler(void(*ptr)(void), uint8_t portNbr)
     _rx_handles[portNbr].attach(ptr);
 }
 
-<<<<<<< HEAD
-    // Don't open a socket connection until a TX callback has been set
-    if (_txH_called & _rxH_called) {
-=======
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 
 void CommModule::openSocket(uint8_t portNbr)
 {
     ready();
     if (_txH_called[portNbr] & _rxH_called[portNbr]) {
+        // Don't open a socket connection until a TX callback has been set
         if (std::binary_search(_open_ports->begin(), _open_ports->end(), portNbr)) {
-            log(LOG_LEVEL::WARN, "CommModule", "Port number %u already opened", portNbr);
+            log(WARN, "CommModule", "Port number %u already opened", portNbr);
         } else {
             // [X] - 1 - Add the port number to the list of active ports & keep sorted
             _open_ports->push_back(portNbr);
             std::sort(_open_ports->begin(), _open_ports->end());
-            log(LOG_LEVEL::INFO, "CommModule", "Port %u opened", portNbr);
+            log(INF1, "CommModule", "Port %u opened", portNbr);
         }
     } else {
         // TX callback function was never set
-        log(LOG_LEVEL::WARN, "CommModule", "Must set TX & RX callback functions before opening socket.\r\n");
+        log(WARN, "CommModule", "Must set TX & RX callback functions before opening socket.\r\n");
     }
 }
 
@@ -194,24 +181,13 @@ void CommModule::send(RTP_t& packet)
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-<<<<<<< HEAD
         std::memcpy(p->raw, &packet.raw, p->total_size);
-=======
-        p->total_size = packet.payload_size + packet.sfs + 3;
-
-        for (int i=0; i < p->total_size + 1; i++) // no need to include rssi & lqi values (the last 2 bytes)
-            p->raw[i] = packet.raw[i];
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 
         // [X] - 1.3 - Place the passed packet into the txQueue.
         // =================
         osMailPut(_txQueue, p);
     } else {
-<<<<<<< HEAD
         log(WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
-=======
-        log(LOG_LEVEL::WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
     }
 }
 
@@ -228,21 +204,12 @@ void CommModule::receive(RTP_t& packet)
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-<<<<<<< HEAD
         std::memcpy(p->raw, &packet.raw, p->total_size);
-=======
-        for (int i=0; i<packet.total_size + 1; i++)
-            p->raw[i] = packet.raw[i];
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 
         // [X] - 1.3 - Place the passed packet into the rxQueue.
         // =================
         osMailPut(_rxQueue, p);
     } else {
-<<<<<<< HEAD
         log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
-=======
-        log(LOG_LEVEL::WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
     }
 }

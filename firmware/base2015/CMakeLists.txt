@@ -6,7 +6,7 @@
 
 #include_directories(drivers drivers/CC1101)
 #include_directories(modules modules/CommLink modules/CommModule)
-#include_directories(utils utils/FirmwareCheck utils/Logger utils/RTOS_Management utils/Watchdog)
+#include_directories(utils utils/firmware-check utils/Logger utils/RTOS_Management utils/Watchdog)
 
 # set the arm toolchain
 set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)

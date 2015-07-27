@@ -1,13 +1,11 @@
-#include "robot.hpp"
-#include "commands.hpp"
-#include "console.hpp"
-#include "reset.hpp"
-#include "LocalFileSystem.h"
+#include "../../robot.hpp"
+//#include "commands.hpp"
+//#include "console.hpp"
+//#include "reset.hpp"
+//#include "LocalFileSystem.h"
 #include "git_version.hpp"
-#include "ds2411.hpp"
 
 #include <algorithm>
-
 
 
 using namespace std;

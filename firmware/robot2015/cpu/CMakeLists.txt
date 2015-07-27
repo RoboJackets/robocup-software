@@ -4,14 +4,47 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
-include_directories(drivers drivers/CC1101 drivers/CC1201 drivers/CC1201/cfg)
-include_directories(modules modules/CommLink modules/CommModule)
-include_directories(utils utils/FirmwareCheck utils/Logger utils/RTOS_Management utils/Watchdog)
+
+# set variables to the names of the directories for each section of code
+set(DRIVERS_ROOT_DIR drivers)
+set(MODULES_ROOT_DIR modules)
+set(UTILS_ROOT_DIR utils)
+set(SECTION_ROOT_DIRS ${DRIVERS_ROOT_DIR} ${MODULES_ROOT_DIR} ${UTILS_ROOT_DIR})
+
+# set variables for each subdirectory of the above sections of the firmware
+set(DRIVERS cc1101 cc1201 cc1201/cfg ds2411)
+set(MODULES CommLink CommModule)
+set(UTILS firmware-check logger rtos-mgmt watchdog console assert)
+
+# generate the list of all directories that are needed
+set(DIRS_LIST ${SECTION_ROOT_DIRS})
+
+foreach(SUB_DIR ${DRIVERS})
+    list(APPEND DIRS_LIST ${DRIVERS_ROOT_DIR}/${SUB_DIR})
+endforeach(SUB_DIR)
+
+foreach(SUB_DIR ${MODULES})
+    list(APPEND DIRS_LIST ${MODULES_ROOT_DIR}/${SUB_DIR})
+endforeach(SUB_DIR)
+
+foreach(SUB_DIR ${UTILS})
+    list(APPEND DIRS_LIST ${UTILS_ROOT_DIR}/${SUB_DIR})
+endforeach(SUB_DIR)
+
+# include all of the specified areas of the firmware between the two sets of set variables from above
+message("\n===== Adding firmware directories =====")
+foreach(path ${DIRS_LIST})
+    message(STATUS "adding '${path}'")
+    include_directories(${path})
+endforeach(path)
+list(LENGTH DIRS_LIST listLen)
+message("done. ${listLen} total directories added.\n=======================================\n")
 
 # set the arm toolchain
+message("\n======== Adding ARM toolchain =========")
 set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)
 include(arm_toolchain.cmake)
-
+message("done.\n=======================================\n")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -57,6 +90,16 @@ file(GLOB_RECURSE robot2015_SRC
     "*.cpp"
 )
 
+message("\n======== Finding source files =========")
+foreach(full_path_file ${robot2015_SRC})
+    get_filename_component(filename ${full_path_file} NAME)
+    message(STATUS "found '${filename}'")
+endforeach(full_path_file)
+unset(listLen)
+list(LENGTH robot2015_SRC listLen)
+message("done. ${listLen} total source files found.\n=======================================\n")
+
+
 add_executable(robot2015_elf ${robot2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp ${MBED_OBJECTS})
 target_link_libraries(robot2015_elf ${MBED_LIBS})
 
@@ -94,7 +137,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 
 add_custom_target(robot2015-prog
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND ${PROJECT_SOURCE_DIR}/util/robot2015-prog.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
+    COMMAND ${PROJECT_SOURCE_DIR}/${UTILS_ROOT_DIR}/robot2015-prog.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
     DEPENDS robot2015
     COMMENT "Copies the files created by robot2015 into a single mbed"
 )
@@ -105,3 +148,12 @@ add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/common/git_version.cpp
     DEPENDS git_version
 )
+
+message("========== System Overview ============")
+message("=======================================")
+message("Project Name:\t\t\t${CMAKE_PROJECT_NAME}")
+message("CMake Version:\t\t\t${CMAKE_VERSION}")
+message("Compilation System:\t\t${CMAKE_SYSTEM}")
+message("Compilation System Type:\t${CMAKE_SYSTEM_NAME}")
+message("Compilation Processor:\t\t${CMAKE_SYSTEM_PROCESSOR}")
+message("=======================================\n")

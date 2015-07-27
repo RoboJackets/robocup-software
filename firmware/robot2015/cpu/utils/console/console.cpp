@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "robot.hpp"
+#include "../../robot.hpp"
 #include "console.hpp"
 #include "commands.hpp"
 
@@ -15,7 +15,6 @@ shared_ptr<Console> Console::instance;
 
 Console::Console() : pc(USBTX, USBRX) { }
 
-<<<<<<< HEAD
 /**
  * default ETX (0x3)
  */
@@ -56,14 +55,14 @@ const string COMMAND_BREAK_MSG = "*BREAK*";
  * Serial (over USB) baud rate. Default 9600. Screen default 9600
  */
 const uint16_t BAUD_RATE = 57600;//9600;
-=======
+
 shared_ptr<Console>& Console::Instance()
 {
 	if(instance.get() == nullptr)
 		instance.reset(new Console);
 	return instance;
 }
->>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
+
 
 void Console::Init()
 {

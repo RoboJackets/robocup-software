@@ -179,11 +179,11 @@
 //#include "cmsis_os.h"
 
 #if RJ_CHECK_FIRMWARE
-#include "FirmwareCheck.hpp"
+#include "firmware-check.hpp"
 #endif
 
 // Include the header file for the watchdog timer class
-#include "Watchdog.hpp"
+#include "watchdog.hpp"
 
 // Include the base classes for communication if a communication link is active
 #if RJ_PRIMARY_RADIO | RJ_SECONDARY_RADIO
@@ -201,4 +201,10 @@
 #include "nRF24L01.h"
 #endif
 
+
+#include "console.hpp"
+#include "commands.hpp"
 #include "logger.hpp"
+#include "CC1201Radio.hpp"
+#include "DS2411.hpp"
+#include "git_version.hpp"

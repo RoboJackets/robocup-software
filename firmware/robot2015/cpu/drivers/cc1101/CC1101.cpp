@@ -15,14 +15,14 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_
         
         // [X] - 2a - Don't completely initialize if device fails to successfully start
         // =================
-        log(LOG_LEVEL::ERROR, "CC1101", "CC1101 Failure");
+        log(SEVERE, "CC1101", "CC1101 Failure");
     } else {
 
         // [X] - 2 - Call the base class method for beginning full class operation with threads
         // =================
         CommLink::ready();
 
-        log(LOG_LEVEL::INFO, "CC1101", "CC1101 Ready!");
+        log(INF1, "CC1101", "CC1101 Ready!");
     }
 }
 
@@ -86,7 +86,7 @@ int32_t CC1101::selfTest(void)
 
         // [X] - 2 - Send message over serial port if version register is not what was expected
         // =================
-        log(LOG_LEVEL::ERROR, "CC1101",
+        log(SEVERE, "CC1101",
             "FATAL ERROR\r\n"
                 "  Wrong version number returned from chip's 'VERSION' register (Addr: 0x%02X)\r\n"
                 "\r\n"
@@ -128,9 +128,9 @@ void CC1101::set_init_vars(void)
     _pck_control.status_field_en = true;
 
     // Set the initial offset frequency estimate
-    log(LOG_LEVEL::INFO, "CC1101", "Configuring frequency offset estimate...");
+    log(INF1, "CC1101", "Configuring frequency offset estimate...");
     write_reg(CCXXX1_FSCTRL0, status(CCXXX1_FREQEST));
-    log(LOG_LEVEL::INFO, "CC1101", "Frequency offset estimate configured");
+    log(INF1, "CC1101", "Frequency offset estimate configured");
 
     // normal packet mode uses RX and TX buffers
     _pck_control.format_type = FORMAT_DEFAULT;
@@ -223,7 +223,7 @@ void CC1101::put_rf_settings()
 
 void CC1101::power_on_reset(void)
 {
-    log(LOG_LEVEL::INFO, "CC1101", "Beginning Power-on-Reset routine...");
+    log(INF1, "CC1101", "Beginning Power-on-Reset routine...");
 
     delete _spi;
 
@@ -270,7 +270,7 @@ void CC1101::power_on_reset(void)
     delete SO2;
     setup_spi();
 
-    log(LOG_LEVEL::INFO, "CC1101", "CC1101 Power-on-Reset complete");
+    log(INF1, "CC1101", "CC1101 Power-on-Reset complete");
 }
 
 // 2nd ighest level of initilization routines behind CC1101::setup();
@@ -291,9 +291,9 @@ void CC1101::init(void)
 
     // Set the initial offset frequency estimate
 
-    log(LOG_LEVEL::INFO, "CC1101", "Configuring frequency offset estimate...");
+    log(INF1, "CC1101", "Configuring frequency offset estimate...");
     write_reg(CCXXX1_FSCTRL0, status(CCXXX1_FREQEST));
-    log(LOG_LEVEL::INFO, "CC1101", "Frequency offset estimate configured");
+    log(INF1, "CC1101", "Frequency offset estimate configured");
 
     calibrate();
 
@@ -319,7 +319,7 @@ int32_t CC1101::sendData(uint8_t *buf, uint8_t size)
     // =================
     // buf[0] = size;
 
-    log(LOG_LEVEL::INFO, "CC1101", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
+    log(INF1, "CC1101", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
 
     // [X] - 3 - Send the data to the CC1101. Increment the size value by 1 before doing so to account for the buffer's inserted value
     // =================

@@ -1,4 +1,4 @@
-#include "FirmwareCheck.hpp"
+#include "firmware-check.hpp"
 
 /**
  * sets the string to the cortex firmware verison
