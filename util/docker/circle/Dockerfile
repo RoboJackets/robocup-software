@@ -9,8 +9,11 @@ WORKDIR /home/developer/robocup-software
 RUN sudo rm -rf /home/developer/robocup-software/.git
 COPY .git/ .git/
 RUN sudo chown -R developer:developer /home/developer/robocup-software
+RUN git submodule deinit -f .
+RUN git submodule update --init
 RUN git reset --hard HEAD
 RUN git clean -f
+RUN git submodule update --init
 
 # Build
 RUN make clean
