@@ -1,0 +1,72 @@
+__Setup(){
+
+  __writeMemory32(0x000000F3, 0x4008609C, "Memory"); // D0
+  __writeMemory32(0x000000F3, 0x400860A0, "Memory"); // D1
+  __writeMemory32(0x000000F3, 0x400860A4, "Memory"); // D2
+  __writeMemory32(0x000000F3, 0x400860A8, "Memory"); // D3
+  __writeMemory32(0x000000F3, 0x400860AC, "Memory"); // D4
+  __writeMemory32(0x000000F3, 0x400860B0, "Memory"); // D5
+  __writeMemory32(0x000000F3, 0x400860B4, "Memory"); // D6
+  __writeMemory32(0x000000F3, 0x400860B8, "Memory"); // D7
+
+  __writeMemory32(0x000000F2, 0x40086290, "Memory"); // D8
+  __writeMemory32(0x000000F2, 0x40086294, "Memory"); // D9
+  __writeMemory32(0x000000F2, 0x40086298, "Memory"); // D10
+  __writeMemory32(0x000000F2, 0x4008629C, "Memory"); // D11
+  __writeMemory32(0x000000F2, 0x40086280, "Memory"); // D12
+  __writeMemory32(0x000000F2, 0x40086284, "Memory"); // D13
+  __writeMemory32(0x000000F2, 0x40086288, "Memory"); // D14
+  __writeMemory32(0x000000F2, 0x4008628C, "Memory"); // D15
+
+  __writeMemory32(0x000000B3, 0x40086124, "Memory"); // A0
+  __writeMemory32(0x000000B3, 0x40086128, "Memory"); // A1
+  __writeMemory32(0x000000B3, 0x4008612C, "Memory"); // A2
+  __writeMemory32(0x000000B3, 0x40086130, "Memory"); // A3
+  __writeMemory32(0x000000B3, 0x40086134, "Memory"); // A4
+  __writeMemory32(0x000000B2, 0x40086080, "Memory"); // A5
+  __writeMemory32(0x000000B2, 0x40086084, "Memory"); // A6
+  __writeMemory32(0x000000B2, 0x40086088, "Memory"); // A7
+
+  __writeMemory32(0x000000B3, 0x40086120, "Memory"); // A8
+  __writeMemory32(0x000000B3, 0x4008611C, "Memory"); // A9
+  __writeMemory32(0x000000B2, 0x40086118, "Memory"); // A10
+  __writeMemory32(0x000000B2, 0x40086108, "Memory"); // A11
+  __writeMemory32(0x000000B2, 0x40086104, "Memory"); // A12
+  __writeMemory32(0x000000B2, 0x40086100, "Memory"); // A13
+  __writeMemory32(0x000000B1, 0x40086320, "Memory"); // A14
+  __writeMemory32(0x000000B1, 0x4008631C, "Memory"); // A15
+
+  __writeMemory32(0x000000B2, 0x400866C0, "Memory"); // A16
+  __writeMemory32(0x000000B2, 0x400866BC, "Memory"); // A17
+  __writeMemory32(0x000000B3, 0x40086700, "Memory"); // A18
+  __writeMemory32(0x000000B3, 0x40086704, "Memory"); // A19
+  __writeMemory32(0x000000B3, 0x40086708, "Memory"); // A20
+  __writeMemory32(0x000000B3, 0x4008670C, "Memory"); // A21
+  __writeMemory32(0x000000B3, 0x40086710, "Memory"); // A22
+  __writeMemory32(0x000000B3, 0x40086510, "Memory"); // A23
+
+  __writeMemory32(0x000000B3, 0x4008608C, "Memory"); // OE
+  __writeMemory32(0x000000B3, 0x40086094, "Memory"); // CS0
+  __writeMemory32(0x000000B3, 0x40086098, "Memory"); // WE
+
+  __writeMemory32(0x00000001, 0x40005000, "Memory"); // EMC_CONTROL
+  __writeMemory32(0x00000081, 0x40005200, "Memory"); // EMC_STATICCONFIG0
+  __writeMemory32(0x00000001, 0x40005208, "Memory"); // EMC_STATICWAITOEN0
+  __writeMemory32(0x0000000D, 0x4000520C, "Memory"); // EMC_STATICWAITRD = 13
+
+  __writeMemory32(0x1C000000, 0x40043100, "Memory"); // map NOR CS0 to shadow area at address 0
+
+}
+
+execUserReset()
+{
+  __message "execUserReset\n";
+  __Setup();
+  __message "execUserReset Finish\n";
+}
+
+execUserFlashInit(){
+  __message "execUserFlashInit\n";
+  __Setup();
+  __message "execUserFlashInit Finish\n";
+}

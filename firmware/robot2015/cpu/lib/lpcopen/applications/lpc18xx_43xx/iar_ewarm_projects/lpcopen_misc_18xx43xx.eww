@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\..\..\..\software\lpc_core\lpc_board\boards_18xx_43xx\lib_lpc_boards_18xx_43xx.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\app_gpdma_speed_test\app_gpdma_speed_test.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\sct_apps\app_sct_trafficlight\app_sct_trafficlight.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\sct_apps\app_sct_blinky\app_sct_blinky.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\sct_apps\app_sct_simple_match\app_sct_simple_match.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\app_pmc_states\app_pmc_states.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\app_otp_funcs\app_otp_funcs.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\app_clock_apis\app_clock_apis.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\misc\app_sdmmc_meas\app_sdmmc_meas.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All_libs</name>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>hitex_eva_1850</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>hitex_eva_4350</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>keil_mcb_1857</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>keil_mcb_4357</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>ngx_xplorer_1830</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>ngx_xplorer_4330</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>
+
+

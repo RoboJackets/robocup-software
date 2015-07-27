@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<ProjectWorkspace xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_mpw.xsd">
+
+  <SchemaVersion>1.0</SchemaVersion>
+
+  <Header>### uVision Project, (C) Keil Software</Header>
+
+  <WorkspaceName>WorkSpace</WorkspaceName>
+
+  <project>
+    <PathAndName>..\..\..\software\lpc_core\lpc_board\boards_13xx\lib_lpc_boards_13xx.uvproj</PathAndName>
+    <NodeIsActive>1</NodeIsActive>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_blinky\periph_blinky.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_bod\periph_bod.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_clkout\periph_clkout.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_ritimer\periph_ritimer.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_ssp\periph_ssp.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_uart\periph_uart.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_watchdog\periph_watchdog.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_i2c\periph_i2c.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_adc\periph_adc.uvproj</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\examples\periph\periph_eeprom\periph_eeprom.uvproj</PathAndName>
+  </project>
+
+</ProjectWorkspace>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\..\..\..\software\lpc_core\lpc_board\boards_11xx\lib_lpc_boards_11xx.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\freertos\freertos_blinky\freertos_blinky.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>all_board_libs</name>
+      <member>
+        <project>lib_lpc_boards_11xx</project>
+        <configuration>nxp_xpresso_11u14</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_11xx</project>
+        <configuration>nxp_xpresso_11c24</configuration>
+      </member>
+    </batchDefinition>
+    <batchDefinition>
+      <name>All_libs_and_Examples</name>
+      <member>
+        <project>lib_lpc_boards_11xx</project>
+        <configuration>nxp_xpresso_11u14</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_11xx</project>
+        <configuration>nxp_xpresso_11c24</configuration>
+      </member>
+      <member>
+        <project>freertos_blinky</project>
+        <configuration>iflash_nxp_xpresso_11c24</configuration>
+      </member>
+      <member>
+        <project>freertos_blinky</project>
+        <configuration>iflash_nxp_xpresso_11u14</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>
+
+

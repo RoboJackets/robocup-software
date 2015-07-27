@@ -8,6 +8,14 @@ include(CMakeForceCompiler)
 set(CMAKE_SYSTEM_NAME Generic)
 # set(CMAKE_SYSTEM_VERSION 1)
 
+#AS      = $(GCC_BIN)arm-none-eabi-as
+#CC      = $(GCC_BIN)arm-none-eabi-gcc
+#CPP     = $(GCC_BIN)arm-none-eabi-g++
+#LD      = $(GCC_BIN)arm-none-eabi-gcc
+#OBJCOPY = $(GCC_BIN)arm-none-eabi-objcopy
+#OBJDUMP = $(GCC_BIN)arm-none-eabi-objdump
+#SIZE    = $(GCC_BIN)arm-none-eabi-size 
+
 #-------------------------------------------------------------------------------
 # specify the cross compiler, later on we will set the correct path
 CMAKE_FORCE_C_COMPILER(arm-none-eabi-gcc GNU)

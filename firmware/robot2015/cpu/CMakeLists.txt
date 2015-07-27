@@ -1,15 +1,15 @@
 # this file came from https://github.com/uwearzt/mbed-cmake
 # and was modified by Justin Buchanan
-#
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
-
 
 # set variables to the names of the directories for each section of code
 set(DRIVERS_ROOT_DIR drivers)
 set(MODULES_ROOT_DIR modules)
 set(UTILS_ROOT_DIR utils)
-set(SECTION_ROOT_DIRS ${DRIVERS_ROOT_DIR} ${MODULES_ROOT_DIR} ${UTILS_ROOT_DIR} config)
+set(USR_CONFIG_DIR config)
+set(USR_LIB_DIR lib)
+set(SECTION_ROOT_DIRS ${DRIVERS_ROOT_DIR} ${MODULES_ROOT_DIR} ${UTILS_ROOT_DIR} ${USR_CONFIG_DIR})
 
 # set variables for each subdirectory of the above sections of the firmware
 set(DRIVERS cc1101 cc1201 cc1201/cfg ds2411)
@@ -99,7 +99,6 @@ unset(listLen)
 list(LENGTH robot2015_SRC listLen)
 message("done. ${listLen} total source files found.\n=======================================\n")
 
-
 add_executable(robot2015_elf ${robot2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp ${MBED_OBJECTS})
 target_link_libraries(robot2015_elf ${MBED_LIBS})
 
@@ -137,7 +136,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 
 add_custom_target(robot2015-prog
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND ${PROJECT_SOURCE_DIR}/${UTILS_ROOT_DIR}/robot2015-prog.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
+    COMMAND ${PROJECT_SOURCE_DIR}/util/robot2015-prog.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
     DEPENDS robot2015
     COMMENT "Copies the files created by robot2015 into a single mbed"
 )

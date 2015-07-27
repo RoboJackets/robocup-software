@@ -1,0 +1,25 @@
+;-------------------------------------------------------------------------------------
+;   Keil scatter loading file
+;-------------------------------------------------------------------------------------
+
+FLASH 0x14000000 0x400000
+{
+  ; ABSOLUTE Execution region
+  ER_RO +0 ABSOLUTE
+  {
+    *startup*.o (RESET, +FIRST)
+	.ANY (+RO)
+  }
+  
+  ; Position Independent execution region
+  ER_PI_RO 0x10080000 0x8000
+  {
+    *spifi_drv*.lib (+RO)
+  }
+  
+  ; Data region
+  DR_RW 0x10000000 0x8000
+  {
+    *.o (+RW, +ZI)
+  }
+}

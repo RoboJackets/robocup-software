@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_board>
+  <pass>
+    <loader>$PROJ_DIR$\..\..\..\..\tool_configs\iar_flash_binaries\FlashLPC18xx_43xx_SPIFI_1.flash</loader>
+  </pass>
+</flash_board>
+
+

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<workspace>
+  <project>
+    <path>$WS_DIR$\..\..\..\software\lpc_core\lpc_board\boards_18xx_43xx\lib_lpc_boards_18xx_43xx.ewp</path>
+  </project>
+  <project>
+    <path>$WS_DIR$\..\examples\ucos_iii\ucos_iii_blinky\ucos_iii_blinky.ewp</path>
+  </project>
+  <batchBuild>
+    <batchDefinition>
+      <name>All_libs</name>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>hitex_eva_1850</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>hitex_eva_4350</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>keil_mcb_1857</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>keil_mcb_4357</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>ngx_xplorer_1830</configuration>
+      </member>
+      <member>
+        <project>lib_lpc_boards_18xx_43xx</project>
+        <configuration>ngx_xplorer_4330</configuration>
+      </member>
+    </batchDefinition>
+  </batchBuild>
+</workspace>
+
+

@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include "../../config/robot.hpp"
 #include "console.hpp"
-#include "commands.hpp"
 
 using namespace std;
 
@@ -56,10 +53,11 @@ const string COMMAND_BREAK_MSG = "*BREAK*";
  */
 const uint16_t BAUD_RATE = 57600;//9600;
 
-shared_ptr<Console>& Console::Instance()
+shared_ptr<Console> &Console::Instance()
 {
-	if(instance.get() == nullptr)
+	if (instance.get() == nullptr)
 		instance.reset(new Console);
+
 	return instance;
 }
 
@@ -116,35 +114,30 @@ void Console::RXCallback()
 {
 	//if for some reason more than one character is in the buffer when the
 	//interrupt is called, handle them all.
-	while (pc.readable())
-	{
+	while (pc.readable()) {
 		//read the char that caused the interrupt
 		char c = pc.getc();
 
 		//clear flags if the sequence is broken
-		if (flagOne && !flagTwo && c != ARROW_KEY_SEQUENCE_TWO)
-		{
+		if (flagOne && !flagTwo && c != ARROW_KEY_SEQUENCE_TWO) {
 			flagOne = false;
 			flagTwo = false;
 		}
 
 		//clear flags if the sequence is broken
-		if (flagOne && flagTwo && !(c == ARROW_UP_KEY || ARROW_DOWN_KEY))
-		{
+		if (flagOne && flagTwo && !(c == ARROW_UP_KEY || ARROW_DOWN_KEY)) {
 			flagOne = false;
 			flagTwo = false;
 		}
 
 		//if the buffer is full, ignore the chracter and print a
 		//warning to the console
-		if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR)
-		{
+		if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR) {
 			pc.printf("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
 			Flush();
 		}
-			//if a new line character is sent, process the current buffer
-		else if (c == NEW_LINE_CHAR)
-		{
+		//if a new line character is sent, process the current buffer
+		else if (c == NEW_LINE_CHAR) {
 			//print command prior to executing
 			pc.printf("\r\n");
 			Flush();
@@ -160,9 +153,8 @@ void Console::RXCallback()
 			pc.printf(CONSOLE_HEADER.c_str());
 			Flush();
 		}
-			//if a backspace is requested, handle it.
-		else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0)
-		{
+		//if a backspace is requested, handle it.
+		else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0) {
 			//re-terminate the string
 			rxBuffer[--rxIndex] = '\0';
 
@@ -173,48 +165,40 @@ void Console::RXCallback()
 			pc.putc(BACKSPACE_REPLY_CHAR);
 			Flush();
 		}
-			//if a break is requested, cancel iterative commands
-		else if (c == BREAK_CHAR)
-		{
-			if (isExecutingIterativeCommand())
-			{
+		//if a break is requested, cancel iterative commands
+		else if (c == BREAK_CHAR) {
+			if (isExecutingIterativeCommand()) {
 				cancelIterativeCommand();
 				pc.printf("%s\r\n", COMMAND_BREAK_MSG.c_str());
 				pc.printf(CONSOLE_HEADER.c_str());
 				Flush();
 			}
 		}
-			//flag the start of an arrow key sequence
-		else if (c == ARROW_KEY_SEQUENCE_ONE)
-		{
+		//flag the start of an arrow key sequence
+		else if (c == ARROW_KEY_SEQUENCE_ONE) {
 			flagOne = true;
 		}
-			//continue arrow sequence
-		else if (flagOne && c == ARROW_KEY_SEQUENCE_TWO)
-		{
+		//continue arrow sequence
+		else if (flagOne && c == ARROW_KEY_SEQUENCE_TWO) {
 			flagTwo = true;
 		}
-			//process arrow key sequence
-		else if (flagOne && flagTwo)
-		{
+		//process arrow key sequence
+		else if (flagOne && flagTwo) {
 			//process keys
-			if (c == ARROW_UP_KEY)
-			{
+			if (c == ARROW_UP_KEY) {
 				printf("\033M");
-			}
-			else if (c == ARROW_DOWN_KEY)
-			{
+			} else if (c == ARROW_DOWN_KEY) {
 				printf("\033D");
 			}
+
 			Flush();
 
 			flagOne = false;
 			flagTwo = false;
 		}
-			//no special character, add it to the buffer and return it to
-			//to the terminal to be visible
-		else
-		{
+		//no special character, add it to the buffer and return it to
+		//to the terminal to be visible
+		else {
 			rxBuffer[rxIndex++] = c;
 			pc.putc(c);
 			Flush();
@@ -240,12 +224,12 @@ void Console::ConComCheck(void)
 	 * for most people. It could however, greatly reduce what we have to
 	 * implement while adding more functionality.
 	 */
-	return;		
+	return;
 }
 
 void Console::RequestSystemStop()
 {
-		Instance()->sysStopReq = true;
+	Instance()->sysStopReq = true;
 }
 
 bool Console::IsSystemStopRequested()

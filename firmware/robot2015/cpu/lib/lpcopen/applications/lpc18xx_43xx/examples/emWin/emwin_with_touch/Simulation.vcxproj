@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C876B334-5583-455F-9708-C56D70857390}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Output\WIN32_MSVC60\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Output\WIN32_MSVC60\Release\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Output\WIN32_MSVC60\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Output\WIN32_MSVC60\Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Output\WIN32_MSVC60\Release/Simulation.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>Config;GUI\Core;GUI\Widget;GUI\WM;System\Simulation;System\Simulation\Res;System\Simulation\SIM_GUI;GUI\DisplayDriver;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LCD_USE_WINSIM;NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>.\Output\WIN32_MSVC60\Release/Simulation.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Output\WIN32_MSVC60\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Output\WIN32_MSVC60\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Output\WIN32_MSVC60\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0407</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>libcmt.lib;System\Simulation\GUISim.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Output\WIN32_MSVC60\Release/Simulation.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\Output\WIN32_MSVC60\Release/Simulation.map</MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Output\WIN32_MSVC60\Release/Simulation.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Output\WIN32_MSVC60\Debug/Simulation.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\..\libraries\emWin\emWin516_Config;..\..\..\..\libraries\emWin\emWin516_header;..\..\..\..\libraries\emWin\Simulation;..\..\..\..\libraries\emWin\Simulation\Res;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LCD_USE_WINSIM;_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeaderOutputFile>.\Output\WIN32_MSVC60\Debug/Simulation.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Output\WIN32_MSVC60\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Output\WIN32_MSVC60\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Output\WIN32_MSVC60\Debug/</ProgramDataBaseFileName>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0407</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>libcmt.lib;winmm.lib;..\..\..\..\libraries\emWin\Simulation\GuiSim.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Output\WIN32_MSVC60\Debug/Simulation.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\Output\WIN32_MSVC60\Debug/Simulation.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>.\Output\WIN32_MSVC60\Debug/Simulation.map</MapFileName>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Output\WIN32_MSVC60\Debug/Simulation.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\libraries\emWin\emWin516_Config\GUIConf.c" />
+    <ClCompile Include="..\..\..\..\libraries\emWin\emWin516_Config\LCDConf.c" />
+    <ClCompile Include="..\..\..\..\libraries\emWin\emWin516_Config\SIMConf.c" />
+    <ClCompile Include="..\..\..\..\libraries\emWin\Simulation\WinMain\WinMain.c" />
+    <ClCompile Include="TOUCH_Sample.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\libraries\emWin\emWin516_Config\GUIConf.h" />
+    <ClInclude Include="..\..\..\..\libraries\emWin\emWin516_Config\LCDConf.h" />
+    <ClInclude Include="..\..\..\..\libraries\emWin\Simulation\GUI_SIM_Win32.h" />
+    <ClInclude Include="..\..\..\..\libraries\emWin\Simulation\Res\ResourceSim.h" />
+    <ClInclude Include="..\..\..\..\libraries\emWin\Simulation\SIM.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\libraries\emWin\emWin516_library\VisualStudio_2010\GUI.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Branding.rh" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Device.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Device1.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Logo.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\n.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\no.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\nw.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\o.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\off.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\off1.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\s.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Simulation.ico" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\so.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\sw.bmp" />
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\w.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\..\libraries\emWin\Simulation\Res\Simulation.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

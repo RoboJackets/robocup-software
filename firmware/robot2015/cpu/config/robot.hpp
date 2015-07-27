@@ -202,9 +202,12 @@
 #endif
 
 
+// #include "adc-dma.hpp"
+// #include "speaker-dma.hpp"
 #include "console.hpp"
 #include "commands.hpp"
 #include "logger.hpp"
 #include "CC1201Radio.hpp"
 #include "DS2411.hpp"
 #include "git_version.hpp"
+

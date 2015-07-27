@@ -1,7 +1,13 @@
 #pragma once
 
+
+#include "mbed.h"
+#include "commands.hpp"
+
+#include <stdio.h>
 #include <string>
 #include <memory>
+
 
 /**
  * enable scrolling vi sequence
@@ -14,7 +20,7 @@ const std::string ENABLE_SCROLL_SEQ = "\033[r";
 const std::string CLEAR_SCREEN_SEQ = "\033[2J";
 
 /**
- * Console initialization routine. Attaches interrupt handlers and clears the 
+ * Console initialization routine. Attaches interrupt handlers and clears the
  * buffers.
  */
 void initConsole(void);
@@ -47,7 +53,7 @@ bool isSysStopReq(void);
 class Console
 {
 
-public:
+ public:
   /**
    * max buffer length. Default 252 (three lines)
    */
@@ -142,11 +148,11 @@ public:
    */
   static bool IsSystemStopRequested(void);
 
-private:
+ private:
   // Constructor is only used in init branch of Instance()
   Console();
 
-  static std::shared_ptr<Console>& Instance();
+  static std::shared_ptr<Console> &Instance();
 
   void ClearRXBuffer();
 

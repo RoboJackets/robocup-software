@@ -1,0 +1,23 @@
+#pragma once
+
+#include "mbed.h"
+#include "error_type.hpp"
+
+class System
+{
+  public:
+    System(void);
+    ~System(void);
+
+    ERR_t Init(void);
+    void Start(void);
+    bool SelfTest(void);
+    long GetTime(void);
+    bool CanDrive(void);
+    bool CanDribble(void);
+
+  protected:
+
+  private:
+    bool isInit;
+};

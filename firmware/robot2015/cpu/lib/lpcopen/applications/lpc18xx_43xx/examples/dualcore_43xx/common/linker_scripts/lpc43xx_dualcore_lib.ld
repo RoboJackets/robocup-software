@@ -1,0 +1,10 @@
+/*
+ * LPC43XX Dual Core Library Linker descriptor file
+ */
+
+
+ GROUP(
+  libcr_nohost.a
+  libcr_c.a
+  libcr_eabihelpers.a
+ )

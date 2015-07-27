@@ -1,0 +1,218 @@
+/*!
+  \page EXAMPLE_MassStorage Mass storage Example Readme
+  \ingroup EXAMPLES_USB
+
+ MassStorageDevice example
+
+This example implements a mass storage class device that operates on a FAT12
+volume stored in internal RAM. The size of this volume is set by the constant
+DATA_RAM_PHYSICAL_SIZE defined in DataRam.h
+
+
+
+#Getting Started
+
+
+This example can be built and debugged using two compiler tool chains.
+Visit http://www.lpcware.com/content/project/LPCUSBlib/build-it to learn
+how to setup and configure these tool chains to build this example.
+
+
+
+#Compiler build configurations
+
+
+The software that makes up this example is designed to run on many different
+development boards. Therefore the compiler must be configured to build an image
+that is targeted to the development board you are using. This section explains
+how to set these build configurations for each of the supported compilers.
+
+
+#LPCXpresso IDE
+
+
+##Configure projects:
+  right click on the udl_board project in the project explorer window
+  click Build Configurations->Set Active->(see configuration in table below)
+  repeat these steps with the udl_chip, LPCUSBlib, and Example_MassStorageDevice
+
+##Configure MCU:
+  right click on the Example_MassStorageDevice project in the project explorer window
+  click Properties->C/C++ Build->MCU settings->(see configuration in table below)
+
+##Configure the indexer:
+   click Window->Preferences->C/C++->Indexer->Use active build configuration
+
+
+
+   <table border> 
+   <tr> 
+      <td><b> Chip/Board </b></td> 
+      <td><b> UDL_Board </b></td> 
+	  <td><b> udl_chip </b></td>
+	  <td><b> LPCUSBlib </b></td>
+	  <td><b> LPCUSBlib </b></td>
+	  <td><b> MCU </b></td>
+   </tr> 
+
+   <tr> 
+      <td> LPC1830  / Xplorer </td> 
+      <td> LPC1830_Xplorer </td> 
+	  <td> CHIP_LPC18xx </td>
+	  <td> LPC18xx_Device </td>
+	  <td> NGX_XPLORER 1830 </td>
+	  <td> LPC1830 </td>
+   </tr> 
+   
+   <tr> 
+      <td> LPC1857  / MCB1800 </td> 
+      <td> LPC18XX KEIL_MCB1800_4300 SH </td> 
+	  <td> CHIP_LPC18xx </td>
+	  <td> LPC18xx_Device </td>
+	  <td> KEIL_MCB1857 </td>
+	  <td> LPC1857 </td>
+   </tr> 
+   </table> 
+   
+
+
+#Keil uVision 4 IDE
+
+##Configure a Batch Build:
+  click on Project->Batch Build...
+  expand the udl_board project to display a list of project targets
+  select the project target by checking the appropriate checkbox
+    (see target list in table below)
+  repeat these steps with the udl_chip, LPCUSBlib, and Example_MassStorageDevice
+
+   <table border> 
+   <tr> 
+      <td><b> Chip/Board </b></td> 
+      <td><b> UDL_Board </b></td> 
+	  <td><b> udl_chip </b></td>
+	  <td><b> LPCUSBlib </b></td>
+	  <td><b> LPCUSBlib </b></td>
+   </tr> 
+
+   <tr> 
+      <td> LPC1830  / Xplorer </td> 
+      <td> LPC1830_Xplorer </td> 
+	  <td> CHIP_LPC18xx </td>
+	  <td> LPC18xx_Device </td>
+	  <td> NGX_XPLORER 1830 </td>
+   </tr> 
+   
+   <tr> 
+      <td> LPC1857  / MCB1800 </td> 
+      <td> LPC18XX KEIL_MCB1800_4300 SH </td> 
+	  <td> CHIP_LPC18xx </td>
+	  <td> LPC18xx_Device </td>
+	  <td> KEIL_MCB1857 </td>
+   </tr> 
+   </table> 
+
+
+
+#Board connections and configurations
+
+
+
+
+##LPC4330_Xplorer (NGX Xplorer Evaluation Board with LPC4330)
+
+Jumper block J4: 1=off 2=on 3=on 4=on
+Connect the JTAG to the 10 pin receptacle marked J2
+Connect the micro-b end of a USB cable to the receptacle
+  marked USB0. Plug the type-A end of this cable into a PC
+
+
+
+##LPC1857_MCB1800 (Keil MCB1800 development board)
+schematic: ./BSP/schematics/mcb1700-schematics.pdf
+
+Jumpers:
+  P2_9    = L
+  P2_8    = L
+  P1_2    = L
+  P1_1    = L
+  
+Connect the JTAG debugger to the 20 pin JTAG or 10 pin Cortex Debug connector.
+Connect the micro USB end of a USB cable to the type-B recepticle labeled 'USB0'
+and the type-A end of the cable to the USB receptacle on a PC. Connect the power
+supply.
+
+
+#PC configuration 
+
+
+
+Use a PC running Windows XP, Vista or 7
+Connect the type-A end of the USB cable that is connected to the board into one
+  of the USB receptacles on the PC
+Open a Windows File Explorer window
+
+
+
+#Build and debug the example 
+
+
+
+##LPCXpresso IDE
+
+In the project explorer window of the IDE right click on the
+  Example_MassStorageDevice project and select Debug As->C/C++ MCU Application
+In the main window of the IDE click Run->Resume to start running the application
+
+
+
+##Keil uVision 4 IDE
+
+In the Batch Build window, select the project targets as described in Compiler
+  Build Configurations and then click Build
+In the main window of the IDE click Debug->Start/Stop Debug Session
+then click Debug->Run.
+
+
+
+#How this example runs and what to look for
+
+
+When the example is run and the board is connected to a PC with a USB cable it
+  will enumerate on the PC as a mass storage device and show up in your Windows
+  file explorer as a drive with the volume label "LPCUSBlib".
+
+The drive will contain a single file called "README.TXT" which contains the text
+  "This is a USB Memory Device demonstration. "
+
+
+
+#Design notes
+
+
+This Mass Storage Device example defines a virtual drive size and a physical
+  drive size.
+These numbers are defined in the file DataRam.h and look like this:
+
+###define DATA_RAM_START_ADDRESS			0x20080000
+###define DATA_RAM_PHYSICAL_SIZE			0xc00
+###define DATA_RAM_VIRTUAL_SIZE			0x4000 /* fake capacity to trick windows */
+
+The value of DATA_RAM_VIRTUAL_SIZE is sent to the Windows operating system in
+  the SCSI Read Capacity command. This value will show up as the capacity of the
+  drive when formatting.
+
+The value of DATA_RAM_PHYSICAL_SIZE is the size of the actual buffers used in
+  the device to implement the mass storage device. When the file system in
+  Windows attempts to read or write past this size these reads and writes will
+  be ignored.
+
+The reason the virtual size is sent to the operating system is because Windows
+  has a lower limit on drive capacities, and the size of internal RAM in some
+  parts is well below this limit.
+
+*/
+
+/**
+ @defgroup EXAMPLE_MassStorage USB Mass Storage Example Source Documentation
+ @ingroup EXAMPLES_USB
+ */

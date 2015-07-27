@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_device>
+  <exe>$PROJ_DIR$\..\..\..\..\libraries\CDL\CMSISv2p00_LPC18xx_43xx\tool\iar_linker_scripts\FlashHitexLPC1850.out</exe>
+  <flash_base>0x1C000000</flash_base>
+  <page>1024</page>
+  <block>1024 0x1000</block>
+  <macro></macro>
+  <aggregate>1</aggregate>
+  <args_doc>[--clock] Passes the clock frequency to the flash loader; 
+value is the CPU clock speed in kHz. The default clock 
+frequency value is 14,746 kHz.</args_doc> 
+</flash_device>

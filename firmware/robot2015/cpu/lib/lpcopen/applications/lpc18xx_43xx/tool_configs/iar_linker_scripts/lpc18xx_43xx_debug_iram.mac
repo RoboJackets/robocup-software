@@ -1,0 +1,15 @@
+__Setup(){
+}
+
+execUserReset()
+{
+  __message "execUserReset\n";
+  __Setup();
+  __message "execUserReset Finish\n";
+}
+
+execUserFlashInit(){
+  __message "execUserFlashInit\n";
+  __Setup();
+  __message "execUserFlashInit Finish\n";
+}

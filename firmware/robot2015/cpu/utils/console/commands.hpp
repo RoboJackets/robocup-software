@@ -18,11 +18,10 @@ const uint8_t MAX_COMMAND_ARGS = 16;
 /**
  * command structure
  */
-typedef struct
-{
+typedef struct {
 	/**
 	 * aliases
- 	 */
+	 */
 	const std::array<std::string, MAX_ALIASES> aliases;
 
 	/**
@@ -33,7 +32,7 @@ typedef struct
 
 	/**
 	 * command handler function pointer
- 	 */
+	 */
 	void (*handler)(const std::vector<std::string> &args);
 
 	/**
@@ -50,7 +49,7 @@ typedef struct
 /*
  * command functions
  */
-void executeCommand(char* rawCommand);
+void executeCommand(char *rawCommand);
 bool isExecutingIterativeCommand(void);
 void cancelIterativeCommand(void);
 void executeIterativeCommand(void);

@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Application">
+      <UniqueIdentifier>{13c7cc1a-fab9-47d4-99a6-f542ef7d3495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{665bf044-fef4-43c0-8239-2ae3a98c9147}</UniqueIdentifier>
+      <Extensions>*.h</Extensions>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{a3c4246a-fd20-4636-9f78-b62f55e5ff26}</UniqueIdentifier>
+      <Extensions>*.*</Extensions>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{8482cfc3-f25b-44b9-bff3-e7eacf84b12e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Simulation">
+      <UniqueIdentifier>{725ede1e-3ff6-4c23-8567-a3494dee8356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Simulation\Res">
+      <UniqueIdentifier>{fb4ebaaa-ec83-476d-a38e-cf46ff918c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System\Simulation\WinMain">
+      <UniqueIdentifier>{8d44559e-a4b3-4aea-8114-0539f22ff25f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\libraries\emWin\emWin516_Config\GUIConf.c">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\libraries\emWin\emWin516_Config\LCDConf.c">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\libraries\emWin\emWin516_Config\SIMConf.c">
+      <Filter>Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\libraries\emWin\Simulation\WinMain\WinMain.c">
+      <Filter>System\Simulation\WinMain</Filter>
+    </ClCompile>
+    <ClCompile Include="TOUCH_Sample.c">
+      <Filter>Application</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\libraries\emWin\emWin516_Config\GUIConf.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\libraries\emWin\emWin516_Config\LCDConf.h">
+      <Filter>Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\libraries\emWin\Simulation\Res\ResourceSim.h">
+      <Filter>System\Simulation\Res</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\libraries\emWin\Simulation\GUI_SIM_Win32.h">
+      <Filter>System\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\libraries\emWin\Simulation\SIM.h">
+      <Filter>System\Simulation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\libraries\emWin\emWin516_library\VisualStudio_2010\GUI.lib">
+      <Filter>GUI</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Branding.rh">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Device.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Device1.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Logo.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\n.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\no.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\nw.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\o.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\off.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\off1.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\s.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\Simulation.ico">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\so.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\sw.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+    <None Include="..\..\..\..\libraries\emWin\Simulation\Res\w.bmp">
+      <Filter>System\Simulation\Res</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\..\libraries\emWin\Simulation\Res\Simulation.rc">
+      <Filter>System\Simulation\Res</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
