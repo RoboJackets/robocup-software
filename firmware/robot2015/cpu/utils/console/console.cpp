@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../../robot.hpp"
+#include "../../config/robot.hpp"
 #include "console.hpp"
 #include "commands.hpp"
 

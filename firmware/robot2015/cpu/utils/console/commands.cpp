@@ -1,8 +1,4 @@
-#include "../../robot.hpp"
-//#include "commands.hpp"
-//#include "console.hpp"
-//#include "reset.hpp"
-//#include "LocalFileSystem.h"
+#include "../../config/robot.hpp"
 #include "git_version.hpp"
 
 #include <algorithm>

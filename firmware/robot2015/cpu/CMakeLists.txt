@@ -9,7 +9,7 @@
 set(DRIVERS_ROOT_DIR drivers)
 set(MODULES_ROOT_DIR modules)
 set(UTILS_ROOT_DIR utils)
-set(SECTION_ROOT_DIRS ${DRIVERS_ROOT_DIR} ${MODULES_ROOT_DIR} ${UTILS_ROOT_DIR})
+set(SECTION_ROOT_DIRS ${DRIVERS_ROOT_DIR} ${MODULES_ROOT_DIR} ${UTILS_ROOT_DIR} config)
 
 # set variables for each subdirectory of the above sections of the firmware
 set(DRIVERS cc1101 cc1201 cc1201/cfg ds2411)
@@ -43,7 +43,7 @@ message("done. ${listLen} total directories added.\n============================
 # set the arm toolchain
 message("\n======== Adding ARM toolchain =========")
 set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)
-include(arm_toolchain.cmake)
+include(lib/arm_toolchain.cmake)
 message("done.\n=======================================\n")
 
 # suppress -rdynamic flag
@@ -56,7 +56,7 @@ set(MBED_TARGET LPC1768)
 #set(MBED_TARGET RBLAB_NRF51822)
 set(PREBUILD_DEPS)
 
-include(arm_mbed.cmake)
+include(lib/arm_mbed.cmake)
 
 #all official libraries pulled with/by the build tools
 include(ExternalProject)
