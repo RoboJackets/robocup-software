@@ -13,7 +13,6 @@ RUN git submodule deinit -f .
 RUN git submodule update --init
 RUN git reset --hard HEAD
 RUN git clean -f
-RUN git submodule update --init
 
 # Build
 RUN make clean

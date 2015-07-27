@@ -11,3 +11,10 @@ dependencies:
 test:
   override:
     - ./util/docker/circle/buildcircle.sh
+
+deployment:
+  hub:
+    branch: .*
+    commands:
+      - ./util/docker/circle/pushcircle.sh
+
