@@ -1,9 +1,10 @@
-project = xessdemo
+project = robocup
 vendor = xilinx
-family = spartan3s
-part = xc3s1000-4ft256
-top_module = xessdemo
+family = spartan3e
+part = xc3s100etq144-4
+top_module = robocup
 
-vfiles = ../verilog/xessdemo.v
+#vfiles = ./src/robocup.v
+vfiles = $(wildcard \.\./src/*.v)
 
-include xilinx.mk
+include ../synth/xilinx.mk
