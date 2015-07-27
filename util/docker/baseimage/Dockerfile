@@ -1,6 +1,6 @@
 # Use phusion/baseimage if problems arise
 FROM ubuntu:14.04
-MAINTAINER Jay Kamat
+MAINTAINER Jay Kamat github@jgkamat.33mail.com
 
 # This dockerimage will serve as a 'static' base for the robocup dockerimage to reduce build time
 
@@ -28,19 +28,18 @@ ENV HOME /home/developer
 # do everything in root's home
 RUN mkdir -p /home/developer/robocup-software
 WORKDIR /home/developer/robocup-software
-ADD * .
+COPY ./ ./
+RUN sudo chown -R developer:developer /home/developer/robocup-software
 
-WORKDIR /home/developer/robocup-software
-RUN util/ubuntu-setup --yes --firmware || true && sudo apt-get clean
+RUN ./util/ubuntu-setup --yes --firmware || true && sudo apt-get clean
 
-# Do a baseline make to speed up future compiles
-WORKDIR /home/developer/robocup-software
-RUN make && make robot2015
-
-# soccer needs to be run in current directory for some reason :/
+# soccer needs to be run in current directory as of now
 WORKDIR /home/developer/robocup-software/run
 
 # Add a docker init system and use it
-ADD smell-baron /bin/smell-baron
+ADD https://github.com/ohjames/smell-baron/releases/download/v0.1.0/smell-baron /bin/smell-baron
+RUN sudo chown developer:developer /bin/smell-baron
+RUN sudo chmod a+x /bin/smell-baron
 ENTRYPOINT ["/bin/smell-baron"]
-CMD [ "/home/developer/robocup-software/run/simulator & /home/developer/robocup-software/run/soccer -sim" ]
+
+# This image is not meant to be run directly, it has not been compiled yet!
