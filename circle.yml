@@ -14,7 +14,7 @@ test:
 
 deployment:
   hub:
-    branch: .*
+    branch: master
     commands:
       - ./util/docker/circle/pushcircle.sh
 
