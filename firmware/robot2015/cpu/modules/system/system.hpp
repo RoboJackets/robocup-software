@@ -1,9 +1,6 @@
 #pragma once
 
-
-#include "mbed.h"
-#include "error_type.hpp"
-
+#include "robot.hpp"
 
 class System
 {

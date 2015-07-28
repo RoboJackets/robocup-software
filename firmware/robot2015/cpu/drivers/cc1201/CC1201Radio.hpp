@@ -4,7 +4,7 @@
 #include "CC1201Defines.hpp"
 #include "CC1201Config.hpp"
 
-#include "logger.hpp"
+#include "../../utils/logger/logger.hpp"
 
 /*
  * default configuration include.

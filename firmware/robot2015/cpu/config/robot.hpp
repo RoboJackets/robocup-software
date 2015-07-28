@@ -1,6 +1,5 @@
 #pragma once
 
-
 #define COMPETITION_DEPLOY 0
 
 #define ARM_MATH_CM3
@@ -21,19 +20,16 @@
 // This will check the mbed's firmware for the most known up-to-date version if enabled
 #define RJ_CHECK_FIRMWARE       0
 
-#define RJ_WATCHDOG_EN          0
-
 
 // ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES ** ============================= **
 
-// Enable/Disable the `Primary Radio Interface` (915MHz band).
-#define RJ_PRIMARY_RADIO    1
+// Enable/Disable the Radio Transceiver (915MHz band)
+#define RJ_RADIO_EN             1
+#define RJ_CC1201
+//#define RJ_CC1101
 
-// Enable/Disable the `Secondary Radio Interface` (2.4GHz band).
-#define RJ_SECONDARY_RADIO  0
-
-// Enable/Disable the `Motion Processor Interface` (MPU-9250).
-#define RJ_MOTION_PROCESSOR 0
+// Enable/Disable the Accel/Gyro (MPU-6050)
+#define RJ_MPU_EN               1
 
 // The `Watchdog Timer` timeout value. The mbed will reset if the timer is not reset after the number of seconds defined here
 #define RJ_WATCHDOG_TIMER_VALUE 2   // seconds
@@ -41,88 +37,82 @@
 
 // ** ============================= ** PIN DECLARATIONS ** ============================= **
 
-// This defines the pin used for the primary radio's `Chip Select` pin
-#define RJ_PRIMARY_RADIO_CS     p8
+// This defines the mbed pins used for the primary SPI data bus.
+#define RJ_SPI_MOSI             p5
+#define RJ_SPI_MISO             p6
+#define RJ_SPI_SCK              p7
+#define RJ_SPI_BUS              RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK
 
-// This defines the pin used for the primary radio's `Interrupt` pin
-#define RJ_PRIMARY_RADIO_INT    p9
+// This defines the Accel/Gyro's interrupt pin.
+#define RJ_MPU_INT              p8
 
-// This defines the pin used for the secondary radio's `Chip Enable` pin
-#define RJ_SECONDARY_RADIO_CE   p10
+// This defines the I/O Expander's interrupt pin.
+#define RJ_IOEXP_INT            p9
 
-// This defines the pin used for the secondary radio's `Chip Select` pin
-#define RJ_SECONDARY_RADIO_CS   p11
+// This defines the Radio Transceiver's interrupt pin.
+#define RJ_RADIO_INT            p10
 
-// This defines the pin used for the secondary radio's `Interrupt` pin
-#define RJ_SECONDARY_RADIO_IRQ  p12
+// This defines the FPGA's `PROG_B` pin.
+#define RJ_FPGA_PROG_B          p11
 
-// This defines the pin used for the primary radio's `GDO2` pin
-#define RJ_PRIMARY_RADIO_GDO2   p13
+// This defines the robot's Green `RDY` LED. This should always be configured as an OPEN DRAIN OUTPUT.
+#define RJ_RDY_LED              p12
 
-// This defines the speaker's audio output pin
-#define RJ_SPEAKER_OUT          p18
+// This defines the FPGA's Chip Select pin. This should always be configured as a DIGITAL OUTPUT.
+#define RJ_FPGA_nCS             p13
 
-// This defines the ball sensor's detector pin
-#define RJ_BALL_DETECTOR        p19
+// This defines the Kicker Board's Chip Select pin. This should always be configured as a DIGITAL OUTPUT.
+#define RJ_KICKER_nCS           p14
 
-// This defines the ball sensor's emitter pin
-#define RJ_BALL_EMITTER         p20
+// This defines the ball sensor's detector pin. This should always be configured as an ANALOG INPUT.
+#define RJ_BALL_DETECTOR        p15
 
-// This defines the pin used for the secondary radio's `Chip Select` pin
-// #define RJ_SECONDARY_RADIO_CS   p21
+// This defines the Battery Voltage pin. This should always be configured as an ANALOG INPUT.
+#define RJ_BATT_SENSE           p16
 
-// This defines the pin used for indicating mbed runtime activity
-#define RJ_STATUS_LED           LED1
+// This defines the +5V Voltage pin. This should always be configured as an ANALOG INPUT.
+#define RJ_5V_SENSE             p17
 
-// These pin declarations are used for showing `TX` & `RX` radio connectivity
-#define RJ_TX_LED               LED2
-#define RJ_RX_LED               LED3
+// This defines the Piezo Speaker's pin.
+#define RJ_SPEAKER              p18
 
-// This defines the pin used for a miscellaneous LED
-#define RJ_MISC_LED             LED4
+// This defines the FPGA's `INIT_B` pin. This should always be configured as an OPEN DRAIN and has an external pull-up resistor.
+#define RJ_FPGA_INIT_B          p19
+
+// This defines one of the mbed's unused pins. It is not connected to anything on the 2015 Control Board rev. 1.
+#define RJ_SPARE_IO             p20
+
+// This defines the pin used for communicating with the Mechanical Base's ID#. This chip is located on the breakbeam board.
+#define RJ_BASE_ID              p21
+
+// This defines the radio's `TX` LED for transmitting packets.
+#define RJ_TX_LED               p22
+
+// This defines the radio's `RX` LED for receiving packets.
+#define RJ_RX_LED               p23
+
+// This defines the `BALL` LED for ball detection.
+#define RJ_BALL_LED             p24
+
+// This defines the pin used for driving the Breakbeam's Ball Emitter LED.
+#define RJ_BALL_EMIT            p25
+
+// This defines the pin used for writing color values to the `STATUS` LED.
+#define RJ_NEOPIXEL             p26
+
+// This defines the set of pins used for the primary I2C data bus.
+#define RJ_I2C_SCL              p27
+#define RJ_I2C_SDA              p28
+#define RJ_I2C_BUS              RJ_I2C_SDA, RJ_I2C_SDA
+
+// This defines the radio transceiver's Chip Select pin. This should always be configured as a DIGITAL OUTPUT.
+#define RJ_RADIO_nCS            p29
+
+// This defines the FPGA's `DONE` pin.
+#define RJ_FPGA_DONE            p30
 
 // This defines the pins used for a `Serial Connection` over the mbed's USB port (for use with a virtual serial connection to a computer)
 #define RJ_SERIAL_RXTX          MBED_UARTUSB
-
-// This defines the mbed pins used for its `Serial Peripheral Interface`
-#define RJ_SPI_BUS              p5, p6, p7  // MOSI, MISO, SCK
-
-// This defines the mbed pins used for its `I2C Interface`
-#define RJ_I2C_BUS              p28, p27    // SDA, SCL
-
-// This defines the mbed pin used for reading an analog voltage for the robot's battery
-#define RJ_BATT_IN              p14
-
-// This defines the mbed pin used for communicating to one of Adafruit's `Neopixel LEDs` for the primary power LED (RGB LEB)
-#define RJ_POWER_LED            p16
-
-// This defines the mbed pin used as an `Interrupt` for the MPU-9250
-#define RJ_MOTION_PROCESSOR_INT p17
-
-// This defines the mbed pin used as the 'Chip Select` pin for the MPU-9250
-#define RJ_MOTION_PROCESSOR_CS  p19
-
-// This defines the mbed pin used as the `Chip Select` pin for the Spartan-3E FPGA
-#define RJ_FPGA_CS              p24
-
-// These two (2) pins are used for configuring the FPGA upon startup
-#define RJ_FPGA_FS0             p23
-#define RJ_FPGA_FS1             p22
-
-#define RJ_DS2411_ID_CHIP       p21
-
-// This defines the mbed pin used as the `Chip Select` pin for the 16 pin I/O expander
-#define RJ_IO_EXPANDER_CS       p29
-
-// This defines the mbed pin used as the `Chip Select` pin for reading the kicker's voltage from an external ADC using I2C communication
-#define RJ_ADC_CS               p26
-
-// This defines the mbed pin used as the `Program` pin for the FPGA's configuration
-#define RJ_FPGA_PROG            p25
-
-// These are the leftover pins. This will be used for the finalized design - designs changes are in progress
-#define RJ_UNUSED_1             p15
-#define RJ_UNUSED_2             p30
 
 
 // ** ============================= ** DO NOT EDIT ANYTHING BELOW HERE ** ============================= **
@@ -131,9 +121,8 @@
 // Include the basic classes - Note: the header files included within "mbed.h" are listed here.
 #include "mbed.h"
 #include "rtos.h"
-
 #include "pnvicdef.hpp"
-#include "reset.hpp"
+#include "robot_types.hpp"
 
 /*
 #include <stdio.h>
@@ -187,19 +176,20 @@
 #include "watchdog.hpp"
 
 // Include the base classes for communication if a communication link is active
-#if RJ_PRIMARY_RADIO | RJ_SECONDARY_RADIO
+#if RJ_RADIO_EN
 #include "CommModule.hpp"
 #include "CommLink.hpp"
 #endif
 
 // Include the primary radio class if 915MHz band radio [if active]
-#if RJ_PRIMARY_RADIO
+#if RJ_RADIO_EN
+#ifdef RJ_CC1201
+#include "CC1201.hpp"
+#else
+#ifdef RJ_CC1101
 #include "CC1101.hpp"
 #endif
-
-// Include the secondary radio class if 2.4GHz band radio [if active]
-#if RJ_SECONDARY_RADIO
-#include "nRF24L01.h"
+#endif
 #endif
 
 

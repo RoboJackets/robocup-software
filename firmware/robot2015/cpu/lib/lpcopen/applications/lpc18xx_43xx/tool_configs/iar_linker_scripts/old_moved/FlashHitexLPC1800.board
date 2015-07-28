@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-
-<flash_board>
-  <pass>
-    <loader>$PROJ_DIR$\..\..\..\..\libraries\CDL\CMSISv2p00_LPC18xx_43xx\tool\iar_linker_scripts\FlashSST39VF320.flash</loader>
-  </pass>
-</flash_board>
-
-

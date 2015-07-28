@@ -1,4 +1,4 @@
-#include "../../config/robot.hpp"
+#include "commands.hpp"
 
 
 using namespace std;
@@ -7,13 +7,13 @@ using namespace std;
 /**
  * error message when a typed command isn't found
  */
-static const string COMMAND_NOT_FOUND_MSG = "Command not found.";
+const string COMMAND_NOT_FOUND_MSG = "Command not found.";
 
 
 /**
  * error message when too many args are provided
  */
-static const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
+const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 
 
 /**
@@ -43,7 +43,7 @@ LocalFileSystem local("local");
  *
  * Alphabetical order please (here addition and in handler function declaration).
  */
-const vector<command_t> commands = {
+static const vector<command_t> commands = {
 	/* COMMAND TEMPALATE
 	{
 		{"<alias>", "<alias2>", "<alias...>"},
@@ -55,64 +55,64 @@ const vector<command_t> commands = {
 		{"alias"},
 		false,
 		cmd_alias,
-		"lists aliases for commands",
+		"Lists aliases for commands.",
 		"alias"
 	},
 	{
 		{"clear", "cls"},
 		false,
 		cmd_clear,
-		"clears the screen"
+		"Clears the screen.",
 		"clear | cls"
 	},
 	{
 		{"echo"},
 		false,
 		cmd_echo,
-		"echos test"
+		"Echos text for debugging the serial link.",
 		"echo <text>"
 	},
 	{
 		{"exit", "quit"},
 		false,
 		cmd_exitSys,
-		"breaks the main loop",
+		"Breaks the main loop.",
 		"exit | quit"
 	},
 	{
 		{"help", "h", "?"},
 		false,
 		cmd_help,
-		"prints this message",
+		"Prints this message.",
 		"help | h | ? (<--list> | <command names>)"
 	},
 	{
 		{"ping"},
 		true,
 		cmd_ping,
-		"check console responsiveness. Ping pong.",
+		"Check console responsiveness. Ping pong.",
 		"ping"
 	},
 	{
 		{"ls"},
 		false,
 		cmd_ls,
-		"list contents of current directory\r\n\tBugs: sometimes displays train animations",
+		"List contents of current directory\r\n  Bugs:\t\tsometimes displays train animations.",
 		"ls [folder/device]"
 	},
 	{
-		{"info", "version"},
+		{"info", "version", "status", "s"},
 		false,
 		cmd_info,
-		"Display information about the current version of the firmware",
-		"info | version"
+		"Display information about the current version of the firmware.",
+		"info | version | status | s"
 	},
 	{
-		{"reset", "reboot"},
+		{"reset", "reboot", "restart"},
 		false,
 		cmd_resetMbed,
-		"resets the mbed (like pushing the reset button)",
-		"reset | reboot"
+		"Resets the mbed (like pushing the reset button).",
+		"reset | reboot | restart"
 	}
 };
 
@@ -232,7 +232,7 @@ void cmd_exitSys(const vector<string> &args)
  */
 void cmd_help(const vector<string> &args)
 {
-	printf("\nCtrl + C stops iterative commands\r\n\r\n");
+	printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
 	Console::Flush();
 
 	// Prints all commands, with details
@@ -241,13 +241,13 @@ void cmd_help(const vector<string> &args)
 			printf("%s:\r\n",
 			       commands[i].aliases[0].c_str());
 			Console::Flush();
-			printf("\tDescription: %s\r\n",
+			printf("  Description:\t%s\r\n",
 			       commands[i].description.c_str());
 			Console::Flush();
-			printf("\tUsage: %s\r\n",
+			printf("  Usage:\t%s\r\n",
 			       commands[i].usage.c_str());
 			Console::Flush();
-			printf("\tIterative: %s\r\n\r\n",
+			printf("  Iterative:\t%s\r\n\r\n",
 			       commands[i].isIterative ? "true" : "false");
 			Console::Flush();
 		}
@@ -288,13 +288,13 @@ void cmd_help(const vector<string> &args)
 					printf("%s:\r\n",
 					       commands[i].aliases[0].c_str());
 					Console::Flush();
-					printf("\tDescription: %s\r\n",
+					printf("  Description:\t%s\r\n",
 					       commands[i].description.c_str());
 					Console::Flush();
-					printf("\tUsage: %s\r\n",
+					printf("  Usage:\t%s\r\n",
 					       commands[i].usage.c_str());
 					Console::Flush();
-					printf("\tIterative: %s\r\n\r\n",
+					printf("  Iterative:\t%s\r\n\r\n",
 					       commands[i].isIterative ? "true" : "false");
 					Console::Flush();
 				}
@@ -315,7 +315,7 @@ void cmd_help(const vector<string> &args)
  */
 void cmd_ping(const vector<string> &args)
 {
-	printf("pong.\r\n");
+	printf("...pong.\r\n");
 	Console::Flush();
 }
 
@@ -325,7 +325,8 @@ void cmd_ping(const vector<string> &args)
  */
 void cmd_resetMbed(const vector<string> &args)
 {
-	mbed_reset();
+	mbed_interface_reset();
+	// mbed_reset();
 }
 
 
@@ -372,7 +373,7 @@ void cmd_info(const vector<string> &args)
 	printf("\r\n");
 
 	DS2411_ID id;
-	ds2411_read_id(RJ_DS2411_ID_CHIP, &id, true);
+	ds2411_read_id(RJ_BASE_ID, &id, true);
 
 	printf("\r\n");
 

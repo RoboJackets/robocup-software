@@ -11,6 +11,8 @@
 #include "mbed.h"
 
 
+#define RJ_DS2411_ID_CHIP RJ_BASE_ID
+
 typedef struct {
     char family;
     char serial[6]; // 0 = LSB, 5 = MSB

@@ -21,7 +21,7 @@ class CommLink;
 // Base class for a communication module
 class CommModule
 {
-public:
+  public:
     /// Default Constructor
     CommModule();
 
@@ -35,35 +35,42 @@ public:
 
     // Open a socket connection for communicating.
     template <typename T>
-    void TxHandler(T *tptr, void(T::*mptr)(RTP_t*), uint8_t portNbr) {
+    void TxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)
+    {
         _txH_called[portNbr] = true;
         ready();
         _tx_handles[portNbr].attach(tptr, mptr);
     }
-    
+
     template <typename T>
-    void RxHandler(T *tptr, void(T::*mptr)(RTP_t*), uint8_t portNbr) {
+    void RxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)
+    {
         _rxH_called[portNbr] = true;
         ready();
         _rx_handles[portNbr].attach(tptr, mptr);
     }
 
-    void TxHandler(void(*)(RTP_t*), uint8_t);
-    void RxHandler(void(*)(RTP_t*), uint8_t);
-    
+    void TxHandler(void(*)(RTP_t *), uint8_t);
+    void RxHandler(void(*)(RTP_t *), uint8_t);
+
     void RxHandler(void(*)(void), uint8_t);
 
     void openSocket(uint8_t);
 
     // Send a RTP packet. The details of exactly how the packet will be sent are determined from the RTP packet's port and subclass values
-    void send(RTP_t&);
-    void receive(RTP_t&);
-    
+    void send(RTP_t &);
+    void receive(RTP_t &);
+
+    unsigned int NumRXPackets(void);
+    unsigned int NumTXPackets(void);
+
     //osThreadId rxID(void);
 
-protected:
+  protected:
     // NOP function for keeping a oommunication link active
     void nopFunc(void);
+
+
 
     // Memory Queue IDs
     osMailQId   _txQueue;
@@ -75,13 +82,16 @@ protected:
 
     std::vector<uint8_t> *_open_ports;
 
-private:
+  private:
     // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void(*task)(void const *arg), osPriority, uint32_t, unsigned char*);
+    friend void define_thread(osThreadDef_t &, void(*task)(void const *arg), osPriority, uint32_t, unsigned char *);
 
     // The working threads for handeling rx and tx data queues
-    static void txThread(void const*);
-    static void rxThread(void const*);
+    static void txThread(void const *);
+    static void rxThread(void const *);
+
+    static unsigned int txPackets;
+    static unsigned int rxPackets;
 
     void ready(void);
 
@@ -101,7 +111,7 @@ private:
 
     FunctionPointerRJ   _rx_handles[COMM_MODULE_NBR_PORTS];
     FunctionPointerRJ   _tx_handles[COMM_MODULE_NBR_PORTS];
-    
+
     bool    _txH_called[COMM_MODULE_NBR_PORTS];
     bool    _rxH_called[COMM_MODULE_NBR_PORTS];
 

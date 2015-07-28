@@ -27,5 +27,5 @@ FPGA::~FPGA(void)
  */
 ERR_t FPGA::Init(void)
 {
-
+    return 0;
 }

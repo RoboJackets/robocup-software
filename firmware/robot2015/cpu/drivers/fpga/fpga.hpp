@@ -2,7 +2,7 @@
 
 
 #include "mbed.h"
-#include "error_type.hpp"
+#include "../utils/robot_types.hpp"
 
 
 class FPGA

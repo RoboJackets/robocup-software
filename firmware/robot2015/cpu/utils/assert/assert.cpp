@@ -1,4 +1,4 @@
-#include "assert.h"
+#include "assert.hpp"
 
 /**
  * [assertFail This is called when an assertion fails. NOTE: THIS HAULTS ALL EXECUTIONS!]

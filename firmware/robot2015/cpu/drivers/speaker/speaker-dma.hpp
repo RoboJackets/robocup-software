@@ -2,11 +2,8 @@
 
 #pragma once
 
-
-#include "mbed.h"
-#include "utils/logger/logger.hpp"
-#include "MODDMA.hpp"
-#include "error_type.hpp"
+#include "../../config/robot.hpp"
+#include "../../utils/robot_types.hpp"
 
 
 // Make the buffer size match the number of degrees

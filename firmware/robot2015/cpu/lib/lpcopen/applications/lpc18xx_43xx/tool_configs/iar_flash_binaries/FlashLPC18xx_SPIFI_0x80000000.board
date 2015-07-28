@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-
-<flash_board>
-  <pass>
-    <loader>$TOOLKIT_DIR$\config\flashloader\NXP\FlashLPC18xx_SPIFI_0x80000000.flash</loader>
-  </pass>
-</flash_board>
-
-

@@ -48,4 +48,4 @@ extern volatile uint8_t rjLogLevel;
  * @param source   [The source of the message.]
  * @param format   [The string format for displaying the log message.]
  */
-void log(uint8_t logLevel, const char *source, const char *format, ...);
+extern void log(uint8_t logLevel, const char *source, const char *format, ...);

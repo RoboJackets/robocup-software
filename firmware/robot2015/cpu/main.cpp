@@ -1,24 +1,43 @@
-#include "config/robot.hpp"
+
+
+#include "robot.hpp"
+#include "console.hpp"
+#include "radio-state-decode.hpp"
+#include "isr-prop.hpp"
+#include "rtos.h"
+#include "dma.hpp"
+#include "adc-dma.hpp"
+
 
 Ticker lifeLight;
-DigitalOut ledOne(LED1);
+DigitalOut ledOne(LED1, 1);
 DigitalOut is_locked(LED2, 0);
 DigitalOut rssi_valid(LED3, 0);
-DigitalOut led4(LED4, 0);
+DigitalOut led4(LED4, 1);
 DigitalIn gpio3(p18);
 DigitalIn gpio2(p16);
-Serial pcserial(USBTX, USBRX);
+//Serial pcserial(USBTX, USBRX);
 
-// #define COMPILE_WITH_DMA
+ADCDMA adc;
+DMA dma;
 
-/*
- * some forward declarations to make the code easier to read
+
+void initConsoleRoutine(void const *args);
+
+/**
+ * Timer interrupt based light flicker. If this stops, the code triggered
+ * a fault.
  */
-void imAlive(void);
-void setISRPriorities(void);
-void initRadioThread(void);
-void initConsoleRoutine(void);
+void imAlive(void)
+{
+	ledOne = !ledOne;
+}
 
+
+/**
+ * [rx_callback This is executed for a successfully received radio packet.]
+ * @param p [none]
+ */
 void rx_callback(RTP_t *p)
 {
 	if (p->payload_size > 0)
@@ -26,294 +45,132 @@ void rx_callback(RTP_t *p)
 }
 
 
-std::string decode_marcstate(uint8_t b)
-{
-	std::string state;
-
-	b = b & 0x1F;
-
-	switch (b) {
-	case 0x00:
-		state = "SLEEP";
-		break;
-
-	case 0x01:
-		state = "IDLE";
-		break;
-
-	case 0x02:
-		state = "XOFF";
-		break;
-
-	case 0x03:
-		state = "BIAS_SETTLE_MC";
-		break;
-
-	case 0x04:
-		state = "REG_SETTLE_MC";
-		break;
-
-	case 0x05:
-		state = "MANCAL";
-		break;
-
-	case 0x06:
-		state = "BIAS_SETTLE";
-		break;
-
-	case 0x07:
-		state = "REG_SETTLE";
-		break;
-
-	case 0x08:
-		state = "STARTCAL";
-		break;
-
-	case 0x09:
-		state = "BWBOOST";
-		break;
-
-	case 0x0A:
-		state = "FS_LOCK";
-		break;
-
-	case 0x0B:
-		state = "IFADCON";
-		break;
-
-	case 0x0C:
-		state = "ENDCAL";
-		break;
-
-	case 0x0D:
-		state = "RX";
-		break;
-
-	case 0x0E:
-		state = "RX_END";
-		break;
-
-	case 0x0F:
-		state = "RXDCM";
-		break;
-
-	case 0x10:
-		state = "TXRX_SWITCH";
-		break;
-
-	case 0x11:
-		state = "RX_FIFO_ERR";
-		break;
-
-	case 0x12:
-		state = "FSTXON";
-		break;
-
-	case 0x13:
-		state = "TX";
-		break;
-
-	case 0x14:
-		state = "TX_END";
-		break;
-
-	case 0x15:
-		state = "RXTX_SWITCH";
-		break;
-
-	case 0x16:
-		state = "TX_FIFO_ERR";
-		break;
-
-	case 0x17:
-		state = "IFADCON_TXRX";
-		break;
-
-	default:
-		state = "ERROR DECODING STATE";
-		break;
-	}
-
-	return state;
-}
-
-
+/**
+ * [main Main program.]
+ * @return  [none]
+ */
 int main(void)
 {
-	pcserial.baud(9600);
-	pcserial.printf("Started!\n");
-	setISRPriorities();
+	led4 = false;
+
+	// pcserial.baud(9600);
+
+	//setISRPriorities();
+
 	lifeLight.attach(&imAlive, 0.25);
 
 	isLogging = true;
-	rjLogLevel = INF3;
+	rjLogLevel = OK;
 
-	//initConsoleRoutine();
+	Thread taskConsole(initConsoleRoutine);
+	/*
+		// led4 = true;
 
-	// Create a new physical hardware communication link
-	CC1201 radio_900(
-	    RJ_SPI_BUS,
-	    RJ_PRIMARY_RADIO_CS,
-	    RJ_PRIMARY_RADIO_INT
-	);
+		// Create a new physical hardware communication link
+		CC1201 radio_900(
+		    RJ_SPI_BUS,
+		    RJ_RADIO_nCS,
+		    RJ_RADIO_INT
+		);
 
-	CC1201Config *radioConfig = new CC1201Config();
-	radioConfig = CC1201Config::resetConfiguration(radioConfig);
-	CC1201Config::loadConfiguration(radioConfig, &radio_900);
-	CC1201Config::verifyConfiguration(radioConfig, &radio_900);
+		led4 = true;
 
-	radio_900.freq();
-	radio_900.set_rssi_offset(-81);
+		CC1201Config *radioConfig = new CC1201Config();
+		radioConfig = CC1201Config::resetConfiguration(radioConfig);
+		CC1201Config::loadConfiguration(radioConfig, &radio_900);
+		CC1201Config::verifyConfiguration(radioConfig, &radio_900);
 
-	// Create a Communication Module Object
-	CommModule comm;
-	radio_900.setModule(comm);
+		radio_900.freq();
+		radio_900.set_rssi_offset(-81);
 
-	comm.TxHandler((CommLink *)&radio_900, &CommLink::sendPacket, 8);
-	comm.RxHandler(rx_callback, 8);
-	comm.openSocket(8);
+		// Create a Communication Module Object
+		CommModule comm;
+		radio_900.setModule(comm);
 
-	// Create a dummy packet that is set to send out from socket connection 8
-	RTP_t dummy_packet;
+		comm.TxHandler((CommLink *)&radio_900, &CommLink::sendPacket, 8);
+		comm.RxHandler(rx_callback, 8);
+		comm.openSocket(8);
 
-	// Enable watchdog timer
-	//Watchdog watchdog;
-	//watchdog.set(RJ_WATCHDOG_TIMER_VALUE);
+		// Create a dummy packet that is set to send out from socket connection 8
+		// RTP_t dummy_packet;
+
+		// Enable watchdog timer
+		//Watchdog watchdog;
+		//watchdog.set(RJ_WATCHDOG_TIMER_VALUE);
+
+		while (1) {
+			dummy_packet.port = 8;
+			dummy_packet.subclass = 1;
+			dummy_packet.address = 255;
+			dummy_packet.sfs = 0;
+			dummy_packet.ack = 0;
+			dummy_packet.payload_size = 25;
+
+			for (int i = 0; i < 25; i++)
+				dummy_packet.payload[i] = 0x24;
+
+			log(OK, "MAIN", "%u\r\n", comm.NumRXPackets());
+
+			std::string current_state = decode_marcstate(radio_900.mode());
+			log(OK, "MAIN", "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
+
+			// comm.send(dummy_packet);	// As of now, the CC1201 should always be in RX and calibrated if necessary exiting this.
+
+			is_locked = radio_900.isLocked();
+			rssi_valid = gpio2;
+
+			osDelay(600);
+			led4 = !led4;
+
+			// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
+			//radio_900.strobe(CC1201_STROBE_SRX);
+		}
+		*/
+
+	uint32_t adc_vals[10] = { 0 };
+
+	dma.setDst(NULL, adc_vals);
+	ledOne = false;
+
+	//dma.start();
+	//adc.BurstRead();
 
 	while (1) {
-		dummy_packet.port = 8;
-		dummy_packet.subclass = 1;
-		dummy_packet.address = 255;
-		dummy_packet.sfs = 0;
-		dummy_packet.ack = 0;
-		dummy_packet.payload_size = 25;
-
-		for (int i = 0; i < 25; i++)
-			dummy_packet.payload[i] = 0x24;
-
-		std::string current_state = decode_marcstate(radio_900.mode());
-		log(OK, "MAIN LOOP", "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
-
-		// comm.send(dummy_packet);	// As of now, the CC1201 should always be in RX and calibrated if necessary exiting this.
-
-		is_locked = radio_900.isLocked();
-		rssi_valid = gpio2;
-
-		osDelay(600);
-		led4 = !led4;
-
-		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
-		//radio_900.strobe(CC1201_STROBE_SRX);
+		osDelay(1000);
 	}
 
 }
 
-
-/**
- * Initializes the peripheral nested vector interrupt controller (PNVIC) with
- * appropriate values. Low values have the higest priority (with system
- * interrupts having negative priority). All maskable interrupts are
- * diabled; do not intialize any interrupt frameworks before this funtion is
- * called. PNVIC interrupt priorities are independent of thread and NVIC
- * priorities.
- *
- * The PNVIC is independent of the NVIC responsible for system NMI's. The NVIC
- * is not accissable through the library, so in this context the NVIC functions
- * refer to the PNVIC. The configuration system for PNVIC priorities is strange
- * and different from X86. If you haven't already, look over
- * doc/ARM-Cortex-M_Interrupt-Priorities.pdf from RJ root and the online
- * documentation regarding Interrupt Priority Registers (IPRs) first.
- */
-void setISRPriorities(void)
-{
-	//set two bits for preemptive data, two bits for priority as the
-	//structure for the IPRs. Grouping is global withing the IPRs so
-	//this value should only be changed here.
-	NVIC_SetPriorityGrouping(5);
-	uint32_t priorityGrouping = NVIC_GetPriorityGrouping();
-
-	//set preemptive priority default to 2 (0..3)
-	//set priority default to 1 (0..3)
-	uint32_t defaultPriority = NVIC_EncodePriority(priorityGrouping, 2, 1);
-
-	//When the kernel initialzes the PNVIC, all ISRs are set to the
-	//highest priority, making it impossible to elevate a few over
-	//the rest, so the default priority is lowered globally for the
-	//table first.
-	//
-	//Consult LPC17xx.h under IRQn_Type for PNVIC ranges, this is LPC1768
-	//specific
-	for (uint32_t IRQn = TIMER0_IRQn; IRQn <= CANActivity_IRQn; IRQn++)
-		NVIC_SetPriority((IRQn_Type) IRQn, defaultPriority);
-
-	////////////////////////////////////
-	//  begin raise priority section  //
-	////////////////////////////////////
-
-	//reestablish watchdog
-	NVIC_SetPriority(WDT_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 0));
-
-	//TODO raise radio
-	//TODO raise others after discussion
-
-	////////////////////////////////////
-	//  begin lower priotity section  //
-	////////////////////////////////////
-
-	//set UART (console) interrupts to minimal priority
-	//when debugging radio and other time sensitive operations, this
-	//interrupt will need to be deferred.
-	NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 0));
-	NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
-	NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
-	NVIC_SetPriority(UART3_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 1));
-
-	//TODO lower others after discussion
-
-	//NVIC_EnableIRQ(TIMER0_IRQn);
-	//NVIC_EnableIRQ(TIMER1_IRQn);
-	//NVIC_EnableIRQ(TIMER2_IRQn);
-	//NVIC_EnableIRQ(TIMER3_IRQn);
-}
 
 /**
  * initializes the console
  */
-void initConsoleRoutine(void)
+void initConsoleRoutine(void const *args)
 {
 	if (!COMPETITION_DEPLOY) {
-		initConsole();
+		Console::Init();
 
-		for (;;) {
+		while (true) {
 			//check console communications, currently does nothing
 			//then execute any active iterative command
-			conComCheck();
+			Console::ConComCheck();
 			//execute any active iterative command
 			executeIterativeCommand();
 
 			//check if a system stop is requested
-			if (isSysStopReq() == true) {
+			if (Console::IsSystemStopRequested() == true)
 				break;
-			}
 
 			//main loop heartbeat
-			Thread::wait(100);
-			//ledTwo = !ledTwo;
+			osDelay(250);
+			ledOne != ledOne;
 		}
 
 		//clear light for main loop (shows its complete)
-		//ledTwo = false;
+		// ledTwo = false;
+
 	} else {
-		for (;;);
+		// return;
+		while (true);
 	}
-}
-
-
-/**
- * timer interrupt based light flicker. If this stops, the code triggered
- * a fault.
- */
-void imAlive(void)
-{
-	ledOne = !ledOne;
 }

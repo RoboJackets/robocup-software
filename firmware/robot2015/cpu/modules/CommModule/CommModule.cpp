@@ -1,9 +1,15 @@
 #include "CommModule.hpp"
 
+unsigned int CommModule::txPackets = 0;
+unsigned int CommModule::rxPackets = 0;
+
 // Set the class's constants for streamlined use in other areas of the code
 const int CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
 const int CommModule::RX_QUEUE_SIZE = COMM_MODULE_RX_QUEUE_SIZE;
 const int CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
+
+// unsigned int CommModule::txPackets;
+// unsigned int CommModule::rxPackets;
 
 // Default constructor
 CommModule::CommModule() :
@@ -24,20 +30,20 @@ CommModule::CommModule() :
 
     // [X] - 2.2 - Create the TX & RX threads - pass them a pointer to the created object.
     // =================
-    _txID = osThreadCreate(&_txDef, (void*)this);
-    _rxID = osThreadCreate(&_rxDef, (void*)this);
+    _txID = osThreadCreate(&_txDef, (void *)this);
+    _rxID = osThreadCreate(&_rxDef, (void *)this);
 
 
-    for (int i=0; i < COMM_MODULE_NBR_PORTS; i++) {
+    for (int i = 0; i < COMM_MODULE_NBR_PORTS; i++) {
         _txH_called[i] = false;
         _rxH_called[i] = false;
     }
 
-/*
-    // Initialize boolean arrays
-    memset(_txH_called, 0, COMM_MODULE_NBR_PORTS);
-    memset(_rxH_called, 0, COMM_MODULE_NBR_PORTS);
-*/
+    /*
+        // Initialize boolean arrays
+        memset(_txH_called, 0, COMM_MODULE_NBR_PORTS);
+        memset(_rxH_called, 0, COMM_MODULE_NBR_PORTS);
+    */
 }
 
 CommModule::~CommModule()
@@ -48,22 +54,24 @@ CommModule::~CommModule()
 
 void CommModule::txThread(void const *arg)
 {
-    CommModule *inst = (CommModule*)arg;
+    CommModule *inst = (CommModule *)arg;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
     log(INF1, "CommModule", "TX Communication Module Ready!");
 
-    while(1) {
+    while (1) {
 
         // When a new RTP packet is put in the tx queue, begin operations (does nothing if no new data in queue)
         osEvent evt = osMailGet(inst->_txQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
 
+            CommModule::txPackets++;
+
             // Get a pointer to the packet's memory location
-            RTP_t *p = (RTP_t*)evt.value.p;
+            RTP_t *p = (RTP_t *)evt.value.p;
 
             // Send the packet on the active communication link
             inst->_tx_handles[p->port].call(p);
@@ -78,7 +86,7 @@ void CommModule::txThread(void const *arg)
 
 void CommModule::rxThread(void const *arg)
 {
-    CommModule *inst = (CommModule*)arg;
+    CommModule *inst = (CommModule *)arg;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
@@ -87,16 +95,18 @@ void CommModule::rxThread(void const *arg)
 
     RTP_t *p;
     osEvent  evt;
-    
-    while(1) {
+
+    while (1) {
 
         // Wait until new data is placed in the class's rxQueue from a CommLink class
         evt = osMailGet(inst->_rxQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
-            
+
+            CommModule::rxPackets++;
+
             // get a pointer to where the data is stored
-            p = (RTP_t*)evt.value.p;
+            p = (RTP_t *)evt.value.p;
 
             // If there is an open socket for the port, call it.
             if (std::binary_search(inst->_open_ports->begin(), inst->_open_ports->end(), p->port)) {
@@ -110,14 +120,14 @@ void CommModule::rxThread(void const *arg)
     }
 }
 
-void CommModule::TxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
+void CommModule::TxHandler(void(*ptr)(RTP_t *), uint8_t portNbr)
 {
     _txH_called[portNbr] = true;
     ready();
     _tx_handles[portNbr].attach(ptr);
 }
 
-void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
+void CommModule::RxHandler(void(*ptr)(RTP_t *), uint8_t portNbr)
 {
     _rxH_called[portNbr] = true;
     ready();
@@ -135,6 +145,7 @@ void CommModule::RxHandler(void(*ptr)(void), uint8_t portNbr)
 void CommModule::openSocket(uint8_t portNbr)
 {
     ready();
+
     if (_txH_called[portNbr] & _rxH_called[portNbr]) {
         // Don't open a socket connection until a TX callback has been set
         if (std::binary_search(_open_ports->begin(), _open_ports->end(), portNbr)) {
@@ -169,7 +180,7 @@ void CommModule::ready(void)
 }
 
 
-void CommModule::send(RTP_t& packet)
+void CommModule::send(RTP_t &packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
@@ -177,7 +188,7 @@ void CommModule::send(RTP_t& packet)
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
-        RTP_t *p = (RTP_t*)osMailAlloc(_txQueue, osWaitForever);
+        RTP_t *p = (RTP_t *)osMailAlloc(_txQueue, osWaitForever);
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
@@ -192,7 +203,7 @@ void CommModule::send(RTP_t& packet)
 }
 
 
-void CommModule::receive(RTP_t& packet)
+void CommModule::receive(RTP_t &packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
@@ -200,7 +211,7 @@ void CommModule::receive(RTP_t& packet)
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
-        RTP_t *p = (RTP_t*)osMailAlloc(_rxQueue, osWaitForever);
+        RTP_t *p = (RTP_t *)osMailAlloc(_rxQueue, osWaitForever);
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
@@ -212,4 +223,15 @@ void CommModule::receive(RTP_t& packet)
     } else {
         log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
+}
+
+unsigned int CommModule::NumRXPackets(void)
+{
+    return CommModule::rxPackets;
+}
+
+
+unsigned int CommModule::NumTXPackets(void)
+{
+    return CommModule::txPackets;
 }

@@ -20,10 +20,10 @@
  */
 class CommLink
 {
-public:
+  public:
     /// Constructor
     CommLink();
-    
+
     /// Constructor
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
@@ -37,25 +37,28 @@ public:
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
     virtual void reset(void) = 0;
-    
+
     /// Perform tests to determine if the hardware is able to properly function
     virtual int32_t selfTest(void) = 0;
-    
+
     /// Determine if communication can occur with another device
     virtual bool isConnected(void) = 0;
-    
-    /// 
-    void setModule(CommModule&);
-    void sendPacket(RTP_t*);
-    void receivePacket(RTP_t*);
 
-protected:
-    virtual int32_t sendData(uint8_t*, uint8_t) = 0;    // write data out to the radio device using SPI
-    virtual int32_t getData(uint8_t*, uint8_t*) = 0;   // read data in from the radio device using SPI
+    ///
+    void setModule(CommModule &);
+    void sendPacket(RTP_t *);
+    void receivePacket(RTP_t *);
+
+    unsigned int rxPackets(void);
+    unsigned int txPackets(void);
+
+  protected:
+    virtual int32_t sendData(uint8_t *, uint8_t) = 0;   // write data out to the radio device using SPI
+    virtual int32_t getData(uint8_t *, uint8_t *) = 0; // read data in from the radio device using SPI
 
     void ISR(void);
     void toggle_cs(void);
-    
+
     /// Used for giving derived classes a standaradized way to inform the base class that it is ready for communication and to begin the threads
     void ready(void);   // Always call CommLink::ready() after derived class is ready for communication
     void setup_spi(void);
@@ -77,16 +80,16 @@ protected:
     DigitalOut  *_cs;       // Chip Select pointer
     InterruptIn *_int_in;    // Interrupt pin
 
-private:
+  private:
     // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void(*task)(void const *arg), osPriority, uint32_t, unsigned char*);
+    friend void define_thread(osThreadDef_t &, void(*task)(void const *arg), osPriority, uint32_t, unsigned char *);
 
     /**
-     * Data queues for 
+     * Data queues for
      */
     MailHelper<RTP_t, COMM_LINK_TX_QUEUE_SIZE>   _txQueueHelper;
     MailHelper<RTP_t, COMM_LINK_RX_QUEUE_SIZE>   _rxQueueHelper;
-    
+
     // Thread definitions and IDs
     osThreadDef_t   _txDef;
     osThreadDef_t   _rxDef;
@@ -94,15 +97,15 @@ private:
     osThreadId      _rxID;
 
     // The working threads for handeling RX/TX data queue operations
-    static void txThread(void const*);
-    static void rxThread(void const*);
+    static void txThread(void const *);
+    static void rxThread(void const *);
 
     // Methods for initializing a transceiver's pins for communication
     void setup(void);
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC, PinName = NC);
     void setup_cs(void);
     void setup_interrupt(void);
-    
+
     // Used for tracking the number of link-level communication interfaces
     static unsigned int _nbr_links;
 

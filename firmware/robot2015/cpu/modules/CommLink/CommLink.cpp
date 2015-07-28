@@ -13,8 +13,8 @@ CommLink::CommLink()
 }
 
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin) :
-_txQueueHelper(),
-_rxQueueHelper()
+    _txQueueHelper(),
+    _rxQueueHelper()
 {
     static unsigned int _nbr_links = 0;
 
@@ -40,8 +40,8 @@ void CommLink::setup()
 
     // [X] - 3 - Create the threads and pass them a pointer to the created object
     // =================
-    _txID = osThreadCreate(&_txDef, (void*)this);
-    _rxID = osThreadCreate(&_rxDef, (void*)this);
+    _txID = osThreadCreate(&_txDef, (void *)this);
+    _rxID = osThreadCreate(&_rxDef, (void *)this);
 }
 
 
@@ -59,7 +59,7 @@ void CommLink::setup_spi(void)
 {
     if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
         _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        _spi->format(8,0);
+        _spi->format(8, 0);
         _spi->frequency(5000000);
     }
 }
@@ -90,7 +90,7 @@ void CommLink::txThread(void const *arg)
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
-    while(1) {
+    while (1) {
         // [X] - 1 - Wait until the CommModule class sends a signal to begin operation on new data being placed in its txQueue
         // =================
         osSignalWait(COMM_LINK_SIGNAL_TX_TRIGGER, osWaitForever);
@@ -111,7 +111,7 @@ void CommLink::txThread(void const *arg)
 // Task operations for placing received data into the received data queue
 void CommLink::rxThread(void const *arg)
 {
-    CommLink *inst = (CommLink*)arg;
+    CommLink *inst = (CommLink *)arg;
 
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD & COMM_LINK_SIGNAL_MODULE_LINKED, osWaitForever);
@@ -119,7 +119,7 @@ void CommLink::rxThread(void const *arg)
     // Set the function to call on an interrupt trigger
     inst->_int_in->rise(inst, &CommLink::ISR);
 
-    while(1) {
+    while (1) {
         // [X] - 1 - Wait until new data has arrived - this is interrupt triggered by CommLink::ISR()
         // =================
         osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
@@ -134,7 +134,7 @@ void CommLink::rxThread(void const *arg)
             // force some numbers for testing always on port 8
             p.port = 8;
             p.subclass = 0;
-            
+
             //p.port = p.data[0] >> 4;
             //p.subclass = p.data[0] & 0x0F;
 
@@ -178,8 +178,19 @@ void CommLink::toggle_cs(void)
 }
 
 
-void CommLink::setModule(CommModule& com)
+void CommLink::setModule(CommModule &com)
 {
     _comm_module = &com;
     osSignalSet(_rxID , COMM_LINK_SIGNAL_MODULE_LINKED);
+}
+
+
+unsigned int CommLink::rxPackets(void)
+{
+    return _comm_module->NumRXPackets();
+}
+
+unsigned int CommLink::txPackets(void)
+{
+    return _comm_module->NumTXPackets();
 }
