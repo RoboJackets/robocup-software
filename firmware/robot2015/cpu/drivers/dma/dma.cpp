@@ -1,74 +1,30 @@
 #include "dma.hpp"
 
+/*
 volatile uint32_t DMATCCount = 0;
 volatile uint32_t DMAErrCount = 0;
 volatile uint32_t ADCDMA0Done = 0;
 volatile uint32_t ADCDMA1Done = 0;
-
-
-/**
- * [DMA_IRQHandler description]
- */
-/*
-void DMA::DMA_IRQHandler(void)
-{
-  uint32_t regVal = _LPC_DMA_ID->IntTCStat;
-
-  if (regVal) {
-    DMATCCount++;
-    _LPC_DMA_ID->IntTCClear = regVal;
-
-    if ( regVal & 0x01 ) {
-      ADCDMA0Done = 1;
-    } else if ( regVal & 0x02 ) {
-      ADCDMA1Done = 1;
-    }
-
-    ADC_burst_off();
-  }
-
-  regVal = _LPC_DMA_ID->IntErrStat;
-
-  if (regVal) {
-    DMAErrCount++;
-
-    _LPC_DMA_ID->IntErrClr = regVal;
-    ADC_burst_off();
-  }
-}
 */
 
-
+/**
+ *
+ */
 DMA::DMA(void)
 {
   isInit = false;
-  Init();
-  log(INF1, "DMA", "DMA setup complete.");
+
+  if (Init())
+    log(INF1, "DMA", "DMA setup successfully completed!");
 }
 
 
+/**
+ *
+ */
 DMA::~DMA(void)
 {
   isInit = false;
-}
-
-/**
- * [DMA::clear_error description]
- * @param channel [description]
- */
-void DMA::clear_error(uint8_t channel)
-{
-  _LPC_DMA_ID->DMACIntErrClr = ( 1 << channel );
-}
-
-
-/**
- * [DMA::clear_errors description]
- */
-void DMA::clear_errors(void)
-{
-  for (int i = 0; i < DMA_NUM_CHANNELS; i++)
-    clear_error(i);
 }
 
 
@@ -78,6 +34,9 @@ void DMA::clear_errors(void)
  */
 void DMA::setSrc(LPC_GPDMACH_TypeDef *dma_channel, uint32_t *addr)
 {
+  if (dma_channel == NULL)
+    dma_channel = chan;
+
   dma_channel->DMACCSrcAddr = (uint32_t)addr;
 }
 
@@ -96,6 +55,26 @@ void DMA::setDst(LPC_GPDMACH_TypeDef *dma_channel, uint32_t *addr)
 
 
 /**
+ * [DMA::find_channel description]
+ * @return  [description]
+ */
+LPC_GPDMACH_TypeDef *DMA::find_channel(void)
+{
+  uint8_t enabled_channels = (_LPC_DMA_ID->DMACEnbldChns) & 0xFF;
+
+  // Loop through all available channels until a good one is found
+  for (int i = 0; i < DMA_NUM_CHANNELS; i++) {
+    bool chan_good = ((enabled_channels >> i) & 0x01);
+
+    if (chan_good)
+      return (LPC_GPDMACH_TypeDef *)((uint32_t)_LPC_DMA_CHAN0 + (i * sizeof(LPC_GPDMACH_TypeDef *)));
+  }
+
+  return (LPC_GPDMACH_TypeDef *)0x00;
+}
+
+
+/**
  * [DMA::enableController description]
  */
 uint8_t DMA::enable_controller(bool endianness)
@@ -104,6 +83,11 @@ uint8_t DMA::enable_controller(bool endianness)
   return _LPC_DMA_ID->DMACConfig & 0x03;
 }
 
+
+/**
+ * [DMA::disable_controller description]
+ * @return  [description]
+ */
 uint8_t DMA::disable_controller(void)
 {
   // Check for any enabled channels
@@ -114,6 +98,26 @@ uint8_t DMA::disable_controller(void)
   _LPC_DMA_ID->DMACConfig &= ~(0x01);
 
   return _LPC_DMA_ID->DMACConfig & 0x03;
+}
+
+
+/**
+ * [DMA::clear_error description]
+ * @param channel [description]
+ */
+void DMA::clear_error(uint8_t channel)
+{
+  _LPC_DMA_ID->DMACIntErrClr = ( 1 << channel );
+}
+
+
+/**
+ * [DMA::clear_errors description]
+ */
+void DMA::clear_errors(void)
+{
+  for (int i = 0; i < DMA_NUM_CHANNELS; i++)
+    clear_error(i);
 }
 
 
@@ -158,7 +162,7 @@ void DMA::set_periph_mode(uint8_t mode)
 
 
 /**
- * [DMA::reset_periph description]
+ * [DMA::reset_periph_modes description]
  */
 void DMA::reset_periph_modes(void)
 {
@@ -184,46 +188,49 @@ void DMA::set_dst_periph(LPC_GPDMACH_TypeDef *dma_channel, uint8_t mode)
 }
 
 
-LPC_GPDMACH_TypeDef *DMA::find_channel(void)
+/**
+ * [DMA::clear_int_flags description]
+ */
+void DMA::clear_int_flags(void)
 {
-  uint8_t enabled_channels = (_LPC_DMA_ID->DMACEnbldChns) & 0xFF;
+  // doesn't work yet!
+  _LPC_DMA_ID->DMACIntTCClear = ( 1 << 0 );
+}
 
-  for (int i = 0; i < DMA_NUM_CHANNELS; i++) {
-    uint8_t chan_good = ((enabled_channels >> i) & 0x01);
 
-    if (chan_good)
-      return (LPC_GPDMACH_TypeDef *)(_LPC_DMA_CHAN0 + (i * sizeof(LPC_GPDMACH_TypeDef *)));
-  }
 
-  return (LPC_GPDMACH_TypeDef *)0x00;
+/**
+ * [DMA::clear_err_flags description]
+ */
+void DMA::clear_err_flags(void)
+{
+  // doesn't work yet!
+  _LPC_DMA_ID->DMACIntErrClr = ( 1 << 0 );
 }
 
 
 /**
  * [DMA_Init description]
  */
-void DMA::Init(void)
+bool DMA::Init(void)
 {
-  NVIC_DisableIRQ(ADC_IRQn);
   NVIC_DisableIRQ(DMA_IRQn);
-
-  //_LPC_DMA_ID->DMACIntTCClear = ( 1 << 0 );
-  //_LPC_DMA_ID->DMACIntErrClr = ( 1 << 0 );
+  clear_int_flags();
+  clear_err_flags();
 
   chan = find_channel();
+  log(OK, "DMA", "DMA Channel Addr:\t%u", chan);
 
   if (chan == 0)
-    return;
+    return false;
 
-  /* Enable CLOCK into GPDMA controller */
+  // Enable CLOCK into GPDMA controller
   LPC_SC->PCONP |= (1 << 29);
-  //reset_periph_modes();
-  //set_periph_mode(1);  // This sets it up for use with Timer0 match0 as being the selection
+  // reset_periph_modes();
+  // set_periph_mode(1);  // This sets it up for use with Timer0 match0 as being the selection
 
-  /* sync enabled */
+  // Sync enabled
   _LPC_DMA_ID->DMACSync = 0xFFFF;
-  //_LPC_DMA_ID->DMACIntTCClear = 0x03;
-  //_LPC_DMA_ID->DMACIntErrClr = 0x03;
 
   // Startup the global DMA controller interface
   while (enable_controller(DMA_LITTLE_ENDIAN) < 0x01) { /* wait */ }
@@ -239,20 +246,19 @@ void DMA::Init(void)
                          | DMA_SET_DST_INCREMENT_MODE(DMA_ADDR_INCREMENT_NO)
                        );
 
-  // setSrc();
-  // setDst();
-
   set_src_periph(chan, DMA_ADC_REQ_ID);
   // set_dst_periph(chan, DMA_ADC_REQ_ID);
 
   isInit = true;
+
+  return true;
 }
 
 
 /**
  * [DMA::start description]
  */
-void DMA::start()
+void DMA::Start(void)
 {
   if (isInit == false)
     return;
@@ -262,78 +268,3 @@ void DMA::start()
 
   NVIC_EnableIRQ(DMA_IRQn);
 }
-
-
-/*
-bool DMA::channel_init(uint32_t channel, uint32_t DMAMode)
-{
-  if (channel == 0) {
-    dmaTransferComplete[0] = false;
-
-    // Clear DMA channel 0 terminal count.
-    _LPC_DMA_ID->IntTCClear = ( 1 << 0 );
-    _LPC_DMA_ID->IntErrClr = ( 1 << 0 );
-    _LPC_DMA_CHAN0->CControl = 0;
-    _LPC_DMA_CHAN0->CConfig = 0;
-
-    if (DMAMode == P2M) {
-
-      // Ch0 set for P2M transfer from ADC to mempry.
-      //setSrc(_LPC_DMA_CHAN0, );
-      //setDst(_LPC_DMA_CHAN0, );
-
-      // The burst size is set to 8, source and dest transfer width is
-      // 32 bits(word), src addr increment by 1. dst addr increment by 1. Terminal
-      // Count Int enable
-      _LPC_DMA_CHAN0->CControl = (DMA_SIZE & 0x0FFF)
-                                 | (0x00 << 12)
-                                 | (0x00 << 15)
-                                 | (0x02 << 18)
-                                 | (0x02 << 21)
-                                 | (1 << 26)
-                                 | (1 << 27)
-                                 | 0x80000000;
-
-      return true;
-    } else {
-
-      return false;
-    }
-  } else if (channel == 1) {
-
-    dmaTransferComplete[1] = false;
-
-    // Clear DMA channel 1 terminal count.
-    _LPC_DMA_ID->IntTCClear = ( 1 << 1 );
-    _LPC_DMA_ID->IntErrClr = ( 1 << 1 );
-    _LPC_DMA_CHAN1->CControl = 0;
-    _LPC_DMA_CHAN1->CConfig = 0;
-
-    if (DMAMode == P2M) {
-
-      // Ch1 set for P2M transfer from ADC to mempry.
-      _LPC_DMA_CHAN1->CSrcAddr = DMA_SRC;
-      _LPC_DMA_CHAN1->CDestAddr = DMA_DST;
-
-      // The burst size is set to 8, source and dest transfer width is
-      // bits(word), src addr increment by 1. dst addr unchange. Terminal
-      Count Int enable
-      _LPC_DMA_CHAN1->CControl = (DMA_SIZE & 0x0FFF)
-                                 | (0x00 << 12)
-                                 | (0x00 << 15)
-                                 | (0x02 << 18)
-                                 | (0x02 << 21)
-                                 | (1 << 26)
-                                 | (1 << 27)
-                                 | 0x80000000;
-
-      return true;
-    } else {
-
-      return false;
-    }
-  }
-
-  return false;
-}
-*/

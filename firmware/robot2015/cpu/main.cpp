@@ -1,10 +1,4 @@
-
-
 #include "robot.hpp"
-#include "console.hpp"
-#include "radio-state-decode.hpp"
-#include "isr-prop.hpp"
-#include "rtos.h"
 #include "dma.hpp"
 #include "adc-dma.hpp"
 
@@ -16,11 +10,10 @@ DigitalOut rssi_valid(LED3, 0);
 DigitalOut led4(LED4, 1);
 DigitalIn gpio3(p18);
 DigitalIn gpio2(p16);
-//Serial pcserial(USBTX, USBRX);
+Serial pcserial(USBTX, USBRX);
 
 ADCDMA adc;
 DMA dma;
-
 
 void initConsoleRoutine(void const *args);
 
@@ -53,7 +46,7 @@ int main(void)
 {
 	led4 = false;
 
-	// pcserial.baud(9600);
+	pcserial.baud(9600);
 
 	//setISRPriorities();
 
@@ -129,6 +122,7 @@ int main(void)
 
 	uint32_t adc_vals[10] = { 0 };
 
+	dma.setSrc(NULL, (uint32_t *)LPC_ADC);
 	dma.setDst(NULL, adc_vals);
 	ledOne = false;
 
@@ -163,7 +157,7 @@ void initConsoleRoutine(void const *args)
 
 			//main loop heartbeat
 			osDelay(250);
-			ledOne != ledOne;
+			ledOne = !ledOne;
 		}
 
 		//clear light for main loop (shows its complete)

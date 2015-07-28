@@ -17,8 +17,8 @@ set(UTILS ${UTILS_ROOT_DIR})
 
 list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg dma ds2411 fpga radio)
 # list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg dma ds2411 fpga radio speaker)
-list(APPEND ${MODULES} CommLink CommModule system)
-list(APPEND ${UTILS} assert console firmware-check logger rtos-mgmt watchdog)
+list(APPEND ${MODULES} CommLink CommModule console system)
+list(APPEND ${UTILS} assert firmware-check logger rtos-mgmt watchdog)
 set(SUB_DIRS_LIST ${DRIVERS} ${MODULES} ${UTILS} ${USR_CONFIG_DIR})
 
 # generate the list of all directories that are needed

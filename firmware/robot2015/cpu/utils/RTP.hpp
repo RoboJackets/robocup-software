@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mbed.h"
+#include <cstdint>
 
 #define RTP_MAX_DATA_SIZE 122
 

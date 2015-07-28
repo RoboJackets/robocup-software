@@ -1,11 +1,8 @@
-#include <stdio.h>
-#include "robot.hpp"
-// #include "console.hpp"
-// #include "commands.hpp"
+#include "console.hpp"
 
 using namespace std;
 
-const string Console::CONSOLE_HEADER = "> ";
+const string Console::CONSOLE_HEADER = "user@robot $ ";
 
 const string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
 

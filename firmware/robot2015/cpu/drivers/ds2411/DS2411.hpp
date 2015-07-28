@@ -1,3 +1,5 @@
+#pragma once
+
 /**
  *  The DS2411 Maxim Integrated Serial Number SOT23 chip is a 3-pin chip that stores
  *  a unique 48-bit serial number, an 8-bit family code (0x01), and an 8-bit CRC value
@@ -5,25 +7,21 @@
  *  http://www.digikey.com/product-detail/en/DS2411R%2BT%26R/DS2411R%2BCT-ND/2045729
  */
 
-#pragma once
+#include "robot.hpp"
 
-
-#include "mbed.h"
-
-
-#define RJ_DS2411_ID_CHIP RJ_BASE_ID
+#define ID_DS2411_PIN RJ_BASE_ID
 
 typedef struct {
     char family;
     char serial[6]; // 0 = LSB, 5 = MSB
     char crc;
-} DS2411_ID;
-
+} DS2411_t;
 
 typedef enum {
-    CRC_MATCH, CRC_FAIL, HANDSHAKE_FAIL
-} DS2411_Result;
-
+    ID_CRC_MATCH,
+    ID_CRC_FAIL,
+    ID_HANDSHAKE_FAIL
+} DS2411Result_t;
 
 /**
  *  This function connects to the specified PinName and populates the provided DS2411_ID block.
@@ -37,4 +35,4 @@ typedef enum {
  * @param  debug [description]
  * @return       [description]
  */
-DS2411_Result ds2411_read_id(PinName pin, DS2411_ID *id, bool debug = false);
+DS2411Result_t ds2411_read_id(PinName, DS2411_t *, bool = false);

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
+#include "robot.hpp"
 #include <memory>
+#include "commands.hpp"
 
 /**
  * enable scrolling vi sequence

@@ -1,17 +1,16 @@
 #include "DS2411.hpp"
 
-
-static const int tREC = 5;
-static const int tSLOT = 65;
-static const int tRSTL = 540;
-static const int tPDHmax = 60;
-static const int tPDLmax = 240;
-static const int tMSP = 68;
-static const int tRSTH = tPDHmax + tPDLmax + tREC;
-static const int tW0L = 90;
-static const int tW1L = 10;
-static const int tRL = 6;
-static const int tMSR = 15;
+static const unsigned int ID_tREC = 5;
+static const unsigned int ID_tPDHmax = 60;
+static const unsigned int ID_tPDLmax = 240;
+static const unsigned int ID_tRSTH = ID_tPDHmax + ID_tPDLmax + ID_tREC;
+static const unsigned int ID_tSLOT = 65;
+static const unsigned int ID_tRSTL = 540;
+static const unsigned int ID_tMSP = 68;
+static const unsigned int ID_tW0L = 90;
+static const unsigned int ID_tW1L = 10;
+static const unsigned int ID_tRL = 6;
+static const unsigned int ID_tMSR = 15;
 
 
 /**
@@ -21,9 +20,9 @@ static const int tMSR = 15;
 void writeOne(DigitalInOut *pin)
 {
     *pin = 0;
-    wait_us(tW1L);
-    *pin = 1;
-    wait_us(tSLOT - tW1L);
+    wait_us(ID_tW1L);
+    *pin = !(*pin);
+    wait_us(ID_tSLOT - ID_tW1L);
 }
 
 
@@ -34,9 +33,9 @@ void writeOne(DigitalInOut *pin)
 void writeZero(DigitalInOut *pin)
 {
     *pin = 0;
-    wait_us(tW0L);
-    *pin = 1;
-    wait_us(tREC);
+    wait_us(ID_tW0L);
+    *pin = !(*pin);
+    wait_us(ID_tREC);
 }
 
 
@@ -72,16 +71,16 @@ char readByte(DigitalInOut *pin)
         // Signal ready to read by setting line low
         pin->output();
         *pin = 0;
-        wait_us(tRL);
-        *pin = 1;
+        wait_us(ID_tRL);
+        *pin = !(*pin);
 
-        wait_us(tMSR - tRL);
+        wait_us(ID_tMSR - ID_tRL);
         pin->input();
 
         int bit = *pin;
         value |= bit << i;
 
-        wait_us(tSLOT - tMSR); // wait for rest of time slot
+        wait_us(ID_tSLOT - ID_tMSR); // wait for rest of time slot
     }
 
     return value;
@@ -115,7 +114,7 @@ unsigned int crc8_add(unsigned int acc, char byte)
  * @param  debug [description]
  * @return       [description]
  */
-DS2411_Result ds2411_read_id(PinName pin, DS2411_ID *id, bool debug)
+DS2411Result_t ds2411_read_id(PinName pin, DS2411_t *id, bool debug)
 {
     if (debug)
         printf("Communicating with ID Chip...\r\n");
@@ -124,32 +123,29 @@ DS2411_Result ds2411_read_id(PinName pin, DS2411_ID *id, bool debug)
 
     // Reset signal, low for 480us
     idPin = 0;
-    wait_us(tRSTL);
-    idPin = 1;
+    wait_us(ID_tRSTL);
+    idPin = !idPin;
 
     // Wait for presence signal
-    wait_us(tMSP);
+    wait_us(ID_tMSP);
     idPin.input();
 
     if (idPin == 1) {
         if (debug)
             printf("Handshake failure!\r\n");
 
-        return HANDSHAKE_FAIL;
+        return ID_HANDSHAKE_FAIL;
     }
 
-    wait_us(tRSTH - tMSP); // wait for rest of tRSTH
+    wait_us(ID_tRSTH - ID_tMSP); // wait for rest of ID_tRSTH
 
     writeByte(&idPin, 0x33); // write Read ROM command 0x33
 
-    char family = readByte(&idPin);
-
-    id->family = family;
-    unsigned int calcCRC = crc8_add(0x0, family);
+    id->family = readByte(&idPin);
+    unsigned int calcCRC = crc8_add(0x00, id->family);
 
     for (int i = 0; i < 6; i++) {
         char v = readByte(&idPin);
-
         id->serial[i] = v;
         calcCRC = crc8_add(calcCRC, v);
     }
@@ -167,8 +163,8 @@ DS2411_Result ds2411_read_id(PinName pin, DS2411_ID *id, bool debug)
 
         printf("\r\nCRC        : 0x%02X \r\n", id->crc);
 
-        printf("CRCs match : %s\r\n", calcCRC == crc ? "true" : "false");
+        printf("CRCs match : %s\r\n", (calcCRC == crc ? "true" : "false"));
     }
 
-    return calcCRC == crc ? CRC_MATCH : CRC_FAIL;
+    return (calcCRC == crc ? ID_CRC_MATCH : ID_CRC_FAIL);
 }
