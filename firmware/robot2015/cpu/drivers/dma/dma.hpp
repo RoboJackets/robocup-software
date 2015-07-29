@@ -3,6 +3,7 @@
 #include "robot.hpp"
 #include "adc-dma.hpp"
 
+
 // Defines
 #define _LPC_DMA_ID             LPC_GPDMA
 #define _LPC_DMA_CHAN0          LPC_GPDMACH0
@@ -55,20 +56,22 @@ class DMA
   public:
     DMA(void);
     ~DMA(void);
-    void setSrc(LPC_GPDMACH_TypeDef *, uint32_t *);
-    void setDst(LPC_GPDMACH_TypeDef *, uint32_t *);
-    void Start(void);
+    void SetSrc(uint32_t);
+    void SetDst(uint32_t);
+    bool Init(void);
+    bool Start(void);
+    static volatile uint32_t dma_buf[15];
 
   protected:
-    LPC_GPDMACH_TypeDef *find_channel(void);
-    bool Init(void);
+    uint8_t find_channel(void);
     uint8_t enable_controller(bool = DMA_LITTLE_ENDIAN);
     uint8_t disable_controller(void);
+    static volatile uint8_t chan_num;
+    static LPC_GPDMACH_TypeDef *chan;
 
   private:
-    bool isInit;
-    LPC_GPDMACH_TypeDef *chan;
-
+    static bool isInit;
+    void transfer_type(LPC_GPDMACH_TypeDef *, uint8_t);
     void set_periph_mode(uint8_t);
     void set_src_periph(LPC_GPDMACH_TypeDef *, uint8_t);
     void set_dst_periph(LPC_GPDMACH_TypeDef *, uint8_t);
@@ -78,6 +81,6 @@ class DMA
     void clear_error(uint8_t);
     void clear_errors(void);
     void disable_channels(void);
-    void clear_int_flags(void);
-    void clear_err_flags(void);
+    void clear_int_flag(uint8_t);
+    void clear_err_flag(uint8_t);
 };

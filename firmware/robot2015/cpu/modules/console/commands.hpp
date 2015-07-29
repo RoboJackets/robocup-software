@@ -78,3 +78,4 @@ void cmd_checkInterfaceConn(const std::vector<std::string> &args);
 void cmd_setBaudrate(const std::vector<std::string> &args);
 void cmd_switchHostname(const std::vector<std::string> &args);
 void cmd_switchUser(const std::vector<std::string> &args);
+void cmd_logLevel(const std::vector<std::string> &args);

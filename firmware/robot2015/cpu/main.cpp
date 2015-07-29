@@ -3,8 +3,7 @@
 #include "adc-dma.hpp"
 
 
-Ticker lifeLight;
-DigitalOut ledOne(LED1, 1);
+DigitalOut ledOne(LED1, 0);
 DigitalOut is_locked(LED2, 0);
 DigitalOut rssi_valid(LED3, 0);
 DigitalOut led4(LED4, 1);
@@ -17,13 +16,18 @@ DMA dma;
 
 void initConsoleRoutine(void const *args);
 
+
 /**
  * Timer interrupt based light flicker. If this stops, the code triggered
  * a fault.
  */
-void imAlive(void)
+void imAlive(void const *args)
 {
-	ledOne = !ledOne;
+	DigitalOut *led = (DigitalOut *)args;
+
+	*led = !(*led);
+	osDelay(50);
+	*led = !(*led);
 }
 
 
@@ -45,17 +49,19 @@ void rx_callback(RTP_t *p)
 int main(void)
 {
 	is_locked = true;
-
+	setISRPriorities();
 	pcserial.baud(9600);
 
-	setISRPriorities();
+	RtosTimer led_1_ticker(imAlive, osTimerPeriodic, (void *)&ledOne);
+	led_1_ticker.start(1000);
 
-	lifeLight.attach(&imAlive, 0.25);
+	RtosTimer RadioTimeoutTask(imAlive, osTimerPeriodic, (void *)&ledOne);
 
 	isLogging = RJ_LOGGING_EN;
-	rjLogLevel = OK;
+	rjLogLevel = INF2;
 
 	Thread taskConsole(initConsoleRoutine);
+
 	/*
 		// led4 = true;
 
@@ -120,18 +126,35 @@ int main(void)
 		}
 		*/
 
-	uint32_t adc_vals[10] = { 0 };
+	uint32_t dma_locations[10] = { 0 };
 
-	// dma.setSrc(NULL, (uint32_t *)LPC_ADC);
-	is_locked = false;
-	// dma.setDst(NULL, adc_vals);
-	ledOne = false;
+	adc.AddChannel(RJ_BALL_DETECTOR);
+	adc.AddChannel(RJ_BATT_SENSE);
+	adc.AddChannel(RJ_5V_SENSE);
 
-	//dma.start();
-	//adc.BurstRead();
+	if (adc.Start())
+		LOG(INF1, "ADC config didn't break!");
+
+
+	if (dma.Init()) {
+		dma.SetDst((uint32_t) &dma_locations[0]);
+		dma.SetSrc((uint32_t) & (LPC_ADC->ADDR0));
+
+		if (dma.Start())
+			LOG(INF1, "DMA config didn't break!");
+	}
+
+
+
+
+	LOG(OK, "ADC & DMA config complete.");
+
+	led4 = 0;
 
 	while (1) {
+		// LOG(INF1, "ADC Vals: %u, %u, %u, 0x%08X, 0x%08X, 0x%08X, 0X%08X", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0);
 		osDelay(1000);
+		adc.BurstRead();
 	}
 
 }
@@ -157,8 +180,8 @@ void initConsoleRoutine(void const *args)
 				break;
 
 			//main loop heartbeat
-			osDelay(250);
-			ledOne = !ledOne;
+			osDelay(70);
+			//ledOne = !ledOne;
 		}
 
 		//clear light for main loop (shows its complete)

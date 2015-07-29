@@ -116,8 +116,7 @@ unsigned int crc8_add(unsigned int acc, char byte)
  */
 DS2411Result_t ds2411_read_id(PinName pin, DS2411_t *id, bool debug)
 {
-    if (debug)
-        printf("Communicating with ID Chip...\r\n");
+    LOG(INF3, "Communicating with ID Chip...");
 
     DigitalInOut idPin(pin, PIN_OUTPUT, PullUp, 1);
 
@@ -131,8 +130,7 @@ DS2411Result_t ds2411_read_id(PinName pin, DS2411_t *id, bool debug)
     idPin.input();
 
     if (idPin == 1) {
-        if (debug)
-            printf("Handshake failure!\r\n");
+        // LOG(SEVERE, "Handshake failure!");
 
         return ID_HANDSHAKE_FAIL;
     }
@@ -153,18 +151,20 @@ DS2411Result_t ds2411_read_id(PinName pin, DS2411_t *id, bool debug)
     char crc = readByte(&idPin);
     id->crc = crc;
 
-    if (debug) {
-        printf("Family byte: 0x%02X\r\n", id->family);
+    /*
+        if (debug) {
+            printf("Family byte: 0x%02X\r\n", id->family);
 
-        printf("Serial byte: 0x");
+            printf("Serial byte: 0x");
 
-        for (int i = 5; i >= 0; i--)
-            printf("%02X", id->serial[i]);
+            for (int i = 5; i >= 0; i--)
+                printf("%02X", id->serial[i]);
 
-        printf("\r\nCRC        : 0x%02X \r\n", id->crc);
+            printf("\r\nCRC        : 0x%02X \r\n", id->crc);
 
-        printf("CRCs match : %s\r\n", (calcCRC == crc ? "true" : "false"));
-    }
+            printf("CRCs match : %s\r\n", (calcCRC == crc ? "true" : "false"));
+        }
+        */
 
     return (calcCRC == crc ? ID_CRC_MATCH : ID_CRC_FAIL);
 }

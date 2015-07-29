@@ -26,9 +26,7 @@
 #define LOG(lvl, ...)       log(lvl, LOG_LINE, __func__, __VA_ARGS__)
 
 #else
-
 #define LOG(...)
-
 #endif
 
 

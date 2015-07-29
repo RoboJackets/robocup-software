@@ -1,8 +1,19 @@
 #include "adc-dma.hpp"
 
-#define SystemFrequency 1000000
+static const PinMap PinMap_ADC[] = {
+  {P0_23, ADC0_0, 1},
+  {P0_24, ADC0_1, 1},
+  {P0_25, ADC0_2, 1},
+  {P0_26, ADC0_3, 1},
+  {P1_30, ADC0_4, 3},
+  {P1_31, ADC0_5, 3},
+  {P0_2,  ADC0_7, 2},
+  {P0_3,  ADC0_6, 2},
+  {NC,    NC,     0}
+};
 
 uint8_t ADCDMA::dmaChannelNum = 0;
+bool ADCDMA::burstEn = false;
 
 
 /**
@@ -12,7 +23,6 @@ ADCDMA::ADCDMA(void)
 {
   isInit = false;
   ADC_int_done = true;
-  burstEn = false;
 
   BurstCounter = 0;
   overrun_count = 0;
@@ -22,9 +32,6 @@ ADCDMA::ADCDMA(void)
   // Clear out a section of memory for storing the ADC readings
   memset(adc_buf, 0, sizeof(adc_buf));
   memset(dmaTransferComplete, 0, sizeof(dmaTransferComplete));
-
-  if (Init(ADC_CLK))
-    LOG(INF1, "ADC using DMA setup complete.");
 }
 
 
@@ -33,7 +40,7 @@ ADCDMA::ADCDMA(void)
  */
 ADCDMA::~ADCDMA(void)
 {
-  if (shutdown())
+  if (ADC_powerdown())
     LOG(INF3, "ADC DMA killed. All ADC interrupts removed.");
 }
 
@@ -176,12 +183,13 @@ bool ADCDMA::InterruptTest(void)
 /**
  * [ADCDMA::DMA_IRQHandler description]
  */
+/*
 void ADCDMA::DMA_IRQHandler(void)
 {
   // if (Chip_DMA_Interrupt(LPC_GPDMA, ADCDMA::dmaChannelNum) == SUCCESS) {
   // channelTC++;
   // } else {
-  /* Process error here */
+  // Process error here
 
   // turn off burst and disable
   if (0) {
@@ -192,73 +200,60 @@ void ADCDMA::DMA_IRQHandler(void)
   LOG(SEVERE, "Unable to successfully configure the DMA for use with the ADC pins.");
   // }
 }
+*/
 
 
 /**
- * [ADCDMA::Shutdown description]
- * @return  [description]
+ * [ADC_IRQHandler description]
  */
-bool ADCDMA::shutdown(void)
-{
-  NVIC_DisableIRQ(_LPC_ADC_IRQ);
-  ADC_burst_off();
-  ADC_stop();
-  isInit = false;
-
-  // Successfully cleaned everything up
-  return true;
-}
-
-
-/**
- * [ADC_IRQHandler  description]
- */
-void ADCDMA::ADC_IRQHandler (void)
+/*
+extern "C" void ADC_IRQHandler(void)
 {
   // uint32_t dummy;
   uint32_t regVal;
 
   // Reading the ADC will clear the interrupt
-  regVal = ((_LPC_ADC_ID->ADSTAT) >> 8) & 0x7F;
+  regVal = ((_LPC_ADC_ID->ADSTAT) >> 8) & 0xFF;
 
   // check OVERRUN error first
   if (regVal) {
+
+  }
+
+  /*
     overrun_count++;
 
     for (int i = 0; i < ADC_NUM_CHANNELS; i++) {
       uint8_t chan_overrun = (regVal >> i);
 
-      /* if overrun, just read ADDR to clear */
-      /* regVal variable has been reused. */
-      if (chan_overrun)
-        uint32_t dummy = _LPC_ADC_ID->ADDR0 + i;
-    }
+       //if overrun, just read ADDR to clear
+  // regVal variable has been reused.
+  //if (chan_overrun)
+  uint32_t dummy = _LPC_ADC_ID->ADDR0 + i;
+  }
 
-    ADC_stop();
-    ADC_burst_off();
-    ADC_int_done = 1;
+  ADC_stop();
+  ADC_burst_off();
+  ADC_int_done = 1;
   }
 
   for (int i = 0; i < ADC_NUM_CHANNELS; i++)
-    if (regVal & _BV(i))
-      adc_buf[i][0] = ADC_GET_READING(_LPC_ADC_ID->ADDR0 + i);
+  if (regVal &_BV(i))
+    adc_buf[i][0] = ADC_GET_READING(_LPC_ADC_ID->ADDR0 + i);
 
-#if ADC_BURST_MODE
-  BurstCounter++;
+
+  // BurstCounter++;
   channel_flag |= (regVal & 0xFF);
 
-  if ((channel_flag & 0xFF) == 0xFF) {
-    ADC_burst_off();
-    channel_flag = 0;
-    ADCIntDone = 1;
+  if ((channel_flag & 0xFF) == 0xFF)
+  {
+  ADC_burst_off();
+  channel_flag = 0;
+  ADCIntDone = 1;
   }
 
-#else
-// _LPC_ADC_ID->ADCR &= ~(0x7 << 24);  /* stop ADC now */
-  ADC_stop();
-  ADCIntDone = 1;
-#endif
 }
+*/
 
 
 /**
@@ -272,83 +267,88 @@ uint8_t ADCDMA::Offset(void)
 
 
 /**
- * [ADCDMA::ADCInit description]
- * @param ADC_Clk [description]
+ * [ADCDMA::AddChannel description]
+ * @param pin [description]
  */
-bool ADCDMA::Init(uint32_t ADC_Clk)
+void ADCDMA::AddChannel(PinName pin)
 {
-  uint32_t pclkdiv, pclk;
+  adc_chan.push_back(pin);
+}
+
+
+bool ADCDMA::Start(void)
+{
+  return init_channels();
+}
+
+
+/**
+ * [ADCDMA::init_channels description]
+ * @return  [description]
+ */
+bool ADCDMA::init_channels(void)
+{
+  // analogin_t *obj;
+
+  // return FALSE if no channels (pins) have been added yet
+  if (adc_chan.empty())
+    return false;
+
+  // THIS BREAKS THINGS!!
+  // Check for valid ADC pins
+  /*
+  for (std::vector<PinName>::iterator pin = adc_chan.begin(); pin != adc_chan.end(); ++pin) {
+    obj->adc = (ADCName)pinmap_peripheral(*pin, PinMap_ADC);
+    MBED_ASSERT(obj->adc != (ADCName)NC);
+  }
+  */
+
+  // Clear out the memory where the values are going
+  // memset(adc_buf, 0, sizeof(adc_buf));
+
+  // ensure power is turned on for the ADC
+  LPC_SC->PCONP |= (1 << 12);
+
+  // set PCLK of ADC to /1
+  LPC_SC->PCLKSEL0 &= ~(0x3 << 24);
+  LPC_SC->PCLKSEL0 |= (0x1 << 24);
+  uint32_t PCLK = SystemCoreClock;
+
+  // calculate minimum clock divider
+  //  clkdiv = divider - 1
+  uint32_t MAX_ADC_CLK = 13000000;
+  uint32_t clkdiv = div_round_up(PCLK, MAX_ADC_CLK) - 1;
 
   // Must disable the NVIC ADC interrupt for DMA use.
   NVIC_DisableIRQ(_LPC_ADC_IRQ);
 
-  // Clear out the memory where the values are going
-  memset(adc_buf, 0, sizeof(adc_buf));
-
-  // Enable CLOCK for ADC controller
-  LPC_SC->PCONP |= (1 << 12);
-
-
-  // all the related pins are set to ADC inputs, AD0.0~7
-  LPC_PINCON->PINSEL0 &= ~0x000000F0;   // P0.2~3, A0.6~7, function 10
-  LPC_PINCON->PINSEL0 |= 0x000000A0;
-  LPC_PINCON->PINSEL1 &= ~0x003FC000;   // P0.23~26, A0.0~3, function 01
-  LPC_PINCON->PINSEL1 |= 0x00154000;
-  LPC_PINCON->PINSEL3 |= 0xF0000000;    // P1.30~31, A0.4~5, function 11
-
-  /* No pull-up no pull-down (function 10) on these ADC pins. */
-  LPC_PINCON->PINMODE0 &= ~0x000000F0;
-  LPC_PINCON->PINMODE0 |= 0x000000A0;
-  LPC_PINCON->PINMODE1 &= ~0x003FC000;
-  LPC_PINCON->PINMODE1 |= 0x002A8000;
-  LPC_PINCON->PINMODE3 &= ~0xF0000000;
-  LPC_PINCON->PINMODE3 |= 0xA0000000;
-
-  /* By default, the PCLKSELx value is zero, thus, the PCLK for
-  all the peripherals is 1/4 of the SystemFrequency. */
-  /* Bit 24~25 is for ADC */
-  pclkdiv = (LPC_SC->PCLKSEL0 >> 24) & 0x03;
-
-  switch (pclkdiv) {
-  case 0x00:
-  default:
-    pclk = SystemFrequency / 4;
-    break;
-
-  case 0x01:
-    pclk = SystemFrequency;
-    break;
-
-  case 0x02:
-    pclk = SystemFrequency / 2;
-    break;
-
-  case 0x03:
-    pclk = SystemFrequency / 8;
-    break;
-  }
-
-  _LPC_ADC_ID->ADCR = ( 0x01 << 0 ) |  // SEL=1,select channel 0~7 on ADC0
-                      ( ( pclk  / ADC_Clk - 1 ) << 8 ) |  // CLKDIV = Fpclk / ADC_Clk - 1
-                      ( 0 << 17 ) |       // CLKS = 0, 11 clocks/10 bits
-                      ( 0 << 24 ) |       // START = 0 A/D conversion stops
-                      ( 0 << 27 );        // EDGE = 0 (CAP/MAT singal falling,trigger A/D conversion)
-
-  // Only allow the channels we want to read access to trigger the correct interrupt signal
-  _LPC_ADC_ID->ADINTEN = ( 1 << 8 ) |
-                         ( 1 << 7 ) |
-                         ( 1 << 6 ) |
-                         ( 1 << 5 ) |
-                         ( 1 << 4 ) |
-                         ( 1 << 3 ) |
-                         ( 1 << 2 ) |
-                         ( 1 << 1 ) |
-                         ( 1 << 0 ) ;
+  // Set the generic software-controlled ADC settings
+  LPC_ADC->ADCR = (0 << 0)        // SEL: 0 = no channels selected initially
+                  | (clkdiv << 8) // CLKDIV: PCLK max ~= 25MHz, /25 to give safe 1MHz at fastest
+                  | (0 << 17)     // CLKS: not applicable
+                  | (0 << 24)     // START: 0 = no start
+                  | (0 << 27);    // EDGE: not applicable
 
   ADC_burst_on();
   ADC_start();
+
+  // Configure the pins for reading voltages (ie. no pull-ups/pull-downs)
+  for (std::vector<PinName>::iterator pin = adc_chan.begin(); pin != adc_chan.end(); ++pin)
+    pinmap_pinout(*pin, PinMap_ADC);
+
+  // Only allow the channels we want to read access to trigger the correct interrupt signal
+  _LPC_ADC_ID->ADINTEN = ( 0 << 8 ) | // When set to 0, only the individual ADC channels enabled here will generate an interrupt
+                         ( 0 << 7 ) | // ADC0.7 - no mbed breakout pin (P0.2)
+                         ( 0 << 6 ) | // ADC0.6 - no mbed breakout pin (P0.3)
+                         ( 0 << 5 ) | // ADC0.5 - mbed p20
+                         ( 0 << 4 ) | // ADC0.4 - mbed p19
+                         ( 0 << 3 ) | // ADC0.3 - mbed p18
+                         ( 1 << 2 ) | // ADC0.2 - mbed p17
+                         ( 1 << 1 ) | // ADC0.1 - mbed p16
+                         ( 1 << 0 ) ; // ADC0.0 - mbed p15
+
   isInit = true;
-//   NVIC_EnableIRQ(_LPC_ADC_IRQ);
+  LOG(INF2, "ADC setup (using DMA) complete.");
 
   return true;
 }
@@ -365,12 +365,12 @@ void ADCDMA::ADC_start(void)
 
 
 /**
- * [ADCDMA::ADC_stop Stop all ADC operations.]
+ * [ADCDMA::ADC_stop description]
  */
 void ADCDMA::ADC_stop(void)
 {
-  // place in power-down mode
-  _LPC_ADC_ID->ADCR &= ~( 1 << 21 );
+  // Stop conversion
+  LPC_ADC->ADCR &= ~(1 << 24);
 }
 
 
@@ -401,11 +401,12 @@ void ADCDMA::ADC_burst_off(void)
 
 
 /**
- * [ADCDMA::deselect_channels description]
+ * [ADCDMA::enable_channel description]
+ * @param channel [description]
  */
-void ADCDMA::deselect_channels(void)
+void ADCDMA::enable_channel(uint8_t channel)
 {
-  _LPC_ADC_ID->ADCR &= ~(0xFF);
+  _LPC_ADC_ID->ADCR |= (1 << 24) | (1 << channel);
 }
 
 
@@ -416,12 +417,27 @@ void ADCDMA::enable_channels(void)
 
 
 /**
- * [ADCDMA::enable_channel description]
- * @param channel [description]
+ * [ADCDMA::deselect_channels description]
  */
-void ADCDMA::enable_channel(uint8_t channel)
+void ADCDMA::deselect_channels(void)
 {
-  _LPC_ADC_ID->ADCR |= (1 << 24) | (1 << channel);
+  _LPC_ADC_ID->ADCR &= ~(0xFF);
+}
+
+
+/**
+ * [ADCDMA::ADC_stop Stop all ADC operations.]
+ */
+bool ADCDMA::ADC_powerdown(void)
+{
+  // place in power-down mode
+  _LPC_ADC_ID->ADCR &= ~( 1 << 21 );
+  ADC_burst_off();
+
+  NVIC_DisableIRQ(_LPC_ADC_IRQ);
+  isInit = false;
+
+  return true;
 }
 
 
@@ -432,27 +448,31 @@ void ADCDMA::enable_channel(uint8_t channel)
  */
 uint32_t ADCDMA::Read(uint8_t channel)
 {
-  uint32_t regVal;
+  if (isInit == false)
+    return 0xFFFFFFFF;
+
+  uint32_t data;
 
   // channel number is 0 through 7
-  if (channel >= ADC_NUM_CHANNELS)
-    channel = 0;     // reset channel number to 0
+  if (channel > adc_chan.size())
+    return 0xEEEEEEEE;
 
   deselect_channels();
   enable_channel(channel);
 
   do {
     // read result of A/D conversion
-    regVal = ADC_GET_READING(_LPC_ADC_ID->ADDR0 + channel);
-  } while (regVal & ADC_DONE);
+    data = ADC_GET_READING(_LPC_ADC_ID->ADGDR);
+  } while (data & ADC_DONE);
 
-  // _LPC_ADC_ID->ADCR &= 0xF8FFFFFF;    // stop ADC now
   ADC_stop();
 
-  if (regVal & ADC_OVERRUN) // save data when it's not overrun, otherwise, return zero
-    return 0xFFFFFFFF;
+  LOG(INF2, "ADC reading from channel %u: %u", channel, data);
 
-  return ADC_GET_READING(regVal);
+  if (data & ADC_OVERRUN) // save data when it's not overrun, otherwise, return zero
+    return 0xDDDDDDDD;
+
+  return data;
 }
 
 
@@ -461,13 +481,15 @@ uint32_t ADCDMA::Read(uint8_t channel)
  */
 void ADCDMA::BurstRead(void)
 {
+  if (isInit == false)
+    return;
+
   // Start bits need to be zero before BURST mode can be set.
-  if (_LPC_ADC_ID->ADCR & (0x7 << 24))
-    _LPC_ADC_ID->ADCR &= ~(0x7 << 24);
+  _LPC_ADC_ID->ADCR &= ~(0x07 << 24);
 
+  // Read only channels we care about, turn others off.
   deselect_channels();
+  _LPC_ADC_ID->ADCR |= 0x03;
 
-  // Read all channels, 0 through 7.
-  _LPC_ADC_ID->ADCR |= 0xFF;
   ADC_burst_on();
 }

@@ -90,14 +90,14 @@ static const vector<command_t> commands = {
 		{"ping"},
 		true,
 		cmd_ping,
-		"Check console responsiveness. Ping --- Pong.",
+		"Check console responsiveness.",
 		"ping"
 	},
 	{
 		{"ls"},
 		false,
 		cmd_ls,
-		"List contents of current directory\r\n  Bugs:\t\tsometimes displays train animations.",
+		"List contents of current directory",//\r\n",  Bugs:\t\tsometimes displays train animations.",
 		"ls [folder/device]"
 	},
 	{
@@ -115,25 +115,25 @@ static const vector<command_t> commands = {
 		"reset | reboot | restart"
 	},
 	{
-		{"disconnect", "disconnect-interface", "unconnect, rmint"},
+		{"rmdev", "disconnect-interface", "unconnect, rmint"},
 		false,
 		cmd_disconnectInterface,
 		"Disconnects the mbed interface chip from the microcontroller.",
-		"disconnect | disconnect-interface | unconnect | rmint"
+		"rmdev | disconnect-interface | unconnect | rmint"
 	},
 	{
-		{"checkconn", "isconn"},
+		{"isconn", "checkconn"},
 		false,
 		cmd_checkInterfaceConn,
-		"Checks the connection with a debugging unit. ONLY hardware reset works after disconnecting.",
-		"checkconn | isconn"
+		"Checks the connection with a debugging unit.",
+		"isconn | checkconn"
 	},
 	{
 		{"baud", "baudrate"},
 		false,
 		cmd_setBaudrate,
 		"Set the serial link's baudrate.",
-		"baud | baudrate"
+		"baud [-r <rate>]"
 	},
 	{
 		{"su", "user"},
@@ -148,6 +148,13 @@ static const vector<command_t> commands = {
 		cmd_switchHostname,
 		"Set the system hostname.",
 		"host | hostname"
+	},
+	{
+		{"loglvl", "loglevel"},
+		false,
+		cmd_logLevel,
+		"Change the active logging output level.",
+		"loglvl | loglevel"
 	}
 };
 
@@ -233,6 +240,9 @@ void cmd_alias(const vector<string> &args)
 */
 void cmd_clear(const vector<string> &args)
 {
+	if (args.empty() == false)
+		return;
+
 	Console::Flush();
 	printf(ENABLE_SCROLL_SEQ.c_str());
 	printf(CLEAR_SCREEN_SEQ.c_str());
@@ -260,6 +270,9 @@ void cmd_echo(const vector<string> &args)
  */
 void cmd_exitSys(const vector<string> &args)
 {
+	if (args.empty() == false)
+		return;
+
 	Console::RequestSystemStop();
 }
 
@@ -269,27 +282,30 @@ void cmd_exitSys(const vector<string> &args)
  */
 void cmd_help(const vector<string> &args)
 {
-	printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
+	// printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
 	Console::Flush();
 
 	// Prints all commands, with details
 	if (args.size() == 0) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
-			printf("%s:\r\n",
+			printf("\t%s:\t",
 			       commands[i].aliases[0].c_str());
 			Console::Flush();
-			printf("  Description:\t%s\r\n",
+			printf("%s\r\n",
 			       commands[i].description.c_str());
+			/*
 			Console::Flush();
 			printf("  Usage:\t%s\r\n",
 			       commands[i].usage.c_str());
 			Console::Flush();
+
 			printf("  Iterative:\t%s\r\n\r\n",
 			       commands[i].isIterative ? "YES" : "NO");
+			       */
 			Console::Flush();
 		}
 
-		printf("Screen Overflow? Try \"help <command>\"\r\n\r\n");
+		// printf("Screen Overflow? Try \"help <command>\"\r\n\r\n");
 		Console::Flush();
 	}
 	//prints all commands
@@ -352,10 +368,10 @@ void cmd_help(const vector<string> &args)
  */
 void cmd_ping(const vector<string> &args)
 {
-	//char time_buf[25];
-	time_t sys_time = time(NULL);
-	//strftime(time_buf, 25, "%c", localtime(&sys_time));
+	if (args.empty() == false)
+		return;
 
+	time_t sys_time = time(NULL);
 	printf("reply: %d\r\n", sys_time);
 	Console::Flush();
 }
@@ -366,7 +382,13 @@ void cmd_ping(const vector<string> &args)
  */
 void cmd_resetMbed(const vector<string> &args)
 {
+	std::string command = "reset";
+
+	if (args.empty() == false)
+		return;
+
 	Console::Flush();
+	printf("rebooting...\r\n");
 	mbed_interface_reset();
 	Console::Flush();
 }
@@ -379,6 +401,9 @@ void cmd_ls(const vector<string> &args)
 {
 	DIR *d;
 	struct dirent *p;
+
+	if (args.empty() == false)
+		return;
 
 	if (args.size() == 0) {
 		d = opendir("/local");
@@ -406,6 +431,9 @@ void cmd_ls(const vector<string> &args)
  */
 void cmd_info(const vector<string> &args)
 {
+	if (args.empty() == false)
+		return;
+
 	DS2411_t id;
 
 	printf("Commit Hash:\t%s\r\nCommit Date:\t%s\r\nCommit Author:\t%s\r\n",
@@ -416,7 +444,8 @@ void cmd_info(const vector<string> &args)
 
 	printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
 
-	ds2411_read_id(RJ_BASE_ID, &id, true);
+	if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
+		printf("Base ID:\tN/A\r\n");
 
 	// Prints out a serial number, taken from the mbed forms
 	// https://developer.mbed.org/forum/helloworld/topic/2048/
@@ -457,9 +486,6 @@ void cmd_info(const vector<string> &args)
 
 	printf("%02X\r\n", buf[5]);
 	Console::Flush();
-
-	LOG(OK, "logging test:\t%02X", (uint8_t)buf[1]);
-	Console::Flush();
 }
 
 
@@ -470,6 +496,9 @@ void cmd_info(const vector<string> &args)
  */
 void cmd_disconnectInterface(const vector<string> &args)
 {
+	if (args.empty() == false)
+		return;
+
 	Console::Flush();
 	mbed_interface_disconnect();
 }
@@ -477,15 +506,22 @@ void cmd_disconnectInterface(const vector<string> &args)
 
 void cmd_checkInterfaceConn(const vector<string> &args)
 {
-	printf("mbed interface connected:\t%s", mbed_interface_connected() ? "YES" : "NO");
+	if (args.empty() == false)
+		return;
+
+	printf("mbed interface connected:\t%s\r\n", mbed_interface_connected() ? "YES" : "NO");
 	Console::Flush();
 }
 
 
 void cmd_setBaudrate(const vector<string> &args)
 {
-	if (args.empty() || args.size() > 1)
+	if (args.size() > 1)
 		return;
+
+	if(args.empty()){
+		printf("Not implemented yet!\r\n");
+	}
 
 	std::string str_baud = args.at(0);
 	int new_rate = atoi(str_baud.c_str());
@@ -518,6 +554,25 @@ void cmd_switchHostname(const vector<string> &args)
 		return;
 
 	Console::CONSOLE_HOSTNAME = args.at(0);
+}
+
+void cmd_logLevel(const vector<string> &args)
+{
+	if (args.size() > 1)
+		return;
+
+	if (args.empty()) {
+		printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+		return;
+	}
+
+	if (args.at(0) == "+") {
+		rjLogLevel++;
+	} else if (args.at(0) == "-") {
+		rjLogLevel--;
+	}
+
+	printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 }
 
 /**

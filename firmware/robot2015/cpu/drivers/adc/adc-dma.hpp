@@ -2,6 +2,7 @@
 
 #include "robot.hpp"
 #include "dma.hpp"
+#include "pinmap.h"
 
 
 // Defines
@@ -30,13 +31,17 @@
 #define _BV(_x_) (1UL << (_x_))
 #endif
 
+#define ANALOGIN_MEDIAN_FILTER      1
 
-// Forward declarations outside class
-void ADC_start(void);
-void ADC_stop(void);
-void ADC_burst_on(void);
-void ADC_burst_off(void);
+#define ADC_10BIT_RANGE             0x3FF
+#define ADC_12BIT_RANGE             0xFFF
 
+static inline int div_round_up(int x, int y)
+{
+  return (x + (y - 1)) / y;
+}
+
+#define ADC_RANGE    ADC_12BIT_RANGE
 
 class ADCDMA
 {
@@ -44,36 +49,41 @@ class ADCDMA
   ADCDMA(void);
   ~ADCDMA(void);
 
-  bool Check(void);
+  bool Start(void);
+  void AddChannel(PinName);
   bool Poll(void);
-  bool Init(uint32_t);
   uint32_t Read(uint8_t);
   void BurstRead(void);
-
-  void ADC_start(void);
-  void ADC_stop(void);
-  void ADC_burst_on(void);
-  void ADC_burst_off(void);
   uint8_t Offset(void);
+  static void ADC_burst_on(void);
+  static void ADC_burst_off(void);
+
+  static bool burstEn;
 
  protected:
   bool InterruptTest(void);
   void enable_channel(uint8_t);
   void enable_channels(void);
+  void deselect_channels(void);
+  bool init_channels(void);
+
+
   static uint8_t dmaChannelNum;
   uint32_t adc_buf[ADC_NUM_CHANNELS][ADC_SAMPLES_PER_CHAN];
+  analogin_t _adc;
 
  private:
   bool isInit;
   bool dmaTransferComplete[2];
   bool ADC_Interrupt_Done_Flag;
   bool ADC_int_done;
-  bool burstEn;
 
-  bool shutdown(void);
-  void deselect_channels(void);
-  void DMA_IRQHandler(void);
+  std::vector<PinName> adc_chan;
+  void ADC_start(void);
+  void ADC_stop(void);
+  bool ADC_powerdown(void);
   void ADC_IRQHandler(void);
+
 
   volatile uint32_t ADCIntDone;
   volatile uint32_t BurstCounter;
