@@ -495,15 +495,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("end", &Geometry2d::Arc::end)
 	;
 
-	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
-		.def("intersects_line", &Arc_intersects_line)
-		.def("intersects_segment", &Arc_intersects_segment)
-		.def("center", &Geometry2d::Arc::center)
-		.def("radius", &Geometry2d::Arc::radius)
-		.def("start", &Geometry2d::Arc::start)
-		.def("end", &Geometry2d::Arc::end)
-	;
-
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
 		.def("clear", &Geometry2d::CompositeShape::clear)
 		.def("is_empty", &Geometry2d::CompositeShape::empty)
