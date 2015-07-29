@@ -1,8 +1,7 @@
 #pragma once
 
 
-#include "mbed.h"
-#include "../utils/robot_types.hpp"
+#include "robot.hpp"
 
 
 class FPGA

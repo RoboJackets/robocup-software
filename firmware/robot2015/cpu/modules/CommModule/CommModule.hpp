@@ -2,7 +2,7 @@
 
 #include "mbed.h"
 #include "cmsis_os.h"
-#include "RTP.hpp"
+#include "robot_types.hpp"
 #include "ThreadHelper.hpp"
 #include "MailHelper.hpp"
 #include "logger.hpp"
@@ -69,8 +69,6 @@ class CommModule
   protected:
     // NOP function for keeping a oommunication link active
     void nopFunc(void);
-
-
 
     // Memory Queue IDs
     osMailQId   _txQueue;

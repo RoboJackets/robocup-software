@@ -34,7 +34,7 @@ void imAlive(void)
 void rx_callback(RTP_t *p)
 {
 	if (p->payload_size > 0)
-		log(OK, "main.cpp", "%u byte packet received!", p->payload_size);
+		LOG(OK, "%u byte packet received!", p->payload_size);
 }
 
 
@@ -44,15 +44,15 @@ void rx_callback(RTP_t *p)
  */
 int main(void)
 {
-	led4 = false;
+	is_locked = true;
 
 	pcserial.baud(9600);
 
-	//setISRPriorities();
+	setISRPriorities();
 
 	lifeLight.attach(&imAlive, 0.25);
 
-	isLogging = true;
+	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = OK;
 
 	Thread taskConsole(initConsoleRoutine);
@@ -102,10 +102,10 @@ int main(void)
 			for (int i = 0; i < 25; i++)
 				dummy_packet.payload[i] = 0x24;
 
-			log(OK, "MAIN", "%u\r\n", comm.NumRXPackets());
+			LOG(OK, "%u\r\n", comm.NumRXPackets());
 
 			std::string current_state = decode_marcstate(radio_900.mode());
-			log(OK, "MAIN", "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
+			LOG(OK, "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
 
 			// comm.send(dummy_packet);	// As of now, the CC1201 should always be in RX and calibrated if necessary exiting this.
 
@@ -122,8 +122,9 @@ int main(void)
 
 	uint32_t adc_vals[10] = { 0 };
 
-	dma.setSrc(NULL, (uint32_t *)LPC_ADC);
-	dma.setDst(NULL, adc_vals);
+	// dma.setSrc(NULL, (uint32_t *)LPC_ADC);
+	is_locked = false;
+	// dma.setDst(NULL, adc_vals);
 	ledOne = false;
 
 	//dma.start();

@@ -24,15 +24,23 @@ volatile uint8_t rjLogLevel;
  * @param source   [The source of the message.]
  * @param format   [The string format for displaying the log message.]
  */
-void log(uint8_t logLevel, const char *source, const char *format, ...)
+void log(uint8_t logLevel, const char *source, const char *func, const char *format, ...)
 {
-	if (isLogging && logLevel <= rjLogLevel) {
-		va_list args;
-		va_start(args, format);
-		printf("[%s][%s] ", LOG_LEVEL_STRING[logLevel], source);
-		vprintf(format, args);
-		printf("\r\n");
-		fflush(stdout);
-		va_end(args);
-	}
+
+    if (isLogging && logLevel <= rjLogLevel) {
+
+        va_list args;
+        //char time_buf[25];
+        time_t sys_time = time(NULL);
+
+        //strftime(time_buf, 25, "%c", localtime(&sys_time));
+        va_start(args, format);
+
+        printf("[%s] %s [%s] <%s>\r\n", LOG_LEVEL_STRING[logLevel], ctime(&sys_time), source, func);
+
+        vprintf(format, args);
+        printf("\r\n");
+        fflush(stdout);
+        va_end(args);
+    }
 }

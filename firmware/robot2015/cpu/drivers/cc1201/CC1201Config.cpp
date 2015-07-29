@@ -3,7 +3,7 @@
 
 #include "CC1201Radio.hpp"
 
-using namespace std;
+// using namespace std;
 
 /**
  * default constructor
@@ -689,12 +689,12 @@ bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
 				string valStr((const char*) valCStr, 2);
 				string expStr((const char*) expCStr, 2);
 				string errorStr = ("ExtReg: " + regStr + ", Val: " + valStr + ", Exp: " + expStr);
-				log(OK, "CHECK", "%s", errorStr.c_str());
+				LOG(OK, "%s", errorStr.c_str());
 				//push the error onto the queue for processing later
 				//configurationFaults.push(errorStr);
 			}
 
-			//log(OK, "CHECK", "Addr:\t%02X\t\t\tExpected:\t%02X\t\t\tValue:\t%02X", extReg, expected, device->readReg(extReg, EXT_FLAG_ON));
+			//LOG(OK, "Addr:\t%02X\t\t\tExpected:\t%02X\t\t\tValue:\t%02X", extReg, expected, device->readReg(extReg, EXT_FLAG_ON));
 
 		}
     }

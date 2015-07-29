@@ -9,7 +9,7 @@
 /**
  * Max number of command aliases.
  */
-static const uint8_t MAX_ALIASES = 4;
+static const uint8_t MAX_ALIASES = 5;
 
 
 /**
@@ -73,3 +73,8 @@ void cmd_ping(const std::vector<std::string> &args);
 void cmd_ls(const std::vector<std::string> &args);
 void cmd_info(const std::vector<std::string> &args);
 void cmd_resetMbed(const std::vector<std::string> &args);
+void cmd_disconnectInterface(const std::vector<std::string> &args);
+void cmd_checkInterfaceConn(const std::vector<std::string> &args);
+void cmd_setBaudrate(const std::vector<std::string> &args);
+void cmd_switchHostname(const std::vector<std::string> &args);
+void cmd_switchUser(const std::vector<std::string> &args);

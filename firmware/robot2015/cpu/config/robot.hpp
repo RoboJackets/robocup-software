@@ -1,13 +1,13 @@
 #pragma once
 
-#define COMPETITION_DEPLOY 0
+#define COMPETITION_DEPLOY      false
 
 #define ARM_MATH_CM3
 
 // ** ============================= ** DEBUGGING OPTIONS ** ============================= **
 
 // Set the debugging level for compiling. Valid levels include `0`, `1`, `2`, `3`, & `4`.
-#define RJ_DEBUG_LEVEL  0
+#define RJ_LOGGING_EN           true
 
 /*
     This will enable/disable a `Log File` that is created at the mbed's startup. The file is written
@@ -15,21 +15,21 @@
     Note that you may have to disconnect and reconnect the mbed's USB connection for the file to show up
     if it is plugged into a computer during the startup process.
 */
-#define RJ_BOOT_LOG             0
+#define RJ_BOOT_LOG             false
 
 // This will check the mbed's firmware for the most known up-to-date version if enabled
-#define RJ_CHECK_FIRMWARE       0
+#define RJ_CHECK_FIRMWARE       false
 
 
 // ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES ** ============================= **
 
 // Enable/Disable the Radio Transceiver (915MHz band)
-#define RJ_RADIO_EN             1
+#define RJ_RADIO_EN             true
 #define RJ_CC1201
 //#define RJ_CC1101
 
 // Enable/Disable the Accel/Gyro (MPU-6050)
-#define RJ_MPU_EN               1
+#define RJ_MPU_EN               true
 
 // The `Watchdog Timer` timeout value. The mbed will reset if the timer is not reset after the number of seconds defined here
 #define RJ_WATCHDOG_TIMER_VALUE 2   // seconds
@@ -118,7 +118,6 @@
 // #include "dma.hpp"
 // #include "speaker-dma.hpp"
 #include "console.hpp"
-//#include "commands.hpp"
 #include "logger.hpp"
 #include "CC1201Radio.hpp"
 #include "DS2411.hpp"

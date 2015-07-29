@@ -15,7 +15,7 @@ DMA::DMA(void)
   isInit = false;
 
   if (Init())
-    log(INF1, "DMA", "DMA setup successfully completed!");
+    LOG(INF1, "DMA setup successfully completed!");
 }
 
 
@@ -219,7 +219,7 @@ bool DMA::Init(void)
   clear_err_flags();
 
   chan = find_channel();
-  log(OK, "DMA", "DMA Channel Addr:\t%u", chan);
+  LOG(OK, "DMA Channel Addr:\t%u", chan);
 
   if (chan == 0)
     return false;

@@ -3,8 +3,9 @@
 #include "mbed.h"
 #include "cmsis_os.h"
 #include "CommLink.hpp"
-#include "RTP.hpp"
+#include "robot_types.hpp"
 #include "CC1101-Defines.hpp"
+#include "logger.hpp"
 
 #define CCXXX1_DEBUG_MODE 0
 

@@ -11,18 +11,18 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_
     CommLink(mosi, miso, sck, cs, int_pin)
 {
     // [X] - 1 - Setup the chip and only signal the base class if device is tested and confirmed to be electrically connected
-    if(powerUp()) {
-        
+    if (powerUp()) {
+
         // [X] - 2a - Don't completely initialize if device fails to successfully start
         // =================
-        log(SEVERE, "CC1101", "CC1101 Failure");
+        LOG(SEVERE, "CC1101 Failure");
     } else {
 
         // [X] - 2 - Call the base class method for beginning full class operation with threads
         // =================
         CommLink::ready();
 
-        log(INF1, "CC1101", "CC1101 Ready!");
+        LOG(INF1, "CC1101 Ready!");
     }
 }
 
@@ -31,8 +31,10 @@ CC1101::~CC1101()
 {
     if (_spi)
         delete _spi;
+
     if (_cs)
         delete _cs;
+
     if (_int_in)
         delete _int_in;
 }
@@ -86,16 +88,16 @@ int32_t CC1101::selfTest(void)
 
         // [X] - 2 - Send message over serial port if version register is not what was expected
         // =================
-        log(SEVERE, "CC1101",
+        LOG(SEVERE, "CC1101",
             "FATAL ERROR\r\n"
-                "  Wrong version number returned from chip's 'VERSION' register (Addr: 0x%02X)\r\n"
-                "\r\n"
-                "  Expected: 0x%02X\r\n"
-                "  Found:    0x%02X\r\n"
-                "\r\n"
-                "  Troubleshooting Tips:\r\n"
-                "    - Check that the chip is fully connected with no soldering errors\r\n"
-                "    - Determine if chip is newer version & update firmware\r\n", CCXXX1_VERSION,
+            "  Wrong version number returned from chip's 'VERSION' register (Addr: 0x%02X)\r\n"
+            "\r\n"
+            "  Expected: 0x%02X\r\n"
+            "  Found:    0x%02X\r\n"
+            "\r\n"
+            "  Troubleshooting Tips:\r\n"
+            "    - Check that the chip is fully connected with no soldering errors\r\n"
+            "    - Determine if chip is newer version & update firmware\r\n", CCXXX1_VERSION,
             CCXXX1_EXPECTED_VERSION_NUMBER, _chip_version);
 
         return -1;  // negative numbers mean error occurred
@@ -128,9 +130,9 @@ void CC1101::set_init_vars(void)
     _pck_control.status_field_en = true;
 
     // Set the initial offset frequency estimate
-    log(INF1, "CC1101", "Configuring frequency offset estimate...");
+    LOG(INF1, "Configuring frequency offset estimate...");
     write_reg(CCXXX1_FSCTRL0, status(CCXXX1_FREQEST));
-    log(INF1, "CC1101", "Frequency offset estimate configured");
+    LOG(INF1, "Frequency offset estimate configured");
 
     // normal packet mode uses RX and TX buffers
     _pck_control.format_type = FORMAT_DEFAULT;
@@ -223,7 +225,7 @@ void CC1101::put_rf_settings()
 
 void CC1101::power_on_reset(void)
 {
-    log(INF1, "CC1101", "Beginning Power-on-Reset routine...");
+    LOG(INF1, "Beginning Power-on-Reset routine...");
 
     delete _spi;
 
@@ -247,7 +249,8 @@ void CC1101::power_on_reset(void)
 
     // pull CSn low & wait for the serial out line to go low
     *_cs = 0;
-    while(*SO);
+
+    while (*SO);
 
     // cleanup everything before the mbed's SPI library calls take back over
     delete SI;
@@ -261,7 +264,8 @@ void CC1101::power_on_reset(void)
     delete _spi;
     // wait for the SO line to go low again. Once low, reset is complete and CC1101 is in IDLE state
     DigitalIn *SO2 = new DigitalIn(_miso_pin);
-    while(*SO2);
+
+    while (*SO2);
 
     // make sure chip is deselected before returning
     *_cs = 1;
@@ -270,7 +274,7 @@ void CC1101::power_on_reset(void)
     delete SO2;
     setup_spi();
 
-    log(INF1, "CC1101", "CC1101 Power-on-Reset complete");
+    LOG(INF1, "CC1101 Power-on-Reset complete");
 }
 
 // 2nd ighest level of initilization routines behind CC1101::setup();
@@ -291,9 +295,9 @@ void CC1101::init(void)
 
     // Set the initial offset frequency estimate
 
-    log(INF1, "CC1101", "Configuring frequency offset estimate...");
+    LOG(INF1, "Configuring frequency offset estimate...");
     write_reg(CCXXX1_FSCTRL0, status(CCXXX1_FREQEST));
-    log(INF1, "CC1101", "Frequency offset estimate configured");
+    LOG(INF1, "Frequency offset estimate configured");
 
     calibrate();
 
@@ -319,7 +323,7 @@ int32_t CC1101::sendData(uint8_t *buf, uint8_t size)
     // =================
     // buf[0] = size;
 
-    log(INF1, "CC1101", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
+    LOG(INF1, "PACKET TRANSMITTED\r\n  Bytes: %u", size);
 
     // [X] - 3 - Send the data to the CC1101. Increment the size value by 1 before doing so to account for the buffer's inserted value
     // =================
@@ -352,7 +356,7 @@ int32_t CC1101::sendData(uint8_t *buf, uint8_t size)
 
 #if CCXXX1_DEBUG_MODE > 1
     t1.stop();
-    log(INF1, "CC1101", "Time:  %02.4f ms", (t1.read() - ti)*1000);
+    LOG(INF1, "Time:  %02.4f ms", (t1.read() - ti) * 1000);
 #endif
 
     // [] - 6 - Return any error codes if necessary.
@@ -399,13 +403,13 @@ int32_t CC1101::getData(uint8_t *buf, uint8_t *length)
             _lqi = status_bytes[1] & CCXXX1_RXFIFO_MASK; // MSB of LQI is the CRC_OK bit - The interrupt is only triggered if CRC is OK, so no need to check again.
 
 #if CCXXX1_DEBUG_MODE > 0
-            log(INF1, "CC1101", 
+            log(INF1, "CC1101",
                 "PACKET RECEIVED\r\n"
                 "  Bytes: %u\r\n"
                 "  RSSI: %ddBm\r\n"
                 "  LQI:  %u"
                 , *length, _rssi, _lqi
-            );
+               );
 #endif
 
             // [X] - 3.2c - Go back to the receiving state since CC1101 is configured for transitioning to IDLE on receiving a packet.
@@ -433,7 +437,7 @@ uint8_t CC1101::read_reg(uint8_t addr)
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    log(INF2, "CC1101", "== Single Register Read ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, x);
+    LOG(INF2, "== Single Register Read ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, x);
 #endif
     return x;
 }   // read_reg
@@ -442,13 +446,15 @@ void CC1101::read_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
     _spi->frequency(5000000);
     toggle_cs();
     _spi->write(addr | CCXXX1_READ_BURST);
+
     for (uint8_t i = 0; i < count; i++) {
         buffer[i] = _spi->write(0);
     }
+
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    log(INF1, "CC1101", "== Burst Register Read ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
+    LOG(INF1, "== Burst Register Read ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
 #endif
 }   // read_reg
 
@@ -464,7 +470,7 @@ void CC1101::write_reg(uint8_t addr, uint8_t value)
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    log(INF2, "CC1101", "== Single Register Write ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, value);
+    LOG(INF2, "== Single Register Write ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, value);
 #endif
 }   // write_reg
 void CC1101::write_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
@@ -472,13 +478,15 @@ void CC1101::write_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
     _spi->frequency(5000000);
     toggle_cs();
     _spi->write(addr | CCXXX1_WRITE_BURST);
+
     for (uint8_t i = 0; i < count; i++) {
         _spi->write(buffer[i]);
     }
+
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    log(INF2, "CC1101", "== Burst Register Write ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
+    LOG(INF2, "== Burst Register Write ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
 #endif
 }   // write_reg
 
@@ -498,7 +506,7 @@ uint8_t CC1101::strobe(uint8_t addr)
 void CC1101::calibrate(void)
 {
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Calibrating frequency synthesizer");
+    LOG(INF1, "Calibrating frequency synthesizer");
 #endif
 
     idle();
@@ -513,7 +521,7 @@ void CC1101::calibrate(void)
     rx_mode();
 
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Frequency synthesizer calibrated");
+    LOG(INF1, "Frequency synthesizer calibrated");
 #endif
 }
 
@@ -538,14 +546,14 @@ void CC1101::channel(uint16_t chan)
 {
     if ( chan != _channel ) {
 #if DEBUG_MODE > 0
-        log(INF1, "CC1101", "Updating channel from %02u to %02u", _channel, chan);
+        LOG(INF1, "Updating channel from %02u to %02u", _channel, chan);
 #endif
 
         _channel = chan;
         write_reg(CCXXX1_CHANNR, _channel);
 
 #if DEBUG_MODE > 0
-        log(INF1, "CC1101", "Channel updated: %02u", _channel);
+        LOG(INF1, "Channel updated: %02u", _channel);
 #endif
     }
 }
@@ -560,10 +568,11 @@ void CC1101::rssi(uint8_t rssi_val)
     int8_t temp;
 
     if (rssi_val & 0x80) {
-        temp = (rssi_val - 256)>>1;
+        temp = (rssi_val - 256) >> 1;
     } else {
-        temp = rssi_val>>1; // divide by 2
+        temp = rssi_val >> 1; // divide by 2
     }
+
     _rssi = temp - 74;
 }   // rssi
 
@@ -571,7 +580,7 @@ void CC1101::rssi(uint8_t rssi_val)
 void CC1101::flush_rx(void)
 {
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Clearing RX buffer...");
+    LOG(INF1, "Clearing RX buffer...");
 #endif
 
     // Make sure that the radio is in IDLE state before flushing the FIFO
@@ -584,7 +593,7 @@ void CC1101::flush_rx(void)
     rx_mode();
 
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "RX buffer cleared");
+    LOG(INF1, "RX buffer cleared");
 #endif
 }
 
@@ -592,7 +601,7 @@ void CC1101::flush_rx(void)
 void CC1101::flush_tx(void)
 {
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Clearing TX buffer...");
+    LOG(INF1, "Clearing TX buffer...");
 #endif
 
     // Make sure that the radio is in IDLE state before flushing the FIFO
@@ -605,7 +614,7 @@ void CC1101::flush_tx(void)
     rx_mode();
 
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "TX buffer cleared");
+    LOG(INF1, "TX buffer cleared");
 #endif
 }
 
@@ -613,13 +622,13 @@ void CC1101::flush_tx(void)
 void CC1101::rx_mode(void)
 {
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Sending RX_MODE strobe to CC1101");
+    LOG(INF1, "Sending RX_MODE strobe to CC1101");
 #endif
 
     strobe(CCXXX1_SRX);
 
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "RX_MODE strobe sent to CC1101");
+    LOG(INF1, "RX_MODE strobe sent to CC1101");
 #endif
 }
 
@@ -627,26 +636,26 @@ void CC1101::rx_mode(void)
 void CC1101::tx_mode(void)
 {
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Sending TX_MODE strobe to CC1101");
+    LOG(INF1, "Sending TX_MODE strobe to CC1101");
 #endif
 
     strobe(CCXXX1_STX);
 
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "TX_MODE strobe sent to CC1101");
+    LOG(INF1, "TX_MODE strobe sent to CC1101");
 #endif
 }
 
 void CC1101::idle(void)
 {
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Sending IDLE strobe to CC1101");
+    LOG(INF1, "Sending IDLE strobe to CC1101");
 #endif
 
     strobe(CCXXX1_SIDLE);
 
 #if DEBUG_MODE > 0
-    log(INF1, "CC1101", "IDLE strobe sent to CC1101");
+    LOG(INF1, "IDLE strobe sent to CC1101");
 #endif
 }
 
@@ -677,10 +686,10 @@ void CC1101::freq(uint32_t freq)
      */
 
     // this is split into 3 bytes that are written to 3 different registers on the CC1101
-    uint32_t reg_freq = freq/(CCXXX1_CRYSTAL_FREQUENCY>>16);
+    uint32_t reg_freq = freq / (CCXXX1_CRYSTAL_FREQUENCY >> 16);
 
-    rfSettings.FREQ2 = (reg_freq>>16) & 0xFF;   // high byte, bits 7..6 are always 0 for this register
-    rfSettings.FREQ1 = (reg_freq>>8) & 0xFF;    // middle byte
+    rfSettings.FREQ2 = (reg_freq >> 16) & 0xFF; // high byte, bits 7..6 are always 0 for this register
+    rfSettings.FREQ1 = (reg_freq >> 8) & 0xFF;  // middle byte
     rfSettings.FREQ0 = reg_freq & 0xFF;         // low byte
 }
 
@@ -694,7 +703,7 @@ void CC1101::datarate(uint32_t rate)
     uint32_t shift_val = 28 - (_modem.data_rate_exp & 0x0F);
 
     // compute the register value and assign it
-    rfSettings.MDMCFG3 = ((_datarate)/(CCXXX1_CRYSTAL_FREQUENCY>>shift_val)) - 256;
+    rfSettings.MDMCFG3 = ((_datarate) / (CCXXX1_CRYSTAL_FREQUENCY >> shift_val)) - 256;
 }
 
 
@@ -703,21 +712,21 @@ void CC1101::interface_freq(uint32_t if_freq)
 {
     // The desired IF frequency for RX. Subtracted from FS base frequency in RX.
     // bits 7..5 are always 0
-    rfSettings.FSCTRL1 = (if_freq/(CCXXX1_CRYSTAL_FREQUENCY>>10)) & 0x1F;
+    rfSettings.FSCTRL1 = (if_freq / (CCXXX1_CRYSTAL_FREQUENCY >> 10)) & 0x1F;
     rfSettings.FSCTRL0 = 0x00;  // set the initial freq calibration to 0
 }
 // ===============
 void CC1101::assign_modem_params()
 {
-    rfSettings.MDMCFG4 = (_modem.channel_bw_exp & 0x03)<<6 | (_modem.channel_bw & 0x03)<<4 | (_modem.data_rate_exp & 0x0F);
-    rfSettings.MDMCFG2 = _modem.dc_filter_off_en<<7 | (_modem.mod_type & 0x07)<<4 | _modem.manchester_encode_en<<3 | (_modem.sync_mode & 0x07);
-    rfSettings.MDMCFG1 = _modem.fec_en<<7 | (_modem.preamble_bytes & 0x07)<<4 | (_modem.channel_space_exp & 0x03);
+    rfSettings.MDMCFG4 = (_modem.channel_bw_exp & 0x03) << 6 | (_modem.channel_bw & 0x03) << 4 | (_modem.data_rate_exp & 0x0F);
+    rfSettings.MDMCFG2 = _modem.dc_filter_off_en << 7 | (_modem.mod_type & 0x07) << 4 | _modem.manchester_encode_en << 3 | (_modem.sync_mode & 0x07);
+    rfSettings.MDMCFG1 = _modem.fec_en << 7 | (_modem.preamble_bytes & 0x07) << 4 | (_modem.channel_space_exp & 0x03);
 }
 // ===============
 void CC1101::assign_packet_params()
 {
-    rfSettings.PCKCTRL0 = _pck_control.whitening_en<<6 | (_pck_control.format_type & 0x3)<<4 | _pck_control.crc_en<<2 | (_pck_control.length_type & 0x3);
-    rfSettings.PCKCTRL1 = (_pck_control.preamble_thresh & 0x07)<<5 | _pck_control.autoflush_en<<3 | _pck_control.status_field_en<<2 | (_pck_control.addr_check & 0x03);
+    rfSettings.PCKCTRL0 = _pck_control.whitening_en << 6 | (_pck_control.format_type & 0x3) << 4 | _pck_control.crc_en << 2 | (_pck_control.length_type & 0x3);
+    rfSettings.PCKCTRL1 = (_pck_control.preamble_thresh & 0x07) << 5 | _pck_control.autoflush_en << 3 | _pck_control.status_field_en << 2 | (_pck_control.addr_check & 0x03);
     rfSettings.PCKLEN = _pck_control.size;
 }
 // ===============
@@ -727,7 +736,7 @@ void CC1101::assign_channel_spacing(uint32_t spacing)
     uint32_t shift_val = 18 - (_modem.channel_space_exp & 0x03);
 
     // compute the register value and assign it
-    rfSettings.MDMCFG0 = (spacing/(CCXXX1_CRYSTAL_FREQUENCY>>shift_val)) - 256;
+    rfSettings.MDMCFG0 = (spacing / (CCXXX1_CRYSTAL_FREQUENCY >> shift_val)) - 256;
 }
 void CC1101::set_rf_settings(void)
 {
@@ -761,7 +770,7 @@ void CC1101::set_rf_settings(void)
     bool RX_TIME_RSSI = false;
     bool RX_TIME_QUAL = false;
     uint8_t RX_TIME = 0x07;    // no timeout
-    rfSettings.MCSM2 = (RX_TIME_RSSI<<4) | (RX_TIME_QUAL<<3) | (RX_TIME & 0x07);
+    rfSettings.MCSM2 = (RX_TIME_RSSI << 4) | (RX_TIME_QUAL << 3) | (RX_TIME & 0x07);
 
 
     uint8_t CCA_MODE = 0x00;
@@ -769,21 +778,21 @@ void CC1101::set_rf_settings(void)
     //uint8_t RXOFF_MODE = 0x03;  // stay in RX when existing RX
     uint8_t TXOFF_MODE = 0x03;  // go directly to RX when existing TX
     // uint8_t TXOFF_MODE = 0x00;  // go directly to IDLE when existing TX
-    rfSettings.MCSM1 = ((CCA_MODE & 0x03)<<4) | ((RXOFF_MODE & 0x03)<<2) | (TXOFF_MODE & 0x03);
+    rfSettings.MCSM1 = ((CCA_MODE & 0x03) << 4) | ((RXOFF_MODE & 0x03) << 2) | (TXOFF_MODE & 0x03);
 
 
     uint8_t FS_AUTOCAL = 0x01;  // calibrate when going from IDLE to RX or TX
     uint8_t PO_TIMEOUT = 0x02;
     bool PIN_CTRL_EN = false;
     bool XOSC_FORCE_ON = false;
-    rfSettings.MCSM0 = ((FS_AUTOCAL & 0x03)<<4) | ((PO_TIMEOUT & 0x03)<<2) | (PIN_CTRL_EN<<1) | (XOSC_FORCE_ON);
+    rfSettings.MCSM0 = ((FS_AUTOCAL & 0x03) << 4) | ((PO_TIMEOUT & 0x03) << 2) | (PIN_CTRL_EN << 1) | (XOSC_FORCE_ON);
 
 
     bool FOC_BS_CS_GATE = false;
     uint8_t FOC_PRE_K = 0x03;
     bool FOC_POST_K = true;
     uint8_t FOC_LIMIT = 0x01;
-    rfSettings.FOCCFG = 0x40 | (FOC_BS_CS_GATE<<5) | ((FOC_PRE_K & 0x03)<<3) | (FOC_POST_K<<2) | (FOC_LIMIT & 0x03);
+    rfSettings.FOCCFG = 0x40 | (FOC_BS_CS_GATE << 5) | ((FOC_PRE_K & 0x03) << 3) | (FOC_POST_K << 2) | (FOC_LIMIT & 0x03);
 
     rfSettings.BSCFG = 0x1C;
 

@@ -3,7 +3,7 @@
 #include "mbed.h"
 #include "cmsis_os.h"
 #include "CommLink.hpp"
-#include "RTP.hpp"
+#include "robot_types.hpp"
 #include "CC1201Defines.hpp"
 
 enum ext_flag_t { EXT_FLAG_OFF, EXT_FLAG_ON };
@@ -11,7 +11,6 @@ enum ext_flag_t { EXT_FLAG_OFF, EXT_FLAG_ON };
 class CC1201 : public CommLink
 {
   public:
-
 	CC1201();
 
 	CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin = NC);
@@ -37,13 +36,13 @@ class CC1201 : public CommLink
 	// TODO: Move any direct register reads/writes & strobes to protected when done testing
 	uint8_t strobe(uint8_t);
 
-	uint8_t readReg(uint8_t, bool = EXT_FLAG_OFF);
+	uint8_t readReg(uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
-	uint8_t readReg(uint8_t, uint8_t *, uint8_t, bool = EXT_FLAG_OFF);
+	uint8_t readReg(uint8_t, uint8_t *, uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
-	uint8_t writeReg(uint8_t, uint8_t, bool = EXT_FLAG_OFF);
+	uint8_t writeReg(uint8_t, uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
-	uint8_t writeReg(uint8_t, uint8_t *, uint8_t, bool = EXT_FLAG_OFF);
+	uint8_t writeReg(uint8_t, uint8_t *, uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
 	void flush_tx(void);
 	void flush_rx(void);
@@ -81,4 +80,3 @@ class CC1201 : public CommLink
 	bool _offset_reg_written;
 	float _rssi;
 };
-

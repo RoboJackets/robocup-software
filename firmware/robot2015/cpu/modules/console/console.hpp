@@ -100,7 +100,9 @@ public:
   /**
    * console header string.
    */
-  static const std::string CONSOLE_HEADER;
+  static std::string CONSOLE_HEADER;
+  static std::string CONSOLE_USER;
+  static std::string CONSOLE_HOSTNAME;
 
   /**
    * receice buffer full error message

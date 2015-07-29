@@ -2,7 +2,7 @@
 
 #include "mbed.h"
 #include "cmsis_os.h"
-#include "RTP.hpp"
+#include "robot_types.hpp"
 #include "ThreadHelper.hpp"
 #include "MailHelper.hpp"
 #include "CommModule.hpp"

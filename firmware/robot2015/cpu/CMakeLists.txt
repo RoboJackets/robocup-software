@@ -3,6 +3,8 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
+# add_definitions(-D __FILE_NAME__=\"$*.cpp\")
+
 # set variables to the names of the directories for each section of code
 set(DRIVERS_ROOT_DIR drivers)
 set(MODULES_ROOT_DIR modules)
@@ -115,7 +117,7 @@ set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 #this is added as a dependency for standard builds, forcing the python script to
 #run at the correct time
 add_custom_target(pre-build
-    COMMAND python2 ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS}
+    COMMAND python2 ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS} --jobs=0
     DEPENDS ${PREBUILD_DEPS})
 set_target_properties(pre-build PROPERTIES EXCLUDE_FROM_ALL TRUE)
 

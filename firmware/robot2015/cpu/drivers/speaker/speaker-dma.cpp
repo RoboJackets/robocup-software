@@ -168,7 +168,7 @@ void Speaker::ERR1_callback(void)
 void Speaker::dma_err(void)
 {
     //error("Oh no! My Mbed EXPLODED! :( Only kidding, go find the problem");
-    log(SEVERE, "SPEAKER DMA", "Unable to successfully configure the DMA for use with the speaker pin's output.");
+    LOG(SEVERE, "Unable to successfully configure the DMA for use with the speaker pin's output.");
 }
 
 #endif  // COMPILE_WITH_DMA

@@ -24,7 +24,7 @@ ADCDMA::ADCDMA(void)
   memset(dmaTransferComplete, 0, sizeof(dmaTransferComplete));
 
   if (Init(ADC_CLK))
-    log(INF1, "ADC DMA", "ADC using DMA setup complete.");
+    LOG(INF1, "ADC using DMA setup complete.");
 }
 
 
@@ -34,7 +34,7 @@ ADCDMA::ADCDMA(void)
 ADCDMA::~ADCDMA(void)
 {
   if (shutdown())
-    log(INF3, "ADC DMA", "ADC DMA killed. All ADC interrupts removed.");
+    LOG(INF3, "ADC DMA killed. All ADC interrupts removed.");
 }
 
 
@@ -60,7 +60,7 @@ ADCDMA::~ADCDMA(void)
 // Chip_ADC_Channel_Int_Cmd(_LPC_ADC_ID, ADC_INT_TRIGGER_CHAN, ENABLE);
 
 // dmaChannelNum = Chip_DMA_GetFreeChannel(LPC_GPDMA, _GPDMA_CONN_ADC);
-// log(INF2, "ADC DMA", "ADC setup complete. Now linking requests to DMA channel %u.", dmaChannelNum);
+// LOG(INF2, "ADC setup complete. Now linking requests to DMA channel %u.", dmaChannelNum);
 
 // Power up the ADC and set PCLK
 // LPC_SC->PCONP    |=  (1UL << 12);
@@ -102,7 +102,7 @@ conf
 
 // Enable configuration.
 // dma.Enable( conf );
-// log(INF1, "ADC DMA", "ADC using DMA setup complete.");
+// LOG(INF1, "ADC using DMA setup complete.");
 
 // Enable ADC irq flag (to DMA).
 // Note, don't set the individual flags,
@@ -129,7 +129,7 @@ bool ADCDMA::Poll(void)
 
     // Read all ADCs
     for (int i = 0; i < ADC_NUM_CHANNELS; i++)
-      log(INF2, "ADC DMA", "Polled reading value:\t%u", ADC_GET_READING(adc_buf[i][0]));
+      LOG(INF2, "Polled reading value:\t%u", ADC_GET_READING(adc_buf[i][0]));
 
     for (int i = 0; i < ADC_NUM_CHANNELS; i++) {
       // return TRUE is ANY channel reading is obtained
@@ -189,7 +189,7 @@ void ADCDMA::DMA_IRQHandler(void)
     ADC_stop();
   }
 
-  log(SEVERE, "ADC DMA", "Unable to successfully configure the DMA for use with the ADC pins.");
+  LOG(SEVERE, "Unable to successfully configure the DMA for use with the ADC pins.");
   // }
 }
 

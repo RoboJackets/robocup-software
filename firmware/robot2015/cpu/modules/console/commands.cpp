@@ -1,13 +1,13 @@
 #include "commands.hpp"
 
 
-using namespace std;
+// using namespace std;
 
 
 /**
  * error message when a typed command isn't found
  */
-const string COMMAND_NOT_FOUND_MSG = "Command not found.";
+const string COMMAND_NOT_FOUND_MSG = "Command not found. Type 'help' for a list of commands.";
 
 
 /**
@@ -90,7 +90,7 @@ static const vector<command_t> commands = {
 		{"ping"},
 		true,
 		cmd_ping,
-		"Check console responsiveness. Ping pong.",
+		"Check console responsiveness. Ping --- Pong.",
 		"ping"
 	},
 	{
@@ -113,6 +113,41 @@ static const vector<command_t> commands = {
 		cmd_resetMbed,
 		"Resets the mbed (like pushing the reset button).",
 		"reset | reboot | restart"
+	},
+	{
+		{"disconnect", "disconnect-interface", "unconnect, rmint"},
+		false,
+		cmd_disconnectInterface,
+		"Disconnects the mbed interface chip from the microcontroller.",
+		"disconnect | disconnect-interface | unconnect | rmint"
+	},
+	{
+		{"checkconn", "isconn"},
+		false,
+		cmd_checkInterfaceConn,
+		"Checks the connection with a debugging unit. ONLY hardware reset works after disconnecting.",
+		"checkconn | isconn"
+	},
+	{
+		{"baud", "baudrate"},
+		false,
+		cmd_setBaudrate,
+		"Set the serial link's baudrate.",
+		"baud | baudrate"
+	},
+	{
+		{"su", "user"},
+		false,
+		cmd_switchUser,
+		"Set active user.",
+		"su | user"
+	},
+	{
+		{"host", "hostname"},
+		false,
+		cmd_switchHostname,
+		"Set the system hostname.",
+		"host | hostname"
 	}
 };
 
@@ -183,7 +218,7 @@ void cmd_alias(const vector<string> &args)
 			if (aliasFound) {
 				printf("\r\n");
 			} else {
-				printf("error listing aliases: command \"%s\" not found\r\n",
+				printf("Error listing aliases: command \"%s\" not found\r\n",
 				       args[argInd].c_str());
 			}
 		}
@@ -198,6 +233,8 @@ void cmd_alias(const vector<string> &args)
 */
 void cmd_clear(const vector<string> &args)
 {
+	Console::Flush();
+	printf(ENABLE_SCROLL_SEQ.c_str());
 	printf(CLEAR_SCREEN_SEQ.c_str());
 	Console::Flush();
 }
@@ -248,7 +285,7 @@ void cmd_help(const vector<string> &args)
 			       commands[i].usage.c_str());
 			Console::Flush();
 			printf("  Iterative:\t%s\r\n\r\n",
-			       commands[i].isIterative ? "true" : "false");
+			       commands[i].isIterative ? "YES" : "NO");
 			Console::Flush();
 		}
 
@@ -295,7 +332,7 @@ void cmd_help(const vector<string> &args)
 					       commands[i].usage.c_str());
 					Console::Flush();
 					printf("  Iterative:\t%s\r\n\r\n",
-					       commands[i].isIterative ? "true" : "false");
+					       commands[i].isIterative ? "YES" : "NO");
 					Console::Flush();
 				}
 			}
@@ -315,7 +352,11 @@ void cmd_help(const vector<string> &args)
  */
 void cmd_ping(const vector<string> &args)
 {
-	printf("...pong.\r\n");
+	//char time_buf[25];
+	time_t sys_time = time(NULL);
+	//strftime(time_buf, 25, "%c", localtime(&sys_time));
+
+	printf("reply: %d\r\n", sys_time);
 	Console::Flush();
 }
 
@@ -325,8 +366,9 @@ void cmd_ping(const vector<string> &args)
  */
 void cmd_resetMbed(const vector<string> &args)
 {
+	Console::Flush();
 	mbed_interface_reset();
-	// mbed_reset();
+	Console::Flush();
 }
 
 
@@ -364,18 +406,17 @@ void cmd_ls(const vector<string> &args)
  */
 void cmd_info(const vector<string> &args)
 {
-	printf("Git Hash:\t%s\r\n", git_version_hash);
-
-	printf("Commit Date:\t%s\r\n", git_head_date);
-
-	printf("Commit Author:\t%s\r\n", git_head_author);
-
-	printf("\r\n");
-
 	DS2411_t id;
-	ds2411_read_id(RJ_BASE_ID, &id, true);
 
-	printf("\r\n");
+	printf("Commit Hash:\t%s\r\nCommit Date:\t%s\r\nCommit Author:\t%s\r\n",
+	       git_version_hash,
+	       git_head_date,
+	       git_head_author
+	      );
+
+	printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
+
+	ds2411_read_id(RJ_BASE_ID, &id, true);
 
 	// Prints out a serial number, taken from the mbed forms
 	// https://developer.mbed.org/forum/helloworld/topic/2048/
@@ -385,14 +426,99 @@ void cmd_info(const vector<string> &args)
 	CallMe_entry(Interface, Interface);
 
 	if (!Interface[0])
-		printf("Serial Number:\t%d%d%d%d\r\n",
-		       Interface[1], Interface[2], Interface[3], Interface[4]);
+		printf("MCU UID:\t%u %u %u %u\r\n",
+		       Interface[1],
+		       Interface[2],
+		       Interface[3],
+		       Interface[4]
+		      );
 	else
-		printf("Unable to retrieve Serial Number from LPC Flash\r\n");
+		printf("Unable to retrieve Serial Number from microcontroller.\r\n");
+
+	// Should be 0x26013F37
+	Interface[0] = 54;
+	CallMe_entry(Interface, Interface);
+
+	if (!Interface[0])
+		printf("MCU ID:\t\t%u\r\n", Interface[1]);
+	else
+		printf("Unable to retrieve microntroller identification tag.\r\n");
+
+	char buf[33];
+	mbed_interface_uid(buf);
+	printf("mbed UID:\t%s\r\n", buf);
+
+	memset(buf, '\0', 33);
+	mbed_mac_address(buf);
+	printf("Eth MAC:\t");
+
+	for (int i = 0; i < 5; i++)
+		printf("%02X-", buf[i]);
+
+	printf("%02X\r\n", buf[5]);
+	Console::Flush();
+
+	LOG(OK, "logging test:\t%02X", (uint8_t)buf[1]);
+	Console::Flush();
+}
+
+
+
+/**
+ * [cmd_disconnectMbed description]
+ * @param args [description]
+ */
+void cmd_disconnectInterface(const vector<string> &args)
+{
+	Console::Flush();
+	mbed_interface_disconnect();
+}
+
+
+void cmd_checkInterfaceConn(const vector<string> &args)
+{
+	printf("mbed interface connected:\t%s", mbed_interface_connected() ? "YES" : "NO");
+	Console::Flush();
+}
+
+
+void cmd_setBaudrate(const vector<string> &args)
+{
+	if (args.empty() || args.size() > 1)
+		return;
+
+	std::string str_baud = args.at(0);
+	int new_rate = atoi(str_baud.c_str());
+
+	int valid_rates[] = {110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 230400, 460800, 921600};
+	std::vector<int> rates (valid_rates, valid_rates + sizeof(valid_rates) / sizeof(int) );
+
+	if (std::find(rates.begin(), rates.end(), new_rate) != rates.end()) {
+		Serial pc(USBTX, USBRX);
+		pc.baud(new_rate);
+		printf("New baudrate: %u\r\n", new_rate);
+	} else {
+		printf("%u is not a valid baudrate.\r\n", new_rate);
+	}
 
 	Console::Flush();
 }
 
+void cmd_switchUser(const vector<string> &args)
+{
+	if (args.empty() || args.size() > 1)
+		return;
+
+	Console::CONSOLE_USER = args.at(0);
+}
+
+void cmd_switchHostname(const vector<string> &args)
+{
+	if (args.empty() || args.size() > 1)
+		return;
+
+	Console::CONSOLE_HOSTNAME = args.at(0);
+}
 
 /**
  * Command executor.
