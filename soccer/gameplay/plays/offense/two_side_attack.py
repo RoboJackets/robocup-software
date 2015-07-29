@@ -17,19 +17,19 @@ class TwoSideAttack(play.Play):
     # Estimate of which shot is better
 
     class State(enum.Enum):
-        setup = 1
-        passing = 2
-        kicking = 3;
-
-    def __init__(self):
-        super().__init__(continuous=False)
-
         # Setup
             # Move A and move B, capture in setup
         # Passing
             # Pick best target, add coordinated pass subbehavior
         # Kicking
             # Pivot kick (by default attacks enemy goal)
+
+        setup = 1
+        passing = 2
+        kicking = 3;
+
+    def __init__(self):
+        super().__init__(continuous=False)
 
         self.add_state(TwoSideAttack.State.setup,
             behavior.Behavior.State.running)
@@ -100,11 +100,6 @@ class TwoSideAttack(play.Play):
 
 
     def on_enter_passing(self):
-        #capture = self.subbehavior_with_name('capture')
-        #passRobot1 = self.subbehavior_with_name('moveA')
-        #passRobot2 = self.subbehavior_with_name('moveB')
-        #to_exclude = [capture.robot, passRobot1.robot, passRobot2.robot]
-
         # Do shot evaluation here
         win_eval = robocup.WindowEvaluator(main.system_state())
         for r in self.to_exclude:
@@ -133,7 +128,7 @@ class TwoSideAttack(play.Play):
 
             if (direct_shot and direct_success > rob_1_chance and direct_success > rob_2_chance):
                 self.kick_directly = True
-                return 
+                return
 
         if rob_1_chance > rob_2_chance:
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot1.pos), 'pass')

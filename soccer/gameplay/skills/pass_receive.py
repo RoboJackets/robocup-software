@@ -213,7 +213,13 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.reset_correct_location()
         self.kicked_time = time.time()
 
+    ## Create a good_area, that determines where a good pass should be,
+    # return true if the ball has exited that area.
+    #
+    # Run test_coordinated_pass for an example of this.
     def check_failure(self):
+        # We wait about 3 frames before freezing the velocity and position of the ball
+        # as it can be unreliable right after kicking. See execute_receiving.
         if self.stable_frame < PassReceive.StabilizationFrames:
             return False
         offset = 0.1
@@ -225,9 +231,11 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         left_kick =  robocup.Point(-offset, -offset)
         right_kick =  robocup.Point(offset, -offset)
 
+        # Create a channel on the left/right of the mouth of the kicker to a bit behind the receiver
         left_recieve = left_kick + straight_line * pass_distance;
         right_recieve = right_kick + straight_line * pass_distance
 
+        # Widen the channel to allow for catching the ball.
         left_recieve.rotate(left_kick, PassReceive.MarginAngle)
         right_recieve.rotate(right_kick, -PassReceive.MarginAngle)
 
@@ -240,10 +248,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         left_recieve.rotate(origin, passDirRadians - math.pi/2)
         right_recieve.rotate(origin, passDirRadians - math.pi/2)
 
+        # Add points that create the good_area to a polygon
         good_area = robocup.Polygon()
         good_area.add_vertex(self.kicked_from + left_kick)
         good_area.add_vertex(self.kicked_from + right_kick)
-
 
         good_area.add_vertex(self.kicked_from + right_recieve)
         good_area.add_vertex(self.kicked_from + left_recieve)
@@ -253,6 +261,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
 
     def execute_receiving(self):
+        # Freeze ball position and velocity once Stabilizationframes is up.
         if self.stable_frame <= PassReceive.StabilizationFrames:
             self.stable_frame = self.stable_frame + 1
             self.reset_correct_location()
@@ -267,11 +276,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     ## prefer a robot that's already near the receive position
     def role_requirements(self):
         reqs = super().role_requirements()
-        if self._target_pos != None:
-            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+        for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            if self._target_pos != None:
                 req.destination_shape = self._target_pos
-        if self.receive_point != None:
-            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            elif self.receive_point != None:
                 req.destination_shape = self.receive_point
         return reqs
 
