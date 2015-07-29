@@ -10,20 +10,13 @@ import evaluation
 import tactics.coordinated_pass
 import tactics.defense
 
-class TwoSideAttack(play.Play):
+class TwoSideCornerKick(play.Play):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py
     # Tell where passing from and where to pass to
     # Estimate of which shot is better
 
     class State(enum.Enum):
-        # Setup
-            # Move A and move B, capture in setup
-        # Passing
-            # Pick best target, add coordinated pass subbehavior
-        # Kicking
-            # Pivot kick (by default attacks enemy goal)
-
         setup = 1
         passing = 2
         kicking = 3;
@@ -31,36 +24,43 @@ class TwoSideAttack(play.Play):
     def __init__(self):
         super().__init__(continuous=False)
 
-        self.add_state(TwoSideAttack.State.setup,
+        # Setup
+            # Move A and move B, capture in setup
+        # Passing
+            # Pick best target, add coordinated pass subbehavior
+        # Kicking
+            # Pivot kick (by default attacks enemy goal)
+
+        self.add_state(TwoSideCornerKick.State.setup,
             behavior.Behavior.State.running)
-        self.add_state(TwoSideAttack.State.passing,
+        self.add_state(TwoSideCornerKick.State.passing,
             behavior.Behavior.State.running)
-        self.add_state(TwoSideAttack.State.kicking,
+        self.add_state(TwoSideCornerKick.State.kicking,
             behavior.Behavior.State.running)
 
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
-            TwoSideAttack.State.setup,
+            TwoSideCornerKick.State.setup,
             lambda: True,
             'immediately')
-        self.add_transition(TwoSideAttack.State.setup,
-            TwoSideAttack.State.passing,
+        self.add_transition(TwoSideCornerKick.State.setup,
+            TwoSideCornerKick.State.passing,
             lambda: self.subbehavior_with_name('capture').is_done_running(),
             'all subbehaviors completed')
 
-        self.add_transition(TwoSideAttack.State.passing,
-            TwoSideAttack.State.kicking,
-            lambda: self.kick_directly == True or self.temporary_behaviors_completed(),
+        self.add_transition(TwoSideCornerKick.State.passing,
+            TwoSideCornerKick.State.kicking,
+            lambda: self.kick_directly == True or self.all_subbehaviors_completed(),
             'all subbehaviors completed')
 
-        self.add_transition(TwoSideAttack.State.kicking,
+        self.add_transition(TwoSideCornerKick.State.kicking,
             behavior.Behavior.State.completed,
             lambda: self.kick_directly == True,
             'all subbehaviors completed')
 
-        self.add_transition(TwoSideAttack.State.kicking,
+        self.add_transition(TwoSideCornerKick.State.kicking,
             behavior.Behavior.State.completed,
-            lambda: self.temporary_behaviors_completed(),
+            lambda: self.all_subbehaviors_completed(),
             'all subbehaviors completed')
 
         self.robot_points = [
@@ -72,14 +72,23 @@ class TwoSideAttack(play.Play):
         self.passRobot2 = None
         self.captureRobot = None
 
-        self.pernamentBehaviors = ['defense']
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
     @classmethod
     def score(cls):
-        if main.game_state().is_playing():
-            return 9
-        return float("inf")
+        gs = main.game_state()
+        if gs.is_ready_state() and gs.is_our_direct() and  main.ball().pos.y > ( constants.Field.Length - 1.0 ):
+            return 1
+        else:
+            return float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True;
+
+
+    def all_subbehaviors_completed(self):
+        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
 
 
     def on_enter_setup(self):
@@ -95,11 +104,15 @@ class TwoSideAttack(play.Play):
         self.passRobot2 = self.subbehavior_with_name('moveB').robot
         self.captureRobot = self.subbehavior_with_name('capture').robot
         self.to_exclude = [self.passRobot1, self.passRobot2, self.captureRobot]
-        self.remove_temporary_subbehaviors()
-
+        self.remove_all_subbehaviors()
 
 
     def on_enter_passing(self):
+        #capture = self.subbehavior_with_name('capture')
+        #passRobot1 = self.subbehavior_with_name('moveA')
+        #passRobot2 = self.subbehavior_with_name('moveB')
+        #to_exclude = [capture.robot, passRobot1.robot, passRobot2.robot]
+
         # Do shot evaluation here
         win_eval = robocup.WindowEvaluator(main.system_state())
         for r in self.to_exclude:
@@ -128,7 +141,7 @@ class TwoSideAttack(play.Play):
 
             if (direct_shot and direct_success > rob_1_chance and direct_success > rob_2_chance):
                 self.kick_directly = True
-                return
+                return 
 
         if rob_1_chance > rob_2_chance:
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot1.pos), 'pass')
@@ -136,22 +149,10 @@ class TwoSideAttack(play.Play):
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot2.pos), 'pass')
 
 
-    def remove_temporary_subbehaviors(self):
-        for (key, value) in self.subbehaviors_by_name().items():
-            if not (key in self.pernamentBehaviors):
-                self.remove_subbehavior(key)
-
-    def temporary_behaviors_completed(self):
-        for (key, value) in self.subbehaviors_by_name().items():
-            if not (key in self.pernamentBehaviors):
-                if not value.is_done_running():
-                    return False
-        return True
-
 
     def on_exit_passing(self):
         self.kick_directly = False
-        self.remove_temporary_subbehaviors()
+        self.remove_all_subbehaviors()
 
 
     def on_enter_kicking(self):
@@ -162,7 +163,7 @@ class TwoSideAttack(play.Play):
 
 
     def on_exit_kicking(self):
-        self.remove_temporary_subbehaviors()
+        self.remove_all_subbehaviors()
 
     @classmethod
     def handles_goalie(cls):

@@ -102,11 +102,17 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_enter_preparing(self):
         kicker = skills.pivot_kick.PivotKick()
         kicker.target = self.receive_point
-        kicker.kick_power = CoordinatedPass.KickPower
+        kickpower = (main.ball().pos - self.receive_point).mag() / 8
+        if (kickpower < 0.2):
+            kickpower = 0.2
+
+        if (kickpower > 1.0):
+            kickpower = 1.0
+        kicker.kick_power = kickpower
         kicker.enable_kick = False # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
-        kicker.aim_params['error_threshold'] = 0.07
+        kicker.aim_params['error_threshold'] = 0.2
         kicker.aim_params['max_steady_ang_vel'] = 3.0
         kicker.aim_params['min_steady_duration'] = 0.15
         kicker.aim_params['desperate_timeout'] = 3.0
@@ -148,9 +154,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
+        self.subbehavior_with_name('receiver').ball_kicked = True
         self.remove_subbehavior('kicker')
 
-        self.subbehavior_with_name('receiver').ball_kicked = True
+        
 
 
 

@@ -25,8 +25,7 @@ class OurCornerKick(play.Play):
 
 
         self.kicker = skills.line_kick.LineKick()
-        # FIXME: settings
-        # self.kicker.use_chipper = True
+        self.kicker.use_chipper = True
         self.kicker.chip_power = OurCornerKick.ChipperPower # TODO: base this on the target dist from the bot
         self.kicker.min_chip_range = OurCornerKick.MinChipRange
         self.kicker.max_chip_range = OurCornerKick.MaxChipRange
