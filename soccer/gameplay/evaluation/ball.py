@@ -35,6 +35,12 @@ GravitationalCoefficient = 9.81 # in m/s^2
 def predict(X_i, V_i, t):
     return X_i + (V_i * t) - (V_i.normalized() * 0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
 
+def predict_stop_time(start_speed):
+    return (start_speed / (FrictionCoefficient * GravitationalCoefficient))
+
+def predict_stop(X_i, V_i):
+    return predict(X_i, V_i, predict_stop_time(V_i.mag()))
+
 
 def rev_predict(V_i, dist):
     """predict how much time it will take the ball to travel the given distance"""
