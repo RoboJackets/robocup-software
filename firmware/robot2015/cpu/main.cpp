@@ -58,7 +58,7 @@ int main(void)
 	RtosTimer RadioTimeoutTask(imAlive, osTimerPeriodic, (void *)&ledOne);
 
 	isLogging = RJ_LOGGING_EN;
-	rjLogLevel = INF2;
+	rjLogLevel = INF1;
 
 	Thread taskConsole(initConsoleRoutine);
 
@@ -94,8 +94,7 @@ int main(void)
 		// RTP_t dummy_packet;
 
 		// Enable watchdog timer
-		//Watchdog watchdog;
-		//watchdog.set(RJ_WATCHDOG_TIMER_VALUE);
+		//Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
 		while (1) {
 			dummy_packet.port = 8;
@@ -147,8 +146,8 @@ int main(void)
 	led4 = 0;
 
 	while (1) {
-		LOG(INF1, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
-		LOG(INF1, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
+		LOG(INF2, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
+		LOG(INF2, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
 		osDelay(1000);
 	}
 

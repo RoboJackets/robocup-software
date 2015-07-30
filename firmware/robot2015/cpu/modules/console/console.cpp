@@ -1,16 +1,9 @@
 #include "console.hpp"
-
-using namespace std;
-
-string Console::CONSOLE_USER = "jon";
-string Console::CONSOLE_HOSTNAME = "robot";
-string Console::CONSOLE_HEADER = Console::CONSOLE_USER + "@" + Console::CONSOLE_HOSTNAME + " $ ";
-const string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
-const string Console::COMMAND_BREAK_MSG = "*BREAK*";
+#include "console-defines.hpp"
 
 shared_ptr<Console> Console::instance;
 
-Console::Console() : pc(USBTX, USBRX) { }
+Console::Console() : pc(USBTX, USBRX) {  }
 
 shared_ptr<Console> &Console::Instance()
 {
@@ -34,7 +27,7 @@ void Console::Init()
 	instance->ClearTXBuffer();
 
 	//set baud rate
-	instance->pc.baud(BAUD_RATE);
+	instance->pc.baud(baudrate);
 
 	//attach interrupt handlers
 	instance->pc.attach(instance.get(), &Console::RXCallback, Serial::RxIrq);
@@ -49,7 +42,6 @@ void Console::Init()
 	instance->txIndex = 0;
 
 	//print header
-	Console::CONSOLE_HEADER = Console::CONSOLE_USER + "@" + Console::CONSOLE_HOSTNAME + " $ ";
 	instance->pc.printf(CONSOLE_HEADER.c_str());
 	Flush();
 }
@@ -96,9 +88,9 @@ void Console::RXCallback()
 			Flush();
 		}
 		//if a new line character is sent, process the current buffer
-		else if (c == NEW_LINE_CHAR) {
+		else if (c == NEW_LINE_CHAR || c == CMD_END_CHAR) {
 			//print command prior to executing
-			pc.printf("\r\n");
+			pc.printf("%c\n", NEW_LINE_CHAR);
 			Flush();
 			rxBuffer[rxIndex] = '\0';
 
@@ -146,19 +138,15 @@ void Console::RXCallback()
 		//process arrow key sequence
 		else if (flagOne && flagTwo) {
 			//process keys
-			if (c == ARROW_UP_KEY) {
-				printf("\033M");
-			} else if (c == ARROW_DOWN_KEY) {
-				printf("\033D");
-			}
+			printf("%c", ARROW_UP_KEY ? ARROW_UP_KEY : ARROW_DOWN_KEY);
 
 			Flush();
 
 			flagOne = false;
 			flagTwo = false;
 		}
-		//no special character, add it to the buffer and return it to
-		//to the terminal to be visible
+		// No special character, add it to the buffer and return it to
+		// the terminal to be visible.
 		else {
 			rxBuffer[rxIndex++] = c;
 			pc.putc(c);
@@ -169,9 +157,9 @@ void Console::RXCallback()
 
 void Console::TXCallback()
 {
-	NVIC_DisableIRQ(UART0_IRQn);
+	// NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
-	NVIC_EnableIRQ(UART0_IRQn);
+	// NVIC_EnableIRQ(UART0_IRQn);
 }
 
 void Console::ConComCheck(void)
@@ -184,6 +172,13 @@ void Console::ConComCheck(void)
 	 * It's not present in our currently library, and is not working
 	 * for most people. It could however, greatly reduce what we have to
 	 * implement while adding more functionality.
+	 */
+
+	/*
+	 * Note for the above ^. The vbus can be monitored through ADC0, input 4.
+	 * This is possible when bits 29..28 of the PINSEL3 register are set to 0b01.
+	 *
+	 * 		- Jon
 	 */
 	return;
 }

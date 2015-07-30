@@ -1,9 +1,5 @@
 #include "commands.hpp"
 
-
-// using namespace std;
-
-
 /**
  * error message when a typed command isn't found
  */
@@ -101,11 +97,11 @@ static const vector<command_t> commands = {
 		"ls [folder/device]"
 	},
 	{
-		{"info", "version", "status", "s"},
+		{"info", "version", "s"},
 		false,
 		cmd_info,
 		"Display information about the current version of the firmware.",
-		"info | version | status | s"
+		"info | version | s"
 	},
 	{
 		{"reset", "reboot", "restart"},
@@ -115,11 +111,11 @@ static const vector<command_t> commands = {
 		"reset | reboot | restart"
 	},
 	{
-		{"rmdev", "disconnect-interface", "unconnect, rmint"},
+		{"rmdev", "unconnect"},
 		false,
 		cmd_disconnectInterface,
 		"Disconnects the mbed interface chip from the microcontroller.",
-		"rmdev | disconnect-interface | unconnect | rmint"
+		"rmdev | unconnect"
 	},
 	{
 		{"isconn", "checkconn"},
@@ -167,21 +163,21 @@ static const vector<command_t> commands = {
 void cmd_alias(const vector<string> &args)
 {
 //if no args given, list all aliases
-	if (args.size() == 0) {
+	if (args.empty() == true) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
-			printf("%s:\r\n", commands[i].aliases[0].c_str());
+			printf("\t%s:\t", commands[i].aliases[0].c_str());
 
 			//print aliases
 			uint8_t a = 0;
 
 			while (a < commands[i].aliases.size()
 			        && commands[i].aliases[a] != "\0") {
-				printf("\t%s", commands[i].aliases[a].c_str());
+				printf("%s", commands[i].aliases[a].c_str());
 
 				//print commas
 				if (a < commands[i].aliases.size() - 1
 				        && commands[i].aliases[a + 1] != "\0") {
-					printf(",");
+					printf(", ");
 				}
 
 				a++;
@@ -240,8 +236,11 @@ void cmd_alias(const vector<string> &args)
 */
 void cmd_clear(const vector<string> &args)
 {
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Invalid arguments!\r\n");
+		Console::Flush();
 		return;
+	}
 
 	Console::Flush();
 	printf(ENABLE_SCROLL_SEQ.c_str());
@@ -255,9 +254,15 @@ void cmd_clear(const vector<string> &args)
  */
 void cmd_echo(const vector<string> &args)
 {
-	for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
-		printf("%s ", args[argInd].c_str());
+	if (args.empty() == true) {
+		printf("Invalid arguments!\r\n");
+		Console::Flush();
+		return;
 	}
+
+
+	for (uint8_t argInd = 0; argInd < args.size(); argInd++)
+		printf("%s ", args[argInd].c_str());
 
 	printf("\r\n");
 	Console::Flush();
@@ -270,8 +275,11 @@ void cmd_echo(const vector<string> &args)
  */
 void cmd_exitSys(const vector<string> &args)
 {
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
+		Console::Flush();
 		return;
+	}
 
 	Console::RequestSystemStop();
 }
@@ -283,33 +291,21 @@ void cmd_exitSys(const vector<string> &args)
 void cmd_help(const vector<string> &args)
 {
 	// printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
-	Console::Flush();
+	// Console::Flush();
 
 	// Prints all commands, with details
 	if (args.size() == 0) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
-			printf("\t%s:\t",
-			       commands[i].aliases[0].c_str());
-			Console::Flush();
-			printf("%s\r\n",
-			       commands[i].description.c_str());
-			/*
-			Console::Flush();
-			printf("  Usage:\t%s\r\n",
-			       commands[i].usage.c_str());
-			Console::Flush();
+			printf("\t%s:\t", commands[i].aliases[0].c_str());
+			// Console::Flush();
+			printf("%s\r\n", commands[i].description.c_str());
 
-			printf("  Iterative:\t%s\r\n\r\n",
-			       commands[i].isIterative ? "YES" : "NO");
-			       */
-			Console::Flush();
+			// Console::Flush();
 		}
-
-		// printf("Screen Overflow? Try \"help <command>\"\r\n\r\n");
 		Console::Flush();
 	}
 	//prints all commands
-	else if (args.size() == 1 && strcmp(args[0].c_str(), "--list") == 0) {
+	else if (args.size() == 1 && (strcmp(args[0].c_str(), "--list") == 0 || strcmp(args[0].c_str(), "-l") == 0)) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
 			if (i % 4 == 3) {
 				printf("%s\r\n", commands[i].aliases[0].c_str());
@@ -368,11 +364,14 @@ void cmd_help(const vector<string> &args)
  */
 void cmd_ping(const vector<string> &args)
 {
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
+		Console::Flush();
 		return;
+	}
 
 	time_t sys_time = time(NULL);
-	printf("reply: %d\r\n", sys_time);
+	printf("reply: %d\r\n", (int)ctime(&sys_time));
 	Console::Flush();
 }
 
@@ -382,10 +381,11 @@ void cmd_ping(const vector<string> &args)
  */
 void cmd_resetMbed(const vector<string> &args)
 {
-	std::string command = "reset";
-
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
+		Console::Flush();
 		return;
+	}
 
 	Console::Flush();
 	printf("rebooting...\r\n");
@@ -402,10 +402,13 @@ void cmd_ls(const vector<string> &args)
 	DIR *d;
 	struct dirent *p;
 
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
+		Console::Flush();
 		return;
+	}
 
-	if (args.size() == 0) {
+	if (args.empty() == true) {
 		d = opendir("/local");
 	} else {
 		d = opendir(args[0].c_str());
@@ -431,8 +434,11 @@ void cmd_ls(const vector<string> &args)
  */
 void cmd_info(const vector<string> &args)
 {
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Invalid arguments!\r\n");
+		Console::Flush();
 		return;
+	}
 
 	DS2411_t id;
 
@@ -441,12 +447,19 @@ void cmd_info(const vector<string> &args)
 	       git_head_date,
 	       git_head_author
 	      );
+	Console::Flush();
 
 	printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
+	Console::Flush();
 
+	printf("Base ID:\t");
 	if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
-		printf("Base ID:\tN/A\r\n");
+		printf("N/A\r\n");
+	else
+		for (int i = 0; i < 6; i++)
+			printf("%02X\r\n", id.serial[i]);
 
+	Console::Flush();
 	// Prints out a serial number, taken from the mbed forms
 	// https://developer.mbed.org/forum/helloworld/topic/2048/
 	unsigned int Interface[5] = {58, 0, 0, 0, 0};
@@ -462,7 +475,9 @@ void cmd_info(const vector<string> &args)
 		       Interface[4]
 		      );
 	else
-		printf("Unable to retrieve Serial Number from microcontroller.\r\n");
+		printf("MCU UID:\t\tN/A\r\n");
+
+	Console::Flush();
 
 	// Should be 0x26013F37
 	Interface[0] = 54;
@@ -471,20 +486,22 @@ void cmd_info(const vector<string> &args)
 	if (!Interface[0])
 		printf("MCU ID:\t\t%u\r\n", Interface[1]);
 	else
-		printf("Unable to retrieve microntroller identification tag.\r\n");
+		printf("MCU ID:\t\tN/A\r\n");
+
+	Console::Flush();
 
 	char buf[33];
 	mbed_interface_uid(buf);
 	printf("mbed UID:\t%s\r\n", buf);
 
-	memset(buf, '\0', 33);
+	Console::Flush();
+
 	mbed_mac_address(buf);
 	printf("Eth MAC:\t");
-
 	for (int i = 0; i < 5; i++)
 		printf("%02X-", buf[i]);
-
 	printf("%02X\r\n", buf[5]);
+
 	Console::Flush();
 }
 
@@ -496,8 +513,11 @@ void cmd_info(const vector<string> &args)
  */
 void cmd_disconnectInterface(const vector<string> &args)
 {
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
+		Console::Flush();
 		return;
+	}
 
 	Console::Flush();
 	mbed_interface_disconnect();
@@ -506,21 +526,29 @@ void cmd_disconnectInterface(const vector<string> &args)
 
 void cmd_checkInterfaceConn(const vector<string> &args)
 {
-	if (args.empty() == false)
+	if (args.empty() == false) {
+		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
+		Console::Flush();
 		return;
+	}
 
-	printf("mbed interface connected:\t%s\r\n", mbed_interface_connected() ? "YES" : "NO");
+	printf("mbed interface connected: %s\r\n", mbed_interface_connected() ? "YES" : "NO");
 	Console::Flush();
 }
 
 
 void cmd_setBaudrate(const vector<string> &args)
 {
-	if (args.size() > 1)
+	if (args.size() > 1) {
+		printf("Invalid arguments \"%s\".\r\n", args.at(1).c_str());
+		Console::Flush();
 		return;
+	}
 
-	if(args.empty()){
+	if (args.empty() == true) {
 		printf("Not implemented yet!\r\n");
+		Console::Flush();
+		return;
 	}
 
 	std::string str_baud = args.at(0);
@@ -542,27 +570,37 @@ void cmd_setBaudrate(const vector<string> &args)
 
 void cmd_switchUser(const vector<string> &args)
 {
-	if (args.empty() || args.size() > 1)
+	if (args.empty() == true || args.size() > 1) {
+		printf("Invalid arguments!\r\n");
+		Console::Flush();
 		return;
+	}
 
 	Console::CONSOLE_USER = args.at(0);
 }
 
 void cmd_switchHostname(const vector<string> &args)
 {
-	if (args.empty() || args.size() > 1)
+	if (args.empty() == true || args.size() > 1) {
+		printf("Invalid arguments!\r\n");
+		Console::Flush();
 		return;
+	}
 
 	Console::CONSOLE_HOSTNAME = args.at(0);
 }
 
 void cmd_logLevel(const vector<string> &args)
 {
-	if (args.size() > 1)
+	if (args.size() > 1) {
+		printf("Invalid arguments \"%s\".\r\n", args.at(1).c_str());
+		Console::Flush();
 		return;
+	}
 
 	if (args.empty()) {
 		printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+		Console::Flush();
 		return;
 	}
 
