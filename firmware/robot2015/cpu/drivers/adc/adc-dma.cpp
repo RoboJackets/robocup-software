@@ -1,6 +1,9 @@
 #include "adc-dma.hpp"
+#include "pinmap.h"
 
-static const PinMap PinMap_ADC[] = {
+// ADC pin mapping for the LPC1768 microcontroller based mbed
+
+static const PinMap RJ_PinMap_ADC[] = {
   {P0_23, ADC0_0, 1},
   {P0_24, ADC0_1, 1},
   {P0_25, ADC0_2, 1},
@@ -272,7 +275,12 @@ uint8_t ADCDMA::Offset(void)
  */
 void ADCDMA::AddChannel(PinName pin)
 {
-  adc_chan.push_back(pin);
+  ADCPin_t obj;
+
+  obj.pin_name = pin;
+  // obj.pin_obj->adc = (ADCName)pinmap_peripheral(obj.pin_name, RJ_PinMap_ADC);
+
+  adc_chan.push_back(obj);
 }
 
 
@@ -288,23 +296,24 @@ bool ADCDMA::Start(void)
  */
 bool ADCDMA::init_channels(void)
 {
-  // analogin_t *obj;
-
   // return FALSE if no channels (pins) have been added yet
-  if (adc_chan.empty())
+  if (adc_chan.empty() || (isInit == true))
     return false;
 
-  // THIS BREAKS THINGS!!
-  // Check for valid ADC pins
   /*
-  for (std::vector<PinName>::iterator pin = adc_chan.begin(); pin != adc_chan.end(); ++pin) {
-    obj->adc = (ADCName)pinmap_peripheral(*pin, PinMap_ADC);
-    MBED_ASSERT(obj->adc != (ADCName)NC);
-  }
+    // THIS BREAKS THINGS!!
+    // Check for valid ADC pins
+    for (std::vector<PinName>::iterator pin = adc_chan.begin(); pin != adc_chan.end(); ++pin) {
+
+      // MBED_ASSERT(obj->adc != (ADCName)NC);
+    }
   */
 
   // Clear out the memory where the values are going
   // memset(adc_buf, 0, sizeof(adc_buf));
+
+  // Must disable the NVIC ADC interrupt for DMA use.
+  NVIC_DisableIRQ(_LPC_ADC_IRQ);
 
   // ensure power is turned on for the ADC
   LPC_SC->PCONP |= (1 << 12);
@@ -315,29 +324,25 @@ bool ADCDMA::init_channels(void)
   uint32_t PCLK = SystemCoreClock;
 
   // calculate minimum clock divider
-  //  clkdiv = divider - 1
   uint32_t MAX_ADC_CLK = 13000000;
   uint32_t clkdiv = div_round_up(PCLK, MAX_ADC_CLK) - 1;
 
-  // Must disable the NVIC ADC interrupt for DMA use.
-  NVIC_DisableIRQ(_LPC_ADC_IRQ);
-
   // Set the generic software-controlled ADC settings
-  LPC_ADC->ADCR = (0 << 0)        // SEL: 0 = no channels selected initially
-                  | (clkdiv << 8) // CLKDIV: PCLK max ~= 25MHz, /25 to give safe 1MHz at fastest
-                  | (0 << 17)     // CLKS: not applicable
-                  | (0 << 24)     // START: 0 = no start
-                  | (0 << 27);    // EDGE: not applicable
+  _LPC_ADC_ID->ADCR = (0 << 0)        // SEL: 0 = no channels selected initially
+                      | (clkdiv << 8) // CLKDIV: PCLK max ~= 25MHz, /25 to give safe 1MHz at fastest
+                      | (0 << 17);     // CLKS: not applicable
+  //    | (0 << 24)     // START: 0 = no start
+  //   | (0 << 27);    // EDGE: not applicable
 
-  ADC_burst_on();
+  // ADC_burst_on();
   ADC_start();
 
   // Configure the pins for reading voltages (ie. no pull-ups/pull-downs)
-  for (std::vector<PinName>::iterator pin = adc_chan.begin(); pin != adc_chan.end(); ++pin)
-    pinmap_pinout(*pin, PinMap_ADC);
+  for (std::vector<ADCPin_t>::iterator pin = adc_chan.begin(); pin != adc_chan.end(); ++pin)
+    pinmap_pinout(pin->pin_name, RJ_PinMap_ADC);
 
   // Only allow the channels we want to read access to trigger the correct interrupt signal
-  _LPC_ADC_ID->ADINTEN = ( 0 << 8 ) | // When set to 0, only the individual ADC channels enabled here will generate an interrupt
+  _LPC_ADC_ID->ADINTEN = ( 1 << 8 ) | // When set to 0, only the individual ADC channels enabled here will generate an interrupt
                          ( 0 << 7 ) | // ADC0.7 - no mbed breakout pin (P0.2)
                          ( 0 << 6 ) | // ADC0.6 - no mbed breakout pin (P0.3)
                          ( 0 << 5 ) | // ADC0.5 - mbed p20

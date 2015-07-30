@@ -53,23 +53,30 @@
  */
 class DMA
 {
-  public:
+public:
     DMA(void);
     ~DMA(void);
     void SetSrc(uint32_t);
-    void SetDst(uint32_t);
+    static void SetDst(uint32_t);
     bool Init(void);
     bool Start(void);
     static volatile uint32_t dma_buf[15];
+    static void clear_int_flag(uint8_t);
+    static void clear_err_flag(uint8_t);
+    static bool HandlerCalled;
+    static uint32_t IRQHandler_old;
+        static LPC_GPDMACH_TypeDef *chan;
 
-  protected:
+        static uint32_t destination_addr;
+
+protected:
     uint8_t find_channel(void);
     uint8_t enable_controller(bool = DMA_LITTLE_ENDIAN);
     uint8_t disable_controller(void);
     static volatile uint8_t chan_num;
-    static LPC_GPDMACH_TypeDef *chan;
 
-  private:
+
+private:
     static bool isInit;
     void transfer_type(LPC_GPDMACH_TypeDef *, uint8_t);
     void set_periph_mode(uint8_t);
@@ -81,6 +88,4 @@ class DMA
     void clear_error(uint8_t);
     void clear_errors(void);
     void disable_channels(void);
-    void clear_int_flag(uint8_t);
-    void clear_err_flag(uint8_t);
 };

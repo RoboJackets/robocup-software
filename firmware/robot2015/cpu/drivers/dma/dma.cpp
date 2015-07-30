@@ -2,35 +2,51 @@
 
 volatile uint32_t DMA::dma_buf[15] = { 0 };
 volatile uint8_t DMA::chan_num = 0;
-LPC_GPDMACH_TypeDef *DMA::chan = 0;
+LPC_GPDMACH_TypeDef* DMA::chan = 0;
 bool DMA::isInit = false;
 static volatile uint32_t DMATCCount = 0;
 static volatile uint32_t DMAErrCount = 0;
+uint32_t DMA::IRQHandler_old = 0;
+bool DMA::HandlerCalled = false;
+uint32_t DMA::destination_addr;
+
 
 extern "C" void DMA_IRQHandler(void)
 {
-  uint32_t regVal;
+  uint32_t chan_mask;
+  uint32_t activeInterrupts = _LPC_DMA_ID->DMACIntTCStat;
 
-  regVal = _LPC_DMA_ID->DMACIntTCStat;
+  for (int channel_number = 0; channel_number < 8; channel_number++) {
 
-  if (regVal) {
-    DMATCCount++;
-    _LPC_DMA_ID->DMACIntTCClear = regVal;
+    // create a bit mask for the interrupt channels
+    chan_mask = (1 << channel_number);
 
-    ADCDMA::ADC_burst_off();
-    // LPC_ADC->CR &= ~(0x1 << 16);  // Disable the BURST mode bit
-  }
+    // if the channel has an active interrupt request
+    if (activeInterrupts & chan_mask) {
+
+      // if the active interrupt request is a TC interrupt
+      if (_LPC_DMA_ID->DMACIntTCStat & chan_mask) {
+        DMA::HandlerCalled = true;
 
 
-  regVal = _LPC_DMA_ID->DMACIntErrStat;
+        // reenable another DMA transfer
+        DMA::chan->DMACCConfig |= 0x01;
 
-  if (regVal) {
+        DMA::SetDst(DMA::destination_addr);
 
-    DMAErrCount++;
-    _LPC_DMA_ID->DMACIntErrClr = regVal;
+        // Clear the TC interrupt
+        DMA::clear_int_flag(channel_number);
+      }
 
-    ADCDMA::ADC_burst_off();
-    // LPC_ADC->ADCR &= ~(0x1 << 16);  // Disable the BURST mode bit
+      // if the active interrupt request is a error interrupt
+      if (_LPC_DMA_ID->DMACIntErrStat & chan_mask) {
+        // turn off ADC burst mode if anything does wrong
+        ADCDMA::ADC_burst_off();
+
+        // Clear the error interrupt
+        DMA::clear_err_flag(channel_number);
+      }
+    }
   }
 }
 
@@ -52,12 +68,22 @@ DMA::~DMA(void)
   isInit = false;
 }
 
-
 /**
  * [DMA_Init description]
  */
 bool DMA::Init(void)
 {
+  if (isInit == true)
+    return false;
+
+  // Enable CLOCK into GPDMA controller
+  LPC_SC->PCONP |= (1 << 29);
+
+  // Sync enabled
+  _LPC_DMA_ID->DMACSync |= 0xFFFF;
+
+  // Startup the global DMA controller interface
+  while (enable_controller(DMA_LITTLE_ENDIAN) < 0x01) { /* wait */ }
 
   chan_num = find_channel();
 
@@ -66,23 +92,22 @@ bool DMA::Init(void)
     return false;
   }
 
-  LOG(INF2, "DMA channel found: Channel %u", chan_num);
+  LOG(INF2, "DMA channel found\r\n  Channel:\t%u\r\n  Reg:\t0x%08X", chan_num, (uint32_t)chan);
 
-  clear_int_flag(chan_num);
-  clear_err_flag(chan_num);
-
-  // Enable CLOCK into GPDMA controller
-  LPC_SC->PCONP |= (1 << 29);
+  // Clear all DMA channel interrupt and error flags
+  _LPC_DMA_ID->DMACIntTCClear = 0xFF;
+  _LPC_DMA_ID->DMACIntErrClr  = 0xFF;
 
   // This won't be needed unless someone wants to code weird, crazy things
   // reset_periph_modes();
   // set_periph_mode(1);  // This sets it up for use with Timer0 match0 as being the selection
 
-  // Sync enabled
-  _LPC_DMA_ID->DMACSync |= 0xFFFF;
+  // Move the interrupt vector for calling our IRQ handler
+  IRQHandler_old = NVIC_GetVector(DMA_IRQn);
+  NVIC_SetVector(DMA_IRQn, (uint32_t)DMA_IRQHandler);
+  NVIC_EnableIRQ(DMA_IRQn);
 
-  // Startup the global DMA controller interface
-  while (enable_controller(DMA_LITTLE_ENDIAN) < 0x01) { /* wait */ }
+  LOG(INF2, "DMA NVIC vector set to address 0x%08X", (uint32_t)DMA_IRQHandler);
 
   // Setup everything, but don't start any transfers
   chan->DMACCControl = (
@@ -92,12 +117,19 @@ bool DMA::Init(void)
                          | DMA_SET_SRC_WIDTH(DMA_WIDTH_WORD)
                          | DMA_SET_DST_WIDTH(DMA_WIDTH_WORD)
                          | DMA_SET_SRC_INCREMENT_MODE(DMA_ADDR_INCREMENT_NO)
-                         | DMA_SET_DST_INCREMENT_MODE(DMA_ADDR_INCREMENT_NO)
+                         | DMA_SET_DST_INCREMENT_MODE(DMA_ADDR_INCREMENT_YES)
+                         | (1 << 31)  // TC interrupt enable
                        );
 
   // Setup for use with ADC as the source by default
   set_src_periph(chan, DMA_ADC_REQ_ID);
   transfer_type(chan, 0x02);
+
+  // enable the TC interrupt
+  chan->DMACCConfig |= (1 << 15);
+
+  // Do this again - ** MAY NOT BE NECESSARY **
+  while (enable_controller(DMA_LITTLE_ENDIAN) < 0x01) { /* wait */ }
 
   isInit = true;
   LOG(INF2, "DMA setup successfully completed!");
@@ -105,7 +137,7 @@ bool DMA::Init(void)
   return true;
 }
 
-void DMA::transfer_type(LPC_GPDMACH_TypeDef *dma_channel, uint8_t type)
+void DMA::transfer_type(LPC_GPDMACH_TypeDef * dma_channel, uint8_t type)
 {
   dma_channel->DMACCConfig |= (type << 11) & 0x07;
 }
@@ -121,8 +153,6 @@ bool DMA::Start(void)
 
   // // Enable the channel once everything is properly configured
   enable_channel(chan);
-
-  NVIC_EnableIRQ(DMA_IRQn);
 
   return true;
 }
@@ -150,7 +180,8 @@ void DMA::SetDst(uint32_t addr)
   if (isInit == false)
     return;
 
-  chan->DMACCDestAddr = (uint32_t)addr;
+  destination_addr = (uint32_t)addr;
+  chan->DMACCDestAddr = destination_addr;
 }
 
 
@@ -231,7 +262,7 @@ void DMA::clear_errors(void)
  * [DMA::enable_channel description]
  * @param dma_channel [description]
  */
-void DMA::enable_channel(LPC_GPDMACH_TypeDef *dma_channel)
+void DMA::enable_channel(LPC_GPDMACH_TypeDef * dma_channel)
 {
   dma_channel->DMACCConfig |= 0x01;
 }
@@ -241,7 +272,7 @@ void DMA::enable_channel(LPC_GPDMACH_TypeDef *dma_channel)
  * [DMA::enable_channel description]
  * @param dma_channel [description]
  */
-void DMA::disable_channel(LPC_GPDMACH_TypeDef *dma_channel)
+void DMA::disable_channel(LPC_GPDMACH_TypeDef * dma_channel)
 {
   dma_channel->DMACCConfig &= ~(0x01);
 }
@@ -279,8 +310,9 @@ void DMA::reset_periph_modes(void)
 /**
  * [DMA::set_src_periph description]
  */
-void DMA::set_src_periph(LPC_GPDMACH_TypeDef *dma_channel, uint8_t mode)
+void DMA::set_src_periph(LPC_GPDMACH_TypeDef * dma_channel, uint8_t mode)
 {
+  dma_channel->DMACCConfig &= ~((mode << 1) & 0x0F);
   dma_channel->DMACCConfig |= ((mode << 1) & 0x0F);
 }
 
@@ -288,7 +320,7 @@ void DMA::set_src_periph(LPC_GPDMACH_TypeDef *dma_channel, uint8_t mode)
 /**
  * [DMA::set_dst_periph description]
  */
-void DMA::set_dst_periph(LPC_GPDMACH_TypeDef *dma_channel, uint8_t mode)
+void DMA::set_dst_periph(LPC_GPDMACH_TypeDef * dma_channel, uint8_t mode)
 {
   dma_channel->DMACCConfig |= ((mode << 6) & 0x0F);
 }

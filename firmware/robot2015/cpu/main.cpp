@@ -135,26 +135,21 @@ int main(void)
 	if (adc.Start())
 		LOG(INF1, "ADC config didn't break!");
 
-
 	if (dma.Init()) {
 		dma.SetDst((uint32_t) &dma_locations[0]);
-		dma.SetSrc((uint32_t) & (LPC_ADC->ADDR0));
+		// dma.SetSrc((uint32_t) & (LPC_ADC->ADDR0));
 
 		if (dma.Start())
 			LOG(INF1, "DMA config didn't break!");
 	}
 
-
-
-
-	LOG(OK, "ADC & DMA config complete.");
-
+	adc.BurstRead();
 	led4 = 0;
 
 	while (1) {
-		// LOG(INF1, "ADC Vals: %u, %u, %u, 0x%08X, 0x%08X, 0x%08X, 0X%08X", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0);
+		LOG(INF1, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
+		LOG(INF1, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
 		osDelay(1000);
-		adc.BurstRead();
 	}
 
 }

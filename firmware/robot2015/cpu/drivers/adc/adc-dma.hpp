@@ -43,9 +43,14 @@ static inline int div_round_up(int x, int y)
 
 #define ADC_RANGE    ADC_12BIT_RANGE
 
+typedef struct ADCPin {
+  PinName pin_name;
+  analogin_t* pin_obj;
+} ADCPin_t;
+
 class ADCDMA
 {
- public:
+public:
   ADCDMA(void);
   ~ADCDMA(void);
 
@@ -60,7 +65,7 @@ class ADCDMA
 
   static bool burstEn;
 
- protected:
+protected:
   bool InterruptTest(void);
   void enable_channel(uint8_t);
   void enable_channels(void);
@@ -72,13 +77,13 @@ class ADCDMA
   uint32_t adc_buf[ADC_NUM_CHANNELS][ADC_SAMPLES_PER_CHAN];
   analogin_t _adc;
 
- private:
+private:
   bool isInit;
   bool dmaTransferComplete[2];
   bool ADC_Interrupt_Done_Flag;
   bool ADC_int_done;
 
-  std::vector<PinName> adc_chan;
+  std::vector<ADCPin_t> adc_chan;
   void ADC_start(void);
   void ADC_stop(void);
   bool ADC_powerdown(void);
