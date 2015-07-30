@@ -13,7 +13,6 @@ var searchData=
   ['point',['Point',['../class_geometry2d_1_1_point.html',1,'Geometry2d']]],
   ['pointmagnitude',['PointMagnitude',['../struct_chart_1_1_point_magnitude.html',1,'Chart']]],
   ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html',1,'Geometry2d']]],
-  ['pose',['Pose',['../class_geometry2d_1_1_pose.html',1,'Geometry2d']]],
   ['processor',['Processor',['../class_processor.html',1,'']]],
   ['protobuftree',['ProtobufTree',['../class_protobuf_tree.html',1,'']]]
 ];

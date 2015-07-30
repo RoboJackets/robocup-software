@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_pid.html" title="Pid" alt="" coords="7,5,47,35"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="5,32,112,61"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="163,5,333,35"/>
+<area shape="rect" id="node5" href="$class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="161,59,335,88"/>
 </map>

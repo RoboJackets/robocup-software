@@ -85,7 +85,6 @@ var hierarchy =
     [ "Pid", "class_pid.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
-    [ "Geometry2d::Pose", "class_geometry2d_1_1_pose.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
     ] ],

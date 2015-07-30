@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="5,5,157,35"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways " alt="" coords="5,5,112,35"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_fixed_step_tree.html" title="tree that grows based on fixed distance step " alt="" coords="160,5,325,35"/>
 </map>

@@ -232,7 +232,6 @@ var annotated =
       [ "Line", "class_geometry2d_1_1_line.html", "class_geometry2d_1_1_line" ],
       [ "Point", "class_geometry2d_1_1_point.html", "class_geometry2d_1_1_point" ],
       [ "Polygon", "class_geometry2d_1_1_polygon.html", "class_geometry2d_1_1_polygon" ],
-      [ "Pose", "class_geometry2d_1_1_pose.html", "class_geometry2d_1_1_pose" ],
       [ "Rect", "class_geometry2d_1_1_rect.html", "class_geometry2d_1_1_rect" ],
       [ "Segment", "class_geometry2d_1_1_segment.html", "class_geometry2d_1_1_segment" ],
       [ "Shape", "class_geometry2d_1_1_shape.html", "class_geometry2d_1_1_shape" ],

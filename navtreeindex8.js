@@ -1,13 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"pages.html":[],
-"radio_8hpp_source.html":[12,0,1,0,0,3],
-"radio__config_8h_source.html":[12,0,2,5,2],
-"robocup-py_8hpp_source.html":[12,0,2,0,1],
-"robot_8hpp_source.html":[12,0,1,0,0,4],
-"struct_chart_1_1_function.html":[11,0,0,0],
-"struct_chart_1_1_function.html#a2e70025e9e8d2673e940741fef2a3d26":[11,0,0,0,0],
-"struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec":[11,0,0,0,1],
 "struct_chart_1_1_numeric_field.html":[11,0,0,1],
 "struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[11,0,0,1,1],
 "struct_chart_1_1_numeric_field.html#aa6184b4fc444532d1923316409f71ae5":[11,0,0,1,0],
@@ -89,5 +81,5 @@ var NAVTREEINDEX8 =
 "structcommand__t.html#ac3e0119f9dad4e6bf296d097cb616f54":[11,0,17,4],
 "structcommand__t.html#aecafd32aee69a7a18c5a0ca6068b3a72":[11,0,17,3],
 "time_8hpp_source.html":[12,0,0,8],
-"util_8h_source.html":[12,0,0,0,10]
+"util_8h_source.html":[12,0,0,0,9]
 };

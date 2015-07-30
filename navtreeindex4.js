@@ -1,13 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"class_robot_observation.html#aae563d9bd7b59ab6cdced4c435660cb6":[11,0,54,4],
-"class_robot_observation.html#ab1b1133ed9080ff2e2b74e67a9774ad0":[11,0,54,3],
-"class_robot_observation.html#abac3b22710efbd54270688b8ce034607":[11,0,54,2],
-"class_robot_pose.html":[11,0,55],
-"class_robot_pose.html#a2369c296d2dfaf5a61147cadc215883a":[11,0,55,1],
-"class_robot_pose.html#a3a50a7bdeecfe79afd9bbe90bca59995":[11,0,55,5],
-"class_robot_pose.html#a4375eb7b0a6cca0784c487bddba1db21":[11,0,55,7],
-"class_robot_pose.html#a4af60ab97e0ab34dae874a2c6a96c8b1":[11,0,55,3],
 "class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e":[11,0,55,2],
 "class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc":[11,0,55,4],
 "class_robot_pose.html#a9c11b53a65ec4e7ab215d33acfdf4c4f":[11,0,55,0],
@@ -249,5 +241,13 @@ var NAVTREEINDEX4 =
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a84b65a10f6fefed8532bd18eaf9d6666":[11,0,2,4,0,6],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a94a18079482b1de79e7ed4df0d37854e":[11,0,2,4,0,2],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a98dab10dd43a8abdb7216a5fd7ff1b59":[11,0,2,4,0,5],
-"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html":[11,0,2,4,0,0]
+"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html":[11,0,2,4,0,0],
+"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html#a370df2f1ed6968607618ccf6acce2a5a":[11,0,2,4,0,0,1],
+"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html#a725cd8499def63689427c626ca236453":[11,0,2,4,0,0,3],
+"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html#ab4178d59e3646f9f906c15f9a59e26e0":[11,0,2,4,0,0,2],
+"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html#af683886cec67de12d08490f370d7bc21":[11,0,2,4,0,0,0],
+"classgameplay_1_1fsm_1_1_state_machine.html":[11,0,2,5,0],
+"classgameplay_1_1fsm_1_1_state_machine.html#a017401bea1691c0b4041ca4b6ad2d6fd":[11,0,2,5,0,4],
+"classgameplay_1_1fsm_1_1_state_machine.html#a0b1b3cee27667170e0efb4f6ec0d162f":[11,0,2,5,0,3],
+"classgameplay_1_1fsm_1_1_state_machine.html#a202d07d517f2720dbd46b1214daa336a":[11,0,2,5,0,15]
 };

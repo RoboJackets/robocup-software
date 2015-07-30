@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node3" href="$class_quaternion_demo.html" title="QuaternionDemo" alt="" coords="144,5,264,35"/>
+<area shape="rect" id="node1" href="$class_radio.html" title="Sends and receives information to/from our robots. " alt="" coords="5,32,61,61"/>
+<area shape="rect" id="node3" href="$class_sim_radio.html" title="Radio IO with robots in the simulator. " alt="" coords="113,5,191,35"/>
+<area shape="rect" id="node5" href="$class_u_s_b_radio.html" title="Radio IO with real robots. " alt="" coords="111,59,193,88"/>
 </map>

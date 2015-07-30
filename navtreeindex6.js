@@ -1,13 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a029f6e451a15ab85b1941b9618c051d7":[11,0,2,8,4,2,0,3],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af":[11,0,2,8,4,2,0,2],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75":[11,0,2,8,4,2,0,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[11,0,2,8,4,2,0,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[11,0,2,8,4,2,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc":[11,0,2,8,4,2,1,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[11,0,2,8,4,2,1,1],
-"classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[11,0,2,9,0],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html":[11,0,2,9,1],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a088d7688857a55b3d45b1f150f753829":[11,0,2,9,1,15],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a0c144cebd3faf01d4d746beab154a8ec":[11,0,2,9,1,4],
@@ -249,5 +241,13 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#a6d8d1d001a19e910fb0e3fd323756773":[11,0,2,14,0,0,10],
 "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#a7f26594adb20baad880aa4dcf641d5ff":[11,0,2,14,0,0,0],
 "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#a8addb844e495298285b36bfda779d27a":[11,0,2,14,0,0,6],
-"classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#aa1ee07064a1e93b794bc58ee6acedf42":[11,0,2,14,0,0,1]
+"classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#aa1ee07064a1e93b794bc58ee6acedf42":[11,0,2,14,0,0,1],
+"classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#ac00a486cfc97e3480b9837da871027b2":[11,0,2,14,0,0,3],
+"classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#ad82b944b7aa86bbcbe1e560392a70ca3":[11,0,2,14,0,0,11],
+"classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#afd683f4a3d2e91b99f073a4db4bf2363":[11,0,2,14,0,0,7],
+"classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#affa107d7a135b9a8252550e6307e8dd7":[11,0,2,14,0,0,2],
+"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html":[11,0,2,14,1,0],
+"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#a72d36b1844e484f5e0b991e23448a114":[11,0,2,14,1,0,2],
+"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#a8500137b1afff402be607bcdf8a43c6e":[11,0,2,14,1,0,1],
+"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#aa1f0cbffbe9251e8fdb27ae266a8cad0":[11,0,2,14,1,0,3]
 };

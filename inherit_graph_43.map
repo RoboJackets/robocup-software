@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_logger.html" title="The Logger stores and saves the state of the game at each point in time. " alt="" coords="5,5,67,35"/>
+<area shape="rect" id="node3" href="$class_log_viewer.html" title="LogViewer" alt="" coords="168,5,251,35"/>
+<area shape="rect" id="node5" href="$class_main_window.html" title="main gui thread class " alt="" coords="161,59,257,88"/>
 </map>
