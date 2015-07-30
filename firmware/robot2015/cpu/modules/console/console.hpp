@@ -4,6 +4,8 @@
 #include <memory>
 #include "commands.hpp"
 
+void Task_SerialConsole(void const *args);
+
 /**
  * enable scrolling vi sequence
  */

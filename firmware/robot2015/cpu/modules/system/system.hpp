@@ -15,7 +15,7 @@ class System
      */
     ERR_t Init(void);
 
-    void Start(void);
+    static void Launch(void);
     bool SelfTest(void);
     long GetTime(void);
     bool CanDrive(void);
@@ -24,5 +24,5 @@ class System
   protected:
 
   private:
-    bool isInit;
+    static bool isInit;
 };

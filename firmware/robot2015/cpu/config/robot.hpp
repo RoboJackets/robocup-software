@@ -114,8 +114,8 @@
 #endif
 
 
-// #include "adc-dma.hpp"
-// #include "dma.hpp"
+#include "adc-dma.hpp"
+#include "dma.hpp"
 // #include "speaker-dma.hpp"
 #include "console.hpp"
 #include "logger.hpp"

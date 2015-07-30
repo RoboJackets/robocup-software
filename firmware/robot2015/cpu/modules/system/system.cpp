@@ -1,14 +1,13 @@
 #include "system.hpp"
 
+bool System::isInit = false;
 
 /**
  *
  */
 System::System(void)
 {
-    isInit = false;
-    // do stuff
-    isInit = true;
+	// do stuff
 }
 
 
@@ -17,7 +16,7 @@ System::System(void)
  */
 System::~System(void)
 {
-    isInit = false;
+	isInit = false;
 }
 
 
@@ -25,10 +24,13 @@ System::~System(void)
  * [System::Init Setup the FPGA interface]
  * @return  [The initialization error code.]
  */
-ERR_t System::Init(void)
+void System::Launch(void)
 {
-    if (isInit)
-        return 0;
+	if (isInit == true)
+		return;
 
-    isInit = true;
+	if (COMPETITION_DEPLOY == false)
+		Thread console_task(Task_SerialConsole);
+
+	isInit = true;
 }
