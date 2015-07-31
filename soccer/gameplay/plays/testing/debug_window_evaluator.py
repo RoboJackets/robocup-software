@@ -6,7 +6,7 @@ import constants
 import time
 import math
 
-# This isn't a real play, but it's pretty usefug
+# This isn't a real play, but it's pretty useful
 # Turn it on and we'll draw the window evaluator stuff on-screen from the ball to our goal
 class DebugWindowEvaluator(play.Play):
 

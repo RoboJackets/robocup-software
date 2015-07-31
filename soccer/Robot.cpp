@@ -566,17 +566,17 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 				state()->drawCircle(target.pos, replanThreshold, Qt::green, "MotionControl");
 				addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 
+
+				//  invalidate path if current position is more than the replanThreshold
 				if (*_motionConstraints._replan_threshold != 0 && pathError > replanThreshold) {
 					_pathInvalidated = true;
 					addText("pathError", Qt::red, "Motion");
-					//addText(pathError);
 				}
 
 
 				if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
 					_pathInvalidated = true;
 					addText("Evaulate Returned an invalid result", Qt::red, "Motion");
-					//addText(pathError);
 				}
 
 
@@ -586,7 +586,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 					addText("Hit Obstacle", Qt::red, "Motion");
 				}
 
-				//  invalidate path if current position is more than 15cm from the planned point
 
 
 
@@ -618,14 +617,13 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		double leadTime = *(_motionConstraints._replan_lead_time) * 1000000;
+		double leadTime = *(_motionConstraints._replan_lead_time) * SecsToTimestamp;
 		RobotPose predictedPose;
 
 		filter()->predict(timestamp() + leadTime, &predictedPose);
 		std::unique_ptr<Planning::Path> path = nullptr;
 		int count = 0;
 		while (!path) {
-
 			Geometry2d::Point endTarget;
 			float endSpeed = _motionCommand.getDirectTarget(endTarget);
 			switch (_motionCommand.getCommandType()) {
@@ -637,17 +635,15 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 					break;
 				default:				
 					path = nullptr;
-					//path = unique_ptr<Planning::Path>(Planning::InterpolatedPath::getStandStillPath(pos));
+					
 			}
 			count++;
+
 			//TODO fix this
 			if (count >=50) {
-				cout<<"crapp"<<endl;
 				path = nullptr;
+				addText("PathPlanning Failed", Qt::red, "Planning");
 				break;
-				//path = unique_ptr<Planning::Path>(Planning::InterpolatedPath::getStandStillPath(pos));
-				//addText("PathPlanning Failed", Qt::red, "Motion");
-				//_path->draw(_state, Qt::magenta);
 			}
 		}
 
@@ -658,12 +654,9 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	}
 
 	if (_path) {
-		_path->draw(_state, Qt::magenta);
+		_path->draw(_state, Qt::magenta, "Planning");
 	}
 
-	if (_path) {
-		_path->draw(_state, Qt::magenta);
-	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
 	return;
