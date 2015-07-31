@@ -48,7 +48,7 @@ namespace Chart
 class StripChart: public QWidget
 {
 	public:
-		StripChart(QWidget *parent = 0);
+		StripChart(QWidget *parent = nullptr);
 		~StripChart();
 
 		void history(const std::vector<std::shared_ptr<Packet::LogFrame> > *value)

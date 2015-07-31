@@ -53,7 +53,7 @@ namespace Planning
 			/** grow the tree in the direction of pt
 			 *  returns the new tree point.
 			 *  If base == 0, then the closest tree point is used */
-			virtual Point* extend(Geometry2d::Point pt, Point* base = 0) = 0;
+			virtual Point* extend(Geometry2d::Point pt, Point* base = nullptr) = 0;
 
 			/** attempt to connect the tree to the point */
 			virtual bool connect(const Geometry2d::Point pt) = 0;
@@ -83,7 +83,7 @@ namespace Planning
 		public:
 			FixedStepTree() {}
 
-			Tree::Point* extend(Geometry2d::Point pt, Tree::Point* base = 0);
+			Tree::Point* extend(Geometry2d::Point pt, Tree::Point* base = nullptr);
 			bool connect(Geometry2d::Point pt);
 	};
 }

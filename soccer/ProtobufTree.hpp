@@ -18,7 +18,7 @@ class ProtobufTree: public QTreeWidget
 	Q_OBJECT;
 	
 	public:
-		ProtobufTree(QWidget *parent = 0);
+		ProtobufTree(QWidget *parent = nullptr);
 		
 		// Column numbers
 		enum
@@ -35,7 +35,7 @@ class ProtobufTree: public QTreeWidget
 		// in a repeated field is reduced.  Fields are never removed.
 		bool message(const google::protobuf::Message &msg);
 		
-		void expandMessages(QTreeWidgetItem *item = 0);
+		void expandMessages(QTreeWidgetItem *item = nullptr);
 		
 		// Expands an item recursively
 		void expandSubtree(QTreeWidgetItem *item);

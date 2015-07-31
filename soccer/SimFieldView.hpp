@@ -12,7 +12,7 @@ class SimFieldView: public FieldView
 	Q_OBJECT;
 	
 	public:
-		SimFieldView(QWidget *parent = 0);
+		SimFieldView(QWidget *parent = nullptr);
 		
 		void sendSimCommand(const Packet::SimCommand &cmd);
 		

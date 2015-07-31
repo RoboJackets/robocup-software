@@ -8,7 +8,7 @@
  */
 class RobotWidget : public QWidget {
 public:
-    RobotWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    RobotWidget(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
 
     void setBlueTeam(bool blueTeam);
     bool blueTeam() const;

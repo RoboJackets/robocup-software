@@ -8,7 +8,7 @@
  */
 class BatteryWidget : public QWidget {
 public:
-	BatteryWidget (QWidget *parent = 0, Qt::WindowFlags f = 0);
+	BatteryWidget (QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
 
 	/**
 	 * @brief Battery level represented by a number between 0 and 1

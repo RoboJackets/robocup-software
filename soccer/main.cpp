@@ -131,7 +131,7 @@ int main (int argc, char* argv[])
 			}
 
 			i++;
-			seed = strtol(argv[i], 0, 16);
+			seed = strtol(argv[i], nullptr, 16);
 		}
 		else if(strcmp(var, "-pbk") == 0)
 		{
@@ -175,7 +175,7 @@ int main (int argc, char* argv[])
 	QString error;
 	if (!config.load(cfgFile, error))
 	{
-		QMessageBox::critical(0, "Soccer",
+		QMessageBox::critical(nullptr, "Soccer",
 			QString("Can't read initial configuration %1:\n%2").arg(cfgFile, error));
 	}
 

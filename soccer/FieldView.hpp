@@ -16,7 +16,7 @@ class Logger;
 class FieldView : public QWidget
 {
 	public:
-		FieldView(QWidget* parent = 0);
+		FieldView(QWidget* parent = nullptr);
 		
 		void layerVisible(int i, bool value)
 		{

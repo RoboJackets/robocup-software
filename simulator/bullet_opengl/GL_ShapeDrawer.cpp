@@ -361,7 +361,7 @@ GL_ShapeDrawer::ShapeCache*		GL_ShapeDrawer::cache(btConvexShape* shape)
 		const btVector3*	pv=sc->m_shapehull.getVertexPointer();
 		btAlignedObjectArray<ShapeCache::Edge*>	edges;
 		sc->m_edges.reserve(ni);
-		edges.resize(nv*nv,0);
+		edges.resize(nv*nv,nullptr);
 		for(int i=0;i<ni;i+=3)
 		{
 			const unsigned int* ti=pi+i;
@@ -726,7 +726,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 				{
 					if (shape->isConvex())
 					{
-						const btConvexPolyhedron* poly = shape->isPolyhedral() ? ((btPolyhedralConvexShape*) shape)->getConvexPolyhedron() : 0;
+						const btConvexPolyhedron* poly = shape->isPolyhedral() ? ((btPolyhedralConvexShape*) shape)->getConvexPolyhedron() : nullptr;
 						if (poly)
 						{
 							int i;
