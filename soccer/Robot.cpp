@@ -624,7 +624,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		std::unique_ptr<Planning::Path> path = nullptr;
 		int count = 0;
 		while (!path) {
-
 			Geometry2d::Point endTarget;
 			float endSpeed = _motionCommand.getDirectTarget(endTarget);
 			switch (_motionCommand.getCommandType()) {
@@ -636,17 +635,15 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 					break;
 				default:				
 					path = nullptr;
-					//path = unique_ptr<Planning::Path>(Planning::InterpolatedPath::getStandStillPath(pos));
+					
 			}
 			count++;
+
 			//TODO fix this
 			if (count >=50) {
-				cout<<"crapp"<<endl;
 				path = nullptr;
+				addText("PathPlanning Failed", Qt::red, "Planning");
 				break;
-				//path = unique_ptr<Planning::Path>(Planning::InterpolatedPath::getStandStillPath(pos));
-				//addText("PathPlanning Failed", Qt::red, "Motion");
-				//_path->draw(_state, Qt::magenta);
 			}
 		}
 
