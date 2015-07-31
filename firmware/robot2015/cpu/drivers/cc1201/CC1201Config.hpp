@@ -2,7 +2,6 @@
 
 #include <queue>
 #include <string>
-#include "CC1201Radio.hpp"
 #include "logger.hpp"
 
 

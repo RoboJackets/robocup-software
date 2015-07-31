@@ -223,7 +223,6 @@ extern "C" void ADC_IRQHandler(void)
 
   }
 
-  /*
     overrun_count++;
 
     for (int i = 0; i < ADC_NUM_CHANNELS; i++) {

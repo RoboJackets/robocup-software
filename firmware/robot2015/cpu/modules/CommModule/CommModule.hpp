@@ -6,22 +6,26 @@
 #include "ThreadHelper.hpp"
 #include "MailHelper.hpp"
 #include "logger.hpp"
-#include "FunctionPointerRJ.hpp"
 
-#include <algorithm>    // std::binary_search, std::sort
+#include <algorithm>
 #include <vector>
+#include <functional>
 
 #define COMM_MODULE_TX_QUEUE_SIZE           5
 #define COMM_MODULE_RX_QUEUE_SIZE           5
 #define COMM_MODULE_NBR_PORTS               16
 #define COMM_MODULE_SIGNAL_START_THREAD     0x01
 
+typedef std::vector<std::function<void(RTP_t*)>> func_t;
+
+void rx_callback_test(RTP_t *);
+void Task_CommCtrl(void const *);
 class CommLink;
 
 // Base class for a communication module
 class CommModule
 {
-  public:
+public:
     /// Default Constructor
     CommModule();
 
@@ -33,54 +37,51 @@ class CommModule
     static const int TX_QUEUE_SIZE;
     static const int RX_QUEUE_SIZE;
 
-    // Open a socket connection for communicating.
+    static unsigned int txPackets;
+    static unsigned int rxPackets;
+
     template <typename T>
-    void TxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)
-    {
+    static void TxHandler(T *obj, void(T::*mptr)(RTP_t *), uint8_t portNbr) {
         _txH_called[portNbr] = true;
+        _link[portNbr] = obj;
+        _tx_handles.at(portNbr) = std::bind(mptr, obj, std::placeholders::_1);
         ready();
-        _tx_handles[portNbr].attach(tptr, mptr);
     }
 
     template <typename T>
-    void RxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)
-    {
+    static void RxHandler(T *obj, void(T::*mptr)(RTP_t *), uint8_t portNbr) {
         _rxH_called[portNbr] = true;
+        _rx_handles.at(portNbr) = std::bind(mptr, obj, std::placeholders::_1);
         ready();
-        _rx_handles[portNbr].attach(tptr, mptr);
     }
 
-    void TxHandler(void(*)(RTP_t *), uint8_t);
-    void RxHandler(void(*)(RTP_t *), uint8_t);
+    static void RxHandler(void(*ptr)(RTP_t *), uint8_t);
 
-    void RxHandler(void(*)(void), uint8_t);
-
-    void openSocket(uint8_t);
+    // Open a socket connection for communicating.
+    static void openSocket(uint8_t);
 
     // Send a RTP packet. The details of exactly how the packet will be sent are determined from the RTP packet's port and subclass values
-    void send(RTP_t &);
-    void receive(RTP_t &);
+    static void send(RTP_t &);
+    static void receive(RTP_t &);
 
-    unsigned int NumRXPackets(void);
-    unsigned int NumTXPackets(void);
+    static unsigned int NumRXPackets(void);
+    static unsigned int NumTXPackets(void);
 
-    //osThreadId rxID(void);
-
-  protected:
-    // NOP function for keeping a oommunication link active
+protected:
+    // NOP function for keeping a communication link active
     void nopFunc(void);
 
     // Memory Queue IDs
-    osMailQId   _txQueue;
-    osMailQId   _rxQueue;
+    static osMailQId   _txQueue;
+    static osMailQId   _rxQueue;
 
     // Thread IDs
-    osThreadId      _txID;
-    osThreadId      _rxID;
+    static osThreadId      _txID;
+    static osThreadId      _rxID;
 
-    std::vector<uint8_t> *_open_ports;
+    static std::vector<uint8_t> *_open_ports;
 
-  private:
+private:
     // Used to help define the class's threads in the constructor
     friend void define_thread(osThreadDef_t &, void(*task)(void const *arg), osPriority, uint32_t, unsigned char *);
 
@@ -88,10 +89,7 @@ class CommModule
     static void txThread(void const *);
     static void rxThread(void const *);
 
-    static unsigned int txPackets;
-    static unsigned int rxPackets;
-
-    void ready(void);
+    static void ready(void);
 
     static bool isReady;
 
@@ -105,15 +103,12 @@ class CommModule
     MailHelper<RTP_t, COMM_MODULE_TX_QUEUE_SIZE>   _txQueueHelper;
     MailHelper<RTP_t, COMM_MODULE_RX_QUEUE_SIZE>   _rxQueueHelper;
 
-    CommLink        *_link[COMM_MODULE_NBR_PORTS];
+    static CommLink *_link[COMM_MODULE_NBR_PORTS];
 
-    FunctionPointerRJ   _rx_handles[COMM_MODULE_NBR_PORTS];
-    FunctionPointerRJ   _tx_handles[COMM_MODULE_NBR_PORTS];
+    static func_t   _rx_handles;
+    static func_t   _tx_handles;
 
-    bool    _txH_called[COMM_MODULE_NBR_PORTS];
-    bool    _rxH_called[COMM_MODULE_NBR_PORTS];
-
-    // Ignore for now
-    // bool _dynamic_stack;
+    static bool     _txH_called[COMM_MODULE_NBR_PORTS];
+    static bool     _rxH_called[COMM_MODULE_NBR_PORTS];
 };
 

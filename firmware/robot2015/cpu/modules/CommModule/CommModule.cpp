@@ -1,15 +1,22 @@
 #include "CommModule.hpp"
 
-unsigned int CommModule::txPackets = 0;
-unsigned int CommModule::rxPackets = 0;
-
 // Set the class's constants for streamlined use in other areas of the code
-const int CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
-const int CommModule::RX_QUEUE_SIZE = COMM_MODULE_RX_QUEUE_SIZE;
-const int CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
-
-// unsigned int CommModule::txPackets;
-// unsigned int CommModule::rxPackets;
+const int       CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
+const int       CommModule::RX_QUEUE_SIZE = COMM_MODULE_RX_QUEUE_SIZE;
+const int       CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
+unsigned int    CommModule::txPackets = 0;
+unsigned int    CommModule::rxPackets = 0;
+osThreadId      CommModule::_txID;
+osThreadId      CommModule::_rxID;
+osMailQId       CommModule::_txQueue;
+osMailQId       CommModule::_rxQueue;
+func_t          CommModule::_rx_handles;
+func_t          CommModule::_tx_handles;
+bool            CommModule::isReady = false;
+bool            CommModule::_txH_called[COMM_MODULE_NBR_PORTS] = { 0 };
+bool            CommModule::_rxH_called[COMM_MODULE_NBR_PORTS] = { 0 };
+CommLink*       CommModule::_link[COMM_MODULE_NBR_PORTS];
+std::vector<uint8_t> * CommModule::_open_ports;
 
 // Default constructor
 CommModule::CommModule() :
@@ -33,17 +40,8 @@ CommModule::CommModule() :
     _txID = osThreadCreate(&_txDef, (void *)this);
     _rxID = osThreadCreate(&_rxDef, (void *)this);
 
-
-    for (int i = 0; i < COMM_MODULE_NBR_PORTS; i++) {
-        _txH_called[i] = false;
-        _rxH_called[i] = false;
-    }
-
-    /*
-        // Initialize boolean arrays
-        memset(_txH_called, 0, COMM_MODULE_NBR_PORTS);
-        memset(_rxH_called, 0, COMM_MODULE_NBR_PORTS);
-    */
+    _tx_handles.reserve(COMM_MODULE_NBR_PORTS);
+    _rx_handles.reserve(COMM_MODULE_NBR_PORTS);
 }
 
 CommModule::~CommModule()
@@ -74,7 +72,7 @@ void CommModule::txThread(void const *arg)
             RTP_t *p = (RTP_t *)evt.value.p;
 
             // Send the packet on the active communication link
-            inst->_tx_handles[p->port].call(p);
+            inst->_tx_handles[p->port](p);
 
             LOG(INF2, "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
 
@@ -110,7 +108,7 @@ void CommModule::rxThread(void const *arg)
 
             // If there is an open socket for the port, call it.
             if (std::binary_search(inst->_open_ports->begin(), inst->_open_ports->end(), p->port)) {
-                inst->_rx_handles[p->port].call(p);
+                inst->_rx_handles[p->port](p);
             }
 
             LOG(INF2, "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
@@ -120,27 +118,12 @@ void CommModule::rxThread(void const *arg)
     }
 }
 
-void CommModule::TxHandler(void(*ptr)(RTP_t *), uint8_t portNbr)
-{
-    _txH_called[portNbr] = true;
-    ready();
-    _tx_handles[portNbr].attach(ptr);
-}
-
 void CommModule::RxHandler(void(*ptr)(RTP_t *), uint8_t portNbr)
 {
     _rxH_called[portNbr] = true;
+    _rx_handles.at(portNbr) = ptr;
     ready();
-    _rx_handles[portNbr].attach(ptr);
 }
-
-void CommModule::RxHandler(void(*ptr)(void), uint8_t portNbr)
-{
-    _rxH_called[portNbr] = true;
-    ready();
-    _rx_handles[portNbr].attach(ptr);
-}
-
 
 void CommModule::openSocket(uint8_t portNbr)
 {
@@ -162,14 +145,10 @@ void CommModule::openSocket(uint8_t portNbr)
     }
 }
 
-
 void CommModule::ready(void)
 {
-    static bool isReady = false;
-
-    if (isReady) {
+    if (isReady)
         return;
-    }
 
     isReady = true;
 
@@ -178,7 +157,6 @@ void CommModule::ready(void)
     osSignalSet(_txID, COMM_MODULE_SIGNAL_START_THREAD);
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
 }
-
 
 void CommModule::send(RTP_t &packet)
 {
@@ -201,7 +179,6 @@ void CommModule::send(RTP_t &packet)
         LOG(WARN, "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }
-
 
 void CommModule::receive(RTP_t &packet)
 {
@@ -229,7 +206,6 @@ unsigned int CommModule::NumRXPackets(void)
 {
     return CommModule::rxPackets;
 }
-
 
 unsigned int CommModule::NumTXPackets(void)
 {

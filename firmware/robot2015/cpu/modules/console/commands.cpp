@@ -371,8 +371,9 @@ void cmd_ping(const vector<string> &args)
 	}
 
 	time_t sys_time = time(NULL);
-	printf("reply: %d\r\n", (int)ctime(&sys_time));
+	printf("reply: %d\r\n", sys_time);
 	Console::Flush();
+	Thread::wait(1000);
 }
 
 
@@ -447,10 +448,8 @@ void cmd_info(const vector<string> &args)
 	       git_head_date,
 	       git_head_author
 	      );
-	Console::Flush();
 
 	printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
-	Console::Flush();
 
 	printf("Base ID:\t");
 	if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
@@ -459,7 +458,6 @@ void cmd_info(const vector<string> &args)
 		for (int i = 0; i < 6; i++)
 			printf("%02X\r\n", id.serial[i]);
 
-	Console::Flush();
 	// Prints out a serial number, taken from the mbed forms
 	// https://developer.mbed.org/forum/helloworld/topic/2048/
 	unsigned int Interface[5] = {58, 0, 0, 0, 0};
@@ -477,8 +475,6 @@ void cmd_info(const vector<string> &args)
 	else
 		printf("MCU UID:\t\tN/A\r\n");
 
-	Console::Flush();
-
 	// Should be 0x26013F37
 	Interface[0] = 54;
 	CallMe_entry(Interface, Interface);
@@ -488,15 +484,11 @@ void cmd_info(const vector<string> &args)
 	else
 		printf("MCU ID:\t\tN/A\r\n");
 
-	Console::Flush();
-
 	char buf[33];
 	mbed_interface_uid(buf);
 	printf("mbed UID:\t%s\r\n", buf);
 
-	Console::Flush();
-
-	mbed_mac_address(buf);
+	// mbed_mac_address(buf);
 	printf("Eth MAC:\t");
 	for (int i = 0; i < 5; i++)
 		printf("%02X-", buf[i]);
@@ -504,7 +496,6 @@ void cmd_info(const vector<string> &args)
 
 	Console::Flush();
 }
-
 
 
 /**

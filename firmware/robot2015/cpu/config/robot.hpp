@@ -105,7 +105,8 @@
 // Include the primary radio class if 915MHz band radio [if active]
 #if RJ_RADIO_EN
 #ifdef RJ_CC1201
-#include "CC1201.hpp"
+// #include "CC1201.hpp"
+#include "CC1201Radio.hpp"
 #else
 #ifdef RJ_CC1101
 #include "CC1101.hpp"
@@ -119,7 +120,6 @@
 // #include "speaker-dma.hpp"
 #include "console.hpp"
 #include "logger.hpp"
-#include "CC1201Radio.hpp"
 #include "DS2411.hpp"
 #include "git_version.hpp"
 #include "radio-state-decode.hpp"

@@ -26,17 +26,6 @@ void imAlive(void const *args)
 
 
 /**
- * [rx_callback This is executed for a successfully received radio packet.]
- * @param p [none]
- */
-void rx_callback(RTP_t *p)
-{
-	if (p->payload_size > 0)
-		LOG(OK, "%u byte packet received!", p->payload_size);
-}
-
-
-/**
  * [main Main program.]
  * @return  [none]
  */
@@ -53,66 +42,13 @@ int main(void)
 	radio_timeout_task.start(300);
 
 	isLogging = RJ_LOGGING_EN;
-
 	rjLogLevel = INF1;
-	Thread console_task(Task_SerialConsole);
-	/*
-		// Create a new physical hardware communication link
-		CC1201 radio_900(
-		    RJ_SPI_BUS,
-		    RJ_RADIO_nCS,
-		    RJ_RADIO_INT
-		);
 
-		CC1201Config *radioConfig = new CC1201Config();
-		radioConfig = CC1201Config::resetConfiguration(radioConfig);
-		CC1201Config::loadConfiguration(radioConfig, &radio_900);
-		CC1201Config::verifyConfiguration(radioConfig, &radio_900);
+	Thread console_task(Task_SerialConsole, NULL, osPriorityBelowNormal);
+	// Thread comm_task(Task_CommCtrl, NULL, osPriorityNormal);
 
-		radio_900.freq();
-		radio_900.set_rssi_offset(-81);
-
-		// Create a Communication Module Object
-		CommModule comm;
-		radio_900.setModule(comm);
-
-		comm.TxHandler((CommLink *)&radio_900, &CommLink::sendPacket, 8);
-		comm.RxHandler(rx_callback, 8);
-		comm.openSocket(8);
-
-		// Create a dummy packet that is set to send out from socket connection 8
-		// RTP_t dummy_packet;
-
-		// Enable watchdog timer
-		// Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
-
-		while (1) {
-			dummy_packet.port = 8;
-			dummy_packet.subclass = 1;
-			dummy_packet.address = 255;
-			dummy_packet.sfs = 0;
-			dummy_packet.ack = 0;
-			dummy_packet.payload_size = 25;
-
-			for (int i = 0; i < 25; i++)
-				dummy_packet.payload[i] = 0x24;
-
-			LOG(OK, "%u\r\n", comm.NumRXPackets());
-
-			std::string current_state = decode_marcstate(radio_900.mode());
-			LOG(OK, "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
-
-			// comm.send(dummy_packet);	// As of now, the CC1201 should always be in RX and calibrated if necessary exiting this.
-
-			is_locked = radio_900.isLocked();
-			rssi_valid = gpio2;
-
-			osDelay(600);
-
-			// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
-			//radio_900.strobe(CC1201_STROBE_SRX);
-		}
-	*/
+	// Enable watchdog timer
+	// Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
 	uint32_t dma_locations[10] = { 0 };
 
