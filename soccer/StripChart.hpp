@@ -26,7 +26,7 @@ namespace Chart
 	
 	struct PointMagnitude: public Function
 	{
-		virtual bool value(const Packet::LogFrame &frame, float &v) const;
+		virtual bool value(const Packet::LogFrame &frame, float &v) const override;
 		
 		// Vector of tags from LogFrame to the Point to be used.
 		// Each tag except must identify a Message.
@@ -36,7 +36,7 @@ namespace Chart
 	
 	struct NumericField: public Function
 	{
-		virtual bool value(const Packet::LogFrame &frame, float &v) const;
+		virtual bool value(const Packet::LogFrame &frame, float &v) const override;
 		
 		// Vector of tags from LogFrame to the float or double field to be used.
 		// Each tag except the last one must identify a Message.
@@ -81,7 +81,7 @@ class StripChart: public QWidget
 		bool autoRange;
 		
 	protected:
-		void paintEvent(QPaintEvent *e);
+		void paintEvent(QPaintEvent *e) override;
 		
 		// Returns the position for the data at a given frame.
 		// i is an index in _history, so 0 is the most recent frame

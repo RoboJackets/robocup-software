@@ -23,11 +23,11 @@ class SimFieldView: public FieldView
 		void robotSelected(int shell);
 	
 	protected:
-		virtual void mouseReleaseEvent(QMouseEvent*);
-		virtual void mousePressEvent(QMouseEvent*);
-		virtual void mouseMoveEvent(QMouseEvent*);
+		virtual void mouseReleaseEvent(QMouseEvent*) override;
+		virtual void mousePressEvent(QMouseEvent*) override;
+		virtual void mouseMoveEvent(QMouseEvent*) override;
 		
-		virtual void drawTeamSpace(QPainter &p);
+		virtual void drawTeamSpace(QPainter &p) override;
 		
 	private:
 		// Places the ball at a position on the screen

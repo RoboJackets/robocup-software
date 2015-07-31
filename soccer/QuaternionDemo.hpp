@@ -14,7 +14,7 @@ public:
 	Eigen::Quaternionf q;
 
 protected:
-	void paintGL();
+	void paintGL() override;
 };
 
 QuaternionDemo::QuaternionDemo(QWidget* parent)

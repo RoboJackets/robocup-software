@@ -29,9 +29,9 @@ namespace Geometry2d
 
         Polygon(const Polygon &other) : vertices(other.vertices) {}
 
-        Shape *clone() const;
+        Shape *clone() const override;
         
-        bool containsPoint(const Point &pt) const {
+        bool containsPoint(const Point &pt) const override {
             return contains(pt);
         }
 
@@ -39,8 +39,8 @@ namespace Geometry2d
         bool intersects(const Rect &rect) const;
         bool intersects(const Polygon &other) const;
 
-        bool hit(const Geometry2d::Point &pt) const;
-        bool hit(const Geometry2d::Segment &seg) const;
+        bool hit(const Geometry2d::Point &pt) const override;
+        bool hit(const Geometry2d::Segment &seg) const override;
         
         /// Returns true if this polygon contains any vertex of other.
         bool containsVertex(const Polygon &other) const;
@@ -56,7 +56,7 @@ namespace Geometry2d
             vertices.push_back(pt);
         }
 
-        std::string toString() {
+        std::string toString() override {
             std::stringstream str;
             str << "Polygon<";
             for(int i = 0; i < vertices.size(); i++)

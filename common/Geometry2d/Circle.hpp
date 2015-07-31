@@ -27,7 +27,7 @@ namespace Geometry2d
             _r = other.radius();
         }
 
-        Shape *clone() const;
+        Shape *clone() const override;
         
 
         // Both radius and radius-squared are stored, since some operations are more
@@ -68,11 +68,11 @@ namespace Geometry2d
             _rsq = -1;
         }
         
-        bool containsPoint(const Point &pt) const;
+        bool containsPoint(const Point &pt) const override;
 
-        bool hit(const Point &pt) const;
+        bool hit(const Point &pt) const override;
 
-        bool hit(const Segment &pt) const;
+        bool hit(const Segment &pt) const override;
         
         // Returns the number of points at which this circle intersects the given circle.
         // i must be null or point to two points.
@@ -92,7 +92,7 @@ namespace Geometry2d
 
         Point center;
 
-        std::string toString() {
+        std::string toString() override {
             std::stringstream str;
             str << "Circle<" << center << ", " << radius() << ">";
             return str.str();

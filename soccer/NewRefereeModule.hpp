@@ -176,7 +176,7 @@ public:
 	void spinKickWatcher();
 
 protected:
-	virtual void run();
+	virtual void run() override;
 
 	volatile bool _running;
 

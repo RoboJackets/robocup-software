@@ -59,7 +59,7 @@ class ProtobufTree: public QTreeWidget
 		
 		void addBytes(QTreeWidgetItem *parent, const std::string &bytes);
 		
-		virtual void contextMenuEvent(QContextMenuEvent *e);
+		virtual void contextMenuEvent(QContextMenuEvent *e) override;
 		
 		bool _first;
 		const std::vector<std::shared_ptr<Packet::LogFrame> > *_history;
