@@ -1,8 +1,8 @@
 import play
 import behavior
 import tactics.defense
-import tactics.stopped_plays.circle_near_ball
-import tactics.stopped_plays.circle_on_center
+import tactics.stopped.circle_near_ball
+import tactics.stopped.circle_on_center
 import main
 import enum
 import robocup
@@ -56,12 +56,12 @@ class Stopped(play.Play):
     def on_enter_normal(self):
         self.remove_all_subbehaviors()
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
-        idle = tactics.stopped_plays.circle_near_ball.CircleNearBall()
+        idle = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
     def on_enter_center(self):
         self.remove_all_subbehaviors()
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
-        idle = tactics.stopped_plays.circle_on_center.CircleOnCenter()
+        idle = tactics.stopped.circle_on_center.CircleOnCenter()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
