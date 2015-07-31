@@ -83,7 +83,7 @@ namespace Planning
 		public:
 			FixedStepTree() {}
 
-			Tree::Point* extend(Geometry2d::Point pt, Tree::Point* base = nullptr);
-			bool connect(Geometry2d::Point pt);
+			Tree::Point* extend(Geometry2d::Point pt, Tree::Point* base = nullptr) override;
+			bool connect(Geometry2d::Point pt) override;
 	};
 }

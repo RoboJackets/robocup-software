@@ -59,8 +59,8 @@ class FieldView : public QWidget
 		bool showTeamNames;
 		
 	protected:
-		virtual void paintEvent(QPaintEvent* e);
-		virtual void resizeEvent(QResizeEvent *e);
+		virtual void paintEvent(QPaintEvent* e) override;
+		virtual void resizeEvent(QResizeEvent *e) override;
 		
 		virtual void drawWorldSpace(QPainter &p);
 		virtual void drawTeamSpace(QPainter &p);

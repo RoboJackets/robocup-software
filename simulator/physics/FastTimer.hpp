@@ -24,8 +24,8 @@ signals:
     void timeout();
 
 protected:
-    virtual void run();
-    virtual bool event(QEvent *e);
+    virtual void run() override;
+    virtual bool event(QEvent *e) override;
 
     useconds_t _us;
     volatile bool _running;

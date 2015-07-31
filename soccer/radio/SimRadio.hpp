@@ -12,10 +12,10 @@ class SimRadio: public Radio
 public:
     SimRadio(bool blueTeam = false);
 
-	virtual bool isOpen() const;
-	virtual void send(Packet::RadioTx &packet);
-    virtual void receive();
-    virtual void switchTeam(bool blueTeam);
+	virtual bool isOpen() const override;
+	virtual void send(Packet::RadioTx &packet) override;
+    virtual void receive() override;
+    virtual void switchTeam(bool blueTeam) override;
 	
 private:
 	QUdpSocket _socket;

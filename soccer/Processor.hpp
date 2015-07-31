@@ -218,7 +218,7 @@ class Processor: public QThread
 		Time firstLogTime;
 
 	protected:
-		void run();
+		void run() override;
 
 		void applyJoystickControls(const JoystickControlValues &controlVals, Packet::RadioTx::Robot *txRobot, OurRobot *robot);
 

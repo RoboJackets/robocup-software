@@ -23,7 +23,7 @@ public:
 	virtual ~Field();
 
 	// Translates the origin of the field
-	void position(float x, float y) { _x = x; _y = y; }
+	void position(float x, float y) override { _x = x; _y = y; }
 
 	void initPhysics();
 

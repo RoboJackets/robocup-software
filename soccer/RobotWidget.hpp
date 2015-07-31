@@ -18,7 +18,7 @@ public:
     void setBallSenseFault(bool faulty = true);
     void setHasBall(bool hasBall = true);
     
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
 
 
 private:
