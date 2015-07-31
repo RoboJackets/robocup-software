@@ -1,2 +1,0 @@
-# Source this file to use the ARM toolchain: . ./use_arm_toolchain
-export PATH=$PATH:$(dirname $(readlink -f $BASH_SOURCE))/build/firmware/arm_toolchain/install/bin

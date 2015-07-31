@@ -2,7 +2,6 @@ import play
 import behavior
 import main
 import robocup
-import evaluation.window_evaluator
 import constants
 import time
 import math
@@ -19,17 +18,8 @@ class DebugWindowEvaluator(play.Play):
             lambda: True,
             'immediately')
 
-        self.avg_time_saved = 0.0
-        self.avg_count = 0.0
-
 
     def execute_running(self):
-        pt = main.ball().pos
-        seg = constants.Field.OurGoalSegment
-
-        win_eval_cpp = robocup.WindowEvaluator(main.system_state())
-        win_eval_cpp.debug = True
-        start = time.time()
-        windows,best = win_eval_cpp.eval_pt_to_our_goal(pt)
-        end = time.time()
-        cpp_time = end - start
+        win_eval = robocup.WindowEvaluator(main.system_state())
+        win_eval.debug = True
+        windows, best = win_eval.eval_pt_to_our_goal(main.ball().pos)
