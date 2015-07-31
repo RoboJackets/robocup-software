@@ -210,14 +210,14 @@ void OurRobot::moveDirect(const Geometry2d::Point &goal, float endSpeed)
 		return;
 
 	// sets flags for future movement
-	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
+	if (verbose) cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
 
 	_motionCommand.setDirectTarget(goal, endSpeed);
 
 	//	reset conflicting motion commands
 	_motionConstraints.pivotTarget = boost::none;
 
-	*_cmdText << "move(" << goal.x << ", " << goal.y << ")\n";
+	*_cmdText << "moveDirect(" << goal.x << ", " << goal.y << ")\n";
 	*_cmdText << "endSpeed(" << endSpeed << ")\n";
 }
 
