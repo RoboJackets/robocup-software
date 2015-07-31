@@ -66,5 +66,4 @@ struct MotionConstraints {
     static ConfigDouble *_max_angle_speed;
     static ConfigDouble *_replan_threshold;
     static ConfigDouble *_replan_lead_time;
-    //static ConfigDouble *_direct_plan_start_speed;
 };

@@ -25,9 +25,6 @@ Geometry2d::Point Planning::randomPoint()
 	return Geometry2d::Point(x, y);
 }
 
-RRTPlanner::RRTPlanner(): _maxIterations(100)
-{}
-
 RRTPlanner::RRTPlanner(int maxIterations): _maxIterations(maxIterations)
 {}
 
@@ -195,15 +192,8 @@ Planning::InterpolatedPath* RRTPlanner::optimize(Planning::InterpolatedPath &pat
 	}
 
 	vector<Geometry2d::Point> pts = path.points;
-	//pts.reserve(path.points.size());
-
-	// Copy all points that won't be optimized
-	//vector<Geometry2d::Point>::const_iterator begin = path.points.begin();
-	//pts.insert(pts.end(), begin, begin + start);
 
 	// The set of obstacles the starting point was inside of
-
-	
 	std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
 
 	obstacles->hit(pts[start], startHitSet);
@@ -217,6 +207,7 @@ Planning::InterpolatedPath* RRTPlanner::optimize(Planning::InterpolatedPath &pat
 				for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
 					if (startHitSet.find(hit) == startHitSet.end()) {
 						transitionValid = false;
+						break;
 					}
 				}
 			}

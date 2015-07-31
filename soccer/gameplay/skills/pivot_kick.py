@@ -150,10 +150,6 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             self.set_aim_params()
 
     def execute_aiming(self):
-        if (main.ball().valid):
-            i = 0
-        else:
-            i = i + 1
         self.set_aim_params()
 
         if isinstance(self.target, robocup.Segment):
