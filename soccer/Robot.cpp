@@ -566,17 +566,17 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 				state()->drawCircle(target.pos, replanThreshold, Qt::green, "MotionControl");
 				addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 
+
+				//  invalidate path if current position is more than the replanThreshold
 				if (*_motionConstraints._replan_threshold != 0 && pathError > replanThreshold) {
 					_pathInvalidated = true;
 					addText("pathError", Qt::red, "Motion");
-					//addText(pathError);
 				}
 
 
 				if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
 					_pathInvalidated = true;
 					addText("Evaulate Returned an invalid result", Qt::red, "Motion");
-					//addText(pathError);
 				}
 
 
@@ -586,7 +586,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 					addText("Hit Obstacle", Qt::red, "Motion");
 				}
 
-				//  invalidate path if current position is more than 15cm from the planned point
 
 
 
@@ -618,7 +617,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		double leadTime = *(_motionConstraints._replan_lead_time) * 1000000;
+		double leadTime = *(_motionConstraints._replan_lead_time) * SecsToTimestamp;
 		RobotPose predictedPose;
 
 		filter()->predict(timestamp() + leadTime, &predictedPose);
