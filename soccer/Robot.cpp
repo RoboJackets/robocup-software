@@ -654,12 +654,9 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	}
 
 	if (_path) {
-		_path->draw(_state, Qt::magenta);
+		_path->draw(_state, Qt::magenta, "Planning");
 	}
 
-	if (_path) {
-		_path->draw(_state, Qt::magenta);
-	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
 	return;
