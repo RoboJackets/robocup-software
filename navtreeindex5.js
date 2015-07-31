@@ -1,5 +1,6 @@
 var NAVTREEINDEX5 =
 {
+"classgameplay_1_1fsm_1_1_state_machine.html#a202d07d517f2720dbd46b1214daa336a":[11,0,2,5,0,15],
 "classgameplay_1_1fsm_1_1_state_machine.html#a25540ef072be9d5415858631e0bcf913":[11,0,2,5,0,9],
 "classgameplay_1_1fsm_1_1_state_machine.html#a26580b6c91b9b04fea7347c43896017a":[11,0,2,5,0,10],
 "classgameplay_1_1fsm_1_1_state_machine.html#a59deb3cdef6d3cf702405a1418bc7104":[11,0,2,5,0,12],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[11,0,2,8,4,2,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[11,0,2,8,4,2,1],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc":[11,0,2,8,4,2,1,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[11,0,2,8,4,2,1,1],
-"classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[11,0,2,9,0]
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[11,0,2,8,4,2,1,1]
 };

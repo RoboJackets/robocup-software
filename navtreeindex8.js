@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec":[11,0,0,0,1],
 "struct_chart_1_1_numeric_field.html":[11,0,0,1],
 "struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[11,0,0,1,1],
 "struct_chart_1_1_numeric_field.html#aa6184b4fc444532d1923316409f71ae5":[11,0,0,1,0],

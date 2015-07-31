@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[11,0,2,9,0],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html":[11,0,2,9,1],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a088d7688857a55b3d45b1f150f753829":[11,0,2,9,1,15],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a0c144cebd3faf01d4d746beab154a8ec":[11,0,2,9,1,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html#affa107d7a135b9a8252550e6307e8dd7":[11,0,2,14,0,0,2],
 "classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html":[11,0,2,14,1,0],
 "classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#a72d36b1844e484f5e0b991e23448a114":[11,0,2,14,1,0,2],
-"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#a8500137b1afff402be607bcdf8a43c6e":[11,0,2,14,1,0,1],
-"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#aa1f0cbffbe9251e8fdb27ae266a8cad0":[11,0,2,14,1,0,3]
+"classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#a8500137b1afff402be607bcdf8a43c6e":[11,0,2,14,1,0,1]
 };
