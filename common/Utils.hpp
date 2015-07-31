@@ -14,7 +14,14 @@
 #include <vector>
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
-template<typename T> static inline void debugThrow(T exception) {
+
+static inline void debugThrow(const std::string &string) {
+	if (THROW_DEBUG_EXCEPTIONS) {
+		throw std::runtime_error(string);
+	}
+}
+
+static inline void debugThrow(const std::exception &exception) {
 	if (THROW_DEBUG_EXCEPTIONS) {
 		throw exception;
 	}

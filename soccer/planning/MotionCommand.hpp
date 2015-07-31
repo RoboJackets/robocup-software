@@ -68,7 +68,7 @@ namespace Planning {
         /// Set the velocity in world coordinates directly (circumvents path planning)
         Geometry2d::Point _targetWorldVel;
 
-        //True when _targetPos should be used. False when worldVel override should be used
+        //The type of command
         CommandType _commandType;
     };
 }

@@ -19,7 +19,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     BackOffSpeed = 0.3
 
     InFrontOfBallCosOfAngleThreshold = 0.95
-    #InFrontOfBallDistance
 
 
     class State(Enum):

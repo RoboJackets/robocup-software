@@ -89,7 +89,8 @@ namespace Planning
 		}
 
 		virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override {
-			throw "This function is not implemented";
+			debugThrow("This function is not implemented");
+			return nullptr;
 		}
 
 		virtual boost::optional<MotionInstant> destination() const override {
@@ -97,7 +98,6 @@ namespace Planning
 			return destination;
 		}
 		virtual std::unique_ptr<Path> clone() const override {
-			throw "This function is not implemented";
 			return std::unique_ptr<Path>(new TrapezoidalPath(startPos,startSpeed,endPos, endSpeed, maxAcc, maxSpeed));
 		}
 	};
