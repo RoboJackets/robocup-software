@@ -16,7 +16,7 @@ static const float MaxChipVelocity = 3*scaling;
 static const float ChipAngle = 0.34906585;//20 degree
 
 RobotBallController::RobotBallController(Robot* robot) :
-	_ghostObject(0),_localMouthPos(0,0,0),_parent(robot),_ball(0),
+	_ghostObject(nullptr),_localMouthPos(0,0,0),_parent(robot),_ball(nullptr),
 	_simEngine(robot->getSimEngine())
 {
 	ballSensorWorks = true;
@@ -64,7 +64,7 @@ void RobotBallController::initPhysics()
 
 bool RobotBallController::detectBall ( btCollisionWorld* collisionWorld)
 {
-	_ball = 0;
+	_ball = nullptr;
 
 	btManifoldArray   manifoldArray;
 	btBroadphasePairArray& pairArray = _ghostObject->getOverlappingPairCache()->getOverlappingPairArray();
@@ -245,7 +245,7 @@ void RobotBallController::prepareDribbler(uint64_t dribble){
 }
 
 bool RobotBallController::hasBall(){
-	return _ball != 0;
+	return _ball != nullptr;
 }
 
 bool RobotBallController::getKickerStatus(){

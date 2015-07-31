@@ -77,15 +77,15 @@ namespace Geometry2d
         // Returns the number of points at which this circle intersects the given circle.
         // i must be null or point to two points.
         // Only the first n points in i are modified, where n is the return value.
-        int intersects(Circle &other, Point *i = 0) const;
+        int intersects(Circle &other, Point *i = nullptr) const;
         
         // Returns the number of points at which this circle intersects the given line.
         // i must be null or point to two points.
         // Only the first n points in i are modified, where n is the return value.
-        int intersects(const Line &line, Point *i = 0) const;
+        int intersects(const Line &line, Point *i = nullptr) const;
         
         bool tangentPoints(const Geometry2d::Point &src, 
-                Geometry2d::Point* p1 = 0, Geometry2d::Point* p2 = 0) const;
+                Geometry2d::Point* p1 = nullptr, Geometry2d::Point* p2 = nullptr) const;
         
         // finds the point on the circle closest to P
         Point nearestPoint(const Geometry2d::Point &P) const;

@@ -14,7 +14,7 @@ class FastTimer: public QThread
     Q_OBJECT;
 
 public:
-    FastTimer(QObject *parent = 0);
+    FastTimer(QObject *parent = nullptr);
     virtual ~FastTimer();
 
     void start(int ms);
