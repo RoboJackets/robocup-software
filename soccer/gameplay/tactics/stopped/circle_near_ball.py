@@ -55,7 +55,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         candidate_arcs = []
         if len(intersection_points) > 1:
             for i in intersection_points:
-                new_angle = (i - circle_ball.center()).angle()
+                new_angle = (i - circle_ball.center).angle()
                 new_angle = self.normalize_angle(new_angle)
                 angles.append(new_angle)
 
@@ -64,9 +64,9 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
 
             counter = 1
             while counter < len(angles):
-                candidate_arcs.append(robocup.Arc(circle_ball.center(), radius, angles[counter - 1], angles[counter]))
+                candidate_arcs.append(robocup.Arc(circle_ball.center, radius, angles[counter - 1], angles[counter]))
                 counter = counter + 1
-            candidate_arcs.append(robocup.Arc(circle_ball.center(), radius, angles[len(angles) - 1], angles[0]))
+            candidate_arcs.append(robocup.Arc(circle_ball.center, radius, angles[len(angles) - 1], angles[0]))
 
             i = 0
             while i < len(candidate_arcs):
@@ -90,11 +90,11 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             else:
                 final_arc = candidate_arcs[0]
         else:
-            midpoint = (circle_ball.center() + robocup.Point(radius, 0))
+            midpoint = (circle_ball.center + robocup.Point(radius, 0))
             if not constants.Field.FieldRect.contains_point(midpoint):
                 final_arc = robocup.Arc(CircleNearBall.BackupBallLocation, radius, math.pi / 2, 5 * math.pi / 2)
             else:
-                final_arc = robocup.Arc(circle_ball.center(), radius, math.pi / 2, 5 * math.pi / 2)
+                final_arc = robocup.Arc(circle_ball.center, radius, math.pi / 2, 5 * math.pi / 2)
 
         arc_angle = final_arc.end() - final_arc.start()
         arc_angle = self.normalize_angle(arc_angle)
