@@ -4,7 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "robot.hpp"
-
+#include "motors.hpp"
 
 /**
  * Max number of command aliases.
@@ -21,7 +21,9 @@ static const uint8_t MAX_COMMAND_ARGS = 16;
 /**
  * command structure
  */
-typedef struct {
+struct command_t {
+	// command_t() = default;
+
 	/**
 	 * aliases
 	 */
@@ -47,35 +49,40 @@ typedef struct {
 	 * usage description. Used by help
 	 */
 	const std::string usage;
-} command_t;
-
+};
 
 /*
  * Command functions.
  */
-void executeCommand(char *rawCommand);
+void executeLine(char *);
 bool isExecutingIterativeCommand(void);
 void cancelIterativeCommand(void);
 void executeIterativeCommand(void);
 
+bool isNumber(std::string&);
+void cmd_registerCmd(command_t&);
+void showInvalidArgs(const std::vector<std::string> &);
+void showInvalidArgs(const std::string&);
+int LogLvlChange(const std::string&);
 
 /*
  * Command definitions. Some command functions have circular definitions.
  *
  * Alphabetical order please.
  */
-void cmd_alias(const std::vector<std::string> &args);
-void cmd_clear(const std::vector<std::string> &args);
-void cmd_echo(const std::vector<std::string> &args);
-void cmd_exitSys(const std::vector<std::string> &args);
-void cmd_help(const std::vector<std::string> &args);
-void cmd_ping(const std::vector<std::string> &args);
-void cmd_ls(const std::vector<std::string> &args);
-void cmd_info(const std::vector<std::string> &args);
-void cmd_resetMbed(const std::vector<std::string> &args);
-void cmd_disconnectInterface(const std::vector<std::string> &args);
-void cmd_checkInterfaceConn(const std::vector<std::string> &args);
-void cmd_setBaudrate(const std::vector<std::string> &args);
-void cmd_switchHostname(const std::vector<std::string> &args);
-void cmd_switchUser(const std::vector<std::string> &args);
-void cmd_logLevel(const std::vector<std::string> &args);
+void cmd_alias(const std::vector<std::string> &);
+void cmd_clear(const std::vector<std::string> &);
+void cmd_echo(const std::vector<std::string> &);
+void cmd_exitSys(const std::vector<std::string> &);
+void cmd_help(const std::vector<std::string> &);
+void cmd_help_detail(const std::vector<std::string> &);
+void cmd_ping(const std::vector<std::string> &);
+void cmd_ls(const std::vector<std::string> &);
+void cmd_info(const std::vector<std::string> &);
+void cmd_resetMbed(const std::vector<std::string> &);
+void cmd_disconnectInterface(const std::vector<std::string> &);
+void cmd_checkInterfaceConn(const std::vector<std::string> &);
+void cmd_baudrate(const std::vector<std::string> &);
+void cmd_switchHostname(const std::vector<std::string> &);
+void cmd_switchUser(const std::vector<std::string> &);
+void cmd_logLevel(const std::vector<std::string> &);

@@ -1,3 +1,5 @@
+#if 0
+
 /* mbed Microcontroller Library
  * Copyright (c) 2006-2013 ARM Limited
  *
@@ -75,3 +77,4 @@ void FunctionPointerRJ::operator ()(void)
 }
 #endif
 
+#endif

@@ -1,9 +1,12 @@
 #include "commands.hpp"
 
+#define GEN_CMD_STRUCT(alias, isit, fptr, desc, usage)
+
+namespace {
 /**
  * error message when a typed command isn't found
  */
-const string COMMAND_NOT_FOUND_MSG = "Command not found. Type 'help' for a list of commands.";
+const string COMMAND_NOT_FOUND_MSG = "Command '%s' not found. Type 'help' for a list of commands.";
 
 
 /**
@@ -29,6 +32,8 @@ vector<string> iterativeCommandArgs;
  */
 void (*iterativeCommandHandler)(const vector<string> &args);
 
+}	// anonymous namespace
+
 
 // Create an object to help find files
 LocalFileSystem local("local");
@@ -39,20 +44,22 @@ LocalFileSystem local("local");
  *
  * Alphabetical order please (here addition and in handler function declaration).
  */
-static const vector<command_t> commands = {
+static const std::vector<command_t> commands = {
 	/* COMMAND TEMPALATE
 	{
 		{"<alias>", "<alias2>", "<alias...>"},
 		is the command iterative,
 		command handler function,
 		"description",
-		"usage"}, */
+		"usage"},
+	*/
+
 	{
-		{"alias"},
+		{"alias", "a"},
 		false,
 		cmd_alias,
 		"Lists aliases for commands.",
-		"alias"
+		"alias | a"
 	},
 	{
 		{"clear", "cls"},
@@ -80,7 +87,7 @@ static const vector<command_t> commands = {
 		false,
 		cmd_help,
 		"Prints this message.",
-		"help | h | ? (<--list> | <command names>)"
+		"help | h | ? [[--list | -l] | [--all | -a] | <command names>]"
 	},
 	{
 		{"ping"},
@@ -90,25 +97,25 @@ static const vector<command_t> commands = {
 		"ping"
 	},
 	{
-		{"ls"},
+		{"ls", "l"},
 		false,
 		cmd_ls,
 		"List contents of current directory",//\r\n",  Bugs:\t\tsometimes displays train animations.",
-		"ls [folder/device]"
+		"ls | l [folder/device]"
 	},
 	{
-		{"info", "version", "s"},
+		{"info", "version", "i"},
 		false,
 		cmd_info,
 		"Display information about the current version of the firmware.",
-		"info | version | s"
+		"info | version | i"
 	},
 	{
-		{"reset", "reboot", "restart"},
+		{"reboot", "reset", "restart"},
 		false,
 		cmd_resetMbed,
 		"Resets the mbed (like pushing the reset button).",
-		"reset | reboot | restart"
+		"reboot | reset | restart"
 	},
 	{
 		{"rmdev", "unconnect"},
@@ -127,32 +134,46 @@ static const vector<command_t> commands = {
 	{
 		{"baud", "baudrate"},
 		false,
-		cmd_setBaudrate,
+		cmd_baudrate,
 		"Set the serial link's baudrate.",
-		"baud [-r <rate>]"
+		"baud | baudrate [[--list | -l] | [<target_rate>]]"
 	},
 	{
 		{"su", "user"},
 		false,
 		cmd_switchUser,
 		"Set active user.",
-		"su | user"
+		"su | user <new_username>"
 	},
 	{
 		{"host", "hostname"},
 		false,
 		cmd_switchHostname,
 		"Set the system hostname.",
-		"host | hostname"
+		"host | hostname <new_hostname>"
 	},
 	{
 		{"loglvl", "loglevel"},
 		false,
 		cmd_logLevel,
 		"Change the active logging output level.",
-		"loglvl | loglevel"
+		"loglvl | loglevel {+,-}..."
+	},
+	{
+		{"motor"},
+		false,
+		motors_cmdProcess,
+		"Show information about the motors.",
+		"motor <motor_id>"
 	}
 };
+
+
+void cmd_registerCmd(const command_t& cmdBlock) {
+	//command_t *cmdCfg = new command_t;
+	//std::memcpy(cmdCfg, &cmdBlock, sizeof cmdCfg);
+	//commands.push_back(cmdCfg);
+}
 
 
 /**
@@ -162,7 +183,7 @@ static const vector<command_t> commands = {
 
 void cmd_alias(const vector<string> &args)
 {
-//if no args given, list all aliases
+	// If no args given, list all aliases
 	if (args.empty() == true) {
 		for (uint8_t i = 0; i < commands.size(); i++) {
 			printf("\t%s:\t", commands[i].aliases[0].c_str());
@@ -185,7 +206,8 @@ void cmd_alias(const vector<string> &args)
 
 			printf("\r\n");
 		}
-	} else {
+	}
+	else {
 		bool aliasFound = false;
 
 		for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
@@ -204,12 +226,14 @@ void cmd_alias(const vector<string> &args)
 
 					while (a < commands[cmdInd].aliases.size()
 					        && commands[cmdInd].aliases[a] != "\0") {
+
 						printf("\t%s",
 						       commands[cmdInd].aliases[a].c_str());
 
 						//print commas
 						if (a < commands[cmdInd].aliases.size() - 1
 						        && commands[cmdInd].aliases[a + 1] != "\0") {
+
 							printf(",");
 						}
 
@@ -218,16 +242,14 @@ void cmd_alias(const vector<string> &args)
 				}
 			}
 
-			if (aliasFound) {
-				printf("\r\n");
-			} else {
-				printf("Error listing aliases: command \"%s\" not found\r\n",
+			if (aliasFound == false) {
+				printf("Error listing aliases: command '%s' not found",
 				       args[argInd].c_str());
 			}
+
+			printf("\r\n");
 		}
 	}
-
-	Console::Flush();
 }
 
 
@@ -237,15 +259,13 @@ void cmd_alias(const vector<string> &args)
 void cmd_clear(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Invalid arguments!\r\n");
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
 	}
-
-	Console::Flush();
-	printf(ENABLE_SCROLL_SEQ.c_str());
-	printf(CLEAR_SCREEN_SEQ.c_str());
-	Console::Flush();
+	else {
+		Console::Flush();
+		printf(ENABLE_SCROLL_SEQ.c_str());
+		printf(CLEAR_SCREEN_SEQ.c_str());
+	}
 }
 
 
@@ -254,18 +274,10 @@ void cmd_clear(const vector<string> &args)
  */
 void cmd_echo(const vector<string> &args)
 {
-	if (args.empty() == true) {
-		printf("Invalid arguments!\r\n");
-		Console::Flush();
-		return;
-	}
-
-
 	for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 		printf("%s ", args[argInd].c_str());
 
 	printf("\r\n");
-	Console::Flush();
 }
 
 
@@ -276,12 +288,13 @@ void cmd_echo(const vector<string> &args)
 void cmd_exitSys(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
 	}
-
-	Console::RequestSystemStop();
+	else {
+		printf("Requesting system stop...");
+		Console::RequestSystemStop();
+		printf("done.\r\n");
+	}
 }
 
 
@@ -291,69 +304,78 @@ void cmd_exitSys(const vector<string> &args)
 void cmd_help(const vector<string> &args)
 {
 	// printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
-	// Console::Flush();
 
 	// Prints all commands, with details
-	if (args.size() == 0) {
-		for (uint8_t i = 0; i < commands.size(); i++) {
-			printf("\t%s:\t", commands[i].aliases[0].c_str());
-			// Console::Flush();
-			printf("%s\r\n", commands[i].description.c_str());
+	if (args.empty() == true) {
+		// Default to a short listing of all the commands
+		for (uint8_t i = 0; i < commands.size(); i++)
+			printf("\t%s:\t%s\r\n", commands[i].aliases[0].c_str(), commands[i].description.c_str());
 
-			// Console::Flush();
-		}
-		Console::Flush();
 	}
-	//prints all commands
-	else if (args.size() == 1 && (strcmp(args[0].c_str(), "--list") == 0 || strcmp(args[0].c_str(), "-l") == 0)) {
-		for (uint8_t i = 0; i < commands.size(); i++) {
-			if (i % 4 == 3) {
-				printf("%s\r\n", commands[i].aliases[0].c_str());
-			} else if (i == commands.size() - 1) {
-				printf("%s", commands[i].aliases[0].c_str());
-			} else {
-				printf("%s,\t", commands[i].aliases[0].c_str());
+	// Check if there's only 1 argument passed. It may be an option flag to the command
+	// Prints all commands - either as a list block or all detailed
+	else {
+		if (strcmp(args[0].c_str(), "--list") == 0 || strcmp(args[0].c_str(), "-l") == 0) {
+			for (uint8_t i = 0; i < commands.size(); i++) {
+				if (i % 5 == 4) {
+					printf("%s\r\n", commands[i].aliases[0].c_str());
+				} else if (i == commands.size() - 1) {
+					printf("%s", commands[i].aliases[0].c_str());
+				} else {
+					printf("%s,\t\t", commands[i].aliases[0].c_str());
+				}
 			}
+		}
+		else if (strcmp(args[0].c_str(), "--all") == 0 || strcmp(args[0].c_str(), "-a") == 0) {
+			for (uint8_t i = 0; i < commands.size(); i++) {
+				//print info about ALL commands
+				printf("%s%s:\r\n"
+				       "    Description:\t%s\r\n"
+				       "    Usage:\t\t%s\r\n",
+				       commands[i].aliases.front().c_str(),
+				       (commands[i].isIterative ? " [ITERATIVE]" : ""),
+				       commands[i].description.c_str(),
+				       commands[i].usage.c_str()
+				      );
+			}
+		}
+		else {
+			// Show detailed info of the command given since it was not an option flag
+			cmd_help_detail(args);
 		}
 
 		printf("\r\n");
-		Console::Flush();
 	}
-	//prints arguments with details
-	else {
-		//iterate through args
-		for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
-			//iterate through commands
-			bool commandFound = false;
+}
 
-			for (uint8_t i = 0; i < commands.size(); i++) {
-				//check match against args
-				if (find(commands[i].aliases.begin(),
-				         commands[i].aliases.end(),
-				         args[argInd]) != commands[i].aliases.end()) {
-					commandFound = true;
+void cmd_help_detail(const vector<string> &args) {
+	// iterate through args
+	for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
+		// iterate through commands
+		bool commandFound = false;
 
-					//print info
-					printf("%s:\r\n",
-					       commands[i].aliases[0].c_str());
-					Console::Flush();
-					printf("  Description:\t%s\r\n",
-					       commands[i].description.c_str());
-					Console::Flush();
-					printf("  Usage:\t%s\r\n",
-					       commands[i].usage.c_str());
-					Console::Flush();
-					printf("  Iterative:\t%s\r\n\r\n",
-					       commands[i].isIterative ? "YES" : "NO");
-					Console::Flush();
-				}
+		for (uint8_t i = 0; i < commands.size(); i++) {
+			// check match against args
+			if (find(commands[i].aliases.begin(),
+			         commands[i].aliases.end(),
+			         args[argInd]) != commands[i].aliases.end()) {
+
+				commandFound = true;
+
+				//print info about a command
+				printf("%s%s:\r\n"
+				       "    Description:\t%s\r\n"
+				       "    Usage:\t\t%s\r\n",
+				       commands[i].aliases.front().c_str(),
+				       (commands[i].isIterative ? " [ITERATIVE]" : ""),
+				       commands[i].description.c_str(),
+				       commands[i].usage.c_str()
+				      );
 			}
-
-			//if the command wasn't found, notify
-			if (!commandFound) {
-				printf("Command \"%s\" not found.\r\n", args[argInd].c_str());
-				Console::Flush();
-			}
+		}
+		//if the command wasn't found, notify
+		if (!commandFound) {
+			printf("Command \"%s\" not found.\r\n", args.at(argInd).c_str());
 		}
 	}
 }
@@ -365,15 +387,16 @@ void cmd_help(const vector<string> &args)
 void cmd_ping(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
 	}
+	else {
+		time_t sys_time = time(NULL);
+		Console::Flush();
+		printf("reply: %lu\r\n", sys_time);
+		Console::Flush();
 
-	time_t sys_time = time(NULL);
-	printf("reply: %d\r\n", sys_time);
-	Console::Flush();
-	Thread::wait(1000);
+		Thread::wait(600);
+	}
 }
 
 
@@ -383,15 +406,17 @@ void cmd_ping(const vector<string> &args)
 void cmd_resetMbed(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
 	}
+	else {
+		printf("The system is going down for reboot NOW!\r\n\r\n");
+		// Console::Flush();
 
-	Console::Flush();
-	printf("rebooting...\r\n");
-	mbed_interface_reset();
-	Console::Flush();
+		// give some time for the feedback to get back to the console
+		Thread::wait(800);
+
+		mbed_interface_reset();
+	}
 }
 
 
@@ -403,30 +428,21 @@ void cmd_ls(const vector<string> &args)
 	DIR *d;
 	struct dirent *p;
 
-	if (args.empty() == false) {
-		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
-		Console::Flush();
-		return;
-	}
-
 	if (args.empty() == true) {
 		d = opendir("/local");
 	} else {
-		d = opendir(args[0].c_str());
+		d = opendir(args.front().c_str());
 	}
 
 	if (d != NULL) {
 		while ((p = readdir(d)) != NULL) {
 			printf(" - %s\r\n", p->d_name);
-
 		}
 
 		closedir(d);
 	} else {
 		printf("Could not open directory!\r\n");
 	}
-
-	Console::Flush();
 }
 
 
@@ -436,65 +452,96 @@ void cmd_ls(const vector<string> &args)
 void cmd_info(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Invalid arguments!\r\n");
-		Console::Flush();
-		return;
-	}
+		showInvalidArgs(args);
 
-	DS2411_t id;
+	} else {
+		char buf[33];
+		DS2411_t id;
+		unsigned int Interface[5] = { 0 };
+		time_t sys_time = time(NULL);
+		typedef void (*CallMe)(unsigned int[], unsigned int[]);
 
-	printf("Commit Hash:\t%s\r\nCommit Date:\t%s\r\nCommit Author:\t%s\r\n",
-	       git_version_hash,
-	       git_head_date,
-	       git_head_author
-	      );
+		strftime(buf, 25, "%c", localtime(&sys_time));
+		printf("Sys Time:\t%s\r\n", buf);
 
-	printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
+		// kernel information
+		printf("Kernel Ver:\t%s\r\n", osKernelSystemId);
+		printf("API Ver:\t%u\r\n", osCMSIS);
 
-	printf("Base ID:\t");
-	if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
-		printf("N/A\r\n");
-	else
-		for (int i = 0; i < 6; i++)
-			printf("%02X\r\n", id.serial[i]);
-
-	// Prints out a serial number, taken from the mbed forms
-	// https://developer.mbed.org/forum/helloworld/topic/2048/
-	unsigned int Interface[5] = {58, 0, 0, 0, 0};
-	typedef void (*CallMe)(unsigned int[], unsigned int[]);
-	CallMe CallMe_entry = (CallMe)0x1FFF1FF1;
-	CallMe_entry(Interface, Interface);
-
-	if (!Interface[0])
-		printf("MCU UID:\t%u %u %u %u\r\n",
-		       Interface[1],
-		       Interface[2],
-		       Interface[3],
-		       Interface[4]
+		printf("Commit Hash:\t%s\r\nCommit Date:\t%s\r\nCommit Author:\t%s\r\n",
+		       git_version_hash,
+		       git_head_date,
+		       git_head_author
 		      );
-	else
-		printf("MCU UID:\t\tN/A\r\n");
 
-	// Should be 0x26013F37
-	Interface[0] = 54;
-	CallMe_entry(Interface, Interface);
+		printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
 
-	if (!Interface[0])
-		printf("MCU ID:\t\t%u\r\n", Interface[1]);
-	else
-		printf("MCU ID:\t\tN/A\r\n");
+		printf("Base ID:\t");
+		if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
+			printf("N/A\r\n");
+		else
+			for (int i = 0; i < 6; i++)
+				printf("%02X\r\n", id.serial[i]);
 
-	char buf[33];
-	mbed_interface_uid(buf);
-	printf("mbed UID:\t%s\r\n", buf);
+		// info about the mbed's interface chip on the bottom of the mbed
+		if (mbed_interface_uid(buf) == -1)
+			memcpy(buf, "N/A\0", 4);
 
-	// mbed_mac_address(buf);
-	printf("Eth MAC:\t");
-	for (int i = 0; i < 5; i++)
-		printf("%02X-", buf[i]);
-	printf("%02X\r\n", buf[5]);
+		printf("mbed UID:\t%s\r\n", buf);
 
-	Console::Flush();
+		// Prints out a serial number, taken from the mbed forms
+		// https://developer.mbed.org/forum/helloworld/topic/2048/
+		Interface[0] = 58;
+		CallMe CallMe_entry = (CallMe)0x1FFF1FF1;
+		CallMe_entry(Interface, Interface);
+
+		if (!Interface[0])
+			printf("MCU UID:\t%u %u %u %u\r\n",
+			       Interface[1],
+			       Interface[2],
+			       Interface[3],
+			       Interface[4]
+			      );
+		else
+			printf("MCU UID:\t\tN/A\r\n");
+
+		// Should be 0x26013F37
+		Interface[0] = 54;
+		CallMe_entry(Interface, Interface);
+
+		if (!Interface[0])
+			printf("MCU ID:\t\t%u\r\n", Interface[1]);
+		else
+			printf("MCU ID:\t\tN/A\r\n");
+
+		// show info about the core processor. ARM cortex-m3 in our case
+		printf("CPUID:\t\t0x%08lX\r\n", *(long unsigned int *)0xE000ED00);
+
+		// ** NOTE: THE mbed_interface_mac() function does not work! It hangs the mbed... **
+
+
+		/*
+			*****
+			THIS CODE IS SUPPOSED TO GIVE USB STATUS INFORMATION. IT HANGS AT EACH WHILE LOOP.
+			[DON'T UNCOMMENT IT UNLESS YOU INTEND TO CHANGE/IMPROVE/FIX IT SOMEHOW]
+			*****
+
+			LPC_USB->USBDevIntClr = (0x01 << 3);	// clear the DEV_STAT interrupt bit before beginning
+			LPC_USB->USBDevIntClr = (0x03 << 4);	// make sure CCEmpty & CDFull are cleared before starting
+			// Sending a COMMAND transfer type for getting the [USB] device status. We expect 1 byte.
+			LPC_USB->USBCmdCode = (0x05 << 8) | (0xFE << 16);
+			while (!(LPC_USB->USBDevIntSt & 0x10));	// wait for the command to be completed
+			LPC_USB->USBDevIntClr = 0x10;	// clear the CCEmpty interrupt bit
+
+			// Now we request a read transfer type for getting the same thing
+			LPC_USB->USBCmdCode = (0x02 << 8) | (0xFE << 16);
+			while (!(LPC_USB->USBDevIntSt & 0x20));	// Wait for CDFULL. data ready after this in USBCmdData
+			uint8_t regVal = LPC_USB->USBCmdData;	// get the byte
+			LPC_USB->USBDevIntClr = 0x20;	// clear the CDFULL interrupt bit
+
+			printf("USB Byte:\t0x%02\r\n", regVal);
+		*/
+	}
 }
 
 
@@ -505,103 +552,105 @@ void cmd_info(const vector<string> &args)
 void cmd_disconnectInterface(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
+	} else {
+		mbed_interface_disconnect();
+		printf("Disconnected mbed interface.\r\n");
 	}
-
-	Console::Flush();
-	mbed_interface_disconnect();
 }
 
 
 void cmd_checkInterfaceConn(const vector<string> &args)
 {
 	if (args.empty() == false) {
-		printf("Unknown argument \"%s\".\r\n", args.at(0).c_str());
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
+	} else {
+		printf("mbed interface connected: %s\r\n", mbed_interface_connected() ? "YES" : "NO");
 	}
-
-	printf("mbed interface connected: %s\r\n", mbed_interface_connected() ? "YES" : "NO");
-	Console::Flush();
 }
 
 
-void cmd_setBaudrate(const vector<string> &args)
+void cmd_baudrate(const vector<string> &args)
 {
-	if (args.size() > 1) {
-		printf("Invalid arguments \"%s\".\r\n", args.at(1).c_str());
-		Console::Flush();
-		return;
+	std::vector<int> valid_rates = {110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 230400, 460800, 921600};
+
+	if ( args.size() > 1 ) {
+		showInvalidArgs(args);
 	}
+	else if ( args.empty() == true ) {
+		printf("Baudrate: %u\r\n", Console::Baudrate());
+	} else if (args.size() == 1) {
+		std::string str_baud = args.front();
 
-	if (args.empty() == true) {
-		printf("Not implemented yet!\r\n");
-		Console::Flush();
-		return;
+		if ( strcmp(str_baud.c_str(), "--list") == 0 || strcmp(str_baud.c_str(), "-l") == 0 ) {
+
+			printf("Valid baudrates:\r\n");
+			for (unsigned int i = 0; i < valid_rates.size(); i++)
+				printf("%u\r\n", valid_rates[i]);
+
+		} else if ( isNumber(str_baud) ) {
+			int new_rate = atoi(str_baud.c_str());
+
+			if ( std::find(valid_rates.begin(), valid_rates.end(), new_rate) != valid_rates.end() ) {
+				Console::Baudrate(new_rate);
+				printf("New baudrate: %u\r\n", new_rate);
+			} else {
+				printf("%u is not a valid baudrate. Use \"--list\" to show valid baudrates.\r\n", new_rate);
+			}
+		} else {
+			printf("Invalid argument \"%s\".\r\n", str_baud.c_str());
+		}
 	}
-
-	std::string str_baud = args.at(0);
-	int new_rate = atoi(str_baud.c_str());
-
-	int valid_rates[] = {110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 230400, 460800, 921600};
-	std::vector<int> rates (valid_rates, valid_rates + sizeof(valid_rates) / sizeof(int) );
-
-	if (std::find(rates.begin(), rates.end(), new_rate) != rates.end()) {
-		Serial pc(USBTX, USBRX);
-		pc.baud(new_rate);
-		printf("New baudrate: %u\r\n", new_rate);
-	} else {
-		printf("%u is not a valid baudrate.\r\n", new_rate);
-	}
-
-	Console::Flush();
 }
 
 void cmd_switchUser(const vector<string> &args)
 {
 	if (args.empty() == true || args.size() > 1) {
-		printf("Invalid arguments!\r\n");
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
+	} else {
+		Console::changeUser(args.front());
 	}
-
-	Console::CONSOLE_USER = args.at(0);
 }
 
 void cmd_switchHostname(const vector<string> &args)
 {
 	if (args.empty() == true || args.size() > 1) {
-		printf("Invalid arguments!\r\n");
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
+	} else {
+		Console::changeHostname(args.front());
 	}
-
-	Console::CONSOLE_HOSTNAME = args.at(0);
 }
 
 void cmd_logLevel(const vector<string> &args)
 {
 	if (args.size() > 1) {
-		printf("Invalid arguments \"%s\".\r\n", args.at(1).c_str());
-		Console::Flush();
-		return;
+		showInvalidArgs(args);
 	}
-
-	if (args.empty()) {
+	else if (args.empty() == true) {
 		printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
-		Console::Flush();
-		return;
 	}
+	else {
+		// this will return a signed int, so the level
+		// could increase or decrease...or stay the same.
+		int newLvl = (int)rjLogLevel;	// rjLogLevel is unsigned, so we'll need to change that first
+		newLvl += LogLvlChange(args.front());
 
-	if (args.at(0) == "+") {
-		rjLogLevel++;
-	} else if (args.at(0) == "-") {
-		rjLogLevel--;
+		if (newLvl >= LOG_LEVEL_END) {
+			printf("Unable to set log level above maximum value.\r\n");
+			newLvl = rjLogLevel;
+		}
+		else if (newLvl <= LOG_LEVEL_START) {
+			printf("Unable to set log level below minimum value.\r\n");
+			newLvl = rjLogLevel;
+		}
+
+		if (newLvl != rjLogLevel) {
+			rjLogLevel = newLvl;
+			printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+		} else {
+			printf("Log level unchanged. Level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+		}
 	}
-
-	printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 }
 
 /**
@@ -609,74 +658,91 @@ void cmd_logLevel(const vector<string> &args)
  *
  * Much of this taken from `console.c` from the old robot firmware (2011).
  */
-void executeCommand(char *rawCommand)
+void executeLine(char *rawCommand)
 {
-	uint8_t argc = 0;
-	string cmdName = "\0";
-	vector<string> args;
-	args.reserve(MAX_COMMAND_ARGS);
+	char* endCmd;
+	char* cmds = strtok_r(rawCommand, ";", &endCmd);
 
-	char *pch = strtok(rawCommand, " ");
+	while (cmds != NULL) {
 
-	while (pch != NULL) {
+		uint8_t argc = 0;
+		string cmdName = "\0";
+		vector<string> args;
+		args.reserve(MAX_COMMAND_ARGS);
 
-		// Check args length
-		if (argc > MAX_COMMAND_ARGS) {
-			printf("%s\r\n", TOO_MANY_ARGS_MSG.c_str());
-			break;
+		char *endArg;
+		char *pch = strtok_r(cmds, " ", &endArg);
+
+		while (pch != NULL) {
+
+			// Check args length
+			if (argc > MAX_COMMAND_ARGS) {
+				printf("%s\r\n", TOO_MANY_ARGS_MSG.c_str());
+				break;
+			}
+
+			// Set command name
+			if (argc == 0)
+				cmdName = string(pch);
+			else
+				args.push_back(pch);
+
+			argc++;
+			pch = strtok_r(NULL, " ", &endArg);
 		}
 
-		// Set command name
-		if (argc == 0)
-			cmdName = string(pch);
-		else
-			args.push_back(pch);
+		if (cmdName.empty() == false) {
+			bool commandFound = false;
 
-		argc++;
-		pch = strtok(NULL, " ");
-	}
+			for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++) {
+				//check for name match
+				if (find(commands[cmdInd].aliases.begin(),
+				         commands[cmdInd].aliases.end(),
+				         cmdName) != commands[cmdInd].aliases.end()) {
+					commandFound = true;
 
-	if (cmdName.size() > 0) {
-		bool commandFound = false;
+					//If the command is desiged to be run every
+					//iteration of the loop, set the handler and
+					//args and flag the loop to execute on each
+					//iteration.
+					if (commands[cmdInd].isIterative) {
+						executingIterativeCommand = false;
 
-		for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++) {
-			//check for name match
-			if (find(commands[cmdInd].aliases.begin(),
-			         commands[cmdInd].aliases.end(),
-			         cmdName) != commands[cmdInd].aliases.end()) {
-				commandFound = true;
+						//Sets the current arg count, args, and
+						//command function in fields to be used
+						//in the iterative call.
+						iterativeCommandArgs = args;
+						iterativeCommandHandler =
+						    commands[cmdInd].handler;
 
-				//If the command is desiged to be run every
-				//iteration of the loop, set the handler and
-				//args and flag the loop to execute on each
-				//iteration.
-				if (commands[cmdInd].isIterative) {
-					executingIterativeCommand = false;
+						executingIterativeCommand = true;
+					}
+					//If the command is not iterative, execute it
+					//once immeidately.
+					else {
+						commands[cmdInd].handler(args);
+					}
 
-					//Sets the current arg count, args, and
-					//command function in fields to be used
-					//in the iterative call.
-					iterativeCommandArgs = args;
-					iterativeCommandHandler =
-					    commands[cmdInd].handler;
-
-					executingIterativeCommand = true;
+					break;
 				}
-				//If the command is not iterative, execute it
-				//once immeidately.
-				else {
-					commands[cmdInd].handler(args);
-				}
+			}
 
-				break;
+			//if the command wasnt found, print an error
+			if (!commandFound) {
+				std::size_t pos = COMMAND_NOT_FOUND_MSG.find("%s");
+
+				if (pos == std::string::npos) {	// no format specifier found in our defined message
+					printf("%s\r\n", COMMAND_NOT_FOUND_MSG.c_str());
+				} else {
+					std::string not_found_cmd = COMMAND_NOT_FOUND_MSG;
+					not_found_cmd.replace(pos, 2, cmdName);
+					printf("%s\r\n", not_found_cmd.c_str());
+				}
 			}
 		}
 
-		//if the command wasnt found, print an error
-		if (!commandFound) {
-			printf("%s\r\n", COMMAND_NOT_FOUND_MSG.c_str());
-			Console::Flush();
-		}
+		cmds = strtok_r(NULL, ";", &endCmd);
+		Console::Flush();	// make sure we force everything out of stdout
 	}
 }
 
@@ -708,4 +774,39 @@ void executeIterativeCommand(void)
 void cancelIterativeCommand(void)
 {
 	executingIterativeCommand = false;
+}
+
+bool isNumber(std::string& s) {
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && std::isdigit(*it)) ++it;
+	return !s.empty() && it == s.end();
+}
+
+void showInvalidArgs(const vector<string> &args) {
+	printf("Invalid arguments");
+
+	if (args.empty() == false) {
+		printf(" ");
+		for (unsigned int i = 0; i < args.size() - 1; i++)
+			printf("'%s', ", args.at(i).c_str());
+
+		printf("'%s'.", args.back().c_str());
+	} else {
+		printf(". No arguments given.");
+	}
+
+	printf("\r\n");
+}
+
+void showInvalidArgs(const string& s) {
+	printf("Invalid argument '%s'.\r\n", s.c_str());
+}
+
+int LogLvlChange(const std::string& s) {
+	int n = 0;
+
+	n += std::count(s.begin(), s.end(), '+');
+	n -= std::count(s.begin(), s.end(), '-');
+
+	return n;
 }

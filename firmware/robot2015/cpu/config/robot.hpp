@@ -41,53 +41,8 @@
 // Include the basic classes - Note: the header files included within "mbed.h" are listed here.
 #include "mbed.h"
 #include "rtos.h"
-//#include "pnvicdef.hpp"
 #include "pins-ctrl-2015.hpp"
 #include "robot_types.hpp"
-
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <time.h>
-
-#include "error.h"
-#include "mbed_interface.h"
-
-#include "DigitalIn.h"
-#include "DigitalOut.h"
-#include "DigitalInOut.h"
-#include "BusIn.h"
-#include "BusOut.h"
-#include "BusInOut.h"
-#include "PortIn.h"
-#include "PortInOut.h"
-#include "PortOut.h"
-#include "AnalogIn.h"
-#include "AnalogOut.h"
-#include "PwmOut.h"
-#include "Serial.h"
-#include "SerialHalfDuplex.h"
-#include "SPI.h"
-#include "SPISlave.h"
-#include "SPIHalfDuplex.h"
-#include "I2C.h"
-#include "I2CSlave.h"
-#include "Ethernet.h"
-#include "CAN.h"
-
-#include "Timer.h"
-#include "Ticker.h"
-#include "Timeout.h"
-#include "LocalFileSystem.h"
-#include "InterruptIn.h"
-#include "wait_api.h"
-#include "rtc_time.h"
-*/
-
-// Include header file for the CMSIS Real Time Operating System
-//#include "cmsis_os.h"
 
 #if RJ_CHECK_FIRMWARE
 #include "firmware-check.hpp"
@@ -105,7 +60,6 @@
 // Include the primary radio class if 915MHz band radio [if active]
 #if RJ_RADIO_EN
 #ifdef RJ_CC1201
-// #include "CC1201.hpp"
 #include "CC1201Radio.hpp"
 #else
 #ifdef RJ_CC1101
@@ -114,13 +68,11 @@
 #endif
 #endif
 
+#include "git_version.hpp"
 
 #include "adc-dma.hpp"
 #include "dma.hpp"
-// #include "speaker-dma.hpp"
 #include "console.hpp"
 #include "logger.hpp"
 #include "DS2411.hpp"
-#include "git_version.hpp"
-#include "radio-state-decode.hpp"
-#include "isr-prop.hpp"
+#include "mainHelperFuncs.hpp"

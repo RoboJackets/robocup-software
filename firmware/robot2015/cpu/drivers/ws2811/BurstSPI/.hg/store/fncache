@@ -1,0 +1,6 @@
+data/BurstSPI_KL46Z.cpp.i
+data/BurstSPI_NUCLEO_L152RE.cpp.i
+data/BurstSPI.h.i
+data/BurstSPI_LPC1768.cpp.i
+data/BurstSPI_KL25Z.cpp.i
+data/BurstSPI.cpp.i

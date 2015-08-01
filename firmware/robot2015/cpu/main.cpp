@@ -1,13 +1,11 @@
 #include "robot.hpp"
+#include "motors.hpp"
+#include "neopixel.h"
 
 DigitalOut ledOne(LED1, 0);
-// DigitalOut is_locked(LED2, 0);
-// DigitalOut rssi_valid(LED3, 0);
 DigitalOut led4(LED4, 0);
 DigitalIn gpio3(p18);
 DigitalIn gpio2(p16);
-Serial pcserial(USBTX, USBRX);
-
 ADCDMA adc;
 DMA dma;
 
@@ -24,27 +22,46 @@ void imAlive(void const *args)
 	*led = !(*led);
 }
 
-
 /**
  * [main Main program.]
  * @return  [none]
  */
 int main(void)
 {
-	setISRPriorities();
-	pcserial.baud(9600);
-
-	RtosTimer live_light(imAlive, osTimerPeriodic, (void *)&ledOne);
-	live_light.start(1300);
-
-	// write a function that will recalibrate the radio for this. Reset the ticker on every received packet.
-	RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void *)&led4);
-	radio_timeout_task.start(300);
-
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INF1;
 
+	setISRPriorities();
+
+	// Start a periodic blinking LED to show system activity
+	RtosTimer live_light(imAlive, osTimerPeriodic, (void *)&ledOne);
+	live_light.start(1300);
+
+	// TODO: write a function that will recalibrate the radio for this.
+	// Reset the ticker on every received packet. For now, we just blink an LED.
+	RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void *)&led4);
+	radio_timeout_task.start(300);
+
+	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, NULL, osPriorityBelowNormal);
+
+	motors_Init();
+
+	// Create a temporary DigitalIn so we can configure the pull-down resistor.
+	// (The mbed API doesn't provide any other way to do this.)
+	// An alternative is to connect an external pull-down resistor.
+	DigitalIn(p21, PullDown);
+
+	// The pixel array control class.
+	neopixel::PixelArray rebLED(p21);
+
+	neopixel::Pixel p[1];
+	p[0].red = 0x00;
+	p[0].green = 0x00;
+	p[0].blue = 0xFF;
+	rebLED.update(p,1);
+
+	// This breaks everything
 	// Thread comm_task(Task_CommCtrl, NULL, osPriorityNormal);
 
 	// Enable watchdog timer
@@ -74,6 +91,5 @@ int main(void)
 		LOG(INF2, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
 		osDelay(1000);
 	}
-
 }
 

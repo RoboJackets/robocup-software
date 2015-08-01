@@ -24,6 +24,15 @@ static int paramsCount = 0;
 
 static bool isInit = false;
 
+RTP_t dummy_packet;
+
+dummy_packet.port = 8;
+dummy_packet.subclass = 1;
+dummy_packet.address = 255;
+dummy_packet.sfs = 0;
+dummy_packet.ack = 0;
+dummy_packet.payload_size = 25;
+
 void paramInit(void)
 {
 	int i;
@@ -33,7 +42,7 @@ void paramInit(void)
 
 	params = &_param_start;
 	paramsLen = &_param_stop - &_param_start;
-	paramsCrc = crcSlow(params, paramsLen);
+	// paramsCrc = crcSlow(params, paramsLen);
 
 	for (i = 0; i < paramsLen; i++)
 		if (!(params[i].type & PARAM_GROUP))
@@ -41,10 +50,10 @@ void paramInit(void)
 
 
 	//Start the param task
-	xTaskCreate(paramTask, (const signed char * const)PARAM_TASK_NAME,
-	            PARAM_TASK_STACKSIZE, NULL, PARAM_TASK_PRI, NULL);
+	// xTaskCreate(paramTask, (const signed char * const)PARAM_TASK_NAME,
+	//             PARAM_TASK_STACKSIZE, NULL, PARAM_TASK_PRI, NULL);
 
-	//TODO: Handle stored parameters!
+	Thread console_task(Task_Param, NULL, osPriorityBelowNormal);
 
 	isInit = true;
 }
@@ -54,48 +63,55 @@ bool paramTest(void)
 	return isInit;
 }
 
-CRTPPacket p;
 
-void paramTask(void * prm)
+// Pass a queue ID
+void Task_Param(void const *arg)
 {
-	crtpInitTaskQueue(CRTP_PORT_PARAM);
+	osMailQId *_paramQueue = (osMailQId *)arg;
+	// osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
+	LOG(OK, "Parameter module ready!");
 
 	while (1) {
-		crtpReceivePacketBlock(CRTP_PORT_PARAM, &p);
+		osEvent evt = osMailGet(*_paramQueue, osWaitForever);
 
-		if (p.channel == TOC_CH)
-			paramTOCProcess(p.data[0]);
-		else if (p.channel == READ_CH)
-			paramReadProcess(p.data[0]);
-		else if (p.channel == WRITE_CH)
-			paramWriteProcess(p.data[0], &p.data[1]);
-		else if (p.channel == MISC_CH) {
-			if (p.data[0] == MISC_SETBYNAME) {
-				int i, nzero = 0;
-				char *group;
-				char *name;
-				uint8_t type;
-				void * valPtr;
-				int error;
+		if (evt.status == osEventMail) {
 
-				// If the packet contains at least 2 zeros in the first 28 bytes
-				// The packet decoding algorithm will not crash
-				for (i = 0; i < CRTP_MAX_DATA_SIZE; i++) {
-					if (p.data[i] == '\0') nzero++;
+			RTP_t *p = (RTP_t *)evt.value.p;
+
+			if (p.channel == TOC_CH)
+				paramTOCProcess(p.data[0]);
+			else if (p.channel == READ_CH)
+				paramReadProcess(p.data[0]);
+			else if (p.channel == WRITE_CH)
+				paramWriteProcess(p.data[0], &p.data[1]);
+			else if (p.channel == MISC_CH) {
+				if (p.data[0] == MISC_SETBYNAME) {
+					int i, nzero = 0;
+					char *group;
+					char *name;
+					uint8_t type;
+					void * valPtr;
+					int error;
+
+					// If the packet contains at least 2 zeros in the first 28 bytes
+					// The packet decoding algorithm will not crash
+					for (i = 0; i < CRTP_MAX_DATA_SIZE; i++) {
+						if (p.data[i] == '\0') nzero++;
+					}
+
+					if (nzero < 2) return;
+
+					group = (char*)&p.data[1];
+					name = (char*)&p.data[1 + strlen(group) + 1];
+					type = p.data[1 + strlen(group) + 1 + strlen(name) + 1];
+					valPtr = &p.data[1 + strlen(group) + 1 + strlen(name) + 2];
+
+					error = paramWriteByNameProcess(group, name, type, valPtr);
+
+					p.data[1 + strlen(group) + 1 + strlen(name) + 1] = error;
+					p.size = 1 + strlen(group) + 1 + strlen(name) + 1 + 1;
+					crtpSendPacket(&p);
 				}
-
-				if (nzero < 2) return;
-
-				group = (char*)&p.data[1];
-				name = (char*)&p.data[1 + strlen(group) + 1];
-				type = p.data[1 + strlen(group) + 1 + strlen(name) + 1];
-				valPtr = &p.data[1 + strlen(group) + 1 + strlen(name) + 2];
-
-				error = paramWriteByNameProcess(group, name, type, valPtr);
-
-				p.data[1 + strlen(group) + 1 + strlen(name) + 1] = error;
-				p.size = 1 + strlen(group) + 1 + strlen(name) + 1 + 1;
-				crtpSendPacket(&p);
 			}
 		}
 	}
@@ -280,7 +296,6 @@ static void paramReadProcess(int ident)
 		p.size = 1 + sizeof(uint64_t);
 		break;
 	}
-
 	crtpSendPacket(&p);
 }
 
@@ -298,7 +313,6 @@ static int variableGetIndex(int id)
 			n++;
 		}
 	}
-
 	if (i >= paramsLen)
 		return -1;
 

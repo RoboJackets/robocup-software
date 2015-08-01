@@ -8,7 +8,6 @@
 #undef LOG
 #endif
 
-
 // Do weird macro things for logging the filename and line for every call.
 // Also allows for disabling all logging through macros so all log calls can be removed from production builds.
 #ifdef RJ_LOGGING_EN
@@ -31,13 +30,15 @@
 
 
 #define FOREACH_LEVEL(LEVEL) \
+	LEVEL(LOG_LEVEL_START) \
     LEVEL(FATAL)  \
     LEVEL(SEVERE) \
     LEVEL(WARN)   \
     LEVEL(OK)     \
     LEVEL(INF1)   \
     LEVEL(INF2)   \
-    LEVEL(INF3)
+    LEVEL(INF3)	  \
+    LEVEL(LOG_LEVEL_END) \
 
 #define GENERATE_ENUM(ENUM)     ENUM,
 #define GENERATE_STRING(STRING) #STRING,

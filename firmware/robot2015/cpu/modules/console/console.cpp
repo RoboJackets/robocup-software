@@ -1,5 +1,11 @@
 #include "console.hpp"
-#include "console-defines.hpp"
+
+#define PUTC(c) 	pc.putc(c)
+#define GETC 		pc.getc
+#define PRINTF(...)	pc.printf(__VA_ARGS__)
+
+const std::string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
+const std::string Console::COMMAND_BREAK_MSG = "*BREAK*";
 
 shared_ptr<Console> Console::instance;
 
@@ -13,36 +19,40 @@ shared_ptr<Console> &Console::Instance()
 	return instance;
 }
 
-void Console::Init()
+void Console::Init(void)
 {
 	auto instance = Instance();
 
-	Flush();
-	printf(ENABLE_SCROLL_SEQ.c_str());
-	printf(CLEAR_SCREEN_SEQ.c_str());
-	Flush();
+	// Set default values for the header parameters
+	instance->CONSOLE_USER = "jon";
+	instance->CONSOLE_HOSTNAME = "robot";
+	instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
 
-	//clear buffers
+	// set baud rate, store the value before
+	Baudrate(9600);
+
+	// Uncomment this is you don't want to see any logging
+	// statements that were called before this is setup
+	//Flush();
+	//printf(ENABLE_SCROLL_SEQ.c_str());
+	//printf(CLEAR_SCREEN_SEQ.c_str());
+	//Flush();
+
+	// clear buffers
 	instance->ClearRXBuffer();
 	instance->ClearTXBuffer();
 
-	//set baud rate
-	instance->pc.baud(baudrate);
-
-	//attach interrupt handlers
+	// attach interrupt handlers
 	instance->pc.attach(instance.get(), &Console::RXCallback, Serial::RxIrq);
 	instance->pc.attach(instance.get(), &Console::TXCallback, Serial::TxIrq);
 
-	//print OK.
-	// instance->pc.printf("Console Ready!\r\n\r\n");
-	Flush();
-
-	//reset indicces
+	// reset indicces
 	instance->rxIndex = 0;
 	instance->txIndex = 0;
 
-	//print header
-	instance->pc.printf(CONSOLE_HEADER.c_str());
+	// print header to show we're ready - make sure everything is flushed prior to doing so
+	Flush();
+	instance->PRINTF("\r\n%s", instance->CONSOLE_HEADER.c_str());
 	Flush();
 }
 
@@ -63,93 +73,104 @@ void Console::Flush()
 
 void Console::RXCallback()
 {
-	//if for some reason more than one character is in the buffer when the
-	//interrupt is called, handle them all.
+	// If for some reason more than one character is in the buffer when the
+	// interrupt is called, handle them all.
 	while (pc.readable()) {
-		//read the char that caused the interrupt
-		char c = pc.getc();
+		// read the char that caused the interrupt
+		char c = GETC();
 
-		//clear flags if the sequence is broken
-		if (flagOne && !flagTwo && c != ARROW_KEY_SEQUENCE_TWO) {
-			flagOne = false;
-			flagTwo = false;
+		// flag the start of an arrow key sequence
+		if (c == ARROW_KEY_SEQUENCE_ONE) {
+			flagOne = true;
+		}
+		// check if we're in a sequence if flagOne is set - do things if necessary
+		else if (flagOne) {
+			if (flagTwo) {
+				switch (c) {
+				case ARROW_UP_KEY:
+					PRINTF("\033M");
+					break;
+
+				case ARROW_DOWN_KEY:
+					PRINTF("\033D");
+					break;
+
+				default:
+					flagOne = false;
+					flagTwo = false;
+				}
+
+				Flush();
+				continue;
+
+			} else {	// flagTwo not set
+				switch (c) {
+				case ARROW_KEY_SEQUENCE_TWO:
+					flagTwo = true;
+					break;
+
+				default:
+					flagOne = false;
+					break;
+				}
+			}
 		}
 
-		//clear flags if the sequence is broken
-		if (flagOne && flagTwo && !(c == ARROW_UP_KEY || ARROW_DOWN_KEY)) {
-			flagOne = false;
-			flagTwo = false;
-		}
-
-		//if the buffer is full, ignore the chracter and print a
-		//warning to the console
+		// if the buffer is full, ignore the chracter and print a
+		// warning to the console
 		if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR) {
-			pc.printf("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
+			PRINTF("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
 			Flush();
 		}
+
 		//if a new line character is sent, process the current buffer
-		else if (c == NEW_LINE_CHAR || c == CMD_END_CHAR) {
-			//print command prior to executing
-			pc.printf("%c\n", NEW_LINE_CHAR);
+		else if (c == NEW_LINE_CHAR) {
+			// print new line prior to executing
+			PRINTF("%c\n", NEW_LINE_CHAR);
 			Flush();
 			rxBuffer[rxIndex] = '\0';
 
 			//execute rx buffer as command line
 			NVIC_DisableIRQ(UART0_IRQn);
-			executeCommand(rxBuffer);
+			executeLine(rxBuffer);
 			NVIC_EnableIRQ(UART0_IRQn);
 
-			//clean up after command execution
+			if (!isExecutingIterativeCommand())
+				PRINTF(CONSOLE_HEADER.c_str());
+
+			// Clean up after command execution
 			rxIndex = 0;
-			Console::CONSOLE_HEADER = Console::CONSOLE_USER + "@" + Console::CONSOLE_HOSTNAME + " $ ";
-			pc.printf(CONSOLE_HEADER.c_str());
 			Flush();
 		}
+
 		//if a backspace is requested, handle it.
 		else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0) {
 			//re-terminate the string
 			rxBuffer[--rxIndex] = '\0';
 
-			//move cursor back, write a space to clear the character
-			//move back cursor again
-			pc.putc(BACKSPACE_REPLY_CHAR);
-			pc.putc(BACKSPACE_REPLACE_CHAR);
-			pc.putc(BACKSPACE_REPLY_CHAR);
+			// 1) Move cursor back
+			// 2) Write a space to clear the character
+			// 3) Move back cursor again
+			PUTC(BACKSPACE_REPLY_CHAR);
+			PUTC(BACKSPACE_REPLACE_CHAR);
+			PUTC(BACKSPACE_REPLY_CHAR);
 			Flush();
 		}
+
 		//if a break is requested, cancel iterative commands
 		else if (c == BREAK_CHAR) {
 			if (isExecutingIterativeCommand()) {
 				cancelIterativeCommand();
-				pc.printf("%s\r\n", COMMAND_BREAK_MSG.c_str());
-				Console::CONSOLE_HEADER = Console::CONSOLE_USER + "@" + Console::CONSOLE_HOSTNAME + " $ ";
-				pc.printf(CONSOLE_HEADER.c_str());
+				PRINTF("%s\r\n%s", COMMAND_BREAK_MSG.c_str(), CONSOLE_HEADER.c_str());
 				Flush();
 			}
 		}
-		//flag the start of an arrow key sequence
-		else if (c == ARROW_KEY_SEQUENCE_ONE) {
-			flagOne = true;
-		}
-		//continue arrow sequence
-		else if (flagOne && c == ARROW_KEY_SEQUENCE_TWO) {
-			flagTwo = true;
-		}
-		//process arrow key sequence
-		else if (flagOne && flagTwo) {
-			//process keys
-			printf("%c", ARROW_UP_KEY ? ARROW_UP_KEY : ARROW_DOWN_KEY);
 
-			Flush();
-
-			flagOne = false;
-			flagTwo = false;
-		}
 		// No special character, add it to the buffer and return it to
 		// the terminal to be visible.
 		else {
 			rxBuffer[rxIndex++] = c;
-			pc.putc(c);
+			PUTC(c);
 			Flush();
 		}
 	}
@@ -191,4 +212,21 @@ void Console::RequestSystemStop()
 bool Console::IsSystemStopRequested()
 {
 	return Instance()->sysStopReq;
+}
+
+void Console::changeHostname(const std::string& hostname) {
+	instance->CONSOLE_HOSTNAME = hostname;
+}
+
+void Console::changeUser(const std::string& user) {
+	instance->CONSOLE_USER = user;
+}
+
+void Console::Baudrate(uint16_t baud) {
+	instance->baudrate = baud;
+	instance->pc.baud(instance->baudrate);
+}
+
+uint16_t Console::Baudrate(void) {
+	return instance->baudrate;
 }

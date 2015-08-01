@@ -76,18 +76,6 @@ public:
   static const std::string COMMAND_BREAK_MSG;
 
   /**
-  * console header string.
-  */
-  static std::string CONSOLE_HEADER;
-  static std::string CONSOLE_USER;
-  static std::string CONSOLE_HOSTNAME;
-
-  /**
-   * Serial (over USB) baud rate. Default 9600. Screen default 9600
-   */
-  static uint16_t baudrate;
-
-  /**
    * Console initialization routine. Attaches interrupt handlers and clears the
    * buffers.
    */
@@ -113,6 +101,12 @@ public:
    */
   static bool IsSystemStopRequested(void);
 
+  static void changeHostname(const std::string&);
+  static void changeUser(const std::string&);
+
+  static void Baudrate(uint16_t);
+  static uint16_t Baudrate(void);
+
 private:
   // Constructor is only used in init branch of Instance()
   Console();
@@ -130,22 +124,34 @@ private:
   static std::shared_ptr<Console> instance;
 
   /**
-   * serial connection
-   */
+  * Console header string.
+  */
+  std::string CONSOLE_HEADER;
+  std::string CONSOLE_USER;
+  std::string CONSOLE_HOSTNAME;
+
+  /**
+  * Serial (over USB) baud rate. Default 9600. Screen default 9600
+  */
+  uint16_t baudrate;
+
+  /**
+  * Serial connection
+  */
   Serial pc;
 
   /**
-   * receive buffer
+   * Receive buffer
    */
   char rxBuffer[BUFFER_LENGTH];
 
   /**
-   * transmission buffer
+   * Transmission buffer
    */
   char txBuffer[BUFFER_LENGTH];
 
   /**
-   * is a system stop requested
+   * Is a system stop requested
    */
   bool sysStopReq = false;
 

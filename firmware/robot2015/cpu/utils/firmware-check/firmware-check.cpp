@@ -1,5 +1,7 @@
 #include "firmware-check.hpp"
 
+// There's a million better ways to check firmware...I wrote this and I hate it.
+
 /**
  * Sets the string to the cortex firmware verison. This is taken from the `mbed interface` chip.
  */

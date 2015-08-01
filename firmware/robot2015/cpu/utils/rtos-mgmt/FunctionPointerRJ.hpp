@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ #if 0
 #ifndef FUNCTION_POINTER_RJ_H
 #define FUNCTION_POINTER_RJ_H
 
@@ -119,3 +120,4 @@ private:
 };
 
 #endif  // FUNCTIONPOINTER_RJ_H
+#endif
