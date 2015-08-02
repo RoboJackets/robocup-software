@@ -8,7 +8,7 @@ ROBOCUP_ROOT="${DIR}/../../../"
 # Get sha sum
 SHA_SUM_SETUP="$(${ROBOCUP_ROOT}/util/docker/getsetupsha.sh)"
 SHA_SUM="$(git rev-parse HEAD)"
-IMAGE_NAME="jgkamat/robocup-ci"
+IMAGE_NAME="robojackets/robocup-ci"
 
 docker push ${IMAGE_NAME}:${SHA_SUM}
 

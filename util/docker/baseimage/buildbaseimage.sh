@@ -7,7 +7,7 @@ ROBOCUP_ROOT="${DIR}/../../../"
 
 # Get sha sum
 SHA_SUM="$(${ROBOCUP_ROOT}/util/docker/getsetupsha.sh)"
-IMAGE_NAME="jgkamat/robocup-baseimage"
+IMAGE_NAME="robojackets/robocup-baseimage"
 
 if curl -s https://registry.hub.docker.com/v1/repositories/${IMAGE_NAME}/tags |  fgrep -q "\"name\": \"${SHA_SUM}\""; then
     # The tag currently exists, and can be pulled
