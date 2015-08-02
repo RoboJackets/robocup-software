@@ -31,6 +31,8 @@
 // Enable/Disable the Accel/Gyro (MPU-6050)
 #define RJ_MPU_EN               true
 
+#define RJ_WATCHDOG_TIMER_EN	false
+
 // The `Watchdog Timer` timeout value. The mbed will reset if the timer is not reset after the number of seconds defined here
 #define RJ_WATCHDOG_TIMER_VALUE 2   // seconds
 
@@ -73,5 +75,5 @@
 #include "dma.hpp"
 #include "console.hpp"
 #include "logger.hpp"
-#include "DS2411.hpp"
+#include "ds2411.hpp"
 #include "mainHelperFuncs.hpp"

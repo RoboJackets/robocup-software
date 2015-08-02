@@ -3,11 +3,14 @@
 /**
  * initializes the console
  */
-void Task_SerialConsole(void const *args)
+void Task_SerialConsole(void const* args)
 {
+  // Store the thread's ID
+  osThreadId threadID = Thread::gettid();
+
   Console::Init();
 
-  LOG(OK, "Serial console ready!");
+  LOG(OK, "Serial console ready! Thread ID: %u", threadID);
 
   while (true) {
     //check console communications, currently does nothing
@@ -24,5 +27,5 @@ void Task_SerialConsole(void const *args)
     Thread::yield();
   }
 
-  terminate();
+  osThreadTerminate(threadID);
 }

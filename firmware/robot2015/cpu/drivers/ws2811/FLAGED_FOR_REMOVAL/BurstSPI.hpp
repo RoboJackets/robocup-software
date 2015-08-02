@@ -1,18 +1,15 @@
-#if 0
-
 #pragma once
 
 #include "mbed.h"
 
 #if defined(TARGET_LPC1768) || defined(TARGET_LPC1114) || defined(TARGET_LPC11U24)
-#define SSP_CR0 CR0
-#define SSP_CR1 CR1
-#define SSP_SR  SR
-#define SSP_DR  DR
+#define SSP_BASE    LPC_SSP0
+#define SSP_CR0     CR0
+#define SSP_CR1     CR1
+#define SSP_SR      SR
+#define SSP_DR      DR
 #endif
 
-namespace BurstSPI
-{
 
 /** An SPI Master, used for communicating with SPI slave devices at very high speeds
  *
@@ -36,7 +33,7 @@ namespace BurstSPI
  * the normal mbed library. With this library it takes 25ms, which is also the theoretical
  * amount of time it should take. If you are running at 1MHz this will do alot less.
  */
-class BurstSPI : public mbed::SPI
+class BurstSPI
 {
 public:
     /** Create a SPI master connected to the specified pins
@@ -50,9 +47,15 @@ public:
     *  @param miso SPI Master In, Slave Out pin
     *  @param sclk SPI Clock pin
     */
-    BurstSPI(PinName mosi, PinName miso, PinName sclk) : mbed::SPI(mosi, miso, sclk) {};
+    BurstSPI(PinName mosi, PinName miso, PinName sclk)
+    {
+        spi = new SPI(mosi, miso, sclk);
+    };
 
-    // ~BurstSPI(void) {};
+    ~BurstSPI(void)
+    {
+        delete spi;
+    };
 
     /** Put data packet in the SPI TX FIFO buffer
     *
@@ -71,10 +74,13 @@ public:
     * from a different object with different settings. Not sure if you should use it?
     * Use it, it takes very little time to execute, so can't hurt.
     */
-    void setFormat(void) {
+    /*
+    void setFormat(void)
+    {
         format(_bits, _mode);
         frequency(_hz);
     }
+    */
 
     /** After you are done with fastWrite, call this function
     *
@@ -85,6 +91,27 @@ public:
     * SPI data after using fastWrite.
     */
     void clearRX(void);
+
+
+    void frequency(int hz)
+    {
+        spi->frequency(hz);
+    }
+
+
+    void format(int bits, int mode = 0)
+    {
+        spi->format(bits, mode);
+    }
+
+
+    int write(int data)
+    {
+        return spi->write(data);
+    }
+
+private:
+    SPI*    spi;
 
     //Just for documentation:
 #if 0
@@ -121,7 +148,3 @@ public:
 #endif
 
 };
-
-}   // namespace
-
-#endif

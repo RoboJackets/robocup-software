@@ -1,10 +1,12 @@
 #pragma once
 
 #include "robot.hpp"
-#include <memory>
 #include "commands.hpp"
 
-void Task_SerialConsole(void const *args);
+#include <memory>
+
+// forward declaration for the console's task function
+void Task_SerialConsole(void const* args);
 
 /**
  * enable scrolling vi sequence

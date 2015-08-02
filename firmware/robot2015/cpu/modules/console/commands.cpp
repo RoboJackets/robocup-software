@@ -2,7 +2,8 @@
 
 #define GEN_CMD_STRUCT(alias, isit, fptr, desc, usage)
 
-namespace {
+namespace
+{
 /**
  * error message when a typed command isn't found
  */
@@ -30,7 +31,7 @@ vector<string> iterativeCommandArgs;
 /**
  * the current iterative command handler
  */
-void (*iterativeCommandHandler)(const vector<string> &args);
+void (*iterativeCommandHandler)(const vector<string>& args);
 
 }	// anonymous namespace
 
@@ -169,7 +170,8 @@ static const std::vector<command_t> commands = {
 };
 
 
-void cmd_registerCmd(const command_t& cmdBlock) {
+void cmd_registerCmd(const command_t& cmdBlock)
+{
 	//command_t *cmdCfg = new command_t;
 	//std::memcpy(cmdCfg, &cmdBlock, sizeof cmdCfg);
 	//commands.push_back(cmdCfg);
@@ -181,7 +183,7 @@ void cmd_registerCmd(const command_t& cmdBlock) {
 * for those commands.
 */
 
-void cmd_alias(const vector<string> &args)
+void cmd_alias(const vector<string>& args)
 {
 	// If no args given, list all aliases
 	if (args.empty() == true) {
@@ -206,8 +208,7 @@ void cmd_alias(const vector<string> &args)
 
 			printf("\r\n");
 		}
-	}
-	else {
+	} else {
 		bool aliasFound = false;
 
 		for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
@@ -256,12 +257,11 @@ void cmd_alias(const vector<string> &args)
 /**
 * Clears the console.
 */
-void cmd_clear(const vector<string> &args)
+void cmd_clear(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
-	}
-	else {
+	} else {
 		Console::Flush();
 		printf(ENABLE_SCROLL_SEQ.c_str());
 		printf(CLEAR_SCREEN_SEQ.c_str());
@@ -272,7 +272,7 @@ void cmd_clear(const vector<string> &args)
 /**
  * Echos text.
  */
-void cmd_echo(const vector<string> &args)
+void cmd_echo(const vector<string>& args)
 {
 	for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 		printf("%s ", args[argInd].c_str());
@@ -285,15 +285,13 @@ void cmd_echo(const vector<string> &args)
  * Requests a system stop. (breaks main loop, or whatever implementation this
  * links to).
  */
-void cmd_exitSys(const vector<string> &args)
+void cmd_exitSys(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
-	}
-	else {
-		printf("Requesting system stop...");
+	} else {
+		printf("Shutting down serial console. Goodbye!\r\n");
 		Console::RequestSystemStop();
-		printf("done.\r\n");
 	}
 }
 
@@ -301,7 +299,7 @@ void cmd_exitSys(const vector<string> &args)
 /**
  * Prints command help.
  */
-void cmd_help(const vector<string> &args)
+void cmd_help(const vector<string>& args)
 {
 	// printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
 
@@ -325,8 +323,7 @@ void cmd_help(const vector<string> &args)
 					printf("%s,\t\t", commands[i].aliases[0].c_str());
 				}
 			}
-		}
-		else if (strcmp(args[0].c_str(), "--all") == 0 || strcmp(args[0].c_str(), "-a") == 0) {
+		} else if (strcmp(args[0].c_str(), "--all") == 0 || strcmp(args[0].c_str(), "-a") == 0) {
 			for (uint8_t i = 0; i < commands.size(); i++) {
 				//print info about ALL commands
 				printf("%s%s:\r\n"
@@ -338,8 +335,7 @@ void cmd_help(const vector<string> &args)
 				       commands[i].usage.c_str()
 				      );
 			}
-		}
-		else {
+		} else {
 			// Show detailed info of the command given since it was not an option flag
 			cmd_help_detail(args);
 		}
@@ -348,7 +344,8 @@ void cmd_help(const vector<string> &args)
 	}
 }
 
-void cmd_help_detail(const vector<string> &args) {
+void cmd_help_detail(const vector<string>& args)
+{
 	// iterate through args
 	for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
 		// iterate through commands
@@ -373,6 +370,7 @@ void cmd_help_detail(const vector<string> &args) {
 				      );
 			}
 		}
+
 		//if the command wasn't found, notify
 		if (!commandFound) {
 			printf("Command \"%s\" not found.\r\n", args.at(argInd).c_str());
@@ -384,12 +382,11 @@ void cmd_help_detail(const vector<string> &args) {
 /**
  * Console responsiveness test.
  */
-void cmd_ping(const vector<string> &args)
+void cmd_ping(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
-	}
-	else {
+	} else {
 		time_t sys_time = time(NULL);
 		Console::Flush();
 		printf("reply: %lu\r\n", sys_time);
@@ -403,12 +400,11 @@ void cmd_ping(const vector<string> &args)
 /**
  * Resets the mbed (should be the equivalent of pressing the reset button).
  */
-void cmd_resetMbed(const vector<string> &args)
+void cmd_resetMbed(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
-	}
-	else {
+	} else {
 		printf("The system is going down for reboot NOW!\r\n\r\n");
 		// Console::Flush();
 
@@ -423,10 +419,10 @@ void cmd_resetMbed(const vector<string> &args)
 /**
  * Lists files.
  */
-void cmd_ls(const vector<string> &args)
+void cmd_ls(const vector<string>& args)
 {
-	DIR *d;
-	struct dirent *p;
+	DIR* d;
+	struct dirent* p;
 
 	if (args.empty() == true) {
 		d = opendir("/local");
@@ -449,7 +445,7 @@ void cmd_ls(const vector<string> &args)
 /**
  * Prints system info.
  */
-void cmd_info(const vector<string> &args)
+void cmd_info(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
@@ -477,6 +473,7 @@ void cmd_info(const vector<string> &args)
 		printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
 
 		printf("Base ID:\t");
+
 		if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
 			printf("N/A\r\n");
 		else
@@ -515,7 +512,7 @@ void cmd_info(const vector<string> &args)
 			printf("MCU ID:\t\tN/A\r\n");
 
 		// show info about the core processor. ARM cortex-m3 in our case
-		printf("CPUID:\t\t0x%08lX\r\n", *(long unsigned int *)0xE000ED00);
+		printf("CPUID:\t\t0x%08lX\r\n", *(long unsigned int*)0xE000ED00);
 
 		// ** NOTE: THE mbed_interface_mac() function does not work! It hangs the mbed... **
 
@@ -549,7 +546,7 @@ void cmd_info(const vector<string> &args)
  * [cmd_disconnectMbed description]
  * @param args [description]
  */
-void cmd_disconnectInterface(const vector<string> &args)
+void cmd_disconnectInterface(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
@@ -560,7 +557,7 @@ void cmd_disconnectInterface(const vector<string> &args)
 }
 
 
-void cmd_checkInterfaceConn(const vector<string> &args)
+void cmd_checkInterfaceConn(const vector<string>& args)
 {
 	if (args.empty() == false) {
 		showInvalidArgs(args);
@@ -570,28 +567,28 @@ void cmd_checkInterfaceConn(const vector<string> &args)
 }
 
 
-void cmd_baudrate(const vector<string> &args)
+void cmd_baudrate(const vector<string>& args)
 {
 	std::vector<int> valid_rates = {110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 230400, 460800, 921600};
 
-	if ( args.size() > 1 ) {
+	if (args.size() > 1) {
 		showInvalidArgs(args);
-	}
-	else if ( args.empty() == true ) {
+	} else if (args.empty() == true) {
 		printf("Baudrate: %u\r\n", Console::Baudrate());
 	} else if (args.size() == 1) {
 		std::string str_baud = args.front();
 
-		if ( strcmp(str_baud.c_str(), "--list") == 0 || strcmp(str_baud.c_str(), "-l") == 0 ) {
+		if (strcmp(str_baud.c_str(), "--list") == 0 || strcmp(str_baud.c_str(), "-l") == 0) {
 
 			printf("Valid baudrates:\r\n");
+
 			for (unsigned int i = 0; i < valid_rates.size(); i++)
 				printf("%u\r\n", valid_rates[i]);
 
-		} else if ( isNumber(str_baud) ) {
+		} else if (isNumber(str_baud)) {
 			int new_rate = atoi(str_baud.c_str());
 
-			if ( std::find(valid_rates.begin(), valid_rates.end(), new_rate) != valid_rates.end() ) {
+			if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) != valid_rates.end()) {
 				Console::Baudrate(new_rate);
 				printf("New baudrate: %u\r\n", new_rate);
 			} else {
@@ -603,7 +600,7 @@ void cmd_baudrate(const vector<string> &args)
 	}
 }
 
-void cmd_switchUser(const vector<string> &args)
+void cmd_switchUser(const vector<string>& args)
 {
 	if (args.empty() == true || args.size() > 1) {
 		showInvalidArgs(args);
@@ -612,7 +609,7 @@ void cmd_switchUser(const vector<string> &args)
 	}
 }
 
-void cmd_switchHostname(const vector<string> &args)
+void cmd_switchHostname(const vector<string>& args)
 {
 	if (args.empty() == true || args.size() > 1) {
 		showInvalidArgs(args);
@@ -621,15 +618,13 @@ void cmd_switchHostname(const vector<string> &args)
 	}
 }
 
-void cmd_logLevel(const vector<string> &args)
+void cmd_logLevel(const vector<string>& args)
 {
 	if (args.size() > 1) {
 		showInvalidArgs(args);
-	}
-	else if (args.empty() == true) {
+	} else if (args.empty() == true) {
 		printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
-	}
-	else {
+	} else {
 		// this will return a signed int, so the level
 		// could increase or decrease...or stay the same.
 		int newLvl = (int)rjLogLevel;	// rjLogLevel is unsigned, so we'll need to change that first
@@ -638,8 +633,7 @@ void cmd_logLevel(const vector<string> &args)
 		if (newLvl >= LOG_LEVEL_END) {
 			printf("Unable to set log level above maximum value.\r\n");
 			newLvl = rjLogLevel;
-		}
-		else if (newLvl <= LOG_LEVEL_START) {
+		} else if (newLvl <= LOG_LEVEL_START) {
 			printf("Unable to set log level below minimum value.\r\n");
 			newLvl = rjLogLevel;
 		}
@@ -658,7 +652,7 @@ void cmd_logLevel(const vector<string> &args)
  *
  * Much of this taken from `console.c` from the old robot firmware (2011).
  */
-void executeLine(char *rawCommand)
+void executeLine(char* rawCommand)
 {
 	char* endCmd;
 	char* cmds = strtok_r(rawCommand, ";", &endCmd);
@@ -670,8 +664,8 @@ void executeLine(char *rawCommand)
 		vector<string> args;
 		args.reserve(MAX_COMMAND_ARGS);
 
-		char *endArg;
-		char *pch = strtok_r(cmds, " ", &endArg);
+		char* endArg;
+		char* pch = strtok_r(cmds, " ", &endArg);
 
 		while (pch != NULL) {
 
@@ -776,17 +770,22 @@ void cancelIterativeCommand(void)
 	executingIterativeCommand = false;
 }
 
-bool isNumber(std::string& s) {
+bool isNumber(std::string& s)
+{
 	std::string::const_iterator it = s.begin();
+
 	while (it != s.end() && std::isdigit(*it)) ++it;
+
 	return !s.empty() && it == s.end();
 }
 
-void showInvalidArgs(const vector<string> &args) {
+void showInvalidArgs(const vector<string>& args)
+{
 	printf("Invalid arguments");
 
 	if (args.empty() == false) {
 		printf(" ");
+
 		for (unsigned int i = 0; i < args.size() - 1; i++)
 			printf("'%s', ", args.at(i).c_str());
 
@@ -798,11 +797,13 @@ void showInvalidArgs(const vector<string> &args) {
 	printf("\r\n");
 }
 
-void showInvalidArgs(const string& s) {
+void showInvalidArgs(const string& s)
+{
 	printf("Invalid argument '%s'.\r\n", s.c_str());
 }
 
-int LogLvlChange(const std::string& s) {
+int LogLvlChange(const std::string& s)
+{
 	int n = 0;
 
 	n += std::count(s.begin(), s.end(), '+');

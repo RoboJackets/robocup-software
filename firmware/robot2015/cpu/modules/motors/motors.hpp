@@ -2,6 +2,7 @@
 
 #include "robot.hpp"
 #include "commands.hpp"
+#include "param.hpp"
 
 /* Any math using the delta values for the hall/encoder (we really
  * only care about encoder readings...) is best handled through a task

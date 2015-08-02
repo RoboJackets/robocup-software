@@ -11,11 +11,11 @@
 
 #define ID_DS2411_PIN RJ_BASE_ID
 
-typedef struct {
+struct DS2411_t {
     char family;
     char serial[6]; // 0 = LSB, 5 = MSB
     char crc;
-} DS2411_t;
+};
 
 typedef enum {
     ID_CRC_MATCH,

@@ -1,23 +1,26 @@
-#include "DS2411.hpp"
+#include "ds2411.hpp"
 
-static const unsigned int ID_tREC = 5;
-static const unsigned int ID_tPDHmax = 60;
-static const unsigned int ID_tPDLmax = 240;
-static const unsigned int ID_tRSTH = ID_tPDHmax + ID_tPDLmax + ID_tREC;
-static const unsigned int ID_tSLOT = 65;
-static const unsigned int ID_tRSTL = 540;
-static const unsigned int ID_tMSP = 68;
-static const unsigned int ID_tW0L = 90;
-static const unsigned int ID_tW1L = 10;
-static const unsigned int ID_tRL = 6;
-static const unsigned int ID_tMSR = 15;
+namespace
+{
+const unsigned int ID_tREC = 5;
+const unsigned int ID_tPDHmax = 60;
+const unsigned int ID_tPDLmax = 240;
+const unsigned int ID_tRSTH = ID_tPDHmax + ID_tPDLmax + ID_tREC;
+const unsigned int ID_tSLOT = 65;
+const unsigned int ID_tRSTL = 540;
+const unsigned int ID_tMSP = 68;
+const unsigned int ID_tW0L = 90;
+const unsigned int ID_tW1L = 10;
+const unsigned int ID_tRL = 6;
+const unsigned int ID_tMSR = 15;
+
 
 
 /**
  * [writeOne description]
  * @param pin [description]
  */
-void writeOne(DigitalInOut *pin)
+void writeOne(DigitalInOut* pin)
 {
     *pin = 0;
     wait_us(ID_tW1L);
@@ -30,7 +33,7 @@ void writeOne(DigitalInOut *pin)
  * [writeZero description]
  * @param pin [description]
  */
-void writeZero(DigitalInOut *pin)
+void writeZero(DigitalInOut* pin)
 {
     *pin = 0;
     wait_us(ID_tW0L);
@@ -44,7 +47,7 @@ void writeZero(DigitalInOut *pin)
  * @param pin [description]
  * @param b   [description]
  */
-void writeByte(DigitalInOut *pin, char b)
+void writeByte(DigitalInOut* pin, char b)
 {
     pin->output();
 
@@ -63,7 +66,7 @@ void writeByte(DigitalInOut *pin, char b)
  * @param  pin [description]
  * @return     [description]
  */
-char readByte(DigitalInOut *pin)
+char readByte(DigitalInOut* pin)
 {
     char value = 0;
 
@@ -106,6 +109,7 @@ unsigned int crc8_add(unsigned int acc, char byte)
     return acc;
 }
 
+}   // end of anonymous namespace
 
 /**
  * [ds2411_read_id description]
@@ -114,7 +118,7 @@ unsigned int crc8_add(unsigned int acc, char byte)
  * @param  debug [description]
  * @return       [description]
  */
-DS2411Result_t ds2411_read_id(PinName pin, DS2411_t *id, bool debug)
+DS2411Result_t ds2411_read_id(PinName pin, DS2411_t* id, bool debug)
 {
     LOG(INF3, "Communicating with ID Chip...");
 

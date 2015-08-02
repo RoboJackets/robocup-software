@@ -4,14 +4,15 @@
 #define GETC 		pc.getc
 #define PRINTF(...)	pc.printf(__VA_ARGS__)
 
+
 const std::string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
 const std::string Console::COMMAND_BREAK_MSG = "*BREAK*";
-
 shared_ptr<Console> Console::instance;
+
 
 Console::Console() : pc(USBTX, USBRX) {  }
 
-shared_ptr<Console> &Console::Instance()
+shared_ptr<Console>& Console::Instance()
 {
 	if (instance.get() == nullptr)
 		instance.reset(new Console);
@@ -163,6 +164,10 @@ void Console::RXCallback()
 				cancelIterativeCommand();
 				PRINTF("%s\r\n%s", COMMAND_BREAK_MSG.c_str(), CONSOLE_HEADER.c_str());
 				Flush();
+			} else {
+				isLogging = !isLogging;
+				PRINTF("Logging %s\r\n", isLogging ? "ENABLED" : "DISABLED");
+				Flush();
 			}
 		}
 
@@ -204,29 +209,34 @@ void Console::ConComCheck(void)
 	return;
 }
 
-void Console::RequestSystemStop()
+void Console::RequestSystemStop(void)
 {
 	Instance()->sysStopReq = true;
+	instance.reset();
 }
 
-bool Console::IsSystemStopRequested()
+bool Console::IsSystemStopRequested(void)
 {
 	return Instance()->sysStopReq;
 }
 
-void Console::changeHostname(const std::string& hostname) {
+void Console::changeHostname(const std::string& hostname)
+{
 	instance->CONSOLE_HOSTNAME = hostname;
 }
 
-void Console::changeUser(const std::string& user) {
+void Console::changeUser(const std::string& user)
+{
 	instance->CONSOLE_USER = user;
 }
 
-void Console::Baudrate(uint16_t baud) {
+void Console::Baudrate(uint16_t baud)
+{
 	instance->baudrate = baud;
 	instance->pc.baud(instance->baudrate);
 }
 
-uint16_t Console::Baudrate(void) {
+uint16_t Console::Baudrate(void)
+{
 	return instance->baudrate;
 }

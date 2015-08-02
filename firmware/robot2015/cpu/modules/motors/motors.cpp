@@ -114,3 +114,7 @@ void motors_cmdProcess(const std::vector<std::string> &args) {
 		}
 	}
 }
+
+PARAM_GROUP_START(motors)
+PARAM_ADD(PARAM_UINT16, dribTrgtVel, &motors.at(0).targetVel)
+PARAM_GROUP_STOP(motors)

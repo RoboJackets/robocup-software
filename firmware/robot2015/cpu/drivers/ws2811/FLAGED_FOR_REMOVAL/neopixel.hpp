@@ -1,12 +1,13 @@
-#if 0
+#if 1
 
 #pragma once
 
-#include <stdint.h>
-#include "BurstSPI.hpp"
 
-namespace neopixel
-{
+#include "BurstSPI.hpp"
+#include "mbed.h"
+
+// namespace neopixel
+// {
 
 /** Represent the value of a single pixel.
  *
@@ -92,7 +93,7 @@ typedef void (*PixelGenerator)(Pixel* out, uint32_t index, uintptr_t extra);
  * }
  * @endcode
  */
-class PixelArray : public BurstSPI::BurstSPI
+class PixelArray : public BurstSPI
 {
 public:
     /** Initialize a PixelArray.
@@ -103,6 +104,8 @@ public:
     PixelArray(PinName out,
                ByteOrder byte_order = BYTE_ORDER_GRB,
                Protocol protocol = PROTOCOL_800KHZ);
+
+    // virtual ~PixelArray();
 
     /** Update the pixel display from a buffer.
      *
@@ -154,6 +157,6 @@ private:
     void SendEightBits(uint8_t);
 };
 
-}   // namespace
+// }   // namespace
 
 #endif 

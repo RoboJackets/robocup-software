@@ -1,10 +1,7 @@
-#if 0
-
-#include <stdint.h>
+#if 1
 #include "neopixel.hpp"
 
-namespace neopixel
-{
+// namespace neopixel {
 
 void PixelArray::SendFourBits(uint32_t bits)
 {
@@ -32,7 +29,7 @@ void PixelArray::SendEightBits(uint8_t bits)
 }
 
 PixelArray::PixelArray(PinName out, ByteOrder byte_order, Protocol protocol)
-    : BurstSPI::BurstSPI(out, NC, NC),
+    : BurstSPI(out, NC, NC),
       byte_order_(byte_order),
       protocol_(protocol)
 {
@@ -131,6 +128,6 @@ void PixelArray::update(PixelGenerator generator, uint32_t length, uintptr_t ext
     wait_us(latch_time_us_);
 }
 
-}   // namespace
+// }   // namespace
 
 #endif
