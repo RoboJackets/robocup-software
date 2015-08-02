@@ -17,8 +17,8 @@ set(DRIVERS ${DRIVERS_ROOT_DIR})
 set(MODULES ${MODULES_ROOT_DIR})
 set(UTILS ${UTILS_ROOT_DIR})
 
-list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg dma ds2411 fpga radio ws2811 ws2811/BurstSPI)
-list(APPEND ${MODULES} CommLink CommModule console motors)
+list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg dma ds2411 fpga mpu-6050 radio ws2811 ws2811/BurstSPI)
+list(APPEND ${MODULES} CommLink CommModule console controller motors)
 list(APPEND ${UTILS} assert firmware-check logger rtos-mgmt watchdog)
 set(SUB_DIRS_LIST ${DRIVERS} ${MODULES} ${UTILS} ${USR_CONFIG_DIR})
 

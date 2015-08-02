@@ -1,8 +1,18 @@
-#ifndef BURSTSPI_H
-#define BURSTSPI_H
+#if 0
+
+#pragma once
 
 #include "mbed.h"
 
+#if defined(TARGET_LPC1768) || defined(TARGET_LPC1114) || defined(TARGET_LPC11U24)
+#define SSP_CR0 CR0
+#define SSP_CR1 CR1
+#define SSP_SR  SR
+#define SSP_DR  DR
+#endif
+
+namespace BurstSPI
+{
 
 /** An SPI Master, used for communicating with SPI slave devices at very high speeds
  *
@@ -26,7 +36,7 @@
  * the normal mbed library. With this library it takes 25ms, which is also the theoretical
  * amount of time it should take. If you are running at 1MHz this will do alot less.
  */
-class BurstSPI : public SPI
+class BurstSPI : public mbed::SPI
 {
 public:
     /** Create a SPI master connected to the specified pins
@@ -40,7 +50,9 @@ public:
     *  @param miso SPI Master In, Slave Out pin
     *  @param sclk SPI Clock pin
     */
-    BurstSPI(PinName mosi, PinName miso, PinName sclk) : SPI(mosi, miso, sclk) {};
+    BurstSPI(PinName mosi, PinName miso, PinName sclk) : mbed::SPI(mosi, miso, sclk) {};
+
+    // ~BurstSPI(void) {};
 
     /** Put data packet in the SPI TX FIFO buffer
     *
@@ -49,7 +61,7 @@ public:
     *
     *  @param data Data to be sent to the SPI slave
     */
-    void fastWrite(int data);
+    void fastWrite(unsigned int);
 
     /** Use this function before fastWrite to set the correct settings
     *
@@ -59,7 +71,7 @@ public:
     * from a different object with different settings. Not sure if you should use it?
     * Use it, it takes very little time to execute, so can't hurt.
     */
-    void setFormat( void ) {
+    void setFormat(void) {
         format(_bits, _mode);
         frequency(_hz);
     }
@@ -72,8 +84,7 @@ public:
     * and clears the RX buffer. You always have to call this before you want to receive
     * SPI data after using fastWrite.
     */
-    void clearRX( void );
-
+    void clearRX(void);
 
     //Just for documentation:
 #if 0
@@ -110,5 +121,7 @@ public:
 #endif
 
 };
+
+}   // namespace
 
 #endif

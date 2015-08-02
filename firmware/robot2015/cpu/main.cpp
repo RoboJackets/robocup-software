@@ -1,6 +1,7 @@
 #include "robot.hpp"
 #include "motors.hpp"
-#include "neopixel.h"
+#include "neopixel.hpp"
+#include "controller.hpp"
 
 DigitalOut ledOne(LED1, 0);
 DigitalOut led4(LED4, 0);
@@ -50,19 +51,24 @@ int main(void)
 	// Create a temporary DigitalIn so we can configure the pull-down resistor.
 	// (The mbed API doesn't provide any other way to do this.)
 	// An alternative is to connect an external pull-down resistor.
-	DigitalIn(p21, PullDown);
+	// DigitalIn(p21, PullDown);
 
 	// The pixel array control class.
+	/*
 	neopixel::PixelArray rebLED(p21);
 
 	neopixel::Pixel p[1];
 	p[0].red = 0x00;
 	p[0].green = 0x00;
 	p[0].blue = 0xFF;
-	rebLED.update(p,1);
+	rebLED.update(p, 1);
+	*/
 
 	// This breaks everything
 	// Thread comm_task(Task_CommCtrl, NULL, osPriorityNormal);
+
+	// Launch the motion controller thread
+	Thread controller_task(Task_Controller, NULL, osPriorityNormal);
 
 	// Enable watchdog timer
 	// Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);

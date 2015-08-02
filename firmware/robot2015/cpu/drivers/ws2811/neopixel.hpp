@@ -1,9 +1,9 @@
-#ifndef NEOPIXEL_H
-#define NEOPIXEL_H
+#if 0
+
+#pragma once
 
 #include <stdint.h>
-#include "mbed.h"
-#include "BurstSPI.h"
+#include "BurstSPI.hpp"
 
 namespace neopixel
 {
@@ -92,7 +92,7 @@ typedef void (*PixelGenerator)(Pixel* out, uint32_t index, uintptr_t extra);
  * }
  * @endcode
  */
-class PixelArray
+class PixelArray : public BurstSPI::BurstSPI
 {
 public:
     /** Initialize a PixelArray.
@@ -144,15 +144,16 @@ public:
     void update(PixelGenerator generator, uint32_t length, uintptr_t extra);
 
 private:
-    BurstSPI spi_;
     ByteOrder byte_order_;
     Protocol protocol_;
-    
-    static int const latch_time_us_ = 50;
-    
-    void send_pixel(Pixel& pixel);
+
+    static unsigned int const latch_time_us_ = 50;
+
+    void send_pixel(Pixel&);
+    void SendFourBits(uint32_t);
+    void SendEightBits(uint8_t);
 };
 
-}
+}   // namespace
 
-#endif
+#endif 

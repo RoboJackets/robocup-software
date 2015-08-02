@@ -1,11 +1,40 @@
+#if 0
+
 #include <stdint.h>
-#include "neopixel.h"
+#include "neopixel.hpp"
 
 namespace neopixel
 {
 
+void PixelArray::SendFourBits(uint32_t bits)
+{
+    // Encode '0' bits as 100 and '1' bits as 110.
+    // We have this bit pattern: 00000000abcd
+    // We want this bit pattern: 1a01b01c01d0
+    uint32_t ac = (bits * 0x088) &        // 0abcdabcd000
+                  0x410; // 0a00000c0000
+
+    uint32_t bd = (bits * 0x022) &        // 000abcdabcd0
+                  0x082; // 0000b00000d0
+
+    static uint32_t const base = 04444;   // 100100100100
+
+    fastWrite(base | ac | bd);        // 1a01b01c01d0
+}
+
+void PixelArray::SendEightBits(uint8_t bits)
+{
+    int zero = 0x300;  // Encode zero as 0b1100000000
+    int one = 0x3e0;   // Encode one as 0b1111100000
+
+    for (int i = 128; i >= 1; i >>= 1)
+        fastWrite((bits & i) ? one : zero);
+}
+
 PixelArray::PixelArray(PinName out, ByteOrder byte_order, Protocol protocol)
-    : spi_(out, NC, NC), byte_order_(byte_order), protocol_(protocol)
+    : BurstSPI::BurstSPI(out, NC, NC),
+      byte_order_(byte_order),
+      protocol_(protocol)
 {
     if (protocol_ == PROTOCOL_800KHZ) {
         // 800kHz bit encodings:
@@ -28,8 +57,10 @@ PixelArray::PixelArray(PinName out, ByteOrder byte_order, Protocol protocol)
         // These constraints are easy to meet by splitting each bit into three and packing them into SPI packets.
         //  '0': 100             mark: 0.42us, space: 0.83us
         //  '1': 110             mark: 0.83us, space: 0.42us
-        spi_.frequency(2400000);  // 800kHz * 3
-        spi_.format(12);          // Send four NeoPixel bits in each packet.
+        // spi_.frequency(2400000);  // 800kHz * 3
+        // spi_.format(12);          // Send four NeoPixel bits in each packet.
+        frequency(2400000);
+        format(12);
     } else {
         // 400kHz bit encodings:
         //  '0': --________
@@ -40,34 +71,11 @@ PixelArray::PixelArray(PinName out, ByteOrder byte_order, Protocol protocol)
         //
         // The period is 2.5us, and we use a 10-bit packet for this encoding:
         //  '0': 1100000000      mark: 0.5us, space: 2us
-        //  '1': 1111100000      mark: 1.25us, space: 1.25us    
-        spi_.frequency(4000000);  // 400kHz * 10
-        spi_.format(10);          // Send one NeoPixel bit in each packet.
-    }
-}
-
-static void SendFourBits(BurstSPI& spi, uint32_t bits)
-{
-    // Encode '0' bits as 100 and '1' bits as 110.
-    // We have this bit pattern: 00000000abcd
-    // We want this bit pattern: 1a01b01c01d0
-    uint32_t ac = (bits * 0x088) &        // 0abcdabcd000
-                  0x410; // 0a00000c0000
-
-    uint32_t bd = (bits * 0x022) &        // 000abcdabcd0
-                  0x082; // 0000b00000d0
-
-    static uint32_t const base = 04444;   // 100100100100
-
-    spi.fastWrite(base | ac | bd);        // 1a01b01c01d0
-}
-
-static void SendEightBits(BurstSPI& spi, uint8_t bits)
-{
-    int zero = 0x300;  // Encode zero as 0b1100000000
-    int one = 0x3e0;   // Encode one as 0b1111100000
-    for (int i = 128; i >= 1; i >>= 1) {
-        spi.fastWrite((bits & i) ? one : zero);
+        //  '1': 1111100000      mark: 1.25us, space: 1.25us
+        // spi_.frequency(4000000);  // 400kHz * 10
+        // spi_.format(10);          // Send one NeoPixel bit in each packet.
+        frequency(4000000);
+        format(10);
     }
 }
 
@@ -91,24 +99,23 @@ void PixelArray::send_pixel(Pixel& pixel)
     uint8_t byte1 = (byte_order_ == BYTE_ORDER_RGB) ? pixel.green : pixel.red;
 
     if (protocol_ == PROTOCOL_800KHZ) {
-        SendFourBits(spi_, (byte0 >> 4) & 0xf);
-        SendFourBits(spi_, (byte0 >> 0) & 0xf);
-        SendFourBits(spi_, (byte1 >> 4) & 0xf);
-        SendFourBits(spi_, (byte1 >> 0) & 0xf);
-        SendFourBits(spi_, (pixel.blue >> 4) & 0xf);
-        SendFourBits(spi_, (pixel.blue >> 0) & 0xf);
+        SendFourBits((byte0 >> 4) & 0xf);
+        SendFourBits((byte0 >> 0) & 0xf);
+        SendFourBits((byte1 >> 4) & 0xf);
+        SendFourBits((byte1 >> 0) & 0xf);
+        SendFourBits((pixel.blue >> 4) & 0xf);
+        SendFourBits((pixel.blue >> 0) & 0xf);
     } else {
-        SendEightBits(spi_, byte0);
-        SendEightBits(spi_, byte1);
-        SendEightBits(spi_, pixel.blue);
+        SendEightBits(byte0);
+        SendEightBits(byte1);
+        SendEightBits(pixel.blue);
     }
 }
 
 void PixelArray::update(Pixel buffer[], uint32_t length)
 {
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++)
         send_pixel(buffer[i]);
-    }
 
     wait_us(latch_time_us_);
 }
@@ -124,4 +131,6 @@ void PixelArray::update(PixelGenerator generator, uint32_t length, uintptr_t ext
     wait_us(latch_time_us_);
 }
 
-}
+}   // namespace
+
+#endif

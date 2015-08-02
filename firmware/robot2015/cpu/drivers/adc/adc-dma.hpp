@@ -3,6 +3,7 @@
 #include "robot.hpp"
 #include "dma.hpp"
 #include "pinmap.h"
+#include <vector>
 
 
 // Defines

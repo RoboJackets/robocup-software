@@ -70,7 +70,7 @@
 // This defines the set of pins used for the primary I2C data bus.
 #define RJ_I2C_SCL              p27
 #define RJ_I2C_SDA              p28
-#define RJ_I2C_BUS              RJ_I2C_SDA, RJ_I2C_SDA
+#define RJ_I2C_BUS              RJ_I2C_SDA, RJ_I2C_SCL
 
 // This defines the radio transceiver's Chip Select pin. This should always be configured as a DIGITAL OUTPUT.
 #define RJ_RADIO_nCS            p29

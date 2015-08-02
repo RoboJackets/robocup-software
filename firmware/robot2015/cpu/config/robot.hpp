@@ -24,7 +24,7 @@
 // ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES ** ============================= **
 
 // Enable/Disable the Radio Transceiver (915MHz band)
-#define RJ_RADIO_EN             true
+#define RJ_RADIO_EN             false
 #define RJ_CC1201
 //#define RJ_CC1101
 
@@ -69,7 +69,6 @@
 #endif
 
 #include "git_version.hpp"
-
 #include "adc-dma.hpp"
 #include "dma.hpp"
 #include "console.hpp"

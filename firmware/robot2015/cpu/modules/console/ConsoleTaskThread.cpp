@@ -23,4 +23,6 @@ void Task_SerialConsole(void const *args)
 
     Thread::yield();
   }
+
+  terminate();
 }
