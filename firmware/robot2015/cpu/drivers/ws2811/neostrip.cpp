@@ -47,6 +47,7 @@ void NeoStrip::setPixel(int p, int color)
 	int red = (color & 0xFF0000) >> 16;
 	int green = (color & 0x00FF00) >> 8;
 	int blue = (color & 0x0000FF);
+	
 	setPixel(p, red, green, blue);
 }
 

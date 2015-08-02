@@ -103,7 +103,7 @@ unset(listLen)
 list(LENGTH robot2015_SRC listLen)
 message("done. ${listLen} total source files found.\n=======================================\n")
 
-add_executable(robot2015_elf ${robot2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp ${MBED_OBJECTS})
+add_executable(robot2015_elf ${robot2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp ${MBED_OBJECTS})# ${DRIVERS_ROOT_DIR}/ws2811/neocore.s)
 target_link_libraries(robot2015_elf ${MBED_LIBS})
 
 # the final product is the .bin file, not the elf one.  We hide this away in the build dir
