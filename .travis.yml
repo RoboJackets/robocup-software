@@ -1,8 +1,5 @@
 
-os:
-  - osx
-
-language: cpp
+language: objective-c
 
 before_install:
   - brew update
