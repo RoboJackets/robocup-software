@@ -5,7 +5,7 @@
 include(CMakeForceCompiler)
  
 #-------------------------------------------------------------------------------
-set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_NAME "ARM Cortex mbed")
 # set(CMAKE_SYSTEM_VERSION 1)
 
 #AS      = $(GCC_BIN)arm-none-eabi-as

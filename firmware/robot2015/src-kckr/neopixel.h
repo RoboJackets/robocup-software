@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * I/O port 
+ * I/O port
  */
 static const uint8_t NEOPIXEL_PORT = 0x18;
 
