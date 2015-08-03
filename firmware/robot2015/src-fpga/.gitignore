@@ -1,10 +1,33 @@
 # .gitignore for HDL synthesis
 
 _xmsgs
+xlnx_*
 xst
+xflow
 *.lso
-*.ngc
+*.ng?
+*.nc?
 *.xrpt
+*.xwbt
+*.xpl
+*.xml
+*.xpi
+*.ptwx
 *.prj
+*.pcf
+*.psr
+*.drc
 *.scr
 *.srp
+*.bit
+*.bld
+*.map
+*.mrp
+*.lst
+*.lso
+*.bgn
+*.pad
+*.csv
+*.txt
+*.par
+*.unroutes
