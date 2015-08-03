@@ -1,6 +1,0 @@
-verilog work ../src/encoder.v
-verilog work ../src/hall_counter.v
-verilog work ../src/kicker_i2c.v
-verilog work ../src/kicker.v
-verilog work ../src/motor.v
-verilog work ../src/robocup.v

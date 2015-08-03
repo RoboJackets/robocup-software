@@ -1,7 +1,0 @@
-MO half_bridge NULL ../src/motor.v vlg2B/half__bridge.bin 1438033544
-MO robocup NULL ../src/robocup.v vlg56/robocup.bin 1438033544
-MO kicker_i2c NULL ../src/kicker_i2c.v vlg66/kicker__i2c.bin 1438033544
-MO hall_counter NULL ../src/hall_counter.v vlg6C/hall__counter.bin 1438033544
-MO motor NULL ../src/motor.v vlg41/motor.bin 1438033544
-MO encoder NULL ../src/encoder.v vlg68/encoder.bin 1438033544
-MO kicker NULL ../src/kicker.v vlg35/kicker.bin 1438033544

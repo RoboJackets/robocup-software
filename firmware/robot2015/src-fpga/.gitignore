@@ -1,0 +1,10 @@
+# .gitignore for HDL synthesis
+
+_xmsgs
+xst
+*.lso
+*.ngc
+*.xrpt
+*.prj
+*.scr
+*.srp
