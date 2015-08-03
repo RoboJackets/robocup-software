@@ -18,3 +18,4 @@ freeglut
 eigen
 bullet --with-shared
 protobuf
+caskroom/cask/brew-cask
