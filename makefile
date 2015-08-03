@@ -56,6 +56,10 @@ base2015:
 base2015-prog:
 	mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
 
+# FPGA 2015
+fpga2015:
+	cd ./firmware/robot2015/src-fpga/synth && make && cp robocup.bit ../fpga2015.bit && make clean
+
 firmware2015: robot2015 kicker2015 base2015
 
 # Robot FPGA
