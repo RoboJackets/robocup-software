@@ -1,1 +1,2 @@
-add_subdirectory(cpu)
+add_subdirectory(src-ctrl)
+add_subdirectory(src-kckr)
