@@ -1,12 +1,34 @@
-#if 1
+/**
+ * RoboJackets: RoboCup SSL Firmware
+ *
+ * Copyright (C) 2015 RoboJackets JJ
+ * Copyright (C) 2011-2012 Bitcraze AB
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, in version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * param.cpp - Provides dynamic system-wide variable access for those defined through macros.
+ */
 
 #include "param.hpp"
 
+
+#include "rtos.h"
+#include "robot_types.hpp"
+#include "CommModule.hpp"
+
+
 // Private functions
-
-void paramTask(void* prm);
-void paramTOCProcess(int command);
-
+static void paramTOCProcess(int command);
 // The following two function SHALL NOT be called outside paramTask!
 static void paramWriteProcess(int id, void*);
 static void paramReadProcess(int id);
@@ -22,11 +44,9 @@ static struct param_s* params;
 static int paramsLen;
 // uint32_t paramsCrc;
 static int paramsCount = 0;
-
 static bool isInit = false;
+static RTP_t p;
 
-
-RTP_t p;
 
 void paramInit(void)
 {
@@ -43,10 +63,9 @@ void paramInit(void)
 		if (!(params[i].type & PARAM_GROUP))
 			paramsCount++;
 
-	Thread console_task(Task_Param, NULL, osPriorityBelowNormal);
-
 	isInit = true;
 }
+
 
 bool paramTest(void)
 {
@@ -74,7 +93,7 @@ void Task_Param(void const* arg)
 
 			pkt = (RTP_t*)evt.value.p;
 
-			LOG(OK, "Received packet! 0x%02X", pkt->payload[0]);
+			LOG(OK, "Received packet in %u", threadID);
 
 			if (pkt->subclass == TOC_CH) {
 				paramTOCProcess(pkt->payload[0]);
@@ -108,7 +127,7 @@ void Task_Param(void const* arg)
 					pkt->payload[1 + strlen(group) + 1 + strlen(name) + 1] = error;
 					pkt->payload_size = 1 + strlen(group) + 1 + strlen(name) + 1 + 1;
 
-					//crtpSendPacket(&p);
+					CommModule::send(p);
 				}
 			}
 
@@ -128,49 +147,49 @@ void paramTOCProcess(int command)
 	char* group = '\0';
 
 	switch (command) {
-	case CMD_GET_INFO: // Get info packet about the param implementation
-		ptr = 0;
-		group = '\0';
-		// p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-		p.payload_size = 2;
-		p.payload[0] = CMD_GET_INFO;
-		p.payload[1] = paramsCount;
-		// memcpy(&p.payload[2], &paramsCrc, 4);
-		// crtpSendPacket(&p);
-		break;
+		case CMD_GET_INFO: // Get info packet about the param implementation
+			ptr = 0;
+			group = '\0';
+			p.header_link = RTP_HEADER(RTP_PORT_PARAM, TOC_CH, true, false);
+			p.payload_size = 2;	// 6 with CRC
+			p.payload[0] = CMD_GET_INFO;
+			p.payload[1] = paramsCount;
+			// memcpy(&p.payload[2], &paramsCrc, 4);
+			CommModule::send(p);
+			break;
 
-	case CMD_GET_ITEM:  // Get param variable
-		for (ptr = 0; ptr < paramsLen; ptr++) { //Ptr points a group
-			if (params[ptr].type & PARAM_GROUP) {
-				if (params[ptr].type & PARAM_START)
-					group = params[ptr].name;
-				else
-					group = '\0';
-			} else {           // Ptr points a variable
-				if (n == p.payload[1])
-					break;
+		case CMD_GET_ITEM:  // Get param variable
+			for (ptr = 0; ptr < paramsLen; ptr++) { //Ptr points a group
+				if (params[ptr].type & PARAM_GROUP) {
+					if (params[ptr].type & PARAM_START)
+						group = params[ptr].name;
+					else
+						group = '\0';
+				} else {           // Ptr points a variable
+					if (n == p.payload[1])
+						break;
 
-				n++;
+					n++;
+				}
 			}
-		}
 
-		if (ptr < paramsLen) {
-			// p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-			p.payload[0] = CMD_GET_ITEM;
-			p.payload[1] = n;
-			p.payload[2] = params[ptr].type;
-			memcpy(p.payload + 3, group, strlen(group) + 1);
-			memcpy(p.payload + 3 + strlen(group) + 1, params[ptr].name, strlen(params[ptr].name) + 1);
-			p.payload_size = 3 + 2 + strlen(group) + strlen(params[ptr].name);
-			// crtpSendPacket(&p);
-		} else {
-			// p.header = CRTP_HEADER(CRTP_PORT_PARAM, TOC_CH);
-			p.payload[0] = CMD_GET_ITEM;
-			p.payload_size = 1;
-			// crtpSendPacket(&p);
-		}
+			if (ptr < paramsLen) {
+				p.header_link = RTP_HEADER(RTP_PORT_PARAM, TOC_CH, true, false);
+				p.payload[0] = CMD_GET_ITEM;
+				p.payload[1] = n;
+				p.payload[2] = params[ptr].type;
+				memcpy(p.payload + 3, group, strlen(group) + 1);
+				memcpy(p.payload + 3 + strlen(group) + 1, params[ptr].name, strlen(params[ptr].name) + 1);
+				p.payload_size = 3 + 2 + strlen(group) + strlen(params[ptr].name);
+				CommModule::send(p);
+			} else {
+				p.header_link = RTP_HEADER(RTP_PORT_PARAM, TOC_CH, true, false);
+				p.payload[0] = CMD_GET_ITEM;
+				p.payload_size = 1;
+				CommModule::send(p);
+			}
 
-		break;
+			break;
 	}
 }
 
@@ -184,7 +203,7 @@ static void paramWriteProcess(int ident, void* valptr)
 		// p.payload[2] = ENOENT;
 		p.payload_size = 3;
 
-		// crtpSendPacket(&p);
+		CommModule::send(p);
 		return;
 	}
 
@@ -192,24 +211,24 @@ static void paramWriteProcess(int ident, void* valptr)
 		return;
 
 	switch (params[id].type & PARAM_BYTES_MASK) {
-	case PARAM_1BYTE:
-		*(uint8_t*)params[id].address = *(uint8_t*)valptr;
-		break;
+		case PARAM_1BYTE:
+			*(uint8_t*)params[id].address = *(uint8_t*)valptr;
+			break;
 
-	case PARAM_2BYTES:
-		*(uint16_t*)params[id].address = *(uint16_t*)valptr;
-		break;
+		case PARAM_2BYTES:
+			*(uint16_t*)params[id].address = *(uint16_t*)valptr;
+			break;
 
-	case PARAM_4BYTES:
-		*(uint32_t*)params[id].address = *(uint32_t*)valptr;
-		break;
+		case PARAM_4BYTES:
+			*(uint32_t*)params[id].address = *(uint32_t*)valptr;
+			break;
 
-	case PARAM_8BYTES:
-		*(uint64_t*)params[id].address = *(uint64_t*)valptr;
-		break;
+		case PARAM_8BYTES:
+			*(uint64_t*)params[id].address = *(uint64_t*)valptr;
+			break;
 	}
 
-	// crtpSendPacket(&p);
+	CommModule::send(p);
 }
 
 static char paramWriteByNameProcess(char* group, char* name, int type, void* valptr)
@@ -242,21 +261,21 @@ static char paramWriteByNameProcess(char* group, char* name, int type, void* val
 	}
 
 	switch (params[ptr].type & PARAM_BYTES_MASK) {
-	case PARAM_1BYTE:
-		*(uint8_t*)params[ptr].address = *(uint8_t*)valptr;
-		break;
+		case PARAM_1BYTE:
+			*(uint8_t*)params[ptr].address = *(uint8_t*)valptr;
+			break;
 
-	case PARAM_2BYTES:
-		*(uint16_t*)params[ptr].address = *(uint16_t*)valptr;
-		break;
+		case PARAM_2BYTES:
+			*(uint16_t*)params[ptr].address = *(uint16_t*)valptr;
+			break;
 
-	case PARAM_4BYTES:
-		*(uint32_t*)params[ptr].address = *(uint32_t*)valptr;
-		break;
+		case PARAM_4BYTES:
+			*(uint32_t*)params[ptr].address = *(uint32_t*)valptr;
+			break;
 
-	case PARAM_8BYTES:
-		*(uint64_t*)params[ptr].address = *(uint64_t*)valptr;
-		break;
+		case PARAM_8BYTES:
+			*(uint64_t*)params[ptr].address = *(uint64_t*)valptr;
+			break;
 	}
 
 	return 0;
@@ -272,33 +291,33 @@ static void paramReadProcess(int ident)
 		// p.payload[2] = ENOENT;
 		p.payload_size = 3;
 
-		//crtpSendPacket(&p);
+		CommModule::send(p);
 		return;
 	}
 
 	switch (params[id].type & PARAM_BYTES_MASK) {
-	case PARAM_1BYTE:
-		memcpy(&p.payload[1], params[id].address, sizeof(uint8_t));
-		p.payload_size = 1 + sizeof(uint8_t);
-		break;
+		case PARAM_1BYTE:
+			memcpy(&p.payload[1], params[id].address, sizeof(uint8_t));
+			p.payload_size = 1 + sizeof(uint8_t);
+			break;
 
-	case PARAM_2BYTES:
-		memcpy(&p.payload[1], params[id].address, sizeof(uint16_t));
-		p.payload_size = 1 + sizeof(uint16_t);
-		break;
+		case PARAM_2BYTES:
+			memcpy(&p.payload[1], params[id].address, sizeof(uint16_t));
+			p.payload_size = 1 + sizeof(uint16_t);
+			break;
 
-	case PARAM_4BYTES:
-		memcpy(&p.payload[1], params[id].address, sizeof(uint32_t));
-		p.payload_size = 1 + sizeof(uint32_t);
-		break;
+		case PARAM_4BYTES:
+			memcpy(&p.payload[1], params[id].address, sizeof(uint32_t));
+			p.payload_size = 1 + sizeof(uint32_t);
+			break;
 
-	case PARAM_8BYTES:
-		memcpy(&p.payload[1], params[id].address, sizeof(uint64_t));
-		p.payload_size = 1 + sizeof(uint64_t);
-		break;
+		case PARAM_8BYTES:
+			memcpy(&p.payload[1], params[id].address, sizeof(uint64_t));
+			p.payload_size = 1 + sizeof(uint64_t);
+			break;
 	}
 
-	// crtpSendPacket(&p);
+	CommModule::send(p);
 }
 
 static int variableGetIndex(int id)
@@ -319,5 +338,3 @@ static int variableGetIndex(int id)
 
 	return i;
 }
-
-#endif

@@ -1,11 +1,11 @@
 #include "robot.hpp"
-#include "motors.hpp"
 #include "controller.hpp"
 #include "MailHelper.hpp"
+
+#include "toc.hpp"
+#include "param.hpp"
 // #include "neostrip.cpp"
 
-DigitalOut ledOne(LED1, 0);
-DigitalOut led4(LED4, 0);
 DigitalIn gpio3(p18);
 DigitalIn gpio2(p16);
 ADCDMA adc;
@@ -36,11 +36,14 @@ int main(void)
 	setISRPriorities();
 
 	// Start a periodic blinking LED to show system activity
+	DigitalOut ledOne(LED1, 0);
 	RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
 	live_light.start(1300);
 
+
 	// TODO: write a function that will recalibrate the radio for this.
 	// Reset the ticker on every received packet. For now, we just blink an LED.
+	DigitalOut led4(LED4, 0);
 	RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void*)&led4);
 	radio_timeout_task.start(300);
 
@@ -55,12 +58,19 @@ int main(void)
 	// Launch the motion controller thread
 	Thread controller_task(Task_Controller, NULL, osPriorityNormal);
 
-	// Mail<RTP_t, 16> paramMail;
-	MailHelper<RTP_t, 5> paramQueue;
-	osMailQId pqID = osMailCreate(paramQueue.def(), NULL);
+	TOCInit();
+	// Start the thread task for setting up a dynamic logging structure
+	MailHelper<RTP_t, 5> tocQueue;
+	osMailQId tocQID = osMailCreate(tocQueue.def(), NULL);
+	Thread toc_task(Task_TOC, &tocQID, osPriorityBelowNormal);
 
-	// Start the thread task for dynamic parameter access
-	Thread param_task(Task_Param, &pqID, osPriorityBelowNormal);
+#if COMPILE_PARAM_LOGGING
+	// Start the thread task for access to certain variables in the dynamic logging structure
+	MailHelper<RTP_t, 5> paramQueue;
+	osMailQId paramQID = osMailCreate(paramQueue.def(), NULL);
+	Thread param_task(Task_Param, &paramQID, osPriorityBelowNormal);
+
+#endif
 
 	/*
 	NeoStrip rgbLED(p21, 1);
@@ -68,7 +78,6 @@ int main(void)
 	rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
 	rgbLED.write();
 	*/
-
 
 #if RJ_WATCHDOG_TIMER_EN
 	// Enable watchdog timer
@@ -94,10 +103,12 @@ int main(void)
 
 	adc.BurstRead();
 
-	RTP_t* paramBlk = (RTP_t*)osMailAlloc(pqID, 1000);
+#if COMPILE_PARAM_LOGGING
+	RTP_t* paramBlk = (RTP_t*)osMailAlloc(paramQID, 1000);
 	paramBlk->subclass = 1;	// read channel
 	paramBlk->payload[0] = 1;	// read channel
-	osMailPut(pqID, paramBlk);
+	osMailPut(paramQID, paramBlk);
+#endif
 
 	while (1) {
 		LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));

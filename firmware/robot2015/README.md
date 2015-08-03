@@ -4,7 +4,7 @@ The [`src-ctrl`](./src-ctrl) directory contains the source code for the control 
 
 The [`src-kckr`](./src-kckr) directory contains the source code for the kicker board that runs on the ATtiny.
 
-The [`fpga`](./fpga) directory contains the source verilog files for synthesizing the FPGA's binary file. 
+The [`src-fpga`](./src-fpga) directory contains the source verilog files for synthesizing the FPGA's binary file. 
 
 The [`packets`](./packets) directory contains figures of the radio protocol's timing controls.
 

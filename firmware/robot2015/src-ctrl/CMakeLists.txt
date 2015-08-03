@@ -11,6 +11,10 @@ set(MODULES_ROOT_DIR modules)
 set(UTILS_ROOT_DIR utils)
 set(USR_LIB_DIR lib)
 set(USR_CONFIG_DIR config)
+set(LINKER_DIR ${CMAKE_CURRENT_LIST_DIR}/scripts/linker)
+set(LINKER_SCRIPT ${LINKER_DIR}/sections_FLASH.ld)
+set(USE_OWN_LINKER_SCRIPT TRUE)
+
 
 # set variables for each subdirectory of the above sections of the firmware
 set(DRIVERS ${DRIVERS_ROOT_DIR})
@@ -19,7 +23,7 @@ set(UTILS ${UTILS_ROOT_DIR})
 
 list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg dma ds2411 fpga mpu-6050 radio ws2811)
 list(APPEND ${MODULES} CommLink CommModule console controller motors param toc)
-list(APPEND ${UTILS} assert firmware-check logger rtos-mgmt watchdog)
+list(APPEND ${UTILS} assert firmware-check fp16 logger rtos-mgmt watchdog)
 set(SUB_DIRS_LIST ${USR_CONFIG_DIR} ${DRIVERS} ${MODULES} ${UTILS})
 
 # generate the list of all directories that are needed

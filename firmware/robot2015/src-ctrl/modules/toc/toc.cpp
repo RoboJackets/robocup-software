@@ -1,13 +1,8 @@
 /**
- *    ||          ____  _ __
- * +------+      / __ )(_) /_______________ _____  ___
- * | 0xBC |     / __  / / __/ ___/ ___/ __ `/_  / / _ \
- * +------+    / /_/ / / /_/ /__/ /  / /_/ / / /_/  __/
- *  ||  ||    /_____/_/\__/\___/_/   \__,_/ /___/\___/
+ * RoboJackets: RoboCup SSL Firmware
  *
- * Crazyflie control firmware
- *
- * Copyright (C) 2012 BitCraze AB
+ * Copyright (C) 2015 RoboJackets JJ
+ * Copyright (C) 2011-2012 Bitcraze AB
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +16,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * toc.cpp: Dynamic log system
+ * toc.cpp - Dynamic logging system for variables defined through macros.
  */
 
-/* The TOC logic is mainly based on param.c
- * FIXME: See if we can factorise the TOC code */
-
 #include "toc.hpp"
+
+#include "rtos.h"
+#include "robot_types.hpp"
+#include "fp16.hpp"
+#include "CommModule.hpp"
+
+// Maximum log payload length
+#define LOG_MAX_LEN 30
+
+/* Log packet parameters storage */
+#define LOG_MAX_OPS 64
+#define LOG_MAX_BLOCKS 8
+
+#define BLOCK_ID_FREE -1
+
+enum {
+  SUBC_TOC      = 0,
+  SUBC_LOG_CFG  = 1,
+  SUBC_LOG_DATA = 2
+};
+
+enum {
+  CMD_GET_ITEM  = 0,
+  CMD_GET_INFO  = 1
+};
+
+enum {
+  CTRL_CREATE_BLOCK  = 0,
+  CTRL_APPEND_BLOCK  = 1,
+  CTRL_DELETE_BLOCK  = 2,
+  CTRL_START_BLOCK   = 3,
+  CTRL_STOP_BLOCK    = 4,
+  CTRL_RESET         = 5
+};
 
 static const uint8_t typeLength[] = {1, 2, 4, 1, 2, 4, 4, 2};
 /*
@@ -41,13 +67,6 @@ static const uint8_t typeLength[] = {1, 2, 4, 1, 2, 4, 4, 2};
   [LOG_FP16]   = 2
 };
 */
-
-// Maximum log payload length
-#define LOG_MAX_LEN 30
-
-/* Log packet parameters storage */
-#define LOG_MAX_OPS 64
-#define LOG_MAX_BLOCKS 8
 
 struct log_ops {
   struct log_ops* next;
@@ -72,25 +91,7 @@ struct ops_setting {
   uint8_t id;
 } __attribute__((packed));
 
-
-#define TOC_CH      0
-#define CONTROL_CH  1
-#define LOG_CH      2
-
-#define CMD_GET_ITEM 0
-#define CMD_GET_INFO 1
-
-#define CONTROL_CREATE_BLOCK 0
-#define CONTROL_APPEND_BLOCK 1
-#define CONTROL_DELETE_BLOCK 2
-#define CONTROL_START_BLOCK  3
-#define CONTROL_STOP_BLOCK   4
-#define CONTROL_RESET        5
-
-#define BLOCK_ID_FREE -1
-
 //Private functions
-static void logTask(void* prm);
 static void logTOCProcess(int command);
 static void logControlProcess(void);
 
@@ -104,12 +105,12 @@ extern struct log_s _log_stop;
 //Pointer to the logeters list and length of it
 static struct log_s* logs;
 static int logsLen;
-static uint32_t logsCrc;
+// static uint32_t logsCrc;
 static int logsCount = 0;
 
 static bool isInit = false;
 
-/* Log management functions */
+// Log management functions
 static int logAppendBlock(int id, struct ops_setting* settings, int len);
 static int logCreateBlock(unsigned char id, struct ops_setting* settings, int len);
 static int logDeleteBlock(int id);
@@ -117,7 +118,8 @@ static int logStartBlock(int id, unsigned int period);
 static int logStopBlock(int id);
 static void logReset();
 
-void logInit(void)
+
+void TOCInit(void)
 {
   int i;
 
@@ -143,137 +145,164 @@ void logInit(void)
   //Init data structures and set the log subsystem in a known state
   logReset();
 
-  //Start the log task
-  /*xTaskCreate(logTask, (const signed char* const)LOG_TASK_NAME,
-              LOG_TASK_STACKSIZE, NULL, LOG_TASK_PRI, NULL);
-  */
+  // Thread toc_task(Task_Param, NULL, osPriorityBelowNormal);
+
   isInit = true;
 }
 
-bool logTest(void)
+
+bool TOCTest(void)
 {
   return isInit;
 }
 
-static RTP_t p;
 
-void logTask(void* prm)
+void Task_TOC(void const* arg)
 {
-//  // crtpInitTaskQueue(CRTP_PORT_LOG);
+  // Store the thread's ID
+  osThreadId threadID = Thread::gettid();
+
+  // Store the passed queue pointer
+  osMailQId* queueID = (osMailQId*)arg;
+
+  LOG(OK, "TOC logging module ready! Thread ID: %u; Queue ID: %u", threadID, *queueID);
+
+  RTP_t* pkt;
 
   while (1) {
-//    // crtpReceivePacketBlock(CRTP_PORT_LOG, &p);
+    osEvent evt = osMailGet(*queueID, osWaitForever);
 
-    // xSemaphoreTake(logLock, portMAX_DELAY);
+    if (evt.status == osEventMail) {
 
-    if (p.subclass == TOC_CH)
-      logTOCProcess(p.payload[0]);
+      pkt = (RTP_t*)evt.value.p;
 
-    if (p.subclass == CONTROL_CH)
-      logControlProcess();
+      LOG(OK, "Received packet in %u", threadID);
 
-    // xSemaphoreGive(logLock);
+      if (pkt->subclass == SUBC_TOC)
+        logTOCProcess(pkt->payload[0]);
+      else if (pkt->subclass == SUBC_LOG_CFG)
+        logControlProcess();
+
+      osMailFree(*queueID, pkt);
+    }
+
+    // Thread::yield();
   }
+
+  osThreadTerminate(threadID);
 }
+
 
 void logTOCProcess(int command)
 {
-  int ptr = 0, n = 0;
+  int ptr = 0;
+  int n = 0;
   char* group = "plop";
+  RTP_t pkt;
+
+  pkt.header_link = RTP_HEADER(RTP_PORT_LOG, SUBC_TOC, true, false);
 
   switch (command) {
-  case CMD_GET_INFO: //Get info packet about the log implementation
-    LOG(INF1, "Packet is TOC_GET_INFO\n");
-    ptr = 0;
-    group = '\0';
-//    // p.header = CRTP_HEADER(CRTP_PORT_LOG, TOC_CH);
-    p.payload_size = 8;
-    p.payload[0] = CMD_GET_INFO;
-    p.payload[1] = logsCount;
-    memcpy(&p.payload[2], &logsCrc, 4);
-    p.payload[6] = LOG_MAX_BLOCKS;
-    p.payload[7] = LOG_MAX_OPS;
-//    crtpSendPacket(&p);
-    break;
+    //Get info packet about the log implementation
+    case CMD_GET_INFO:
+      LOG(INF1, "Packet is TOC_GET_INFO\n");
+      group = '\0';
+      // pkt.header = RTP_HEADER(RTP_PORT_LOG, SUBC_TOC, true, false);
+      pkt.payload_size = 8;
+      pkt.payload[0] = CMD_GET_INFO;
+      pkt.payload[1] = logsCount;
+      pkt.payload[2] = LOG_MAX_BLOCKS;
+      pkt.payload[3] = LOG_MAX_OPS;
+      // memcpy(&pkt.payload[4], &logsCrc, 4);
+      // CommModule::send(pkt)
+      break;
 
-  case CMD_GET_ITEM:  //Get log variable
-    LOG(INF1, "Packet is TOC_GET_ITEM Id: %d\n", p.payload[1]);
+    //Get log variable
+    case CMD_GET_ITEM:
+      LOG(INF1, "Packet is TOC_GET_ITEM Id: %d\n", pkt.payload[1]);
 
-    for (ptr = 0; ptr < logsLen; ptr++) { //Ptr points a group
-      if (logs[ptr].type & LOG_GROUP) {
-        if (logs[ptr].type & LOG_START)
-          group = logs[ptr].name;
-        else
-          group = '\0';
-      } else {                      //Ptr points a variable
-        if (n == p.payload[1])
-          break;
+      for (ptr = 0; ptr < logsLen; ptr++) { //Ptr points a group
+        if (logs[ptr].type & LOG_GROUP) {
+          if (logs[ptr].type & LOG_START)
+            group = logs[ptr].name;
+          else
+            group = '\0';
+        } else {                      //Ptr points a variable
+          if (n == pkt.payload[1])
+            break;
 
-        n++;
+          n++;
+        }
       }
-    }
 
-    if (ptr < logsLen) {
-      LOG(INF1, "Item is \"%s\":\"%s\"\n", group, logs[ptr].name);
-//      p.header = CRTP_HEADER(CRTP_PORT_LOG, TOC_CH);
-      p.payload[0] = CMD_GET_ITEM;
-      p.payload[1] = n;
-      p.payload[2] = logs[ptr].type;
-      memcpy(p.payload + 3, group, strlen(group) + 1);
-      memcpy(p.payload + 3 + strlen(group) + 1, logs[ptr].name, strlen(logs[ptr].name) + 1);
-      p.payload_size = 3 + 2 + strlen(group) + strlen(logs[ptr].name);
-//      crtpSendPacket(&p);
-    } else {
-      LOG(INF1, "Index out of range!");
-//      p.header = CRTP_HEADER(CRTP_PORT_LOG, TOC_CH);
-      p.payload[0] = CMD_GET_ITEM;
-      p.payload_size = 1;
-//      crtpSendPacket(&p);
-    }
+      pkt.payload[0] = CMD_GET_ITEM;
 
-    break;
+      if (ptr < logsLen) {
+        LOG(INF1, "Item is \"%s\":\"%s\"\n", group, logs[ptr].name);
+        // pkt.header_link = RTP_HEADER(RTP_PORT_LOG, SUBC_TOC, true, false);
+        // pkt.payload[0] = CMD_GET_ITEM;
+        pkt.payload[1] = n;
+        pkt.payload[2] = logs[ptr].type;
+        memcpy(pkt.payload + 3, group, strlen(group) + 1);
+        memcpy(pkt.payload + 3 + strlen(group) + 1, logs[ptr].name, strlen(logs[ptr].name) + 1);
+        pkt.payload_size = 3 + 2 + strlen(group) + strlen(logs[ptr].name);
+        // CommModule::send(pkt);
+      } else {
+        LOG(INF1, "Index out of range!");
+        // pkt.header_link = RTP_HEADER(RTP_PORT_LOG, SUBC_TOC, true, false);
+        // pkt.payload[0] = CMD_GET_ITEM;
+        pkt.payload_size = 1;
+        // CommModule::send(pkt);
+      }
+
+      break;
   }
+
+  CommModule::send(pkt);
 }
 
-void logControlProcess()
+void logControlProcess(void)
 {
   int ret = 0; //ENOEXEC;
+  RTP_t pkt;
 
-  switch (p.payload[0]) {
-  case CONTROL_CREATE_BLOCK:
-    ret = logCreateBlock(p.payload[1],
-                         (struct ops_setting*)&p.payload[2],
-                         (p.payload_size - 2) / sizeof(struct ops_setting));
-    break;
+  switch (pkt.payload[0]) {
+    case CTRL_CREATE_BLOCK:
+      ret = logCreateBlock(pkt.payload[1],
+                           (struct ops_setting*)&pkt.payload[2],
+                           (pkt.payload_size - 2) / sizeof(struct ops_setting)
+                          );
+      break;
 
-  case CONTROL_APPEND_BLOCK:
-    ret = logAppendBlock(p.payload[1],
-                         (struct ops_setting*)&p.payload[2],
-                         (p.payload_size - 2) / sizeof(struct ops_setting));
-    break;
+    case CTRL_APPEND_BLOCK:
+      ret = logAppendBlock(pkt.payload[1],
+                           (struct ops_setting*)&pkt.payload[2],
+                           (pkt.payload_size - 2) / sizeof(struct ops_setting)
+                          );
+      break;
 
-  case CONTROL_DELETE_BLOCK:
-    ret = logDeleteBlock(p.payload[1]);
-    break;
+    case CTRL_DELETE_BLOCK:
+      ret = logDeleteBlock(pkt.payload[1]);
+      break;
 
-  case CONTROL_START_BLOCK:
-    ret = logStartBlock(p.payload[1], p.payload[2] * 10);
-    break;
+    case CTRL_START_BLOCK:
+      ret = logStartBlock(pkt.payload[1], pkt.payload[2] * 10);
+      break;
 
-  case CONTROL_STOP_BLOCK:
-    ret = logStopBlock(p.payload[1]);
-    break;
+    case CTRL_STOP_BLOCK:
+      ret = logStopBlock(pkt.payload[1]);
+      break;
 
-  case CONTROL_RESET:
-    logReset();
-    ret = 0;
-    break;
+    case CTRL_RESET:
+      logReset();
+      ret = 0;
+      break;
   }
 
   //Commands answer
-  p.payload[2] = ret;
-  p.payload_size = 3;
-//  crtpSendPacket(&p);
+  pkt.payload[2] = ret;
+  pkt.payload_size = 3;
+  CommModule::send(pkt);
 }
 
 static int logCreateBlock(unsigned char id, struct ops_setting* settings, int len)
@@ -287,14 +316,13 @@ static int logCreateBlock(unsigned char id, struct ops_setting* settings, int le
     if (logBlocks[i].id == BLOCK_ID_FREE) break;
 
   if (i == LOG_MAX_BLOCKS)
-    return 0;
-
-  // return ENOMEM;
+    return 0; // return ENOMEM;
 
   logBlocks[i].id = id;
+  logBlocks[i].ops = NULL;
+
   // logBlocks[i].timer = xTimerCreate((const signed char*)"logTimer", M2T(1000),
   // pdTRUE, &logBlocks[i], logBlockTimed);
-  logBlocks[i].ops = NULL;
 
   if (logBlocks[i].timer == NULL) {
     logBlocks[i].id = BLOCK_ID_FREE;
@@ -302,7 +330,7 @@ static int logCreateBlock(unsigned char id, struct ops_setting* settings, int le
     return 0;
   }
 
-  LOG(INF1, "Added block ID %d\n", id);
+  LOG(OK, "Added block ID %d\n", id);
 
   return logAppendBlock(id, settings, len);
 }
@@ -332,9 +360,8 @@ static int logAppendBlock(int id, struct ops_setting* settings, int len)
   block = &logBlocks[i];
 
   for (i = 0; i < len; i++) {
-    int currentLength = blockCalcLength(block);
+    int varId, currentLength = blockCalcLength(block);
     struct log_ops* ops;
-    int varId;
 
     if ((currentLength + typeLength[settings[i].logType & 0x0F]) > LOG_MAX_LEN) {
       LOG(SEVERE, "Trying to append a full block. Block id %d.\n", id);
@@ -480,7 +507,7 @@ void logRunBlock(void* arg)
 
   // timestamp = ((long long)xTaskGetTickCount()) / portTICK_RATE_MS;
 
-//  pk.header = CRTP_HEADER(CRTP_PORT_LOG, LOG_CH);
+//  pk.header = RTP_HEADER(RTP_PORT_LOG, SUBC_LOG_DATA, true, false);
   pk.payload_size = 4;
   pk.payload[0] = blk->id;
   pk.payload[1] = timestamp & 0x0ff;
@@ -495,33 +522,33 @@ void logRunBlock(void* arg)
     variable = *(float*)ops->variable;
 
     switch (ops->storageType) {
-    case LOG_UINT8:
-      valuei = *(uint8_t*)&variable;
-      break;
+      case LOG_UINT8:
+        valuei = *(uint8_t*)&variable;
+        break;
 
-    case LOG_INT8:
-      valuei = *(int8_t*)&variable;
-      break;
+      case LOG_INT8:
+        valuei = *(int8_t*)&variable;
+        break;
 
-    case LOG_UINT16:
-      valuei = *(uint16_t*)&variable;
-      break;
+      case LOG_UINT16:
+        valuei = *(uint16_t*)&variable;
+        break;
 
-    case LOG_INT16:
-      valuei = *(int16_t*)&variable;
-      break;
+      case LOG_INT16:
+        valuei = *(int16_t*)&variable;
+        break;
 
-    case LOG_UINT32:
-      valuei = *(uint32_t*)&variable;
-      break;
+      case LOG_UINT32:
+        valuei = *(uint32_t*)&variable;
+        break;
 
-    case LOG_INT32:
-      valuei = *(int32_t*)&variable;
-      break;
+      case LOG_INT32:
+        valuei = *(int32_t*)&variable;
+        break;
 
-    case LOG_FLOAT:
-      valuei = *(float*)&variable;
-      break;
+      case LOG_FLOAT:
+        valuei = *(float*)&variable;
+        break;
     }
 
     if (ops->logType == LOG_FLOAT || ops->logType == LOG_FP16) {
@@ -534,7 +561,7 @@ void logRunBlock(void* arg)
         memcpy(&pk.payload[pk.payload_size], &valuef, 4);
         pk.payload_size += 4;
       } else {
-        // valuei = single2half(valuef);
+        valuei = single2half(valuef);
         memcpy(&pk.payload[pk.payload_size], &valuei, 2);
         pk.payload_size += 2;
       }
@@ -555,7 +582,7 @@ void logRunBlock(void* arg)
     logReset();
 //    crtpReset();
   } else {
-//    crtpSendPacket(&pk);
+    CommModule::send(pk);
   }
 }
 
@@ -670,33 +697,33 @@ int logGetInt(int varid)
   // ASSERT(varid >= 0);
 
   switch (logs[varid].type) {
-  case LOG_UINT8:
-    valuei = *(uint8_t*)logs[varid].address;
-    break;
+    case LOG_UINT8:
+      valuei = *(uint8_t*)logs[varid].address;
+      break;
 
-  case LOG_INT8:
-    valuei = *(int8_t*)logs[varid].address;
-    break;
+    case LOG_INT8:
+      valuei = *(int8_t*)logs[varid].address;
+      break;
 
-  case LOG_UINT16:
-    valuei = *(uint16_t*)logs[varid].address;
-    break;
+    case LOG_UINT16:
+      valuei = *(uint16_t*)logs[varid].address;
+      break;
 
-  case LOG_INT16:
-    valuei = *(int16_t*)logs[varid].address;
-    break;
+    case LOG_INT16:
+      valuei = *(int16_t*)logs[varid].address;
+      break;
 
-  case LOG_UINT32:
-    valuei = *(uint32_t*)logs[varid].address;
-    break;
+    case LOG_UINT32:
+      valuei = *(uint32_t*)logs[varid].address;
+      break;
 
-  case LOG_INT32:
-    valuei = *(int32_t*)logs[varid].address;
-    break;
+    case LOG_INT32:
+      valuei = *(int32_t*)logs[varid].address;
+      break;
 
-  case LOG_FLOAT:
-    valuei = *(float*)logs[varid].address;
-    break;
+    case LOG_FLOAT:
+      valuei = *(float*)logs[varid].address;
+      break;
   }
 
   return valuei;
@@ -716,3 +743,5 @@ unsigned int logGetUint(int varid)
 {
   return (unsigned int)logGetInt(varid);
 }
+
+// #endif

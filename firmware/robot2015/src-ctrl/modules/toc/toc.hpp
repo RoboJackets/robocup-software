@@ -1,13 +1,8 @@
 /**
- *    ||          ____  _ __
- * +------+      / __ )(_) /_______________ _____  ___
- * | 0xBC |     / __  / / __/ ___/ ___/ __ `/_  / / _ \
- * +------+    / /_/ / / /_/ /__/ /  / /_/ / / /_/  __/
- *  ||  ||    /_____/_/\__/\___/_/   \__,_/ /___/\___/
+ * RoboJackets: RoboCup SSL Firmware
  *
- * Crazyflie control firmware
- *
- * Copyright (C) 2012 BitCraze AB
+ * Copyright (C) 2015 RoboJackets JJ
+ * Copyright (C) 2011-2012 Bitcraze AB
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,68 +16,71 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * toc.hpp - Dynamic log system
+ * toc.hpp - Dynamic logging system for variables defined through macros.
  */
 
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <string>
 
-#include "robot.hpp"
-// #include "crc.h"
-// #include "worker.h"
-// #include "fp16.h"
-// #include "console.h"
-// #include "cfassert.h"
-// #include "config.h"
-// #include "crtp.h"
+// Includes
+#include <cstdint>
 
-/* Public functions */
-void logInit(void);
-bool logTest(void);
 
-/* Internal access of log variables */
+// Defines
+#define LOG_GROUP 0x80
+
+
+// Macros
+#define LOG_ADD(TYPE, NAME, ADDRESS) \
+  { .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
+
+#define LOG_ADD_GROUP(TYPE, NAME, ADDRESS) \
+  { \
+    .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
+
+#define LOG_GROUP_START(NAME)  \
+  static const struct log_s __logs_##NAME[] __attribute__((section(".log." #NAME), used)) = \
+      { \
+        LOG_ADD_GROUP(LOG_GROUP | LOG_START, NAME, 0x00)
+
+#define LOG_GROUP_STOP(NAME) \
+  LOG_ADD_GROUP(LOG_GROUP | LOG_STOP, stop_##NAME, 0x00) \
+  };
+
+
+// Task declaration
+void Task_TOC(void const* arg);
+
+
+// Function declarations
+void TOCInit(void);
+bool TOCTest(void);
+// Internal access of log variables
 int logGetVarId(char* group, char* name);
 float logGetFloat(int varid);
 int logGetInt(int varid);
 unsigned int logGetUint(int varid);
 
-/* Basic log structure */
-struct log_s {
+
+// Data structures
+struct log_s {  // Basic log structure
   uint8_t type;
   char* name;
   void* address;
 };
 
-/* Possible variable types */
-#define LOG_UINT8  1
-#define LOG_UINT16 2
-#define LOG_UINT32 3
-#define LOG_INT8   4
-#define LOG_INT16  5
-#define LOG_INT32  6
-#define LOG_FLOAT  7
-#define LOG_FP16   8
+enum {  // Possible variable types
+  LOG_UINT8   = 1,
+  LOG_UINT16  = 2,
+  LOG_UINT32  = 3,
+  LOG_INT8    = 4,
+  LOG_INT16   = 5,
+  LOG_INT32   = 6,
+  LOG_FLOAT   = 7,
+  LOG_FP16    = 8
+};
 
-/* Internal defines */
-#define LOG_GROUP 0x80
-#define LOG_START 1
-#define LOG_STOP  0
-
-/* Macros */
-#define LOG_ADD(TYPE, NAME, ADDRESS) \
-   { .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
-
-#define LOG_ADD_GROUP(TYPE, NAME, ADDRESS) \
-   { \
-  .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
-
-#define LOG_GROUP_START(NAME)  \
-  static const struct log_s __logs_##NAME[] __attribute__((section(".log." #NAME), used)) = { \
-  LOG_ADD_GROUP(LOG_GROUP | LOG_START, NAME, 0x0)
-
-#define LOG_GROUP_STOP(NAME) \
-  LOG_ADD_GROUP(LOG_GROUP | LOG_STOP, stop_##NAME, 0x0) \
-  };
+enum {  // Internal enums
+  LOG_STOP  = 0,
+  LOG_START = 1
+};

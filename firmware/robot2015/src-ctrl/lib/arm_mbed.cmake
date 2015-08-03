@@ -107,8 +107,17 @@ set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 
 # ------------------------------------------------------------------------------
 # Linker settings
+if(${USE_OWN_LINKER_SCRIPT})
+if(EXISTS ${LINKER_SCRIPT})
+message(STATUS "Using non-default linker script located at ${LINKER_SCRIPT}.")
+endif()
+else()
+set(LINKER_SCRIPT ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_LINK_TARGET}.ld)
+message(STATUS "Using default linker script located at ${LINKER_SCRIPT}.")
+endif()
+
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \"-T${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_LINK_TARGET}.ld\" -static")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \"-T${LINKER_SCRIPT}\" -static")
 
 
 # ------------------------------------------------------------------------------

@@ -1,7 +1,6 @@
-#include <stdarg.h>
+#pragma once
 
-#ifndef __ASSERT_H__
-#define __ASSERT_H__
+#include <stdarg.h>
 
 /**
  * [ASSERT A macro for assertion checks.]
@@ -15,5 +14,3 @@
  * [assertFail This is called when an assertion fails.]
  */
 void assertFail(char *exp, char *file, int line);
-
-#endif //__ASSERT_H__

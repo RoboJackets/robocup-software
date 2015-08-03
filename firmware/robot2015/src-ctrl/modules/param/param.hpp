@@ -1,21 +1,32 @@
-#if 1
+/**
+ * RoboJackets: RoboCup SSL Firmware
+ *
+ * Copyright (C) 2015 RoboJackets JJ
+ * Copyright (C) 2011-2012 Bitcraze AB
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, in version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * param.hpp - Provides dynamic system-wide variable access for those defined through macros.
+ */
 
 #pragma once
 
-#include "robot.hpp"
 
-// Public functions
-void paramInit(void);
-bool paramTest(void);
-void Task_Param(void const *arg);
+// Includes
+#include <cstdint>
 
-// Basic parameter structure
-struct param_s {
-  uint8_t type;
-  char* name;
-  void* address;
-};
 
+// Defines
 #define PARAM_1BYTE     (0x00)
 #define PARAM_2BYTES    (0x01)
 #define PARAM_4BYTES    (0x02)
@@ -37,31 +48,6 @@ struct param_s {
 #define PARAM_STOP      (0x00)
 #define PARAM_SYNC      (0x02)
 
-// User-friendly macros
-#define PARAM_UINT8     (PARAM_1BYTE | PARAM_TYPE_INT | PARAM_UNSIGNED)
-#define PARAM_INT8      (PARAM_1BYTE | PARAM_TYPE_INT | PARAM_SIGNED)
-#define PARAM_UINT16    (PARAM_2BYTES | PARAM_TYPE_INT | PARAM_UNSIGNED)
-#define PARAM_INT16     (PARAM_2BYTES | PARAM_TYPE_INT | PARAM_SIGNED)
-#define PARAM_UINT32    (PARAM_4BYTES | PARAM_TYPE_INT | PARAM_UNSIGNED)
-#define PARAM_INT32     (PARAM_4BYTES | PARAM_TYPE_INT | PARAM_SIGNED)
-#define PARAM_FLOAT     (PARAM_4BYTES | PARAM_TYPE_FLOAT | PARAM_SIGNED)
-
-// Macros
-#define PARAM_ADD(TYPE, NAME, ADDRESS) \
-   { .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
-
-#define PARAM_ADD_GROUP(TYPE, NAME, ADDRESS) \
-   { \
-  .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
-
-#define PARAM_GROUP_START(NAME)  \
-  static const struct param_s __params_##NAME[] __attribute__((section(".param." #NAME), used)) = { \
-  PARAM_ADD_GROUP(PARAM_GROUP | PARAM_START, NAME, 0x00)
-
-#define PARAM_GROUP_STOP(NAME) \
-  PARAM_ADD_GROUP(PARAM_GROUP | PARAM_STOP, stop_##NAME, 0x00) \
-  };
-
 #define TOC_CH 0
 #define READ_CH 1
 #define WRITE_CH 2
@@ -76,4 +62,47 @@ struct param_s {
 
 #define MISC_SETBYNAME 0
 
-#endif
+
+// User-friendly macros
+#define PARAM_UINT8     (PARAM_1BYTE  | PARAM_TYPE_INT    | PARAM_UNSIGNED)
+#define PARAM_INT8      (PARAM_1BYTE  | PARAM_TYPE_INT    | PARAM_SIGNED)
+#define PARAM_UINT16    (PARAM_2BYTES | PARAM_TYPE_INT    | PARAM_UNSIGNED)
+#define PARAM_INT16     (PARAM_2BYTES | PARAM_TYPE_INT    | PARAM_SIGNED)
+#define PARAM_UINT32    (PARAM_4BYTES | PARAM_TYPE_INT    | PARAM_UNSIGNED)
+#define PARAM_INT32     (PARAM_4BYTES | PARAM_TYPE_INT    | PARAM_SIGNED)
+#define PARAM_FLOAT     (PARAM_4BYTES | PARAM_TYPE_FLOAT  | PARAM_SIGNED)
+
+
+// Macros
+#define PARAM_ADD(TYPE, NAME, ADDRESS) \
+  { .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
+
+#define PARAM_ADD_GROUP(TYPE, NAME, ADDRESS) \
+  { \
+    .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
+
+#define PARAM_GROUP_START(NAME)  \
+  static const struct param_s __params_##NAME[] __attribute__((section(".param." #NAME), used)) = \
+      { \
+        PARAM_ADD_GROUP(PARAM_GROUP | PARAM_START, NAME, 0x00)
+
+#define PARAM_GROUP_STOP(NAME) \
+  PARAM_ADD_GROUP(PARAM_GROUP | PARAM_STOP, stop_##NAME, 0x00) \
+  };
+
+
+// Task declaration
+void Task_Param(void const* arg);
+
+
+// Function declarations
+void paramInit(void);
+bool paramTest(void);
+
+
+// Data structures
+struct param_s {  // Basic parameter structure
+  uint8_t type;
+  char* name;
+  void* address;
+};

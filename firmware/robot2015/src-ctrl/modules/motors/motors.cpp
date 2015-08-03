@@ -1,4 +1,30 @@
+/**
+ * RoboJackets: RoboCup SSL Firmware
+ *
+ * Copyright (C) 2015 RoboJackets JJ
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, in version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * motors.cpp - BLDC data structures.
+ */
+
 #include "motors.hpp"
+
+#include <vector>
+
+#include "commands.hpp"
+#include "toc.hpp"
+#include "param.hpp"
 
 /*
 const command_t motorBlock = {
@@ -25,7 +51,8 @@ motor_t mtrEx = {
 
 std::array<motor_t, 5> motors;
 
-void motors_Init(void) {
+void motors_Init(void)
+{
 	// cmd_registerCmd(motorBlock);
 
 	// motors.fill(mtr);
@@ -57,7 +84,8 @@ void motors_Init(void) {
 }
 
 // An easy-to-read printf/logging function for a single motor
-void motors_PrintMotor(motor_t& mtr) {
+void motors_PrintMotor(motor_t& mtr)
+{
 	printf(	"%s\r\n  Target Vel:\t\t%u\r\n  Adjusted Vel:\t\t%u\r\n  Hall Cnt:\t\t%u"
 	        "\r\n  Encoder Cnt:\t\t%u\t[prev: %u]\r\n  Enc OK:\t\t%s\r\n  Hall OK:\t\t"
 	        "%s\r\n  DRV Addr 0x00:\t0x%02X\r\n  DRV Addr 0x01:\t0x%02X\r\n",
@@ -70,11 +98,13 @@ void motors_PrintMotor(motor_t& mtr) {
 	        mtr.status.encOK ? "YES" : "NO",
 	        mtr.status.hallOK ? "YES" : "NO",
 	        mtr.status.drvStatus[0],
-	        mtr.status.drvStatus[1] );
+	        mtr.status.drvStatus[1]
+	      );
 }
 
 // The console function to run with the 'motor' command
-void motors_cmdProcess(const std::vector<std::string> &args) {
+void motors_cmdProcess(const std::vector<std::string>& args)
+{
 	if (args.empty() == true) {
 		printf("Must specify a motor ID!\r\n");
 	} else {
@@ -95,26 +125,32 @@ void motors_cmdProcess(const std::vector<std::string> &args) {
 				}
 
 				// Push the ID into the vector if it's not already in it
-				if (std::find(motorIDs.begin(), motorIDs.end(), mtrID) == motorIDs.end()) {
+				if (std::find(motorIDs.begin(), motorIDs.end(), mtrID) == motorIDs.end())
 					motorIDs.push_back(mtrID);
-				}
-			}
-			else {
+
+			} else {
 				showInvalidArgs(args.at(i));
 				break;
 			}
 		}
+
 		// remove duplicate motor ID arguments & sort them
 		// sort( motorIDs.begin(), motorIDs.end() );
 		// motorIDs.erase( unique( motorIDs.begin(), motorIDs.end() ), motorIDs.end() );
 
 		// If we make it to this point, all arguments given are valid motor ID numbers.
-		for (unsigned int i = 0; i < motorIDs.size(); i++) {
+		for (unsigned int i = 0; i < motorIDs.size(); i++)
 			motors_PrintMotor(motors.at(motorIDs.at(i)));
-		}
 	}
 }
 
-PARAM_GROUP_START(motors)
-PARAM_ADD(PARAM_UINT16, dribTrgtVel, &motors.at(0).targetVel)
-PARAM_GROUP_STOP(motors)
+
+PARAM_GROUP_START(mtrs)
+PARAM_ADD(PARAM_UINT16, mDtV, &motors[0].targetVel)
+PARAM_GROUP_STOP(mtrs)
+
+
+LOG_GROUP_START(mDV)
+LOG_ADD(LOG_UINT16, trgt, &motors[0].targetVel)
+LOG_ADD(LOG_UINT16, adj, &motors[0].adjVel)
+LOG_GROUP_STOP(mDV)
