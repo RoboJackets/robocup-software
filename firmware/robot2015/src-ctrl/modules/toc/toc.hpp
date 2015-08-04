@@ -31,6 +31,8 @@
 
 
 // Macros
+#ifdef LINK_TOC_PARAMS
+
 #define LOG_ADD(TYPE, NAME, ADDRESS) \
   { .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
 
@@ -46,6 +48,16 @@
 #define LOG_GROUP_STOP(NAME) \
   LOG_ADD_GROUP(LOG_GROUP | LOG_STOP, stop_##NAME, 0x00) \
   };
+
+#else
+
+// Null definitions
+#define LOG_ADD(TYPE, NAME, ADDRESS)
+#define LOG_ADD_GROUP(TYPE, NAME, ADDRESS)
+#define LOG_GROUP_START(NAME)
+#define LOG_GROUP_STOP(NAME)
+
+#endif
 
 
 // Task declaration

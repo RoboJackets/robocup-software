@@ -36,8 +36,10 @@ static int variableGetIndex(int id);
 static char paramWriteByNameProcess(char* group, char* name, int type, void* valptr);
 
 // These are set by the linker
-extern struct param_s _param_start;
-extern struct param_s _param_stop;
+#ifdef LINK_TOC_PARAMS
+extern "C" struct param_s _param_start;
+extern "C" struct param_s _param_stop;
+#endif
 
 // Pointer to the parameters list and length of it
 static struct param_s* params;
@@ -55,8 +57,10 @@ void paramInit(void)
 	if (isInit)
 		return;
 
+#ifdef LINK_TOC_PARAMS
 	params = &_param_start;
 	paramsLen = &_param_stop - &_param_start;
+#endif
 	// paramsCrc = crcSlow(params, paramsLen);
 
 	for (i = 0; i < paramsLen; i++)

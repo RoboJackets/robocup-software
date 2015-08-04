@@ -99,8 +99,10 @@ void logRunBlock(void* arg);
 // void logBlockTimed(xTimerHandle timer);
 
 //These are set by the Linker
-extern struct log_s _log_start;
-extern struct log_s _log_stop;
+#ifdef LINK_TOC_PARAMS
+extern "C" struct log_s _log_start;
+extern "C" struct log_s _log_stop;
+#endif
 
 //Pointer to the logeters list and length of it
 static struct log_s* logs;
@@ -126,8 +128,10 @@ void TOCInit(void)
   if (isInit)
     return;
 
+#ifdef LINK_TOC_PARAMS
   logs = &_log_start;
   logsLen = &_log_stop - &_log_start;
+#endif
   // logsCrc = crcSlow(logs, logsLen);
 
   // Big lock that protects the log datastructures

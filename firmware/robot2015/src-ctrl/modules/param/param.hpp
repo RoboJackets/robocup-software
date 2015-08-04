@@ -74,6 +74,8 @@
 
 
 // Macros
+#ifdef LINK_TOC_PARAMS
+
 #define PARAM_ADD(TYPE, NAME, ADDRESS) \
   { .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
 
@@ -89,6 +91,16 @@
 #define PARAM_GROUP_STOP(NAME) \
   PARAM_ADD_GROUP(PARAM_GROUP | PARAM_STOP, stop_##NAME, 0x00) \
   };
+
+#else
+
+// Null definitions
+#define PARAM_ADD(TYPE, NAME, ADDRESS)
+#define PARAM_ADD_GROUP(TYPE, NAME, ADDRESS)
+#define PARAM_GROUP_START(NAME)
+#define PARAM_GROUP_STOP(NAME)
+
+#endif
 
 
 // Task declaration

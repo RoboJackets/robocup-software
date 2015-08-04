@@ -23,8 +23,11 @@
 #include <vector>
 
 #include "commands.hpp"
+
+#ifdef LINK_TOC_PARAMS
 #include "toc.hpp"
 #include "param.hpp"
+#endif
 
 /*
 const command_t motorBlock = {
@@ -145,6 +148,7 @@ void motors_cmdProcess(const std::vector<std::string>& args)
 }
 
 
+#ifdef LINK_TOC_PARAMS
 PARAM_GROUP_START(mtrs)
 PARAM_ADD(PARAM_UINT16, mDtV, &motors[0].targetVel)
 PARAM_GROUP_STOP(mtrs)
@@ -154,3 +158,4 @@ LOG_GROUP_START(mDV)
 LOG_ADD(LOG_UINT16, trgt, &motors[0].targetVel)
 LOG_ADD(LOG_UINT16, adj, &motors[0].adjVel)
 LOG_GROUP_STOP(mDV)
+#endif

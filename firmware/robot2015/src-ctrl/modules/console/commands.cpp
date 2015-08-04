@@ -484,7 +484,7 @@ void cmd_info(const vector<string>& args)
 		if (mbed_interface_uid(buf) == -1)
 			memcpy(buf, "N/A\0", 4);
 
-		printf("mbed UID:\t%s\r\n", buf);
+		printf("mbed UID:\t0x%s\r\n", buf);
 
 		// Prints out a serial number, taken from the mbed forms
 		// https://developer.mbed.org/forum/helloworld/topic/2048/
@@ -512,7 +512,8 @@ void cmd_info(const vector<string>& args)
 			printf("MCU ID:\t\tN/A\r\n");
 
 		// show info about the core processor. ARM cortex-m3 in our case
-		printf("CPUID:\t\t0x%08lX\r\n", *(long unsigned int*)0xE000ED00);
+		printf("CPUID:\t\t0x%08lX\r\n", SCB->CPUID);
+
 
 		// ** NOTE: THE mbed_interface_mac() function does not work! It hangs the mbed... **
 

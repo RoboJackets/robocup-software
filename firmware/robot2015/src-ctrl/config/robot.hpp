@@ -79,3 +79,8 @@
 #include "logger.hpp"
 #include "ds2411.hpp"
 #include "mainHelperFuncs.hpp"
+
+#ifdef LINK_TOC_PARAMS
+#include "toc.hpp"
+#include "param.hpp"
+#endif
