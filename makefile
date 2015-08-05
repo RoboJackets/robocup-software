@@ -23,8 +23,16 @@ pylint:
 	cd soccer && pylint -E gameplay
 
 clean:
-	cd build && make $(MAKE_FLAGS) clean
-	rm -rf build
+	@if [ -d "./build" ]; then						\
+		cd ./build && make $(MAKE_FLAGS) clean; 	\
+		cd .. &&  rm -rf ./build;					\
+	fi
+	@if [ -d "./firmware/build" ]; then				\
+		rm -rf ./firmware/build/robot; 				\
+		rm -rf ./firmware/build/build;				\
+	fi
+	@echo "Cleaned"
+	
 
 # Robot firmware (both 2008/2011)
 robot:
@@ -38,30 +46,31 @@ robot-prog-samba:
 
 # robot 2015 firmware
 robot2015:
-	mkdir -p build && cd build && cmake --target robot2015 -DTOC=FALSE .. && make $(MAKE_FLAGS) robot2015
+	@mkdir -p build && cd build && cmake --target robot2015 -DTOC=FALSE .. && make $(MAKE_FLAGS) robot2015
 
 robot2015-prog:
-	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
+	@mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 
 robot2015-log:
-	mkdir -p build && cd build && cmake --target robot2015 -DTOC=TRUE .. && make $(MAKE_FLAGS) robot2015
+	@mkdir -p build && cd build && cmake --target robot2015 -DTOC=TRUE .. && make $(MAKE_FLAGS) robot2015
 
 # kicker 2015 firmware
 kicker2015:
-	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
+	@mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
 kicker2015-prog:
-	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
+	@mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
 	
 # Base station 2015 firmware
 base2015:
-	mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
+	@mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
 
 base2015-prog:
-	mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
+	@mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
 
 # FPGA 2015
 fpga2015:
-	cd ./firmware/robot2015/src-fpga/synth && make && cp robocup.bit ../fpga2015.bit && make clean
+	@mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+	# && make $(MAKE_FLAGS) fpga2015
 
 firmware2015: robot2015 kicker2015 fpga2015 base2015
 
