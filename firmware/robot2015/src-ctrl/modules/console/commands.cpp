@@ -1,4 +1,5 @@
 #include "commands.hpp"
+#include "CommModule.hpp"
 
 #define GEN_CMD_STRUCT(alias, isit, fptr, desc, usage)
 
@@ -166,6 +167,13 @@ static const std::vector<command_t> commands = {
 		motors_cmdProcess,
 		"Show information about the motors.",
 		"motor <motor_id>"
+	},
+	{
+		{"radio"},
+		false,
+		comm_cmdProcess,
+		"Show information about the radio.",
+		"radio"
 	}
 };
 

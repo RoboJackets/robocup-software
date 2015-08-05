@@ -1,0 +1,15 @@
+"C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armproc.dll" 
+
+"C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armjlink.dll" 
+
+"C:\E\temp\FreeRTOSv8.2.1\clean\FreeRTOS\Demo\CORTEX_M7_STM32F7_STM32756G-EVAL_IAR_Keil\main.c" 
+
+--plugin "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armbat.dll" 
+
+--device_macro "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\config\debugger\ST\STM32F4xx.dmac" 
+
+--flash_loader "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\config\flashloader\ST\FlashSTM32F756xG.board" 
+
+
+
+

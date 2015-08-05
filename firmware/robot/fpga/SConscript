@@ -30,7 +30,7 @@ jtag_file = xilinx.Textfile(project + '.jtag', [
 xilinx.Command(ucf_file, ucf_file.srcnode(), Copy('$TARGET', '$SOURCE'))
 
 xflow = xilinx.Command([bit_file, 'xflow.log'], [top_file, ucf_file],
-	'xflow -wd ${TARGET.dir} -p xc3s100etq144-4 -synth xst_verilog -implement fast_runtime -config bitgen $SOURCE')
+	'xflow -wd ${TARGET.dir} -p xc3s100etq144-4 -synth xst_verilog.opt -implement fast_runtime.opt -config bitgen $SOURCE')
 Clean(xflow, Dir('.'))
 
 Alias('fpga2011', bit_file)

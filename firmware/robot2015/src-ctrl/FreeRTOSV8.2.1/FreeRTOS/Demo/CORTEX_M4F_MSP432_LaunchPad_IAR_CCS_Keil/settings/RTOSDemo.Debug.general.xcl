@@ -1,0 +1,13 @@
+"C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armproc.dll" 
+
+"C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armJET.dll" 
+
+"C:\E\temp\FreeRTOSv8.2.1\clean\FreeRTOS\Demo\CORTEX_M4F_MSP432_LaunchPad_IAR_CCS_Keil\Debug\Exe\c.out" 
+
+--plugin "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armbat.dll" 
+
+--flash_loader "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\config\flashloader\" 
+
+
+
+

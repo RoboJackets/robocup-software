@@ -11,6 +11,7 @@
  * This library supports only the NXP LPC1768!
  */
 
+#include "mbed.h"
 #include "neostrip.hpp"
 
 // function to write to the strip, implemented in ARM assembly

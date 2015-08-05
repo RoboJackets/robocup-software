@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "mbed.h"
+ // extern "C" void neo_out(NeoColor*, int);
 
 // NeoColor struct definition to hold 24 bit
 // color data for each pixel, in GRB order

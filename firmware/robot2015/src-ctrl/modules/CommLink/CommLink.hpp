@@ -1,19 +1,39 @@
 #pragma once
 
+
 #include "mbed.h"
 #include "cmsis_os.h"
 #include "robot_types.hpp"
 #include "ThreadHelper.hpp"
 #include "MailHelper.hpp"
-#include "CommModule.hpp"
+#include "logger.hpp"
 
-#define COMM_LINK_TX_QUEUE_SIZE 3
-#define COMM_LINK_RX_QUEUE_SIZE 3
+
+#define COMM_LINK_TX_QUEUE_SIZE         3
+#define COMM_LINK_RX_QUEUE_SIZE         3
 #define COMM_LINK_SIGNAL_START_THREAD   0x01
-#define COMM_LINK_SIGNAL_TX_TRIGGER   0x02
-#define COMM_LINK_SIGNAL_RX_TRIGGER   0x04
-#define COMM_LINK_SIGNAL_MODULE_LINKED   0x08
-#define COMM_LINK_BUFFER_SIZE   64
+#define COMM_LINK_SIGNAL_TX_TRIGGER     0x02
+#define COMM_LINK_SIGNAL_RX_TRIGGER     0x04
+#define COMM_LINK_SIGNAL_MODULE_LINKED  0x08
+#define COMM_LINK_BUFFER_SIZE           64
+
+
+#define FOREACH_COMM_ERR(ERR)   \
+    ERR(COMM_SUCCESS)           \
+    ERR(COMM_FAILURE)           \
+    ERR(COMM_DEV_BUF_ERR)       \
+    ERR(COMM_FUNC_BUF_ERR)      \
+    ERR(COMM_FALSE_TRIG)        \
+    ERR(COMM_NO_DATA)
+
+
+/**
+ * CommLink Error Levels.
+ */
+enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
+
+extern const char* COMM_ERR_STRING[];
+
 
 /**
  * CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication links to the higher-level firmware
@@ -21,14 +41,14 @@
 class CommLink
 {
   public:
-    /// Constructor
-    CommLink();
+    /// Defautl Constructor
+    CommLink(void) {};
 
     /// Constructor
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
     /// Deconstructor
-    virtual ~CommLink() {}; // Don't forget to include deconstructor implementation in derived classes that frees memory
+    virtual ~CommLink(void) {}; // Don't forget to include deconstructor implementation in derived classes that frees memory
 
     // Class constants for the data queue sizes
     static const int TX_QUEUE_SIZE;
@@ -44,17 +64,16 @@ class CommLink
     /// Determine if communication can occur with another device
     virtual bool isConnected(void) = 0;
 
-    ///
-    void setModule(CommModule &);
-    void sendPacket(RTP_t *);
-    void receivePacket(RTP_t *);
+    /// Send & Receive through the RTP structure
+    void sendPacket(RTP_t*);
+    void receivePacket(RTP_t*);
 
     unsigned int rxPackets(void);
     unsigned int txPackets(void);
 
   protected:
-    virtual int32_t sendData(uint8_t *, uint8_t) = 0;   // write data out to the radio device using SPI
-    virtual int32_t getData(uint8_t *, uint8_t *) = 0; // read data in from the radio device using SPI
+    virtual int32_t sendData(uint8_t*, uint8_t) = 0;    // write data out to the radio device using SPI
+    virtual int32_t getData(uint8_t*, uint8_t*) = 0;   // read data in from the radio device using SPI
 
     void ISR(void);
     void toggle_cs(void);
@@ -63,8 +82,7 @@ class CommLink
     void ready(void);   // Always call CommLink::ready() after derived class is ready for communication
     void setup_spi(void);
 
-    // The data queues for temporarily holding received packets and packets that need to be transmitted
-    osMailQId   _txQueue;
+    // The data queues for temporarily holding received packets
     osMailQId   _rxQueue;
 
     // ============== PIN NAMES ==============
@@ -76,29 +94,25 @@ class CommLink
     PinName     _int_pin;   // Interrupt pin
 
     // ============== PIN OBJECTS ==============
-    SPI         *_spi;      // SPI pointer
-    DigitalOut  *_cs;       // Chip Select pointer
-    InterruptIn *_int_in;    // Interrupt pin
+    SPI*         _spi;      // SPI pointer
+    DigitalOut*  _cs;       // Chip Select pointer
+    InterruptIn* _int_in;    // Interrupt pin
 
   private:
     // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t &, void(*task)(void const *arg), osPriority, uint32_t, unsigned char *);
+    friend void define_thread(osThreadDef_t&, void(*task)(void const* arg), osPriority, uint32_t, unsigned char*);
 
     /**
-     * Data queues for
+     * Data queue helper for RX queue.
      */
-    MailHelper<RTP_t, COMM_LINK_TX_QUEUE_SIZE>   _txQueueHelper;
     MailHelper<RTP_t, COMM_LINK_RX_QUEUE_SIZE>   _rxQueueHelper;
 
     // Thread definitions and IDs
-    osThreadDef_t   _txDef;
     osThreadDef_t   _rxDef;
-    osThreadId      _txID;
     osThreadId      _rxID;
 
-    // The working threads for handeling RX/TX data queue operations
-    static void txThread(void const *);
-    static void rxThread(void const *);
+    // The working threads for handeling RX data queue operations
+    static void rxThread(void const*);
 
     // Methods for initializing a transceiver's pins for communication
     void setup(void);
@@ -110,6 +124,4 @@ class CommLink
     static unsigned int _nbr_links;
 
     uint8_t buf[COMM_LINK_BUFFER_SIZE];
-
-    CommModule     *_comm_module;
 };

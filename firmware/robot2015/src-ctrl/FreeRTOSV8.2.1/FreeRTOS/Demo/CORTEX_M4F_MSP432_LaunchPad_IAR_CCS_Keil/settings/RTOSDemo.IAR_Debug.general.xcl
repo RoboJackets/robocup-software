@@ -1,0 +1,15 @@
+"C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armproc.dll" 
+
+"C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armjlink.dll" 
+
+"C:\E\temp\FreeRTOSv8.2.1\FreeRTOSV8.2.1\FreeRTOS\Demo\CORTEX_M4F_MSP432_LaunchPad_IAR_CCS_Keil\IAR_Debug\Exe\c.out" 
+
+--plugin "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\bin\armbat.dll" 
+
+--device_macro "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\config\debugger\TexasInstruments\MSP432P401R.dmac" 
+
+--flash_loader "C:\DevTools\IAR Systems\Embedded Workbench 7.2\arm\config\flashloader\TexasInstruments\FlashMSP432P401R.board" 
+
+
+
+

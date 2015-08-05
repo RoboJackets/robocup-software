@@ -4,13 +4,19 @@
 
 #include "controller.hpp"
 #include "MailHelper.hpp"
+#include "CommModule.hpp"
 // #include "neostrip.cpp"
 
 DigitalIn gpio3(p18);
 DigitalIn gpio2(p16);
-DigitalOut led3(LED3, 1);
 ADCDMA adc;
 DMA dma;
+
+
+extern "C" void TIMER0_IRQHandler(void)
+{
+
+}
 
 /**
  * Timer interrupt based light flicker. If this stops, the code triggered
@@ -33,6 +39,26 @@ int main(void)
 {
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INF1;
+
+	/*
+	// Power up timer 0
+	LPC_SC->PCONP |= (1 << 1);
+
+	// Set divider to CLK/1
+	LPC_SC->PCLK0 |= (0x01 << 2);
+
+	// LPC_PINCON->PINSEL4 |= (0x00);
+	//
+	PINCON->PINMODE4 |= (0x03);
+
+	// select timer pins in PINSEL reg
+	//select pin modes in PINMODE
+	// Interrupt set enable register for interrupt
+
+	NVIC_SetVector(TIMER0_IRQn, (uint32_t)TIMER0_IRQHandler);
+	NVIC_EnableIRQ(TIMER0_IRQn);
+	*/
+
 
 	// Set the system time to the build time
 	const char* sysTime = __DATE__ " " __TIME__;
@@ -77,15 +103,15 @@ int main(void)
 	radio_timeout_task.start(300);
 
 	// Start the thread task for the serial console
-	Thread console_task(Task_SerialConsole, NULL, osPriorityBelowNormal);
+	Thread console_task(Task_SerialConsole, NULL, osPriorityLow);
 
 	motors_Init();
 
 	// This breaks everything
-	// Thread comm_task(Task_CommCtrl, NULL, osPriorityNormal);
+	Thread comm_task(Task_CommCtrl, NULL, osPriorityHigh);
 
 	// Launch the motion controller thread
-	Thread controller_task(Task_Controller, NULL, osPriorityNormal);
+	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
 
 #ifdef LINK_TOC_PARAMS
 	TOCInit();
@@ -102,7 +128,6 @@ int main(void)
 	MailHelper<RTP_t, 5> paramQueue;
 	osMailQId paramQID = osMailCreate(paramQueue.def(), NULL);
 	Thread param_task(Task_Param, &paramQID, osPriorityBelowNormal);
-
 #endif
 
 	/*

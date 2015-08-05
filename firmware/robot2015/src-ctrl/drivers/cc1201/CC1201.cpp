@@ -1,29 +1,33 @@
 #include "CC1201.hpp"
 
-
-CC1201::CC1201() :
-	CommLink()
-{
-}
+#include "CC1201Defines.hpp"
+#include "logger.hpp"
 
 
-CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin) :
+CC1201::CC1201(void) : CommLink() {};
+
+
+CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin, int rssiOffset) :
 	CommLink(mosi, miso, sck, cs, intPin)
 {
 	//powerOnReset();res
 	_offset_reg_written = false;
 	reset();
 	idle(); flush_rx(); flush_tx();
+	set_rssi_offset(rssiOffset);
+
+
+	_isInit = true;
 	selfTest();
 
 	if (_isInit == true) {
 		CommLink::ready();
-		LOG(OK, "Ready!");
+		LOG(INF1, "CC1201 ready!");
 	}
 }
 
 
-CC1201::~CC1201()
+CC1201::~CC1201(void)
 {
 	if (_spi)
 		delete _spi;
@@ -39,14 +43,14 @@ CC1201::~CC1201()
 /**
  *
  */
-int32_t CC1201::sendData(uint8_t *buf, uint8_t size)
+int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 {
 	//idle();
 	//strobe(CC1201_STROBE_SFTX);
 	if (_isInit == false)
 		return 0;
 
-	LOG(OK, "%u", size);
+	LOG(INF3, "%u", size);
 
 	if ( size != (buf[0] + 1) ) {
 		LOG(SEVERE, "Packet size values are inconsistent. %u bytes requested vs %u bytes in packet.", size, buf[0]);
@@ -88,36 +92,38 @@ int32_t CC1201::sendData(uint8_t *buf, uint8_t size)
 	return 0;   // success
 }
 
-int32_t CC1201::getData(uint8_t *buf, uint8_t *len)
+int32_t CC1201::getData(uint8_t* buf, uint8_t* len)
 {
 	osDelay(1);	//make sure the packet is ready. remove for production
 
-	uint8_t device_state = freq_update();	// update frequency offset estimate & get the current state while at it
-
+	uint8_t device_state = freqUpdate();	// update frequency offset estimate & get the current state while at it
 	uint8_t num_rx_bytes = readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON);
 
 	if ( ((*len) + 2) < num_rx_bytes ) {
-		LOG(SEVERE, "%u bytes in RX FIFO with passed buffer size of %u bytes. Unable to process request.", num_rx_bytes, *len);
-		return 0x01;
+		LOG(SEVERE, "%u bytes in RX FIFO with passed buffer size of %u bytes.", num_rx_bytes, *len);
+
+		return COMM_FUNC_BUF_ERR;
 	}
 
 	if ( (device_state & CC1201_RX_FIFO_ERROR) == CC1201_RX_FIFO_ERROR ) {
 		flush_rx();	// flush RX FIFO buffer and place back into RX state
 		strobe(CC1201_STROBE_SRX);
-		return 0x02;
+
+		return COMM_DEV_BUF_ERR;
 	}
 
 	if ( readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON) > 0 ) {
 		// This was a TX interrupt from the CC1201, not an RX
-		return 0x03;
+		return COMM_FALSE_TRIG;
 	}
 
 	if ( num_rx_bytes > 0 ) {
 		device_state = readReg(CC1201_RX_FIFO, buf, num_rx_bytes);
 		*len = num_rx_bytes;
 
-		LOG(INF2, "Bytes in RX buffer: %u", num_rx_bytes);
-		LOG(INF2, "Payload bytes: %u", buf[0]);
+		LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes, buf[0]);
+	} else {
+		return COMM_NO_DATA;
 	}
 
 	update_rssi();
@@ -125,7 +131,7 @@ int32_t CC1201::getData(uint8_t *buf, uint8_t *len)
 	// return back to RX mode
 	strobe(CC1201_STROBE_SRX);
 
-	return 1;	// success
+	return COMM_SUCCESS;	// success
 }
 
 
@@ -154,7 +160,7 @@ uint8_t CC1201::readReg(uint8_t addr, ext_flag_t ext_flag)
 
 	return returnVal;
 }
-uint8_t CC1201::readReg(uint8_t addr, uint8_t *buffer, uint8_t len, ext_flag_t ext_flag)
+uint8_t CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len, ext_flag_t ext_flag)
 {
 	uint8_t status_byte;
 
@@ -194,7 +200,7 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t value, ext_flag_t ext_flag)
 
 	return status_byte;
 }
-uint8_t CC1201::writeReg(uint8_t addr, uint8_t *buffer, uint8_t len, ext_flag_t ext_flag)
+uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, ext_flag_t ext_flag)
 {
 	uint8_t status_byte;
 	addr &= 0x7F; // Don't accidently do a read
@@ -230,7 +236,7 @@ uint8_t CC1201::readRegExt(uint8_t addr)
 
 	return returnVal;
 }
-uint8_t CC1201::readRegExt(uint8_t addr, uint8_t *buffer, uint8_t len)
+uint8_t CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
 {
 	// Only callable from readReg(), so no checks needed
 	uint8_t status_byte;
@@ -261,7 +267,7 @@ uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t value)
 
 	return status_byte;
 }
-uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t *buffer, uint8_t len)
+uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
 {
 	// Only callable from writeReg(), so no checks needed
 	uint8_t status_byte;
@@ -325,7 +331,7 @@ void CC1201::reset(void)
 
 int32_t CC1201::selfTest(void)
 {
-	if (_isInit)
+	if (_isInit == true)
 		return 0;
 
 	_isInit = true;
@@ -384,7 +390,7 @@ void CC1201::powerOnReset(void)
 	LOG(INF2, "dealloc SPI");
 	delete _spi;
 	LOG(INF2, "(MI)SO alloc digIn");
-	DigitalIn *SO = new DigitalIn(_miso_pin);
+	DigitalIn* SO = new DigitalIn(_miso_pin);
 
 
 	LOG(INF2, "wait for olliscator assertion");
@@ -465,7 +471,7 @@ uint8_t CC1201::idle(void)
 	uint8_t status_byte = strobe(CC1201_STROBE_SIDLE);
 
 	if (_isInit == false)
-		return 0;
+		return status_byte;
 
 	while ( mode() != 0x01 );
 
@@ -478,7 +484,7 @@ uint8_t CC1201::rand(void)
 	return readReg(CC1201EXT_RNDGEN, EXT_FLAG_ON);
 }
 
-uint8_t CC1201::freq_update(void)
+uint8_t CC1201::freqUpdate(void)
 {
 	return strobe(CC1201_STROBE_SAFC);
 }
@@ -490,7 +496,7 @@ float CC1201::freq(void)
 	uint32_t freq_base;
 	float freq;
 
-	freq_update();
+	freqUpdate();
 
 	readReg(CC1201EXT_FREQOFF1, buf, 5, EXT_FLAG_ON);
 
@@ -501,7 +507,7 @@ float CC1201::freq(void)
 	freq = 40 * static_cast<float>((freq_base >> 16) + (freq_offset >> 18));
 	freq /= 4;
 
-	LOG(INF1, "Operating Frequency: %3.2f MHz", freq);
+	LOG(INF2, "Operating Frequency: %3.2f MHz", freq);
 
 	return freq;
 }
