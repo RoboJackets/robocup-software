@@ -84,10 +84,11 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build -include=common,logging,simulator,soccer
 
-# run the 'uncrustify' program on the codebase, which automatically formats code according to our style config
+# automatically format code according to our style config defined in .clang-format
 pretty:
 	util/reformat-code.sh
-# run the 'uncrustify' program on the codebase to check its formatting.  An exit code of 0 means the codebase passed and is in accordance with the style config
+# check if everything in our codebase is in accordance with the style config defined in .clang-format
+# a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
 	util/reformat-code.sh --check
 
