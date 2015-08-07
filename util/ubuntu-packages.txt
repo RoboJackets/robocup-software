@@ -37,7 +37,7 @@ libbullet-dev
 clang
 
 # C/C++ (and more) code-formatting tool
-uncrustify
+clang-format
 
 # contains a ton of great C++ libraries
 libboost-all-dev

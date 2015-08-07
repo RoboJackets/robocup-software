@@ -17,4 +17,4 @@ freeglut
 eigen
 bullet --with-shared
 protobuf
-uncrustify
+clang-format
