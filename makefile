@@ -86,7 +86,8 @@ modernize:
 
 # run the 'uncrustify' program on the codebase, which automatically formats code according to our style config
 pretty:
-	find . -path ./build -prune -o -name "*.hpp" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -print0 | xargs -0 uncrustify -c uncrustify.cfg --replace --no-backup
+	util/reformat-code.sh
 # run the 'uncrustify' program on the codebase to check its formatting.  An exit code of 0 means the codebase passed and is in accordance with the style config
 checkstyle:
-	find . -path ./build -prune -o -name "*.hpp" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -print0 | xargs -0 uncrustify -c uncrustify.cfg --check
+	util/reformat-code.sh --check
+
