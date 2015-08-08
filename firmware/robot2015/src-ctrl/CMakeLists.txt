@@ -167,7 +167,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${CMAKE_SOURCE_D
 
 add_custom_target(robot2015-prog
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND ${CMAKE_SOURCE_DIR}/util/robot2015-prog.sh ${CMAKE_SOURCE_DIR}/run/robot2015.bin
+    COMMAND ${MBED_COPY_SCRIPT} ${CMAKE_SOURCE_DIR}/run/robot2015.bin
     DEPENDS robot2015
     COMMENT "Copies the files created from the 'robot2015' target onto a single mbed using USB."
 )
