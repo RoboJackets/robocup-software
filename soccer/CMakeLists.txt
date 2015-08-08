@@ -27,7 +27,6 @@ set(ROBOCUP_LIB_SRC
     "planning/RRTPlanner.cpp"
     "planning/Tree.cpp"
     "planning/MotionConstraints.cpp"
-    "planning/MotionConstraints.cpp"
     "Processor.cpp"
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"

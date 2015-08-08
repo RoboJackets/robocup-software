@@ -278,7 +278,7 @@ void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Poi
 	self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-void State_draw_polygon(SystemState *self, boost::python::list points, boost::python::tuple rgb, const std::string &layer) {
+void State_draw_polygon(SystemState *self, const boost::python::list &points, boost::python::tuple rgb, const std::string &layer) {
 	std::vector<Geometry2d::Point> ptVec;
 	for (int i = 0; i < len(points); i++) {
 		ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
@@ -331,10 +331,6 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc *self, const Geometry
 	}
 
 	return lst;
-}
-
-Geometry2d::Point Circle_get_center(Geometry2d::Circle *self) {
-    return self->center;
 }
 
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
@@ -501,16 +497,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
-        .def("center", &Circle_get_center)
-	;
-
-	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
-		.def("intersects_line", &Arc_intersects_line)
-		.def("intersects_segment", &Arc_intersects_segment)
-		.def("center", &Geometry2d::Arc::center)
-		.def("radius", &Geometry2d::Arc::radius)
-		.def("start", &Geometry2d::Arc::start)
-		.def("end", &Geometry2d::Arc::end)
+        .def_readonly("center", &Geometry2d::Circle::center)
 	;
 
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())

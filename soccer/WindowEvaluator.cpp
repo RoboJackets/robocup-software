@@ -4,8 +4,9 @@
 
 #include "WindowEvaluator.h"
 #include "Constants.hpp"
-#include <algorithm>
 
+#include <algorithm>
+#include <array>
 #include <iostream>
 
 REGISTER_CONFIGURABLE(WindowEvaluator)

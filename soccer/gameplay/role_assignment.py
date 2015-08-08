@@ -228,7 +228,7 @@ def assign_roles(robots, role_reqs):
             else:
                 if req.destination_shape != None:
                     cost += PositionCostMultiplier * req.destination_shape.dist_to(robot.pos)
-                if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
+                if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id():
                     cost += RobotChangeCost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
@@ -279,7 +279,7 @@ def assign_roles(robots, role_reqs):
         insert_into_results(results, tree_mapping, reqs, None)
 
 
-    if total > MaxWeight:
+    if total >= MaxWeight:
         fail("No assignments possible that satisfy all constraints")
 
     return results
