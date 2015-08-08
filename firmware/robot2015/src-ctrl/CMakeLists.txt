@@ -3,6 +3,8 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
+project("Mbed Firmware")
+
 function(listDirectories list)
     # generate the list of all directories that are needed
     message("\n===== Adding firmware directories =====")
@@ -58,7 +60,7 @@ set(UTILS ${UTILS_ROOT_DIR})
 
 list(APPEND ${DRIVERS} adc cc1101 cc1201 cc1201/cfg dma ds2411 fpga mcp23017 mpu-6050 radio ws2811)
 list(APPEND ${MODULES} CommLink CommModule console controller motors)
-list(APPEND ${UTILS} assert firmware-check fp16 logger rtos-mgmt watchdog)
+list(APPEND ${UTILS} assert fp16 logger numparser rtos-mgmt watchdog)
 
 if(${USE_OWN_LINKER_SCRIPT})
     list(APPEND ${MODULES} param toc)
@@ -68,7 +70,7 @@ set(SUB_DIRS_LIST ${USR_CONFIG_DIR} ${DRIVERS} ${MODULES} ${UTILS})
 
 # set the arm toolchain
 set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)
-include(lib/arm_toolchain.cmake)
+include(scripts/arm_toolchain.cmake)
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -80,7 +82,7 @@ set(MBED_TARGET LPC1768)
 #set(MBED_TARGET RBLAB_NRF51822)
 set(PREBUILD_DEPS)
 
-include(lib/arm_mbed.cmake)
+include(scripts/arm_mbed.cmake)
 
 #all official libraries pulled with/by the build tools
 include(ExternalProject)
@@ -157,15 +159,15 @@ endforeach()
 # custom target for creating a .bin file from an elf binary
 add_custom_target(robot2015
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/robot2015.bin ${PROJECT_SOURCE_DIR}/run/
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/robot2015.bin ${CMAKE_SOURCE_DIR}/run/
     DEPENDS robot2015_elf
     COMMENT "objcopying to make MBED-compatible executable"
 )
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/robot2015.bin)
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${CMAKE_SOURCE_DIR}/run/robot2015.bin)
 
 add_custom_target(robot2015-prog
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND ${PROJECT_SOURCE_DIR}/util/robot2015-prog.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
+    COMMAND ${CMAKE_SOURCE_DIR}/util/robot2015-prog.sh ${CMAKE_SOURCE_DIR}/run/robot2015.bin
     DEPENDS robot2015
     COMMENT "Copies the files created from the 'robot2015' target onto a single mbed using USB."
 )
