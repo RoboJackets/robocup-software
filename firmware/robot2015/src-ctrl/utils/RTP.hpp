@@ -1,10 +1,18 @@
 #pragma once
 
+
 #include <cstdint>
 
+
+#if __BIG_ENDIAN
+#define RTP_HEADER(port, subclass, ack, sfs)    (((port & 0x0F) << 4) | ((subclass & 0x03) << 2) | ((ack & 0x01) << 1) | (sfs & 0x01))
+#else
 #define RTP_HEADER(port, subclass, ack, sfs)    (((sfs & 0x01) << 7) | ((ack & 0x01) << 6) | ((subclass & 0x03) << 4) | (port & 0x0F))
+#endif
+
 
 #define RTP_MAX_DATA_SIZE 122
+
 
 enum RTPPort {
     RTP_PORT_CONSOLE     = 0x00,
@@ -39,8 +47,12 @@ struct RTP_t {
                             uint8_t header_link;
                         };
                         struct {
+#if __BIG_ENDIAN
                             uint8_t sfs : 1, ack : 1, subclass : 2, port : 4;
-                        };
+#else
+                            uint8_t port : 4, subclass : 2, ack : 1, sfs : 1;
+#endif
+                        } __attribute__((packed));
                     };
 
                 };
