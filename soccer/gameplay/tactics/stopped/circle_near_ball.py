@@ -29,38 +29,24 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             lambda: not self.all_subbehaviors_completed(),
             "robots aren't lined up")
 
-        # Define circle to circle up on
-        radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
-
-        perRobot = (2 * constants.Robot.Radius* 1.25) / radius
-
-        ball_pos = main.ball().pos if main.ball() != None else robocup.Point(constants.Field.Width / 2, constants.Field.Length / 2)
-
-        dirvec = (robocup.Point(0,0) - ball_pos).normalized() * radius
-
-        for i in range(6):
-            pt = ball_pos + dirvec
+        i = 0
+        for pt in self.get_circle_points(6):
             self.add_subbehavior(skills.move.Move(pt), name="robot" + str(i), required=False, priority=6 - i)
-            dirvec.rotate(robocup.Point(0,0), perRobot)
+            i = i + 1
 
 
     def all_subbehaviors_completed(self):
         return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
 
-    def move_around_circle(self):
-        num_robots = 0
-        for b in self.all_subbehaviors():
-            if b.robot is not None:
-                num_robots+=1
-
+    def get_circle_points(self, num_of_points):
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
         ball_pos = main.ball().pos if main.ball() != None else robocup.Point(constants.Field.Width / 2, constants.Field.Length / 2)
         circle_ball = robocup.Circle(ball_pos, radius)
 
         intersection_points = []
         for i in constants.Field.FieldBorders:
-            tmp_point = circle_ball.intersects_line(i)
-            for j in tmp_point:
+
+            for j in circle_ball.intersects_line(i):
                 # Using near_point because of rounding errors
                 if constants.Field.FieldRect.near_point(j, 0.001):
                     intersection_points.append(j)
@@ -69,7 +55,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         candidate_arcs = []
         if len(intersection_points) > 1:
             for i in intersection_points:
-                new_angle = (i - circle_ball.center()).angle()
+                new_angle = (i - circle_ball.center).angle()
                 new_angle = self.normalize_angle(new_angle)
                 angles.append(new_angle)
 
@@ -78,9 +64,9 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
 
             counter = 1
             while counter < len(angles):
-                candidate_arcs.append(robocup.Arc(circle_ball.center(), radius, angles[counter - 1], angles[counter]))
+                candidate_arcs.append(robocup.Arc(circle_ball.center, radius, angles[counter - 1], angles[counter]))
                 counter = counter + 1
-            candidate_arcs.append(robocup.Arc(circle_ball.center(), radius, angles[len(angles) - 1], angles[0]))
+            candidate_arcs.append(robocup.Arc(circle_ball.center, radius, angles[len(angles) - 1], angles[0]))
 
             i = 0
             while i < len(candidate_arcs):
@@ -104,25 +90,39 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             else:
                 final_arc = candidate_arcs[0]
         else:
-            midpoint = (circle_ball.center() + robocup.Point(radius, 0))
+            midpoint = (circle_ball.center + robocup.Point(radius, 0))
             if not constants.Field.FieldRect.contains_point(midpoint):
                 final_arc = robocup.Arc(CircleNearBall.BackupBallLocation, radius, math.pi / 2, 5 * math.pi / 2)
             else:
-                final_arc = robocup.Arc(circle_ball.center(), radius, math.pi / 2, 5 * math.pi / 2)
+                final_arc = robocup.Arc(circle_ball.center, radius, math.pi / 2, 5 * math.pi / 2)
 
         arc_angle = final_arc.end() - final_arc.start()
         arc_angle = self.normalize_angle(arc_angle)
 
-        perRobot = arc_angle / (num_robots + 1)
+        perRobot = arc_angle / (num_of_points + 1)
 
         dirvec = robocup.Point(radius, 0)
         dirvec.rotate(robocup.Point(0,0), final_arc.start())
         dirvec.rotate(robocup.Point(0,0), perRobot)
 
-        for i in range(6):
+        final_points = []
+        for i in range(num_of_points):
             pt = final_arc.center() + dirvec
-            self.subbehavior_with_name("robot" + str(i)).pos = pt
+            final_points.append(pt)
             dirvec.rotate(robocup.Point(0,0), perRobot)
+
+        return final_points
+
+    def execute_completed(self):
+        num_robots = 0
+        for b in self.all_subbehaviors():
+            if b.robot is not None:
+                num_robots+=1
+
+        i = 0
+        for pt in self.get_circle_points(num_robots):
+            self.subbehavior_with_name("robot" + str(i)).pos = pt
+            i = i + 1
 
         # set robot attributes
         for b in self.all_subbehaviors():
@@ -131,8 +131,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                 b.robot.face(main.ball().pos)
                 b.robot.avoid_all_teammates(True)
 
-    def execute_completed(self):
-        self.move_around_circle()
+
 
     # Makes an angle > 0, < pi * 2
     def normalize_angle(self, angle):
@@ -144,4 +143,19 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         return angle
 
     def execute_running(self):
-        self.move_around_circle()
+        num_robots = 0
+        for b in self.all_subbehaviors():
+            if b.robot is not None:
+                num_robots+=1
+
+        i = 0
+        for pt in self.get_circle_points(num_robots):
+            self.subbehavior_with_name("robot" + str(i)).pos = pt
+            i = i + 1
+
+        # set robot attributes
+        for b in self.all_subbehaviors():
+            if b.robot is not None:
+                b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
+                b.robot.face(main.ball().pos)
+                b.robot.avoid_all_teammates(True)

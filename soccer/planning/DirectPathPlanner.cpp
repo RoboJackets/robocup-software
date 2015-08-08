@@ -4,7 +4,7 @@ using namespace Planning;
 using namespace std;
 
 
-std::unique_ptr<Path> RRTPlanner::run(
+std::unique_ptr<Path> DirectPathPlanner::run(
         MotionInstant startInstant,
         MotionInstant endInstant,
         const MotionConstraints &motionConstraints,

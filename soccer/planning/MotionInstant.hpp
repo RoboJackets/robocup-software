@@ -12,10 +12,10 @@ namespace  Planning {
 
         MotionInstant(Geometry2d::Point pos, Geometry2d::Point vel) : pos(pos), vel(vel) {}
 
-        /// A point on the field that the robot should use path-planning to get to
+        /// A position at a given point in time.
         Geometry2d::Point pos;
 
-        /// Set the velocity in world coordinates directly (circumvents path planning)
+        /// A velocity at a given point in time.
         Geometry2d::Point vel;
     };
 }

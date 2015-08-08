@@ -4,14 +4,14 @@ set(CMAKE_AUTOMOC ON)
 
 set(simulator_SRC
     "bullet_opengl/DemoApplication.cpp"
+    "bullet_opengl/GL_DialogDynamicsWorld.cpp"
+    "bullet_opengl/GL_DialogWindow.cpp"
     "bullet_opengl/GL_ShapeDrawer.cpp"
-    "bullet_opengl/GLDebugDrawer.cpp"
     "bullet_opengl/GL_Simplex1to4.cpp"
+    "bullet_opengl/GLDebugDrawer.cpp"
     "bullet_opengl/GLDebugFont.cpp"
     "bullet_opengl/GlutDemoApplication.cpp"
-    "bullet_opengl/GL_DialogDynamicsWorld.cpp"
     "bullet_opengl/GlutStuff.cpp"
-    "bullet_opengl/GL_DialogWindow.cpp"
     "bullet_opengl/RenderTexture.cpp"
     "physics/Ball.cpp"
     "physics/Entity.cpp"
