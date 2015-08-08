@@ -24,6 +24,8 @@
 `include "kicker_i2c.v"
 `include "hall_counter.v"
 
+`include "git_version.vh"
+
 // Conventions:
 //  Hall effect sensor vectors are [2:0] which maps to {a, b, c}.
 //  Half-bridge drive vectors are [1:0] which maps to {high, low}.
