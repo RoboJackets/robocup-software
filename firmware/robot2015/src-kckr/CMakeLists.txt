@@ -34,7 +34,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 
 # add command to copy the kicker firmware onto the mbed
 add_custom_target(kicker2015-prog
-    COMMAND ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh ${PROJECT_SOURCE_DIR}/run/kickerFW
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/kckr-fw
     DEPENDS kicker2015
     COMMENT "Copies kickerFW onto the mbed"
 )
