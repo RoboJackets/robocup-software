@@ -63,14 +63,12 @@ kicker2015-prog:
 # Base station 2015 firmware
 base2015:
 	@mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
-
 base2015-prog:
 	@mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
 
 # FPGA 2015
 fpga2015:
 	@mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
-	# && make $(MAKE_FLAGS) fpga2015
 
 firmware2015: robot2015 kicker2015 fpga2015 base2015
 
