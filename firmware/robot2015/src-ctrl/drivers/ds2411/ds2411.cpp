@@ -1,5 +1,8 @@
 #include "ds2411.hpp"
 
+#include "logger.hpp"
+
+
 namespace
 {
 const unsigned int ID_tREC = 5;

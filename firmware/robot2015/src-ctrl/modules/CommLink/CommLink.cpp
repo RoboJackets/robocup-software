@@ -1,14 +1,15 @@
 #include "CommLink.hpp"
-#include "CommModule.hpp"
+
+//#include "CommModule.hpp"
 
 
 // Set the class's constants for streamlined use in other areas of the code
 const int CommLink::TX_QUEUE_SIZE = COMM_LINK_TX_QUEUE_SIZE;
 const int CommLink::RX_QUEUE_SIZE = COMM_LINK_RX_QUEUE_SIZE;
 
-unsigned int CommLink::_nbr_links = 0;
-
 const char* COMM_ERR_STRING[] = { FOREACH_COMM_ERR(GENERATE_STRING) };
+
+unsigned int CommLink::_nbr_links = 0;
 
 
 // =================== MAIN CONSTRUCTOR ==============
@@ -87,7 +88,7 @@ void CommLink::rxThread(void const* arg)
     CommLink* inst = (CommLink*)arg;
 
     // Only continue past this point once the hardware link is initialized
-    osSignalWait(COMM_LINK_SIGNAL_START_THREAD & COMM_LINK_SIGNAL_MODULE_LINKED, osWaitForever);
+    osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
     // Set the function to call on an interrupt trigger
     inst->_int_in->rise(inst, &CommLink::ISR);
@@ -144,15 +145,4 @@ void CommLink::ISR(void)
 void CommLink::toggle_cs(void)
 {
     *_cs = !*_cs;
-}
-
-
-unsigned int CommLink::rxPackets(void)
-{
-    return CommModule::NumRXPackets();
-}
-
-unsigned int CommLink::txPackets(void)
-{
-    return CommModule::NumTXPackets();
 }

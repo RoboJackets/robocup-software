@@ -1,31 +1,50 @@
 #include "console.hpp"
 
+#include "rtos.h"
+#include "logger.hpp"
+
+
 /**
- * initializes the console
+ * Initializes the console
  */
 void Task_SerialConsole(void const* args)
 {
   // Store the thread's ID
   osThreadId threadID = Thread::gettid();
 
+
+  // Initalize the console buffer
   Console::Init();
 
-  LOG(OK, "Serial console ready! Thread ID: %u", threadID);
+
+  // Let everyone know we're ok
+  LOG(INIT, "Serial console ready! Thread ID: %u", threadID);
+
+
+  // Print out the header to show the user we're ready for input
+  Console::PrintHeader();
+
 
   while (true) {
-    //check console communications, currently does nothing
-    //then execute any active iterative command
+
+    // Check console communications, currently does nothing
     Console::ConComCheck();
 
-    //execute any active iterative command
+
+    // Execute any active iterative command
     executeIterativeCommand();
 
-    //check if a system stop is requested
+
+    // Check if a system stop is requested
     if (Console::IsSystemStopRequested() == true)
       break;
 
+
+    // Yield to other threads when not needing to execute anything
     Thread::yield();
   }
 
+
+  // Terminate the thread if the while loop is ever broken out of
   osThreadTerminate(threadID);
 }

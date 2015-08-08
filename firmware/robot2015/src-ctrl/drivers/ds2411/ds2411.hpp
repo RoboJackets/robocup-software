@@ -7,9 +7,12 @@
  *  http://www.digikey.com/product-detail/en/DS2411R%2BT%26R/DS2411R%2BCT-ND/2045729
  */
 
-#include "robot.hpp"
+#include "mbed.h"
+#include "robot-devices.hpp"
+
 
 #define ID_DS2411_PIN RJ_BASE_ID
+
 
 struct DS2411_t {
     char family;
@@ -35,4 +38,4 @@ typedef enum {
  * @param  debug [description]
  * @return       [description]
  */
-DS2411Result_t ds2411_read_id(PinName, DS2411_t *, bool = false);
+DS2411Result_t ds2411_read_id(PinName, DS2411_t*, bool = false);

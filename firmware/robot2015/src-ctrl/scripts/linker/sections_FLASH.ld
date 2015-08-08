@@ -55,8 +55,8 @@ SECTIONS
         PROVIDE (_param_stop = .);      /* Set the address here to the '_param_stop' variable. Define it if undefined. */
         . = ALIGN(4);                   /* Align to the nearest word-aligned address */
         PROVIDE (_log_start = .);       /* Set the address here to the '_log_start' variable. Define it if undefined. */
-        KEEP(*(.log))                   /* Place variables set with a section attribute of '*.log' here */
-        KEEP(*(.log.*))                 /* Place variables set with a section attribute of '*.log.*' here */
+        KEEP(*(.logsect))                   /* Place variables set with a section attribute of '*.log' here */
+        KEEP(*(.logsect.*))                 /* Place variables set with a section attribute of '*.log.*' here */
         PROVIDE (_log_stop = .);        /* Set the address here to the '_log_stop' variable. Define it if undefined. */
 
         *(.text*)

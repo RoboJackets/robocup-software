@@ -1,7 +1,9 @@
 #include "commands.hpp"
 #include "CommModule.hpp"
+#include "ds2411.hpp"
+#include "logger.hpp"
+#include "numparser.hpp"
 
-#define GEN_CMD_STRUCT(alias, isit, fptr, desc, usage)
 
 namespace
 {
@@ -178,14 +180,6 @@ static const std::vector<command_t> commands = {
 };
 
 
-void cmd_registerCmd(const command_t& cmdBlock)
-{
-	//command_t *cmdCfg = new command_t;
-	//std::memcpy(cmdCfg, &cmdBlock, sizeof cmdCfg);
-	//commands.push_back(cmdCfg);
-}
-
-
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
 * for those commands.
@@ -351,6 +345,7 @@ void cmd_help(const vector<string>& args)
 		printf("\r\n");
 	}
 }
+
 
 void cmd_help_detail(const vector<string>& args)
 {
@@ -594,7 +589,7 @@ void cmd_baudrate(const vector<string>& args)
 			for (unsigned int i = 0; i < valid_rates.size(); i++)
 				printf("%u\r\n", valid_rates[i]);
 
-		} else if (isNumber(str_baud)) {
+		} else if (isInt(str_baud)) {
 			int new_rate = atoi(str_baud.c_str());
 
 			if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) != valid_rates.end()) {
@@ -609,6 +604,7 @@ void cmd_baudrate(const vector<string>& args)
 	}
 }
 
+
 void cmd_switchUser(const vector<string>& args)
 {
 	if (args.empty() == true || args.size() > 1) {
@@ -618,6 +614,7 @@ void cmd_switchUser(const vector<string>& args)
 	}
 }
 
+
 void cmd_switchHostname(const vector<string>& args)
 {
 	if (args.empty() == true || args.size() > 1) {
@@ -626,6 +623,7 @@ void cmd_switchHostname(const vector<string>& args)
 		Console::changeHostname(args.front());
 	}
 }
+
 
 void cmd_logLevel(const vector<string>& args)
 {
@@ -637,7 +635,7 @@ void cmd_logLevel(const vector<string>& args)
 		// this will return a signed int, so the level
 		// could increase or decrease...or stay the same.
 		int newLvl = (int)rjLogLevel;	// rjLogLevel is unsigned, so we'll need to change that first
-		newLvl += LogLvlChange(args.front());
+		newLvl += logLvlChange(args.front());
 
 		if (newLvl >= LOG_LEVEL_END) {
 			printf("Unable to set log level above maximum value.\r\n");
@@ -655,6 +653,7 @@ void cmd_logLevel(const vector<string>& args)
 		}
 	}
 }
+
 
 /**
  * Command executor.
@@ -779,14 +778,6 @@ void cancelIterativeCommand(void)
 	executingIterativeCommand = false;
 }
 
-bool isNumber(std::string& s)
-{
-	std::string::const_iterator it = s.begin();
-
-	while (it != s.end() && std::isdigit(*it)) ++it;
-
-	return !s.empty() && it == s.end();
-}
 
 void showInvalidArgs(const vector<string>& args)
 {
@@ -806,17 +797,9 @@ void showInvalidArgs(const vector<string>& args)
 	printf("\r\n");
 }
 
+
 void showInvalidArgs(const string& s)
 {
 	printf("Invalid argument '%s'.\r\n", s.c_str());
 }
 
-int LogLvlChange(const std::string& s)
-{
-	int n = 0;
-
-	n += std::count(s.begin(), s.end(), '+');
-	n -= std::count(s.begin(), s.end(), '-');
-
-	return n;
-}

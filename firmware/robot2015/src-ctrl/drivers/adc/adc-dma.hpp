@@ -1,9 +1,10 @@
 #pragma once
 
-#include "robot.hpp"
-#include "dma.hpp"
-#include "pinmap.h"
+#include "mbed.h"
+
 #include <vector>
+
+#include "dma.hpp"
 
 
 // Defines
@@ -23,6 +24,13 @@
 #define ADC_ADINT             (0x00010000)
 #define ADC_CLK               (1000000)
 
+#define ANALOGIN_MEDIAN_FILTER      1
+
+#define ADC_10BIT_RANGE             0x3FF
+#define ADC_12BIT_RANGE             0xFFF
+#define ADC_RANGE                   ADC_12BIT_RANGE
+
+
 // Macros
 #ifndef ADC_GET_READING
 #define ADC_GET_READING(x) (((uint32_t)(x) >> 0x04) & 0xFFF)
@@ -32,31 +40,27 @@
 #define _BV(_x_) (1UL << (_x_))
 #endif
 
-#define ANALOGIN_MEDIAN_FILTER      1
-
-#define ADC_10BIT_RANGE             0x3FF
-#define ADC_12BIT_RANGE             0xFFF
 
 static inline int div_round_up(int x, int y)
 {
   return (x + (y - 1)) / y;
 }
 
-#define ADC_RANGE    ADC_12BIT_RANGE
 
 typedef struct ADCPin {
   PinName pin_name;
   analogin_t* pin_obj;
 } ADCPin_t;
 
+
 class ADCDMA
 {
-public:
+ public:
   ADCDMA(void);
   ~ADCDMA(void);
 
   bool Start(void);
-  void AddChannel(PinName);
+  void SetChannels(std::initializer_list<PinName> pins);
   bool Poll(void);
   uint32_t Read(uint8_t);
   void BurstRead(void);
@@ -66,7 +70,7 @@ public:
 
   static bool burstEn;
 
-protected:
+ protected:
   bool InterruptTest(void);
   void enable_channel(uint8_t);
   void enable_channels(void);
@@ -78,21 +82,23 @@ protected:
   uint32_t adc_buf[ADC_NUM_CHANNELS][ADC_SAMPLES_PER_CHAN];
   analogin_t _adc;
 
-private:
+ private:
   bool isInit;
   bool dmaTransferComplete[2];
   bool ADC_Interrupt_Done_Flag;
   bool ADC_int_done;
 
   std::vector<ADCPin_t> adc_chan;
+
+  volatile uint32_t ADCIntDone;
+  volatile uint32_t BurstCounter;
+  volatile uint32_t overrun_count;
+  volatile uint32_t channel_flag;
+
   void ADC_start(void);
   void ADC_stop(void);
   bool ADC_powerdown(void);
   void ADC_IRQHandler(void);
 
 
-  volatile uint32_t ADCIntDone;
-  volatile uint32_t BurstCounter;
-  volatile uint32_t overrun_count;
-  volatile uint32_t channel_flag;
 };

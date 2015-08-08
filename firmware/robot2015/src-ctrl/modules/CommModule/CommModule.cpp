@@ -1,19 +1,24 @@
 #include "CommModule.hpp"
 
+
+#include "logger.hpp"
+
+
 // Set the class's constants for streamlined use in other areas of the code
 const int       CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
 const int       CommModule::RX_QUEUE_SIZE = COMM_MODULE_RX_QUEUE_SIZE;
 const int       CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
-unsigned int    CommModule::txPackets = 0;
-unsigned int    CommModule::rxPackets = 0;
+
+// Class declarations since everything in CommModule is static
+bool            CommModule::isReady = false;
 osThreadId      CommModule::_txID;
 osThreadId      CommModule::_rxID;
 osMailQId       CommModule::_txQueue;
 osMailQId       CommModule::_rxQueue;
-bool            CommModule::isReady = false;
 CommPorts_t     CommModule::_ports;
 
-CommPort_t      portAdd;
+// This one isn't apart of any class, but it's an extern in CommModule.hpp
+CommPort_t      _tmpPort;
 
 
 // Default constructor
@@ -37,31 +42,22 @@ CommModule::CommModule() :
     // =================
     _txID = osThreadCreate(&_txDef, (void*)this);
     _rxID = osThreadCreate(&_rxDef, (void*)this);
-
-    //_tx_handles.reserve(COMM_MODULE_NBR_PORTS);
-    //_rx_handles.reserve(COMM_MODULE_NBR_PORTS);
-    // _ports.reserve(COMM_MODULE_NBR_PORTS);
 }
 
-CommModule::~CommModule()
-{
-    //if (_open_ports)
-    //delete _open_ports;
-}
 
 void CommModule::txThread(void const* arg)
 {
-    // CommModule* inst = (CommModule*)arg;
-
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
     LOG(INF2, "TX Communication Module Ready!");
 
+    osEvent  evt;
+
     while (1) {
 
         // When a new RTP packet is put in the tx queue, begin operations (does nothing if no new data in queue)
-        osEvent evt = osMailGet(_txQueue, osWaitForever);
+        evt = osMailGet(_txQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
             // Get a pointer to the packet's memory location
@@ -69,7 +65,8 @@ void CommModule::txThread(void const* arg)
 
             // Call the user callback function
             if (_ports[p->port].isOpen()) {
-                _ports[p->port].tx_callback(p);
+
+                _ports[p->port].TXCallback()(p);
 
                 LOG(INF3, "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
             }
@@ -80,10 +77,9 @@ void CommModule::txThread(void const* arg)
     }
 }
 
+
 void CommModule::rxThread(void const* arg)
 {
-    // CommModule* inst = (CommModule*)arg;
-
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
@@ -103,7 +99,8 @@ void CommModule::rxThread(void const* arg)
 
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen()) {
-                _ports[p->port].rx_callback(p);
+
+                _ports[p->port].RXCallback()(p);
 
                 LOG(INF3, "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
             }
@@ -113,30 +110,30 @@ void CommModule::rxThread(void const* arg)
     }
 }
 
+
 void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 {
     if ( !_ports[portNbr].Exists() ) {
 
-        portAdd = CommPort_t(portNbr);
+        CommPort_t _tmpPort(portNbr);
 
-        portAdd.RXCallback(std::bind(ptr, std::placeholders::_1));
+        _tmpPort.RXCallback() = std::bind(ptr, std::placeholders::_1);
 
-        _ports += portAdd;
+        _ports += _tmpPort;
 
-    } else if ( _ports[portNbr].hasTXCallback() ) {
-
-        _ports[portNbr].RXCallback(std::bind(ptr, std::placeholders::_1));
     } else {
 
-        return;
+        _ports[portNbr].RXCallback() = std::bind(ptr, std::placeholders::_1);
     }
 
     ready();
 }
 
+
 bool CommModule::openSocket(uint8_t portNbr)
 {
     if ( _ports[portNbr].Open() ) {
+        // Everything looks to be setup, go ahead and enable it
         LOG(INF3, "Port %u opened", portNbr);
 
         return true;
@@ -147,6 +144,7 @@ bool CommModule::openSocket(uint8_t portNbr)
         return false;
     }
 }
+
 
 void CommModule::ready(void)
 {
@@ -159,10 +157,10 @@ void CommModule::ready(void)
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
 }
 
+
 void CommModule::send(RTP_t& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
-    //if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
     if ( _ports[packet.port].isOpen() ) {
         //packet.payload_size += 1;   // Fixup factor for header bytes
 
@@ -178,11 +176,12 @@ void CommModule::send(RTP_t& packet)
         // =================
         osMailPut(_txQueue, p);
 
-        _ports[packet.port].TXPackets(1);   // Increment the packet counter by 1
+        _ports[packet.port].TXPackets()++;   // Increment the packet counter by 1
     } else {
         LOG(WARN, "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }
+
 
 void CommModule::receive(RTP_t& packet)
 {
@@ -202,51 +201,56 @@ void CommModule::receive(RTP_t& packet)
         // =================
         osMailPut(_rxQueue, p);
 
-        _ports[packet.port].RXPackets(1);
+        _ports[packet.port].RXPackets()++;
+
+        if (p->ack) {
+
+            RTP_t res;
+
+            res.header_link = p->header_link;
+            res.payload[0] = 0xAA;
+            res.payload_size = 1;
+            res.address = 0x01;
+
+            send(res);
+        }
+
     } else {
         LOG(WARN, "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }
 
+
 unsigned int CommModule::NumRXPackets(void)
 {
-    return CommModule::rxPackets;
+    return _ports.allRXPackets();
 }
+
 
 unsigned int CommModule::NumTXPackets(void)
 {
-    return CommModule::txPackets;
+    return _ports.allTXPackets();
 }
+
 
 void CommModule::PrintInfo(bool forceHeader)
 {
-    if (_ports.empty() == false) {
-
+    if (forceHeader == true && _ports.empty()) {
         PrintHeader();
-
-        //for (pIt = _ports.begin(); pIt != _ports.end(); ++pIt) {
-        for (int i = 0; i < _ports.count(); i++) {
-            printf("%2u\t%u\t%u\t%s\t\t%s\r\n",
-                   _ports[i].Nbr(),
-                   _ports[i].RXPackets(),
-                   _ports[i].TXPackets(),
-                   _ports[i].hasRXCallback() ? "YES" : "NO",
-                   _ports[i].hasTXCallback() ? "YES" : "NO"
-                  );
-        }
-
-        printf("\r\n");
     } else {
-        if (forceHeader == true) {
-            PrintHeader();
-        }
+        _ports.PrintPorts();
+        _ports.PrintFooter();
     }
+
+    Console::Flush();
 }
+
 
 void CommModule::PrintHeader(void)
 {
-    printf("PORT\tIN\tOUT\tRX CBCK\t\tTX CBCK\r\n");
+    _ports.PrintHeader();
 }
+
 
 void comm_cmdProcess(const vector<string>& args)
 {

@@ -1,12 +1,13 @@
 #pragma once
 
-
 #include "mbed.h"
 #include "cmsis_os.h"
-#include "robot_types.hpp"
+#include "robot-types.hpp"
+#include "robot-macros.hpp"
 #include "ThreadHelper.hpp"
 #include "MailHelper.hpp"
 #include "logger.hpp"
+#include "CommModule.hpp"
 
 
 #define COMM_LINK_TX_QUEUE_SIZE         3
@@ -31,8 +32,6 @@
  * CommLink Error Levels.
  */
 enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
-
-extern const char* COMM_ERR_STRING[];
 
 
 /**
@@ -67,9 +66,6 @@ class CommLink
     /// Send & Receive through the RTP structure
     void sendPacket(RTP_t*);
     void receivePacket(RTP_t*);
-
-    unsigned int rxPackets(void);
-    unsigned int txPackets(void);
 
   protected:
     virtual int32_t sendData(uint8_t*, uint8_t) = 0;    // write data out to the radio device using SPI

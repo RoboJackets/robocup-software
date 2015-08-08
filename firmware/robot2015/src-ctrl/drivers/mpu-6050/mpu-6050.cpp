@@ -3,6 +3,9 @@
  */
 #include "mpu-6050.hpp"
 
+#include "logger.hpp"
+
+
 MPU6050::MPU6050(PinName sda, PinName scl) : connection(sda, scl)
 {
     setSleepMode(false);

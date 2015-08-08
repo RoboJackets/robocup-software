@@ -1,12 +1,14 @@
 #pragma once
 
-#include "robot.hpp"
+#include "mbed.h"
+#include "robot-devices.hpp"
 #include "commands.hpp"
 
 #include <memory>
 
 // forward declaration for the console's task function
 void Task_SerialConsole(void const* args);
+
 
 /**
  * enable scrolling vi sequence
@@ -24,7 +26,7 @@ const std::string CLEAR_SCREEN_SEQ = "\033[2J";
 class Console
 {
 
-public:
+ public:
   /**
    * max buffer length. Default 252 (three lines)
    */
@@ -108,8 +110,9 @@ public:
 
   static void Baudrate(uint16_t);
   static uint16_t Baudrate(void);
+  static void PrintHeader(void);
 
-private:
+ private:
   // Constructor is only used in init branch of Instance()
   Console();
 

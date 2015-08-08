@@ -1,5 +1,8 @@
 #include "dma.hpp"
 
+#include "logger.hpp"
+
+
 volatile uint32_t DMA::dma_buf[15] = { 0 };
 volatile uint8_t DMA::chan_num = 0;
 LPC_GPDMACH_TypeDef* DMA::chan = 0;
@@ -28,9 +31,8 @@ extern "C" void DMA_IRQHandler(void)
       if (_LPC_DMA_ID->DMACIntTCStat & chan_mask) {
         DMA::HandlerCalled = true;
 
-
         // reenable another DMA transfer
-        DMA::chan->DMACCConfig |= 0x01;
+        // DMA::chan->DMACCConfig |= 0x01;
 
         DMA::SetDst(DMA::destination_addr);
 
@@ -73,6 +75,8 @@ DMA::~DMA(void)
  */
 bool DMA::Init(void)
 {
+  return false;
+
   if (isInit == true)
     return false;
 

@@ -58,6 +58,7 @@ struct motorErr_t {
 	std::array<uint16_t, 2> drvStatus;
 };
 
+
 struct motor_t {
 	motorVel_t 	targetVel;
 	motorVel_t	adjVel;

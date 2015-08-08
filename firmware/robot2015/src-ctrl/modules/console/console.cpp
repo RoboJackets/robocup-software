@@ -1,5 +1,8 @@
 #include "console.hpp"
 
+#include "logger.hpp"
+
+
 #define PUTC(c) 	pc.putc(c)
 #define GETC 		pc.getc
 #define PRINTF(...)	pc.printf(__VA_ARGS__)
@@ -51,7 +54,15 @@ void Console::Init(void)
 	instance->rxIndex = 0;
 	instance->txIndex = 0;
 
-	// print header to show we're ready - make sure everything is flushed prior to doing so
+	printf(" ");
+	Flush();
+	printf("\b");
+	Flush();
+}
+
+void Console::PrintHeader(void)
+{
+	// prints out a bash-like header
 	Flush();
 	instance->PRINTF("\r\n%s", instance->CONSOLE_HEADER.c_str());
 	Flush();
@@ -88,17 +99,17 @@ void Console::RXCallback()
 		else if (flagOne) {
 			if (flagTwo) {
 				switch (c) {
-				case ARROW_UP_KEY:
-					PRINTF("\033M");
-					break;
+					case ARROW_UP_KEY:
+						PRINTF("\033M");
+						break;
 
-				case ARROW_DOWN_KEY:
-					PRINTF("\033D");
-					break;
+					case ARROW_DOWN_KEY:
+						PRINTF("\033D");
+						break;
 
-				default:
-					flagOne = false;
-					flagTwo = false;
+					default:
+						flagOne = false;
+						flagTwo = false;
 				}
 
 				Flush();
@@ -106,13 +117,13 @@ void Console::RXCallback()
 
 			} else {	// flagTwo not set
 				switch (c) {
-				case ARROW_KEY_SEQUENCE_TWO:
-					flagTwo = true;
-					break;
+					case ARROW_KEY_SEQUENCE_TWO:
+						flagTwo = true;
+						break;
 
-				default:
-					flagOne = false;
-					break;
+					default:
+						flagOne = false;
+						break;
 				}
 			}
 		}
@@ -183,9 +194,9 @@ void Console::RXCallback()
 
 void Console::TXCallback()
 {
-	// NVIC_DisableIRQ(UART0_IRQn);
+	NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
-	// NVIC_EnableIRQ(UART0_IRQn);
+	NVIC_EnableIRQ(UART0_IRQn);
 }
 
 void Console::ConComCheck(void)

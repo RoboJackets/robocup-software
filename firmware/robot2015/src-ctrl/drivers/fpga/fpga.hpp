@@ -1,18 +1,20 @@
 #pragma once
 
-
-#include "robot.hpp"
-
+#include "mbed.h"
+#include "pins-ctrl-2015.hpp"
 
 class FPGA
 {
-  public:
-    FPGA(void);
-    ~FPGA(void);
-    ERR_t Init(void);
+ public:
+  FPGA(void) : spi(RJ_SPI_BUS), cs(RJ_FPGA_nCS), progB(RJ_FPGA_PROG_B) {};
+  FPGA(PinName _cs, PinName _progB = RJ_FPGA_PROG_B);
+  ~FPGA(void);
+  bool Init(void);
 
-  protected:
+ protected:
 
-  private:
-    bool isInit;
+ private:
+  bool isInit;
+  SPI spi;
+  DigitalOut cs, progB;
 };

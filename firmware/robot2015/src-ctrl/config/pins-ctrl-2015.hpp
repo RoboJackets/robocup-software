@@ -1,6 +1,8 @@
 #pragma once
 
+
 #include "PinNames.h"
+
 
 // ** ============================= ** PIN DECLARATIONS ** ============================= **
 
@@ -80,3 +82,53 @@
 
 // This defines the pins used for a `Serial Connection` over the mbed's USB port (for use with a virtual serial connection to a computer)
 #define RJ_SERIAL_RXTX          MBED_UARTUSB
+
+
+// ** ============================= ** IO-EXPANDER PINS ** ============================= **
+
+// Port A bit masks
+#define RJ_IOEXP_A0
+#define RJ_IOEXP_A1
+#define RJ_IOEXP_A2
+#define RJ_IOEXP_A3
+#define RJ_IOEXP_A4
+#define RJ_IOEXP_A5
+#define RJ_IOEXP_A6
+#define RJ_IOEXP_A7
+
+// Port B bit masks
+#define RJ_IOEXP_B0
+#define RJ_IOEXP_B1
+#define RJ_IOEXP_B2
+#define RJ_IOEXP_B3
+#define RJ_IOEXP_B4
+#define RJ_IOEXP_B5
+#define RJ_IOEXP_B6
+#define RJ_IOEXP_B7
+
+// These relate the PCB's connection with the IO Expander's bit masks defined above
+// // =============================================================================
+
+// The robot's rotary ID selector
+#define RJ_HEX_SWITCH_B0        RJ_IOEXP_A0
+#define RJ_HEX_SWITCH_B1        RJ_IOEXP_A1
+#define RJ_HEX_SWITCH_B2        RJ_IOEXP_A2
+#define RJ_HEX_SWITCH_B3        RJ_IOEXP_A3
+
+// Configuration DIP switches
+#define RJ_DIP_SWITCH_1         RJ_IOEXP_A4
+#define RJ_DIP_SWITCH_2         RJ_IOEXP_A5
+#define RJ_DIP_SWITCH_3         RJ_IOEXP_A6
+
+// A pushbutton
+#define RJ_PUSHBUTTON           RJ_IOEXP_A7
+
+// Red error LEDs
+#define RJ_ERR_LED_M1           RJ_IOEXP_B0
+#define RJ_ERR_LED_M2           RJ_IOEXP_B1
+#define RJ_ERR_LED_M3           RJ_IOEXP_B2
+#define RJ_ERR_LED_M4           RJ_IOEXP_B3
+#define RJ_ERR_LED_MPU          RJ_IOEXP_B4
+#define RJ_ERR_LED_BSENSE       RJ_IOEXP_B5
+#define RJ_ERR_LED_DRIB         RJ_IOEXP_B6
+#define RJ_ERR_LED_RADIO        RJ_IOEXP_B7

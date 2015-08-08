@@ -13,7 +13,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 	//powerOnReset();res
 	_offset_reg_written = false;
 	reset();
-	idle(); flush_rx(); flush_tx();
+	idle();
 	set_rssi_offset(rssiOffset);
 
 

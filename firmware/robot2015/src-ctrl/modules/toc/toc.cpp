@@ -22,9 +22,10 @@
 #include "toc.hpp"
 
 #include "rtos.h"
-#include "robot_types.hpp"
+#include "robot-types.hpp"
 #include "fp16.hpp"
 #include "CommModule.hpp"
+
 
 // Maximum log payload length
 #define LOG_MAX_LEN 30
@@ -34,6 +35,7 @@
 #define LOG_MAX_BLOCKS 8
 
 #define BLOCK_ID_FREE -1
+
 
 enum {
   SUBC_TOC      = 0,
@@ -54,6 +56,7 @@ enum {
   CTRL_STOP_BLOCK    = 4,
   CTRL_RESET         = 5
 };
+
 
 static const uint8_t typeLength[] = {1, 2, 4, 1, 2, 4, 4, 2};
 /*
@@ -91,6 +94,7 @@ struct ops_setting {
   uint8_t id;
 } __attribute__((packed));
 
+
 //Private functions
 static void logTOCProcess(int command);
 static void logControlProcess(void);
@@ -98,11 +102,13 @@ static void logControlProcess(void);
 void logRunBlock(void* arg);
 // void logBlockTimed(xTimerHandle timer);
 
+
 //These are set by the Linker
 #ifdef LINK_TOC_PARAMS
 extern "C" struct log_s _log_start;
 extern "C" struct log_s _log_stop;
 #endif
+
 
 //Pointer to the logeters list and length of it
 static struct log_s* logs;
@@ -111,6 +117,7 @@ static int logsLen;
 static int logsCount = 0;
 
 static bool isInit = false;
+
 
 // Log management functions
 static int logAppendBlock(int id, struct ops_setting* settings, int len);
@@ -132,6 +139,7 @@ void TOCInit(void)
   logs = &_log_start;
   logsLen = &_log_stop - &_log_start;
 #endif
+  
   // logsCrc = crcSlow(logs, logsLen);
 
   // Big lock that protects the log datastructures

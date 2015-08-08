@@ -23,8 +23,9 @@
 
 
 #include "rtos.h"
-#include "robot_types.hpp"
+#include "robot-types.hpp"
 #include "CommModule.hpp"
+#include "logger.hpp"
 
 
 // Private functions

@@ -1,5 +1,10 @@
 #include "adc-dma.hpp"
+
+#include <cstdarg>
+
 #include "pinmap.h"
+#include "logger.hpp"
+
 
 // ADC pin mapping for the LPC1768 microcontroller based mbed
 
@@ -272,14 +277,19 @@ uint8_t ADCDMA::Offset(void)
  * [ADCDMA::AddChannel description]
  * @param pin [description]
  */
-void ADCDMA::AddChannel(PinName pin)
+void ADCDMA::SetChannels(std::initializer_list<PinName> pins)
 {
-  ADCPin_t obj;
+  std::vector<PinName> pinsList(pins);
+  std::vector<ADCPin_t>::iterator it;
 
-  obj.pin_name = pin;
-  // obj.pin_obj->adc = (ADCName)pinmap_peripheral(obj.pin_name, RJ_PinMap_ADC);
+  for (it = adc_chan.begin(); it < adc_chan.end(); it++) {
+    adc_chan.insert(it, adc_chan.begin(), adc_chan.end());
 
-  adc_chan.push_back(obj);
+    it->pin_name = pinsList.at(adc_chan.size());
+    // obj.pin_obj->adc = (ADCName)pinmap_peripheral(obj.pin_name, RJ_PinMap_ADC);
+  }
+
+  LOG(INIT, "ADC Channels Vec Size: %u\r\n", adc_chan.size());
 }
 
 
@@ -296,7 +306,7 @@ bool ADCDMA::Start(void)
 bool ADCDMA::init_channels(void)
 {
   // return FALSE if no channels (pins) have been added yet
-  if (adc_chan.empty() || (isInit == true))
+  if (adc_chan.empty() || (isInit == false))
     return false;
 
   /*

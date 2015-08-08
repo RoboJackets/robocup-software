@@ -1,6 +1,7 @@
 #include "pins-ctrl-2015.hpp"
 #include "CC1201Radio.hpp"
 #include "CommModule.hpp"
+#include "CommPort.hpp"
 #include "rtos.h"
 
 /*
@@ -40,12 +41,12 @@ static const uint8_t BASE_STATION_ADDR = 0x01;
 
 
 enum PORTS {
-	COMM_PORT_LINK_TEST 		= 0x01,
-	COMM_PORT_CONTROLLER 		= 0x02,
-	COMM_PORT_SETPOINT 			= 0x03,
-	COMM_PORT_GAMEPLAY_STROBE 	= 0x04,
-	COMM_PORT_DISCOVERY 		= 0x05,
-	COMM_PORT_BULK_DATA 		= 0x06
+	COMM_PORT_LINK_TEST 		= 0x03,
+	COMM_PORT_CONTROLLER 		= 0x04,
+	COMM_PORT_SETPOINT 			= 0x05,
+	COMM_PORT_GAMEPLAY_STROBE 	= 0x06,
+	COMM_PORT_DISCOVERY 		= 0x07,
+	COMM_PORT_BULK_DATA 		= 0x08
 };
 
 
@@ -60,19 +61,15 @@ void rxCallbackLinkTest(RTP_t* p)
 	}
 
 	// Send back an ACK if we need
-	if (p->ack == true) {
+	if (p->ack == true && false) {
+		RTP_t res;
 
-		// Make sure this isn't an ACK for one of our own packets first
-		if (p->payload_size != 1 && (p->payload[0] != ACK_RESPONSE_CODE)) {
-			RTP_t res;
+		res.header_link = p->header_link;
+		res.payload[0] = ACK_RESPONSE_CODE;
+		res.payload_size = 1;
+		res.address = BASE_STATION_ADDR;
 
-			res.header_link = p->header_link;
-			res.payload[0] = ACK_RESPONSE_CODE;
-			res.payload_size = 1;
-			res.address = BASE_STATION_ADDR;
-
-			CommModule::send(res);
-		}
+		CommModule::send(res);
 	}
 }
 
@@ -86,9 +83,11 @@ void Task_CommCtrl(void const* args)
 	// Store the thread's ID
 	osThreadId threadID = Thread::gettid();
 
+
 	// Setup the TX/RX lights and have them off initially
 	DigitalOut txLED(RJ_TX_LED, 1);
 	DigitalOut rxLED(RJ_RX_LED, 1);
+
 
 	// Create a new physical hardware communication link
 	CC1201 radio(
@@ -97,57 +96,97 @@ void Task_CommCtrl(void const* args)
 	    RJ_RADIO_INT
 	);
 
+
 	/*
 	CC1201Config* radioConfig = new CC1201Config();
 	radioConfig = CC1201Config::resetConfiguration(radioConfig);
-	CC1201Config::loadConfiguration(radioConfig, &radio_900);
-	CC1201Config::verifyConfiguration(radioConfig, &radio_900);
+	CC1201Config::loadConfiguration(radioConfig, &radio);
+	CC1201Config::verifyConfiguration(radioConfig, &radio);
 	*/
 
-	// Update the frequency offset
-	radio.freqUpdate();
 
-	LOG(INF1, "Radio set for %.2fMHz", radio.freq());
+	// Update the frequency offset
+	// radio.freqUpdate();
+
+
+	// The usual way of opening a port.
+
+	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
+	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
+	CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);		// returns true if port was successfully opened.
+
 
 	// Open a socket for running tests across the link layer
-	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
 	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
+	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
+	CommModule::openSocket(COMM_PORT_LINK_TEST);
 
-	if ( CommModule::openSocket(COMM_PORT_LINK_TEST) )
-		txLED = 1;
 
-	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_CONTROLLER);
+	// This port won't open since there's no RX callback to invoke. The packets are simply dropped.
 	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_CONTROLLER);
-	//CommModule::openSocket(COMM_PORT_CONTROLLER);
+	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_CONTROLLER);
+	CommModule::openSocket(COMM_PORT_CONTROLLER);
 
+
+	// There's no TX callback for this port, but it will still open when invoked since it knows where to send an RX packet.
 	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
-	//CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
-	CommModule::openSocket(COMM_PORT_SETPOINT);
+	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
+	//CommModule::openSocket(COMM_PORT_SETPOINT);
 
-	//CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
-	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
-	CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);
 
-	LOG(OK, "Radio interface ready! Thread ID: %u", threadID);
+	/*
+	 * Ports are always displayed in ascending (lowest -> highest) order according
+	 * to its port number when using the console. Since most of everything is static,
+	 * the CommModule methods can be used from almost anywhere.
+	 */
+
+
+	LOG(INIT, "Radio interface ready on channel %u! Thread ID: %u", radio.freq(), threadID);
+
 
 	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
-	//txLED = 0;
-	//rxLED = 0;
+	txLED = 0;
+	rxLED = 0;
+
+
+
+	// == everything below this line all the way until the start of the while loop is test code ==
+
+	char buf[] = "Hello World. Welcome to SLL. Here's some important information.";
+
 
 	// Test RX by placing a dummy packet in the RX queue
 	RTP_t pck;
-	pck.header_link = RTP_HEADER(8, 1, false, false);
-	pck.address = 255;
+	pck.header_link = RTP_HEADER(COMM_PORT_GAMEPLAY_STROBE, 1, false, false);
 	pck.payload_size = 25;
 	memset(pck.payload, 0xFF, pck.payload_size);
+	pck.address = BASE_STATION_ADDR;
 
-	//CommModule::receive(pck);
-	//CommModule::send(pck);
+	// Test RX acknowledgment with a packet structured to trigger the ACK response
+	RTP_t ack_pck;
+	ack_pck.header_link = RTP_HEADER(COMM_PORT_LINK_TEST, 1, false, false);
+	ack_pck.payload_size = sizeof(buf);
+	memcpy(ack_pck.payload, buf, sizeof(buf));
+	ack_pck.address = BASE_STATION_ADDR;
 
-	while (1) {
-		Thread::wait(200);
-		//Thread::yield();
+
+	while (true) {
+		Thread::wait(400);
+		Thread::yield();
+
+		// Simulate some incoming packets on 2 different ports
 		CommModule::receive(pck);
+
+		Thread::wait(400);
+
+		// Now, simulate some incoming packets that sometimes request an ACK
+		ack_pck.port = COMM_PORT_LINK_TEST;
+		//CommModule::receive(ack_pck);
+
+		Thread::wait(400);
+
+		ack_pck.port = COMM_PORT_CONTROLLER;
+		//CommModule::send(ack_pck);
 
 		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
 		//radio_900.strobe(CC1201_STROBE_SRX);

@@ -1,12 +1,14 @@
-#include "robot.hpp"
+#if 0
+
 #include "radio.hpp"
+
 #include <memory>
 
 
 /*
  * Forward delarations.
  */
-void radioThreadHandler(void const *args);
+void radioThreadHandler(void const* args);
 std::unique_ptr<Thread> radioThread;
 
 
@@ -20,7 +22,7 @@ int initRadio(void)
 }
 
 
-void radioThreadHandler(void const *args)
+void radioThreadHandler(void const* args)
 {
     while (true)
         Thread::wait(500);
@@ -130,3 +132,5 @@ int main()
     }
 }
 */
+
+#endif

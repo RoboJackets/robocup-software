@@ -1,5 +1,11 @@
 #include "controller.hpp"
 
+#include "rtos.h"
+
+
+#define CONTROL_LOOP_FREQ_HZ 10
+
+
 /**
  * initializes the motion controller thread
  */
@@ -20,10 +26,12 @@ void Task_Controller(void const* args)
 	// imu.selfTest();
 
 	if (imu.testConnection()) {
-		LOG(OK, "Controller ready! Thread ID: %u", threadID);
+		LOG(INIT, "Control loop ready! Thread ID: %u", threadID);
+
 	} else {
-		LOG(SEVERE, "MPU6050 not found!");
-		// If there's no IMU chip, no need to continue running the thread
+		LOG(SEVERE, "MPU6050 not found! Falling back to sensorless control loop.");
+
+		// Once things are more organized, startup a sensorless control loop thread before killing this one.
 		osThreadTerminate(threadID);
 	}
 
@@ -44,8 +52,8 @@ void Task_Controller(void const* args)
 		    accelVals[2]
 		   );
 
-		Thread::wait(1000);
-		Thread::yield();
+		Thread::wait(HZ_TO_DELAY(CONTROL_LOOP_FREQ_HZ));
+		//Thread::yield();
 	}
 
 	osThreadTerminate(threadID);

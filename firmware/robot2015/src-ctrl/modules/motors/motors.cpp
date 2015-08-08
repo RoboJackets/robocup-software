@@ -20,24 +20,15 @@
 
 #include "motors.hpp"
 
-#include <vector>
-
+#include "mbed.h"
 #include "commands.hpp"
+#include "numparser.hpp"
 
 #ifdef LINK_TOC_PARAMS
 #include "toc.hpp"
 #include "param.hpp"
 #endif
 
-/*
-const command_t motorBlock = {
-	.aliases = {"motor"},
-	.isIterative = false,
-	.handler = motors_cmdProcess,
-	.description = "Show information about the motors.",
-	.usage = "motor <motor_id>"
-};
-*/
 
 motor_t mtrEx = {
 	.targetVel = 		0x4D,
@@ -52,32 +43,14 @@ motor_t mtrEx = {
 	.desc = "Motor "
 };
 
+
 std::array<motor_t, 5> motors;
+
 
 void motors_Init(void)
 {
-	// cmd_registerCmd(motorBlock);
-
-	// motors.fill(mtr);
-	/*
-		char str[2];
-		for (int i = 0; i < motors.size() - 1; i++) {
-			// std::string motor_desc = std::to_string(i);
-			sprintf(str, "Motor %u", i);
-			// motor_desc = "Motor " + motor_desc;
-			motors.at(i).desc = str;
-		}
-		*/
-
-	// motors.at(5).desc = "Dribbler";
-
-	// Add the debug function to the vector of valid console commands
-	//std::vector<command_t>::iterator cmds = commands.end();
-	//std::next(cmds);
-
-	//commands.insert(cmds, motorBlock);
-
 	// ahhh just make a dummy vector of info for now...
+
 	motors.fill(mtrEx);
 	motors.at(0).desc = "Dribbler";
 	motors.at(1).desc += "1";
@@ -85,6 +58,7 @@ void motors_Init(void)
 	motors.at(3).desc += "3";
 	motors.at(4).desc += "4";
 }
+
 
 // An easy-to-read printf/logging function for a single motor
 void motors_PrintMotor(motor_t& mtr)
@@ -105,6 +79,7 @@ void motors_PrintMotor(motor_t& mtr)
 	      );
 }
 
+
 // The console function to run with the 'motor' command
 void motors_cmdProcess(const std::vector<std::string>& args)
 {
@@ -117,7 +92,7 @@ void motors_cmdProcess(const std::vector<std::string>& args)
 		for (unsigned int i = 0; i < args.size(); i++) {
 			std::string mtrArg = args.at(i);
 
-			if (isNumber(mtrArg)) {
+			if (isInt(mtrArg)) {
 				// Get the string argument into a type we can work with
 				uint8_t mtrID = (uint8_t)atoi(mtrArg.c_str());
 
@@ -137,11 +112,7 @@ void motors_cmdProcess(const std::vector<std::string>& args)
 			}
 		}
 
-		// remove duplicate motor ID arguments & sort them
-		// sort( motorIDs.begin(), motorIDs.end() );
-		// motorIDs.erase( unique( motorIDs.begin(), motorIDs.end() ), motorIDs.end() );
-
-		// If we make it to this point, all arguments given are valid motor ID numbers.
+		// If we make it to this point, all arguments given are valid motor ID numbers - without duplicate entries
 		for (unsigned int i = 0; i < motorIDs.size(); i++)
 			motors_PrintMotor(motors.at(motorIDs.at(i)));
 	}
@@ -152,7 +123,6 @@ void motors_cmdProcess(const std::vector<std::string>& args)
 PARAM_GROUP_START(mtrs)
 PARAM_ADD(PARAM_UINT16, mDtV, &motors[0].targetVel)
 PARAM_GROUP_STOP(mtrs)
-
 
 LOG_GROUP_START(mDV)
 LOG_ADD(LOG_UINT16, trgt, &motors[0].targetVel)

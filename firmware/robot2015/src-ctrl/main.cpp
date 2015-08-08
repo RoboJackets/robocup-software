@@ -1,126 +1,85 @@
 #include "robot.hpp"
-
-#include <ctime>
-
-#include "controller.hpp"
-#include "MailHelper.hpp"
-#include "CommModule.hpp"
 // #include "neostrip.cpp"
 
-DigitalIn gpio3(p18);
-DigitalIn gpio2(p16);
-ADCDMA adc;
-DMA dma;
 
+// ADCDMA adc;
+// DMA dma;
 
-extern "C" void TIMER0_IRQHandler(void)
-{
-
-}
 
 /**
- * Timer interrupt based light flicker. If this stops, the code triggered
- * a fault.
- */
-void imAlive(void const* args)
-{
-	DigitalOut* led = (DigitalOut*)args;
-
-	*led = !(*led);
-	osDelay(50);
-	*led = !(*led);
-}
-
-/**
- * [main Main program.]
+ * [main Main The entry point of the system where each submodule's thread is started.]
  * @return  [none]
  */
 int main(void)
 {
 	isLogging = RJ_LOGGING_EN;
-	rjLogLevel = INF1;
-
-	/*
-	// Power up timer 0
-	LPC_SC->PCONP |= (1 << 1);
-
-	// Set divider to CLK/1
-	LPC_SC->PCLK0 |= (0x01 << 2);
-
-	// LPC_PINCON->PINSEL4 |= (0x00);
-	//
-	PINCON->PINMODE4 |= (0x03);
-
-	// select timer pins in PINSEL reg
-	//select pin modes in PINMODE
-	// Interrupt set enable register for interrupt
-
-	NVIC_SetVector(TIMER0_IRQn, (uint32_t)TIMER0_IRQHandler);
-	NVIC_EnableIRQ(TIMER0_IRQn);
-	*/
+	rjLogLevel = INIT;
 
 
-	// Set the system time to the build time
+	/* Always send out an empty line at startup for keeping the console
+	 * clean on after a 'reboot' command is called;
+	 */
+	if (isLogging) {
+		printf("\r\n\r\n");
+		fflush(stdout);
+	}
+
+
+	/* Set the system time to the most recently known time. The compilation
+	 * time is used here. The timestamp should always be the same when using GCC.
+	 */
 	const char* sysTime = __DATE__ " " __TIME__;
 	struct tm tt;
 
-	if (strptime(sysTime, "%b %d %Y %H:%M:%S", &tt) == 0) // 'Mmm DD YYYYHH:MM:SS'
+	if (strptime(sysTime, "%b %d %Y %H:%M:%S", &tt) == 0) {	// 'Mmm DD YYYYHH:MM:SS'
 		LOG(SEVERE, "Unable to parse system time of %s", sysTime);
+	} else {
+		set_time(mktime(&tt));
+	}
 
-	set_time(mktime(&tt));
 
-	/*
-	// Start the flash signature generation
-	*(long unsigned int*)0x40084024 |= (0x01 << 17) | ((LPC_RAM_BASE / 16) << 16);
-
-	// Wait for the flash signature to be generated
-	while ( !((*(long unsigned int*)0x40084FE0) & (0x01 << 2)) ) {};
-
-	LOG(OK,
-	    "Flash Signature: 0x%08X-%08X-%08X-%08X",
-	    *(long unsigned int*)0x4008402C,
-	    *(long unsigned int*)0x40084030,
-	    *(long unsigned int*)0x40084034,
-	    *(long unsigned int*)0x40084038
-	   );
-	*/
-
+	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
+
 
 	// Start a periodic blinking LED to show system activity
 	DigitalOut ledOne(LED1, 0);
-
 	RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
+	live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
 
-	live_light.start(1300);
 
 	// TODO: write a function that will recalibrate the radio for this.
 	// Reset the ticker on every received packet. For now, we just blink an LED.
 	DigitalOut led4(LED4, 0);
-
 	RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void*)&led4);
-
 	radio_timeout_task.start(300);
+
+
+	motors_Init();
+
 
 	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, NULL, osPriorityLow);
 
-	motors_Init();
-
-	// This breaks everything
+	// Start the thread task for handling radio communications
 	Thread comm_task(Task_CommCtrl, NULL, osPriorityHigh);
 
-	// Launch the motion controller thread
+	// Start the thread task for the on-board control loop
 	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
+
+
+	//FPGA fpga;
+
+	//if (fpga.Init() == false)
+	//	LOG(FATAL, "FPGA config failed!");
+
 
 #ifdef LINK_TOC_PARAMS
 	TOCInit();
 
 	// Start the thread task for setting up a dynamic logging structure
 	MailHelper<RTP_t, 5> tocQueue;
-
 	osMailQId tocQID = osMailCreate(tocQueue.def(), NULL);
-
 	Thread toc_task(Task_TOC, &tocQID, osPriorityBelowNormal);
 
 
@@ -130,6 +89,7 @@ int main(void)
 	Thread param_task(Task_Param, &paramQID, osPriorityBelowNormal);
 #endif
 
+
 	/*
 	NeoStrip rgbLED(p21, 1);
 	rgbLED.setBrightness(1.0);
@@ -137,32 +97,36 @@ int main(void)
 	rgbLED.write();
 	*/
 
+
 #if RJ_WATCHDOG_TIMER_EN
-	// Enable watchdog timer
+	// Enable the watchdog timer if it's set in configurations.
 	Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
 #endif
 
-	uint32_t dma_locations[10] = { 0 };
 
-	adc.AddChannel(RJ_BALL_DETECTOR);
+	/* This needs some work. Probably best to just drop DMA for the ADC and
+	 * configure the 3 ADC channels at startup to be in burst mode at a very
+	 * low rate. Then the ADC registers should always have a valid reading.
+	 */
 
-	adc.AddChannel(RJ_BATT_SENSE);
+	/*
+	adc.SetChannels({ RJ_BALL_DETECTOR, RJ_BATT_SENSE, RJ_5V_SENSE });
 
-	adc.AddChannel(RJ_5V_SENSE);
+	if (!adc.Start()) {
+		DigitalOut led3(LED3, 1);
 
-	if (adc.Start())
-		LOG(INF1, "ADC config didn't break!");
+		// error
+	}
 
-	if (dma.Init()) {
-		dma.SetDst((uint32_t) dma_locations);
-		dma.SetSrc((uint32_t) & (LPC_ADC->ADDR0));
+	if (!dma.Init()) {	// currently hard coded to always return false
+		DigitalOut led2(LED4, 1);
 
-		if (dma.Start())
-			LOG(INF1, "DMA config didn't break!");
+		// error
 	}
 
 	adc.BurstRead();
+	*/
 
 	/*
 		RTP_t* paramBlk = (RTP_t*)osMailAlloc(paramQID, 1000);
@@ -171,10 +135,63 @@ int main(void)
 		osMailPut(paramQID, paramBlk);
 	*/
 
+	RTP_t pkt;
+	pkt.header_link = RTP_HEADER(0x0F, 0x00, true, true);
+	LOG(INIT,
+	    "Header:\t\t0x%02X\r\n"
+	    "Port:\t\t%u\r\n"
+	    "Subclass:\t%u\r\n"
+	    "ACK:\t\t%u\r\n"
+	    "SFS:\t\t%u",
+	    pkt.header_link,
+	    pkt.port,
+	    pkt.subclass,
+	    pkt.ack,
+	    pkt.sfs
+	   );
+
 	while (1) {
-		LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
-		LOG(INF3, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
-		Thread::wait(1000);
+		//LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
+		//LOG(INF3, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
+
+		Thread::wait(1000);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
 	}
 }
 
+
+// The below commented code are things that I worked towards but never brought to a functional state
+
+/*
+// Power up timer 0
+LPC_SC->PCONP |= (1 << 1);
+
+// Set divider to CLK/1
+LPC_SC->PCLK0 |= (0x01 << 2);
+
+// LPC_PINCON->PINSEL4 |= (0x00);
+//
+PINCON->PINMODE4 |= (0x03);
+
+// select timer pins in PINSEL reg
+//select pin modes in PINMODE
+// Interrupt set enable register for interrupt
+
+NVIC_SetVector(TIMER0_IRQn, (uint32_t)TIMER0_IRQHandler);
+NVIC_EnableIRQ(TIMER0_IRQn);
+*/
+
+/*
+// Start the flash signature generation
+*(long unsigned int*)0x40084024 |= (0x01 << 17) | ((LPC_RAM_BASE / 16) << 16);
+
+// Wait for the flash signature to be generated
+while ( !((*(long unsigned int*)0x40084FE0) & (0x01 << 2)) ) {};
+
+LOG(OK,
+    "Flash Signature: 0x%08X-%08X-%08X-%08X",
+    *(long unsigned int*)0x4008402C,
+    *(long unsigned int*)0x40084030,
+    *(long unsigned int*)0x40084034,
+    *(long unsigned int*)0x40084038
+   );
+*/

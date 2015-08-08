@@ -25,6 +25,8 @@
 // Includes
 #include <cstdint>
 
+#include "logger.hpp"
+
 
 // Defines
 #define LOG_GROUP 0x80
@@ -41,7 +43,7 @@
     .type = TYPE, .name = #NAME, .address = (void*)(ADDRESS), },
 
 #define LOG_GROUP_START(NAME)  \
-  static const struct log_s __logs_##NAME[] __attribute__((section(".log." #NAME), used)) = \
+  static const struct log_s __logs_##NAME[] __attribute__((section(".logsect." #NAME), used)) = \
       { \
         LOG_ADD_GROUP(LOG_GROUP | LOG_START, NAME, 0x00)
 

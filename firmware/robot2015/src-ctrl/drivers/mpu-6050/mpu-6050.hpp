@@ -3,9 +3,11 @@
 /**
  * Includes
  */
-#include "robot.hpp"
+#include <cstdint>
+
+#include "mbed.h"
 #include "mpu-6050-defines.hpp"
-#include <vector>
+ 
 
 /**
  * Defines
@@ -48,7 +50,7 @@
   */
 class MPU6050
 {
-public:
+  public:
      /**
      * Constructor.
      *
@@ -227,7 +229,7 @@ public:
 
      bool selfTest(void);
 
-private:
+  private:
      I2C connection;
      uint8_t currentAcceleroRange;
      uint8_t currentGyroRange;

@@ -3,7 +3,7 @@
 #include "mbed.h"
 #include "cmsis_os.h"
 #include "CommLink.hpp"
-#include "robot_types.hpp"
+#include "robot-types.hpp"
 #include "CC1101-Defines.hpp"
 #include "logger.hpp"
 
