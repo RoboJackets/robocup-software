@@ -4,23 +4,26 @@
 
 #include <memory>
 
-
 /*
- * Forward delarations.
+ * forward delarations
  */
 void radioThreadHandler(void const* args);
 std::unique_ptr<Thread> radioThread;
 
+std::unique_ptr<Thread> radioThread;
 
 /**
  * Call to initialize radio.
  */
 int initRadio(void)
 {
-    radioThread.reset(new Thread(radioThreadHandler));
-    return 0;
+	radioThread.reset(new Thread(radioThreadHandler));
+
+	return 0;
 }
 
+DigitalOut ledThree(LED3);
+DigitalOut ledFour(LED4);
 
 void radioThreadHandler(void const* args)
 {
@@ -100,8 +103,13 @@ int main()
     //watchdog.set(RJ_WATCHDOG_TIMER_VALUE);
 
     led1 = 1;
+<<<<<<< HEAD:firmware/robot2015/src-ctrl/drivers/radio/radio.cpp
 
     while(1) {
+=======
+    
+    while (true) {
+>>>>>>> master:firmware/robot2015/cpu/radio.cpp
 
         led1 = !led1;
 

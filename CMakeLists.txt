@@ -10,6 +10,17 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 
+# Google test
+enable_testing()
+include(SetupGTest)
+
+# C++ version
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# Build in debug mode
+# TODO: make this easier to specify when running `make` on the command-line
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
 # Qt5
 if(APPLE)
     # look for the homebrew-installed version of Qt5
@@ -85,7 +96,6 @@ if(NOT STATIC_ANALYSIS)
 endif()
 
 # run all the other CMakeLists files
-add_subdirectory(test)
 add_subdirectory(common)
 add_subdirectory(soccer)
 add_subdirectory(simulator)

@@ -1,15 +1,34 @@
 
-# Compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
-
 # Qt
 set(CMAKE_AUTOMOC ON)
 
-file(GLOB simulator_SRC
-    "*.cpp"
-    "physics/*.cpp"
-    "bullet_opengl/*.cpp"
-    )
+set(simulator_SRC
+    "bullet_opengl/DemoApplication.cpp"
+    "bullet_opengl/GL_ShapeDrawer.cpp"
+    "bullet_opengl/GLDebugDrawer.cpp"
+    "bullet_opengl/GL_Simplex1to4.cpp"
+    "bullet_opengl/GLDebugFont.cpp"
+    "bullet_opengl/GlutDemoApplication.cpp"
+    "bullet_opengl/GL_DialogDynamicsWorld.cpp"
+    "bullet_opengl/GlutStuff.cpp"
+    "bullet_opengl/GL_DialogWindow.cpp"
+    "bullet_opengl/RenderTexture.cpp"
+    "physics/Ball.cpp"
+    "physics/Entity.cpp"
+    "physics/Environment.cpp"
+    "physics/FastTimer.cpp"
+    "physics/Field.cpp"
+    "physics/GlutCamera.cpp"
+    "physics/RaycastVehicle.cpp"
+    "physics/Robot.cpp"
+    "physics/RobotBallController.cpp"
+    "physics/SimEngine.cpp"
+    "RobotTableModel.cpp"
+    "simulator.cpp"
+    "SimulatorGLUTThread.cpp"
+    "SimulatorWindow.cpp"
+)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/bullet_opengl)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})    # for Qt automoc files

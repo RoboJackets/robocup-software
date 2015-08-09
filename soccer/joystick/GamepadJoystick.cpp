@@ -71,16 +71,16 @@ void GamepadJoystick::update()
     Time now = timestamp();
     if(SDL_JoystickGetButton(_joystick, 1))
     {
-        if(_controls.dribblerPower > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+        if( (now - _lastDribblerTime) >= Dribble_Step_Time)
         {
-            _controls.dribblerPower -= 0.1;
+            _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
         }
     } else if(SDL_JoystickGetButton(_joystick, 3))
     {
-        if(_controls.dribblerPower < 1 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+        if( (now - _lastDribblerTime) >= Dribble_Step_Time)
         {
-            _controls.dribblerPower += 0.1;
+            _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
             _lastDribblerTime = now;
         }
     } else {
@@ -90,16 +90,16 @@ void GamepadJoystick::update()
 
     if(SDL_JoystickGetButton(_joystick, 0))
     {
-        if(_controls.kickPower > 0 && (now - _lastKickerTime) >= Kicker_Step_Time)
+        if( (now - _lastKickerTime) >= Kicker_Step_Time)
         {
-            _controls.kickPower -= 0.1;
+            _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
     } else if (SDL_JoystickGetButton(_joystick, 2))
     {
-        if(_controls.kickPower < 1 && (now - _lastKickerTime) >= Kicker_Step_Time)
+        if( (now - _lastKickerTime) >= Kicker_Step_Time)
         {
-            _controls.kickPower += 0.1;
+            _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;
         }
     } else {
@@ -151,7 +151,6 @@ void GamepadJoystick::update()
 JoystickControlValues GamepadJoystick::getJoystickControlValues()
 {
     QMutexLocker(&mutex());
-//    cout << _controls.translation.x << endl;
     return _controls;
 }
 

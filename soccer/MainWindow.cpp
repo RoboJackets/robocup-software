@@ -31,6 +31,8 @@ using namespace Eigen;
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 
+static const std::vector<QString> defaultHiddenLayers{"MotionControl", "Planning0", "Planning1", "Planning2", "Planning3", "Planning4", "Planning5"};
+
 void calcMinimumWidth(QWidget *widget, QString text)
 {
 	QRect rect = QFontMetrics(widget->font()).boundingRect(text);
@@ -191,6 +193,15 @@ void MainWindow::live(bool value)
 	}
 }
 
+void MainWindow::addLayer(int i, QString name, bool checked) {
+	QListWidgetItem *item = new QListWidgetItem(name);
+	Qt::CheckState checkState = checked? Qt::Checked : Qt::Unchecked;
+	item->setCheckState(checkState);
+	item->setData(Qt::UserRole, i);
+	_ui.debugLayers->addItem(item);
+	on_debugLayers_itemChanged(item);
+}
+
 void MainWindow::updateViews()
 {
 	int manual =_processor->manualID();
@@ -294,10 +305,9 @@ void MainWindow::updateViews()
 		// Add the missing layers and turn them on
 		for (int i = _ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)
 		{
-			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(liveFrame->debug_layers(i)));
-			item->setCheckState(Qt::Checked);
-			item->setData(Qt::UserRole, i);
-			_ui.debugLayers->addItem(item);
+			const QString name = QString::fromStdString(liveFrame->debug_layers(i));
+			bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(), [&](QString string){return string==name;});
+			addLayer(i, name, enabled);
 		}
 
 		_ui.debugLayers->sortItems();

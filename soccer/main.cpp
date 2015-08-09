@@ -22,90 +22,6 @@
 
 using namespace std;
 
-////BEGIN memory debugging
-//static void *(*old_malloc_hook)(size_t, const void *) = 0;
-//static void *(*old_realloc_hook)(void *, size_t, const void *) = 0;
-//static void (*old_free_hook)(void *, const void *) = 0;
-//
-//static void *md_malloc(size_t size, const void *caller);
-//static void *md_realloc(void *ptr, size_t size, const void *caller);
-//static void md_free(void *ptr, const void *caller);
-//
-//pthread_mutex_t md_mutex = PTHREAD_MUTEX_INITIALIZER;
-//
-//volatile bool barrier = false;
-//
-//static void *md_malloc(size_t size, const void *caller)
-//{
-//	pthread_mutex_lock(&md_mutex);
-//	__malloc_hook = old_malloc_hook;
-//	__realloc_hook = old_realloc_hook;
-//	__free_hook = old_free_hook;
-//	assert(!barrier);
-//	barrier = true;
-//	void *result = malloc(size);
-//	old_malloc_hook = __malloc_hook;
-//	__malloc_hook = md_malloc;
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	barrier = false;
-//	pthread_mutex_unlock(&md_mutex);
-//	return result;
-//}
-//
-//static void *md_realloc(void *ptr, size_t size, const void *caller)
-//{
-//	pthread_mutex_lock(&md_mutex);
-//	__malloc_hook = old_malloc_hook;
-//	__realloc_hook = old_realloc_hook;
-//	__free_hook = old_free_hook;
-//	assert(!barrier);
-//	barrier = true;
-//	assert(size < 1048576 * 100);
-//	void *result = realloc(ptr, size);
-//	__malloc_hook = md_malloc;a
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	barrier = false;
-//	pthread_mutex_unlock(&md_mutex);
-//	return result;
-//}
-//
-//static void md_free(void *ptr, const void *caller)
-//{
-//	pthread_mutex_lock(&md_mutex);
-//	__malloc_hook = old_malloc_hook;
-//	__realloc_hook = old_realloc_hook;
-//	__free_hook = old_free_hook;
-//	assert(!barrier);
-//	barrier = true;
-//	if (!ptr)
-//	{
-//// 		printf("Free zero from %p\n", caller);
-//	} else {
-//		free(ptr);
-//	}
-//	__malloc_hook = md_malloc;
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	barrier = false;
-//	pthread_mutex_unlock(&md_mutex);
-//}
-//
-//static void md_init_hook()
-//{
-//	old_malloc_hook = __malloc_hook;
-//	old_realloc_hook = __realloc_hook;
-//	old_free_hook = __free_hook;
-//	__malloc_hook = md_malloc;
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	fprintf(stderr, "Memory debugging initialized: %p %p %p\n", old_malloc_hook, old_realloc_hook, old_free_hook);
-//}
-//
-//void (*__malloc_initialize_hook)(void) = md_init_hook;
-////END memory debugging
-
 
 //  we use this to catch Ctrl+C and kill the program
 void signal_handler(int signum) {
@@ -160,7 +76,7 @@ int main (int argc, char* argv[])
     QString radioFreq;
 
     string playbookFile;
-	
+
 	for (int i=1 ; i<argc; ++i)
 	{
 		const char* var = argv[i];
@@ -202,7 +118,7 @@ int main (int argc, char* argv[])
 				printf("no config file specified after -c\n");
 				usage(argv[0]);
 			}
-			
+
 			i++;
 			cfgFile = argv[i];
 		}
@@ -213,7 +129,7 @@ int main (int argc, char* argv[])
 				printf("no seed specified after -s\n");
 				usage(argv[0]);
 			}
-			
+
 			i++;
 			seed = strtol(argv[i], 0, 16);
 		}
@@ -236,16 +152,16 @@ int main (int argc, char* argv[])
 
 
 	printf("Running on %s\n", sim ? "simulation" : "real hardware\n");
-	
+
 	printf("seed %016lx\n", seed);
 	srand48(seed);
-	
+
 	// Default config file name
 	if (cfgFile.isNull())
 	{
 		cfgFile = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
 	}
-	
+
 	Configuration config;
 	for (Configurable *obj :  Configurable::configurables())
 	{
@@ -254,7 +170,7 @@ int main (int argc, char* argv[])
 
 	Processor *processor = new Processor(sim);
 	processor->blueTeam(blueTeam);
-	
+
 	// Load config file
 	QString error;
 	if (!config.load(cfgFile, error))
@@ -266,7 +182,7 @@ int main (int argc, char* argv[])
 	MainWindow *win = new MainWindow;
 	win->configuration(&config);
 	win->processor(processor);
-	
+
 	if (!QDir("logs").exists())
 	{
 		fprintf(stderr, "No logs/ directory - not writing log file\n");
@@ -292,12 +208,12 @@ int main (int argc, char* argv[])
     }
 
 	win->logFileChanged();
-	
+
 	processor->start();
 
 	if(playbookFile.size() > 0)
 		processor->gameplayModule()->loadPlaybook(playbookFile);
-	
+
 	win->show();
 
 	processor->gameplayModule()->setupUI();
@@ -305,9 +221,9 @@ int main (int argc, char* argv[])
 
 	int ret = app.exec();
 	processor->stop();
-	
+
 	delete win;
 	delete processor;
-	
+
 	return ret;
 }
