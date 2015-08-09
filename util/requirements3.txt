@@ -6,3 +6,4 @@ watchdog # file-system event notifications
 munkres	# provides the 'hungarian algorithm', which we use for robot role assignment
 pylint #static checker for python
 pyserial
+stylize # code reformatting and checkstyling

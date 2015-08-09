@@ -86,9 +86,8 @@ modernize:
 
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	util/reformat-code.sh
+	stylize --diffbase=origin/master --exclude_dirs build third_party
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	util/reformat-code.sh --check
-
+	stylize --diffbase=origin/master --check --exclude_dirs build third_party
