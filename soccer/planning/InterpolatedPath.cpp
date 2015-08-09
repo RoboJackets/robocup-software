@@ -79,7 +79,7 @@ namespace Planning {
 	}
 
 	bool InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float startTime) const {
-		int start = 0;
+		size_t start = 0;
 		for (float t: times) {
 			start++;
 			if (t > startTime) {
@@ -93,24 +93,22 @@ namespace Planning {
 			return false;
 		}
 
-		// The set of obstacles the starting point was inside of
-		std::set<std::shared_ptr<Geometry2d::Shape> > hit;
-		obstacles.hit(points[start], hit);
+		//This code disregards obstacles which the robot starts in. This allows the robot to move out a obstacle if it is already in one.
+		std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
+		obstacles.hit(points[start], startHitSet);
 
-		for (unsigned int i = start; i < (points.size() - 1); ++i) {
-			std::set<std::shared_ptr<Geometry2d::Shape> > newHit;
-			obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]), newHit);
-			try {
-				set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(),
-							   ExceptionIterator<std::shared_ptr<Geometry2d::Shape>>());
-			} catch (exception &e) {
-				// Going into a new obstacle
-				return true;
+		for (size_t i = start; i < points.size() - 1; i++) {
+			std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
+			if (obstacles.hit(Geometry2d::Segment(points[i], points[i+1]), newHitSet)) {
+				for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
+					//If it hits something, check if the hit was in the origional hitSet
+					if (startHitSet.find(hit) == startHitSet.end()) {
+						return true;
+					}
+				}
 			}
 		}
-
-		// Didn't hit anything or never left any obstacle
-		return obstacles.hit(points.back());
+		return false;
 	}
 
 	float InterpolatedPath::distanceTo(const Geometry2d::Point &pt) const {

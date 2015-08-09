@@ -116,6 +116,8 @@ namespace Gameplay
 
 			void sendFieldDimensionsToPython();
 
+			void calculateFieldObstacles();
+
 
 		protected:
 
