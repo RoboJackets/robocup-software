@@ -40,24 +40,21 @@ robot-prog-samba:
 
 # robot 2015 firmware
 robot2015:
-	@mkdir -p build && cd build && cmake --target robot2015 -DTOC=FALSE .. && make $(MAKE_FLAGS) robot2015
-
+	mkdir -p build && cd build && cmake --target robot2015 -DTOC=FALSE .. && make $(MAKE_FLAGS) robot2015
 robot2015-prog:
-	@mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
-
+	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 robot2015-log:
-	@mkdir -p build && cd build && cmake --target robot2015 -DTOC=TRUE .. && make $(MAKE_FLAGS) robot2015
+	mkdir -p build && cd build && cmake --target robot2015 -DTOC=TRUE .. && make $(MAKE_FLAGS) robot2015
 
 # kicker 2015 firmware
 kicker2015:
-	@mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
+	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
 kicker2015-prog:
-	@mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
+	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
 	
 # Base station 2015 firmware
 base2015:
 	mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
-
 base2015-prog:
 	mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
 
