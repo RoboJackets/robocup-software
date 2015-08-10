@@ -1,27 +1,132 @@
 # This is the "User Constraints File" for configuring the fpga
 # It specifies pin names and properties
 
-##Xilinx Spartan XC3S100E
-##Pin out is based on tq144_footprint.xls
+## Xilinx Spartan XC3S100E
+## Pin out is based on tq144_footprint.xls
 
 
-NET "phaseH<2>" LOC="P26"; #Phase 1
-NET "phaseH<1>" LOC="P32"; #Phase 2
-NET "phaseH<0>" LOC="P34"; #Phase 3
+#NET "phaseH<2>" LOC="P26"; #Phase 1
+#NET "phaseH<1>" LOC="P32"; #Phase 2
+#NET "phaseH<0>" LOC="P34"; #Phase 3
 
-NET "phaseL<2>" LOC="P140"; #Phase 1
-NET "phaseL<1>" LOC="P142"; #Phase 2
-NET "phaseL<0>" LOC="P134"; #Phase 3
+#NET "phaseL<2>" LOC="P140"; #Phase 1
+#NET "phaseL<1>" LOC="P142"; #Phase 2
+#NET "phaseL<0>" LOC="P134"; #Phase 3
 
+#NET "h<2>" LOC="P98" | PULLUP; #Hall Effect 1
+#NET "h<1>" LOC="P96" | PULLUP; #Hall Effect 2
+#NET "h<0>" LOC="P94" | PULLUP; #Hall Effect 3
+
+
+#################################################
+#                     Clock                     #
+#################################################
 NET "clock" LOC="P50";
 
-NET "h<2>" LOC="P98" | PULLUP; #Hall Effect 1
-NET "h<1>" LOC="P96" | PULLUP; #Hall Effect 2
-NET "h<0>" LOC="P94" | PULLUP; #Hall Effect 3
+
+#################################################
+#                     Phases                    #
+#################################################
+NET "phase_aH<0>" LOC="P29";                    # Dribbler
+NET "phase_aL<0>" LOC="P26";
+NET "phase_bH<0>" LOC="P25";
+NET "phase_bL<0>" LOC="P23";
+NET "phase_aH<0>" LOC="P21";
+NET "phase_cL<0>" LOC="P70";
+
+NET "phase_aH<1>" LOC="P93";                    # Drive Motor 1
+NET "phase_aL<1>" LOC="P94";
+NET "phase_bH<1>" LOC="P96";
+NET "phase_bL<1>" LOC="P97";
+NET "phase_aH<1>" LOC="P98";
+NET "phase_cL<1>" LOC="P103";
+
+NET "phase_aH<2>" LOC="P5";                     # Drive Motor 2
+NET "phase_aL<2>" LOC="P7";
+NET "phase_bH<2>" LOC="P8";
+NET "phase_bL<2>" LOC="P10";
+NET "phase_aH<2>" LOC="P14";
+NET "phase_cL<2>" LOC="P15";
+
+NET "phase_aH<3>" LOC="P16";                    # Drive Motor 3
+NET "phase_aL<3>" LOC="P17";
+NET "phase_bH<3>" LOC="P82";
+NET "phase_bL<3>" LOC="P81";
+NET "phase_aH<3>" LOC="P77";
+NET "phase_cL<3>" LOC="P76";
+
+NET "phase_aH<4>" LOC="P124";                   # Drive Motor 4
+NET "phase_aL<4>" LOC="P125";
+NET "phase_bH<4>" LOC="P83";
+NET "phase_bL<4>" LOC="P85";
+NET "phase_aH<4>" LOC="P86";
+NET "phase_cL<4>" LOC="P87";
 
 
-#NET "clock" TNM_NET="clock";
-#TIMESPEC "TS_SYSCLK"=PERIOD "clock" 37 ns HIGH 50 %; #EDIT to match osc time
+#################################################
+#                  Hall Sensors                 #
+#################################################
+NET "hall_a<0>" LOC="P88" | PULLUP;             # Dribbler
+NET "hall_b<0>" LOC="P91" | PULLUP;
+NET "hall_c<0>" LOC="P92" | PULLUP;
+
+NET "hall_a<1>" LOC="P104" | PULLUP;            # Drive Motor 1
+NET "hall_b<1>" LOC="P105" | PULLUP;
+NET "hall_c<1>" LOC="P104" | PULLUP;
+
+NET "hall_a<2>" LOC="P116" | PULLUP;            # Drive Motor 2
+NET "hall_b<2>" LOC="P113" | PULLUP;
+NET "hall_c<2>" LOC="P112" | PULLUP;
+
+NET "hall_a<3>" LOC="P75" | PULLUP;             # Drive Motor 3
+NET "hall_b<3>" LOC="P74" | PULLUP;
+NET "hall_c<3>" LOC="P68" | PULLUP;
+
+NET "hall_a<4>" LOC="P117" | PULLUP;            # Drive Motor 4
+NET "hall_b<4>" LOC="P122" | PULLUP;
+NET "hall_c<4>" LOC="P123" | PULLUP;
+
+
+#################################################
+#                    Encoders                   #
+#################################################
+NET "enc_a<1>" LOC="P101";
+NET "enc_b<1>" LOC="P95";
+NET "enc_a<2>" LOC="P12";
+NET "enc_b<2>" LOC="P6";
+NET "enc_a<3>" LOC="P31";
+NET "enc_b<3>" LOC="P24";
+NET "enc_a<4>" LOC="P89";
+NET "enc_b<4>" LOC="P84";
+
+
+#################################################
+#                   SPI Slave                   #
+#################################################
+NET "spi_slave_miso" LOC="P63";
+NET "spi_slave_mosi" LOC="P44";
+NET "spi_slave_sck" LOC="P71";
+NET "spi_slave_ncs" LOC="P69";
+
+
+#################################################
+#                  SPI Master                   #
+#################################################
+NET "spi_master_miso" LOC="P139";
+NET "spi_master_mosi" LOC="P140";
+NET "spi_master_sck" LOC="P135"; 
+
+# These are the driver chip select pins for the SPI master
+NET "drv_ncs<0>" LOC="P131";
+NET "drv_ncs<1>" LOC="P126";
+NET "drv_ncs<2>" LOC="P130";
+NET "drv_ncs<3>" LOC="P34";
+NET "drv_ncs<4>" LOC="P35";
+
+# These are the ADC chip select pins for the SPI master
+NET "adc_ncs<0>" LOC="P132";
+NET "adc_ncs<1>" LOC="P134";
+
 
 NET "clock" TNM_NET = "clock";
-TIMESPEC "TS_clock" = PERIOD "tnm_clock" 100ns; #18.432Mhz = 54.25ns 27Mhz = 37.04
+TIMESPEC "TS_clock"=PERIOD "tnm_clock" 54.25ns; #18.432Mhz = 54.25ns 27Mhz = 37.04
