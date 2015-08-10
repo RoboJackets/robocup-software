@@ -84,11 +84,17 @@ void Task_CommCtrl(void const* args)
 	// Store the thread's ID
 	osThreadId threadID = Thread::gettid();
 
+	// Store our priority so we know what to reset it to if ever needed
+	osPriority threadPriority;
+
+	if (threadID != NULL)
+		threadPriority  = osThreadGetPriority(threadID);
+	else
+		threadPriority = (osPriority)NULL;
 
 	// Setup the TX/RX lights and have them off initially
 	DigitalOut txLED(RJ_TX_LED, 1);
 	DigitalOut rxLED(RJ_RX_LED, 1);
-
 
 	// Create a new physical hardware communication link
 	CC1201 radio(
@@ -142,7 +148,7 @@ void Task_CommCtrl(void const* args)
 	 */
 
 
-	LOG(INIT, "Radio interface ready on channel %u! Thread ID: %u", radio.freq(), threadID);
+	LOG(INIT, "Radio interface ready on channel %u!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
 
 	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.

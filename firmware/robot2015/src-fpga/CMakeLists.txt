@@ -6,7 +6,7 @@ set(DEV_PARTNUM xc3s100etq144-4)
 
 # names are limited to 8.3 filename types since we need on-board access to this during runtime
 # lookup the limitations of an 8.3 filename before changing the output bitfile's name if that's ever needed
-set(OUTPUT_FILENAME_BASE robocup-fpga)
+set(OUTPUT_FILENAME_BASE rj-fpga)
 
  # These are set with the above
 set(BIT_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.nib)
@@ -124,7 +124,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 add_custom_target(fpga2015-prog
     COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
     DEPENDS fpga2015nib
-    COMMENT "Copies the generated FPGA bitstream file to the mbed"
+    COMMENT COMMENT "Copying the FPGA's bitfile over to the mbed"
 )
 
 

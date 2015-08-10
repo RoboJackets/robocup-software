@@ -8,6 +8,11 @@
 #include "robot-devices.hpp"
 #include "motors.hpp"
 
+
+void Task_CommCtrl(void const*);
+void comm_cmdProcess(const std::vector<std::string>&);
+
+
 // forward declaration for the console's task function
 void Task_SerialConsole(void const* args);
 

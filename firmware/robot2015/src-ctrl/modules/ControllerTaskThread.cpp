@@ -19,6 +19,14 @@ void Task_Controller(void const* args)
 	// Store the thread's ID
 	osThreadId threadID = Thread::gettid();
 
+	// Store our priority so we know what to reset it to if ever needed
+	osPriority threadPriority;
+
+	if (threadID != NULL)
+		threadPriority  = osThreadGetPriority(threadID);
+	else
+		threadPriority = (osPriority)NULL;
+
 	float gyroVals[3] = { 0 };
 	float accelVals[3] = { 0 };
 
@@ -31,10 +39,10 @@ void Task_Controller(void const* args)
 	// imu.selfTest();
 
 	if (imu.testConnection()) {
-		LOG(INIT, "Control loop ready! Thread ID: %u", threadID);
+		LOG(INIT, "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
 
 	} else {
-		LOG(SEVERE, "MPU6050 not found! Falling back to sensorless control loop.");
+		LOG(SEVERE, "MPU6050 not found!\r\n    Falling back to sensorless control loop.");
 
 		// Once things are more organized, startup a sensorless control loop thread before killing this one.
 		osThreadTerminate(threadID);

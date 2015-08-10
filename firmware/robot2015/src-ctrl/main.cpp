@@ -2,6 +2,7 @@
 
 #include <cstdarg>
 #include <ctime>
+
 #include <logger.hpp>
 
 #include "commands.hpp"
@@ -64,15 +65,18 @@ int main(void)
 
 	motors_Init();
 
+	// Wait for anything before now to print things out of the serial port.
+	// That way, things should stay lined up in the console when starting all the threads.
+	Thread::wait(200);
 
-	// Start the thread task for the serial console
-	Thread console_task(Task_SerialConsole, NULL, osPriorityLow);
+	// Start the thread task for the on-board control loop
+	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
 
 	// Start the thread task for handling radio communications
 	Thread comm_task(Task_CommCtrl, NULL, osPriorityHigh);
 
-	// Start the thread task for the on-board control loop
-	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
+	// Start the thread task for the serial console
+	Thread console_task(Task_SerialConsole, NULL, osPriorityLow);
 
 
 	//FPGA fpga;
@@ -142,6 +146,10 @@ int main(void)
 		osMailPut(paramQID, paramBlk);
 	*/
 
+
+	/*
+	 * Uncomment this block to show info about the bit packing of a radio packet
+	 *
 	RTP_t pkt;
 	pkt.header_link = RTP_HEADER(0x0F, 0x00, true, true);
 	LOG(INIT,
@@ -156,6 +164,7 @@ int main(void)
 	    pkt.ack,
 	    pkt.sfs
 	   );
+	*/
 
 	while (1) {
 		//LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));

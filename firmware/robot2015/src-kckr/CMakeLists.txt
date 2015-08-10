@@ -28,17 +28,17 @@ set_target_properties(kicker2015_elf PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE
 add_custom_target(kicker2015
     # the -j options tell objcopy what sections to include in the output
     # the -O ihex specifies what output format to use, which is the hex format needed for flashing the AVR
-    COMMAND avr-objcopy -j .text -j .data -O binary ${CMAKE_CURRENT_BINARY_DIR}/kicker2015_elf ${PROJECT_SOURCE_DIR}/run/kicker.nib
+    COMMAND avr-objcopy -j .text -j .data -O binary ${CMAKE_CURRENT_BINARY_DIR}/kicker2015_elf ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib
     DEPENDS kicker2015_elf
-    COMMENT "objcopying to convert kicker.elf to kicker.nib"
+    COMMENT "objcopying to convert kicker.elf to rj-kickr.nib"
 )
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/kicker.nib)
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib)
 
 # add command to copy the kicker firmware onto the mbed
 # names are limited to 8.3 filename types since we need on-board access to this during runtime
 # lookup the limitations of an 8.3 filename before changing the output binary name if that's ever needed
 add_custom_target(kicker2015-prog
-    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/kicker.nib
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib
     DEPENDS kicker2015
-    COMMENT "Copies kickerFW onto the mbed"
+    COMMENT "Copying the kicker board's binary over to the mbed"
 )
