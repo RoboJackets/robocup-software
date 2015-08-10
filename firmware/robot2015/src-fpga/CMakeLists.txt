@@ -1,8 +1,20 @@
-
+###############################################################################
+################################ LOCAL VARIABLES ##############################
+###############################################################################
 # Device specifics
 set(DEV_PARTNUM xc3s100etq144-4)
 
+# names are limited to 8.3 filename types since we need on-board access to this during runtime
+# lookup the limitations of an 8.3 filename before changing the output bitfile's name if that's ever needed
+set(OUTPUT_FILENAME_BASE robocup-fpga)
 
+ # These are set with the above
+set(BIT_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.nib)
+
+
+###############################################################################
+########################## FIND PATH TO ISE WEBPACK ###########################
+###############################################################################
 # look for installed Xilinx tools in /opt/Xilinx
 message(STATUS "Searching for Xilinx tools in '/opt/Xilinx'")
 file(GLOB XILINX_VERSION_DIRS
@@ -36,6 +48,7 @@ endforeach()
 # log a warning if no Xilinx versions could be found, otherwise set the directory to the tools
 list(LENGTH XILINX_VERSION_DIRS AVAILABLE_XILINX_VERSIONS_COUNT)
 
+# show what versions were found and what version we're using
 if(AVAILABLE_XILINX_VERSIONS_COUNT EQUAL 0)
     message(WARNING
         "Unable to find Xilinx tools.  Install the ISE WebPACK (14.7) to \
@@ -55,12 +68,14 @@ else()
 endif()
 
 
+###############################################################################
+################################ FPGA TARGETS #################################
+###############################################################################
 # Move the constrain file to where we'll call the Xilinx command from
 add_custom_target(copy_ucf
     ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Copying UCF file to xflow working directory"
 )
-
 
 # target for synthesizing the Verilog to a bitstream file that can be used to configure the fpga
 add_custom_target(fpga2015bit
@@ -75,7 +90,6 @@ add_custom_target(fpga2015bit
     DEPENDS copy_ucf
 )
 
-
 # The bitstream file contains extra header information that we don't need when configuring the fpga, so we convert to the binary format
 # which can be used for configuration directly.
 # The -b flag instructs promgen to swap the bit order, which is required for slave serial mode.  See this forum post for more info:
@@ -87,26 +101,28 @@ add_custom_target(fpga2015bin
     COMMENT "Creating bin file from bitstream"
 )
 
-
 # MBED tries to load the most recent .bin file as its main program, so we can't name our fpga file with a .bin extension
 add_custom_target(fpga2015nib
-    cp ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin ${CMAKE_CURRENT_BINARY_DIR}/robocup.nib
+    cp ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
     COMMENT "Copying '.bin' to '.nib' b/c '.bin' is a reserved extension on the mbed."
     DEPENDS fpga2015bin
 )
 add_custom_target(fpga2015  # An alias back to the fpga2015bin target
     DEPENDS fpga2015nib
 )
-
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME})
 
 # target to copy the output fpga bitstream to the mbed
 add_custom_target(fpga2015-prog
-    COMMAND ${MBED_COPY_SCRIPT} ${CMAKE_CURRENT_BINARY_DIR}/robocup.nib
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
     DEPENDS fpga2015nib
     COMMENT "Copies the generated FPGA bitstream file to the mbed"
 )
 
 
+###############################################################################
+###################### PROVIDE GIT HASH FOR SYNTHESIS #########################
+###############################################################################
 # Write git_version.vh into the build dir containing the first 8 characters of
 # the current git hash and a boolean for whether or not the repo is "dirty"
 execute_process(
