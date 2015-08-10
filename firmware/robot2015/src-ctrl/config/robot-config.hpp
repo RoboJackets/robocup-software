@@ -7,10 +7,6 @@
 #define ARM_MATH_CM3
 
 // ** ============================= ** DEBUGGING OPTIONS ** ============================= **
-
-// Set the debugging level for compiling. Valid levels include `0`, `1`, `2`, `3`, & `4`.
-#define RJ_LOGGING_EN           true
-
 /*
     This will enable/disable a `Log File` that is created at the mbed's startup. The file is written
     to the mbed's onboard flash memory and can be opened for debugging purposes if it is enabled.

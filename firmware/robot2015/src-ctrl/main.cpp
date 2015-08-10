@@ -1,4 +1,9 @@
 #include "robot.hpp"
+
+#include <cstdarg>
+#include <ctime>
+
+#include "commands.hpp"
 // #include "neostrip.cpp"
 
 
@@ -28,15 +33,16 @@ int main(void)
 	/* Set the system time to the most recently known time. The compilation
 	 * time is used here. The timestamp should always be the same when using GCC.
 	 */
+	/*
 	const char* sysTime = __DATE__ " " __TIME__;
-	struct tm tt;
+	std::tm* tt;
 
-	if (strptime(sysTime, "%b %d %Y %H:%M:%S", &tt) == 0) {	// 'Mmm DD YYYYHH:MM:SS'
+	if (std::strftime(sysTime, sizeof(sysTime),"%b %d %Y %H:%M:%S", tt) == 0) {	// 'Mmm DD YYYYHH:MM:SS'
 		LOG(SEVERE, "Unable to parse system time of %s", sysTime);
 	} else {
-		set_time(mktime(&tt));
+		set_time(mktime(tt));
 	}
-
+	*/
 
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
