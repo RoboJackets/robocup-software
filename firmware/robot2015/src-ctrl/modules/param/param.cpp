@@ -21,7 +21,6 @@
 
 #include "param.hpp"
 
-
 #include "rtos.h"
 #include "robot-types.hpp"
 #include "CommModule.hpp"
