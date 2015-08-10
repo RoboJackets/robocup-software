@@ -27,13 +27,15 @@ include(${MBED_ENV_SETUP_FILE})
 # set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # enable C++ exceptions
-#set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
 
 # enable C++11
-#set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
 
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
+# Use filenames relative to this directory for logging output paths
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -D__FILE_NAME__='\"$(subst ${CMAKE_CURRENT_LIST_DIR}/,,$(basename $(abspath $<)))\"'")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")

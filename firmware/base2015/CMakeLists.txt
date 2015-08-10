@@ -21,16 +21,16 @@ set_target_properties(base2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # custom target for creating a .bin file from an elf binary
 add_custom_target(base2015
-    arm-none-eabi-objcopy -O binary base2015_elf base2015.bin
-    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/base2015.bin ${PROJECT_SOURCE_DIR}/run/
+    arm-none-eabi-objcopy -O binary base2015_elf rj-base.bin
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/rj-base.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS base2015_elf
     COMMENT "objcopying to make MBED-compatible executable"
 )
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/base2015.bin)
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-base.bin)
 
 add_custom_target(base2015-prog
-    arm-none-eabi-objcopy -O binary base2015_elf base2015.bin
-    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/base2015.bin
+    arm-none-eabi-objcopy -O binary base2015_elf rj-base.bin
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-base.bin
     DEPENDS base2015
     COMMENT "Copying base station's binary over to the mbed"
 )
