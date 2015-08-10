@@ -20,10 +20,6 @@
 #define COMM_MODULE_SIGNAL_START_THREAD     0x01
 
 
-void Task_CommCtrl(void const*);
-void comm_cmdProcess(const vector<string>&);
-
-
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */

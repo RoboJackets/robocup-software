@@ -1,5 +1,7 @@
 #include "Console.hpp"
 
+#include "logger.hpp"
+
 
 #define PUTC(c) 	pc.putc(c)
 #define GETC 		pc.getc
@@ -58,6 +60,8 @@ char* Console::Init(void)
 	instance->rxIndex = 0;
 	instance->txIndex = 0;
 
+	LOG(INIT, "Hello from the 'common2015' library!");
+
 	printf(" ");
 	Flush();
 	printf("\b");
@@ -74,131 +78,124 @@ void Console::PrintHeader(void)
 	Flush();
 }
 
-void Console::ClearRXBuffer()
+void Console::ClearRXBuffer(void)
 {
 	memset(rxBuffer, '\0', BUFFER_LENGTH);
 }
 
-void Console::ClearTXBuffer()
+void Console::ClearTXBuffer(void)
 {
 	memset(txBuffer, '\0', BUFFER_LENGTH);
 }
 
-void Console::Flush()
+void Console::Flush(void)
 {
 	fflush(stdout);
 }
 
-void Console::RXCallback()
+void Console::RXCallback(void)
 {
 	// If for some reason more than one character is in the buffer when the
 	// interrupt is called, handle them all.
 	while (pc.readable()) {
-		// read the char that caused the interrupt
-		char c = GETC();
 
-		// flag the start of an arrow key sequence
-		if (c == ARROW_KEY_SEQUENCE_ONE) {
-			flagOne = true;
-		}
-		// check if we're in a sequence if flagOne is set - do things if necessary
-		else if (flagOne) {
-			if (flagTwo) {
-				switch (c) {
-					case ARROW_UP_KEY:
-						PRINTF("\033M");
-						break;
+		// If there is an command that hasn't finished yet, ignore the character for now
+		if (command_handled == false && command_ready == true) {
 
-					case ARROW_DOWN_KEY:
-						PRINTF("\033D");
-						break;
+			return;
 
-					default:
-						flagOne = false;
-						flagTwo = false;
-				}
+		} else {
+			// Otherwise, continue as normal
 
-				Flush();
-				continue;
+			// read the char that caused the interrupt
+			char c = GETC();
 
-			} else {	// flagTwo not set
-				switch (c) {
-					case ARROW_KEY_SEQUENCE_TWO:
-						flagTwo = true;
-						break;
+			// flag the start of an arrow key sequence
+			if (c == ARROW_KEY_SEQUENCE_ONE) {
+				flagOne = true;
+			}
+			// check if we're in a sequence if flagOne is set - do things if necessary
+			else if (flagOne) {
+				if (flagTwo) {
+					switch (c) {
+						case ARROW_UP_KEY:
+							PRINTF("\033M");
+							break;
 
-					default:
-						flagOne = false;
-						break;
+						case ARROW_DOWN_KEY:
+							PRINTF("\033D");
+							break;
+
+						default:
+							flagOne = false;
+							flagTwo = false;
+					}
+
+					Flush();
+					continue;
+
+				} else {	// flagTwo not set
+					switch (c) {
+						case ARROW_KEY_SEQUENCE_TWO:
+							flagTwo = true;
+							break;
+
+						default:
+							flagOne = false;
+							break;
+					}
 				}
 			}
-		}
 
-		// if the buffer is full, ignore the chracter and print a
-		// warning to the console
-		if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR) {
-			PRINTF("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
-			Flush();
-		}
+			// if the buffer is full, ignore the chracter and print a
+			// warning to the console
+			if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR) {
+				PRINTF("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
+				Flush();
+			}
 
-		//if a new line character is sent, process the current buffer
-		else if (c == NEW_LINE_CHAR) {
-			// print new line prior to executing
-			PRINTF("%c\n", NEW_LINE_CHAR);
-			Flush();
-			rxBuffer[rxIndex] = '\0';
+			//if a new line character is sent, process the current buffer
+			else if (c == NEW_LINE_CHAR) {
+				// print new line prior to executing
+				PRINTF("%c\n", NEW_LINE_CHAR);
+				Flush();
+				rxBuffer[rxIndex] = '\0';
 
-			// Wait until a different process signals that we can continue
-			// before trying to access the rxBuffer again. Failure to do so
-			// could end very badly.
-			NVIC_DisableIRQ(UART0_IRQn);
+				command_ready = true;
+				command_handled = false;
+			}
 
-			command_ready = true;
+			//if a backspace is requested, handle it.
+			else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0) {
+				//re-terminate the string
+				rxBuffer[--rxIndex] = '\0';
 
-			while (command_handled == false) { /* wait */ };
+				// 1) Move cursor back
+				// 2) Write a space to clear the character
+				// 3) Move back cursor again
+				PUTC(BACKSPACE_REPLY_CHAR);
+				PUTC(BACKSPACE_REPLACE_CHAR);
+				PUTC(BACKSPACE_REPLY_CHAR);
+				Flush();
+			}
 
-			command_ready = false;
+			// set that a command break was requested flag if we received a break character
+			else if (c == BREAK_CHAR) {
+				iter_break_req = true;
+			}
 
-			NVIC_EnableIRQ(UART0_IRQn);
-
-			if (iter_break_req == false)
-				PRINTF(CONSOLE_HEADER.c_str());
-
-			// Clean up after command execution
-			rxIndex = 0;
-			Flush();
-		}
-
-		//if a backspace is requested, handle it.
-		else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0) {
-			//re-terminate the string
-			rxBuffer[--rxIndex] = '\0';
-
-			// 1) Move cursor back
-			// 2) Write a space to clear the character
-			// 3) Move back cursor again
-			PUTC(BACKSPACE_REPLY_CHAR);
-			PUTC(BACKSPACE_REPLACE_CHAR);
-			PUTC(BACKSPACE_REPLY_CHAR);
-			Flush();
-		}
-
-		// set that a command break was requested flag if we received a break character
-		else if (c == BREAK_CHAR) {
-			iter_break_req = true;
-		}
-
-		// No special character, add it to the buffer and return it to
-		// the terminal to be visible.
-		else {
-			rxBuffer[rxIndex++] = c;
-			PUTC(c);
-			Flush();
+			// No special character, add it to the buffer and return it to
+			// the terminal to be visible.
+			else {
+				rxBuffer[rxIndex++] = c;
+				PUTC(c);
+				Flush();
+			}
 		}
 	}
 }
 
-void Console::TXCallback()
+void Console::TXCallback(void)
 {
 	NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
@@ -253,6 +250,11 @@ void Console::IterCmdBreakReq(bool newState)
 	}
 }
 
+char* Console::rxBufferPtr(void)
+{
+	return instance->rxBuffer;
+}
+
 bool Console::CommandReady(void)
 {
 	return command_ready;
@@ -260,7 +262,18 @@ bool Console::CommandReady(void)
 
 void Console::CommandHandled(bool cmdDoneState)
 {
+	// update the class's flag for if a command was handled or not
 	command_handled = cmdDoneState;
+
+	// Clean up after command execution
+	instance->rxIndex = 0;
+
+	// reset our outgoing flag saying if there's a valid command sequence in the RX buffer or now
+	command_ready = false;
+
+	// print out the header without a newline first
+	if (iter_break_req == false)
+		instance->PRINTF("%s", instance->CONSOLE_HEADER.c_str());
 }
 
 void Console::changeHostname(const std::string& hostname)

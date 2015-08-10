@@ -281,19 +281,19 @@ class CommPorts : CommPort<T>
         return tmpPort;
     }
 
-    const int count(void)
+    int count(void) const
     {
         return ports.size();
     }
 
-    const bool empty(void)
+    bool empty(void) const
     {
         return ports.empty();
     }
 
 
     // Get the total count (across all ports) of each RX/TX packet count
-    const unsigned int allRXPackets(void) const
+    unsigned int allRXPackets(void) const
     {
         unsigned int pcks = 0;
 
@@ -303,7 +303,7 @@ class CommPorts : CommPort<T>
 
         return pcks;
     }
-    const unsigned int allTXPackets(void) const
+    unsigned int allTXPackets(void) const
     {
         unsigned int pcks = 0;
 

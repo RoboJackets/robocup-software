@@ -103,6 +103,8 @@ class Console
   static bool IterCmdBreakReq(void);
   static void IterCmdBreakReq(bool newState);
 
+  static char* rxBufferPtr(void);
+
   static bool CommandReady(void);
   static void CommandHandled(bool);
 
@@ -111,6 +113,7 @@ class Console
 
   static void Baudrate(uint16_t);
   static uint16_t Baudrate(void);
+
   static void PrintHeader(void);
 
  private:
