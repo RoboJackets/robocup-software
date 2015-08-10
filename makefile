@@ -49,6 +49,16 @@ kicker2015:
 	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
 kicker2015-prog:
 	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
+
+# fpga 2015 synthesis
+fpga2015:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+fpga2015-prog:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015-prog
+
+# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
+firmware2015: robot2015 kicker2015 fpga2015 
+firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
 	
 # Base station 2015 firmware
 base2015:
