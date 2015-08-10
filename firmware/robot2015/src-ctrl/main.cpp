@@ -2,6 +2,7 @@
 
 #include <cstdarg>
 #include <ctime>
+#include <logger.hpp>
 
 #include "commands.hpp"
 // #include "neostrip.cpp"

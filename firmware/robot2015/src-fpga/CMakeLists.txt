@@ -11,19 +11,22 @@ set(OUTPUT_FILENAME_BASE robocup-fpga)
  # These are set with the above
 set(BIT_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.nib)
 
+# This is the root path to anything Xilinx related
+set(XILINX_SYSTEM_ROOT /opt/Xilinx)
+
 
 ###############################################################################
 ########################## FIND PATH TO ISE WEBPACK ###########################
 ###############################################################################
 # look for installed Xilinx tools in /opt/Xilinx
-message(STATUS "Searching for Xilinx tools in '/opt/Xilinx'")
+message(STATUS "Searching for Xilinx tools in '${XILINX_SYSTEM_ROOT}'")
 file(GLOB XILINX_VERSION_DIRS
-    /opt/Xilinx/*
+    ${XILINX_SYSTEM_ROOT}/*
 )
 
 # Pick out the folders that look like a floating point formatted value
 string(REGEX MATCHALL
-    "/opt/Xilinx/(([0-9]+)?[\\.]).*"
+    "${XILINX_SYSTEM_ROOT}/(([0-9]+)?[\\.]).*"
     XILINX_VERSION_DIRS
     "${XILINX_VERSION_DIRS}"
 )
@@ -52,13 +55,18 @@ list(LENGTH XILINX_VERSION_DIRS AVAILABLE_XILINX_VERSIONS_COUNT)
 if(AVAILABLE_XILINX_VERSIONS_COUNT EQUAL 0)
     message(WARNING
         "Unable to find Xilinx tools.  Install the ISE WebPACK (14.7) to \
-        '/opt/Xilinx' to synthesize Verilog for the FPGA. \
+        '${XILINX_SYSTEM_ROOT}' to synthesize Verilog for the FPGA. \
         http://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/design-tools.html.")
 else()
     # print out some version info
-    message(STATUS "${AVAILABLE_XILINX_VERSIONS_COUNT} version(s) of Xilinx tools found.")
+    if(${AVAILABLE_XILINX_VERSIONS_COUNT} EQUAL 1)
+        message(STATUS "${AVAILABLE_XILINX_VERSIONS_COUNT} version of Xilinx tools found:")
+    else()
+        message(STATUS "${AVAILABLE_XILINX_VERSIONS_COUNT} versions of Xilinx tools found:")
+    endif()
+    
     foreach(VERSION_NUM ${XILINX_VERSION_DIRS})
-        message(STATUS "    Found '${VERSION_NUM}'")
+        message(STATUS "  Found '${VERSION_NUM}'")
     endforeach()
 
     list(GET XILINX_VERSION_DIRS 0 XILINX_VERSION_DIR)

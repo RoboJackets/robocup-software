@@ -1,9 +1,14 @@
 #include "controller.hpp"
 
 #include <rtos.h>
+#include <logger.hpp>
+
+#include "motors.hpp"
+#include "mpu-6050.hpp"
 
 
-#define CONTROL_LOOP_FREQ_HZ 10
+// Keep this pretty high for now. Ideally, drop it down to ~3 for production builds. Hopefully that'll be possible without the console
+#define CONTROL_LOOP_WAIT_MS 250
 
 
 /**
@@ -52,7 +57,7 @@ void Task_Controller(void const* args)
 		    accelVals[2]
 		   );
 
-		Thread::wait(HZ_TO_DELAY(CONTROL_LOOP_FREQ_HZ));
+		Thread::wait(CONTROL_LOOP_WAIT_MS);
 		//Thread::yield();
 	}
 
