@@ -69,16 +69,16 @@ set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # custom target for creating a .bin file from an elf binary
 add_custom_target(robot2015
-    arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/robot2015.bin ${PROJECT_SOURCE_DIR}/run/
+    arm-none-eabi-objcopy -O binary robot2015_elf rj-robot.bin
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/rj-robot.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS robot2015_elf
     COMMENT "objcopying to make mbed-compatible executable"
 )
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/robot2015.bin)
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
 
 add_custom_target(robot2015-prog
-    arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/robot2015.bin
+    arm-none-eabi-objcopy -O binary robot2015_elf rj-robot.bin
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin
     DEPENDS robot2015
-    COMMENT "Copying the robot's mbed binary over to the mbed"
+    COMMENT "Copying the robot's binary over to the mbed"
 )
