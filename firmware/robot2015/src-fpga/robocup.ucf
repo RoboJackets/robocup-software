@@ -1,120 +1,116 @@
-NET "M1A_H" LOC="P3";
-NET "M1A_L" LOC="P4";
-NET "M1B_H" LOC="P5";
-NET "M1B_L" LOC="P7";
-NET "M1HALL_C" LOC="P8";
-NET "M1HALL_A" LOC="P10";
-NET "M1HALL_B" LOC="P12";
-NET "M1C_H" LOC="P14";
-NET "M1C_L" LOC="P15";
-NET "M4A_H" LOC="P25";
-NET "M4A_L" LOC="P26";
-NET "M4B_H" LOC="P32";
-NET "M4B_L" LOC="P33";
-NET "M4C_H" LOC="P34";
-NET "M4C_L" LOC="P35";
-NET "M4HALL_B" LOC="P36";
-NET "M4HALL_A" LOC="P38";
-# FLASH_NCS(39) is not used by the FPGA after configuration, but is present here to provide a pullup
-# while all other unused pins have pulldowns (default)
-NET "FLASH_NCS" LOC="P39";
-NET "M4HALL_C" LOC="P41";
-NET "M4ENC_A" LOC="P43";
-NET "MOSI" LOC="P44";
-NET "M4ENC_B" LOC="P47";
-NET "SYSCLK" LOC="P50";
-#NET "FS1" LOC="P51"; # unused
-#NET "FS0" LOC="P52"; # unused
-# M2(57) is not used by the FPGA after configuration
-NET "MISO" LOC="P63";
-NET "FPGA_NCS" LOC="P69";
-NET "SCK" LOC="P71";
-# DONE(72) is not used by the FPGA after configuration
-NET "M3ENC_A" LOC="P77";
-NET "M3ENC_B" LOC="P78";
-NET "M3A_H" LOC="P81";
-NET "M3A_L" LOC="P82";
-NET "M3B_H" LOC="P83";
-NET "M3HALL_C" LOC="P84";
-NET "M3B_L" LOC="P85";
-NET "M3C_H" LOC="P86";
-NET "M3C_L" LOC="P87";
-NET "M5A_H" LOC="P88";
-NET "M3HALL_A" LOC="P89";
-NET "M5A_L" LOC="P91";
-NET "M5B_H" LOC="P92";
-NET "M5B_L" LOC="P93";
-NET "M5C_H" LOC="P94";
-NET "M3HALL_B" LOC="P95";
-NET "M5C_L" LOC="P96";
-NET "M5HALL_A" LOC="P97";
-NET "M5HALL_B" LOC="P98";
-NET "M5HALL_C" LOC="P101";
-NET "M2A_H" LOC="P103";
-NET "M2A_L" LOC="P104";
-NET "M2B_H" LOC="P105";
-NET "M2B_L" LOC="P106";
-NET "DISCHARGE" LOC="P107";
-# TMS(108) is JTAG
-# ARM_TDI(109) is JTAG
-# TCK(110) is JTAG)
-NET "M2C_H" LOC="P112";
-NET "M2C_L" LOC="P113";
-NET "M2HALL_B" LOC="P114";
-NET "M2HALL_A" LOC="P116";
-NET "M2HALL_C" LOC="P117";
-NET "M2ENC_A" LOC="P119";
-NET "M2ENC_B" LOC="P120";
-NET "KSDA" LOC="P122";
-NET "KSCL" LOC="P123";
-NET "KDONE" LOC="P124";
-NET "KCHARGE" LOC="P125";
-NET "KKICK" LOC="P126";
-# PCB error: 128, 129 (optional), and 130 must be shorted on the board to put KCHIP on an output.
-NET "KCHIP" LOC="P130";
-NET "M1ENC_A" LOC="P141";
-NET "M1ENC_B" LOC="P142";
-# FPGA_TDI(144) is JTAG
+# This is the "User Constraints File" for configuring the fpga
+# It specifies pin names and properties
 
-# Hall effect sensor vectors are [2:0] which maps to {a, b, c}.
-NET "M1HALL_A" PULLUP;
-NET "M1HALL_B" PULLUP;
-NET "M1HALL_C" PULLUP;
 
-NET "M2HALL_A" PULLUP;
-NET "M2HALL_B" PULLUP;
-NET "M2HALL_C" PULLUP;
+#################################################
+#                     Clock                     #
+#################################################
+NET "sysclk" LOC="P50";
 
-NET "M3HALL_A" PULLUP;
-NET "M3HALL_B" PULLUP;
-NET "M3HALL_C" PULLUP;
 
-NET "M4HALL_A" PULLUP;
-NET "M4HALL_B" PULLUP;
-NET "M4HALL_C" PULLUP;
+#################################################
+#                     Phases                    #
+#################################################
+NET "phase_aH<0>" LOC="P29";                    # Dribbler
+NET "phase_aL<0>" LOC="P26";
+NET "phase_bH<0>" LOC="P25";
+NET "phase_bL<0>" LOC="P23";
+NET "phase_aH<0>" LOC="P21";
+NET "phase_cL<0>" LOC="P70";
 
-NET "M5HALL_A" PULLUP;
-NET "M5HALL_B" PULLUP;
-NET "M5HALL_C" PULLUP;
+NET "phase_aH<1>" LOC="P93";                    # Drive Motor 1
+NET "phase_aL<1>" LOC="P94";
+NET "phase_bH<1>" LOC="P96";
+NET "phase_bL<1>" LOC="P97";
+NET "phase_aH<1>" LOC="P98";
+NET "phase_cL<1>" LOC="P103";
 
-NET "M1ENC_A" PULLUP;
-NET "M1ENC_B" PULLUP;
+NET "phase_aH<2>" LOC="P5";                     # Drive Motor 2
+NET "phase_aL<2>" LOC="P7";
+NET "phase_bH<2>" LOC="P8";
+NET "phase_bL<2>" LOC="P10";
+NET "phase_aH<2>" LOC="P14";
+NET "phase_cL<2>" LOC="P15";
 
-NET "M2ENC_A" PULLUP;
-NET "M2ENC_B" PULLUP;
+NET "phase_aH<3>" LOC="P16";                    # Drive Motor 3
+NET "phase_aL<3>" LOC="P17";
+NET "phase_bH<3>" LOC="P82";
+NET "phase_bL<3>" LOC="P81";
+NET "phase_aH<3>" LOC="P77";
+NET "phase_cL<3>" LOC="P76";
 
-NET "M3ENC_A" PULLUP;
-NET "M3ENC_B" PULLUP;
+NET "phase_aH<4>" LOC="P124";                   # Drive Motor 4
+NET "phase_aL<4>" LOC="P125";
+NET "phase_bH<4>" LOC="P83";
+NET "phase_bL<4>" LOC="P85";
+NET "phase_aH<4>" LOC="P86";
+NET "phase_cL<4>" LOC="P87";
 
-NET "M4ENC_A" PULLUP;
-NET "M4ENC_B" PULLUP;
 
-NET "DISCHARGE" PULLUP;
-NET "KDONE" PULLUP;
-NET "KSDA" PULLUP;
-NET "KSCL" PULLUP;
-NET "FPGA_NCS" PULLUP;
-NET "FLASH_NCS" PULLUP;
+#################################################
+#                  Hall Sensors                 #
+#################################################
+NET "hall_a<0>" LOC="P88" | PULLUP;             # Dribbler
+NET "hall_b<0>" LOC="P91" | PULLUP;
+NET "hall_c<0>" LOC="P92" | PULLUP;
 
-NET "SYSCLK" TNM_NET="SYSCLK";
-TIMESPEC "TS_SYSCLK"=PERIOD "SYSCLK" 50 ns HIGH 50 %;
+NET "hall_a<1>" LOC="P104" | PULLUP;            # Drive Motor 1
+NET "hall_b<1>" LOC="P105" | PULLUP;
+NET "hall_c<1>" LOC="P104" | PULLUP;
+
+NET "hall_a<2>" LOC="P116" | PULLUP;            # Drive Motor 2
+NET "hall_b<2>" LOC="P113" | PULLUP;
+NET "hall_c<2>" LOC="P112" | PULLUP;
+
+NET "hall_a<3>" LOC="P75" | PULLUP;             # Drive Motor 3
+NET "hall_b<3>" LOC="P74" | PULLUP;
+NET "hall_c<3>" LOC="P68" | PULLUP;
+
+NET "hall_a<4>" LOC="P117" | PULLUP;            # Drive Motor 4
+NET "hall_b<4>" LOC="P122" | PULLUP;
+NET "hall_c<4>" LOC="P123" | PULLUP;
+
+
+#################################################
+#                    Encoders                   #
+#################################################
+NET "enc_a<1>" LOC="P101";
+NET "enc_b<1>" LOC="P95";
+NET "enc_a<2>" LOC="P12";
+NET "enc_b<2>" LOC="P6";
+NET "enc_a<3>" LOC="P31";
+NET "enc_b<3>" LOC="P24";
+NET "enc_a<4>" LOC="P89";
+NET "enc_b<4>" LOC="P84";
+
+
+#################################################
+#                   SPI Slave                   #
+#################################################
+NET "spi_slave_miso" LOC="P63";
+NET "spi_slave_mosi" LOC="P44";
+NET "spi_slave_sck" LOC="P71";
+NET "spi_slave_ncs" LOC="P69";
+
+
+#################################################
+#                  SPI Master                   #
+#################################################
+NET "spi_master_miso" LOC="P139";
+NET "spi_master_mosi" LOC="P140";
+NET "spi_master_sck" LOC="P135"; 
+
+# These are the driver chip select pins for the SPI master
+NET "drv_ncs<0>" LOC="P131";
+NET "drv_ncs<1>" LOC="P126";
+NET "drv_ncs<2>" LOC="P130";
+NET "drv_ncs<3>" LOC="P34";
+NET "drv_ncs<4>" LOC="P35";
+
+# These are the ADC chip select pins for the SPI master
+NET "adc_ncs<0>" LOC="P132";
+NET "adc_ncs<1>" LOC="P134";
+
+
+NET "clock" TNM_NET = "clock";
+TIMESPEC "TS_clock"=PERIOD "tnm_clock" 54.25ns; #18.432Mhz = 54.25ns 27Mhz = 37.04
