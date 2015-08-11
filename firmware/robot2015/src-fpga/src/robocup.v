@@ -52,6 +52,8 @@ module robocup (
 );
 
 
+
+/*
 // This is sent as the first byte of every SPI transfer
 localparam LOGIC_VERSION = 8'h05;
 
@@ -271,6 +273,8 @@ always @(posedge sysclk) begin
 	end
 end
 
+*/
+
 
 // This is the interface used for communications back to the mbed
 spi_slave #(
@@ -289,36 +293,39 @@ spi_slave #(
 );
 
 
-// This handles all of the SPI communications to/from the motor board
-Motor_Board_Comm motor_board_comm_module();
+// This handles all of the SPI bus communications to/from the motor board
+// Motor_Board_Comm motor_board_comm_module();
 
 
-// These are all of the instances for the drive motors and the dribbler
+// Declare a variable for synthesis that is used for generating modules within for loops
 genvar i;
+
+
+// This is where the declarations for each set of motor pins is generated
 generate for (i = 0; i < 5; i = i + 1)
-	begin: Motor_Param_Inst
-
-		wire [1:0] enc[i] = { enc_a[i], enc_b[i] };
-		wire [2:0] hall[i] = { hall_a[i], hall_b[i], hall_c[i] };
-		wire [5:0] phaseOut[i] = { phase_aH[i], phase_aL[i], phase_bH[i], phase_bL[i], phase_cH[i], phase_cL[i] };
-
-    end
-endgenerate
-generate for (i = 0; i < 5; i = i + 1)
-	begin: Motor_Inst
-
-		BLDC_Motor motor_i (
-			.clk(sysclk),
-			.duty_cycle(duty_cycle_sync[i]),
-			.hall(hall_sync[i]),
-			.enc(enc_sync[i]),
-			.phaseH(phaseH_setup[i]),
-			.phaseL(phaseL_setup[i]),
-			.hall_count(hall_count_setup[i]),
-			.enc_count(enc_count_setup[i])
-		);
-
-    end
+	wire [1:0] enc[i] = { enc_a[i], enc_b[i] };
+	wire [2:0] hall[i] = { hall_a[i], hall_b[i], hall_c[i] };
+	wire [5:0] phaseOut[i] = { phase_aH[i], phase_aL[i], phase_bH[i], phase_bL[i], phase_cH[i], phase_cL[i] };
 endgenerate
 
-endmodule
+
+// This is where all of the motors modules are instantiated
+generate for (i = 0; i < 5; i = i + 1) begin: BLDC_MOTOR_INST
+	BLDC_Motor motor_module_i ( 
+		.clk 			( sysclk ),
+		.en				(  ),
+		.reset_counts 	(  ), 
+		.duty_cycle		(  ), 
+		.enc 			(  ),
+		.hall 			(  ),
+		.phaseH 		(  ),
+		.phaseL 		(  ), 
+		.enc_count 		(  ),
+		.hall_count 	(  ),
+		.hall_fault 	(  )
+	);
+
+	end
+endgenerate
+
+endmodule 	// RoboCup

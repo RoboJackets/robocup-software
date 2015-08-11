@@ -13,8 +13,7 @@ module Motor_Board_Comm (
 
 // We will need 5 SPI master instances for the 5 drivers, and 2 SPI instances for the ADCs
 genvar i;
-generate for (i = 0; i < 7; i = i + 1)
-  begin: SPI_Master_Inst
+generate for (i = 0; i < 7; i = i + 1) begin: SPI_Master_Inst
 
     spi_master
       #(
