@@ -73,27 +73,25 @@ MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 # Create a path where we can write to arbitruary mbed(s)
 MNT_PATH=/mnt/script/MBED
 
-
 # This will trigger anytime a file is closed at the mouting point
 # The process exits at the first event trigger. Times out after 10s
 sudo mkdir -p $MNT_PATH && \
 sudo touch $MNT_PATH && \
-sudo inotifywait -t 10 --format %f -e close_write "$MNT_PATH" 2>&1 | \
+sudo inotifywait -q --format %f -e unmount, close_write "$MNT_PATH"/ 2>&1 | \
 while read f; do
-    echo "${WHITE}${GREENBG}File write success for file ${f}! Rebooting mbed...${R}"
+    echo "${WHITE}${GREENBG}File write success for file ${f}!${FINLN}${R}"
 
     for i in $MBED_SERIAL_PATH; do
-        echo Attempting reboot on $i ...
+        echo "${WHITE}${YELLOWBG}Unmount succes!${FINLN}${R}"
 
         # send break signal to all mbeds
-        sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
+        sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak(0.01)"
     done
 
     #echo "${WHITE}${YELLOWBG}Starting screen session.${R}"
     # screen -d -m -S mysession
     # screen -L -S mysession split -v -p 0 -X stuff mbed
 done
-
 
 # this causes the script to fail if any command below fails
 set -e
