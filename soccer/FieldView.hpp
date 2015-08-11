@@ -24,6 +24,11 @@ class FieldView : public QWidget
 			{
 				_layerVisible[i] = value;
 			}
+			else if (i >= _layerVisible.size())
+			{
+				_layerVisible.resize(i+1);
+				_layerVisible[i] = value;
+			}
 		}
 		
 		bool layerVisible(int i) const

@@ -111,19 +111,6 @@ void FieldView::paintEvent(QPaintEvent* e)
 		return;
 	}
 	
-	// Check number of debug layers
-	if (_layerVisible.size() != frame->debug_layers_size())
-	{
-		int start = _layerVisible.size();
-		_layerVisible.resize(frame->debug_layers_size());
-		
-		// Turn on the new layers
-		for (int i = start; i < _layerVisible.size(); ++i)
-		{
-			_layerVisible[i] = true;
-		}
-	}
-	
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();
 	_screenToWorld *= Geometry2d::TransformMatrix::scale(Field_Dimensions::Current_Dimensions.FloorLength(), Field_Dimensions::Current_Dimensions.FloorWidth());

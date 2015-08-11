@@ -5,15 +5,17 @@
             "follow_symlinks": true,
             "path": ".",
             "folder_exclude_patterns": [
-                "build",
-                "old",
-                "sslrefbox",
-                "downloads",
-                "watchdog",
-                "firmware/external",
-                "api_docs",
+                ".idea",
                 "__pycache__",
-                "soccer/gameplay/cpp-old"
+                "api_docs",
+                "build",
+                "downloads",
+                "firmware/external",
+                "old",
+                "soccer/gameplay/cpp-old",
+                "sslrefbox",
+                "third_party",
+                "watchdog"
             ],
             "file_exclude_patterns": [
                 ".*"
