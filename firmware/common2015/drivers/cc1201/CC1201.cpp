@@ -10,14 +10,10 @@ CC1201::CC1201(void) : CommLink() {};
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin, int rssiOffset) :
 	CommLink(mosi, miso, sck, cs, intPin)
 {
-	//powerOnReset();res
+	//powerOnReset();
 	_offset_reg_written = false;
 	reset();
-	idle();
 	set_rssi_offset(rssiOffset);
-
-
-	_isInit = true;
 	selfTest();
 
 	if (_isInit == true) {
@@ -143,7 +139,6 @@ uint8_t CC1201::readReg(uint8_t addr, ext_flag_t ext_flag)
 	uint8_t returnVal;
 
 	if ( (addr == 0x2F) & (ext_flag == EXT_FLAG_OFF) ) {
-		//LOG(WARN, "readReg invalid address: %02X", addr);
 		LOG(WARN, "Invalid address: %02X", addr);
 		return 0xFF;
 	}
@@ -165,7 +160,6 @@ uint8_t CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len, ext_flag_t e
 	uint8_t status_byte;
 
 	if ( (addr >= 0x2F) & (ext_flag == EXT_FLAG_OFF) ) {
-		//LOG(WARN, "readReg invalid address: %02X", addr);
 		LOG(WARN, "Invalid address: %02X", addr);
 		return 0xFF;
 	}
@@ -288,7 +282,6 @@ uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
 uint8_t CC1201::strobe(uint8_t addr)
 {
 	if (addr > 0x3d || addr < 0x30) {
-		//LOG(WARN, "Invalid address: %02X", addr);
 		LOG(WARN, "Invalid address: %02X", addr);
 		return -1;
 	}
@@ -334,27 +327,24 @@ int32_t CC1201::selfTest(void)
 	if (_isInit == true)
 		return 0;
 
-	_isInit = true;
-
 	_chip_version = readReg(CC1201EXT_PARTNUMBER, EXT_FLAG_ON);
 
-	/*
-		if (_chip_version != CC1201_EXPECTED_PART_NUMBER) {
-			LOG(FATAL, LINE_INFO,
-			    "FATAL ERROR\r\n"
-			    "  Wrong version number returned from chip's 'PARTNUMBER' register (Addr: 0x%02X)\r\n"
-			    "  Expected: 0x%02X\r\n"
-			    "  Found:    0x%02X\r\n"
-			    "\r\n"
-			    , CC1201EXT_PARTNUMBER, CC1201_EXPECTED_PART_NUMBER, _chip_version);
+	if (_chip_version != CC1201_EXPECTED_PART_NUMBER) {
+		LOG(FATAL,
+		    "CC1201 part number error:\r\n"
+		    "    Expected:\t0x%02X\r\n"
+		    "    Found:\t0x%02X",
+		    CC1201_EXPECTED_PART_NUMBER,
+		    _chip_version
+		   );
 
-			return -1;
-		}
-		*/
+		return -1;
+	} else {
 
-	idle();
-
-	return 0;
+		_isInit = true;
+		idle();
+		return 0;
+	}
 }
 
 bool CC1201::isConnected(void)

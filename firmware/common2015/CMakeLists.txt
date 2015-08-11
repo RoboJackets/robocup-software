@@ -11,6 +11,7 @@ set(common2015_SRC
     # "drivers/radio/radio.cpp"
     "drivers/cc1101/CC1101.cpp"
     "drivers/cc1201/CC1201.cpp"
+    "drivers/cc1201/CC1201Config.cpp"
 
     "modules/Console/Console.cpp"
     "modules/CommLink/CommLink.cpp"
