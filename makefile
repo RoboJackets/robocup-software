@@ -3,10 +3,6 @@ all:
 	mkdir -p build
 	cd build; cmake .. -Wno-dev && make $(MAKE_FLAGS)
 
-static-analysis:
-	mkdir -p build/static-analysis
-	cd build/static-analysis; scan-build cmake ../.. -Wno-dev -DSTATIC_ANALYSIS=ON && scan-build -o output make $(MAKE_FLAGS)
-
 run: all
 	cd run; ./soccer
 run-sim: all
@@ -32,7 +28,7 @@ clean:
 	cd build && make $(MAKE_FLAGS) clean
 	rm -rf build
 
-# robot firmware (both 2008/2011)
+# Robot firmware (both 2008/2011)
 robot:
 	cd firmware; scons robot
 robot-prog:
@@ -48,19 +44,29 @@ robot2015:
 robot2015-prog:
 	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 
-# robot 2015 fpga
-fpga2015:
-	mkdir -p build && cd build && cmake --target fpga2015bin .. && make $(MAKE_FLAGS) fpga2015bin
-fpga2015-prog:
-	mkdir -p build && cd build && cmake --target fpga2015-prog .. && make $(MAKE_FLAGS) fpga2015-prog
+# kicker 2015 firmware
+kicker2015:
+	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
+kicker2015-prog:
+	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
 
+# fpga 2015 synthesis
+fpga2015:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+fpga2015-prog:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015-prog
+
+# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
+firmware2015: robot2015 kicker2015 fpga2015 
+firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
+	
 # Base station 2015 firmware
 base2015:
 	mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
 base2015-prog:
 	mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
 
-# robot 2011 fpga
+# Robot FPGA
 fpga2011:
 	cd firmware; scons fpga2011
 # program the fpga over the usb spi interface
@@ -75,3 +81,15 @@ base2011:
 	cd firmware; scons base2011
 base2011-prog:
 	cd firmware; scons base2011; sudo scons base2011-prog
+
+static-analysis:
+	mkdir -p build/static-analysis
+	cd build/static-analysis; scan-build cmake ../.. -Wno-dev -DSTATIC_ANALYSIS=ON && scan-build -o output make $(MAKE_FLAGS)
+modernize:
+	# Runs CMake with a sepcial flag telling it to output the compilation
+	# database, which lists the files to be compiled and the flags passed to
+	# the compiler for each one. Then runs clang-modernize, using the
+	# compilation database as input, on all c/c++ files in the repo.
+	mkdir -p build
+	cd build; cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -Wno-dev && make $(MAKE_FLAGS)
+	clang-modernize -p build -include=common,logging,simulator,soccer
