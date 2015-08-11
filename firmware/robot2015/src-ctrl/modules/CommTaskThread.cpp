@@ -1,7 +1,8 @@
 #include "pins-ctrl-2015.hpp"
-#include <CC1201Radio.hpp>
 #include <CommModule.hpp>
 #include <CommPort.hpp>
+#include <CC1201Radio.hpp>
+#include <CC1201Config.hpp>
 #include <logger.hpp>
 // #include <rtos.h>
 
@@ -37,9 +38,7 @@ CommModule.send(pck);			// Send it!
 
 static const uint8_t BASE_STATION_ADDR = 0x01;
 
-
 #define ACK_RESPONSE_CODE 0xAA
-
 
 enum PORTS {
 	COMM_PORT_LINK_TEST 		= 0x03,
@@ -62,7 +61,7 @@ void rxCallbackLinkTest(RTP_t* p)
 	}
 
 	// Send back an ACK if we need
-	if (p->ack == true && false) {
+	if (p->ack == true) {
 		RTP_t res;
 
 		res.header_link = p->header_link;
@@ -103,43 +102,39 @@ void Task_CommCtrl(void const* args)
 	    RJ_RADIO_INT
 	);
 
-
-	/*
+	if(radio.isConnected() == false) {
+		LOG(FATAL, "No radio found");
+	} else {
+		LOG(INIT, "Found radio transceiver");
+	}
+	
 	CC1201Config* radioConfig = new CC1201Config();
 	radioConfig = CC1201Config::resetConfiguration(radioConfig);
 	CC1201Config::loadConfiguration(radioConfig, &radio);
 	CC1201Config::verifyConfiguration(radioConfig, &radio);
-	*/
-
 
 	// Update the frequency offset
-	// radio.freqUpdate();
-
+	radio.freqUpdate();
 
 	// The usual way of opening a port.
-
 	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
 	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
 	CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);		// returns true if port was successfully opened.
-
 
 	// Open a socket for running tests across the link layer
 	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
 	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
 	CommModule::openSocket(COMM_PORT_LINK_TEST);
 
-
 	// This port won't open since there's no RX callback to invoke. The packets are simply dropped.
 	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_CONTROLLER);
 	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_CONTROLLER);
 	CommModule::openSocket(COMM_PORT_CONTROLLER);
 
-
 	// There's no TX callback for this port, but it will still open when invoked since it knows where to send an RX packet.
 	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
 	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
 	//CommModule::openSocket(COMM_PORT_SETPOINT);
-
 
 	/*
 	 * Ports are always displayed in ascending (lowest -> highest) order according
@@ -147,20 +142,15 @@ void Task_CommCtrl(void const* args)
 	 * the CommModule methods can be used from almost anywhere.
 	 */
 
-
-	LOG(INIT, "Radio interface ready on channel %u!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
-
+	LOG(INIT, "Radio interface ready on frequency %3.2f!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
 	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
 	txLED = 0;
 	rxLED = 0;
 
-
-
 	// == everything below this line all the way until the start of the while loop is test code ==
 
 	char buf[] = "Hello World. Welcome to SLL. Here's some important information.";
-
 
 	// Test RX by placing a dummy packet in the RX queue
 	RTP_t pck;
@@ -171,29 +161,28 @@ void Task_CommCtrl(void const* args)
 
 	// Test RX acknowledgment with a packet structured to trigger the ACK response
 	RTP_t ack_pck;
-	ack_pck.header_link = RTP_HEADER(COMM_PORT_LINK_TEST, 1, false, false);
+	ack_pck.header_link = RTP_HEADER(COMM_PORT_LINK_TEST, 1, true, false);
 	ack_pck.payload_size = sizeof(buf);
 	memcpy(ack_pck.payload, buf, sizeof(buf));
 	ack_pck.address = BASE_STATION_ADDR;
 
-
 	while (true) {
-		Thread::wait(400);
+		Thread::wait(4);
 		Thread::yield();
 
 		// Simulate some incoming packets on 2 different ports
 		CommModule::receive(pck);
 
-		Thread::wait(400);
+		Thread::wait(1);
 
 		// Now, simulate some incoming packets that sometimes request an ACK
 		ack_pck.port = COMM_PORT_LINK_TEST;
-		//CommModule::receive(ack_pck);
+		CommModule::receive(ack_pck);
 
-		Thread::wait(400);
+		Thread::wait(2);
 
 		ack_pck.port = COMM_PORT_CONTROLLER;
-		//CommModule::send(ack_pck);
+		CommModule::send(ack_pck);
 
 		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
 		//radio_900.strobe(CC1201_STROBE_SRX);
