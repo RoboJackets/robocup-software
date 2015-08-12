@@ -30,5 +30,5 @@ const float Dots_Large_Offset = 0.054772;
 const float Dots_Radius = 0.02;
 
 /// timestamp() returns the current time in microseconds.  Multiply by this constant to get to seconds.
-const float TimestampToSecs = 1.0f / TimestampToSecs;
 const float SecsToTimestamp = 1000000.0f;
+const float TimestampToSecs = 1.0f / SecsToTimestamp;
