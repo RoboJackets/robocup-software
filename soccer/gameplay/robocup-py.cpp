@@ -75,7 +75,7 @@ std::string Point_repr(Geometry2d::Point *self) {
 }
 
 std::string Robot_repr(Robot *self) {
-	return self->to_string();
+	return self->toString();
 }
 
 Geometry2d::Point Robot_pos(Robot *self) {
