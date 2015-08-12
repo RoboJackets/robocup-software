@@ -11,7 +11,7 @@ namespace Planning
 
 	public:
 		/**
-		 * Virtual function which returns a planned Path following the specified MotionContraints and doesn't hit the obstacles.
+		 * Returns an obstacle-free Path subject to the specified MotionContraints.
 		 */
 		virtual std::unique_ptr<Path> run(
 				MotionInstant startInstant,

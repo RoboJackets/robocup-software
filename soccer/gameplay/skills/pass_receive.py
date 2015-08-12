@@ -90,7 +90,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.add_transition(PassReceive.State.receiving,
             behavior.Behavior.State.failed,
-            # TODO look here
             lambda: self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
 

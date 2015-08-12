@@ -66,7 +66,7 @@ namespace Planning
 		}
 
 		virtual bool hit(const Geometry2d::CompositeShape &shape, float &hitTime, float startTime = 0) const override {
-			throw "This function is not implemented";
+			throw std::logic_error("This function is not implemented");
 		}
 
 		virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const override {

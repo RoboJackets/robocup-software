@@ -4,13 +4,11 @@
 
 namespace  Planning {
 /**
- * This class represents a instant on a motion. It cointains a position and velocity vector
+ * This class represents a robot's motion "state" at a given time, including position and velocity.
  */
     struct MotionInstant {
 
-        MotionInstant() : pos(), vel() {}
-
-        MotionInstant(Geometry2d::Point pos, Geometry2d::Point vel) : pos(pos), vel(vel) {}
+        MotionInstant(Geometry2d::Point pos = {0, 0}, Geometry2d::Point vel = {0, 0}) : pos(pos), vel(vel) {}
 
         /// A position at a given point in time.
         Geometry2d::Point pos;
