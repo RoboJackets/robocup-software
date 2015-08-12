@@ -21,7 +21,7 @@ class DefendPenalty(play.Play):
         lineup = tactics.line_up.LineUp(line)
         self.add_subbehavior(lineup, 'lineup')
 
-        #self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
 
     @classmethod
     def score(cls):
@@ -30,4 +30,8 @@ class DefendPenalty(play.Play):
 
     @classmethod
     def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
         return True
