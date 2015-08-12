@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 Ball::Ball(Environment* env) :
-		Entity(env), _ball(0), _ballShape(0), _simEngine(env->getSimEngine())
+		Entity(env), _ball(nullptr), _ballShape(nullptr), _simEngine(env->getSimEngine())
 {
 }
 

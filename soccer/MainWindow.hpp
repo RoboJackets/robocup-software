@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow
 
 	public:
 
-		MainWindow(QWidget *parent = 0);
+		MainWindow(QWidget *parent = nullptr);
 
 		void configuration(Configuration *config);
 

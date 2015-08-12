@@ -33,7 +33,7 @@ struct NullArgumentException : public std::exception {
 	std::string argument_name;
 	NullArgumentException() : argument_name("") {}
 	NullArgumentException(std::string name) : argument_name(name) {}
-	virtual const char* what() const throw(){ return ("'" + argument_name + "'' was 'None'.").c_str(); }
+	virtual const char* what() const throw() override{ return ("'" + argument_name + "'' was 'None'.").c_str(); }
 };
 
 void translateException(NullArgumentException const& e)

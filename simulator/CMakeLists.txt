@@ -67,7 +67,7 @@ endif()
 
 
 
-target_link_libraries(simulator common BulletDynamics BulletCollision LinearMath)
+target_link_libraries(simulator common)
 qt5_use_modules(simulator Widgets Xml Core OpenGL Network)
 
 # bullet physics library
@@ -76,7 +76,6 @@ include_directories(${BULLET_INCLUDE_DIR})
 target_link_libraries(simulator ${BULLET_LIBRARIES})
 
 # handle OpenGL stuff separately on OS X vs Linux
-target_link_libraries(simulator glut)
 if(APPLE)
     link_directories(/opt/X11/lib/)
     include_directories(/opt/X11/include/)
@@ -84,6 +83,7 @@ if(APPLE)
     include_directories(/System/Library/Frameworks)
     find_library(OpenGL_LIBRARY OpenGL)
     target_link_libraries(simulator ${OpenGL_LIBRARY})
+    target_link_libraries(simulator /usr/local/lib/libglut.dylib)
 else()
-    target_link_libraries(simulator GL GLU)
+    target_link_libraries(simulator GL GLU glut)
 endif()

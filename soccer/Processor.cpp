@@ -77,7 +77,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 	_useOpponentHalf = true;
 
 	_simulation = sim;
-	_radio = 0;
+	_radio = nullptr;
 
 	//	joysticks
 	_joysticks.push_back(new GamepadJoystick());
