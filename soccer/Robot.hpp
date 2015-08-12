@@ -109,10 +109,6 @@ public:
 		return shell() == other.shell() && self() == other.self();
 	}
 
-	bool equals(const Robot &other) {
-		return *this == other;
-	}
-
 	std::string toString() const {
 		return 	std::string("<Robot ") +
 						(self() ? "us[" : "them[") +
