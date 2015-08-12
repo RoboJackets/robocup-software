@@ -27,12 +27,12 @@ public:
     USBRadio();
     ~USBRadio();
 
-	virtual bool isOpen() const;
-	virtual void send(Packet::RadioTx &packet);
-	virtual void receive();
+	virtual bool isOpen() const override;
+	virtual void send(Packet::RadioTx &packet) override;
+	virtual void receive() override;
 	
-	virtual void channel(int n);
-    void switchTeam(bool) { }
+	virtual void channel(int n) override;
+    void switchTeam(bool) override { }
 	
 protected:
 	libusb_context *_usb_context;

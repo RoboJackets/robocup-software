@@ -14,7 +14,7 @@ class FastTimer: public QThread
     Q_OBJECT;
 
 public:
-    FastTimer(QObject *parent = 0);
+    FastTimer(QObject *parent = nullptr);
     virtual ~FastTimer();
 
     void start(int ms);
@@ -24,8 +24,8 @@ signals:
     void timeout();
 
 protected:
-    virtual void run();
-    virtual bool event(QEvent *e);
+    virtual void run() override;
+    virtual bool event(QEvent *e) override;
 
     useconds_t _us;
     volatile bool _running;

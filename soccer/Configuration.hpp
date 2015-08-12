@@ -115,12 +115,12 @@ class ConfigBool: public ConfigItem
 			return x;
 		}
 		
-		virtual QString toString();
-		virtual void setValue(const QString &str);
+		virtual QString toString() override;
+		virtual void setValue(const QString &str) override;
 	
 	protected:
 		friend class Configuration;
-		virtual void setupItem();
+		virtual void setupItem() override;
 		
 		bool _value;
 };
@@ -130,8 +130,8 @@ class ConfigInt: public ConfigItem
 	public:
 	ConfigInt(Configuration *tree, QString name, int value = 0);
 
-		virtual QString toString();
-		virtual void setValue(const QString &str);
+		virtual QString toString() override;
+		virtual void setValue(const QString &str) override;
 		
 		operator int() const
 		{
@@ -165,8 +165,8 @@ class ConfigDouble: public ConfigItem
 	public:
 		ConfigDouble(Configuration *tree, QString name, double value = 0);
 		
-		virtual QString toString();
-		virtual void setValue(const QString &str);
+		virtual QString toString() override;
+		virtual void setValue(const QString &str) override;
 		
 		operator double() const
 		{
@@ -220,7 +220,7 @@ template<class T>
 class ConfigurableImpl: public Configurable
 {
 public:
-	virtual void createConfiguration(Configuration *cfg) const
+	virtual void createConfiguration(Configuration *cfg) const override
 	{
 		T::createConfiguration(cfg);
 	}

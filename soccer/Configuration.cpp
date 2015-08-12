@@ -16,7 +16,7 @@ Q_DECLARE_METATYPE(ConfigItem *) // FIXME: verify this
 ConfigItem::ConfigItem(Configuration *config, const QString& name)
 {
 	_config = config;
-	_treeItem = 0;
+	_treeItem = nullptr;
 	_path = name.split('/');
 }
 
@@ -26,7 +26,7 @@ ConfigItem::~ConfigItem()
 	{
 		//FIXME - Things are getting deleted in a non-GUI thread
 // 		delete _treeItem;
-		_treeItem = 0;
+		_treeItem = nullptr;
 	}
 }
 
@@ -131,7 +131,7 @@ void ConfigDouble::setValue(const QString& str)
 
 Configuration::Configuration()
 {
-	_tree = 0;
+	_tree = nullptr;
 	
 	// Create the XML root element
 	_doc.appendChild(_doc.createElement("config"));
@@ -156,7 +156,7 @@ void Configuration::addToTree(ConfigItem *item)
 	--last;
 	for (QStringList::const_iterator i = path.begin(); i != last; ++i)
 	{
-		QTreeWidgetItem *next = 0;
+		QTreeWidgetItem *next = nullptr;
 		for (int j = 0; j < parent->childCount(); ++j)
 		{
 			QTreeWidgetItem *child = parent->child(j);
@@ -226,7 +226,7 @@ ConfigItem *Configuration::nameLookup(const QString& name) const
 			return item;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 bool Configuration::load(const QString &filename, QString &error)

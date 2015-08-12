@@ -32,9 +32,9 @@ namespace Geometry2d {
             }
         }
 
-        Shape *clone() const;
+        Shape *clone() const override;
 
-        virtual bool containsPoint(const Point &pt) const;
+        virtual bool containsPoint(const Point &pt) const override;
 
         void add(const std::shared_ptr<Shape> shape);
 
@@ -106,11 +106,11 @@ namespace Geometry2d {
             return false;
         }
 
-        bool hit(const Point &pt) const {
+        bool hit(const Point &pt) const override {
             return hit<Point>(pt);
         }
 
-        bool hit(const Segment &seg) const {
+        bool hit(const Segment &seg) const override {
             return hit<Segment>(seg);
         }
 
@@ -127,7 +127,7 @@ namespace Geometry2d {
         iterator begin() { return _subshapes.begin(); }
         iterator end() { return _subshapes.end(); }
 
-        std::string toString() {
+        std::string toString() override {
             std::stringstream str;
             str << "Composite<";
             for(int i = 0; i < _subshapes.size(); i++)
