@@ -72,15 +72,15 @@ qt5_use_modules(simulator Widgets Xml Core OpenGL Network)
 
 # bullet physics library
 find_package(Bullet REQUIRED)
-include_directories(${BULLET_INCLUDE_DIR})
+include_directories(SYSTEM ${BULLET_INCLUDE_DIR})
 target_link_libraries(simulator ${BULLET_LIBRARIES})
 
 # handle OpenGL stuff separately on OS X vs Linux
 if(APPLE)
     link_directories(/opt/X11/lib/)
-    include_directories(/opt/X11/include/)
+    include_directories(SYSTEM /opt/X11/include/)
 
-    include_directories(/System/Library/Frameworks)
+    include_directories(SYSTEM /System/Library/Frameworks)
     find_library(OpenGL_LIBRARY OpenGL)
     target_link_libraries(simulator ${OpenGL_LIBRARY})
     target_link_libraries(simulator /usr/local/lib/libglut.dylib)

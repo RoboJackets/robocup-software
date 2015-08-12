@@ -560,7 +560,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.add_property("angle_vel", &Robot_angle_vel, "angular velocity in degrees per second")
         .add_property("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
-		.def("__eq__", &Robot::equals)
+		.def("__eq__", &Robot::operator==)
 	;
 
 	class_<OurRobot, OurRobot *, bases<Robot>, boost::noncopyable>("OurRobot", init<int, SystemState*>())
