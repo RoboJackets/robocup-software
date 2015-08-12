@@ -51,18 +51,6 @@ int SystemState::findDebugLayer(QString layer)
 		return i.value();
 	}
 }
-/*
-void SystemState::drawPath(const Planning::BezierPath &path, const QColor& qc, const QString& layer)
-{
-	DebugPath *dbg = logFrame->add_debug_paths();
-	dbg->set_layer(findDebugLayer(layer));
-	for (Geometry2d::Point pt : path.points)
-	{
-		*dbg->add_points() = pt;
-	}
-	dbg->set_color(color(qc));
-}
-*/
 
 void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor& qc, const QString &layer)
 {
@@ -77,13 +65,7 @@ void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor&
 
 void SystemState::drawPolygon(const std::vector<Geometry2d::Point>& pts, const QColor &qc, const QString &layer)
 {
-	DebugPath *dbg = logFrame->add_debug_polygons();
-	dbg->set_layer(findDebugLayer(layer));
-	for (size_t i = 0; i < pts.size(); ++i)
-	{
-		*dbg->add_points() = pts[i];
-	}
-	dbg->set_color(color(qc));
+	drawPolygon(pts.data(), pts.siize(), qc, layer);
 }
 
 void SystemState::drawPolygon(const Geometry2d::Polygon& polygon, const QColor &qc, const QString &layer)
