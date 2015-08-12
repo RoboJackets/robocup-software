@@ -527,7 +527,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
-	//Add's our robots as obstacles only if they're within a certain distance from our robot.
+	//Add's our robots as obstacles only if they're within a certain distance from this robot.
 	//This distance increases with velocity.
 	Geometry2d::CompositeShape
 		self_obs = createRobotObstacles(_state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag()),
@@ -617,12 +617,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		double leadTime = *(_motionConstraints._replan_lead_time) * SecsToTimestamp;
+		Time leadTime = *(_motionConstraints._replan_lead_time) * SecsToTimestamp;
 		RobotPose predictedPose;
 
 		filter()->predict(timestamp() + leadTime, &predictedPose);
 		std::unique_ptr<Planning::Path> path = nullptr;
-		int count = 0;
+		int planning_attempts = 0;
 		while (!path) {
 			Geometry2d::Point endTarget;
 			float endSpeed = _motionCommand.getDirectTarget(endTarget);
@@ -637,10 +637,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 					path = nullptr;
 					
 			}
-			count++;
+			planning_attempts++;
 
 			//TODO fix this
-			if (count >=50) {
+			// Due to a bug in the path planner, sometimes planning is successful, other times it fails due to issues with NaN.
+			// Planning happens in a loop here so we can retry for a limited number of times.
+			if (planning_attempts >= 50) {
 				path = nullptr;
 				addText("PathPlanning Failed", Qt::red, "Planning");
 				break;

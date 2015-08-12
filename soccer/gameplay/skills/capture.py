@@ -157,7 +157,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            #reqs.destination_shape = evaluation.ball.predict_stop(main.ball().pos, main.ball().vel)#main.ball().pos
             reqs.destination_shape = main.ball().pos
         return reqs
 

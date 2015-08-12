@@ -59,7 +59,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                 new_angle = self.normalize_angle(new_angle)
                 angles.append(new_angle)
 
-            # Get angles going sequencially
+            # Get angles going sequentially
             angles.sort()
 
             counter = 1
