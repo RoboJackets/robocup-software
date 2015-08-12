@@ -138,7 +138,7 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    </div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="struct_chart_1_1_point_magnitude.html">   27</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="struct_chart_1_1_point_magnitude.html">PointMagnitude</a>: <span class="keyword">public</span> <a class="code" href="struct_chart_1_1_function.html">Function</a></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// Vector of tags from LogFrame to the Point to be used.</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">// Each tag except must identify a Message.</span></div>
@@ -148,7 +148,7 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    </div>
 <div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="struct_chart_1_1_numeric_field.html">   37</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="struct_chart_1_1_numeric_field.html">NumericField</a>: <span class="keyword">public</span> <a class="code" href="struct_chart_1_1_function.html">Function</a></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">// Vector of tags from LogFrame to the float or double field to be used.</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// Each tag except the last one must identify a Message.</span></div>
@@ -160,7 +160,7 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="class_strip_chart.html">   48</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_strip_chart.html">StripChart</a>: <span class="keyword">public</span> QWidget</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="class_strip_chart.html">StripChart</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="class_strip_chart.html">StripChart</a>(QWidget *parent = <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        ~<a class="code" href="class_strip_chart.html">StripChart</a>();</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">void</span> history(<span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt; *value)</div>
@@ -193,7 +193,7 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">bool</span> autoRange;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        </div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">void</span> paintEvent(QPaintEvent *e);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">void</span> paintEvent(QPaintEvent *e) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        </div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">// Returns the position for the data at a given frame.</span></div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">// i is an index in _history, so 0 is the most recent frame</span></div>
@@ -225,7 +225,7 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>StripChart.hpp</b></li>
-    <li class="footer">Generated on Sun Aug 9 2015 03:38:57 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 12 2015 02:26:42 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

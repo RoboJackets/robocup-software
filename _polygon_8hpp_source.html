@@ -138,9 +138,9 @@ $(document).ready(function(){initNavTree('_polygon_8hpp_source.html','');});
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <a class="code" href="class_geometry2d_1_1_polygon.html">Polygon</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_polygon.html">Polygon</a> &amp;other) : vertices(other.vertices) {}</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        Shape *clone() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        Shape *clone() <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordtype">bool</span> containsPoint(<span class="keyword">const</span> Point &amp;pt)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordtype">bool</span> containsPoint(<span class="keyword">const</span> Point &amp;pt)<span class="keyword"> const override </span>{</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">return</span> contains(pt);</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        }</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
@@ -148,8 +148,8 @@ $(document).ready(function(){initNavTree('_polygon_8hpp_source.html','');});
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordtype">bool</span> intersects(<span class="keyword">const</span> Rect &amp;rect) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordtype">bool</span> intersects(<span class="keyword">const</span> Polygon &amp;other) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_polygon.html#ad1046baadd7dbedbb752df3fa9a9fae2">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_polygon.html#ad1046baadd7dbedbb752df3fa9a9fae2">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> &amp;seg) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_polygon.html#ae1a27433275c4c6a6d628e29ae6cbf02">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_polygon.html#ae1a27433275c4c6a6d628e29ae6cbf02">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> &amp;seg) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        </div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_polygon.html#aaeb37754674c18668a41637cd7070bfe">containsVertex</a>(<span class="keyword">const</span> Polygon &amp;other) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        </div>
@@ -164,7 +164,7 @@ $(document).ready(function(){initNavTree('_polygon_8hpp_source.html','');});
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            vertices.push_back(pt);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        std::string toString() {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        std::string toString()<span class="keyword"> override </span>{</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            std::stringstream str;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            str &lt;&lt; <span class="stringliteral">&quot;Polygon&lt;&quot;</span>;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; vertices.size(); i++)</div>
@@ -185,16 +185,16 @@ $(document).ready(function(){initNavTree('_polygon_8hpp_source.html','');});
 <div class="ttc" id="class_geometry2d_1_1_polygon_html_adb85e6da4e9230a47f7ddb7c0b9c5c6d"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html#adb85e6da4e9230a47f7ddb7c0b9c5c6d">Geometry2d::Polygon::Polygon</a></div><div class="ttdeci">Polygon(const Segment &amp;seg, float r, float length)</div><div class="ttdoc">Same as above but with length given to avoid a square root. </div><div class="ttdef"><b>Definition:</b> Polygon.hpp:25</div></div>
 <div class="ttc" id="class_geometry2d_1_1_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a></div><div class="ttdoc">The shape class provides the interface to all shapes that are subclasses. </div><div class="ttdef"><b>Definition:</b> Shape.hpp:19</div></div>
 <div class="ttc" id="namespace_geometry2d_html"><div class="ttname"><a href="namespace_geometry2d.html">Geometry2d</a></div><div class="ttdef"><b>Definition:</b> Circle.hpp:7</div></div>
+<div class="ttc" id="class_geometry2d_1_1_polygon_html_ae1a27433275c4c6a6d628e29ae6cbf02"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html#ae1a27433275c4c6a6d628e29ae6cbf02">Geometry2d::Polygon::hit</a></div><div class="ttdeci">bool hit(const Geometry2d::Point &amp;pt) const override</div><div class="ttdoc">collision-detection </div><div class="ttdef"><b>Definition:</b> Polygon.cpp:182</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 <div class="ttc" id="class_geometry2d_1_1_rect_html"><div class="ttname"><a href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a></div><div class="ttdef"><b>Definition:</b> Rect.hpp:13</div></div>
-<div class="ttc" id="class_geometry2d_1_1_polygon_html_ad1046baadd7dbedbb752df3fa9a9fae2"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html#ad1046baadd7dbedbb752df3fa9a9fae2">Geometry2d::Polygon::hit</a></div><div class="ttdeci">bool hit(const Geometry2d::Point &amp;pt) const </div><div class="ttdoc">collision-detection </div><div class="ttdef"><b>Definition:</b> Polygon.cpp:182</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><a class="el" href="dir_40506df144da4b42abe7ffe21204d9b9.html">Geometry2d</a></li><li class="navelem"><b>Polygon.hpp</b></li>
-    <li class="footer">Generated on Sun Aug 9 2015 03:38:57 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 12 2015 02:26:42 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

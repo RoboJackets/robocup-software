@@ -219,12 +219,12 @@ $(document).ready(function(){initNavTree('_configuration_8hpp_source.html','');}
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="keywordflow">return</span> x;</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        }</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">virtual</span> QString toString();</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setValue(<span class="keyword">const</span> QString &amp;str);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">virtual</span> QString toString() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setValue(<span class="keyword">const</span> QString &amp;str) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    </div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="class_configuration.html">Configuration</a>;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setupItem();</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setupItem() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        </div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordtype">bool</span> _value;</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
@@ -234,8 +234,8 @@ $(document).ready(function(){initNavTree('_configuration_8hpp_source.html','');}
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <a class="code" href="class_config_int.html">ConfigInt</a>(<a class="code" href="class_configuration.html">Configuration</a> *tree, QString name, <span class="keywordtype">int</span> value = 0);</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keyword">virtual</span> QString toString();</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setValue(<span class="keyword">const</span> QString &amp;str);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keyword">virtual</span> QString toString() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setValue(<span class="keyword">const</span> QString &amp;str) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        </div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keyword">operator</span> int()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="keyword">        </span>{</div>
@@ -269,8 +269,8 @@ $(document).ready(function(){initNavTree('_configuration_8hpp_source.html','');}
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <a class="code" href="class_config_double.html">ConfigDouble</a>(<a class="code" href="class_configuration.html">Configuration</a> *tree, QString name, <span class="keywordtype">double</span> value = 0);</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        </div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <span class="keyword">virtual</span> QString toString();</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setValue(<span class="keyword">const</span> QString &amp;str);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <span class="keyword">virtual</span> QString toString() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> setValue(<span class="keyword">const</span> QString &amp;str) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        </div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="keyword">operator</span> double()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keyword">        </span>{</div>
@@ -318,7 +318,7 @@ $(document).ready(function(){initNavTree('_configuration_8hpp_source.html','');}
 <div class="line"><a name="l00220"></a><span class="lineno"><a class="line" href="class_configurable_impl.html">  220</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_configurable_impl.html">ConfigurableImpl</a>: <span class="keyword">public</span> <a class="code" href="class_configurable.html">Configurable</a></div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;{</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> createConfiguration(<a class="code" href="class_configuration.html">Configuration</a> *cfg)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> createConfiguration(<a class="code" href="class_configuration.html">Configuration</a> *cfg)<span class="keyword"> const override</span></div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        T::createConfiguration(cfg);</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    }</div>
@@ -336,7 +336,7 @@ $(document).ready(function(){initNavTree('_configuration_8hpp_source.html','');}
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>Configuration.hpp</b></li>
-    <li class="footer">Generated on Sun Aug 9 2015 03:38:57 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 12 2015 02:26:42 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

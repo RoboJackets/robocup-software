@@ -12,8 +12,8 @@ var class_geometry2d_1_1_composite_shape =
     [ "begin", "class_geometry2d_1_1_composite_shape.html#abdfb138b69ced9a2009b540bbbea1dd6", null ],
     [ "begin", "class_geometry2d_1_1_composite_shape.html#a844748ba610d4f1e0627c641ec8202d3", null ],
     [ "clear", "class_geometry2d_1_1_composite_shape.html#ae8a9e41ef5fe8929ca8a058236032c4a", null ],
-    [ "clone", "class_geometry2d_1_1_composite_shape.html#aaf47c71233b25c0bbecef792eab6bc73", null ],
-    [ "containsPoint", "class_geometry2d_1_1_composite_shape.html#a3914f955df82a20d19e3d16ad04d05bf", null ],
+    [ "clone", "class_geometry2d_1_1_composite_shape.html#afd2a7edd1aaa80d6cd80bb547c95a5d2", null ],
+    [ "containsPoint", "class_geometry2d_1_1_composite_shape.html#a22ca788714459dad916072544ae5a54d", null ],
     [ "empty", "class_geometry2d_1_1_composite_shape.html#a000954e8a51034992f8bc4515b6798f0", null ],
     [ "end", "class_geometry2d_1_1_composite_shape.html#a8153557cbbe866fefb0977412da2756b", null ],
     [ "end", "class_geometry2d_1_1_composite_shape.html#af61941cb922d3176cb8f85e487148bc2", null ],
@@ -21,11 +21,11 @@ var class_geometry2d_1_1_composite_shape =
     [ "hit", "class_geometry2d_1_1_composite_shape.html#af2ff7ab40d2bf36208bec2ace248bcb3", null ],
     [ "hit", "class_geometry2d_1_1_composite_shape.html#a6891bb2e28753f2b12cafd1675e16acd", null ],
     [ "hit", "class_geometry2d_1_1_composite_shape.html#ada61cce38b616262762fe6776baab173", null ],
-    [ "hit", "class_geometry2d_1_1_composite_shape.html#a54304f6ac218f90d2cc5059e9c275ee7", null ],
-    [ "hit", "class_geometry2d_1_1_composite_shape.html#ac9ccf9f0d42c288abb4067f2044de4ff", null ],
+    [ "hit", "class_geometry2d_1_1_composite_shape.html#a77583e2b6ccf16d62ab63df5db6f7c44", null ],
+    [ "hit", "class_geometry2d_1_1_composite_shape.html#ae29d68f3264be98552b8e6820c68f11b", null ],
     [ "operator[]", "class_geometry2d_1_1_composite_shape.html#a486aef4e9642f47c86cbb0cd4b5c6359", null ],
     [ "operator[]", "class_geometry2d_1_1_composite_shape.html#af989bf2f55f335559521c4f194e9510e", null ],
     [ "size", "class_geometry2d_1_1_composite_shape.html#a639f7b93dc4f173434823ce10126cb50", null ],
     [ "subshapes", "class_geometry2d_1_1_composite_shape.html#aa0278930523dec99a4865f24dbedd052", null ],
-    [ "toString", "class_geometry2d_1_1_composite_shape.html#aa9c55a0d099a5732a169239da0ecd5be", null ]
+    [ "toString", "class_geometry2d_1_1_composite_shape.html#a44132b73936c2206d32cffac411021ac", null ]
 ];
