@@ -81,10 +81,10 @@ if (NOT FOUND_A_BOOST_PYTHON)
 endif()
 
 # libusb
-include_directories(${LIBUSB_1_INCLUDE_DIRS})
+include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
 # SDL
-include_directories(${SDL_INCLUDE_DIRS})
+include_directories(SYSTEM ${SDL_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
