@@ -57,19 +57,7 @@ enum PORTS {
 void rxCallbackLinkTest(RTP_t* p)
 {
 	if (p->payload_size > 0) {
-		LOG(OK, "%u byte packet received!", p->payload_size);
-	}
-
-	// Send back an ACK if we need
-	if (p->ack == true) {
-		RTP_t res;
-
-		res.header_link = p->header_link;
-		res.payload[0] = ACK_RESPONSE_CODE;
-		res.payload_size = 1;
-		res.address = BASE_STATION_ADDR;
-
-		CommModule::send(res);
+		LOG(INIT, "Radio RX working!. Received %u byte packet.", p->payload_size);
 	}
 }
 
@@ -86,14 +74,17 @@ void Task_CommCtrl(void const* args)
 	// Store our priority so we know what to reset it to if ever needed
 	osPriority threadPriority;
 
-	if (threadID != NULL)
+	if (threadID != nullptr)
 		threadPriority  = osThreadGetPriority(threadID);
 	else
-		threadPriority = (osPriority)NULL;
+		threadPriority = osPriorityIdle;
 
 	// Setup the TX/RX lights and have them off initially
 	DigitalOut txLED(RJ_TX_LED, 1);
 	DigitalOut rxLED(RJ_RX_LED, 1);
+
+	// Startup the CommModule interface
+	CommModule::Init();
 
 	// Create a new physical hardware communication link
 	CC1201 radio(
@@ -102,39 +93,43 @@ void Task_CommCtrl(void const* args)
 	    RJ_RADIO_INT
 	);
 
-	if(radio.isConnected() == false) {
-		LOG(FATAL, "No radio found");
+	if (radio.isConnected() == true) {
+		// Load the configuration onto the radio transceiver
+		CC1201Config* radioConfig = new CC1201Config();
+		radioConfig = CC1201Config::resetConfiguration(radioConfig);
+		CC1201Config::loadConfiguration(radioConfig, &radio);
+		CC1201Config::verifyConfiguration(radioConfig, &radio);
+
+		// Update the frequency offset
+		radio.freqUpdate();
+
+		LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
+
+		// The usual way of opening a port.
+		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
+		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
+		CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);		// returns true if port was successfully opened.
+
+		// Open a socket for running tests across the link layer
+		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
+		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
+		CommModule::openSocket(COMM_PORT_LINK_TEST);
+
+		// This port won't open since there's no RX callback to invoke. The packets are simply dropped.
+		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_CONTROLLER);
+		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_CONTROLLER);
+		CommModule::openSocket(COMM_PORT_CONTROLLER);
+
+		// There's no TX callback for this port, but it will still open when invoked since it knows where to send an RX packet.
+		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
+		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
+		//CommModule::openSocket(COMM_PORT_SETPOINT);
+
 	} else {
-		LOG(INIT, "Found radio transceiver");
+
+		LOG(FATAL, "No radio found");
 	}
-	
-	CC1201Config* radioConfig = new CC1201Config();
-	radioConfig = CC1201Config::resetConfiguration(radioConfig);
-	CC1201Config::loadConfiguration(radioConfig, &radio);
-	CC1201Config::verifyConfiguration(radioConfig, &radio);
 
-	// Update the frequency offset
-	radio.freqUpdate();
-
-	// The usual way of opening a port.
-	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
-	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
-	CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);		// returns true if port was successfully opened.
-
-	// Open a socket for running tests across the link layer
-	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
-	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
-	CommModule::openSocket(COMM_PORT_LINK_TEST);
-
-	// This port won't open since there's no RX callback to invoke. The packets are simply dropped.
-	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_CONTROLLER);
-	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_CONTROLLER);
-	CommModule::openSocket(COMM_PORT_CONTROLLER);
-
-	// There's no TX callback for this port, but it will still open when invoked since it knows where to send an RX packet.
-	CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
-	CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
-	//CommModule::openSocket(COMM_PORT_SETPOINT);
 
 	/*
 	 * Ports are always displayed in ascending (lowest -> highest) order according
@@ -142,15 +137,13 @@ void Task_CommCtrl(void const* args)
 	 * the CommModule methods can be used from almost anywhere.
 	 */
 
-	LOG(INIT, "Radio interface ready on frequency %3.2f!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
-
 	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
 	txLED = 0;
 	rxLED = 0;
 
 	// == everything below this line all the way until the start of the while loop is test code ==
 
-	char buf[] = "Hello World. Welcome to SLL. Here's some important information.";
+	char buf[] = "Hello World!";
 
 	// Test RX by placing a dummy packet in the RX queue
 	RTP_t pck;
@@ -166,22 +159,24 @@ void Task_CommCtrl(void const* args)
 	memcpy(ack_pck.payload, buf, sizeof(buf));
 	ack_pck.address = BASE_STATION_ADDR;
 
+	LOG(INIT, "Packet:\r\n    %s\r\n    Size:\t%u", ack_pck.payload, ack_pck.payload_size);
+
+	Thread::wait(1200);
+
+	CommModule::receive(pck);
+
 	while (true) {
-		Thread::wait(4);
-		Thread::yield();
+		Thread::wait(100);
+		// Thread::yield();
 
 		// Simulate some incoming packets on 2 different ports
-		CommModule::receive(pck);
+		//CommModule::receive(pck);
 
-		Thread::wait(1);
+		//Thread::wait(1);
 
 		// Now, simulate some incoming packets that sometimes request an ACK
-		ack_pck.port = COMM_PORT_LINK_TEST;
-		CommModule::receive(ack_pck);
+		//CommModule::receive(ack_pck);
 
-		Thread::wait(2);
-
-		ack_pck.port = COMM_PORT_CONTROLLER;
 		CommModule::send(ack_pck);
 
 		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.

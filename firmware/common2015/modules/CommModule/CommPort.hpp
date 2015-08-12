@@ -154,6 +154,14 @@ class CommPort
 
 
     // Returns a reference to the TX/RX packet count for modifying
+    unsigned int TXPackets(void) const
+    {
+        return tx_packets;
+    }
+    unsigned int RXPackets(void) const
+    {
+        return rx_packets;
+    }
     unsigned int& TXPackets(void)
     {
         return tx_packets;
@@ -162,18 +170,10 @@ class CommPort
     {
         return rx_packets;
     }
-    const unsigned int& TXPackets(void) const
-    {
-        return this->tx_packets;
-    }
-    const unsigned int& RXPackets(void) const
-    {
-        return this->rx_packets;
-    }
 
 
     // Standard display function for a CommPort
-    void PrintPort(void)
+    void PrintPort(void) const
     {
         printf("%2u\t\t%u\t%u\t%s\t\t%s\t\t%s\r\n",
                Nbr(),
@@ -298,7 +298,7 @@ class CommPorts : CommPort<T>
         unsigned int pcks = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
-            pcks += it->RXPackets();
+            pcks += static_cast<unsigned int>(it->RXPackets());
         }
 
         return pcks;
@@ -308,7 +308,7 @@ class CommPorts : CommPort<T>
         unsigned int pcks = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
-            pcks += it->TXPackets();
+            pcks += static_cast<unsigned int>(it->TXPackets());
         }
 
         return pcks;

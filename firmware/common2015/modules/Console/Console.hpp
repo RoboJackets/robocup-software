@@ -120,15 +120,15 @@ class Console
   // Constructor is only used in init branch of Instance()
   Console();
 
-  static std::shared_ptr<Console>& Instance();
+  static std::shared_ptr<Console>& Instance(void);
 
-  void ClearRXBuffer();
+  void ClearRXBuffer(void);
 
-  void ClearTXBuffer();
+  void ClearTXBuffer(void);
 
-  void RXCallback();
+  void RXCallback(void);
 
-  void TXCallback();
+  void TXCallback(void);
 
   static std::shared_ptr<Console> instance;
 

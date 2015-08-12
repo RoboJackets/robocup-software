@@ -22,10 +22,10 @@ void Task_Controller(void const* args)
 	// Store our priority so we know what to reset it to if ever needed
 	osPriority threadPriority;
 
-	if (threadID != NULL)
+	if (threadID != nullptr)
 		threadPriority  = osThreadGetPriority(threadID);
 	else
-		threadPriority = (osPriority)NULL;
+		threadPriority = osPriorityIdle;
 
 	float gyroVals[3] = { 0 };
 	float accelVals[3] = { 0 };
@@ -45,8 +45,16 @@ void Task_Controller(void const* args)
 		LOG(SEVERE, "MPU6050 not found!\r\n    Falling back to sensorless control loop.");
 
 		// Once things are more organized, startup a sensorless control loop thread before killing this one.
-		osThreadTerminate(threadID);
+		// osThreadTerminate(threadID);
+		//
+		//
+		while (true) {
+			Thread::wait(1500);
+			Thread::yield();
+		}
 	}
+
+	osThreadSetPriority(threadID, osPriorityNormal);
 
 	while (true) {
 		imu.getGyro(gyroVals);
@@ -66,7 +74,8 @@ void Task_Controller(void const* args)
 		   );
 
 		Thread::wait(CONTROL_LOOP_WAIT_MS);
-		//Thread::yield();
+
+		Thread::yield();
 	}
 
 	osThreadTerminate(threadID);

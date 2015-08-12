@@ -12,9 +12,9 @@ const int       CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
 bool            CommModule::isReady = false;
 osThreadId      CommModule::_txID;
 osThreadId      CommModule::_rxID;
-osMailQId       CommModule::_txQueue;
-osMailQId       CommModule::_rxQueue;
 CommPorts_t     CommModule::_ports;
+
+std::shared_ptr<CommModule> CommModule::instance;
 
 // This one isn't apart of any class, but it's an extern in CommModule.hpp
 CommPort_t      _tmpPort;
@@ -26,21 +26,37 @@ CommModule::CommModule() :
     // =================
     _txQueueHelper(),
     _rxQueueHelper()
+{}
+
+
+void CommModule::Init(void)
 {
-    // [X] - 1.2 - Create the data queues.
-    // =================
-    _txQueue = osMailCreate(_txQueueHelper.def(), NULL);
-    _rxQueue = osMailCreate(_rxQueueHelper.def(), NULL);
+    // [X] - 1.0 - Make sure we have an instance to work with
+    auto instance = Instance();
 
-    // [X] - 2.1 - Define the TX & RX task threads.
+    // [X] - 1.1 - Create the data queues.
     // =================
-    define_thread(_txDef, &CommModule::txThread);
-    define_thread(_rxDef, &CommModule::rxThread);
+    instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), NULL);
+    instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), NULL);
 
-    // [X] - 2.2 - Create the TX & RX threads - pass them a pointer to the created object.
+    // [X] - 1.2 - Define the TX & RX task threads.
     // =================
-    _txID = osThreadCreate(&_txDef, (void*)this);
-    _rxID = osThreadCreate(&_rxDef, (void*)this);
+    define_thread(instance->_txDef, &CommModule::txThread);
+    define_thread(instance->_rxDef, &CommModule::rxThread);
+
+    // [X] - 1.3 - Create the TX & RX threads - pass them a pointer to the created object.
+    // =================
+    _txID = osThreadCreate(&(instance->_txDef), NULL);
+    _rxID = osThreadCreate(&(instance->_rxDef), NULL);
+}
+
+
+shared_ptr<CommModule>& CommModule::Instance(void)
+{
+    if (instance.get() == nullptr)
+        instance.reset(new CommModule);
+
+    return instance;
 }
 
 
@@ -49,29 +65,40 @@ void CommModule::txThread(void const* arg)
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    LOG(INF2, "TX Communication Module Ready!");
+    LOG(INIT, "TX Communication Module Ready!\r\n    Thread ID:\t%u\r\n", _txID);
+
+    osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
 
     osEvent  evt;
 
     while (1) {
 
         // When a new RTP packet is put in the tx queue, begin operations (does nothing if no new data in queue)
-        evt = osMailGet(_txQueue, osWaitForever);
+        evt = osMailGet(instance->_txQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
+
             // Get a pointer to the packet's memory location
             RTP_t* p = (RTP_t*)evt.value.p;
 
-            // Call the user callback function
-            if (_ports[p->port].isOpen()) {
+            // Bump up the thread's priority
+            if (osThreadSetPriority(_txID, osPriorityRealtime) == osOK) {
 
-                _ports[p->port].TXCallback()(p);
+                // Call the user callback function
+                if (_ports[p->port].isOpen()) {
 
-                LOG(INF3, "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
+                    _ports[p->port].TXCallback()(p);
+
+                    _ports[p->port].TXPackets()++;   // Increment the packet counter by 1
+
+                    LOG(INF3, "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
+                }
+
+                // Release the allocated memory once data is sent
+                osMailFree(instance->_txQueue, p);
+
+                osThreadSetPriority(_txID, osPriorityNormal);
             }
-
-            // Release the allocated memory once data is sent
-            osMailFree(_txQueue, p);
         }
     }
 }
@@ -82,7 +109,7 @@ void CommModule::rxThread(void const* arg)
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    LOG(INF2, "RX Communication Module Ready!");
+    LOG(INIT, "RX Communication Module Ready!\r\n    Thread ID:\t%u\r\n", _rxID);
 
     RTP_t* p;
     osEvent  evt;
@@ -90,7 +117,7 @@ void CommModule::rxThread(void const* arg)
     while (1) {
 
         // Wait until new data is placed in the class's rxQueue from a CommLink class
-        evt = osMailGet(_rxQueue, osWaitForever);
+        evt = osMailGet(instance->_rxQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
             // get a pointer to where the data is stored
@@ -101,10 +128,12 @@ void CommModule::rxThread(void const* arg)
 
                 _ports[p->port].RXCallback()(p);
 
+                _ports[p->port].RXPackets()++;
+
                 LOG(INF3, "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
             }
 
-            osMailFree(_rxQueue, p);  // free memory allocated for mail
+            osMailFree(instance->_rxQueue, p);  // free memory allocated for mail
         }
     }
 }
@@ -133,7 +162,7 @@ bool CommModule::openSocket(uint8_t portNbr)
 {
     if ( _ports[portNbr].Open() ) {
         // Everything looks to be setup, go ahead and enable it
-        LOG(INF3, "Port %u opened", portNbr);
+        LOG(INIT, "Port %u opened", portNbr);
 
         return true;
     } else {
@@ -150,10 +179,10 @@ void CommModule::ready(void)
     if (isReady == true)
         return;
 
-    isReady = true;
-
+    // Start running the TX thread - it will trigger with to startup the RX thread
     osSignalSet(_txID, COMM_MODULE_SIGNAL_START_THREAD);
-    osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
+
+    isReady = true;
 }
 
 
@@ -161,21 +190,21 @@ void CommModule::send(RTP_t& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
     if ( _ports[packet.port].isOpen() ) {
-        //packet.payload_size += 1;   // Fixup factor for header bytes
+
+        packet.adjustSizes();
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
-        RTP_t* p = (RTP_t*)osMailAlloc(_txQueue, osWaitForever);
+        RTP_t* p = (RTP_t*)osMailAlloc(instance->_txQueue, osWaitForever);
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-        std::memcpy(p->raw, &packet.raw, p->total_size);
+        std::memcpy(p, &packet, packet.total_size);
 
         // [X] - 1.3 - Place the passed packet into the txQueue.
         // =================
-        osMailPut(_txQueue, p);
+        osMailPut(instance->_txQueue, p);
 
-        _ports[packet.port].TXPackets()++;   // Increment the packet counter by 1
     } else {
         LOG(WARN, "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
@@ -186,33 +215,18 @@ void CommModule::receive(RTP_t& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
     if ( _ports[packet.port].isOpen() ) {
-        //packet.payload_size -= 1;   // Fixup factor for header bytes
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
-        RTP_t* p = (RTP_t*)osMailAlloc(_rxQueue, osWaitForever);
+        RTP_t* p = (RTP_t*)osMailAlloc(instance->_rxQueue, osWaitForever);
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-        std::memcpy(p->raw, &packet.raw, p->total_size);
+        std::memcpy(p, &packet, packet.total_size);
 
         // [X] - 1.3 - Place the passed packet into the rxQueue.
         // =================
-        osMailPut(_rxQueue, p);
-
-        _ports[packet.port].RXPackets()++;
-
-        if (p->ack) {
-
-            RTP_t res;
-
-            res.header_link = p->header_link;
-            res.payload[0] = 0xAA;
-            res.payload_size = 1;
-            res.address = 0x01;
-
-            send(res);
-        }
+        osMailPut(instance->_rxQueue, p);
 
     } else {
         LOG(WARN, "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);

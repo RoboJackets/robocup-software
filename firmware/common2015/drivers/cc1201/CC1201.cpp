@@ -44,20 +44,16 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 	//idle();
 	//strobe(CC1201_STROBE_SFTX);
 	if (_isInit == false)
-		return 0;
-
-	LOG(INF3, "%u", size);
+		return -1;
 
 	if ( size != (buf[0] + 1) ) {
 		LOG(SEVERE, "Packet size values are inconsistent. %u bytes requested vs %u bytes in packet.", size, buf[0]);
 		return 1;
 	}
 
-
 	// [X] - 1 - Send the data to the CC1201.
 	// =================
 	uint8_t device_state = writeReg(CC1201_TX_FIFO, buf, size);
-
 
 	// [X] - 4 - Enter the TX state.
 	// =================
@@ -74,23 +70,31 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 		strobe(CC1201_STROBE_STX);	// Enter TX mode
 	}
 
-
+	/*
 	// [X] - 5 - Wait until radio enters into the TX state
 	// =================
 	while ( mode() != 0x13 );	// While not TX mode
 
+	*/
 	uint8_t bts = 1;
 
 	do {
 		bts = readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON);
+
+		Thread::wait(2);
+
 	} while (bts != 0);
+	
+
+	// LOG(OK, " %u bytes", size);
 
 	return 0;   // success
 }
 
+
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len)
 {
-	osDelay(1);	//make sure the packet is ready. remove for production
+	//osDelay(1);	//make sure the packet is ready. remove for production
 
 	uint8_t device_state = freqUpdate();	// update frequency offset estimate & get the current state while at it
 	uint8_t num_rx_bytes = readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON);
@@ -316,8 +320,14 @@ void CC1201::reset(void)
 	idle();
 	toggle_cs();
 	_spi->write(CC1201_STROBE_SRES);
-	//Thread::wait(200);
 	toggle_cs();
+
+	for (int i = 0; i < 300; i++) {
+		if (~(idle()) & 0x80)	// Chip is ready when status byte's MSB is 0
+			break;
+		else
+			Thread::wait(1);
+	}
 
 	_isInit = false;
 }
