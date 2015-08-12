@@ -15,5 +15,5 @@ homebrew/x11/freeglut
 libusb
 freeglut
 eigen
-bullet
+bullet --with-shared
 protobuf
