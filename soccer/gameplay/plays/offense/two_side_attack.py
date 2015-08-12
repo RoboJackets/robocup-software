@@ -17,15 +17,11 @@ class TwoSideAttack(play.Play):
     # Estimate of which shot is better
 
     class State(enum.Enum):
-        # Setup
-            # Move A and move B, capture in setup
-        # Passing
-            # Pick best target, add coordinated pass subbehavior
-        # Kicking
-            # Pivot kick (by default attacks enemy goal)
-
+        ## Move A and move B, capture in setup
         setup = 1
+        ## Pick best target, add coordinated pass subbehavior
         passing = 2
+        ## Pivot kick (by default attacks enemy goal)
         kicking = 3;
 
     def __init__(self):

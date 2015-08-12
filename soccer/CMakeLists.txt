@@ -24,9 +24,9 @@ set(ROBOCUP_LIB_SRC
     "NewRefereeModule.cpp"
     "planning/CompositePath.cpp"
     "planning/InterpolatedPath.cpp"
+    "planning/MotionConstraints.cpp"
     "planning/RRTPlanner.cpp"
     "planning/Tree.cpp"
-    "planning/MotionConstraints.cpp"
     "Processor.cpp"
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
@@ -40,6 +40,7 @@ set(ROBOCUP_LIB_SRC
     "StripChart.cpp"
     "SystemState.cpp"
     "VisionReceiver.cpp"
+    "WindowEvaluator.cpp"
 )
 
 
@@ -88,8 +89,9 @@ include_directories(SYSTEM ${SDL_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
-add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC} WindowEvaluator.cpp WindowEvaluator.h)
+add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
+set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
 target_link_libraries(robocup common)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
@@ -151,11 +153,10 @@ target_link_libraries(log_viewer common)
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
-    "ExampleTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
     "WindowEvaluatorTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)
