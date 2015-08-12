@@ -9,8 +9,8 @@ FastTimer::FastTimer(QObject* parent):
     _us(0),
     _running(false)
 {
-    pthread_mutex_init(&_mutex, 0);
-    pthread_cond_init(&_cond, 0);
+    pthread_mutex_init(&_mutex, nullptr);
+    pthread_cond_init(&_cond, nullptr);
 }
 
 FastTimer::~FastTimer()
@@ -48,19 +48,19 @@ void FastTimer::stop()
 void FastTimer::run()
 {
     struct timeval start;
-    gettimeofday(&start, 0);
+    gettimeofday(&start, nullptr);
     pthread_mutex_lock(&_mutex);
     while (_running)
     {
         struct timeval t;
-        gettimeofday(&t, 0);
+        gettimeofday(&t, nullptr);
         useconds_t us = (t.tv_sec - start.tv_sec) * 1000000 + t.tv_usec - start.tv_usec;
         start = t;
 
         if (_us > us)
         {
             usleep(_us-us);
-            gettimeofday(&start, 0);
+            gettimeofday(&start, nullptr);
         }
 
         QApplication::instance()->postEvent(this, new QEvent(QEvent::User));

@@ -23,7 +23,7 @@ using namespace std;
 
 
 SimEngine::SimEngine() :
-		_dynamicsWorld(0), _stepping(true), _singleStep(false),
+		_dynamicsWorld(nullptr), _stepping(true), _singleStep(false),
 		_debugMode(0),	_defaultContactProcessingThreshold(BT_LARGE_FLOAT) {}
 
 void SimEngine::initPhysics() {

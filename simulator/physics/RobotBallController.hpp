@@ -45,14 +45,14 @@ public:
 	void initPhysics();
 
 	///btActionInterface interface
-	virtual void updateAction( btCollisionWorld* collisionWorld,btScalar deltaTime){
+	virtual void updateAction( btCollisionWorld* collisionWorld,btScalar deltaTime) override{
 		detectBall(collisionWorld);
 		dribblerStep();
 		kickerStep();
 	}
 
 	///btActionInterface interface
-	void debugDraw(btIDebugDraw* debugDrawer) {};
+	void debugDraw(btIDebugDraw* debugDrawer) override {};
 
 	bool detectBall(btCollisionWorld* collisionWorld);
 	void dribblerStep();

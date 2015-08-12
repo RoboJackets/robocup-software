@@ -49,7 +49,7 @@ namespace Geometry2d
 
 			Point nearestPoint(const Line& l) const;
 			
-			bool intersects(const Segment &other, Point *intr = 0) const;
+			bool intersects(const Segment &other, Point *intr = nullptr) const;
 			bool intersects(const Circle& circle) const;
 			bool intersects(const Line &line, Point *intr = 0) const;
 

@@ -6,7 +6,7 @@
 using namespace std;
 
 GlutCamera::GlutCamera(SimEngine* engine) :
-		_mode(0),_vehicle(0),
+		_mode(0),_vehicle(nullptr),
 		_cameraDistance(1.0*scaling), _ele(20.f), _azi(0.f), _cameraPosition(0.f, 0.f, 0.f),
 		_cameraTargetPosition(0.f, 0.f, 0.f), _scaleBottom(0.5f), _scaleFactor(2.f),
 		_cameraUp(0, 1, 0), _forwardAxis(2), _glutScreenWidth(0), _glutScreenHeight(0),
