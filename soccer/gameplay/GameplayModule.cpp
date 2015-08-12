@@ -130,9 +130,10 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	ourGoalArea->vertices.push_back(Point(-halfFlat, radius));
 	ourGoalArea->vertices.push_back(Point( halfFlat, radius));
 	ourGoalArea->vertices.push_back(Point( halfFlat, 0));
-	_ourGoalArea.add(ourGoalArea);
-	_ourGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point(-halfFlat, 0), radius)));
-	_ourGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point( halfFlat, 0), radius)));
+	_ourGoalArea = std::make_shared<CompositeShape>();
+	_ourGoalArea->add(ourGoalArea);
+	_ourGoalArea->add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point(-halfFlat, 0), radius)));
+	_ourGoalArea->add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point( halfFlat, 0), radius)));
 
 	auto theirGoalArea = std::make_shared<Polygon>();
 	const auto field_length = Field_Dimensions::Current_Dimensions.Length();
@@ -140,9 +141,10 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	theirGoalArea->vertices.push_back(Point(-halfFlat, field_length - radius));
 	theirGoalArea->vertices.push_back(Point( halfFlat, field_length - radius));
 	theirGoalArea->vertices.push_back(Point( halfFlat, field_length));
-	_theirGoalArea.add(theirGoalArea);
-	_theirGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point(-halfFlat, field_length), radius)));
-	_theirGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point( halfFlat, field_length), radius)));
+	_theirGoalArea = std::make_shared<CompositeShape>();
+	_theirGoalArea->add(theirGoalArea);
+	_theirGoalArea->add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point(-halfFlat, field_length), radius)));
+	_theirGoalArea->add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point( halfFlat, field_length), radius)));
 
 	_ourHalf = std::make_shared<Polygon>();
 	_ourHalf->vertices.push_back(Point(-x, -Field_Dimensions::Current_Dimensions.Border()));
