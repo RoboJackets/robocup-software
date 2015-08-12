@@ -1,3 +1,5 @@
+# set the path to where the ARM & AVR toolchains setup files are at so they can be used for all firmware directories
+set(ARM_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/arm_toolchain.cmake PARENT_SCOPE)
 
 # all official libraries
 include(ExternalProject)

@@ -1,0 +1,17 @@
+[timestart] 117830
+[size] 1440 823
+[pos] -1441 147
+*-13.209131 129850 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] main.
+@28
+main.clk
+main.scl_out
+main.sda_out
+main.sda_in
+@24
+main.dut.state[2:0]
+main.dut.clock_div[5:0]
+@29
+main.dut.bit_count[2:0]
+[pattern_trace] 1
+[pattern_trace] 0
