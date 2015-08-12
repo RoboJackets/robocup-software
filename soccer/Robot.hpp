@@ -113,7 +113,7 @@ public:
 		return *this == other;
 	}
 
-	std::string to_string() const {
+	std::string toString() const {
 		return 	std::string("<Robot ") +
 						(self() ? "us[" : "them[") +
 						std::to_string(shell()) +
@@ -123,7 +123,7 @@ public:
 	}
 
 	friend std::ostream& operator<< (std::ostream& stream, const Robot& robot) {
-		stream << robot.to_string();
+		stream << robot.toString();
 		return stream;
 	}
 
