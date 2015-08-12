@@ -21,3 +21,5 @@
 
 # IntelliJ
 .idea
+rj-*.bin
+rj-*.nib
