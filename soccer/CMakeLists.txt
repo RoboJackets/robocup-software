@@ -60,10 +60,6 @@ qt5_wrap_ui(SOCCER_UIS ${SOCCER_UIS})
 qt5_add_resources(SOCCER_RSRC ui/main_icons.qrc)
 
 
-
-# Python
-include_directories(${PYTHON_INCLUDE_DIRS})
-
 # Boost Python
 set(Boost_USE_STATIC_LIBS   OFF)
 set(Boost_USE_MULTITHREADED ON)
@@ -106,7 +102,7 @@ target_link_libraries(robocup ${SDL_LIBRARY})
 
 # python
 # note: these are set in the root CMakeLists.txt file
-include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 link_directories(${PYTHON_LINK_DIRS})
 target_link_libraries(robocup ${PYTHON_LIBRARIES})
 
