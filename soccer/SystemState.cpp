@@ -65,7 +65,7 @@ void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor&
 
 void SystemState::drawPolygon(const std::vector<Geometry2d::Point>& pts, const QColor &qc, const QString &layer)
 {
-	drawPolygon(pts.data(), pts.siize(), qc, layer);
+	drawPolygon(pts.data(), pts.size(), qc, layer);
 }
 
 void SystemState::drawPolygon(const Geometry2d::Polygon& polygon, const QColor &qc, const QString &layer)
