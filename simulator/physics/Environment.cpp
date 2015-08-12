@@ -59,7 +59,7 @@ void Environment::connectSockets() {
 		throw std::runtime_error("Unable to bind sockets.  Is there another instance of simulator already running?");
 	}
 
-	gettimeofday(&_lastStepTime, 0);
+	gettimeofday(&_lastStepTime, nullptr);
 
 	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
 	_timer.start(16 / Oversample);
@@ -109,7 +109,7 @@ void Environment::step()
 
 	// timing
 	struct timeval tv;
-	gettimeofday(&tv, 0);
+	gettimeofday(&tv, nullptr);
 	_lastStepTime = tv;
 
 	// execute simulation step
@@ -211,7 +211,7 @@ void Environment::sendVision()
 	det->set_camera_id(0);
 
 	struct timeval tv;
-	gettimeofday(&tv, 0);
+	gettimeofday(&tv, nullptr);
 	det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
 	det->set_t_sent(det->t_capture());
 
@@ -380,9 +380,9 @@ Robot *Environment::robot(bool blue, int board_id) const
 
 	if (robots.contains(board_id))
 	{
-		return robots.value(board_id,0);
+		return robots.value(board_id,nullptr);
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 

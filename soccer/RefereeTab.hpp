@@ -8,7 +8,7 @@ class RefereeTab: public QWidget
 	Q_OBJECT;
 
 	public:
-		RefereeTab(QWidget *parent = 0);
+		RefereeTab(QWidget *parent = nullptr);
 
 	protected Q_SLOTS:
 		void on_externalReferee_toggled(bool value);

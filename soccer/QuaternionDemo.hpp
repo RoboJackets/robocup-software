@@ -7,14 +7,14 @@
 class QuaternionDemo: public QGLWidget
 {
 public:
-	QuaternionDemo(QWidget *parent = 0);
+	QuaternionDemo(QWidget *parent = nullptr);
 
 	bool initialized;
 	Eigen::Quaternionf ref;
 	Eigen::Quaternionf q;
 
 protected:
-	void paintGL();
+	void paintGL() override;
 };
 
 QuaternionDemo::QuaternionDemo(QWidget* parent)
