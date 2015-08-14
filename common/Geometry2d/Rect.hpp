@@ -31,7 +31,7 @@ namespace Geometry2d
 				pt[1] = other.pt[1];
 			}
 
-			Shape *clone() const;
+			Shape *clone() const override;
 
 			Rect &operator+=(const Point &offset)
 			{
@@ -70,16 +70,16 @@ namespace Geometry2d
 			bool contains(const Point &other) const;
 			bool contains(const Rect &other) const;
 
-			bool containsPoint(const Point &other) const {
+			bool containsPoint(const Point &other) const override {
 				return contains(other);
 			}
 
 
-	        bool hit(const Point &pt) const {
+	        bool hit(const Point &pt) const override {
 	        	return contains(pt);
 	        }
 
-	        bool hit(const Segment &seg) const;
+	        bool hit(const Segment &seg) const override;
 
 			Point center() const { return (pt[0] + pt[1]) / 2; }
 
@@ -98,7 +98,7 @@ namespace Geometry2d
 			
 			Point pt[2];
 
-			std::string toString() {
+			std::string toString() override {
 				std::stringstream str;
 				str << "Line<" << pt[0] << ", " << pt[1] << ">";
 				return str.str();

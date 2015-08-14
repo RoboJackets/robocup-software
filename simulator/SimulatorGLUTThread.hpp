@@ -58,7 +58,7 @@ public:
 
 private:
 	// Re-implement the run function to start the process
-	void run();
+	void run() override;
 	
 	QMutex _mutex;
 	bool _stopped;

@@ -12,7 +12,7 @@ class LogViewer: public QMainWindow
 	Q_OBJECT;
 	
 	public:
-		LogViewer(QWidget *parent = 0);
+		LogViewer(QWidget *parent = nullptr);
 		
 		int frameNumber() const
 		{

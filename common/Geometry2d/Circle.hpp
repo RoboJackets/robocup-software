@@ -27,7 +27,7 @@ namespace Geometry2d
             _r = other.radius();
         }
 
-        Shape *clone() const;
+        Shape *clone() const override;
         
 
         // Both radius and radius-squared are stored, since some operations are more
@@ -68,31 +68,31 @@ namespace Geometry2d
             _rsq = -1;
         }
         
-        bool containsPoint(const Point &pt) const;
+        bool containsPoint(const Point &pt) const override;
 
-        bool hit(const Point &pt) const;
+        bool hit(const Point &pt) const override;
 
-        bool hit(const Segment &pt) const;
+        bool hit(const Segment &pt) const override;
         
         // Returns the number of points at which this circle intersects the given circle.
         // i must be null or point to two points.
         // Only the first n points in i are modified, where n is the return value.
-        int intersects(Circle &other, Point *i = 0) const;
+        int intersects(Circle &other, Point *i = nullptr) const;
         
         // Returns the number of points at which this circle intersects the given line.
         // i must be null or point to two points.
         // Only the first n points in i are modified, where n is the return value.
-        int intersects(const Line &line, Point *i = 0) const;
+        int intersects(const Line &line, Point *i = nullptr) const;
         
         bool tangentPoints(const Geometry2d::Point &src, 
-                Geometry2d::Point* p1 = 0, Geometry2d::Point* p2 = 0) const;
+                Geometry2d::Point* p1 = nullptr, Geometry2d::Point* p2 = nullptr) const;
         
         // finds the point on the circle closest to P
         Point nearestPoint(const Geometry2d::Point &P) const;
 
         Point center;
 
-        std::string toString() {
+        std::string toString() override {
             std::stringstream str;
             str << "Circle<" << center << ", " << radius() << ">";
             return str.str();

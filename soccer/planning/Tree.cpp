@@ -36,7 +36,7 @@ void Tree::Point::addEdges(std::list<Geometry2d::Segment>& edges)
 Tree::Tree()
 {
 	step = .1;
-	_obstacles = 0;
+	_obstacles = nullptr;
 }
 
 Tree::~Tree()
@@ -46,7 +46,7 @@ Tree::~Tree()
 
 void Tree::clear()
 {
-	 _obstacles = 0;
+	 _obstacles = nullptr;
 
     // Delete all points
     for (Point *pt :  points)
@@ -62,7 +62,7 @@ void Tree::init(const Geometry2d::Point& start, const Geometry2d::CompositeShape
 
 	_obstacles = obstacles;
 
-	Point* p = new Point(start, 0);
+	Point* p = new Point(start, nullptr);
 	_obstacles->hit(p->pos, p->hit);
 	points.push_back(p);
 }
@@ -96,7 +96,7 @@ void Tree::addPath(Planning::InterpolatedPath &path, Point* dest, const bool rev
 Tree::Point* Tree::nearest(Geometry2d::Point pt)
 {
 	float bestDistance = -1;
-    Point *best = 0;
+    Point *best = nullptr;
 
     for (Point* other :  points)
     {
@@ -115,7 +115,7 @@ Tree::Point* Tree::start() const
 {
 	if (points.empty())
 	{
-		return 0;
+		return nullptr;
 	}
 
 	return points.front();
@@ -125,7 +125,7 @@ Tree::Point* Tree::last() const
 {
 	if (points.empty())
 	{
-		return 0;
+		return nullptr;
 	}
 
 	return points.back();
@@ -140,7 +140,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 		base = nearest(pt);
 		if (!base)
 		{
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -174,7 +174,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 		} catch (exception& e)
 		{
 			// We hit a new obstacle
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -191,7 +191,7 @@ bool FixedStepTree::connect(Geometry2d::Point pt)
 	//try to reach the goal pt
 	const unsigned int maxAttemps = 50;
 
-	Point* from = 0;
+	Point* from = nullptr;
 
 	for (unsigned int i=0 ; i<maxAttemps ; ++i)
 	{
