@@ -6,6 +6,8 @@
 *  
 */
 
+`ifndef _BLDC_ENCODER_COUNTER_
+`define _BLDC_ENCODER_COUNTER_
 
 // BLDC_Driver module
 module BLDC_Encoder_Counter ( clk, reset, enc, count );
@@ -64,3 +66,5 @@ always @(posedge clk) begin : ENCODER_COUNTER
 
 end
 endmodule
+
+`endif

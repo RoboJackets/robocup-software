@@ -41,8 +41,6 @@ CC1201::~CC1201(void)
  */
 int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 {
-	//idle();
-	//strobe(CC1201_STROBE_SFTX);
 	if (_isInit == false)
 		return -1;
 
@@ -50,6 +48,8 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 		LOG(SEVERE, "Packet size values are inconsistent. %u bytes requested vs %u bytes in packet.", size, buf[0]);
 		return 1;
 	}
+
+	strobe(CC1201_STROBE_SFTX);
 
 	// [X] - 1 - Send the data to the CC1201.
 	// =================

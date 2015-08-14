@@ -6,6 +6,8 @@
 *  
 */
 
+`ifndef _BLDC_HALL_COUNTER_
+`define _BLDC_HALL_COUNTER_
 
 // BLDC_Hall_Counter module
 module BLDC_Hall_Counter ( clk, reset, hall, count );
@@ -72,3 +74,5 @@ always @(posedge clk) begin : HALL_COUNTER
 end
 
 endmodule
+
+`endif

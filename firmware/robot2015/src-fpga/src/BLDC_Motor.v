@@ -6,6 +6,8 @@
 *  
 */
 
+`ifndef _BLDC_MOTOR_
+`define _BLDC_MOTOR_
 
 `include "BLDC_Driver.v"
 `include "BLDC_Hall_Counter.v"
@@ -69,7 +71,7 @@ bits [1..0]:    OCTW_SET
 
 
 // BLDC_Motor module
-module BLDC_Motor ( clk, en, reset_counts, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, hall_fault );
+module BLDC_Motor ( clk, en, reset_enc_count, reset_hall_count, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, hall_fault );
 
 // Module parameters - passed parameters will overwrite the values here
 parameter MIN_DUTY_CYCLE =          ( 0 );
@@ -79,10 +81,11 @@ parameter ENCODER_COUNT_WIDTH =     ( 15 );
 parameter HALL_COUNT_WIDTH =        ( 7 );
 
 // Local parameters - can not be altered outside this module
-localparam DUTY_CYCLE_WIDTH =       ( log2( MAX_DUTY_CYCLE ) );
+`include "log2-macro.v"     // This must be included here
+localparam DUTY_CYCLE_WIDTH =   `LOG2( MAX_DUTY_CYCLE );
 
 // Module inputs/outputs
-input clk, en, reset_counts;
+input clk, en, reset_enc_count, reset_hall_count;
 input [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
 input [1:0] enc;
 input [2:0] hall;
@@ -92,14 +95,10 @@ output [HALL_COUNT_WIDTH-1:0] hall_count;
 output hall_fault;
 // ===============================================
 
-function integer log2;
-  input integer value;
-  begin
-    value = value-1;
-    for (log2=0; value>0; log2=log2+1)
-      value = value>>1;
-  end
-endfunction
+// Show the expected startup length during synthesis. Assumes an 18.432MHz input clock.
+initial begin
+    $display ("Duty cycle width from BLDC_Motor.v:\t%d", DUTY_CYCLE_WIDTH);
+end
 
 // Instantiation of all the modules required for complete functioning with all sensors
 // ===============================================
@@ -107,7 +106,7 @@ BLDC_Encoder_Counter #(         // Instantiation of the encoder for counting the
     .COUNT_WIDTH                ( ENCODER_COUNT_WIDTH )
     ) encoder_counter (
     .clk                        ( clk ) ,
-    .reset                      ( reset_counts ) ,
+    .reset                      ( reset_enc_count ) ,
     .enc                        ( enc ) ,
     .count                      ( enc_count )
 );
@@ -116,7 +115,7 @@ BLDC_Hall_Counter #(            // Instantiation of the hall effect sensor's cou
     .COUNTER_WIDTH              ( HALL_COUNT_WIDTH )
     ) hall_counter (
     .clk                        ( clk ) ,
-    .reset                      ( reset_counts ) ,
+    .reset                      ( reset_hall_count ) ,
     .hall                       ( hall ) ,
     .count                      ( hall_count )
 );
@@ -138,3 +137,5 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
 );
 
 endmodule
+
+`endif

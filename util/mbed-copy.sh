@@ -71,26 +71,27 @@ echo -e "Devices path is $MBED_DEVICES_PATH"
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 
 # Create a path where we can write to arbitruary mbed(s)
-MNT_PATH=/mnt/script/MBED
+MNT_PATH="/mnt/script/MBED"
 
 # This will trigger anytime a file is closed at the mouting point
 # The process exits at the first event trigger. Times out after 10s
-sudo mkdir -p $MNT_PATH && \
-sudo touch $MNT_PATH && \
-sudo inotifywait -q --format %f -e unmount, close_write "$MNT_PATH"/ 2>&1 | \
-while read f; do
-    echo "${WHITE}${GREENBG}File write success for file ${f}!${FINLN}${R}"
+sudo mkdir -p $MNT_PATH
 
-    for i in $MBED_SERIAL_PATH; do
+for ((i=0;i<${#MBED_DEVICES_PATH[@]};++i)); do
+
+    sudo inotifywait -q -r -t 6 -e close_write "$MNT_PATH" 2>&1 | while read f; do
+        echo "${WHITE}${GREENBG}File write success for file ${f}!${FINLN}${R}"
         echo "${WHITE}${YELLOWBG}Unmount succes!${FINLN}${R}"
 
         # send break signal to all mbeds
-        sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak(0.01)"
-    done
+        sudo python3 -c "import serial; serial.Serial(\"${MBED_SERIAL_PATH[i]}\").sendBreak()"
+        #sudo rmdir $MNT_PATH
 
-    #echo "${WHITE}${YELLOWBG}Starting screen session.${R}"
-    # screen -d -m -S mysession
-    # screen -L -S mysession split -v -p 0 -X stuff mbed
+        #echo "${WHITE}${YELLOWBG}Starting screen session.${R}"
+        # screen -d -m -S mysession
+        # screen -L -S mysession split -v -p 0 -X stuff mbed
+    done &
+
 done
 
 # this causes the script to fail if any command below fails
@@ -102,9 +103,9 @@ IFS=$'\n'
 # loop through all mbed devices, mount them, copy over the bin file, and unmount them
 for i in $MBED_DEVICES_PATH; do
     echo "Installing on $i"
-
     sudo mount $i $MNT_PATH
-    sudo cp $1 $MNT_PATH/
+    sudo rmdir $MNT_PATH
+    sudo cp $1 $MNT_PATH
 
     if [ "$SHA2" != "$(sha256sum /mnt/script/MBED/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')" ]; then
         STYLE=1
@@ -114,7 +115,7 @@ for i in $MBED_DEVICES_PATH; do
         echo "${WHITE}${BLUEBG}SHA256SUMS of binary files match, copy ${BOLD}successful${AOFF}${WHITE}${BLUEBG}!${FINLN}${R}"
     fi
 
-    sudo umount -l $MNT_PATH/
+    sudo umount -l $MNT_PATH
 
     if [ $? -eq 0 ]; then
         # Yay, we made it!
@@ -133,7 +134,9 @@ for i in $MBED_DEVICES_PATH; do
         printf "%*s\n" $(((${#msg}+$(tput cols))/2)) "$msg"     # center align the message
         printf "$PUTLN \n $PUTLN$R\n"
     fi
-    sudo rmdir $MNT_PATH
-done
+    
+done &
+
+wait
 
 # tput rmcup

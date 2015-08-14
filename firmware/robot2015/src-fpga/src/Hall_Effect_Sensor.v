@@ -15,6 +15,9 @@ impedance phase for each hall state is specified in the document linked below.
 //http://www.maxonmotor.com/medias/sys_master/root/8815461662750/EC-Technology-short-and-to-the-point-14-EN-32-35.pdf?attachment<=true
 --Doho*/
 
+`ifndef _HALL_EFFECT_SENSOR_
+`define _HALL_EFFECT_SENSOR_
+
 module Hall_Effect_Sensor ( hall, u, z );
 
 input    [2:0]  hall; 	// Hall Effect sensor input
@@ -86,3 +89,5 @@ always @(*) begin
 end
 
 endmodule
+
+`endif

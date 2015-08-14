@@ -42,7 +42,9 @@
 //       CPOL and CPHA inputs. See
 //       http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus
 //       a description of these conventions.
-//
+
+`ifndef _SPI_MASTER_
+`define _SPI_MASTER_
 
 
 module spi_master
@@ -67,7 +69,7 @@ module spi_master
    output [NUM_PORTS-1:0] din,
    output reg csb,
    output reg sclk
-   );
+);
 
    reg [NUM_PORTS-1:0] dout_s;
    reg  [CLK_DIVIDER_WIDTH-1:0]  clk_count;
@@ -75,21 +77,7 @@ module spi_master
    wire pulse = next_clk_count == (clk_divider >> 1);
    reg    state;
 
-`ifdef verilator
-   localparam LOG2_DATA_WIDTH = $clog2(DATA_WIDTH+1);
-`else
-   function integer log2;
-      input integer value;
-      integer       count;
-      begin
-         value = value-1;
-         for (count=0; value>0; count=count+1)
-           value = value>>1;
-         log2=count;
-      end
-   endfunction
-   localparam LOG2_DATA_WIDTH = log2(DATA_WIDTH+1);
-`endif   
+`include "log2-macro.v"
 
    reg [LOG2_DATA_WIDTH:0] shift_count;
 
@@ -241,3 +229,4 @@ module sro
    end
 endmodule
    
+`endif

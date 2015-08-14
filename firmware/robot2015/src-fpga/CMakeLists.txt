@@ -10,6 +10,7 @@ set(OUTPUT_FILENAME_BASE rj-fpga)
 
  # These are set with the above
 set(BIT_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.nib)
+set(XILINX_PROJ_FILENAME ${OUTPUT_FILENAME_BASE}.prj)
 
 # This is the root path to anything Xilinx related
 set(XILINX_SYSTEM_ROOT /opt/Xilinx)
@@ -85,14 +86,25 @@ add_custom_target(copy_ucf
     COMMENT "Copying UCF file to xflow working directory"
 )
 
+# Find all of the verilog files and create a project file that we can pass into xflow
+file(GLOB_RECURSE verilog_SRC "*.v" ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Make sure the constraint file is part of the project file
+list(APPEND verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf)
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${XILINX_PROJ_FILENAME} "EOF")
+#foreach(srcFile ${verilog_SRC})
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/${XILINX_PROJ_FILENAME} "verilog work \"robocup.v\"\r\n")
+#endforeach()
+
 # target for synthesizing the Verilog to a bitstream file that can be used to configure the fpga
 add_custom_target(fpga2015bit
     ${XILINX_TOOLS_DIR}/xflow
+        -g CMAKE_SCRIPT
         -wd ${CMAKE_CURRENT_BINARY_DIR}
         -p  ${DEV_PARTNUM}
         -synth xst_verilog
         -implement fast_runtime
         -config bitgen
+        #${CMAKE_CURRENT_BINARY_DIR}/${XILINX_PROJ_FILENAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/robocup.v
     COMMENT "Using Xilinx xflow to generate the FPGA's bitstream from Verilog files"
     DEPENDS copy_ucf

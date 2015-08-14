@@ -6,6 +6,11 @@
 *  
 */
 
+`ifndef _BLDC_DRIVER_
+`define _BLDC_DRIVER_
+
+`include "Hall_Effect_Sensor.v"
+`include "Phase_Driver.v"
 
 /*
 *  If `STARTUP_INCREMENT_COMPLETELY` is defined, the state machine will ignore the
@@ -14,10 +19,6 @@
 *  when the duty cycle is equal to `END_STARTUP_DUTY_CYCLE`.
 */
 `define STARTUP_INCREMENT_COMPLETELY
-
-
-`include "Hall_Effect_Sensor.v"
-`include "Phase_Driver.v"
 
 
 // BLDC_Driver module
@@ -31,7 +32,8 @@ parameter DUTY_CYCLE_STEP_RES =                 ( 1 );
 parameter DEAD_TIME =                           ( 2 );
 
 // Local parameters - can not be altered outside this module
-localparam DUTY_CYCLE_WIDTH =                   ( log2( MAX_DUTY_CYCLE ) );   // must be before declaring duty_cycle
+`include "log2-macro.v"     // This must be included here
+localparam DUTY_CYCLE_WIDTH =   `LOG2( MAX_DUTY_CYCLE );
 
 // Module inputs/outputs
 input clk, en;
@@ -41,14 +43,6 @@ output reg [2:0] phaseH, phaseL;
 output reg fault = 0;
 // ===============================================
 
-function integer log2;
-  input integer value;
-  begin
-    value = value-1;
-    for (log2=0; value>0; log2=log2+1)
-      value = value>>1;
-  end
-endfunction
 
 // Local parameters that can not be altered outside of this file
 // ===============================================
@@ -58,12 +52,12 @@ localparam HALL_STATE_STEADY_COUNT =    50; // Threshold value in determining wh
 
 // Derived local parameters
 // ===============================================
-localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 2 );                   // Divide by 4 to get 25% of the max speed for startup state
-localparam STARTUP_DUTY_CYCLE_STEPS =       ( END_STARTUP_DUTY_CYCLE - MIN_DUTY_CYCLE );   // Get the number of steps between the min. and max. duty cycles for startup state
-localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << STARTUP_COUNTER_WIDTH );                           // The number of input clock cycles in one period of the startup counter's clock
-localparam HALL_CHECK_CLOCK_WIDTH =         ( STARTUP_COUNTER_WIDTH );                              // Width of counter for checking the hall effect sensor inputs at a reduced frequency.
-localparam HALL_CHECK_COUNTER_WIDTH =       ( log2( HALL_STATE_STEADY_COUNT ) );                  // Counter used for reduced sampling of the hall effect sensor
-localparam PHASE_DRIVER_COUNTER_WIDTH =     ( log2( PHASE_DRIVER_MAX_COUNTER ) );
+localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 2 );                        // Divide by 4 to get 25% of the max speed for startup state
+localparam STARTUP_DUTY_CYCLE_STEPS =       ( END_STARTUP_DUTY_CYCLE - MIN_DUTY_CYCLE );    // Get the number of steps between the min. and max. duty cycles for startup state
+localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << STARTUP_COUNTER_WIDTH );                 // The number of input clock cycles in one period of the startup counter's clock
+localparam HALL_CHECK_CLOCK_WIDTH =         ( STARTUP_COUNTER_WIDTH );                      // Width of counter for checking the hall effect sensor inputs at a reduced frequency.
+localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );             // Counter used for reduced sampling of the hall effect sensor
+localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
 
 // State machine declarations for readability
 // ===============================================
@@ -111,13 +105,14 @@ initial begin
     $display ("Motor startup state will hold until at requested duty cycle. [STARTUP_INCREMENT_COMPLETELY = YES]");
 `endif
     $display ("The startup duty cycle increments every %d clock cycles.", STARTUP_PERIOD_CLOCK_CYCLES);
-    $display ("    Duty cycle range: %d to %d.", MIN_DUTY_CYCLE, END_STARTUP_DUTY_CYCLE);
+    $display ("    Duty cycle range during motor startup: %d to %d.", MIN_DUTY_CYCLE, END_STARTUP_DUTY_CYCLE);
     $display ("    The full range of the duty cycle is from %d to %d.\n", MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
 end
 
 
 // Begin main logic
-always @(posedge clk) begin : MOTOR_STATES
+always @(posedge clk)
+begin : MOTOR_STATES
 
     if ( en == 0 ) begin
         fault <= 0;
@@ -299,3 +294,5 @@ end
 endgenerate
 
 endmodule
+
+`endif

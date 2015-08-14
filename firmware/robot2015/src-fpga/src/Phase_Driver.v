@@ -53,6 +53,9 @@ are do not alternate going on and off so there is no danger of shoot through.
 
 --Doho*/
 
+`ifndef _PHASE_DRIVER_
+`define _PHASE_DRIVER_
+
 
 module Phase_Driver ( clk, duty_cycle, high_z, pwm_high, pwm_low );
 
@@ -87,11 +90,11 @@ assign	pwm_low = 	(high_z == 1) ? 0 :
 					(duty_cycle == 0) ? 1 :
                     l;
 
-
 always @(posedge clk) begin : PHASE_DRIVER
 	counter = counter + 1;
 	if (counter >= MAX_COUNTER) counter = 0;
 end
 
-
 endmodule
+
+`endif
