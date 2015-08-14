@@ -26,12 +26,12 @@ public:
      * This is less than ideal, but it's what we've got.
      * @return A boolean indicating if the joystick is valid
      */
-    bool valid() const;
+    bool valid() const override;
 
-    void reset();
-    void update();
+    void reset() override;
+    void update() override;
 
-    JoystickControlValues getJoystickControlValues();
+    JoystickControlValues getJoystickControlValues() override;
 
 
 protected:

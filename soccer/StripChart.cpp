@@ -18,7 +18,7 @@ using namespace google::protobuf;
 
 StripChart::StripChart(QWidget* parent)
 {
-	_history = 0;
+	_history = nullptr;
 	_minValue = 0;
 	_maxValue = 1;
 	//_function = 0;

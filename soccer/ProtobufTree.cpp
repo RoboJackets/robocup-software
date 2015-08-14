@@ -29,9 +29,9 @@ ProtobufTree::ProtobufTree(QWidget *parent):
 	QTreeWidget(parent)
 {
 	_first = true;
-	_history = 0;
-	mainWindow = 0;
-	updateTimer = 0;
+	_history = nullptr;
+	mainWindow = nullptr;
+	updateTimer = nullptr;
 }
 
 bool ProtobufTree::message(const google::protobuf::Message& msg)
@@ -388,7 +388,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 {
 	QMenu menu;
 	
-	QAction *expandItemAction = 0, *collapseItemAction = 0;
+	QAction *expandItemAction = nullptr, *collapseItemAction = nullptr;
 	QTreeWidgetItem *item = itemAt(e->pos());
 	if (item)
 	{
@@ -410,11 +410,11 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 	
 	menu.addSeparator();
 
-	QAction *chartAction = 0;
+	QAction *chartAction = nullptr;
 	QList<QAction*> chartMenuActions;
 
 	QList<QDockWidget *> dockWidgets;
-	const FieldDescriptor *field = 0;
+	const FieldDescriptor *field = nullptr;
 	if (mainWindow && item)
 	{
 		field = item->data(Column_Tag, FieldDescriptorRole).value<const FieldDescriptor *>();

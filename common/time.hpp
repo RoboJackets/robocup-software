@@ -11,7 +11,7 @@ typedef uint64_t Time;
 static inline Time timestamp()
 {
     struct timeval time;
-    gettimeofday(&time, 0);
+    gettimeofday(&time, nullptr);
 
     return (Time)time.tv_sec * 1000000 + (Time)time.tv_usec;
 }

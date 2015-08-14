@@ -8,7 +8,7 @@
  */
 class RobotWidget : public QWidget {
 public:
-    RobotWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    RobotWidget(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
 
     void setBlueTeam(bool blueTeam);
     bool blueTeam() const;
@@ -18,7 +18,7 @@ public:
     void setBallSenseFault(bool faulty = true);
     void setHasBall(bool hasBall = true);
     
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
 
 
 private:

@@ -57,7 +57,7 @@ public:
 
 
 	///btActionInterface interface
-	virtual void updateAction( btCollisionWorld* collisionWorld, btScalar step)
+	virtual void updateAction( btCollisionWorld* collisionWorld, btScalar step) override
 	{
         (void) collisionWorld;
 		updateVehicle(step);
@@ -65,7 +65,7 @@ public:
 	
 
 	///btActionInterface interface
-	void debugDraw(btIDebugDraw* debugDrawer);
+	void debugDraw(btIDebugDraw* debugDrawer) override;
 			
 	const btTransform& getChassisWorldTransform() const;
 	
@@ -223,7 +223,7 @@ public:
 	{
 	}
 
-	virtual void* castRay(const btVector3& from,const btVector3& to, btVehicleRaycasterResult& result);
+	virtual void* castRay(const btVector3& from,const btVector3& to, btVehicleRaycasterResult& result) override;
 };
 
 

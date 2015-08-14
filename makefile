@@ -92,4 +92,7 @@ modernize:
 	# compilation database as input, on all c/c++ files in the repo.
 	mkdir -p build
 	cd build; cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -Wno-dev && make $(MAKE_FLAGS)
+	# You can pass specific flags to clang-modernize if you want it to only run some types of
+	# transformations, rather than all transformations that it's capable of.
+	# See `clang-modernize --help` for more info.
 	clang-modernize -p build -include=common,logging,simulator,soccer

@@ -18,10 +18,10 @@ public:
 	Ball(Environment* env);
 	virtual ~Ball();
 
-	virtual void position(float x, float y);
+	virtual void position(float x, float y) override;
 	virtual void velocity(float x, float y);
 
-	virtual Geometry2d::Point getPosition() const;
+	virtual Geometry2d::Point getPosition() const override;
 
 	void initPhysics();
 
