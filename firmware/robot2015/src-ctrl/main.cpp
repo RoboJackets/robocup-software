@@ -6,6 +6,7 @@
 #include <logger.hpp>
 
 #include "commands.hpp"
+#include "mem-iap.hpp"
 // #include "neostrip.cpp"
 
 
@@ -19,8 +20,16 @@
  */
 int main(void)
 {
-	isLogging = RJ_LOGGING_EN;
-	rjLogLevel = INIT;
+	// IAP     iap; 				// in-application-programming object for flash memory access
+	//if ( iap.blank_check( TARGET_SECTOR, TARGET_SECTOR ) == SECTOR_NOT_BLANK ) {
+		//iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
+		//iap.erase( TARGET_SECTOR, TARGET_SECTOR );
+	// }
+	// iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
+		
+
+	isLogging = sector_start_adress[ TARGET_SECTOR ];
+	rjLogLevel = sector_start_adress[ TARGET_SECTOR + 1 ];
 
 
 	/* Always send out an empty line at startup for keeping the console

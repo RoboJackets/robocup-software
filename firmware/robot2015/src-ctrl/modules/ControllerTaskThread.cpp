@@ -8,7 +8,7 @@
 
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production builds. Hopefully that'll be possible without the console
-#define CONTROL_LOOP_WAIT_MS 250
+#define CONTROL_LOOP_WAIT_MS 3
 
 
 /**

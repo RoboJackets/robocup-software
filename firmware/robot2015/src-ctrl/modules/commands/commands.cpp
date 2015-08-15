@@ -3,6 +3,7 @@
 #include "ds2411.hpp"
 #include "logger.hpp"
 #include "numparser.hpp"
+#include "mem-iap.hpp"
 
 
 namespace
@@ -647,6 +648,13 @@ void cmd_logLevel(const vector<string>& args)
 
 		if (newLvl != rjLogLevel) {
 			rjLogLevel = newLvl;
+
+			// Store the new log level in FLASH memory
+			IAP iap;
+			uint8_t mem[ MEM_SIZE ];   //  memory, it should be aligned to word boundary
+			mem[1] = ( rjLogLevel & 0xFF );
+			iap.write( mem, sector_start_adress[ TARGET_SECTOR ], MEM_SIZE );
+
 			printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 		} else {
 			printf("Log level unchanged. Level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
