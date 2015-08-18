@@ -12,6 +12,7 @@ boost-build
 boost-python --with-python3
 ccache
 cmake
+ninja
 homebrew/x11/freeglut
 libusb
 freeglut

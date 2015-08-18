@@ -1,7 +1,15 @@
 MAKE_FLAGS=--no-print-directory
-all:
+
+# build a specified target with CMake and Ninja
+# usage: $(call cmake_build_target, target, extraCmakeFlags)
+define cmake_build_target
 	mkdir -p build
-	cd build; cmake .. -Wno-dev && make $(MAKE_FLAGS)
+	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
+endef
+
+
+all:
+	$(call cmake_build_target, all)
 
 run: all
 	cd run; ./soccer
@@ -14,18 +22,18 @@ run-sim: all
 tests: test-cpp test-python
 test-cpp: test-soccer test-firmware
 test-soccer:
-	mkdir -p build
-	cd build && cmake --target test-soccer .. && make $(MAKE_FLAGS) test-soccer && cd .. && run/test-soccer
+	$(call cmake_build_target, test-soccer)
+	run/test-soccer
 test-firmware:
-	mkdir -p build
-	cd build && cmake --target test-firmware .. && make $(MAKE_FLAGS) test-firmware && cd .. && run/test-firmware
+	$(call cmake_build_target, test-firmware)
+	run/test-firmware
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
 	cd soccer && pylint -E gameplay
 
 clean:
-	cd build && make $(MAKE_FLAGS) clean || true
+	cd build && ninja clean || true
 	rm -rf build
 
 # Robot firmware (both 2008/2011)
@@ -40,17 +48,17 @@ robot-prog-samba:
 
 # robot 2015 firmware
 robot2015:
-	mkdir -p build && cd build && cmake --target robot2015 .. && make $(MAKE_FLAGS) robot2015
+	$(call cmake_build_target, robot2015)
 
 robot2015-prog:
-	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
+	$(call cmake_build_target, robot2015-prog)
 
 # Base station 2015 firmware
 base2015:
-	mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
+	$(call cmake_build_target, base2015)
 
 base2015-prog:
-	mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
+	$(call cmake_build_target, base2015-prog)
 
 # Robot FPGA
 fpga2011:
@@ -76,9 +84,9 @@ modernize:
 	# database, which lists the files to be compiled and the flags passed to
 	# the compiler for each one. Then runs clang-modernize, using the
 	# compilation database as input, on all c/c++ files in the repo.
-	mkdir -p build
-	cd build; cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -Wno-dev && make $(MAKE_FLAGS)
+	mkdir -p build/modernize
+	cd build/modernize; cmake ../.. -Wno-dev -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && make $(MAKE_FLAGS)
 	# You can pass specific flags to clang-modernize if you want it to only run some types of
 	# transformations, rather than all transformations that it's capable of.
 	# See `clang-modernize --help` for more info.
-	clang-modernize -p build -include=common,logging,simulator,soccer
+	clang-modernize -p build/modernize -include=common,logging,simulator,soccer
