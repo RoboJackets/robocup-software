@@ -27,22 +27,24 @@ curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-so
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for style", "context": "circle/style", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for firmware", "context": "circle/firmware", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 
-
-if make; then
+make
+if [ "$?" = "0" ]; then
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for compiling", "context": "circle/compile", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 else
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": "A check for compiling", "context": "circle/compile", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
     SUCCESS=false
 fi
 
-if make test-cpp; then
+make test-cpp
+if [ "$?" = "0" ]; then
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 else
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
     SUCCESS=false
 fi
 
-if make robot2015; then
+make robot2015
+if [ "$?" = "0" ]; then
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for firmware", "context": "circle/firmware", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 else
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": "A check for firmware", "context": "circle/firmware", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'

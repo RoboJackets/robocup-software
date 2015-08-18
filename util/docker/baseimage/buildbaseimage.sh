@@ -12,13 +12,9 @@ IMAGE_NAME="robojackets/robocup-baseimage"
 if curl -s https://registry.hub.docker.com/v1/repositories/${IMAGE_NAME}/tags |  fgrep -q "\"name\": \"${SHA_SUM}\""; then
     # The tag currently exists, and can be pulled
     docker pull ${IMAGE_NAME}:${SHA_SUM}
-    docker tag -f ${IMAGE_NAME}:${SHA_SUM} ${IMAGE_NAME}:latest_build
-    docker push ${IMAGE_NAME}:latest_build
 else
     # The tag does not exist, let's build it!
     docker build -t ${IMAGE_NAME}:${SHA_SUM}  -f ${ROBOCUP_ROOT}/util/docker/baseimage/Dockerfile ${ROBOCUP_ROOT}
     docker push ${IMAGE_NAME}:${SHA_SUM}
-    docker tag -f ${IMAGE_NAME}:${SHA_SUM} ${IMAGE_NAME}:latest_build
-    docker push ${IMAGE_NAME}:latest_build
 fi
 
