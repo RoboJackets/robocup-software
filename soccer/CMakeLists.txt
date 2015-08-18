@@ -127,7 +127,7 @@ if(APPLE)
     # so it can be used the same way the soccer executable is used on Linux
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/soccer
         "#!/bin/sh\n"
-        "./soccer.app/Contents/MacOS/soccer $@")
+        "$(dirname $0)/soccer.app/Contents/MacOS/soccer $@")
     file(INSTALL ${CMAKE_CURRENT_BINARY_DIR}/soccer
         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
