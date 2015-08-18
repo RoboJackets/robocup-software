@@ -154,9 +154,10 @@ target_link_libraries(log_viewer common)
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
+    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
+    "TestMain.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)
