@@ -1,6 +1,6 @@
 
 # 'latest' is the latest tagged on the machine, which should be the one created by the baseimage script.
-FROM jgkamat/robocup-baseimage:latest
+FROM robojackets/robocup-baseimage:latest_build
 MAINTAINER Jay Kamat github@jgkamat.33mail.com
 
 WORKDIR /home/developer/robocup-software
