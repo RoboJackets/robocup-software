@@ -1,9 +1,12 @@
 # GT RoboJackets RoboCup SSL [![Build Status](https://travis-ci.org/RoboJackets/robocup-software.png?branch=master)](https://travis-ci.org/RoboJackets/robocup-software)
 
+[![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [documentation page](http://robojackets.github.io/robocup-software/), our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
 Also, check out our [2014 qualification video](https://www.youtube.com/watch?v=H3F9HexPLT0) to see our robots in action!
 
+Here is a screenshot of our 'soccer' program:
 ![Screenshot of the 'soccer' program](doc/images/soccer.png "Soccer")
 
 
@@ -82,3 +85,8 @@ Note: The doxygen documentation site above is updated automacally using travis-c
 
 ## Testing
 We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `make tests`.  To add a test to be run with the rest of the bunch, add a new file in soccer/tests.
+
+## License
+
+This project is licensed under the Apache License v2.0.  See the [LICENSE](LICENSE) file for more information.
+
