@@ -21,9 +21,10 @@ static inline void debugThrow(const std::string &string) {
 	}
 }
 
-static inline void debugThrow(const std::exception &exception) {
+template <class exception>
+static inline void debugThrow(const exception &e) {
 	if (THROW_DEBUG_EXCEPTIONS) {
-		throw exception;
+		throw e;
 	}
 }
 
