@@ -28,13 +28,6 @@ ENV HOME /home/developer
 # do everything in root's home
 RUN mkdir -p /home/developer/robocup-software
 WORKDIR /home/developer/robocup-software
-COPY ./ ./
-RUN sudo chown -R developer:developer /home/developer/robocup-software
-
-RUN ./util/ubuntu-setup --yes --firmware || true && sudo apt-get clean
-
-# soccer needs to be run in current directory as of now
-WORKDIR /home/developer/robocup-software/run
 
 # Add a docker init system and use it
 ADD https://github.com/ohjames/smell-baron/releases/download/v0.1.0/smell-baron /bin/smell-baron
@@ -43,3 +36,4 @@ RUN sudo chmod a+x /bin/smell-baron
 ENTRYPOINT ["/bin/smell-baron"]
 
 # This image is not meant to be run directly, it has not been compiled yet!
+# In addition, it does not contain any source code, only dependencies

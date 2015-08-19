@@ -21,6 +21,10 @@ fi
 # Go to root so we can make.
 cd ${ROBOCUP_ROOT}
 
+# Clean
+make clean
+git submodule update --init
+
 # TODO Auth
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for compiling", "context": "circle/compile", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
