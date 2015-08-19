@@ -1192,6 +1192,11 @@ void MainWindow::setRadioChannel(RadioChannels channel)
 	}
 }
 
+void MainWindow::setUseRefChecked(bool use_ref)
+{
+	_ui.actionUse_Field_Oriented_Controls->setChecked(false);
+}
+
 void MainWindow::on_fastHalt_clicked()
 {
 	_processor->refereeModule()->command = NewRefereeModuleEnums::HALT;
