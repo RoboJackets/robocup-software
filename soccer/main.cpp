@@ -41,6 +41,7 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-sim:        use simulator\n");
 	fprintf(stderr, "\t-freq:       specify radio frequency (906 or 904)\n");
 	fprintf(stderr, "\t-nolog:      don't write log files\n");
+	fprintf(stderr, "\t-noref:      don't use external referee commands\n");
 	exit(1);
 }
 
@@ -187,6 +188,8 @@ int main (int argc, char* argv[])
 	MainWindow *win = new MainWindow;
 	win->configuration(&config);
 	win->processor(processor);
+
+	win->setUseRefChecked(!noref);
 
 	if (!QDir("logs").exists())
 	{
