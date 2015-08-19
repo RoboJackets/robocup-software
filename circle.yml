@@ -1,6 +1,9 @@
 machine:
   services:
     - docker
+notify:
+  webhooks:
+    - url: https://webhooks.gitter.im/e/adc1cd90ef1589404742
 
 dependencies:
   pre:
