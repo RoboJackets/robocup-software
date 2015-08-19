@@ -1,6 +1,5 @@
 #!/bin/bash
 # Builds our circle image which runs tests
-set -e
 
 DIR=$(cd $(dirname $0) ; pwd -P)
 ROBOCUP_ROOT="${DIR}/../../"
@@ -24,6 +23,7 @@ cd ${ROBOCUP_ROOT}
 # Clean
 make clean
 git submodule update --init
+sudo chown -R `whoami`:`whoami` ${HOME}/.ccache
 
 # TODO Auth
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for compiling", "context": "circle/compile", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
