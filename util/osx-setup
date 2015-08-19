@@ -5,6 +5,16 @@ set -e
 
 BASE="$(dirname $0)/.."
 
+if [ ! $(which brew) ]; then
+    echo "-- Installing homebrew - a package manager for OS X"
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+if [[ ! $(brew ls --versions brew-cask) ]]; then
+    echo "-- Installing homebrew cask"
+    brew install caskroom/cask/brew-cask
+fi
+
 #  needed for the simulator
 echo "-- Installing xquartz through homebrew cask"
 brew cask install xquartz
