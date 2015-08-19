@@ -1,6 +1,7 @@
 machine:
   services:
     - docker
+
 notify:
   webhooks:
     - url: https://webhooks.gitter.im/e/adc1cd90ef1589404742
@@ -10,6 +11,8 @@ dependencies:
       # Login to docker
     - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
     - ./util/docker/baseimage/buildbaseimage.sh
+  cache_directories:
+    - ~/.ccache
 
 test:
   override:

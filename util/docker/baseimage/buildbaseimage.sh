@@ -14,7 +14,12 @@ if curl -s https://registry.hub.docker.com/v1/repositories/${IMAGE_NAME}/tags | 
     docker pull ${IMAGE_NAME}:${SHA_SUM}
 else
     # The tag does not exist, let's build it!
-    docker build -t ${IMAGE_NAME}:${SHA_SUM}  -f ${ROBOCUP_ROOT}/util/docker/baseimage/Dockerfile ${ROBOCUP_ROOT}
+    docker build -t ${IMAGE_NAME}:in_progress  -f ${ROBOCUP_ROOT}/util/docker/baseimage/Dockerfile .
+    docker run \
+        -v ${ROBOCUP_ROOT}:/home/developer/robocup-software ${IMAGE_NAME}:in_progress \
+        sh -c './util/ubuntu-setup --yes --firmware && sudo apt-get clean'
+
+    docker commit "$(docker ps -aq | head -n1)" ${IMAGE_NAME}:${SHA_SUM}
     docker push ${IMAGE_NAME}:${SHA_SUM}
 fi
 
