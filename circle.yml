@@ -4,6 +4,8 @@ machine:
 
 dependencies:
   pre:
+      # set build status to pending on start
+    - ./util/docker/maketest.sh --pending ${GH_TOKEN}
       # Login to docker
     - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
     - ./util/docker/baseimage/buildbaseimage.sh
