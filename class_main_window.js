@@ -1,6 +1,6 @@
 var class_main_window =
 [
-    [ "MainWindow", "class_main_window.html#a996c5a2b6f77944776856f08ec30858d", null ],
+    [ "MainWindow", "class_main_window.html#a8b244be8b7b7db1b08de2a2acb9409db", null ],
     [ "allDebugOff", "class_main_window.html#ad3ef00bb8cd8a66a55eecc6244a6ce76", null ],
     [ "allDebugOn", "class_main_window.html#a8c658c8786efca65f5795e2dedfaf985", null ],
     [ "configuration", "class_main_window.html#a9670a762862f1ce381fc43b740809f1e", null ],

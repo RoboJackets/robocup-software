@@ -153,9 +153,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>nearSegment</b> (cons
 <a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_segment.html#aff3b54739f001cba6fc3d6f2dbe11085">nearestPoint</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;p) const </td></tr>
 <tr class="memdesc:aff3b54739f001cba6fc3d6f2dbe11085"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the nearest point on the segment given <em>p</em> <br /></td></tr>
 <tr class="separator:aff3b54739f001cba6fc3d6f2dbe11085"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc4c970b0a862d922a09c4ada0f37f20"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc4c970b0a862d922a09c4ada0f37f20"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;other, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *intr=nullptr) const </td></tr>
-<tr class="separator:afc4c970b0a862d922a09c4ada0f37f20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabcfbd693cdd86a00a2e8ee23c9b8174"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabcfbd693cdd86a00a2e8ee23c9b8174"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;other, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *intr=0) const </td></tr>
+<tr class="separator:aabcfbd693cdd86a00a2e8ee23c9b8174"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61c9142254ec26a860f4b3d30745bbb3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61c9142254ec26a860f4b3d30745bbb3"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (const <a class="el" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;circle) const </td></tr>
 <tr class="separator:a61c9142254ec26a860f4b3d30745bbb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -181,13 +181,13 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> (
 <tr class="memitem:a309831055a148ecdb48c5544d63eff95 inherit pub_methods_class_geometry2d_1_1_line"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95">transform</a> (const <a class="el" href="class_geometry2d_1_1_transform_matrix.html">TransformMatrix</a> &amp;t)</td></tr>
 <tr class="memdesc:a309831055a148ecdb48c5544d63eff95 inherit pub_methods_class_geometry2d_1_1_line"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a transformation matrix to the line.  <a href="#a309831055a148ecdb48c5544d63eff95">More...</a><br /></td></tr>
 <tr class="separator:a309831055a148ecdb48c5544d63eff95 inherit pub_methods_class_geometry2d_1_1_line"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c8720ecad2765785f6982ce9092907e inherit pub_methods_class_geometry2d_1_1_line"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_line.html#a1c8720ecad2765785f6982ce9092907e">intersects</a> (const <a class="el" href="class_geometry2d_1_1_line.html">Line</a> &amp;other, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *intersection=nullptr) const </td></tr>
-<tr class="memdesc:a1c8720ecad2765785f6982ce9092907e inherit pub_methods_class_geometry2d_1_1_line"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test for line intersections.  <a href="#a1c8720ecad2765785f6982ce9092907e">More...</a><br /></td></tr>
-<tr class="separator:a1c8720ecad2765785f6982ce9092907e inherit pub_methods_class_geometry2d_1_1_line"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf5012c5f6d7b0bdea180b80b77579e5 inherit pub_methods_class_geometry2d_1_1_line"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf5012c5f6d7b0bdea180b80b77579e5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_line.html#acf5012c5f6d7b0bdea180b80b77579e5">intersects</a> (const <a class="el" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;circle, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *p1=nullptr, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *p2=nullptr) const </td></tr>
-<tr class="memdesc:acf5012c5f6d7b0bdea180b80b77579e5 inherit pub_methods_class_geometry2d_1_1_line"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the points of intersection b/t circle and line <br /></td></tr>
-<tr class="separator:acf5012c5f6d7b0bdea180b80b77579e5 inherit pub_methods_class_geometry2d_1_1_line"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f22a6ad011f3069680f4f0b3b043c61 inherit pub_methods_class_geometry2d_1_1_line"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_line.html#a3f22a6ad011f3069680f4f0b3b043c61">intersects</a> (const <a class="el" href="class_geometry2d_1_1_line.html">Line</a> &amp;other, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *intersection=0) const </td></tr>
+<tr class="memdesc:a3f22a6ad011f3069680f4f0b3b043c61 inherit pub_methods_class_geometry2d_1_1_line"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test for line intersections.  <a href="#a3f22a6ad011f3069680f4f0b3b043c61">More...</a><br /></td></tr>
+<tr class="separator:a3f22a6ad011f3069680f4f0b3b043c61 inherit pub_methods_class_geometry2d_1_1_line"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a160ccafd13f76e0704cf226d233d08e4 inherit pub_methods_class_geometry2d_1_1_line"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a160ccafd13f76e0704cf226d233d08e4"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_line.html#a160ccafd13f76e0704cf226d233d08e4">intersects</a> (const <a class="el" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;circle, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *p1=0, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *p2=0) const </td></tr>
+<tr class="memdesc:a160ccafd13f76e0704cf226d233d08e4 inherit pub_methods_class_geometry2d_1_1_line"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the points of intersection b/t circle and line <br /></td></tr>
+<tr class="separator:a160ccafd13f76e0704cf226d233d08e4 inherit pub_methods_class_geometry2d_1_1_line"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4780f317efc1077423a99223ad0e770a inherit pub_methods_class_geometry2d_1_1_line"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a">pointSide</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;p) const </td></tr>
 <tr class="memdesc:a4780f317efc1077423a99223ad0e770a inherit pub_methods_class_geometry2d_1_1_line"><td class="mdescLeft">&#160;</td><td class="mdescRight">tells you which side of the line you are on  <a href="#a4780f317efc1077423a99223ad0e770a">More...</a><br /></td></tr>
 <tr class="separator:a4780f317efc1077423a99223ad0e770a inherit pub_methods_class_geometry2d_1_1_line"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -235,7 +235,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_segment.html">Segment</a></li>
-    <li class="footer">Generated on Wed Aug 19 2015 17:43:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 20 2015 06:26:22 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

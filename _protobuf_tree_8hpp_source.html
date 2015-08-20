@@ -130,7 +130,7 @@ $(document).ready(function(){initNavTree('_protobuf_tree_8hpp_source.html','');}
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    Q_OBJECT;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="class_protobuf_tree.html">ProtobufTree</a>(QWidget *parent = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="class_protobuf_tree.html">ProtobufTree</a>(QWidget *parent = 0);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="comment">// Column numbers</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">enum</span></div>
@@ -147,7 +147,7 @@ $(document).ready(function(){initNavTree('_protobuf_tree_8hpp_source.html','');}
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">// in a repeated field is reduced.  Fields are never removed.</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keywordtype">bool</span> message(<span class="keyword">const</span> google::protobuf::Message &amp;msg);</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordtype">void</span> expandMessages(QTreeWidgetItem *item = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordtype">void</span> expandMessages(QTreeWidgetItem *item = 0);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="comment">// Expands an item recursively</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordtype">void</span> expandSubtree(QTreeWidgetItem *item);</div>
@@ -171,7 +171,7 @@ $(document).ready(function(){initNavTree('_protobuf_tree_8hpp_source.html','');}
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        </div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keywordtype">void</span> addBytes(QTreeWidgetItem *parent, <span class="keyword">const</span> std::string &amp;bytes);</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> contextMenuEvent(QContextMenuEvent *e) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">void</span> contextMenuEvent(QContextMenuEvent *e);</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        </div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordtype">bool</span> _first;</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt; *_history;</div>
@@ -184,7 +184,7 @@ $(document).ready(function(){initNavTree('_protobuf_tree_8hpp_source.html','');}
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>ProtobufTree.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 19 2015 17:43:45 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 20 2015 06:26:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

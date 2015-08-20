@@ -1,6 +1,6 @@
 var class_referee_tab =
 [
-    [ "RefereeTab", "class_referee_tab.html#ac8cafdf0496c43e298aa3d42327331de", null ],
+    [ "RefereeTab", "class_referee_tab.html#a98cad232460f0b99bc2107bfa7d699e5", null ],
     [ "on_actionForceStart_triggered", "class_referee_tab.html#a763311c8a6ac9c94dbd4e94806a5dd7b", null ],
     [ "on_actionHalt_triggered", "class_referee_tab.html#a464fa55d184a2ad803aeebf0fbbdc211", null ],
     [ "on_actionKickoffBlue_triggered", "class_referee_tab.html#a289af5d5085ec8d0e98189d79d2d8d7f", null ],
