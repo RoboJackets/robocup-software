@@ -2,19 +2,13 @@
 # Builds our circle image which runs tests
 set -e
 
+DIR=$(cd $(dirname $0) ; pwd -P)
+source ${DIR}/../docker_common.sh
+
 if [ "$GH_TOKEN" = "" ]; then
     echo "Github token not set!"
     exit 1
 fi
-
-DIR=$(cd $(dirname $0) ; pwd -P)
-ROBOCUP_ROOT="${DIR}/../../../"
-
-# Get sha sum
-SHA_SUM_SETUP="$(${ROBOCUP_ROOT}/util/docker/getsetupsha.sh)"
-SHA_SUM="$(git rev-parse HEAD)"
-INPUT_IMAGE_NAME="robojackets/robocup-baseimage"
-IMAGE_NAME="robojackets/robocup-ci"
 
 # Entrypiont is needed to preserve exit code
 docker run \
@@ -24,7 +18,7 @@ docker run \
     -e CIRCLE_BUILD_NUM=${CIRCLE_BUILD_NUM} \
     -e CIRCLE_ARTIFACTS=${CIRCLE_ARTIFACTS} \
     --entrypoint /bin/bash \
-    ${INPUT_IMAGE_NAME}:${SHA_SUM_SETUP} /home/developer/robocup-software/util/docker/maketest.sh ${GH_TOKEN}
+    ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/util/docker/maketest.sh ${GH_TOKEN}
 
 EXIT=$?
 if [ $EXIT -ne 0 ]; then
@@ -32,4 +26,4 @@ if [ $EXIT -ne 0 ]; then
 fi
 
 # Commit the latest image
-docker commit "$(docker ps -aq | head -n1)" ${IMAGE_NAME}:${SHA_SUM}
+docker commit "$(docker ps -aq | head -n1)" ${IMAGE_NAME_CI}:${SHA_SUM}

@@ -1,4 +1,5 @@
 #!/bin/bash
+# Gets the sha for the
 
 DIR=$(cd $(dirname $0) ; pwd -P)
 ROBOCUP_ROOT="${DIR}/../../"

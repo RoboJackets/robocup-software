@@ -2,18 +2,13 @@
 # Runs the autoupdate script for api documentation
 set -e
 
+DIR=$(cd $(dirname $0) ; pwd -P)
+source ${DIR}/../docker_common.sh
+
 if [ "$GH_TOKEN" = "" ]; then
     echo "Github token not set!"
     exit 1
 fi
-
-DIR=$(cd $(dirname $0) ; pwd -P)
-ROBOCUP_ROOT="${DIR}/../../../"
-
-# Get sha sum
-SHA_SUM_SETUP="$(${ROBOCUP_ROOT}/util/docker/getsetupsha.sh)"
-SHA_SUM="$(git rev-parse HEAD)"
-INPUT_IMAGE_NAME="robojackets/robocup-baseimage"
 
 # Entrypiont is needed to preserve exit code
 docker run \
@@ -26,4 +21,4 @@ docker run \
     -e GIT_EMAIL=${GIT_EMAIL} \
     -e GH_TOKEN=${GH_TOKEN} \
     --entrypoint /bin/bash \
-    ${INPUT_IMAGE_NAME}:${SHA_SUM_SETUP} /home/developer/robocup-software/autoupdate-docs-travis.sh
+    ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/autoupdate-docs-travis.sh
