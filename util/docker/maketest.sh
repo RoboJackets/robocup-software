@@ -8,6 +8,8 @@ ROBOCUP_ROOT="${DIR}/../../"
 SHA_SUM="$(git rev-parse HEAD)"
 USER="jgkamat"
 SUCCESS=true
+LINK_PREFIX="https://circle-artifacts.com/gh/RoboJackets/robocup-software/$CIRCLE_BUILD_NUM/artifacts/0$CIRCLE_ARTIFACTS/"
+ARTIFACT_DIR="/tmp/build_artifacts"
 
 if [ "$1" == "" ]; then
     echo "Token needed to update statuses"
@@ -20,6 +22,7 @@ fi
 # Go to root so we can make.
 cd ${ROBOCUP_ROOT}
 
+
 # Clean
 make clean
 git submodule update --init
@@ -31,7 +34,7 @@ curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-so
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for style", "context": "circle/style", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for firmware", "context": "circle/firmware", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 
-make
+make | tee "${ARTIFACT_DIR}/makeoutput.txt"
 if [ "$?" = "0" ]; then
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for compiling", "context": "circle/compile", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 else
@@ -39,7 +42,7 @@ else
     SUCCESS=false
 fi
 
-make test-cpp
+make test-cpp | tee "${ARTIFACT_DIR}/testcppoutput.txt"
 if [ "$?" = "0" ]; then
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 else
@@ -47,7 +50,7 @@ else
     SUCCESS=false
 fi
 
-make robot2015
+make robot2015 | tee "${ARTIFACT_DIR}/firmwareoutput.txt"
 if [ "$?" = "0" ]; then
     curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for firmware", "context": "circle/firmware", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 else
@@ -58,7 +61,6 @@ fi
 # TODO style check
 curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for style", "context": "circle/style", "target_url": "https://circleci.com/gh/RoboJackets/robocup-software"}'
 
-# Always succeed if reaching here!
 exit 0
 # exit $($SUCCESS)
 

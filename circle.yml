@@ -21,8 +21,8 @@ test:
     - sh -c true
 
 deployment:
-  hub:
+  github:
     branch: master
     commands:
-      - ./util/docker/circle/pushcircle.sh
+      - ./autoupdate-docs-travis.sh
 
