@@ -23,3 +23,7 @@ else
     docker push ${IMAGE_NAME}:${SHA_SUM}
 fi
 
+if [ "$(git rev-parse --abbrev-ref HEAD)" = "master" ]; then
+    git tag ${IMAGE_NAME}:${SHA_SUM} ${IMAGE_NAME}:master
+    git push ${IMAGE_NAME}:master
+fi
