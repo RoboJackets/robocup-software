@@ -16,7 +16,7 @@ using namespace boost::python;
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
-#include <WindowEvaluator.h>
+#include "WindowEvaluator.hpp"
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
@@ -681,8 +681,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
 		.def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
 		.def("eval_pt_to_seg", &WinEval_eval_pt_to_seg)
-		.def("obstacle_range", &WindowEvaluator::obstacle_range)
-		.def("obstacle_robot", &WindowEvaluator::obstacle_robot)
 	;
 
 }

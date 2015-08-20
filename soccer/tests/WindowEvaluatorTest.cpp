@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "WindowEvaluator.h"
+#include "WindowEvaluator.hpp"
 #include "SystemState.hpp"
 #include "Configuration.hpp"
 
