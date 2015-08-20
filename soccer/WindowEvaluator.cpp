@@ -1,8 +1,4 @@
-//
-// Created by matt on 7/8/15.
-//
-
-#include "WindowEvaluator.h"
+#include "WindowEvaluator.hpp"
 #include "Constants.hpp"
 
 #include <algorithm>
