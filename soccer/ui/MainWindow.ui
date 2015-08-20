@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1405</width>
-    <height>902</height>
+    <width>1300</width>
+    <height>805</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -217,7 +217,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
-            <number>15</number>
+            <number>0</number>
            </property>
            <item>
             <spacer name="horizontalSpacer">
@@ -253,6 +253,19 @@
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="logPlaybackPrevFrame">
              <property name="toolTip">
               <string>Play log backwards</string>
@@ -273,6 +286,19 @@
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="logPlaybackPause">
              <property name="toolTip">
               <string>Pause log playback</string>
@@ -291,6 +317,19 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="logPlaybackNextFrame">
@@ -316,6 +355,19 @@
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="logPlaybackPlay">
              <property name="toolTip">
               <string>Play log forwards quickly</string>
@@ -334,6 +386,19 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="logPlaybackLive">
@@ -1244,7 +1309,7 @@ p, li { white-space: pre-wrap; }
              <property name="handleWidth">
               <number>10</number>
              </property>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="spacing">
                 <number>2</number>
@@ -1276,7 +1341,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
                 <number>2</number>
@@ -1616,8 +1681,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1405</width>
-     <height>19</height>
+     <width>1300</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
