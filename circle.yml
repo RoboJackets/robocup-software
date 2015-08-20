@@ -20,5 +20,5 @@ deployment:
   github:
     branch: master
     commands:
-      - ./autoupdate-docs-travis.sh
+      - ./util/docker/circle/apidocs.sh
 
