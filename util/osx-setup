@@ -10,6 +10,9 @@ if [ ! $(which brew) ]; then
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 fi
 
+echo "-- Updating homebrew package list"
+brew update
+
 if [[ ! $(brew ls --versions brew-cask) ]]; then
     echo "-- Installing homebrew cask"
     brew install caskroom/cask/brew-cask
