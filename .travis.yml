@@ -2,7 +2,7 @@
 language: objective-c
 
 before_install:
-  - brew remove --force $(brew list)
+  - brew upgrade
   - util/osx-setup
 
 cache:
