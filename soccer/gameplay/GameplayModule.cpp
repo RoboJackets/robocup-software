@@ -51,8 +51,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	        object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
 	        _mainPyNamespace["robocup"] = robocup_module;
 
+			QDir gameplayDir = ApplicationRunDirectory();
+			gameplayDir.cd("../soccer/gameplay");
+
 	        //	add gameplay directory to python import path (so import XXX) will look in the right directory
-	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay')",
+			string importStmt = QString("import sys; sys.path.append('%1')").arg(gameplayDir.absolutePath()).toStdString();
+	        handle<>ignored2((PyRun_String(importStmt.data(),
 	            Py_file_input,
 	            _mainPyNamespace.ptr(),
 	            _mainPyNamespace.ptr())));

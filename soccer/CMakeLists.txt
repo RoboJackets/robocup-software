@@ -125,7 +125,7 @@ if(APPLE)
     # so it can be used the same way the soccer executable is used on Linux
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/soccer
         "#!/bin/sh\n"
-        "./soccer.app/Contents/MacOS/soccer $@")
+        "$(dirname $0)/soccer.app/Contents/MacOS/soccer $@")
     file(INSTALL ${CMAKE_CURRENT_BINARY_DIR}/soccer
         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
@@ -154,8 +154,10 @@ target_link_libraries(log_viewer common)
 set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
+    "BatteryProfileTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
+    "TestMain.cpp"
     "tests/WindowEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})

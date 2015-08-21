@@ -164,7 +164,7 @@ int main (int argc, char* argv[])
 	// Default config file name
 	if (cfgFile.isNull())
 	{
-		cfgFile = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
+		cfgFile = ApplicationRunDirectory().filePath(sim ? "soccer-sim.cfg" : "soccer-real.cfg");
 	}
 
 	Configuration config;
