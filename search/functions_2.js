@@ -11,7 +11,7 @@ var searchData=
   ['clone',['clone',['../class_planning_1_1_composite_path.html#a7ae76a00762203c43efa4ec6ed1ecc37',1,'Planning::CompositePath::clone()'],['../class_planning_1_1_interpolated_path.html#ad32897dcaddb33b8e9ff517e3d020536',1,'Planning::InterpolatedPath::clone()'],['../class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76',1,'Planning::Path::clone()']]],
   ['compositepath',['CompositePath',['../class_planning_1_1_composite_path.html#abc6160d85809ed87b08458aa2dafd58c',1,'Planning::CompositePath::CompositePath()'],['../class_planning_1_1_composite_path.html#a1eac9045d553ea16c9a47d3b18837ae2',1,'Planning::CompositePath::CompositePath(Path *path)']]],
   ['concomcheck',['ConComCheck',['../class_console.html#a650e706007b150c274ee5cef199b3988',1,'Console']]],
-  ['connect',['connect',['../class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce',1,'Planning::Tree::connect()'],['../class_planning_1_1_fixed_step_tree.html#a9768d2c7f904d0baa96d18881f38f48f',1,'Planning::FixedStepTree::connect()']]],
+  ['connect',['connect',['../class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce',1,'Planning::Tree::connect()'],['../class_planning_1_1_fixed_step_tree.html#a0df94725122ad972287c2387e9f1e366',1,'Planning::FixedStepTree::connect()']]],
   ['consecutivepathchangecount',['consecutivePathChangeCount',['../class_our_robot.html#afb8d32e3580b30997915444bb907e262',1,'OurRobot']]],
   ['containsvertex',['containsVertex',['../class_geometry2d_1_1_polygon.html#aaeb37754674c18668a41637cd7070bfe',1,'Geometry2d::Polygon']]],
   ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5',1,'OurRobot']]],

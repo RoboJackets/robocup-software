@@ -119,14 +119,14 @@ $(document).ready(function(){initNavTree('_quaternion_demo_8hpp_source.html','')
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="class_quaternion_demo.html">    7</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_quaternion_demo.html">QuaternionDemo</a>: <span class="keyword">public</span> QGLWidget</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <a class="code" href="class_quaternion_demo.html">QuaternionDemo</a>(QWidget *parent = 0);</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <a class="code" href="class_quaternion_demo.html">QuaternionDemo</a>(QWidget *parent = <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keywordtype">bool</span> initialized;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    Eigen::Quaternionf ref;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    Eigen::Quaternionf q;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> paintGL();</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> paintGL() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;};</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;QuaternionDemo::QuaternionDemo(QWidget* parent)</div>
@@ -200,7 +200,7 @@ $(document).ready(function(){initNavTree('_quaternion_demo_8hpp_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>QuaternionDemo.hpp</b></li>
-    <li class="footer">Generated on Thu Aug 20 2015 14:36:28 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 21 2015 19:21:53 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

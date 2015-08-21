@@ -13,7 +13,7 @@ var searchData=
   ['baseid',['baseID',['../class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9',1,'RobotStatusWidget']]],
   ['basic122',['Basic122',['../classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html',1,'gameplay::plays::offense::basic_122']]],
   ['batterylevel',['batteryLevel',['../class_battery_widget.html#a85f7badb6e5e2e17856f8636cf5a6783',1,'BatteryWidget']]],
-  ['batteryprofile',['BatteryProfile',['../class_battery_profile.html',1,'BatteryProfile'],['../class_battery_profile.html#a528dc86e5d8f773a40e2233d4d407d6f',1,'BatteryProfile::BatteryProfile()']]],
+  ['batteryprofile',['BatteryProfile',['../class_battery_profile.html',1,'BatteryProfile'],['../class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137',1,'BatteryProfile::BatteryProfile()']]],
   ['batterywidget',['BatteryWidget',['../class_battery_widget.html',1,'']]],
   ['baud_5frate',['BAUD_RATE',['../class_console.html#af66997051b8b2bc90f2e3e5d84c78c0f',1,'Console']]],
   ['behavior',['Behavior',['../classgameplay_1_1behavior_1_1_behavior.html',1,'gameplay::behavior']]],

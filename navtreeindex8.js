@@ -1,12 +1,13 @@
 var NAVTREEINDEX8 =
 {
+"struct_chart_1_1_function.html#a2e70025e9e8d2673e940741fef2a3d26":[11,0,0,0,0],
 "struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec":[11,0,0,0,1],
 "struct_chart_1_1_numeric_field.html":[11,0,0,1],
 "struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[11,0,0,1,1],
-"struct_chart_1_1_numeric_field.html#aa6184b4fc444532d1923316409f71ae5":[11,0,0,1,0],
+"struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[11,0,0,1,0],
 "struct_chart_1_1_point_magnitude.html":[11,0,0,2],
-"struct_chart_1_1_point_magnitude.html#a502e0a5fa8f4581c8d424504e9676029":[11,0,0,2,0],
 "struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f":[11,0,0,2,1],
+"struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[11,0,0,2,0],
 "struct_d_s2411___i_d.html":[11,0,27],
 "struct_d_s2411___i_d.html#a13fcc2b99a720cf9fcd79b7040c4b425":[11,0,27,0],
 "struct_d_s2411___i_d.html#aa053f632683c22d9142a959cfd6e0e8d":[11,0,27,2],

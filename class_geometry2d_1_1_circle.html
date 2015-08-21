@@ -127,9 +127,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a440f21df6647f855642a63d332de5fca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a440f21df6647f855642a63d332de5fca"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Circle</b> (const <a class="el" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;other)</td></tr>
 <tr class="separator:a440f21df6647f855642a63d332de5fca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae94ef7fa1a61820be2d585eb993a3bd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae94ef7fa1a61820be2d585eb993a3bd"></a>
-<a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>clone</b> () const </td></tr>
-<tr class="separator:aae94ef7fa1a61820be2d585eb993a3bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27a9b3ef11ba063e55cd72e28457bed2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27a9b3ef11ba063e55cd72e28457bed2"></a>
+<a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>clone</b> () const override</td></tr>
+<tr class="separator:a27a9b3ef11ba063e55cd72e28457bed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0022f5704dbbe3adac8080229b0452cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0022f5704dbbe3adac8080229b0452cc"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>radius_sq</b> () const </td></tr>
 <tr class="separator:a0022f5704dbbe3adac8080229b0452cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,31 +142,31 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>radius</b> () const 
 <tr class="memitem:a49ed5a6811d38f61b5faadcb9c214184"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49ed5a6811d38f61b5faadcb9c214184"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>radius</b> (float value)</td></tr>
 <tr class="separator:a49ed5a6811d38f61b5faadcb9c214184"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3416fa810a625ee5e411a7fd7d73a3e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3416fa810a625ee5e411a7fd7d73a3e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>containsPoint</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) const </td></tr>
-<tr class="separator:ad3416fa810a625ee5e411a7fd7d73a3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1745002a247e91abad1379c7a8d088b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1745002a247e91abad1379c7a8d088b7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_circle.html#a1745002a247e91abad1379c7a8d088b7">hit</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) const </td></tr>
-<tr class="memdesc:a1745002a247e91abad1379c7a8d088b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">collision-detection <br /></td></tr>
-<tr class="separator:a1745002a247e91abad1379c7a8d088b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9c8dec2c7e2bccf8d93aeb2d7f8cc63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9c8dec2c7e2bccf8d93aeb2d7f8cc63"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;pt) const </td></tr>
-<tr class="separator:ad9c8dec2c7e2bccf8d93aeb2d7f8cc63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1de800092dfc89295ca52d27bf0c3cc5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1de800092dfc89295ca52d27bf0c3cc5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (<a class="el" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;other, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *i=0) const </td></tr>
-<tr class="separator:a1de800092dfc89295ca52d27bf0c3cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a3c282b1f0058096bbdbbe6184ddced"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a3c282b1f0058096bbdbbe6184ddced"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (const <a class="el" href="class_geometry2d_1_1_line.html">Line</a> &amp;line, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *i=0) const </td></tr>
-<tr class="separator:a7a3c282b1f0058096bbdbbe6184ddced"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5ca4876e5f61028919960c8fad1aa7e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5ca4876e5f61028919960c8fad1aa7e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>tangentPoints</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;src, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *p1=0, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *p2=0) const </td></tr>
-<tr class="separator:ac5ca4876e5f61028919960c8fad1aa7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6364c1d39b02d5c50f58670c8a8add22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6364c1d39b02d5c50f58670c8a8add22"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>containsPoint</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) const override</td></tr>
+<tr class="separator:a6364c1d39b02d5c50f58670c8a8add22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66361200138203231d4c58ed18cb4a3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66361200138203231d4c58ed18cb4a3b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_circle.html#a66361200138203231d4c58ed18cb4a3b">hit</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) const override</td></tr>
+<tr class="memdesc:a66361200138203231d4c58ed18cb4a3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">collision-detection <br /></td></tr>
+<tr class="separator:a66361200138203231d4c58ed18cb4a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade39a4a7e43b01f726176d2a416b9781"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade39a4a7e43b01f726176d2a416b9781"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;pt) const override</td></tr>
+<tr class="separator:ade39a4a7e43b01f726176d2a416b9781"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a062e4c2d2b4dbb0d31d1675e95f92634"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a062e4c2d2b4dbb0d31d1675e95f92634"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (<a class="el" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;other, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *i=nullptr) const </td></tr>
+<tr class="separator:a062e4c2d2b4dbb0d31d1675e95f92634"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa91de6c8c434a7f01c0bc6b191276d52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa91de6c8c434a7f01c0bc6b191276d52"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (const <a class="el" href="class_geometry2d_1_1_line.html">Line</a> &amp;line, <a class="el" href="class_geometry2d_1_1_point.html">Point</a> *i=nullptr) const </td></tr>
+<tr class="separator:aa91de6c8c434a7f01c0bc6b191276d52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2084b79a2e494da675a007da976fcaaa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2084b79a2e494da675a007da976fcaaa"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>tangentPoints</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;src, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *p1=nullptr, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *p2=nullptr) const </td></tr>
+<tr class="separator:a2084b79a2e494da675a007da976fcaaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4f647ad279b67217d81a1515d0e03b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4f647ad279b67217d81a1515d0e03b1"></a>
 <a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nearestPoint</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;P) const </td></tr>
 <tr class="separator:af4f647ad279b67217d81a1515d0e03b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac691ed5e15ce91e2e4be27eb922a89a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac691ed5e15ce91e2e4be27eb922a89a4"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> ()</td></tr>
-<tr class="separator:ac691ed5e15ce91e2e4be27eb922a89a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9d0de1ce9a23a5b153451a7da407289"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9d0de1ce9a23a5b153451a7da407289"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> () override</td></tr>
+<tr class="separator:ab9d0de1ce9a23a5b153451a7da407289"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -211,7 +211,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>_rsq</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_circle.html">Circle</a></li>
-    <li class="footer">Generated on Thu Aug 20 2015 14:36:29 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 21 2015 19:21:54 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -12,7 +12,7 @@ var class_new_referee_module =
     [ "getPackets", "class_new_referee_module.html#a147c72a78e4843f8279cd95ba6ab9294", null ],
     [ "kicked", "class_new_referee_module.html#a07cb0d959a2987bd652bddb09756e3ef", null ],
     [ "ready", "class_new_referee_module.html#a76a869649edb4c88927ec2562ab1bdc8", null ],
-    [ "run", "class_new_referee_module.html#a5da7a469074d3c9bdc5ab90ec0be8543", null ],
+    [ "run", "class_new_referee_module.html#afcb94c84fef0e884ade7621b9b951342", null ],
     [ "spinKickWatcher", "class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45", null ],
     [ "stop", "class_new_referee_module.html#af8f23bb5c7a4f051f6925bdeb1c43eb0", null ],
     [ "updateGameState", "class_new_referee_module.html#a340e90a3f874be229d1df0ef68662055", null ],

@@ -139,7 +139,7 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;            _r = other.radius();</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        }</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a> *clone() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a> *clone() <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Both radius and radius-squared are stored, since some operations are more</span></div>
@@ -180,31 +180,31 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            _rsq = -1;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordtype">bool</span> containsPoint(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordtype">bool</span> containsPoint(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_circle.html#a1745002a247e91abad1379c7a8d088b7">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_circle.html#a66361200138203231d4c58ed18cb4a3b">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_circle.html#a1745002a247e91abad1379c7a8d088b7">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;pt) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_circle.html#a66361200138203231d4c58ed18cb4a3b">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        </div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="comment">// Returns the number of points at which this circle intersects the given circle.</span></div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="comment">// i must be null or point to two points.</span></div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="comment">// Only the first n points in i are modified, where n is the return value.</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordtype">int</span> intersects(<a class="code" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;other, <a class="code" href="class_geometry2d_1_1_point.html">Point</a> *i = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordtype">int</span> intersects(<a class="code" href="class_geometry2d_1_1_circle.html">Circle</a> &amp;other, <a class="code" href="class_geometry2d_1_1_point.html">Point</a> *i = <span class="keyword">nullptr</span>) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        </div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="comment">// Returns the number of points at which this circle intersects the given line.</span></div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="comment">// i must be null or point to two points.</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="comment">// Only the first n points in i are modified, where n is the return value.</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordtype">int</span> intersects(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_line.html">Line</a> &amp;line, <a class="code" href="class_geometry2d_1_1_point.html">Point</a> *i = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordtype">int</span> intersects(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_line.html">Line</a> &amp;line, <a class="code" href="class_geometry2d_1_1_point.html">Point</a> *i = <span class="keyword">nullptr</span>) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        </div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordtype">bool</span> tangentPoints(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;src, </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>* p1 = 0, <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>* p2 = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>* p1 = <span class="keyword">nullptr</span>, <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>* p2 = <span class="keyword">nullptr</span>) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="comment">// finds the point on the circle closest to P</span></div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <a class="code" href="class_geometry2d_1_1_point.html">Point</a> nearestPoint(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;P) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <a class="code" href="class_geometry2d_1_1_point.html">Point</a> center;</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        std::string toString() {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        std::string toString()<span class="keyword"> override </span>{</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            std::stringstream str;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            str &lt;&lt; <span class="stringliteral">&quot;Circle&lt;&quot;</span> &lt;&lt; center &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; radius() &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span>;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">return</span> str.str();</div>
@@ -218,12 +218,12 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keyword">mutable</span> <span class="keywordtype">float</span> _rsq;</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    };</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div>
-<div class="ttc" id="class_geometry2d_1_1_circle_html_a1745002a247e91abad1379c7a8d088b7"><div class="ttname"><a href="class_geometry2d_1_1_circle.html#a1745002a247e91abad1379c7a8d088b7">Geometry2d::Circle::hit</a></div><div class="ttdeci">bool hit(const Point &amp;pt) const </div><div class="ttdoc">collision-detection </div><div class="ttdef"><b>Definition:</b> Circle.cpp:179</div></div>
 <div class="ttc" id="class_geometry2d_1_1_segment_html"><div class="ttname"><a href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a></div><div class="ttdef"><b>Definition:</b> Segment.hpp:13</div></div>
 <div class="ttc" id="class_geometry2d_1_1_line_html"><div class="ttname"><a href="class_geometry2d_1_1_line.html">Geometry2d::Line</a></div><div class="ttdef"><b>Definition:</b> Line.hpp:10</div></div>
 <div class="ttc" id="class_geometry2d_1_1_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a></div><div class="ttdoc">The shape class provides the interface to all shapes that are subclasses. </div><div class="ttdef"><b>Definition:</b> Shape.hpp:19</div></div>
 <div class="ttc" id="class_geometry2d_1_1_circle_html"><div class="ttname"><a href="class_geometry2d_1_1_circle.html">Geometry2d::Circle</a></div><div class="ttdef"><b>Definition:</b> Circle.hpp:9</div></div>
 <div class="ttc" id="namespace_geometry2d_html"><div class="ttname"><a href="namespace_geometry2d.html">Geometry2d</a></div><div class="ttdef"><b>Definition:</b> Circle.hpp:7</div></div>
+<div class="ttc" id="class_geometry2d_1_1_circle_html_a66361200138203231d4c58ed18cb4a3b"><div class="ttname"><a href="class_geometry2d_1_1_circle.html#a66361200138203231d4c58ed18cb4a3b">Geometry2d::Circle::hit</a></div><div class="ttdeci">bool hit(const Point &amp;pt) const override</div><div class="ttdoc">collision-detection </div><div class="ttdef"><b>Definition:</b> Circle.cpp:179</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -231,7 +231,7 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><a class="el" href="dir_40506df144da4b42abe7ffe21204d9b9.html">Geometry2d</a></li><li class="navelem"><b>Circle.hpp</b></li>
-    <li class="footer">Generated on Thu Aug 20 2015 14:36:28 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 21 2015 19:21:53 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
