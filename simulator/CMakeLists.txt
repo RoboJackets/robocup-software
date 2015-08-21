@@ -57,7 +57,7 @@ if(APPLE)
     # so it can be used the same way the simulator executable is used on Linux
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/simulator
         "#!/bin/sh\n"
-        "./simulator.app/Contents/MacOS/simulator $@")
+        "$(dirname $0)/simulator.app/Contents/MacOS/simulator $@")
     file(INSTALL ${CMAKE_CURRENT_BINARY_DIR}/simulator
         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
