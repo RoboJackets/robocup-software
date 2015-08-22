@@ -17,6 +17,7 @@ docker run \
     -v ${CIRCLE_ARTIFACTS:-/tmp/}:/tmp/build_artifacts \
     -e CIRCLE_BUILD_NUM=${CIRCLE_BUILD_NUM} \
     -e CIRCLE_ARTIFACTS=${CIRCLE_ARTIFACTS} \
+    -e GH_USER=${GH_USER} \
     --entrypoint /bin/bash \
     ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/util/docker/maketest.sh ${GH_TOKEN}
 
