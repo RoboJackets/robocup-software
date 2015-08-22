@@ -21,4 +21,4 @@ docker run \
     -e GIT_EMAIL=${GIT_EMAIL} \
     -e GH_TOKEN=${GH_TOKEN} \
     --entrypoint /bin/bash \
-    ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/autoupdate-docs-travis.sh
+    ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/autoupdate-docs.sh
