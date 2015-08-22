@@ -1,6 +1,6 @@
 var class_robot_status_widget =
 [
-    [ "RobotStatusWidget", "class_robot_status_widget.html#a46caec3ac78e8adcd31c2b5edcbd2f2f", null ],
+    [ "RobotStatusWidget", "class_robot_status_widget.html#a6dbc644473687b31390d5c2d6798fb37", null ],
     [ "baseID", "class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9", null ],
     [ "batteryLevel", "class_robot_status_widget.html#ac6e8176116b109c1238b94cc79937a47", null ],
     [ "blueTeam", "class_robot_status_widget.html#a485972a042891978be339892a331c7fb", null ],

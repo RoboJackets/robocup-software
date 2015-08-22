@@ -1,4 +1,4 @@
 <map id="Joystick" name="Joystick">
-<area shape="rect" id="node5" href="$class_gamepad_joystick.html" title="Logitecch Gamepad/Joystick used to control robots. " alt="" coords="5,160,131,189"/>
-<area shape="rect" id="node7" href="$class_space_nav_joystick.html" title="Joystick class for using a SpaceNavigator 3d mouse for controlling the robots. " alt="" coords="155,160,285,189"/>
+<area shape="rect" id="node3" href="$class_gamepad_joystick.html" title="Logitecch Gamepad/Joystick used to control robots. " alt="" coords="5,155,136,181"/>
+<area shape="rect" id="node4" href="$class_space_nav_joystick.html" title="Joystick class for using a SpaceNavigator 3d mouse for controlling the robots. " alt="" coords="161,155,295,181"/>
 </map>

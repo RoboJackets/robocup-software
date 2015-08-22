@@ -1,5 +1,5 @@
 <map id="SpaceNavJoystick" name="SpaceNavJoystick">
-<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="43,101,112,131"/>
-<area shape="rect" id="node6" href="$struct_joystick_control_values.html" title="JoystickControlValues" alt="" coords="147,101,299,131"/>
-<area shape="rect" id="node8" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="163,5,293,35"/>
+<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="52,96,121,123"/>
+<area shape="rect" id="node4" href="$struct_joystick_control_values.html" title="JoystickControlValues" alt="" coords="161,96,319,123"/>
+<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="177,5,319,32"/>
 </map>

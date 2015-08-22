@@ -1,5 +1,5 @@
 <map id="ConfigItem" name="ConfigItem">
-<area shape="rect" id="node3" href="$class_config_bool.html" title="ConfigBool" alt="" coords="5,83,91,112"/>
-<area shape="rect" id="node5" href="$class_config_double.html" title="ConfigDouble" alt="" coords="115,83,216,112"/>
-<area shape="rect" id="node7" href="$class_config_int.html" title="ConfigInt" alt="" coords="240,83,315,112"/>
+<area shape="rect" id="node2" href="$class_config_bool.html" title="ConfigBool" alt="" coords="5,80,96,107"/>
+<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="120,80,227,107"/>
+<area shape="rect" id="node4" href="$class_config_int.html" title="ConfigInt" alt="" coords="251,80,329,107"/>
 </map>

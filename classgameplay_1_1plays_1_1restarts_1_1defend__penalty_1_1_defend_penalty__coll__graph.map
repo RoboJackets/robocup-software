@@ -1,6 +1,6 @@
 <map id="gameplay.plays.restarts.defend_penalty.DefendPenalty" name="gameplay.plays.restarts.defend_penalty.DefendPenalty">
-<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="39,256,175,285"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="9,161,204,207"/>
-<area shape="rect" id="node6" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="13,83,200,112"/>
-<area shape="rect" id="node8" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="13,5,200,35"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="45,245,185,272"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="10,155,221,197"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="15,80,216,107"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="15,5,217,32"/>
 </map>

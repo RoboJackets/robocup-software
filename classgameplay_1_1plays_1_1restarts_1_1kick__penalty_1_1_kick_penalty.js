@@ -1,6 +1,6 @@
 var classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty =
 [
-    [ "__init__", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a2fe43bf6c84a35c2cb294726e4612a65", null ],
-    [ "is_restart", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#acef9963b9c916053e4511c69bf6115ef", null ],
-    [ "score", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#aef90563aee0174af61e4d916de952520", null ]
+    [ "__init__", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a1cfe84eaf34e8f1a3737cff5b32087e3", null ],
+    [ "is_restart", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a28b19f6ad08c0cf6e3b1b05983cbbb52", null ],
+    [ "score", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a886e44c013e3e3486d8764947d9d9734", null ]
 ];

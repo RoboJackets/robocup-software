@@ -1,5 +1,5 @@
 <map id="MotionConstraints" name="MotionConstraints">
-<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="19,261,120,291"/>
-<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="27,181,112,211"/>
-<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="20,85,119,115"/>
+<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="21,251,128,277"/>
+<area shape="rect" id="node3" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="29,173,120,200"/>
+<area shape="rect" id="node4" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="21,83,128,109"/>
 </map>

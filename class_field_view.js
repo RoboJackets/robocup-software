@@ -1,6 +1,6 @@
 var class_field_view =
 [
-    [ "FieldView", "class_field_view.html#af112f353884fa4a27fd6abd08e8954a4", null ],
+    [ "FieldView", "class_field_view.html#ae60a9d0f4e581a12fca6f07869691cf9", null ],
     [ "currentFrame", "class_field_view.html#a719010ed6b8cdfcf20e2d7ddc57c4a00", null ],
     [ "drawCoords", "class_field_view.html#ae73cf2c49d7ee4084a059d64a9d1c40d", null ],
     [ "drawField", "class_field_view.html#abb9fe0e90365ffd140802c830776ce69", null ],
@@ -11,8 +11,8 @@ var class_field_view =
     [ "history", "class_field_view.html#a0797e949abe9d6464495b3c918dbfb39", null ],
     [ "layerVisible", "class_field_view.html#a80052d77279a1fcec907e943213b18e7", null ],
     [ "layerVisible", "class_field_view.html#a279726dc265e0530bc36d6e48c19563b", null ],
-    [ "paintEvent", "class_field_view.html#a6826a48cade24e5c3be4beaf436c8c4e", null ],
-    [ "resizeEvent", "class_field_view.html#ae9c6e6f3cbf896b9cb79c42e5ddd320c", null ],
+    [ "paintEvent", "class_field_view.html#ac4110880ef4b5fa7ad132312447f204b", null ],
+    [ "resizeEvent", "class_field_view.html#acb1b09b160ea03d7732069d75862fb95", null ],
     [ "rotate", "class_field_view.html#ae5ea42046a11bc6adfa2ba36fc014092", null ],
     [ "_history", "class_field_view.html#a02ac341069431d73c15618263fbb9e12", null ],
     [ "_layerVisible", "class_field_view.html#a82a5b13f5cf34be68d365814ad74df0e", null ],

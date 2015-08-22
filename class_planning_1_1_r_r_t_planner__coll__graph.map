@@ -1,12 +1,12 @@
 <map id="Planning::RRTPlanner" name="Planning::RRTPlanner">
-<area shape="rect" id="node2" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="39,47,169,76"/>
-<area shape="rect" id="node24" href="$class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="272,85,416,115"/>
-<area shape="rect" id="node4" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1131,247,1259,276"/>
-<area shape="rect" id="node6" href="$class_config_double.html" title="ConfigDouble" alt="" coords="845,271,947,300"/>
-<area shape="rect" id="node8" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="581,271,667,300"/>
-<area shape="rect" id="node10" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="295,271,393,300"/>
-<area shape="rect" id="node14" href="$class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="524,156,724,185"/>
-<area shape="rect" id="node20" href="$class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways " alt="" coords="843,119,949,148"/>
-<area shape="rect" id="node16" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="275,156,413,185"/>
-<area shape="rect" id="node18" href="$class_planning_1_1_fixed_step_tree.html" title="tree that grows based on fixed distance step " alt="" coords="1112,119,1277,148"/>
+<area shape="rect" id="node2" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="45,40,187,67"/>
+<area shape="rect" id="node13" href="$class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="299,80,450,107"/>
+<area shape="rect" id="node3" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1212,232,1351,259"/>
+<area shape="rect" id="node4" href="$class_config_double.html" title="ConfigDouble" alt="" coords="912,252,1019,279"/>
+<area shape="rect" id="node5" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="631,252,721,279"/>
+<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="321,252,428,279"/>
+<area shape="rect" id="node8" href="$class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="566,147,786,173"/>
+<area shape="rect" id="node11" href="$class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways " alt="" coords="910,112,1021,139"/>
+<area shape="rect" id="node9" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="299,147,450,173"/>
+<area shape="rect" id="node10" href="$class_planning_1_1_fixed_step_tree.html" title="tree that grows based on fixed distance step " alt="" coords="1195,112,1367,139"/>
 </map>

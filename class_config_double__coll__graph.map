@@ -1,4 +1,4 @@
 <map id="ConfigDouble" name="ConfigDouble">
-<area shape="rect" id="node2" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="13,181,99,211"/>
-<area shape="rect" id="node4" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="7,85,105,115"/>
+<area shape="rect" id="node2" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="13,173,104,200"/>
+<area shape="rect" id="node3" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="5,83,112,109"/>
 </map>

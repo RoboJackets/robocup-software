@@ -1,6 +1,6 @@
 <map id="Geometry2d::Shape" name="Geometry2d::Shape">
-<area shape="rect" id="node3" href="$class_geometry2d_1_1_circle.html" title="Geometry2d::Circle" alt="" coords="5,83,139,112"/>
-<area shape="rect" id="node5" href="$class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="163,83,363,112"/>
-<area shape="rect" id="node7" href="$class_geometry2d_1_1_polygon.html" title="Geometry2d::Polygon" alt="" coords="387,83,533,112"/>
-<area shape="rect" id="node9" href="$class_geometry2d_1_1_rect.html" title="Geometry2d::Rect" alt="" coords="557,83,685,112"/>
+<area shape="rect" id="node2" href="$class_geometry2d_1_1_circle.html" title="Geometry2d::Circle" alt="" coords="5,80,149,107"/>
+<area shape="rect" id="node3" href="$class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="174,80,393,107"/>
+<area shape="rect" id="node4" href="$class_geometry2d_1_1_polygon.html" title="Geometry2d::Polygon" alt="" coords="419,80,577,107"/>
+<area shape="rect" id="node5" href="$class_geometry2d_1_1_rect.html" title="Geometry2d::Rect" alt="" coords="603,80,740,107"/>
 </map>

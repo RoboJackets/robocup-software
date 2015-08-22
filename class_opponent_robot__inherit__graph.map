@@ -1,4 +1,4 @@
 <map id="OpponentRobot" name="OpponentRobot">
-<area shape="rect" id="node2" href="$class_robot.html" title="Robot" alt="" coords="33,83,89,112"/>
-<area shape="rect" id="node4" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="19,5,104,35"/>
+<area shape="rect" id="node2" href="$class_robot.html" title="Robot" alt="" coords="36,80,93,107"/>
+<area shape="rect" id="node3" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="21,5,109,32"/>
 </map>

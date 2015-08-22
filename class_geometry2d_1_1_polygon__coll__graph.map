@@ -1,4 +1,4 @@
 <map id="Geometry2d::Polygon" name="Geometry2d::Polygon">
-<area shape="rect" id="node2" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="5,111,144,140"/>
-<area shape="rect" id="node6" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="185,5,316,35"/>
+<area shape="rect" id="node2" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="5,104,155,131"/>
+<area shape="rect" id="node4" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="201,5,343,32"/>
 </map>

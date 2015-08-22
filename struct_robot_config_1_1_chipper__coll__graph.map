@@ -1,5 +1,5 @@
 <map id="RobotConfig::Chipper" name="RobotConfig::Chipper">
-<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="28,261,129,291"/>
-<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="36,181,121,211"/>
-<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="29,85,128,115"/>
+<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="28,251,135,277"/>
+<area shape="rect" id="node3" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="36,173,127,200"/>
+<area shape="rect" id="node4" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="28,83,135,109"/>
 </map>

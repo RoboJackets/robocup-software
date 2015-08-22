@@ -1,4 +1,4 @@
 <map id="gameplay.single_robot_behavior.SingleRobotBehavior" name="gameplay.single_robot_behavior.SingleRobotBehavior">
-<area shape="rect" id="node2" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="13,83,200,112"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="13,5,200,35"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="14,80,215,107"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="13,5,216,32"/>
 </map>

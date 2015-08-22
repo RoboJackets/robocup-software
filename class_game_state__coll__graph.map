@@ -1,5 +1,5 @@
 <map id="GameState" name="GameState">
-<area shape="rect" id="node2" href="$class_team_info.html" title="TeamInfo" alt="" coords="123,200,200,229"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="28,104,108,133"/>
-<area shape="rect" id="node6" title="STL class. " alt="" coords="5,6,131,53"/>
+<area shape="rect" id="node2" href="$class_team_info.html" title="TeamInfo" alt="" coords="137,189,215,216"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="30,99,116,125"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="5,6,141,47"/>
 </map>

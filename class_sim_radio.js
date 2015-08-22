@@ -1,8 +1,8 @@
 var class_sim_radio =
 [
     [ "SimRadio", "class_sim_radio.html#a4201155ebfea83d663aec59ff1cbc964", null ],
-    [ "isOpen", "class_sim_radio.html#a2ea9f7ef0cc7383df07a3839ce446ab5", null ],
-    [ "receive", "class_sim_radio.html#ab1749b3adaf2941fb3b31ec7a13eeeec", null ],
-    [ "send", "class_sim_radio.html#a995a3a55fe3548658aecdd2625922d7b", null ],
-    [ "switchTeam", "class_sim_radio.html#a934962b6a82a7aa7b979be738b68bb9a", null ]
+    [ "isOpen", "class_sim_radio.html#a00e35ad8caa7a8df04ae13704fb804d8", null ],
+    [ "receive", "class_sim_radio.html#a6b63dd2355026fb8c0ff650e610f4d0d", null ],
+    [ "send", "class_sim_radio.html#a7e137f847c153680a9ef26f625b6b354", null ],
+    [ "switchTeam", "class_sim_radio.html#af293058987a8949e56fd63983780622f", null ]
 ];

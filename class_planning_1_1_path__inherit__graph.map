@@ -1,4 +1,4 @@
 <map id="Planning::Path" name="Planning::Path">
-<area shape="rect" id="node3" href="$class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="5,83,176,112"/>
-<area shape="rect" id="node5" href="$class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="200,83,373,112"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="5,80,187,107"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="211,80,400,107"/>
 </map>

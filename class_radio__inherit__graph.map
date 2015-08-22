@@ -1,4 +1,4 @@
 <map id="Radio" name="Radio">
-<area shape="rect" id="node3" href="$class_sim_radio.html" title="Radio IO with robots in the simulator. " alt="" coords="5,83,83,112"/>
-<area shape="rect" id="node5" href="$class_u_s_b_radio.html" title="Radio IO with real robots. " alt="" coords="107,83,189,112"/>
+<area shape="rect" id="node2" href="$class_sim_radio.html" title="Radio IO with robots in the simulator. " alt="" coords="5,80,87,107"/>
+<area shape="rect" id="node3" href="$class_u_s_b_radio.html" title="Radio IO with real robots. " alt="" coords="112,80,197,107"/>
 </map>

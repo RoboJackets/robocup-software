@@ -2,8 +2,8 @@ var annotated =
 [
     [ "Chart", null, [
       [ "Function", "struct_chart_1_1_function.html", "struct_chart_1_1_function" ],
-      [ "NumericField", "struct_chart_1_1_numeric_field.html", "struct_chart_1_1_numeric_field" ],
-      [ "PointMagnitude", "struct_chart_1_1_point_magnitude.html", "struct_chart_1_1_point_magnitude" ]
+      [ "PointMagnitude", "struct_chart_1_1_point_magnitude.html", "struct_chart_1_1_point_magnitude" ],
+      [ "NumericField", "struct_chart_1_1_numeric_field.html", "struct_chart_1_1_numeric_field" ]
     ] ],
     [ "Gameplay", "namespace_gameplay.html", "namespace_gameplay" ],
     [ "gameplay", null, [
@@ -14,10 +14,10 @@ var annotated =
         [ "CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", "classgameplay_1_1composite__behavior_1_1_composite_behavior" ]
       ] ],
       [ "constants", null, [
-        [ "Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
         [ "Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
-        [ "Field", "classgameplay_1_1constants_1_1_field.html", null ],
-        [ "Robot", "classgameplay_1_1constants_1_1_robot.html", "classgameplay_1_1constants_1_1_robot" ]
+        [ "Robot", "classgameplay_1_1constants_1_1_robot.html", "classgameplay_1_1constants_1_1_robot" ],
+        [ "Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
+        [ "Field", "classgameplay_1_1constants_1_1_field.html", null ]
       ] ],
       [ "evaluation", null, [
         [ "double_touch", null, [
@@ -141,8 +141,8 @@ var annotated =
         ] ]
       ] ],
       [ "role_assignment", null, [
-        [ "ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ],
-        [ "RoleRequirements", "classgameplay_1_1role__assignment_1_1_role_requirements.html", "classgameplay_1_1role__assignment_1_1_role_requirements" ]
+        [ "RoleRequirements", "classgameplay_1_1role__assignment_1_1_role_requirements.html", "classgameplay_1_1role__assignment_1_1_role_requirements" ],
+        [ "ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ]
       ] ],
       [ "root_play", null, [
         [ "RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", "classgameplay_1_1root__play_1_1_root_play" ]
@@ -239,11 +239,11 @@ var annotated =
     ] ],
     [ "Planning", null, [
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
-      [ "FixedStepTree", "class_planning_1_1_fixed_step_tree.html", "class_planning_1_1_fixed_step_tree" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
       [ "Path", "class_planning_1_1_path.html", "class_planning_1_1_path" ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
-      [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ]
+      [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ],
+      [ "FixedStepTree", "class_planning_1_1_fixed_step_tree.html", "class_planning_1_1_fixed_step_tree" ]
     ] ],
     [ "test_constants", null, [
       [ "TestConstants", "classtest__constants_1_1_test_constants.html", "classtest__constants_1_1_test_constants" ]

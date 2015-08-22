@@ -1,4 +1,4 @@
 <map id="Robot" name="Robot">
-<area shape="rect" id="node2" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="28,117,113,147"/>
-<area shape="rect" id="node4" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,5,136,35"/>
+<area shape="rect" id="node2" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="31,109,120,136"/>
+<area shape="rect" id="node3" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,5,147,32"/>
 </map>

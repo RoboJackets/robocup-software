@@ -1,15 +1,15 @@
 var classgameplay_1_1play__registry_1_1_play_registry_1_1_node =
 [
-    [ "__init__", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ac6f17552b0995e8adf8cdb8f1219e5b2", null ],
-    [ "__str__", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ab9da86459042cd80e2ab81a6bc5f1513", null ],
-    [ "enabled", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a1bdc00bb8624b3eae7baba4508695028", null ],
-    [ "enabled", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae42210642f5819b300f45fd4bebb2f9", null ],
-    [ "last_score", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a2c7c2d1ae26c1acab6b6bef55ea90add", null ],
-    [ "module_name", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4cbd0dab1b3d072ed40c93e95a2054e5", null ],
-    [ "name", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a582d3ae01112a0e4b200a161fdf92ab5", null ],
-    [ "parent", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a56763364fbc289daeb6c43cb8ae7af82", null ],
-    [ "parent", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aebea3e8c82320b1384a4d10a384eb950", null ],
-    [ "play_class", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#afd65e43f930177179e6f6d5eac89c448", null ],
-    [ "play_class", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a275994e56ff79392cd237c70a69da526", null ],
-    [ "recalculate_scores", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aabb80a984575fee2371f1cb0cddc7122", null ]
+    [ "__init__", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4b74d731d15ceb9a50eccae677497090", null ],
+    [ "__str__", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aafec1b75db7c1f893df3a70f3d42eb67", null ],
+    [ "enabled", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a6d0055427abab28f117f506b0fc66eec", null ],
+    [ "enabled", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a6d0055427abab28f117f506b0fc66eec", null ],
+    [ "last_score", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#acf7777490893a64f471fca2132a04517", null ],
+    [ "module_name", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ad6098c7b2a5c5289eeaa56f77489c6d3", null ],
+    [ "name", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4e31aa650e2de651f8ece2c4ad0c5597", null ],
+    [ "parent", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae223de49d3ecd99839ae7cd2b700f6c", null ],
+    [ "parent", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae223de49d3ecd99839ae7cd2b700f6c", null ],
+    [ "play_class", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#afe5cb94c58298c293bcb694c78764ee1", null ],
+    [ "play_class", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#afe5cb94c58298c293bcb694c78764ee1", null ],
+    [ "recalculate_scores", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a31dc9d13ec470c62c6f5e06908f5f3a2", null ]
 ];

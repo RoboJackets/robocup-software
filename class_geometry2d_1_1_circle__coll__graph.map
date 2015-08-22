@@ -1,4 +1,4 @@
 <map id="Geometry2d::Circle" name="Geometry2d::Circle">
-<area shape="rect" id="node2" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="5,5,144,35"/>
-<area shape="rect" id="node4" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="168,5,299,35"/>
+<area shape="rect" id="node2" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="5,5,155,32"/>
+<area shape="rect" id="node3" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="179,5,321,32"/>
 </map>

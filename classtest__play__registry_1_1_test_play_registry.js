@@ -1,7 +1,7 @@
 var classtest__play__registry_1_1_test_play_registry =
 [
-    [ "test_delete", "classtest__play__registry_1_1_test_play_registry.html#a353f3a3c85ddfb569cfa051a1e0abd10", null ],
-    [ "test_delete_last_item_in_category", "classtest__play__registry_1_1_test_play_registry.html#a422fd2d293fba74ee1901804546872a0", null ],
-    [ "test_insert", "classtest__play__registry_1_1_test_play_registry.html#aaf5b9b9b1b35fe5c40a3c1255fb12bc7", null ],
-    [ "test_nested_insert", "classtest__play__registry_1_1_test_play_registry.html#a90c0d18ea43663b4ed9cb5ad2103a6bf", null ]
+    [ "test_delete", "classtest__play__registry_1_1_test_play_registry.html#a2f00cea3065064990a5c7678e29dec3a", null ],
+    [ "test_delete_last_item_in_category", "classtest__play__registry_1_1_test_play_registry.html#aaf952de1d23c964f24823a633150578c", null ],
+    [ "test_insert", "classtest__play__registry_1_1_test_play_registry.html#a798446cd2a28d595f8e1207396d95e26", null ],
+    [ "test_nested_insert", "classtest__play__registry_1_1_test_play_registry.html#a41c5c7035fd9c54fa3394f311ee4c9d2", null ]
 ];
