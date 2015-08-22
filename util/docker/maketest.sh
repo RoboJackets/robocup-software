@@ -5,16 +5,37 @@ DIR=$(cd $(dirname $0) ; pwd -P)
 source ${DIR}/docker_common.sh
 
 # Get sha sum
-USER="jgkamat"
+USER="${GH_USER:-georgeburdell}"
 SUCCESS=true
 LINK_PREFIX="https://circle-artifacts.com/gh/RoboJackets/robocup-software/$CIRCLE_BUILD_NUM/artifacts/0$CIRCLE_ARTIFACTS/"
 ARTIFACT_DIR="/tmp/build_artifacts"
+PENDING=false
+SHORTNAMES=( )
 
 start_pending() {
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for compiling", "context": "circle/compile", "target_url": '"\"${LINK_PREFIX}makeoutput.txt\"}"
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": '"\"${LINK_PREFIX}testcppoutput.txt\"}"
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for style", "context": "circle/style", "target_url": '"\"${LINK_PREFIX}firmwareoutput.txt\"}"
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "A check for firmware", "context": "circle/firmware", "target_url": '"\"${LINK_PREFIX}TODONOTDONE\"}"
+    SHORTNAME="$1"
+    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"pending", "description": "This check is pending. Please Wait.", "context": '"\"circle/$SHORTNAME\""', "target_url": "http://bit.ly/IqT6zt"}'
+}
+
+# A function to run a command. Takes in a command name, shortname and description.
+ci_task() {
+    CMD="$1"
+    SHORTNAME="$2"
+    DESCRIPTION="$3"
+
+    SHORTNAMES+=("${SHORTNAME}")
+
+    if [ "$PENDING" = "true" ]; then
+        return 0
+    fi
+
+    ${CMD} | tee "${ARTIFACT_DIR}/${SHORTNAME}.txt"
+    if [ "${PIPESTATUS[0]}" = "0" ]; then
+        curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": '"\"${DESCRIPTION}\""', "context": '"\"circle/${SHORTNAME}\""', "target_url": '""\"${LINK_PREFIX}${SHORTNAME}.txt\""}"
+    else
+        curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": '"\"${DESCRIPTION}\""', "context": '"\"circle/${SHORTNAME}\""', "target_url": '""\"${LINK_PREFIX}${SHORTNAME}.txt\""}"
+        SUCCESS=false
+    fi
 }
 
 if [ "$1" = "" ]; then
@@ -25,8 +46,7 @@ elif [ "$1" = "--pending" -a "$2" = "" ]; then
     exit 1
 elif [ "$1" = "--pending" -a "$2" != "" ]; then
     TOKEN="$2"
-    start_pending
-    exit 0
+    PENDING=true
 else
     TOKEN="$1"
 fi
@@ -39,34 +59,18 @@ make clean
 git submodule update --init
 sudo chown -R `whoami`:`whoami` ${HOME}/.ccache
 
-start_pending
+ci_task 'make' 'compile' 'A check to see if the code compiles'
+ci_task 'make test-soccer' 'test-soccer' 'A check to see if soccer tests pass'
+ci_task 'make robot2015' 'firmware' 'A check to see if firmware works'
+ci_task 'make test-firmware' 'test-firmware' 'A check to see if firmware tests pass'
+ci_task 'true' 'style' 'A check to see if style passes'
 
-make | tee "${ARTIFACT_DIR}/makeoutput.txt"
-if [ "${PIPESTATUS[0]}" = "0" ]; then
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for compiling", "context": "circle/compile", "target_url": '"\"${LINK_PREFIX}makeoutput.txt\"}"
-else
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": "A check for compiling", "context": "circle/compile", "target_url": '"\"${LINK_PREFIX}makeoutput.txt\"}"
-    SUCCESS=false
+# This script needs to be run prior with the --pending flag if you want to see pening flags
+if [ "$PENDING" = "true" ]; then
+    for i in ${SHORTNAMES[*]}; do
+        start_pending ${i}
+    done
 fi
-
-make test-cpp | tee "${ARTIFACT_DIR}/testcppoutput.txt"
-if [ "${PIPESTATUS[0]}" = "0" ]; then
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": '"\"${LINK_PREFIX}testcppoutput.txt\"}"
-else
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": "A check for cpp tests", "context": "circle/test-cpp", "target_url": '"\"${LINK_PREFIX}testcppoutput.txt\"}"
-    SUCCESS=false
-fi
-
-make robot2015 | tee "${ARTIFACT_DIR}/firmwareoutput.txt"
-if [ "${PIPESTATUS[0]}" = "0" ]; then
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for firmware", "context": "circle/firmware", "target_url": '"\"${LINK_PREFIX}firmwareoutput.txt\"}"
-else
-    curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"failure", "description": "A check for firmware", "context": "circle/firmware", "target_url": '"\"${LINK_PREFIX}firmwareoutput.txt\"}"
-    SUCCESS=false
-fi
-
-# TODO style check
-curl -u $USER:$TOKEN -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} -H "Content-Type: application/json" -d '{"state":"success", "description": "A check for style", "context": "circle/style", "target_url": '"\"${LINK_PREFIX}TODOFIXME\"}"
 
 $SUCCESS
 exit $?
