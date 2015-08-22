@@ -23,8 +23,6 @@ RUN export uid=1000 gid=1000 && \
 USER developer
 ENV HOME /home/developer
 
-# clone and run ubuntu-setup to shave some time off. This will be run again in the robocup-software to compensate for changes to the setup script.
-
 # do everything in root's home
 RUN mkdir -p /home/developer/robocup-software
 WORKDIR /home/developer/robocup-software
