@@ -9,11 +9,11 @@ using namespace std;
 //
 //  based on the li-po discharge curve from SparkFun
 //  https://learn.sparkfun.com/tutorials/battery-technologies/lithium-polymer
-const BatteryProfile RJ2008BatteryProfile(
+const BatteryProfile RJ2008BatteryProfile({
     {14.20, 0.20},
     {15.10, 0.50},
     {16.00, 1.00}
-);
+});
 
 #warning Battery profile for 2015 robot isnt calibrated yet - it always reports 0% charged
 const BatteryProfile RJ2015BatteryProfile({
