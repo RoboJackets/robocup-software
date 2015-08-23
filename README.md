@@ -79,7 +79,7 @@ We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert 
 
 http://robojackets.github.io/robocup-software/
 
-Note: The doxygen documentation site above is updated automacally using travis-ci.  See our .travis.yml file for more info.
+Note: The doxygen documentation site above is updated automacally using circle-ci.  See our autoupdate-docs.sh file for more info.
 
 ## Testing
 We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `make tests`.  To add a test to be run with the rest of the bunch, add a new file in soccer/tests.
