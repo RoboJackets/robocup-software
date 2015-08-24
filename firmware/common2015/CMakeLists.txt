@@ -8,14 +8,21 @@ set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
 set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 set(common2015_SRC
-    "drivers/CC1101/CC1101.cpp"
+    # "drivers/radio/radio.cpp"
+    "drivers/cc1101/CC1101.cpp"
+    "drivers/cc1201/CC1201.cpp"
+    "drivers/cc1201/CC1201Config.cpp"
+
+    "modules/Console/Console.cpp"
     "modules/CommLink/CommLink.cpp"
     "modules/CommModule/CommModule.cpp"
-    "utils/FirmwareCheck/FirmwareCheck.cpp"
-    "utils/Logger/logger.cpp"
-    "utils/RTOS_Management/FunctionPointerRJ.cpp"
-    "utils/RTOS_Management/ThreadHelper.cpp"
-    ${CMAKE_BINARY_DIR}/common/git_version.cpp
+    
+    "utils/fp16/fp16.cpp"
+    "utils/assert/assert.cpp"
+    "utils/logger/logger.cpp"
+    "utils/numparser/numparser.cpp"
+    "utils/rtos-mgmt/helper-funcs.cpp"
+    "utils/rtos-mgmt/thread-helper.cpp"
 )
 
 # set the names of each directory and then set the names of the subdirectories within each one
@@ -54,7 +61,7 @@ endforeach()
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
-add_library(common2015 ${common2015_SRC})
+add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
 add_dependencies(common2015 mbed_libraries)
 
 target_link_libraries(common2015 ${MBED_OBJECTS})
