@@ -54,13 +54,13 @@
 // This defines the pin used for communicating with the Mechanical Base's ID#. This chip is located on the breakbeam board.
 #define RJ_BASE_ID              p21
 
-// This defines the radio's `TX` LED for transmitting packets.
+// This defines the radio's `TX` LED for transmitting packets. This should always be configured as an OPEN DRAIN OUTPUT.
 #define RJ_TX_LED               p22
 
-// This defines the radio's `RX` LED for receiving packets.
+// This defines the radio's `RX` LED for receiving packets. This should always be configured as an OPEN DRAIN OUTPUT.
 #define RJ_RX_LED               p23
 
-// This defines the `BALL` LED for ball detection.
+// This defines the `BALL` LED for ball detection. This should always be configured as an OPEN DRAIN OUTPUT.
 #define RJ_BALL_LED             p24
 
 // This defines the pin used for driving the Breakbeam's Ball Emitter LED.

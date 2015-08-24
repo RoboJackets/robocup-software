@@ -8,9 +8,28 @@
 #include "commands.hpp"
 // #include "neostrip.cpp"
 
-
 // ADCDMA adc;
 // DMA dma;
+
+// Sets the correct hardware configurations for pins connected to LEDs
+void initLEDs(void)
+{
+	DigitalOut led_brkbm(RJ_BALL_LED, 1);
+	led_brkbm.mode(OpenDrain);
+	led_brkbm.mode(PullUp);
+
+	DigitalOut led_ready(RJ_RDY_LED, 1);
+	led_ready.mode(OpenDrain);
+	led_ready.mode(PullUp);
+
+	DigitalOut led_rx(RJ_RX_LED, 1);
+	led_rx.mode(OpenDrain);
+	led_rx.mode(PullUp);
+
+	DigitalOut led_tx(RJ_TX_LED, 1);
+	led_tx.mode(OpenDrain);
+	led_tx.mode(PullUp);
+}
 
 
 /**
@@ -19,6 +38,8 @@
  */
 int main(void)
 {
+	initLEDs();
+
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INIT;
 
