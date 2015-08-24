@@ -1,24 +1,17 @@
-language: cpp
-compiler: gcc
 
-submodules: false
-
-# holds github oauth token so we can push compiled doxygen documentation
-# generated with: `travis encrypt 'GIT_USERNAME="justbuchanan" GIT_EMAIL="justbuchanan@gmail.com" GH_TOKEN=######################'`
-env:
-  global:
-    secure: "L9gLcUuHMBnCeHIyecTAUR0C3FoS6HwyQzrYm50leQ4icxFNfusqDJcsOQGs9JrGucLxq8Oj+hcYJUXQLKT2iQLm0IWfji0/w5H9Ocy5GZDmw8xUvJOJjgGwKdndn+lgsvRkmTtBguz4Pyn2gkUlILKDoR4Jx6pQ4jxrJkVMEA0="
-
+language: objective-c
 
 before_install:
-  # auto-update documentation site
-  - './autoupdate-docs-travis.sh'
-  - './util/travis-setup'
-  - export CC=gcc-4.7
-  - export CXX=g++-4.7
+  - brew update
+  - brew upgrade
+  - util/osx-setup
 
-script: make && make test-cpp && make robot2015
+cache:
+  directories:
+    - $HOME/.ccache
+    - /usr/local
+
+script: make
 
 notifications:
   email: false
-
