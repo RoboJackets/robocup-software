@@ -1,4 +1,6 @@
 #include "pins-ctrl-2015.hpp"
+#include "TaskSignals.hpp"
+
 #include <CommModule.hpp>
 #include <CommPort.hpp>
 #include <CC1201Radio.hpp>
@@ -79,9 +81,9 @@ void Task_CommCtrl(void const* args)
 	else
 		threadPriority = osPriorityIdle;
 
-	// Setup the TX/RX lights and have them off initially
-	//DigitalOut txLED(RJ_TX_LED, 1);
-	//DigitalOut rxLED(RJ_RX_LED, 1);
+	// Setup the TX/RX lights and have them on initially
+	DigitalOut txLED(RJ_TX_LED, 1);
+	DigitalOut rxLED(RJ_RX_LED, 1);
 
 	// Startup the CommModule interface
 	CommModule::Init();
@@ -127,9 +129,12 @@ void Task_CommCtrl(void const* args)
 
 	} else {
 
-		LOG(FATAL, "No radio found");
-	}
+		LOG(FATAL, "No radio interface found. Terminating radio thread.");
+		// TODO: Turn on radio error LED here
 
+		osThreadTerminate(threadID);
+		return;
+	}
 
 	/*
 	 * Ports are always displayed in ascending (lowest -> highest) order according
@@ -137,9 +142,9 @@ void Task_CommCtrl(void const* args)
 	 * the CommModule methods can be used from almost anywhere.
 	 */
 
-	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
-	// txLED = 0;
-	// rxLED = 0;
+	// Turn off the TX/RX LEDs if we make it to this point in the initilization
+	txLED = 0;
+	rxLED = 0;
 
 	// == everything below this line all the way until the start of the while loop is test code ==
 
@@ -159,16 +164,13 @@ void Task_CommCtrl(void const* args)
 	memcpy(ack_pck.payload, buf, sizeof(buf));
 	ack_pck.address = BASE_STATION_ADDR;
 
-	LOG(INIT, "Payload:\t\"%s\"\t(%u bytes)", ack_pck.payload, ack_pck.payload_size);
-
-	Thread::wait(1200);
+	LOG(INIT, "Placing dummy RX packet in radio buffer:\r\n    Payload:\t\"%s\"\t(%u bytes)", ack_pck.payload, ack_pck.payload_size);
 
 	CommModule::receive(pck);
 
 	while (true) {
 		/*
 		Thread::wait(100);
-		// Thread::yield();
 
 		// Simulate some incoming packets on 2 different ports
 		//CommModule::receive(pck);
@@ -180,8 +182,8 @@ void Task_CommCtrl(void const* args)
 
 		CommModule::send(ack_pck);
 		*/
-	
-		//CommModule::receive(pck);
+
+		CommModule::receive(pck);
 		Thread::wait(250);
 		Thread::yield();
 

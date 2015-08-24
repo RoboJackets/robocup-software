@@ -1,4 +1,5 @@
 #include "commands.hpp"
+#include "TaskSignals.hpp"
 
 #include <rtos.h>
 #include <Console.hpp>
@@ -20,6 +21,10 @@ void Task_SerialConsole(void const* args)
     threadPriority  = osThreadGetPriority(threadID);
   else
     threadPriority = (osPriority)NULL;
+
+  // We wait here until until main tells us we can continue.
+  // This is to prevent any startup logging output from getting jumbled in with the console's serial data
+  osSignalWait(CONSOLE_TASK_START_SIGNAL, osWaitForever);
 
   // Initalize the console buffer and save the char buffer's starting address
   Console::Init();

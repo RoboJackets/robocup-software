@@ -1,21 +1,3 @@
-/*  MCP23017 library for Arduino
-    Copyright (C) 2009 David Pye    <davidmpye@gmail.com
-    Modified for use on the MBED ARM platform
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include "mcp23017.hpp"
 
 #include <mbed.h>
@@ -32,7 +14,7 @@ void MCP23017::set_config(PinName sda, PinName scl, int i2cAddress)
     instance->_scl = scl;
     instance->_i2cAddress = i2cAddress;
 
-    LOG(INIT,
+    LOG(OK,
         "IO Expander I2C Address:\t0x%02X",
         instance->_i2cAddress
        );
@@ -49,10 +31,12 @@ shared_ptr<MCP23017>& MCP23017::Instance(void)
 bool MCP23017::Init(void)
 {
     auto instance = Instance();
-    instance->_i2c.frequency(400000);
+
     set_config(RJ_I2C_BUS);
     reset();
     config(0x00FF, 0x0000, 0xFF00);
+
+    LOG(OK, "MCP23017 initialized");
 
     return true;
 }
@@ -76,6 +60,51 @@ void MCP23017::reset(void)
     instance->shadow_GPIO  = 0;
     instance->shadow_GPPU  = 0;
     instance->shadow_IPOL  = 0;
+}
+
+/*-----------------------------------------------------------------------------
+ * writeRegister
+ * write a byte
+ */
+void MCP23017::writeRegister(int regAddress, unsigned char data)
+{
+    char  buffer[2];
+    buffer[0] = regAddress;
+    buffer[1] = data;
+
+    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 2);
+
+    if (!ret)
+        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X", instance->_i2cAddress);
+}
+
+/*----------------------------------------------------------------------------
+ * write Register
+ * write two bytes
+ */
+void MCP23017::writeRegister(int regAddress, unsigned short data)
+{
+    char  buffer[3];
+    buffer[0] = regAddress;
+    buffer[1] = data & 0xFF;
+    buffer[2] = (data >> 8) & 0xFF;
+
+    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 3);
+
+    if (!ret)
+        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X", instance->_i2cAddress);
+}
+
+/*-----------------------------------------------------------------------------
+ * readRegister
+ */
+int MCP23017::readRegister(int regAddress)
+{
+    char buffer[2];
+    instance->_i2c.write(regAddress);
+    instance->_i2c.read(instance->_i2cAddress, buffer, 2);
+
+    return (int)(buffer[0] | (buffer[1] << 8));
 }
 
 /*-----------------------------------------------------------------------------
@@ -110,7 +139,7 @@ int  MCP23017::read_bit(int bit_number)
 {
     instance->shadow_GPIO = digitalWordRead();
 
-    LOG(INIT,
+    LOG(INF2,
         "Read an I/O pin bit:"
         "    Bit:\t%u\r\n"
         "    State:\t%s",
@@ -139,7 +168,7 @@ void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,  
     internalPullupMask(pullup_config);
     inputPolarityMask(polarity_config);
 
-    LOG(INIT,
+    LOG(INF2,
         "IO Expander Configuration:\r\n"
         "    IODIR:\t0x%04X\r\n"
         "    GPPU:\t0x%04X\r\n"
@@ -148,53 +177,6 @@ void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,  
         instance->shadow_GPPU,
         instance->shadow_IPOL
        );
-}
-
-/*-----------------------------------------------------------------------------
- * writeRegister
- * write a byte
- */
-void MCP23017::writeRegister(int regAddress, unsigned char data)
-{
-    char  buffer[2];
-    buffer[0] = regAddress;
-    buffer[1] = data;
-
-    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 2);
-
-    if (!ret) {
-        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X", instance->_i2cAddress);
-    }
-}
-
-/*----------------------------------------------------------------------------
- * write Register
- * write two bytes
- */
-void MCP23017::writeRegister(int regAddress, unsigned short data)
-{
-    char  buffer[3];
-    buffer[0] = regAddress;
-    buffer[1] = data & 0xFF;
-    buffer[2] = (data >> 8) & 0xFF;
-
-    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 3);
-
-    if (!ret) {
-        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X", instance->_i2cAddress);
-    }
-}
-
-/*-----------------------------------------------------------------------------
- * readRegister
- */
-int MCP23017::readRegister(int regAddress)
-{
-    char buffer[2];
-    instance->_i2c.write(regAddress);
-    instance->_i2c.read(instance->_i2cAddress, buffer, 2);
-
-    return ((int)(buffer[0] | (buffer[1] << 8)));
 }
 
 /*-----------------------------------------------------------------------------

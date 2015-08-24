@@ -33,3 +33,6 @@
 
 // The number of ms the flashing status light waits between flashes.
 #define RJ_LIFELIGHT_TIMEOUT_MS 1400
+
+// The amount of time (in ms) that all LEDs stay lit during startup
+#define RJ_STARTUP_LED_TIMEOUT_MS 500

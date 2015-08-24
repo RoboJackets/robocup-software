@@ -1,4 +1,5 @@
 #include "controller.hpp"
+#include "TaskSignals.hpp"
 
 #include <rtos.h>
 #include <logger.hpp>
@@ -9,6 +10,9 @@
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production builds. Hopefully that'll be possible without the console
 #define CONTROL_LOOP_WAIT_MS 3
+
+
+void Task_Controller_Sensorless(void const* args);
 
 
 /**
@@ -36,7 +40,6 @@ void Task_Controller(void const* args)
 	imu.setGyroRange(MPU6050_GYRO_RANGE_250);
 	imu.setAcceleroRange(MPU6050_ACCELERO_RANGE_2G);
 	imu.setSleepMode(false);
-	// imu.selfTest();
 
 	if (imu.testConnection()) {
 		LOG(INIT, "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
@@ -44,14 +47,13 @@ void Task_Controller(void const* args)
 	} else {
 		LOG(SEVERE, "MPU6050 not found!\r\n    Falling back to sensorless control loop.");
 
-		// Once things are more organized, startup a sensorless control loop thread before killing this one.
-		// osThreadTerminate(threadID);
-		//
-		//
-		while (true) {
-			Thread::wait(1500);
-			Thread::yield();
-		}
+		// TODO: Turn on the IMU's error LED here
+
+		// Start a thread that can function without the IMU, then terminate this thread
+		Thread controller_task(Task_Controller_Sensorless, nullptr, osPriorityRealtime);
+		osThreadTerminate(threadID);
+
+		return;
 	}
 
 	osThreadSetPriority(threadID, osPriorityNormal);
@@ -75,6 +77,34 @@ void Task_Controller(void const* args)
 
 		Thread::wait(CONTROL_LOOP_WAIT_MS);
 
+		Thread::yield();
+	}
+
+	osThreadTerminate(threadID);
+}
+
+
+/**
+ * [Task_Controller_Sensorless]
+ * @param args [description]
+ */
+void Task_Controller_Sensorless(void const* args)
+{
+	// Store the thread's ID
+	osThreadId threadID = Thread::gettid();
+
+	// Store our priority so we know what to reset it to if ever needed
+	osPriority threadPriority;
+
+	if (threadID != nullptr)
+		threadPriority  = osThreadGetPriority(threadID);
+	else
+		threadPriority = osPriorityIdle;
+
+	LOG(INIT, "Sensorless control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
+
+	while (1) {
+		Thread::wait(1500);
 		Thread::yield();
 	}
 

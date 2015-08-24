@@ -20,7 +20,7 @@ public:
     *
     *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
     */
-    I2CMasterRtos(PinName sda, PinName scl, int freq = 100000):m_drv(sda,scl,freq) {}
+    I2CMasterRtos(PinName sda, PinName scl, int freq = 400000):m_drv(sda,scl,freq) {}
 
     /** Set the frequency of the I2C interface
      *

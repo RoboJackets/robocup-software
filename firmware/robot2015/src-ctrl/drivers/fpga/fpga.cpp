@@ -1,27 +1,33 @@
 #include "fpga.hpp"
 
+#include <logger.hpp>
 
-/**
- *
- */
-FPGA::FPGA(PinName _cs, PinName _progB)
-    : spi(RJ_SPI_BUS),
+
+bool FPGA::isInit = false;
+
+
+FPGA::FPGA(PinName _mosi, PinName _miso, PinName _sck, PinName _cs, PinName _progB, PinName _initB, PinName _done)
+    : spi(_mosi, _miso, _sck),
       cs(_cs, 1),
-      progB(_progB, 1)
+      progB(_progB, PIN_OUTPUT, OpenDrain, 0),
+      initB(_initB),
+      done(_done)
 {
+    // We force the PROG_B pin low to start a fresh configuration period in the constructor
+
     isInit = false;
 
-    wait(1);    //  1 second
-    progB = 0;
-    wait_us(80);
+    // However, it must be HIGH during configuration, we we bring it back HIGH here
+    wait_us(50);
+    // while(initB) { /* wait */ };
     progB = 1;
 
-    //  8 bits per write, mode 3?
+    //  8 bits per write, mode 3 for polarity & phase of SPI transfers
     spi.format(8, 3);
 
     //  1MHz - pretty slow, we can boost this later
     //  our max physical limit is 1/8 of the fpga system clock (18.4MHz), so 18.4/8 is the max
-    spi.frequency(1000000);
+    spi.frequency(2000000);
 }
 
 
@@ -38,30 +44,35 @@ FPGA::~FPGA(void)
  * [FPGA::Init Setup the FPGA interface]
  * @return  [The initialization error code.]
  */
-bool FPGA::Init(void)
+bool FPGA::Init(const std::string& filename)
 {
-    FILE* fp = fopen("/local/robocup.nib", "r");
+    std::string filepath = "/local/";
+    filepath.append(filename);
 
-    if (fp == nullptr)
+    FILE* fp = fopen(filepath.c_str(), "r");
+
+    if (fp == nullptr) {
         return false;
+    } else {
+        int result = 0;
+        char buf[10];
 
-    printf("opened file: %p\r\n", fp);
+        LOG(INIT, "Opened FPGA bitfile:\t'%p'", fp);
 
-    int result = 0;
-    char buf[10];
+        while (true) {
+            size_t bytes_read = fread(buf, 1, 1, fp);
 
-    while (true) {
-        size_t bytes_read = fread(buf, 1, 1, fp);
+            if (bytes_read == 0)
+                break;
 
-        if (bytes_read == 0)
-            break;
+            result = spi.write(buf[0]);
+        }
 
-        result = spi.write(buf[0]); //  result should always be 0xFF since it's wired to high
+        fclose(fp);
+
+        // If configuration failed, the `DONE` pin will read HIGH, so we flip it to keep things lined up with the nullptr error above.
+        isInit = done;
+
+        return isInit;
     }
-
-    fclose(fp);
-
-    isInit = true;
-
-    return true;
 }

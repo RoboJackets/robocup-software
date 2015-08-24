@@ -2,9 +2,8 @@
 
 #include <mbed.h>
 
-#include "mcp23017.hpp"
-
 #include "pins-ctrl-2015.hpp"
+#include "mcp23017.hpp"
 
 
 /*
@@ -13,21 +12,21 @@
  */
 enum IOExpanderPin {
   IOExpanderPinA0 = 0,
-  IOExpanderPinA1 = 1,
-  IOExpanderPinA2 = 2,
-  IOExpanderPinA3 = 3,
-  IOExpanderPinA4 = 4,
-  IOExpanderPinA5 = 5,
-  IOExpanderPinA6 = 6,
-  IOExpanderPinA7 = 7,
-  IOExpanderPinB0 = 8,
-  IOExpanderPinB1 = 9,
-  IOExpanderPinB2 = 10,
-  IOExpanderPinB3 = 11,
-  IOExpanderPinB4 = 12,
-  IOExpanderPinB5 = 13,
-  IOExpanderPinB6 = 14,
-  IOExpanderPinB7 = 15
+  IOExpanderPinA1,
+  IOExpanderPinA2,
+  IOExpanderPinA3,
+  IOExpanderPinA4,
+  IOExpanderPinA5,
+  IOExpanderPinA6,
+  IOExpanderPinA7,
+  IOExpanderPinB0,
+  IOExpanderPinB1,
+  IOExpanderPinB2,
+  IOExpanderPinB3,
+  IOExpanderPinB4,
+  IOExpanderPinB5,
+  IOExpanderPinB6,
+  IOExpanderPinB7
 };
 
 

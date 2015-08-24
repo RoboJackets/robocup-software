@@ -4,10 +4,9 @@
  * Includes
  */
 #include <cstdint>
+#include <mbed.h>
 
-#include "mbed.h"
 #include "mpu-6050-defines.hpp"
-
 #include "I2CMasterRtos.hpp"
  
 

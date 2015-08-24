@@ -130,6 +130,8 @@ class Console
 
   void TXCallback(void);
 
+  void setHeader(void);
+
   static std::shared_ptr<Console> instance;
 
   // Flags for command execution states

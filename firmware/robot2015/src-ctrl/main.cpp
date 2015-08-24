@@ -1,13 +1,14 @@
+#define _XOPEN_SOURCE 600
+
 #include "robot.hpp"
 
-//#include <time.h>
 #include <cstdarg>
-#include <date_time/posix_time/posix_time.hpp>
-
+// #include <ctime>
 #include <logger.hpp>
 
 #include "commands.hpp"
 #include "io-expander.hpp"
+#include "TaskSignals.hpp"
 // #include "neostrip.cpp"
 
 // ADCDMA adc;
@@ -62,7 +63,7 @@ void Sample_timer_interrupt(void const* args)
  */
 int main(void)
 {
-	// Turn on some startup LEDs to show they're working
+	// Turn on some startup LEDs to show they're working, they are turned off before we hit the while loop
 	statusLightsON(nullptr);
 
 	// Set the default logging configurations
@@ -90,19 +91,18 @@ int main(void)
 	/* Set the system time to the most recently known time. The compilation
 	 * time is used here. The timestamp should always be the same when using GCC.
 	 */
+	/*
 	const char* sysTime = __DATE__ " " __TIME__;
-	struct tm* tstruct;
+	struct tm tm;
 
-	std::tm tmTime = boost::posix_time::to_tm(boost::posix_time::time_from_string(sysTime));
-
-	if (0) {
-		//if (strptime(sysTime, "%b %d %Y %H:%M:%S", tstruct) == 0) {	// 'Mmm DD YYYYHH:MM:SS'
+	if ( !(strptime(sysTime, "%b %d %Y %H:%M:%S", &tm)) ) {	// 'Mmm DD YYYYHH:MM:SS'
 		LOG(SEVERE, "Unable to parse system time of %s", sysTime);
 	} else {
 		LOG(INIT, "Setting system time to %s", sysTime);
-		time_t buildTime = mktime(tstruct);
+		time_t buildTime = mktime(&tm);
 		set_time(buildTime);
 	}
+	*/
 
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
@@ -120,7 +120,9 @@ int main(void)
 
 	// Flip off the startup LEDs after a timeout period
 	RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
+	init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
+	// Setup the IO Expander's hardware
 	MCP23017::Init();
 
 	// Setup some extended LEDs and turn them on
@@ -134,21 +136,32 @@ int main(void)
 
 	// Wait for anything before now to print things out of the serial port.
 	// That way, things should stay lined up in the console when starting all the threads.
-	Thread::wait(200);
+	// Thread::wait(200);
 
 	// Start the thread task for the on-board control loop
-	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
+	Thread controller_task(Task_Controller, nullptr, osPriorityRealtime);
 
 	// Start the thread task for handling radio communications
-	Thread comm_task(Task_CommCtrl, NULL, osPriorityHigh);
+	Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
 
 	// Start the thread task for the serial console
-	Thread console_task(Task_SerialConsole, NULL, osPriorityBelowNormal);
+	Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
 
-	//FPGA fpga;
+	// Create an object for communicating with the FPGA
+	FPGA fpga(
+	    RJ_SPI_BUS,
+	    RJ_FPGA_nCS,
+	    RJ_FPGA_PROG_B,
+	    RJ_FPGA_INIT_B,
+	    RJ_FPGA_DONE
+	);
 
-	//if (fpga.Init() == false)
-	//	LOG(FATAL, "FPGA config failed!");
+	// This is where the FPGA is actually configured with the bitfile's name passed in
+	if (fpga.Init("rj-fpga.nib") == false) {
+		LOG(FATAL, "FPGA config failed!");
+	} else {
+		LOG(INIT, "FPGA configuration complete!");
+	}
 
 
 #ifdef LINK_TOC_PARAMS
@@ -171,7 +184,6 @@ int main(void)
 
 #endif
 
-
 	/*
 	NeoStrip rgbLED(p21, 1);
 	rgbLED.setBrightness(1.0);
@@ -179,13 +191,10 @@ int main(void)
 	rgbLED.write();
 	*/
 
-
 #if RJ_WATCHDOG_TIMER_EN
 	// Enable the watchdog timer if it's set in configurations.
 	Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
-
 #endif
-
 
 	/* This needs some work. Probably best to just drop DMA for the ADC and
 	 * configure the 3 ADC channels at startup to be in burst mode at a very
@@ -237,13 +246,14 @@ int main(void)
 	   );
 	*/
 
-	// Make sure the lights stay on for a minimum time during startup
-	init_leds_off.start(200);
+	while ( !(LPC_UART0->LSR & (1 << 6)) ) { /* Wait until the startup logs are completely sent over the serial line */ }
+
+	Thread::wait(75);
+
+	// This is where we let the console task know we're finished with all startup serial logs
+	console_task.signal_set(CONSOLE_TASK_START_SIGNAL);
 
 	while (1) {
-		//LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
-		//LOG(INF3, "  DMACIntTCStat:\t0x%08X\r\n  DMACIntErrStat:\t0x%08X\r\n  DMACEnbldChns:\t0x%08X\r\n  DMACConfig:\t\t0x%08X", LPC_GPDMA->DMACIntTCStat, LPC_GPDMA->DMACIntErrStat, LPC_GPDMA->DMACEnbldChns, LPC_GPDMA->DMACConfig);
-
 		Thread::wait(1000);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
 	}
 }

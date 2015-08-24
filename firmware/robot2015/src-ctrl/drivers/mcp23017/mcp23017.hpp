@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "pins-ctrl-2015.hpp"
+#include "I2CMasterRtos.hpp"
 
 
 // Register defines from data sheet - we set IOCON.BANK to 0
@@ -26,6 +27,7 @@ enum {
     DIR_OUTPUT  = 0,
     DIR_INPUT   = 1
 };
+
 
 /** MCP23017 class
  *
@@ -125,7 +127,7 @@ class MCP23017
     static std::shared_ptr<MCP23017>& Instance(void);
     static std::shared_ptr<MCP23017> instance;
 
-    I2C              _i2c;
+    I2CMasterRtos    _i2c;
     PinName          _sda, _scl;
     int              _i2cAddress;                        // physical I2C address
     unsigned short   shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;     // Cached copies of the register values

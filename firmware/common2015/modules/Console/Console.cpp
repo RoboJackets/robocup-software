@@ -36,7 +36,7 @@ char* Console::Init(void)
 	// Set default values for the header parameters
 	instance->CONSOLE_USER = "jon";
 	instance->CONSOLE_HOSTNAME = "robot";
-	instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
+	instance->setHeader();
 
 	// set baud rate, store the value before
 	Baudrate(9600);
@@ -60,7 +60,7 @@ char* Console::Init(void)
 	instance->rxIndex = 0;
 	instance->txIndex = 0;
 
-	LOG(INIT, "Hello from the 'common2015' library!");
+	LOG(INF3, "Hello from the 'common2015' library!");
 
 	printf(" ");
 	Flush();
@@ -279,11 +279,18 @@ void Console::CommandHandled(bool cmdDoneState)
 void Console::changeHostname(const std::string& hostname)
 {
 	instance->CONSOLE_HOSTNAME = hostname;
+	instance->setHeader();
 }
 
 void Console::changeUser(const std::string& user)
 {
 	instance->CONSOLE_USER = user;
+	instance->setHeader();
+}
+
+void Console::setHeader(void)
+{
+	instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
 }
 
 void Console::Baudrate(uint16_t baud)
