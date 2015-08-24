@@ -33,12 +33,8 @@
 
 #include   "rj-macros.hpp"
 
-
-//#define     USER_FLASH_AREA_START_STR( x )      STR( x )
-//#define     STR( x )                            #x
-
-//unsigned char user_area[ USER_FLASH_AREA_SIZE ] __attribute__((section( ".ARM.__at_" USER_FLASH_AREA_START_STR( USER_FLASH_AREA_START ) ), zero_init));
-unsigned char user_area[ USER_FLASH_AREA_SIZE ] __attribute__((section( ".ARM.__at_" TO_STRING( USER_FLASH_AREA_START ) ), zero_init));
+#pragma message("Starting memory address for storage: " TO_STRING(USER_FLASH_AREA_START) "\r\nNumber of allocated bytes:\t" TO_STRING(USER_FLASH_AREA_SIZE))
+unsigned char user_area[USER_FLASH_AREA_SIZE] __attribute__((section( ".ARM.__at_" TO_STRING(USER_FLASH_AREA_START) )));
 
 /*
  *  Reserve of flash area is explained by Igor. Please refer next URL
@@ -62,10 +58,10 @@ enum command_code {
     IAPCommand_Compare,
     IAPCommand_Reinvoke_ISP,
     IAPCommand_Read_device_serial_number,
-#if defined(TARGET_LPC11UXX)
+#ifdef TARGET_LPC11UXX
     IAPCommand_EEPROM_Write = 61,
     IAPCommand_EEPROM_Read,
-#elif defined(TARGET_LPC81X) || defined(TARGET_LPC82X)
+#elif (TARGET_LPC81X || TARGET_LPC82X)
     IAPCommand_Erase_page = 59,
 #endif
 };
@@ -73,7 +69,6 @@ enum command_code {
 int IAP::reinvoke_isp( void )
 {
     __disable_irq();
-
     IAP_command[ 0 ]    = IAPCommand_Reinvoke_ISP;
 
     iap_entry( IAP_command, IAP_result );
@@ -89,9 +84,9 @@ int IAP::reinvoke_isp( void )
 int IAP::read_ID( void )
 {
     IAP_command[ 0 ]    = IAPCommand_Read_part_ID;
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     //  return ( (int)IAP_result[ 0 ] );
     return ( (int)IAP_result[ 1 ] );    //  to return the number itself (this command always returns CMD_SUCCESS)
 }
@@ -99,9 +94,9 @@ int IAP::read_ID( void )
 int* IAP::read_serial( void )
 {
     IAP_command[ 0 ]    = IAPCommand_Read_device_serial_number;
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     //  return ( (int)IAP_result[ 0 ] );
     return ( (int*)&IAP_result[ 1 ] );     //  to return the number itself (this command always returns CMD_SUCCESS)
 }
@@ -111,9 +106,9 @@ int IAP::blank_check( int start, int end )
     IAP_command[ 0 ]    = IAPCommand_Blank_check_sector;
     IAP_command[ 1 ]    = (unsigned int)start;  //  Start Sector Number
     IAP_command[ 2 ]    = (unsigned int)end;    //  End Sector Number (should be greater than or equal to start sector number)
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
@@ -123,9 +118,9 @@ int IAP::erase( int start, int end )
     IAP_command[ 1 ]    = (unsigned int)start;  //  Start Sector Number
     IAP_command[ 2 ]    = (unsigned int)end;    //  End Sector Number (should be greater than or equal to start sector number)
     IAP_command[ 3 ]    = cclk_kHz;             //  CPU Clock Frequency (CCLK) in kHz
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
@@ -134,9 +129,9 @@ int IAP::prepare( int start, int end )
     IAP_command[ 0 ]    = IAPCommand_Prepare_sector_for_write_operation;
     IAP_command[ 1 ]    = (unsigned int)start;  //  Start Sector Number
     IAP_command[ 2 ]    = (unsigned int)end;    //  End Sector Number (should be greater than or equal to start sector number).
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
@@ -147,9 +142,9 @@ int IAP::write( char* source_addr, char* target_addr, int size )
     IAP_command[ 2 ]    = (unsigned int)source_addr;    //  Source RAM address from which data bytes are to be read. This address should be a word boundary.
     IAP_command[ 3 ]    = size;                         //  Number of bytes to be written. Should be 256 | 512 | 1024 | 4096.
     IAP_command[ 4 ]    = cclk_kHz;                     //  CPU Clock Frequency (CCLK) in kHz.
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
@@ -159,9 +154,9 @@ int IAP::compare( char* source_addr, char* target_addr, int size )
     IAP_command[ 1 ]    = (unsigned int)target_addr;    //  Starting flash or RAM address of data bytes to be compared. This address should be a word boundary.
     IAP_command[ 2 ]    = (unsigned int)source_addr;    //  Starting flash or RAM address of data bytes to be compared. This address should be a word boundary.
     IAP_command[ 3 ]    = size;                         //  Number of bytes to be compared; should be a multiple of 4.
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
@@ -169,7 +164,9 @@ int IAP::read_BootVer(void)
 {
     IAP_command[0] = IAPCommand_Read_Boot_Code_version;
     IAP_result[1] = 0; // not sure if in high or low bits.
+    __disable_irq();
     iap_entry(IAP_command, IAP_result);
+    __enable_irq();
     return ((int)IAP_result[1]);
 }
 
@@ -183,7 +180,7 @@ int IAP::reserved_flash_area_size( void )
     return ( USER_FLASH_AREA_SIZE );
 }
 
-#if defined(TARGET_LPC11UXX)
+#ifdef TARGET_LPC11UXX
 
 int IAP::write_eeprom( char* source_addr, char* target_addr, int size )
 {
@@ -192,9 +189,9 @@ int IAP::write_eeprom( char* source_addr, char* target_addr, int size )
     IAP_command[ 2 ]    = (unsigned int)source_addr;    //  Source RAM address from which data bytes are to be read. This address should be a word boundary.
     IAP_command[ 3 ]    = size;                         //  Number of bytes to be written. Should be 256 | 512 | 1024 | 4096.
     IAP_command[ 4 ]    = cclk_kHz;                     //  CPU Clock Frequency (CCLK) in kHz.
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
@@ -205,13 +202,13 @@ int IAP::read_eeprom( char* source_addr, char* target_addr, int size )
     IAP_command[ 2 ]    = (unsigned int)target_addr;    //  Destination RAM address where data bytes are to be written. This address should be a 256 byte boundary.
     IAP_command[ 3 ]    = size;                         //  Number of bytes to be written. Should be 256 | 512 | 1024 | 4096.
     IAP_command[ 4 ]    = cclk_kHz;                     //  CPU Clock Frequency (CCLK) in kHz.
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 
-#elif defined(TARGET_LPC81X) || defined(TARGET_LPC82X)
+#elif (TARGET_LPC81X || TARGET_LPC82X)
 
 int IAP::erase_page( int start, int end )
 {
@@ -219,9 +216,9 @@ int IAP::erase_page( int start, int end )
     IAP_command[ 1 ]    = (unsigned int)start;  //  Start Sector Number
     IAP_command[ 2 ]    = (unsigned int)end;    //  End Sector Number (should be greater than or equal to start sector number)
     IAP_command[ 3 ]    = cclk_kHz;             //  CPU Clock Frequency (CCLK) in kHz
-
+    __disable_irq();
     iap_entry( IAP_command, IAP_result );
-
+    __enable_irq();
     return ( (int)IAP_result[ 0 ] );
 }
 

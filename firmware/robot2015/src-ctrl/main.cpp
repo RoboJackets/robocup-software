@@ -9,7 +9,6 @@
 #include "mem-iap.hpp"
 // #include "neostrip.cpp"
 
-
 // ADCDMA adc;
 // DMA dma;
 
@@ -20,17 +19,8 @@
  */
 int main(void)
 {
-	// IAP     iap; 				// in-application-programming object for flash memory access
-	//if ( iap.blank_check( TARGET_SECTOR, TARGET_SECTOR ) == SECTOR_NOT_BLANK ) {
-		//iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
-		//iap.erase( TARGET_SECTOR, TARGET_SECTOR );
-	// }
-	// iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
-		
-
-	isLogging = sector_start_adress[ TARGET_SECTOR ];
-	rjLogLevel = sector_start_adress[ TARGET_SECTOR + 1 ];
-
+	isLogging = (bool)(*(sector_start_adress[TARGET_SECTOR]) > 0 ? true : false);
+	rjLogLevel = (uint8_t)*(sector_start_adress[TARGET_SECTOR+1]);
 
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;

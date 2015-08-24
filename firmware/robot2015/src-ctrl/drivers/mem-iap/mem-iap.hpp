@@ -28,24 +28,24 @@
  */
 #pragma once
 
-#include    "mbed.h"
+#include "mbed.h"
 
-#define     MEM_SIZE        256
+#define     MEM_SIZE                256
 
-#if defined(TARGET_LPC176X)
-#define     TARGET_SECTOR    29     //  use sector 29 as target sector if it is on LPC1768
-#elif defined(TARGET_LPC11UXX) || defined(TARGET_LPC11XX)
-#define     TARGET_SECTOR    7      //  use sector  7 as target sector if it is on LPC11U24
+#ifdef TARGET_LPC1768
+#define     TARGET_SECTOR           (29)     //  use sector 29 as target sector if it is on LPC1768
+#elif (TARGET_LPC11UXX || TARGET_LPC11XX)
+#define     TARGET_SECTOR           7      //  use sector  7 as target sector if it is on LPC11U24
 #define     TARGET_EEPROM_ADDRESS   64
 #define     TARGET_EEPROM_ADDRESS   64
-#elif defined(TARGET_LPC81X) || defined(TARGET_LPC82X)
+#elif (TARGET_LPC81X || TARGET_LPC82X)
 #define     TARGET_SECTOR    15      //  use sector  15 as target sector if it is on LPC812
 #endif
 
-#if defined(TARGET_LPC176X)
-
-#define     USER_FLASH_AREA_START   FLASH_SECTOR_29
-#define     USER_FLASH_AREA_SIZE    (FLASH_SECTOR_SIZE_16_TO_29 * 1)
+#if (TARGET_LPC1768 || TARGET_LPC176X)
+ 
+#define     USER_FLASH_AREA_START   (FLASH_SECTOR_29)
+#define     USER_FLASH_AREA_SIZE    (FLASH_SECTOR_SIZE_16_TO_29 )
 
 /*
  *  memory map information is available in next URL also.
@@ -94,40 +94,40 @@
  *      Sector29:    0x00078000 - 0x0007FFFF        32K
  */
 
-#define     FLASH_SECTOR_0       0x00000000
-#define     FLASH_SECTOR_1       0x00001000
-#define     FLASH_SECTOR_2       0x00002000
-#define     FLASH_SECTOR_3       0x00003000
-#define     FLASH_SECTOR_4       0x00004000
-#define     FLASH_SECTOR_5       0x00005000
-#define     FLASH_SECTOR_6       0x00006000
-#define     FLASH_SECTOR_7       0x00007000
-#define     FLASH_SECTOR_8       0x00008000
-#define     FLASH_SECTOR_9       0x00009000
-#define     FLASH_SECTOR_10      0x0000A000
-#define     FLASH_SECTOR_11      0x0000B000
-#define     FLASH_SECTOR_12      0x0000C000
-#define     FLASH_SECTOR_13      0x0000D000
-#define     FLASH_SECTOR_14      0x0000E000
-#define     FLASH_SECTOR_15      0x0000F000
-#define     FLASH_SECTOR_16      0x00010000
-#define     FLASH_SECTOR_17      0x00018000
-#define     FLASH_SECTOR_18      0x00020000
-#define     FLASH_SECTOR_19      0x00028000
-#define     FLASH_SECTOR_20      0x00030000
-#define     FLASH_SECTOR_21      0x00038000
-#define     FLASH_SECTOR_22      0x00040000
-#define     FLASH_SECTOR_23      0x00048000
-#define     FLASH_SECTOR_24      0x00050000
-#define     FLASH_SECTOR_25      0x00058000
-#define     FLASH_SECTOR_26      0x00060000
-#define     FLASH_SECTOR_27      0x00068000
-#define     FLASH_SECTOR_28      0x00070000
-#define     FLASH_SECTOR_29      0x00078000
+#define     FLASH_SECTOR_0       (0x00000000)
+#define     FLASH_SECTOR_1       (0x00001000)
+#define     FLASH_SECTOR_2       (0x00002000)
+#define     FLASH_SECTOR_3       (0x00003000)
+#define     FLASH_SECTOR_4       (0x00004000)
+#define     FLASH_SECTOR_5       (0x00005000)
+#define     FLASH_SECTOR_6       (0x00006000)
+#define     FLASH_SECTOR_7       (0x00007000)
+#define     FLASH_SECTOR_8       (0x00008000)
+#define     FLASH_SECTOR_9       (0x00009000)
+#define     FLASH_SECTOR_10      (0x0000A000)
+#define     FLASH_SECTOR_11      (0x0000B000)
+#define     FLASH_SECTOR_12      (0x0000C000)
+#define     FLASH_SECTOR_13      (0x0000D000)
+#define     FLASH_SECTOR_14      (0x0000E000)
+#define     FLASH_SECTOR_15      (0x0000F000)
+#define     FLASH_SECTOR_16      (0x00010000)
+#define     FLASH_SECTOR_17      (0x00018000)
+#define     FLASH_SECTOR_18      (0x00020000)
+#define     FLASH_SECTOR_19      (0x00028000)
+#define     FLASH_SECTOR_20      (0x00030000)
+#define     FLASH_SECTOR_21      (0x00038000)
+#define     FLASH_SECTOR_22      (0x00040000)
+#define     FLASH_SECTOR_23      (0x00048000)
+#define     FLASH_SECTOR_24      (0x00050000)
+#define     FLASH_SECTOR_25      (0x00058000)
+#define     FLASH_SECTOR_26      (0x00060000)
+#define     FLASH_SECTOR_27      (0x00068000)
+#define     FLASH_SECTOR_28      (0x00070000)
+#define     FLASH_SECTOR_29      (0x00078000)
 #define     FLASH_SECTOR_SIZE_0_TO_15    ( 4 * 1024)
 #define     FLASH_SECTOR_SIZE_16_TO_29   (32 * 1024)
 
-static char* sector_start_adress[]    = {
+constexpr char* sector_start_adress[]    = {
     (char*)FLASH_SECTOR_0,
     (char*)FLASH_SECTOR_1,
     (char*)FLASH_SECTOR_2,
@@ -160,11 +160,12 @@ static char* sector_start_adress[]    = {
     (char*)FLASH_SECTOR_29
 };
 
-#elif defined(TARGET_LPC11UXX) || defined(TARGET_LPC11XX)
+/*
+#elif (TARGET_LPC11UXX || TARGET_LPC11XX) == true
 
 #define     USER_FLASH_AREA_START   FLASH_SECTOR_7
 #define     USER_FLASH_AREA_SIZE    (FLASH_SECTOR_SIZE * 1)
-
+*/
 /**    Table for start adress of sectors
  *
  *        LPC11U24 internal flash memory sector numbers and addresses
@@ -182,8 +183,8 @@ static char* sector_start_adress[]    = {
  *      Sector5:     0x00005000 - 0x00005FFF        4K
  *      Sector6:     0x00006000 - 0x00006FFF        4K
  *      Sector7:     0x00007000 - 0x00007FFF        4K
- */
-
+ */ 
+/*
 #define     FLASH_SECTOR_0       0x00000000
 #define     FLASH_SECTOR_1       0x00001000
 #define     FLASH_SECTOR_2       0x00002000
@@ -194,7 +195,7 @@ static char* sector_start_adress[]    = {
 #define     FLASH_SECTOR_7       0x00007000
 #define     FLASH_SECTOR_SIZE    (4 * 1024)
 
-static char* sector_start_adress[]    = {
+char* sector_start_adress[]    = {
     (char*)FLASH_SECTOR_0,
     (char*)FLASH_SECTOR_1,
     (char*)FLASH_SECTOR_2,
@@ -205,11 +206,11 @@ static char* sector_start_adress[]    = {
     (char*)FLASH_SECTOR_7,
 };
 
-#elif defined(TARGET_LPC81X) || defined(TARGET_LPC82X)
+#elif (TARGET_LPC81X || TARGET_LPC82X) == true
 
 #define     USER_FLASH_AREA_START   FLASH_SECTOR_15
 #define     USER_FLASH_AREA_SIZE    (FLASH_SECTOR_SIZE * 1)
-
+*/
 /**    Table for start adress of sectors
  *
  *        LPC812/LPC824 internal flash memory sector numbers and addresses
@@ -250,7 +251,7 @@ static char* sector_start_adress[]    = {
  *      Sector30:    0x00007800 - 0x00007BFF        1K  (LPC824 only)
  *      Sector31:    0x00007C00 - 0x00007FFF        1K  (LPC824 only)
  */
-
+/*
 #define     FLASH_SECTOR_0       0x00000000
 #define     FLASH_SECTOR_1       0x00000400
 #define     FLASH_SECTOR_2       0x00000800
@@ -285,7 +286,7 @@ static char* sector_start_adress[]    = {
 #define     FLASH_SECTOR_31      0x00007C00     //  for LPC824 only
 #define     FLASH_SECTOR_SIZE    (1 * 1024)
 
-static char* sector_start_adress[]    = {
+char* sector_start_adress[]    = {
     (char*)FLASH_SECTOR_0,
     (char*)FLASH_SECTOR_1,
     (char*)FLASH_SECTOR_2,
@@ -319,7 +320,7 @@ static char* sector_start_adress[]    = {
     (char*)FLASH_SECTOR_30,      //  for LPC824 only
     (char*)FLASH_SECTOR_31      //  for LPC824 only
 };
-
+*/
 #endif
 
 /**    Error code by IAP routine
@@ -390,7 +391,7 @@ class IAP
     int read_ID( void );
 
     /** Read device serial number
-     *
+     *user_area
      *  @return    device serial number
      *  @see       read_ID()
      */
@@ -459,7 +460,7 @@ class IAP
      */
     int   reserved_flash_area_size( void );
 
-#if defined(TARGET_LPC11UXX)
+#ifdef TARGET_LPC11UXX
 
     /** Copy RAM to EEPROM (LPC11U24)
      *
@@ -481,7 +482,7 @@ class IAP
      */
     int read_eeprom( char* source_addr, char* target_addr, int size );
 
-#elif defined(TARGET_LPC81X) || defined(TARGET_LPC82X)
+#elif (TARGET_LPC81X || TARGET_LPC82X)
 
     /** Erase page(s) (LPC812, LPC824)
      *

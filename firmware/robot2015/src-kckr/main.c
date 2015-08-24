@@ -3,17 +3,21 @@
 #include "kicker.h"
 #include "neopixel.h"
 
+// Architecture = avr2/avr25[1]
+// MCU Name = attiny441
+// Macro = __AVR_ATtiny441__
+
 /*
  * initialization
  */
 void init(void)
 {
 	//force prescalar to keep frequency at 9.6 MHz
-	CLKPR = (1 << CLKPCE);
+	loop_until_bit_is_set(CLKPR, CLKPCE);
 	CLKPR = 0;
 
 	//set data pins I/O
-	DDRB = 1 << 3; //set B3, DO
+	loop_until_bit_is_set(DDRB, 3); //set B3, DO
 
 	//create led buffer
 	initNeopixelBuffer();
