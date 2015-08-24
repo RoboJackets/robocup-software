@@ -19,8 +19,8 @@
  */
 int main(void)
 {
-	isLogging = (bool)(*(sector_start_adress[TARGET_SECTOR]) > 0 ? true : false);
-	rjLogLevel = (uint8_t)*(sector_start_adress[TARGET_SECTOR+1]);
+	isLogging = true;
+	rjLogLevel = INIT;
 
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;
