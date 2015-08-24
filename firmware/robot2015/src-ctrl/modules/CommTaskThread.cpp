@@ -137,13 +137,9 @@ void Task_CommCtrl(void const* args)
 	 * the CommModule methods can be used from almost anywhere.
 	 */
 
-<<<<<<< HEAD
-	LOG(INIT, "Radio interface ready on frequency %3.2f!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
-=======
 	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
 	txLED = 0;
 	rxLED = 0;
->>>>>>> mbed-fpga
 
 	// == everything below this line all the way until the start of the while loop is test code ==
 
@@ -170,14 +166,10 @@ void Task_CommCtrl(void const* args)
 	CommModule::receive(pck);
 
 	while (true) {
-<<<<<<< HEAD
 		/*
-		Thread::wait(4);
-=======
 		Thread::wait(100);
 		// Thread::yield();
 
->>>>>>> mbed-fpga
 		// Simulate some incoming packets on 2 different ports
 		//CommModule::receive(pck);
 
