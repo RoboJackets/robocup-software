@@ -320,10 +320,10 @@ void MainWindow::updateViews()
 	{
 		if(_firstLogTimestamp == -1)
 			_firstLogTimestamp = currentFrame->timestamp();
-		auto gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
-		auto minutes = gametime_ms / 60000;
-		auto seconds = (gametime_ms % 60000) /  1000;
-		auto deciseconds = (gametime_ms % 1000) / 100;
+		uint64_t gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
+		uint64_t minutes = gametime_ms / 60000;
+		uint64_t seconds = (gametime_ms % 60000) /  1000;
+		uint64_t deciseconds = (gametime_ms % 1000) / 100;
 		_ui.logTime->setText(QString::fromStdString(to_string(minutes) + " : " + to_string(seconds) + "." + to_string(deciseconds)));
 
 		// Update the orientation demo view
