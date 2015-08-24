@@ -65,10 +65,13 @@ if [ $UID -ne 0 ]; then
 	exec sudo $0 $@
 fi
 
-# add repo for backport of cmake3 from debian testing
-# TODO remove this once ubuntu ships cmake3
 if $ADD_REPOS; then
+    # add repo for backport of cmake3 from debian testing
+    # TODO remove this once ubuntu ships cmake3
     apt-add-repository -y ppa:packetlost/cmake
+
+    # for newer compilers
+    add-apt-repository ppa:ubuntu-toolchain-r/test
 fi
 
 if $FIRMWARE; then
@@ -76,6 +79,8 @@ if $FIRMWARE; then
 fi
 
 # apt get install cmake is taken care of by requirements
+
+
 
 apt-get update
 
