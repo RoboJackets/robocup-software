@@ -20,8 +20,7 @@
 
 #include <mbed.h>
 #include <logger.hpp>
-
-#include "pins-ctrl-2015.hpp"
+    
 
 // Declaration for the pointer to the global object
 shared_ptr<MCP23017> MCP23017::instance;

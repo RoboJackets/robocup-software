@@ -1,8 +1,9 @@
 #pragma once
 
 #include <mbed.h>
-
 #include <memory>
+
+#include "pins-ctrl-2015.hpp"
 
 
 // Register defines from data sheet - we set IOCON.BANK to 0
