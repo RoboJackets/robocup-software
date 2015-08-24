@@ -12,6 +12,7 @@
 #include <sys/time.h>
 #include <typeinfo>
 #include <vector>
+#include <QtWidgets>
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 template<typename T> static inline void debugThrow(T exception) {
@@ -205,3 +206,6 @@ QString typeName(const std::type_info &info);
 
 // Like typeName, but only returns the final class name part.
 QString className(const std::type_info &info);
+
+/// Returns the absolute path to the 'run' directory
+QDir ApplicationRunDirectory();
