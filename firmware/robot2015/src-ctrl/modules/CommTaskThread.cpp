@@ -138,8 +138,8 @@ void Task_CommCtrl(void const* args)
 	 */
 
 	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
-	txLED = 0;
-	rxLED = 0;
+	// txLED = 0;
+	// rxLED = 0;
 
 	// == everything below this line all the way until the start of the while loop is test code ==
 
