@@ -1,26 +1,9 @@
-/*  MCP23017 library for Arduino
-    Copyright (C) 2009 David Pye    <davidmpye@gmail.com
-    Modified for use on the MBED ARM platform
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #pragma once
 
-#include "mbed.h"
+#include <mbed.h>
 
-#define I2C_BASE_ADDRESS 0x40
+#include <memory>
+
 
 // Register defines from data sheet - we set IOCON.BANK to 0
 // as it is easier to manage the registers sequentially.
@@ -55,17 +38,7 @@ enum {
 class MCP23017
 {
   public:
-    /** Constructor for the MCP23017 connected to specified I2C pins at a specific address
-     *
-     * 16-bit I/O expander with I2C interface
-     *
-     * @param   sda         I2C data pin
-     * @param   scl         I2C clock pin
-     * @param   i2cAddress  I2C address
-     */
-    MCP23017(PinName sda, PinName scl, int i2cAddress = I2C_BASE_ADDRESS);
-
-    ~MCP23017(void);
+    static bool Init(void);
 
     /** Reset MCP23017 device to its power-on state
      */
@@ -123,7 +96,7 @@ class MCP23017
     // See the data sheet for more information on what they do
 
     //Returns a word with the current pin states (ie contents of the GPIO register)
-    static unsigned short digitalWordRead();
+    static unsigned short digitalWordRead(void);
 
     // Allows you to write a word to the GPIO register
     static void digitalWordWrite(unsigned short w);
@@ -143,12 +116,16 @@ class MCP23017
 
     static void write(int data);
 
-  protected:
-    static bool init(void);
 
   private:
-    static I2C*             _i2c;
-    static PinName          _sda, _scl;
-    static int              _i2cAddress;                        // physical I2C address
-    static unsigned short   shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;     // Cached copies of the register values
+    MCP23017() : _i2c(RJ_I2C_BUS) {  }
+
+    static void set_config(PinName sda, PinName scl, int i2cAddress = RJ_IO_EXPANDER_I2C_ADDRESS);
+    static std::shared_ptr<MCP23017>& Instance(void);
+    static std::shared_ptr<MCP23017> instance;
+
+    I2C              _i2c;
+    PinName          _sda, _scl;
+    int              _i2cAddress;                        // physical I2C address
+    unsigned short   shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;     // Cached copies of the register values
 };

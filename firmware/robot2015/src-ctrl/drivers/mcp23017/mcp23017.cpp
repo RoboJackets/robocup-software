@@ -17,43 +17,44 @@
 */
 
 #include "mcp23017.hpp"
-#include "mbed.h"
+
+#include <mbed.h>
+#include <logger.hpp>
+
+#include "pins-ctrl-2015.hpp"
+
+// Declaration for the pointer to the global object
+shared_ptr<MCP23017> MCP23017::instance;
 
 
-I2C*            _i2c;
-PinName         _sda, _scl;
-int             _i2cAddress;
-unsigned short  shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;
-
-
-union {
-    uint8_t  value8[2];
-    uint16_t value16;
-} tmp_data;
-
-/*-----------------------------------------------------------------------------
- *
- */
-MCP23017::MCP23017(PinName sda, PinName scl, int i2cAddress)
+void MCP23017::set_config(PinName sda, PinName scl, int i2cAddress)
 {
-    _sda = sda;
-    _scl = scl;
-    _i2cAddress = i2cAddress;
+    instance->_sda = sda;
+    instance->_scl = scl;
+    instance->_i2cAddress = i2cAddress;
 
-    init();
-
-    reset();                                  // initialise chip to power-on condition
+    LOG(INIT,
+        "IO Expander I2C Address:\r\n"
+        "    0x%02X",
+        instance->_i2cAddress
+       );
 }
 
-MCP23017::~MCP23017(void)
+shared_ptr<MCP23017>& MCP23017::Instance(void)
 {
-    if (_i2c)
-        delete _i2c;
+    if (instance.get() == nullptr)
+        instance.reset(new MCP23017);
+
+    return instance;
 }
 
-bool MCP23017::init(void)
+bool MCP23017::Init(void)
 {
-    _i2c = new I2C(_sda, _scl);
+    auto instance = Instance();
+    instance->_i2c.frequency(400000);
+    set_config(RJ_I2C_BUS);
+    reset();
+    config(0x00FF, 0x0000, 0xFF00);
 
     return true;
 }
@@ -62,24 +63,21 @@ bool MCP23017::init(void)
  * reset
  * Set configuration (IOCON) and direction(IODIR) registers to initial state
  */
-void MCP23017::reset()
+void MCP23017::reset(void)
 {
     // First make sure that the device is in BANK=0 mode
-    writeRegister(0x05, (unsigned char)0x00);
-
-    // set direction registers to inputs
-    writeRegister(IODIR, (unsigned short)0xFFFF);
-
-    // set all other registers to zero (last of 10 registers is OLAT)
-    for (int reg_addr = 2 ; reg_addr <= OLAT ; reg_addr += 2) {
-        writeRegister(reg_addr, (unsigned short)0x0000);
-    }
+    writeRegister(0x05, (unsigned char)0x04);
 
     // Set the shadow registers to power-on state
-    shadow_IODIR = 0xFFFF;
-    shadow_GPIO  = 0;
-    shadow_GPPU  = 0;
-    shadow_IPOL  = 0;
+    inputOutputMask(0xFFFF);
+
+    // set all other registers to zero (last of 10 registers is OLAT)
+    for (int reg_addr = 2; reg_addr <= OLAT; reg_addr += 2)
+        writeRegister(reg_addr, (unsigned short)0x0000);
+
+    instance->shadow_GPIO  = 0;
+    instance->shadow_GPPU  = 0;
+    instance->shadow_IPOL  = 0;
 }
 
 /*-----------------------------------------------------------------------------
@@ -89,12 +87,12 @@ void MCP23017::reset()
 void MCP23017::write_bit(int value, int bit_number)
 {
     if (value == 0) {
-        shadow_GPIO &= ~(1 << bit_number);
+        instance->shadow_GPIO &= ~(1 << bit_number);
     } else {
-        shadow_GPIO |= 1 << bit_number;
+        instance->shadow_GPIO |= 1 << bit_number;
     }
 
-    writeRegister(GPIO, (unsigned short)shadow_GPIO);
+    digitalWordWrite(instance->shadow_GPIO);
 }
 
 /*-----------------------------------------------------------------------------
@@ -102,8 +100,8 @@ void MCP23017::write_bit(int value, int bit_number)
  */
 void MCP23017::write_mask(unsigned short data, unsigned short mask)
 {
-    shadow_GPIO = (shadow_GPIO & ~mask) | data;
-    writeRegister(GPIO, (unsigned short)shadow_GPIO);
+    instance->shadow_GPIO = (instance->shadow_GPIO & ~mask) | data;
+    digitalWordWrite(instance->shadow_GPIO);
 }
 
 /*-----------------------------------------------------------------------------
@@ -112,8 +110,16 @@ void MCP23017::write_mask(unsigned short data, unsigned short mask)
  */
 int  MCP23017::read_bit(int bit_number)
 {
-    shadow_GPIO = readRegister(GPIO);
-    return  ((shadow_GPIO >> bit_number) & 0x0001);
+    instance->shadow_GPIO = digitalWordRead();
+
+    LOG(INIT,
+        "  Bit:\t%u\r\n"
+        "  State:\t%s",
+        bit_number,
+        ((instance->shadow_GPIO >> bit_number) & 0x0001) ? "ON" : "OFF"
+       );
+
+    return  ((instance->shadow_GPIO >> bit_number) & 0x0001);
 }
 
 /*-----------------------------------------------------------------------------
@@ -121,8 +127,7 @@ int  MCP23017::read_bit(int bit_number)
  */
 int  MCP23017::read_mask(unsigned short mask)
 {
-    shadow_GPIO = readRegister(GPIO);
-    return (shadow_GPIO & mask);
+    return readRegister(GPIO) & mask;
 }
 
 /*-----------------------------------------------------------------------------
@@ -131,14 +136,18 @@ int  MCP23017::read_mask(unsigned short mask)
  */
 void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,  unsigned short polarity_config)
 {
-    shadow_IODIR = dir_config;
-    writeRegister(IODIR, (unsigned short)shadow_IODIR);
+    inputOutputMask(dir_config);
+    internalPullupMask(pullup_config);
+    inputPolarityMask(polarity_config);
 
-    shadow_GPPU = pullup_config;
-    writeRegister(GPPU, (unsigned short)shadow_GPPU);
-
-    shadow_IPOL = polarity_config;
-    writeRegister(IPOL, (unsigned short)shadow_IPOL);
+    LOG(INIT,
+        "    IODIR:\t0x%04X\r\n"
+        "    GPPU:\t0x%04X\r\n"
+        "    IPOL:\t0x%04X",
+        instance->shadow_IODIR,
+        instance->shadow_GPPU,
+        instance->shadow_IPOL
+       );
 }
 
 /*-----------------------------------------------------------------------------
@@ -148,10 +157,14 @@ void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,  
 void MCP23017::writeRegister(int regAddress, unsigned char data)
 {
     char  buffer[2];
-
     buffer[0] = regAddress;
     buffer[1] = data;
-    _i2c->write(_i2cAddress, buffer, 2);
+
+    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 2);
+
+    if (!ret) {
+        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X", instance->_i2cAddress);
+    }
 }
 
 /*----------------------------------------------------------------------------
@@ -161,13 +174,15 @@ void MCP23017::writeRegister(int regAddress, unsigned char data)
 void MCP23017::writeRegister(int regAddress, unsigned short data)
 {
     char  buffer[3];
-
     buffer[0] = regAddress;
-    tmp_data.value16 = data;
-    buffer[1] = tmp_data.value8[0];
-    buffer[2] = tmp_data.value8[1];
+    buffer[1] = data & 0xFF;
+    buffer[2] = (data >> 8) & 0xFF;
 
-    _i2c->write(_i2cAddress, buffer, 3);
+    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 3);
+
+    if (!ret) {
+        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X", instance->_i2cAddress);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -176,12 +191,10 @@ void MCP23017::writeRegister(int regAddress, unsigned short data)
 int MCP23017::readRegister(int regAddress)
 {
     char buffer[2];
+    instance->_i2c.write(regAddress);
+    instance->_i2c.read(instance->_i2cAddress, buffer, 2);
 
-    buffer[0] = regAddress;
-    _i2c->write(_i2cAddress, buffer, 1);
-    _i2c->read(_i2cAddress, buffer, 2);
-
-    return ((int)(buffer[0] + (buffer[1] << 8)));
+    return ((int)(buffer[0] | (buffer[1] << 8)));
 }
 
 /*-----------------------------------------------------------------------------
@@ -190,12 +203,12 @@ int MCP23017::readRegister(int regAddress)
 void MCP23017::pinMode(int pin, int mode)
 {
     if (DIR_INPUT) {
-        shadow_IODIR |= 1 << pin;
+        instance->shadow_IODIR |= 1 << pin;
     } else {
-        shadow_IODIR &= ~(1 << pin);
+        instance->shadow_IODIR &= ~(1 << pin);
     }
 
-    writeRegister(IODIR, (unsigned short)shadow_IODIR);
+    inputOutputMask(instance->shadow_IODIR);
 }
 
 /*-----------------------------------------------------------------------------
@@ -215,33 +228,32 @@ void MCP23017::digitalWrite(int pin, int val)
     //enable the internal pullup
     //otherwise, it will set the OUTPUT voltage
     //as appropriate.
-    bool isOutput = !(shadow_IODIR & 1 << pin);
+    bool isOutput = !(instance->shadow_IODIR & 1 << pin);
 
     if (isOutput) {
         //This is an output pin so just write the value
-        if (val) shadow_GPIO |= 1 << pin;
-        else shadow_GPIO &= ~(1 << pin);
+        if (val) instance->shadow_GPIO |= 1 << pin;
+        else instance->shadow_GPIO &= ~(1 << pin);
 
-        writeRegister(GPIO, (unsigned short)shadow_GPIO);
+        digitalWordWrite(instance->shadow_GPIO);
     } else {
         //This is an input pin, so we need to enable the pullup
         if (val) {
-            shadow_GPPU |= 1 << pin;
+            instance->shadow_GPPU |= 1 << pin;
         } else {
-            shadow_GPPU &= ~(1 << pin);
+            instance->shadow_GPPU &= ~(1 << pin);
         }
 
-        writeRegister(GPPU, (unsigned short)shadow_GPPU);
+        internalPullupMask(instance->shadow_GPPU);
     }
 }
 
 /*-----------------------------------------------------------------------------
  * digitalWordRead
  */
-unsigned short MCP23017::digitalWordRead()
+unsigned short MCP23017::digitalWordRead(void)
 {
-    shadow_GPIO = readRegister(GPIO);
-    return shadow_GPIO;
+    return readRegister(GPIO);
 }
 
 /*-----------------------------------------------------------------------------
@@ -249,8 +261,7 @@ unsigned short MCP23017::digitalWordRead()
  */
 void MCP23017::digitalWordWrite(unsigned short w)
 {
-    shadow_GPIO = w;
-    writeRegister(GPIO, (unsigned short)shadow_GPIO);
+    writeRegister(GPIO, w);
 }
 
 /*-----------------------------------------------------------------------------
@@ -258,7 +269,8 @@ void MCP23017::digitalWordWrite(unsigned short w)
  */
 void MCP23017::inputPolarityMask(unsigned short mask)
 {
-    writeRegister(IPOL, mask);
+    instance->shadow_IPOL = mask;
+    writeRegister(IPOL, (unsigned short)instance->shadow_IPOL);
 }
 
 /*-----------------------------------------------------------------------------
@@ -266,8 +278,8 @@ void MCP23017::inputPolarityMask(unsigned short mask)
  */
 void MCP23017::inputOutputMask(unsigned short mask)
 {
-    shadow_IODIR = mask;
-    writeRegister(IODIR, (unsigned short)shadow_IODIR);
+    instance->shadow_IODIR = mask;
+    writeRegister(IODIR, (unsigned short)instance->shadow_IODIR);
 }
 
 /*-----------------------------------------------------------------------------
@@ -275,7 +287,7 @@ void MCP23017::inputOutputMask(unsigned short mask)
  */
 void MCP23017::internalPullupMask(unsigned short mask)
 {
-    shadow_GPPU = mask;
-    writeRegister(GPPU, (unsigned short)shadow_GPPU);
+    instance->shadow_GPPU = mask;
+    writeRegister(GPPU, (unsigned short)instance->shadow_GPPU);
 }
 

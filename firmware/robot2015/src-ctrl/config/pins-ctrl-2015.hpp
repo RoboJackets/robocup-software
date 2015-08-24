@@ -132,3 +132,5 @@
 #define RJ_ERR_LED_BSENSE       RJ_IOEXP_B5
 #define RJ_ERR_LED_DRIB         RJ_IOEXP_B6
 #define RJ_ERR_LED_RADIO        RJ_IOEXP_B7
+
+#define RJ_IO_EXPANDER_I2C_ADDRESS  (0x42)

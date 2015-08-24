@@ -20,7 +20,7 @@ bool Console::command_ready = false;
 
 Console::Console() : pc(USBTX, USBRX) {  }
 
-shared_ptr<Console>& Console::Instance()
+shared_ptr<Console>& Console::Instance(void)
 {
 	if (instance.get() == nullptr)
 		instance.reset(new Console);

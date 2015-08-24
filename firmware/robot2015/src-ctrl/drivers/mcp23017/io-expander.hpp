@@ -1,37 +1,113 @@
 #pragma once
 
+#include <mbed.h>
+
 #include "mcp23017.hpp"
 
-enum errorLED {
-    ERROR_LED1 = 0x01,
-    ERROR_LED2 = 0x02
+#include "pins-ctrl-2015.hpp"
+
+
+/*
+ * Pin numbers that correspond to the MCP23017 datasheet:
+ * http://ww1.microchip.com/downloads/en/DeviceDoc/21952b.pdf
+ */
+enum IOExpanderPin {
+  IOExpanderPinA0 = 0,
+  IOExpanderPinA1 = 1,
+  IOExpanderPinA2 = 2,
+  IOExpanderPinA3 = 3,
+  IOExpanderPinA4 = 4,
+  IOExpanderPinA5 = 5,
+  IOExpanderPinA6 = 6,
+  IOExpanderPinA7 = 7,
+  IOExpanderPinB0 = 8,
+  IOExpanderPinB1 = 9,
+  IOExpanderPinB2 = 10,
+  IOExpanderPinB3 = 11,
+  IOExpanderPinB4 = 12,
+  IOExpanderPinB5 = 13,
+  IOExpanderPinB6 = 14,
+  IOExpanderPinB7 = 15
 };
 
-enum DipSwitch {
-    DIP_SWITCH1 = 0x01,
-    DIP_SWITCH2 = 0x02
-};
 
-class IOExpander : public MCP23017
+/*
+ * A digitalOut class meant to replicate basic functionality of the mBed digitalOut
+ */
+class IOExpanderDigitalOut
 {
-  public:
-    IOExpander(PinName sda, PinName scl, PinName intPin);
+ private:
+  IOExpanderPin m_pin;
+  static bool isInit;
 
-    //~IOExpander(void);
+ public:
+  // Default constructor will setup the hardware
+  IOExpanderDigitalOut()
+  {
+    if (isInit == true)
+      return;
 
-    void Init(void);
+    isInit = true;
+  }
 
-    bool readSwitches(DipSwitch sw);
-    uint8_t readHexSelector(void);
+  // Other constructors for creating objects for pinouts
+  IOExpanderDigitalOut(IOExpanderPin)
+  {
+    if (isInit == true)
+      return;
 
-    void setErrorLED(errorLED led);
-    uint8_t readLEDStates(void);
+    isInit = true;
+  }
 
-  protected:
-    uint8_t robotID;
-    uint8_t switchStates;
+  /*
+   * Pulls pin low if val = 0 and pulls pin high if val >= 1
+   */
+  void write(int const val)
+  {
+    MCP23017::write_bit(val, m_pin);
 
-  private:
-    PinName         _intPin;
-    InterruptIn     _intIn;
+  }
+
+  /*
+   * Returns 0 if pin is low, 1 if pin is high
+   */
+  int read(void)
+  {
+    return MCP23017::read_bit(m_pin);
+  }
+
+  /*
+   * Allows the equals operator to write to a pin
+   */
+  IOExpanderDigitalOut& operator= (int pin)
+  {
+    write(pin);
+    return *this;
+  }
+
+  /*
+   * Allows the equals operator to read the state of another IOExpander pin
+   */
+  IOExpanderDigitalOut& operator= (IOExpanderDigitalOut& rhs)
+  {
+    write(rhs.read());
+    return *this;
+  }
+
+  /*
+   * Allows the equals operator to read the state of another normal IO pin
+   */
+  IOExpanderDigitalOut& operator= (DigitalInOut& rhs)
+  {
+    write(rhs.read());
+    return *this;
+  }
+
+  /*
+   * Allows the pin to return its value like a simple integer variable
+   */
+  operator int(void)
+  {
+    return read();
+  }
 };

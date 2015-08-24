@@ -92,8 +92,8 @@ void Task_CommCtrl(void const* args)
 		threadPriority = (osPriority)NULL;
 
 	// Setup the TX/RX lights and have them off initially
-	DigitalOut txLED(RJ_TX_LED, 1);
-	DigitalOut rxLED(RJ_RX_LED, 1);
+	//DigitalOut txLED(RJ_TX_LED, 1);
+	//DigitalOut rxLED(RJ_RX_LED, 1);
 
 	// Create a new physical hardware communication link
 	CC1201 radio(
@@ -144,10 +144,6 @@ void Task_CommCtrl(void const* args)
 
 	LOG(INIT, "Radio interface ready on frequency %3.2f!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
-	// Turn off the TX/RX LEDs once the hardware is ready and ports are setup.
-	txLED = 0;
-	rxLED = 0;
-
 	// == everything below this line all the way until the start of the while loop is test code ==
 
 	char buf[] = "Hello World. Welcome to SLL. Here's some important information.";
@@ -167,9 +163,8 @@ void Task_CommCtrl(void const* args)
 	ack_pck.address = BASE_STATION_ADDR;
 
 	while (true) {
+		/*
 		Thread::wait(4);
-		Thread::yield();
-
 		// Simulate some incoming packets on 2 different ports
 		CommModule::receive(pck);
 
@@ -183,6 +178,11 @@ void Task_CommCtrl(void const* args)
 
 		ack_pck.port = COMM_PORT_CONTROLLER;
 		CommModule::send(ack_pck);
+		*/
+	
+		CommModule::receive(pck);
+		Thread::wait(250);
+		Thread::yield();
 
 		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
 		//radio_900.strobe(CC1201_STROBE_SRX);

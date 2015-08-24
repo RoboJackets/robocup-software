@@ -6,31 +6,40 @@
 #include <logger.hpp>
 
 #include "commands.hpp"
+//#include "mcp23017.hpp"
+#include "io-expander.hpp"
 // #include "neostrip.cpp"
 
 // ADCDMA adc;
 // DMA dma;
 
 // Sets the correct hardware configurations for pins connected to LEDs
-void initLEDs(void)
+void statusLights(bool state)
 {
-	DigitalOut led_brkbm(RJ_BALL_LED, 1);
-	led_brkbm.mode(OpenDrain);
-	led_brkbm.mode(PullUp);
+	DigitalInOut init_leds[4] = {
+		{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, state},
+		{RJ_RDY_LED, PIN_OUTPUT, OpenDrain, state},
+		{RJ_RX_LED, PIN_OUTPUT, OpenDrain, state},
+		{RJ_TX_LED, PIN_OUTPUT, OpenDrain, state}
+	};
 
-	DigitalOut led_ready(RJ_RDY_LED, 1);
-	led_ready.mode(OpenDrain);
-	led_ready.mode(PullUp);
+	for (int i = 0; i < 4; i++)
+		init_leds[i].mode(PullUp);
 
-	DigitalOut led_rx(RJ_RX_LED, 1);
-	led_rx.mode(OpenDrain);
-	led_rx.mode(PullUp);
-
-	DigitalOut led_tx(RJ_TX_LED, 1);
-	led_tx.mode(OpenDrain);
-	led_tx.mode(PullUp);
+	// Keeps the `ready` LED on after the others are turned off
+	if (state == 1)
+		init_leds[1] = 0;
 }
 
+void statusLightsON(void const* args)
+{
+	statusLights(0);
+}
+
+void statusLightsOFF(void const* args)
+{
+	statusLights(1);
+}
 
 /**
  * [main Main The entry point of the system where each submodule's thread is started.]
@@ -38,11 +47,12 @@ void initLEDs(void)
  */
 int main(void)
 {
-	initLEDs();
+	// Turn on some startup LEDs to show they're working
+	statusLightsON(nullptr);
 
+	// Set the default logging configurations
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INIT;
-
 
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;
@@ -52,6 +62,7 @@ int main(void)
 		fflush(stdout);
 	}
 
+	// MCP23017::Init();
 
 	/* Set the system time to the most recently known time. The compilation
 	 * time is used here. The timestamp should always be the same when using GCC.
@@ -70,12 +81,10 @@ int main(void)
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
 
-
 	// Start a periodic blinking LED to show system activity
 	DigitalOut ledOne(LED1, 0);
 	RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
 	live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
-
 
 	// TODO: write a function that will recalibrate the radio for this.
 	// Reset the ticker on every received packet. For now, we just blink an LED.
@@ -83,12 +92,43 @@ int main(void)
 	RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void*)&led4);
 	radio_timeout_task.start(300);
 
+	// Flip off the startup LEDs after a timeout period
+	RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
+
+	MCP23017::Init();
+
+	// Setup some extended LEDs and turn them on
+	IOExpanderDigitalOut led_err_m1(IOExpanderPinB0);
+	IOExpanderDigitalOut led_err_m2(IOExpanderPinB1);
+	IOExpanderDigitalOut led_err_m3(IOExpanderPinB2);
+	IOExpanderDigitalOut led_err_m4(IOExpanderPinB3);
+	IOExpanderDigitalOut led_err_mpu(IOExpanderPinB4);
+	IOExpanderDigitalOut led_err_bsense(IOExpanderPinB5);
+	IOExpanderDigitalOut led_err_drib(IOExpanderPinB6);
+	IOExpanderDigitalOut led_err_radio(IOExpanderPinB7);
+
+
+	uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
+	LOG(INIT, "Robot ID:\r\n    %u", robot_id);
+
+	led_err_m1 = 1;
+	led_err_m2 = 1;
+	led_err_m3 = 1;
+	led_err_m4 = 1;
+	led_err_mpu = 1;
+	led_err_bsense = 1;
+	led_err_drib = 0;
+	led_err_radio.write(1);
+
+	LOG(INIT, "    0x%04X", MCP23017::read_mask(0xFFFF));
+
+	LOG(INIT, "GPIO Register:\r\n    0x%04X", MCP23017::readRegister(0x12));
 
 	motors_Init();
 
 	// Wait for anything before now to print things out of the serial port.
 	// That way, things should stay lined up in the console when starting all the threads.
-	Thread::wait(200);
+	Thread::wait(250);
 
 	// Start the thread task for the on-board control loop
 	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
@@ -97,8 +137,9 @@ int main(void)
 	Thread comm_task(Task_CommCtrl, NULL, osPriorityHigh);
 
 	// Start the thread task for the serial console
-	Thread console_task(Task_SerialConsole, NULL, osPriorityLow);
+	Thread console_task(Task_SerialConsole, NULL, osPriorityBelowNormal);
 
+	// while (1) { /* stall forever */ };
 
 	//FPGA fpga;
 
@@ -111,14 +152,19 @@ int main(void)
 
 	// Start the thread task for setting up a dynamic logging structure
 	MailHelper<RTP_t, 5> tocQueue;
+
 	osMailQId tocQID = osMailCreate(tocQueue.def(), NULL);
+
 	Thread toc_task(Task_TOC, &tocQID, osPriorityBelowNormal);
 
 
 	// Start the thread task for access to certain variables in the dynamic logging structure
 	MailHelper<RTP_t, 5> paramQueue;
+
 	osMailQId paramQID = osMailCreate(paramQueue.def(), NULL);
+
 	Thread param_task(Task_Param, &paramQID, osPriorityBelowNormal);
+
 #endif
 
 
@@ -186,6 +232,8 @@ int main(void)
 	    pkt.sfs
 	   );
 	*/
+
+	init_leds_off.start(1000);
 
 	while (1) {
 		//LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));
