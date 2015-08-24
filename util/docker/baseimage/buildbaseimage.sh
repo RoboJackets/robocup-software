@@ -18,8 +18,3 @@ else
     docker commit "$(docker ps -aq | head -n1)" ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP}
     docker push ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP}
 fi
-
-if [ "$(git rev-parse --abbrev-ref HEAD)" = "master" ]; then
-    docker tag ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} ${IMAGE_NAME_BASE}:master
-    docker push ${IMAGE_NAME_BASE}:master
-fi
