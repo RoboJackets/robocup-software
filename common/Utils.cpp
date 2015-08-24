@@ -50,3 +50,16 @@ QString className(const std::type_info &info)
 		return fullName;
 	}
 }
+
+QDir ApplicationRunDirectory() {
+	QDir runDir(qApp->applicationDirPath());
+
+	// cd up out of the application bundle on OS X
+	#if defined(__APPLE__)
+	runDir.cdUp();
+	runDir.cdUp();
+	runDir.cdUp();
+	#endif
+
+	return runDir;
+}
