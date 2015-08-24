@@ -14,7 +14,7 @@ SHORTNAMES=( )
 
 start_pending() {
     SHORTNAME="$1"
-    curl -u $USER:$TOKEN \
+    curl -s -u $USER:$TOKEN \
         -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} \
         -H "Content-Type: application/json" \
         -d '{"state":"pending", "description": "This check is pending. Please wait.", "context": '"\"circle/$SHORTNAME\""', "target_url": "http://www.robojackets.org/"}'
@@ -34,12 +34,12 @@ ci_task() {
 
     ${CMD} 2>&1 | tee "${ARTIFACT_DIR}/${SHORTNAME}.txt"
     if [ "${PIPESTATUS[0]}" = "0" ]; then
-        curl -u $USER:$TOKEN \
+        curl -s -u $USER:$TOKEN \
             -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} \
             -H "Content-Type: application/json" \
             -d '{"state":"success", "description": '"\"${DESCRIPTION}\""', "context": '"\"circle/${SHORTNAME}\""', "target_url": '""\"${LINK_PREFIX}${SHORTNAME}.txt\""}"
     else
-        curl -u $USER:$TOKEN \
+        curl -s -u $USER:$TOKEN \
             -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} \
             -H "Content-Type: application/json" \
             -d '{"state":"failure", "description": '"\"${DESCRIPTION}\""', "context": '"\"circle/${SHORTNAME}\""', "target_url": '""\"${LINK_PREFIX}${SHORTNAME}.txt\""}"
