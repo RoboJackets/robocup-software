@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('class_config_bool.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -132,12 +132,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>value</b> ()</td></tr
 <tr class="memitem:a31c83a6f6542f246c2db254afe26744d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31c83a6f6542f246c2db254afe26744d"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (bool x)</td></tr>
 <tr class="separator:a31c83a6f6542f246c2db254afe26744d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2be4a94f7bc7e380aa3261d025f7796a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2be4a94f7bc7e380aa3261d025f7796a"></a>
-virtual QString&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> ()</td></tr>
-<tr class="separator:a2be4a94f7bc7e380aa3261d025f7796a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96cb2928e161ec8e4c192bc1bb768c01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96cb2928e161ec8e4c192bc1bb768c01"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setValue</b> (const QString &amp;str)</td></tr>
-<tr class="separator:a96cb2928e161ec8e4c192bc1bb768c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa72eb7f5509a2d2a86e1257abcb96f3e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa72eb7f5509a2d2a86e1257abcb96f3e"></a>
+virtual QString&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> () override</td></tr>
+<tr class="separator:aa72eb7f5509a2d2a86e1257abcb96f3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5262fa947935fc2364d0661d5544977a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5262fa947935fc2364d0661d5544977a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setValue</b> (const QString &amp;str) override</td></tr>
+<tr class="separator:a5262fa947935fc2364d0661d5544977a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_config_item"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_config_item')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_config_item.html">ConfigItem</a></td></tr>
 <tr class="memitem:a8ebeafa9a6183b55e0413e08c3902ad0 inherit pub_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ebeafa9a6183b55e0413e08c3902ad0"></a>
 const QStringList &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>path</b> () const </td></tr>
@@ -145,9 +145,9 @@ const QStringList &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>pa
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a0a776f02cd198aa511c1301d4cbedd89"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a776f02cd198aa511c1301d4cbedd89"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setupItem</b> ()</td></tr>
-<tr class="separator:a0a776f02cd198aa511c1301d4cbedd89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e0b74836a839f6b64065a1fffd30c1e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e0b74836a839f6b64065a1fffd30c1e"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setupItem</b> () override</td></tr>
+<tr class="separator:a4e0b74836a839f6b64065a1fffd30c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_config_item"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_config_item')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_config_item.html">ConfigItem</a></td></tr>
 <tr class="memitem:ad77b4cb0cf66701cc56e2fb9df91986c inherit pro_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad77b4cb0cf66701cc56e2fb9df91986c"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;name)</td></tr>
@@ -209,7 +209,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Configuration</b></t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_config_bool.html">ConfigBool</a></li>
-    <li class="footer">Generated on Sat Aug 22 2015 01:39:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Aug 24 2015 03:11:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

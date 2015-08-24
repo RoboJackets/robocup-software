@@ -29,7 +29,7 @@ var searchData=
   ['configurable',['Configurable',['../class_configurable.html',1,'']]],
   ['configurableimpl',['ConfigurableImpl',['../class_configurable_impl.html',1,'']]],
   ['configuration',['Configuration',['../class_configuration.html',1,'']]],
-  ['connect',['connect',['../class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce',1,'Planning::Tree::connect()'],['../class_planning_1_1_fixed_step_tree.html#a9768d2c7f904d0baa96d18881f38f48f',1,'Planning::FixedStepTree::connect()']]],
+  ['connect',['connect',['../class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce',1,'Planning::Tree::connect()'],['../class_planning_1_1_fixed_step_tree.html#a0df94725122ad972287c2387e9f1e366',1,'Planning::FixedStepTree::connect()']]],
   ['consecutivepathchangecount',['consecutivePathChangeCount',['../class_our_robot.html#afb8d32e3580b30997915444bb907e262',1,'OurRobot']]],
   ['console',['Console',['../class_console.html',1,'']]],
   ['console_5fheader',['CONSOLE_HEADER',['../class_console.html#aac03135af6935d26620edf616f5d1fbd',1,'Console']]],

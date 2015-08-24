@@ -7,7 +7,7 @@ var class_geometry2d_1_1_segment =
     [ "center", "class_geometry2d_1_1_segment.html#a55470dbda457a6d0a40a1f2d50aaaa63", null ],
     [ "distTo", "class_geometry2d_1_1_segment.html#ad297596bd8d0394cfb83654cd6ca5149", null ],
     [ "intersection", "class_geometry2d_1_1_segment.html#a441152211804a220c07ba24e9145bc68", null ],
-    [ "intersects", "class_geometry2d_1_1_segment.html#aabcfbd693cdd86a00a2e8ee23c9b8174", null ],
+    [ "intersects", "class_geometry2d_1_1_segment.html#afc4c970b0a862d922a09c4ada0f37f20", null ],
     [ "intersects", "class_geometry2d_1_1_segment.html#a61c9142254ec26a860f4b3d30745bbb3", null ],
     [ "length", "class_geometry2d_1_1_segment.html#a3a1007a2699b7f5f5032dbfcc15c7962", null ],
     [ "nearestPoint", "class_geometry2d_1_1_segment.html#aff3b54739f001cba6fc3d6f2dbe11085", null ],

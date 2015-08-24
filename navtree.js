@@ -21,7 +21,8 @@ var NAVTREE =
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
-        [ "Variables", "functions_vars.html", null ]
+        [ "Variables", "functions_vars.html", null ],
+        [ "Typedefs", "functions_type.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -40,7 +41,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1fsm_1_1_state_machine.html#a3a4c37dbe31d9817899849b058b708a4",
 "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html",
 "classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html#acc360481d8278d8866b7aabec872d852",
-"struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec"
+"struct_chart_1_1_function.html#a2e70025e9e8d2673e940741fef2a3d26"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

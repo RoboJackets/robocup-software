@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('class_log_viewer.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -167,9 +167,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>on_logEnd_clicked</b>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ea8a1e6d383967978cef76568c47864"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ea8a1e6d383967978cef76568c47864"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>LogViewer</b> (QWidget *parent=0)</td></tr>
-<tr class="separator:a0ea8a1e6d383967978cef76568c47864"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb5363a5732b1e7b42d0ca1ea6692b8a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb5363a5732b1e7b42d0ca1ea6692b8a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>LogViewer</b> (QWidget *parent=nullptr)</td></tr>
+<tr class="separator:adb5363a5732b1e7b42d0ca1ea6692b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1d8cee251677454a1ac490b4c08e2bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1d8cee251677454a1ac490b4c08e2bb"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>frameNumber</b> () const </td></tr>
 <tr class="separator:aa1d8cee251677454a1ac490b4c08e2bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,8 +193,6 @@ std::vector&lt; std::shared_ptr<br class="typebreak"/>
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_log_viewer__inherit__graph.png" border="0" usemap="#_log_viewer_inherit__map" alt="Inheritance graph"/></div>
-<map name="_log_viewer_inherit__map" id="_log_viewer_inherit__map">
-</map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for LogViewer:</div>
@@ -202,8 +200,6 @@ std::vector&lt; std::shared_ptr<br class="typebreak"/>
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_log_viewer__coll__graph.png" border="0" usemap="#_log_viewer_coll__map" alt="Collaboration graph"/></div>
-<map name="_log_viewer_coll__map" id="_log_viewer_coll__map">
-</map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/<a class="el" href="_log_viewer_8hpp_source.html">LogViewer.hpp</a></li>
@@ -215,7 +211,7 @@ std::vector&lt; std::shared_ptr<br class="typebreak"/>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_log_viewer.html">LogViewer</a></li>
-    <li class="footer">Generated on Sat Aug 22 2015 01:39:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Aug 24 2015 03:11:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -13,7 +13,7 @@ var searchData=
   ['repeatedlineup',['RepeatedLineUp',['../classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html',1,'gameplay::plays::testing::repeated_line_up']]],
   ['replanifneeded',['replanIfNeeded',['../class_our_robot.html#a95efbaa6f6668a9559edc7c29e992447',1,'OurRobot']]],
   ['requestsystemstop',['RequestSystemStop',['../class_console.html#a7d6415b627a760650db294cd6ce16df0',1,'Console']]],
-  ['reset',['reset',['../class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab',1,'SpaceNavJoystick::reset()']]],
+  ['reset',['reset',['../class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#ac855a0204a9e0e6073b1754b6f7d2de2',1,'SpaceNavJoystick::reset()']]],
   ['resetfornextiteration',['resetForNextIteration',['../class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0',1,'OurRobot']]],
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a9fa9ccfbd33bb16648924d560e2b49c8',1,'gameplay::fsm::StateMachine']]],
@@ -34,7 +34,7 @@ var searchData=
   ['rotate',['rotate',['../class_geometry2d_1_1_point.html#a0d94c0285505aa1aab17c36505928bbb',1,'Geometry2d::Point::rotate(const Point &amp;origin, float angle)'],['../class_geometry2d_1_1_point.html#a6ccfeea670b14c267037f6185cb9d137',1,'Geometry2d::Point::rotate(float angle)'],['../class_geometry2d_1_1_point.html#ab9ba426c22a63b02d9488fc61368e5cf',1,'Geometry2d::Point::rotate(const Point &amp;pt, const Point &amp;origin, float angle)']]],
   ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
   ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]],
-  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a4d403e52859796483e59297893c3006d',1,'Planning::RRTPlanner::run()'],['../class_processor.html#a073f5e9ea6a3557c217d67ab392e5852',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
+  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a4d403e52859796483e59297893c3006d',1,'Planning::RRTPlanner::run()'],['../class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
   ['rx_5fbuffer_5ffull_5fmsg',['RX_BUFFER_FULL_MSG',['../class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92',1,'Console']]],
   ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279',1,'OurRobot']]]
 ];

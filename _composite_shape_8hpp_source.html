@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('_composite_shape_8hpp_source.html','')
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -139,9 +139,9 @@ $(document).ready(function(){initNavTree('_composite_shape_8hpp_source.html','')
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            }</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        }</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a> *clone() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a> *clone() <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> containsPoint(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> containsPoint(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordtype">void</span> add(<span class="keyword">const</span> std::shared_ptr&lt;Shape&gt; shape);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
@@ -198,11 +198,11 @@ $(document).ready(function(){initNavTree('_composite_shape_8hpp_source.html','')
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        }</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="class_geometry2d_1_1_composite_shape.html#a54304f6ac218f90d2cc5059e9c275ee7">  109</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html#a54304f6ac218f90d2cc5059e9c275ee7">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="class_geometry2d_1_1_composite_shape.html#a77583e2b6ccf16d62ab63df5db6f7c44">  109</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html#a77583e2b6ccf16d62ab63df5db6f7c44">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a> &amp;pt)<span class="keyword"> const override </span>{</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <span class="keywordflow">return</span> hit&lt;Point&gt;(pt);</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        }</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html#a4cc519c5a51c2009d0cca14ca158d0ab">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;seg)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html#a4cc519c5a51c2009d0cca14ca158d0ab">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;seg)<span class="keyword"> const override </span>{</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            <span class="keywordflow">return</span> hit&lt;Segment&gt;(seg);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        }</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
@@ -219,7 +219,7 @@ $(document).ready(function(){initNavTree('_composite_shape_8hpp_source.html','')
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        iterator begin() { <span class="keywordflow">return</span> _subshapes.begin(); }</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        iterator end() { <span class="keywordflow">return</span> _subshapes.end(); }</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        std::string toString() {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        std::string toString()<span class="keyword"> override </span>{</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            std::stringstream str;</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            str &lt;&lt; <span class="stringliteral">&quot;Composite&lt;&quot;</span>;</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; _subshapes.size(); i++)</div>
@@ -244,13 +244,13 @@ $(document).ready(function(){initNavTree('_composite_shape_8hpp_source.html','')
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        std::vector&lt;std::shared_ptr&lt;Shape&gt; &gt; _subshapes;</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    };</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
+<div class="ttc" id="class_geometry2d_1_1_composite_shape_html_a77583e2b6ccf16d62ab63df5db6f7c44"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html#a77583e2b6ccf16d62ab63df5db6f7c44">Geometry2d::CompositeShape::hit</a></div><div class="ttdeci">bool hit(const Point &amp;pt) const override</div><div class="ttdoc">collision-detection </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:109</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html_ae8a9e41ef5fe8929ca8a058236032c4a"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html#ae8a9e41ef5fe8929ca8a058236032c4a">Geometry2d::CompositeShape::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">removes all subshapes </div><div class="ttdef"><b>Definition:</b> CompositeShape.cpp:29</div></div>
 <div class="ttc" id="class_geometry2d_1_1_segment_html"><div class="ttname"><a href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a></div><div class="ttdef"><b>Definition:</b> Segment.hpp:13</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html_ada61cce38b616262762fe6776baab173"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html#ada61cce38b616262762fe6776baab173">Geometry2d::CompositeShape::hit</a></div><div class="ttdeci">bool hit(const T &amp;obj) const </div><div class="ttdoc">Checks if a given shape is in it. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:96</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html_a4cc519c5a51c2009d0cca14ca158d0ab"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html#a4cc519c5a51c2009d0cca14ca158d0ab">Geometry2d::CompositeShape::hit</a></div><div class="ttdeci">bool hit(const T &amp;obj, std::set&lt; std::shared_ptr&lt; Shape &gt; &gt; &amp;hitSet) const </div><div class="ttdoc">Checks if a given object hits obstacles in the group. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:68</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:17</div></div>
 <div class="ttc" id="class_geometry2d_1_1_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a></div><div class="ttdoc">The shape class provides the interface to all shapes that are subclasses. </div><div class="ttdef"><b>Definition:</b> Shape.hpp:19</div></div>
-<div class="ttc" id="class_geometry2d_1_1_composite_shape_html_a54304f6ac218f90d2cc5059e9c275ee7"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html#a54304f6ac218f90d2cc5059e9c275ee7">Geometry2d::CompositeShape::hit</a></div><div class="ttdeci">bool hit(const Point &amp;pt) const </div><div class="ttdoc">collision-detection </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:109</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -258,7 +258,7 @@ $(document).ready(function(){initNavTree('_composite_shape_8hpp_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><a class="el" href="dir_40506df144da4b42abe7ffe21204d9b9.html">Geometry2d</a></li><li class="navelem"><b>CompositeShape.hpp</b></li>
-    <li class="footer">Generated on Sat Aug 22 2015 01:39:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Aug 24 2015 03:11:01 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
