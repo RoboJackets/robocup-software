@@ -20,6 +20,6 @@ else
 fi
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" = "master" ]; then
-    git tag ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} ${IMAGE_NAME_BASE}:master
-    git push ${IMAGE_NAME_BASE}:master
+    docker tag ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} ${IMAGE_NAME_BASE}:master
+    docker push ${IMAGE_NAME_BASE}:master
 fi
