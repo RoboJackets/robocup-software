@@ -47,15 +47,11 @@ void statusLightsOFF(void const* args)
  */
 int main(void)
 {
-<<<<<<< HEAD
 	// Turn on some startup LEDs to show they're working
 	statusLightsON(nullptr);
 
 	// Set the default logging configurations
 	isLogging = RJ_LOGGING_EN;
-=======
-	isLogging = true;
->>>>>>> mbed-fpga
 	rjLogLevel = INIT;
 
 	/* Always send out an empty line at startup for keeping the console
