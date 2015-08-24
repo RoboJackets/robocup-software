@@ -25,7 +25,7 @@ pylint:
 	cd soccer && pylint -E gameplay
 
 clean:
-	cd build && make $(MAKE_FLAGS) clean
+	cd build && make $(MAKE_FLAGS) clean || true
 	rm -rf build
 
 # Robot firmware (both 2008/2011)
