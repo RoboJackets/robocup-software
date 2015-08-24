@@ -159,7 +159,7 @@ void Task_CommCtrl(void const* args)
 	memcpy(ack_pck.payload, buf, sizeof(buf));
 	ack_pck.address = BASE_STATION_ADDR;
 
-	LOG(INIT, "Packet:\r\n    %s\r\n    Size:\t%u", ack_pck.payload, ack_pck.payload_size);
+	LOG(INIT, "Payload:\t\"%s\"\t(%u bytes)", ack_pck.payload, ack_pck.payload_size);
 
 	Thread::wait(1200);
 
@@ -181,7 +181,7 @@ void Task_CommCtrl(void const* args)
 		CommModule::send(ack_pck);
 		*/
 	
-		CommModule::receive(pck);
+		//CommModule::receive(pck);
 		Thread::wait(250);
 		Thread::yield();
 

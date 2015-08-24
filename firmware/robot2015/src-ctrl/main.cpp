@@ -1,17 +1,23 @@
 #include "robot.hpp"
 
+//#include <time.h>
 #include <cstdarg>
-#include <ctime>
+#include <date_time/posix_time/posix_time.hpp>
 
 #include <logger.hpp>
 
 #include "commands.hpp"
-//#include "mcp23017.hpp"
 #include "io-expander.hpp"
 // #include "neostrip.cpp"
 
 // ADCDMA adc;
 // DMA dma;
+
+//global variables used by interrupt routine
+volatile int j = 0;
+float Analog_out_data[128];
+AnalogOut buzzer(RJ_SPEAKER);
+
 
 // Sets the correct hardware configurations for pins connected to LEDs
 void statusLights(bool state)
@@ -30,16 +36,25 @@ void statusLights(bool state)
 	if (state == 1)
 		init_leds[1] = 0;
 }
-
 void statusLightsON(void const* args)
 {
 	statusLights(0);
 }
-
 void statusLightsOFF(void const* args)
 {
 	statusLights(1);
 }
+
+
+// used to output next analog sample whenever a timer interrupt occurs
+void Sample_timer_interrupt(void const* args)
+{
+	// send next analog sample out to D to A
+	buzzer = Analog_out_data[j];
+	// increment pointer and wrap around back to 0 at 128
+	j = (j + 1) & 0x07F;
+}
+
 
 /**
  * [main Main The entry point of the system where each submodule's thread is started.]
@@ -52,7 +67,17 @@ int main(void)
 
 	// Set the default logging configurations
 	isLogging = RJ_LOGGING_EN;
-	rjLogLevel = INIT;
+	rjLogLevel = INF2;
+
+	// precompute 128 sample points on one sine wave cycle
+	// used for continuous sine wave output later
+	for (int k = 0; k < 128; k++)
+		Analog_out_data[k] = ((1.0 + sin((float(k) / 128.0 * 6.28318530717959))) / 2.0);
+
+	// turn on timer interrupts to start sine wave output
+	// sample rate is 500Hz with 128 samples per cycle on sine wave
+	RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
+	sine_wave.start(1.0 / (500.0 * 128));
 
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;
@@ -62,21 +87,22 @@ int main(void)
 		fflush(stdout);
 	}
 
-	// MCP23017::Init();
-
 	/* Set the system time to the most recently known time. The compilation
 	 * time is used here. The timestamp should always be the same when using GCC.
 	 */
-	/*
 	const char* sysTime = __DATE__ " " __TIME__;
-	std::tm* tt;
+	struct tm* tstruct;
 
-	if (std::strftime(sysTime, sizeof(sysTime),"%b %d %Y %H:%M:%S", tt) == 0) {	// 'Mmm DD YYYYHH:MM:SS'
+	std::tm tmTime = boost::posix_time::to_tm(boost::posix_time::time_from_string(sysTime));
+
+	if (0) {
+		//if (strptime(sysTime, "%b %d %Y %H:%M:%S", tstruct) == 0) {	// 'Mmm DD YYYYHH:MM:SS'
 		LOG(SEVERE, "Unable to parse system time of %s", sysTime);
 	} else {
-		set_time(mktime(tt));
+		LOG(INIT, "Setting system time to %s", sysTime);
+		time_t buildTime = mktime(tstruct);
+		set_time(buildTime);
 	}
-	*/
 
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
@@ -99,22 +125,16 @@ int main(void)
 
 	// Setup some extended LEDs and turn them on
 	IOExpanderDigitalOut led_err_m1(IOExpanderPinB0);
-
-	uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
-	LOG(INIT, "Robot ID:\r\n    %u", robot_id);
-
 	led_err_m1 = 1;
 
-	LOG(INIT, "    0x%04X", MCP23017::read_mask(0xFFFF));
-
-	for (int i = 0; i < 0x14; i++)
-		LOG(INIT, "    Addr:\t0x%04X\r\n    Val:\t0x%04X", i, MCP23017::readRegister(i));
+	uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
+	LOG(INIT, "Robot ID:\t%u", robot_id);
 
 	motors_Init();
 
 	// Wait for anything before now to print things out of the serial port.
 	// That way, things should stay lined up in the console when starting all the threads.
-	Thread::wait(1000);
+	Thread::wait(200);
 
 	// Start the thread task for the on-board control loop
 	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
@@ -217,7 +237,8 @@ int main(void)
 	   );
 	*/
 
-	init_leds_off.start(1000);
+	// Make sure the lights stay on for a minimum time during startup
+	init_leds_off.start(200);
 
 	while (1) {
 		//LOG(INF3, "  0x%08X\r\n  0x%08X\r\n  0x%08X\r\n  ADGDR:\t0x%08X\r\n  ADINTEN:\t0x%08X\r\n  ADCR:\t\t0x%08X\r\n  Chan 0:\t0X%08X\r\n  Chan 1:\t0X%08X\r\n  Chan 2:\t0X%08X\r\n  INT Called:\t%s", dma_locations[0], dma_locations[1], dma_locations[2], LPC_ADC->ADGDR, LPC_ADC->ADINTEN, LPC_ADC->ADCR, LPC_ADC->ADDR0, LPC_ADC->ADDR1, LPC_ADC->ADDR2, (DMA::HandlerCalled ? "YES" : "NO"));

@@ -20,7 +20,7 @@
 
 #include <mbed.h>
 #include <logger.hpp>
-    
+
 
 // Declaration for the pointer to the global object
 shared_ptr<MCP23017> MCP23017::instance;
@@ -33,8 +33,7 @@ void MCP23017::set_config(PinName sda, PinName scl, int i2cAddress)
     instance->_i2cAddress = i2cAddress;
 
     LOG(INIT,
-        "IO Expander I2C Address:\r\n"
-        "    0x%02X",
+        "IO Expander I2C Address:\t0x%02X",
         instance->_i2cAddress
        );
 }
@@ -112,8 +111,9 @@ int  MCP23017::read_bit(int bit_number)
     instance->shadow_GPIO = digitalWordRead();
 
     LOG(INIT,
-        "  Bit:\t%u\r\n"
-        "  State:\t%s",
+        "Read an I/O pin bit:"
+        "    Bit:\t%u\r\n"
+        "    State:\t%s",
         bit_number,
         ((instance->shadow_GPIO >> bit_number) & 0x0001) ? "ON" : "OFF"
        );
@@ -140,6 +140,7 @@ void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,  
     inputPolarityMask(polarity_config);
 
     LOG(INIT,
+        "IO Expander Configuration:\r\n"
         "    IODIR:\t0x%04X\r\n"
         "    GPPU:\t0x%04X\r\n"
         "    IPOL:\t0x%04X",

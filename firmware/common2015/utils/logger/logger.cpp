@@ -44,7 +44,7 @@ void log(uint8_t logLevel, const char* source, const char* func, const char* for
         va_start(args, format);
 
         fflush(stdout);
-        printf("%s [%s] [%s] <%s>\r\n", time_buf, LOG_LEVEL_STRING[logLevel], source, func);
+        printf("%s [%s] [%s] <%s>\r\n  ", time_buf, LOG_LEVEL_STRING[logLevel], source, func);
         fflush(stdout);
         vprintf(format, args);
         printf("\r\n\r\n");

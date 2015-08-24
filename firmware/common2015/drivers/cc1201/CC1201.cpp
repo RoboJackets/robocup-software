@@ -340,7 +340,7 @@ int32_t CC1201::selfTest(void)
 	_chip_version = readReg(CC1201EXT_PARTNUMBER, EXT_FLAG_ON);
 
 	if (_chip_version != CC1201_EXPECTED_PART_NUMBER) {
-		LOG(FATAL,
+		LOG(SEVERE,
 		    "CC1201 part number error:\r\n"
 		    "    Expected:\t0x%02X\r\n"
 		    "    Found:\t0x%02X",
