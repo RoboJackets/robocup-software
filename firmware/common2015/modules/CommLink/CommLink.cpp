@@ -1,6 +1,6 @@
 #include "CommLink.hpp"
 
-//#include "logger.hpp"
+#include "logger.hpp"
 
 
 // Set the class's constants for streamlined use in other areas of the code
@@ -104,6 +104,8 @@ void CommLink::rxThread(void const* arg)
         uint8_t rec_bytes = RTP_MAX_DATA_SIZE;
         int32_t response = inst->getData(p.raw, &rec_bytes);
 
+        LOG(INIT, "interrupt working");
+
         if (response == COMM_SUCCESS) {
 
             // [X] - 3 - Write the data to the CommModule object's rxQueue
@@ -126,7 +128,6 @@ void CommLink::ready(void)
 
 void CommLink::sendPacket(RTP_t* p)
 {
-    p->payload_size = p->total_size - 1; // fixup factor for headers. Exclude the `size` byte from being counted
     sendData(p->raw, p->total_size);
 }
 

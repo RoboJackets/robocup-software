@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include <functional>
+#include <memory>
 
 
 #define COMM_MODULE_TX_QUEUE_SIZE           5
@@ -44,19 +45,14 @@ class CommModule
     static CommPorts_t      _ports;
 
   public:
-
-    /// Default Constructor
-    CommModule();
-
-    // Deconstructor
-    virtual ~CommModule() {};
-
     // Class constants - set in CommModule.cpp
     static const int NBR_PORTS;
     static const int TX_QUEUE_SIZE;
     static const int RX_QUEUE_SIZE;
 
+    static void Init(void);
 
+    // Set a TX callback function on an object
     template <typename B>
     static void TxHandler(B* obj, void(B::*mptr)(RTP_t*), uint8_t portNbr)
     {
@@ -76,6 +72,7 @@ class CommModule
         ready();
     }
 
+    // Set an RX callback function on an object
     template <typename B>
     static void RxHandler(B* obj, void(B::*mptr)(RTP_t*), uint8_t portNbr)
     {
@@ -95,6 +92,7 @@ class CommModule
         ready();
     }
 
+    // Set a normal RX callback function without an object
     static void RxHandler(void(*ptr)(RTP_t*), uint8_t);
 
     // Open a socket connection for communicating.
@@ -114,14 +112,19 @@ class CommModule
     void nopFunc(void);
 
     // Memory Queue IDs
-    static osMailQId   _txQueue;
-    static osMailQId   _rxQueue;
+    osMailQId   _txQueue;
+    osMailQId   _rxQueue;
 
     // Thread IDs
     static osThreadId      _txID;
     static osThreadId      _rxID;
 
   private:
+    // Private constructor
+    CommModule();
+
+    static shared_ptr<CommModule>& Instance(void);
+
     // Used to help define the class's threads in the constructor
     friend void define_thread(osThreadDef_t&, void(*task)(void const* arg), osPriority, uint32_t, unsigned char*);
 
@@ -131,9 +134,11 @@ class CommModule
 
     static void ready(void);
 
-    static bool isReady;
-
     static void PrintHeader(void);
+
+    static std::shared_ptr<CommModule> instance;
+
+    static bool isReady;
 
     // Thread and Mail defintion data structures
     osThreadDef_t   _txDef;

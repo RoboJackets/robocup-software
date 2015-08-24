@@ -1,5 +1,6 @@
 *.kdev4
 *.pyc
+*.xls#
 .sconsign.dblite
 .scons_variables
 /build
@@ -20,3 +21,5 @@
 
 # IntelliJ
 .idea
+rj-*.bin
+rj-*.nib

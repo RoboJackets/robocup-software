@@ -7,10 +7,11 @@ include(${ATTINY_TOOLCHAIN_FILE})
 # the ATTiny13 has an internal 9.6MHz clock with the prescaler, don't scale back
 # to keep timing for neopixel
 # The -O2 turns on optimizations, which are required to use the delay_*() functions
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=attiny13 -DF_CPU=9600000")
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=attiny13 -DF_CPU=9600000")
 
 # so, we gotta find the right mmcu flag for the 441. or create a config file for it or something like that.
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=attiny441 -DF_CPU=9600000")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=avr25 -DF_CPU=9600000 -D__AVR_DEVICE_NAME__=attiny441")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=attiny441 -DF_CPU=9600000")
 
 # Select the C source files
 file(GLOB kicker_SRC "*.c")

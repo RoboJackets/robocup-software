@@ -3,20 +3,42 @@
 #include "kicker.h"
 #include "neopixel.h"
 
+// Architecture = avr2/avr25[1]
+// MCU Name = attiny441
+// Macro = __AVR_ATtiny441__
+
 /*
  * initialization
  */
 void init(void)
 {
 	//force prescalar to keep frequency at 9.6 MHz
-	CLKPR = (1 << CLKPCE);
+	loop_until_bit_is_set(CLKPR, CLKPCE);
 	CLKPR = 0;
 
 	//set data pins I/O
-	DDRB = 1 << 3; //set B3, DO
+	loop_until_bit_is_set(DDRB, 3); //set B3, DO
 
 	//create led buffer
 	initNeopixelBuffer();
+}
+
+void SPI_SlaveInit(void)
+{
+	/* Set MISO output, all others input */
+	DDR_SPI = (1 << DD_MISO);
+
+	/* Enable SPI */
+	SPCR = (1 << SPE);
+}
+
+char SPI_SlaveReceive(void)
+{
+	/* Wait for reception complete */
+	while (!(SPSR & (1 << SPIF))) {};
+
+	/* Return Data Register */
+	return SPDR;
 }
 
 /*

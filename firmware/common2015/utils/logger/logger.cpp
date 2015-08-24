@@ -17,7 +17,7 @@ const char* LOG_LEVEL_STRING[] = { FOREACH_LEVEL(GENERATE_STRING) };
 /**
  * Active logging.
  */
-volatile bool isLogging = RJ_LOGGING_EN;
+volatile bool isLogging;// = RJ_LOGGING_EN;
 
 
 /**

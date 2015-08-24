@@ -3,6 +3,7 @@
 #include "ds2411.hpp"
 #include "logger.hpp"
 #include "numparser.hpp"
+#include "mem-iap.hpp"
 
 
 namespace
@@ -632,24 +633,47 @@ void cmd_logLevel(const vector<string>& args)
 	} else if (args.empty() == true) {
 		printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 	} else {
-		// this will return a signed int, so the level
-		// could increase or decrease...or stay the same.
-		int newLvl = (int)rjLogLevel;	// rjLogLevel is unsigned, so we'll need to change that first
-		newLvl += logLvlChange(args.front());
+		bool storeVals = true;
 
-		if (newLvl >= LOG_LEVEL_END) {
-			printf("Unable to set log level above maximum value.\r\n");
-			newLvl = rjLogLevel;
-		} else if (newLvl <= LOG_LEVEL_START) {
-			printf("Unable to set log level below minimum value.\r\n");
-			newLvl = rjLogLevel;
+		if (strcmp(args.front().c_str(), "on") == 0 || strcmp(args.front().c_str(), "enable") == 0) {
+			isLogging = true;
+			printf("Logging enabled.\r\n");
+		} else if (strcmp(args.front().c_str(), "off") == 0 || strcmp(args.front().c_str(), "disable") == 0) {
+			isLogging = false;
+			printf("Logging disabled.\r\n");
+		} else {
+			// this will return a signed int, so the level
+			// could increase or decrease...or stay the same.
+			int newLvl = (int)rjLogLevel;	// rjLogLevel is unsigned, so we'll need to change that first
+			newLvl += logLvlChange(args.front());
+
+			if (newLvl >= LOG_LEVEL_END) {
+				printf("Unable to set log level above maximum value.\r\n");
+				newLvl = rjLogLevel;
+			} else if (newLvl <= LOG_LEVEL_START) {
+				printf("Unable to set log level below minimum value.\r\n");
+				newLvl = rjLogLevel;
+			}
+
+			if (newLvl != rjLogLevel) {
+				rjLogLevel = newLvl;
+				printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+			} else {
+				storeVals = false;
+				printf("Log level unchanged. Level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+			}
 		}
 
-		if (newLvl != rjLogLevel) {
-			rjLogLevel = newLvl;
-			printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
-		} else {
-			printf("Log level unchanged. Level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
+		if ( storeVals == true ) {
+			// Store the new log level in FLASH memory
+			IAP iap;
+			char mem[MEM_SIZE] = { 0 };   //  memory, it should be aligned to word boundary
+			
+			mem[0] = isLogging ? 0xFF : 0x00;
+			mem[1] = ( rjLogLevel & 0xFF );
+
+			iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
+			iap.write( mem, sector_start_adress[TARGET_SECTOR], MEM_SIZE );
 		}
 	}
 }

@@ -18,7 +18,7 @@
 set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(CONFIG_ROOT_NAME    config)
-set(DRIVERS             adc dma ds2411 fpga mcp23017 mpu-6050 ws2811)
+set(DRIVERS             adc dma ds2411 fpga mcp23017 mem-iap mpu-6050 rtos-i2c ws2811)
 set(MODULES             commands controller motors)
 
 # generate a list of directories that we need to include from the values set above

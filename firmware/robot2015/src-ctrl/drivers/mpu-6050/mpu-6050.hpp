@@ -7,6 +7,8 @@
 
 #include "mbed.h"
 #include "mpu-6050-defines.hpp"
+
+#include "I2CMasterRtos.hpp"
  
 
 /**
@@ -230,7 +232,7 @@ class MPU6050
      bool selfTest(void);
 
   private:
-     I2C connection;
+     I2CMasterRtos connection;
      uint8_t currentAcceleroRange;
      uint8_t currentGyroRange;
 

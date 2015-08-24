@@ -17,8 +17,8 @@
 #define SMARTRF_SETTING_IOCFG3             0x30 // HIGHZ
 #define SMARTRF_SETTING_IOCFG2             0x30 // HIGHZ
 #define SMARTRF_SETTING_IOCFG1             0x30	// HIGHZ [used as SO for SPI when CSn is LOW]
-#define SMARTRF_SETTING_IOCFG0			   0x06 // Asserted when sync word has been received and de-asserted at the end of the packet
-//#define SMARTRF_SETTING_IOCFG0             0x07	// Asserted when PKT_CRC_OK is set. De-asserted at first byte read from the RX FIFO
+//#define SMARTRF_SETTING_IOCFG0			   0x06 // Asserted when sync word has been received and de-asserted at the end of the packet
+#define SMARTRF_SETTING_IOCFG0             0x07	// Asserted when PKT_CRC_OK is set. De-asserted at first byte read from the RX FIFO
 //#define SMARTRF_SETTING_IOCFG2             0x0D	// RSSI calculation is valid
 //#define SMARTRF_SETTING_IOCFG2             0x11	// High if RSSI level is above threshold
 //#define SMARTRF_SETTING_IOCFG0             0x0B	// Asserted when preamble quality threshold is reached
@@ -30,7 +30,7 @@
 #define SMARTRF_SETTING_SYNC1              0x51
 #define SMARTRF_SETTING_SYNC0              0xDE
 
-#define SMARTRF_SETTING_SYNC_CFG1          0xAA // 32 bit sync word length; Threshold value of `10` (or 0x04 here) from TI's SmartRF Studio GUI
+#define SMARTRF_SETTING_SYNC_CFG1          0x84 // 32 bit sync word length; Threshold value of `10` (or 0x04 here) from TI's SmartRF Studio GUI
 #define SMARTRF_SETTING_SYNC_CFG0          0x08 // PQT gating disabled; External sync detect disabled; Strict sync word check disabled
 #define SMARTRF_SETTING_DEVIATION_M        0x47 // FROM RFSTUDIO
 #define SMARTRF_SETTING_MODCFG_DEV_E       0x2F	// FROM RFSTUDIO
@@ -71,7 +71,8 @@
 #define SMARTRF_SETTING_ASK_CFG            0x0F	// Only used in ASK/OOK modes; Data filter scale bandwidth of 0.28 (0x00 - default); ASK/OOK depth of 0x0F (default)
 #define SMARTRF_SETTING_PKT_LEN            0xFF	// Max allowed packet length in variable mode
 #define SMARTRF_SETTING_IF_MIX_CFG         0x00	// Zero-IF configuration
-#define SMARTRF_SETTING_FREQOFF_CFG        0x2B	// FROM RFSTUDIO - THIS IS A PRETTY DAMN IMPORTANT CONFIGURATION VALUE FOR 4-GFSK!
+// #define SMARTRF_SETTING_FREQOFF_CFG        0x2B	// FROM RFSTUDIO - THIS IS A PRETTY DAMN IMPORTANT CONFIGURATION VALUE FOR 4-GFSK!
+#define SMARTRF_SETTING_FREQOFF_CFG        0x23
 #define SMARTRF_SETTING_TOC_CFG            0x08	// FROM RFSTUDIO
 #define SMARTRF_SETTING_MARC_SPARE         0x00	// 
 #define SMARTRF_SETTING_ECG_CFG            0x00	// External clock frequency set with a division factor of 64. Probably can ignore
