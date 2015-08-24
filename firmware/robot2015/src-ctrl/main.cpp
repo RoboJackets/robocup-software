@@ -99,36 +99,22 @@ int main(void)
 
 	// Setup some extended LEDs and turn them on
 	IOExpanderDigitalOut led_err_m1(IOExpanderPinB0);
-	IOExpanderDigitalOut led_err_m2(IOExpanderPinB1);
-	IOExpanderDigitalOut led_err_m3(IOExpanderPinB2);
-	IOExpanderDigitalOut led_err_m4(IOExpanderPinB3);
-	IOExpanderDigitalOut led_err_mpu(IOExpanderPinB4);
-	IOExpanderDigitalOut led_err_bsense(IOExpanderPinB5);
-	IOExpanderDigitalOut led_err_drib(IOExpanderPinB6);
-	IOExpanderDigitalOut led_err_radio(IOExpanderPinB7);
-
 
 	uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
 	LOG(INIT, "Robot ID:\r\n    %u", robot_id);
 
 	led_err_m1 = 1;
-	led_err_m2 = 1;
-	led_err_m3 = 1;
-	led_err_m4 = 1;
-	led_err_mpu = 1;
-	led_err_bsense = 1;
-	led_err_drib = 0;
-	led_err_radio.write(1);
 
 	LOG(INIT, "    0x%04X", MCP23017::read_mask(0xFFFF));
 
-	LOG(INIT, "GPIO Register:\r\n    0x%04X", MCP23017::readRegister(0x12));
+	for (int i = 0; i < 0x14; i++)
+		LOG(INIT, "    Addr:\t0x%04X\r\n    Val:\t0x%04X", i, MCP23017::readRegister(i));
 
 	motors_Init();
 
 	// Wait for anything before now to print things out of the serial port.
 	// That way, things should stay lined up in the console when starting all the threads.
-	Thread::wait(250);
+	Thread::wait(1000);
 
 	// Start the thread task for the on-board control loop
 	Thread controller_task(Task_Controller, NULL, osPriorityRealtime);
@@ -138,8 +124,6 @@ int main(void)
 
 	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, NULL, osPriorityBelowNormal);
-
-	// while (1) { /* stall forever */ };
 
 	//FPGA fpga;
 

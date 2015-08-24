@@ -111,3 +111,5 @@ class IOExpanderDigitalOut
     return read();
   }
 };
+
+bool IOExpanderDigitalOut::isInit = false;
