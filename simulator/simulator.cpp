@@ -1,6 +1,7 @@
 #include "physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
 #include "SimulatorGLUTThread.hpp"
+#include <Utils.hpp>
 
 #include <QApplication>
 #include <QFile>
@@ -31,7 +32,8 @@ int main(int argc, char* argv[])
 
 	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
 
-	QString configFile = "simulator.cfg";
+	QString configFile = ApplicationRunDirectory().filePath("simulator.cfg");
+
 	bool sendShared = false;
 	bool headless = false;
 

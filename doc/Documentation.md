@@ -63,7 +63,7 @@ In addition to turning inline code comments into documentation, Doxygen can also
 
 To build the documentation website, run `doxygen` from the root of the robocup-software project.  This will place a bunch of files in `api_docs/html`.  Open the `index.html` file in a browser to view the site.
 
-Our documentation website automagically updates everytime someone pushes the master branch of the repository.  This is setup through [travis-ci](https://travis-ci.org) - see the `autoupdate-docs-travis.sh` script to see how this is done.
+Our documentation website automagically updates everytime someone pushes the master branch of the repository.  This is setup through [circle-ci](https://circleci.com) - see the `autoupdate-docs.sh` script to see how this is done.
 
 
 ## Further configuration
