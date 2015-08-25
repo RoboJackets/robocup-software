@@ -149,7 +149,8 @@ TEST(TrapezoidalMotion2, MoreTests) {
 		float posOut1, speedOut1, posOut2, speedOut2;
 		bool pathValid1 = trapezoid1(i+1, posOut1, speedOut1);
 		bool pathValid2 = trapezoid2(i, posOut2, speedOut2);
-		ASSERT_EQ(pathValid1, pathValid2);
+		ASSERT_TRUE(pathValid1);
+		ASSERT_TRUE(pathValid2);
 		ASSERT_NEAR(posOut1, posOut2+0.5, 0.00001);
 		ASSERT_NEAR(speedOut1, speedOut2, 0.00001);
 	}
@@ -214,7 +215,7 @@ TEST(TrapezoidalMotion2, TriangleRampUp) {
 
 	float i = 4;
 	pathValid = triangle2(i + 4, posOut, speedOut);
-	ASSERT_EQ(pathValid, false);
+	ASSERT_FALSE(pathValid);
 	ASSERT_NEAR(speedOut, 2 - i/2, 0.00001);
 }
 
@@ -241,7 +242,7 @@ TEST(TrapezoidalMotion3, TriangleRampUp) {
 	float posOut2, speedOut2, posOut4, speedOut4;
 	bool pathValid2 = triangle2(2 + i, posOut2, speedOut2);
 	bool pathValid4 = triangle4(i, posOut4, speedOut4);
-	//ASSERT_EQ(pathValid2, pathValid4);
+	ASSERT_EQ(pathValid2, pathValid4);
 	ASSERT_NEAR(posOut2, posOut4 + 1, 0.00001);
 	ASSERT_NEAR(speedOut2, speedOut4, 0.00001);
 }
