@@ -226,5 +226,5 @@ class MainWindow : public QMainWindow
 		///	the play, pause, ffwd, etc buttons
 		std::vector<QPushButton *> _logPlaybackButtons;
 
-		unsigned long long _firstLogTimestamp = -1;
+		Time _firstLogTimestamp = -1;
 };

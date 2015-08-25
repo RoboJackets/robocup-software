@@ -65,8 +65,7 @@ namespace Geometry2d
 			}
 
 			friend std::ostream& operator<< (std::ostream& stream, const Segment& seg) {
-				stream << seg.toString();
-				return stream;
+				return stream << seg.toString();
 			}
 
 			bool operator== (const Segment& other) const {

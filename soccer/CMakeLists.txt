@@ -158,7 +158,7 @@ set(SOCCER_TEST_SRC
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
     "TestMain.cpp"
-    "tests/WindowEvaluatorTest.cpp"
+    "WindowEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

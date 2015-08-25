@@ -388,7 +388,8 @@ void Gameplay::GameplayModule::run()
 		if (r && r->visible) {
 			/// set obstacles for the robots
 			if (r->shell() == _goalieID || r->isPenaltyKicker)
-				r->replanIfNeeded(global_obstacles); /// just for goalie
+				// The goalie and penalty kicker can enter the goal zone.
+				r->replanIfNeeded(global_obstacles);
 			else
 				r->replanIfNeeded(obstacles_with_goals); /// all other robots
 		}

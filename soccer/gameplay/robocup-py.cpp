@@ -6,23 +6,23 @@
 
 using namespace boost::python;
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Rect.hpp>
+#include "motion/TrapezoidalMotion.hpp"
+#include "WindowEvaluator.hpp"
+#include <Constants.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Arc.hpp>
+#include <Geometry2d/Rect.hpp>
+#include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <protobuf/LogFrame.pb.h>
-#include <Constants.hpp>
-#include "WindowEvaluator.hpp"
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 #include <exception>
 
-#include "motion/TrapezoidalMotion.hpp"
 
 /**
  * These functions make sure errors on the c++

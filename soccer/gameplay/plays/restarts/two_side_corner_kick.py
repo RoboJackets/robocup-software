@@ -17,19 +17,15 @@ class TwoSideCornerKick(play.Play):
     # Estimate of which shot is better
 
     class State(enum.Enum):
+        ## Move A and move B, capture in setup
         setup = 1
+        ## Pick best target, add coordinated pass subbehavior
         passing = 2
+        ## Pivot kick (by default attacks enemy goal)
         kicking = 3;
 
     def __init__(self):
         super().__init__(continuous=False)
-
-        # Setup
-            # Move A and move B, capture in setup
-        # Passing
-            # Pick best target, add coordinated pass subbehavior
-        # Kicking
-            # Pivot kick (by default attacks enemy goal)
 
         self.add_state(TwoSideCornerKick.State.setup,
             behavior.Behavior.State.running)
@@ -85,10 +81,6 @@ class TwoSideCornerKick(play.Play):
     @classmethod
     def is_restart(cls):
         return True;
-
-
-    def all_subbehaviors_completed(self):
-        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
 
 
     def on_enter_setup(self):

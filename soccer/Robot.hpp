@@ -1,24 +1,23 @@
 #pragma once
 
-#include <stdint.h>
-#include <vector>
-#include <boost/optional.hpp>
-#include <boost/array.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/circular_buffer.hpp>
-#include <QColor>
-#include <Eigen/Geometry>
 #include <Constants.hpp>
-#include <Utils.hpp>
-
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
+#include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
-#include "planning/MotionConstraints.hpp"
-#include "planning/MotionCommand.hpp"
-
-#include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <Utils.hpp>
+
+#include <boost/array.hpp>
+#include <boost/circular_buffer.hpp>
+#include <boost/optional.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <Eigen/Dense>
+#include <QColor>
+#include <stdint.h>
+#include <vector>
 
 
 class SystemState;
@@ -123,9 +122,6 @@ public:
 		return stream;
 	}
 
-	friend std::ostream& operator<< (std::ostream& stream, const Robot* robot) {
-        return stream << *robot;
-	}
 
 private:
 	unsigned int _shell;

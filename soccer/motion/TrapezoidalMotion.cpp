@@ -4,6 +4,7 @@
 #include "Utils.hpp"
 
 using namespace std;
+
 float Trapezoidal::getTime(
 	float distance,
 	float pathLength,
