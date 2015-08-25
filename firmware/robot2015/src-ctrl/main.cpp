@@ -144,7 +144,7 @@ int main(void)
 
 	// Wait for anything before now to print things out of the serial port.
 	// That way, things should stay lined up in the console when starting all the threads.
-	Thread::wait(100);
+	// Thread::wait(100);
 
 	// Start the thread task for the on-board control loop
 	Thread controller_task(Task_Controller, nullptr, osPriorityRealtime);

@@ -51,7 +51,7 @@ static const uint8_t BASE_STATION_ADDR = 0x01;
 void rxCallbackLinkTest(RTP_t* p)
 {
 	if (p->payload_size > 0) {
-		LOG(INIT, "Radio RX working!. Received %u byte packet.", p->payload_size);
+		LOG(INIT, "Radio RX working!.\r\n    Received %u byte packet.", p->payload_size);
 	}
 }
 
@@ -72,10 +72,6 @@ void Task_CommCtrl(void const* args)
 		threadPriority  = osThreadGetPriority(threadID);
 	else
 		threadPriority = osPriorityIdle;
-
-	// Setup the TX/RX lights and have them on initially
-	DigitalOut txLED(RJ_TX_LED, 1);
-	DigitalOut rxLED(RJ_RX_LED, 1);
 
 	// Startup the CommModule interface
 	CommModule::Init();
@@ -120,7 +116,7 @@ void Task_CommCtrl(void const* args)
 		CommModule::openSocket(COMM_PORT_SETPOINT);
 
 	} else {
-		LOG(FATAL, "No radio interface found. Terminating main radio thread.");
+		LOG(FATAL, "No radio interface found!\r\n    Terminating main radio thread.");
 		// TODO: Turn on radio error LED here
 
 		// Always keep the link test port open regardless
@@ -136,10 +132,6 @@ void Task_CommCtrl(void const* args)
 	 * to its port number when using the console. Since most of everything is static,
 	 * the CommModule methods can be used from almost anywhere.
 	 */
-
-	// Turn off the TX/RX LEDs if we make it to this point in the initilization
-	txLED = 0;
-	rxLED = 0;
 
 	// == everything below this line all the way until the start of the while loop is test code ==
 
@@ -179,7 +171,7 @@ void Task_CommCtrl(void const* args)
 		*/
 
 		CommModule::receive(pck);
-		Thread::wait(250);
+		Thread::wait(1500);
 		Thread::yield();
 
 		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.

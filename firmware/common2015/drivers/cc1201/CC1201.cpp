@@ -18,9 +18,8 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 
 	if (_isInit == true) {
 		LOG(INF1, "CC1201 ready!");
+		CommLink::ready();
 	}
-
-	CommLink::ready();
 }
 
 
@@ -85,7 +84,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 		Thread::wait(2);
 
 	} while (bts != 0);
-	
+
 
 	// LOG(OK, " %u bytes", size);
 
