@@ -2,12 +2,12 @@
 #include "robot-config.hpp"
 #include "TaskSignals.hpp"
 
+#include <rtos.h>
 #include <CommModule.hpp>
 #include <CommPort.hpp>
 #include <CC1201Radio.hpp>
 #include <CC1201Config.hpp>
 #include <logger.hpp>
-// #include <rtos.h>
 
 /*
  * Information about the radio protocol can be found at:
@@ -95,10 +95,14 @@ void Task_CommCtrl(void const* args)
 
 		LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
+		Thread::wait(400);
+
 		// Open a socket for running tests across the link layer
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
 		CommModule::openSocket(COMM_PORT_LINK_TEST);
+
+		Thread::wait(400);
 
 		// The usual way of opening a port.
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);

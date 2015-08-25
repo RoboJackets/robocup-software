@@ -63,17 +63,12 @@ shared_ptr<CommModule>& CommModule::Instance(void)
 void CommModule::txThread(void const* arg)
 {
     // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
+    // osPriority threadPriority;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    if (_txID != nullptr)
-        threadPriority  = osThreadGetPriority(_txID);
-    else
-        threadPriority = osPriorityIdle;
-
-    LOG(INIT, "TX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", _txID, threadPriority);
+    LOG(INIT, "TX communication module ready!\r\n    Thread ID:\t%u", _txID);
 
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
 
@@ -90,23 +85,23 @@ void CommModule::txThread(void const* arg)
             RTP_t* p = (RTP_t*)evt.value.p;
 
             // Bump up the thread's priority
-            if (osThreadSetPriority(_txID, osPriorityRealtime) == osOK) {
+            // if (osThreadSetPriority(_txID, osPriorityRealtime) == osOK) {
 
-                // Call the user callback function
-                if (_ports[p->port].isOpen() ) {
+            // Call the user callback function
+            if (_ports[p->port].isOpen() ) {
 
-                    _ports[p->port].TXCallback()(p);
+                _ports[p->port].TXCallback()(p);
 
-                    _ports[p->port].TXPackets()++;   // Increment the packet counter by 1
+                _ports[p->port].TXPackets()++;   // Increment the packet counter by 1
 
-                    LOG(INF3, "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
-                }
-
-                // Release the allocated memory once data is sent
-                osMailFree(instance->_txQueue, p);
-
-                osThreadSetPriority(_txID, osPriorityNormal);
+                LOG(INF3, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u", p->port, p->subclass);
             }
+
+            // Release the allocated memory once data is sent
+            osMailFree(instance->_txQueue, p);
+
+            // osThreadSetPriority(_txID, osPriorityNormal);
+            // }
         }
     }
 
@@ -117,17 +112,12 @@ void CommModule::txThread(void const* arg)
 void CommModule::rxThread(void const* arg)
 {
     // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
+    // osPriority threadPriority;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    if (_rxID != nullptr)
-        threadPriority  = osThreadGetPriority(_rxID);
-    else
-        threadPriority = osPriorityIdle;
-
-    LOG(INIT, "RX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", _rxID, threadPriority);
+    LOG(INIT, "RX communication module ready!\r\n    Thread ID:\t%u", _rxID);
 
     RTP_t* p;
     osEvent  evt;
@@ -142,21 +132,21 @@ void CommModule::rxThread(void const* arg)
             p = (RTP_t*)evt.value.p;
 
             // Bump up the thread's priority
-            if (osThreadSetPriority(_rxID, osPriorityRealtime) == osOK) {
-                // Call the user callback function (if set)
-                if (_ports[p->port].isOpen() ) {
+            // if (osThreadSetPriority(_rxID, osPriorityRealtime) == osOK) {
+            // Call the user callback function (if set)
+            if (_ports[p->port].isOpen() ) {
 
-                    _ports[p->port].RXCallback()(p);
+                _ports[p->port].RXCallback()(p);
 
-                    _ports[p->port].RXPackets()++;
+                _ports[p->port].RXPackets()++;
 
-                    LOG(INF3, "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
-                }
-
-                osMailFree(instance->_rxQueue, p);  // free memory allocated for mail
-
-                osThreadSetPriority(_rxID, osPriorityNormal);
+                LOG(INF3, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u", p->port, p->subclass);
             }
+
+            osMailFree(instance->_rxQueue, p);  // free memory allocated for mail
+
+            // osThreadSetPriority(_rxID, osPriorityNormal);
+            // }
         }
     }
 

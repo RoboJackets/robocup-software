@@ -17,7 +17,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 	selfTest();
 
 	if (_isInit == true) {
-		LOG(INF1, "CC1201 ready!");
+		// LOG(INIT, "CC1201 ready!");
 		CommLink::ready();
 	}
 }

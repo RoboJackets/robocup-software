@@ -851,7 +851,7 @@ bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
 				string valStr((const char*) valCStr, 2);
 				string expStr((const char*) expCStr, 2);
 				string errorStr = ("ExtReg: " + regStr + ", Val: " + valStr + ", Exp: " + expStr);
-				LOG(OK, "%s", errorStr.c_str());
+				// LOG(OK, "%s", errorStr.c_str());
 				//push the error onto the queue for processing later
 				//configurationFaults.push(errorStr);
 			}

@@ -18,7 +18,7 @@
 #define COMM_MODULE_TX_QUEUE_SIZE           5
 #define COMM_MODULE_RX_QUEUE_SIZE           5
 #define COMM_MODULE_NBR_PORTS               16
-#define COMM_MODULE_SIGNAL_START_THREAD     0x01
+#define COMM_MODULE_SIGNAL_START_THREAD     0x04
 
 
 /* These define the function pointer type that's used for every callback

@@ -75,7 +75,7 @@ void CommLink::setup_interrupt(void)
 {
     if (_int_pin != NC) {
         _int_in = new InterruptIn(_int_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        _int_in->mode(PullDown);
+        _int_in->mode(PullUp);
     }
 }
 
@@ -87,21 +87,27 @@ void CommLink::rxThread(void const* arg)
     CommLink* inst = (CommLink*)arg;
 
     // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
+    // osPriority threadPriority;
 
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
-    if (inst->_rxID != nullptr)
-        threadPriority  = osThreadGetPriority(inst->_rxID);
-    else
-        threadPriority = osPriorityIdle;
+    /*
+        if (inst->_rxID != nullptr)
+            threadPriority  = osThreadGetPriority(inst->_rxID);
+        else
+            threadPriority = osPriorityIdle;
+            */
 
-    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u", inst->_rxID);
+
+    while ( true ) {
+        Thread::wait(1500);
+    }
 
     // Set the function to call on an interrupt trigger
-    inst->_int_in->rise(inst, &CommLink::ISR);
-    
+    // inst->_int_in->rise(inst, &CommLink::ISR);
+
     RTP_t p;
 
     while (true) {

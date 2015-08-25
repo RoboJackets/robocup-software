@@ -3,9 +3,6 @@
 #include <queue>
 #include <string>
 
-// #include "logger.hpp"
-
-
 class CC1201Config
 {
 	public:

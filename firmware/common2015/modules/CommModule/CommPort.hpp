@@ -87,10 +87,10 @@ class CommPort
 
             return isOpen();
         } else {
-            // Never deny a port from being "opened". Always adding ports simply means tracking all attempted port configs.
-            return true;
+            return false;
         }
     }
+    
     void Close(void)
     {
         is_open = false;
@@ -135,11 +135,11 @@ class CommPort
     // Check if an RX/TX callback function has been set for the port.
     bool hasTXCallback(void) const
     {
-        return (tx_callback ? false : true);
+        return tx_callback != nullptr;
     }
     bool hasRXCallback(void) const
     {
-        return (rx_callback ? false : true);
+        return rx_callback != nullptr;
     }
 
 
