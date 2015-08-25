@@ -142,7 +142,7 @@ int main(void)
 	Thread controller_task(Task_Controller, nullptr, osPriorityRealtime);
 
 	// Start the thread task for handling radio communications
-	Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
+	// Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
 
 	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);

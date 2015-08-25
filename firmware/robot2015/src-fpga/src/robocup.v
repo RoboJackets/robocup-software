@@ -8,17 +8,17 @@
 `endif
 
 module robocup #(
-parameter 		NUM_MOTORS 				= 	(  5 ),
-				NUM_HALL_SENS 			= 	( NUM_MOTORS ),
-				NUM_ENCODERS 			= 	( NUM_MOTORS ), 	// Not really, but keep this consistent with the others make things easier overall
+	parameter 		NUM_MOTORS 				= 	(  5 ),
+					NUM_HALL_SENS 			= 	( NUM_MOTORS ),
+					NUM_ENCODERS 			= 	( NUM_MOTORS ), 	// Not really, but keep this consistent with the others make things easier overall
 
-				SPI_MASTER_CPOL 		= 	(  0 ),
-				SPI_MASTER_CPHA 		= 	(  0 ),
-				SPI_MASTER_DATA_WIDTH 	= 	( 16 ),
+					SPI_MASTER_CPOL 		= 	(  0 ),
+					SPI_MASTER_CPHA 		= 	(  0 ),
+					SPI_MASTER_DATA_WIDTH 	= 	( 16 ),
 
-				SPI_SLAVE_CPOL 			= 	(  0 ),
-				SPI_SLAVE_CPHA 			= 	(  0 ),
-				SPI_SLAVE_DATA_WIDTH	= 	(  8 )
+					SPI_SLAVE_CPOL 			= 	(  0 ),
+					SPI_SLAVE_CPHA 			= 	(  0 ),
+					SPI_SLAVE_DATA_WIDTH	= 	(  8 )
 
     ) (
 	// Clock
