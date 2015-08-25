@@ -2,4 +2,4 @@
 
 #include <string>
 
-bool isInt(std::string& s);
+bool isInt(const std::string& s);

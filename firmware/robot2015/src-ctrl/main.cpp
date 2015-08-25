@@ -57,6 +57,14 @@ void Sample_timer_interrupt(void const* args)
 }
 
 
+void sampleInputs(void)
+{
+	// Set global variables here for the config input values from the IO Expander.
+	// This is where the robot's ID comes from, so it's pretty important.
+	LOG(SEVERE, "Interrupt triggered!");
+}
+
+
 /**
  * [main Main The entry point of the system where each submodule's thread is started.]
  * @return  [none]
@@ -68,7 +76,7 @@ int main(void)
 
 	// Set the default logging configurations
 	isLogging = RJ_LOGGING_EN;
-	rjLogLevel = INF2;
+	rjLogLevel = INIT;
 
 	// precompute 128 sample points on one sine wave cycle
 	// used for continuous sine wave output later
@@ -77,8 +85,8 @@ int main(void)
 
 	// turn on timer interrupts to start sine wave output
 	// sample rate is 500Hz with 128 samples per cycle on sine wave
-	RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
-	sine_wave.start(1.0 / (500.0 * 128));
+	// RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
+	// sine_wave.start(1.0 / (500.0 * 128));
 
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;
@@ -136,17 +144,22 @@ int main(void)
 
 	// Wait for anything before now to print things out of the serial port.
 	// That way, things should stay lined up in the console when starting all the threads.
-	// Thread::wait(200);
+	Thread::wait(100);
 
 	// Start the thread task for the on-board control loop
 	Thread controller_task(Task_Controller, nullptr, osPriorityRealtime);
 
 	// Start the thread task for handling radio communications
-	// Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
+	Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
 
 	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
 
+	// Attach an interrupt callback for setting the buttons/switches states into the firmware anytime one of them changes
+	InterruptIn configInputs(RJ_IOEXP_INT);
+	configInputs.rise(&sampleInputs);
+
+#if RJ_FPGA_ENABLE
 	// Create an object for communicating with the FPGA
 	FPGA fpga(
 	    RJ_SPI_BUS,
@@ -162,6 +175,8 @@ int main(void)
 	} else {
 		LOG(INIT, "FPGA configuration complete!");
 	}
+
+#endif
 
 
 #ifdef LINK_TOC_PARAMS
@@ -228,7 +243,7 @@ int main(void)
 
 
 	/*
-	 * Uncomment this block to show info about the bit packing of a radio packet
+	 * Uncomment this block to show info about the bit packing of a radio packetls
 	 *
 	RTP_t pkt;
 	pkt.header_link = RTP_HEADER(0x0F, 0x00, true, true);
@@ -247,8 +262,6 @@ int main(void)
 	*/
 
 	while ( !(LPC_UART0->LSR & (1 << 6)) ) { /* Wait until the startup logs are completely sent over the serial line */ }
-
-	Thread::wait(75);
 
 	// This is where we let the console task know we're finished with all startup serial logs
 	console_task.signal_set(CONSOLE_TASK_START_SIGNAL);

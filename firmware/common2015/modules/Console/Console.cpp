@@ -34,7 +34,7 @@ char* Console::Init(void)
 	auto instance = Instance();
 
 	// Set default values for the header parameters
-	instance->CONSOLE_USER = "jon";
+	instance->CONSOLE_USER = "anon";
 	instance->CONSOLE_HOSTNAME = "robot";
 	instance->setHeader();
 
@@ -152,9 +152,13 @@ void Console::RXCallback(void)
 			if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR) {
 				PRINTF("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
 				Flush();
+
+				// Execute the function that sets up the console after a command's execution.
+				// This will ensure everything flushes corectly on a full buffer
+				CommandHandled(true);
 			}
 
-			//if a new line character is sent, process the current buffer
+			// if a new line character is sent, process the current buffer
 			else if (c == NEW_LINE_CHAR) {
 				// print new line prior to executing
 				PRINTF("%c\n", NEW_LINE_CHAR);
@@ -165,8 +169,8 @@ void Console::RXCallback(void)
 				command_handled = false;
 			}
 
-			//if a backspace is requested, handle it.
-			else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0) {
+			// if a backspace is requested, handle it.
+			else if (c == BACKSPACE_FLAG_CHAR && rxIndex > instance->CONSOLE_HEADER.length()) {
 				//re-terminate the string
 				rxBuffer[--rxIndex] = '\0';
 

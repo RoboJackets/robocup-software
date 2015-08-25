@@ -1,8 +1,10 @@
 #include "commands.hpp"
-#include "CommModule.hpp"
+
+#include <CommModule.hpp>
+#include <logger.hpp>
+#include <numparser.hpp>
+
 #include "ds2411.hpp"
-#include "logger.hpp"
-#include "numparser.hpp"
 #include "mem-iap.hpp"
 
 
@@ -175,8 +177,8 @@ static const std::vector<command_t> commands = {
 		{"radio"},
 		false,
 		comm_cmdProcess,
-		"Show information about the radio.",
-		"radio"
+		"Show information about the radio & perform basic radio tasks.",
+		"radio [ports | test-tx | test-rx] [[open, close, show, reset] <port_num>]"
 	}
 };
 
@@ -668,7 +670,7 @@ void cmd_logLevel(const vector<string>& args)
 			// Store the new log level in FLASH memory
 			IAP iap;
 			char mem[MEM_SIZE] = { 0 };   //  memory, it should be aligned to word boundary
-			
+
 			mem[0] = isLogging ? 0xFF : 0x00;
 			mem[1] = ( rjLogLevel & 0xFF );
 
@@ -678,6 +680,87 @@ void cmd_logLevel(const vector<string>& args)
 	}
 }
 
+/**
+ * [comm_cmdProcess description]
+ * @param args [description]
+ */
+void comm_cmdProcess(const vector<string>& args)
+{
+	if (args.empty() == true) {
+		showInvalidArgs(args);
+
+	} else if (args.size() == 1) {
+
+		if (strcmp(args.front().c_str(), "ports") == 0 ) {
+			CommModule::PrintInfo(true);
+
+		} else {
+			if (CommModule::isReady() == true) {
+
+				RTP_t pck;
+				pck.header_link = RTP_HEADER(COMM_PORT_LINK_TEST, 1, false, false);
+				pck.payload_size = 5;
+				memset(pck.payload, 0xFF, pck.payload_size);
+				pck.address = 0x01;
+
+				if (strcmp(args.front().c_str(), "test-tx") == 0 ) {
+					printf("Placing %u byte dummy packet in TX buffer.\r\n", pck.payload_size);
+					CommModule::send(pck);
+
+				} else if (strcmp(args.front().c_str(), "test-rx") == 0 ) {
+					printf("Placing %u byte dummy packet in RX buffer.\r\n", pck.payload_size);
+					CommModule::receive(pck);
+
+				} else {
+					showInvalidArgs(args.front());
+
+				}
+			} else {
+				printf("The radio interface is not ready.\r\n");
+			}
+		}
+	} else if (args.size() == 2) {
+		// Default to showing all port info if no specific port number is given for the 'show' option
+		if (strcmp(args.front().c_str(), "ports") == 0) {
+			if (strcmp(args.at(1).c_str(), "show") == 0) {
+				CommModule::PrintInfo(true);
+			}
+		}
+	} else if (args.size() == 3) {
+
+		if (strcmp(args.front().c_str(), "ports") == 0) {
+
+			if ( isInt(args.at(2).c_str()) ) {
+				unsigned int portNbr = atoi(args.at(2).c_str());
+
+				if (strcmp(args.at(1).c_str(), "open") == 0) {
+					CommModule::openSocket(portNbr);
+
+				} else if (strcmp(args.at(1).c_str(), "close") == 0) {
+					CommModule::Close(portNbr);
+					printf("Port %u closed.\r\n", portNbr);
+
+				} else if (strcmp(args.at(1).c_str(), "show") == 0) {
+					// Change to show only the requested port's info
+					CommModule::PrintInfo(true);
+
+				} else if (strcmp(args.at(1).c_str(), "reset") == 0) {
+					CommModule::ResetCount(portNbr);
+					printf("Reset packet counts for port %u.\r\n", portNbr);
+
+				} else {
+					showInvalidArgs(args);
+				}
+			} else {
+				showInvalidArgs(args.at(2));
+			}
+		} else {
+			showInvalidArgs(args.at(2));
+		}
+	} else {
+		showInvalidArgs(args);
+	}
+}
 
 /**
  * Command executor.

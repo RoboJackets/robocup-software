@@ -1,7 +1,7 @@
 #include "numparser.hpp"
 
 
-bool isInt(std::string& s)
+bool isInt(const std::string& s)
 {
     std::string::const_iterator it = s.begin();
 

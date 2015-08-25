@@ -12,6 +12,7 @@
 #define CONTROL_LOOP_WAIT_MS 3
 
 
+// Declaration for an alternative control loop thread for when the accel/gyro can't be used for whatever reason
 void Task_Controller_Sensorless(void const* args);
 
 
@@ -31,6 +32,7 @@ void Task_Controller(void const* args)
 	else
 		threadPriority = osPriorityIdle;
 
+#if RJ_MPU_EN
 	float gyroVals[3] = { 0 };
 	float accelVals[3] = { 0 };
 
@@ -46,19 +48,26 @@ void Task_Controller(void const* args)
 
 	} else {
 		LOG(SEVERE, "MPU6050 not found!\r\n    Falling back to sensorless control loop.");
-
 		// TODO: Turn on the IMU's error LED here
 
+#else
+	LOG(INIT, "IMU disabled in config file\r\n    Falling back to sensorless control loop.");
+#endif
 		// Start a thread that can function without the IMU, then terminate this thread
 		Thread controller_task(Task_Controller_Sensorless, nullptr, osPriorityRealtime);
 		osThreadTerminate(threadID);
 
 		return;
+
+#if RJ_MPU_EN
 	}
+
+#endif
 
 	osThreadSetPriority(threadID, osPriorityNormal);
 
-	while (true) {
+	while (true)
+	{
 		imu.getGyro(gyroVals);
 		imu.getAccelero(accelVals);
 
@@ -76,7 +85,6 @@ void Task_Controller(void const* args)
 		   );
 
 		Thread::wait(CONTROL_LOOP_WAIT_MS);
-
 		Thread::yield();
 	}
 
@@ -104,7 +112,7 @@ void Task_Controller_Sensorless(void const* args)
 	LOG(INIT, "Sensorless control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
 
 	while (1) {
-		Thread::wait(1500);
+		Thread::wait(CONTROL_LOOP_WAIT_MS);
 		Thread::yield();
 	}
 

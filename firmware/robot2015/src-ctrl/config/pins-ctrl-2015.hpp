@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include "PinNames.h"
-
 
 // ** ============================= ** PIN DECLARATIONS ** ============================= **
 
@@ -87,24 +85,24 @@
 // ** ============================= ** IO-EXPANDER PINS ** ============================= **
 
 // Port A bit masks
-#define RJ_IOEXP_A0
-#define RJ_IOEXP_A1
-#define RJ_IOEXP_A2
-#define RJ_IOEXP_A3
-#define RJ_IOEXP_A4
-#define RJ_IOEXP_A5
-#define RJ_IOEXP_A6
-#define RJ_IOEXP_A7
+#define RJ_IOEXP_A0             (0)
+#define RJ_IOEXP_A1             (1)
+#define RJ_IOEXP_A2             (2)
+#define RJ_IOEXP_A3             (3)
+#define RJ_IOEXP_A4             (4)
+#define RJ_IOEXP_A5             (5)
+#define RJ_IOEXP_A6             (6)
+#define RJ_IOEXP_A7             (7)
 
 // Port B bit masks
-#define RJ_IOEXP_B0
-#define RJ_IOEXP_B1
-#define RJ_IOEXP_B2
-#define RJ_IOEXP_B3
-#define RJ_IOEXP_B4
-#define RJ_IOEXP_B5
-#define RJ_IOEXP_B6
-#define RJ_IOEXP_B7
+#define RJ_IOEXP_B0             (8)
+#define RJ_IOEXP_B1             (9)
+#define RJ_IOEXP_B2             (10)
+#define RJ_IOEXP_B3             (11)
+#define RJ_IOEXP_B4             (12)
+#define RJ_IOEXP_B5             (13)
+#define RJ_IOEXP_B6             (14)
+#define RJ_IOEXP_B7             (15)
 
 // These relate the PCB's connection with the IO Expander's bit masks defined above
 // // =============================================================================

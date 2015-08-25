@@ -17,9 +17,10 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 	selfTest();
 
 	if (_isInit == true) {
-		CommLink::ready();
 		LOG(INF1, "CC1201 ready!");
 	}
+
+	CommLink::ready();
 }
 
 
@@ -94,8 +95,6 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len)
 {
-	//osDelay(1);	//make sure the packet is ready. remove for production
-
 	uint8_t device_state = freqUpdate();	// update frequency offset estimate & get the current state while at it
 	uint8_t num_rx_bytes = readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON);
 

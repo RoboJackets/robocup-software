@@ -94,6 +94,7 @@ class CommModule
 
     // Set a normal RX callback function without an object
     static void RxHandler(void(*ptr)(RTP_t*), uint8_t);
+    static void TxHandler(void(*ptr)(RTP_t*), uint8_t);
 
     // Open a socket connection for communicating.
     static bool openSocket(uint8_t);
@@ -106,6 +107,10 @@ class CommModule
     static unsigned int NumTXPackets(void);
 
     static void PrintInfo(bool forceHeader = false);
+
+    static void ResetCount(unsigned int portNbr);
+    static void Close(unsigned int portNbr);
+    static bool isReady(void);
 
   protected:
     // NOP function for keeping a communication link active
@@ -138,7 +143,7 @@ class CommModule
 
     static std::shared_ptr<CommModule> instance;
 
-    static bool isReady;
+    static bool _isReady;
 
     // Thread and Mail defintion data structures
     osThreadDef_t   _txDef;

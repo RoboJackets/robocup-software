@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mbed.h"
-//#include "cmsis_os.h"
-#include "rtos.h"
+#include <mbed.h>
+#include <rtos.h>
+
 #include "rj-macros.hpp"
 #include "robot-types.hpp"
 #include "rtos-mgmt/thread-helper.hpp"
@@ -10,12 +10,9 @@
 #include "CommModule.hpp"
 
 
-#define COMM_LINK_TX_QUEUE_SIZE         3
-#define COMM_LINK_RX_QUEUE_SIZE         3
+#define COMM_LINK_RX_QUEUE_SIZE         5
 #define COMM_LINK_SIGNAL_START_THREAD   0x01
-#define COMM_LINK_SIGNAL_TX_TRIGGER     0x02
-#define COMM_LINK_SIGNAL_RX_TRIGGER     0x04
-#define COMM_LINK_SIGNAL_MODULE_LINKED  0x08
+#define COMM_LINK_SIGNAL_RX_TRIGGER     0x02
 #define COMM_LINK_BUFFER_SIZE           64
 
 
@@ -50,7 +47,6 @@ class CommLink
     virtual ~CommLink(void) {}; // Don't forget to include deconstructor implementation in derived classes that frees memory
 
     // Class constants for the data queue sizes
-    static const int TX_QUEUE_SIZE;
     static const int RX_QUEUE_SIZE;
 
     // The pure virtual methods for making CommLink an abstract class

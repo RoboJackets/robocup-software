@@ -4,7 +4,6 @@
 
 
 // Set the class's constants for streamlined use in other areas of the code
-const int CommLink::TX_QUEUE_SIZE = COMM_LINK_TX_QUEUE_SIZE;
 const int CommLink::RX_QUEUE_SIZE = COMM_LINK_RX_QUEUE_SIZE;
 
 const char* COMM_ERR_STRING[] = { FOREACH_COMM_ERR(GENERATE_STRING) };
@@ -87,24 +86,35 @@ void CommLink::rxThread(void const* arg)
 {
     CommLink* inst = (CommLink*)arg;
 
+    // Store our priority so we know what to reset it to if ever needed
+    osPriority threadPriority;
+
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
+    if (inst->_rxID != nullptr)
+        threadPriority  = osThreadGetPriority(inst->_rxID);
+    else
+        threadPriority = osPriorityIdle;
+
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
+
     // Set the function to call on an interrupt trigger
     inst->_int_in->rise(inst, &CommLink::ISR);
+    
+    RTP_t p;
 
-    while (1) {
+    while (true) {
         // [X] - 1 - Wait until new data has arrived - this is interrupt triggered by CommLink::ISR()
         // =================
         osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
 
         // [X] - 2 - Get the received data from the external chip
         // =================
-        RTP_t p;
         uint8_t rec_bytes = RTP_MAX_DATA_SIZE;
         int32_t response = inst->getData(p.raw, &rec_bytes);
 
-        LOG(INIT, "interrupt working");
+        LOG(INF1, "Interrupt manually disabled right now");
 
         if (response == COMM_SUCCESS) {
 
@@ -116,6 +126,8 @@ void CommLink::rxThread(void const* arg)
             // =================
         }
     }   // while()
+
+    osThreadTerminate(inst->_rxID);
 }
 
 

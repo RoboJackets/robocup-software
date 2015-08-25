@@ -15,9 +15,9 @@
 
 // GPIO configurations are [almost] completely independent from modulation implementations
 #define SMARTRF_SETTING_IOCFG3              0x30        // HIGHZ
-#define SMARTRF_SETTING_IOCFG2              0x07        // Asserted when PKT_CRC_OK is set. De-asserted at first byte read from the RX FIFO
+#define SMARTRF_SETTING_IOCFG2              0x30        // Asserted when PKT_CRC_OK is set. De-asserted at first byte read from the RX FIFO
 #define SMARTRF_SETTING_IOCFG1              0x30        // HIGHZ [used as SO for SPI when CSn is LOW]
-#define SMARTRF_SETTING_IOCFG0              0x30        // HIGHZ
+#define SMARTRF_SETTING_IOCFG0              0x07        // HIGHZ
 //#define SMARTRF_SETTING_IOCFG0             0x06         // Asserted when sync word has been received and de-asserted at the end of the packet
 //#define SMARTRF_SETTING_IOCFG2             0x0D         // RSSI calculation is valid
 //#define SMARTRF_SETTING_IOCFG2             0x11         // High if RSSI level is above threshold

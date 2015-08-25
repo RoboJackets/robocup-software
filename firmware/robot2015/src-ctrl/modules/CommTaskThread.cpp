@@ -1,4 +1,5 @@
 #include "pins-ctrl-2015.hpp"
+#include "robot-config.hpp"
 #include "TaskSignals.hpp"
 
 #include <CommModule.hpp>
@@ -41,15 +42,6 @@ CommModule.send(pck);			// Send it!
 static const uint8_t BASE_STATION_ADDR = 0x01;
 
 #define ACK_RESPONSE_CODE 0xAA
-
-enum PORTS {
-	COMM_PORT_LINK_TEST 		= 0x03,
-	COMM_PORT_CONTROLLER 		= 0x04,
-	COMM_PORT_SETPOINT 			= 0x05,
-	COMM_PORT_GAMEPLAY_STROBE 	= 0x06,
-	COMM_PORT_DISCOVERY 		= 0x07,
-	COMM_PORT_BULK_DATA 		= 0x08
-};
 
 
 /**
@@ -107,15 +99,15 @@ void Task_CommCtrl(void const* args)
 
 		LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
-		// The usual way of opening a port.
-		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
-		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
-		CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);		// returns true if port was successfully opened.
-
 		// Open a socket for running tests across the link layer
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
 		CommModule::openSocket(COMM_PORT_LINK_TEST);
+
+		// The usual way of opening a port.
+		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
+		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_GAMEPLAY_STROBE);
+		CommModule::openSocket(COMM_PORT_GAMEPLAY_STROBE);		// returns true if port was successfully opened.
 
 		// This port won't open since there's no RX callback to invoke. The packets are simply dropped.
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_CONTROLLER);
@@ -125,12 +117,15 @@ void Task_CommCtrl(void const* args)
 		// There's no TX callback for this port, but it will still open when invoked since it knows where to send an RX packet.
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
-		//CommModule::openSocket(COMM_PORT_SETPOINT);
+		CommModule::openSocket(COMM_PORT_SETPOINT);
 
 	} else {
-
-		LOG(FATAL, "No radio interface found. Terminating radio thread.");
+		LOG(FATAL, "No radio interface found. Terminating main radio thread.");
 		// TODO: Turn on radio error LED here
+
+		// Always keep the link test port open regardless
+		// CommModule::RxHandler(nullptr, COMM_PORT_LINK_TEST);
+		// CommModule::openSocket(COMM_PORT_LINK_TEST);
 
 		osThreadTerminate(threadID);
 		return;
@@ -152,7 +147,7 @@ void Task_CommCtrl(void const* args)
 
 	// Test RX by placing a dummy packet in the RX queue
 	RTP_t pck;
-	pck.header_link = RTP_HEADER(COMM_PORT_GAMEPLAY_STROBE, 1, false, false);
+	pck.header_link = RTP_HEADER(COMM_PORT_CONTROLLER, 1, false, false);
 	pck.payload_size = 25;
 	memset(pck.payload, 0xFF, pck.payload_size);
 	pck.address = BASE_STATION_ADDR;

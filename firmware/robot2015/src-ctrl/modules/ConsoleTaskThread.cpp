@@ -29,6 +29,8 @@ void Task_SerialConsole(void const* args)
   // Initalize the console buffer and save the char buffer's starting address
   Console::Init();
 
+  Console::changeUser(git_head_author);
+
   // Let everyone know we're ok
   LOG(INIT, "Serial console ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
 

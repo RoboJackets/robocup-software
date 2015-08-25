@@ -23,9 +23,9 @@ class Console
 
  public:
   /**
-   * max buffer length. Default 252 (three lines)
+   * max buffer length. Default 400 (five lines)
    */
-  static const uint8_t BUFFER_LENGTH = 252;
+  static const uint16_t BUFFER_LENGTH = 400;
 
   /**
    * new line character. Default '\r'

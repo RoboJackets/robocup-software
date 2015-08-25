@@ -36,6 +36,12 @@ bool MCP23017::Init(void)
     reset();
     config(0x00FF, 0x0000, 0xFF00);
 
+    DigitalInOut scl(instance->_scl);
+    DigitalInOut sda(instance->_sda);
+
+    scl.mode(PullUp);
+    sda.mode(PullUp);
+
     LOG(OK, "MCP23017 initialized");
 
     return true;
