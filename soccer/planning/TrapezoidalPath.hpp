@@ -31,23 +31,28 @@ namespace Planning
 		const float maxAcc;
 		const float maxSpeed;
 
-	public:
-		TrapezoidalPath(Geometry2d::Point startPos, float startSpeed, Geometry2d::Point endPos, float endSpeed, float maxAcc, float maxSpeed) :
-				startPos(startPos), startSpeed(startSpeed), endPos(endPos), endSpeed(endSpeed),
-				pathLength((startPos - endPos).mag()), maxAcc(maxAcc), maxSpeed(maxSpeed),
-				pathDirection((endPos - startPos).normalized()){
-				}
+		float duration;
 
-		/** default path is empty */
+	public:
 		TrapezoidalPath(Geometry2d::Point startPos, float startSpeed, Geometry2d::Point endPos, float endSpeed, const MotionConstraints& constraints) :
 				startPos(startPos), startSpeed(startSpeed), endPos(endPos), endSpeed(endSpeed),
 				pathLength((startPos - endPos).mag()), maxAcc(constraints.maxAcceleration), maxSpeed(constraints.maxSpeed),
-				pathDirection((endPos - startPos).normalized()){
-					float minSpeed = maxSpeed;
-					if (startSpeed<minSpeed) {
-						startSpeed = minSpeed;
-					}
-				}
+				pathDirection((endPos - startPos).normalized())	{
+
+			float minSpeed = maxSpeed;
+			if (startSpeed<minSpeed) {
+				startSpeed = minSpeed;
+			}
+
+			//Precalculate the duration of the path
+			duration = Trapezoidal::getTime(
+						pathLength, //distance
+						pathLength, //pathLength
+						maxSpeed,
+						maxAcc,
+						startSpeed,
+						endSpeed);
+		}
 
 		virtual bool evaluate(float time, MotionInstant &targetMotionInstant) const override {
 			float distance;
@@ -78,14 +83,6 @@ namespace Planning
 		}
 
 		virtual float getDuration() const override {
-			static float duration = Trapezoidal::getTime(
-					pathLength, //distance
-					pathLength, //pathLength
-					maxSpeed,
-					maxAcc,
-					startSpeed,
-					endSpeed);
-
 			return duration;
 		}
 
@@ -95,11 +92,11 @@ namespace Planning
 		}
 
 		virtual boost::optional<MotionInstant> destination() const override {
-			static MotionInstant destination = MotionInstant(endPos, pathDirection*endSpeed);
-			return destination;
+			return MotionInstant(endPos, pathDirection*endSpeed);
 		}
 		virtual std::unique_ptr<Path> clone() const override {
-			return std::unique_ptr<Path>(new TrapezoidalPath(startPos,startSpeed,endPos, endSpeed, maxAcc, maxSpeed));
+			debugThrow("This function is not implemented");
+			return nullptr;
 		}
 	};
 }
