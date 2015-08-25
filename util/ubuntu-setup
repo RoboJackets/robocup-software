@@ -78,9 +78,6 @@ if $FIRMWARE; then
     add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 fi
 
-# apt get install cmake is taken care of by requirements
-
-
 
 apt-get update
 
@@ -109,7 +106,7 @@ fi
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
-echo "--Symlink clang-3.5 to clang"
+echo "-- Symlinking clang-3.5 to clang"
 ln -sf $(which clang-3.5) /usr/bin/clang
 
 # install python3 requirements
