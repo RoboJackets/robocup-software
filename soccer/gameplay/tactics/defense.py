@@ -51,7 +51,6 @@ class Defense(composite_behavior.CompositeBehavior):
         self.debug = True
 
         self.win_eval = robocup.WindowEvaluator(main.system_state())
-        self.win_eval.debug = True
 
 
 

@@ -53,8 +53,8 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         default_pt = seg.center()
 
         if self._block_line != None:
-            main.system_state().draw_line(self._block_line, constants.Colors.White, "Debug")
-            main.system_state().draw_circle(self._block_line.get_pt(0), 0.1, constants.Colors.White, "Debug")
+            # main.system_state().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
+            main.system_state().draw_circle(self._block_line.get_pt(0), 0.1, constants.Colors.White, "SubmissiveDefender")
 
             threat_point = self._block_line.get_pt(0)
 
