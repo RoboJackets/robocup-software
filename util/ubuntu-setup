@@ -109,6 +109,9 @@ fi
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
+echo "--Symlink clang-3.5 to clang"
+ln -sf $(which clang-3.5) /usr/bin/clang
+
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
 # install python2 requirements
