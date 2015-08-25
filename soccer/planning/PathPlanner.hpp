@@ -1,5 +1,9 @@
 #pragma once
-#include "planning/Path.hpp"
+
+#include <planning/MotionConstraints.hpp>
+#include <planning/MotionInstant.hpp>
+#include <planning/Path.hpp>
+
 
 namespace Planning
 {

@@ -1,19 +1,20 @@
 #pragma once
-#include <planning/Path.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Configuration.hpp>
-#include "MotionInstant.hpp"
-#include "../../common/Geometry2d/Segment.hpp"
+
 #include "motion/TrapezoidalMotion.hpp"
 #include "MotionConstraints.hpp"
+#include "MotionInstant.hpp"
+#include <Configuration.hpp>
+#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <planning/Path.hpp>
 
 
 namespace Planning
 {
 	/**
-	 * @brief Represents a direct Trapezoidal Path
+	 * @brief Represents a straight-line path with a trapezoidal velocity profile
 	 *
 	 * @details The path represents a function of position given time that the robot should follow.
 	 * The path is made up of other Paths and can be made up of CompositePaths.

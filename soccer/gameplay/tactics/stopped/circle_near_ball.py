@@ -35,9 +35,6 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             i = i + 1
 
 
-    def all_subbehaviors_completed(self):
-        return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
-
     def get_circle_points(self, num_of_points):
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
         ball_pos = main.ball().pos if main.ball() != None else robocup.Point(constants.Field.Width / 2, constants.Field.Length / 2)

@@ -8,7 +8,7 @@ using namespace Geometry2d;
 using namespace Planning;
 
 /* ************************************************************************* */
-TEST( testPath, nearestSegment) {
+TEST(Path, nearestSegment) {
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
 	Planning::InterpolatedPath path;
@@ -25,7 +25,7 @@ TEST( testPath, nearestSegment) {
 }
 
 /* ************************************************************************* */
-TEST( testPath, startFrom1 ) {
+TEST(Path, startFrom1 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
@@ -47,7 +47,7 @@ TEST( testPath, startFrom1 ) {
 }
 
 /* ************************************************************************* */
-TEST( testPath, startFrom2 ) {
+TEST(Path, startFrom2 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
@@ -69,7 +69,7 @@ TEST( testPath, startFrom2 ) {
 }
 
 /* ************************************************************************* */
-TEST( testPath, startFrom3 ) {
+TEST(Path, startFrom3 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 

@@ -16,17 +16,15 @@
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
-static inline void debugThrow(const std::string &string) {
-	if (THROW_DEBUG_EXCEPTIONS) {
-		throw std::runtime_error(string);
-	}
-}
-
 template <class exception>
 static inline void debugThrow(const exception &e) {
 	if (THROW_DEBUG_EXCEPTIONS) {
 		throw e;
 	}
+}
+
+static inline void debugThrow(const std::string &string) {
+	debugThrow(std::runtime_error(string));
 }
 
 /**

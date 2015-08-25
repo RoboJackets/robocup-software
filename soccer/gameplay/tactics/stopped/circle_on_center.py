@@ -42,9 +42,6 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
             dirvec.rotate(robocup.Point(0,0), perRobot)
 
 
-    def all_subbehaviors_completed(self):
-        return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
-
     def goto_center(self):
         num_robots = 0
         for b in self.all_subbehaviors():
