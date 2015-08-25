@@ -57,7 +57,7 @@ float Trapezoidal::getTime(
 		return 0;
 	}
 
-	if (distance - (rampUpDist + plateauDist + rampDownDist) < 0.00001) {
+	if (abs(distance - (rampUpDist + plateauDist + rampDownDist)) < 0.00001) {
 		return rampUpTime + plateauTime + rampDownTime;
 	}
 	if (distance<rampUpDist) 
