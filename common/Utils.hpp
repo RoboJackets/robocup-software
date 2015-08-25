@@ -24,9 +24,7 @@ inline void debugThrow(const exception &e) {
 }
 
 inline void debugThrow(const std::string &string) {
-	if (THROW_DEBUG_EXCEPTIONS) {
-		debugThrow(std::runtime_error(string));
-	}
+	debugThrow(std::runtime_error(string));
 }
 
 /**
