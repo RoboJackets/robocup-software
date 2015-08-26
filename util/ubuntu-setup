@@ -13,6 +13,7 @@ This script will need root privileges"
 
 # defaults!
 YES=false
+IMACOOLFRESHMANDOINGFRESHMANEDITS="bad style is cool right?"
 
 # if we change this to true, please put it in the below if statment, as debian already has a good version...
 if [ -z "$(cat /etc/os-release | grep -i '^NAME=.*Debian')" ]; then # dont add repositories on debian, compatability issues?
