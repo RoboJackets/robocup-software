@@ -1,13 +1,17 @@
-
 #pragma once
 
-#include <list>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <planning/InterpolatedPath.hpp>
-#include <MotionConstraints.hpp>
-
+#include "PathPlanner.hpp"
 #include "Tree.hpp"
+#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
+#include <planning/InterpolatedPath.hpp>
+#include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
+#include <planning/MotionInstant.hpp>
+
+#include <Eigen/Dense>
+#include <list>
+
 
 namespace Planning
 {
@@ -20,10 +24,10 @@ namespace Planning
 	 * @details There are many ways to plan paths.  This planner uses bidirectional [RRTs](http://en.wikipedia.org/wiki/Rapidly-exploring_random_tree).
 	 * You can check out our interactive RRT applet on GitHub here: https://github.com/RoboJackets/rrt.
 	 */
-	class RRTPlanner
+	class RRTPlanner: public PathPlanner
 	{
 		public:
-			RRTPlanner();
+			RRTPlanner(int maxIterations);
 			/**
 			 * gets the maximum number of iterations for the RRT algorithm
 			 */
@@ -41,12 +45,11 @@ namespace Planning
 
 			///run the path ROTplanner
 			///this will always populate path to be the path we need to travel
-			Planning::InterpolatedPath* run(
-					const Geometry2d::Point& start,
-					const float angle,
-					const Geometry2d::Point& vel,
+			std::unique_ptr<Path> run(
+					MotionInstant startInstant,
+					MotionInstant motionCommand,
 					const MotionConstraints &motionConstraints,
-					const Geometry2d::CompositeShape* obstacles);
+					const Geometry2d::CompositeShape* obstacles) override;
 
 	protected:
 		MotionConstraints _motionConstraints;
@@ -58,6 +61,7 @@ namespace Planning
 		Geometry2d::Point _bestGoal;
 
 		Geometry2d::Point vi;
+		Geometry2d::Point vf;
 		///maximum number of rrt iterations to run
 		///this does not include connect attempts
 		unsigned int _maxIterations;
@@ -69,18 +73,18 @@ namespace Planning
 		 *  If the points don't match up...fail!
 		 *  The final path will be from the start of tree0
 		 *  to the start of tree1 */
-		Planning::InterpolatedPath makePath();
+		Planning::InterpolatedPath* makePath();
 
 		/** optimize the path
 		 *  Calles the cubicBezier optimization function.
 		 */
-		void optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
+		Planning::InterpolatedPath* optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
 
 		/**
 		 * Uses a cubicBezier to interpolate between the points on the path and add
 		 * velocity planning
 		 */
-		void cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
+		Planning::InterpolatedPath* cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
 
 		/**
 		 * Helper function for cubicBezier() which uses Eigen matrices to solve for the

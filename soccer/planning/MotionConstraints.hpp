@@ -14,20 +14,8 @@ struct MotionConstraints {
 
     MotionConstraints();
 
-    /// Position target
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /// A point on the field that the robot should use path-planning to get to
-    boost::optional<Geometry2d::Point> targetPos;
-
-    /// Set the velocity in world coordinates directly (circumvents path planning)
-    boost::optional<Geometry2d::Point> targetWorldVel;
-
-
-
     /// Angle target
     ////////////////////////////////////////////////////////////////////////////////
-
 
     /// Angular velocity in rad/s counterclockwise
     boost::optional<float> targetAngleVel;
@@ -77,4 +65,5 @@ struct MotionConstraints {
     static ConfigDouble *_max_speed;
     static ConfigDouble *_max_angle_speed;
     static ConfigDouble *_replan_threshold;
+    static ConfigDouble *_replan_lead_time;
 };

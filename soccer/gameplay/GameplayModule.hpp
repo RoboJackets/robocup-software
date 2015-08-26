@@ -150,8 +150,11 @@ namespace Gameplay
 			std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
 			
 			///	goal areas
-			Geometry2d::CompositeShape _ourGoalArea;
-			Geometry2d::CompositeShape _theirGoalArea;
+			std::shared_ptr<Geometry2d::CompositeShape> _ourGoalArea;
+			std::shared_ptr<Geometry2d::CompositeShape> _theirGoalArea;
+
+		  std::shared_ptr<Geometry2d::Polygon> _ourGoal;
+		  std::shared_ptr<Geometry2d::Polygon> _theirGoal;
 
 			/// utility functions
 

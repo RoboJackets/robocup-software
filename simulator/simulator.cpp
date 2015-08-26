@@ -21,16 +21,18 @@ void quit(int signal)
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
-	fprintf(stderr, "\t--help      Show usage message\n");
-	fprintf(stderr, "\t--sv        Use shared vision multicast port\n");
-	fprintf(stderr, "\t--headless  Run the simulator in headless mode (without a GUI)\n");
+	fprintf(stderr, "\t--help       Show usage message\n");
+	fprintf(stderr, "\t--sv         Use shared vision multicast port\n");
+	fprintf(stderr, "\t--headless   Run the simulator in headless mode (without a GUI)\n");
+    fprintf(stderr, "\t--smallfield Run the simulator with the small/single field.\n");
 }
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 
-	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
+    // Default to double size field, switch to single if flag is set.
+    Field_Dimensions::Current_Dimensions = Field_Dimensions::Double_Field_Dimensions * scaling;
 
 	QString configFile = ApplicationRunDirectory().filePath("simulator.cfg");
 
@@ -65,6 +67,8 @@ int main(int argc, char* argv[])
 			return 0;
 		} else if (strcmp(argv[i], "--headless") == 0) {
 			headless = true;
+        } else if (strcmp(argv[i], "--smallfield") == 0) {
+            Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
 		} else {
 			printf("%s is not recognized as a valid flag\n", argv[i]);
 			return 1;
