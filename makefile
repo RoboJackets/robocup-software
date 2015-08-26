@@ -86,8 +86,8 @@ modernize:
 
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	stylize --diffbase=master --exclude_dirs build third_party
+	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs build third_party
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	stylize --diffbase=master --check --exclude_dirs build third_party
+	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs build third_party --check
