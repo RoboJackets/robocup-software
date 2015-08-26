@@ -8,7 +8,7 @@ using namespace Geometry2d;
 using namespace Planning;
 
 /* ************************************************************************* */
-TEST( testPath, nearestSegment) {
+TEST(Path, nearestSegment) {
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
 	Planning::InterpolatedPath path;
@@ -25,7 +25,7 @@ TEST( testPath, nearestSegment) {
 }
 
 /* ************************************************************************* */
-TEST( testPath, startFrom1 ) {
+TEST(Path, startFrom1 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
@@ -47,7 +47,7 @@ TEST( testPath, startFrom1 ) {
 }
 
 /* ************************************************************************* */
-TEST( testPath, startFrom2 ) {
+TEST(Path, startFrom2 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
@@ -69,7 +69,7 @@ TEST( testPath, startFrom2 ) {
 }
 
 /* ************************************************************************* */
-TEST( testPath, startFrom3 ) {
+TEST(Path, startFrom3 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
@@ -102,20 +102,14 @@ TEST(InterpolatedPath, evaluate) {
 	path.vels.push_back(Point(0,0));
 	path.vels.push_back(p1);
 	path.vels.push_back(Point(0,0));
-	Point posOut, velOut;
+
+	MotionInstant out;
 	bool pathValid;
 
-
-	//	path should be invalid and at start state when t < 0
-	pathValid = path.evaluate(-1, posOut, velOut);
-	EXPECT_FLOAT_EQ(0, (posOut - p0).mag());
-	EXPECT_FLOAT_EQ(0, (velOut).mag());
-	EXPECT_FALSE(pathValid);
-
 	//	path should be invalid and at end state when t > duration
-	pathValid = path.evaluate(1000, posOut, velOut);
-	EXPECT_FLOAT_EQ(0, (posOut - p2).mag());
-	EXPECT_FLOAT_EQ(0, velOut.mag());
+	pathValid = path.evaluate(1000, out);
+	EXPECT_FLOAT_EQ(0, (out.pos - p2).mag());
+	EXPECT_FLOAT_EQ(0, out.vel.mag());
 	EXPECT_FALSE(pathValid);
 }
 
@@ -138,28 +132,28 @@ TEST(InterpolatedPath, subPath1) {
 
     //  make a subpath that cuts off one second from the start and end of the original
     unique_ptr<Path> subPath = path.subPath(1, 5);
-    Point pMid, vMid;
+    MotionInstant mid;
     float midTime = (5-1)/2.0;
-    bool valid = subPath->evaluate(midTime, pMid, vMid);
+    bool valid = subPath->evaluate(midTime, mid);
     EXPECT_TRUE(valid);
-    EXPECT_FLOAT_EQ(Point(1,1).x, vMid.x);
-    EXPECT_FLOAT_EQ(Point(1,1).y, vMid.y);   //  mid velocity of subpath should be the same as velocity of original path
-    EXPECT_FLOAT_EQ(1, pMid.x);
-    EXPECT_FLOAT_EQ(2, pMid.y);
+    EXPECT_FLOAT_EQ(Point(1,1).x, mid.vel.x);
+    EXPECT_FLOAT_EQ(Point(1,1).y, mid.vel.y);   //  mid velocity of subpath should be the same as velocity of original path
+    EXPECT_FLOAT_EQ(1, mid.pos.x);
+    EXPECT_FLOAT_EQ(2, mid.pos.y);
 
 
     //  test the subpath at t = 0
-    Point pStart, vStart;
-    valid = subPath->evaluate(0, pStart, vStart);
+    MotionInstant start;
+    valid = subPath->evaluate(0, start);
     EXPECT_TRUE(valid);
 
     //  the starting velocity of the subpath should be somewhere between the 0 and the velocity at the middle
-    EXPECT_GT(vStart.mag(), 0);
-    EXPECT_LT(vStart.mag(), Point(1,1).mag());
+    EXPECT_GT(start.vel.mag(), 0);
+    EXPECT_LT(start.vel.mag(), Point(1,1).mag());
 
     //  the starting position of the subpath should be somewhere between the start pos of the original path and the middle point
-    EXPECT_GT(pStart.y, 1);
-    EXPECT_LT(pStart.x, 2);
+    EXPECT_GT(start.pos.y, 1);
+    EXPECT_LT(start.pos.x, 2);
 }
 
 TEST(InterpolatedPath, subpath2) {
@@ -186,15 +180,15 @@ TEST(InterpolatedPath, subpath2) {
     }
 
     //Compare the subPaths to the origional path and check that the results of evaluating the paths are close enough
-	Point pOrg, vOrg, pSub, vSub;
+	MotionInstant org, sub;
     for (int i = 0; i<6; i++) {
     	for (float j=0; j<1.5; j+=0.001) {
-    		bool validOrg = path.evaluate(i*1.5 + j, pOrg, vOrg);
-    		bool validSub = subPaths[i]->evaluate(j, pSub, vSub);
-			EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i+j=" << i+j;
-			EXPECT_NEAR(vOrg.y, vSub.y, 0.000001) << "i+j=" << i+j;
-			EXPECT_NEAR(pOrg.x, pSub.x, 0.000001) << "i+j=" << i+j;
-			EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i+j=" << i+j;
+    		bool validOrg = path.evaluate(i * 1.5 + j, org);
+    		bool validSub = subPaths[i]->evaluate(j, sub);
+			EXPECT_NEAR(org.vel.x, sub.vel.x, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(org.vel.y, sub.vel.y, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(org.pos.x, sub.pos.x, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(org.pos.y, sub.pos.y, 0.00001) << "i+j=" << i+j;
     		EXPECT_EQ(validOrg, validSub) << "i+j=" << i+j;
     	}
     }
@@ -226,13 +220,13 @@ TEST(CompositePath, CompositeSubPath) {
 
     //Compare that the compositePath and origional path are mostly equal
 	for (float i = 0; i<=10; i+=0.001) {
-		Point pOrg, vOrg, pSub, vSub;
-		bool validOrg = path.evaluate(i, pOrg, vOrg);
-		bool validSub = compositePath.evaluate(i, pSub, vSub);
-		EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i=" << i;
-		EXPECT_NEAR(vOrg.y, vSub.y, 0.000001) << "i=" << i;
-		EXPECT_NEAR(pOrg.x, pSub.x, 0.000001) << "i=" << i;
-		EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i=" << i;
+		MotionInstant org, sub;
+		bool validOrg = path.evaluate(i, org);
+		bool validSub = compositePath.evaluate(i, sub);
+		EXPECT_NEAR(org.vel.x, sub.vel.x, 0.000001) << "i=" << i;
+		EXPECT_NEAR(org.vel.y, sub.vel.y, 0.000001) << "i=" << i;
+		EXPECT_NEAR(org.pos.x, sub.pos.x, 0.000001) << "i=" << i;
+		EXPECT_NEAR(org.pos.y, sub.pos.y, 0.00001) << "i=" << i;
 		EXPECT_EQ(validOrg, validSub) << "i=" << i;
     }
 
@@ -247,13 +241,13 @@ TEST(CompositePath, CompositeSubPath) {
     //Compare the subPaths of the compositePaths to the origional path and check that the results of evaluating the paths are close enough
     for (int i = 0; i<9; i++) {
     	for (float j=0; j<1; j+=0.1) {
-    		Point pOrg, vOrg, pSub, vSub;
-    		bool validOrg = path.evaluate(i*1 + j, pOrg, vOrg);
-    		bool validSub = subPaths[i]->evaluate(j, pSub, vSub);
-			EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i+j=" << i+j;
-			EXPECT_NEAR(vOrg.y, vSub.y, 0.000001) << "i+j=" << i+j;
-			EXPECT_NEAR(pOrg.x, pSub.x, 0.000001) << "i+j=" << i+j;
-			EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i+j=" << i+j;
+			MotionInstant org, sub;
+    		bool validOrg = path.evaluate(i * 1 + j, org);
+    		bool validSub = subPaths[i]->evaluate(j, sub);
+			EXPECT_NEAR(org.vel.x, sub.vel.x, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(org.vel.y, sub.vel.y, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(org.pos.x, sub.pos.x, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(org.pos.y, sub.pos.y, 0.00001) << "i+j=" << i+j;
     		EXPECT_EQ(validOrg, validSub) << "i+j=" << i+j;
     	}
     }

@@ -21,10 +21,10 @@ set(ROBOCUP_LIB_SRC
     "modeling/RobotFilter.cpp"
     "motion/MotionControl.cpp"
     "motion/TrapezoidalMotion.cpp"
-    "MotionConstraints.cpp"
     "NewRefereeModule.cpp"
     "planning/CompositePath.cpp"
     "planning/InterpolatedPath.cpp"
+    "planning/MotionConstraints.cpp"
     "planning/RRTPlanner.cpp"
     "planning/Tree.cpp"
     "Processor.cpp"
@@ -40,6 +40,7 @@ set(ROBOCUP_LIB_SRC
     "StripChart.cpp"
     "SystemState.cpp"
     "VisionReceiver.cpp"
+    "WindowEvaluator.cpp"
 )
 
 
@@ -59,10 +60,6 @@ qt5_wrap_ui(SOCCER_UIS ${SOCCER_UIS})
 
 qt5_add_resources(SOCCER_RSRC ui/main_icons.qrc)
 
-
-
-# Python
-include_directories(${PYTHON_INCLUDE_DIRS})
 
 # Boost Python
 set(Boost_USE_STATIC_LIBS   OFF)
@@ -85,15 +82,16 @@ if (NOT FOUND_A_BOOST_PYTHON)
 endif()
 
 # libusb
-include_directories(${LIBUSB_1_INCLUDE_DIRS})
+include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
 # SDL
-include_directories(${SDL_INCLUDE_DIRS})
+include_directories(SYSTEM ${SDL_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
 add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
+set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
 target_link_libraries(robocup common)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
@@ -106,7 +104,7 @@ target_link_libraries(robocup ${SDL_LIBRARY})
 
 # python
 # note: these are set in the root CMakeLists.txt file
-include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 link_directories(${PYTHON_LINK_DIRS})
 target_link_libraries(robocup ${PYTHON_LIBRARIES})
 
@@ -154,11 +152,13 @@ target_link_libraries(log_viewer common)
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
     "BatteryProfileTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
     "TestMain.cpp"
+    "WindowEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

@@ -11,10 +11,6 @@ import robocup
 # this test repeatedly runs the PivotKick behavior aimed at our goal
 class TestPivotKick(play.Play):
 
-    class State(enum.Enum):
-        waiting = 1
-        kicking = 2
-
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -24,7 +20,7 @@ class TestPivotKick(play.Play):
             'immediately')
 
         kick = skills.pivot_kick.PivotKick()
-        kick.target = constants.Field.TheirGoalSegment
+        kick.target = constants.Field.OurGoalSegment
         kick.aim_params['desperate_timeout'] = 3
         self.add_subbehavior(kick, 'kick', required=False)
 

@@ -28,32 +28,32 @@ class Robot:
 class Ball:
     Radius = 0.0215
     Mass = 0.04593 # mass of golf ball (kg)
-    
+
 
 class Field:
-    Length = 6.05
-    Width = 4.05
-    Border = 0.25
+    Length = 9.00
+    Width = 6.00
+    Border = 0.70
 
     LineWidth = 0.01
 
-    GoalWidth = 0.700
+    GoalWidth = 1.000
     GoalDepth = 0.180
     GoalHeight = 0.160
 
     # Distance of the penalty marker from the goal line
-    PenaltyDist = 0.750
+    PenaltyDist = 1.0
     PenaltyDiam = 0.010
 
     # Radius of the goal arcs
-    ArcRadius = 0.8
+    ArcRadius = 1.0
 
-    # diameter of the center circle 
+    # diameter of the center circle
     CenterRadius = 0.5
     CenterDiameter = 1.0
 
-    # flat area for defense markings 
-    GoalFlat = 0.35
+    # flat area for defense markings
+    GoalFlat = 0.5
 
     FloorLength = Length + 2.0 * Border;
     FloorWidth = Width + 2.0 * Border;
@@ -70,6 +70,13 @@ class Field:
     TheirGoalShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, Length), ArcRadius))
     TheirGoalShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, Length), robocup.Point(GoalFlat / 2.0, Length - ArcRadius)))
 
+    FieldBorders = [
+            robocup.Line(robocup.Point(-Width / 2.0, 0), robocup.Point(-Width / 2.0, Length)),
+            robocup.Line(robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0, Length)),
+            robocup.Line(robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),
+            robocup.Line(robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0)) ]
+
+    FieldRect = robocup.Rect(robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))
 
     TheirGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),
                                         robocup.Point(-GoalWidth / 2.0, Length))
@@ -117,4 +124,12 @@ def setFieldConstantsFromField_Dimensions(value):
 
     Field.TheirHalf = robocup.Rect(robocup.Point(-Field.Width/2, Field.Length), robocup.Point(Field.Width/2, Field.Length/2))
     Field.OurHalf = robocup.Rect(robocup.Point(-Field.Width/2, 0), robocup.Point(Field.Width/2, Field.Length/2))
+
+    Field.FieldBorders = [
+            robocup.Line(robocup.Point(-Width / 2.0, 0), robocup.Point(-Width / 2.0, Length)),
+            robocup.Line(robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0, Length)),
+            robocup.Line(robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),
+            robocup.Line(robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0)) ]
+
+    Field.FieldRect = robocup.Rect(robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))
 

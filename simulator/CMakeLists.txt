@@ -4,14 +4,14 @@ set(CMAKE_AUTOMOC ON)
 
 set(simulator_SRC
     "bullet_opengl/DemoApplication.cpp"
+    "bullet_opengl/GL_DialogDynamicsWorld.cpp"
+    "bullet_opengl/GL_DialogWindow.cpp"
     "bullet_opengl/GL_ShapeDrawer.cpp"
-    "bullet_opengl/GLDebugDrawer.cpp"
     "bullet_opengl/GL_Simplex1to4.cpp"
+    "bullet_opengl/GLDebugDrawer.cpp"
     "bullet_opengl/GLDebugFont.cpp"
     "bullet_opengl/GlutDemoApplication.cpp"
-    "bullet_opengl/GL_DialogDynamicsWorld.cpp"
     "bullet_opengl/GlutStuff.cpp"
-    "bullet_opengl/GL_DialogWindow.cpp"
     "bullet_opengl/RenderTexture.cpp"
     "physics/Ball.cpp"
     "physics/Entity.cpp"
@@ -72,15 +72,15 @@ qt5_use_modules(simulator Widgets Xml Core OpenGL Network)
 
 # bullet physics library
 find_package(Bullet REQUIRED)
-include_directories(${BULLET_INCLUDE_DIR})
+include_directories(SYSTEM ${BULLET_INCLUDE_DIR})
 target_link_libraries(simulator ${BULLET_LIBRARIES})
 
 # handle OpenGL stuff separately on OS X vs Linux
 if(APPLE)
     link_directories(/opt/X11/lib/)
-    include_directories(/opt/X11/include/)
+    include_directories(SYSTEM /opt/X11/include/)
 
-    include_directories(/System/Library/Frameworks)
+    include_directories(SYSTEM /System/Library/Frameworks)
     find_library(OpenGL_LIBRARY OpenGL)
     target_link_libraries(simulator ${OpenGL_LIBRARY})
     target_link_libraries(simulator /usr/local/lib/libglut.dylib)

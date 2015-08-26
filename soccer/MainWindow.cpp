@@ -318,6 +318,14 @@ void MainWindow::updateViews()
 
 	if (currentFrame)
 	{
+		if(_firstLogTimestamp == -1)
+			_firstLogTimestamp = currentFrame->timestamp();
+		uint64_t gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
+		uint64_t minutes = gametime_ms / 60000;
+		uint64_t seconds = (gametime_ms % 60000) /  1000;
+		uint64_t deciseconds = (gametime_ms % 1000) / 100;
+		_ui.logTime->setText(QString::fromStdString(to_string(minutes) + " : " + to_string(seconds) + "." + to_string(deciseconds)));
+
 		// Update the orientation demo view
 		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
@@ -401,6 +409,7 @@ void MainWindow::updateViews()
 	_ui.refYellowTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.timeouts_left));
 	_ui.refYellowGoalie->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
 
+	_ui.actionUse_External_Referee->setChecked(_processor->refereeModule()->useExternalReferee());
 
 	//	update robot status list
 	for (const OurRobot *robot : _processor->state()->self) {
@@ -1036,9 +1045,17 @@ void MainWindow::on_manualID_currentIndexChanged(int value)
 	}
 }
 
+void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
+    _processor->setUseFieldOrientedManualDrive(value);
+}
+
 void MainWindow::on_goalieID_currentIndexChanged(int value)
 {
 	_processor->goalieID(value - 1);
+}
+
+void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
+	_processor->refereeModule()->useExternalReferee(value);
 }
 
 ////////
@@ -1173,6 +1190,11 @@ void MainWindow::setRadioChannel(RadioChannels channel)
 		this->on_action906MHz_triggered();
 		break;
 	}
+}
+
+void MainWindow::setUseRefChecked(bool use_ref)
+{
+	_ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }
 
 void MainWindow::on_fastHalt_clicked()
