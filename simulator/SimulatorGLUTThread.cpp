@@ -12,7 +12,7 @@ using namespace std;
 
 // Hooks for GLUT
 
-static SimulatorGLUTThread* gSimpleApplication = 0;
+static SimulatorGLUTThread* gSimpleApplication = nullptr;
 
 static void glutKeyboardCallback(unsigned char key, int x, int y) {
 	gSimpleApplication->keyboardCallback(key, x, y);
@@ -45,8 +45,8 @@ static void glutDisplayCallback(void) {
 // SimulatorGLUTThread implementation
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared, bool showWindow)
-: _argv(argv), _argc(argc), _env(0), _vehicle(0), _blue(false),
-  _camera(0), _cameraHeight(4.f), _minCameraDistance(3.f), _maxCameraDistance(10.f), _showWindow(showWindow), _stopped(false)
+: _argv(argv), _argc(argc), _env(nullptr), _vehicle(nullptr), _blue(false),
+  _camera(nullptr), _cameraHeight(4.f), _minCameraDistance(3.f), _maxCameraDistance(10.f), _showWindow(showWindow), _stopped(false)
 {
 	initialize(configFile, sendShared);
 }

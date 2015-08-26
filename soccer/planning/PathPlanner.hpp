@@ -1,5 +1,9 @@
 #pragma once
-#include "planning/Path.hpp"
+
+#include <planning/MotionConstraints.hpp>
+#include <planning/MotionInstant.hpp>
+#include <planning/Path.hpp>
+
 
 namespace Planning
 {
@@ -10,9 +14,8 @@ namespace Planning
 	{
 
 	public:
-		//std::unique_ptr<Path> plan(const Geometry2d::Point& startPos, const Geometry2d::Point& startVel, const Geometry2d::Point& endPos, const Geometry2d::Point& endVel, const MotionConstraints& motionConstraints)=0;
 		/**
-		 * Virtual function which returns a planned Path following the specified MotionContraints and doesn't hit the obstacles.
+		 * Returns an obstacle-free Path subject to the specified MotionContraints.
 		 */
 		virtual std::unique_ptr<Path> run(
 				MotionInstant startInstant,

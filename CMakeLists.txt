@@ -22,7 +22,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
 # Turn some compiler warnings into errors
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=delete-non-virtual-dtor -Werror=uninitialized")
 
 # Qt5
 if(APPLE)
@@ -30,6 +30,11 @@ if(APPLE)
     find_package(Qt5Widgets
         REQUIRED
         PATHS /usr/local/Cellar/qt5/*)
+
+    # this directory is included by default, but we mark it as SYSTEM so
+    # warnings in external headers don't show up every time we build
+    include_directories(SYSTEM /usr/local/include/)
+
 else()
     find_package(Qt5Widgets REQUIRED)
 endif()

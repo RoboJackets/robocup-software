@@ -41,6 +41,7 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-sim:        use simulator\n");
 	fprintf(stderr, "\t-freq:       specify radio frequency (906 or 904)\n");
 	fprintf(stderr, "\t-nolog:      don't write log files\n");
+	fprintf(stderr, "\t-noref:      don't use external referee commands\n");
 	exit(1);
 }
 
@@ -131,7 +132,7 @@ int main (int argc, char* argv[])
 			}
 
 			i++;
-			seed = strtol(argv[i], 0, 16);
+			seed = strtol(argv[i], nullptr, 16);
 		}
 		else if(strcmp(var, "-pbk") == 0)
 		{
@@ -163,7 +164,7 @@ int main (int argc, char* argv[])
 	// Default config file name
 	if (cfgFile.isNull())
 	{
-		cfgFile = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
+		cfgFile = ApplicationRunDirectory().filePath(sim ? "soccer-sim.cfg" : "soccer-real.cfg");
 	}
 
 	Configuration config;
@@ -180,13 +181,15 @@ int main (int argc, char* argv[])
 	QString error;
 	if (!config.load(cfgFile, error))
 	{
-		QMessageBox::critical(0, "Soccer",
+		QMessageBox::critical(nullptr, "Soccer",
 			QString("Can't read initial configuration %1:\n%2").arg(cfgFile, error));
 	}
 
 	MainWindow *win = new MainWindow;
 	win->configuration(&config);
 	win->processor(processor);
+
+	win->setUseRefChecked(!noref);
 
 	if (!QDir("logs").exists())
 	{

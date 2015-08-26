@@ -1,0 +1,26 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+      # set build status to pending on start
+    - ./util/docker/maketest.sh --pending ${GH_TOKEN}
+      # Login to docker
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - ./util/docker/baseimage/buildbaseimage.sh
+      # Actually the test step, but we want to cache it so it can go here.
+    - ./util/docker/circle/buildcircle.sh
+  cache_directories:
+    - ~/.ccache
+
+test:
+  override:
+    - sh -c true
+
+deployment:
+  github:
+    branch: master
+    commands:
+      - ./util/docker/circle/apidocs.sh
+

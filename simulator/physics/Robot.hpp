@@ -81,11 +81,11 @@ public:
 	//the following are in field space, aka soccer's coordinate system
 
 	// Entity interface
-	virtual void position(float x, float y); // world coords
+	virtual void position(float x, float y) override; // world coords
 
 	virtual void velocity(float x, float y, float w); // body coords
 
-	virtual Geometry2d::Point getPosition() const;
+	virtual Geometry2d::Point getPosition() const override;
 
 	virtual float getAngle() const;
 

@@ -1,24 +1,23 @@
 #pragma once
 
-#include <stdint.h>
-#include <vector>
-#include <boost/optional.hpp>
-#include <boost/array.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/circular_buffer.hpp>
-#include <QColor>
-#include <Eigen/Geometry>
 #include <Constants.hpp>
-#include <Utils.hpp>
-
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
+#include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
-#include "planning/MotionConstraints.hpp"
-#include "planning/MotionCommand.hpp"
-
-#include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <Utils.hpp>
+
+#include <array>
+#include <boost/circular_buffer.hpp>
+#include <boost/optional.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <Eigen/Dense>
+#include <QColor>
+#include <stdint.h>
+#include <vector>
 
 
 class SystemState;
@@ -109,11 +108,7 @@ public:
 		return shell() == other.shell() && self() == other.self();
 	}
 
-	bool equals(const Robot &other) {
-		return *this == other;
-	}
-
-	std::string to_string() const {
+	std::string toString() const {
 		return 	std::string("<Robot ") +
 						(self() ? "us[" : "them[") +
 						std::to_string(shell()) +
@@ -123,14 +118,10 @@ public:
 	}
 
 	friend std::ostream& operator<< (std::ostream& stream, const Robot& robot) {
-		stream << robot.to_string();
+		stream << robot.toString();
 		return stream;
 	}
 
-	friend std::ostream& operator<< (std::ostream& stream, const Robot* robot) {
-		stream << robot->to_string();
-		return stream;
-	}
 
 private:
 	unsigned int _shell;
@@ -151,7 +142,7 @@ private:
  */
 class OurRobot: public Robot {
 public:
-	typedef boost::array<float,Num_Shells> RobotMask;
+	typedef std::array<float,Num_Shells> RobotMask;
 
 	RobotConfig *config;
 	RobotStatus *status;
@@ -219,7 +210,8 @@ public:
 
 
 	/**
-	 * @brief Move to a given point using the default RRT planner
+	 * @brief Move to a given point bypassing the RRT Path planner. This will plan a direct path ignoring 
+	 *			all obstacles and the starting velocity	
 	 * @param endSpeed - the speed we should be going when we reach the end of the path
 	 */
 	void moveDirect(const Geometry2d::Point &goal, float endSpeed = 0);
@@ -499,7 +491,7 @@ protected:
 	template<class ROBOT>
 	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
 		Geometry2d::CompositeShape result;
-		for (size_t i=0; i<RobotMask::size(); ++i)
+		for (size_t i=0; i<mask.size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
 				result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
 		return result;
@@ -520,7 +512,7 @@ protected:
 	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask,
 				 Geometry2d::Point currentPosition, float checkRadius) const {
 		Geometry2d::CompositeShape result;
-		for (size_t i=0; i<RobotMask::size(); ++i)
+		for (size_t i=0; i<mask.size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible) {
 				if (currentPosition.distTo(robots[i]->pos)<=checkRadius) {
 					result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));

@@ -1,16 +1,16 @@
-
 #pragma once
 
-#include <list>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <planning/InterpolatedPath.hpp>
-#include "planning/MotionConstraints.hpp"
-#include "planning/MotionCommand.hpp"
 #include "PathPlanner.hpp"
-
 #include "Tree.hpp"
+#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
+#include <planning/InterpolatedPath.hpp>
+#include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
+#include <planning/MotionInstant.hpp>
 
+#include <Eigen/Dense>
+#include <list>
 
 
 namespace Planning
@@ -27,7 +27,6 @@ namespace Planning
 	class RRTPlanner: public PathPlanner
 	{
 		public:
-			RRTPlanner();
 			RRTPlanner(int maxIterations);
 			/**
 			 * gets the maximum number of iterations for the RRT algorithm

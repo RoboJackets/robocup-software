@@ -6,23 +6,23 @@
 
 using namespace boost::python;
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Rect.hpp>
+#include "motion/TrapezoidalMotion.hpp"
+#include "WindowEvaluator.hpp"
+#include <Constants.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Arc.hpp>
+#include <Geometry2d/Rect.hpp>
+#include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <protobuf/LogFrame.pb.h>
-#include <Constants.hpp>
-#include <WindowEvaluator.h>
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 #include <exception>
 
-#include "motion/TrapezoidalMotion.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -33,7 +33,7 @@ struct NullArgumentException : public std::exception {
 	std::string argument_name;
 	NullArgumentException() : argument_name("") {}
 	NullArgumentException(std::string name) : argument_name(name) {}
-	virtual const char* what() const throw(){ return ("'" + argument_name + "'' was 'None'.").c_str(); }
+	virtual const char* what() const throw() override{ return ("'" + argument_name + "'' was 'None'.").c_str(); }
 };
 
 void translateException(NullArgumentException const& e)
@@ -75,7 +75,7 @@ std::string Point_repr(Geometry2d::Point *self) {
 }
 
 std::string Robot_repr(Robot *self) {
-	return self->to_string();
+	return self->toString();
 }
 
 Geometry2d::Point Robot_pos(Robot *self) {
@@ -278,7 +278,7 @@ void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Poi
 	self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-void State_draw_polygon(SystemState *self, boost::python::list points, boost::python::tuple rgb, const std::string &layer) {
+void State_draw_polygon(SystemState *self, const boost::python::list &points, boost::python::tuple rgb, const std::string &layer) {
 	std::vector<Geometry2d::Point> ptVec;
 	for (int i = 0; i < len(points); i++) {
 		ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
@@ -333,10 +333,6 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc *self, const Geometry
 	return lst;
 }
 
-Geometry2d::Point Circle_get_center(Geometry2d::Circle *self) {
-    return self->center;
-}
-
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
 	if(origin == nullptr)
 		throw NullArgumentException{"origin"};
@@ -355,14 +351,32 @@ boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometr
 	return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target) {
+boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target) {
 	if(origin == nullptr)
 		throw NullArgumentException{"origin"};
 	if(target == nullptr)
 		throw NullArgumentException{"target"};
 	boost::python::list lst;
 
-	auto window_results = self->eval_pt_to_pt(*origin, *target);
+	auto window_results = self->eval_pt_to_robot(*origin, *target);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target, float targetWidth) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	if(target == nullptr)
+		throw NullArgumentException{"target"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
 
 	lst.append(window_results.first);
 	if(window_results.second.is_initialized())
@@ -483,16 +497,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
-        .def("center", &Circle_get_center)
-	;
-
-	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
-		.def("intersects_line", &Arc_intersects_line)
-		.def("intersects_segment", &Arc_intersects_segment)
-		.def("center", &Geometry2d::Arc::center)
-		.def("radius", &Geometry2d::Arc::radius)
-		.def("start", &Geometry2d::Arc::start)
-		.def("end", &Geometry2d::Arc::end)
+        .def_readonly("center", &Geometry2d::Circle::center)
 	;
 
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
@@ -555,7 +560,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.add_property("angle_vel", &Robot_angle_vel, "angular velocity in degrees per second")
         .add_property("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
-		.def("__eq__", &Robot::equals)
+		.def("__eq__", &Robot::operator==)
 	;
 
 	class_<OurRobot, OurRobot *, bases<Robot>, boost::noncopyable>("OurRobot", init<int, SystemState*>())
@@ -673,11 +678,10 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("hypothetical_robot_locations", &WindowEvaluator::hypothetical_robot_locations)
 		.def("add_excluded_robot", &WinEval_add_excluded_robot)
 		.def("eval_pt_to_pt", &WinEval_eval_pt_to_pt)
+		.def("eval_pt_to_robot", &WinEval_eval_pt_to_robot)
 		.def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
 		.def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
 		.def("eval_pt_to_seg", &WinEval_eval_pt_to_seg)
-		.def("obstacle_range", &WindowEvaluator::obstacle_range)
-		.def("obstacle_robot", &WindowEvaluator::obstacle_robot)
 	;
 
 }

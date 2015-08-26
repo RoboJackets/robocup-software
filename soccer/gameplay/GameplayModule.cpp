@@ -7,7 +7,6 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <boost/make_shared.hpp>
 
 //	for python stuff
 #include "robocup-py.hpp"
@@ -51,8 +50,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	        object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
 	        _mainPyNamespace["robocup"] = robocup_module;
 
+			QDir gameplayDir = ApplicationRunDirectory();
+			gameplayDir.cd("../soccer/gameplay");
+
 	        //	add gameplay directory to python import path (so import XXX) will look in the right directory
-	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay')",
+			string importStmt = QString("import sys; sys.path.append('%1')").arg(gameplayDir.absolutePath()).toStdString();
+	        handle<>ignored2((PyRun_String(importStmt.data(),
 	            Py_file_input,
 	            _mainPyNamespace.ptr(),
 	            _mainPyNamespace.ptr())));
@@ -71,113 +74,123 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 }
 
 void Gameplay::GameplayModule::calculateFieldObstacles() {
-	_centerMatrix = TransformMatrix::translate(Point(0, Field_Dimensions::Current_Dimensions.Length() / 2));
-	_oppMatrix = TransformMatrix::translate(Point(0, Field_Dimensions::Current_Dimensions.Length())) *
-							 TransformMatrix::rotate(M_PI);
-
-	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
-	Polygon *sidePolygon = new Polygon;
-	_sideObstacle = std::shared_ptr<Shape>(sidePolygon);
-	float x = Field_Dimensions::Current_Dimensions.Width() / 2 + 0.3;
-	const float y1 = Field_Dimensions::Current_Dimensions.Length() / 2;
-	const float y2 = Field_Dimensions::Current_Dimensions.Length() + 0.3;
-	const float r = Field_Dimensions::Current_Dimensions.CenterRadius();
-	sidePolygon->vertices.push_back(Point(-x, y1));
-	sidePolygon->vertices.push_back(Point(-r, y1));
-	sidePolygon->vertices.push_back(Point(0, y1 + r));
-	sidePolygon->vertices.push_back(Point(r, y1));
-	sidePolygon->vertices.push_back(Point(x, y1));
-	sidePolygon->vertices.push_back(Point(x, y2));
-	sidePolygon->vertices.push_back(Point(-x, y2));
-
-	float y = -0.3;
-	float deadspace = 0.3;
-	x = Field_Dimensions::Current_Dimensions.Width() /2.0f + 0.3;
-	Polygon* floorObstacle = new Polygon;
-	floorObstacle->vertices.push_back(Point(-x, y));
-	floorObstacle->vertices.push_back(Point(-x, y-1));
-	floorObstacle->vertices.push_back(Point(x, y-1));
-	floorObstacle->vertices.push_back(Point(x, y));
-	_nonFloor[0] = std::shared_ptr<Shape>(floorObstacle);
-
-	y = Field_Dimensions::Current_Dimensions.Length() + 0.3;
-	floorObstacle = new Polygon;
-	floorObstacle->vertices.push_back(Point(-x, y));
-	floorObstacle->vertices.push_back(Point(-x, y+1));
-	floorObstacle->vertices.push_back(Point(x, y+1));
-	floorObstacle->vertices.push_back(Point(x, y));
-	_nonFloor[1] = std::shared_ptr<Shape>(floorObstacle);
-
-	y = Field_Dimensions::Current_Dimensions.FloorLength();
-	floorObstacle = new Polygon;
-	floorObstacle->vertices.push_back(Point(-x, -deadspace));
-	floorObstacle->vertices.push_back(Point(-x-1, -deadspace));
-	floorObstacle->vertices.push_back(Point(-x-1, y));
-	floorObstacle->vertices.push_back(Point(-x, y));
-	_nonFloor[2] = std::shared_ptr<Shape>(floorObstacle);
-
-	floorObstacle = new Polygon;
-	floorObstacle->vertices.push_back(Point(x, -deadspace));
-	floorObstacle->vertices.push_back(Point(x+1, -deadspace));
-	floorObstacle->vertices.push_back(Point(x+1, y));
-	floorObstacle->vertices.push_back(Point(x, y));
-	_nonFloor[3] = std::shared_ptr<Shape>(floorObstacle);
-
-	auto ourGoalArea = std::make_shared<Polygon>();
-	const float halfFlat = Field_Dimensions::Current_Dimensions.GoalFlat() /2.0;
-	const float radius = Field_Dimensions::Current_Dimensions.ArcRadius();
-	ourGoalArea->vertices.push_back(Point(-halfFlat, 0));
-	ourGoalArea->vertices.push_back(Point(-halfFlat, radius));
-	ourGoalArea->vertices.push_back(Point( halfFlat, radius));
-	ourGoalArea->vertices.push_back(Point( halfFlat, 0));
-	_ourGoalArea.add(ourGoalArea);
-	_ourGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point(-halfFlat, 0), radius)));
-	_ourGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point( halfFlat, 0), radius)));
-
-	auto theirGoalArea = std::make_shared<Polygon>();
-	const auto field_length = Field_Dimensions::Current_Dimensions.Length();
-	theirGoalArea->vertices.push_back(Point(-halfFlat, field_length));
-	theirGoalArea->vertices.push_back(Point(-halfFlat, field_length - radius));
-	theirGoalArea->vertices.push_back(Point( halfFlat, field_length - radius));
-	theirGoalArea->vertices.push_back(Point( halfFlat, field_length));
-	_theirGoalArea.add(theirGoalArea);
-	_theirGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point(-halfFlat, field_length), radius)));
-	_theirGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Point( halfFlat, field_length), radius)));
-
-	_ourHalf = std::make_shared<Polygon>();
-	_ourHalf->vertices.push_back(Point(-x, -Field_Dimensions::Current_Dimensions.Border()));
-	_ourHalf->vertices.push_back(Point(-x, y1));
-	_ourHalf->vertices.push_back(Point(x, y1));
-	_ourHalf->vertices.push_back(Point(x, -Field_Dimensions::Current_Dimensions.Border()));
-
-	_opponentHalf = std::make_shared<Polygon>();
-	_opponentHalf->vertices.push_back(Point(-x, y1));
-	_opponentHalf->vertices.push_back(Point(-x, y2));
-	_opponentHalf->vertices.push_back(Point(x, y2));
-	_opponentHalf->vertices.push_back(Point(x, y1));
-
 	auto dimensions = Field_Dimensions::Current_Dimensions;
 
-	_ourGoal = std::make_shared<Polygon>();
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, 0));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), 0));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), -dimensions.GoalDepth() - dimensions.LineWidth()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), -dimensions.GoalDepth() - dimensions.LineWidth()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), 0));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2, 0));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2, -dimensions.GoalDepth()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, -dimensions.GoalDepth()));
-	
-	_theirGoal = std::make_shared<Polygon>();
-	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length()));
-	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length()));
-	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
-	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
-	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length()));
-	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length()));
-	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
-	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
+	_centerMatrix = TransformMatrix::translate(Point(0, dimensions.Length() / 2));
+	_oppMatrix = TransformMatrix::translate(Point(0, dimensions.Length())) *
+							 TransformMatrix::rotate(M_PI);
 
+	// TODO(barulicm): describe what @inset is
+	constexpr float inset = 0.3;
+
+	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
+	// TODO(barulicm): double check this - shouldn't the y be inset, not the x?
+	float x = dimensions.Width() / 2 + inset;
+	const float y1 = dimensions.Length() / 2;
+	const float y2 = dimensions.Length() + inset;
+	const float r = dimensions.CenterRadius();
+	_sideObstacle = make_shared<Polygon>(vector<Point>{
+		Point(-x, y1),
+		Point(-r, y1),
+		Point(0, y1 + r),
+		Point(r, y1),
+		Point(x, y1),
+		Point(x, y2),
+		Point(-x, y2)
+	});
+
+	float y = -inset;
+	float deadspace = inset;
+	x = dimensions.Width() /2.0f + inset;
+	_nonFloor[0] = make_shared<Polygon>(vector<Point>{
+		Point(-x, y),
+		Point(-x, y-1),
+		Point(x, y-1),
+		Point(x, y)
+	});
+
+	y = dimensions.Length() + inset;
+	_nonFloor[1] = make_shared<Polygon>(vector<Point>{
+		Point(-x, y),
+		Point(-x, y+1),
+		Point(x, y+1),
+		Point(x, y)
+	});
+
+	y = dimensions.FloorLength();
+	_nonFloor[2] = make_shared<Polygon>(vector<Point>{
+		Point(-x, -deadspace),
+		Point(-x-1, -deadspace),
+		Point(-x-1, y),
+		Point(-x, y)
+	});
+
+	_nonFloor[3] = make_shared<Polygon>(vector<Point>{
+		Point(x, -deadspace),
+		Point(x+1, -deadspace),
+		Point(x+1, y),
+		Point(x, y)
+	});
+
+	const float halfFlat = dimensions.GoalFlat() /2.0;
+	const float radius = dimensions.ArcRadius();
+	auto ourGoalArea = make_shared<Polygon>(vector<Point>{
+		Point(-halfFlat, 0),
+		Point(-halfFlat, radius),
+		Point( halfFlat, radius),
+		Point( halfFlat, 0)
+	});
+	_ourGoalArea = make_shared<CompositeShape>();
+	_ourGoalArea->add(ourGoalArea);
+	_ourGoalArea->add(std::dynamic_pointer_cast<Shape>(make_shared<Circle>(Point(-halfFlat, 0), radius)));
+	_ourGoalArea->add(std::dynamic_pointer_cast<Shape>(make_shared<Circle>(Point( halfFlat, 0), radius)));
+
+	auto theirGoalArea = make_shared<Polygon>(vector<Point>{
+		Point(-halfFlat, dimensions.Length()),
+		Point(-halfFlat, dimensions.Length() - radius),
+		Point( halfFlat, dimensions.Length() - radius),
+		Point( halfFlat, dimensions.Length())
+	});
+	_theirGoalArea = make_shared<CompositeShape>();
+	_theirGoalArea->add(theirGoalArea);
+	_theirGoalArea->add(std::dynamic_pointer_cast<Shape>(make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
+	_theirGoalArea->add(std::dynamic_pointer_cast<Shape>(make_shared<Circle>(Point( halfFlat, dimensions.Length()), radius)));
+
+	_ourHalf = make_shared<Polygon>(vector<Point>{
+		Point(-x, -dimensions.Border()),
+		Point(-x, y1),
+		Point(x, y1),
+		Point(x, -dimensions.Border())
+	});
+
+	_opponentHalf = make_shared<Polygon>(vector<Point>{
+		Point(-x, y1),
+		Point(-x, y2),
+		Point(x, y2),
+		Point(x, y1)
+	});
+
+	_ourGoal = make_shared<Polygon>(vector<Point>{
+		Point(-dimensions.GoalWidth()/2, 0),
+		Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), 0),
+		Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), -dimensions.GoalDepth() - dimensions.LineWidth()),
+		Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), -dimensions.GoalDepth() - dimensions.LineWidth()),
+		Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), 0),
+		Point( dimensions.GoalWidth()/2, 0),
+		Point( dimensions.GoalWidth()/2, -dimensions.GoalDepth()),
+		Point(-dimensions.GoalWidth()/2, -dimensions.GoalDepth())
+	});
+	
+	_theirGoal = make_shared<Polygon>(vector<Point>{
+		Point(-dimensions.GoalWidth()/2, dimensions.Length()),
+		Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length()),
+		Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()),
+		Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()),
+		Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length()),
+		Point( dimensions.GoalWidth()/2, dimensions.Length()),
+		Point( dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()),
+		Point(-dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth())
+	});
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
@@ -309,7 +322,7 @@ void Gameplay::GameplayModule::run()
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
 			//	vector of shared pointers to pass to python
-			std::vector<OurRobot *> *botVector = new std::vector<OurRobot *>();
+			vector<OurRobot *> *botVector = new vector<OurRobot *>();
 			for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
 				OurRobot *ourBot = *itr;
 				//	don't attempt to drive the robot that's joystick-controlled
@@ -320,7 +333,7 @@ void Gameplay::GameplayModule::run()
 			}
 			getMainModule().attr("set_our_robots")(botVector);
 
-			std::vector<OpponentRobot *> *theirBotVector = new std::vector<OpponentRobot *>();
+			vector<OpponentRobot *> *theirBotVector = new vector<OpponentRobot *>();
 			for (auto itr = _state->opp.begin(); itr != _state->opp.end(); itr++) {
 				OpponentRobot *bot = *itr;
 				if (bot && bot->visible) {
@@ -382,7 +395,8 @@ void Gameplay::GameplayModule::run()
 		if (r && r->visible) {
 			/// set obstacles for the robots
 			if (r->shell() == _goalieID || r->isPenaltyKicker)
-				r->replanIfNeeded(global_obstacles); /// just for goalie
+				// The goalie and penalty kicker can enter the goal zone.
+				r->replanIfNeeded(global_obstacles);
 			else
 				r->replanIfNeeded(obstacles_with_goals); /// all other robots
 		}

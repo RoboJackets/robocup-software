@@ -4,7 +4,6 @@ import behavior
 import role_assignment
 import constants
 import evaluation.ball
-
 import skills
 import main
 import enum

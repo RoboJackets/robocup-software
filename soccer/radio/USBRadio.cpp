@@ -22,8 +22,8 @@ USBRadio::USBRadio()
 {
 	_sequence = 0;
 	_printedError = false;
-	_device = 0;
-	_usb_context = 0;
+	_device = nullptr;
+	_usb_context = nullptr;
 	libusb_init(&_usb_context);
 	
 	for (int i = 0; i < NumRXTransfers; ++i)
@@ -49,7 +49,7 @@ USBRadio::~USBRadio()
 
 bool USBRadio::open()
 {
-	libusb_device **devices = 0;
+	libusb_device **devices = nullptr;
 	ssize_t numDevices = libusb_get_device_list(_usb_context, &devices);
 	
 	if (numDevices < 0)
@@ -154,7 +154,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer)
 
 void USBRadio::command(uint8_t cmd)
 {
-	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 2, 0, cmd, 0, 0, Control_Timeout))
+	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 2, 0, cmd, nullptr, 0, Control_Timeout))
 	{
 		throw runtime_error("USBRadio::command control write failed");
 	}
@@ -162,7 +162,7 @@ void USBRadio::command(uint8_t cmd)
 
 void USBRadio::write(uint8_t reg, uint8_t value)
 {
-	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 1, value, reg, 0, 0, Control_Timeout))
+	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 1, value, reg, nullptr, 0, Control_Timeout))
 	{
 		throw runtime_error("USBRadio::write control write failed");
 	}
@@ -202,7 +202,7 @@ void USBRadio::configure()
 void USBRadio::auto_calibrate(bool enable)
 {
 	int flag = enable ? 1 : 0;
-	assert(libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 4, flag, 0, 0, 0, Control_Timeout) == 0);
+	assert(libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 4, flag, 0, nullptr, 0, Control_Timeout) == 0);
 }
 
 bool USBRadio::isOpen() const
@@ -285,7 +285,7 @@ void USBRadio::send(Packet::RadioTx& packet)
 	{
 		fprintf(stderr, "USBRadio: Bulk write failed\n");
 		libusb_close(_device);
-		_device = 0;
+		_device = nullptr;
 	}
 	
 	_sequence = (_sequence + 1) & 7;

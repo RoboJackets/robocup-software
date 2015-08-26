@@ -13,12 +13,14 @@
  */
 class BatteryProfile {
 public:
+    /// Each Entry in the profile is a <voltage, charge level> pair.
+    typedef std::pair<double, double> Entry;
+
     /**
      * @brief Construct a battery profile with the given <voltage, charge level> pairs.
      * These MUST be sorted in order of increasing voltage.
      */
-    BatteryProfile(int count, double v1, double l1, ...);
-    BatteryProfile(const std::vector<double> &voltages, const std::vector<double> &chargeLevels);
+    BatteryProfile(std::vector<BatteryProfile::Entry> dataPoints);
 
     /**
      * @brief Get the charge level given the voltage
@@ -31,8 +33,7 @@ public:
     double getChargeLevel(double voltage) const;
 
 private:
-    std::vector<double> _voltages;
-    std::vector<double> _chargeLevels;
+    std::vector<BatteryProfile::Entry> _dataPoints;
 };
 
 

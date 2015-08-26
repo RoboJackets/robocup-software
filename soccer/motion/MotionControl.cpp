@@ -202,7 +202,7 @@ void MotionControl::run() {
 
 		//	draw target pt
 		_robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
-		_robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue, "velocity");
+		_robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue, "MotionControl");
 
 		//	convert from world to body coordinates
 		target.vel = target.vel.rotated(-_robot->angle);
@@ -221,7 +221,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
 	angleVel *= *_robot->config->angleVelMultiplier;
 
     // convert units
-    angleVel = angleVel * RadiansToDegrees;
+    angleVel *= RadiansToDegrees;
 
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
