@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = quit;
-	sigaction(SIGINT, &act, 0);
+	sigaction(SIGINT, &act, nullptr);
 
 	// Create and initialize GUI with environment information
 	SimulatorWindow win(sim_thread.env());

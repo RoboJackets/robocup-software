@@ -13,7 +13,7 @@ class SimulatorWindow: public QMainWindow
 	Q_OBJECT;
 
 public:
-	SimulatorWindow(Environment *value, QWidget *parent = 0);
+	SimulatorWindow(Environment *value, QWidget *parent = nullptr);
 
 private slots:
 	// slots from GUI components

@@ -12,7 +12,7 @@
 class RobotStatusWidget : public QWidget {
 public:
 
-	RobotStatusWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+	RobotStatusWidget(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
 
 	int shellID() const;
 	void setShellID(int shellID);

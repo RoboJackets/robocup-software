@@ -30,7 +30,7 @@ subject to the following restrictions:
 #include "LinearMath/btTransform.h"
 
 GL_Simplex1to4::GL_Simplex1to4()
-:m_simplexSolver(0)
+:m_simplexSolver(nullptr)
 {
 }
 
