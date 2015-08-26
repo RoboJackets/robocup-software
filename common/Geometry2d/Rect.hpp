@@ -6,102 +6,86 @@
 
 #include <algorithm>
 
-namespace Geometry2d
-{
-	class Segment;
-	
-	class Rect : public Shape
-	{
-		public:
-			Rect() {}
+namespace Geometry2d {
+class Segment;
 
-            Rect(const Point &p1)
-            {
-                pt[0] = pt[1] = p1;
-            }
+class Rect : public Shape {
+public:
+    Rect() {}
 
-			Rect(const Point &p1, const Point &p2)
-			{
-				pt[0] = p1;
-				pt[1] = p2;
-			}
+    Rect(const Point& p1) { pt[0] = pt[1] = p1; }
 
-			Rect(const Rect &other) {
-				pt[0] = other.pt[0];
-				pt[1] = other.pt[1];
-			}
+    Rect(const Point& p1, const Point& p2) {
+        pt[0] = p1;
+        pt[1] = p2;
+    }
 
-			Shape *clone() const override;
+    Rect(const Rect& other) {
+        pt[0] = other.pt[0];
+        pt[1] = other.pt[1];
+    }
 
-			Rect &operator+=(const Point &offset)
-			{
-				pt[0] += offset;
-				pt[1] += offset;
+    Shape* clone() const override;
 
-				return *this;
-			}
+    Rect& operator+=(const Point& offset) {
+        pt[0] += offset;
+        pt[1] += offset;
 
-			Rect &operator-=(const Point &offset)
-			{
-				pt[0] -= offset;
-				pt[1] -= offset;
+        return *this;
+    }
 
-				return *this;
-			}
+    Rect& operator-=(const Point& offset) {
+        pt[0] -= offset;
+        pt[1] -= offset;
 
-			Rect operator+(const Point &offset)
-			{
-				return Rect(pt[0] + offset, pt[1] + offset);
-			}
+        return *this;
+    }
 
-			Rect operator*(float s)
-			{
-				return Rect(pt[0] * s, pt[1] * s);
-			}
+    Rect operator+(const Point& offset) {
+        return Rect(pt[0] + offset, pt[1] + offset);
+    }
 
-			Rect &operator*=(float s)
-			{
-				pt[0] *= s;
-				pt[1] *= s;
+    Rect operator*(float s) { return Rect(pt[0] * s, pt[1] * s); }
 
-				return *this;
-			}
-			
-			bool contains(const Point &other) const;
-			bool contains(const Rect &other) const;
+    Rect& operator*=(float s) {
+        pt[0] *= s;
+        pt[1] *= s;
 
-			bool containsPoint(const Point &other) const override {
-				return contains(other);
-			}
+        return *this;
+    }
 
+    bool contains(const Point& other) const;
+    bool contains(const Rect& other) const;
 
-	        bool hit(const Point &pt) const override {
-	        	return contains(pt);
-	        }
+    bool containsPoint(const Point& other) const override {
+        return contains(other);
+    }
 
-	        bool hit(const Segment &seg) const override;
+    bool hit(const Point& pt) const override { return contains(pt); }
 
-			Point center() const { return (pt[0] + pt[1]) / 2; }
+    bool hit(const Segment& seg) const override;
 
-			void expand(const Point &pt);
-			void expand(const Rect &rect);
+    Point center() const { return (pt[0] + pt[1]) / 2; }
 
-			float minx() const { return std::min(pt[0].x, pt[1].x); }
-			float miny() const { return std::min(pt[0].y, pt[1].y); }
-			float maxx() const { return std::max(pt[0].x, pt[1].x); }
-			float maxy() const { return std::max(pt[0].y, pt[1].y); }
-			
-			bool nearPoint(const Point &pt, float threshold) const;
-			bool nearSegment(const Segment &seg, float threshold) const;
-			
-			bool intersects(const Rect &other) const;
-			
-			Point pt[2];
+    void expand(const Point& pt);
+    void expand(const Rect& rect);
 
-			std::string toString() override {
-				std::stringstream str;
-				str << "Line<" << pt[0] << ", " << pt[1] << ">";
-				return str.str();
-			}
-	};
+    float minx() const { return std::min(pt[0].x, pt[1].x); }
+    float miny() const { return std::min(pt[0].y, pt[1].y); }
+    float maxx() const { return std::max(pt[0].x, pt[1].x); }
+    float maxy() const { return std::max(pt[0].y, pt[1].y); }
+
+    bool nearPoint(const Point& pt, float threshold) const;
+    bool nearSegment(const Segment& seg, float threshold) const;
+
+    bool intersects(const Rect& other) const;
+
+    Point pt[2];
+
+    std::string toString() override {
+        std::stringstream str;
+        str << "Line<" << pt[0] << ", " << pt[1] << ">";
+        return str.str();
+    }
+};
 }

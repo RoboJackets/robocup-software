@@ -3,7 +3,6 @@
 
 using namespace Geometry2d;
 
-
 TEST(Line, intersectsCircle) {
     Circle circle(Point(0, 0), 1);
     Line line(Point(0, 0), Point(0, 0));

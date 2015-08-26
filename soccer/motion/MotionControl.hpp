@@ -8,53 +8,58 @@ class OurRobot;
 
 /**
  * @brief Handles computer-side motion control
- * @details It is responsible for most of what gets sent out in a RadioTx packet.
+ * @details It is responsible for most of what gets sent out in a RadioTx
+ * packet.
  * The MotionControl object is given an OurRobot at initialization and from then
  * on will set the values in that robot's RadioTx packet directly whenever run()
  * or stopped() is called.
  */
 class MotionControl {
 public:
-	MotionControl(OurRobot *robot);
+    MotionControl(OurRobot* robot);
 
-	/**
-	 * Stops the robot.
-	 * The robot will decelerate at max acceleration until it stops.
-	 */
-	void stopped();
+    /**
+     * Stops the robot.
+     * The robot will decelerate at max acceleration until it stops.
+     */
+    void stopped();
 
-	/**
-	 * This runs PID control on the position and angle of the robot and
-	 * sets values in the robot's radioTx packet.
-	 */
-	void run();
+    /**
+     * This runs PID control on the position and angle of the robot and
+     * sets values in the robot's radioTx packet.
+     */
+    void run();
 
-
-	static void createConfiguration(Configuration *cfg);
+    static void createConfiguration(Configuration* cfg);
 
 private:
-	//	sets the target velocity in the robot's radio packet
-	//	this method is used by both run() and stopped() and does the
-	//	velocity and acceleration limiting and conversion to robot velocity "units"
-	void _targetBodyVel(Geometry2d::Point targetVel);
+    //	sets the target velocity in the robot's radio packet
+    //	this method is used by both run() and stopped() and does the
+    //	velocity and acceleration limiting and conversion to robot velocity
+    //"units"
+    void _targetBodyVel(Geometry2d::Point targetVel);
 
-	///	sets the target angle velocity in the robot's radio packet
-	///	does velocity limiting and conversion to robot velocity "units"
-	void _targetAngleVel(float angleVel);
+    ///	sets the target angle velocity in the robot's radio packet
+    ///	does velocity limiting and conversion to robot velocity "units"
+    void _targetAngleVel(float angleVel);
 
-	OurRobot *_robot;
+    OurRobot* _robot;
 
-	//	these are tracked so we can limit robot acceleration
-	Geometry2d::Point _lastVelCmd;	//	the last velocity (in m/s, not the radioTx value) command that we sent to the robot
-	long _lastCmdTime;	//	the time in microseconds when the last velocity command was sent
+    //	these are tracked so we can limit robot acceleration
+    Geometry2d::Point _lastVelCmd;  //	the last velocity (in m/s, not the
+                                    //radioTx value) command that we sent to the
+                                    //robot
+    long _lastCmdTime;  //	the time in microseconds when the last velocity
+                        //command was sent
 
-	Pid _positionXController;
-	Pid _positionYController;
-	Pid _angleController;
+    Pid _positionXController;
+    Pid _positionYController;
+    Pid _angleController;
 
-	static ConfigDouble *_max_acceleration;
-	static ConfigDouble *_max_velocity;
+    static ConfigDouble* _max_acceleration;
+    static ConfigDouble* _max_velocity;
 
-	//	if the path just changed, we add this boost to the output velocity command (before velocity scaling to bot 'units')
-	static ConfigDouble *_path_change_boost;
+    //	if the path just changed, we add this boost to the output velocity
+    //command (before velocity scaling to bot 'units')
+    static ConfigDouble* _path_change_boost;
 };
