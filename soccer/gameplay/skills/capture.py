@@ -137,13 +137,14 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_fine_approach(self):
-        Capture.multiplier = 1.5
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
         self.robot.face(main.ball().pos)
 
+        # TODO(ashaw596): explain this math a bit
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        aproach = self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel
+        multiplier = 1.5
+        aproach = self.bot_to_ball()*multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel
         if (aproach.mag() > 1):
             aproach = aproach.normalized()*1
         self.robot.set_world_vel(aproach)
