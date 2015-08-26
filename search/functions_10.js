@@ -1,13 +1,14 @@
 var searchData=
 [
-  ['saturate',['saturate',['../class_geometry2d_1_1_point.html#a7c7c74276015f8a8efc19a3b2937ae7f',1,'Geometry2d::Point']]],
+  ['saturate',['saturate',['../class_geometry2d_1_1_point.html#a4e06880b08bc14c657cd65b707e473c9',1,'Geometry2d::Point']]],
   ['saveplaybook',['savePlaybook',['../class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96',1,'Gameplay::GameplayModule']]],
   ['score',['score',['../classgameplay_1_1play_1_1_play.html#a3a7c13e330fea8e8d01c6f6692b5388b',1,'gameplay::play::Play']]],
   ['self',['self',['../class_robot.html#a54366c96e4367b00216f42ae0405c552',1,'Robot']]],
   ['setcoeffs',['setCoeffs',['../class_f_i_r_filter.html#ac3ce994b4706cbe70027320275e5f4dc',1,'FIRFilter']]],
   ['seterrortext',['setErrorText',['../class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b',1,'RobotStatusWidget']]],
-  ['setpath',['setPath',['../class_our_robot.html#aefb68b96c17bcfdc3a3f143375fc3002',1,'OurRobot']]],
+  ['setpath',['setPath',['../class_our_robot.html#a7b0e5ed5c25cf218ebdbc4966c7ed720',1,'OurRobot']]],
   ['setshowstopper',['setShowstopper',['../class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98',1,'RobotStatusWidget']]],
+  ['setup_5fball_5favoid',['setup_ball_avoid',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#aa86b6d94d7f92969395d5e83724fff58',1,'gameplay::skills::line_kick::LineKick']]],
   ['shell',['shell',['../class_robot.html#a8ed316247241fadd6d59fc197df25e3e',1,'Robot']]],
   ['shieldfromteammates',['shieldFromTeammates',['../class_our_robot.html#a9651d74f3d8839801adf5ab7ce509bf7',1,'OurRobot']]],
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#ac7ecf05e72f3229814b6bc2055f3ad68',1,'gameplay::skills::_kick::_Kick']]],
@@ -18,6 +19,6 @@ var searchData=
   ['start',['start',['../class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027',1,'Planning::Tree']]],
   ['stop',['stop',['../class_our_robot.html#ad06cbfbea4234c95cbe813e1c8910363',1,'OurRobot']]],
   ['stopped',['stopped',['../class_motion_control.html#a0d8a00158b08f848c7bd03f65f2bb2b8',1,'MotionControl']]],
-  ['subpath',['subPath',['../class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b',1,'Planning::CompositePath::subPath()'],['../class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261',1,'Planning::InterpolatedPath::subPath()'],['../class_planning_1_1_path.html#addd308038986255e995c00208a1094f5',1,'Planning::Path::subPath()']]],
+  ['subpath',['subPath',['../class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b',1,'Planning::CompositePath::subPath()'],['../class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261',1,'Planning::InterpolatedPath::subPath()'],['../class_planning_1_1_path.html#addd308038986255e995c00208a1094f5',1,'Planning::Path::subPath()'],['../class_planning_1_1_trapezoidal_path.html#aed1954b0e8b011d365b1381ac3f228b7',1,'Planning::TrapezoidalPath::subPath()']]],
   ['subscribe',['subscribe',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a3b13cc53c85d9ef11c7d6507843c2e8a',1,'gameplay::fs_watcher::FsWatcher']]]
 ];

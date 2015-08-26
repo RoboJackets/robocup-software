@@ -6,7 +6,8 @@ var searchData=
   ['testconstants',['TestConstants',['../classtest__constants_1_1_test_constants.html',1,'test_constants']]],
   ['testcoordinatedpass',['TestCoordinatedPass',['../classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html',1,'gameplay::plays::testing::test_coordinated_pass']]],
   ['testdefender',['TestDefender',['../classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender.html',1,'gameplay::plays::testing::test_fullback']]],
-  ['testdefense',['TestDefense',['../classgameplay_1_1plays_1_1testing_1_1defense_1_1_test_defense.html',1,'gameplay::plays::testing::defense']]],
+  ['testdefense',['TestDefense',['../classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense.html',1,'gameplay::plays::testing::test_defense']]],
+  ['testdefenseandkicker',['TestDefenseAndKicker',['../classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker.html',1,'gameplay::plays::testing::test_defense_and_kicker']]],
   ['testfsm',['TestFsm',['../classtest__fsm_1_1_test_fsm.html',1,'test_fsm']]],
   ['testidle',['TestIdle',['../classgameplay_1_1plays_1_1testing_1_1test__idle_1_1_test_idle.html',1,'gameplay::plays::testing::test_idle']]],
   ['testintercept',['TestIntercept',['../classgameplay_1_1plays_1_1testing_1_1test__intercept_1_1_test_intercept.html',1,'gameplay::plays::testing::test_intercept']]],
@@ -16,15 +17,16 @@ var searchData=
   ['testpivotkick',['TestPivotKick',['../classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html',1,'gameplay::plays::testing::test_pivot_kick']]],
   ['testplayregistry',['TestPlayRegistry',['../classtest__play__registry_1_1_test_play_registry.html',1,'test_play_registry']]],
   ['testroleassignment',['TestRoleAssignment',['../classtest__role__assignment_1_1_test_role_assignment.html',1,'test_role_assignment']]],
-  ['testwindowevaluator',['TestWindowEvaluator',['../classtest__win__eval_1_1_test_window_evaluator.html',1,'test_win_eval']]],
   ['theirkickoff',['TheirKickoff',['../classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html',1,'gameplay::plays::restarts::their_kickoff']]],
   ['theirrestart',['TheirRestart',['../classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html',1,'gameplay::plays::restarts::their_restart']]],
   ['timedbehavior',['TimedBehavior',['../classgameplay_1_1timed__behavior_1_1_timed_behavior.html',1,'gameplay::timed_behavior']]],
   ['timeout',['Timeout',['../class_timeout.html',1,'']]],
   ['transformmatrix',['TransformMatrix',['../class_geometry2d_1_1_transform_matrix.html',1,'Geometry2d']]],
+  ['trapezoidalpath',['TrapezoidalPath',['../class_planning_1_1_trapezoidal_path.html',1,'Planning']]],
   ['tree',['Tree',['../class_planning_1_1_tree.html',1,'Planning']]],
   ['trianglepass',['TrianglePass',['../classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html',1,'gameplay::plays::testing::triangle_pass']]],
   ['tunefacing',['TuneFacing',['../classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html',1,'gameplay::plays::tuning::tune_facing']]],
   ['tunepivoting',['TunePivoting',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html',1,'gameplay::plays::tuning::tune_pivot']]],
-  ['twosideattack',['TwoSideAttack',['../classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack.html',1,'gameplay::plays::testing::two_side_attack']]]
+  ['twosideattack',['TwoSideAttack',['../classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html',1,'gameplay::plays::offense::two_side_attack']]],
+  ['twosidecornerkick',['TwoSideCornerKick',['../classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html',1,'gameplay::plays::restarts::two_side_corner_kick']]]
 ];

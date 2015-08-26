@@ -2,6 +2,7 @@ var class_geometry2d_1_1_polygon =
 [
     [ "Polygon", "class_geometry2d_1_1_polygon.html#a24eece2270e9b41b5da735623e266757", null ],
     [ "Polygon", "class_geometry2d_1_1_polygon.html#a3666f09a7b6862d2b19c6edf02f3dde1", null ],
+    [ "Polygon", "class_geometry2d_1_1_polygon.html#a18e79e61dca8b46ad18e7cbb8e272113", null ],
     [ "Polygon", "class_geometry2d_1_1_polygon.html#a9f1e47d29166782739f056d05912930d", null ],
     [ "Polygon", "class_geometry2d_1_1_polygon.html#adb85e6da4e9230a47f7ddb7c0b9c5c6d", null ],
     [ "Polygon", "class_geometry2d_1_1_polygon.html#ab3b781a05b0e384e12f5cb0ec9dacc68", null ],

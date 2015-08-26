@@ -9,11 +9,15 @@ var class_geometry2d_1_1_segment =
     [ "intersection", "class_geometry2d_1_1_segment.html#a441152211804a220c07ba24e9145bc68", null ],
     [ "intersects", "class_geometry2d_1_1_segment.html#afc4c970b0a862d922a09c4ada0f37f20", null ],
     [ "intersects", "class_geometry2d_1_1_segment.html#a61c9142254ec26a860f4b3d30745bbb3", null ],
+    [ "intersects", "class_geometry2d_1_1_segment.html#a315dfe229855c280897d755d5eeafe86", null ],
     [ "length", "class_geometry2d_1_1_segment.html#a3a1007a2699b7f5f5032dbfcc15c7962", null ],
     [ "nearestPoint", "class_geometry2d_1_1_segment.html#aff3b54739f001cba6fc3d6f2dbe11085", null ],
+    [ "nearestPoint", "class_geometry2d_1_1_segment.html#a2618e1c3b88aa902361dbaa76d18e0a9", null ],
     [ "nearPoint", "class_geometry2d_1_1_segment.html#aa02ebe181ee9a4b55870b29b4aefbde3", null ],
     [ "nearPointPerp", "class_geometry2d_1_1_segment.html#ad29aa8a8c448377c1a689947fdd695eb", null ],
     [ "nearSegment", "class_geometry2d_1_1_segment.html#ab00a4c048e893543baf141aaa9aace26", null ],
     [ "operator+=", "class_geometry2d_1_1_segment.html#a83cbadb4f3d7a69cfbbb3128adaab61f", null ],
-    [ "toString", "class_geometry2d_1_1_segment.html#a9de1cd35a8c2a01fee93a59c46c0ff37", null ]
+    [ "operator==", "class_geometry2d_1_1_segment.html#a79ea07c88d669bd2027199ac60771f1e", null ],
+    [ "toString", "class_geometry2d_1_1_segment.html#adb6d901afdb99489c3e2f3f9d6f5e9a0", null ],
+    [ "operator<<", "class_geometry2d_1_1_segment.html#aff0156971f29d02ee141a89c1546099f", null ]
 ];

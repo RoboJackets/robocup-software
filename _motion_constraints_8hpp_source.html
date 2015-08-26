@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>GT RoboCup SSL: soccer/MotionConstraints.hpp Source File</title>
+<title>GT RoboCup SSL: soccer/planning/MotionConstraints.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -120,64 +120,55 @@ $(document).ready(function(){initNavTree('_motion_constraints_8hpp_source.html',
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="struct_motion_constraints.html">MotionConstraints</a>();</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#aeda8a7fa1cb0b93e541ca324702951f6">   21</a></span>&#160;    boost::optional&lt;Geometry2d::Point&gt; <a class="code" href="struct_motion_constraints.html#aeda8a7fa1cb0b93e541ca324702951f6">targetPos</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">   21</a></span>&#160;    boost::optional&lt;float&gt; <a class="code" href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">targetAngleVel</a>;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#ab68727c3731894a86111db019bf9032d">   24</a></span>&#160;    boost::optional&lt;Geometry2d::Point&gt; <a class="code" href="struct_motion_constraints.html#ab68727c3731894a86111db019bf9032d">targetWorldVel</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">   24</a></span>&#160;    boost::optional&lt;Geometry2d::Point&gt; <a class="code" href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">faceTarget</a>;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">   33</a></span>&#160;    boost::optional&lt;float&gt; <a class="code" href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">targetAngleVel</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">   32</a></span>&#160;    boost::optional&lt;Geometry2d::Point&gt; <a class="code" href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">pivotTarget</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">   36</a></span>&#160;    boost::optional&lt;Geometry2d::Point&gt; <a class="code" href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">faceTarget</a>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">   40</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">maxAngleSpeed</a>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">   44</a></span>&#160;    boost::optional&lt;Geometry2d::Point&gt; <a class="code" href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">pivotTarget</a>;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">   52</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">maxAngleSpeed</a>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">   52</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">maxSpeed</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">float</span> maxAcceleration;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">   56</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">endSpeed</a> = 0;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">   64</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">maxSpeed</a>;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">float</span> maxAcceleration;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">   68</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">endSpeed</a> = 0;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="struct_motion_constraints.html#ad5044f21eb16f8cc7ce757ded8916f69">createConfiguration</a>(<a class="code" href="class_configuration.html">Configuration</a> *cfg);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_max_acceleration;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_max_speed;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_max_angle_speed;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_replan_threshold;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;};</div>
-<div class="ttc" id="struct_motion_constraints_html_ab97184be0becd18734a3a62b99904349"><div class="ttname"><a href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">MotionConstraints::maxAngleSpeed</a></div><div class="ttdeci">float maxAngleSpeed</div><div class="ttdoc">Angle constraints. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:52</div></div>
-<div class="ttc" id="struct_motion_constraints_html_ab68727c3731894a86111db019bf9032d"><div class="ttname"><a href="struct_motion_constraints.html#ab68727c3731894a86111db019bf9032d">MotionConstraints::targetWorldVel</a></div><div class="ttdeci">boost::optional&lt; Geometry2d::Point &gt; targetWorldVel</div><div class="ttdoc">Set the velocity in world coordinates directly (circumvents path planning) </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:24</div></div>
-<div class="ttc" id="struct_motion_constraints_html_a73099498892078e6f421055efbdafb26"><div class="ttname"><a href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">MotionConstraints::endSpeed</a></div><div class="ttdeci">float endSpeed</div><div class="ttdoc">The speed we should be going when we reach the end of the path. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:68</div></div>
-<div class="ttc" id="struct_motion_constraints_html_ad5044f21eb16f8cc7ce757ded8916f69"><div class="ttname"><a href="struct_motion_constraints.html#ad5044f21eb16f8cc7ce757ded8916f69">MotionConstraints::createConfiguration</a></div><div class="ttdeci">static void createConfiguration(Configuration *cfg)</div><div class="ttdoc">Default constraint values supplied by config. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.cpp:12</div></div>
-<div class="ttc" id="struct_motion_constraints_html_a0bcc511453b4a71fdd7529e00cd5d7b6"><div class="ttname"><a href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">MotionConstraints::targetAngleVel</a></div><div class="ttdeci">boost::optional&lt; float &gt; targetAngleVel</div><div class="ttdoc">Angle target. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:33</div></div>
-<div class="ttc" id="struct_motion_constraints_html_acc6299843f20efa93ac3bf153938730c"><div class="ttname"><a href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">MotionConstraints::pivotTarget</a></div><div class="ttdeci">boost::optional&lt; Geometry2d::Point &gt; pivotTarget</div><div class="ttdoc">Pivot target. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:44</div></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="struct_motion_constraints.html#ad5044f21eb16f8cc7ce757ded8916f69">createConfiguration</a>(<a class="code" href="class_configuration.html">Configuration</a> *cfg);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_max_acceleration;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_max_speed;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_max_angle_speed;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_replan_threshold;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a> *_replan_lead_time;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;};</div>
+<div class="ttc" id="struct_motion_constraints_html_ab97184be0becd18734a3a62b99904349"><div class="ttname"><a href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">MotionConstraints::maxAngleSpeed</a></div><div class="ttdeci">float maxAngleSpeed</div><div class="ttdoc">Angle constraints. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:40</div></div>
+<div class="ttc" id="struct_motion_constraints_html_a73099498892078e6f421055efbdafb26"><div class="ttname"><a href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">MotionConstraints::endSpeed</a></div><div class="ttdeci">float endSpeed</div><div class="ttdoc">The speed we should be going when we reach the end of the path. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:56</div></div>
+<div class="ttc" id="struct_motion_constraints_html_ad5044f21eb16f8cc7ce757ded8916f69"><div class="ttname"><a href="struct_motion_constraints.html#ad5044f21eb16f8cc7ce757ded8916f69">MotionConstraints::createConfiguration</a></div><div class="ttdeci">static void createConfiguration(Configuration *cfg)</div><div class="ttdoc">Default constraint values supplied by config. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.cpp:13</div></div>
+<div class="ttc" id="struct_motion_constraints_html_a0bcc511453b4a71fdd7529e00cd5d7b6"><div class="ttname"><a href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">MotionConstraints::targetAngleVel</a></div><div class="ttdeci">boost::optional&lt; float &gt; targetAngleVel</div><div class="ttdoc">Angle target. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:21</div></div>
+<div class="ttc" id="struct_motion_constraints_html_acc6299843f20efa93ac3bf153938730c"><div class="ttname"><a href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">MotionConstraints::pivotTarget</a></div><div class="ttdeci">boost::optional&lt; Geometry2d::Point &gt; pivotTarget</div><div class="ttdoc">Pivot target. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:32</div></div>
 <div class="ttc" id="class_configuration_html"><div class="ttname"><a href="class_configuration.html">Configuration</a></div><div class="ttdoc">static variable for the program, extremely general </div><div class="ttdef"><b>Definition:</b> Configuration.hpp:15</div></div>
 <div class="ttc" id="struct_motion_constraints_html"><div class="ttname"><a href="struct_motion_constraints.html">MotionConstraints</a></div><div class="ttdoc">This class contains the motion constraints that the high-level logic sets for a robot. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:13</div></div>
-<div class="ttc" id="struct_motion_constraints_html_a73556444afd501a847005ecbf4de9063"><div class="ttname"><a href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">MotionConstraints::faceTarget</a></div><div class="ttdeci">boost::optional&lt; Geometry2d::Point &gt; faceTarget</div><div class="ttdoc">A global point on the field that the robot should face towards. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:36</div></div>
-<div class="ttc" id="struct_motion_constraints_html_aeda8a7fa1cb0b93e541ca324702951f6"><div class="ttname"><a href="struct_motion_constraints.html#aeda8a7fa1cb0b93e541ca324702951f6">MotionConstraints::targetPos</a></div><div class="ttdeci">boost::optional&lt; Geometry2d::Point &gt; targetPos</div><div class="ttdoc">Position target. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:21</div></div>
-<div class="ttc" id="struct_motion_constraints_html_a50ac8502cbbb4f8a56f848b2ecbc1220"><div class="ttname"><a href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">MotionConstraints::maxSpeed</a></div><div class="ttdeci">float maxSpeed</div><div class="ttdoc">Position constraints. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:64</div></div>
+<div class="ttc" id="struct_motion_constraints_html_a73556444afd501a847005ecbf4de9063"><div class="ttname"><a href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">MotionConstraints::faceTarget</a></div><div class="ttdeci">boost::optional&lt; Geometry2d::Point &gt; faceTarget</div><div class="ttdoc">A global point on the field that the robot should face towards. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:24</div></div>
+<div class="ttc" id="struct_motion_constraints_html_a50ac8502cbbb4f8a56f848b2ecbc1220"><div class="ttname"><a href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">MotionConstraints::maxSpeed</a></div><div class="ttdeci">float maxSpeed</div><div class="ttdoc">Position constraints. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:52</div></div>
 <div class="ttc" id="class_config_double_html"><div class="ttname"><a href="class_config_double.html">ConfigDouble</a></div><div class="ttdef"><b>Definition:</b> Configuration.hpp:163</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>MotionConstraints.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 03:32:16 for GT RoboCup SSL by
+    <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><a class="el" href="dir_28df16f06401fa4b261f014c0f6bda1e.html">planning</a></li><li class="navelem"><b>MotionConstraints.hpp</b></li>
+    <li class="footer">Generated on Wed Aug 26 2015 17:39:56 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

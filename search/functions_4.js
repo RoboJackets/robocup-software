@@ -2,7 +2,12 @@ var searchData=
 [
   ['enable_5fkick',['enable_kick',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#aa031cd4d7eb1bc53391b179051ffab86',1,'gameplay::skills::_kick::_Kick']]],
   ['errors_5fbelow_5fthresholds',['errors_below_thresholds',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a54f889dec3e256e69a453d7c2f677722',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['evaluate',['evaluate',['../class_planning_1_1_composite_path.html#ab178e05058a99745ff3a27ad04147644',1,'Planning::CompositePath::evaluate()'],['../class_planning_1_1_interpolated_path.html#a2b781a669dd6880fe60ebf65c6f27659',1,'Planning::InterpolatedPath::evaluate()'],['../class_planning_1_1_path.html#a9e701e94af9dc86c81986a07cac5dec5',1,'Planning::Path::evaluate()']]],
+  ['eval_5fpt_5fto_5fopp_5fgoal',['eval_pt_to_opp_goal',['../class_window_evaluator.html#a71232e59601b090acd8716f17647c788',1,'WindowEvaluator']]],
+  ['eval_5fpt_5fto_5four_5fgoal',['eval_pt_to_our_goal',['../class_window_evaluator.html#a9adcbf8fb8f9a7bcd868bac2de612aab',1,'WindowEvaluator']]],
+  ['eval_5fpt_5fto_5fpt',['eval_pt_to_pt',['../class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e',1,'WindowEvaluator']]],
+  ['eval_5fpt_5fto_5frobot',['eval_pt_to_robot',['../class_window_evaluator.html#ae4975224599810750d351662aab90587',1,'WindowEvaluator']]],
+  ['eval_5fpt_5fto_5fseg',['eval_pt_to_seg',['../class_window_evaluator.html#a0fd9db04818564c867860db4493aa5e3',1,'WindowEvaluator']]],
+  ['evaluate',['evaluate',['../class_planning_1_1_composite_path.html#aede80c915df9ab8d94e5536fa289016b',1,'Planning::CompositePath::evaluate()'],['../class_planning_1_1_interpolated_path.html#a1f73ab852337c1889bbcf4720e6d8e01',1,'Planning::InterpolatedPath::evaluate()'],['../class_planning_1_1_path.html#aabd42049334d4ffa5d184e1df15b8d5c',1,'Planning::Path::evaluate()'],['../class_planning_1_1_trapezoidal_path.html#a6398e8a84842a23c8c5e830d5320a759',1,'Planning::TrapezoidalPath::evaluate()']]],
   ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a4994ec94ffe187229f25d47eba85fe1a',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
   ['extend',['extend',['../class_planning_1_1_tree.html#ae18f323a55ea3b91251b697f9176f646',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#aae4e5be14b801ad75e26dbd78bb061d2',1,'Planning::FixedStepTree::extend()']]]
 ];

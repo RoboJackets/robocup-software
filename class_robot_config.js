@@ -11,6 +11,8 @@ var class_robot_config =
     [ "chipper", "class_robot_config.html#a8d3a76cbd7e56c4a5a33c33adff3a6ed", null ],
     [ "dribbler", "class_robot_config.html#abfce265e9d680916c5ee73097d1ac8b3", null ],
     [ "kicker", "class_robot_config.html#a6417cc426cb159a57165092a836c47a2", null ],
+    [ "minEffectiveAngularSpeed", "class_robot_config.html#a952c4e79e1754bf4899df1dc83e3bde7", null ],
+    [ "minEffectiveVelocity", "class_robot_config.html#a03a932955b358220ea27162453545715", null ],
     [ "pivotVelMultiplier", "class_robot_config.html#a258c42b64eb53160ec1eda9c6081dbf9", null ],
     [ "rotation", "class_robot_config.html#a1efd430e6346fed75d320bfbf0f6a081", null ],
     [ "translation", "class_robot_config.html#a7d3341f5e06c2698ad74d847fd99e463", null ],

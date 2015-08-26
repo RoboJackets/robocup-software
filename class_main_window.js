@@ -12,6 +12,7 @@ var class_main_window =
     [ "processor", "class_main_window.html#a088d6e32820b7c79cb4eb17c49947ef3", null ],
     [ "processor", "class_main_window.html#a6b804f3f49c90b5c8b39fcec6aa0f7e1", null ],
     [ "setRadioChannel", "class_main_window.html#a7bb7f8869c30b01e75147215cf607bea", null ],
+    [ "setUseRefChecked", "class_main_window.html#a99ee6b77e631a789593c667c1154f249", null ],
     [ "state", "class_main_window.html#aaf10567ea63770d4f67ea5cb1704bdce", null ],
     [ "updateTimer", "class_main_window.html#ad5aeab31e70ef68b7d2f53a82c459cc6", null ]
 ];

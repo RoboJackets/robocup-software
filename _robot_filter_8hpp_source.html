@@ -125,7 +125,7 @@ $(document).ready(function(){initNavTree('_robot_filter_8hpp_source.html','');})
 <div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="class_robot_observation.html#a84a0962c9fa5d7a0e2f5a5b2b3795ce6">   22</a></span>&#160;    Time <a class="code" href="class_robot_observation.html#a84a0962c9fa5d7a0e2f5a5b2b3795ce6">time</a>;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">int</span> source;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">int</span> frameNumber;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="comment">// Compares the times on two observations.  Used for sorting.</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">bool</span> operator&lt;(<span class="keyword">const</span> <a class="code" href="class_robot_observation.html">RobotObservation</a> &amp;other)<span class="keyword"> const</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">    </span>{</div>
@@ -137,25 +137,24 @@ $(document).ready(function(){initNavTree('_robot_filter_8hpp_source.html','');})
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="class_robot_filter.html">RobotFilter</a>();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_filter.html#a47b3ca9d7c598cc9078ea60a7dc1b050">update</a>(<span class="keyword">const</span> <a class="code" href="class_robot_observation.html">RobotObservation</a> *obs);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_filter.html#a097d3796b5daa9a16378f2220b248448">predict</a>(Time time, <a class="code" href="class_robot.html">Robot</a> *robot);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_filter.html#a36b101813670a9bf8151bd52a0f4300b">predict</a>(Time time, <a class="code" href="class_robot_pose.html">RobotPose</a> *robot);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Num_Cameras = 2;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Num_Cameras = 4;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="class_robot_pose.html">RobotPose</a> _estimate[Num_Cameras];</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">int</span> _camera;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
 <div class="ttc" id="class_robot_observation_html_a84a0962c9fa5d7a0e2f5a5b2b3795ce6"><div class="ttname"><a href="class_robot_observation.html#a84a0962c9fa5d7a0e2f5a5b2b3795ce6">RobotObservation::time</a></div><div class="ttdeci">Time time</div><div class="ttdoc">in radians </div><div class="ttdef"><b>Definition:</b> RobotFilter.hpp:22</div></div>
 <div class="ttc" id="class_robot_filter_html_a47b3ca9d7c598cc9078ea60a7dc1b050"><div class="ttname"><a href="class_robot_filter.html#a47b3ca9d7c598cc9078ea60a7dc1b050">RobotFilter::update</a></div><div class="ttdeci">void update(const RobotObservation *obs)</div><div class="ttdoc">Gives a new observation to the filter. </div><div class="ttdef"><b>Definition:</b> RobotFilter.cpp:17</div></div>
-<div class="ttc" id="class_robot_pose_html"><div class="ttname"><a href="class_robot_pose.html">RobotPose</a></div><div class="ttdoc">Contains robot motion state data. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:48</div></div>
-<div class="ttc" id="class_robot_filter_html_a097d3796b5daa9a16378f2220b248448"><div class="ttname"><a href="class_robot_filter.html#a097d3796b5daa9a16378f2220b248448">RobotFilter::predict</a></div><div class="ttdeci">void predict(Time time, Robot *robot)</div><div class="ttdoc">Generates a prediction of the ball&#39;s state at a given time in the future. </div><div class="ttdef"><b>Definition:</b> RobotFilter.cpp:47</div></div>
-<div class="ttc" id="class_robot_html"><div class="ttname"><a href="class_robot.html">Robot</a></div><div class="ttdef"><b>Definition:</b> Robot.hpp:73</div></div>
+<div class="ttc" id="class_robot_pose_html"><div class="ttname"><a href="class_robot_pose.html">RobotPose</a></div><div class="ttdoc">Contains robot motion state data. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:51</div></div>
 <div class="ttc" id="class_robot_filter_html"><div class="ttname"><a href="class_robot_filter.html">RobotFilter</a></div><div class="ttdoc">adjusts robot vision for accuracy and calculates velocities from positions </div><div class="ttdef"><b>Definition:</b> RobotFilter.hpp:36</div></div>
 <div class="ttc" id="class_robot_observation_html"><div class="ttname"><a href="class_robot_observation.html">RobotObservation</a></div><div class="ttdoc">An observation of a robot&#39;s position and angle at a certain time. </div><div class="ttdef"><b>Definition:</b> RobotFilter.hpp:12</div></div>
+<div class="ttc" id="class_robot_filter_html_a36b101813670a9bf8151bd52a0f4300b"><div class="ttname"><a href="class_robot_filter.html#a36b101813670a9bf8151bd52a0f4300b">RobotFilter::predict</a></div><div class="ttdeci">void predict(Time time, RobotPose *robot)</div><div class="ttdoc">Generates a prediction of the ball&#39;s state at a given time in the future. </div><div class="ttdef"><b>Definition:</b> RobotFilter.cpp:47</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -163,7 +162,7 @@ $(document).ready(function(){initNavTree('_robot_filter_8hpp_source.html','');})
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><a class="el" href="dir_cbd8e190a8e460b48e48ebd2bd706a27.html">modeling</a></li><li class="navelem"><b>RobotFilter.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 03:32:16 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 26 2015 17:39:56 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

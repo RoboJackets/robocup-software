@@ -7,7 +7,5 @@ var struct_motion_constraints =
     [ "maxAngleSpeed", "struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349", null ],
     [ "maxSpeed", "struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220", null ],
     [ "pivotTarget", "struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c", null ],
-    [ "targetAngleVel", "struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6", null ],
-    [ "targetPos", "struct_motion_constraints.html#aeda8a7fa1cb0b93e541ca324702951f6", null ],
-    [ "targetWorldVel", "struct_motion_constraints.html#ab68727c3731894a86111db019bf9032d", null ]
+    [ "targetAngleVel", "struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6", null ]
 ];

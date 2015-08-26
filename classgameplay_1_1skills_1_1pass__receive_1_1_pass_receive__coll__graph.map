@@ -1,5 +1,7 @@
 <map id="gameplay.skills.pass_receive.PassReceive" name="gameplay.skills.pass_receive.PassReceive">
-<area shape="rect" id="node2" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="5,155,224,197"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="14,80,215,107"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="13,5,216,32"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="774,31,1010,87"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="507,5,725,46"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,45,458,72"/>
+<area shape="rect" id="node6" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="510,70,722,111"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,45,208,72"/>
 </map>

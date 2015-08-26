@@ -120,88 +120,94 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/CompositeShape.hpp&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Segment.hpp&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Point.hpp&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;protobuf/RadioTx.pb.h&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;protobuf/RadioRx.pb.h&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;GameState.hpp&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;Constants.hpp&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;Utils.hpp&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">class </span><a class="code" href="class_robot_config.html">RobotConfig</a>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">class </span><a class="code" href="class_our_robot.html">OurRobot</a>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">class </span><a class="code" href="class_opponent_robot.html">OpponentRobot</a>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span>Packet</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">class </span>LogFrame;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="class_ball.html">   32</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_ball.html">Ball</a></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="class_ball.html">Ball</a>()</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        valid = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <a class="code" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">time</a> = 0;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vel;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">bool</span> valid;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">   46</a></span>&#160;    Time <a class="code" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">time</a>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;};</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="class_system_state.html">   56</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_system_state.html">SystemState</a></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;{</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="class_system_state.html">SystemState</a>();</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    ~<a class="code" href="class_system_state.html">SystemState</a>();</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> drawLine(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a> &amp;line, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">void</span> drawLine(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p0, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p1, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> drawCircle(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;center, <span class="keywordtype">float</span> radius, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *pts, <span class="keywordtype">int</span> n, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> std::vector&lt;Geometry2d::Point&gt;&amp; pts, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> drawText(<span class="keyword">const</span> QString &amp;text, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pos, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> drawShape(<span class="keyword">const</span> std::shared_ptr&lt;Geometry2d::Shape&gt;&amp; obs, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> drawCompositeShape(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&amp; group, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    Time timestamp;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <a class="code" href="class_game_state.html">GameState</a> gameState;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="class_system_state.html#a20bda3ff4b40b5b8fe5a9e9a4dfdd40a">  102</a></span>&#160;    std::vector&lt;OurRobot *&gt; <span class="keyword">self</span>;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    std::vector&lt;OpponentRobot *&gt; opp;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <a class="code" href="class_ball.html">Ball</a> ball;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    std::shared_ptr&lt;Packet::LogFrame&gt; logFrame;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">const</span> QStringList &amp;debugLayers()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        <span class="keywordflow">return</span> _debugLayers;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_system_state.html#a812653eed4f23e3636ca4ebad24d6174">findDebugLayer</a>(QString layer);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    QMap&lt;QString, int&gt; _debugLayerMap;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    QStringList _debugLayers;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Polygon.hpp&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;protobuf/RadioTx.pb.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;protobuf/RadioRx.pb.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;GameState.hpp&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;Constants.hpp&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;Utils.hpp&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Arc.hpp&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">class </span><a class="code" href="class_robot_config.html">RobotConfig</a>;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">class </span><a class="code" href="class_our_robot.html">OurRobot</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">class </span><a class="code" href="class_opponent_robot.html">OpponentRobot</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">namespace </span>Packet</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">class </span>LogFrame;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="class_ball.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_ball.html">Ball</a></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="class_ball.html">Ball</a>()</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        valid = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <a class="code" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">time</a> = 0;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vel;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">bool</span> valid;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">   48</a></span>&#160;    Time <a class="code" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">time</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;};</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="class_system_state.html">   58</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_system_state.html">SystemState</a></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;{</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <a class="code" href="class_system_state.html">SystemState</a>();</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    ~<a class="code" href="class_system_state.html">SystemState</a>();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">void</span> drawLine(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a> &amp;line, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> drawLine(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p0, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p1, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> drawCircle(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;center, <span class="keywordtype">float</span> radius, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_polygon.html">Geometry2d::Polygon</a> &amp;pts, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> drawArc(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_arc.html">Geometry2d::Arc</a> &amp;arc, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *pts, <span class="keywordtype">int</span> n, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> std::vector&lt;Geometry2d::Point&gt;&amp; pts, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> drawText(<span class="keyword">const</span> QString &amp;text, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pos, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">void</span> drawShape(<span class="keyword">const</span> std::shared_ptr&lt;Geometry2d::Shape&gt;&amp; obs, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">void</span> drawCompositeShape(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&amp; group, <span class="keyword">const</span> QColor &amp;color = Qt::black, <span class="keyword">const</span> QString &amp;layer = QString());</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    Time timestamp;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <a class="code" href="class_game_state.html">GameState</a> gameState;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="class_system_state.html#a20bda3ff4b40b5b8fe5a9e9a4dfdd40a">  108</a></span>&#160;    std::vector&lt;OurRobot *&gt; <span class="keyword">self</span>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    std::vector&lt;OpponentRobot *&gt; opp;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="class_ball.html">Ball</a> ball;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    std::shared_ptr&lt;Packet::LogFrame&gt; logFrame;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keyword">const</span> QStringList &amp;debugLayers()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">return</span> _debugLayers;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_system_state.html#a812653eed4f23e3636ca4ebad24d6174">findDebugLayer</a>(QString layer);</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">int</span> _numDebugLayers;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    QMap&lt;QString, int&gt; _debugLayerMap;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    QStringList _debugLayers;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">int</span> _numDebugLayers;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;};</div>
 <div class="ttc" id="class_system_state_html_a812653eed4f23e3636ca4ebad24d6174"><div class="ttname"><a href="class_system_state.html#a812653eed4f23e3636ca4ebad24d6174">SystemState::findDebugLayer</a></div><div class="ttdeci">int findDebugLayer(QString layer)</div><div class="ttdoc">Returns the number of a debug layer given its name. </div><div class="ttdef"><b>Definition:</b> SystemState.cpp:34</div></div>
 <div class="ttc" id="class_game_state_html"><div class="ttname"><a href="class_game_state.html">GameState</a></div><div class="ttdoc">Holds the state of the game according to the referee. </div><div class="ttdef"><b>Definition:</b> GameState.hpp:9</div></div>
-<div class="ttc" id="class_ball_html"><div class="ttname"><a href="class_ball.html">Ball</a></div><div class="ttdoc">Our beliefs about the ball&#39;s position and velocity. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:32</div></div>
-<div class="ttc" id="class_our_robot_html"><div class="ttname"><a href="class_our_robot.html">OurRobot</a></div><div class="ttdoc">A robot on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:129</div></div>
+<div class="ttc" id="class_ball_html"><div class="ttname"><a href="class_ball.html">Ball</a></div><div class="ttdoc">Our beliefs about the ball&#39;s position and velocity. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:34</div></div>
+<div class="ttc" id="class_our_robot_html"><div class="ttname"><a href="class_our_robot.html">OurRobot</a></div><div class="ttdoc">A robot on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:143</div></div>
+<div class="ttc" id="class_geometry2d_1_1_arc_html"><div class="ttname"><a href="class_geometry2d_1_1_arc.html">Geometry2d::Arc</a></div><div class="ttdef"><b>Definition:</b> Arc.hpp:12</div></div>
 <div class="ttc" id="class_geometry2d_1_1_line_html"><div class="ttname"><a href="class_geometry2d_1_1_line.html">Geometry2d::Line</a></div><div class="ttdef"><b>Definition:</b> Line.hpp:10</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:17</div></div>
+<div class="ttc" id="class_geometry2d_1_1_polygon_html"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html">Geometry2d::Polygon</a></div><div class="ttdef"><b>Definition:</b> Polygon.hpp:11</div></div>
 <div class="ttc" id="class_robot_config_html"><div class="ttname"><a href="class_robot_config.html">RobotConfig</a></div><div class="ttdoc">Configuration per robot model. </div><div class="ttdef"><b>Definition:</b> RobotConfig.hpp:8</div></div>
-<div class="ttc" id="class_ball_html_a0f13620d6928b163e3c415e63f3abb5e"><div class="ttname"><a href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">Ball::time</a></div><div class="ttdeci">Time time</div><div class="ttdoc">Time at which this estimate is valid. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:46</div></div>
-<div class="ttc" id="class_opponent_robot_html"><div class="ttname"><a href="class_opponent_robot.html">OpponentRobot</a></div><div class="ttdoc">A robot that is not on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:556</div></div>
-<div class="ttc" id="class_system_state_html"><div class="ttname"><a href="class_system_state.html">SystemState</a></div><div class="ttdoc">Holds the positions of everything on the field. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:56</div></div>
+<div class="ttc" id="class_ball_html_a0f13620d6928b163e3c415e63f3abb5e"><div class="ttname"><a href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">Ball::time</a></div><div class="ttdeci">Time time</div><div class="ttdoc">Time at which this estimate is valid. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:48</div></div>
+<div class="ttc" id="class_opponent_robot_html"><div class="ttname"><a href="class_opponent_robot.html">OpponentRobot</a></div><div class="ttdoc">A robot that is not on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:594</div></div>
+<div class="ttc" id="class_system_state_html"><div class="ttname"><a href="class_system_state.html">SystemState</a></div><div class="ttdoc">Holds the positions of everything on the field. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:58</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -209,7 +215,7 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>SystemState.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 03:32:16 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 26 2015 17:39:56 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

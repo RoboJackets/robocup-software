@@ -116,8 +116,8 @@ $(document).ready(function(){initNavTree('class_robot.html','');});
 <table class="directory">
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>angle</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e">angleVel</a></td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>equals</b>(const Robot &amp;other) (defined in <a class="el" href="class_robot.html">Robot</a>)</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_robot.html#af07efd37034645af0a39eb598ff29b65">filter</a>() const </td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_robot.html#af07efd37034645af0a39eb598ff29b65">filter</a>() const </td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>operator&lt;&lt;</b> (defined in <a class="el" href="class_robot.html">Robot</a>)</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>operator==</b>(const Robot &amp;other) (defined in <a class="el" href="class_robot.html">Robot</a>)</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>pos</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_robot.html#a241c0ca6e392b4c2fef481392d35531d">Robot</a>(unsigned int shell, bool self)</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"></td></tr>
@@ -125,16 +125,17 @@ $(document).ready(function(){initNavTree('class_robot.html','');});
   <tr class="even"><td class="entry"><a class="el" href="class_robot.html#a54366c96e4367b00216f42ae0405c552">self</a>() const </td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_robot.html#a8ed316247241fadd6d59fc197df25e3e">shell</a>() const </td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">time</a></td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>vel</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>visible</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>visionFrame</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_robot.html#a924320124b09c2f2ac1621aa210d5f38">~Robot</a>()</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>toString</b>() const  (defined in <a class="el" href="class_robot.html">Robot</a>)</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>vel</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>visible</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>visionFrame</b> (defined in <a class="el" href="class_robot_pose.html">RobotPose</a>)</td><td class="entry"><a class="el" href="class_robot_pose.html">RobotPose</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_robot.html#a924320124b09c2f2ac1621aa210d5f38">~Robot</a>()</td><td class="entry"><a class="el" href="class_robot.html">Robot</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Aug 26 2015 03:32:16 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 26 2015 17:39:56 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

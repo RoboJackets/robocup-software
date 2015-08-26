@@ -6,7 +6,6 @@ var searchData=
   ['recalculate_5faim_5ftarget_5fpoint',['recalculate_aim_target_point',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a75bd883862175e5633582c1bbdfc510a',1,'gameplay::skills::_kick::_Kick']]],
   ['receive_5fpoint',['receive_point',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#afc0527fde8258483ab9d3800e988f352',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['receivedtime',['receivedTime',['../class_new_referee_packet.html#a8bce4e0b812bf5c92f6b1e89ed670985',1,'NewRefereePacket::receivedTime()'],['../class_vision_packet.html#a87ca75703079dd88549870b955e0d12c',1,'VisionPacket::receivedTime()']]],
-  ['receivetimeout',['ReceiveTimeout',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a7cba3b5eae5fbd57ef7e06497fd6a6f1',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['receiving',['receiving',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html#aa1b8b40765471a49cd54f5d7da8793e5',1,'gameplay::skills::pass_receive::PassReceive::State']]],
   ['rect',['Rect',['../class_geometry2d_1_1_rect.html',1,'Geometry2d']]],
   ['refereetab',['RefereeTab',['../class_referee_tab.html',1,'']]],
@@ -34,7 +33,7 @@ var searchData=
   ['rotate',['rotate',['../class_geometry2d_1_1_point.html#a0d94c0285505aa1aab17c36505928bbb',1,'Geometry2d::Point::rotate(const Point &amp;origin, float angle)'],['../class_geometry2d_1_1_point.html#a6ccfeea670b14c267037f6185cb9d137',1,'Geometry2d::Point::rotate(float angle)'],['../class_geometry2d_1_1_point.html#ab9ba426c22a63b02d9488fc61368e5cf',1,'Geometry2d::Point::rotate(const Point &amp;pt, const Point &amp;origin, float angle)']]],
   ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
   ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]],
-  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a4d403e52859796483e59297893c3006d',1,'Planning::RRTPlanner::run()'],['../class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
+  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_path_planner.html#a575b729dcb03e5eb3772e3206132d672',1,'Planning::PathPlanner::run()'],['../class_planning_1_1_r_r_t_planner.html#ae0bde0971be415a64fe3a65c1db67dca',1,'Planning::RRTPlanner::run()'],['../class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
   ['rx_5fbuffer_5ffull_5fmsg',['RX_BUFFER_FULL_MSG',['../class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92',1,'Console']]],
   ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279',1,'OurRobot']]]
 ];

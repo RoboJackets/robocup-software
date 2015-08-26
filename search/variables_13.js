@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['y',['y',['../class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc',1,'Geometry2d::Point']]]
+  ['x',['x',['../class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1',1,'Geometry2d::Point']]]
 ];

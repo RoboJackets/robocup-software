@@ -1,0 +1,5 @@
+<map id="WindowEvaluator" name="WindowEvaluator">
+<area shape="rect" id="node3" href="$class_robot.html" title="Robot" alt="" coords="65,227,123,253"/>
+<area shape="rect" id="node4" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="67,109,156,136"/>
+<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="95,5,237,32"/>
+</map>

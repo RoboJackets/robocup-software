@@ -1,5 +1,6 @@
 <map id="soccer/gameplay/tactics" name="soccer/gameplay/tactics">
-<area shape="rect" id="node4" href="dir_24200c9238783bdaced5939d9e7da1f3.html" title="positions" alt="" coords="37,65,112,113"/>
-<area shape="rect" id="graph3" href="dir_a76a2e4c36e9f78b81bda6f3380d26e4.html" alt="" coords="27,55,219,124"/>
-<area shape="rect" id="graph2" href="dir_35e5706fd63e5c8944975582312a2569.html" title="gameplay" alt="" coords="16,16,229,135"/>
+<area shape="rect" id="node2" href="dir_24200c9238783bdaced5939d9e7da1f3.html" title="positions" alt="" coords="137,63,215,111"/>
+<area shape="rect" id="node3" href="dir_0338934697b586a2bc1a5e9bde7bbe20.html" title="stopped" alt="" coords="37,63,111,111"/>
+<area shape="rect" id="clust2" href="dir_a76a2e4c36e9f78b81bda6f3380d26e4.html" alt="" coords="27,52,323,121"/>
+<area shape="rect" id="clust1" href="dir_35e5706fd63e5c8944975582312a2569.html" title="gameplay" alt="" coords="16,16,333,132"/>
 </map>

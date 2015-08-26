@@ -1,6 +1,7 @@
 var classgameplay_1_1role__assignment_1_1_role_requirements =
 [
     [ "__init__", "classgameplay_1_1role__assignment_1_1_role_requirements.html#ab43e43f91349123136d7932106894af7", null ],
+    [ "__repr__", "classgameplay_1_1role__assignment_1_1_role_requirements.html#a924e89bd2c97699fb2ddb4e1c178622e", null ],
     [ "__str__", "classgameplay_1_1role__assignment_1_1_role_requirements.html#a134502376521b61504c783c3a5125525", null ],
     [ "chipper_preference_weight", "classgameplay_1_1role__assignment_1_1_role_requirements.html#a35b3648c23a1cdd1c573e68455e0ee70", null ],
     [ "chipper_preference_weight", "classgameplay_1_1role__assignment_1_1_role_requirements.html#a35b3648c23a1cdd1c573e68455e0ee70", null ],

@@ -124,23 +124,20 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#abc6160d85809ed87b08458aa2dafd58c">CompositePath</a> ()</td></tr>
 <tr class="memdesc:abc6160d85809ed87b08458aa2dafd58c"><td class="mdescLeft">&#160;</td><td class="mdescRight">default path is empty <br/></td></tr>
 <tr class="separator:abc6160d85809ed87b08458aa2dafd58c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1eac9045d553ea16c9a47d3b18837ae2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1eac9045d553ea16c9a47d3b18837ae2"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a1eac9045d553ea16c9a47d3b18837ae2">CompositePath</a> (<a class="el" href="class_planning_1_1_path.html">Path</a> *path)</td></tr>
-<tr class="memdesc:a1eac9045d553ea16c9a47d3b18837ae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructors with one path <br/></td></tr>
-<tr class="separator:a1eac9045d553ea16c9a47d3b18837ae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0696157e38b858bde2fb6e77fc81c4e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0696157e38b858bde2fb6e77fc81c4e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>CompositePath</b> (std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; path)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#ae0696157e38b858bde2fb6e77fc81c4e">CompositePath</a> (std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; path)</td></tr>
+<tr class="memdesc:ae0696157e38b858bde2fb6e77fc81c4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructors with one path <br/></td></tr>
 <tr class="separator:ae0696157e38b858bde2fb6e77fc81c4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7dbe5c31ab2a5f25fbf785fd0f173f7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7dbe5c31ab2a5f25fbf785fd0f173f7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#aa7dbe5c31ab2a5f25fbf785fd0f173f7">append</a> (std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; path)</td></tr>
 <tr class="memdesc:aa7dbe5c31ab2a5f25fbf785fd0f173f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append the path to the end of the <a class="el" href="class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. ">CompositePath</a>. <br/></td></tr>
 <tr class="separator:aa7dbe5c31ab2a5f25fbf785fd0f173f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab178e05058a99745ff3a27ad04147644"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#ab178e05058a99745ff3a27ad04147644">evaluate</a> (float t, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetPosOut, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetVelOut) const override</td></tr>
-<tr class="memdesc:ab178e05058a99745ff3a27ad04147644"><td class="mdescLeft">&#160;</td><td class="mdescRight">A path describes the position and velocity a robot should be at for a particular time interval.  <a href="#ab178e05058a99745ff3a27ad04147644">More...</a><br/></td></tr>
-<tr class="separator:ab178e05058a99745ff3a27ad04147644"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4894531bc48a3e98f6dd798865e0832"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#ab4894531bc48a3e98f6dd798865e0832">hit</a> (const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;shape, float startTime=0) const override</td></tr>
-<tr class="memdesc:ab4894531bc48a3e98f6dd798865e0832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#ab4894531bc48a3e98f6dd798865e0832">More...</a><br/></td></tr>
-<tr class="separator:ab4894531bc48a3e98f6dd798865e0832"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aede80c915df9ab8d94e5536fa289016b"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#aede80c915df9ab8d94e5536fa289016b">evaluate</a> (float t, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &amp;targetMotionInstant) const override</td></tr>
+<tr class="memdesc:aede80c915df9ab8d94e5536fa289016b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A path describes the position and velocity a robot should be at for a particular time interval.  <a href="#aede80c915df9ab8d94e5536fa289016b">More...</a><br/></td></tr>
+<tr class="separator:aede80c915df9ab8d94e5536fa289016b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a178005e26072ef95f622d1d5fda7ab22"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a178005e26072ef95f622d1d5fda7ab22">hit</a> (const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;shape, float &amp;hitTime, float startTime=0) const override</td></tr>
+<tr class="memdesc:a178005e26072ef95f622d1d5fda7ab22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#a178005e26072ef95f622d1d5fda7ab22">More...</a><br/></td></tr>
+<tr class="separator:a178005e26072ef95f622d1d5fda7ab22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49a53c51d18adedb59542f42f6d897a4"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const override</td></tr>
 <tr class="memdesc:a49a53c51d18adedb59542f42f6d897a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#a49a53c51d18adedb59542f42f6d897a4">More...</a><br/></td></tr>
 <tr class="separator:a49a53c51d18adedb59542f42f6d897a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,11 +147,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a75f37da922b9d6ff873a082ab4084c9b"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b">subPath</a> (float startTime=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const override</td></tr>
 <tr class="memdesc:a75f37da922b9d6ff873a082ab4084c9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a subPath.  <a href="#a75f37da922b9d6ff873a082ab4084c9b">More...</a><br/></td></tr>
 <tr class="separator:a75f37da922b9d6ff873a082ab4084c9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2718493a38c83bce065872d12ddafa8a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2718493a38c83bce065872d12ddafa8a"></a>
+<tr class="memitem:afeadd1b82197ab960743e3dfe8f4855d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afeadd1b82197ab960743e3dfe8f4855d"></a>
 virtual boost::optional<br class="typebreak"/>
-&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a2718493a38c83bce065872d12ddafa8a">destination</a> () const override</td></tr>
-<tr class="memdesc:a2718493a38c83bce065872d12ddafa8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the destination point of the path if it has one. <br/></td></tr>
-<tr class="separator:a2718493a38c83bce065872d12ddafa8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+&lt; <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#afeadd1b82197ab960743e3dfe8f4855d">destination</a> () const override</td></tr>
+<tr class="memdesc:afeadd1b82197ab960743e3dfe8f4855d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the destination point of the path if it has one. <br/></td></tr>
+<tr class="separator:afeadd1b82197ab960743e3dfe8f4855d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ae76a00762203c43efa4ec6ed1ecc37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ae76a00762203c43efa4ec6ed1ecc37"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a7ae76a00762203c43efa4ec6ed1ecc37">clone</a> () const override</td></tr>
 <tr class="memdesc:a7ae76a00762203c43efa4ec6ed1ecc37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a>. <br/></td></tr>
@@ -234,7 +231,7 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 
 </div>
 </div>
-<a class="anchor" id="ab178e05058a99745ff3a27ad04147644"></a>
+<a class="anchor" id="aede80c915df9ab8d94e5536fa289016b"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -250,14 +247,8 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
-          <td class="paramname"><em>targetPosOut</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
-          <td class="paramname"><em>targetVelOut</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &amp;&#160;</td>
+          <td class="paramname"><em>targetMotionInstant</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -276,15 +267,14 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 <p>This method evalates the path at a given time and returns the target position and velocity of the robot.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Time (in seconds) since the robot started the path </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">targetPosOut</td><td>The position the robot would ideally be at at the given time </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">targetVelOut</td><td>The target velocity of the robot at the given time </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Time (in seconds) since the robot started the path. Throws an exception if t&lt;0 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">targetMotionInstant</td><td>The position and velocity the robot would ideally be at at the given time </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the path is valid at time , false if you've gone past the end </dd></dl>
 
-<p>Implements <a class="el" href="class_planning_1_1_path.html#a9e701e94af9dc86c81986a07cac5dec5">Planning::Path</a>.</p>
+<p>Implements <a class="el" href="class_planning_1_1_path.html#aabd42049334d4ffa5d184e1df15b8d5c">Planning::Path</a>.</p>
 
 </div>
 </div>
@@ -316,7 +306,7 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 
 </div>
 </div>
-<a class="anchor" id="ab4894531bc48a3e98f6dd798865e0832"></a>
+<a class="anchor" id="a178005e26072ef95f622d1d5fda7ab22"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -328,6 +318,12 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
           <td>(</td>
           <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;&#160;</td>
           <td class="paramname"><em>shape</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float &amp;&#160;</td>
+          <td class="paramname"><em>hitTime</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -352,13 +348,14 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">shape</td><td>The obstacles on the field </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">hitTime</td><td>the approximate time when the path hits an obstacle. If no obstacles are hit, behavior is undefined for the final value. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">startTime</td><td>The time on the path to start checking from </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if it hits an obstacle, otherwise false </dd></dl>
 
-<p>Implements <a class="el" href="class_planning_1_1_path.html#a42d80c8abceb3183ddfa62c749537dd2">Planning::Path</a>.</p>
+<p>Implements <a class="el" href="class_planning_1_1_path.html#a766d381e64503cd5528da634ff69c565">Planning::Path</a>.</p>
 
 </div>
 </div>
@@ -418,7 +415,7 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_composite_path.html">CompositePath</a></li>
-    <li class="footer">Generated on Wed Aug 26 2015 03:32:17 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Aug 26 2015 17:39:57 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

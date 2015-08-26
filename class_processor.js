@@ -30,10 +30,12 @@ var class_processor =
     [ "refereeModule", "class_processor.html#a80d47b696cbba4ce58438c9ec3921c24", null ],
     [ "run", "class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774", null ],
     [ "setFieldDimensions", "class_processor.html#ac7a0fb93ef1c11e46c8f6313c2317e9a", null ],
+    [ "setUseFieldOrientedManualDrive", "class_processor.html#a2c61fc87a5e9dcb24df4b64d5a701a92", null ],
     [ "simulation", "class_processor.html#af783beacf0f962ef8ec48232e0a5a2d9", null ],
     [ "state", "class_processor.html#ac70adfd2e901cf43c8fbed4c884094d2", null ],
     [ "status", "class_processor.html#a731ff4331aef13a8586d00a34024eb96", null ],
     [ "stop", "class_processor.html#a96c4902b3169f62c96383c24899bce56", null ],
+    [ "useFieldOrientedManualDrive", "class_processor.html#a53e5e4890e47a1c3b95c0119a15295e1", null ],
     [ "useOpponentHalf", "class_processor.html#abe2acdc734aece774c9dd262a217ba1a", null ],
     [ "useOurHalf", "class_processor.html#a761db266f4f8c46829387e50ec2a8c5a", null ],
     [ "firstLogTime", "class_processor.html#a3461ecf24cb193dcc45e825ac4e4ac98", null ]

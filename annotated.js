@@ -5,6 +5,12 @@ var annotated =
       [ "PointMagnitude", "struct_chart_1_1_point_magnitude.html", "struct_chart_1_1_point_magnitude" ],
       [ "NumericField", "struct_chart_1_1_numeric_field.html", "struct_chart_1_1_numeric_field" ]
     ] ],
+    [ "circle_near_ball", null, [
+      [ "CircleNearBall", "classcircle__near__ball_1_1_circle_near_ball.html", "classcircle__near__ball_1_1_circle_near_ball" ]
+    ] ],
+    [ "circle_on_center", null, [
+      [ "CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", "classcircle__on__center_1_1_circle_on_center" ]
+    ] ],
     [ "Gameplay", "namespace_gameplay.html", "namespace_gameplay" ],
     [ "gameplay", null, [
       [ "behavior", null, [
@@ -22,10 +28,6 @@ var annotated =
       [ "evaluation", null, [
         [ "double_touch", null, [
           [ "DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker" ]
-        ] ],
-        [ "window_evaluator", null, [
-          [ "Window", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window" ],
-          [ "WindowEvaluator", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator" ]
         ] ]
       ] ],
       [ "fs_watcher", null, [
@@ -44,6 +46,9 @@ var annotated =
         [ "offense", null, [
           [ "basic_122", null, [
             [ "Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122" ]
+          ] ],
+          [ "two_side_attack", null, [
+            [ "TwoSideAttack", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack" ]
           ] ]
         ] ],
         [ "restarts", null, [
@@ -70,6 +75,9 @@ var annotated =
           ] ],
           [ "their_restart", null, [
             [ "TheirRestart", "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html", "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart" ]
+          ] ],
+          [ "two_side_corner_kick", null, [
+            [ "TwoSideCornerKick", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick" ]
           ] ]
         ] ],
         [ "stopped", null, [
@@ -78,9 +86,6 @@ var annotated =
         [ "testing", null, [
           [ "debug_window_evaluator", null, [
             [ "DebugWindowEvaluator", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator" ]
-          ] ],
-          [ "defense", null, [
-            [ "TestDefense", "classgameplay_1_1plays_1_1testing_1_1defense_1_1_test_defense.html", "classgameplay_1_1plays_1_1testing_1_1defense_1_1_test_defense" ]
           ] ],
           [ "line_up", null, [
             [ "LineUp", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up.html", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up" ]
@@ -99,6 +104,12 @@ var annotated =
           ] ],
           [ "test_coordinated_pass", null, [
             [ "TestCoordinatedPass", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass" ]
+          ] ],
+          [ "test_defense", null, [
+            [ "TestDefense", "classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense.html", "classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense" ]
+          ] ],
+          [ "test_defense_and_kicker", null, [
+            [ "TestDefenseAndKicker", "classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker.html", "classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker" ]
           ] ],
           [ "test_fullback", null, [
             [ "TestDefender", "classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender.html", "classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender" ]
@@ -120,9 +131,6 @@ var annotated =
           ] ],
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
-          ] ],
-          [ "two_side_attack", null, [
-            [ "TwoSideAttack", "classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack.html", "classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack" ]
           ] ]
         ] ],
         [ "tuning", null, [
@@ -181,6 +189,9 @@ var annotated =
         [ "move", null, [
           [ "Move", "classgameplay_1_1skills_1_1move_1_1_move.html", "classgameplay_1_1skills_1_1move_1_1_move" ]
         ] ],
+        [ "move_direct", null, [
+          [ "MoveDirect", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct" ]
+        ] ],
         [ "pass_receive", null, [
           [ "PassReceive", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive" ]
         ] ],
@@ -191,9 +202,6 @@ var annotated =
       [ "tactics", null, [
         [ "behavior_sequence", null, [
           [ "BehaviorSequence", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence" ]
-        ] ],
-        [ "circle_near_ball", null, [
-          [ "CircleNearBall", "classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html", "classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball" ]
         ] ],
         [ "coordinated_pass", null, [
           [ "CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass" ]
@@ -227,6 +235,7 @@ var annotated =
       ] ]
     ] ],
     [ "Geometry2d", null, [
+      [ "Arc", "class_geometry2d_1_1_arc.html", "class_geometry2d_1_1_arc" ],
       [ "Circle", "class_geometry2d_1_1_circle.html", "class_geometry2d_1_1_circle" ],
       [ "CompositeShape", "class_geometry2d_1_1_composite_shape.html", "class_geometry2d_1_1_composite_shape" ],
       [ "Line", "class_geometry2d_1_1_line.html", "class_geometry2d_1_1_line" ],
@@ -240,8 +249,12 @@ var annotated =
     [ "Planning", null, [
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
+      [ "MotionCommand", "class_planning_1_1_motion_command.html", "class_planning_1_1_motion_command" ],
+      [ "MotionInstant", "struct_planning_1_1_motion_instant.html", "struct_planning_1_1_motion_instant" ],
       [ "Path", "class_planning_1_1_path.html", "class_planning_1_1_path" ],
+      [ "PathPlanner", "class_planning_1_1_path_planner.html", "class_planning_1_1_path_planner" ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
+      [ "TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", "class_planning_1_1_trapezoidal_path" ],
       [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ],
       [ "FixedStepTree", "class_planning_1_1_fixed_step_tree.html", "class_planning_1_1_fixed_step_tree" ]
     ] ],
@@ -257,9 +270,6 @@ var annotated =
     ] ],
     [ "test_role_assignment", null, [
       [ "TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", "classtest__role__assignment_1_1_test_role_assignment" ]
-    ] ],
-    [ "test_win_eval", null, [
-      [ "TestWindowEvaluator", "classtest__win__eval_1_1_test_window_evaluator.html", "classtest__win__eval_1_1_test_window_evaluator" ]
     ] ],
     [ "AutoName", "class_auto_name.html", "class_auto_name" ],
     [ "Ball", "class_ball.html", "class_ball" ],
@@ -319,5 +329,7 @@ var annotated =
     [ "Timeout", "class_timeout.html", "class_timeout" ],
     [ "USBRadio", "class_u_s_b_radio.html", "class_u_s_b_radio" ],
     [ "VisionPacket", "class_vision_packet.html", "class_vision_packet" ],
-    [ "VisionReceiver", "class_vision_receiver.html", "class_vision_receiver" ]
+    [ "VisionReceiver", "class_vision_receiver.html", "class_vision_receiver" ],
+    [ "Window", "class_window.html", "class_window" ],
+    [ "WindowEvaluator", "class_window_evaluator.html", "class_window_evaluator" ]
 ];
