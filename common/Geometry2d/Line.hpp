@@ -54,10 +54,10 @@ namespace Geometry2d
 			@param intr set to the intersection point if the lines intersect
 			@return true if the lines intersect, false otherwise
 			*/
-			bool intersects(const Line &other, Point *intersection = 0) const;
+			bool intersects(const Line &other, Point *intersection = nullptr) const;
 			
 			/** returns the points of intersection b/t circle and line */
-			bool intersects(const Circle& circle, Point* p1 = 0, Point* p2 = 0) const;
+			bool intersects(const Circle& circle, Point* p1 = nullptr, Point* p2 = nullptr) const;
             
 			/**
 			 * tells you which side of the line you are on

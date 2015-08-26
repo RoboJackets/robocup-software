@@ -15,6 +15,8 @@ namespace Planning
 	{
 
 	public:
+        virtual ~Path() {}
+
 		/**
          * A path describes the position and velocity a robot should be at for a
          * particular time interval.  This method evalates the path at a given time and

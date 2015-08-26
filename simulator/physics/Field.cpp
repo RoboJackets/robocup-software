@@ -7,7 +7,7 @@ using namespace std;
 
 
 Field::Field(Environment* env) :
-	Entity(env),_indexVertexArrays(0),_vertices(0),_simEngine(env->getSimEngine()),_x(0),_y(0)
+	Entity(env),_indexVertexArrays(nullptr),_vertices(nullptr),_simEngine(env->getSimEngine()),_x(0),_y(0)
 {
 }
 

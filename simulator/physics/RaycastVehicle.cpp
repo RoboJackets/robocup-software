@@ -174,7 +174,7 @@ btScalar RaycastVehicle::rayCast(btWheelInfo& wheel)
 
 	void* object = m_vehicleRaycaster->castRay(source,target,rayResults);
 
-	wheel.m_raycastInfo.m_groundObject = 0;
+	wheel.m_raycastInfo.m_groundObject = nullptr;
 
 	if (object)
 	{
@@ -737,5 +737,5 @@ void* DefaultVehicleRaycaster::castRay(const btVector3& from,const btVector3& to
 			return body;
 		}
 	}
-	return 0;
+	return nullptr;
 }

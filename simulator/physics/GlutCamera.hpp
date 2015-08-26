@@ -56,7 +56,7 @@ protected:
 	SimEngine *_simEngine;
 
 public:
-	GlutCamera(SimEngine* engine = 0);
+	GlutCamera(SimEngine* engine = nullptr);
 	virtual ~GlutCamera();
 
 	bool setTexturing(bool enable) { return (_shapeDrawer->enableTexture(enable)); }

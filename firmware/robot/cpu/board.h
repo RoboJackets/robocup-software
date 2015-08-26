@@ -111,7 +111,7 @@
 #define ADC_MAX_CK_10BIT         5000000
 /// ADC clock frequency, at 8-bit resolution (in Hz)
 #define ADC_MAX_CK_8BIT          8000000
-/// Startup time max, return from Idle mode (in µs)
+/// Startup time max, return from Idle mode (in Âµs)
 #define ADC_STARTUP_TIME_MAX       20
 /// Track and hold Acquisition Time min (in ns)
 #define ADC_TRACK_HOLD_TIME_MIN   600
