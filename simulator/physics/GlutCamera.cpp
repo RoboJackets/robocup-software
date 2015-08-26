@@ -274,8 +274,8 @@ void GlutCamera::setOrthographicProjection() {
     // switch to projection mode
     glMatrixMode(GL_PROJECTION);
 
-    // save previous matrix which contains the
-    // settings for the perspective projection
+    // save previous matrix which contains the settings for the perspective
+    // projection
     glPushMatrix();
     // reset matrix
     glLoadIdentity();
@@ -286,8 +286,7 @@ void GlutCamera::setOrthographicProjection() {
 
     // invert the y axis, down is positive
     glScalef(1, -1, 1);
-    // mover the origin from the bottom left corner
-    // to the upper left corner
+    // mover the origin from the bottom left corner to the upper left corner
     glTranslatef(btScalar(0), btScalar(-_glutScreenHeight), btScalar(0));
 }
 

@@ -13,8 +13,7 @@
 
 using namespace Geometry2d;
 
-// FIXME: parameters have no sensible interpretation
-// static physics parameters
+// FIXME: parameters have no sensible interpretation static physics parameters
 static const float maxEngineForce =
     4000.f;  // this should be engine/velocity dependent
 static const float maxBreakingForce = 100.f;

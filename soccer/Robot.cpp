@@ -508,8 +508,7 @@ void OurRobot::replanIfNeeded(
     // create and visualize obstacles
     Geometry2d::CompositeShape full_obstacles(_local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
-    // from this robot.
-    // This distance increases with velocity.
+    // from this robot. This distance increases with velocity.
     Geometry2d::CompositeShape self_obs = createRobotObstacles(
                                    _state->self, _self_avoid_mask, this->pos,
                                    0.6 + this->vel.mag()),
@@ -577,10 +576,9 @@ void OurRobot::replanIfNeeded(
                 addText("Hit Obstacle", Qt::red, "Motion");
             }
 
-            //	if the destination of the current path is greater than X m away
-            //from the target destination,
-            //	we invalidate the path.  this situation could arise if the path
-            //destination changed
+            // if the destination of the current path is greater than X m away
+            // from the target destination, we invalidate the path. This
+            // situation could arise if the path destination changed.
             if (!_path->destination() ||
                 (_path->destination()->pos - commandDestination.pos).mag() >
                     *_goalChangeThreshold ||

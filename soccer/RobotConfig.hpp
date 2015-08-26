@@ -24,7 +24,7 @@ public:
         Kicker(Configuration* config, QString prefix);
 
         ///	these limits are applied before sending the actual commands to the
-        ///robots
+        /// robots
         ConfigDouble* maxKick;
         ConfigDouble* maxChip;
         // ConfigDouble *passKick;
@@ -35,7 +35,7 @@ public:
 
         ///	dribber values are multiplied by this before being sent to the robot
         ///	this was added because 2011 bots needed lower dribbler values than
-        ///the 2008 model
+        /// the 2008 model
         ConfigDouble* multiplier;
     };
 
@@ -64,11 +64,11 @@ public:
     ConfigDouble* minEffectiveAngularSpeed;
 
     ///	we multiply this by the bot's acceleration and add this to the output
-    ///targetVel
+    /// targetVel
     ConfigDouble* accelerationMultiplier;
 
-    //	when pivoting, we multiply the calculated x-velocity
-    //	of the robot by this value before sending it to the robot
+    // when pivoting, we multiply the calculated x-velocity of the robot by this
+    // value before sending it to the robot
     ConfigDouble* pivotVelMultiplier;
 };
 

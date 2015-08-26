@@ -52,8 +52,8 @@ message TestResult
 	optional string group = 3;
 }
 
-// Only the first LogFrame in a log file contains this.
-// It contains unchanging information about the soccer build and invocation.
+// Only the first LogFrame in a log file contains this. It contains unchanging
+// information about the soccer build and invocation.
 message LogConfig
 {
 	// Name of the program which generated this log

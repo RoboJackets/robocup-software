@@ -23,8 +23,8 @@ BatteryProfile::BatteryProfile(std::vector<BatteryProfile::Entry> dataPoints) {
 
 double BatteryProfile::getChargeLevel(double voltage) const {
     //  lower_bound does a binary search and returns an iterator pointing to the
-    //  first element
-    //  that is not less than @voltage, or end() if no element exists
+    //  first element that is not less than @voltage, or end() if no element
+    //  exists
     auto nextBiggest = lower_bound(
         _dataPoints.begin(), _dataPoints.end(), voltage,
         [](const Entry& entry, double val) { return entry.first < val; });

@@ -23,8 +23,8 @@ TransformMatrix::TransformMatrix(const Geometry2d::Point& origin,
 }
 
 float TransformMatrix::transformAngle(float angle) const {
-    // Multiply the matrix by a unit vector in the given direction
-    // with a 3rd element of zero and find the direction of the result.
+    // Multiply the matrix by a unit vector in the given direction with a 3rd
+    // element of zero and find the direction of the result.
 
     float px = cos(angle);
     float py = sin(angle);
@@ -60,13 +60,12 @@ float TransformMatrix::rotation() const {
 }
 
 bool TransformMatrix::mirrored() const {
-    // This matrix contains a reflection iff the Z component of
-    // the transformed x vector cross the transformed y vector
-    // is negative.  Conveniently, this is the determinant of the
-    // matrix formed by the two vectors.
+    // This matrix contains a reflection iff the Z component of the transformed
+    // x vector cross the transformed y vector is negative.  Conveniently, this
+    // is the determinant of the matrix formed by the two vectors.
     //
-    // In a right-handed coordinate system, +X cross +Y = +Z.
-    // A reflection flips the coordinate system to be left-handed
-    // so the (right-handed) cross product becomes -Z.
+    // In a right-handed coordinate system, +X cross +Y = +Z. A reflection flips
+    // the coordinate system to be left-handed so the (right-handed) cross
+    // product becomes -Z.
     return (_m[0] * _m[4] - _m[1] * _m[3]) < 0;
 }

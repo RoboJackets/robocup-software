@@ -1,5 +1,4 @@
-#ifndef TEAMINFO_HPP
-#define TEAMINFO_HPP
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -53,5 +52,3 @@ public:
         goalie = packet.goalie();
     }
 };
-
-#endif  // TEAMINFO_HPP

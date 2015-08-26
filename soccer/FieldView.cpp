@@ -158,11 +158,10 @@ void FieldView::drawWorldSpace(QPainter& p) {
     // Draw the field
     drawField(p, frame);
 
-    //	maps robots to their comet trails, so we can draw a path of where each
-    //robot has been over the past X frames
-    //	the pair used as a key is of the form (team, robot_id).  Blue team = 1,
-    //yellow = 2.
-    //	we only draw trails for robots that exist in the current frame
+    // maps robots to their comet trails, so we can draw a path of where each
+    // robot has been over the past X frames the pair used as a key is of the
+    // form (team, robot_id).  Blue team = 1, yellow = 2. we only draw trails
+    // for robots that exist in the current frame
     map<pair<int, int>, QPainterPath> cometTrails;
 
     ///	populate @cometTrails with the past locations of each robot

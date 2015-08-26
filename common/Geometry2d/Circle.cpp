@@ -10,9 +10,9 @@ int Circle::intersects(Circle& other, Point* i) const {
     // http://local.wasp.uwa.edu.au/~pbourke/geometry/2circle/
     // (Mathworld's solution uses inconvenient coordinates)
     //
-    // This is rearranged to perform the sqrts after the number
-    // of intersection points is known, so they can be omitted
-    // if the points are not needed or if the circles don't intersect.
+    // This is rearranged to perform the sqrts after the number of intersection
+    // points is known, so they can be omitted if the points are not needed or
+    // if the circles don't intersect.
 
     float dsq = (center - other.center).magsq();
     if (dsq == 0) {

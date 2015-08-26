@@ -9,10 +9,9 @@ class OurRobot;
 /**
  * @brief Handles computer-side motion control
  * @details It is responsible for most of what gets sent out in a RadioTx
- * packet.
- * The MotionControl object is given an OurRobot at initialization and from then
- * on will set the values in that robot's RadioTx packet directly whenever run()
- * or stopped() is called.
+ *     packet. The MotionControl object is given an OurRobot at initialization
+ *     and from then on will set the values in that robot's RadioTx packet
+ *     directly whenever run() or stopped() is called.
  */
 class MotionControl {
 public:
@@ -45,12 +44,12 @@ private:
 
     OurRobot* _robot;
 
-    //	these are tracked so we can limit robot acceleration
-    Geometry2d::Point _lastVelCmd;  //	the last velocity (in m/s, not the
-                                    //radioTx value) command that we sent to the
-                                    //robot
-    long _lastCmdTime;  //	the time in microseconds when the last velocity
-                        //command was sent
+    /// The last velocity (in m/s, not the radioTx value) command that we sent
+    /// to the robot
+    Geometry2d::Point _lastVelCmd;
+
+    /// the time in microseconds when the last velocity command was sent
+    long _lastCmdTime;
 
     Pid _positionXController;
     Pid _positionYController;

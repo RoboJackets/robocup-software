@@ -38,7 +38,7 @@ RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
-//	Joystick speed limits (for damped and non-damped mode)
+// Joystick speed limits (for damped and non-damped mode)
 // Translation in m/s, Rotation in rad/s
 static const float JoystickRotationMaxSpeed = 4 * M_PI;
 static const float JoystickRotationMaxDampedSpeed = 1 * M_PI;
@@ -70,7 +70,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _simulation = sim;
     _radio = nullptr;
 
-    //	joysticks
+    // joysticks
     _joysticks.push_back(new GamepadJoystick());
     _joysticks.push_back(new SpaceNavJoystick());
     _dampedTranslation = true;
@@ -361,8 +361,7 @@ void Processor::run() {
             unsigned int board = rx.robot_id();
             if (board < Num_Shells) {
                 // We have to copy because the RX packet will survive past this
-                // frame
-                // but LogFrame will not (the RadioRx in LogFrame will be
+                // frame but LogFrame will not (the RadioRx in LogFrame will be
                 // reused).
                 _state.self[board]->radioRx().CopyFrom(rx);
                 _state.self[board]->radioRxUpdated();
@@ -523,8 +522,7 @@ void Processor::run() {
             // This seems to depend on how many threads are blocked.
             ::usleep(_framePeriod - lastFrameTime);
         } else {
-            //			printf("Processor took too long: %d us\n",
-            //lastFrameTime);
+            //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
 
@@ -574,35 +572,35 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
                                       OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
-    //	use world coordinates if we can see the robot
-    //	otherwise default to body coordinates
+    // use world coordinates if we can see the robot
+    // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
         translation.rotate(-robot->angle);
     } else {
-        //	adjust for robot coordinate system (x axis points forward through
-        //the mouth of the bot)
+        // adjust for robot coordinate system (x axis points forward through
+        // the mouth of the bot)
         translation.rotate(-M_PI / 2.0f);
     }
 
-    //	translation
+    // translation
     tx->set_body_x(translation.x);
     tx->set_body_y(translation.y);
 
-    //	rotation
+    // rotation
     tx->set_body_w(controlVals.rotation);
 
-    //	kick/chip
+    // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
     tx->set_kick_immediate(kick);
     tx->set_kick(kick ? controlVals.kickPower : 0);
     tx->set_use_chipper(controlVals.chip);
 
-    //	dribbler
+    // dribbler
     tx->set_dribbler(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValues() {
-    //	if there's more than one joystick, we add their values
+    // if there's more than one joystick, we add their values
     JoystickControlValues vals;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
@@ -621,12 +619,12 @@ JoystickControlValues Processor::getJoystickControlValues() {
         }
     }
 
-    //	keep it in range
+    // keep it in range
     vals.translation.clamp(sqrt(2.0));
     if (vals.rotation > 1) vals.rotation = 1;
     if (vals.rotation < -1) vals.rotation = -1;
 
-    //	scale up speeds, respecting the damping modes
+    // scale up speeds, respecting the damping modes
     if (_dampedTranslation) {
         vals.translation *= JoystickTranslationMaxDampedSpeed;
     } else {
@@ -638,7 +636,7 @@ JoystickControlValues Processor::getJoystickControlValues() {
         vals.rotation *= JoystickRotationMaxSpeed;
     }
 
-    //	scale up kicker and dribbler speeds
+    // scale up kicker and dribbler speeds
     vals.dribblerPower *= 128;
     vals.kickPower *= 255;
 

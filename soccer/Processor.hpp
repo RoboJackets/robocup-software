@@ -218,8 +218,8 @@ private:
     bool _blueTeam;
 
     // Locked when processing loop stuff is happening (not when blocked for
-    // timing or I/O).
-    // This is public so the GUI thread can lock it to access SystemState, etc.
+    // timing or I/O). This is public so the GUI thread can lock it to access
+    // SystemState, etc.
     DebugQMutex _loopMutex;
 
     /** global system state */

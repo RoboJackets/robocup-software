@@ -91,9 +91,8 @@ using namespace NewRefereeModuleEnums;
 static const float KickThreshold = 0.150f;
 
 /// How many milliseconds the ball must be more than KickThreshold meters away
-/// from
-/// its position when the referee indicated Ready for us to detect the ball as
-/// having been kicked.
+/// from its position when the referee indicated Ready for us to detect the ball
+/// as having been kicked.
 static const int KickVerifyTime_ms = 250;
 
 NewRefereeModule::NewRefereeModule(SystemState& state)

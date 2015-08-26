@@ -149,9 +149,8 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     child->setData(Column_Tag, Qt::DisplayRole, i);
 
                     // A FieldMap is not used here because the items don't
-                    // actually have tags.
-                    // The item's position in its parent is its position in the
-                    // repeated field.
+                    // actually have tags. The item's position in its parent is
+                    // its position in the repeated field.
                 }
 
                 newFields = true;

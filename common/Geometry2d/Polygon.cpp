@@ -102,37 +102,31 @@ bool Polygon::nearSegment(const Segment& seg, float threshold) const {
 bool Polygon::contains(const Point& pt) const {
     // FIXME (Ben) - Replace this with the optimized wrap-number test.
 
-    // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.htm
-    // isLeft in their description does not actually indicate if a point is on
-    // the -X
-    // side of a line.  It is the same as my Line::point_side.
+    // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.h
+    // tm isLeft in their description does not actually indicate if a point is
+    // on the -X side of a line.  It is the same as my Line::point_side.
     //
     // Simple explanation:
-    // Consider a ray along +X starting at this point.
-    // Go around the polygon and look at every intersection of an edge with this
-    // ray.
-    // Since you are following the polygon's edges in order, if this point is
-    // outside
-    // the polygon the ray will intersect the same number of up-going and
-    // down-going edges.
+    // Consider a ray along +X starting at this point. Go around the polygon and
+    // look at every intersection of an edge with this ray. Since you are
+    // following the polygon's edges in order, if this point is outside the
+    // polygon the ray will intersect the same number of up-going and down-going
+    // edges.
     //
-    // Consider the case of a convex polygon with this point outside:
-    // The ray will intersect exactly one up-going edge and one down-going edge.
-    // For a non-convex polygon, the ray will intersect zero or more additional
-    // pairs
+    // Consider the case of a convex polygon with this point outside: The ray
+    // will intersect exactly one up-going edge and one down-going edge. For a
+    // non-convex polygon, the ray will intersect zero or more additional pairs
     // of up-going and down-going edges.
     //
     // Increment count for each up-going edge and decrement for each down-going
-    // edge.
-    // count==0 iff the point is outside.
+    // edge. count==0 iff the point is outside.
     //
-    // This handles cases where the ray intersects vertices too.
-    // Only the endpoint with the smallest Y-value is considered.
-    // If the ray is outside the polygon, then both edges will be counted
-    // because one will be up-going and one down-going at the vertex.
-    // If the ray is inside the polygon, both edges are going in the same
-    // direction
-    // so the vertex will only be checked for one of them.
+    // This handles cases where the ray intersects vertices too. Only the
+    // endpoint with the smallest Y-value is considered. If the ray is outside
+    // the polygon, then both edges will be counted because one will be up-going
+    // and one down-going at the vertex. If the ray is inside the polygon, both
+    // edges are going in the same direction so the vertex will only be checked
+    // for one of them.
 
     int count = 0;
     unsigned int i = vertices.size() - 1;

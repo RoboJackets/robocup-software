@@ -136,9 +136,10 @@ TEST(InterpolatedPath, subPath1) {
     bool valid = subPath->evaluate(midTime, mid);
     EXPECT_TRUE(valid);
     EXPECT_FLOAT_EQ(Point(1, 1).x, mid.vel.x);
-    EXPECT_FLOAT_EQ(Point(1, 1).y, mid.vel.y);  //  mid velocity of subpath
-                                                //  should be the same as
-                                                //  velocity of original path
+
+    //  mid velocity of subpath should be the same as velocity of original path
+    EXPECT_FLOAT_EQ(Point(1, 1).y, mid.vel.y);
+
     EXPECT_FLOAT_EQ(1, mid.pos.x);
     EXPECT_FLOAT_EQ(2, mid.pos.y);
 

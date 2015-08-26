@@ -17,8 +17,8 @@ Rect Segment::bbox() const {
 }
 
 float Segment::distTo(const Point& other) const {
-    // Calculate the distance in the delta direction of other
-    // with respect to the segment's first endpoint.
+    // Calculate the distance in the delta direction of other with respect to
+    // the segment's first endpoint.
     Point dp = pt[1] - pt[0];
     float d = dp.dot(other - pt[0]);
 
@@ -147,9 +147,8 @@ bool Segment::nearPoint(const Point& point, float threshold) const {
         return true;
     }
 
-    // Calculate the position between the endpoints of the point on
-    // the line nearest this point.
-    // In the result (d), p1 maps to 0 and p2 maps to 1.
+    // Calculate the position between the endpoints of the point on the line
+    // nearest this point. In the result (d), p1 maps to 0 and p2 maps to 1.
     float d = (d1.x * delta.x + d1.y * delta.y) / delta_magsq;
 
     return d >= 0 && d <= 1;
@@ -171,9 +170,8 @@ bool Segment::nearPointPerp(const Point& point, float threshold) const {
 
     Point d1 = point - p1;
 
-    // Calculate the position between the endpoints of the point on
-    // the line nearest this point.
-    // In the result (d), p1 maps to 0 and p2 maps to 1.
+    // Calculate the position between the endpoints of the point on the line
+    // nearest this point. In the result (d), p1 maps to 0 and p2 maps to 1.
     float d = (d1.x * delta.x + d1.y * delta.y) / delta_magsq;
 
     return d >= 0 && d <= 1;

@@ -188,11 +188,6 @@ protected:
     void saveOpenGLState();
     void restoreOpenGLState();
 
-    //	void	drawLine(int _X0, int _Y0, int _X1, int _Y1, unsigned int _Color0,
-    //unsigned int _Color1, bool antiAliased);
-    //	void	drawRect(int horStart, int vertStart, int horEnd, int vertEnd,
-    //unsigned int argbColor00,unsigned int argbColor10,unsigned int
-    //argbColor01,unsigned int argbColor11);
 
 public:
     GL_DialogWindow(int horPos, int vertPos, int dialogWidth, int dialogHeight,

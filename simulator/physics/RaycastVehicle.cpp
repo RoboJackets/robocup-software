@@ -614,8 +614,8 @@ void RaycastVehicle::updateFriction(btScalar timeStep) {
 
             btVector3 sideImp = m_axle[wheel] * m_sideImpulse[wheel];
 
-#if defined ROLLING_INFLUENCE_FIX  // fix. It only worked if car's up was along
-                                   // Y - VT.
+  // fix. It only worked if car's up was along Y - VT.
+#if defined ROLLING_INFLUENCE_FIX
             btVector3 vChassisWorldUp =
                 getRigidBody()->getCenterOfMassTransform().getBasis().getColumn(
                     m_indexUpAxis);
