@@ -157,7 +157,7 @@ set(SOCCER_TEST_SRC
     "ExampleTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

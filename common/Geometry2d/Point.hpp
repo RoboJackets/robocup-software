@@ -16,15 +16,18 @@ namespace Geometry2d
 	class Point
 	{
 		public:
+			/** the x coordinate */
+			float x;
+
+			/** the y coordinate */
+			float y;
+		
 			/**
 			default constrctor.
 			initializes point to (0,0)
 			usage as Point p = Point();
 			*/
-			Point()
-			{
-				x = y = 0;
-			}
+			Point() : x(0), y(0) {}
 
 			/**
 			overloaded constructor.
@@ -33,18 +36,23 @@ namespace Geometry2d
 			@param x the x coordinate
 			@param y the y coordinate
 			*/
-			Point(float x, float y)
-			{
-				this->x = x;
-				this->y = y;
-			}
-			
-			template<class T>
-			Point(const T &other)
-			{
-				x = other.x();
-				y = other.y();
-			}
+			Point(float x, float y) : x(x), y(y) {}
+
+			/**
+			 * Implicity constructor for creating a Point from a Packet::Point
+			 */
+			Point(const Packet::Point& other) : x(other.x()), y(other.y()) {}
+
+			/**
+			 * Implicity constructor for creating a Point from a QPointF
+			 */
+			Point(const QPointF& other) : x(other.x()), y(other.y()) {}
+
+			/**
+			 * Implicity constructor for creating a Point from a QPoint
+			 */
+			Point(const QPoint& other) : x(other.x()), y(other.y()) {}
+
 			/**
 			 * to draw stuff and interface with QT
 			 */
@@ -369,12 +377,6 @@ namespace Geometry2d
 				stream << point.toString();
 				return stream;
 			}
-
-			/** the x coordinate */
-			float x;
-			
-			/** the y coordinate */
-			float y;
 	}; // \class Point
 
 	// global operations
