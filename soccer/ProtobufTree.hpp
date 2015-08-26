@@ -45,9 +45,8 @@ public:
     QTimer* updateTimer;
 
 protected:
-    // Recursively updates the tree.
-    // This should only be called for items where <parent> is the item for a
-    // message (not a repeated field).
+    // Recursively updates the tree. This should only be called for items where
+    // <parent> is the item for a message (not a repeated field).
     bool addTreeData(QTreeWidgetItem* parent,
                      const google::protobuf::Message& msg);
 

@@ -235,10 +235,9 @@ char identify_device(uint16_t vid, uint16_t pid) {
 // Reads descriptors and sets up the device.
 // Called immediately after the device is connected and reset.
 char configure_device() {
-    // Read the first 8 bytes of the device descriptor.
-    // The last byte is the endpoint size on the device.
-    // We can only assume that it is at least 8, so we have to
-    // read the full descriptor again when we know the true value.
+    // Read the first 8 bytes of the device descriptor. The last byte is the
+    // endpoint size on the device. We can only assume that it is at least 8, so
+    // we have to read the full descriptor again when we know the true value.
     USB_Setup_Request c;
     c.bmRequestType = 0x80;
     c.bRequest = 6;
@@ -319,10 +318,8 @@ void host_gen_vect() {
 
         printf_P(PSTR("Device connected\n"));
 
-        // Switch to the Host Ready state.
-        // We have to do this even though we're manually controlling VBus
-        // because
-        // the USB core needs to change state.
+        // Switch to the Host Ready state. We have to do this even though we're
+        // manually controlling VBus because the USB core needs to change state.
         set_bit(OTGCON, VBUSREQ);
 
         // DCONNI will be set shortly.
@@ -352,10 +349,9 @@ void host_gen_vect() {
             clear_bit(UPCONX, PEN);
         }
 
-        // Move the USB core to the Host Idle state.
-        // We have to do this even though we're manually controlling VBus
-        // because
-        // the USB core needs to change state.
+        // Move the USB core to the Host Idle state. We have to do this even
+        // though we're manually controlling VBus because the USB core needs to
+        // change state.
         set_bit(OTGCON, VBUSRQC);
 
         // Turn off Vbus long enough for the USB core to notice, then turn it

@@ -538,10 +538,10 @@ void DemoApplication::shootBox(const btVector3& destination) {
         body->setLinearVelocity(linVel);
         body->setAngularVelocity(btVector3(0, 0, 0));
         body->setCcdMotionThreshold(0.5);
-        body->setCcdSweptSphereRadius(0.4f);  // value should be smaller
-                                              // (embedded) than the half
-                                              // extends of the box (see
-                                              // ::setShootBoxShape)
+
+        // value should be smaller (embedded) than the half extends of the box
+        // (see ::setShootBoxShape)
+        body->setCcdSweptSphereRadius(0.4f);
         //		printf("shootBox uid=%d\n",
         //body->getBroadphaseHandle()->getUid());
         //		printf("camPos=%f,%f,%f\n",camPos.getX(),camPos.getY(),camPos.getZ());
@@ -924,8 +924,8 @@ void DemoApplication::setOrthographicProjection() {
     // switch to projection mode
     glMatrixMode(GL_PROJECTION);
 
-    // save previous matrix which contains the
-    // settings for the perspective projection
+    // save previous matrix which contains the settings for the perspective
+    // projection
     glPushMatrix();
     // reset matrix
     glLoadIdentity();
@@ -936,8 +936,7 @@ void DemoApplication::setOrthographicProjection() {
 
     // invert the y axis, down is positive
     glScalef(1, -1, 1);
-    // mover the origin from the bottom left corner
-    // to the upper left corner
+    // mover the origin from the bottom left corner to the upper left corner
     glTranslatef(btScalar(0), btScalar(-m_glutScreenHeight), btScalar(0));
 }
 

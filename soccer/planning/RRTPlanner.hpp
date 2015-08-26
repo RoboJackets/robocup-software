@@ -37,7 +37,7 @@ public:
      */
     void maxIterations(int value) { _maxIterations = value; }
 
-    /// run the path ROTplanner
+    /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
     std::unique_ptr<Path> run(
         MotionInstant startInstant, MotionInstant motionCommand,

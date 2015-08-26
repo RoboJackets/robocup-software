@@ -38,9 +38,8 @@ public:
     void update(const RobotObservation* obs);
 
     /// Generates a prediction of the ball's state at a given time in the
-    /// future.
-    /// This may clear robot->visible if the prediction is too long in the
-    /// future to be reliable.
+    /// future. This may clear robot->visible if the prediction is too long in
+    /// the future to be reliable.
     void predict(Time time, RobotPose* robot);
 
 private:

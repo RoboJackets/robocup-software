@@ -70,9 +70,8 @@ public:
     int intersects(Circle& other, Point* i = nullptr) const;
 
     // Returns the number of points at which this circle intersects the given
-    // line.
-    // i must be null or point to two points.
-    // Only the first n points in i are modified, where n is the return value.
+    // line. i must be null or point to two points. Only the first n points in i
+    // are modified, where n is the return value.
     int intersects(const Line& line, Point* i = nullptr) const;
 
     bool tangentPoints(const Geometry2d::Point& src,

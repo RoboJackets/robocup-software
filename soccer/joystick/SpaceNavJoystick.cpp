@@ -25,9 +25,9 @@ void SpaceNavJoystick::update() {
     _controlValues.kick = false;
     _controlValues.chip = false;
 
-    //  read events from spacenav.  There may be many of them.
-    //  we're only interested in the latest motion event, but we want to take
-    //  note of any button event that happens
+    //  read events from spacenav.  There may be many of them. we're only
+    //  interested in the latest motion event, but we want to take note of any
+    //  button event that happens
     spnav_event sev;
     while (spnav_poll_event(&sev)) {
         if (sev.type == SPNAV_EVENT_MOTION) {

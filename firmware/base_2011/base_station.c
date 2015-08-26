@@ -64,9 +64,8 @@ void led_test() {
 }
 
 int main() {
-    // Disable the watchdog timer.
-    // This must be done in case we are started from the bootloader,
-    // which uses the WDT to reset.
+    // Disable the watchdog timer. This must be done in case we are started from
+    // the bootloader, which uses the WDT to reset.
     wdt_reset();
     clear_bit(MCUSR, WDRF);
     WDTCSR |= (1 << WDCE) | (1 << WDE);

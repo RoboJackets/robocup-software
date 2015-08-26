@@ -6,10 +6,9 @@
 namespace Geometry2d {
 // A 2x3 transformation matrix.
 //
-// This is the 2D equivalent of the usual 3D tranformation matrix
-// with the bottom row omitted because the bottom (third) element
-// of a 2D point is always 1.  The third row of the matrix is
-// understood to be [0 0 1].
+// This is the 2D equivalent of the usual 3D tranformation matrix with the
+// bottom row omitted because the bottom (third) element of a 2D point is always
+// 1.  The third row of the matrix is understood to be [0 0 1].
 class TransformMatrix {
 public:
     TransformMatrix() {
@@ -94,8 +93,7 @@ public:
     float yScale() const { return y().mag(); }
 
     // Returns the clockwise angle from the transformed Y axis to the original Y
-    // axis.
-    // This is not affected by horizontal reflection.
+    // axis. This is not affected by horizontal reflection.
     float rotation() const;
 
     // Returns true if the coordinate system has been mirrored (i.e. is now

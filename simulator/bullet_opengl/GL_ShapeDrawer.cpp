@@ -303,11 +303,9 @@ void GL_ShapeDrawer::drawCylinder(float radius, float halfHeight, int upAxis) {
     GLUquadricObj* quadObj = gluNewQuadric();
 
     // The gluCylinder subroutine draws a cylinder that is oriented along the z
-    // axis.
-    // The base of the cylinder is placed at z = 0; the top of the cylinder is
-    // placed at z=height.
-    // Like a sphere, the cylinder is subdivided around the z axis into slices
-    // and along the z axis into stacks.
+    // axis. The base of the cylinder is placed at z = 0; the top of the
+    // cylinder is placed at z=height. Like a sphere, the cylinder is subdivided
+    // around the z axis into slices and along the z axis into stacks.
 
     gluQuadricDrawStyle(quadObj, (GLenum)GLU_FILL);
     gluQuadricNormals(quadObj, (GLenum)GLU_SMOOTH);
@@ -529,10 +527,9 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape,
             /// you can comment out any of the specific cases, and use the
             /// default
 
-            /// the benefit of 'default' is that it approximates the actual
-            /// collision shape including collision margin
-            // int
-            // shapetype=m_textureenabled?MAX_BROADPHASE_COLLISION_TYPES:shape->getShapeType();
+            /// the benefit of 'default' is that it approximates the actual /
+            //collision shape including collision margin int shapetype=m_texture
+            //enabled?MAX_BROADPHASE_COLLISION_TYPES:shape->getShapeType();
             int shapetype = shape->getShapeType();
             switch (shapetype) {
                 case SPHERE_SHAPE_PROXYTYPE: {

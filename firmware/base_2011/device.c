@@ -101,8 +101,8 @@ void usb_write_packet() {
 
 // Send data from program memory
 void usb_write_P(PGM_VOID_P buf, uint8_t len, uint16_t requested) {
-    // Only send up to the requested amount of data.
-    // Otherwise we will be waiting forever for another IN token from the host.
+    // Only send up to the requested amount of data. Otherwise we will be
+    // waiting forever for another IN token from the host.
     uint8_t n = len;
     if (n > requested) {
         n = requested;
@@ -196,8 +196,7 @@ void usb_handle_setup() {
     clear_bit(UEINTX, RXSTPI);
 
     // Every request must end with either an IN packet (usb_write_packet or
-    // similar) or
-    // a STALL, which is sent if valid == 0.
+    // similar) or a STALL, which is sent if valid == 0.
     uint8_t valid = 1;
 
     if ((req.bmRequestType & 0x60) == 0) {

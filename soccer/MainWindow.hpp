@@ -186,8 +186,7 @@ private:
     int _updateCount;
 
     // Tracking fractional frames is the easiest way to allow arbitrary playback
-    // rates.
-    // To keep rounding consistent, only access this with frameNumber().
+    // rates. To keep rounding consistent, only access this with frameNumber().
     double _doubleFrameNumber;
 
     Time _lastUpdateTime;

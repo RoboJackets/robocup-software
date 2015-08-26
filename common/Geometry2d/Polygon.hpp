@@ -13,8 +13,8 @@ public:
     Polygon(const Rect& rect);
     Polygon(std::vector<Point> verts);
 
-    /// Creates a rectangle of arbitrary orientation which encloses
-    /// all points within a distance r of the given segment.
+    /// Creates a rectangle of arbitrary orientation which encloses / all points
+    //within a distance r of the given segment.
     Polygon(const Segment& seg, float r) { init(seg, r, seg.length()); }
 
     /// Same as above but with length given to avoid a square root.

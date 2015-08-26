@@ -43,17 +43,17 @@ static inline float fixAngleRadians(float a) {
 /** Checks whether or not the given ball is in the defense area. */
 static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
     if (std::abs(point.x) < Field_Dimensions::Current_Dimensions.GoalFlat() /
-                                2.0f)  // Ball is in center (rectangular)
-                                       // portion of defensive bubble
+                                2.0f)
     {
+    // Ball is in center (rectangular) portion of defensive bubble
         return point.y > 0 &&
                point.y < Field_Dimensions::Current_Dimensions.ArcRadius();
     } else if (std::abs(point.x) <
                (Field_Dimensions::Current_Dimensions.ArcRadius() +
                 Field_Dimensions::Current_Dimensions.GoalFlat() /
-                    2.0f))  // Ball is in one of the side (arc) portions of
-                            // defensive bubble
-    {
+                    2.0f))
+    { 
+        // Ball is in one of the side (arc) portions of defensive bubble
         double adjusted_x =
             std::abs(point.x) -
             (Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f);
@@ -177,10 +177,9 @@ protected:
     Coeffs _coeffs;
 };
 
-// An output iterator which throws an exception when it's used.
-// This is used for example to determine if the output of set_difference would
-// be non-empty without
-// calculating all of it.
+// An output iterator which throws an exception when it's used. This is used for
+// example to determine if the output of set_difference would be non-empty
+// without calculating all of it.
 template <typename T>
 class ExceptionIterator
     : public std::iterator<std::output_iterator_tag, void, void, void, void> {

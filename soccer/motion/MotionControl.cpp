@@ -150,9 +150,9 @@ void MotionControl::run() {
             ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs +
             1.0 / 60.0;
 
-        //	if the path is getting rapidly changed, we cheat so that the robot
-        //actually moves
-        //	see OurRobot._recentPathChangeTimes for more info
+        // If the path is getting rapidly changed, we cheat so that the robot
+        // actually moves.
+        // See OurRobot._recentPathChangeTimes for more info.
         // if (_robot->isRepeatedlyChangingPaths()) {
         // 	timeIntoPath = max<float>(timeIntoPath,
         // OurRobot::PathChangeHistoryBufferSize * 1.0f/60.0f * 0.8);

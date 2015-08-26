@@ -10,8 +10,8 @@ TEST(Point, clampBig) {
     EXPECT_FLOAT_EQ(10, p0.mag());
 }
 
-//  if you clamp a vector to a value that's bigger
-//  than it's magnitued, it shouldn't change
+//  if you clamp a vector to a value that's bigger than it's magnitued, it
+//  shouldn't change
 TEST(Point, clampSmall) {
     Point p0(10, 0);
     p0.clamp(15);

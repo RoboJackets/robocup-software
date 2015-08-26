@@ -1,12 +1,9 @@
 #include "SimulatorWindow.hpp"
-//#include "rendering/SimRenderView.hpp"
 #include "physics/Environment.hpp"
 #include "RobotTableModel.hpp"
 #include "physics/PhysicsConstants.hpp"
 
-////////////////////////////////////
-// SimulatorWindow class
-////////////////////////////////////
+
 SimulatorWindow::SimulatorWindow(Environment* env, QWidget* parent)
     : QMainWindow(parent), _environment(env) {
     _ui.setupUi(this);

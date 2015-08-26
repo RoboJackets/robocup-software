@@ -55,9 +55,9 @@ public:
     bool visible;
     Geometry2d::Point pos;
     Geometry2d::Point vel;
-    float angle;     ///	angle in radians.  0 radians means the robot is aimed
-                     ///along the x-axis
-    float angleVel;  ///	angular velocity in radians/sec
+    /// angle in radians.  0 radians means the robot is aimed along the x-axis
+    float angle;
+    float angleVel;  /// angular velocity in radians/sec
 
     // Time at which this estimate is valid
     Time time;
@@ -137,15 +137,16 @@ public:
     void addText(const QString& text, const QColor& color = Qt::white,
                  const QString& layerPrefix = "RobotText");
 
-    // kicker readiness checks
-    bool charged() const;     /// true if the kicker is ready
-    float kickTimer() const;  /// returns the time since the kicker was last
-                              /// charged, 0.0 if ready
+    /// true if the kicker is ready
+    bool charged() const;
 
-    const Geometry2d::Segment kickerBar()
-        const;  /// segment for the location of the kicker
-    Geometry2d::Point pointInRobotSpace(const Geometry2d::Point& pt)
-        const;  /// converts a point to the frame of reference of robot
+    /// returns the time since the kicker was last charged, 0.0 if ready
+    float kickTimer() const;
+
+    /// segment for the location of the kicker
+    const Geometry2d::Segment kickerBar() const;
+    /// converts a point to the frame of reference of robot
+    Geometry2d::Point pointInRobotSpace(const Geometry2d::Point& pt) const;
 
     // simple checks to do geometry
     /** returns true if the position specified is behind the robot */
@@ -173,11 +174,11 @@ public:
     const Planning::Path* path() const { return _path.get(); }
 
     ///	clears old radioTx stuff, resets robot debug text, and clears local
-    ///obstacles
+    /// obstacles
     void resetForNextIteration();
 
     ///	clears all fields in the robot's MotionConstraints object, causing the
-    ///robot to stop
+    /// robot to stop
     void resetMotionConstraints();
 
     /** Stop the robot */
@@ -193,10 +194,9 @@ public:
 
     /**
      * @brief Move to a given point bypassing the RRT Path planner. This will
-     *plan a direct path ignoring
-     *			all obstacles and the starting velocity
+     * plan a direct path ignoring all obstacles and the starting velocity
      * @param endSpeed - the speed we should be going when we reach the end of
-     *the path
+     * the path
      */
     void moveDirect(const Geometry2d::Point& goal, float endSpeed = 0);
 
@@ -204,11 +204,9 @@ public:
 
     /**
      * The number of consecutive times since now that we've set our path to
-     * something new.  This
-     * causes issues in Motion Control because the path start time is constantly
-     * reset, so we track
-     * it here and compensate for it in MotionControl.
-     * See _pathChangeHistory for more info
+     * something new. This causes issues in Motion Control because the path
+     * start time is constantly reset, so we track it here and compensate for it
+     * in MotionControl. See _pathChangeHistory for more info
      */
     int consecutivePathChangeCount() const;
 
@@ -245,11 +243,9 @@ public:
     /**
      * KICKING/CHIPPING
      *
-     * When we call kick() or chip(), it doesn't happen immediately.
-     * It primes the kicker or chipper to kick at the designated power the next
-     * time
-     * the bot senses that it has the ball.  Once this happens, we record the
-     * time
+     * When we call kick() or chip(), it doesn't happen immediately. It primes
+     * the kicker or chipper to kick at the designated power the next time the
+     * bot senses that it has the ball.  Once this happens, we record the time
      * of the actual kick.
      */
 
@@ -284,16 +280,15 @@ public:
 
     Time lastKickTime() const;
 
-    //	checks if the bot has kicked/chipped very recently.
+    /// checks if the bot has kicked/chipped very recently.
     bool justKicked() {
         return timestamp() - lastKickTime() < 0.25 * SecsToTimestamp;
     }
 
     /**
      * Gets a string representing the series of commands called on the robot
-     * this iteration.
-     * Contains face(), move(), etc - used to display in the BehaviorTree tab in
-     * soccer
+     * this iteration. Contains face(), move(), etc - used to display in the
+     * BehaviorTree tab in soccer
      */
     std::string getCmdText() const;
 
@@ -309,13 +304,13 @@ public:
     bool avoidOpponents() const;
     void avoidOpponents(bool enable);
 
-    // Add a custom radius avoidance of the ball
-    // creates an obstacle around the ball
-    // if radius is 0 or less, it disables avoidance
+
     void disableAvoidBall();
     void avoidBallRadius(float radius);
     float avoidBallRadius() const;
     void resetAvoidBall();  //	sets avoid ball radius to Ball_Avoid_Small
+
+    void resetAvoidRobotRadii();
 
     /**
      * Adds an obstacle to the local set of obstacles for avoidance
@@ -329,9 +324,6 @@ public:
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
 
-    // opponent approach interface
-
-    void resetAvoidRobotRadii();
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -351,16 +343,19 @@ public:
     /** enable/disable for opponent avoidance */
     void avoidOpponent(unsigned shell_id, bool enable_avoid);
 
-    /** enable/disable approach of opponents - diable uses larger avoidance
-     * radius */
+    /**
+     * enable/disable approach of opponents - diable uses larger avoidance
+     * radius
+     */
     void approachOpponent(unsigned shell_id, bool enable_approach);
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
-    // self approach interface
 
-    /** determines whether a robot will avoid another robot when it plans - use
-     * for priority */
+    /**
+     * determines whether a robot will avoid another robot when it plans - use
+     * for priority
+     */
 
     void avoidAllTeammates(bool enable = true);
     void avoidTeammate(unsigned shell_id, bool enable = true);
@@ -375,7 +370,6 @@ public:
      */
     void shieldFromTeammates(float radius);
 
-    // gameplay interface - interface for delayed update/planning
 
     /**
      * Replans the path if needed.
@@ -383,8 +377,10 @@ public:
      */
     void replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles);
 
-    /** status evaluations for choosing robots in behaviors - combines multiple
-     * checks */
+    /**
+     * status evaluations for choosing robots in behaviors - combines multiple
+     * checks
+     */
     bool chipper_available() const;
     bool kicker_available() const;
     bool dribbler_available() const;
@@ -440,11 +436,11 @@ protected:
 
     SystemState* _state;
 
-    // obstacle management
-    Geometry2d::CompositeShape
-        _local_obstacles;  /// set of obstacles added by plays
-    RobotMask _self_avoid_mask,
-        _opp_avoid_mask;     /// masks for obstacle avoidance
+    /// set of obstacles added by plays
+    Geometry2d::CompositeShape _local_obstacles;
+
+    /// masks for obstacle avoidance
+    RobotMask _self_avoid_mask, _opp_avoid_mask;
     float _avoidBallRadius;  /// radius of ball obstacle
 
     Planning::MotionCommand _motionCommand;
@@ -460,8 +456,8 @@ protected:
 
     Time _pathStartTime;
 
-    ///	whenever the constraints for the robot path are changed, this is set to
-    ///true to trigger a replan
+    /// whenever the constraints for the robot path are changed, this is set
+    /// to true to trigger a replan
     bool _pathInvalidated;
 
     /**
@@ -487,9 +483,9 @@ protected:
 
     /**
      * Only adds obstacles within the checkRadius of the passed in position
-     * Creates a set of obstacles from a given robot team mask,
-     * where mask values < 0 create no obstacle, and larger values
-     * create an obstacle of a given radius
+     * Creates a set of obstacles from a given robot team mask, where mask
+     * values < 0 create no obstacle, and larger values create an obstacle of a
+     * given radius
      *
      * NOTE: mask must not be set for this robot
      *
@@ -533,21 +529,16 @@ protected:
      * * the move() target keeps changing
      *
      * This causes the _pathStartTime to constantly be reset and motion control
-     * looks about zero seconds
-     * into the planned path and sends the robot a velocity command that's
-     * really really tiny, causing
-     * it to barely move at all.
+     * looks about zero seconds into the planned path and sends the robot a
+     * velocity command that's really really tiny, causing it to barely move at
+     * all.
      *
      * Our solution to this is to track the last N path changes in a circular
-     * buffer so we can tell if
-     * we're hitting this scenario.  If so, we can compensate, by having motion
-     * control look further into
-     * the path when commanding the robot.
+     * buffer so we can tell if we're hitting this scenario.  If so, we can
+     * compensate, by having motion control look further into the path when
+     * commanding the robot.
      */
-    boost::circular_buffer<bool> _pathChangeHistory;  //	tracks whether or
-                                                      //not we got a new path
-                                                      //for the last N
-                                                      //iterations
+    boost::circular_buffer<bool> _pathChangeHistory;
 
     ///	the size of _pathChangeHistory
     static const int PathChangeHistoryBufferSize = 10;
@@ -570,8 +561,8 @@ private:
      * iteration
      * Then display this in the BehaviorTree tab in soccer
      */
-    //	note: originally this was not a pointer, but I got weird errors about a
-    //deleted copy constructor...
+    // note: originally this was not a pointer, but I got weird errors about a
+    // deleted copy constructor...
     std::stringstream* _cmdText;
 
     void _clearCmdText();

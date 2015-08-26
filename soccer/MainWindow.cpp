@@ -546,9 +546,8 @@ void MainWindow::updateViews() {
                 (RobotStatusWidget*)_ui.robotStatusList->itemWidget(item);
 
             // We make a copy of the robot's RadioRx package b/c the original
-            // might change
-            // during the course of this method b/c radio comm happens on a
-            // different thread.
+            // might change during the course of this method b/c radio comm
+            // happens on a different thread.
             RadioRx rx(robot->radioRx());
 
 #ifndef DEMO_ROBOT_STATUS
@@ -565,7 +564,7 @@ void MainWindow::updateViews() {
 
             //	motor faults
             //	each motor fault is shown as text in the error text display as
-            //well as being drawn as a red X on the graphic of a robot
+            // well as being drawn as a red X on the graphic of a robot
             bool hasMotorFault = false;
             if (rx.motor_status().size() == 5) {
                 const char* motorNames[] = {"FR", "FL", "BL", "BR", "Dribbler"};
@@ -591,8 +590,7 @@ void MainWindow::updateViews() {
                             break;
                     }
 
-                    //	show wheel faults (exluding the dribbler, which is index
-                    //4)
+                    //	show wheel faults (exluding dribbler, which is index 4)
                     if (i != 4) statusWidget->setWheelFault(i, motorIFault);
 
                     hasMotorFault = hasMotorFault || motorIFault;
@@ -602,9 +600,10 @@ void MainWindow::updateViews() {
                 }
             }
 
+            // check for kicker error code
             bool kickerFault =
                 rx.has_kicker_status() &&
-                (rx.kicker_status() & 0x80);  //	check for kicker error code
+                (rx.kicker_status() & 0x80);
             bool ballSenseFault = rx.has_ball_sense_status() &&
                                   !(rx.ball_sense_status() == Packet::NoBall ||
                                     rx.ball_sense_status() == Packet::HasBall);
@@ -653,9 +652,8 @@ void MainWindow::updateViews() {
     }
 
     // We restart this timer repeatedly instead of using a single shot timer in
-    // order
-    // to guarantee a minimum time between redraws.  This will limit the CPU
-    // usage on a fast computer.
+    // order to guarantee a minimum time between redraws.  This will limit the
+    // CPU usage on a fast computer.
     updateTimer.start(20);
 }
 

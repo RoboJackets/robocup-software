@@ -24,11 +24,9 @@
 //    RadioRx packets go from radio to soccer.
 //
 // The network ports are set in Processor's constructor and don't change after
-// that.
-// They are determined by command-line options (-sim and -r).
-// If no radio channel is given on the command line, the first available one is
-// picked
-// based on which soccer-side port can be bound.
+// that. They are determined by command-line options (-sim and -r). If no radio
+// channel is given on the command line, the first available one is picked based
+// on which soccer-side port can be bound.
 
 static const char RefereeAddress[] = "224.5.23.1";
 static const char SharedVisionAddress[] = "224.5.23.2";
@@ -39,15 +37,20 @@ static const int SimVisionPort = 9000;
 static const int LegacyRefereePort = 10001;
 static const int ProtobufRefereePort = 10003;
 
-static const int SharedVisionPort = 10002;  // Kept around for legacy code
-static const int SharedVisionPortSinglePrimary =
-    10002;  // Primary Single-sized field port with old Protobuf protocol
-static const int SharedVisionPortSingleSecondary =
-    10004;  // Secondary Single-sized field port with old Protobuf protocol
-static const int SharedVisionPortDoubleOld =
-    10005;  // Double-sized field port with old Protobuf protocol
-static const int SharedVisionPortDoubleNew =
-    10006;  // Double-sized field port with new Protobuf protocol
+// Kept around for legacy code
+static const int SharedVisionPort = 10002;
+
+// Primary Single-sized field port with old Protobuf protocol
+static const int SharedVisionPortSinglePrimary = 10002;
+
+// Secondary Single-sized field port with old Protobuf protocol
+static const int SharedVisionPortSingleSecondary = 10004;
+
+// Double-sized field port with old Protobuf protocol
+static const int SharedVisionPortDoubleOld = 10005;
+
+// Double-sized field port with new Protobuf protocol
+static const int SharedVisionPortDoubleNew = 10006;
 
 static const int RadioRxPort = 12000;
 static const int RadioTxPort = 13000;

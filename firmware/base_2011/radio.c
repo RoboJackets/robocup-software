@@ -12,8 +12,7 @@ ISR(TIMER1_OVF_vect) {
     // Go to IDLE.  This only takes 2 radio clocks.
     radio_command(SIDLE);
 
-    // Flush the RX FIFO in case we were receiving a packet
-    // and cut it off.
+    // Flush the RX FIFO in case we were receiving a packet and cut it off.
     radio_read(RXFIFO);
     radio_command(SFRX);
 
@@ -46,10 +45,8 @@ void fail(uint8_t flash) {
 void radio_init() {
     // Waits for the radio's status and version bytes to have expected values.
     // This verifies that the radio crystal oscillator and SPI interface are
-    // working.
-    // Checking these two registers isn't strictly necessary but it reduces the
-    // chances
-    // of a false positive.
+    // working. Checking these two registers isn't strictly necessary but it
+    // reduces the chances of a false positive.
     uint8_t version;
     PORTB |= 0xf0;
     do {

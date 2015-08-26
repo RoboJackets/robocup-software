@@ -54,24 +54,23 @@ std::unique_ptr<Path> RRTPlanner::run(
         goalTree.init(goal, obstacles);
         goalTree.step = .1f;
 
-        // The starting point is in an obstacle
-        // extend the tree until we find an unobstructed point
+        // The starting point is in an obstacle extend the tree until we find an
+        // unobstructed point
         for (int i = 0; i < 100; ++i) {
             Geometry2d::Point r = randomPoint();
 
             // extend to a random point
             Tree::Point* newPoint = goalTree.extend(r);
 
-            // if the new point is not blocked
-            // it becomes the new goal
+            // if the new point is not blocked, it becomes the new goal
             if (newPoint && newPoint->hit.empty()) {
                 newGoal = newPoint->pos;
                 break;
             }
         }
 
-        /// see if the new goal is better than old one
-        /// must be at least a robot radius better else the move isn't worth it
+        // see if the new goal is better than old one must be at least a robot
+        // radius better else the move isn't worth it
         const float oldDist = _bestGoal.distTo(goal);
         const float newDist = newGoal.distTo(goal) + Robot_Radius;
         if (newDist < oldDist || obstacles->hit(_bestGoal)) {
@@ -151,10 +150,9 @@ Planning::InterpolatedPath* RRTPlanner::makePath() {
 
     newPath = optimize(*newPath, _obstacles, _motionConstraints, vi);
 
-    // TODO evaluate the old path based on the closest segment
-    // and the distance to the endpoint of that segment
-    // Otherwise, a new path will always be shorter than the old given we
-    // traveled some
+    // TODO: evaluate the old path based on the closest segment and the distance
+    // to the endpoint of that segment Otherwise, a new path will always be
+    // shorter than the old given we traveled some
 
     /// Conditions to use new path
     /// 1. old path is empty
