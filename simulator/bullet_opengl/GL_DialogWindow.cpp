@@ -350,8 +350,8 @@ void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2,
     if (sliderPos < sliderPosS) sliderPos = sliderPosS;
     if (sliderPos > sliderPosE) sliderPos = sliderPosE;
     //	drawRect(parentHorPos2+80+borderSize, parentVertPos2+borderSize,
-    //parentHorPos2+m_parentWindow->getDialogWidth()-16-borderSize,
-    //parentVertPos2+2-borderSize, white,white,white,white);
+    // parentHorPos2+m_parentWindow->getDialogWidth()-16-borderSize,
+    // parentVertPos2+2-borderSize, white,white,white,white);
     drawRect(sliderPosS, parentVertPos2 + borderSize, sliderPosE,
              parentVertPos2 + 2 - borderSize, white, white, white, white);
 
@@ -367,9 +367,9 @@ void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2,
     //	btSliderConstraint* pSlider = (btSliderConstraint*)m_constraint;
     //	btScalar currPos = pSlider->getLinearPos();
     //	if(currPos < pSlider->getLowerLinLimit()) currPos =
-    //pSlider->getLowerLinLimit();
+    // pSlider->getLowerLinLimit();
     //	if(currPos > pSlider->getUpperLinLimit()) currPos =
-    //pSlider->getUpperLinLimit();
+    // pSlider->getUpperLinLimit();
     //	m_fraction = (currPos - pSlider->getLowerLinLimit()) /
     //(pSlider->getUpperLinLimit() - pSlider->getLowerLinLimit());
     m_fraction = (btScalar)(sliderPos - sliderPosS) /

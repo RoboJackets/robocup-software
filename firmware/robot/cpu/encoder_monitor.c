@@ -37,9 +37,9 @@ void encoder_monitor() {
     if (base2008) {
         //	IMPORTANT!
         //	The below safety check was disabled for the 2014 competition to
-        //allow us to run our 2011 robots
+        // allow us to run our 2011 robots
         //	in 2008 mode.  It is a hack that should be reverted after
-        //competition.
+        // competition.
         //	See GitHub issues #47 and #79 for more info.
 
         // // 2008: Make sure the encoder inputs are idle (allow one count for

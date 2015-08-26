@@ -188,7 +188,6 @@ protected:
     void saveOpenGLState();
     void restoreOpenGLState();
 
-
 public:
     GL_DialogWindow(int horPos, int vertPos, int dialogWidth, int dialogHeight,
                     btCollisionObject* colObject, const char* dialogTitle);

@@ -282,11 +282,11 @@ static void USBDDriver_Test(unsigned char test) {
             // The test packet is made up by concatenating the following
             // strings.
             //(Note: For J/K NRZI data, and for NRZ data, the bit on the left is
-            //the first one
+            // the first one
             // transmitted. S indicates that a bit stuff occurs, which
             // inserts an extra NRZI data bit.
             //* N is used to indicate N occurrences of a string of bits or
-            //symbols.)
+            // symbols.)
             // A port in Test_Packet mode must send this packet repetitively.
             // The inter-packet timing
             // must be no less than the minimum allowable inter-packet gap as

@@ -304,7 +304,6 @@ public:
     bool avoidOpponents() const;
     void avoidOpponents(bool enable);
 
-
     void disableAvoidBall();
     void avoidBallRadius(float radius);
     float avoidBallRadius() const;
@@ -323,7 +322,6 @@ public:
         return _local_obstacles;
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
-
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -351,7 +349,6 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
-
     /**
      * determines whether a robot will avoid another robot when it plans - use
      * for priority
@@ -369,7 +366,6 @@ public:
      * carrier.
      */
     void shieldFromTeammates(float radius);
-
 
     /**
      * Replans the path if needed.
@@ -516,7 +512,7 @@ protected:
     friend class Processor;
 
     ///	The processor mutates RadioRx in place and calls this afterwards to let
-    ///it know that it changed
+    /// it know that it changed
     void radioRxUpdated();
 
 protected:

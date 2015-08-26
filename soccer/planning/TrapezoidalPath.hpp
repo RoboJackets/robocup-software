@@ -58,13 +58,13 @@ public:
         float distance;
         float speedOut;
         bool valid = TrapezoidalMotion(pathLength,  // PathLength
-                                       maxSpeed,  // maxSpeed
-                                       maxAcc,  // maxAcc
-                                       time,  // time
+                                       maxSpeed,    // maxSpeed
+                                       maxAcc,      // maxAcc
+                                       time,        // time
                                        startSpeed,  // startSpeed
-                                       endSpeed,  // endSpeed
-                                       distance,  // posOut
-                                       speedOut);  // speedOut
+                                       endSpeed,    // endSpeed
+                                       distance,    // posOut
+                                       speedOut);   // speedOut
         targetMotionInstant.pos = pathDirection * distance + startPos;
         targetMotionInstant.vel = pathDirection * speedOut;
         return valid;

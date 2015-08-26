@@ -67,7 +67,7 @@ void RbpfModel::update(VectorNd& X, MatrixNNd& P, const VectorSd& Z,
     //	}else{
     //		// S^{-1} could not be determined, throw exception
     //		printf("S^-1 could not be calculated during EKF update in
-    //RbpfModel.update()");
+    // RbpfModel.update()");
     //		bool inverseFound = false;
     //		assert(inverseFound);
     //	}

@@ -36,7 +36,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
         PyImport_AppendInittab("robocup", &PyInit_robocup);
 
         //	we use Py_InitializeEx(0) instead of regular Py_Initialize() so that
-        //Ctrl-C kills soccer as expected
+        // Ctrl-C kills soccer as expected
         Py_InitializeEx(0);
         PyEval_InitThreads();
         {
@@ -51,7 +51,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
             gameplayDir.cd("../soccer/gameplay");
 
             //	add gameplay directory to python import path (so import XXX)
-            //will look in the right directory
+            // will look in the right directory
             string importStmt = QString("import sys; sys.path.append('%1')")
                                     .arg(gameplayDir.absolutePath())
                                     .toStdString();
@@ -84,7 +84,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     constexpr float inset = 0.3;
 
     //// Make an obstacle to cover the opponent's half of the field except for
-    ///one robot diameter across the center line.
+    /// one robot diameter across the center line.
     // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
     float x = dimensions.Width() / 2 + inset;
     const float y1 = dimensions.Length() / 2;

@@ -59,6 +59,6 @@ private:
     static ConfigDouble* _max_velocity;
 
     //	if the path just changed, we add this boost to the output velocity
-    //command (before velocity scaling to bot 'units')
+    // command (before velocity scaling to bot 'units')
     static ConfigDouble* _path_change_boost;
 };

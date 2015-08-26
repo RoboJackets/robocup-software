@@ -133,7 +133,7 @@ int KalmanFilter::correct(const Vector z) {
     // update measurement covariance
     *tmp_nn_1 = *I_nn;
     tmp_nn_1.gemm(CblasNoTrans, CblasNoTrans, -1, K, H, 1);  // I-KH
-    P.mult(tmp_nn_1, P);  // P = (I-KH) P
+    P.mult(tmp_nn_1, P);                                     // P = (I-KH) P
 
     return 0;
 }

@@ -167,7 +167,7 @@ int DifferenceKalmanFilter::correct(const DVector* z) {
     // update measurement covariance
     *tmp_nn_1 = *I_nn;
     tmp_nn_1->gemm(CblasNoTrans, CblasNoTrans, -1, K, H, 1);  // I-KH
-    tmp_nn_2->mult(tmp_nn_1, P);  // P = (I-KH) P
+    tmp_nn_2->mult(tmp_nn_1, P);                              // P = (I-KH) P
     *P = *tmp_nn_2;
 
     return 0;

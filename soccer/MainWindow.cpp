@@ -602,8 +602,7 @@ void MainWindow::updateViews() {
 
             // check for kicker error code
             bool kickerFault =
-                rx.has_kicker_status() &&
-                (rx.kicker_status() & 0x80);
+                rx.has_kicker_status() && (rx.kicker_status() & 0x80);
             bool ballSenseFault = rx.has_ball_sense_status() &&
                                   !(rx.ball_sense_status() == Packet::NoBall ||
                                     rx.ball_sense_status() == Packet::HasBall);
@@ -621,7 +620,7 @@ void MainWindow::updateViews() {
 
             //	battery
             //	convert battery voltage to a percentage and show it with the
-            //battery indicator
+            // battery indicator
             float batteryLevel = 1;
             if (rx.has_battery()) {
                 if (rx.hardware_version() == RJ2008 ||
@@ -639,9 +638,9 @@ void MainWindow::updateViews() {
             }
             statusWidget->setBatteryLevel(batteryLevel);
 
-            //	if there is an error bad enough that we should get this robot
-            //off the field, alert the user through the UI that there is a
-            //"showstopper"
+            // if there is an error bad enough that we should get this robot
+            // off the field, alert the user through the UI that there is a
+            // "showstopper"
             bool showstopper = !hasVision || !hasRadio || hasMotorFault ||
                                kickerFault || ballSenseFault ||
                                (batteryLevel < 0.25);

@@ -543,7 +543,7 @@ void DemoApplication::shootBox(const btVector3& destination) {
         // (see ::setShootBoxShape)
         body->setCcdSweptSphereRadius(0.4f);
         //		printf("shootBox uid=%d\n",
-        //body->getBroadphaseHandle()->getUid());
+        // body->getBroadphaseHandle()->getUid());
         //		printf("camPos=%f,%f,%f\n",camPos.getX(),camPos.getY(),camPos.getZ());
         //		printf("destination=%f,%f,%f\n",destination.getX(),destination.getY(),destination.getZ());
     }

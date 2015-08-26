@@ -3,7 +3,6 @@
 #include "RobotTableModel.hpp"
 #include "physics/PhysicsConstants.hpp"
 
-
 SimulatorWindow::SimulatorWindow(Environment* env, QWidget* parent)
     : QMainWindow(parent), _environment(env) {
     _ui.setupUi(this);

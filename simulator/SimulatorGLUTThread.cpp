@@ -269,7 +269,7 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
             clientResetScene();
             break;
         //	case '1':	_simEngine->setDebug(btIDebugDraw::DBG_EnableCCD);
-        //break;
+        // break;
 
         default:
             //        std::cout << "unused key : " << key << std::endl;
