@@ -6,8 +6,10 @@ using namespace std;
 using namespace Geometry2d;
 
 
+
 TEST(testPoint, clampBig) {
     Point p0(10.0, 10.0);
+    p0.x;
     p0.clamp(10);
     EXPECT_FLOAT_EQ(10, p0.mag());
 }
