@@ -13,6 +13,10 @@ Polygon::Polygon(const Rect &rect)
     vertices[3] = Point(rect.pt[0].x, rect.pt[1].y);
 }
 
+Polygon::Polygon(std::vector<Point> verts) {
+    vertices = std::move(verts);
+}
+
 Shape *Polygon::clone() const {
     return new Polygon(*this);
 }
