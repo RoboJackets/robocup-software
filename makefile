@@ -95,8 +95,8 @@ STYLE_EXCLUDE_DIRS=build \
 	firmware/robot/cpu/at91sam7s64
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+	stylize --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS)
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check
+	stylize --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check
