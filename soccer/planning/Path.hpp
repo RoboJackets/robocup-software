@@ -24,7 +24,8 @@ public:
      * an exception if t<0
      * @param[out] 	targetMotionInstant The position and velocity the robot
      * would ideally be at at the given time
-     * @return 		true if the path is valid at time @t, false if you've gone past
+     * @return 		true if the path is valid at time @t, false if you've gone
+     * past
      * the end
      */
     virtual bool evaluate(float t,

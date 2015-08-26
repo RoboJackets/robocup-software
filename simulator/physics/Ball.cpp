@@ -51,7 +51,7 @@ void Ball::initPhysics() {
     _ball->setDamping(0.25f, 0.25f);  // use damping for friction
 
     //_ball->setCollisionFlags(_ball->getCollisionFlags() |
-    //btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+    // btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
     // enable CCD if the object moves more than 1 meter in one simulation frame
     _ball->setCcdMotionThreshold(Sim_Ball_Radius / 2.f);

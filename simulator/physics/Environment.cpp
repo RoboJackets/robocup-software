@@ -388,7 +388,7 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
     //		std::string out;
     //		rx.SerializeToString(&out);
     //		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress,
-    //RadioRxPort + ch);
+    // RadioRxPort + ch);
     //	}
 }
 

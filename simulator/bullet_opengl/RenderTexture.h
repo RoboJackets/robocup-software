@@ -58,8 +58,8 @@ public:
             btScalar(255.f),
             ((btScalar)pixel[2] + btScalar(255.f) * rgba.getZ()));
         //		pixel[3] = (unsigned
-        //char)btMin(btScalar(255.f),((btScalar)pixel[3] +
-        //btScalar(255.f)*rgba.getW()));
+        // char)btMin(btScalar(255.f),((btScalar)pixel[3] +
+        // btScalar(255.f)*rgba.getW()));
     }
 
     inline btVector4 getPixel(int x, int y) {

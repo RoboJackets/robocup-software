@@ -39,16 +39,11 @@ misrepresented as being the original software.
 #include "BulletCollision/CollisionShapes/btStaticPlaneShape.h"
 #include "BulletCollision/CollisionShapes/btMultiSphereShape.h"
 #include "BulletCollision/CollisionShapes/btConvexPolyhedron.h"
-
-///
 #include "BulletCollision/CollisionShapes/btShapeHull.h"
-
 #include "LinearMath/btTransformUtil.h"
-
 #include "LinearMath/btIDebugDraw.h"
-// for debugmodes
 
-#include <stdio.h>  //printf debugging
+#include <stdio.h>
 
 //#define USE_DISPLAY_LISTS 1
 #ifdef USE_DISPLAY_LISTS
@@ -527,9 +522,10 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape,
             /// you can comment out any of the specific cases, and use the
             /// default
 
-            /// the benefit of 'default' is that it approximates the actual /
-            //collision shape including collision margin int shapetype=m_texture
-            //enabled?MAX_BROADPHASE_COLLISION_TYPES:shape->getShapeType();
+            /// the benefit of 'default' is that it approximates the actual
+            /// collision shape including collision margin int
+            // shapetype=m_texture
+            // enabled?MAX_BROADPHASE_COLLISION_TYPES:shape->getShapeType();
             int shapetype = shape->getShapeType();
             switch (shapetype) {
                 case SPHERE_SHAPE_PROXYTYPE: {
@@ -887,10 +883,9 @@ void GL_ShapeDrawer::drawShadow(btScalar* m, const btVector3& extrusion,
         }
     }
 
-    if (shape
-            ->isConcave())  //>getShapeType() ==
-                            //TRIANGLE_MESH_SHAPE_PROXYTYPE||shape->getShapeType()
-                            //== GIMPACT_SHAPE_PROXYTYPE)
+    if (shape->isConcave())  //>getShapeType() ==
+    // TRIANGLE_MESH_SHAPE_PROXYTYPE||shape->getShapeType()
+    //== GIMPACT_SHAPE_PROXYTYPE)
     //		if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
     {
         btConcaveShape* concaveMesh = (btConcaveShape*)shape;

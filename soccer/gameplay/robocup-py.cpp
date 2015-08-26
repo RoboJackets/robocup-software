@@ -50,7 +50,7 @@ void translateException(NullArgumentException const& e) {
 
 //	this is here so boost can work with std::shared_ptr
 //	later versions of boost include this, so we only define it for older
-//versions
+// versions
 #if BOOST_VERSION < 105300
 template <class T>
 T* get_pointer(std::shared_ptr<T> const& p) {

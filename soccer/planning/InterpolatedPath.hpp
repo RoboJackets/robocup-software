@@ -75,7 +75,8 @@ public:
      *
      * \param[in] 	start Index of point in path to use at start point.
      * \param[in] 	end Index of point in path to use at end point.
-     * \returns 	the length of the path starting at point (start) and ending at
+     * \returns 	the length of the path starting at point (start) and ending
+     * at
      * point [end].
      */
     float length(unsigned int start, unsigned int end) const;

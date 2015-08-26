@@ -258,7 +258,8 @@ void Modeling::RobotModel::update(uint64_t cur_time) {
         _accel.y = (float)_posKalman->state()->elt(5);
 
         // Using the ABG filter for independent velocity and acceleration
-        // 		Geometry2d::Point predictPos = abgPos + vel * dtime + accel * 0.5f
+        // 		Geometry2d::Point predictPos = abgPos + vel * dtime + accel *
+        // 0.5f
         // * dtime * dtime;
         //         Geometry2d::Point predictVel = vel + accel * dtime;
         //

@@ -70,7 +70,7 @@ void MotionControl::run() {
                                                 : *constraints.faceTarget;
 
         //	fixing the angle ensures that we don't go the long way around to get
-        //to our final angle
+        // to our final angle
         float targetAngleFinal = (targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 

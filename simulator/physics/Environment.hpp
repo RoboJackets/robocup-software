@@ -44,7 +44,7 @@ private:
     FastTimer _timer;
 
     QUdpSocket _visionSocket;  ///< Simulated vision - can also receive commands
-                               ///from soccer
+    /// from soccer
     QUdpSocket _radioSocketBlue,
         _radioSocketYellow;  ///< Connections for robots
 

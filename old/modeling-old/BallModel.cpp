@@ -45,7 +45,7 @@ bool Modeling::BallModel::valid(uint64_t time) {
     // there are no observations
 
     //	return !_observations.empty() && ((time - lastUpdatedTime) <
-    //MaxCoastTime);
+    // MaxCoastTime);
 
     // just use coast time
     return (time - lastUpdatedTime) < MaxCoastTime;

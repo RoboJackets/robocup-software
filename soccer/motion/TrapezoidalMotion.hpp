@@ -23,18 +23,16 @@ namespace Trapezoidal {
  * Estimates how long it would take to move to a certain distance down a path
  * using Trapezoidal Motion
  *
- * \param[in] 	distance 	The certain distance down the path the robot has
- * traveled
- * \param[in] 	pathLength 	The total distance we are trying to travel
- * \param[in] 	maxSpeed 	The max speed we want to move at during the Trapezoidal
- * Motion
- * \param[in] 	maxAcc 		The max acceleration we want to use during the
- * Trapezoidal Motion
- * \param[in] 	startSpeed 	The speed we're moving at the start of the trapezoid
- * \param[in] 	finalSpeed 	The speed we'd like to be going at the end of the
- * trapezoid
- * \return 		the estimated time it would take for the robot to move that certain
- * distance down the path
+ * @param distance The certain distance down the path the robot has traveled
+ * @param pathLength The total distance we are trying to travel
+ * @param maxSpeed The max speed we want to move at during the Trapezoidal
+ *     Motion
+ * @param maxAcc The max acceleration we want to use during the Trapezoidal
+ *     Motion
+ * @param startSpeed The speed we're moving at the start of the trapezoid
+ * @param finalSpeed The speed we'd like to be going at the end of the trapezoid
+ * @return The estimated time it would take for the robot to move that certain
+ *     distance down the path
  */
 float getTime(float distance, float pathLength, float maxSpeed, float maxAcc,
               float startSpeed, float finalSpeed);
