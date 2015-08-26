@@ -51,6 +51,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.ball_kicked = False
         self._target_pos = None
+        self._receive_point = None
         self._ball_kick_time = 0
         self.kicked_from = None
         self.kicked_vel = None
