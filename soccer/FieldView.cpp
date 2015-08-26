@@ -229,16 +229,14 @@ void FieldView::drawWorldSpace(QPainter& p) {
                 for (const SSL_DetectionRobot& r : detect.robots_blue()) {
                     QPointF pos(r.x() / 1000, r.y() / 1000);
                     drawRobot(p, true, r.robot_id(), pos, r.orientation());
-                    // 					p.drawEllipse(QPointF(r.x() / 1000, r.y() /
-                    // 1000),
+                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
                     // Robot_Radius, Robot_Radius);
                 }
 
                 for (const SSL_DetectionRobot& r : detect.robots_yellow()) {
                     QPointF pos(r.x() / 1000, r.y() / 1000);
                     drawRobot(p, false, r.robot_id(), pos, r.orientation());
-                    // 					p.drawEllipse(QPointF(r.x() / 1000, r.y() /
-                    // 1000),
+                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
                     // Robot_Radius, Robot_Radius);
                 }
             }
