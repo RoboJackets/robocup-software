@@ -1,13 +1,12 @@
 
+#include <QMutexLocker>
+#include <poll.h>
+
 #include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
 #include "modeling/BallTracker.hpp"
-
-#include <QMutexLocker>
-
-#include <poll.h>
 #include <multicast.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
@@ -15,12 +14,8 @@
 #include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
-
 #include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
-
-#include <boost/make_shared.hpp>
-
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>

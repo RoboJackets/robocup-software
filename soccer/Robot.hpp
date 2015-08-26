@@ -10,7 +10,7 @@
 #include <protobuf/RadioTx.pb.h>
 #include <Utils.hpp>
 
-#include <boost/array.hpp>
+#include <array>
 #include <boost/circular_buffer.hpp>
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -142,7 +142,7 @@ private:
  */
 class OurRobot: public Robot {
 public:
-	typedef boost::array<float,Num_Shells> RobotMask;
+	typedef std::array<float,Num_Shells> RobotMask;
 
 	RobotConfig *config;
 	RobotStatus *status;
@@ -491,7 +491,7 @@ protected:
 	template<class ROBOT>
 	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
 		Geometry2d::CompositeShape result;
-		for (size_t i=0; i<RobotMask::size(); ++i)
+		for (size_t i=0; i<mask.size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
 				result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
 		return result;
@@ -512,7 +512,7 @@ protected:
 	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask,
 				 Geometry2d::Point currentPosition, float checkRadius) const {
 		Geometry2d::CompositeShape result;
-		for (size_t i=0; i<RobotMask::size(); ++i)
+		for (size_t i=0; i<mask.size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible) {
 				if (currentPosition.distTo(robots[i]->pos)<=checkRadius) {
 					result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
