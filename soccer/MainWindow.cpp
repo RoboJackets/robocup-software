@@ -159,8 +159,7 @@ void MainWindow::processor(Processor* value) {
     }
 
     _ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
-    _ui.logHistoryLocation->setTickInterval(60 *
-                                            60);  // interval is ~ 1 minute
+    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
 }
 
 void MainWindow::logFileChanged() {
