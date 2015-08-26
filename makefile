@@ -92,7 +92,9 @@ STYLE_EXCLUDE_DIRS=build \
 	third_party \
 	firmware/robot/cpu/at91sam7s256 \
 	firmware/robot/cpu/at91sam7s321 \
-	firmware/robot/cpu/at91sam7s64
+	firmware/robot/cpu/at91sam7s64 \
+	firmware/robot2015 \
+	firmware/common2015
 # automatically format code according to our style config defined in .clang-format
 pretty:
 	stylize --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS)
