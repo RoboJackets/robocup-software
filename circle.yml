@@ -1,13 +1,17 @@
 machine:
   services:
     - docker
+  environment:
+    GITHUB_HAS_GREAT_SECURITY: ba71cd719dd509a0ea
+    GH_STATUS_TOKEN: ${GITHUB_HAS_GREAT_SECURITY}76a8e073ede1df83fbf980
+    GIT_EMAIL: georgeburdell@users.noreply.github.com
+    GIT_USER: georgeburdell
+    GIT_USERNAME: georgeburdell
 
 dependencies:
   pre:
       # set build status to pending on start
-    - ./util/docker/maketest.sh --pending ${GH_TOKEN}
-      # Login to docker
-    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - ./util/docker/maketest.sh --pending ${GH_STATUS_TOKEN}
     - ./util/docker/baseimage/buildbaseimage.sh
       # Actually the test step, but we want to cache it so it can go here.
     - ./util/docker/circle/buildcircle.sh

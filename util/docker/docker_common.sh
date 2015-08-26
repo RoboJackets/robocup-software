@@ -1,6 +1,7 @@
 #!/bin/bash
 
 COMMON_DIR=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)/
+
 ROBOCUP_ROOT="${COMMON_DIR}/../../"
 
 # Get sha sum
