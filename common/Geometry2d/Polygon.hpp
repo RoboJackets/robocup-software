@@ -13,6 +13,7 @@ namespace Geometry2d
     public:
         Polygon() {}
         Polygon(const Rect &rect);
+        Polygon(std::vector<Point> verts);
 
         /// Creates a rectangle of arbitrary orientation which encloses
         /// all points within a distance r of the given segment.
