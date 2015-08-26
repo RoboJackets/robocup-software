@@ -9,6 +9,10 @@ run-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
 	cd run; ./soccer -sim
+run-sim2play: all
+	-pkill -f './simulator --headless'
+	cd run; ./simulator --headless &
+	cd run; ./soccer -sim -y & ./soccer -sim -b
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python

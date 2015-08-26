@@ -5,8 +5,6 @@
 #include <Processor.hpp>
 #include <SystemState.hpp>
 
-#include <boost/make_shared.hpp>
-
 using namespace std;
 using namespace boost;
 using namespace Geometry2d;

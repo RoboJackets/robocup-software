@@ -13,14 +13,15 @@ namespace Geometry2d
     public:
         Polygon() {}
         Polygon(const Rect &rect);
-        
+        Polygon(std::vector<Point> verts);
+
         /// Creates a rectangle of arbitrary orientation which encloses
         /// all points within a distance r of the given segment.
         Polygon(const Segment &seg, float r)
         {
             init(seg, r, seg.length());
         }
-        
+
         /// Same as above but with length given to avoid a square root.
         Polygon(const Segment &seg, float r, float length)
         {
@@ -44,12 +45,12 @@ namespace Geometry2d
         
         /// Returns true if this polygon contains any vertex of other.
         bool containsVertex(const Polygon &other) const;
-        
+
         bool nearPoint(const Point &pt, float threshold) const;
         bool nearSegment(const Segment &seg, float threshold) const;
-        
+
         Rect bbox() const;
-        
+
         std::vector<Point> vertices;
 
         void addVertex(const Point &pt) {
@@ -64,7 +65,7 @@ namespace Geometry2d
             str << ">";
             return str.str();
         }
-    
+
     protected:
         /// Used by constructors
         void init(const Segment &seg, float r, float length);

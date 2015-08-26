@@ -4,7 +4,7 @@
 #include <SystemState.hpp>
 #include <QColor>
 #include <QString>
-
+#include "MotionInstant.hpp"
 
 namespace Planning
 {
@@ -22,21 +22,21 @@ namespace Planning
          * particular time interval.  This method evalates the path at a given time and
          * returns the target position and velocity of the robot.
          *
-         * @param[in] 	t Time (in seconds) since the robot started the path
-         * @param[out] 	targetPosOut The position the robot would ideally be at at the given time
-         * @param[out] 	targetVelOut The target velocity of the robot at the given time
+         * @param[in] 	t Time (in seconds) since the robot started the path. Throws an exception if t<0
+         * @param[out] 	targetMotionInstant The position and velocity the robot would ideally be at at the given time
          * @return 		true if the path is valid at time @t, false if you've gone past the end
          */
-		virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const=0;
+		virtual bool evaluate(float t, MotionInstant &targetMotionInstant) const=0;
 
 		/**
 		 * Returns true if the path hits an obstacle
 		 *
 		 * @param[in]	shape The obstacles on the field
+		 * @param[out]  hitTime the approximate time when the path hits an obstacle. If no obstacles are hit, behavior is undefined for the final value.
 		 * @param[in] 	startTime The time on the path to start checking from
 		 * @return 		true if it hits an obstacle, otherwise false
 		 */
-		virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const=0;
+		virtual bool hit(const Geometry2d::CompositeShape &shape, float &hitTime, float startTime) const=0;
 
 		/**
 		 * Draws the path
@@ -67,7 +67,7 @@ namespace Planning
 		/**
 		 * Returns the destination point of the path if it has one
 		 */
-		virtual boost::optional<Geometry2d::Point> destination() const=0;
+		virtual boost::optional<MotionInstant> destination() const=0;
 
 		/**
 		 * Returns a deep copy of the Path

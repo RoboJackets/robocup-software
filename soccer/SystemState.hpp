@@ -10,11 +10,13 @@
 #include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Polygon.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
+#include <Geometry2d/Arc.hpp>
 
 class RobotConfig;
 class OurRobot;
@@ -78,10 +80,14 @@ public:
 	/** @ingroup drawing_functions */
 	void drawCircle(const Geometry2d::Point &center, float radius, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
+    void drawPolygon(const Geometry2d::Polygon &pts, const QColor &color = Qt::black, const QString &layer = QString());
+    /** @ingroup drawing_functions */
+	void drawArc(const Geometry2d::Arc &arc, const QColor &color = Qt::black, const QString &layer = QString());
+	/** @ingroup drawing_functions */
 	void drawPolygon(const Geometry2d::Point *pts, int n, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
 	void drawPolygon(const std::vector<Geometry2d::Point>& pts, const QColor &color = Qt::black, const QString &layer = QString());
-	/** @ingroup drawing_functions */
+    /** @ingroup drawing_functions */
 	void drawText(const QString &text, const Geometry2d::Point &pos, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
 	void drawShape(const std::shared_ptr<Geometry2d::Shape>& obs, const QColor &color = Qt::black, const QString &layer = QString());

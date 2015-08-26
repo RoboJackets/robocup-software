@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+/// This class contains constants defining the layout of the field.
+/// See the official SSL rules page for a detailed diagram:
+/// http://robocupssl.cpe.ku.ac.th/rules:main
 struct Field_Dimensions {
 
   inline float Length() const { return _Length; }

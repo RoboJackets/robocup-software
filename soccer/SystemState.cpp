@@ -51,18 +51,6 @@ int SystemState::findDebugLayer(QString layer)
 		return i.value();
 	}
 }
-/*
-void SystemState::drawPath(const Planning::BezierPath &path, const QColor& qc, const QString& layer)
-{
-	DebugPath *dbg = logFrame->add_debug_paths();
-	dbg->set_layer(findDebugLayer(layer));
-	for (Geometry2d::Point pt : path.points)
-	{
-		*dbg->add_points() = pt;
-	}
-	dbg->set_color(color(qc));
-}
-*/
 
 void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor& qc, const QString &layer)
 {
@@ -77,13 +65,12 @@ void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor&
 
 void SystemState::drawPolygon(const std::vector<Geometry2d::Point>& pts, const QColor &qc, const QString &layer)
 {
-	DebugPath *dbg = logFrame->add_debug_polygons();
-	dbg->set_layer(findDebugLayer(layer));
-	for (size_t i = 0; i < pts.size(); ++i)
-	{
-		*dbg->add_points() = pts[i];
-	}
-	dbg->set_color(color(qc));
+	drawPolygon(pts.data(), pts.size(), qc, layer);
+}
+
+void SystemState::drawPolygon(const Geometry2d::Polygon& polygon, const QColor &qc, const QString &layer)
+{
+    this->drawPolygon(polygon.vertices, qc, layer);
 }
 
 void SystemState::drawCircle(const Geometry2d::Point& center, float radius, const QColor& qc, const QString &layer)
@@ -92,6 +79,16 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 	dbg->set_layer(findDebugLayer(layer));
 	*dbg->mutable_center() = center;
 	dbg->set_radius(radius);
+	dbg->set_color(color(qc));
+}
+
+void SystemState::drawArc(const Geometry2d::Arc &arc, const QColor &qc, const QString &layer) {
+	DebugArc *dbg = logFrame->add_debug_arcs();
+	dbg->set_layer(findDebugLayer(layer));
+	*dbg->mutable_center() = arc.center();
+	dbg->set_radius(arc.radius());
+	dbg->set_start(arc.start());
+	dbg->set_end(arc.end());
 	dbg->set_color(color(qc));
 }
 
