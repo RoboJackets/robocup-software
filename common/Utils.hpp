@@ -192,8 +192,8 @@ public:
 
 // Sets str to the name of a class.
 // Use it like this:
-//		Object *obj = new Object();
-//		QString name = typeName(typeid(*obj));
+// 	Object *obj = new Object();
+// 	QString name = typeName(typeid(*obj));
 // The returned name is in the usual C++ format: "Namespace::Namespace::Class"
 QString typeName(const std::type_info& info);
 

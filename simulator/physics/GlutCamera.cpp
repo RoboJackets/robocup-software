@@ -191,7 +191,7 @@ void GlutCamera::updateCamera() {
         glLoadIdentity();
         // glTranslatef(100,210,0);
     } else {
-        //		glFrustum (-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
+        // 	glFrustum (-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
         glFrustum(-aspect * _frustumZNear, aspect * _frustumZNear,
                   -_frustumZNear, _frustumZNear, _frustumZNear, _frustumZFar);
         glMatrixMode(GL_MODELVIEW);
@@ -303,7 +303,7 @@ void GlutCamera::displayProfileString(int xOffset, int yStart, char* message) {
 }
 
 void GlutCamera::renderscene(int pass, int debugMode) {
-    //	throw runtime_error("Breaking at renderscene");
+    // throw runtime_error("Breaking at renderscene");
     btScalar m[16];
     btMatrix3x3 rot;
     rot.setIdentity();
@@ -354,9 +354,9 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 
         aabbMin -= btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
         aabbMax += btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
-        //		printf("aabbMin=(%f,%f,%f)\n",aabbMin.getX(),aabbMin.getY(),aabbMin.getZ());
-        //		printf("aabbMax=(%f,%f,%f)\n",aabbMax.getX(),aabbMax.getY(),aabbMax.getZ());
-        //		_dynamicsWorld->getDebugDrawer()->drawAabb(aabbMin,aabbMax,btVector3(1,1,1));
+        // 	printf("aabbMin=(%f,%f,%f)\n",aabbMin.getX(),aabbMin.getY(),aabbMin.getZ());
+        // 	printf("aabbMax=(%f,%f,%f)\n",aabbMax.getX(),aabbMax.getY(),aabbMax.getZ());
+        // 	_dynamicsWorld->getDebugDrawer()->drawAabb(aabbMin,aabbMax,btVector3(1,1,1));
 
         if (!(debugMode & btIDebugDraw::DBG_DrawWireframe)) {
             switch (pass) {

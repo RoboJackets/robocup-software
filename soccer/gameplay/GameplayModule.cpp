@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 
-//	for python stuff
+// for python stuff
 #include "robocup-py.hpp"
 
 using namespace std;
@@ -26,7 +26,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
     _goalieID = -1;
 
     //
-    //	setup python interpreter
+    // setup python interpreter
     //
     try {
         cout << "Initializing embedded python interpreter..." << endl;
@@ -35,7 +35,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
         //  it has to be done before Py_Initialize()
         PyImport_AppendInittab("robocup", &PyInit_robocup);
 
-        //	we use Py_InitializeEx(0) instead of regular Py_Initialize() so that
+        // we use Py_InitializeEx(0) instead of regular Py_Initialize() so that
         // Ctrl-C kills soccer as expected
         Py_InitializeEx(0);
         PyEval_InitThreads();
@@ -50,7 +50,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
             QDir gameplayDir = ApplicationRunDirectory();
             gameplayDir.cd("../soccer/gameplay");
 
-            //	add gameplay directory to python import path (so import XXX)
+            // add gameplay directory to python import path (so import XXX)
             // will look in the right directory
             string importStmt = QString("import sys; sys.path.append('%1')")
                                     .arg(gameplayDir.absolutePath())
@@ -59,7 +59,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
                 (PyRun_String(importStmt.data(), Py_file_input,
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-            //	instantiate the root play
+            // instantiate the root play
             handle<> ignored3(
                 (PyRun_String("import main; main.init()", Py_file_input,
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
@@ -225,7 +225,7 @@ void Gameplay::GameplayModule::savePlaybook(const string& playbookFile,
 void Gameplay::GameplayModule::goalieID(int value) {
     _goalieID = value;
 
-    //	pass this value to python
+    // pass this value to python
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
@@ -280,7 +280,7 @@ void Gameplay::GameplayModule::run() {
 
     _ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
-    ///	prepare each bot for the next iteration by resetting temporary things
+    /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : _state->self) {
         if (robot) {
             robot->resetAvoidBall();
@@ -300,13 +300,13 @@ void Gameplay::GameplayModule::run() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            //	vector of shared pointers to pass to python
+            // vector of shared pointers to pass to python
             vector<OurRobot*>* botVector = new vector<OurRobot*>();
             for (auto itr = _playRobots.begin(); itr != _playRobots.end();
                  itr++) {
                 OurRobot* ourBot = *itr;
-                //	don't attempt to drive the robot that's joystick-controlled
-                //	FIXME: exclude manual id robot
+                // don't attempt to drive the robot that's joystick-controlled
+                // FIXME: exclude manual id robot
                 // if (ourBot->shell() != MANUAL_ID) {
                 botVector->push_back(ourBot);
                 // }
@@ -356,7 +356,7 @@ void Gameplay::GameplayModule::run() {
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
             try {
-                //	record the state of our behavior tree
+                // record the state of our behavior tree
                 std::string bhvrTreeDesc =
                     extract<std::string>(getRootPlay().attr("__str__")());
                 _state->logFrame->set_behavior_tree(bhvrTreeDesc);

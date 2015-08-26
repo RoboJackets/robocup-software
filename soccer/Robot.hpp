@@ -173,11 +173,11 @@ public:
      */
     const Planning::Path* path() const { return _path.get(); }
 
-    ///	clears old radioTx stuff, resets robot debug text, and clears local
+    /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
     void resetForNextIteration();
 
-    ///	clears all fields in the robot's MotionConstraints object, causing the
+    /// clears all fields in the robot's MotionConstraints object, causing the
     /// robot to stop
     void resetMotionConstraints();
 
@@ -307,7 +307,7 @@ public:
     void disableAvoidBall();
     void avoidBallRadius(float radius);
     float avoidBallRadius() const;
-    void resetAvoidBall();  //	sets avoid ball radius to Ball_Avoid_Small
+    void resetAvoidBall();  // sets avoid ball radius to Ball_Avoid_Small
 
     void resetAvoidRobotRadii();
 
@@ -511,7 +511,7 @@ protected:
 protected:
     friend class Processor;
 
-    ///	The processor mutates RadioRx in place and calls this afterwards to let
+    /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
 
@@ -536,7 +536,7 @@ protected:
      */
     boost::circular_buffer<bool> _pathChangeHistory;
 
-    ///	the size of _pathChangeHistory
+    /// the size of _pathChangeHistory
     static const int PathChangeHistoryBufferSize = 10;
 
     bool _didSetPathThisIteration;
@@ -563,7 +563,7 @@ private:
 
     void _clearCmdText();
 
-    ///	default values for avoid radii
+    /// default values for avoid radii
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;

@@ -45,7 +45,7 @@ void MotionControl::run() {
 
     const MotionConstraints& constraints = _robot->motionConstraints();
 
-    //	update PID parameters
+    // update PID parameters
     _positionXController.kp = *_robot->config->translation.p;
     _positionXController.ki = *_robot->config->translation.i;
     _positionXController.setWindup(*_robot->config->translation.i_windup);
@@ -58,7 +58,7 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
-    //	Angle control //////////////////////////////////////////////////
+    // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
     float targetW = 0;
@@ -69,7 +69,7 @@ void MotionControl::run() {
                                                 ? *constraints.pivotTarget
                                                 : *constraints.faceTarget;
 
-        //	fixing the angle ensures that we don't go the long way around to get
+        // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
         float targetAngleFinal = (targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
@@ -77,17 +77,17 @@ void MotionControl::run() {
         // float targetW;
         // float targetAngle;
         // TrapezoidalMotion(
-        // 	abs(angleError),					//	dist
-        // 	motionConstraints.maxAngleSpeed,	//	max deg/sec
-        // 	30,									//	max deg/sec^2
-        // 	0.1 ,								//	time into path
-        // 	_robot->angleVel,					//	start speed
-        // 	0,									//	final speed
+        // 	abs(angleError),					// dist
+        // 	motionConstraints.maxAngleSpeed,	// max deg/sec
+        // 	30,									// max deg/sec^2
+        // 	0.1 ,								// time into path
+        // 	_robot->angleVel,					// start speed
+        // 	0,									// final speed
         // 	targetAngle,
-        // 	targetW 							//	ignored
+        // 	targetW 							// ignored
         // 	);
 
-        // //	PID on angle
+        // // PID on angle
         // if(angleError<0) {
         // 	targetW = - targetW;
         // }
@@ -95,7 +95,7 @@ void MotionControl::run() {
 
         targetW = _angleController.run(angleError);
 
-        //	limit W
+        // limit W
         if (abs(targetW) > (constraints.maxAngleSpeed)) {
             if (targetW > 0) {
                 targetW = (constraints.maxAngleSpeed);
@@ -121,20 +121,20 @@ void MotionControl::run() {
         float speed = r * targetW * RadiansToDegrees * FudgeFactor;
         Point vel(speed, 0);
 
-        //	the robot body coordinate system is wierd...
+        // the robot body coordinate system is wierd...
         vel.rotate(-M_PI_2);
 
         _targetBodyVel(vel);
 
-        return;  //	pivot handles both angle and position
+        return;  // pivot handles both angle and position
     }
 
-    //	Position control ///////////////////////////////////////////////
+    // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
     Planning::MotionInstant target;
 
-    //	if no target position is given, we don't have a path to follow
+    // if no target position is given, we don't have a path to follow
     if (!_robot->path() ||
         _robot->motionCommand().getCommandType() ==
             Planning::MotionCommand::WorldVel) {
@@ -142,10 +142,10 @@ void MotionControl::run() {
             _robot->motionCommand().getWorldVel().rotated(-_robot->angle);
     } else {
         //
-        //	Path following
+        // Path following
         //
 
-        //	convert from microseconds to seconds
+        // convert from microseconds to seconds
         float timeIntoPath =
             ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs +
             1.0 / 60.0;
@@ -159,8 +159,8 @@ void MotionControl::run() {
         // 	cout << "Compensating!  new t = " << timeIntoPath << endl;
         // }
 
-        //	the 0.9 is a fudge factor
-        //	we do this to compensate for lost command cycles
+        // the 0.9 is a fudge factor
+        // we do this to compensate for lost command cycles
         // double factor = *_path_jitter_compensation_factor;
         // timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f *
         // factor;
@@ -170,15 +170,15 @@ void MotionControl::run() {
         // << endl;
         // cout << "timeIntoPath: " << timeIntoPath << endl;
 
-        //	evaluate path - where should we be right now?
+        // evaluate path - where should we be right now?
         bool pathValidNow = _robot->path()->evaluate(timeIntoPath, target);
         if (!pathValidNow) {
             target.vel = Geometry2d::Point();
         }
-        //	tracking error
+        // tracking error
         Point posError = target.pos - _robot->pos;
 
-        //	acceleration factor
+        // acceleration factor
         Planning::MotionInstant nextTarget;
         _robot->path()->evaluate(timeIntoPath + 1.0 / 60.0, nextTarget);
         Point acceleration = (nextTarget.vel - target.vel) / 60.0f;
@@ -187,22 +187,22 @@ void MotionControl::run() {
 
         target.vel += accelFactor;
 
-        //	path change boost
+        // path change boost
         if (_robot->consecutivePathChangeCount() > 0) {
             float boost = *_path_change_boost;
             target.vel += acceleration * boost;
         }
 
-        //	PID on position
+        // PID on position
         target.vel.x += _positionXController.run(posError.x);
         target.vel.y += _positionYController.run(posError.y);
 
-        //	draw target pt
+        // draw target pt
         _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
         _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
                                   "MotionControl");
 
-        //	convert from world to body coordinates
+        // convert from world to body coordinates
         target.vel = target.vel.rotated(-_robot->angle);
     }
 
@@ -215,7 +215,7 @@ void MotionControl::stopped() {
 }
 
 void MotionControl::_targetAngleVel(float angleVel) {
-    //	velocity multiplier
+    // velocity multiplier
     angleVel *= *_robot->config->angleVelMultiplier;
 
     // convert units
@@ -230,7 +230,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
             angleVel > 0 ? minEffectiveAngularSpeed : -minEffectiveAngularSpeed;
     }
 
-    //	the robot firmware still speaks degrees, so that's how we send it over
+    // the robot firmware still speaks degrees, so that's how we send it over
     _robot->radioTx.set_body_w(angleVel);
 }
 
@@ -249,16 +249,16 @@ void MotionControl::_targetBodyVel(Point targetVel) {
         targetVel = _lastVelCmd + targetAccel * dt;
     }
 
-    //	make sure we don't send any bad values
+    // make sure we don't send any bad values
     if (isnan(targetVel.x) || isnan(targetVel.y)) {
         targetVel = Point(0, 0);
     }
 
-    //	track these values so we can limit acceleration
+    // track these values so we can limit acceleration
     _lastVelCmd = targetVel;
     _lastCmdTime = timestamp();
 
-    //	velocity multiplier
+    // velocity multiplier
     targetVel *= *_robot->config->velMultiplier;
 
     // if the velocity is nonzero, make sure it's not so small that the robot
@@ -268,7 +268,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
         targetVel = targetVel.normalized() * minEffectiveVelocity;
     }
 
-    //	set radioTx values
+    // set radioTx values
     _robot->radioTx.set_body_x(targetVel.x);
     _robot->radioTx.set_body_y(targetVel.y);
 }

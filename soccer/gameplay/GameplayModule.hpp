@@ -102,7 +102,7 @@ public:
 protected:
     boost::python::object getRootPlay();
 
-    ///	gets the instance of the main.py module that's loaded at GameplayModule
+    /// gets the instance of the main.py module that's loaded at GameplayModule
     boost::python::object getMainModule();
 
 private:
@@ -124,10 +124,10 @@ private:
 
     std::shared_ptr<Geometry2d::Shape> _sideObstacle;
 
-    ///	outside of the floor boundaries
+    /// outside of the floor boundaries
     std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
 
-    ///	goal areas
+    /// goal areas
     std::shared_ptr<Geometry2d::CompositeShape> _ourGoalArea;
     std::shared_ptr<Geometry2d::CompositeShape> _theirGoalArea;
 
@@ -146,7 +146,7 @@ private:
     // Shell ID of the robot to assign the goalie position
     int _goalieID;
 
-    //	python
+    // python
     boost::python::object _mainPyNamespace;
 };
 }

@@ -315,7 +315,7 @@ void GL_ToggleControl::draw(int& parentHorPos2, int& parentVertPos2,
 
     if (m_active) {
         // unsigned int red = 0xff8f0000;
-        //	unsigned int white = 0xff8f0000;
+        // unsigned int white = 0xff8f0000;
         unsigned int black = 0xff1f1f1f;
         borderSize = 4;
         drawRect(parentHorPos + borderSize, parentVertPos + borderSize,
@@ -349,7 +349,7 @@ void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2,
     int sliderPos = controlHorPos;
     if (sliderPos < sliderPosS) sliderPos = sliderPosS;
     if (sliderPos > sliderPosE) sliderPos = sliderPosE;
-    //	drawRect(parentHorPos2+80+borderSize, parentVertPos2+borderSize,
+    // drawRect(parentHorPos2+80+borderSize, parentVertPos2+borderSize,
     // parentHorPos2+m_parentWindow->getDialogWidth()-16-borderSize,
     // parentVertPos2+2-borderSize, white,white,white,white);
     drawRect(sliderPosS, parentVertPos2 + borderSize, sliderPosE,
@@ -364,13 +364,13 @@ void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2,
 
     btVector3 rgb(1, 1, 1);
 
-    //	btSliderConstraint* pSlider = (btSliderConstraint*)m_constraint;
-    //	btScalar currPos = pSlider->getLinearPos();
-    //	if(currPos < pSlider->getLowerLinLimit()) currPos =
+    // btSliderConstraint* pSlider = (btSliderConstraint*)m_constraint;
+    // btScalar currPos = pSlider->getLinearPos();
+    // if(currPos < pSlider->getLowerLinLimit()) currPos =
     // pSlider->getLowerLinLimit();
-    //	if(currPos > pSlider->getUpperLinLimit()) currPos =
+    // if(currPos > pSlider->getUpperLinLimit()) currPos =
     // pSlider->getUpperLinLimit();
-    //	m_fraction = (currPos - pSlider->getLowerLinLimit()) /
+    // m_fraction = (currPos - pSlider->getLowerLinLimit()) /
     //(pSlider->getUpperLinLimit() - pSlider->getLowerLinLimit());
     m_fraction = (btScalar)(sliderPos - sliderPosS) /
                  (btScalar)(sliderPosE - sliderPosS);
@@ -378,7 +378,7 @@ void GL_SliderControl::draw(int& parentHorPos2, int& parentVertPos2,
     char tmpBuf[256];
     sprintf(tmpBuf, "%s %3d%%", m_sliderText, (int)(m_fraction * 100.f));
 
-    //	GLDebugDrawStringInternal(parentHorPos2,parentVertPos2+8,m_sliderText,rgb);
+    // GLDebugDrawStringInternal(parentHorPos2,parentVertPos2+8,m_sliderText,rgb);
     GLDebugDrawStringInternal(parentHorPos2, parentVertPos2 + 8, tmpBuf, rgb);
     parentVertPos2 += 20;
 }

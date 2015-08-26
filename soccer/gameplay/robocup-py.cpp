@@ -48,8 +48,8 @@ void translateException(NullArgumentException const& e) {
  * from python was None.  Check for this case so that we don't segfault.
  */
 
-//	this is here so boost can work with std::shared_ptr
-//	later versions of boost include this, so we only define it for older
+// this is here so boost can work with std::shared_ptr
+// later versions of boost include this, so we only define it for older
 // versions
 #if BOOST_VERSION < 105300
 template <class T>
@@ -177,7 +177,7 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
         boost::python::object obj(pt);
         return obj;
     } else {
-        //	return None
+        // return None
         return boost::python::object();
     }
 }
@@ -206,7 +206,7 @@ boost::python::object Segment_nearest_point_to_line(Geometry2d::Segment* self,
     return boost::python::object{self->nearestPoint(*line)};
 }
 
-//	returns None or a Geometry2d::Point
+// returns None or a Geometry2d::Point
 boost::python::object Line_line_intersection(Geometry2d::Line* self,
                                              Geometry2d::Line* other) {
     if (other == nullptr) throw NullArgumentException("other");
@@ -215,7 +215,7 @@ boost::python::object Line_line_intersection(Geometry2d::Line* self,
         boost::python::object obj(pt);
         return obj;
     } else {
-        //	return None
+        // return None
         return boost::python::object();
     }
 };
@@ -624,7 +624,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("game_state", &SystemState::gameState)
         .def_readonly("timestamp", &SystemState::timestamp)
 
-        //	debug drawing methods
+        // debug drawing methods
         .def("draw_circle", &State_draw_circle)
         .def("draw_text", &State_draw_text)
         .def("draw_shape", &SystemState::drawShape)

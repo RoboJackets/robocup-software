@@ -196,7 +196,7 @@ void OurRobot::move(const Geometry2d::Point& goal,
 
     _motionCommand.setPathTarget(Planning::MotionInstant(goal, endVelocity));
 
-    //	reset conflicting motion commands
+    // reset conflicting motion commands
     _motionConstraints.pivotTarget = boost::none;
 
     *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
@@ -214,7 +214,7 @@ void OurRobot::moveDirect(const Geometry2d::Point& goal, float endSpeed) {
 
     _motionCommand.setDirectTarget(goal, endSpeed);
 
-    //	reset conflicting motion commands
+    // reset conflicting motion commands
     _motionConstraints.pivotTarget = boost::none;
 
     *_cmdText << "moveDirect(" << goal.x << ", " << goal.y << ")" << endl;
@@ -230,7 +230,7 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v) {
 void OurRobot::angleVelocity(float targetAngleVel) {
     _motionConstraints.targetAngleVel = fixAngleRadians(targetAngleVel);
 
-    //	reset other conflicting motion commands
+    // reset other conflicting motion commands
     _motionConstraints.faceTarget = boost::none;
     _motionConstraints.pivotTarget = boost::none;
 
@@ -240,7 +240,7 @@ void OurRobot::angleVelocity(float targetAngleVel) {
 void OurRobot::pivot(const Geometry2d::Point& pivotTarget) {
     _motionConstraints.pivotTarget = pivotTarget;
 
-    //	reset other conflicting motion commands
+    // reset other conflicting motion commands
     _motionCommand.setWorldVel(Geometry2d::Point());
     _motionConstraints.faceTarget = boost::none;
     setPath(nullptr);
@@ -285,7 +285,7 @@ void OurRobot::dribble(uint8_t speed) {
 void OurRobot::face(const Geometry2d::Point& pt) {
     _motionConstraints.faceTarget = pt;
 
-    //	reset conflicting motion commands
+    // reset conflicting motion commands
     _motionConstraints.pivotTarget = boost::none;
 
     *_cmdText << "face(" << pt.x << ", " << pt.y << ")" << endl;
@@ -494,7 +494,7 @@ void OurRobot::replanIfNeeded(
 
     // if no goal, command robot to stop in place
     if (_state->gameState.state == GameState::Halt) {
-        //	clear our history of path change times
+        // clear our history of path change times
         _pathChangeHistory.clear();
         setPath(nullptr);
         return;

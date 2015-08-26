@@ -144,7 +144,7 @@ private Q_SLOTS:
     void on_fastKickoffYellow_clicked();
 
 signals:
-    //	signal used to let widgets that we're viewing a different log frame now
+    // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
 
 private:
@@ -178,7 +178,7 @@ private:
 
     bool _live;
 
-    ///	playback rate of the viewer - a value of 1 means realtime
+    /// playback rate of the viewer - a value of 1 means realtime
     double _playbackRate;
 
     // This is used to update some status items less frequently than the full
@@ -197,10 +197,10 @@ private:
     QLabel* _procFPS;
     QLabel* _logMemory;
 
-    //	maps robot shell IDs to items in the list
+    // maps robot shell IDs to items in the list
     std::map<int, QListWidgetItem*> _robotStatusItemMap;
 
-    ///	the play, pause, ffwd, etc buttons
+    /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons;
 
     Time _firstLogTimestamp = -1;

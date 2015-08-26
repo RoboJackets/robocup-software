@@ -62,7 +62,7 @@ TEST(Path, startFrom2) {
     // verify
     ASSERT_EQ(4, act.size());
     EXPECT_TRUE(pt == act.points[0]);
-    //	EXPECT_FLOAT_EQ( 0.5, act.points[1].x); // fails
+    // EXPECT_FLOAT_EQ( 0.5, act.points[1].x); // fails
     EXPECT_FLOAT_EQ(0.0, act.points[1].y);
 }
 
@@ -83,7 +83,7 @@ TEST(Path, startFrom3) {
     // verify
     ASSERT_EQ(5, act.size());
     EXPECT_TRUE(pt == act.points[0]);
-    //	EXPECT_TRUE(p1 == act.points[1]); // fails
+    // EXPECT_TRUE(p1 == act.points[1]); // fails
 }
 
 TEST(InterpolatedPath, evaluate) {
@@ -103,7 +103,7 @@ TEST(InterpolatedPath, evaluate) {
     MotionInstant out;
     bool pathValid;
 
-    //	path should be invalid and at end state when t > duration
+    // path should be invalid and at end state when t > duration
     pathValid = path.evaluate(1000, out);
     EXPECT_FLOAT_EQ(0, (out.pos - p2).mag());
     EXPECT_FLOAT_EQ(0, out.vel.mag());

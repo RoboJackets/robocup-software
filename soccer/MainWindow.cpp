@@ -128,7 +128,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
 
-    //	put all log playback buttons into a vector for easy access later
+    // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
     _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
     _logPlaybackButtons.push_back(_ui.logPlaybackPause);
@@ -160,7 +160,7 @@ void MainWindow::processor(Processor* value) {
 
     _ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
     _ui.logHistoryLocation->setTickInterval(60 *
-                                            60);  //	interval is ~ 1 minute
+                                            60);  // interval is ~ 1 minute
 }
 
 void MainWindow::logFileChanged() {
@@ -265,7 +265,7 @@ void MainWindow::updateViews() {
         }
     }
 
-    //	update history slider in ui
+    // update history slider in ui
     emit historyLocationChanged(_doubleFrameNumber -
                                 _processor->logger().firstFrameNumber());
 
@@ -275,7 +275,7 @@ void MainWindow::updateViews() {
     // Update field view
     _ui.fieldView->update();
 
-    //	enable playback buttons based on playback rate
+    // enable playback buttons based on playback rate
     for (QPushButton* playbackBtn : _logPlaybackButtons)
         playbackBtn->setEnabled(true);
     if (_live)
@@ -369,7 +369,7 @@ void MainWindow::updateViews() {
                                    Qt::AscendingOrder);
         }
 
-        //	update the behavior tree view
+        // update the behavior tree view
         _ui.behaviorTree->setPlainText(
             QString::fromStdString(currentFrame->behavior_tree()));
     }
@@ -399,7 +399,7 @@ void MainWindow::updateViews() {
                                 _processor->refereeModule()->command)
                                 .c_str());
 
-    //	convert time left from ms to s and display it to two decimal places
+    // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
         _processor->refereeModule()->stage_time_left / 1000.0f, 'f', 2)));
 
@@ -434,17 +434,17 @@ void MainWindow::updateViews() {
     _ui.actionUse_External_Referee->setChecked(
         _processor->refereeModule()->useExternalReferee());
 
-    //	update robot status list
+    // update robot status list
     for (const OurRobot* robot : _processor->state()->self) {
-        //	a robot shows up in the status list if it's reachable via radio
+        // a robot shows up in the status list if it's reachable via radio
         bool shouldDisplay = robot->rxIsFresh();
 
-        //	see if it's already in the robot status list widget
+        // see if it's already in the robot status list widget
         bool displaying = _robotStatusItemMap.find(robot->shell()) !=
                           _robotStatusItemMap.end();
 
         if (shouldDisplay && !displaying) {
-            //	add a widget to the list for this robot
+            // add a widget to the list for this robot
 
             QListWidgetItem* item = new QListWidgetItem();
             _robotStatusItemMap[robot->shell()] = item;
@@ -454,15 +454,15 @@ void MainWindow::updateViews() {
             item->setSizeHint(statusWidget->minimumSizeHint());
             _ui.robotStatusList->setItemWidget(item, statusWidget);
 
-            //	set shell ID
+            // set shell ID
             statusWidget->setShellID(robot->shell());
 
-            //	set team
+            // set team
             statusWidget->setBlueTeam(processor()->blueTeam());
 
-            //	TODO: set board ID
+            // TODO: set board ID
 
-            //	set robot model
+            // set robot model
             QString robotModel;
             switch (robot->radioRx().hardware_version()) {
                 case RJ2008:
@@ -479,25 +479,25 @@ void MainWindow::updateViews() {
             }
             statusWidget->setRobotModel(robotModel);
 
-//	uncomment this #define to test the display of a variety of different errors
+// uncomment this #define to test the display of a variety of different errors
 // #define DEMO_ROBOT_STATUS
 
 #ifdef DEMO_ROBOT_STATUS
-            //	set board ID
+            // set board ID
             QString hex("");
             for (int i = 0; i < 4; i++)
                 hex += QString::number(rand() % 16, 16).toUpper();
             statusWidget->setBoardID(hex);
 
-            //	fake vision
+            // fake vision
             bool vision = rand() % 5 != 0;
             statusWidget->setHasVision(vision);
 
-            //	fake battery
+            // fake battery
             float battery = robot->shell() / 6.0f;
             statusWidget->setBatteryLevel(battery);
 
-            //	fake radio
+            // fake radio
             bool radio = rand() % 5 != 0;
             statusWidget->setHasRadio(radio);
 
@@ -505,11 +505,11 @@ void MainWindow::updateViews() {
             QString error = "Kicker Fault, Hall Fault FR, Ball Sense Fault";
             statusWidget->setErrorText(error);
 
-            //	fake ball status
+            // fake ball status
             bool ball = rand() % 4 == 0;
             statusWidget->setHasBall(ball);
 
-            //	fake ball sense error
+            // fake ball sense error
             bool ballFault = rand() % 4 == 0;
             statusWidget->setBallSenseFault(ballFault);
             bool hasWheelFault = false;
@@ -523,11 +523,11 @@ void MainWindow::updateViews() {
             statusWidget->setShowstopper(showstopper);
 #endif
         } else if (!shouldDisplay && displaying) {
-            //	remove the widget for this robot from the list
+            // remove the widget for this robot from the list
 
             QListWidgetItem* item = _robotStatusItemMap[robot->shell()];
 
-            //	delete widget from list
+            // delete widget from list
             for (int row = 0; row < _ui.robotStatusList->count(); row++) {
                 if (_ui.robotStatusList->item(row) == item) {
                     _ui.robotStatusList->takeItem(row);
@@ -539,7 +539,7 @@ void MainWindow::updateViews() {
             delete item;
         }
 
-        //	update displayed attributes for valid robots
+        // update displayed attributes for valid robots
         if (shouldDisplay) {
             QListWidgetItem* item = _robotStatusItemMap[robot->shell()];
             RobotStatusWidget* statusWidget =
@@ -551,25 +551,25 @@ void MainWindow::updateViews() {
             RadioRx rx(robot->radioRx());
 
 #ifndef DEMO_ROBOT_STATUS
-            //	radio status
+            // radio status
             bool hasRadio = robot->rxIsFresh();
             statusWidget->setHasRadio(hasRadio);
 
-            //	vision status
+            // vision status
             bool hasVision = robot->visible;
             statusWidget->setHasVision(hasVision);
 
-            //	build a list of errors to display in the widget
+            // build a list of errors to display in the widget
             QStringList errorList;
 
-            //	motor faults
-            //	each motor fault is shown as text in the error text display as
+            // motor faults
+            // each motor fault is shown as text in the error text display as
             // well as being drawn as a red X on the graphic of a robot
             bool hasMotorFault = false;
             if (rx.motor_status().size() == 5) {
                 const char* motorNames[] = {"FR", "FL", "BL", "BR", "Dribbler"};
 
-                //	examine status of each motor (including the dribbler)
+                // examine status of each motor (including the dribbler)
                 for (int i = 0; i < 5; ++i) {
                     bool motorIFault = true;
                     switch (rx.motor_status(i)) {
@@ -590,12 +590,12 @@ void MainWindow::updateViews() {
                             break;
                     }
 
-                    //	show wheel faults (exluding dribbler, which is index 4)
+                    // show wheel faults (exluding dribbler, which is index 4)
                     if (i != 4) statusWidget->setWheelFault(i, motorIFault);
 
                     hasMotorFault = hasMotorFault || motorIFault;
 
-                    //	show dribbler fault on painted robot widget
+                    // show dribbler fault on painted robot widget
                     if (i == 4) statusWidget->setBallSenseFault(motorIFault);
                 }
             }
@@ -610,16 +610,16 @@ void MainWindow::updateViews() {
             if (ballSenseFault) errorList << "Ball Sense Fault";
             statusWidget->setBallSenseFault(ballSenseFault);
 
-            //	display error text
+            // display error text
             statusWidget->setErrorText(errorList.join(", "));
 
-            //	show the ball in the robot's mouth if it has one
+            // show the ball in the robot's mouth if it has one
             bool hasBall = rx.has_ball_sense_status() &&
                            rx.ball_sense_status() == Packet::HasBall;
             statusWidget->setHasBall(hasBall);
 
-            //	battery
-            //	convert battery voltage to a percentage and show it with the
+            // battery
+            // convert battery voltage to a percentage and show it with the
             // battery indicator
             float batteryLevel = 1;
             if (rx.has_battery()) {
@@ -955,7 +955,7 @@ void MainWindow::on_actionSeed_triggered() {
 
 // Log controls
 void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
-    //	update current frame
+    // update current frame
     int minFrame = _processor->logger().firstFrameNumber();
     int maxFrame = _processor->logger().lastFrameNumber();
     _doubleFrameNumber = value + minFrame;
@@ -963,7 +963,7 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
 
     emit historyLocationChanged(_doubleFrameNumber - minFrame);
 
-    //	pause playback
+    // pause playback
     live(false);
     _playbackRate = 0;
 }

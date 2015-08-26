@@ -16,7 +16,7 @@ public:
         : pos(pos), angle(angle), time(time), source(-1), frameNumber(frame) {}
 
     Geometry2d::Point pos;
-    float angle;  ///	in radians
+    float angle;  /// in radians
     Time time;
     int source;
     int frameNumber;

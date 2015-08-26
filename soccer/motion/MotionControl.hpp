@@ -32,14 +32,14 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    //	sets the target velocity in the robot's radio packet
-    //	this method is used by both run() and stopped() and does the
-    //	velocity and acceleration limiting and conversion to robot velocity
+    // sets the target velocity in the robot's radio packet
+    // this method is used by both run() and stopped() and does the
+    // velocity and acceleration limiting and conversion to robot velocity
     //"units"
     void _targetBodyVel(Geometry2d::Point targetVel);
 
-    ///	sets the target angle velocity in the robot's radio packet
-    ///	does velocity limiting and conversion to robot velocity "units"
+    /// sets the target angle velocity in the robot's radio packet
+    /// does velocity limiting and conversion to robot velocity "units"
     void _targetAngleVel(float angleVel);
 
     OurRobot* _robot;
@@ -58,7 +58,7 @@ private:
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_velocity;
 
-    //	if the path just changed, we add this boost to the output velocity
+    // if the path just changed, we add this boost to the output velocity
     // command (before velocity scaling to bot 'units')
     static ConfigDouble* _path_change_boost;
 };

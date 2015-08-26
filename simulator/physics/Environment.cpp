@@ -378,18 +378,18 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
     }
 
     // FIXME: the interface changed for this part
-    //	Robot *rev = robot(blue, tx.robot_id());
-    //	if (rev)
-    //	{
-    //		Packet::RadioRx rx = rev->radioRx();
-    //		rx.set_robot_id(tx.robot_id());
+    // Robot *rev = robot(blue, tx.robot_id());
+    // if (rev)
+    // {
+    // 	Packet::RadioRx rx = rev->radioRx();
+    // 	rx.set_robot_id(tx.robot_id());
     //
-    //		// Send the RX packet
-    //		std::string out;
-    //		rx.SerializeToString(&out);
-    //		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress,
+    // 	// Send the RX packet
+    // 	std::string out;
+    // 	rx.SerializeToString(&out);
+    // 	_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress,
     // RadioRxPort + ch);
-    //	}
+    // }
 }
 
 void Environment::renderScene(GL_ShapeDrawer* shapeDrawer,

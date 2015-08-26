@@ -213,7 +213,7 @@ void DemoApplication::updateCamera() {
         glLoadIdentity();
         // glTranslatef(100,210,0);
     } else {
-        //		glFrustum (-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
+        // 	glFrustum (-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
         glFrustum(-aspect * m_frustumZNear, aspect * m_frustumZNear,
                   -m_frustumZNear, m_frustumZNear, m_frustumZNear,
                   m_frustumZFar);
@@ -542,10 +542,10 @@ void DemoApplication::shootBox(const btVector3& destination) {
         // value should be smaller (embedded) than the half extends of the box
         // (see ::setShootBoxShape)
         body->setCcdSweptSphereRadius(0.4f);
-        //		printf("shootBox uid=%d\n",
+        // 	printf("shootBox uid=%d\n",
         // body->getBroadphaseHandle()->getUid());
-        //		printf("camPos=%f,%f,%f\n",camPos.getX(),camPos.getY(),camPos.getZ());
-        //		printf("destination=%f,%f,%f\n",destination.getX(),destination.getY(),destination.getZ());
+        // 	printf("camPos=%f,%f,%f\n",camPos.getX(),camPos.getY(),camPos.getZ());
+        // 	printf("destination=%f,%f,%f\n",destination.getX(),destination.getY(),destination.getZ());
     }
 }
 
@@ -1075,9 +1075,9 @@ void DemoApplication::renderscene(int pass) {
 
         aabbMin -= btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
         aabbMax += btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
-        //		printf("aabbMin=(%f,%f,%f)\n",aabbMin.getX(),aabbMin.getY(),aabbMin.getZ());
-        //		printf("aabbMax=(%f,%f,%f)\n",aabbMax.getX(),aabbMax.getY(),aabbMax.getZ());
-        //		m_dynamicsWorld->getDebugDrawer()->drawAabb(aabbMin,aabbMax,btVector3(1,1,1));
+        // 	printf("aabbMin=(%f,%f,%f)\n",aabbMin.getX(),aabbMin.getY(),aabbMin.getZ());
+        // 	printf("aabbMax=(%f,%f,%f)\n",aabbMax.getX(),aabbMax.getY(),aabbMax.getZ());
+        // 	m_dynamicsWorld->getDebugDrawer()->drawAabb(aabbMin,aabbMax,btVector3(1,1,1));
 
         if (!(getDebugMode() & btIDebugDraw::DBG_DrawWireframe)) {
             switch (pass) {
