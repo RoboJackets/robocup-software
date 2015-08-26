@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	
 	// Create vision socket
 	QUdpSocket visionSocket;
-	if (!visionSocket.bind(SharedVisionPort, QUdpSocket::ShareAddress))
+	if (!visionSocket.bind(SharedVisionPortDoubleOld, QUdpSocket::ShareAddress))
 	{
 		printf("Can't bind to shared vision port");
 		return 1;
@@ -78,6 +78,7 @@ int main(int argc, char *argv[])
 		
 		logFrame.Clear();
 		logFrame.set_command_time(startTime);
+		logFrame.set_timestamp(startTime);
 		
 		// Check for user input (to exit)
 		struct pollfd pfd;

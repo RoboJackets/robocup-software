@@ -15,10 +15,16 @@
 #include <QtWidgets>
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
-template<typename T> static inline void debugThrow(T exception) {
+
+template <class exception>
+inline void debugThrow(const exception &e) {
 	if (THROW_DEBUG_EXCEPTIONS) {
-		throw exception;
+		throw e;
 	}
+}
+
+inline void debugThrow(const std::string &string) {
+	debugThrow(std::runtime_error(string));
 }
 
 /**

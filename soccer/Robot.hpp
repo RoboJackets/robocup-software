@@ -1,21 +1,24 @@
 #pragma once
 
-#include <stdint.h>
-#include <vector>
-#include <boost/optional.hpp>
-#include <boost/array.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/circular_buffer.hpp>
-#include <QColor>
-#include <Eigen/Geometry>
 #include <Constants.hpp>
-#include "MotionConstraints.hpp"
-#include <Utils.hpp>
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
+#include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
-#include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <Utils.hpp>
+
+#include <array>
+#include <boost/circular_buffer.hpp>
+#include <boost/optional.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <Eigen/Dense>
+#include <QColor>
+#include <stdint.h>
+#include <vector>
+
 
 class SystemState;
 class RobotConfig;
@@ -105,9 +108,20 @@ public:
 		return shell() == other.shell() && self() == other.self();
 	}
 
-	bool equals(const Robot &other) {
-		return *this == other;
+	std::string toString() const {
+		return 	std::string("<Robot ") +
+						(self() ? "us[" : "them[") +
+						std::to_string(shell()) +
+						"], pos=" +
+						pos.toString() +
+						">";
 	}
+
+	friend std::ostream& operator<< (std::ostream& stream, const Robot& robot) {
+		stream << robot.toString();
+		return stream;
+	}
+
 
 private:
 	unsigned int _shell;
@@ -128,7 +142,7 @@ private:
  */
 class OurRobot: public Robot {
 public:
-	typedef boost::array<float,Num_Shells> RobotMask;
+	typedef std::array<float,Num_Shells> RobotMask;
 
 	RobotConfig *config;
 	RobotStatus *status;
@@ -170,8 +184,13 @@ public:
 		return _motionConstraints;
 	}
 
+	/**
+	 * Returns a temporary observing pointer to the path of the robot.
+	 * This is only currently supported for legacy reasons.
+	 * Saving the pointer may lead to seg faults as it may be deleted by the Robot who owns it.
+	 */
 	const Planning::Path* path() const {
-		return _path;
+		return _path.get();
 	}
 
 	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
@@ -187,7 +206,15 @@ public:
 	 * @brief Move to a given point using the default RRT planner
 	 * @param endSpeed - the speed we should be going when we reach the end of the path
 	 */
-	void move(const Geometry2d::Point &goal, float endSpeed = 0);
+	void move(const Geometry2d::Point &goal, Geometry2d::Point endVelocity = Geometry2d::Point());
+
+
+	/**
+	 * @brief Move to a given point bypassing the RRT Path planner. This will plan a direct path ignoring 
+	 *			all obstacles and the starting velocity	
+	 * @param endSpeed - the speed we should be going when we reach the end of the path
+	 */
+	void moveDirect(const Geometry2d::Point &goal, float endSpeed = 0);
 
 	Time pathStartTime() const {
 		return _pathStartTime;
@@ -390,6 +417,10 @@ public:
 		return _radioRx;
 	}
 
+	const Planning::MotionCommand motionCommand() const {
+		return _motionCommand;
+	}
+
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
@@ -414,6 +445,7 @@ public:
 		radioTx.set_sing(true);
 	}
 
+	bool isPenaltyKicker = false;
 
 	static void createConfiguration(Configuration *cfg);
 
@@ -430,18 +462,22 @@ protected:
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
 	float _avoidBallRadius; /// radius of ball obstacle
 
+	Planning::MotionCommand _motionCommand;
+	Planning::MotionCommand::CommandType _lastCommandType;
 	MotionConstraints _motionConstraints;
 
-	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
+	std::shared_ptr<Planning::PathPlanner> _planner;	/// single-robot RRT planner
 
-	void setPath(Planning::Path *path);
+	void setPath(std::unique_ptr<Planning::Path> path);
 
-	Planning::Path *_path;	/// latest path
+	std::unique_ptr<Planning::Path> _path;	/// latest path
+
+
+
 	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
 	bool _pathInvalidated;
-
 
 	/**
 	 * Creates a set of obstacles from a given robot team mask,
@@ -455,7 +491,7 @@ protected:
 	template<class ROBOT>
 	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
 		Geometry2d::CompositeShape result;
-		for (size_t i=0; i<RobotMask::size(); ++i)
+		for (size_t i=0; i<mask.size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
 				result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
 		return result;
@@ -476,7 +512,7 @@ protected:
 	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask,
 				 Geometry2d::Point currentPosition, float checkRadius) const {
 		Geometry2d::CompositeShape result;
-		for (size_t i=0; i<RobotMask::size(); ++i)
+		for (size_t i=0; i<mask.size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible) {
 				if (currentPosition.distTo(robots[i]->pos)<=checkRadius) {
 					result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
@@ -546,6 +582,8 @@ private:
 	static ConfigDouble *_selfAvoidRadius;
 	static ConfigDouble *_oppAvoidRadius;
 	static ConfigDouble *_oppGoalieAvoidRadius;
+	static ConfigDouble *_goalChangeThreshold;
+	static ConfigDouble *_replanTimeout;
 };
 
 /**
