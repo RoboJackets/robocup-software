@@ -257,10 +257,10 @@ private:
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::shared_ptr<BallTracker> _ballTracker;
 
-    //	mixes values from all joysticks to control the single manual robot
+    // mixes values from all joysticks to control the single manual robot
     std::vector<Joystick*> _joysticks;
 
-    //	joystick damping
+    // joystick damping
     bool _dampedRotation;
     bool _dampedTranslation;
 

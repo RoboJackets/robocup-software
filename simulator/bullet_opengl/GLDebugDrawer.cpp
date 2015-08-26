@@ -63,7 +63,7 @@ void GLDebugDrawer::drawSphere(const btVector3& p, btScalar radius,
 void GLDebugDrawer::drawTriangle(const btVector3& a, const btVector3& b,
                                  const btVector3& c, const btVector3& color,
                                  btScalar alpha) {
-    //	if (m_debugMode > 0)
+    // if (m_debugMode > 0)
     {
         const btVector3 n = btCross(b - a, c - a).normalized();
         glBegin(GL_TRIANGLES);
@@ -102,9 +102,9 @@ void GLDebugDrawer::drawContactPoint(const btVector3& pointOnB,
         glVertex3d(to.getX(), to.getY(), to.getZ());
         glEnd();
 
-        //		glRasterPos3f(from.x(),  from.y(),  from.z());
-        //		char buf[12];
-        //		sprintf(buf," %d",lifeTime);
+        // 	glRasterPos3f(from.x(),  from.y(),  from.z());
+        // 	char buf[12];
+        // 	sprintf(buf," %d",lifeTime);
         // BMF_DrawString(BMF_GetFont(BMF_kHelvetica10),buf);
     }
 }

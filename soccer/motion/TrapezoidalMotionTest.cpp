@@ -128,7 +128,7 @@ bool triangle4(float t, float& posOut, float& speedOut) {
 }
 
 TEST(TrapezoidalMotion, PreStart) {
-    //	make sure it gives good values for negative t values
+    // make sure it gives good values for negative t values
     float posOut, speedOut;
     bool pathValid = trapezoid1(-2, posOut, speedOut);
     EXPECT_FALSE(pathValid);
@@ -137,7 +137,7 @@ TEST(TrapezoidalMotion, PreStart) {
 }
 
 TEST(TrapezoidalMotion, Start) {
-    //	beginning of the trapezoid, t = 0
+    // beginning of the trapezoid, t = 0
     float posOut, speedOut;
     bool pathValid = trapezoid1(0, posOut, speedOut);
     EXPECT_NEAR(speedOut, 0, 0.001);
@@ -146,7 +146,7 @@ TEST(TrapezoidalMotion, Start) {
 }
 
 TEST(TrapezoidalMotion, End) {
-    //	way after the trapezoid finishes
+    // way after the trapezoid finishes
     float posOut, speedOut;
     bool pathValid = trapezoid1(50, posOut, speedOut);
     EXPECT_NEAR(speedOut, 0, 0.001)

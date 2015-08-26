@@ -314,7 +314,7 @@ int main() {
         }
 
 #if ENABLE_IMU
-        //	update IMU
+        // update IMU
         if ((current_time - imu_update_time) >= 1) {
             imu_update_time = current_time;
             // Check for new IMU data

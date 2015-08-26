@@ -75,7 +75,7 @@ void GLDebugResetFont(int screenWidth, int screenHeight) {
                      &sFontData[0]);
     }
 
-    //	printf("generating font at resolution
+    // printf("generating font at resolution
     //%d,%d\n",screenWidth,screenHeight);
 }
 

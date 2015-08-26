@@ -72,7 +72,7 @@ void FieldView::rotate(int value) {
 void FieldView::paintEvent(QPaintEvent* e) {
     QPainter p(this);
 
-    //	antialiasing drastically improves rendering quality
+    // antialiasing drastically improves rendering quality
     p.setRenderHint(QPainter::Antialiasing);
 
     if (!live) {
@@ -164,15 +164,15 @@ void FieldView::drawWorldSpace(QPainter& p) {
     // for robots that exist in the current frame
     map<pair<int, int>, QPainterPath> cometTrails;
 
-    ///	populate @cometTrails with the past locations of each robot
-    int pastLocationCount = 50;  //	number of past locations to show
+    /// populate @cometTrails with the past locations of each robot
+    int pastLocationCount = 50;  // number of past locations to show
     const float prev_loc_scale = 0.4;
     for (int i = 0; i < pastLocationCount + 1 && i < _history->size(); i++) {
         const LogFrame* oldFrame = _history->at(i).get();
         if (oldFrame) {
             for (const SSL_WrapperPacket& wrapper : oldFrame->raw_vision()) {
                 if (!wrapper.has_detection()) {
-                    //	useless
+                    // useless
                     continue;
                 }
 
@@ -203,7 +203,7 @@ void FieldView::drawWorldSpace(QPainter& p) {
         }
     }
 
-    //	draw robot comet trails
+    // draw robot comet trails
     const float cometTrailPenSize = 0.05;
     for (auto& kv : cometTrails) {
         QColor color = kv.first.first == 1 ? Qt::blue : Qt::yellow;
@@ -505,7 +505,7 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
                 Field_Dimensions::Current_Dimensions.Border());
 
     p.setPen(QPen(Qt::white, Field_Dimensions::Current_Dimensions.LineWidth() *
-                                 2.0));  //	double-width pen for visibility
+                                 2.0));  // double-width pen for visibility
                                          //(although its less accurate)
     p.setBrush(Qt::NoBrush);
     p.drawRect(QRectF(0, 0, Field_Dimensions::Current_Dimensions.Length(),
@@ -593,7 +593,7 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     p.setPen(
         QPen(goalColor,
              Field_Dimensions::Current_Dimensions.LineWidth() *
-                 2.0));  //	double-width for visibility, not real-life accuracy
+                 2.0));  // double-width for visibility, not real-life accuracy
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -668,7 +668,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID,
 
     painter.restore();
 
-    //	draw shell number
+    // draw shell number
     painter.save();
     painter.translate(pos.x(), pos.y());
     if (blueRobot) {

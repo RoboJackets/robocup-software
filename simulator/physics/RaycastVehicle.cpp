@@ -89,8 +89,8 @@ void RaycastVehicle::updateWheelTransform(int wheelIndex,
     const btVector3& right = wheel.m_raycastInfo.m_wheelAxleWS;
     btVector3 fwd = up.cross(right);
     fwd = fwd.normalize();
-    //	up = right.cross(fwd);
-    //	up.normalize();
+    // up = right.cross(fwd);
+    // up.normalize();
 
     // rotate around steering over de wheelAxleWS
     btScalar steering = wheel.m_steering;
@@ -370,7 +370,7 @@ void RaycastVehicle::updateSuspension(btScalar deltaTime) {
 
         if (wheel_info.m_raycastInfo.m_isInContact) {
             btScalar force;
-            //	Spring
+            // Spring
             {
                 btScalar susp_length = wheel_info.getSuspensionRestLength();
                 btScalar current_length =
@@ -660,7 +660,7 @@ void RaycastVehicle::debugDraw(btIDebugDraw* debugDrawer) {
 void* DefaultVehicleRaycaster::castRay(const btVector3& from,
                                        const btVector3& to,
                                        btVehicleRaycasterResult& result) {
-    //	RayResultCallback& resultCallback;
+    // RayResultCallback& resultCallback;
 
     btCollisionWorld::ClosestRayResultCallback rayCallback(from, to);
 

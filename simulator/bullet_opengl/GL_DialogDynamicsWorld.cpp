@@ -213,7 +213,7 @@ GL_DialogWindow* GL_DialogDynamicsWorld::createDialog(int horPos, int vertPos,
     btRigidBody* body = new btRigidBody(rbInfo);
     btTransform trans;
     trans.setIdentity();
-    //	trans.setOrigin(btVector3(btScalar(horPos-m_screenWidth/2+dialogWidth/2),
+    // trans.setOrigin(btVector3(btScalar(horPos-m_screenWidth/2+dialogWidth/2),
     // btScalar(vertPos+m_screenHeight/2.+dialogHeight/2),btScalar(0.)));
     trans.setOrigin(
         btVector3(btScalar(horPos - m_screenWidth / 2 + dialogWidth / 2),
@@ -249,7 +249,7 @@ GL_SliderControl* GL_DialogDynamicsWorld::createSlider(
     trans.setIdentity();
     int sliderX = dialog->getDialogHorPos() - m_screenWidth / 2 +
                   dialog->getDialogWidth() / 2;
-    //	int sliderY = dialog->getDialogVertPos() + m_screenHeight/2 +
+    // int sliderY = dialog->getDialogVertPos() + m_screenHeight/2 +
     // dialog->getDialogHeight()/2 + dialog->getNumControls()*20;
     int sliderY = dialog->getDialogVertPos() - m_screenHeight / 2 +
                   dialog->getDialogHeight() / 2 + dialog->getNumControls() * 20;
@@ -284,8 +284,8 @@ GL_SliderControl* GL_DialogDynamicsWorld::createSlider(
     frameInB.setIdentity();
     // frameInB.setOrigin(-offset/2);
 
-    //	btScalar lowerLimit = 80.f;
-    //	btScalar upperLimit = 170.f;
+    // btScalar lowerLimit = 80.f;
+    // btScalar upperLimit = 170.f;
     btScalar lowerLimit = 141.f;
     btScalar upperLimit = 227.f;
 
@@ -331,7 +331,7 @@ GL_ToggleControl* GL_DialogDynamicsWorld::createToggle(GL_DialogWindow* dialog,
 
     int toggleX = dialog->getDialogHorPos() - m_screenWidth / 2 +
                   dialog->getDialogWidth() / 2;
-    //	int toggleY = dialog->getDialogVertPos() + m_screenHeight/2 +
+    // int toggleY = dialog->getDialogVertPos() + m_screenHeight/2 +
     // dialog->getDialogHeight()/2 + dialog->getNumControls()*20;
     int toggleY = dialog->getDialogVertPos() - m_screenHeight / 2 +
                   dialog->getDialogHeight() / 2 + dialog->getNumControls() * 20;
@@ -454,7 +454,7 @@ bool GL_DialogDynamicsWorld::mouseFunc(int button, int state, int x, int y) {
                     }
                     // else
                     //{
-                    //	rayFrom = m_cameraPosition;
+                    // rayFrom = m_cameraPosition;
                     //}
 
                     btCollisionWorld::ClosestRayResultCallback rayCallback(
@@ -701,11 +701,11 @@ void GL_DialogDynamicsWorld::mouseMotionFunc(int x, int y) {
                 newPivotB.setY(newRayTo.getY());
             } else {
                 // rayFrom = m_cameraPosition;
-                //	btVector3 dir = newRayTo-rayFrom;
-                //	dir.normalize();
-                //	dir *= gOldPickingDist;
+                // btVector3 dir = newRayTo-rayFrom;
+                // dir.normalize();
+                // dir *= gOldPickingDist;
 
-                //	newPivotB = rayFrom + dir;
+                // newPivotB = rayFrom + dir;
             }
 
             p2p->setPivotB(newPivotB);

@@ -17,14 +17,14 @@ used to store past positions of the robot.
 
 Example usage:
 int main(int argc, char **argv) {
-    CIRCBUFF_DECL(cb, int, 5);	//	make a new circular buffer
-    CIRCBUFF_INIT(cb);			//	prepare it for use
+    CIRCBUFF_DECL(cb, int, 5);	// make a new circular buffer
+    CIRCBUFF_INIT(cb);			// prepare it for use
 
-    //	push the values 0..99 onto the buffer one at a time, printing the
+    // push the values 0..99 onto the buffer one at a time, printing the
 buffer at each step
     for (int i = 0; i < 100; i++) {
-        CIRCBUFF_PUSH(cb, i);	//	push the value
-        CIRCBUFF_INT_PRINT(cb);	//	print
+        CIRCBUFF_PUSH(cb, i);	// push the value
+        CIRCBUFF_INT_PRINT(cb);	// print
     }
 
     return 0;

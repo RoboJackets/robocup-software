@@ -153,7 +153,7 @@ void RobotBallController::dribblerStep() {
         btVector3 ballPos = _ball->getCenterOfMassPosition();
         ballPos[1] = 0;
 
-        //		btVector3 backDir = (robotPos - sensorPos).normalize();
+        // 	btVector3 backDir = (robotPos - sensorPos).normalize();
         btVector3 backDir = (target - ballPos).normalize();
 
         // oppose the rotation?

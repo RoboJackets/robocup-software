@@ -57,7 +57,7 @@ public:
         pixel[2] = (unsigned char)btMin(
             btScalar(255.f),
             ((btScalar)pixel[2] + btScalar(255.f) * rgba.getZ()));
-        //		pixel[3] = (unsigned
+        // 	pixel[3] = (unsigned
         // char)btMin(btScalar(255.f),((btScalar)pixel[3] +
         // btScalar(255.f)*rgba.getW()));
     }

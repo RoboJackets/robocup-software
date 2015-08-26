@@ -63,13 +63,13 @@ int imu_init() {
 void imu_update() {
     IMUupdateData();
 
-    //	read quaternion
-    //	units????
+    // read quaternion
+    // units????
     float quaternion[4];
     IMUgetQuaternionFloat(quaternion);
 
-    //	read accelerations and convert int -> float.
-    //	units in linear_acceleration are in m/s^2
+    // read accelerations and convert int -> float.
+    // units in linear_acceleration are in m/s^2
     long acc[3] = {0};
     IMUgetLinearAccelWorld(acc);
     const int SCALE_FACTOR = 65535;
@@ -77,5 +77,5 @@ void imu_update() {
     linear_acceleration[1] = (float)acc[1] / SCALE_FACTOR;
     linear_acceleration[2] = (float)acc[2] / SCALE_FACTOR;
 
-    //	TODO: rotate linear acc using the quaternion
+    // TODO: rotate linear acc using the quaternion
 }

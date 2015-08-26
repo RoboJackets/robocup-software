@@ -218,7 +218,7 @@ static void pid_update() {
         drive_mode[i] = DRIVE_SLOW_DECAY;
     }
 
-    //	FIXME: this assumes wheels are all at 45degrees
+    // FIXME: this assumes wheels are all at 45degrees
     int wheel_command[4] = {-cmd_body_x - cmd_body_y + cmd_body_w,
                             -cmd_body_x + cmd_body_y + cmd_body_w,
                             cmd_body_x + cmd_body_y + cmd_body_w,

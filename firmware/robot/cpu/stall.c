@@ -1,6 +1,6 @@
 // FIXME - Use hall counters instead so this works with the dribbler and 2008
 // bases
-//	Does the dribbler need different parameters?
+// Does the dribbler need different parameters?
 
 #include <stdio.h>
 #include <stdlib.h>

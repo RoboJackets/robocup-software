@@ -6,7 +6,7 @@ using namespace Geometry2d;
 
 bool Line::intersects(const Line& other, Point* intr) const {
     // From Mathworld:
-    //	http://mathworld.wolfram.com/Line-LineIntersection.html
+    // http://mathworld.wolfram.com/Line-LineIntersection.html
 
     float x1 = pt[0].x;
     float y1 = pt[0].y;

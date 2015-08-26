@@ -150,7 +150,7 @@ void OGL_displaylist_register_shape(btCollisionShape* shape) {
 
     glNewList(dlist.m_dlist, GL_COMPILE);
 
-    //	glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
 
     glCullFace(GL_BACK);
 
@@ -160,7 +160,7 @@ void OGL_displaylist_register_shape(btCollisionShape* shape) {
         concaveMesh->processAllTriangles(&drawCallback, aabbMin, aabbMax);
     }
 
-    //	glDisable(GL_CULL_FACE);
+    // glDisable(GL_CULL_FACE);
 
     glEndList();
 }
@@ -375,12 +375,12 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape,
         btVector3 org(m[12], m[13], m[14]);
         btVector3 dx(m[0], m[1], m[2]);
         btVector3 dy(m[4], m[5], m[6]);
-        //		btVector3 dz(m[8], m[9], m[10]);
+        // 	btVector3 dz(m[8], m[9], m[10]);
         const btBoxShape* boxShape = static_cast<const btBoxShape*>(shape);
         btVector3 halfExtent = boxShape->getHalfExtentsWithMargin();
         dx *= halfExtent[0];
         dy *= halfExtent[1];
-        //		dz *= halfExtent[2];
+        // 	dz *= halfExtent[2];
         glColor3f(1, 1, 1);
         glDisable(GL_LIGHTING);
         glLineWidth(2);
@@ -494,7 +494,7 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape,
         glMatrixMode(GL_MODELVIEW);
 
         static const GLfloat planex[] = {1, 0, 0, 0};
-        //	static const GLfloat	planey[]={0,1,0,0};
+        // static const GLfloat	planey[]={0,1,0,0};
         static const GLfloat planez[] = {0, 0, 1, 0};
         glTexGenfv(GL_S, GL_OBJECT_PLANE, planex);
         glTexGenfv(GL_T, GL_OBJECT_PLANE, planez);
@@ -886,7 +886,7 @@ void GL_ShapeDrawer::drawShadow(btScalar* m, const btVector3& extrusion,
     if (shape->isConcave())  //>getShapeType() ==
     // TRIANGLE_MESH_SHAPE_PROXYTYPE||shape->getShapeType()
     //== GIMPACT_SHAPE_PROXYTYPE)
-    //		if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+    // 	if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
     {
         btConcaveShape* concaveMesh = (btConcaveShape*)shape;
 

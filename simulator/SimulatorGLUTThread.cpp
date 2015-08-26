@@ -103,14 +103,14 @@ void SimulatorGLUTThread::run() {
         while (true) {
             if (_stopped) return;
             stepSimulation();
-            usleep(16667);  //	wait 1/60 seconds
+            usleep(16667);  // wait 1/60 seconds
         }
     }
 }
 
 void SimulatorGLUTThread::stop() {
     QMutexLocker locker(&_mutex);
-    //	in headless mode, we check this variable to stop nicely
+    // in headless mode, we check this variable to stop nicely
     _stopped = true;
     if (_showWindow) {
         glutLeaveMainLoop();
@@ -165,7 +165,7 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
         case 'a':
             _simEngine->setDebug(btIDebugDraw::DBG_DrawAabb);
             break;
-        //	case 'c':
+        // case 'c':
         //_simEngine->setDebug(btIDebugDraw::DBG_DrawContactPoints);    break;
         case 'C':
             _simEngine->setDebug(btIDebugDraw::DBG_DrawConstraints);
@@ -268,7 +268,7 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
         case ' ':
             clientResetScene();
             break;
-        //	case '1':	_simEngine->setDebug(btIDebugDraw::DBG_EnableCCD);
+        // case '1':	_simEngine->setDebug(btIDebugDraw::DBG_EnableCCD);
         // break;
 
         default:
@@ -428,7 +428,7 @@ void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 }
 
 void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
-    //	printf("key = %i x=%i y=%i\n",key,x,y);
+    // printf("key = %i x=%i y=%i\n",key,x,y);
     switch (key) {
         case GLUT_KEY_LEFT: {
             if (_vehicle) _vehicle->velocity(0, 0, 3);
@@ -476,7 +476,7 @@ void SimulatorGLUTThread::nextVehicle() {
 void SimulatorGLUTThread::displayProfileString(int xOffset, int yStart,
                                                char* message) {
     glRasterPos3f(btScalar(xOffset), btScalar(yStart), btScalar(0));
-    //	GLDebugDrawString(xOffset,yStart,message);
+    // GLDebugDrawString(xOffset,yStart,message);
     GLDebugDrawStringInternal(xOffset, yStart, message, btVector3(1, 1, 1),
                               true, 10);
 }

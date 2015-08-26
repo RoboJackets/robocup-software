@@ -141,7 +141,7 @@ Planning::InterpolatedPath* RRTPlanner::makePath() {
         return newPath;
     }
 
-    //	extract path from RRTs
+    // extract path from RRTs
     _fixedStepTree0.addPath(
         *newPath,
         p0);  // add the start tree first...normal order (aka from root to p0)

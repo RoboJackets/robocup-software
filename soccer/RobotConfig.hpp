@@ -16,14 +16,14 @@ public:
         ConfigDouble* p;
         ConfigDouble* i;
         ConfigInt*
-            i_windup;  ///	how many past errors to store.  -1 means store all
+            i_windup;  /// how many past errors to store.  -1 means store all
         ConfigDouble* d;
     };
 
     struct Kicker {
         Kicker(Configuration* config, QString prefix);
 
-        ///	these limits are applied before sending the actual commands to the
+        /// these limits are applied before sending the actual commands to the
         /// robots
         ConfigDouble* maxKick;
         ConfigDouble* maxChip;
@@ -33,8 +33,8 @@ public:
     struct Dribbler {
         Dribbler(Configuration* config, QString prefix);
 
-        ///	dribber values are multiplied by this before being sent to the robot
-        ///	this was added because 2011 bots needed lower dribbler values than
+        /// dribber values are multiplied by this before being sent to the robot
+        /// this was added because 2011 bots needed lower dribbler values than
         /// the 2008 model
         ConfigDouble* multiplier;
     };
@@ -53,7 +53,7 @@ public:
     Dribbler dribbler;
     Chipper chipper;
 
-    ///	convert from real units to bot "units"
+    /// convert from real units to bot "units"
     ConfigDouble* velMultiplier;
     ConfigDouble* angleVelMultiplier;
 
@@ -63,7 +63,7 @@ public:
     ConfigDouble* minEffectiveVelocity;
     ConfigDouble* minEffectiveAngularSpeed;
 
-    ///	we multiply this by the bot's acceleration and add this to the output
+    /// we multiply this by the bot's acceleration and add this to the output
     /// targetVel
     ConfigDouble* accelerationMultiplier;
 

@@ -22,7 +22,7 @@ message RadioTx
 		optional float accel = 9;
 		optional float decel = 10;
 
-		//	measurement from the camera
+		// measurement from the camera
 		optional Point position = 14;
 		optional float latency = 15;
 		
