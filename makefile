@@ -88,10 +88,15 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build -include=common,logging,simulator,soccer
 
+STYLE_EXCLUDE_DIRS=build \
+	third_party \
+	firmware/robot/cpu/at91sam7s256 \
+	firmware/robot/cpu/at91sam7s321 \
+	firmware/robot/cpu/at91sam7s64
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs build third_party
+	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS)
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs build third_party --check
+	stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check
