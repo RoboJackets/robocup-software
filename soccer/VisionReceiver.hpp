@@ -52,7 +52,7 @@ public:
 	int port;
 	
 protected:
-	virtual void run();
+	virtual void run() override;
 	
 	volatile bool _running;
 	

@@ -2,8 +2,7 @@ import single_robot_behavior
 import behavior
 
 
-## Behavior that moves a robot to a specified location using straight line trapezoidal motion. 
-## This ignore all obstacles
+## Behavior that moves a robot to a specified location, circumventing the path planner.
 class MoveDirect(single_robot_behavior.SingleRobotBehavior):
 
     def __init__(self, pos=None):

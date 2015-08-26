@@ -18,17 +18,17 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     OpponentFacingThreshold = math.pi / 8.0
 
     class State(enum.Enum):
-        """Normal gameplay, stay towards the side of the goal that the ball is on."""
+        ## Normal gameplay, stay towards the side of the goal that the ball is on.
         defend = 1
-        """Opponent has a ball and is prepping a shot we should block."""
+        ## Opponent has a ball and is prepping a shot we should block.
         block = 2
-        """The ball is moving towards our goal and we should catch it."""
+        ## The ball is moving towards our goal and we should catch it.
         intercept = 3
-        """Get the ball out of our defense area."""
+        ## Get the ball out of our defense area.
         clear = 4
-        """Prepare to block the opponent's penalty shot"""
+        ## Prepare to block the opponent's penalty shot
         setup_penalty = 5
-        """Keep calm and wait for the ball to be valid."""
+        ## Keep calm and wait for the ball to be valid.
         chill = 6
 
     def __init__(self):

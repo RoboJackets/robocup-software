@@ -1,10 +1,9 @@
-//
-// Created by matt on 7/8/15.
-//
-
-#include "WindowEvaluator.h"
+#include "WindowEvaluator.hpp"
 #include "Constants.hpp"
+
 #include <algorithm>
+#include <array>
+#include <iostream>
 
 REGISTER_CONFIGURABLE(WindowEvaluator)
 
@@ -42,11 +41,17 @@ WindowEvaluator::WindowEvaluator(SystemState *systemState)
 {
 }
 
-WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target) {
+
+
+WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target, float targetWidth) {
   auto dir_vec = (target - origin).perpCCW().normalized();
-  auto segment = Segment{target + dir_vec * Robot_Radius, target - dir_vec * Robot_Radius};
+  auto segment = Segment{target + dir_vec * (targetWidth / 2), target - dir_vec * (targetWidth / 2)};
 
   return eval_pt_to_seg(origin, segment);
+}
+
+WindowingResult WindowEvaluator::eval_pt_to_robot(Point origin, Point target) {
+  return eval_pt_to_pt(origin, target, 2 * Robot_Radius);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_opp_goal(Point origin) {
@@ -198,10 +203,14 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
   boost::optional<Window> best{!windows.empty(), *max_element(windows.begin(),windows.end(),[](Window& a, Window& b) -> bool{
     return a.segment.delta().magsq() < b.segment.delta().magsq();
   })};
-
-  if(debug && best) {
-    system->drawLine(best->segment, QColor{"Green"}, "Debug");
-    system->drawLine(Line{origin, best->segment.center()}, QColor{"Green"}, "Debug");
+  if(debug) {
+    if (best) {
+      system->drawLine(Line{origin, best->segment.center()}, QColor{"Green"}, "Debug");
+    }
+    for (Window &window : windows) {
+      system->drawLine(window.segment, QColor{"Green"}, "Debug");
+      system->drawText(QString::number(window.shot_success), window.segment.center() + Point(0, 0.1), QColor{"Green"}, "Debug");
+    }  
   }
 
   return make_pair(windows, best);

@@ -44,10 +44,10 @@ MainWindow::MainWindow(QWidget *parent):
 {
 	qRegisterMetaType<QVector<int> >("QVector<int>");
 
-	_quaternion_demo = 0;
+	_quaternion_demo = nullptr;
 
 	_updateCount = 0;
-	_processor = 0;
+	_processor = nullptr;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
 
@@ -320,16 +320,16 @@ void MainWindow::updateViews()
 	{
 		if(_firstLogTimestamp == -1)
 			_firstLogTimestamp = currentFrame->timestamp();
-		auto gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
-		auto minutes = gametime_ms / 60000;
-		auto seconds = (gametime_ms % 60000) /  1000;
-		auto deciseconds = (gametime_ms % 1000) / 100;
+		uint64_t gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
+		uint64_t minutes = gametime_ms / 60000;
+		uint64_t seconds = (gametime_ms % 60000) /  1000;
+		uint64_t deciseconds = (gametime_ms % 1000) / 100;
 		_ui.logTime->setText(QString::fromStdString(to_string(minutes) + " : " + to_string(seconds) + "." + to_string(deciseconds)));
 
 		// Update the orientation demo view
 		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
-			const RadioRx *manualRx = 0;
+			const RadioRx *manualRx = nullptr;
 			for (const RadioRx &rx :  currentFrame->radio_rx())
 			{
 				if ((int)rx.robot_id() == manual)
@@ -368,7 +368,7 @@ void MainWindow::updateViews()
 		_ui.behaviorTree->setPlainText(QString::fromStdString(currentFrame->behavior_tree()));
 	}
 
-	if(std::time(0) - (_processor->refereeModule()->received_time/1000000) > 1)
+	if(std::time(nullptr) - (_processor->refereeModule()->received_time/1000000) > 1)
 	{
 		_ui.fastHalt->setEnabled(true);
 		_ui.fastStop->setEnabled(true);
@@ -956,7 +956,7 @@ void MainWindow::on_actionSeed_triggered()
 	QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
 	if (!text.isNull())
 	{
-		long seed = strtol(text.toLatin1(), 0, 16);
+		long seed = strtol(text.toLatin1(), nullptr, 16);
 		printf("seed %016lx\n", seed);
 		srand48(seed);
 	}
@@ -1084,7 +1084,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos)
 	QMenu menu;
 	QAction *all = menu.addAction("All");
 	QAction *none = menu.addAction("None");
-	QAction *single = 0, *notSingle = 0;
+	QAction *single = nullptr, *notSingle = nullptr;
 	if (item)
 	{
 		single = menu.addAction("Only this");
@@ -1190,6 +1190,11 @@ void MainWindow::setRadioChannel(RadioChannels channel)
 		this->on_action906MHz_triggered();
 		break;
 	}
+}
+
+void MainWindow::setUseRefChecked(bool use_ref)
+{
+	_ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }
 
 void MainWindow::on_fastHalt_clicked()

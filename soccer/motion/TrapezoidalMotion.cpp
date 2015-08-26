@@ -1,8 +1,10 @@
 #include "TrapezoidalMotion.hpp"
 #include <math.h>
 #include <iostream>
+#include "Utils.hpp"
 
 using namespace std;
+
 float Trapezoidal::getTime(
 	float distance,
 	float pathLength,
@@ -56,9 +58,9 @@ float Trapezoidal::getTime(
 		return 0;
 	}
 
-	//if (distance - (rampUpDist + plateauDist + rampDownDist) <0.001) {
-	//	return rampUpTime + plateauTime + rampDownTime;
-	//}
+	if (abs(distance - (rampUpDist + plateauDist + rampDownDist)) < 0.00001) {
+		return rampUpTime + plateauTime + rampDownTime;
+	}
 	if (distance<rampUpDist) 
 	{
 		//time calculations
@@ -74,7 +76,8 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			throw 1;//TODO Handle this
+			debugThrow("TrapezoidalMotion failed. Solution is imaginary");//TODO Handle this
+			return rampUpTime;
 		}
 		if (temp1 > 0 && temp1<rampUpTime) 
 		{
@@ -106,7 +109,8 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			//TODO Handle this case
+			debugThrow("TrapezoidalMotion failed. Solution is imaginary");//TODO Handle this
+			return rampUpTime + plateauTime + rampDownTime;
 		}
 		if (temp1 > 0 && temp1<rampDownTime) 
 		{

@@ -1,6 +1,7 @@
 #include "physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
 #include "SimulatorGLUTThread.hpp"
+#include <Utils.hpp>
 
 #include <QApplication>
 #include <QFile>
@@ -33,7 +34,8 @@ int main(int argc, char* argv[])
     // Default to double size field, switch to single if flag is set.
     Field_Dimensions::Current_Dimensions = Field_Dimensions::Double_Field_Dimensions * scaling;
 
-	QString configFile = "simulator.cfg";
+	QString configFile = ApplicationRunDirectory().filePath("simulator.cfg");
+
 	bool sendShared = false;
 	bool headless = false;
 
@@ -79,7 +81,7 @@ int main(int argc, char* argv[])
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = quit;
-	sigaction(SIGINT, &act, 0);
+	sigaction(SIGINT, &act, nullptr);
 
 	// Create and initialize GUI with environment information
 	SimulatorWindow win(sim_thread.env());

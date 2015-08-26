@@ -46,7 +46,7 @@ FieldView::FieldView(QWidget* parent) :
     showDotPatterns = false;
     showTeamNames = false;
 	_rotate = 1;
-	_history = 0;
+	_history = nullptr;
 
 	// Green background
 	QPalette p = palette();

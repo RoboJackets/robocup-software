@@ -1,6 +1,6 @@
 import play
 import behavior
-import tactics.stopped_plays.circle_near_ball
+import tactics.stopped.circle_near_ball
 import robocup
 import main
 

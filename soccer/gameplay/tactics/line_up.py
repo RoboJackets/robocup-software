@@ -31,9 +31,6 @@ class LineUp(composite_behavior.CompositeBehavior):
             'robots arent lined up')
 
 
-    def all_subbehaviors_completed(self):
-        return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
-
     def execute_running(self):
         for i in range(6):
             pt = self._line.get_pt(0) + ( self.diff * float(i) )

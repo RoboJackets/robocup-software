@@ -29,7 +29,7 @@ static const float robotWeight = 8*scaling;
 
 Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& startPos) :
 	Entity(env),shell(id), _rev(rev),
-	_robotChassis(0), _robotVehicle(0), _wheelShape(0),_controller(0),
+	_robotChassis(nullptr), _robotVehicle(nullptr), _wheelShape(nullptr),_controller(nullptr),
 	_brakingForce(0),_targetVel(0,0,0),_targetRot(0),
 	_simEngine(env->getSimEngine())
 {

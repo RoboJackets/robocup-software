@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow
 
 	public:
 
-		MainWindow(QWidget *parent = 0);
+		MainWindow(QWidget *parent = nullptr);
 
 		void configuration(Configuration *config);
 
@@ -71,6 +71,8 @@ class MainWindow : public QMainWindow
 
         QTimer updateTimer;
 
+    void setUseRefChecked(bool use_ref);
+
 	private Q_SLOTS:
 		void addLayer(int i, QString name, bool checked);
 		void updateViews();
@@ -79,14 +81,14 @@ class MainWindow : public QMainWindow
 		void on_actionRawBalls_toggled(bool state);
 		void on_actionRawRobots_toggled(bool state);
 		void on_actionCoords_toggled(bool state);
-        void on_actionDotPatterns_toggled(bool state);
-        void on_actionTeam_Names_toggled(bool state);
+		void on_actionDotPatterns_toggled(bool state);
+    void on_actionTeam_Names_toggled(bool state);
 		void on_actionTeamYellow_triggered();
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);
 		void on_goalieID_currentIndexChanged(int value);
 
-        void on_actionUse_Field_Oriented_Controls_toggled(bool value);
+		void on_actionUse_Field_Oriented_Controls_toggled(bool value);
 
 		void on_actionUse_External_Referee_toggled(bool value);
 
@@ -224,5 +226,5 @@ class MainWindow : public QMainWindow
 		///	the play, pause, ffwd, etc buttons
 		std::vector<QPushButton *> _logPlaybackButtons;
 
-		unsigned long long _firstLogTimestamp = -1;
+		Time _firstLogTimestamp = -1;
 };
