@@ -13,9 +13,10 @@
 <area shape="rect" id="node13" href="$classgameplay_1_1skills_1_1line__kick_1_1_line_kick_1_1_state.html" title="gameplay.skills.line\l_kick.LineKick.State" alt="" coords="172,737,319,778"/>
 <area shape="rect" id="node14" href="$classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html" title="gameplay.skills.pass\l_receive.PassReceive.State" alt="" coords="148,802,343,843"/>
 <area shape="rect" id="node15" href="$classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html" title="gameplay.tactics.coordinated\l_pass.CoordinatedPass.State" alt="" coords="141,867,350,909"/>
-<area shape="rect" id="node16" href="$classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html" title="gameplay.tactics.penalty.\lPenalty.State" alt="" coords="154,933,337,974"/>
-<area shape="rect" id="node17" href="$classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html" title="gameplay.tactics.positions.goalie.\lGoalie.State" alt="" coords="127,998,363,1039"/>
-<area shape="rect" id="node18" href="$classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html" title="gameplay.tactics.positions.submissive\l_goalie.SubmissiveGoalie.State" alt="" coords="113,1063,378,1105"/>
-<area shape="rect" id="node19" href="$classtest__fsm_1_1_my_fsm_1_1_state.html" title="test_fsm.MyFsm.State" alt="" coords="162,1129,329,1156"/>
-<area shape="rect" id="node20" href="$classtest__fsm_1_1_my_fsm_1_1_sub_state.html" title="test_fsm.MyFsm.SubState" alt="" coords="150,1180,341,1207"/>
+<area shape="rect" id="node16" href="$classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html" title="gameplay.tactics.one\l_touch_pass.OneTouchPass.State" alt="" coords="127,933,363,974"/>
+<area shape="rect" id="node17" href="$classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html" title="gameplay.tactics.penalty.\lPenalty.State" alt="" coords="154,998,337,1039"/>
+<area shape="rect" id="node18" href="$classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html" title="gameplay.tactics.positions.goalie.\lGoalie.State" alt="" coords="127,1063,363,1105"/>
+<area shape="rect" id="node19" href="$classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html" title="gameplay.tactics.positions.submissive\l_goalie.SubmissiveGoalie.State" alt="" coords="113,1129,378,1170"/>
+<area shape="rect" id="node20" href="$classtest__fsm_1_1_my_fsm_1_1_state.html" title="test_fsm.MyFsm.State" alt="" coords="162,1195,329,1221"/>
+<area shape="rect" id="node21" href="$classtest__fsm_1_1_my_fsm_1_1_sub_state.html" title="test_fsm.MyFsm.SubState" alt="" coords="150,1245,341,1272"/>
 </map>

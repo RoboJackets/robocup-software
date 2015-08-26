@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['enable_5fkick',['enable_kick',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#aa031cd4d7eb1bc53391b179051ffab86',1,'gameplay::skills::_kick::_Kick']]],
-  ['errors_5fbelow_5fthresholds',['errors_below_thresholds',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a54f889dec3e256e69a453d7c2f677722',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['eval_5fpt_5fto_5fopp_5fgoal',['eval_pt_to_opp_goal',['../class_window_evaluator.html#a71232e59601b090acd8716f17647c788',1,'WindowEvaluator']]],
-  ['eval_5fpt_5fto_5four_5fgoal',['eval_pt_to_our_goal',['../class_window_evaluator.html#a9adcbf8fb8f9a7bcd868bac2de612aab',1,'WindowEvaluator']]],
-  ['eval_5fpt_5fto_5fpt',['eval_pt_to_pt',['../class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e',1,'WindowEvaluator']]],
-  ['eval_5fpt_5fto_5frobot',['eval_pt_to_robot',['../class_window_evaluator.html#ae4975224599810750d351662aab90587',1,'WindowEvaluator']]],
-  ['eval_5fpt_5fto_5fseg',['eval_pt_to_seg',['../class_window_evaluator.html#a0fd9db04818564c867860db4493aa5e3',1,'WindowEvaluator']]],
-  ['evaluate',['evaluate',['../class_planning_1_1_composite_path.html#aede80c915df9ab8d94e5536fa289016b',1,'Planning::CompositePath::evaluate()'],['../class_planning_1_1_interpolated_path.html#a1f73ab852337c1889bbcf4720e6d8e01',1,'Planning::InterpolatedPath::evaluate()'],['../class_planning_1_1_path.html#aabd42049334d4ffa5d184e1df15b8d5c',1,'Planning::Path::evaluate()'],['../class_planning_1_1_trapezoidal_path.html#a6398e8a84842a23c8c5e830d5320a759',1,'Planning::TrapezoidalPath::evaluate()']]],
-  ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a4994ec94ffe187229f25d47eba85fe1a',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
-  ['extend',['extend',['../class_planning_1_1_tree.html#ae18f323a55ea3b91251b697f9176f646',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#aae4e5be14b801ad75e26dbd78bb061d2',1,'Planning::FixedStepTree::extend()']]]
+  ['debug',['debug',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a17465304b544fbc51bbde5276d862635',1,'gameplay::tactics::defense::Defense']]],
+  ['destination',['destination',['../class_planning_1_1_composite_path.html#afeadd1b82197ab960743e3dfe8f4855d',1,'Planning::CompositePath::destination()'],['../class_planning_1_1_interpolated_path.html#af47a727eb4ecee7e948dd7dc69c32694',1,'Planning::InterpolatedPath::destination()'],['../class_planning_1_1_path.html#add5ef48f588dcaf013dee4277b0bfd3f',1,'Planning::Path::destination()'],['../class_planning_1_1_trapezoidal_path.html#ac8472ae64251004624cfb89db620676a',1,'Planning::TrapezoidalPath::destination()']]],
+  ['direction',['direction',['../class_geometry2d_1_1_point.html#a7ddcff0925ffe9f7405e8db84710d3a3',1,'Geometry2d::Point']]],
+  ['distto',['distTo',['../class_geometry2d_1_1_line.html#abce9805c81f2753a672f01fa0c2df429',1,'Geometry2d::Line::distTo()'],['../class_geometry2d_1_1_point.html#a2c3908ca392de0f0416dc8a5b739374e',1,'Geometry2d::Point::distTo()']]],
+  ['dot',['dot',['../class_geometry2d_1_1_point.html#a56c90e311e65ab8927a29f3230ac27fc',1,'Geometry2d::Point']]],
+  ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#a8a6d71132a1bc261968aa7fcbb141b1a',1,'Planning::Path::draw()'],['../class_planning_1_1_trapezoidal_path.html#a570d82cddbe78e00e1b0db9d3eaf30d5',1,'Planning::TrapezoidalPath::draw()']]],
+  ['drawworldspace',['drawWorldSpace',['../class_field_view.html#a460a442ebb106e12d137c3eca53c9244',1,'FieldView']]],
+  ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a1247845051783e5eda54f7da8c8cfd1f',1,'gameplay::skills::line_kick::LineKick']]]
 ];

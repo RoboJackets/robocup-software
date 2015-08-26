@@ -1,15 +1,16 @@
 var searchData=
 [
-  ['path',['path',['../class_our_robot.html#a07fa3651d43e3114c30d8fb43c0ff8da',1,'OurRobot']]],
-  ['penaltydist',['PenaltyDist',['../struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f',1,'Field_Dimensions']]],
-  ['perpccw',['perpCCW',['../class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049',1,'Geometry2d::Point']]],
-  ['perpcw',['perpCW',['../class_geometry2d_1_1_point.html#abd3f1f20685256a38bc7c2a6b264ac79',1,'Geometry2d::Point']]],
-  ['pivot',['pivot',['../class_our_robot.html#a09f7e6a379537ecc7290a6d11072c903',1,'OurRobot']]],
-  ['playrobots',['playRobots',['../class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b',1,'Gameplay::GameplayModule']]],
-  ['point',['Point',['../class_geometry2d_1_1_point.html#a8e0ac151ee451f036d322d24677bc691',1,'Geometry2d::Point::Point()'],['../class_geometry2d_1_1_point.html#a36b9e202aef2c2c2cfb39386ac1dbfd3',1,'Geometry2d::Point::Point(float x, float y)']]],
-  ['pointinrobotspace',['pointInRobotSpace',['../class_our_robot.html#a1d04e4b5569a9ff3ee1dca09bd73c38d',1,'OurRobot']]],
-  ['pointside',['pointSide',['../class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a',1,'Geometry2d::Line']]],
-  ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html#a9f1e47d29166782739f056d05912930d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r)'],['../class_geometry2d_1_1_polygon.html#adb85e6da4e9230a47f7ddb7c0b9c5c6d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r, float length)']]],
-  ['pos',['pos',['../classgameplay_1_1skills_1_1face_1_1_face.html#af4d0c1b9f0ee5369d851631166a591ba',1,'gameplay.skills.face.Face.pos()'],['../classgameplay_1_1skills_1_1move_1_1_move.html#a699e4e7e1f9a86a58aa521fe046ff7f1',1,'gameplay.skills.move.Move.pos()'],['../classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aa40f48a641350be5c9987b8c62f7efc5',1,'gameplay.skills.move_direct.MoveDirect.pos()']]],
-  ['predict',['predict',['../class_robot_filter.html#a36b101813670a9bf8151bd52a0f4300b',1,'RobotFilter']]]
+  ['operator_21_3d',['operator!=',['../class_geometry2d_1_1_point.html#a82b12d2fee995bfc2654f7f5a30890e5',1,'Geometry2d::Point']]],
+  ['operator_2a',['operator*',['../class_geometry2d_1_1_point.html#a07d1485f7ee656c42b0ec1193894eba5',1,'Geometry2d::Point']]],
+  ['operator_2a_3d',['operator*=',['../class_geometry2d_1_1_point.html#a0c53cdd9a83d4784f348d10ba59f09f1',1,'Geometry2d::Point']]],
+  ['operator_2b',['operator+',['../class_geometry2d_1_1_point.html#a050aa8469a83849c9edc9f86528eb696',1,'Geometry2d::Point']]],
+  ['operator_2b_3d',['operator+=',['../class_geometry2d_1_1_point.html#ad4f8293bbae72ff1e0a8f5b3b44a5f14',1,'Geometry2d::Point']]],
+  ['operator_2d',['operator-',['../class_geometry2d_1_1_point.html#a254f1f813786a241e0a1449a3346e683',1,'Geometry2d::Point::operator-(const Point &amp;other) const '],['../class_geometry2d_1_1_point.html#a75d62178f5def7f127a53b564c91d0f1',1,'Geometry2d::Point::operator-() const ']]],
+  ['operator_2d_3d',['operator-=',['../class_geometry2d_1_1_point.html#ad01507999f64979ebaaec51b91924d17',1,'Geometry2d::Point']]],
+  ['operator_2f',['operator/',['../class_geometry2d_1_1_point.html#a3ba4d2d74062074af6e267672dcb6729',1,'Geometry2d::Point::operator/(const Point &amp;other) const '],['../class_geometry2d_1_1_point.html#a1d311a8cff730f09aa8a51a0dedf34c7',1,'Geometry2d::Point::operator/(float s) const ']]],
+  ['operator_2f_3d',['operator/=',['../class_geometry2d_1_1_point.html#a384a0bb60f1498244ca2846785ae1f79',1,'Geometry2d::Point']]],
+  ['operator_3d_3d',['operator==',['../class_geometry2d_1_1_point.html#a4a3a50ce17d45c654de3baae4eb65b09',1,'Geometry2d::Point']]],
+  ['oppmatrix',['oppMatrix',['../group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93',1,'Gameplay::GameplayModule']]],
+  ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a94810075ff582bba928f7b24a523d5b8',1,'Planning::RRTPlanner']]],
+  ['ourrobot',['OurRobot',['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot']]]
 ];

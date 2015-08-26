@@ -126,6 +126,9 @@ var annotated =
           [ "test_mark", null, [
             [ "TestMark", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark" ]
           ] ],
+          [ "test_one_touch_pass", null, [
+            [ "TestOneTouchPass", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass" ]
+          ] ],
           [ "test_pivot_kick", null, [
             [ "TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick" ]
           ] ],
@@ -167,6 +170,9 @@ var annotated =
         ] ],
         [ "aim", null, [
           [ "Aim", "classgameplay_1_1skills_1_1aim_1_1_aim.html", "classgameplay_1_1skills_1_1aim_1_1_aim" ]
+        ] ],
+        [ "angle_receive", null, [
+          [ "AngleReceive", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive" ]
         ] ],
         [ "bump", null, [
           [ "Bump", "classgameplay_1_1skills_1_1bump_1_1_bump.html", "classgameplay_1_1skills_1_1bump_1_1_bump" ]
@@ -211,6 +217,9 @@ var annotated =
         ] ],
         [ "line_up", null, [
           [ "LineUp", "classgameplay_1_1tactics_1_1line__up_1_1_line_up.html", "classgameplay_1_1tactics_1_1line__up_1_1_line_up" ]
+        ] ],
+        [ "one_touch_pass", null, [
+          [ "OneTouchPass", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass" ]
         ] ],
         [ "penalty", null, [
           [ "Penalty", "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html", "classgameplay_1_1tactics_1_1penalty_1_1_penalty" ]

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['_5f_5finit_5f_5f',['__init__',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a2715644059d358e8d1dee533985a2562',1,'gameplay::tactics::coordinated_pass::CoordinatedPass']]],
   ['_5favoidballradius',['_avoidBallRadius',['../class_our_robot.html#a3c4be933a623940fe86c44c3a3a3f5d4',1,'OurRobot']]],
   ['_5fbestgoal',['_bestGoal',['../class_planning_1_1_r_r_t_planner.html#a3f92c0ebfbc1f94d4b6926355c195d63',1,'Planning::RRTPlanner']]],
   ['_5fkick',['_Kick',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html',1,'gameplay::skills::_kick']]],

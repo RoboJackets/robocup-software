@@ -18,8 +18,8 @@ var searchData=
   ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#a8a6d71132a1bc261968aa7fcbb141b1a',1,'Planning::Path::draw()'],['../class_planning_1_1_trapezoidal_path.html#a570d82cddbe78e00e1b0db9d3eaf30d5',1,'Planning::TrapezoidalPath::draw()']]],
   ['drawing_20functions',['Drawing Functions',['../group__drawing__functions.html',1,'']]],
   ['drawworldspace',['drawWorldSpace',['../class_field_view.html#a460a442ebb106e12d137c3eca53c9244',1,'FieldView']]],
-  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
   ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
+  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
   ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a1247845051783e5eda54f7da8c8cfd1f',1,'gameplay::skills::line_kick::LineKick']]],
   ['ds2411_5fid',['DS2411_ID',['../struct_d_s2411___i_d.html',1,'']]],
   ['documentation',['Documentation',['../md_doc__documentation.html',1,'']]]

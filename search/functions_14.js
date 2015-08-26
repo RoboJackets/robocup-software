@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['win_5feval_5fparams',['win_eval_params',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a9a6f0fcf000b9bc6cfe4784abf1971b4',1,'gameplay::skills::_kick::_Kick']]],
-  ['windowevaluator',['WindowEvaluator',['../class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e',1,'WindowEvaluator']]],
-  ['worldvelocity',['worldVelocity',['../class_our_robot.html#a48f1720743b1345687d4813a10af4cf0',1,'OurRobot']]]
+  ['valid',['valid',['../class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19',1,'GamepadJoystick::valid()'],['../class_joystick.html#a7e9f7707fd861b7d9e89658d9fadd99e',1,'Joystick::valid()'],['../class_space_nav_joystick.html#acd39b0dedfcd5c6864b02af1360ad229',1,'SpaceNavJoystick::valid()'],['../class_planning_1_1_interpolated_path.html#aca44a774c67f00b0b0987f0deca6a94b',1,'Planning::InterpolatedPath::valid()']]]
 ];
