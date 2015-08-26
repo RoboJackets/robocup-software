@@ -1,9 +1,9 @@
 #include "Logger.hpp"
 
 #include <QString>
-#include <boost/make_shared.hpp>
 #include <fcntl.h>
 #include <stdio.h>
+#include <unistd.h>
 
 using namespace std;
 using namespace Packet;
