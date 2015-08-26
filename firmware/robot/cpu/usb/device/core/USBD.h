@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -31,12 +31,12 @@
 /// \unit
 ///
 /// !!!Purpose
-/// 
+///
 /// Collection of methods for using the USB device controller on AT91
 /// microcontrollers.
-/// 
+///
 /// !!!Usage
-/// 
+///
 /// Please refer to the corresponding application note.
 /// - "AT91 USB device framework"
 /// - "USBD API" . "USBD API Methods"
@@ -66,15 +66,15 @@
 /// - USBD_STATUS_LOCKED
 /// - USBD_STATUS_ABORTED
 /// - USBD_STATUS_RESET
-           
+
 /// Indicates the operation was successful.
-#define USBD_STATUS_SUCCESS             0
+#define USBD_STATUS_SUCCESS 0
 /// Endpoint/device is already busy.
-#define USBD_STATUS_LOCKED              1
+#define USBD_STATUS_LOCKED 1
 /// Operation has been aborted.
-#define USBD_STATUS_ABORTED             2
+#define USBD_STATUS_ABORTED 2
 /// Operation has been aborted because the device has been reset.
-#define USBD_STATUS_RESET               3
+#define USBD_STATUS_RESET 3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -91,17 +91,17 @@
 /// - USBD_STATE_CONFIGURED
 
 /// The device is currently suspended.
-#define USBD_STATE_SUSPENDED            0
+#define USBD_STATE_SUSPENDED 0
 /// USB cable is plugged into the device.
 // #define USBD_STATE_ATTACHED             1
 /// Host is providing +5V through the USB cable.
-#define USBD_STATE_POWERED              2
+#define USBD_STATE_POWERED 2
 /// Device has been reset.
-#define USBD_STATE_DEFAULT              3
+#define USBD_STATE_DEFAULT 3
 /// The device has been given an address on the bus.
-#define USBD_STATE_ADDRESS              4
+#define USBD_STATE_ADDRESS 4
 /// A valid configuration has been selected.
-#define USBD_STATE_CONFIGURED           5
+#define USBD_STATE_CONFIGURED 5
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -115,11 +115,11 @@
 /// - USBD_LEDOTHER
 
 /// LED for indicating that the device is powered.
-#define USBD_LEDPOWER                   0
+#define USBD_LEDPOWER 0
 /// LED for indicating USB activity.
-#define USBD_LEDUSB                     1
+#define USBD_LEDUSB 1
 /// LED for custom usage.
-#define USBD_LEDOTHER                   2
+#define USBD_LEDOTHER 2
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -130,8 +130,7 @@
 /// Callback used by transfer functions (USBD_Read & USBD_Write) to notify
 /// that a transaction is complete.
 //------------------------------------------------------------------------------
-typedef void (*TransferCallback)(void *pArg,
-                                 unsigned char status,
+typedef void (*TransferCallback)(void* pArg, unsigned char status,
                                  unsigned int transferred,
                                  unsigned int remaining);
 
@@ -147,19 +146,13 @@ extern void USBD_Connect(void);
 
 extern void USBD_Disconnect(void);
 
-extern char USBD_Write(
-    unsigned char bEndpoint,
-    const void *pData,
-    unsigned int size,
-    TransferCallback callback,
-    void *pArg);
+extern char USBD_Write(unsigned char bEndpoint, const void* pData,
+                       unsigned int size, TransferCallback callback,
+                       void* pArg);
 
-extern char USBD_Read(
-    unsigned char bEndpoint,
-    void *pData,
-    unsigned int dLength,
-    TransferCallback fCallback,
-    void *pArg);
+extern char USBD_Read(unsigned char bEndpoint, void* pData,
+                      unsigned int dLength, TransferCallback fCallback,
+                      void* pArg);
 
 extern unsigned char USBD_Stall(unsigned char bEndpoint);
 
@@ -167,7 +160,7 @@ extern void USBD_Halt(unsigned char bEndpoint);
 
 extern void USBD_Unhalt(unsigned char bEndpoint);
 
-extern void USBD_ConfigureEndpoint(const USBEndpointDescriptor *pDescriptor);
+extern void USBD_ConfigureEndpoint(const USBEndpointDescriptor* pDescriptor);
 
 extern unsigned char USBD_IsHalted(unsigned char bEndpoint);
 
@@ -183,5 +176,4 @@ extern unsigned char USBD_IsHighSpeed(void);
 
 extern void USBD_Test(unsigned char bIndex);
 
-#endif //#ifndef USBD_H
-
+#endif  //#ifndef USBD_H

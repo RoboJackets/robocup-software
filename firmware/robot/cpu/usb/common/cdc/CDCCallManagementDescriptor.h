@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -56,25 +56,24 @@
 /// - CDCCallManagementDescriptor_DATACALLMANAGEMENT
 
 /// Device handles call management itself.
-#define CDCCallManagementDescriptor_SELFCALLMANAGEMENT      (1 << 0)
+#define CDCCallManagementDescriptor_SELFCALLMANAGEMENT (1 << 0)
 /// Device can exchange call management information over a Data class interface.
-#define CDCCallManagementDescriptor_DATACALLMANAGEMENT      (1 << 1)
+#define CDCCallManagementDescriptor_DATACALLMANAGEMENT (1 << 1)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__          // IAR
-#pragma pack(1)            // IAR
-#define __attribute__(...) // IAR
-#endif                     // IAR
+#ifdef __ICCARM__           // IAR
+#pragma pack(1)             // IAR
+#define __attribute__(...)  // IAR
+#endif                      // IAR
 
 //------------------------------------------------------------------------------
 /// Describes the processing of calls for the communication class interface.
 //------------------------------------------------------------------------------
 typedef struct {
-
     /// Size of this descriptor in bytes.
     unsigned char bFunctionLength;
     /// Descriptor type (CDCDescriptors_INTERFACE).
@@ -87,11 +86,10 @@ typedef struct {
     /// (optional).
     unsigned char bDataInterface;
 
-} __attribute__ ((packed)) CDCCallManagementDescriptor; // GCC
+} __attribute__((packed)) CDCCallManagementDescriptor;  // GCC
 
-#ifdef __ICCARM__          // IAR
-#pragma pack()             // IAR
-#endif                     // IAR
+#ifdef __ICCARM__  // IAR
+#pragma pack()     // IAR
+#endif             // IAR
 
-#endif //#ifndef CDCCALLMANAGEMENTDESCRIPTOR_H
-
+#endif  //#ifndef CDCCALLMANAGEMENTDESCRIPTOR_H

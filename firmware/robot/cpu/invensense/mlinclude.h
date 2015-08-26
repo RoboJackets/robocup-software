@@ -13,21 +13,23 @@
 #ifdef WIN32
 #ifdef COVERAGE
 
-extern int functionEnterLog(const char *file, const char *func);
-extern int functionExitLog(const char *file, const char *func);
+extern int functionEnterLog(const char* file, const char* func);
+extern int functionExitLog(const char* file, const char* func);
 
 #undef INVENSENSE_FUNC_START
-#define INVENSENSE_FUNC_START  __pragma(message(__FILE__ "|"__FUNCTION__ )) \
-    int dslkQjDsd = functionEnterLog(__FILE__, __FUNCTION__);
-#endif // COVERAGE
-#endif // WIN32
+#define INVENSENSE_FUNC_START                                   \
+    __pragma(message(__FILE__ "|"__FUNCTION__)) int dslkQjDsd = \
+        functionEnterLog(__FILE__, __FUNCTION__);
+#endif  // COVERAGE
+#endif  // WIN32
 
 #ifdef PROFILE
 #undef INVENSENSE_FUNC_START
-#define INVENSENSE_FUNC_START int dslkQjDsd = profileEnter(__FILE__, __FUNCTION__);
-#define return if ( profileExit(__FILE__, __FUNCTION__) ) return
-#endif // PROFILE
+#define INVENSENSE_FUNC_START \
+    int dslkQjDsd = profileEnter(__FILE__, __FUNCTION__);
+#define return if (profileExit(__FILE__, __FUNCTION__)) return
+#endif  // PROFILE
 
 // #define return if ( functionExitLog(__FILE__, __FUNCTION__) ) return
 
-#endif //ML_INCLUDE_H__
+#endif  // ML_INCLUDE_H__

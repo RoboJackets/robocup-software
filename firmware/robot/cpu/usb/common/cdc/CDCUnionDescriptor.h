@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -47,17 +47,16 @@
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__          // IAR
-#pragma pack(1)            // IAR
-#define __attribute__(...) // IAR
-#endif                     // IAR
+#ifdef __ICCARM__           // IAR
+#pragma pack(1)             // IAR
+#define __attribute__(...)  // IAR
+#endif                      // IAR
 
 //------------------------------------------------------------------------------
 /// Describes the relationship between a group of interfaces that can
 /// be considered to form a functional unit.
 //------------------------------------------------------------------------------
 typedef struct {
-
     /// Size of the descriptor in bytes.
     unsigned char bFunctionLength;
     /// Descriptor type (CDCDescriptors_INTERFACE).
@@ -69,11 +68,10 @@ typedef struct {
     /// Number of the first slave interface for this union.
     unsigned char bSlaveInterface0;
 
-} __attribute__ ((packed)) CDCUnionDescriptor; // GCC
+} __attribute__((packed)) CDCUnionDescriptor;  // GCC
 
-#ifdef __ICCARM__          // IAR
-#pragma pack()             // IAR
-#endif                     // IAR
+#ifdef __ICCARM__  // IAR
+#pragma pack()     // IAR
+#endif             // IAR
 
-#endif //#ifndef CDCUNIONDESCRIPTOR_H
-
+#endif  //#ifndef CDCUNIONDESCRIPTOR_H

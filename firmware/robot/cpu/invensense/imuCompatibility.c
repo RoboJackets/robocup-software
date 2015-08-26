@@ -6,21 +6,13 @@
 
 uint_fast8_t sStatus = 0;
 
-tMLError isCompatible(uint_fast8_t mask, uint_fast8_t want)
-{
-    if ( (sStatus & mask) == want )
+tMLError isCompatible(uint_fast8_t mask, uint_fast8_t want) {
+    if ((sStatus & mask) == want)
         return ML_SUCCESS;
     else
         return ML_ERROR;
 }
 
-void clearCompatible()
-{
-    sStatus = 0;
-}
+void clearCompatible() { sStatus = 0; }
 
-void setCompatible( uint_fast8_t bit )
-{
-    sStatus |= bit;
-}
-
+void setCompatible(uint_fast8_t bit) { sStatus |= bit; }

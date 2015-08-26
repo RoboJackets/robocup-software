@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -108,27 +108,27 @@
 /// - USBGenericRequest_SYNCHFRAME
 
 /// GET_STATUS request code.
-#define USBGenericRequest_GETSTATUS             0
+#define USBGenericRequest_GETSTATUS 0
 /// CLEAR_FEATURE request code.
-#define USBGenericRequest_CLEARFEATURE          1
+#define USBGenericRequest_CLEARFEATURE 1
 /// SET_FEATURE request code.
-#define USBGenericRequest_SETFEATURE            3
+#define USBGenericRequest_SETFEATURE 3
 /// SET_ADDRESS request code.
-#define USBGenericRequest_SETADDRESS            5
+#define USBGenericRequest_SETADDRESS 5
 /// GET_DESCRIPTOR request code.
-#define USBGenericRequest_GETDESCRIPTOR         6
+#define USBGenericRequest_GETDESCRIPTOR 6
 /// SET_DESCRIPTOR request code.
-#define USBGenericRequest_SETDESCRIPTOR         7
+#define USBGenericRequest_SETDESCRIPTOR 7
 /// GET_CONFIGURATION request code.
-#define USBGenericRequest_GETCONFIGURATION      8
+#define USBGenericRequest_GETCONFIGURATION 8
 /// SET_CONFIGURATION request code.
-#define USBGenericRequest_SETCONFIGURATION      9
+#define USBGenericRequest_SETCONFIGURATION 9
 /// GET_INTERFACE request code.
-#define USBGenericRequest_GETINTERFACE          10
+#define USBGenericRequest_GETINTERFACE 10
 /// SET_INTERFACE request code.
-#define USBGenericRequest_SETINTERFACE          11
+#define USBGenericRequest_SETINTERFACE 11
 /// SYNCH_FRAME request code.
-#define USBGenericRequest_SYNCHFRAME            12
+#define USBGenericRequest_SYNCHFRAME 12
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -143,13 +143,13 @@
 /// - USBGenericRequest_OTHER
 
 /// Recipient is the whole device.
-#define USBGenericRequest_DEVICE                0
+#define USBGenericRequest_DEVICE 0
 /// Recipient is an interface.
-#define USBGenericRequest_INTERFACE             1
+#define USBGenericRequest_INTERFACE 1
 /// Recipient is an endpoint.
-#define USBGenericRequest_ENDPOINT              2
+#define USBGenericRequest_ENDPOINT 2
 /// Recipient is another entity.
-#define USBGenericRequest_OTHER                 3
+#define USBGenericRequest_OTHER 3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -163,11 +163,11 @@
 /// - USBGenericRequest_VENDOR
 
 /// Request is standard.
-#define USBGenericRequest_STANDARD              0
+#define USBGenericRequest_STANDARD 0
 /// Request is class-specific.
-#define USBGenericRequest_CLASS                 1
+#define USBGenericRequest_CLASS 1
 /// Request is vendor-specific.
-#define USBGenericRequest_VENDOR                2
+#define USBGenericRequest_VENDOR 2
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -180,9 +180,9 @@
 /// - USBGenericRequest_OUT
 
 /// Transfer occurs from device to the host.
-#define USBGenericRequest_OUT                   0
+#define USBGenericRequest_OUT 0
 /// Transfer occurs from the host to the device.
-#define USBGenericRequest_IN                    1
+#define USBGenericRequest_IN 1
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -193,21 +193,20 @@
 /// Generic USB SETUP request sent over Control endpoints.
 //------------------------------------------------------------------------------
 typedef struct {
-
     /// Type of request
     /// \sa "USB Request Recipients"
     /// \sa "USB Request Types"
     /// \sa "USB Request Directions"
-    unsigned char bmRequestType:8;
+    unsigned char bmRequestType : 8;
     /// Request code
     /// \sa "USB Request Codes"
-    unsigned char bRequest:8;
+    unsigned char bRequest : 8;
     /// Request-specific value parameter.
-    unsigned short wValue:16;
+    unsigned short wValue : 16;
     /// Request-specific index parameter.
-    unsigned short wIndex:16;
+    unsigned short wIndex : 16;
     /// Expected length (in bytes) of the data phase.
-    unsigned short wLength:16;
+    unsigned short wLength : 16;
 
 } USBGenericRequest;
 
@@ -219,8 +218,8 @@ typedef struct {
 /// \param request Pointer to a USBGenericRequest instance.
 /// \return "USB Request Types"
 //------------------------------------------------------------------------------
-static inline unsigned char USBGenericRequest_GetType(const USBGenericRequest *request)
-{
+static inline unsigned char USBGenericRequest_GetType(
+    const USBGenericRequest* request) {
     return ((request->bmRequestType >> 5) & 0x3);
 }
 
@@ -230,8 +229,8 @@ static inline unsigned char USBGenericRequest_GetType(const USBGenericRequest *r
 /// \return Request code.
 /// \sa "USB Request Codes"
 //------------------------------------------------------------------------------
-static inline unsigned char USBGenericRequest_GetRequest(const USBGenericRequest *request)
-{
+static inline unsigned char USBGenericRequest_GetRequest(
+    const USBGenericRequest* request) {
     return request->bRequest;
 }
 
@@ -240,8 +239,8 @@ static inline unsigned char USBGenericRequest_GetRequest(const USBGenericRequest
 /// \param request - Pointer to a USBGenericRequest instance.
 /// \return Request value.
 //------------------------------------------------------------------------------
-static inline unsigned short USBGenericRequest_GetValue(const USBGenericRequest *request)
-{
+static inline unsigned short USBGenericRequest_GetValue(
+    const USBGenericRequest* request) {
     return request->wValue;
 }
 
@@ -250,8 +249,8 @@ static inline unsigned short USBGenericRequest_GetValue(const USBGenericRequest 
 /// \param request Pointer to a USBGenericRequest instance.
 /// \return Request index;
 //------------------------------------------------------------------------------
-static inline unsigned short USBGenericRequest_GetIndex(const USBGenericRequest *request)
-{
+static inline unsigned short USBGenericRequest_GetIndex(
+    const USBGenericRequest* request) {
     return request->wIndex;
 }
 
@@ -260,8 +259,8 @@ static inline unsigned short USBGenericRequest_GetIndex(const USBGenericRequest 
 /// \param request Pointer to a USBGenericRequest instance.
 /// \return Length of data phase.
 //------------------------------------------------------------------------------
-static inline unsigned short USBGenericRequest_GetLength(const USBGenericRequest *request)
-{
+static inline unsigned short USBGenericRequest_GetLength(
+    const USBGenericRequest* request) {
     return request->wLength;
 }
 
@@ -271,8 +270,7 @@ static inline unsigned short USBGenericRequest_GetLength(const USBGenericRequest
 /// \return Endpoint number.
 //------------------------------------------------------------------------------
 static inline unsigned char USBGenericRequest_GetEndpointNumber(
-    const USBGenericRequest *request)
-{
+    const USBGenericRequest* request) {
     return USBGenericRequest_GetIndex(request) & 0xF;
 }
 
@@ -282,8 +280,8 @@ static inline unsigned char USBGenericRequest_GetEndpointNumber(
 /// \return Request recipient.
 /// \sa "USB Request Recipients"
 //------------------------------------------------------------------------------
-static inline unsigned char USBGenericRequest_GetRecipient(const USBGenericRequest *request)
-{
+static inline unsigned char USBGenericRequest_GetRecipient(
+    const USBGenericRequest* request) {
     // Recipient is in bits [0..4] of the bmRequestType field
     return request->bmRequestType & 0xF;
 }
@@ -294,18 +292,14 @@ static inline unsigned char USBGenericRequest_GetRecipient(const USBGenericReque
 /// \return Transfer direction.
 /// \sa "USB Request Directions"
 //------------------------------------------------------------------------------
-static inline unsigned char USBGenericRequest_GetDirection(const USBGenericRequest *request)
-{
+static inline unsigned char USBGenericRequest_GetDirection(
+    const USBGenericRequest* request) {
     // Transfer direction is located in bit D7 of the bmRequestType field
     if ((request->bmRequestType & 0x80) != 0) {
-
         return USBGenericRequest_IN;
-    }
-    else {
-
+    } else {
         return USBGenericRequest_OUT;
     }
 }
 
-#endif //#ifndef USBGENERICREQUEST_H
-
+#endif  //#ifndef USBGENERICREQUEST_H

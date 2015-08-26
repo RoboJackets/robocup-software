@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -63,8 +63,8 @@
 /// \param request Pointer to a USBGenericRequest instance.
 /// \return Interface number.
 //------------------------------------------------------------------------------
-static inline unsigned char USBInterfaceRequest_GetInterface(const USBGenericRequest *request)
-{
+static inline unsigned char USBInterfaceRequest_GetInterface(
+    const USBGenericRequest* request) {
     return (USBGenericRequest_GetIndex(request) & 0xFF);
 }
 
@@ -75,10 +75,8 @@ static inline unsigned char USBInterfaceRequest_GetInterface(const USBGenericReq
 /// \return New active setting for the interface.
 //------------------------------------------------------------------------------
 static inline unsigned char USBInterfaceRequest_GetAlternateSetting(
-    const USBGenericRequest *request)
-{
+    const USBGenericRequest* request) {
     return (USBGenericRequest_GetValue(request) & 0xFF);
 }
 
-#endif //#ifndef USBINTERFACEREQUEST_H
-
+#endif  //#ifndef USBINTERFACEREQUEST_H

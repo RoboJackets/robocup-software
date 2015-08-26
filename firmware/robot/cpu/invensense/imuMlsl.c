@@ -22,32 +22,23 @@
 tWriteBurst WriteBurst = &MLSLSerialWriteBurst;
 tReadBurst ReadBurst = &MLSLSerialReadBurst;
 
-#define SERIAL_TIMEOUT 40*8
+#define SERIAL_TIMEOUT 40 * 8
 
 int _i2c;
 
-tMLError IMUserialOpen()
-{
-    return ML_SUCCESS;
-}
+tMLError IMUserialOpen() { return ML_SUCCESS; }
 
-tMLError IMUserialClose( void )
-{
-	return ML_SUCCESS;
-}
+tMLError IMUserialClose(void) { return ML_SUCCESS; }
 
 /**
  *  @brief  used to reset any buffering the driver may be doing
  *  @return Zero if the command is successful, an error code otherwise.
  */
-tMLError MLSLSerialReset( void )
-{
-    return ML_SUCCESS;
-}
+tMLError MLSLSerialReset(void) { return ML_SUCCESS; }
 
 /**
  *  @brief  used to write a single byte of data.
- *          It is called by the MPL to write a single byte of data to the IMU. 
+ *          It is called by the MPL to write a single byte of data to the IMU.
  *          This should be sent by I2C or SPI.
  *
  *  @param  slaveAddr       I2C slave address of device.
@@ -56,30 +47,26 @@ tMLError MLSLSerialReset( void )
  *
  *  @return Zero if the command is successful, an error code otherwise.
  */
-tMLError MLSLSerialWriteSingle( unsigned char slaveAddr, 
-                                      unsigned char registerAddr, 
-                                      unsigned char data )
-{
-	while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP));
-	AT91C_BASE_TWI->TWI_MMR = (slaveAddr << 16) | AT91C_TWI_IADRSZ_1_BYTE;
-	AT91C_BASE_TWI->TWI_IADR = registerAddr;
-	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
-	AT91C_BASE_TWI->TWI_THR = data;
-	uint32_t status;
-	while (1)
-	{
-		status = AT91C_BASE_TWI->TWI_SR;
-		if (status & (AT91C_TWI_TXRDY | AT91C_TWI_NACK))
-		{
-			break;
-		}
-	}
-	if (status & AT91C_TWI_NACK)
-	{
-		return ML_ERROR;
-	} else {
-		return ML_SUCCESS;
-	}
+tMLError MLSLSerialWriteSingle(unsigned char slaveAddr,
+                               unsigned char registerAddr, unsigned char data) {
+    while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP))
+        ;
+    AT91C_BASE_TWI->TWI_MMR = (slaveAddr << 16) | AT91C_TWI_IADRSZ_1_BYTE;
+    AT91C_BASE_TWI->TWI_IADR = registerAddr;
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
+    AT91C_BASE_TWI->TWI_THR = data;
+    uint32_t status;
+    while (1) {
+        status = AT91C_BASE_TWI->TWI_SR;
+        if (status & (AT91C_TWI_TXRDY | AT91C_TWI_NACK)) {
+            break;
+        }
+    }
+    if (status & AT91C_TWI_NACK) {
+        return ML_ERROR;
+    } else {
+        return ML_SUCCESS;
+    }
 }
 
 /**
@@ -93,33 +80,28 @@ tMLError MLSLSerialWriteSingle( unsigned char slaveAddr,
  *
  *  @return Zero if the command is successful, an error code otherwise.
  */
-tMLError MLSLSerialWriteBurst( unsigned char slaveAddr, 
-                               unsigned char registerAddr, 
-                               unsigned short length, 
-                               const unsigned char *data )
-{
-	while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP));
-	AT91C_BASE_TWI->TWI_MMR = (slaveAddr << 16) | AT91C_TWI_IADRSZ_1_BYTE;
-	AT91C_BASE_TWI->TWI_IADR = registerAddr;
-	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
-	for (int i = 0; i < length; ++i)
-	{
-		AT91C_BASE_TWI->TWI_THR = data[i];
-		uint32_t status;
-		while (1)
-		{
-			status = AT91C_BASE_TWI->TWI_SR;
-			if (status & AT91C_TWI_NACK)
-			{
-				return ML_ERROR;
-			}
-			if (status & AT91C_TWI_TXRDY)
-			{
-				break;
-			}
-		}
-	}
-	return ML_SUCCESS;
+tMLError MLSLSerialWriteBurst(unsigned char slaveAddr,
+                              unsigned char registerAddr, unsigned short length,
+                              const unsigned char* data) {
+    while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP))
+        ;
+    AT91C_BASE_TWI->TWI_MMR = (slaveAddr << 16) | AT91C_TWI_IADRSZ_1_BYTE;
+    AT91C_BASE_TWI->TWI_IADR = registerAddr;
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
+    for (int i = 0; i < length; ++i) {
+        AT91C_BASE_TWI->TWI_THR = data[i];
+        uint32_t status;
+        while (1) {
+            status = AT91C_BASE_TWI->TWI_SR;
+            if (status & AT91C_TWI_NACK) {
+                return ML_ERROR;
+            }
+            if (status & AT91C_TWI_TXRDY) {
+                break;
+            }
+        }
+    }
+    return ML_SUCCESS;
 }
 
 /**
@@ -132,35 +114,31 @@ tMLError MLSLSerialWriteBurst( unsigned char slaveAddr,
  *
  *  @return Zero if the command is successful, an error code otherwise.
  */
-tMLError MLSLSerialReadSingle( unsigned char slaveAddr, 
-                               unsigned char registerAddr, 
-                               unsigned char *data )
-{
-	while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP));
-	AT91C_BASE_TWI->TWI_MMR = (slaveAddr << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
-	AT91C_BASE_TWI->TWI_IADR = registerAddr;
-	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
-	uint32_t status;
-	while (1)
-	{
-		status = AT91C_BASE_TWI->TWI_SR;
-		if (status & (AT91C_TWI_RXRDY | AT91C_TWI_NACK))
-		{
-			break;
-		}
-	}
-	uint8_t result = AT91C_BASE_TWI->TWI_RHR;
-	while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP));
-	if (status & AT91C_TWI_NACK)
-	{
-		return ML_ERROR;
-	} else {
-		*data = result;
-		return ML_SUCCESS;
-	}
+tMLError MLSLSerialReadSingle(unsigned char slaveAddr,
+                              unsigned char registerAddr, unsigned char* data) {
+    while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP))
+        ;
+    AT91C_BASE_TWI->TWI_MMR =
+        (slaveAddr << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
+    AT91C_BASE_TWI->TWI_IADR = registerAddr;
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
+    uint32_t status;
+    while (1) {
+        status = AT91C_BASE_TWI->TWI_SR;
+        if (status & (AT91C_TWI_RXRDY | AT91C_TWI_NACK)) {
+            break;
+        }
+    }
+    uint8_t result = AT91C_BASE_TWI->TWI_RHR;
+    while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP))
+        ;
+    if (status & AT91C_TWI_NACK) {
+        return ML_ERROR;
+    } else {
+        *data = result;
+        return ML_SUCCESS;
+    }
 }
-
-
 
 /**
  *  @brief  used to read multiple bytes of data.
@@ -173,39 +151,34 @@ tMLError MLSLSerialReadSingle( unsigned char slaveAddr,
  *
  *  @return Zero if the command is successful; an error code otherwise
  */
-tMLError MLSLSerialReadBurst( unsigned char slaveAddr, 
-                              unsigned char registerAddr, 
-                              unsigned short length, 
-                              unsigned char *data )
-{
-	while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP));
-	AT91C_BASE_TWI->TWI_MMR = (slaveAddr << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
-	AT91C_BASE_TWI->TWI_IADR = registerAddr;
-	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START;
-	uint32_t status;
-	for (int i = 0; i < length; ++i)
-	{
-		if (i == (length - 1))
-		{
-			 AT91C_BASE_TWI->TWI_CR = AT91C_TWI_STOP;
-		}
-		
-		while (1)
-		{
-			status = AT91C_BASE_TWI->TWI_SR;
-			if (status & AT91C_TWI_NACK)
-			{
-				AT91C_BASE_TWI->TWI_RHR;
-				return ML_ERROR;
-			}
-			if (status & AT91C_TWI_RXRDY)
-			{
-				break;
-			}
-		}
-		data[i] = AT91C_BASE_TWI->TWI_RHR;
-	}
-	return ML_SUCCESS;
+tMLError MLSLSerialReadBurst(unsigned char slaveAddr,
+                             unsigned char registerAddr, unsigned short length,
+                             unsigned char* data) {
+    while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP))
+        ;
+    AT91C_BASE_TWI->TWI_MMR =
+        (slaveAddr << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
+    AT91C_BASE_TWI->TWI_IADR = registerAddr;
+    AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START;
+    uint32_t status;
+    for (int i = 0; i < length; ++i) {
+        if (i == (length - 1)) {
+            AT91C_BASE_TWI->TWI_CR = AT91C_TWI_STOP;
+        }
+
+        while (1) {
+            status = AT91C_BASE_TWI->TWI_SR;
+            if (status & AT91C_TWI_NACK) {
+                AT91C_BASE_TWI->TWI_RHR;
+                return ML_ERROR;
+            }
+            if (status & AT91C_TWI_RXRDY) {
+                break;
+            }
+        }
+        data[i] = AT91C_BASE_TWI->TWI_RHR;
+    }
+    return ML_SUCCESS;
 }
 
 /**
@@ -231,16 +204,14 @@ tMLError MLSLSerialReadBurst( unsigned char slaveAddr,
  *
  *  @return Zero if the command is successful, an error code otherwise.
  */
-tMLError MLSLIntHandler( unsigned char intSource )
-{
+tMLError MLSLIntHandler(unsigned char intSource) {
     tMLError ec;
 
-    ec = MLDLIntHandler( intSource );
+    ec = MLDLIntHandler(intSource);
 
     return ec;
 }
 
-
-  /*********************/
- /** \}*/ /* defgroup */
+/*********************/
+/** \}*/ /* defgroup */
 /*********************/

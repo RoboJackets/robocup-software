@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -59,31 +59,30 @@
 
 /// Device supports the request combination of SetCommFeature, ClearCommFeature
 /// and GetCommFeature.
-#define CDCAbstractControlManagementDescriptor_COMMFEATURE          (1 << 0)
+#define CDCAbstractControlManagementDescriptor_COMMFEATURE (1 << 0)
 /// Device supports the request combination of SetLineCoding, GetLineCoding and
 /// SetControlLineState.
-#define CDCAbstractControlManagementDescriptor_LINE                 (1 << 1)
+#define CDCAbstractControlManagementDescriptor_LINE (1 << 1)
 /// Device supports the SendBreak request.
-#define CDCAbstractControlManagementDescriptor_SENDBREAK            (1 << 2)
+#define CDCAbstractControlManagementDescriptor_SENDBREAK (1 << 2)
 /// Device supports the NetworkConnection notification.
-#define CDCAbstractControlManagementDescriptor_NETWORKCONNECTION    (1 << 3)
+#define CDCAbstractControlManagementDescriptor_NETWORKCONNECTION (1 << 3)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__          // IAR
-#pragma pack(1)            // IAR
-#define __attribute__(...) // IAR
-#endif                     // IAR
+#ifdef __ICCARM__           // IAR
+#pragma pack(1)             // IAR
+#define __attribute__(...)  // IAR
+#endif                      // IAR
 
 //------------------------------------------------------------------------------
 /// Describes the command supported by the communication interface class
 /// with the Abstract Control Model subclass code.
 //------------------------------------------------------------------------------
 typedef struct {
-
     /// Size of this descriptor in bytes.
     unsigned char bFunctionLength;
     /// Descriptor type (CDCDescriptors_INTERFACE).
@@ -94,11 +93,10 @@ typedef struct {
     /// \sa "CDC ACM Capabilities".
     unsigned char bmCapabilities;
 
-} __attribute__ ((packed)) CDCAbstractControlManagementDescriptor; // GCC
+} __attribute__((packed)) CDCAbstractControlManagementDescriptor;  // GCC
 
-#ifdef __ICCARM__          // IAR
-#pragma pack()             // IAR
-#endif                     // IAR
+#ifdef __ICCARM__  // IAR
+#pragma pack()     // IAR
+#endif             // IAR
 
-#endif //#ifndef CDCABSTRACTCONTROLMANAGEMENTDESCRIPTOR_H
-
+#endif  //#ifndef CDCABSTRACTCONTROLMANAGEMENTDESCRIPTOR_H

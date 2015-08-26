@@ -4,7 +4,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-
 TEST(Point, clampBig) {
     Point p0(10.0, 10.0);
     p0.clamp(10);

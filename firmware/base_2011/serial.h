@@ -9,4 +9,4 @@ void ser_init(void);
 // (a write of that size will not block).
 char ser_tx_empty(void);
 
-#endif // _SERIAL_H_
+#endif  // _SERIAL_H_

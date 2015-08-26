@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,12 +53,11 @@
 /// - CDCDeviceDescriptor_PROTOCOL
 
 /// Device class code when using the CDC class.
-#define CDCDeviceDescriptor_CLASS               0x02
+#define CDCDeviceDescriptor_CLASS 0x02
 /// Device subclass code when using the CDC class.
-#define CDCDeviceDescriptor_SUBCLASS            0x00
+#define CDCDeviceDescriptor_SUBCLASS 0x00
 /// Device protocol code when using the CDC class.
-#define CDCDeviceDescriptor_PROTOCOL            0x00
+#define CDCDeviceDescriptor_PROTOCOL 0x00
 //------------------------------------------------------------------------------
 
-#endif //#ifndef CDCDEVICEDESCRIPTOR_H
-
+#endif  //#ifndef CDCDEVICEDESCRIPTOR_H

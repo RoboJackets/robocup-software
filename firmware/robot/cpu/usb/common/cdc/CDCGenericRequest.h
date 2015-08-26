@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -52,12 +52,11 @@
 /// - CDCGenericRequest_SETCONTROLLINESTATE
 
 /// SetLineCoding request code.
-#define CDCGenericRequest_SETLINECODING             0x20
+#define CDCGenericRequest_SETLINECODING 0x20
 /// GetLineCoding request code.
-#define CDCGenericRequest_GETLINECODING             0x21
+#define CDCGenericRequest_GETLINECODING 0x21
 /// SetControlLineState request code.
-#define CDCGenericRequest_SETCONTROLLINESTATE       0x22
+#define CDCGenericRequest_SETCONTROLLINESTATE 0x22
 //------------------------------------------------------------------------------
 
-#endif //#ifndef CDCGENERICREQUEST_H
-
+#endif  //#ifndef CDCGENERICREQUEST_H

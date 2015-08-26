@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,10 +53,9 @@
 //         Exported functions
 //------------------------------------------------------------------------------
 
-static inline unsigned char USBSetAddressRequest_GetAddress(const USBGenericRequest *request)
-{
+static inline unsigned char USBSetAddressRequest_GetAddress(
+    const USBGenericRequest* request) {
     return USBGenericRequest_GetValue(request) & 0x7F;
 }
 
-#endif //#ifndef USBSETADDRESSREQUEST_H
-
+#endif  //#ifndef USBSETADDRESSREQUEST_H

@@ -17,14 +17,12 @@ extern "C" {
 #define IMU_C_OPEN_CALLED IMU_C_OPEN
 #define IMU_C_START_CALLED IMU_C_START
 
-    tMLError isCompatible(uint_fast8_t mask, uint_fast8_t want);
-    void setCompatible( uint_fast8_t bit );
-    void clearCompatible();
+tMLError isCompatible(uint_fast8_t mask, uint_fast8_t want);
+void setCompatible(uint_fast8_t bit);
+void clearCompatible();
 
 #ifdef __cplusplus
 }
 #endif
 
-
-
-#endif // INVENSENSE_IMU_COMPATABILITY_H__
+#endif  // INVENSENSE_IMU_COMPATABILITY_H__

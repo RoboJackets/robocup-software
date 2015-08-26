@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,7 +53,8 @@
 /// Standard USBDDriver instance.
 USBDDriver usbdDriver;
 /// Current line coding (baudrate, parity, stop bits).
-CDCLineCoding lineCoding = {115200, CDCLineCoding_ONESTOPBIT, CDCLineCoding_NOPARITY, 8};
+CDCLineCoding lineCoding = {115200, CDCLineCoding_ONESTOPBIT,
+                            CDCLineCoding_NOPARITY, 8};
 
 //------------------------------------------------------------------------------
 //         Internal functions
@@ -64,38 +65,28 @@ CDCLineCoding lineCoding = {115200, CDCLineCoding_ONESTOPBIT, CDCLineCoding_NOPA
 /// SetLineCoding request has been retrieved. Sends a zero-length packet
 /// to the host for acknowledging the request.
 //------------------------------------------------------------------------------
-static void CDCDSerialDriver_SetLineCodingCallback()
-{
+static void CDCDSerialDriver_SetLineCodingCallback() {
     USBD_Write(0, 0, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
 /// Receives new line coding information from the USB host.
 //------------------------------------------------------------------------------
-static void CDCDSerialDriver_SetLineCoding()
-{
+static void CDCDSerialDriver_SetLineCoding() {
     TRACE_INFO_WP("sLineCoding ");
 
-    USBD_Read(0,
-              &lineCoding,
-              sizeof(CDCLineCoding),
-              (TransferCallback) CDCDSerialDriver_SetLineCodingCallback,
-              0);
+    USBD_Read(0, &lineCoding, sizeof(CDCLineCoding),
+              (TransferCallback)CDCDSerialDriver_SetLineCodingCallback, 0);
 }
 
 //------------------------------------------------------------------------------
 /// Sends the current line coding information to the host through Control
 /// endpoint 0.
 //------------------------------------------------------------------------------
-static void CDCDSerialDriver_GetLineCoding()
-{
+static void CDCDSerialDriver_GetLineCoding() {
     TRACE_INFO_WP("gLineCoding ");
 
-    USBD_Write(0,
-               &lineCoding,
-               sizeof(CDCLineCoding),
-               0,
-               0);
+    USBD_Write(0, &lineCoding, sizeof(CDCLineCoding), 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -106,8 +97,7 @@ static void CDCDSerialDriver_GetLineCoding()
 //------------------------------------------------------------------------------
 /// Re-implemented callback, invoked when a new USB Request is received.
 //------------------------------------------------------------------------------
-void USBDCallbacks_RequestReceived(const USBGenericRequest *request)
-{
+void USBDCallbacks_RequestReceived(const USBGenericRequest* request) {
     CDCDSerialDriver_RequestHandler(request);
 }
 
@@ -120,14 +110,12 @@ void USBDCallbacks_RequestReceived(const USBGenericRequest *request)
 //------------------------------------------------------------------------------
 /// Initializes the USB Device CDC serial driver & USBD Driver.
 //------------------------------------------------------------------------------
-void CDCDSerialDriver_Initialize()
-{
+void CDCDSerialDriver_Initialize() {
     TRACE_INFO("CDCDSerialDriver_Initialize\n\r");
-    
+
     // Initialize the standard driver
-    USBDDriver_Initialize(&usbdDriver,
-                          &cdcdSerialDriverDescriptors,
-                          0); // Multiple settings for interfaces not supported
+    USBDDriver_Initialize(&usbdDriver, &cdcdSerialDriverDescriptors,
+                          0);  // Multiple settings for interfaces not supported
 
     // Initialize the USB driver
     USBD_Init();
@@ -138,15 +126,13 @@ void CDCDSerialDriver_Initialize()
 /// re-implementation of USBDCallbacks_RequestReceived() method.
 /// \param Pointer to a USBGenericRequest instance.
 //------------------------------------------------------------------------------
-void CDCDSerialDriver_RequestHandler(const USBGenericRequest *request)
-{
+void CDCDSerialDriver_RequestHandler(const USBGenericRequest* request) {
     TRACE_INFO_WP("NewReq ");
 
     // Handle the request
     switch (USBGenericRequest_GetRequest(request)) {
-
         case CDCGenericRequest_SETLINECODING:
-            
+
             CDCDSerialDriver_SetLineCoding();
             break;
 
@@ -157,7 +143,7 @@ void CDCDSerialDriver_RequestHandler(const USBGenericRequest *request)
 
         case CDCGenericRequest_SETCONTROLLINESTATE:
 
-			USBD_Write(0, 0, 0, 0, 0);
+            USBD_Write(0, 0, 0, 0, 0);
             break;
 
         default:
@@ -166,4 +152,3 @@ void CDCDSerialDriver_RequestHandler(const USBGenericRequest *request)
             break;
     }
 }
-
