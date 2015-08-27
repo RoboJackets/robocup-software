@@ -90,19 +90,13 @@ void Task_CommCtrl(void const* args)
 		CC1201Config::loadConfiguration(radioConfig, &radio);
 		CC1201Config::verifyConfiguration(radioConfig, &radio);
 
-		// Update the frequency offset
-		radio.freqUpdate();
-
 		LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
-		Thread::wait(400);
-
+		/*
 		// Open a socket for running tests across the link layer
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
 		CommModule::openSocket(COMM_PORT_LINK_TEST);
-
-		Thread::wait(400);
 
 		// The usual way of opening a port.
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_GAMEPLAY_STROBE);
@@ -118,6 +112,7 @@ void Task_CommCtrl(void const* args)
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
 		CommModule::openSocket(COMM_PORT_SETPOINT);
+		*/
 
 	} else {
 		LOG(FATAL, "No radio interface found!\r\n    Terminating main radio thread.");
