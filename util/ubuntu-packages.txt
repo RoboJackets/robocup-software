@@ -33,7 +33,7 @@ libbullet-dev
 
 # C/C++ compiler
 # tends to be faster and have more helpful error messages than gcc
-clang
+clang-3.5
 
 # C/C++ (and more) code-formatting tool
 clang-format-3.5
