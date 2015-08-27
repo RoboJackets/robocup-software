@@ -22,13 +22,10 @@ void Task_SerialConsole(void const* args)
   else
     threadPriority = osPriorityIdle;
 
-  // We wait here until until main tells us we can continue.
-  // This is to prevent any startup logging output from getting jumbled in with the console's serial data
-  // osSignalWait(CONSOLE_TASK_START_SIGNAL, osWaitForever);
-
   // Initalize the console buffer and save the char buffer's starting address
   Console::Init();
 
+  // Set the console username to whoever the git author is
   Console::changeUser(git_head_author);
 
   // Let everyone know we're ok

@@ -117,9 +117,9 @@ void Task_CommCtrl(void const* args)
 		// TODO: Turn on radio error LED here
 
 		// Always keep the link test port open regardless
-		// CommModule::RxHandler(nullptr, COMM_PORT_LINK_TEST);
-		// CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
-		// CommModule::openSocket(COMM_PORT_LINK_TEST);
+		CommModule::RxHandler(nullptr, COMM_PORT_LINK_TEST);
+		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
+		CommModule::openSocket(COMM_PORT_LINK_TEST);
 
 		osThreadTerminate(threadID);
 		return;
@@ -168,7 +168,7 @@ void Task_CommCtrl(void const* args)
 		CommModule::send(ack_pck);
 		*/
 
-		CommModule::receive(pck);
+		// CommModule::receive(pck);
 		Thread::wait(1500);
 		Thread::yield();
 

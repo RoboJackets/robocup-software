@@ -258,12 +258,8 @@ int main(void)
 	   );
 	*/
 
+	// LED3 turns on once we hit the end of initilization
 	DigitalOut ledThree(LED3, 1);
-
-	// while ( !(LPC_UART0->LSR & (1 << 6)) ) { /* Wait until the startup logs are completely sent over the serial line */ }
-
-	// This is where we let the console task know we're finished with all startup serial logs
-	// console_task.signal_set(CONSOLE_TASK_START_SIGNAL);
 
 	while (1) {
 		Thread::wait(1000);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
