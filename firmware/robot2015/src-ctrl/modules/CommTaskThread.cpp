@@ -120,6 +120,7 @@ void Task_CommCtrl(void const* args)
 
 		// Always keep the link test port open regardless
 		// CommModule::RxHandler(nullptr, COMM_PORT_LINK_TEST);
+		// CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
 		// CommModule::openSocket(COMM_PORT_LINK_TEST);
 
 		osThreadTerminate(threadID);
