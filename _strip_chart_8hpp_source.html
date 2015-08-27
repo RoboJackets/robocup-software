@@ -115,113 +115,99 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Packet</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">class </span>LogFrame;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;}</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">// Chart functions:</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// Gets the value for a given frame.</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">// Stores the value in v.</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">// Returns true if the value was available.</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">// Returns false with v undefined if the value was not available.</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>Chart</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="struct_chart_1_1_function.html">   21</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="struct_chart_1_1_function.html">Function</a></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="struct_chart_1_1_function.html">Function</a>() {}</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    };</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    </div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="struct_chart_1_1_point_magnitude.html">   27</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="struct_chart_1_1_point_magnitude.html">PointMagnitude</a>: <span class="keyword">public</span> <a class="code" href="struct_chart_1_1_function.html">Function</a></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="comment">// Vector of tags from LogFrame to the Point to be used.</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        <span class="comment">// Each tag except must identify a Message.</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// A repeated field&#39;s tag is followed by the index of the item.</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        QVector&lt;int&gt; path;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    };</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="struct_chart_1_1_numeric_field.html">   37</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="struct_chart_1_1_numeric_field.html">NumericField</a>: <span class="keyword">public</span> <a class="code" href="struct_chart_1_1_function.html">Function</a></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame &amp;frame, <span class="keywordtype">float</span> &amp;v) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="comment">// Vector of tags from LogFrame to the float or double field to be used.</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="comment">// Each tag except the last one must identify a Message.</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="comment">// A repeated field&#39;s tag is followed by the index of the item.</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        QVector&lt;int&gt; path;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    };</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Packet {</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">class </span>LogFrame;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;}</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">// Chart functions:</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// Gets the value for a given frame.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// Stores the value in v.</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">// Returns true if the value was available.</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">// Returns false with v undefined if the value was not available.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>Chart {</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="struct_chart_1_1_function.html">   19</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_chart_1_1_function.html">Function</a> {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="struct_chart_1_1_function.html">Function</a>() {}</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame&amp; frame, <span class="keywordtype">float</span>&amp; v) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;};</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="struct_chart_1_1_point_magnitude.html">   24</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_chart_1_1_point_magnitude.html">PointMagnitude</a> : <span class="keyword">public</span> <a class="code" href="struct_chart_1_1_function.html">Function</a> {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame&amp; frame, <span class="keywordtype">float</span>&amp; v) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="comment">// Vector of tags from LogFrame to the Point to be used.</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="comment">// Each tag except must identify a Message.</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="comment">// A repeated field&#39;s tag is followed by the index of the item.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    QVector&lt;int&gt; path;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="struct_chart_1_1_numeric_field.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_chart_1_1_numeric_field.html">NumericField</a> : <span class="keyword">public</span> <a class="code" href="struct_chart_1_1_function.html">Function</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> value(<span class="keyword">const</span> Packet::LogFrame&amp; frame, <span class="keywordtype">float</span>&amp; v) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// Vector of tags from LogFrame to the float or double field to be used.</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// Each tag except the last one must identify a Message.</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="comment">// A repeated field&#39;s tag is followed by the index of the item.</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    QVector&lt;int&gt; path;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="class_strip_chart.html">   43</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_strip_chart.html">StripChart</a> : <span class="keyword">public</span> QWidget {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="class_strip_chart.html">StripChart</a>(QWidget* parent = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    ~<a class="code" href="class_strip_chart.html">StripChart</a>();</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="class_strip_chart.html">   48</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_strip_chart.html">StripChart</a>: <span class="keyword">public</span> QWidget</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="class_strip_chart.html">StripChart</a>(QWidget *parent = <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        ~<a class="code" href="class_strip_chart.html">StripChart</a>();</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordtype">void</span> history(<span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt; *value)</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            _history = value;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="comment">// Sets the chart function.</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="comment">// This chart owns the function and will destroy it when needed.</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordtype">void</span> <span class="keyword">function</span>(<a class="code" href="struct_chart_1_1_function.html">Chart::Function</a> *<span class="keyword">function</span>);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordtype">void</span> minValue(<span class="keywordtype">float</span> v)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            _minValue = v;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        }</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordtype">void</span> maxValue(<span class="keywordtype">float</span> v)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        {</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            _maxValue = v;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordtype">void</span> color(<span class="keyword">const</span> QColor &amp;color)</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            _color = color;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            update();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="comment">// If true, minValue and maxValue are automatically changed when</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="comment">// out-of-range values are found</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">bool</span> autoRange;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordtype">void</span> paintEvent(QPaintEvent *e) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="comment">// Returns the position for the data at a given frame.</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">// i is an index in _history, so 0 is the most recent frame</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">// and increasing indices are older frames.</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        QPointF dataPoint(<span class="keywordtype">int</span> i, <span class="keywordtype">float</span> value);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">int</span> indexAtPoint(<span class="keyword">const</span> QPoint &amp;point);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="comment">// Chart function (see above)</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        QList&lt;Chart::Function *&gt; _functions;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordtype">float</span> _minValue;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordtype">float</span> _maxValue;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        QColor _color;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt; *_history;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    QPointF _mouse_overlay;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;};</div>
-<div class="ttc" id="struct_chart_1_1_numeric_field_html"><div class="ttname"><a href="struct_chart_1_1_numeric_field.html">Chart::NumericField</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:37</div></div>
-<div class="ttc" id="struct_chart_1_1_function_html"><div class="ttname"><a href="struct_chart_1_1_function.html">Chart::Function</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:21</div></div>
-<div class="ttc" id="class_strip_chart_html"><div class="ttname"><a href="class_strip_chart.html">StripChart</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:48</div></div>
-<div class="ttc" id="struct_chart_1_1_point_magnitude_html"><div class="ttname"><a href="struct_chart_1_1_point_magnitude.html">Chart::PointMagnitude</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:27</div></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> history(<span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt;* value) {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        _history = value;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">// Sets the chart function.</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">// This chart owns the function and will destroy it when needed.</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> <span class="keyword">function</span>(<a class="code" href="struct_chart_1_1_function.html">Chart::Function</a>* <span class="keyword">function</span>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> minValue(<span class="keywordtype">float</span> v) { _minValue = v; }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> maxValue(<span class="keywordtype">float</span> v) { _maxValue = v; }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> color(<span class="keyword">const</span> QColor&amp; color) {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        _color = color;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        update();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// If true, minValue and maxValue are automatically changed when</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// out-of-range values are found</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">bool</span> autoRange;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> paintEvent(QPaintEvent* e) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="comment">// Returns the position for the data at a given frame.</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// i is an index in _history, so 0 is the most recent frame</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="comment">// and increasing indices are older frames.</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    QPointF dataPoint(<span class="keywordtype">int</span> i, <span class="keywordtype">float</span> value);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">int</span> indexAtPoint(<span class="keyword">const</span> QPoint&amp; point);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="comment">// Chart function (see above)</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    QList&lt;Chart::Function*&gt; _functions;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">float</span> _minValue;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">float</span> _maxValue;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    QColor _color;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt;* _history;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    QPointF _mouse_overlay;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;};</div>
+<div class="ttc" id="struct_chart_1_1_numeric_field_html"><div class="ttname"><a href="struct_chart_1_1_numeric_field.html">Chart::NumericField</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:33</div></div>
+<div class="ttc" id="struct_chart_1_1_function_html"><div class="ttname"><a href="struct_chart_1_1_function.html">Chart::Function</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:19</div></div>
+<div class="ttc" id="class_strip_chart_html"><div class="ttname"><a href="class_strip_chart.html">StripChart</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:43</div></div>
+<div class="ttc" id="struct_chart_1_1_point_magnitude_html"><div class="ttname"><a href="struct_chart_1_1_point_magnitude.html">Chart::PointMagnitude</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:24</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>StripChart.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:11 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

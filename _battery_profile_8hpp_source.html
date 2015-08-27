@@ -113,34 +113,32 @@ $(document).ready(function(){initNavTree('_battery_profile_8hpp_source.html','')
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;stdarg.h&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="class_battery_profile.html">   14</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_battery_profile.html">BatteryProfile</a> {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="class_battery_profile.html#a959daafc29caf952e00c445dba350163">   17</a></span>&#160;    <span class="keyword">typedef</span> std::pair&lt;double, double&gt; <a class="code" href="class_battery_profile.html#a959daafc29caf952e00c445dba350163">Entry</a>;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137">BatteryProfile</a>(std::vector&lt;BatteryProfile::Entry&gt; dataPoints);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="class_battery_profile.html#a60890c08094cb4ad4e97ba0ac9c2c2e1">getChargeLevel</a>(<span class="keywordtype">double</span> voltage) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::vector&lt;BatteryProfile::Entry&gt; _dataPoints;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;};</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">//  profiles for our batteries.  See BatteryProfile.cpp for more info</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">const</span> <span class="keyword">extern</span> <a class="code" href="class_battery_profile.html">BatteryProfile</a> RJ2008BatteryProfile;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">const</span> <span class="keyword">extern</span> <a class="code" href="class_battery_profile.html">BatteryProfile</a> RJ2015BatteryProfile;</div>
-<div class="ttc" id="class_battery_profile_html_a60890c08094cb4ad4e97ba0ac9c2c2e1"><div class="ttname"><a href="class_battery_profile.html#a60890c08094cb4ad4e97ba0ac9c2c2e1">BatteryProfile::getChargeLevel</a></div><div class="ttdeci">double getChargeLevel(double voltage) const </div><div class="ttdoc">Get the charge level given the voltage. </div><div class="ttdef"><b>Definition:</b> BatteryProfile.cpp:29</div></div>
-<div class="ttc" id="class_battery_profile_html_a0ef1c20dce9459c9d1bba4da43f6f137"><div class="ttname"><a href="class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137">BatteryProfile::BatteryProfile</a></div><div class="ttdeci">BatteryProfile(std::vector&lt; BatteryProfile::Entry &gt; dataPoints)</div><div class="ttdoc">Construct a battery profile with the given &lt;voltage, charge level&gt; pairs. </div><div class="ttdef"><b>Definition:</b> BatteryProfile.cpp:25</div></div>
-<div class="ttc" id="class_battery_profile_html"><div class="ttname"><a href="class_battery_profile.html">BatteryProfile</a></div><div class="ttdoc">Calculates a battery&#39;s charge level given its voltage using a model of its discharge curve...</div><div class="ttdef"><b>Definition:</b> BatteryProfile.hpp:14</div></div>
-<div class="ttc" id="class_battery_profile_html_a959daafc29caf952e00c445dba350163"><div class="ttname"><a href="class_battery_profile.html#a959daafc29caf952e00c445dba350163">BatteryProfile::Entry</a></div><div class="ttdeci">std::pair&lt; double, double &gt; Entry</div><div class="ttdoc">Each Entry in the profile is a &lt;voltage, charge level&gt; pair. </div><div class="ttdef"><b>Definition:</b> BatteryProfile.hpp:17</div></div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="class_battery_profile.html">   15</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_battery_profile.html">BatteryProfile</a> {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_battery_profile.html#a959daafc29caf952e00c445dba350163">   18</a></span>&#160;    <span class="keyword">typedef</span> std::pair&lt;double, double&gt; <a class="code" href="class_battery_profile.html#a959daafc29caf952e00c445dba350163">Entry</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <a class="code" href="class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137">BatteryProfile</a>(std::vector&lt;BatteryProfile::Entry&gt; dataPoints);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="class_battery_profile.html#a60890c08094cb4ad4e97ba0ac9c2c2e1">getChargeLevel</a>(<span class="keywordtype">double</span> voltage) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    std::vector&lt;BatteryProfile::Entry&gt; _dataPoints;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;};</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">//  profiles for our batteries.  See BatteryProfile.cpp for more info</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">const</span> <span class="keyword">extern</span> <a class="code" href="class_battery_profile.html">BatteryProfile</a> RJ2008BatteryProfile;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">const</span> <span class="keyword">extern</span> <a class="code" href="class_battery_profile.html">BatteryProfile</a> RJ2015BatteryProfile;</div>
+<div class="ttc" id="class_battery_profile_html_a60890c08094cb4ad4e97ba0ac9c2c2e1"><div class="ttname"><a href="class_battery_profile.html#a60890c08094cb4ad4e97ba0ac9c2c2e1">BatteryProfile::getChargeLevel</a></div><div class="ttdeci">double getChargeLevel(double voltage) const </div><div class="ttdoc">Get the charge level given the voltage. </div><div class="ttdef"><b>Definition:</b> BatteryProfile.cpp:24</div></div>
+<div class="ttc" id="class_battery_profile_html_a0ef1c20dce9459c9d1bba4da43f6f137"><div class="ttname"><a href="class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137">BatteryProfile::BatteryProfile</a></div><div class="ttdeci">BatteryProfile(std::vector&lt; BatteryProfile::Entry &gt; dataPoints)</div><div class="ttdoc">Construct a battery profile with the given &lt;voltage, charge level&gt; pairs. </div><div class="ttdef"><b>Definition:</b> BatteryProfile.cpp:20</div></div>
+<div class="ttc" id="class_battery_profile_html"><div class="ttname"><a href="class_battery_profile.html">BatteryProfile</a></div><div class="ttdoc">Calculates a battery&#39;s charge level given its voltage using a model of its discharge curve...</div><div class="ttdef"><b>Definition:</b> BatteryProfile.hpp:15</div></div>
+<div class="ttc" id="class_battery_profile_html_a959daafc29caf952e00c445dba350163"><div class="ttname"><a href="class_battery_profile.html#a959daafc29caf952e00c445dba350163">BatteryProfile::Entry</a></div><div class="ttdeci">std::pair&lt; double, double &gt; Entry</div><div class="ttdoc">Each Entry in the profile is a &lt;voltage, charge level&gt; pair. </div><div class="ttdef"><b>Definition:</b> BatteryProfile.hpp:18</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>BatteryProfile.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:10 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

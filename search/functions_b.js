@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['last',['last',['../class_planning_1_1_tree.html#ae5673a955cf95b8d5980b075fdd0d263',1,'Planning::Tree']]],
-  ['length',['length',['../class_planning_1_1_interpolated_path.html#a553a22edf069f1e3a1fee0636c26fe3f',1,'Planning::InterpolatedPath::length(unsigned int start=0) const '],['../class_planning_1_1_interpolated_path.html#a840780fe321cafd58e03d035d088e56f',1,'Planning::InterpolatedPath::length(unsigned int start, unsigned int end) const '],['../class_planning_1_1_interpolated_path.html#a82eedd33fcddbc8086da88a9289d6c7c',1,'Planning::InterpolatedPath::length(const Geometry2d::Point &amp;pt) const ']]],
-  ['loadplaybook',['loadPlaybook',['../class_gameplay_1_1_gameplay_module.html#aceed4fb50804b681031f6fbc25221c1c',1,'Gameplay::GameplayModule']]],
-  ['localobstacles',['localObstacles',['../class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70',1,'OurRobot']]]
+  ['kick',['kick',['../class_our_robot.html#a08041f75636852ac9c9eecf9cad3b543',1,'OurRobot']]],
+  ['kick_5fpower',['kick_power',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a3bfc1231b8a013f41ab0e92859564032',1,'gameplay::skills::_kick::_Kick']]],
+  ['kickerbar',['kickerBar',['../class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43',1,'OurRobot']]],
+  ['kickimmediately',['kickImmediately',['../class_our_robot.html#a1b366ab867c9976e5915872d059e991f',1,'OurRobot']]],
+  ['kicklevel',['kickLevel',['../class_our_robot.html#a0a7af7e311b88b1d594049a47139f33b',1,'OurRobot']]],
+  ['kicktimer',['kickTimer',['../class_our_robot.html#a808d23e992c9f6e6a40a8b9c35965e6e',1,'OurRobot']]]
 ];

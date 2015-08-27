@@ -127,10 +127,10 @@ $(document).ready(function(){initNavTree('class_our_robot.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ae1f911f5d763abd596a229e287dd3d62"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1f911f5d763abd596a229e287dd3d62"></a>
+<tr class="memitem:a1ee7ef35836f1b868ddfeb330c4cca03"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ee7ef35836f1b868ddfeb330c4cca03"></a>
 typedef std::array&lt; float, <br class="typebreak"/>
 Num_Shells &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>RobotMask</b></td></tr>
-<tr class="separator:ae1f911f5d763abd596a229e287dd3d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a1ee7ef35836f1b868ddfeb330c4cca03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -148,22 +148,24 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>addStatusText</b> ()<
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addText</b> (const QString &amp;text, const QColor &amp;color=Qt::white, const QString &amp;layerPrefix=&quot;RobotText&quot;)</td></tr>
 <tr class="separator:a639eecf0232af72c5845feca21ee9d70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a141c819500dd3fad0054ddc8a9aff964"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a141c819500dd3fad0054ddc8a9aff964"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>charged</b> () const </td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a141c819500dd3fad0054ddc8a9aff964">charged</a> () const </td></tr>
+<tr class="memdesc:a141c819500dd3fad0054ddc8a9aff964"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if the kicker is ready <br/></td></tr>
 <tr class="separator:a141c819500dd3fad0054ddc8a9aff964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a808d23e992c9f6e6a40a8b9c35965e6e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a808d23e992c9f6e6a40a8b9c35965e6e"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a808d23e992c9f6e6a40a8b9c35965e6e">kickTimer</a> () const </td></tr>
-<tr class="memdesc:a808d23e992c9f6e6a40a8b9c35965e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if the kicker is ready <br/></td></tr>
+<tr class="memdesc:a808d23e992c9f6e6a40a8b9c35965e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the time since the kicker was last charged, 0.0 if ready <br/></td></tr>
 <tr class="separator:a808d23e992c9f6e6a40a8b9c35965e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ebe1185b9bb1cc9c473d507ec9e8f43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ebe1185b9bb1cc9c473d507ec9e8f43"></a>
 const <a class="el" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43">kickerBar</a> () const </td></tr>
-<tr class="memdesc:a8ebe1185b9bb1cc9c473d507ec9e8f43"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the time since the kicker was last charged, 0.0 if ready <br/></td></tr>
+<tr class="memdesc:a8ebe1185b9bb1cc9c473d507ec9e8f43"><td class="mdescLeft">&#160;</td><td class="mdescRight">segment for the location of the kicker <br/></td></tr>
 <tr class="separator:a8ebe1185b9bb1cc9c473d507ec9e8f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d04e4b5569a9ff3ee1dca09bd73c38d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d04e4b5569a9ff3ee1dca09bd73c38d"></a>
 <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1d04e4b5569a9ff3ee1dca09bd73c38d">pointInRobotSpace</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) const </td></tr>
-<tr class="memdesc:a1d04e4b5569a9ff3ee1dca09bd73c38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">segment for the location of the kicker <br/></td></tr>
+<tr class="memdesc:a1d04e4b5569a9ff3ee1dca09bd73c38d"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a point to the frame of reference of robot <br/></td></tr>
 <tr class="separator:a1d04e4b5569a9ff3ee1dca09bd73c38d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43a7c66bc61352d1d9fa3a6851e83d5d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a43a7c66bc61352d1d9fa3a6851e83d5d">behindBall</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;ballPos) const </td></tr>
-<tr class="memdesc:a43a7c66bc61352d1d9fa3a6851e83d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a point to the frame of reference of robot  <a href="#a43a7c66bc61352d1d9fa3a6851e83d5d">More...</a><br/></td></tr>
+<tr class="memitem:a43a7c66bc61352d1d9fa3a6851e83d5d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43a7c66bc61352d1d9fa3a6851e83d5d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a43a7c66bc61352d1d9fa3a6851e83d5d">behindBall</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;ballPos) const </td></tr>
+<tr class="memdesc:a43a7c66bc61352d1d9fa3a6851e83d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns true if the position specified is behind the robot <br/></td></tr>
 <tr class="separator:a43a7c66bc61352d1d9fa3a6851e83d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a835a2100f3ee6e68e0bf88d4704479ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a835a2100f3ee6e68e0bf88d4704479ec"></a>
 boost::optional<br class="typebreak"/>
@@ -247,7 +249,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 Time&#160;</td><td class="memItemRight" valign="bottom"><b>lastKickTime</b> () const </td></tr>
 <tr class="separator:a24e0845fafeab64fec2c9c38d683ceaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb041522cb8d92a305ecc8e3698c02e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb041522cb8d92a305ecc8e3698c02e4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>justKicked</b> ()</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#acb041522cb8d92a305ecc8e3698c02e4">justKicked</a> ()</td></tr>
+<tr class="memdesc:acb041522cb8d92a305ecc8e3698c02e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks if the bot has kicked/chipped very recently. <br/></td></tr>
 <tr class="separator:acb041522cb8d92a305ecc8e3698c02e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4170e6526e724b2bf36a06af62ea64b5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a4170e6526e724b2bf36a06af62ea64b5">getCmdText</a> () const </td></tr>
 <tr class="memdesc:a4170e6526e724b2bf36a06af62ea64b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a string representing the series of commands called on the robot this iteration.  <a href="#a4170e6526e724b2bf36a06af62ea64b5">More...</a><br/></td></tr>
@@ -274,6 +277,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>avoidBallRadius</b> 
 <tr class="memitem:a4e60906752c6be31fda315fe8ae958ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e60906752c6be31fda315fe8ae958ed"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>resetAvoidBall</b> ()</td></tr>
 <tr class="separator:a4e60906752c6be31fda315fe8ae958ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe5a36c87ae5c6e9e0adcddfd5372637"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe5a36c87ae5c6e9e0adcddfd5372637"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>resetAvoidRobotRadii</b> ()</td></tr>
+<tr class="separator:afe5a36c87ae5c6e9e0adcddfd5372637"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3ccf59f3c226b40774933432ce22a70"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3ccf59f3c226b40774933432ce22a70"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70">localObstacles</a> (const std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a> &gt; &amp;obs)</td></tr>
 <tr class="memdesc:ad3ccf59f3c226b40774933432ce22a70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an obstacle to the local set of obstacles for avoidance Cleared after every frame. <br/></td></tr>
@@ -284,9 +290,6 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 <tr class="memitem:abe87bdafe987c05819d221d4ac84252c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe87bdafe987c05819d221d4ac84252c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clearLocalObstacles</b> ()</td></tr>
 <tr class="separator:abe87bdafe987c05819d221d4ac84252c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe5a36c87ae5c6e9e0adcddfd5372637"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe5a36c87ae5c6e9e0adcddfd5372637"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resetAvoidRobotRadii</b> ()</td></tr>
-<tr class="separator:afe5a36c87ae5c6e9e0adcddfd5372637"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af154e4d8545df3fda5b8bab6215c04f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af154e4d8545df3fda5b8bab6215c04f0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>approachAllOpponents</b> (bool enable=true)</td></tr>
 <tr class="separator:af154e4d8545df3fda5b8bab6215c04f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -457,11 +460,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>visible</b></td></tr>
 <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vel</b></td></tr>
 <tr class="separator:a3a50a7bdeecfe79afd9bbe90bca59995 inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2369c296d2dfaf5a61147cadc215883a inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2369c296d2dfaf5a61147cadc215883a"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>angle</b></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a2369c296d2dfaf5a61147cadc215883a">angle</a></td></tr>
+<tr class="memdesc:a2369c296d2dfaf5a61147cadc215883a inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angle in radians. 0 radians means the robot is aimed along the x-axis <br/></td></tr>
 <tr class="separator:a2369c296d2dfaf5a61147cadc215883a inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a685c05ad27d5bcc6ac58130df4219e7e"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e">angleVel</a></td></tr>
-<tr class="memdesc:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angle in radians. 0 radians means the robot is aimed along the x-axis <br/></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>angleVel</b></td></tr>
 <tr class="separator:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7cb2b17a2866dca8a5b238ff9af2accc inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cb2b17a2866dca8a5b238ff9af2accc"></a>
 Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">time</a></td></tr>
@@ -504,18 +507,18 @@ Protected Attributes</h2></td></tr>
 <a class="el" href="class_system_state.html">SystemState</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_state</b></td></tr>
 <tr class="separator:a1a0db98c8a9a081f074390cdd609daff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb63e8e4286349325bd43978f0fe3ea5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb63e8e4286349325bd43978f0fe3ea5"></a>
-<a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_local_obstacles</b></td></tr>
+<a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#afb63e8e4286349325bd43978f0fe3ea5">_local_obstacles</a></td></tr>
+<tr class="memdesc:afb63e8e4286349325bd43978f0fe3ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">set of obstacles added by plays <br/></td></tr>
 <tr class="separator:afb63e8e4286349325bd43978f0fe3ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19192634cf02c79cbaf29b35d999a52d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a19192634cf02c79cbaf29b35d999a52d"></a>
 RobotMask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d">_self_avoid_mask</a></td></tr>
-<tr class="memdesc:a19192634cf02c79cbaf29b35d999a52d"><td class="mdescLeft">&#160;</td><td class="mdescRight">set of obstacles added by plays <br/></td></tr>
+<tr class="memdesc:a19192634cf02c79cbaf29b35d999a52d"><td class="mdescLeft">&#160;</td><td class="mdescRight">masks for obstacle avoidance <br/></td></tr>
 <tr class="separator:a19192634cf02c79cbaf29b35d999a52d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52e73bbe9a4e546a0103838e1a1da08e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52e73bbe9a4e546a0103838e1a1da08e"></a>
 RobotMask&#160;</td><td class="memItemRight" valign="bottom"><b>_opp_avoid_mask</b></td></tr>
 <tr class="separator:a52e73bbe9a4e546a0103838e1a1da08e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c4be933a623940fe86c44c3a3a3f5d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c4be933a623940fe86c44c3a3a3f5d4"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a3c4be933a623940fe86c44c3a3a3f5d4">_avoidBallRadius</a></td></tr>
-<tr class="memdesc:a3c4be933a623940fe86c44c3a3a3f5d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">masks for obstacle avoidance <br/></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>_avoidBallRadius</b></td></tr>
 <tr class="separator:a3c4be933a623940fe86c44c3a3a3f5d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9625c9712133ce97beaac4e5b7500637"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9625c9712133ce97beaac4e5b7500637"></a>
 <a class="el" href="class_planning_1_1_motion_command.html">Planning::MotionCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a9625c9712133ce97beaac4e5b7500637">_motionCommand</a></td></tr>
@@ -644,25 +647,6 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MotionControl</b></t
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>true if we are able to approach the given opponent </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a43a7c66bc61352d1d9fa3a6851e83d5d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool OurRobot::behindBall </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
-          <td class="paramname"><em>ballPos</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>converts a point to the frame of reference of robot </p>
-<p>returns true if the position specified is behind the robot </p>
 
 </div>
 </div>
@@ -1047,7 +1031,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:11 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

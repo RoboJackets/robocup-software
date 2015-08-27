@@ -1,6 +1,6 @@
 var class_our_robot =
 [
-    [ "RobotMask", "class_our_robot.html#ae1f911f5d763abd596a229e287dd3d62", null ],
+    [ "RobotMask", "class_our_robot.html#a1ee7ef35836f1b868ddfeb330c4cca03", null ],
     [ "OurRobot", "class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a", null ],
     [ "~OurRobot", "class_our_robot.html#a8ff6c7f8f05d24ba8f24efcb0ad247a3", null ],
     [ "addStatusText", "class_our_robot.html#a47574cba97a8970a1437e47e8657d032", null ],

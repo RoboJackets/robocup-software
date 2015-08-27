@@ -119,22 +119,21 @@ $(document).ready(function(){initNavTree('_ball_filter_8hpp_source.html','');});
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">// A BallFilter never needs to reset itself.  The BallTracker will</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment">// create a new one when a new ball is found.</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_ball_filter.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_ball_filter.html">BallFilter</a></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;{</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="class_ball_filter.html">BallFilter</a>();</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="comment">// Gives a new observation to the filter</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">void</span> update(<span class="keyword">const</span> <a class="code" href="class_ball_observation.html">BallObservation</a> *obs);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="comment">// Generates a prediction of the ball&#39;s state at a given time in the future</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordtype">void</span> predict(Time time, <a class="code" href="class_ball.html">Ball</a> *out, <span class="keywordtype">float</span> *velocityUncertainty);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="class_ball.html">Ball</a> _estimate;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;};</div>
-<div class="ttc" id="class_ball_observation_html"><div class="ttname"><a href="class_ball_observation.html">BallObservation</a></div><div class="ttdef"><b>Definition:</b> BallTracker.hpp:11</div></div>
-<div class="ttc" id="class_ball_html"><div class="ttname"><a href="class_ball.html">Ball</a></div><div class="ttdoc">Our beliefs about the ball&#39;s position and velocity. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:34</div></div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_ball_filter.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_ball_filter.html">BallFilter</a> {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="class_ball_filter.html">BallFilter</a>();</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="comment">// Gives a new observation to the filter</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> update(<span class="keyword">const</span> <a class="code" href="class_ball_observation.html">BallObservation</a>* obs);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="comment">// Generates a prediction of the ball&#39;s state at a given time in the future</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">void</span> predict(Time time, <a class="code" href="class_ball.html">Ball</a>* out, <span class="keywordtype">float</span>* velocityUncertainty);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_ball.html">Ball</a> _estimate;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;};</div>
+<div class="ttc" id="class_ball_observation_html"><div class="ttname"><a href="class_ball_observation.html">BallObservation</a></div><div class="ttdef"><b>Definition:</b> BallTracker.hpp:10</div></div>
+<div class="ttc" id="class_ball_html"><div class="ttname"><a href="class_ball.html">Ball</a></div><div class="ttdoc">Our beliefs about the ball&#39;s position and velocity. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:32</div></div>
 <div class="ttc" id="class_ball_filter_html"><div class="ttname"><a href="class_ball_filter.html">BallFilter</a></div><div class="ttdef"><b>Definition:</b> BallFilter.hpp:12</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -142,7 +141,7 @@ $(document).ready(function(){initNavTree('_ball_filter_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><a class="el" href="dir_cbd8e190a8e460b48e48ebd2bd706a27.html">modeling</a></li><li class="navelem"><b>BallFilter.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:10 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

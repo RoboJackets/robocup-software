@@ -1,9 +1,11 @@
 var searchData=
 [
+  ['calculatefieldobstacles',['calculateFieldObstacles',['../class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d',1,'Gameplay::GameplayModule']]],
   ['capture',['Capture',['../classgameplay_1_1skills_1_1capture_1_1_capture.html',1,'gameplay::skills::capture']]],
   ['category',['Category',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html',1,'gameplay::play_registry::PlayRegistry']]],
   ['centermatrix',['centerMatrix',['../group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02',1,'Gameplay::GameplayModule']]],
   ['centerradius',['CenterRadius',['../struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238',1,'Field_Dimensions']]],
+  ['charged',['charged',['../class_our_robot.html#a141c819500dd3fad0054ddc8a9aff964',1,'OurRobot']]],
   ['check_5ffailure',['check_failure',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a6056f4d008f2b7ade420124dbc716127',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['chill',['chill',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#aee00ec00f07e8671c4f88ef22802cb0f',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
   ['chip',['chip',['../class_our_robot.html#a5db88cfc6b189c39fa00f192bdb8a2e6',1,'OurRobot']]],

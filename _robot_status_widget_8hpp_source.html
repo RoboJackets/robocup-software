@@ -114,71 +114,66 @@ $(document).ready(function(){initNavTree('_robot_status_widget_8hpp_source.html'
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QtWidgets&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_robot_status_widget.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_robot_status_widget.html">RobotStatusWidget</a> : <span class="keyword">public</span> QWidget {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="class_robot_status_widget.html">RobotStatusWidget</a>(QWidget *parent = <span class="keyword">nullptr</span>, Qt::WindowFlags f = <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">int</span> shellID() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">void</span> setShellID(<span class="keywordtype">int</span> shellID);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">void</span> setBlueTeam(<span class="keywordtype">bool</span> blueTeam);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keywordtype">bool</span> blueTeam() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b">setErrorText</a>(<span class="keyword">const</span> QString &amp;error);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">const</span> QString &amp;<a class="code" href="class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5">boardID</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">void</span> setBoardID(<span class="keyword">const</span> QString &amp;boardID);</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">void</span> setWheelFault(<span class="keywordtype">int</span> wheelIndex, <span class="keywordtype">bool</span> faulty = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> setBallSenseFault(<span class="keywordtype">bool</span> faulty = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> setHasBall(<span class="keywordtype">bool</span> hasBall = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">const</span> QString &amp;<a class="code" href="class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9">baseID</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> setBaseID(<span class="keyword">const</span> QString &amp;baseID);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    QString <a class="code" href="class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481">robotModel</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> setRobotModel(<span class="keyword">const</span> QString &amp;robotModel);</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="class_robot_status_widget.html">RobotStatusWidget</a>(QWidget* parent = <span class="keyword">nullptr</span>, Qt::WindowFlags f = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">int</span> shellID() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> setShellID(<span class="keywordtype">int</span> shellID);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">void</span> setBlueTeam(<span class="keywordtype">bool</span> blueTeam);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">bool</span> blueTeam() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b">setErrorText</a>(<span class="keyword">const</span> QString&amp; error);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">const</span> QString&amp; <a class="code" href="class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5">boardID</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">void</span> setBoardID(<span class="keyword">const</span> QString&amp; boardID);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">void</span> setWheelFault(<span class="keywordtype">int</span> wheelIndex, <span class="keywordtype">bool</span> faulty = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">void</span> setBallSenseFault(<span class="keywordtype">bool</span> faulty = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">void</span> setHasBall(<span class="keywordtype">bool</span> hasBall = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">const</span> QString&amp; <a class="code" href="class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9">baseID</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> setBaseID(<span class="keyword">const</span> QString&amp; baseID);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    QString <a class="code" href="class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481">robotModel</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> setRobotModel(<span class="keyword">const</span> QString&amp; robotModel);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">bool</span> hasRadio() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> setHasRadio(<span class="keywordtype">bool</span> hasRadio);</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">bool</span> hasRadio() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> setHasRadio(<span class="keywordtype">bool</span> hasRadio);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">bool</span> hasVision() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">void</span> setHasVision(<span class="keywordtype">bool</span> hasVision);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">bool</span> hasVision() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> setHasVision(<span class="keywordtype">bool</span> hasVision);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">float</span> batteryLevel() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> setBatteryLevel(<span class="keywordtype">float</span> batteryLevel);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">float</span> batteryLevel() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> setBatteryLevel(<span class="keywordtype">float</span> batteryLevel);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98">setShowstopper</a>(<span class="keywordtype">bool</span> showstopper = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98">setShowstopper</a>(<span class="keywordtype">bool</span> showstopper = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    Ui_RobotStatusWidget _ui;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    Ui_RobotStatusWidget _ui;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">int</span> _shellID;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> _blueTeam;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> _hasRadio;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> _hasVision;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">float</span> _batteryLevel;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">bool</span> _showstopper;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    QString _boardID;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;};</div>
-<div class="ttc" id="class_robot_status_widget_html_aee0341c324eaeca5015992e346f61481"><div class="ttname"><a href="class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481">RobotStatusWidget::robotModel</a></div><div class="ttdeci">QString robotModel() const </div><div class="ttdoc">A string describing the robot model (i.e. </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:69</div></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">int</span> _shellID;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">bool</span> _blueTeam;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">bool</span> _hasRadio;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">bool</span> _hasVision;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">float</span> _batteryLevel;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">bool</span> _showstopper;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    QString _boardID;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;};</div>
+<div class="ttc" id="class_robot_status_widget_html_aee0341c324eaeca5015992e346f61481"><div class="ttname"><a href="class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481">RobotStatusWidget::robotModel</a></div><div class="ttdeci">QString robotModel() const </div><div class="ttdoc">A string describing the robot model (i.e. </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:63</div></div>
 <div class="ttc" id="class_robot_status_widget_html_ad0a87138083bc4eabbbcf7da73e027f9"><div class="ttname"><a href="class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9">RobotStatusWidget::baseID</a></div><div class="ttdeci">const QString &amp; baseID() const </div><div class="ttdoc">ID of mechanical base (4 hex digits) </div></div>
 <div class="ttc" id="class_robot_status_widget_html"><div class="ttname"><a href="class_robot_status_widget.html">RobotStatusWidget</a></div><div class="ttdoc">Shows the status of a single robot. </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.hpp:12</div></div>
-<div class="ttc" id="class_robot_status_widget_html_a40aeb74a207e2b6c00845fcedb00aa98"><div class="ttname"><a href="class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98">RobotStatusWidget::setShowstopper</a></div><div class="ttdeci">void setShowstopper(bool showstopper=true)</div><div class="ttdoc">Set to true to present this robot as being in critical status and in need of removing from the field...</div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:125</div></div>
-<div class="ttc" id="class_robot_status_widget_html_aa6ade8ef47dbc0a4f95536d6243eb8e5"><div class="ttname"><a href="class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5">RobotStatusWidget::boardID</a></div><div class="ttdeci">const QString &amp; boardID() const </div><div class="ttdoc">ID of control board (4 hex digits) </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:58</div></div>
-<div class="ttc" id="class_robot_status_widget_html_a407333ebcd9a92b112db48fcc42a0b0b"><div class="ttname"><a href="class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b">RobotStatusWidget::setErrorText</a></div><div class="ttdeci">void setErrorText(const QString &amp;error)</div><div class="ttdoc">This error text is displayed in a text box. </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:45</div></div>
+<div class="ttc" id="class_robot_status_widget_html_a40aeb74a207e2b6c00845fcedb00aa98"><div class="ttname"><a href="class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98">RobotStatusWidget::setShowstopper</a></div><div class="ttdeci">void setShowstopper(bool showstopper=true)</div><div class="ttdoc">Set to true to present this robot as being in critical status and in need of removing from the field...</div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:114</div></div>
+<div class="ttc" id="class_robot_status_widget_html_aa6ade8ef47dbc0a4f95536d6243eb8e5"><div class="ttname"><a href="class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5">RobotStatusWidget::boardID</a></div><div class="ttdeci">const QString &amp; boardID() const </div><div class="ttdoc">ID of control board (4 hex digits) </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:54</div></div>
+<div class="ttc" id="class_robot_status_widget_html_a407333ebcd9a92b112db48fcc42a0b0b"><div class="ttname"><a href="class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b">RobotStatusWidget::setErrorText</a></div><div class="ttdeci">void setErrorText(const QString &amp;error)</div><div class="ttdoc">This error text is displayed in a text box. </div><div class="ttdef"><b>Definition:</b> RobotStatusWidget.cpp:43</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>RobotStatusWidget.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:11 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

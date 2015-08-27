@@ -150,7 +150,6 @@ var NAVTREEINDEX2 =
 "class_new_referee_module.html":[11,0,42],
 "class_new_referee_module.html#a07cb0d959a2987bd652bddb09756e3ef":[11,0,42,4],
 "class_new_referee_module.html#a147c72a78e4843f8279cd95ba6ab9294":[11,0,42,3],
-"class_new_referee_module.html#a15ab09c31a75f36319904b3b71a49799":[11,0,42,15],
 "class_new_referee_module.html#a168a3f0fa18abaae6dcfe30617dfe483":[11,0,42,12],
 "class_new_referee_module.html#a177330156f66b188b204c6425291a320":[11,0,42,27],
 "class_new_referee_module.html#a2b0512a3ad19139e9665906ee3eccf09":[11,0,42,26],
@@ -164,6 +163,7 @@ var NAVTREEINDEX2 =
 "class_new_referee_module.html#a772247a544bbdcc8f0d1d38f9707a7df":[11,0,42,19],
 "class_new_referee_module.html#a801cd6435d850cc547a6ccfea07c4d85":[11,0,42,1],
 "class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45":[11,0,42,7],
+"class_new_referee_module.html#a8600ce600c3ef9e26a1552bfaccb5cf9":[11,0,42,15],
 "class_new_referee_module.html#a8f339df7555d0542e5fb70f759764036":[11,0,42,18],
 "class_new_referee_module.html#a9bfd7d12aa4d501e8528059c78ee9979":[11,0,42,10],
 "class_new_referee_module.html#aa0705d0cfdead64cc49960d30d1c4e33":[11,0,42,28],
@@ -210,6 +210,7 @@ var NAVTREEINDEX2 =
 "class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff":[11,0,45,101],
 "class_our_robot.html#a1b366ab867c9976e5915872d059e991f":[11,0,45,52],
 "class_our_robot.html#a1d04e4b5569a9ff3ee1dca09bd73c38d":[11,0,45,67],
+"class_our_robot.html#a1ee7ef35836f1b868ddfeb330c4cca03":[11,0,45,0],
 "class_our_robot.html#a2390d341b0b1b87fc432e6123048560c":[11,0,45,23],
 "class_our_robot.html#a24e0845fafeab64fec2c9c38d683ceaa":[11,0,45,55],
 "class_our_robot.html#a2b854b5bc7a008d8fff97ca26ea6d3a4":[11,0,45,44],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "class_our_robot.html#a81f77c196c0b958f29e24b61529d6873":[11,0,45,13],
 "class_our_robot.html#a835a2100f3ee6e68e0bf88d4704479ec":[11,0,45,68],
 "class_our_robot.html#a8bd167a6569b54a911720c7136920580":[11,0,45,14],
-"class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43":[11,0,45,49],
-"class_our_robot.html#a8ff6c7f8f05d24ba8f24efcb0ad247a3":[11,0,45,2]
+"class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43":[11,0,45,49]
 };

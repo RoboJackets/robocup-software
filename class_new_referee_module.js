@@ -21,7 +21,7 @@ var class_new_referee_module =
     [ "_kickDetectState", "class_new_referee_module.html#a168a3f0fa18abaae6dcfe30617dfe483", null ],
     [ "_kickTime", "class_new_referee_module.html#a4d123a4dc8eca2e62c6452f90b333c49", null ],
     [ "_mutex", "class_new_referee_module.html#a5f247f02ee65e50e0bdd9ded8764efce", null ],
-    [ "_packets", "class_new_referee_module.html#a15ab09c31a75f36319904b3b71a49799", null ],
+    [ "_packets", "class_new_referee_module.html#a8600ce600c3ef9e26a1552bfaccb5cf9", null ],
     [ "_readyBallPos", "class_new_referee_module.html#af1b58a8145d850b7634aec7fdbd8d50f", null ],
     [ "_running", "class_new_referee_module.html#acf78225e9998043f0be3d39363fc80ec", null ],
     [ "_state", "class_new_referee_module.html#a8f339df7555d0542e5fb70f759764036", null ],

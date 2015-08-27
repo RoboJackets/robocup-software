@@ -157,15 +157,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>goalieID</b> ()</td></
 <a class="el" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">oppMatrix</a> () const </td></tr>
 <tr class="memdesc:gaec847a2ad959fb0b02024a75c16a2c93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opponent's coordinates. <br/></td></tr>
 <tr class="separator:gaec847a2ad959fb0b02024a75c16a2c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f607fcb4fdd5fe68830769cbeb0350b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f607fcb4fdd5fe68830769cbeb0350b"></a>
-const std::set&lt; <a class="el" href="class_our_robot.html">OurRobot</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">playRobots</a> () const </td></tr>
-<tr class="memdesc:a5f607fcb4fdd5fe68830769cbeb0350b"><td class="mdescLeft">&#160;</td><td class="mdescRight">All robots on our team that are usable by plays. <br/></td></tr>
-<tr class="separator:a5f607fcb4fdd5fe68830769cbeb0350b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e9e7aaca1329a5f986a34a582b151f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e9e7aaca1329a5f986a34a582b151f6"></a>
+const std::set&lt; <a class="el" href="class_our_robot.html">OurRobot</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#a8e9e7aaca1329a5f986a34a582b151f6">playRobots</a> () const </td></tr>
+<tr class="memdesc:a8e9e7aaca1329a5f986a34a582b151f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">All robots on our team that are usable by plays. <br/></td></tr>
+<tr class="separator:a8e9e7aaca1329a5f986a34a582b151f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33399a813ba047378703a512451330c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33399a813ba047378703a512451330c9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>sendFieldDimensionsToPython</b> ()</td></tr>
 <tr class="separator:a33399a813ba047378703a512451330c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab76f2717e7ed13a7c738c081bf70be3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab76f2717e7ed13a7c738c081bf70be3d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>calculateFieldObstacles</b> ()</td></tr>
+<tr class="memitem:ab76f2717e7ed13a7c738c081bf70be3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d">calculateFieldObstacles</a> ()</td></tr>
 <tr class="separator:ab76f2717e7ed13a7c738c081bf70be3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
@@ -182,6 +181,22 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div class="textblock"><p>Coordinator of high-level logic. </p>
 <p>The gameplay module has an embedded python interpreter and serves as the bridge between our python and c++ code. The python side of things is responsible for high-level gameplay. At each iteration of the main run loop, the <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> calls into python, which does all of the high-level planning, resulting in updated motion targets, etc for the robots. The <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> then executes path planning for each <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ab76f2717e7ed13a7c738c081bf70be3d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Gameplay::GameplayModule::calculateFieldObstacles </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line. </p>
+
+</div>
+</div>
 <a class="anchor" id="aceed4fb50804b681031f6fbc25221c1c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -283,7 +298,7 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_gameplay.html">Gameplay</a></li><li class="navelem"><a class="el" href="class_gameplay_1_1_gameplay_module.html">GameplayModule</a></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:11 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

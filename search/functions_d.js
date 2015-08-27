@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['name',['name',['../class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558',1,'AutoName']]],
-  ['nearest',['nearest',['../class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c',1,'Planning::Tree']]],
-  ['nearestpoint',['nearestPoint',['../class_geometry2d_1_1_line.html#a8719bc0e5b5008309c8cea92c09e22ba',1,'Geometry2d::Line::nearestPoint()'],['../class_geometry2d_1_1_segment.html#aff3b54739f001cba6fc3d6f2dbe11085',1,'Geometry2d::Segment::nearestPoint()']]],
-  ['nearestsegment',['nearestSegment',['../class_planning_1_1_interpolated_path.html#a7be18b8afc1a230ead23bdaebafc3680',1,'Planning::InterpolatedPath']]],
-  ['nearpoint',['nearPoint',['../class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb',1,'Geometry2d::Point']]],
-  ['normalized',['normalized',['../class_geometry2d_1_1_point.html#a551abe4264e33b2de66890982ef508e6',1,'Geometry2d::Point']]]
+  ['mag',['mag',['../class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71',1,'Geometry2d::Point']]],
+  ['magsq',['magsq',['../class_geometry2d_1_1_point.html#aaafa7c842d0f79280fbf1b03bcae411f',1,'Geometry2d::Point']]],
+  ['makepath',['makePath',['../class_planning_1_1_r_r_t_planner.html#ac51cc04cd64cb3155c473763aef1217d',1,'Planning::RRTPlanner']]],
+  ['maxiterations',['maxIterations',['../class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c',1,'Planning::RRTPlanner::maxIterations() const '],['../class_planning_1_1_r_r_t_planner.html#ab45eeb7da9dbe6cb822e01748cad5867',1,'Planning::RRTPlanner::maxIterations(int value)']]],
+  ['move',['move',['../class_our_robot.html#a45f544356d189269ff8059d29c2e0948',1,'OurRobot']]],
+  ['move_5ftarget',['move_target',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#adb17ca8de0337084f237f95450ab8c1a',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
+  ['movedirect',['moveDirect',['../class_our_robot.html#ad6f4beda00f00e8fad82ae514bdbae26',1,'OurRobot']]]
 ];

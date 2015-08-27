@@ -17,7 +17,7 @@ var class_system_state =
     [ "ball", "class_system_state.html#ab6177237598711857c66eb4a92cd8eb8", null ],
     [ "gameState", "class_system_state.html#a1babf5bd12c00f8fd35eb0cdf4ee1240", null ],
     [ "logFrame", "class_system_state.html#af1d2d245231e05f0f057b275ed4a7318", null ],
-    [ "opp", "class_system_state.html#a90451c957783fbf245a83948edf594a5", null ],
-    [ "self", "class_system_state.html#a20bda3ff4b40b5b8fe5a9e9a4dfdd40a", null ],
+    [ "opp", "class_system_state.html#a46676fe7ecb35869b780db5b464ac901", null ],
+    [ "self", "class_system_state.html#a34cadeb82436b321dea1144d12191759", null ],
     [ "timestamp", "class_system_state.html#ab06c155b28573b21199784b2a489bf06", null ]
 ];

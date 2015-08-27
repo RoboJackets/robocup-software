@@ -113,36 +113,33 @@ $(document).ready(function(){initNavTree('_auto_name_8hpp_source.html','');});
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;Utils.hpp&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;typeinfo&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="class_auto_name.html">    7</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_auto_name.html">AutoName</a></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <span class="keyword">virtual</span> ~<a class="code" href="class_auto_name.html">AutoName</a>()</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        }</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558">   16</a></span>&#160;        <span class="keyword">const</span> QString &amp;<a class="code" href="class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558">name</a>()</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            <span class="comment">// We get the name automatically from type_info, but the object doesn&#39;t have the proper type when the constructor is called</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            <span class="comment">// because the subclass&#39; vtable isn&#39;t in place.  Thus we have to find the name lazily.</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <span class="keywordflow">if</span> (_name.isNull())</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                _name = className(<span class="keyword">typeid</span>(*<span class="keyword">this</span>));</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            }</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;            </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            <span class="keywordflow">return</span> _name;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        }</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        QString _name;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;};</div>
-<div class="ttc" id="class_auto_name_html_a60e0e24b7dc109403cb343b83e8a6558"><div class="ttname"><a href="class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558">AutoName::name</a></div><div class="ttdeci">const QString &amp; name()</div><div class="ttdoc">gets the name of the class </div><div class="ttdef"><b>Definition:</b> AutoName.hpp:16</div></div>
-<div class="ttc" id="class_auto_name_html"><div class="ttname"><a href="class_auto_name.html">AutoName</a></div><div class="ttdoc">Inherit from this class to get a name() function that will return the name of the class...</div><div class="ttdef"><b>Definition:</b> AutoName.hpp:7</div></div>
+<div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="class_auto_name.html">    8</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_auto_name.html">AutoName</a> {</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="class_auto_name.html">AutoName</a>() {}</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558">   14</a></span>&#160;    <span class="keyword">const</span> QString&amp; <a class="code" href="class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558">name</a>() {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment">// We get the name automatically from type_info, but the object doesn&#39;t</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="comment">// have the proper type when the constructor is called</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="comment">// because the subclass&#39; vtable isn&#39;t in place.  Thus we have to find</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="comment">// the name lazily.</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordflow">if</span> (_name.isNull()) {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            _name = className(<span class="keyword">typeid</span>(*<span class="keyword">this</span>));</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        }</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordflow">return</span> _name;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    }</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    QString _name;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
+<div class="ttc" id="class_auto_name_html_a60e0e24b7dc109403cb343b83e8a6558"><div class="ttname"><a href="class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558">AutoName::name</a></div><div class="ttdeci">const QString &amp; name()</div><div class="ttdoc">gets the name of the class </div><div class="ttdef"><b>Definition:</b> AutoName.hpp:14</div></div>
+<div class="ttc" id="class_auto_name_html"><div class="ttname"><a href="class_auto_name.html">AutoName</a></div><div class="ttdoc">Inherit from this class to get a name() function that will return the name of the class...</div><div class="ttdef"><b>Definition:</b> AutoName.hpp:8</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><b>AutoName.hpp</b></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:10 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

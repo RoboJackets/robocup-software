@@ -134,7 +134,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:ab45eeb7da9dbe6cb822e01748cad5867"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the maximum number of iterations for th RRT algorithm <br/></td></tr>
 <tr class="separator:ab45eeb7da9dbe6cb822e01748cad5867"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0bde0971be415a64fe3a65c1db67dca"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#ae0bde0971be415a64fe3a65c1db67dca">run</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> startInstant, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> motionCommand, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *obstacles) override</td></tr>
-<tr class="memdesc:ae0bde0971be415a64fe3a65c1db67dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">run the path ROTplanner this will always populate path to be the path we need to travel  <a href="#ae0bde0971be415a64fe3a65c1db67dca">More...</a><br/></td></tr>
+<tr class="memdesc:ae0bde0971be415a64fe3a65c1db67dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">run the path RRTplanner this will always populate path to be the path we need to travel  <a href="#ae0bde0971be415a64fe3a65c1db67dca">More...</a><br/></td></tr>
 <tr class="separator:ae0bde0971be415a64fe3a65c1db67dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
@@ -286,9 +286,8 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 </table>
 </div><div class="memdoc">
 
-<p>run the path ROTplanner this will always populate path to be the path we need to travel </p>
+<p>run the path RRTplanner this will always populate path to be the path we need to travel </p>
 <p>Locate a non blocked goal point</p>
-<p>see if the new goal is better than old one must be at least a robot radius better else the move isn't worth it</p>
 <p>simple case of direct shot</p>
 <p>run global position best path search </p>
 
@@ -306,7 +305,7 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_r_r_t_planner.html">RRTPlanner</a></li>
-    <li class="footer">Generated on Wed Aug 26 2015 17:45:12 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Aug 27 2015 19:48:30 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

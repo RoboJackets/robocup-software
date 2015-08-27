@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"class_our_robot.html#a8ff6c7f8f05d24ba8f24efcb0ad247a3":[11,0,45,2],
 "class_our_robot.html#a920664e44a3de52a4144f95b41d0287c":[11,0,45,89],
 "class_our_robot.html#a926c6f96c07a42c24c090acf686eec9e":[11,0,45,58],
 "class_our_robot.html#a93dbfda2cb5b00e16853ac117b0e5e49":[11,0,45,39],
@@ -31,7 +32,6 @@ var NAVTREEINDEX3 =
 "class_our_robot.html#adac5bd2605e976a6fe96ca786947908b":[11,0,45,97],
 "class_our_robot.html#adc03cb404cd381aa1c49c655f7b6f7ac":[11,0,45,18],
 "class_our_robot.html#ae118950fcd306d5d1ed139cf1e8390e5":[11,0,45,20],
-"class_our_robot.html#ae1f911f5d763abd596a229e287dd3d62":[11,0,45,0],
 "class_our_robot.html#ae659b832401f12a187df08165301e847":[11,0,45,34],
 "class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063":[11,0,45,83],
 "class_our_robot.html#ae9ecae79abff8d58ae81d01f3a31f3c0":[11,0,45,16],

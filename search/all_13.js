@@ -5,7 +5,7 @@ var searchData=
   ['saveplaybook',['savePlaybook',['../class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96',1,'Gameplay::GameplayModule']]],
   ['score',['score',['../classgameplay_1_1play_1_1_play.html#a3a7c13e330fea8e8d01c6f6692b5388b',1,'gameplay::play::Play']]],
   ['segment',['Segment',['../class_geometry2d_1_1_segment.html',1,'Geometry2d']]],
-  ['self',['self',['../class_system_state.html#a20bda3ff4b40b5b8fe5a9e9a4dfdd40a',1,'SystemState::self()'],['../class_robot.html#a54366c96e4367b00216f42ae0405c552',1,'Robot::self()']]],
+  ['self',['self',['../class_system_state.html#a34cadeb82436b321dea1144d12191759',1,'SystemState::self()'],['../class_robot.html#a54366c96e4367b00216f42ae0405c552',1,'Robot::self()']]],
   ['setcoeffs',['setCoeffs',['../class_f_i_r_filter.html#ac3ce994b4706cbe70027320275e5f4dc',1,'FIRFilter']]],
   ['seterrortext',['setErrorText',['../class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b',1,'RobotStatusWidget']]],
   ['setpath',['setPath',['../class_our_robot.html#a7b0e5ed5c25cf218ebdbc4966c7ed720',1,'OurRobot']]],
