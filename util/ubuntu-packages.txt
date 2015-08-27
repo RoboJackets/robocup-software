@@ -33,10 +33,10 @@ libbullet-dev
 
 # C/C++ compiler
 # tends to be faster and have more helpful error messages than gcc
-clang-3.5
+clang-3.6
 
 # C/C++ (and more) code-formatting tool
-clang-format-3.5
+clang-format-3.6
 
 # contains a ton of great C++ libraries
 libboost-all-dev
