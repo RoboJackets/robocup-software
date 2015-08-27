@@ -149,7 +149,7 @@ int main(void)
 	Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
 
 	// Start the thread task for the serial console
-	// Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
+	Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
 
 	// Attach an interrupt callback for setting the buttons/switches states into the firmware anytime one of them changes
 	InterruptIn configInputs(RJ_IOEXP_INT);
@@ -258,9 +258,9 @@ int main(void)
 	   );
 	*/
 
-DigitalOut ledThree(LED3, 1);
+	DigitalOut ledThree(LED3, 1);
 
-	while ( !(LPC_UART0->LSR & (1 << 6)) ) { /* Wait until the startup logs are completely sent over the serial line */ }
+	// while ( !(LPC_UART0->LSR & (1 << 6)) ) { /* Wait until the startup logs are completely sent over the serial line */ }
 
 	// This is where we let the console task know we're finished with all startup serial logs
 	// console_task.signal_set(CONSOLE_TASK_START_SIGNAL);
