@@ -490,7 +490,7 @@ bool GL_DialogDynamicsWorld::mouseFunc(int button, int state, int x, int y) {
                                             btSliderConstraint*
                                                 sliderConstraint =
                                                     (btSliderConstraint*)
-                                                constraint;
+                                                        constraint;
                                             sliderConstraint->setLowerLinLimit(
                                                 slider->getLowerLimit());
                                             sliderConstraint->setUpperLinLimit(

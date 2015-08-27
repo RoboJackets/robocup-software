@@ -190,12 +190,12 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         fill_shot_success(w, origin);
     }
 
-    boost::optional<Window> best{!windows.empty(),
-                                 *max_element(windows.begin(), windows.end(),
-                                              [](Window& a, Window& b) -> bool {
-                                     return a.segment.delta().magsq() <
-                                            b.segment.delta().magsq();
-                                 })};
+    boost::optional<Window> best{
+        !windows.empty(), *max_element(windows.begin(), windows.end(),
+                                       [](Window& a, Window& b) -> bool {
+                                           return a.segment.delta().magsq() <
+                                                  b.segment.delta().magsq();
+                                       })};
     if (debug) {
         if (best) {
             system->drawLine(Line{origin, best->segment.center()},
