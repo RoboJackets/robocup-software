@@ -71,28 +71,7 @@ echo -e "Devices path is $MBED_DEVICES_PATH"
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 
 # Create a path where we can write to arbitruary mbed(s)
-MNT_PATH="/mnt/script/MBED"
-
-# This will trigger anytime a file is closed at the mouting point
-# The process exits at the first event trigger. Times out after 10s
-sudo mkdir -p $MNT_PATH
-
-for ((i=0;i<${#MBED_DEVICES_PATH[@]};++i)); do
-
-    sudo inotifywait -q -r -t 6 -e close_write "$MNT_PATH" 2>&1 | while read f; do
-        echo "${WHITE}${GREENBG}File write success for file ${f}!${FINLN}${R}"
-        echo "${WHITE}${YELLOWBG}Unmount succes!${FINLN}${R}"
-
-        # send break signal to all mbeds
-        sudo python3 -c "import serial; serial.Serial(\"${MBED_SERIAL_PATH[i]}\").sendBreak()"
-        #sudo rmdir $MNT_PATH
-
-        #echo "${WHITE}${YELLOWBG}Starting screen session.${R}"
-        # screen -d -m -S mysession
-        # screen -L -S mysession split -v -p 0 -X stuff mbed
-    done &
-
-done
+MNT_PATH=/mnt/script/MBED
 
 # this causes the script to fail if any command below fails
 set -e
@@ -100,12 +79,14 @@ set -e
 # use newlines as delimiters in the forloop, rather than all whitespace
 IFS=$'\n'
 
+sudo mkdir -p $MNT_PATH
+
 # loop through all mbed devices, mount them, copy over the bin file, and unmount them
 for i in $MBED_DEVICES_PATH; do
     echo "Installing on $i"
+
     sudo mount $i $MNT_PATH
-    sudo rmdir $MNT_PATH
-    sudo cp $1 $MNT_PATH
+    sudo cp $1 $MNT_PATH/
 
     if [ "$SHA2" != "$(sha256sum /mnt/script/MBED/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')" ]; then
         STYLE=1
@@ -134,9 +115,49 @@ for i in $MBED_DEVICES_PATH; do
         printf "%*s\n" $(((${#msg}+$(tput cols))/2)) "$msg"     # center align the message
         printf "$PUTLN \n $PUTLN$R\n"
     fi
-    
-done &
 
-wait
+    
+    # echo "$(fuser -m $MNT_PATH)"
+done &&
+
+sudo rm -rf $MNT_PATH
+
+sleep 5
+
+# Reset the mbed(s)
+for i in $MBED_SERIAL_PATH; do
+    echo Attempting reboot on $i ...
+    # clear buffer, send reboot, enter
+
+    # Wait until no PIDs are using the path
+    while [ -n "$(fuser -m $MNT_PATH)" ]; do
+        echo "$(fuser -m $i)"
+        sleep 0.2
+    done
+
+    # reboots the mbed through pyOCD (using the interface mcu)
+    pyocd-tool reset
+
+    # send break signal to all mbeds
+    # sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
+done &&
+
+
+# Always remove the created path - even on a failure
+if [ -e "$MNT_PATH" ]; then
+    echo "directory still exists"
+
+    # Wait until the mbed is not being used
+    while [ -n "$(fuser -m $MNT_PATH)" ]; do
+        echo "ping"
+        sleep 1
+    done
+
+    if sudo rmdir $MNT_PATH; then
+        echo "Directory force removed"
+    else
+        echo "Unable to remove directory"
+    fi
+fi
 
 # tput rmcup
