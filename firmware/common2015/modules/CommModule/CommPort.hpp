@@ -14,10 +14,10 @@ class CommPort
     // Constructor
     CommPort()
         : is_open(false),
-          rx_callback(nullptr),
-          tx_callback(nullptr),
           rx_packets(0),
-          tx_packets(0)
+          tx_packets(0),
+          rx_callback(nullptr),
+          tx_callback(nullptr)
     {
         Nbr(0);
         resetPacketCount();
@@ -35,10 +35,10 @@ class CommPort
     // Copy constructor
     CommPort(const CommPort<T>& p)
         : is_open(p.is_open),
-          rx_callback(p.rx_callback),
-          tx_callback(p.tx_callback),
           rx_packets(p.rx_packets),
-          tx_packets(p.tx_packets)
+          tx_packets(p.tx_packets),
+          rx_callback(p.rx_callback),
+          tx_callback(p.tx_callback)
     {
         Nbr(p.Nbr());
     };
@@ -90,7 +90,7 @@ class CommPort
             return false;
         }
     }
-    
+
     void Close(void)
     {
         is_open = false;

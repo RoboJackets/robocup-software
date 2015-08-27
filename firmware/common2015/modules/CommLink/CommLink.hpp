@@ -10,7 +10,7 @@
 #include "CommModule.hpp"
 
 
-#define COMM_LINK_RX_QUEUE_SIZE         5
+#define COMM_LINK_RX_QUEUE_SIZE         3
 #define COMM_LINK_SIGNAL_START_THREAD   0x01
 #define COMM_LINK_SIGNAL_RX_TRIGGER     0x02
 #define COMM_LINK_BUFFER_SIZE           64

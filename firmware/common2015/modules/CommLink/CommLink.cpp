@@ -87,22 +87,21 @@ void CommLink::rxThread(void const* arg)
     CommLink* inst = (CommLink*)arg;
 
     // Store our priority so we know what to reset it to if ever needed
-    // osPriority threadPriority;
+    osPriority threadPriority;
 
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
-    /*
-        if (inst->_rxID != nullptr)
-            threadPriority  = osThreadGetPriority(inst->_rxID);
-        else
-            threadPriority = osPriorityIdle;
-            */
+    if (inst->_rxID != nullptr)
+        threadPriority  = osThreadGetPriority(inst->_rxID);
+    else
+        threadPriority = osPriorityIdle;
 
-    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u", inst->_rxID);
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
 
     while ( true ) {
-        Thread::wait(1500);
+        osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
+        osDelay(1000);
     }
 
     // Set the function to call on an interrupt trigger

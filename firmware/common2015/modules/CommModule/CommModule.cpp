@@ -46,8 +46,8 @@ void CommModule::Init(void)
 
     // [X] - 1.3 - Create the TX & RX threads - pass them a pointer to the created object.
     // =================
-    _txID = osThreadCreate(&(instance->_txDef), NULL);
-    _rxID = osThreadCreate(&(instance->_rxDef), NULL);
+    _txID = osThreadCreate(&(instance->_txDef), nullptr);
+    _rxID = osThreadCreate(&(instance->_rxDef), nullptr);
 }
 
 

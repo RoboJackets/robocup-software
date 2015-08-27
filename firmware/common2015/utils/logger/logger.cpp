@@ -3,7 +3,8 @@
 #include <cstdarg>
 #include <algorithm>
 
-#include "mbed.h"
+#include <mbed.h>
+#include <rtos.h>
 
 
 const char* LOG_LEVEL_STRING[] = { FOREACH_LEVEL(GENERATE_STRING) };
@@ -26,6 +27,9 @@ volatile bool isLogging;// = RJ_LOGGING_EN;
 volatile uint8_t rjLogLevel;
 
 
+Mutex log_mutex;
+
+
 /**
  * [log The system-wide logging interface function. All log messages go through this.]
  * @param logLevel [The "importance level" of the called log message.]
@@ -35,6 +39,7 @@ volatile uint8_t rjLogLevel;
 void log(uint8_t logLevel, const char* source, const char* func, const char* format, ...)
 {
     if (isLogging && logLevel <= rjLogLevel) {
+        log_mutex.lock();
 
         va_list args;
         char time_buf[25];
@@ -51,6 +56,7 @@ void log(uint8_t logLevel, const char* source, const char* func, const char* for
         fflush(stdout);
 
         va_end(args);
+        log_mutex.unlock();
     }
 }
 
