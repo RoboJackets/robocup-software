@@ -36,8 +36,8 @@ void CommModule::Init(void)
 
     // [X] - 1.1 - Create the data queues.
     // =================
-    instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), NULL);
-    instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), NULL);
+    instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
+    instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), nullptr);
 
     // [X] - 1.2 - Define the TX & RX task threads.
     // =================
@@ -133,6 +133,7 @@ void CommModule::rxThread(void const* arg)
 
             // Bump up the thread's priority
             // if (osThreadSetPriority(_rxID, osPriorityRealtime) == osOK) {
+            
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen() ) {
 
@@ -162,8 +163,7 @@ void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 
         _tmpPort.RXCallback() = std::bind(ptr, std::placeholders::_1);
 
-        _ports += _tmpPort;            // get a pointer to where the data is stored
-
+        _ports += _tmpPort;
 
     } else {
 
@@ -194,7 +194,9 @@ void CommModule::TxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 bool CommModule::openSocket(uint8_t portNbr)
 {
     if ( !_ports[portNbr].Exists() ) {
+
         CommPort_t _tmpPort(portNbr);
+
         _ports += _tmpPort;
 
         LOG(WARN, "Port %u established, but has no set callbacks", portNbr);
@@ -210,10 +212,10 @@ bool CommModule::openSocket(uint8_t portNbr)
 
         return true;
     } else {
-        // this almost never gets called. I'm probably going to remove it soon. Only makes it this far if trying to open port 0 without any setup.
-
+        // this almost never gets called. Probably going to remove it soon. Only makes it this far if trying to open port 0 without any setup.
         // TX callback function was never set
         LOG(WARN, "Must set TX & RX callback functions before opening socket.\r\n");
+
         return false;
     }
 }
