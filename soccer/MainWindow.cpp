@@ -239,10 +239,12 @@ void MainWindow::updateViews() {
         _procFPS->setText(
             QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
-        _logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
-            QString::number(_processor->logger().numFrames()),
-            QString::number(_processor->logger().maxFrames()),
-            QString::number((_processor->logger().spaceUsed() + 512) / 1024)));
+        _logMemory->setText(
+            QString("Log: %1/%2 %3 kiB")
+                .arg(QString::number(_processor->logger().numFrames()),
+                     QString::number(_processor->logger().maxFrames()),
+                     QString::number((_processor->logger().spaceUsed() + 512) /
+                                     1024)));
     }
 
     // Advance log history
@@ -1049,7 +1051,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction* single = nullptr, *notSingle = nullptr;
+    QAction* single = nullptr, * notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");

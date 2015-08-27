@@ -193,8 +193,9 @@ bool Configuration::load(const QString& filename, QString& error) {
     QString domError;
     int errorLine = 0, errorColumn = 0;
     if (!newDoc.setContent(&file, &domError, &errorLine, &errorColumn)) {
-        error = QString("%1:%2: %3").arg(
-            QString::number(errorLine), QString::number(errorColumn), domError);
+        error = QString("%1:%2: %3")
+                    .arg(QString::number(errorLine),
+                         QString::number(errorColumn), domError);
         return false;
     }
 
