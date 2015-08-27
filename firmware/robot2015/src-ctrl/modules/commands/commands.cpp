@@ -412,7 +412,7 @@ void cmd_resetMbed(const vector<string>& args)
 		showInvalidArgs(args);
 	} else {
 		printf("The system is going down for reboot NOW!\r\n\r\n");
-		// Console::Flush();
+		Console::Flush();
 
 		// give some time for the feedback to get back to the console
 		Thread::wait(800);
@@ -429,6 +429,7 @@ void cmd_ls(const vector<string>& args)
 {
 	DIR* d;
 	struct dirent* p;
+	std::vector<std::string> filenames;
 
 	if (args.empty() == true) {
 		d = opendir("/local");
@@ -436,14 +437,25 @@ void cmd_ls(const vector<string>& args)
 		d = opendir(args.front().c_str());
 	}
 
-	if (d != NULL) {
-		while ((p = readdir(d)) != NULL) {
-			printf(" - %s\r\n", p->d_name);
+	if (d != nullptr) {
+		while ((p = readdir(d)) != nullptr) {
+			filenames.push_back(string(p->d_name));
 		}
 
 		closedir(d);
+
+		// don't use printf until we close the directory
+		for ( auto& i : filenames ) {
+			printf(" - %s\r\n", i.c_str());
+			Console::Flush();
+		}
+
 	} else {
-		printf("Could not open directory!\r\n");
+		if ( args.empty() == false ) {
+			printf("Could not find %s\r\n", args.front().c_str());
+		}
+
+		LOG(FATAL, "CODE ERROR! FIX ME!");
 	}
 }
 

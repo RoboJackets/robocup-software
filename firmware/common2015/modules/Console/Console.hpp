@@ -78,7 +78,7 @@ class Console
    * Console initialization routine. Attaches interrupt handlers and clears the
    * buffers.
    */
-  static char* Init(void);
+  static void Init(void);
 
   /**
    * console communications check. should be called in the main loop.

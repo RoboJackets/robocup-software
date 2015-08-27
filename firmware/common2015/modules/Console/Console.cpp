@@ -29,7 +29,7 @@ shared_ptr<Console>& Console::Instance(void)
 }
 
 
-char* Console::Init(void)
+void Console::Init(void)
 {
 	auto instance = Instance();
 
@@ -62,12 +62,10 @@ char* Console::Init(void)
 
 	LOG(INF3, "Hello from the 'common2015' library!");
 
-	printf(" ");
-	Flush();
-	printf("\b");
-	Flush();
-
-	return instance->rxBuffer;
+	//printf(" ");
+	//Flush();
+	//printf("\b");
+	//Flush();
 }
 
 void Console::PrintHeader(void)
