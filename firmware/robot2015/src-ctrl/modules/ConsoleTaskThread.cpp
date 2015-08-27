@@ -17,10 +17,10 @@ void Task_SerialConsole(void const* args)
   // Store our priority so we know what to reset it to after running a command
   osPriority threadPriority;
 
-  if (threadID != NULL)
+  if (threadID != nullptr)
     threadPriority  = osThreadGetPriority(threadID);
   else
-    threadPriority = (osPriority)NULL;
+    threadPriority = osPriorityIdle;
 
   // We wait here until until main tells us we can continue.
   // This is to prevent any startup logging output from getting jumbled in with the console's serial data
