@@ -17,14 +17,14 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_
 
         // [X] - 2a - Don't completely initialize if device fails to successfully start
         // =================
-        LOG(SEVERE, "CC1101 Failure");
+        LOG(FATAL, "CC1101 Failure");
     } else {
 
         // [X] - 2 - Call the base class method for beginning full class operation with threads
         // =================
         CommLink::ready();
 
-        LOG(INF1, "CC1101 Ready!");
+        LOG(INIT, "CC1101 Ready!");
     }
 }
 

@@ -17,7 +17,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 	selfTest();
 
 	if (_isInit == true) {
-		// LOG(INIT, "CC1201 ready!");
+		LOG(INIT, "CC1201 ready!");
 		CommLink::ready();
 	}
 }
@@ -36,11 +36,9 @@ CC1201::~CC1201(void)
 }
 
 
-/**
- *
- */
 int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 {
+	// Return if there's no functional radio transceiver - the system will lockup otherwise
 	if (_isInit == false)
 		return -1;
 
@@ -70,23 +68,14 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
 		strobe(CC1201_STROBE_STX);	// Enter TX mode
 	}
 
-	/*
-	// [X] - 5 - Wait until radio enters into the TX state
-	// =================
-	while ( mode() != 0x13 );	// While not TX mode
-
-	*/
+	// [X] - 5 - Wait until radio's TX buffer is emptied
 	uint8_t bts = 1;
 
 	do {
 		bts = readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON);
-
 		Thread::wait(2);
 
 	} while (bts != 0);
-
-
-	// LOG(OK, " %u bytes", size);
 
 	return 0;   // success
 }
@@ -110,6 +99,7 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len)
 		return COMM_DEV_BUF_ERR;
 	}
 
+	// This is temporary
 	if ( readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON) > 0 ) {
 		// This was a TX interrupt from the CC1201, not an RX
 		return COMM_FALSE_TRIG;
@@ -320,6 +310,7 @@ void CC1201::reset(void)
 	_spi->write(CC1201_STROBE_SRES);
 	toggle_cs();
 
+	// Wait up to 300ms for the radio to do anything. Don't block everything else if it doesn't startup correctly
 	for (int i = 0; i < 300; i++) {
 		if (~(idle()) & 0x80)	// Chip is ready when status byte's MSB is 0
 			break;
@@ -338,12 +329,11 @@ int32_t CC1201::selfTest(void)
 	_chip_version = readReg(CC1201EXT_PARTNUMBER, EXT_FLAG_ON);
 
 	if (_chip_version != CC1201_EXPECTED_PART_NUMBER) {
-		LOG(SEVERE,
+		LOG(FATAL,
 		    "CC1201 part number error:\r\n"
-		    "    Expected:\t0x%02X\r\n"
-		    "    Found:\t0x%02X",
-		    CC1201_EXPECTED_PART_NUMBER,
-		    _chip_version
+		    "    Found:\t0x%02X (expected 0x%02X)",
+		    _chip_version,
+		    CC1201_EXPECTED_PART_NUMBER
 		   );
 
 		return -1;
@@ -369,8 +359,7 @@ void CC1201::powerOnReset(void)
 	recurseCount++;
 
 	if (recurseCount >= 10) {
-		LOG(SEVERE, "cannot calibrate radio -> system reset");
-		//Thread::wait(500);
+		LOG(SEVERE, "Cannot calibrate radio -> system reset");
 		mbed_interface_reset();
 	}
 
@@ -397,11 +386,10 @@ void CC1201::powerOnReset(void)
 	while (*SO) {
 		if (waitCycles == 0) {
 			LOG(WARN, "calibration settled assertion timeout -> retry");
-			//powerOnReset();	// There's absolutely no need to do this. If it doesn't calibrate in 20 cycles, it will never do it successfully.
 			return;
 		}
 
-		//Thread::wait(100);
+		Thread::wait(5);
 		waitCycles--;
 	}
 
@@ -518,7 +506,7 @@ bool CC1201::isLocked(void)
 
 void CC1201::set_rssi_offset(int8_t offset)
 {
-	// HAVING THIS MEANS OFFSET CAN ONLY BE SET ONCE FROM THE CLASS
+	// HAVING THIS MEANS OFFSET MUST ONLY BE SET ONCE FOR THE CLASS
 	if (_offset_reg_written == true )
 		return;
 
