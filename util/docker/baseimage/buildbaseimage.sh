@@ -23,3 +23,5 @@ else
         docker push ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP}
     fi
 fi
+
+docker tag -f ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} ${IMAGE_NAME_BASE}:current
