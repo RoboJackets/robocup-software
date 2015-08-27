@@ -5,7 +5,7 @@ set -e
 DIR=$(cd $(dirname $0) ; pwd -P)
 source ${DIR}/../docker_common.sh
 
-if [ "$GH_TOKEN" = "" ]; then
+if [ "$GH_STATUS_TOKEN" = "" ]; then
     echo "Github token not set!"
     exit 1
 fi
@@ -19,7 +19,7 @@ docker run \
     -e CIRCLE_ARTIFACTS=${CIRCLE_ARTIFACTS} \
     -e GH_USER=${GH_USER} \
     --entrypoint /bin/bash \
-    ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/util/docker/maketest.sh ${GH_TOKEN}
+    ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} /home/developer/robocup-software/util/docker/maketest.sh ${GH_STATUS_TOKEN}
 
 EXIT=$?
 if [ $EXIT -ne 0 ]; then
