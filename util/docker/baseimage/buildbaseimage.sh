@@ -17,5 +17,11 @@ else
         -c './util/ubuntu-setup --yes --firmware && sudo apt-get clean'
 
     docker commit "$(docker ps -aq | head -n1)" ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP}
-    docker push ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP}
+
+    if [ -n "$DOCKER_PASS" ]; then
+        docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+        docker push ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP}
+    fi
 fi
+
+docker tag -f ${IMAGE_NAME_BASE}:${SHA_SUM_SETUP} ${IMAGE_NAME_BASE}:current
