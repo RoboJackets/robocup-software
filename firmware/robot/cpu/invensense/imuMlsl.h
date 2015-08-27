@@ -23,31 +23,36 @@ typedef enum {
 extern "C" {
 #endif
 
-typedef tMLError (*tWriteBurst)(unsigned char slaveAddr,
-                                unsigned char registerAddr,
-                                unsigned short length,
-                                const unsigned char* data);
-typedef tMLError (*tReadBurst)(unsigned char slaveAddr,
-                               unsigned char registerAddr,
-                               unsigned short length, unsigned char* data);
+    typedef tMLError (*tWriteBurst)( unsigned char slaveAddr, 
+                                     unsigned char registerAddr,
+                                     unsigned short length, 
+                                     const unsigned char *data );
+    typedef tMLError (*tReadBurst)( unsigned char slaveAddr, 
+                                    unsigned char registerAddr, 
+                                    unsigned short length, 
+                                    unsigned char *data );
 
-tMLError IMUserialOpen();
-tMLError IMUserialClose(void);
-tMLError MLSLSerialReset(void);
-tMLError MLSLSerialWriteSingle(unsigned char slaveAddr,
-                               unsigned char registerAddr, unsigned char data);
-tMLError MLSLSerialWriteBurst(unsigned char slaveAddr,
-                              unsigned char registerAddr, unsigned short length,
-                              const unsigned char* data);
-tMLError MLSLSerialReadSingle(unsigned char slaveAddr,
-                              unsigned char registerAddr, unsigned char* data);
-tMLError MLSLSerialReadBurst(unsigned char slaveAddr,
-                             unsigned char registerAddr, unsigned short length,
-                             unsigned char* data);
-tMLError MLSLIntHandler(unsigned char intSource);
+    tMLError IMUserialOpen();
+    tMLError IMUserialClose( void );
+    tMLError MLSLSerialReset( void );
+    tMLError MLSLSerialWriteSingle( unsigned char slaveAddr, 
+                                          unsigned char registerAddr, 
+                                          unsigned char data );
+    tMLError MLSLSerialWriteBurst( unsigned char slaveAddr, 
+                                         unsigned char registerAddr, 
+                                         unsigned short length, 
+                                         const unsigned char *data );
+    tMLError MLSLSerialReadSingle( unsigned char slaveAddr, 
+                                         unsigned char registerAddr, 
+                                         unsigned char *data );
+    tMLError MLSLSerialReadBurst( unsigned char slaveAddr, 
+                                  unsigned char registerAddr, 
+                                  unsigned short length, 
+                                  unsigned char *data );
+    tMLError MLSLIntHandler( unsigned char intSource );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // INVENSENSE_IMU_MLSL_H__
+#endif // INVENSENSE_IMU_MLSL_H__

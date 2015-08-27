@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -47,10 +47,10 @@
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__           // IAR
-#pragma pack(1)             // IAR
-#define __attribute__(...)  // IAR
-#endif                      // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack(1)            // IAR
+#define __attribute__(...) // IAR
+#endif                     // IAR
 
 //------------------------------------------------------------------------------
 /// Alternate device descriptor indicating the capabilities of the device
@@ -59,29 +59,31 @@
 /// high-speed mode.
 //------------------------------------------------------------------------------
 typedef struct {
-    /// Size of the descriptor in bytes.
-    unsigned char bLength;
-    /// Descriptor type (USBDESC_DEVICE_QUALIFIER or "USB device types").
-    unsigned char bDescriptorType;
-    /// USB specification release number (in BCD format).
-    unsigned short bcdUSB;
-    /// Device class code.
-    unsigned char bDeviceClass;
-    /// Device subclass code.
-    unsigned char bDeviceSubClass;
-    /// Device protocol code.
-    unsigned char bDeviceProtocol;
-    /// Maximum packet size of endpoint 0.
-    unsigned char bMaxPacketSize0;
-    /// Number of possible configurations for the device.
-    unsigned char bNumConfigurations;
-    /// Reserved.
-    unsigned char bReserved;
 
-} __attribute__((packed)) USBDeviceQualifierDescriptor;  // GCC
+   /// Size of the descriptor in bytes.
+   unsigned char bLength;
+   /// Descriptor type (USBDESC_DEVICE_QUALIFIER or "USB device types").
+   unsigned char bDescriptorType;
+   /// USB specification release number (in BCD format).
+   unsigned short bcdUSB;
+   /// Device class code.
+   unsigned char bDeviceClass;
+   /// Device subclass code.
+   unsigned char bDeviceSubClass;
+   /// Device protocol code.
+   unsigned char bDeviceProtocol;
+   /// Maximum packet size of endpoint 0.
+   unsigned char bMaxPacketSize0;
+   /// Number of possible configurations for the device.
+   unsigned char bNumConfigurations;
+   /// Reserved.
+   unsigned char bReserved;         
 
-#ifdef __ICCARM__  // IAR
-#pragma pack()     // IAR
-#endif             // IAR
+} __attribute__ ((packed)) USBDeviceQualifierDescriptor; // GCC
 
-#endif  //#ifndef USBDEVICEQUALIFIERDESCRIPTOR_H
+#ifdef __ICCARM__          // IAR
+#pragma pack()             // IAR
+#endif                     // IAR
+
+#endif //#ifndef USBDEVICEQUALIFIERDESCRIPTOR_H
+

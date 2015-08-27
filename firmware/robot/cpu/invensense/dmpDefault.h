@@ -6,7 +6,7 @@
 #define ML_DMPDEFAULT_H__
 
 /**
- * @defgroup DEFAULT
+ * @defgroup DEFAULT 
  * @brief Default DMP assembly listing header file
  *
  * @{
@@ -14,13 +14,16 @@
  *      @brief    Default DMP assembly listing header file
  */
 
+
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-void* dmpDefault();
+    void *dmpDefault();
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // ML_DMPDEFAULT_H__
+
+#endif // ML_DMPDEFAULT_H__

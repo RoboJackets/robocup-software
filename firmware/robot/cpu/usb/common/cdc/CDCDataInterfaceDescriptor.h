@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,12 +53,13 @@
 /// - CDCDataInterfaceDescriptor_NOPROTOCOL
 
 /// Interface class code for a data class interface.
-#define CDCDataInterfaceDescriptor_CLASS 0x0A
+#define CDCDataInterfaceDescriptor_CLASS        0x0A
 /// Interface subclass code for a data class interface.
-#define CDCDataInterfaceDescriptor_SUBCLASS 0x00
+#define CDCDataInterfaceDescriptor_SUBCLASS     0x00
 /// Protocol code for a data class interface which does not implement any
 /// particular protocol.
-#define CDCDataInterfaceDescriptor_NOPROTOCOL 0x00
+#define CDCDataInterfaceDescriptor_NOPROTOCOL   0x00
 //------------------------------------------------------------------------------
 
-#endif  //#ifndef CDCDATAINTERFACEDESCRIPTOR_H
+#endif //#ifndef CDCDATAINTERFACEDESCRIPTOR_H
+

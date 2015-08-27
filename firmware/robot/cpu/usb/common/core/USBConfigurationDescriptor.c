@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,41 +53,51 @@
 ///
 /// Note that if the pointer to an array is null (0), nothing is stored in
 /// it.
-/// \param configuration Pointer to the start of the whole Configuration
+/// \param configuration Pointer to the start of the whole Configuration 
 ///                      descriptor.
 /// \param interfaces    Pointer to the Interface descriptor array.
 /// \param endpoints     Pointer to the Endpoint descriptor array.
 /// \param others        Pointer to the class-specific descriptor array.
 //-----------------------------------------------------------------------------
 void USBConfigurationDescriptor_Parse(
-    const USBConfigurationDescriptor* configuration,
-    USBInterfaceDescriptor** interfaces, USBEndpointDescriptor** endpoints,
-    USBGenericDescriptor** others) {
+    const USBConfigurationDescriptor *configuration,
+    USBInterfaceDescriptor **interfaces,
+    USBEndpointDescriptor **endpoints,
+    USBGenericDescriptor **others)
+{
     // Get size of configuration to parse
     int size = USBConfigurationDescriptor_GetTotalLength(configuration);
     size -= sizeof(USBConfigurationDescriptor);
 
     // Start parsing descriptors
-    USBGenericDescriptor* descriptor = (USBGenericDescriptor*)configuration;
+    USBGenericDescriptor *descriptor = (USBGenericDescriptor *) configuration;
     while (size > 0) {
+
         // Get next descriptor
         descriptor = USBGenericDescriptor_GetNextDescriptor(descriptor);
         size -= USBGenericDescriptor_GetLength(descriptor);
 
         // Store descriptor in correponding array
-        if (USBGenericDescriptor_GetType(descriptor) ==
-            USBGenericDescriptor_INTERFACE) {
+        if (USBGenericDescriptor_GetType(descriptor)
+             == USBGenericDescriptor_INTERFACE) {
+
             if (interfaces) {
-                *interfaces = (USBInterfaceDescriptor*)descriptor;
+            
+                *interfaces = (USBInterfaceDescriptor *) descriptor;
                 interfaces++;
             }
-        } else if (USBGenericDescriptor_GetType(descriptor) ==
-                   USBGenericDescriptor_ENDPOINT) {
+        }
+        else if (USBGenericDescriptor_GetType(descriptor)
+                  == USBGenericDescriptor_ENDPOINT) {
+
             if (endpoints) {
-                *endpoints = (USBEndpointDescriptor*)descriptor;
+                
+                *endpoints = (USBEndpointDescriptor *) descriptor;
                 endpoints++;
             }
-        } else if (others) {
+        }
+        else if (others) {
+
             *others = descriptor;
             others++;
         }
@@ -95,12 +105,16 @@ void USBConfigurationDescriptor_Parse(
 
     // Null-terminate arrays
     if (interfaces) {
+
         *interfaces = 0;
     }
     if (endpoints) {
+
         *endpoints = 0;
     }
     if (others) {
+
         *others = 0;
     }
 }
+

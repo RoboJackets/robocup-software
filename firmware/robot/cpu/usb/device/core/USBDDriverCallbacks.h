@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -57,4 +57,5 @@ extern void USBDDriverCallbacks_ConfigurationChanged(unsigned char cfgnum);
 extern void USBDDriverCallbacks_InterfaceSettingChanged(unsigned char interface,
                                                         unsigned char setting);
 
-#endif  //#ifndef USBDDRIVERCALLBACKS_H
+#endif //#ifndef USBDDRIVERCALLBACKS_H
+

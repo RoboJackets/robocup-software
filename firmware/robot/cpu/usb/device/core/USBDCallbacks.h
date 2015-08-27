@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -66,6 +66,7 @@ extern void USBDCallbacks_Suspended(void);
 extern void USBDCallbacks_Resumed(void);
 #endif
 
-extern void USBDCallbacks_RequestReceived(const USBGenericRequest* request);
+extern void USBDCallbacks_RequestReceived(const USBGenericRequest *request);
 
-#endif  //#ifndef USBDCALLBACKS_H
+#endif //#ifndef USBDCALLBACKS_H
+

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -59,11 +59,11 @@
 /// - CDCDSerialDriverDescriptors_NOTIFICATION
 
 /// Data OUT endpoint number.
-#define CDCDSerialDriverDescriptors_DATAOUT 1
+#define CDCDSerialDriverDescriptors_DATAOUT             1
 /// Data IN endpoint number.
-#define CDCDSerialDriverDescriptors_DATAIN 2
+#define CDCDSerialDriverDescriptors_DATAIN              2
 /// Notification endpoint number.
-#define CDCDSerialDriverDescriptors_NOTIFICATION 3
+#define CDCDSerialDriverDescriptors_NOTIFICATION        3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -73,4 +73,5 @@
 /// List of descriptors for a CDC device serial driver.
 extern USBDDriverDescriptors cdcdSerialDriverDescriptors;
 
-#endif  //#ifndef CDCDDRIVERDESCRIPTORS_H
+#endif //#ifndef CDCDDRIVERDESCRIPTORS_H
+

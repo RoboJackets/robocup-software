@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -62,10 +62,11 @@
 /// the device as well as the driver current state.
 //------------------------------------------------------------------------------
 typedef struct {
+
     /// List of descriptors used by the device.
-    const USBDDriverDescriptors* pDescriptors;
+    const USBDDriverDescriptors *pDescriptors;
     /// Current setting for each interface.
-    unsigned char* pInterfaces;
+    unsigned char *pInterfaces;
     /// Current configuration number (0 -> device is not configured).
     unsigned char cfgnum;
     /// Indicates if remote wake up has been enabled by the host.
@@ -77,14 +78,16 @@ typedef struct {
 //         Exported functions
 //------------------------------------------------------------------------------
 
-extern void USBDDriver_Initialize(USBDDriver* pDriver,
-                                  const USBDDriverDescriptors* pDescriptors,
-                                  unsigned char* pInterfaces);
+extern void USBDDriver_Initialize(
+    USBDDriver *pDriver,
+    const USBDDriverDescriptors *pDescriptors,
+    unsigned char *pInterfaces);
 
-extern void USBDDriver_RequestHandler(USBDDriver* pDriver,
-                                      const USBGenericRequest* pRequest);
+extern void USBDDriver_RequestHandler(
+    USBDDriver *pDriver,
+    const USBGenericRequest *pRequest);
 
-extern unsigned char USBDDriver_IsRemoteWakeUpEnabled(
-    const USBDDriver* pDriver);
+extern unsigned char USBDDriver_IsRemoteWakeUpEnabled(const USBDDriver *pDriver);
 
-#endif  //#ifndef USBDDRIVER_H
+#endif //#ifndef USBDDRIVER_H
+

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -55,8 +55,10 @@
 //------------------------------------------------------------------------------
 
 static inline unsigned char USBSetConfigurationRequest_GetConfiguration(
-    const USBGenericRequest* request) {
+    const USBGenericRequest *request)
+{
     return USBGenericRequest_GetValue(request);
 }
 
-#endif  //#ifndef USBSETCONFIGURATIONREQUEST_H
+#endif //#ifndef USBSETCONFIGURATIONREQUEST_H
+

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -30,7 +30,7 @@
 /**
  \unit
  !!!Purpose
-
+ 
     Definitions and methods for USB configuration descriptor structures
     described by the USB specification.
 
@@ -75,74 +75,77 @@
 /// - USBConfigurationDescriptor_POWER
 
 /// Device is bus-powered and not support remote wake-up.
-#define USBConfigurationDescriptor_BUSPOWERED_NORWAKEUP 0x80
+#define USBConfigurationDescriptor_BUSPOWERED_NORWAKEUP  0x80
 /// Device is self-powered and not support remote wake-up.
 #define USBConfigurationDescriptor_SELFPOWERED_NORWAKEUP 0xC0
 /// Device is bus-powered  and supports remote wake-up.
-#define USBConfigurationDescriptor_BUSPOWERED_RWAKEUP 0xA0
+#define USBConfigurationDescriptor_BUSPOWERED_RWAKEUP    0xA0
 /// Device is self-powered and supports remote wake-up.
-#define USBConfigurationDescriptor_SELFPOWERED_RWAKEUP 0xE0
+#define USBConfigurationDescriptor_SELFPOWERED_RWAKEUP   0xE0
 
 /// Calculates the value of the power consumption field given the value in mA.
 /// \param power The power consumption value in mA
 /// \return The value that should be set to the field in descriptor
-#define USBConfigurationDescriptor_POWER(power) (power / 2)
+#define USBConfigurationDescriptor_POWER(power)     (power / 2)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 //         Types
 //-----------------------------------------------------------------------------
 
-#ifdef __ICCARM__           // IAR
-#pragma pack(1)             // IAR
-#define __attribute__(...)  // IAR
-#endif                      // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack(1)            // IAR
+#define __attribute__(...) // IAR
+#endif                     // IAR
 
 //-----------------------------------------------------------------------------
 /// USB standard configuration descriptor structure.
 //-----------------------------------------------------------------------------
 typedef struct {
-    /// Size of the descriptor in bytes.
-    unsigned char bLength;
-    /// Descriptor type (USBDESC_CONFIGURATION of "USB Descriptor types").
-    unsigned char bDescriptorType;
-    /// Length of all descriptors returned along with this configuration
-    /// descriptor.
-    unsigned short wTotalLength;
-    /// Number of interfaces in this configuration.
-    unsigned char bNumInterfaces;
-    /// Value for selecting this configuration.
-    unsigned char bConfigurationValue;
-    /// Index of the configuration string descriptor.
-    unsigned char iConfiguration;
-    /// Configuration characteristics.
-    unsigned char bmAttributes;
-    /// Maximum power consumption of the device when in this configuration.
-    unsigned char bMaxPower;
 
-} __attribute__((packed)) USBConfigurationDescriptor;  // GCC
+   /// Size of the descriptor in bytes.
+   unsigned char bLength;
+   /// Descriptor type (USBDESC_CONFIGURATION of "USB Descriptor types").
+   unsigned char bDescriptorType;
+   /// Length of all descriptors returned along with this configuration
+   /// descriptor.
+   unsigned short wTotalLength;
+   /// Number of interfaces in this configuration.
+   unsigned char bNumInterfaces;
+   /// Value for selecting this configuration.
+   unsigned char bConfigurationValue; 
+   /// Index of the configuration string descriptor.
+   unsigned char iConfiguration;
+   /// Configuration characteristics.
+   unsigned char bmAttributes;
+   /// Maximum power consumption of the device when in this configuration.
+   unsigned char bMaxPower;           
+                                       
+} __attribute__ ((packed)) USBConfigurationDescriptor; // GCC
 
-#ifdef __ICCARM__  // IAR
-#pragma pack()     // IAR
-#endif             // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack()             // IAR
+#endif                     // IAR
 
 //-----------------------------------------------------------------------------
 //         Exported functions
 //-----------------------------------------------------------------------------
 
 extern void USBConfigurationDescriptor_Parse(
-    const USBConfigurationDescriptor* configuration,
-    USBInterfaceDescriptor** interfaces, USBEndpointDescriptor** endpoints,
-    USBGenericDescriptor** others);
+    const USBConfigurationDescriptor *configuration,
+    USBInterfaceDescriptor **interfaces,
+    USBEndpointDescriptor **endpoints,
+    USBGenericDescriptor **others);
 
 //-----------------------------------------------------------------------------
-/// Returns the total length of a configuration, i.e. including the
+/// Returns the total length of a configuration, i.e. including the 
 /// descriptors following it.
 /// \param configuration Pointer to a USBConfigurationDescriptor instance.
 /// \return Total length (in bytes) of the configuration.
 //-----------------------------------------------------------------------------
 static inline unsigned int USBConfigurationDescriptor_GetTotalLength(
-    const USBConfigurationDescriptor* configuration) {
+    const USBConfigurationDescriptor *configuration)
+{
     return configuration->wTotalLength;
 }
 
@@ -152,7 +155,8 @@ static inline unsigned int USBConfigurationDescriptor_GetTotalLength(
 /// \return Number of interfaces in configuration.
 //-----------------------------------------------------------------------------
 static inline unsigned char USBConfigurationDescriptor_GetNumInterfaces(
-    const USBConfigurationDescriptor* configuration) {
+    const USBConfigurationDescriptor *configuration)
+{
     return configuration->bNumInterfaces;
 }
 
@@ -163,12 +167,17 @@ static inline unsigned char USBConfigurationDescriptor_GetNumInterfaces(
 ///         otherwise 0.
 //-----------------------------------------------------------------------------
 static inline unsigned char USBConfigurationDescriptor_IsSelfPowered(
-    const USBConfigurationDescriptor* configuration) {
+    const USBConfigurationDescriptor *configuration)
+{
     if ((configuration->bmAttributes & (1 << 6)) != 0) {
+
         return 1;
-    } else {
+    }
+    else {
+
         return 0;
     }
 }
 
-#endif  //#ifndef USBCONFIGURATIONDESCRIPTOR_H
+#endif //#ifndef USBCONFIGURATIONDESCRIPTOR_H
+

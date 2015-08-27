@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -58,15 +58,17 @@
 /// the full-speed qualifier & other speed descriptors.
 //------------------------------------------------------------------------------
 typedef struct {
+
     /// Pointer to the full-speed device descriptor.
-    const USBDeviceDescriptor* pFsDevice;
+    const USBDeviceDescriptor *pFsDevice;
     /// Pointer to the full-speed configuration descriptor.
-    const USBConfigurationDescriptor* pFsConfiguration;
+    const USBConfigurationDescriptor *pFsConfiguration;
     /// Pointer to the list of string descriptors.
-    const unsigned char** pStrings;
+    const unsigned char **pStrings;
     /// Number of string descriptors in list.
     unsigned char numStrings;
 
 } USBDDriverDescriptors;
 
-#endif  //#ifndef USBDDRIVERDESCRIPTORS_H
+#endif //#ifndef USBDDRIVERDESCRIPTORS_H
+

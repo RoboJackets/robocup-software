@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -86,11 +86,11 @@
 /// - USBFeatureRequest_TESTMODE
 
 /// Halt feature of an endpoint.
-#define USBFeatureRequest_ENDPOINTHALT 0
+#define USBFeatureRequest_ENDPOINTHALT          0
 /// Remote wake-up feature of the device.
-#define USBFeatureRequest_DEVICEREMOTEWAKEUP 1
+#define USBFeatureRequest_DEVICEREMOTEWAKEUP    1
 /// Test mode of the device.
-#define USBFeatureRequest_TESTMODE 2
+#define USBFeatureRequest_TESTMODE              2
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -107,18 +107,18 @@
 /// - USBFeatureRequest_TESTSENDZLP
 
 /// Tests the high-output drive level on the D+ line.
-#define USBFeatureRequest_TESTJ 1
+#define USBFeatureRequest_TESTJ                 1
 /// Tests the high-output drive level on the D- line.
-#define USBFeatureRequest_TESTK 2
+#define USBFeatureRequest_TESTK                 2
 /// Tests the output impedance, low-level output voltage and loading
 /// characteristics.
-#define USBFeatureRequest_TESTSE0NAK 3
+#define USBFeatureRequest_TESTSE0NAK            3
 /// Tests rise and fall times, eye patterns and jitter.
-#define USBFeatureRequest_TESTPACKET 4
+#define USBFeatureRequest_TESTPACKET            4
 /// Tests the hub disconnect detection.
-#define USBFeatureRequest_TESTFORCEENABLE 5
+#define USBFeatureRequest_TESTFORCEENABLE       5
 /// Send a ZLP in Test Mode.
-#define USBFeatureRequest_TESTSENDZLP 6
+#define USBFeatureRequest_TESTSENDZLP           6
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -132,7 +132,8 @@
 /// \return Feature selector.
 //------------------------------------------------------------------------------
 static inline unsigned char USBFeatureRequest_GetFeatureSelector(
-    const USBGenericRequest* request) {
+    const USBGenericRequest *request)
+{
     return USBGenericRequest_GetValue(request);
 }
 
@@ -143,8 +144,10 @@ static inline unsigned char USBFeatureRequest_GetFeatureSelector(
 /// \return Test selector.
 //------------------------------------------------------------------------------
 static inline unsigned char USBFeatureRequest_GetTestSelector(
-    const USBGenericRequest* request) {
+    const USBGenericRequest *request)
+{
     return (USBGenericRequest_GetIndex(request) >> 8) & 0xFF;
 }
 
-#endif  //#ifndef USBFEATUREREQUEST_H
+#endif //#ifndef USBFEATUREREQUEST_H
+

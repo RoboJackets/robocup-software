@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -53,12 +53,13 @@
 /// - CDCCommunicationInterfaceDescriptor_NOPROTOCOL
 
 /// Interface class code for a CDC communication class interface.
-#define CDCCommunicationInterfaceDescriptor_CLASS 0x02
+#define CDCCommunicationInterfaceDescriptor_CLASS                   0x02
 /// Interface subclass code for an Abstract Control Model interface descriptor.
-#define CDCCommunicationInterfaceDescriptor_ABSTRACTCONTROLMODEL 0x02
+#define CDCCommunicationInterfaceDescriptor_ABSTRACTCONTROLMODEL    0x02
 /// Interface protocol code when a CDC communication interface does not
 /// implemenent any particular protocol.
-#define CDCCommunicationInterfaceDescriptor_NOPROTOCOL 0x00
+#define CDCCommunicationInterfaceDescriptor_NOPROTOCOL              0x00
 //------------------------------------------------------------------------------
 
-#endif  //#ifndef CDCCOMMUNICATIONINTERFACEDESCRIPTOR_H
+#endif //#ifndef CDCCOMMUNICATIONINTERFACEDESCRIPTOR_H
+

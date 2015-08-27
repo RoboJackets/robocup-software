@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -75,19 +75,19 @@
 /// - CDCDSerialDriver_STATE_OVERRUN
 
 /// Indicates the receiver carrier signal is present.
-#define CDCDSerialDriver_STATE_RXDRIVER (1 << 0)
+#define CDCDSerialDriver_STATE_RXDRIVER         (1 << 0)
 /// Indicates the transmission carrier signal is present.
-#define CDCDSerialDriver_STATE_TXCARRIER (1 << 1)
+#define CDCDSerialDriver_STATE_TXCARRIER        (1 << 1)
 /// Indicates a break has been detected.
-#define CDCDSerialDriver_STATE_BREAK (1 << 2)
+#define CDCDSerialDriver_STATE_BREAK            (1 << 2)
 /// Indicates a ring signal has been detected.
-#define CDCDSerialDriver_STATE_RINGSIGNAL (1 << 3)
+#define CDCDSerialDriver_STATE_RINGSIGNAL       (1 << 3)
 /// Indicates a framing error has occured.
-#define CDCDSerialDriver_STATE_FRAMING (1 << 4)
+#define CDCDSerialDriver_STATE_FRAMING          (1 << 4)
 /// Indicates a parity error has occured.
-#define CDCDSerialDriver_STATE_PARITY (1 << 5)
+#define CDCDSerialDriver_STATE_PARITY           (1 << 5)
 /// Indicates a data overrun error has occured.
-#define CDCDSerialDriver_STATE_OVERRUN (1 << 6)
+#define CDCDSerialDriver_STATE_OVERRUN          (1 << 6)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -96,7 +96,7 @@
 
 extern void CDCDSerialDriver_Initialize();
 
-extern void CDCDSerialDriver_RequestHandler(const USBGenericRequest* request);
+extern void CDCDSerialDriver_RequestHandler(const USBGenericRequest *request);
 
 //------------------------------------------------------------------------------
 /// Receives data from the host through the virtual COM port created by
@@ -109,10 +109,15 @@ extern void CDCDSerialDriver_RequestHandler(const USBGenericRequest* request);
 /// \return USBD_STATUS_SUCCESS if the read operation has been started normally;
 ///         otherwise, the corresponding error code.
 //------------------------------------------------------------------------------
-static inline unsigned char CDCDSerialDriver_Read(void* data, unsigned int size,
-                                                  TransferCallback callback,
-                                                  void* argument) {
-    return USBD_Read(CDCDSerialDriverDescriptors_DATAOUT, data, size, callback,
+static inline unsigned char CDCDSerialDriver_Read(void *data,
+                                    unsigned int size,
+                                    TransferCallback callback,
+                                    void *argument)
+{
+    return USBD_Read(CDCDSerialDriverDescriptors_DATAOUT,
+                     data,
+                     size,
+                     callback,
                      argument);
 }
 
@@ -127,11 +132,15 @@ static inline unsigned char CDCDSerialDriver_Read(void* data, unsigned int size,
 /// \return USBD_STATUS_SUCCESS if the read operation has been started normally;
 ///         otherwise, the corresponding error code.
 //------------------------------------------------------------------------------
-static inline unsigned char CDCDSerialDriver_Write(void* data,
-                                                   unsigned int size,
-                                                   TransferCallback callback,
-                                                   void* argument) {
-    return USBD_Write(CDCDSerialDriverDescriptors_DATAIN, data, size, callback,
+static inline unsigned char CDCDSerialDriver_Write(void *data,
+                                     unsigned int size,
+                                     TransferCallback callback,
+                                     void *argument)
+{
+    return USBD_Write(CDCDSerialDriverDescriptors_DATAIN,
+                      data,
+                      size,
+                      callback,
                       argument);
 }
 
@@ -139,4 +148,5 @@ extern unsigned short CDCDSerialDriver_GetSerialState();
 
 extern void CDCDSerialDriver_SetSerialState(unsigned short serialState);
 
-#endif  //#ifndef CDCSERIALDRIVER_H
+#endif //#ifndef CDCSERIALDRIVER_H
+

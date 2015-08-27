@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -61,11 +61,11 @@
 /// - CDCLineCoding_TWOSTOPBITS
 
 /// The transmission protocol uses one stop bit.
-#define CDCLineCoding_ONESTOPBIT 0
+#define CDCLineCoding_ONESTOPBIT            0
 /// The transmission protocol uses 1.5 stop bit.
-#define CDCLineCoding_ONE5STOPBIT 1
+#define CDCLineCoding_ONE5STOPBIT           1
 /// The transmissin protocol uses two stop bits.
-#define CDCLineCoding_TWOSTOPBITS 2
+#define CDCLineCoding_TWOSTOPBITS           2
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -80,30 +80,31 @@
 /// - CDCLineCoding_SPACEPARITY
 
 /// No parity checking.
-#define CDCLineCoding_NOPARITY 0
+#define CDCLineCoding_NOPARITY              0
 /// Odd parity checking.
-#define CDCLineCoding_ODDPARITY 1
+#define CDCLineCoding_ODDPARITY             1
 /// Even parity checking.
-#define CDCLineCoding_EVENPARITY 2
+#define CDCLineCoding_EVENPARITY            2
 /// Mark parity checking.
-#define CDCLineCoding_MARKPARITY 3
+#define CDCLineCoding_MARKPARITY            3
 /// Space parity checking.
-#define CDCLineCoding_SPACEPARITY 4
+#define CDCLineCoding_SPACEPARITY           4
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__           // IAR
-#pragma pack(1)             // IAR
-#define __attribute__(...)  // IAR
-#endif                      // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack(1)            // IAR
+#define __attribute__(...) // IAR
+#endif                     // IAR
 
 //------------------------------------------------------------------------------
 /// Format of the data returned when a GetLineCoding request is received.
 //------------------------------------------------------------------------------
 typedef struct {
+
     /// Data terminal rate in bits per second.
     unsigned int dwDTERate;
     /// Number of stop bits.
@@ -115,10 +116,11 @@ typedef struct {
     /// Number of data bits (5, 6, 7, 8 or 16).
     char bDataBits;
 
-} __attribute__((packed)) CDCLineCoding;  // GCC
+} __attribute__ ((packed)) CDCLineCoding; // GCC
 
-#ifdef __ICCARM__  // IAR
-#pragma pack()     // IAR
-#endif             // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack()             // IAR
+#endif                     // IAR
 
-#endif  //#ifndef CDCLINECODING_H
+#endif //#ifndef CDCLINECODING_H
+

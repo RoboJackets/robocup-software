@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-/* - Error Codes. - */
+    /* - Error Codes. - */
 #define MLOS_SUCCESS 0
-#define MLOS_ERROR 1
+#define MLOS_ERROR   1
 
 #define MLOSSleep(ms) delay_ms(ms)
 #define MLOSGetTickCount() (current_time)
@@ -18,4 +18,4 @@ extern "C" {
 }
 #endif
 
-#endif  // INVENSENSE_IMU_MLOS_H__
+#endif // INVENSENSE_IMU_MLOS_H__

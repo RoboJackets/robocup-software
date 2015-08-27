@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -49,9 +49,11 @@
 //------------------------------------------------------------------------------
 
 extern unsigned char CDCSetControlLineStateRequest_IsDtePresent(
-    const USBGenericRequest* request);
+    const USBGenericRequest *request);
+
 
 extern unsigned char CDCSetControlLineStateRequest_ActivateCarrier(
-    const USBGenericRequest* request);
+    const USBGenericRequest *request);
 
-#endif  //#ifndef CDCSETCONTROLLINESTATE_H
+#endif //#ifndef CDCSETCONTROLLINESTATE_H
+

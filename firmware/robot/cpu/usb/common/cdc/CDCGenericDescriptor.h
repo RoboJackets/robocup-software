@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -50,7 +50,7 @@
 /// - CDCGenericDescriptor_CDC1_10
 
 /// Identify CDC specification version 1.10.
-#define CDCGenericDescriptor_CDC1_10 0x0110
+#define CDCGenericDescriptor_CDC1_10                            0x0110
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -61,10 +61,10 @@
 /// - CDCGenericDescriptor_INTERFACE
 /// - CDCGenericDescriptor_ENDPOINT
 
-/// Indicates that a CDC descriptor applies to an interface.
-#define CDCGenericDescriptor_INTERFACE 0x24
+///Indicates that a CDC descriptor applies to an interface.
+#define CDCGenericDescriptor_INTERFACE                          0x24
 /// Indicates that a CDC descriptor applies to an endpoint.
-#define CDCGenericDescriptor_ENDPOINT 0x25
+#define CDCGenericDescriptor_ENDPOINT                           0x25
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -78,13 +78,14 @@
 /// - CDCGenericDescriptor_UNION
 
 /// Header functional descriptor subtype.
-#define CDCGenericDescriptor_HEADER 0x00
+#define CDCGenericDescriptor_HEADER                             0x00
 /// Call management functional descriptor subtype.
-#define CDCGenericDescriptor_CALLMANAGEMENT 0x01
+#define CDCGenericDescriptor_CALLMANAGEMENT                     0x01
 /// Abstract control management descriptor subtype.
-#define CDCGenericDescriptor_ABSTRACTCONTROLMANAGEMENT 0x02
+#define CDCGenericDescriptor_ABSTRACTCONTROLMANAGEMENT          0x02
 /// Union descriptor subtype.
-#define CDCGenericDescriptor_UNION 0x06
+#define CDCGenericDescriptor_UNION                              0x06
 //------------------------------------------------------------------------------
 
-#endif  //#ifndef CDCGENERICDESCRIPTOR_H
+#endif //#ifndef CDCGENERICDESCRIPTOR_H
+

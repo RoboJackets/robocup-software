@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -59,7 +59,7 @@
 /// This page lists definitions and macro for endpoint descriptors.
 ///
 /// - USB Endpoint directions
-///    - USBEndpointDescriptor_OUT
+///    - USBEndpointDescriptor_OUT 
 ///    - USBEndpointDescriptor_IN
 ///
 /// - USB Endpoint types
@@ -92,9 +92,9 @@
 /// - USBEndpointDescriptor_IN
 
 /// Endpoint receives data from the host.
-#define USBEndpointDescriptor_OUT 0
+#define USBEndpointDescriptor_OUT           0
 /// Endpoint sends data to the host.
-#define USBEndpointDescriptor_IN 1
+#define USBEndpointDescriptor_IN            1
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -109,13 +109,13 @@
 /// - USBEndpointDescriptor_INTERRUPT
 
 /// Control endpoint type.
-#define USBEndpointDescriptor_CONTROL 0
+#define USBEndpointDescriptor_CONTROL       0
 /// Isochronous endpoint type.
-#define USBEndpointDescriptor_ISOCHRONOUS 1
+#define USBEndpointDescriptor_ISOCHRONOUS   1
 /// Bulk endpoint type.
-#define USBEndpointDescriptor_BULK 2
+#define USBEndpointDescriptor_BULK          2
 /// Interrupt endpoint type.
-#define USBEndpointDescriptor_INTERRUPT 3
+#define USBEndpointDescriptor_INTERRUPT     3
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -134,21 +134,21 @@
 /// - USBEndpointDescriptor_MAXISOCHRONOUSSIZE_HS
 
 /// Maximum size for a full-speed control endpoint.
-#define USBEndpointDescriptor_MAXCTRLSIZE_FS 64
+#define USBEndpointDescriptor_MAXCTRLSIZE_FS                64
 /// Maximum size for a high-speed control endpoint.
-#define USBEndpointDescriptor_MAXCTRLSIZE_HS 64
+#define USBEndpointDescriptor_MAXCTRLSIZE_HS                64
 /// Maximum size for a full-speed bulk endpoint.
-#define USBEndpointDescriptor_MAXBULKSIZE_FS 64
+#define USBEndpointDescriptor_MAXBULKSIZE_FS                64
 /// Maximum size for a high-speed bulk endpoint.
-#define USBEndpointDescriptor_MAXBULKSIZE_HS 512
+#define USBEndpointDescriptor_MAXBULKSIZE_HS                512
 /// Maximum size for a full-speed interrupt endpoint.
-#define USBEndpointDescriptor_MAXINTERRUPTSIZE_FS 64
+#define USBEndpointDescriptor_MAXINTERRUPTSIZE_FS           64
 /// Maximum size for a high-speed interrupt endpoint.
-#define USBEndpointDescriptor_MAXINTERRUPTSIZE_HS 1024
+#define USBEndpointDescriptor_MAXINTERRUPTSIZE_HS           1024
 /// Maximum size for a full-speed isochronous endpoint.
-#define USBEndpointDescriptor_MAXISOCHRONOUSSIZE_FS 1023
+#define USBEndpointDescriptor_MAXISOCHRONOUSSIZE_FS         1023
 /// Maximum size for a high-speed isochronous endpoint.
-#define USBEndpointDescriptor_MAXISOCHRONOUSSIZE_HS 1024
+#define USBEndpointDescriptor_MAXISOCHRONOUSSIZE_HS         1024
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -172,34 +172,34 @@
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__           // IAR
-#pragma pack(1)             // IAR
-#define __attribute__(...)  // IAR
-#endif                      // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack(1)            // IAR
+#define __attribute__(...) // IAR
+#endif                     // IAR
 
 //------------------------------------------------------------------------------
 /// USB standard endpoint descriptor structure.
 //------------------------------------------------------------------------------
 typedef struct {
-    /// Size of the descriptor in bytes.
-    unsigned char bLength;
-    /// Descriptor type (<USBGenericDescriptor_ENDPOINT>).
-    unsigned char bDescriptorType;
-    /// Address and direction of the endpoint.
-    unsigned char bEndpointAddress;
-    /// Endpoint type and additional characteristics (for isochronous
-    /// endpoints).
-    unsigned char bmAttributes;
-    /// Maximum packet size (in bytes) of the endpoint.
-    unsigned short wMaxPacketSize;
-    /// Polling rate of the endpoint.
-    unsigned char bInterval;
 
-} __attribute__((packed)) USBEndpointDescriptor;  // GCC
+   /// Size of the descriptor in bytes.
+   unsigned char bLength;
+   /// Descriptor type (<USBGenericDescriptor_ENDPOINT>).
+   unsigned char bDescriptorType;
+   /// Address and direction of the endpoint.
+   unsigned char bEndpointAddress;
+   /// Endpoint type and additional characteristics (for isochronous endpoints).
+   unsigned char bmAttributes;
+   /// Maximum packet size (in bytes) of the endpoint.
+   unsigned short wMaxPacketSize;
+   /// Polling rate of the endpoint.
+   unsigned char bInterval;
 
-#ifdef __ICCARM__  // IAR
-#pragma pack()     // IAR
-#endif             // IAR
+} __attribute__ ((packed)) USBEndpointDescriptor; // GCC
+
+#ifdef __ICCARM__          // IAR
+#pragma pack()             // IAR
+#endif                     // IAR
 
 //------------------------------------------------------------------------------
 //         Exported functions
@@ -211,7 +211,8 @@ typedef struct {
 /// \return Endpoint number.
 //------------------------------------------------------------------------------
 static inline unsigned char USBEndpointDescriptor_GetNumber(
-    const USBEndpointDescriptor* endpoint) {
+    const USBEndpointDescriptor *endpoint)
+{
     return endpoint->bEndpointAddress & 0xF;
 }
 
@@ -221,10 +222,14 @@ static inline unsigned char USBEndpointDescriptor_GetNumber(
 /// \return Endpoint direction (see <Endpoint directions>).
 //------------------------------------------------------------------------------
 static inline unsigned char USBEndpointDescriptor_GetDirection(
-    const USBEndpointDescriptor* endpoint) {
+    const USBEndpointDescriptor *endpoint)
+{
     if ((endpoint->bEndpointAddress & 0x80) != 0) {
+
         return USBEndpointDescriptor_IN;
-    } else {
+    }
+    else {
+
         return USBEndpointDescriptor_OUT;
     }
 }
@@ -235,7 +240,8 @@ static inline unsigned char USBEndpointDescriptor_GetDirection(
 /// \return Endpoint type (see <Endpoint types>).
 //------------------------------------------------------------------------------
 static inline unsigned char USBEndpointDescriptor_GetType(
-    const USBEndpointDescriptor* endpoint) {
+    const USBEndpointDescriptor *endpoint)
+{
     return endpoint->bmAttributes & 0x3;
 }
 
@@ -246,8 +252,10 @@ static inline unsigned char USBEndpointDescriptor_GetType(
 /// \return Maximum packet size of endpoint.
 //------------------------------------------------------------------------------
 static inline unsigned short USBEndpointDescriptor_GetMaxPacketSize(
-    const USBEndpointDescriptor* endpoint) {
+    const USBEndpointDescriptor *endpoint)
+{
     return endpoint->wMaxPacketSize;
 }
 
-#endif  //#ifndef USBENDPOINTDESCRIPTOR_H
+#endif //#ifndef USBENDPOINTDESCRIPTOR_H
+

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support
+ *         ATMEL Microcontroller Software Support 
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -46,16 +46,17 @@
 //         Types
 //------------------------------------------------------------------------------
 
-#ifdef __ICCARM__           // IAR
-#pragma pack(1)             // IAR
-#define __attribute__(...)  // IAR
-#endif                      // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack(1)            // IAR
+#define __attribute__(...) // IAR
+#endif                     // IAR
 
 //------------------------------------------------------------------------------
 /// Marks the beginning of the concatenated set of functional descriptors
 /// for the interface.
 //------------------------------------------------------------------------------
 typedef struct {
+
     /// Size of this descriptor in bytes.
     unsigned char bFunctionLength;
     /// Descriptor type (CDCDescriptors_INTERFACE).
@@ -65,10 +66,12 @@ typedef struct {
     /// USB CDC specification release number.
     unsigned short bcdCDC;
 
-} __attribute__((packed)) CDCHeaderDescriptor;  // GCC
+} __attribute__ ((packed)) CDCHeaderDescriptor; // GCC
 
-#ifdef __ICCARM__  // IAR
-#pragma pack()     // IAR
-#endif             // IAR
+#ifdef __ICCARM__          // IAR
+#pragma pack()             // IAR
+#endif                     // IAR
 
-#endif  //#ifndef CDCHEADERDESCRIPTOR_H
+#endif //#ifndef CDCHEADERDESCRIPTOR_H
+
+
