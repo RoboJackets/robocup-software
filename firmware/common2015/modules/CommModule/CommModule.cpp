@@ -63,18 +63,23 @@ shared_ptr<CommModule>& CommModule::Instance(void)
 void CommModule::txThread(void const* arg)
 {
     // Store our priority so we know what to reset it to if ever needed
-    // osPriority threadPriority;
+    osPriority threadPriority;
+    osEvent  evt;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    LOG(INIT, "TX communication module ready!\r\n    Thread ID:\t%u", _txID);
+    if (instance->_txID != nullptr)
+        threadPriority  = osThreadGetPriority(instance->_txID);
+    else
+        threadPriority = osPriorityIdle;
 
+    LOG(INIT, "TX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", instance->_txID, threadPriority);
+
+    // Signal to the RX thread that it can begin
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
 
-    osEvent  evt;
-
-    while (1) {
+    while (true) {
 
         // When a new RTP packet is put in the tx queue, begin operations (does nothing if no new data in queue)
         evt = osMailGet(instance->_txQueue, osWaitForever);
@@ -112,17 +117,21 @@ void CommModule::txThread(void const* arg)
 void CommModule::rxThread(void const* arg)
 {
     // Store our priority so we know what to reset it to if ever needed
-    // osPriority threadPriority;
+    osPriority threadPriority;
+    RTP_t* p;
+    osEvent  evt;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    LOG(INIT, "RX communication module ready!\r\n    Thread ID:\t%u", _rxID);
+    if (instance->_rxID != nullptr)
+        threadPriority  = osThreadGetPriority(instance->_rxID);
+    else
+        threadPriority = osPriorityIdle;
 
-    RTP_t* p;
-    osEvent  evt;
+    LOG(INIT, "RX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", instance->_rxID, threadPriority);
 
-    while (1) {
+    while (true) {
 
         // Wait until new data is placed in the class's rxQueue from a CommLink class
         evt = osMailGet(instance->_rxQueue, osWaitForever);
@@ -133,7 +142,7 @@ void CommModule::rxThread(void const* arg)
 
             // Bump up the thread's priority
             // if (osThreadSetPriority(_rxID, osPriorityRealtime) == osOK) {
-            
+
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen() ) {
 
