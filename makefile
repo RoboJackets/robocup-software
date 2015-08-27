@@ -93,6 +93,8 @@ STYLE_EXCLUDE_DIRS=build \
 	firmware/robot/cpu/at91sam7s256 \
 	firmware/robot/cpu/at91sam7s321 \
 	firmware/robot/cpu/at91sam7s64 \
+	firmware/robot/cpu/usb \
+	firmware/robot/cpu/invensense \
 	firmware/robot2015 \
 	firmware/common2015
 # automatically format code according to our style config defined in .clang-format
