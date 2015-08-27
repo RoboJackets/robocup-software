@@ -92,7 +92,6 @@ void Task_CommCtrl(void const* args)
 
 		LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", radio.freq(), threadID, threadPriority);
 
-		/*
 		// Open a socket for running tests across the link layer
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_LINK_TEST);
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_LINK_TEST);
@@ -112,7 +111,6 @@ void Task_CommCtrl(void const* args)
 		CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket, COMM_PORT_SETPOINT);
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
 		CommModule::openSocket(COMM_PORT_SETPOINT);
-		*/
 
 	} else {
 		LOG(FATAL, "No radio interface found!\r\n    Terminating main radio thread.");
