@@ -65,8 +65,8 @@ void RbpfModelGraph::setTransProb(int indexA, int indexB, double weight) {
 std::ostream& operator<<(std::ostream& out, const RbpfModelGraph& g) {
     // display each model (node)
     for (int i = 0; i < g.j; i++) {
-        out << "Model(" << i << "):" << std::endl
-            << g.modelVector[i] << std::endl;
+        out << "Model(" << i << "):" << std::endl << g.modelVector[i]
+            << std::endl;
     }
     // display each transition probability (directed, weighted edge)
     out << "Adjacency Matrix:" << std::endl;

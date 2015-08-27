@@ -606,8 +606,8 @@ void RaycastVehicle::updateFriction(btScalar timeStep) {
         }
         if (m_sideImpulse[wheel] != btScalar(0.)) {
             class btRigidBody* groundObject =
-                (class btRigidBody*)m_wheelInfo[wheel]
-                    .m_raycastInfo.m_groundObject;
+                (class btRigidBody*)
+                m_wheelInfo[wheel].m_raycastInfo.m_groundObject;
 
             btVector3 rel_pos2 = wheelInfo.m_raycastInfo.m_contactPointWS -
                                  groundObject->getCenterOfMassPosition();

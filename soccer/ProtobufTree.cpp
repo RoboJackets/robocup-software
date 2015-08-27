@@ -387,7 +387,7 @@ void ProtobufTree::collapseSubtree(QTreeWidgetItem* item) {
 void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
     QMenu menu;
 
-    QAction *expandItemAction = nullptr, *collapseItemAction = nullptr;
+    QAction* expandItemAction = nullptr, *collapseItemAction = nullptr;
     QTreeWidgetItem* item = itemAt(e->pos());
     if (item) {
         expandItemAction = menu.addAction("Expand");
@@ -428,9 +428,9 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
                     chartAction = chartMenu->addAction("New Chart");
                     chartMenu->addSeparator();
                     for (int i = 0; i < dockWidgets.size(); ++i) {
-                        chartMenuActions.append(chartMenu->addAction(
-                            QString("Add to '%1'")
-                                .arg(dockWidgets[0]->windowTitle())));
+                        chartMenuActions.append(
+                            chartMenu->addAction(QString("Add to '%1'").arg(
+                                dockWidgets[0]->windowTitle())));
                     }
                 } else {
                     chartAction = menu.addAction("New Chart");

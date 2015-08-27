@@ -284,7 +284,7 @@ std::ostream& operator<<(std::ostream& out, const Rbpf& r) {
     out << "model graph:" << std::endl << r.modelGraph << std::endl;
     // display k particles
     for (int x = 0; x < r.k; x++)
-        out << "particle(" << x << "):" << std::endl
-            << r.particleVector[x] << std::endl;
+        out << "particle(" << x << "):" << std::endl << r.particleVector[x]
+            << std::endl;
     return out;
 }
