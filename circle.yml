@@ -26,4 +26,5 @@ deployment:
     branch: master
     commands:
       - ./util/docker/circle/apidocs.sh
+      - ./util/docker/baseimage/pushbaseimage.sh
 
