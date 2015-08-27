@@ -2,7 +2,6 @@
 #define VISIONDOTPATTERN_HPP
 #include <QColor>
 
-
 /*!
  * \brief Defines the dot pattern for the robot shells.
  *
@@ -13,18 +12,18 @@
  * clockwise around the robot.
  */
 const QColor Dot_Pattern_Colors[12][4] = {
-    {Qt::magenta, Qt::magenta, Qt:: magenta, Qt::green},
-    {Qt::green, Qt::magenta, Qt:: magenta, Qt::green},
-    {Qt::green, Qt::green, Qt:: magenta, Qt::green},
-    {Qt::magenta, Qt::green, Qt:: magenta, Qt::green},
-    {Qt::magenta, Qt::magenta, Qt:: green, Qt::magenta},
-    {Qt::green, Qt::magenta, Qt:: green, Qt::magenta},
-    {Qt::green, Qt::green, Qt:: green, Qt::magenta},
-    {Qt::magenta, Qt::green, Qt:: green, Qt::magenta},
-    {Qt::green, Qt::green, Qt:: green, Qt::green},
-    {Qt::magenta, Qt::magenta, Qt:: magenta, Qt::magenta},
-    {Qt::magenta, Qt::magenta, Qt:: green, Qt::green},
-    {Qt::green, Qt::green, Qt:: magenta, Qt::magenta},
+    {Qt::magenta, Qt::magenta, Qt::magenta, Qt::green},
+    {Qt::green, Qt::magenta, Qt::magenta, Qt::green},
+    {Qt::green, Qt::green, Qt::magenta, Qt::green},
+    {Qt::magenta, Qt::green, Qt::magenta, Qt::green},
+    {Qt::magenta, Qt::magenta, Qt::green, Qt::magenta},
+    {Qt::green, Qt::magenta, Qt::green, Qt::magenta},
+    {Qt::green, Qt::green, Qt::green, Qt::magenta},
+    {Qt::magenta, Qt::green, Qt::green, Qt::magenta},
+    {Qt::green, Qt::green, Qt::green, Qt::green},
+    {Qt::magenta, Qt::magenta, Qt::magenta, Qt::magenta},
+    {Qt::magenta, Qt::magenta, Qt::green, Qt::green},
+    {Qt::green, Qt::green, Qt::magenta, Qt::magenta},
 };
 
-#endif // VISIONDOTPATTERN_HPP
+#endif  // VISIONDOTPATTERN_HPP

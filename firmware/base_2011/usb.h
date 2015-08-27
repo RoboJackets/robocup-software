@@ -1,7 +1,6 @@
 #pragma once
 
-typedef struct
-{
+typedef struct {
     uint8_t bmRequestType;
     uint8_t bRequest;
     uint16_t wValue;

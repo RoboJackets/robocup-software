@@ -2,15 +2,14 @@
 
 #include "Configuration.hpp"
 
-
 int main(int argc, char** argv) {
-  ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
 
-  // setup config system because some tests rely on it
-  Configuration config;
-  for (Configurable *obj :  Configurable::configurables()) {
-    obj->createConfiguration(&config);
-  }
+    // setup config system because some tests rely on it
+    Configuration config;
+    for (Configurable* obj : Configurable::configurables()) {
+        obj->createConfiguration(&config);
+    }
 
-  return RUN_ALL_TESTS();
+    return RUN_ALL_TESTS();
 }

@@ -22,29 +22,26 @@
 
 class RbpfState {
 public:
+    // _X: initial state, (n x 1)
+    // _P: initial state covariance, (n x n)
+    // _modelIdx: index of this particle's model
+    // _w: initial weight
+    //  n: size of Kalman Filter state
+    RbpfState(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P,
+              int _modelIdx, double _w);
 
-	// _X: initial state, (n x 1)
-	// _P: initial state covariance, (n x n)
-	// _modelIdx: index of this particle's model
-	// _w: initial weight
-	//  n: size of Kalman Filter state
-	RbpfState(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P, int _modelIdx, double _w);
+    // Copies one state into another. Note: this is not a copy constructor.
+    void copy(const RbpfState& state) { *this = state; }
 
-	// Copies one state into another. Note: this is not a copy constructor.
-	void copy(const RbpfState &state)
-	{
-		*this = state;
-	}
+    // Used for printing this state to a stream
+    friend std::ostream& operator<<(std::ostream& out, const RbpfState& state);
 
-	// Used for printing this state to a stream
-	friend std::ostream& operator<<(std::ostream& out, const RbpfState &state);
+    static const unsigned int n = NSIZE;  // size of Kalman Filter state
+    rbpf::VectorNd X;                     // state vector (n x 1)
+    rbpf::MatrixNNd P;                    // state covariance (n x n)
+    int modelIdx;                         // index of this particle's model
+    double weight;                        // particle weight
 
-	static const unsigned int n = NSIZE;         // size of Kalman Filter state
-	rbpf::VectorNd X;      // state vector (n x 1)
-	rbpf::MatrixNNd P;      // state covariance (n x n)
-	int modelIdx;  // index of this particle's model
-	double weight; // particle weight
-
-	// Required for use of fixed size matrices as members
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    // Required for use of fixed size matrices as members
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

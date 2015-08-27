@@ -2,6 +2,6 @@
 
 #define EOF -1
 
-int printf(const char *format, ...);
+int printf(const char* format, ...);
 int putchar(int c);
-int puts(const char *s);
+int puts(const char* s);

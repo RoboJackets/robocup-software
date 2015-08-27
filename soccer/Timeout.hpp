@@ -11,30 +11,22 @@
  */
 class Timeout {
 public:
-	Timeout(float seconds = 0) {
-		setIntervalInSeconds(seconds);
-		reset();
-	}
+    Timeout(float seconds = 0) {
+        setIntervalInSeconds(seconds);
+        reset();
+    }
 
-	void reset() {
-		_startTime = timestamp();
-	}
+    void reset() { _startTime = timestamp(); }
 
+    void setIntervalInSeconds(float seconds) {
+        _interval = (Time)(seconds * 1000.0f);
+    }
 
-	void setIntervalInSeconds(float seconds) {
-		_interval = (Time)(seconds * 1000.0f);
-	}
+    void setIntervalInMilliseconds(Time ms) { _interval = ms; }
 
-	void setIntervalInMilliseconds(Time ms) {
-		_interval = ms;
-	}
-
-
-	bool isTimedOut() {
-		return timestamp() - _startTime > _interval;
-	}
+    bool isTimedOut() { return timestamp() - _startTime > _interval; }
 
 private:
-	Time _interval;
-	Time _startTime;
+    Time _interval;
+    Time _startTime;
 };
