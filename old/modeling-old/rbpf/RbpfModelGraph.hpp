@@ -22,33 +22,34 @@
 
 class RbpfModelGraph {
 public:
-	typedef boost::ptr_vector<RbpfModel> ModelVector;
+    typedef boost::ptr_vector<RbpfModel> ModelVector;
 
-	RbpfModelGraph();
+    RbpfModelGraph();
 
-	~RbpfModelGraph();
+    ~RbpfModelGraph();
 
-	// adds a model as a node in the graph and initializes transition
-	// probabilities to zero.
-	void addModel(RbpfModel* model);
+    // adds a model as a node in the graph and initializes transition
+    // probabilities to zero.
+    void addModel(RbpfModel* model);
 
-	// returns a model from the graph that corresponds to index modelIndex
-	RbpfModel* getModel(int modelIndex);
+    // returns a model from the graph that corresponds to index modelIndex
+    RbpfModel* getModel(int modelIndex);
 
-	// sets the transition probability from model A to model B
-	void setTransProb(int indexA, int indexB, double weight);
+    // sets the transition probability from model A to model B
+    void setTransProb(int indexA, int indexB, double weight);
 
-	// get the transition probability from model A to model B
-	double getTransProb(int indexA, int indexB);
+    // get the transition probability from model A to model B
+    double getTransProb(int indexA, int indexB);
 
-	// Used for printing this modelGraph to a stream
-	friend std::ostream& operator<<(std::ostream& out, const RbpfModelGraph &graph);
+    // Used for printing this modelGraph to a stream
+    friend std::ostream& operator<<(std::ostream& out,
+                                    const RbpfModelGraph& graph);
 
-	int j; // number of models in graph
+    int j;  // number of models in graph
 
 protected:
-	LinAlg::Matrix adjacencyMatrix;
-	ModelVector modelVector;
+    LinAlg::Matrix adjacencyMatrix;
+    ModelVector modelVector;
 };
 
 #endif /* RBPFMODELGRAPH_HPP_ */

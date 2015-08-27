@@ -52,8 +52,8 @@ message TestResult
 	optional string group = 3;
 }
 
-// Only the first LogFrame in a log file contains this.
-// It contains unchanging information about the soccer build and invocation.
+// Only the first LogFrame in a log file contains this. It contains unchanging
+// information about the soccer build and invocation.
 message LogConfig
 {
 	// Name of the program which generated this log
@@ -152,8 +152,8 @@ message LogFrame
 	// results from testing
 	repeated TestResult testResults = 21;
 
-	//	the description of the behavior tree
-	//	should show the hierarchy of behaviors and each behavior's state
+	// the description of the behavior tree
+	// should show the hierarchy of behaviors and each behavior's state
 	optional string behavior_tree = 22;
 
 	optional string team_name_yellow = 23;

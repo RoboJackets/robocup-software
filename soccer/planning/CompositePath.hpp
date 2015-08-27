@@ -5,43 +5,45 @@
 #include <Geometry2d/CompositeShape.hpp>
 #include <Configuration.hpp>
 
+namespace Planning {
+/**
+ * @brief Represents a motion path made up of a series of Paths.
+ *
+ * @details The path represents a function of position given time that the robot
+ * should follow.
+ * The path is made up of other Paths and can be made up of CompositePaths.
+ */
+class CompositePath : public Path {
+private:
+    // Vector of Paths
+    std::vector<std::unique_ptr<Path>> paths;
 
-namespace Planning
-{
-	/**
-	 * @brief Represents a motion path made up of a series of Paths.
-	 *
-	 * @details The path represents a function of position given time that the robot should follow.
-	 * The path is made up of other Paths and can be made up of CompositePaths.
-	 */
-	class CompositePath: public Path
-	{
+    // Saving some variables to speed up computation
+    float duration = 0.0f;
 
-	private:
-		//Vector of Paths
-		std::vector<std::unique_ptr<Path>> paths;
+public:
+    /** default path is empty */
+    CompositePath() {}
 
-		//Saving some variables to speed up computation
-		float duration = 0.0f;
+    /** constructors with one path */
+    CompositePath(std::unique_ptr<Path> path);
 
-	public:
-		/** default path is empty */
-		CompositePath() {}
+    /**
+     * Append the path to the end of the CompositePath
+     */
+    void append(std::unique_ptr<Path> path);
 
-		/** constructors with one path */
-		CompositePath(std::unique_ptr<Path> path);
-
-		/**
-		 * Append the path to the end of the CompositePath
-		 */
-		void append(std::unique_ptr<Path> path);
-
-		virtual bool evaluate(float t, MotionInstant &targetMotionInstant) const override;
-		virtual bool hit(const Geometry2d::CompositeShape &shape, float &hitTime, float startTime = 0) const override;
-		virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const override;
-		virtual float getDuration() const override;
-		virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
-		virtual boost::optional<MotionInstant> destination() const override;
-		virtual std::unique_ptr<Path> clone() const override;
-	};
+    virtual bool evaluate(float t,
+                          MotionInstant& targetMotionInstant) const override;
+    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+                     float startTime = 0) const override;
+    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
+                      const QString& layer = "Motion") const override;
+    virtual float getDuration() const override;
+    virtual std::unique_ptr<Path> subPath(
+        float startTime = 0,
+        float endTime = std::numeric_limits<float>::infinity()) const override;
+    virtual boost::optional<MotionInstant> destination() const override;
+    virtual std::unique_ptr<Path> clone() const override;
+};
 }

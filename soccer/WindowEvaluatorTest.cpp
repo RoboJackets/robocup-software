@@ -5,21 +5,19 @@
 
 using namespace Geometry2d;
 
-
 Configuration config;
-
 
 // Places a robot on the field that counts as an obstacle to the window
 // evaluator, but is not actuallly in the way.  Should return one segment as
 // the result.
 TEST(WindowEvaluator, eval_pt_to_seg) {
     // setup config system because window evaulator relies on it
-    for (Configurable *obj :  Configurable::configurables()) {
+    for (Configurable* obj : Configurable::configurables()) {
         obj->createConfiguration(&config);
     }
 
     SystemState state;
-    OurRobot *obstacleBot = state.self[0];
+    OurRobot* obstacleBot = state.self[0];
     obstacleBot->visible = true;
     obstacleBot->pos = Point(1, 1);
 
@@ -28,7 +26,8 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
         Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
     WindowEvaluator winEval(&state);
-    WindowingResult result = winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
+    WindowingResult result =
+        winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
 
     auto& windows = result.first;
     auto& best = result.second;
