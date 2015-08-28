@@ -1,7 +1,7 @@
 #include "RobotStatusWidget.hpp"
 
-
-RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f) {
+RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
+    : QWidget(parent, f) {
     _ui.setupUi(this);
 
     setBoardID("?\?-??");
@@ -24,16 +24,14 @@ RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidg
     _showstopper = false;
 }
 
-int RobotStatusWidget::shellID() const {
-    return _shellID;
-}
+int RobotStatusWidget::shellID() const { return _shellID; }
 
 void RobotStatusWidget::setShellID(int shellID) {
     if (shellID != _shellID) {
         _shellID = shellID;
 
         _ui.robotWidget->setShellID(_shellID);
-        
+
         if (shellID == -1) {
             _ui.shellID->setText(QString("?"));
         } else {
@@ -42,7 +40,7 @@ void RobotStatusWidget::setShellID(int shellID) {
     }
 }
 
-void RobotStatusWidget::setErrorText(const QString &error){
+void RobotStatusWidget::setErrorText(const QString& error) {
     _ui.errorText->setText(error);
 }
 
@@ -51,26 +49,20 @@ void RobotStatusWidget::setBlueTeam(bool blueTeam) {
     _blueTeam = blueTeam;
 }
 
-bool RobotStatusWidget::blueTeam() const {
-    return _blueTeam;
-}
+bool RobotStatusWidget::blueTeam() const { return _blueTeam; }
 
-const QString &RobotStatusWidget::boardID() const {
-    return _boardID;
-}
+const QString& RobotStatusWidget::boardID() const { return _boardID; }
 
-void RobotStatusWidget::setBoardID(const QString &boardID) {
+void RobotStatusWidget::setBoardID(const QString& boardID) {
     if (boardID != _boardID) {
         _boardID = boardID;
         _ui.boardID->setText(QString("ID: %1").arg(boardID));
     }
 }
 
-QString RobotStatusWidget::robotModel() const {
-    return _ui.robotModel->text();
-}
+QString RobotStatusWidget::robotModel() const { return _ui.robotModel->text(); }
 
-void RobotStatusWidget::setRobotModel(const QString &robotModel) {
+void RobotStatusWidget::setRobotModel(const QString& robotModel) {
     _ui.robotModel->setText(robotModel);
 }
 
@@ -86,34 +78,31 @@ void RobotStatusWidget::setHasBall(bool hasBall) {
     _ui.robotWidget->setHasBall(hasBall);
 }
 
-
-bool RobotStatusWidget::hasRadio() const {
-    return _hasRadio;
-}
+bool RobotStatusWidget::hasRadio() const { return _hasRadio; }
 
 void RobotStatusWidget::setHasRadio(bool hasRadio) {
     if (hasRadio != _hasRadio) {
         _hasRadio = hasRadio;
 
-        _ui.radioIndicator->setPixmap(QPixmap(QString(hasRadio ? ":icons/radio-connected.svg" : ":icons/radio-disconnected.svg")));
+        _ui.radioIndicator->setPixmap(
+            QPixmap(QString(hasRadio ? ":icons/radio-connected.svg"
+                                     : ":icons/radio-disconnected.svg")));
     }
 }
 
-bool RobotStatusWidget::hasVision() const {
-    return _hasVision;
-}
+bool RobotStatusWidget::hasVision() const { return _hasVision; }
 
 void RobotStatusWidget::setHasVision(bool hasVision) {
     if (hasVision != _hasVision) {
         _hasVision = hasVision;
 
-        _ui.visionIndicator->setPixmap(QPixmap(QString(hasVision ? ":icons/vision-available.svg" : ":icons/vision-unavailable.svg")));
+        _ui.visionIndicator->setPixmap(
+            QPixmap(QString(hasVision ? ":icons/vision-available.svg"
+                                      : ":icons/vision-unavailable.svg")));
     }
 }
- 
-float RobotStatusWidget::batteryLevel() const {
-    return _batteryLevel;
-}
+
+float RobotStatusWidget::batteryLevel() const { return _batteryLevel; }
 
 void RobotStatusWidget::setBatteryLevel(float batteryLevel) {
     if (fabs(batteryLevel - _batteryLevel) > 0.01) {

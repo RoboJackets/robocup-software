@@ -7,7 +7,7 @@ SUBSYSTEM!="usb_device", ACTION!="add", GOTO="robocup_rules_end"
 ATTR{idVendor}=="03eb", ATTR{idProduct}=="2ffb", MODE="0660", GROUP="plugdev"
 
 # Base station (normal operation)
-ATTR{idVendor}=="3141", ATTR{idProduct}=="0004", MODE="0660", GROUP="plugdev"
+ATTR{idVendor}=="3141", ATTR{idProduct}=="0004", MODE="0660", GROUP="plugdev" SYMLINK+="rj_base_station_2011"
 
 # JTAG adapter
 ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE="0660", GROUP="plugdev"

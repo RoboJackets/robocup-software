@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -60,10 +60,9 @@
 // \param pStr  Storage string.
 // \param pSource  Source string.
 //------------------------------------------------------------------------------
-static void PutString(const char *pSource)
-{
+static void PutString(const char* pSource) {
     while (*pSource != 0) {
-		putchar(*pSource++);
+        putchar(*pSource++);
     }
 }
 
@@ -76,11 +75,7 @@ static void PutString(const char *pSource)
 // \param width  Minimum integer width.
 // \param value  Integer value.
 //------------------------------------------------------------------------------
-void PutUnsignedInt(
-    char fill,
-    int width,
-    unsigned int value)
-{
+void PutUnsignedInt(char fill, int width, unsigned int value) {
     // Take current digit into account when calculating width
     width--;
 
@@ -109,20 +104,13 @@ void PutUnsignedInt(
 // \param width  Minimum integer width.
 // \param value  Signed integer value.
 //------------------------------------------------------------------------------
-void PutSignedInt(
-    char fill,
-    int width,
-    int value)
-{
+void PutSignedInt(char fill, int width, int value) {
     unsigned int absolute;
 
     // Compute absolute value
     if (value < 0) {
-
         absolute = -value;
-    }
-    else {
-
+    } else {
         absolute = value;
     }
 
@@ -133,13 +121,10 @@ void PutSignedInt(
     if ((absolute / 10) > 0) {
         if (value < 0) {
             PutSignedInt(fill, width, -(absolute / 10));
-        }
-        else {
+        } else {
             PutSignedInt(fill, width, absolute / 10);
         }
-    }
-    else {
-
+    } else {
         // Reserve space for sign
         if (value < 0) {
             width--;
@@ -171,12 +156,8 @@ void PutSignedInt(
 // \param maj  Indicates if the letters must be printed in lower- or upper-case.
 // \param value  Hexadecimal value.
 //------------------------------------------------------------------------------
-static void PutHexa(
-    char fill,
-    int width,
-    unsigned char maj,
-    unsigned int value)
-{
+static void PutHexa(char fill, int width, unsigned char maj,
+                    unsigned int value) {
     // Decrement width
     width--;
 
@@ -195,11 +176,9 @@ static void PutHexa(
     // Write current digit
     if ((value & 0xF) < 10) {
         putchar((value & 0xF) + '0');
-    }
-    else if (maj) {
+    } else if (maj) {
         putchar((value & 0xF) - 10 + 'A');
-    }
-    else {
+    } else {
         putchar((value & 0xF) - 10 + 'a');
     }
 }
@@ -213,25 +192,23 @@ static void PutHexa(
 /// arguments.
 /// \param pFormat  Format string.
 //------------------------------------------------------------------------------
-int printf(const char *pFormat, ...)
-{
+int printf(const char* pFormat, ...) {
     va_list ap;
-    char          fill;
+    char fill;
     unsigned char width;
 
     // Forward call to vprintf
     va_start(ap, pFormat);
 
     // Phase string
-    while (*pFormat != 0)
-	{
+    while (*pFormat != 0) {
         // Normal character
         if (*pFormat != '%') {
-			putchar(*pFormat++);
+            putchar(*pFormat++);
         }
         // Escaped '%'
-        else if (*(pFormat+1) == '%') {
-			putchar('%');
+        else if (*(pFormat + 1) == '%') {
+            putchar('%');
             pFormat += 2;
         }
         // Token delimiter
@@ -242,40 +219,50 @@ int printf(const char *pFormat, ...)
 
             // Parse filler
             if (*pFormat == '0') {
-
                 fill = '0';
                 pFormat++;
             }
 
             // Parse width
             while ((*pFormat >= '0') && (*pFormat <= '9')) {
-        
-                width = (width*10) + *pFormat-'0';
+                width = (width * 10) + *pFormat - '0';
                 pFormat++;
             }
 
             // Parse type
             switch (*pFormat) {
-				//FIXME - Division is broken
-//             case 'i': 
-            case 'd': PutSignedInt(fill, width, va_arg(ap, int)); break;
-//             case 'u': PutUnsignedInt(fill, width, va_arg(ap, unsigned int)); break;
-            case 'x': PutHexa(fill, width, 0, va_arg(ap, unsigned int)); break;
-            case 'X': PutHexa(fill, width, 1, va_arg(ap, unsigned int)); break;
-            case 's': PutString(va_arg(ap, char *)); break;
-            case 'c': putchar(va_arg(ap, unsigned int)); break;
-			case 'p':
-				putchar('0');
-				putchar('x');
-				PutHexa('0', 8, 0, va_arg(ap, unsigned int));
-				break;
-            default: break;
+                // FIXME - Division is broken
+                //             case 'i':
+                case 'd':
+                    PutSignedInt(fill, width, va_arg(ap, int));
+                    break;
+                //             case 'u': PutUnsignedInt(fill, width, va_arg(ap,
+                //             unsigned int)); break;
+                case 'x':
+                    PutHexa(fill, width, 0, va_arg(ap, unsigned int));
+                    break;
+                case 'X':
+                    PutHexa(fill, width, 1, va_arg(ap, unsigned int));
+                    break;
+                case 's':
+                    PutString(va_arg(ap, char*));
+                    break;
+                case 'c':
+                    putchar(va_arg(ap, unsigned int));
+                    break;
+                case 'p':
+                    putchar('0');
+                    putchar('x');
+                    PutHexa('0', 8, 0, va_arg(ap, unsigned int));
+                    break;
+                default:
+                    break;
             }
 
             pFormat++;
         }
     }
     va_end(ap);
-	
-	return 1;
+
+    return 1;
 }

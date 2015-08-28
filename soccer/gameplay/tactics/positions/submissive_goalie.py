@@ -66,7 +66,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         for state in non_block_states:
             self.add_transition(state,
                 SubmissiveGoalie.State.block,
-                lambda: not evaluation.ball.is_in_our_goalie_zone() and 
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal(),
                 'ball not in goal or moving towards it')
 
@@ -88,7 +88,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         if self.block_line == None:
             self._move_target = SubmissiveGoalie.RobotSegment.center()
         else:
-            self._move_target = self.block_line.line_intersection(SubmissiveGoalie.RobotSegment)
+            self._move_target = SubmissiveGoalie.RobotSegment.nearest_point_to_line(self.block_line)
 
         self._move_target.x = min(max(self._move_target.x, -SubmissiveGoalie.MaxX), SubmissiveGoalie.MaxX)
 
@@ -150,7 +150,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
     def execute_block(self):
         move = self.subbehavior_with_name('move')
         move.pos = self.move_target
-       
+
 
 
     def on_exit_block(self):
@@ -161,7 +161,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         reqs = super().role_requirements()
 
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
-            req.required_shell_id = self.shell_id
+            req.required_shell_id = self.shell_id if self.shell_id != None else -1
         return reqs
 
 

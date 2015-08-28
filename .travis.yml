@@ -1,0 +1,22 @@
+
+language: objective-c
+
+# only run travis-ci on master
+branches:
+  only:
+    - master
+
+before_install:
+  - brew update
+  - brew upgrade
+  - util/osx-setup
+
+cache:
+  directories:
+    - $HOME/.ccache
+    - /usr/local
+
+script: make
+
+notifications:
+  email: false
