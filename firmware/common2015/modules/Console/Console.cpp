@@ -158,6 +158,11 @@ void Console::RXCallback(void)
 
 			// if a new line character is sent, process the current buffer
 			else if (c == NEW_LINE_CHAR) {
+				// store the currently typed line into a vector for scrolling through command history
+				if ( cmdHist.size() < 6 ) {
+					cmdHist.push_back(rxBuffer);
+				}
+
 				// print new line prior to executing
 				PRINTF("%c\n", NEW_LINE_CHAR);
 				Flush();
