@@ -70,6 +70,12 @@ robot2015-fpga-prog: robot2015-fpga-set robot2015-test-prog
 robot2015-fpga-set:
 HW_TEST_UNIT := fpga
 
+# piezo buzzer hardware test
+robot2015-piezo: robot2015-piezo-set robot2015-test
+robot2015-piezo-prog: robot2015-piezo-set robot2015-test-prog
+robot2015-piezo-set:
+HW_TEST_UNIT := piezo
+
 # kicker 2015 firmware
 kicker2015:
 	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
