@@ -134,7 +134,8 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 
 # target to copy the output fpga bitstream to the mbed
 add_custom_target(fpga2015-prog
-    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
+    # COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
+    COMMAND ${MBED_LOAD_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
     DEPENDS fpga2015nib
     COMMENT COMMENT "Copying the FPGA's bitfile over to the mbed"
 )

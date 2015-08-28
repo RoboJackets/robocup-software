@@ -4,20 +4,10 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
-#if(${TOC})
-#    set(USE_OWN_LINKER_SCRIPT ${TOC})
-#    set(LINKER_DIR ${CMAKE_CURRENT_LIST_DIR}/scripts/linker)
-#    set(LINKER_SCRIPT ${LINKER_DIR}/sections_FLASH.ld)
-#endif()
-# 
-#if(${USE_OWN_LINKER_SCRIPT})
-#    list(APPEND ${MODULES} param toc)
-#endif()
-
 # set the names of each directory and then set the names of the subdirectories within each one
-set(DRIVERS_ROOT_NAME   drivers)
-set(MODULES_ROOT_NAME   modules)
-set(CONFIG_ROOT_NAME    config)
+set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
+set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+set(CONFIG_ROOT_NAME    ${CMAKE_CURRENT_SOURCE_DIR}/config)
 set(DRIVERS             adc dma ds2411 fpga mcp23017 mem-iap mpu-6050 rtos-i2c ws2811)
 set(MODULES             commands controller motors)
 
@@ -36,7 +26,7 @@ include(${ARM_TOOLCHAIN_FILE})
 
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
-set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS} -D_XOPEN_SOURCE=600)
+set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
 set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # Find the assembly source files and make sure they're compiled using the C compiler
@@ -47,9 +37,6 @@ unset(assm_SRC)
 
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC "*.cpp")
-
-# Exclude FreeRTOS stuff if it happens to be a directory here...
-string(REGEX REPLACE ";?[^;]+/FreeRTOS[V]?[0-9\\.]+/[^;]+;?" "${0}" robot2015_SRC "${robot2015_SRC}")
 
 # add the target for making the elf file
 add_executable(robot2015_elf ${robot2015_SRC} ${assm_SRC})
@@ -82,3 +69,5 @@ add_custom_target(robot2015-prog
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"
 )
+
+add_subdirectory(hw-test)

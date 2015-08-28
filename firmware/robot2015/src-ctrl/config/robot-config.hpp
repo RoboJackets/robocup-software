@@ -38,6 +38,8 @@
 // The amount of time (in ms) that all LEDs stay lit during startup
 #define RJ_STARTUP_LED_TIMEOUT_MS 500
 
+#define RJ_FPGA_SPI_FREQ        1000000
+
 enum PORTS {
     COMM_PORT_LINK_TEST         = 0x03,
     COMM_PORT_CONTROLLER        = 0x04,
