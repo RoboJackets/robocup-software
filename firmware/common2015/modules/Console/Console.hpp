@@ -187,7 +187,4 @@ class Console
    * transmission buffer index
    */
   uint8_t txIndex = 0;
-
-  std::vector<std::string> cmdHist;
-  std::string cmdCache;
 };
