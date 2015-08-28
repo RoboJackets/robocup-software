@@ -9,12 +9,11 @@
 #include <sys/types.h>
 #include <pthread.h>
 
-class FastTimer: public QThread
-{
+class FastTimer : public QThread {
     Q_OBJECT;
 
 public:
-    FastTimer(QObject *parent = nullptr);
+    FastTimer(QObject* parent = nullptr);
     virtual ~FastTimer();
 
     void start(int ms);
@@ -25,7 +24,7 @@ signals:
 
 protected:
     virtual void run() override;
-    virtual bool event(QEvent *e) override;
+    virtual bool event(QEvent* e) override;
 
     useconds_t _us;
     volatile bool _running;

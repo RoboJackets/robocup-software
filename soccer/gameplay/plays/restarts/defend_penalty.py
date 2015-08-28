@@ -23,7 +23,6 @@ class DefendPenalty(play.Play):
 
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
 
-
     @classmethod
     def score(cls):
         gs = main.game_state()

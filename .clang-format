@@ -1,0 +1,9 @@
+---
+BasedOnStyle: Google
+DerivePointerAlignment: false
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+SpaceAfterCStyleCast: false
+...

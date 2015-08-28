@@ -1,36 +1,34 @@
 #pragma once
 #include <vector>
 
-class Pid
-{
+class Pid {
 public:
-	Pid(float p = 0, float i = 0, float d = 0, unsigned int windup = 0);
+    Pid(float p = 0, float i = 0, float d = 0, unsigned int windup = 0);
 
+    unsigned int windup() const { return _windup; }
 
-	unsigned int windup() const { return _windup; }
+    /** Runs the pid loop and returns the error */
+    float run(const float err);
 
-	/** Runs the pid loop and returns the error */
-	float run(const float err);
+    void setWindup(unsigned int w);
 
-	void setWindup(unsigned int w);
+    /** clear any windup */
+    void clearWindup();
 
-	/** clear any windup */
-	void clearWindup();
-
-	float kp, ki, kd;
+    float kp, ki, kd;
 
 private:
-	Pid(Pid&);
-	Pid& operator &= (Pid&);
+    Pid(Pid&);
+    Pid& operator&=(Pid&);
 
-	/** amount to sum up */
-	unsigned int _windup;
+    /** amount to sum up */
+    unsigned int _windup;
 
-	unsigned int _windupLoc;
+    unsigned int _windupLoc;
 
-	float _errSum;
+    float _errSum;
 
-	float _lastErr;
+    float _lastErr;
 
-	std::vector<float> _oldErr;
+    std::vector<float> _oldErr;
 };
