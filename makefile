@@ -44,6 +44,32 @@ robot2015:
 robot2015-prog:
 	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 
+# general target for calling the hardware tests
+robot2015-test:
+	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_TEST_UNIT) --target robot2015-test .. && make $(MAKE_FLAGS) robot2015-test
+robot2015-test-prog:
+	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_TEST_UNIT) --target robot2015-test-prog .. && make $(MAKE_FLAGS) robot2015-test-prog
+
+# I2C bus hardware test
+robot2015-i2c: robot2015-i2c-set robot2015-test
+robot2015-i2c-prog: robot2015-i2c-set robot2015-test-prog
+robot2015-i2c-set:
+HW_TEST_UNIT := i2c
+
+# IO expander hardware test
+robot2015-io-expander: robot2015-io-expander-set robot2015-test
+robot2015-io-expander-prog: robot2015-io-expander-set robot2015-test-prog
+robot2015-io-expander-set:
+HW_TEST_UNIT := io-expander
+
+# fpga hardware test
+#robot2015-fpga: fpga2015 robot2015-fpga-set robot2015-test
+#robot2015-fpga-prog: fpga2015-prog robot2015-fpga-set robot2015-test-prog
+robot2015-fpga: robot2015-fpga-set robot2015-test
+robot2015-fpga-prog: robot2015-fpga-set robot2015-test-prog
+robot2015-fpga-set:
+HW_TEST_UNIT := fpga
+
 # kicker 2015 firmware
 kicker2015:
 	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
