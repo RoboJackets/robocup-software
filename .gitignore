@@ -21,5 +21,7 @@
 
 # IntelliJ
 .idea
+
 rj-*.bin
 rj-*.nib
+run/*-test.bin
