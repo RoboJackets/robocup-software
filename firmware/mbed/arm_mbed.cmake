@@ -25,9 +25,9 @@ set(MBED_DSP_PATH      ${PY_TOOLS_DIR}/build/dsp)
 #  LPC1768, LPC11U24, NRF51822, K64F
 
 # TARGET -> has to be set in CMakeLists.txt
-#
+# 
 # MBED_VENDOR -> CPU Manufacturer
-#
+# 
 message(STATUS "MBED target set to ${MBED_TARGET}")
 # the settings for mbed is really messed up ;)
 if(MBED_TARGET MATCHES "LPC1768")
@@ -194,15 +194,20 @@ if(${MBED_USE_DSP} STREQUAL "true")
   set(PY_LIBS ${PY_LIBS} --dsp)
 endif()
 
-
+# include the mbed paths and link the toolchain where this file is included in another file
 set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 link_directories(${MBED_LINK_DIRS})
-
 include_directories(${MBED_PATH})
 
 
-set(SWSPI_MBED_LIB ${CMAKE_CURRENT_SOURCE_DIR}/mbed/swspi.cmake)
-set(MCP23017_MBED_LIB ${CMAKE_CURRENT_SOURCE_DIR}/mbed/mcp23017.cmake)
+# set variables to each of the accessory library cmake project files
+set(SWSPI_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/swspi.cmake)
+set(MCP23017_MBED_LIB ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake)
 
-set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB}) # or ${MCP23017_MBED_LIB}
-set(MBED_ASSEC_LIBS_DEPENDS swspi_library) # or mcp23017_library
+# create a list of which accessory libraries we want to download and add to the common2015 library
+set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB})
+
+# uncomment the below line to add the MCP23017 library or other
+# ones when adding their cmake file to the mbed directory
+# -------------------------------------------------------------
+# list(APPEND MBED_ASSEC_LIBS ${MCP23017_MBED_LIB})

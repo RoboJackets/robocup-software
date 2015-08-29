@@ -3,10 +3,6 @@
 #include "kicker.h"
 #include "neopixel.h"
 
-// Architecture = avr2/avr25[1]
-// MCU Name = attiny441
-// Macro = __AVR_ATtiny441__
-
 /*
  * initialization
  */
@@ -23,23 +19,23 @@ void init(void)
 	initNeopixelBuffer();
 }
 
-void SPI_SlaveInit(void)
-{
-	/* Set MISO output, all others input */
-	DDR_SPI = (1 << DD_MISO);
+// void SPI_SlaveInit(void)
+// {
+// 	/* Set MISO output, all others input */
+// 	DDR_SPI = (1 << DD_MISO);
 
-	/* Enable SPI */
-	SPCR = (1 << SPE);
-}
+// 	/* Enable SPI */
+// 	SPCR = (1 << SPE);
+// }
 
-char SPI_SlaveReceive(void)
-{
-	/* Wait for reception complete */
-	while (!(SPSR & (1 << SPIF))) {};
+// char SPI_SlaveReceive(void)
+// {
+// 	/* Wait for reception complete */
+// 	while (!(SPSR & (1 << SPIF))) {};
 
-	/* Return Data Register */
-	return SPDR;
-}
+// 	/* Return Data Register */
+// 	return SPDR;
+// }
 
 /*
  * main

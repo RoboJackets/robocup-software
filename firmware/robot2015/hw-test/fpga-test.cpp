@@ -4,7 +4,7 @@
 #include <string>
 
 #include <helper-funcs.hpp>
-#include <SWSPI.h>
+#include "SWSPI.h"
 
 #include "robot-devices.hpp"
 
