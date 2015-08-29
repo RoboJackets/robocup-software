@@ -83,16 +83,6 @@ endif()
 ###############################################################################
 ################################ FPGA TARGETS #################################
 ###############################################################################
-# Move the constrain file to where we'll call the Xilinx command from
-#add_custom_target(copy_ucf
-#    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf ${CMAKE_CURRENT_BINARY_DIR}
-#    COMMENT "Copying UCF file to xflow working directory"
-#)
-#add_custom_target(copy_top_level
-#    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf ${CMAKE_CURRENT_BINARY_DIR}
-#    COMMENT "Copying top level file to xflow working directory"
-#)
-
 # Gather a list of all of the project sources
 file(GLOB_RECURSE verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.v)
 # Make sure the constraint file is part of the project file
