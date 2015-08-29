@@ -24,4 +24,4 @@
 
 rj-*.bin
 rj-*.nib
-run/*-test.bin
+*run/*-test.bin
