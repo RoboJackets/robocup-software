@@ -2,7 +2,8 @@
 
 # Script that loads a progam directly into the mbed microcontroller's flash memory and launches its execution
 
-UTIL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $SCRIPT_DIR/colors
 
 # Become root
 if [ $UID -ne 0 ]; then
@@ -28,8 +29,8 @@ else
             exit 0
         fi
     else
-        PRGM_SCRIPT="$UTIL_DIR/mbed-prgm.py"
-        sudo python $PRGM_SCRIPT --file=$1 --destination=$MNT_DIR
+        PRGM_SCRIPT="$SCRIPT_DIR/mbed-prgm.py"
+        sudo python $PRGM_SCRIPT --no-fat-write --load-memory --wait --file=$1 --destination=$MNT_DIR
     fi
 
 fi

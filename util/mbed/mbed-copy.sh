@@ -4,38 +4,8 @@
 
 # tput smcup
 
-# Define some colors because...why not?
-R1="$(tput setab 9)"
-R2="$(tput setaf 9)"
-AOFF="$(tput sgr0)"     # Attributes off
-R="$AOFF$R1$R2"
-# bold/normal font types   
-INVT="$(tput smso)"
-BOLD="$(tput bold)"
-NORM="$(tput rmso)"
-# Foreground Colors
-BLACK="$(tput setaf 0)"
-RED="$(tput setaf 1)"
-GREEN="$(tput setaf 2)"
-YELLOW="$(tput setaf 3)"
-BLUE="$(tput setaf 4)"
-PURP="$(tput setaf 5)"
-CYAN="$(tput setaf 6)"
-WHITE="$(tput setaf 7)"
-# Background colors
-BLACKBG="$(tput setab 0)"
-REDBG="$(tput setab 1)"
-GREENBG="$(tput setab 2)"
-YELLOWBG="$(tput setab 3)"
-BLUEBG="$(tput setab 4)"
-PURPBG="$(tput setab 5)"
-CYANBG="$(tput setab 6)"
-WHITEBG="$(tput setab 7)"
-# Insert a blank line
-CLRLN="$(tput el1)"
-PUTLN="$CLRLN$(tput ich $(tput cols))"
-FINLN="$(tput el)"
-
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $SCRIPT_DIR/colors
 
 # checks for file existence
 if [ ! -e "$1" ]; then

@@ -2,6 +2,9 @@
 
 # Script that will reformat an mbed's USB storage sector.
 
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $SCRIPT_DIR/colors
+
 # Become root
 if [ $UID -ne 0 ]; then
     echo "--  Becoming root"
@@ -33,12 +36,6 @@ else
 
         echo "--  unmounting from $MNT_DIR"
         umount $MBED_DEV
-
-        # Our projected mount point does not exist
-        #echo "--  making $MNT_DIR"
-        #sudo cp -r --preserve=mode,ownership "$MNT_DIR" "/tmp/$MNT_DIR"
-        
-        #mkdir -p "$MNT_DIR"
     fi
     
     echo "--  formatting mbed storage at $MBED_DEV"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-UTIL_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-cd $UTIL_DIR
+cd $SCRIPT_DIR
 cd ..
 set -e
 
