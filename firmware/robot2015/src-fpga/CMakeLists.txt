@@ -7,10 +7,13 @@ set(DEV_PARTNUM xc3s100etq144-4)
 # names are limited to 8.3 filename types since we need on-board access to this during runtime
 # lookup the limitations of an 8.3 filename before changing the output bitfile's name if that's ever needed
 set(OUTPUT_FILENAME_BASE rj-fpga)
+set(TOP_LEVEL_NAME robocup)
 
  # These are set with the above
-set(BIT_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.nib)
-set(XILINX_PROJ_FILENAME ${OUTPUT_FILENAME_BASE}.prj)
+set(BIN_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.bin)
+set(NIB_OUT_FILENAME ${OUTPUT_FILENAME_BASE}.nib)
+set(BIT_OUT_FILENAME ${TOP_LEVEL_NAME}.bit)
+set(UCF_IN_FILENAME  ${TOP_LEVEL_NAME}.ucf)
 
 # This is the root path to anything Xilinx related
 set(XILINX_SYSTEM_ROOT /opt/Xilinx)
@@ -81,19 +84,41 @@ endif()
 ################################ FPGA TARGETS #################################
 ###############################################################################
 # Move the constrain file to where we'll call the Xilinx command from
-add_custom_target(copy_ucf
-    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Copying UCF file to xflow working directory"
-)
+#add_custom_target(copy_ucf
+#    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf ${CMAKE_CURRENT_BINARY_DIR}
+#    COMMENT "Copying UCF file to xflow working directory"
+#)
+#add_custom_target(copy_top_level
+#    ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf ${CMAKE_CURRENT_BINARY_DIR}
+#    COMMENT "Copying top level file to xflow working directory"
+#)
 
-# Find all of the verilog files and create a project file that we can pass into xflow
-file(GLOB_RECURSE verilog_SRC "*.v" ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Gather a list of all of the project sources
+file(GLOB_RECURSE verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.v)
 # Make sure the constraint file is part of the project file
-list(APPEND verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/robocup.ucf)
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${XILINX_PROJ_FILENAME} "EOF")
-#foreach(srcFile ${verilog_SRC})
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/${XILINX_PROJ_FILENAME} "verilog work \"robocup.v\"\r\n")
-#endforeach()
+list(APPEND verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${UCF_IN_FILENAME})
+list(LENGTH verilog_SRC NUM_SRCS)
+
+set(NEED_TO_SYNTHESIZE FALSE)
+set(COMPRESS_BINARY TRUE)
+
+add_custom_target(copy_src)
+foreach(srcFile ${verilog_SRC})
+    get_filename_component(SRC_BASENAME ${srcFile} NAME)
+    set(srcBuildFile ${CMAKE_CURRENT_BINARY_DIR}/${SRC_BASENAME})
+
+    add_custom_command(
+        TARGET copy_src PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${srcFile} ${srcBuildFile}
+        COMMENT "Checking changes for ${SRC_BASENAME}"
+    )
+
+    # check if there is a new version for each of the source files - set a flag if anything has changed
+    if(${srcFile} IS_NEWER_THAN ${srcBuildFile})
+        set(NEED_TO_SYNTHESIZE TRUE)
+        message(STATUS "New version of ${srcFile} found")
+    endif()
+endforeach()
 
 # target for synthesizing the Verilog to a bitstream file that can be used to configure the fpga
 add_custom_target(fpga2015bit
@@ -104,40 +129,46 @@ add_custom_target(fpga2015bit
         -synth xst_verilog
         -implement fast_runtime
         -config bitgen
-        #${CMAKE_CURRENT_BINARY_DIR}/${XILINX_PROJ_FILENAME}
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/robocup.v
-    COMMENT "Using Xilinx xflow to generate the FPGA's bitstream from Verilog files"
-    DEPENDS copy_ucf
+        ${TOP_LEVEL_NAME}
+    COMMENT "Using Xilinx xflow to generate the FPGA's bitstream from ${NUM_SRCS} Verilog files"
+    DEPENDS copy_src
 )
 
 # The bitstream file contains extra header information that we don't need when configuring the fpga, so we convert to the binary format
 # which can be used for configuration directly.
-# The -b flag instructs promgen to swap the bit order, which is required for slave serial mode.  See this forum post for more info:
+# The -spi flag instructs promgen to swap the bit order, which is required for slave serial mode.  See this forum post for more info:
 # http://dbaspot.com/arch/340642-spartan3e-slave-serial-daisy-chain-print.html
+set(PROGMEN_FLAGS -w -spi -p bin -data_file up 0 ${CMAKE_CURRENT_BINARY_DIR}/${BIT_OUT_FILENAME} -o ${CMAKE_CURRENT_BINARY_DIR}/${BIN_OUT_FILENAME})
+if(${COMPRESS_BINARY})
+    set(PROGMEN_FLAGS -z ${PROGMEN_FLAGS})
+endif()
 add_custom_target(fpga2015bin
-    ${XILINX_TOOLS_DIR}/promgen
-        -w -b -p bin -u 0 ${CMAKE_CURRENT_BINARY_DIR}/robocup.bit -o ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin
+    ${XILINX_TOOLS_DIR}/promgen ${PROGMEN_FLAGS}
+    COMMENT "Creating ${BIN_OUT_FILENAME} binary from the ${BIT_OUT_FILENAME} bitstream"
     DEPENDS fpga2015bit
-    COMMENT "Creating bin file from bitstream"
 )
 
+# only synthesize if we need to
+set(FPGA_TARGET_DEPENDS copy_src)
+if(${NEED_TO_SYNTHESIZE})
+    list(APPEND FPGA_TARGET_DEPENDS fpga2015bin)
+else()
+    message(STATUS "No new or modified source files found for synthesis")
+endif()
+
 # MBED tries to load the most recent .bin file as its main program, so we can't name our fpga file with a .bin extension
-add_custom_target(fpga2015nib
-    cp ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
-    COMMENT "Copying '.bin' to '.nib' b/c '.bin' is a reserved extension on the mbed."
-    DEPENDS fpga2015bin
+add_custom_target(fpga2015
+    cp ${CMAKE_CURRENT_BINARY_DIR}/${BIN_OUT_FILENAME} ${PROJECT_SOURCE_DIR}/run/${NIB_OUT_FILENAME}
+    COMMENT "Copying ${BIN_OUT_FILENAME} to ${NIB_OUT_FILENAME} b/c *.bin is a reserved extension on the mbed"
+    DEPENDS ${FPGA_TARGET_DEPENDS}
 )
-add_custom_target(fpga2015  # An alias back to the fpga2015bin target
-    DEPENDS fpga2015nib
-)
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME})
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/${NIB_OUT_FILENAME})
 
 # target to copy the output fpga bitstream to the mbed
 add_custom_target(fpga2015-prog
-    # COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
-    COMMAND ${MBED_LOAD_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${BIT_OUT_FILENAME}
-    DEPENDS fpga2015nib
-    COMMENT COMMENT "Copying the FPGA's bitfile over to the mbed"
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/${NIB_OUT_FILENAME}
+    COMMENT COMMENT "Copying ${NIB_OUT_FILENAME} (bitstream file) to the mbed"
+    DEPENDS fpga2015
 )
 
 
