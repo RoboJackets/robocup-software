@@ -100,7 +100,7 @@ list(APPEND verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${UCF_IN_FILENAME})
 list(LENGTH verilog_SRC NUM_SRCS)
 
 set(NEED_TO_SYNTHESIZE FALSE)
-set(COMPRESS_BINARY TRUE)
+set(COMPRESS_BINARY FALSE)
 
 add_custom_target(copy_src)
 foreach(srcFile ${verilog_SRC})
@@ -110,13 +110,12 @@ foreach(srcFile ${verilog_SRC})
     add_custom_command(
         TARGET copy_src PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${srcFile} ${srcBuildFile}
-        COMMENT "Checking changes for ${SRC_BASENAME}"
+        COMMENT "Checking for newer versions of ${SRC_BASENAME}"
     )
 
     # check if there is a new version for each of the source files - set a flag if anything has changed
     if(${srcFile} IS_NEWER_THAN ${srcBuildFile})
         set(NEED_TO_SYNTHESIZE TRUE)
-        message(STATUS "New version of ${srcFile} found")
     endif()
 endforeach()
 
@@ -136,14 +135,14 @@ add_custom_target(fpga2015bit
 
 # The bitstream file contains extra header information that we don't need when configuring the fpga, so we convert to the binary format
 # which can be used for configuration directly.
-# The -spi flag instructs promgen to swap the bit order, which is required for slave serial mode.  See this forum post for more info:
+# The -b flag instructs promgen to swap the bit order, which is required for slave serial mode.  See this forum post for more info:
 # http://dbaspot.com/arch/340642-spartan3e-slave-serial-daisy-chain-print.html
-set(PROGMEN_FLAGS -w -spi -p bin -data_file up 0 ${CMAKE_CURRENT_BINARY_DIR}/${BIT_OUT_FILENAME} -o ${CMAKE_CURRENT_BINARY_DIR}/${BIN_OUT_FILENAME})
+set(PROGMEN_FLAGS)
 if(${COMPRESS_BINARY})
     set(PROGMEN_FLAGS -z ${PROGMEN_FLAGS})
 endif()
 add_custom_target(fpga2015bin
-    ${XILINX_TOOLS_DIR}/promgen ${PROGMEN_FLAGS}
+    ${XILINX_TOOLS_DIR}/promgen ${PROGMEN_FLAGS} -w -b -p bin -u 0 ${CMAKE_CURRENT_BINARY_DIR}/${BIT_OUT_FILENAME} -o ${CMAKE_CURRENT_BINARY_DIR}/${BIN_OUT_FILENAME}
     COMMENT "Creating ${BIN_OUT_FILENAME} binary from the ${BIT_OUT_FILENAME} bitstream"
     DEPENDS fpga2015bit
 )

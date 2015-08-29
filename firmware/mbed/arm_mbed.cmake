@@ -194,7 +194,15 @@ if(${MBED_USE_DSP} STREQUAL "true")
   set(PY_LIBS ${PY_LIBS} --dsp)
 endif()
 
+
 set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 link_directories(${MBED_LINK_DIRS})
 
 include_directories(${MBED_PATH})
+
+
+set(SWSPI_MBED_LIB ${CMAKE_CURRENT_SOURCE_DIR}/mbed/swspi.cmake)
+set(MCP23017_MBED_LIB ${CMAKE_CURRENT_SOURCE_DIR}/mbed/mcp23017.cmake)
+
+set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB}) # or ${MCP23017_MBED_LIB}
+set(MBED_ASSEC_LIBS_DEPENDS swspi_library) # or mcp23017_library

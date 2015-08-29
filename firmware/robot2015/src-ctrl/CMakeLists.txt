@@ -8,6 +8,7 @@
 set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(CONFIG_ROOT_NAME    ${CMAKE_CURRENT_SOURCE_DIR}/config)
+set(CONFIG_ROOT_NAME    ${CONFIG_ROOT_NAME} PARENT_SCOPE)
 set(DRIVERS             adc dma ds2411 fpga mcp23017 mem-iap mpu-6050 rtos-i2c ws2811)
 set(MODULES             commands controller motors)
 
@@ -69,5 +70,3 @@ add_custom_target(robot2015-prog
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"
 )
-
-add_subdirectory(hw-test)
