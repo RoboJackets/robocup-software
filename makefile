@@ -54,27 +54,25 @@ robot2015-test-prog:
 robot2015-i2c: robot2015-i2c-set robot2015-test
 robot2015-i2c-prog: robot2015-i2c-set robot2015-test-prog
 robot2015-i2c-set:
-HW_TEST_UNIT := i2c
+	@HW_TEST_UNIT=i2c
 
 # IO expander hardware test
 robot2015-io-expander: robot2015-io-expander-set robot2015-test
 robot2015-io-expander-prog: robot2015-io-expander-set robot2015-test-prog
 robot2015-io-expander-set:
-HW_TEST_UNIT := io-expander
+	@HW_TEST_UNIT=io-expander
 
 # fpga hardware test
-#robot2015-fpga: fpga2015 robot2015-fpga-set robot2015-test
-#robot2015-fpga-prog: fpga2015-prog robot2015-fpga-set robot2015-test-prog
 robot2015-fpga: robot2015-fpga-set robot2015-test
 robot2015-fpga-prog: robot2015-fpga-set robot2015-test-prog
 robot2015-fpga-set:
-HW_TEST_UNIT := fpga
+	@HW_TEST_UNIT=fpga
 
 # piezo buzzer hardware test
 robot2015-piezo: robot2015-piezo-set robot2015-test
 robot2015-piezo-prog: robot2015-piezo-set robot2015-test-prog
 robot2015-piezo-set:
-HW_TEST_UNIT := piezo
+	@HW_TEST_UNIT=piezo
 
 # kicker 2015 firmware
 kicker2015:
