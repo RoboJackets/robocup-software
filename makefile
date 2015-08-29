@@ -75,6 +75,10 @@ robot2015-test:
 robot2015-test-prog:
 	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test-prog .. && make $(MAKE_FLAGS) robot2015-test-prog
 
+# run the official mbed test binaries in hardware
+mbed-test:
+	mkdir -p build && cd build && cmake --target mbed-test .. && make $(MAKE_FLAGS) mbed-test
+
 # kicker 2015 firmware
 kicker2015:
 	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
