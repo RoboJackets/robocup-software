@@ -1,4 +1,5 @@
 MAKE_FLAGS=--no-print-directory
+HW_UNIT=default
 all:
 	mkdir -p build
 	cd build; cmake .. -Wno-dev && make $(MAKE_FLAGS)
@@ -44,35 +45,35 @@ robot2015:
 robot2015-prog:
 	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 
-# general target for calling the hardware tests
-robot2015-test:
-	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_TEST_UNIT) --target robot2015-test .. && make $(MAKE_FLAGS) robot2015-test
-robot2015-test-prog:
-	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_TEST_UNIT) --target robot2015-test-prog .. && make $(MAKE_FLAGS) robot2015-test-prog
-
 # I2C bus hardware test
-robot2015-i2c: robot2015-i2c-set robot2015-test
-robot2015-i2c-prog: robot2015-i2c-set robot2015-test-prog
-robot2015-i2c-set:
-	@HW_TEST_UNIT=i2c
+robot2015-i2c: HW_UNIT=i2c 
+robot2015-i2c: robot2015-test
+robot2015-i2c-prog: HW_UNIT=i2c
+robot2015-i2c-prog: robot2015-test-prog
 
 # IO expander hardware test
-robot2015-io-expander: robot2015-io-expander-set robot2015-test
-robot2015-io-expander-prog: robot2015-io-expander-set robot2015-test-prog
-robot2015-io-expander-set:
-	@HW_TEST_UNIT=io-expander
+robot2015-io-expander: HW_UNIT=io-expander
+robot2015-io-expander: robot2015-test
+robot2015-io-expander-prog: HW_UNIT=io-expander
+robot2015-io-expander-prog: robot2015-test-prog
 
 # fpga hardware test
-robot2015-fpga: robot2015-fpga-set robot2015-test
-robot2015-fpga-prog: robot2015-fpga-set robot2015-test-prog
-robot2015-fpga-set:
-	@HW_TEST_UNIT=fpga
+robot2015-fpga: HW_UNIT=fpga
+robot2015-fpga: robot2015-test
+robot2015-fpga-prog: HW_UNIT=fpga
+robot2015-fpga-prog: robot2015-test-prog
 
 # piezo buzzer hardware test
-robot2015-piezo: robot2015-piezo-set robot2015-test
-robot2015-piezo-prog: robot2015-piezo-set robot2015-test-prog
-robot2015-piezo-set:
-	@HW_TEST_UNIT=piezo
+robot2015-piezo: HW_UNIT=piezo 
+robot2015-piezo: robot2015-test
+robot2015-piezo-prog: HW_UNIT=piezo
+robot2015-piezo-prog: robot2015-test-prog
+
+# general target for calling the hardware tests
+robot2015-test:
+	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test .. && make $(MAKE_FLAGS) robot2015-test
+robot2015-test-prog:
+	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test-prog .. && make $(MAKE_FLAGS) robot2015-test-prog
 
 # kicker 2015 firmware
 kicker2015:
