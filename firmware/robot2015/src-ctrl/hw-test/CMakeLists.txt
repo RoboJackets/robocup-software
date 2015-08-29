@@ -1,6 +1,5 @@
 # HW_TEST_UNIT should always be set to whatever comes before '-test.cpp' in their respective filename that contains main()
-if(HW_TEST_UNIT)
-
+if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME})
     set(TEST_UNIT_FILE "${HW_TEST_UNIT}-test.cpp")
 
