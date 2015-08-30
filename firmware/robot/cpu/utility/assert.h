@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -42,7 +42,7 @@
 ///    any side-effect; otherwise, the program may not work properly
 ///    anymore when assertions are disabled.
 /// -# Use SANITY_CHECK() to perform checks with a default error message
-///    (outputs the file and line number where the error occured). This 
+///    (outputs the file and line number where the error occured). This
 ///    reduces memory overhead caused by assertion error strings.
 /// -# Initialize the dbgu to see failed assertions at run-time.
 /// -# Assertions can be entirely disabled by defining the NOASSERT symbol
@@ -60,45 +60,49 @@
 //         Definitions
 //------------------------------------------------------------------------------
 #if defined(NOASSERT)
-    #define ASSERT(...)
-    #define SANITY_CHECK(...)
+#define ASSERT(...)
+#define SANITY_CHECK(...)
 #else
 #include <stdio.h>
 #include "trace.h"
 
-    #if (TRACE_LEVEL == 0)
-        /// Checks that the given condition is true, 
-        /// otherwise stops the program execution.
-        /// \param condition  Condition to verify.
-        #define ASSERT(condition, ...)  { \
-            if (!(condition)) { \
-                while (1); \
-            } \
-        }
+#if (TRACE_LEVEL == 0)
+/// Checks that the given condition is true,
+/// otherwise stops the program execution.
+/// \param condition  Condition to verify.
+#define ASSERT(condition, ...) \
+    {                          \
+        if (!(condition)) {    \
+            while (1)          \
+                ;              \
+        }                      \
+    }
 
-        /// Performs the same duty as the ASSERT() macro
-        /// \param condition  Condition to verify.
-        #define SANITY_CHECK(condition) ASSERT(condition, ...)
+/// Performs the same duty as the ASSERT() macro
+/// \param condition  Condition to verify.
+#define SANITY_CHECK(condition) ASSERT(condition, ...)
 
-    #else
-        /// Checks that the given condition is true, otherwise displays an error
-        /// message and stops the program execution.
-        /// \param condition  Condition to verify.
-        #define ASSERT(condition, ...)  { \
-            if (!(condition)) { \
-                printf("-F- ASSERT: "); \
-                printf(__VA_ARGS__); \
-                while (1); \
-            } \
-        }
-        #define SANITY_ERROR            "Sanity check failed at %s:%d\n\r"
-    
-        /// Performs the same duty as the ASSERT() macro, except a default error
-        /// message is output if the condition is false.
-        /// \param condition  Condition to verify.
-        #define SANITY_CHECK(condition) ASSERT(condition, SANITY_ERROR, __FILE__, __LINE__)
-    #endif
+#else
+/// Checks that the given condition is true, otherwise displays an error
+/// message and stops the program execution.
+/// \param condition  Condition to verify.
+#define ASSERT(condition, ...)      \
+    {                               \
+        if (!(condition)) {         \
+            printf("-F- ASSERT: "); \
+            printf(__VA_ARGS__);    \
+            while (1)               \
+                ;                   \
+        }                           \
+    }
+#define SANITY_ERROR "Sanity check failed at %s:%d\n\r"
+
+/// Performs the same duty as the ASSERT() macro, except a default error
+/// message is output if the condition is false.
+/// \param condition  Condition to verify.
+#define SANITY_CHECK(condition) \
+    ASSERT(condition, SANITY_ERROR, __FILE__, __LINE__)
+#endif
 #endif
 
-#endif //#ifndef ASSERT_H
-
+#endif  //#ifndef ASSERT_H

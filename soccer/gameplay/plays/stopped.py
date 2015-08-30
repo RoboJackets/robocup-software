@@ -1,23 +1,42 @@
 import play
 import behavior
 import tactics.defense
+import tactics.stopped.circle_near_ball
+import tactics.stopped.circle_on_center
 import main
+import enum
+import robocup
+import constants
 
 
-# when we get the Stopped command from the referee,
-# we run this play.  See the rules to see what we're allowed to do while the game is stopped
+## When we get the Stopped command from the referee, we run this play.
+# See the rules to see what we're allowed to do while the game is stopped
 class Stopped(play.Play):
+
+    class State(enum.Enum):
+        normal = 1   # Normal
+        center = 2   # Ball is in the center
+
     def __init__(self):
         super().__init__(continuous=True)
+
+        for state in Stopped.State:
+            self.add_state(state, behavior.Behavior.State.running)
+
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running,
+            Stopped.State.normal,
             lambda: True,
             'immediately')
 
-        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+        self.add_transition(Stopped.State.normal,
+            Stopped.State.center,
+            lambda: self.is_in_center(),
+            'Switched into center mode')
 
-        idle = tactics.circle_near_ball.CircleNearBall()
-        self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
+        self.add_transition(Stopped.State.center,
+            Stopped.State.normal,
+            lambda: not self.is_in_center(),
+            'Switched into normal mode')
 
 
     @classmethod
@@ -28,3 +47,21 @@ class Stopped(play.Play):
     @classmethod
     def handles_goalie(self):
         return True
+
+    def is_in_center(self):
+        if main.ball().valid:
+            return robocup.Circle(constants.Field.CenterPoint, constants.Field.CenterRadius).contains_point(main.ball().pos)
+        return False
+
+    def on_enter_normal(self):
+        self.remove_all_subbehaviors()
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+        idle = tactics.stopped.circle_near_ball.CircleNearBall()
+        self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
+
+    def on_enter_center(self):
+        self.remove_all_subbehaviors()
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+        idle = tactics.stopped.circle_on_center.CircleOnCenter()
+        self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
+

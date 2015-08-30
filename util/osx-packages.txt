@@ -6,6 +6,7 @@ qt5
 pyqt5
 python3
 sdl
+libspnav
 boost
 boost-build
 boost-python --with-python3
@@ -17,3 +18,4 @@ freeglut
 eigen
 bullet --with-shared
 protobuf
+clang-format

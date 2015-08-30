@@ -23,7 +23,7 @@ import logging
 # If the receiver gets the ball, CoordinatedPass transitions to the completed state, otherwise it goes to the failed state
 class CoordinatedPass(composite_behavior.CompositeBehavior):
 
-    KickPower = 0.4 # was25
+    KickPower = 0.6
 
 
     class State(enum.Enum):
@@ -32,10 +32,18 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiving = 3   # the kicker has kicked and the receiver is trying to get the ball
 
 
-    def __init__(self, receive_point=None):
+    ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
+    # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
+    def __init__(self, receive_point=None, skillreceiver=None):
         super().__init__(continuous=False)
 
+        # This creates a new instance of skillreceiver every time the constructor is
+        # called (instead of pulling from a single static instance).
+        if skillreceiver == None:
+            skillreceiver = skills.pass_receive.PassReceive()
+
         self.receive_point = receive_point
+        self.skillreceiver = skillreceiver
 
         for state in CoordinatedPass.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -49,7 +57,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.add_transition(CoordinatedPass.State.preparing,
             CoordinatedPass.State.kicking,
             lambda: (self.subbehavior_with_name('kicker').state == skills.pivot_kick.PivotKick.State.aimed
-                and self.subbehavior_with_name('receiver').state == skills.pass_receive.PassReceive.State.aligned),
+                and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
 
         self.add_transition(CoordinatedPass.State.kicking,
@@ -86,7 +94,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
 
     def on_enter_running(self):
-        receiver = skills.pass_receive.PassReceive()
+        receiver = self.skillreceiver
+        receiver.restart()
         receiver.receive_point = self.receive_point
         self.add_subbehavior(receiver, 'receiver', required=True)
 
@@ -102,11 +111,17 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_enter_preparing(self):
         kicker = skills.pivot_kick.PivotKick()
         kicker.target = self.receive_point
-        kicker.kick_power = CoordinatedPass.KickPower
+        kickpower = (main.ball().pos - self.receive_point).mag() / 8
+        if (kickpower < 0.2):
+            kickpower = 0.2
+
+        if (kickpower > 1.0):
+            kickpower = 1.0
+        kicker.kick_power = kickpower
         kicker.enable_kick = False # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
-        kicker.aim_params['error_threshold'] = 0.07
+        kicker.aim_params['error_threshold'] = 0.2
         kicker.aim_params['max_steady_ang_vel'] = 3.0
         kicker.aim_params['min_steady_duration'] = 0.15
         kicker.aim_params['desperate_timeout'] = 3.0
@@ -124,6 +139,20 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             receiver = self.subbehavior_with_name('receiver')
             kicker.shot_obstacle_ignoring_robots = [receiver.robot]
 
+    # gets robots involved with the pass
+    def get_robots(self):
+        kicker = None
+        receiver = None
+        if self.has_subbehavior_with_name('kicker'):
+            kicker = self.subbehavior_with_name('kicker')
+        if self.has_subbehavior_with_name('receiver'):
+            receiver = self.subbehavior_with_name('receiver')
+        toReturn = []
+        if receiver != None and receiver.robot != None:
+            toReturn.extend([receiver.robot])
+        if kicker != None and kicker.robot != None:
+            toReturn.extend([kicker.robot])
+        return toReturn
 
 
     def execute_preparing(self):
@@ -148,9 +177,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
+        self.subbehavior_with_name('receiver').ball_kicked = True
         self.remove_subbehavior('kicker')
 
-        self.subbehavior_with_name('receiver').ball_kicked = True
+        
 
 
 

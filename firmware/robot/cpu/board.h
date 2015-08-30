@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -30,10 +30,10 @@
 //------------------------------------------------------------------------------
 /// \unit
 /// !Purpose
-/// 
+///
 /// Definition of AT91SAM7S-EK characteristics, AT91SAM7S-dependant PIOs and
 /// external components interfacing.
-/// 
+///
 /// !Contents
 /// This file provide a large number of definitions, which are of three
 /// different types.
@@ -62,7 +62,7 @@
 /// prefixed with #BOARD_FLASH_#.
 //------------------------------------------------------------------------------
 
-#ifndef BOARD_H 
+#ifndef BOARD_H
 #define BOARD_H
 
 //------------------------------------------------------------------------------
@@ -70,17 +70,17 @@
 //------------------------------------------------------------------------------
 
 #if defined(at91sam7s321)
-    #include "at91sam7s321/AT91SAM7S321.h"
+#include "at91sam7s321/AT91SAM7S321.h"
 #elif defined(at91sam7s64)
-    #include "at91sam7s64/AT91SAM7S64.h"
+#include "at91sam7s64/AT91SAM7S64.h"
 #elif defined(at91sam7s128)
-    #include "at91sam7s128/AT91SAM7S128.h"
+#include "at91sam7s128/AT91SAM7S128.h"
 #elif defined(at91sam7s256)
-    #include "at91sam7s256/AT91SAM7S256.h"
+#include "at91sam7s256/AT91SAM7S256.h"
 #elif defined(at91sam7s512)
-    #include "at91sam7s512/AT91SAM7S512.h"
+#include "at91sam7s512/AT91SAM7S512.h"
 #else
-    #error Board does not support the specified chip.
+#error Board does not support the specified chip.
 #endif
 
 //------------------------------------------------------------------------------
@@ -98,23 +98,23 @@
 // Clocks
 //------------------------------------------------------------------------------
 /// Frequency of the board main oscillator, in Hz.
-#define BOARD_MAINOSC           18432000
+#define BOARD_MAINOSC 18432000
 
 /// Master clock frequency (when using board_lowlevel.c), in Hz.
-#define BOARD_MCK               48000000
+#define BOARD_MCK 48000000
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // ADC
 //------------------------------------------------------------------------------
 /// ADC clock frequency, at 10-bit resolution (in Hz)
-#define ADC_MAX_CK_10BIT         5000000
+#define ADC_MAX_CK_10BIT 5000000
 /// ADC clock frequency, at 8-bit resolution (in Hz)
-#define ADC_MAX_CK_8BIT          8000000
+#define ADC_MAX_CK_8BIT 8000000
 /// Startup time max, return from Idle mode (in µs)
-#define ADC_STARTUP_TIME_MAX       20
+#define ADC_STARTUP_TIME_MAX 20
 /// Track and hold Acquisition Time min (in ns)
-#define ADC_TRACK_HOLD_TIME_MIN   600
+#define ADC_TRACK_HOLD_TIME_MIN 600
 
 //------------------------------------------------------------------------------
 // USB
@@ -126,20 +126,20 @@
 #define BOARD_USB_PULLUP_EXTERNAL
 
 /// Number of endpoints in the USB controller.
-#define BOARD_USB_NUMENDPOINTS                  4
+#define BOARD_USB_NUMENDPOINTS 4
 
 /// Returns the maximum packet size of the given endpoint.
 /// \param i  Endpoint number.
-/// \return Maximum packet size in bytes of endpoint. 
-#define BOARD_USB_ENDPOINTS_MAXPACKETSIZE(i)    ((i == 0) ? 8 : 64)
+/// \return Maximum packet size in bytes of endpoint.
+#define BOARD_USB_ENDPOINTS_MAXPACKETSIZE(i) ((i == 0) ? 8 : 64)
 
 /// Returns the number of FIFO banks for the given endpoint.
 /// \param i  Endpoint number.
 /// \return Number of FIFO banks for the endpoint.
-#define BOARD_USB_ENDPOINTS_BANKS(i)            (((i == 0) || (i == 3)) ? 1 : 2)
+#define BOARD_USB_ENDPOINTS_BANKS(i) (((i == 0) || (i == 3)) ? 1 : 2)
 
 /// USB attributes configuration descriptor (bus or self powered, remote wakeup)
-#define BOARD_USB_BMATTRIBUTES                  USBConfigurationDescriptor_SELFPOWERED_NORWAKEUP
+#define BOARD_USB_BMATTRIBUTES USBConfigurationDescriptor_SELFPOWERED_NORWAKEUP
 
 // Unused callbacks
 #define USBDCallbacks_Resumed()
@@ -152,59 +152,63 @@
 //------------------------------------------------------------------------------
 
 // Pins
-#define LED_RG		(1 <<  0)
-#define LED_RR		(1 <<  1)
-#define BALL_LED	(1 <<  2)
-#define I2C_SDA		(1 <<  3)
-#define I2C_SCL		(1 <<  4)
-#define LED_LR		(1 <<  5)
-#define IMU_INT		(1 <<  6)
-#define BUZZ		(1 <<  7)
-#define FS0			(1 <<  8)
-#define FPGA_NCS	(1 <<  9)
-#define FS1			(1 << 10)
-#define FLASH_NCS	(1 << 11)
-#define MISO		(1 << 12)
-#define MOSI		(1 << 13)
-#define SCK			(1 << 14)
-#define ID2			(1 << 15)
-#define NCONNECT	(1 << 16)
-#define M5DIV		(1 << 17)
-#define M2DIV		(1 << 18)
-#define M3DIV		(1 << 19)
-#define RADIO_INT	(1 << 20)
-#define MCU_PROGB	(1 << 21)
-#define RADIO_NCS	(1 << 22)
-#define LED_RY		(1 << 23)
-#define ID0			(1 << 24)
-#define ID1			(1 << 25)
-#define ID3			(1 << 26)
-#define DP1			(1 << 27)
-#define DP2			(1 << 28)
-#define DP4			(1 << 29)
-#define LED_LY		(1 << 30)
-#define VBUS		(1 << 31)
+#define LED_RG (1 << 0)
+#define LED_RR (1 << 1)
+#define BALL_LED (1 << 2)
+#define I2C_SDA (1 << 3)
+#define I2C_SCL (1 << 4)
+#define LED_LR (1 << 5)
+#define IMU_INT (1 << 6)
+#define BUZZ (1 << 7)
+#define FS0 (1 << 8)
+#define FPGA_NCS (1 << 9)
+#define FS1 (1 << 10)
+#define FLASH_NCS (1 << 11)
+#define MISO (1 << 12)
+#define MOSI (1 << 13)
+#define SCK (1 << 14)
+#define ID2 (1 << 15)
+#define NCONNECT (1 << 16)
+#define M5DIV (1 << 17)
+#define M2DIV (1 << 18)
+#define M3DIV (1 << 19)
+#define RADIO_INT (1 << 20)
+#define MCU_PROGB (1 << 21)
+#define RADIO_NCS (1 << 22)
+#define LED_RY (1 << 23)
+#define ID0 (1 << 24)
+#define ID1 (1 << 25)
+#define ID3 (1 << 26)
+#define DP1 (1 << 27)
+#define DP2 (1 << 28)
+#define DP4 (1 << 29)
+#define LED_LY (1 << 30)
+#define VBUS (1 << 31)
 
-#define LED_ALL		(LED_LY | LED_LR | LED_RG | LED_RY | LED_RR)
+#define LED_ALL (LED_LY | LED_LR | LED_RG | LED_RY | LED_RR)
 
 // NPCS numbers in the SPI controller
-#define NPCS_FLASH	0
-#define NPCS_FPGA	1
-#define NPCS_RADIO	3
+#define NPCS_FLASH 0
+#define NPCS_FPGA 1
+#define NPCS_RADIO 3
 
 // Macros to turn LEDs on and off.  Works on multiple LEDs.
-#define LED_ON(x)	{AT91C_BASE_PIOA->PIO_CODR = (x);}
-#define LED_OFF(x)	{AT91C_BASE_PIOA->PIO_SODR = (x);}
-#define LED_TOGGLE(x) {AT91C_BASE_PIOA->PIO_ODSR ^= (x);}
+#define LED_ON(x) \
+    { AT91C_BASE_PIOA->PIO_CODR = (x); }
+#define LED_OFF(x) \
+    { AT91C_BASE_PIOA->PIO_SODR = (x); }
+#define LED_TOGGLE(x) \
+    { AT91C_BASE_PIOA->PIO_ODSR ^= (x); }
 
 #define LED_IS_ON(x) (!(AT91C_BASE_PIOA->PIO_ODSR & (x)))
 
 // I2C addresses
-#define I2C_IMU3000	0x69
+#define I2C_IMU3000 0x69
 // The accelerometer is only available when the IMU3000 is in pass-through mode
-#define I2C_ACCEL	0x0f
+#define I2C_ACCEL 0x0f
 
-#define SWITCHES	(AT91C_BASE_PIOA->PIO_PDSR ^ (DP1 | DP2 | DP4 | ID0 | ID1 | ID2 | ID3))
+#define SWITCHES \
+    (AT91C_BASE_PIOA->PIO_PDSR ^ (DP1 | DP2 | DP4 | ID0 | ID1 | ID2 | ID3))
 
 //------------------------------------------------------------------------------
 // Flash
@@ -213,4 +217,4 @@
 #define BOARD_FLASH_EFC
 //------------------------------------------------------------------------------
 
-#endif //#ifndef BOARD_H
+#endif  //#ifndef BOARD_H

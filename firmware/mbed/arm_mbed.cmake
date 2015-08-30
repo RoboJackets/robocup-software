@@ -28,7 +28,7 @@ set(MBED_DSP_PATH      ${PY_TOOLS_DIR}/build/dsp)
 #
 # MBED_VENDOR -> CPU Manufacturer
 #
-message(STATUS "building for ${MBED_TARGET}")
+message(STATUS "MBED target set to ${MBED_TARGET}")
 # the settings for mbed is really messed up ;)
 if(MBED_TARGET MATCHES "LPC1768")
   set(MBED_VENDOR "NXP")

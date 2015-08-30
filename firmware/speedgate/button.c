@@ -31,17 +31,16 @@
 #define PINB_MASK ((1 << 4) | (1 << 6) | (1 << 7))
 #define PINE_MASK ((1 << 2) | (1 << 3) | (1 << 4) | (1 << 5))
 
-#define BUTTON_UP       6
-#define BUTTON_DOWN     7
-#define BUTTON_LEFT     2
-#define BUTTON_RIGHT    3
-#define BUTTON_CENTER   4
+#define BUTTON_UP 6
+#define BUTTON_DOWN 7
+#define BUTTON_LEFT 2
+#define BUTTON_RIGHT 3
+#define BUTTON_CENTER 4
 
 volatile uint8_t gButtonTimeout = 0;
 volatile char last_key = 0;
 
-void Button_Init(void)
-{
+void Button_Init(void) {
     // Init port pins
     DDRB &= ~(1 << 7) & ~(1 << 6) & ~(1 << 4);
     PORTB |= PINB_MASK;
@@ -52,79 +51,67 @@ void Button_Init(void)
     PCMSK0 = PINE_MASK;
     PCMSK1 = PINB_MASK;
     EICRA = 2;
-    EIFR = (1<<PCIF0)|(1<<PCIF1);
-    EIMSK = (1<<PCIE0)|(1<<PCIE1);
+    EIFR = (1 << PCIF0) | (1 << PCIF1);
+    EIMSK = (1 << PCIE0) | (1 << PCIE1);
 }
 
-void PinChangeInterrupt(void)
-{
+void PinChangeInterrupt(void) {
     char buttons;
     char key;
 
-/*
-    Read the buttons:
+    /*
+        Read the buttons:
 
-    Bit             7   6   5   4   3   2   1   0
-    ---------------------------------------------
-    PORTB           B   A       O
-    PORTE                           D   C
-    ---------------------------------------------
-    PORTB | PORTE   B   A       O   D   C
-    =============================================
-*/
-
+        Bit             7   6   5   4   3   2   1   0
+        ---------------------------------------------
+        PORTB           B   A       O
+        PORTE                           D   C
+        ---------------------------------------------
+        PORTB | PORTE   B   A       O   D   C
+        =============================================
+    */
 
     buttons = (~PINB) & PINB_MASK;
     buttons |= (~PINE) & 0x0c;
 
     // Output virtual keys
-    if (buttons & (1 << BUTTON_CENTER))
-    {
+    if (buttons & (1 << BUTTON_CENTER)) {
         key = KEY_CENTER;
-    } else if (buttons & (1 << BUTTON_UP))
-    {
+    } else if (buttons & (1 << BUTTON_UP)) {
         key = KEY_UP;
-    } else if (buttons & (1 << BUTTON_DOWN))
-    {
+    } else if (buttons & (1 << BUTTON_DOWN)) {
         key = KEY_DOWN;
-    } else if (buttons & (1 << BUTTON_LEFT))
-    {
+    } else if (buttons & (1 << BUTTON_LEFT)) {
         key = KEY_LEFT;
-    } else if (buttons & (1 << BUTTON_RIGHT))
-    {
+    } else if (buttons & (1 << BUTTON_RIGHT)) {
         key = KEY_RIGHT;
     } else {
         key = KEY_NONE;
     }
-    
-    if (key != KEY_NONE)
-    {
-        if (gButtonTimeout)  // gButtonTimeout is set in the LCD_SOF_interrupt in LCD_driver.c
+
+    if (key != KEY_NONE) {
+        if (gButtonTimeout)  // gButtonTimeout is set in the LCD_SOF_interrupt
+                             // in LCD_driver.c
         {
-            if (last_key == KEY_NONE)
-            {
+            if (last_key == KEY_NONE) {
                 last_key = key;
             }
             gButtonTimeout = 0;
         }
     }
 
-//    EIFR = (1<<PCIF1) | (1<<PCIF0);     // Clear pin change interrupt flags
+    //    EIFR = (1<<PCIF1) | (1<<PCIF0);     // Clear pin change interrupt
+    //    flags
 }
 
-ISR(PCINT0_vect)
-{
+ISR(PCINT0_vect) {
     speed_interrupt();
     PinChangeInterrupt();
 }
 
-ISR(PCINT1_vect)
-{
-    PinChangeInterrupt();
-}
+ISR(PCINT1_vect) { PinChangeInterrupt(); }
 
-char getkey()
-{
+char getkey() {
     char k;
 
     cli();
@@ -135,15 +122,13 @@ char getkey()
     return k;
 }
 
-char getch()
-{
+char getch() {
     char k;
-    
-    while (!(k = getkey()))
-    {
+
+    while (!(k = getkey())) {
         set_sleep_mode(SLEEP_MODE_IDLE);
         sleep_mode();
     }
-    
+
     return k;
 }

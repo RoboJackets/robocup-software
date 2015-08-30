@@ -2,12 +2,9 @@
 
 using namespace Geometry2d;
 
+Shape* CompositeShape::clone() const { return new CompositeShape(*this); }
 
-Shape *CompositeShape::clone() const {
-    return new CompositeShape(*this);
-}
-
-bool Geometry2d::CompositeShape::containsPoint(const Point &pt) const {
+bool Geometry2d::CompositeShape::containsPoint(const Point& pt) const {
     for (auto subshape : _subshapes) {
         if (subshape->containsPoint(pt)) return true;
     }
@@ -20,12 +17,10 @@ void Geometry2d::CompositeShape::add(std::shared_ptr<Shape> shape) {
     }
 }
 
-void Geometry2d::CompositeShape::add(const CompositeShape &compShape) {
+void Geometry2d::CompositeShape::add(const CompositeShape& compShape) {
     for (auto shape : compShape.subshapes()) {
         add(shape);
     }
 }
 
-void Geometry2d::CompositeShape::clear() {
-    _subshapes.clear();
-}
+void Geometry2d::CompositeShape::clear() { _subshapes.clear(); }

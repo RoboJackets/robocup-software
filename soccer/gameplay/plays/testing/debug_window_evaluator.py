@@ -2,11 +2,11 @@ import play
 import behavior
 import main
 import robocup
-import evaluation
 import constants
+import time
+import math
 
-
-# This isn't a real play, but it's pretty useful
+## This isn't a real play, but it's pretty useful
 # Turn it on and we'll draw the window evaluator stuff on-screen from the ball to our goal
 class DebugWindowEvaluator(play.Play):
 
@@ -20,9 +20,6 @@ class DebugWindowEvaluator(play.Play):
 
 
     def execute_running(self):
-        pt = main.ball().pos
-        seg = constants.Field.OurGoalSegment
-
-        win_eval = evaluation.window_evaluator.WindowEvaluator()
+        win_eval = robocup.WindowEvaluator(main.system_state())
         win_eval.debug = True
-        win_eval.eval_pt_to_seg(pt, seg)
+        windows, best = win_eval.eval_pt_to_our_goal(main.ball().pos)

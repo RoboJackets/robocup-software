@@ -6,11 +6,11 @@
 #define reply_timer_done() (AT91C_BASE_TC0->TC_SR & AT91C_TC_CPCS)
 
 // Speeds given in the most recent forward packet
-extern int cmd_body_x;			// -511 to 511
+extern int cmd_body_x;  // -511 to 511
 extern int cmd_body_y;
 extern int cmd_body_w;
-extern int dribble_command;		// -511 to 511
-extern int kick_command;		// 0 to 255
+extern int dribble_command;  // -511 to 511
+extern int kick_command;     // 0 to 255
 extern int kick_immediate;
 extern int accel_limit;
 extern int decel_limit;

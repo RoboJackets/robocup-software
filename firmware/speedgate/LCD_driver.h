@@ -19,24 +19,23 @@
 //
 //*****************************************************************************
 
-#define FALSE   0
-#define TRUE    (!FALSE)
+#define FALSE 0
+#define TRUE (!FALSE)
 
-#define LCD_REGISTER_COUNT      20
-#define TEXTBUFFER_SIZE         25
+#define LCD_REGISTER_COUNT 20
+#define TEXTBUFFER_SIZE 25
 
 /************************************************************************/
-//MACROS
+// MACROS
 /************************************************************************/
-//active = [TRUE;FALSE]
+// active = [TRUE;FALSE]
 #define LCD_SET_COLON(active) LCD_Data[8] = active
 
 // DEVICE SPECIFIC!!! (ATmega169)
-#define pLCDREG ((unsigned char *)(0xEC))
+#define pLCDREG ((unsigned char*)(0xEC))
 
 // DEVICE SPECIFIC!!! (ATmega169) First LCD segment register
-#define LCD_CONTRAST_LEVEL(level) LCDCCR=((LCDCCR&0xF0)|(0x0F & level))
-
+#define LCD_CONTRAST_LEVEL(level) LCDCCR = ((LCDCCR & 0xF0) | (0x0F & level))
 
 /************************************************************************/
 // Global variables
@@ -49,12 +48,12 @@ extern volatile signed char gScroll;
 /************************************************************************/
 // Global functions
 /************************************************************************/
-void lcd_init (void);
+void lcd_init(void);
 void lcd_write_digit(char input, char digit);
 
 void lcd_update(void);
 void lcd_flash_off(void);
 void lcd_clear(void);
 void lcd_putc(uint8_t digit, char character);
-void lcd_puts(char *pStr);
-void lcd_puts_r(const char *pFlashStr);
+void lcd_puts(char* pStr);
+void lcd_puts_r(const char* pFlashStr);

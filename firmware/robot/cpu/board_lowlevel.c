@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -27,7 +27,6 @@
  * ----------------------------------------------------------------------------
  */
 
-
 //------------------------------------------------------------------------------
 //         Headers
 //------------------------------------------------------------------------------
@@ -39,34 +38,34 @@
 //         Internal definitions
 //------------------------------------------------------------------------------
 // Startup time of main oscillator (in number of slow clock ticks).
-#define BOARD_OSCOUNT           (AT91C_CKGR_OSCOUNT & (0x40 << 8))
+#define BOARD_OSCOUNT (AT91C_CKGR_OSCOUNT & (0x40 << 8))
 
 // USB PLL divisor value to obtain a 48MHz clock.
-#define BOARD_USBDIV            AT91C_CKGR_USBDIV_1
+#define BOARD_USBDIV AT91C_CKGR_USBDIV_1
 
 // PLL frequency range.
-#define BOARD_CKGR_PLL          AT91C_CKGR_OUT_0
+#define BOARD_CKGR_PLL AT91C_CKGR_OUT_0
 
 // PLL startup time (in number of slow clock ticks).
-#define BOARD_PLLCOUNT          (16 << 8)
+#define BOARD_PLLCOUNT (16 << 8)
 
 // PLL MUL value.
-#define BOARD_MUL               (AT91C_CKGR_MUL & (72 << 16))
+#define BOARD_MUL (AT91C_CKGR_MUL & (72 << 16))
 
 // PLL DIV value.
-#define BOARD_DIV               (AT91C_CKGR_DIV & 14)
+#define BOARD_DIV (AT91C_CKGR_DIV & 14)
 
 // Master clock prescaler value.
-#define BOARD_PRESCALER         AT91C_PMC_PRES_CLK_2
+#define BOARD_PRESCALER AT91C_PMC_PRES_CLK_2
 
 //------------------------------------------------------------------------------
 //         Internal functions
 //------------------------------------------------------------------------------
 
 // Handler for unhandled things
-static void death()
-{
-	while (1);
+static void death() {
+    while (1)
+        ;
 }
 
 //------------------------------------------------------------------------------
@@ -77,12 +76,11 @@ static void death()
 /// Performs the low-level initialization of the chip. This includes EFC, master
 /// clock, AIC & watchdog configuration, as well as memory remapping.
 //------------------------------------------------------------------------------
-void LowLevelInit(void)
-{
+void LowLevelInit(void) {
     unsigned char i;
 
-	// Set flash wait states in the EFC
-    // 48MHz = 1 wait state
+// Set flash wait states in the EFC
+// 48MHz = 1 wait state
 #if defined(at91sam7s512)
     AT91C_BASE_EFC0->EFC_FMR = AT91C_MC_FWS_1FWS;
     AT91C_BASE_EFC1->EFC_FMR = AT91C_MC_FWS_1FWS;
@@ -92,36 +90,39 @@ void LowLevelInit(void)
 
     // Initialize main oscillator
     AT91C_BASE_PMC->PMC_MOR = BOARD_OSCOUNT | AT91C_CKGR_MOSCEN;
-    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS));
+    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCS))
+        ;
 
     // Initialize PLL at 96MHz (96.109) and USB clock to 48MHz
-    AT91C_BASE_PMC->PMC_PLLR = BOARD_USBDIV | BOARD_CKGR_PLL | BOARD_PLLCOUNT
-                               | BOARD_MUL | BOARD_DIV;
-    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK));
+    AT91C_BASE_PMC->PMC_PLLR =
+        BOARD_USBDIV | BOARD_CKGR_PLL | BOARD_PLLCOUNT | BOARD_MUL | BOARD_DIV;
+    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCK))
+        ;
 
     // Wait for the master clock if it was already initialized
-    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY));
+    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY))
+        ;
 
     // Switch to slow clock + prescaler
     AT91C_BASE_PMC->PMC_MCKR = BOARD_PRESCALER;
-    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY));
+    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY))
+        ;
 
     // Switch to fast clock + prescaler
     AT91C_BASE_PMC->PMC_MCKR |= AT91C_PMC_CSS_PLL_CLK;
-    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY));
+    while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY))
+        ;
 
     // Initialize AIC
     AT91C_BASE_AIC->AIC_IDCR = 0xFFFFFFFF;
-    AT91C_BASE_AIC->AIC_SVR[0] = (unsigned int) death;
+    AT91C_BASE_AIC->AIC_SVR[0] = (unsigned int)death;
     for (i = 1; i < 31; i++) {
-
-        AT91C_BASE_AIC->AIC_SVR[i] = (unsigned int) death;
+        AT91C_BASE_AIC->AIC_SVR[i] = (unsigned int)death;
     }
-    AT91C_BASE_AIC->AIC_SPU = (unsigned int) death;
+    AT91C_BASE_AIC->AIC_SPU = (unsigned int)death;
 
     // Unstack nested interrupts
-    for (i = 0; i < 8 ; i++) {
-
+    for (i = 0; i < 8; i++) {
         AT91C_BASE_AIC->AIC_EOICR = 0;
     }
 
