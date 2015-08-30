@@ -26,7 +26,7 @@ static const btScalar suspensionRestLength = 0.05f * scaling;  // 0.6f
 static const float robotWeight = 8 * scaling;
 
 Robot::Robot(Environment* env, unsigned int id, Robot::RobotRevision rev,
-             const Geometry2d::Point& startPos)
+             Geometry2d::Point startPos)
     : Entity(env),
       shell(id),
       _rev(rev),

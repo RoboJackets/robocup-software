@@ -7,8 +7,6 @@
 #include <memory>
 #include <set>
 
-class Obstacle;
-
 namespace Geometry2d {
 
 /**
@@ -32,7 +30,7 @@ public:
 
     Shape* clone() const override;
 
-    virtual bool containsPoint(const Point& pt) const override;
+    virtual bool containsPoint(Point pt) const override;
 
     void add(const std::shared_ptr<Shape> shape);
 
@@ -68,7 +66,7 @@ public:
         return !hitSet.empty();
     }
 
-    bool hit(const Point& pt, std::set<std::shared_ptr<Shape> >& hitSet) const {
+    bool hit(Point pt, std::set<std::shared_ptr<Shape> >& hitSet) const {
         return hit<Point>(pt, hitSet);
     }
 
@@ -94,7 +92,7 @@ public:
         return false;
     }
 
-    bool hit(const Point& pt) const override { return hit<Point>(pt); }
+    bool hit(Point pt) const override { return hit<Point>(pt); }
 
     bool hit(const Segment& seg) const override { return hit<Segment>(seg); }
 

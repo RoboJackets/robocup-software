@@ -185,8 +185,7 @@ void OurRobot::stop() {
     *_cmdText << "stop()\n";
 }
 
-void OurRobot::move(const Geometry2d::Point& goal,
-                    Geometry2d::Point endVelocity) {
+void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
     if (!visible) return;
 
     // sets flags for future movement
@@ -204,7 +203,7 @@ void OurRobot::move(const Geometry2d::Point& goal,
               << endl;
 }
 
-void OurRobot::moveDirect(const Geometry2d::Point& goal, float endSpeed) {
+void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
     if (!visible) return;
 
     // sets flags for future movement
@@ -221,7 +220,7 @@ void OurRobot::moveDirect(const Geometry2d::Point& goal, float endSpeed) {
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
-void OurRobot::worldVelocity(const Geometry2d::Point& v) {
+void OurRobot::worldVelocity(Geometry2d::Point v) {
     _motionCommand.setWorldVel(v);
     setPath(nullptr);
     *_cmdText << "worldVel(" << v.x << ", " << v.y << ")" << endl;
@@ -237,7 +236,7 @@ void OurRobot::angleVelocity(float targetAngleVel) {
     *_cmdText << "angleVelocity(" << targetAngleVel << ")" << endl;
 }
 
-void OurRobot::pivot(const Geometry2d::Point& pivotTarget) {
+void OurRobot::pivot(Geometry2d::Point pivotTarget) {
     _motionConstraints.pivotTarget = pivotTarget;
 
     // reset other conflicting motion commands
@@ -249,8 +248,7 @@ void OurRobot::pivot(const Geometry2d::Point& pivotTarget) {
               << endl;
 }
 
-Geometry2d::Point OurRobot::pointInRobotSpace(
-    const Geometry2d::Point& pt) const {
+Geometry2d::Point OurRobot::pointInRobotSpace(Geometry2d::Point pt) const {
     Point p = pt;
     p.rotate(pos, -angle);
     return p;
@@ -265,7 +263,7 @@ const Geometry2d::Segment OurRobot::kickerBar() const {
     return Segment(pose * L, pose * R);
 }
 
-bool OurRobot::behindBall(const Geometry2d::Point& ballPos) const {
+bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
     Point ballTransformed = pointInRobotSpace(ballPos);
     return ballTransformed.x < -Robot_Radius;
 }
@@ -282,7 +280,7 @@ void OurRobot::dribble(uint8_t speed) {
     *_cmdText << "dribble(" << (float)speed << ")" << endl;
 }
 
-void OurRobot::face(const Geometry2d::Point& pt) {
+void OurRobot::face(Geometry2d::Point pt) {
     _motionConstraints.faceTarget = pt;
 
     // reset conflicting motion commands
