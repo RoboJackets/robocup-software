@@ -2,7 +2,7 @@
 #include "Point.hpp"
 #include "Circle.hpp"
 
-using namespace Geometry2d;
+namespace Geometry2d {
 
 bool Line::intersects(const Line& other, Point* intr) const {
     // From Mathworld:
@@ -31,7 +31,7 @@ bool Line::intersects(const Line& other, Point* intr) const {
     return true;
 }
 
-float Line::distTo(const Point& other) const {
+float Line::distTo(Point other) const {
     Point delta = pt[1] - pt[0];
     float top = delta.x * (pt[0].y - other.y) - (pt[0].x - other.x) * delta.y;
 
@@ -83,3 +83,5 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
 
     return true;
 }
+
+}  // namespace Geometry2d

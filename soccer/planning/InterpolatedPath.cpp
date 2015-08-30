@@ -10,12 +10,11 @@ using namespace std;
 using namespace Geometry2d;
 
 namespace Planning {
-InterpolatedPath::InterpolatedPath(const Geometry2d::Point& p0) {
+InterpolatedPath::InterpolatedPath(Geometry2d::Point p0) {
     points.push_back(p0);
 }
 
-InterpolatedPath::InterpolatedPath(const Geometry2d::Point& p0,
-                                   const Geometry2d::Point& p1) {
+InterpolatedPath::InterpolatedPath(Geometry2d::Point p0, Geometry2d::Point p1) {
     points.push_back(p0);
     points.push_back(p1);
 }
@@ -59,7 +58,7 @@ boost::optional<MotionInstant> InterpolatedPath::destination() const {
 }
 
 // Returns the index of the point in this path nearest to pt.
-int InterpolatedPath::nearestIndex(const Geometry2d::Point& pt) const {
+int InterpolatedPath::nearestIndex(Geometry2d::Point pt) const {
     if (points.size() == 0) {
         return -1;
     }
@@ -116,7 +115,7 @@ bool InterpolatedPath::hit(const Geometry2d::CompositeShape& obstacles,
     return false;
 }
 
-float InterpolatedPath::distanceTo(const Geometry2d::Point& pt) const {
+float InterpolatedPath::distanceTo(Geometry2d::Point pt) const {
     int i = nearestIndex(pt);
     if (i < 0) {
         return 0;
@@ -136,7 +135,7 @@ float InterpolatedPath::distanceTo(const Geometry2d::Point& pt) const {
 }
 
 Geometry2d::Segment InterpolatedPath::nearestSegment(
-    const Geometry2d::Point& pt) const {
+    Geometry2d::Point pt) const {
     Geometry2d::Segment best;
     float dist = -1;
     if (points.empty()) {
@@ -156,7 +155,7 @@ Geometry2d::Segment InterpolatedPath::nearestSegment(
     return best;
 }
 
-void InterpolatedPath::startFrom(const Geometry2d::Point& pt,
+void InterpolatedPath::startFrom(Geometry2d::Point pt,
                                  InterpolatedPath& result) const {
     // path will start at the current robot pose
     result.clear();
@@ -194,7 +193,7 @@ void InterpolatedPath::startFrom(const Geometry2d::Point& pt,
     result.points.insert(result.points.end(), path_start, points.end());
 }
 
-float InterpolatedPath::length(const Geometry2d::Point& pt) const {
+float InterpolatedPath::length(Geometry2d::Point pt) const {
     float dist = -1;
     float length = 0;
     if (points.empty()) {

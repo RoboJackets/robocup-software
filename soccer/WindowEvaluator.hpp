@@ -125,7 +125,7 @@ public:
 private:
     SystemState* system;
 
-    void fill_shot_success(Window& window, const Geometry2d::Point& origin);
+    void fill_shot_success(Window& window, Geometry2d::Point origin);
 
     void obstacle_range(std::vector<Window>& windows, double& t0, double& t1);
 

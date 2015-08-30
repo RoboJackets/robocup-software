@@ -65,9 +65,9 @@ void MotionControl::run() {
     if (constraints.targetAngleVel) {
         targetW = *constraints.targetAngleVel;
     } else if (constraints.faceTarget || constraints.pivotTarget) {
-        const Geometry2d::Point& targetPt = constraints.pivotTarget
-                                                ? *constraints.pivotTarget
-                                                : *constraints.faceTarget;
+        Geometry2d::Point targetPt = constraints.pivotTarget
+                                         ? *constraints.pivotTarget
+                                         : *constraints.faceTarget;
 
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
