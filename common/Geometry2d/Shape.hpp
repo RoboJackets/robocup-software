@@ -26,12 +26,12 @@ public:
         return nullptr;
     }
 
-    virtual bool containsPoint(const Point& pt) const {
+    virtual bool containsPoint(Point pt) const {
         throw std::runtime_error("Unimplemented method");
         return false;
     }
 
-    virtual bool hit(const Point& pt) const {
+    virtual bool hit(Point pt) const {
         throw std::runtime_error("Unimplemented method");
         return false;
     }

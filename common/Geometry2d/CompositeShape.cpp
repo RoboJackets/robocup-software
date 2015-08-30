@@ -1,26 +1,28 @@
 #include "CompositeShape.hpp"
 
-using namespace Geometry2d;
+namespace Geometry2d {
 
 Shape* CompositeShape::clone() const { return new CompositeShape(*this); }
 
-bool Geometry2d::CompositeShape::containsPoint(const Point& pt) const {
+bool CompositeShape::containsPoint(Point pt) const {
     for (auto subshape : _subshapes) {
         if (subshape->containsPoint(pt)) return true;
     }
     return false;
 }
 
-void Geometry2d::CompositeShape::add(std::shared_ptr<Shape> shape) {
+void CompositeShape::add(std::shared_ptr<Shape> shape) {
     if (shape) {
         _subshapes.push_back(shape);
     }
 }
 
-void Geometry2d::CompositeShape::add(const CompositeShape& compShape) {
+void CompositeShape::add(const CompositeShape& compShape) {
     for (auto shape : compShape.subshapes()) {
         add(shape);
     }
 }
 
-void Geometry2d::CompositeShape::clear() { _subshapes.clear(); }
+void CompositeShape::clear() { _subshapes.clear(); }
+
+}  // namespace Geometry2d

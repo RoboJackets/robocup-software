@@ -65,7 +65,7 @@ void SystemState::drawPolygon(const Geometry2d::Polygon& polygon,
     this->drawPolygon(polygon.vertices, qc, layer);
 }
 
-void SystemState::drawCircle(const Geometry2d::Point& center, float radius,
+void SystemState::drawCircle(Geometry2d::Point center, float radius,
                              const QColor& qc, const QString& layer) {
     DebugCircle* dbg = logFrame->add_debug_circles();
     dbg->set_layer(findDebugLayer(layer));
@@ -113,13 +113,12 @@ void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc,
     dbg->set_color(color(qc));
 }
 
-void SystemState::drawLine(const Geometry2d::Point& p0,
-                           const Geometry2d::Point& p1, const QColor& color,
-                           const QString& layer) {
+void SystemState::drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
+                           const QColor& color, const QString& layer) {
     drawLine(Geometry2d::Line(p0, p1), color, layer);
 }
 
-void SystemState::drawText(const QString& text, const Geometry2d::Point& pos,
+void SystemState::drawText(const QString& text, Geometry2d::Point pos,
                            const QColor& qc, const QString& layer) {
     DebugText* dbg = logFrame->add_debug_texts();
     dbg->set_layer(findDebugLayer(layer));

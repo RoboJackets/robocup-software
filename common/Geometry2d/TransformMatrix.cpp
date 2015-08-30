@@ -1,14 +1,14 @@
 #include "TransformMatrix.hpp"
 #include "util.h"
 
-using namespace Geometry2d;
+namespace Geometry2d {
 
 const TransformMatrix TransformMatrix::identity(1, 0, 0, 0, 1, 0);
 
 const TransformMatrix TransformMatrix::mirrorX(-1, 0, 0, 0, 1, 0);
 
-TransformMatrix::TransformMatrix(const Geometry2d::Point& origin,
-                                 float rotation, bool mirror, float s) {
+TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror,
+                                 float s) {
     // Set up translation
     _m[0] = 1;
     _m[1] = 0;
@@ -69,3 +69,5 @@ bool TransformMatrix::mirrored() const {
     // product becomes -Z.
     return (_m[0] * _m[4] - _m[1] * _m[3]) < 0;
 }
+
+}  // namespace Geometry2d

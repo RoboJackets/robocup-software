@@ -9,7 +9,7 @@ using namespace Planning;
 using namespace std;
 
 //// Point ////
-Tree::Point::Point(const Geometry2d::Point& p, Tree::Point* parent) : pos(p) {
+Tree::Point::Point(Geometry2d::Point p, Tree::Point* parent) : pos(p) {
     _parent = parent;
     leaf = true;
 
@@ -45,7 +45,7 @@ void Tree::clear() {
     points.clear();
 }
 
-void Tree::init(const Geometry2d::Point& start,
+void Tree::init(Geometry2d::Point start,
                 const Geometry2d::CompositeShape* obstacles) {
     clear();
 

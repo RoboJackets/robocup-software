@@ -280,8 +280,7 @@ public:
     Point perpCCW() const { return Point(-y, x); }
 
     /** saturates the magnitude of a vector */
-    static Geometry2d::Point saturate(const Geometry2d::Point& value,
-                                      float max) {
+    static Geometry2d::Point saturate(Geometry2d::Point value, float max) {
         float mag = value.mag();
         if (mag > fabs(max)) {
             return value.normalized() * fabs(max);

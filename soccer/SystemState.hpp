@@ -72,11 +72,11 @@ public:
     void drawLine(const Geometry2d::Line& line, const QColor& color = Qt::black,
                   const QString& layer = QString());
     /** @ingroup drawing_functions */
-    void drawLine(const Geometry2d::Point& p0, const Geometry2d::Point& p1,
+    void drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
                   const QColor& color = Qt::black,
                   const QString& layer = QString());
     /** @ingroup drawing_functions */
-    void drawCircle(const Geometry2d::Point& center, float radius,
+    void drawCircle(Geometry2d::Point center, float radius,
                     const QColor& color = Qt::black,
                     const QString& layer = QString());
     /** @ingroup drawing_functions */
@@ -95,7 +95,7 @@ public:
                      const QColor& color = Qt::black,
                      const QString& layer = QString());
     /** @ingroup drawing_functions */
-    void drawText(const QString& text, const Geometry2d::Point& pos,
+    void drawText(const QString& text, Geometry2d::Point pos,
                   const QColor& color = Qt::black,
                   const QString& layer = QString());
     /** @ingroup drawing_functions */
