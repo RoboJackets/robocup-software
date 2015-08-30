@@ -132,7 +132,8 @@ int main(int argc, char* argv[]) {
                                                          : "soccer-real.cfg");
     }
 
-    std::shared_ptr<Configuration> config = Configuration::FromRegisteredConfigurables();
+    std::shared_ptr<Configuration> config =
+        Configuration::FromRegisteredConfigurables();
 
     Processor* processor = new Processor(sim);
     processor->blueTeam(blueTeam);

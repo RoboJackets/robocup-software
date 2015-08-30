@@ -687,6 +687,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
 
     class_<std::shared_ptr<Configuration>>("Configuration")
-        .def("FromRegisteredConfigurables", &Configuration::FromRegisteredConfigurables)
+        .def("FromRegisteredConfigurables",
+             &Configuration::FromRegisteredConfigurables)
         .staticmethod("FromRegisteredConfigurables");
 }
