@@ -9,6 +9,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class Configuration;
 class ConfigItem;
+
 /**
  * static variable for the program, extremely general
  */
@@ -17,6 +18,9 @@ class Configuration : public QObject {
 
 public:
     Configuration();
+
+    /// Initializes a config object and adds all registered configurables to it.
+    static std::shared_ptr<Configuration> FromRegisteredConfigurables();
 
     void tree(QTreeWidget* tree);
 
@@ -162,6 +166,7 @@ protected:
 };
 
 #define REGISTER_CONFIGURABLE(x) static ConfigurableImpl<x> x##__configurable;
+
 /**
  *
  */
@@ -175,8 +180,10 @@ public:
     static const std::list<Configurable*>& configurables();
 
 private:
+    /// Global list of all registered configurables
     static std::list<Configurable*>* _configurables;
 };
+
 /**
  * a template for making configurables
  * the implementing object is responsible for handling configuration
