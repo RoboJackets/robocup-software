@@ -80,13 +80,20 @@ namespace Geometry2d
 			/**
 			 * see operator+
 			 * does vector division, note the operator
-			 * without parameter, it is the negative
 			 */
 			Point operator/(Point other) const
 			{
 				return Point(x / other.x, y / other.y);
 			}
 
+			/**
+			 * see operator+
+			 * does vector multiplication, note the operator
+			 */
+			Point operator*(Point other) const
+			{
+				return Point(x * other.x, y * other.y);
+			}
 
 			/**
 			 * see operator+
@@ -197,15 +204,6 @@ namespace Geometry2d
 			float dot(Point p) const
 			{
 				return x * p.x + y * p.y;
-			}
-			
-			/**
-			find out of the point is 0,0
-			@return true if the point is (0,0)
-			*/
-			bool isZero() const
-			{
-				return x == 0 && y == 0;
 			}
 			
 			/**
