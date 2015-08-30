@@ -9,25 +9,25 @@ dealing with large projects. Our project is approximately 50-80k lines of code,
 and is still very small by some open source standards. 
 
 This should not be discouraging, but rather informative. Most initial
-contributions will be small; it takes time learn the project structure and any
-languages and skill each particular project requires. Contributions of any size
+contributions will be small; it takes time to learn the project structure and any
+languages and skills each particular project requires. Contributions of any size
 will be greatly appreciated, and you should have realistic expectations of what
 a first contribution might be (if you dont believe me, you can look at my first
 contribution [here](https://github.com/RoboJackets/robocup-software/commit/6ce98fc0f8d88b6d145700779e126c0f1b99bb92#diff-71a3477f37bd5b20744e292eda2e3fbc). It's two lines of 'code'). This guide will help you learn to navigate our code base, and 
 work toward an initial contribution.
 
 ## Initial Prerequisites
-Before starting, you'll need a Unix environment. This means you need to be 
+Before starting, you'll need a Unix-like environment. This means you need to be 
 running OSX or Ubuntu Linux (other flavors of Debian may work, but we do not
-support Fedora Core of any kind).
+officially support them or FedoraCore).
 
 You'll also need a Github account, which you can create [here](http://github.com).
-Github is a front-end for a program called Git, which allows multiple people to
+Github is a web front-end for a program called Git, which allows multiple people to
 work on and contrubute to the same code base, at the same time.
 
 ## Git
-We use Git as our version control system (if you already know git, you can stop
-here). A Version control system allows many people to code for the same project 
+We use Git as our version control system (if you already know git, you can skip
+ahead). A Version control system allows many people to code for the same project 
 at the same time.
 
 To ease new contributors into Git, I'll repeatedly use the analogy of the 
@@ -87,7 +87,7 @@ questions.
 For RoboCub you should create a new branch for every new item you'd like to work
 on and for every bug or issue you have to fix. This ensures your master branch
 stays clean. You should never solve more than issue at a time and you should
-never have changes or additions for multiple thing in the same branch. 
+never have changes or additions for multiple things in the same branch. 
 
 ### Remotes
 If Git is like a test, then remotes would be cheating. A remote allows you to
@@ -95,11 +95,13 @@ view the solution(s) of another classmate, and pull those additions into your
 repostory as if they were on the classroom whiteboard.
 
 In software this can be particularly useful if a team member is working on some
-new code that may be perfect yet, but isn't ready to be folded into master. This
-may happen when you cannot continue work without getting the somewhat related
-progress from someone else. You should understand that when pulling from 
+new code that may not be perfect yet, but isn't ready to be folded into master. 
+This may happen when you cannot continue work without getting the somewhat 
+related progress from someone else. You should understand that when pulling from 
 someone else, they take no responsibility for any problems their updates may
-cause for you.
+cause for you. This is a decently advanced concept for those new to distributed 
+environments, and won't be used too often. We encourage you learn more about 
+this independently if interested. 
 
 ### Overall Workflow (important)
 If you read the previous sections, you may be a little overwhelmed. This section
@@ -138,10 +140,10 @@ it, and you changes will be complete.
 
 Keep in mind, you can have several branches at once. If you need to fix a bug 
 for an existing contribution while working on a new one, you should checkout 
-the master branch, and then create a new named bug fix branch. It is critically 
-important that a pull request only address one thing at a time. If it does not,
-the request will not accepted until you have separated the items you have 
-worked on. 
+the master branch, and then create a new branch named bug fix. It is 
+critically important that a pull request only address one thing at a time. If it 
+does not, the request will not accepted until you have separated the items you 
+have worked on. 
 
 If you've done all this successfully, you are now an official contributor.
 
@@ -151,7 +153,7 @@ contributing to the project. At this point, you should have created a Github
 account and forked the main RoboCup repository. You should also look at 
 creating a ssh key for Github [here](https://help.github.com/articles/generating-ssh-keys/). 
 
-1. Clone your repository `git clone git:<repository>`
+1. Clone your repository.
 2. You've decided to write some radio firmware. Create a new branch for radio
 development using `git checkout -b radioFirmware`. You will automatically be
 switched to the new branch,
@@ -166,7 +168,7 @@ on more than one feature per branch. Return to the master branch using
 7. Switch back to the radioFirmware branch with `git checkout radioFirmware`. 
 You can now (optionally) delete the pathPlanningHotfix branch once the pull 
 request has been accepted.
-8. Continue radio firmware development. If any more urgent problem arises, 
+8. Continue radio firmware development. If any more urgent problems arises, 
 you can repeat steps 4-7.
 9. Push the new radio firmware and submit a pull request.
 
@@ -175,8 +177,8 @@ With large projects, originization and structure can break down fairly quickly
 resulting in some bad spaghetti code. We want to avoid this as much as 
 possible. For this reason, every pull request will be reviewed by a more senior
 member of the team, currently Justin Buchanan. If your request isn't accepted 
-right away, don't take it personally. Often you code may work fine, but there 
-are thing you can add or refine. This helps keep our repository clean and will 
+right away, don't take it personally. Often your code may work fine, but there 
+are things you can add or refine. This helps keep our repository clean and will 
 give you valuable experience participating in a code review process.
 
 ### Continuous Integration
@@ -199,8 +201,8 @@ Code should be documented thoroughly. Generally speaking, you won't be here for
 more than 4(ish) years. Many students will come behind you and will need to use 
 the code you've written. 
 
-Each class or file you create should be documented as to what content it 
-contains and what purpose it serves.
+Each class or file you create should be documented as to what it contains and 
+what purpose it serves.
 
 Each function should have documentation containing it's purpose, what 
 parameters is takes, and what values it returns. Error handling should be 
@@ -212,7 +214,7 @@ the function is reentrant or accquires and releases locks.
 If the overall set of code is complex and new, consider editing or adding to 
 the wiki.
 
-C/C++/Python is documented use doxygen. You can view the guide for writing doxygen 
+C/C++/Python is documented using doxygen. You can view the guide for writing doxygen 
 comments and documentation [here](http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html).
 
 Text file types that are not supported by doxygen should still be documented 
@@ -224,6 +226,6 @@ uniformly. This would be difficult to coordinate across multiple users, so we
 have a program that automatically restyles the code for you. If you submit a 
 pull request before restyling the code, it will likely fail the CI check. You 
 can auto-format the code by running `make pretty`. If you have a lot of code, 
-you may have to run this a few times. You can check if the style is *passing* 
+you may have to run this a few times. You can check if the style is passing 
 by running `make checkstyle`. If there are no errors, then you are good to go.
 
