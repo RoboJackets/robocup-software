@@ -24,9 +24,8 @@ public:
 
     Shape* clone() const override;
 
-    bool containsPoint(const Point& pt) const override { return contains(pt); }
+    bool containsPoint(const Point& pt) const override;
 
-    bool contains(const Point& pt) const;
     bool intersects(const Rect& rect) const;
     bool intersects(const Polygon& other) const;
 

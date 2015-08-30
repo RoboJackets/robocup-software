@@ -54,14 +54,11 @@ public:
         return *this;
     }
 
-    bool contains(const Point& other) const;
-    bool contains(const Rect& other) const;
+    bool containsRect(const Rect& other) const;
 
-    bool containsPoint(const Point& other) const override {
-        return contains(other);
-    }
+    bool containsPoint(const Point& other) const override;
 
-    bool hit(const Point& pt) const override { return contains(pt); }
+    bool hit(const Point& pt) const override { return containsPoint(pt); }
 
     bool hit(const Segment& seg) const override;
 
