@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 #include <boost/optional.hpp>
 #include <QtCore/QPointF>
 #include <protobuf/Point.pb.h>
@@ -192,10 +192,10 @@ public:
      * @param max The magnitude to restrict the vector
      */
     void clamp(float max) {
-        if (mag() > max) {
-            float ratio = mag() / max;
-            x = x / ratio;
-            y = y / ratio;
+        float ratio = mag() / max;
+        if (ratio > 1) {
+            x /= ratio;
+            y /= ratio;
         }
     }
 
