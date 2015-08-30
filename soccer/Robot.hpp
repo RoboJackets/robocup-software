@@ -443,7 +443,7 @@ protected:
     Planning::MotionCommand::CommandType _lastCommandType;
     MotionConstraints _motionConstraints;
 
-    std::shared_ptr<Planning::PathPlanner>
+    std::shared_ptr<Planning::SingleRobotPathPlanner>
         _planner;  /// single-robot RRT planner
 
     void setPath(std::unique_ptr<Planning::Path> path);
