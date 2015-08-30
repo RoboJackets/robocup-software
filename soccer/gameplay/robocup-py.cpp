@@ -136,12 +136,12 @@ void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
     if (other == nullptr) throw NullArgumentException("other");
-    return self->contains(*other);
+    return self->containsRect(*other);
 }
 
 bool Rect_contains_point(Geometry2d::Rect* self, Geometry2d::Point* pt) {
     if (pt == nullptr) throw NullArgumentException("pt");
-    return self->contains(*pt);
+    return self->containsPoint(*pt);
 }
 
 void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
