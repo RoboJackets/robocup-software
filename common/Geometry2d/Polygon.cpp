@@ -55,7 +55,7 @@ bool Polygon::intersects(const Polygon& other) const {
 
 bool Polygon::containsVertex(const Polygon& other) const {
     for (unsigned int i = 0; i < other.vertices.size(); ++i) {
-        if (contains(other.vertices[i])) {
+        if (containsPoint(other.vertices[i])) {
             return true;
         }
     }
@@ -64,7 +64,7 @@ bool Polygon::containsVertex(const Polygon& other) const {
 }
 
 bool Polygon::nearPoint(const Point& pt, float threshold) const {
-    if (contains(pt)) {
+    if (containsPoint(pt)) {
         return true;
     }
 
@@ -82,7 +82,7 @@ bool Polygon::nearPoint(const Point& pt, float threshold) const {
 }
 
 bool Polygon::nearSegment(const Segment& seg, float threshold) const {
-    if (contains(seg.pt[0]) || contains(seg.pt[1])) {
+    if (containsPoint(seg.pt[0]) || containsPoint(seg.pt[1])) {
         return true;
     }
 
@@ -99,7 +99,7 @@ bool Polygon::nearSegment(const Segment& seg, float threshold) const {
     return false;
 }
 
-bool Polygon::contains(const Point& pt) const {
+bool Polygon::containsPoint(const Point& pt) const {
     // FIXME (Ben) - Replace this with the optimized wrap-number test.
 
     // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.h
