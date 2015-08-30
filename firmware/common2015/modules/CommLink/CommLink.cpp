@@ -99,13 +99,8 @@ void CommLink::rxThread(void const* arg)
 
     LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
 
-    while ( true ) {
-        osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
-        osDelay(1000);
-    }
-
     // Set the function to call on an interrupt trigger
-    // inst->_int_in->rise(inst, &CommLink::ISR);
+    inst->_int_in->rise(inst, &CommLink::ISR);
 
     RTP_t p;
 
@@ -119,7 +114,7 @@ void CommLink::rxThread(void const* arg)
         uint8_t rec_bytes = RTP_MAX_DATA_SIZE;
         int32_t response = inst->getData(p.raw, &rec_bytes);
 
-        LOG(INF1, "Interrupt manually disabled right now");
+        LOG(INF3, "RX interrupt triggered");
 
         if (response == COMM_SUCCESS) {
 

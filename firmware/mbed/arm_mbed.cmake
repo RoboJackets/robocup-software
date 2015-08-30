@@ -201,11 +201,12 @@ include_directories(${MBED_PATH})
 
 
 # set variables to each of the accessory library cmake project files
-set(SWSPI_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/swspi.cmake)
 set(MCP23017_MBED_LIB ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake)
+set(SWSPI_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake)
+set(SWI2C_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake)
 
 # create a list of which accessory libraries we want to download and add to the common2015 library
-set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB})
+#set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB} ${SWI2C_MBED_LIB})
 
 # uncomment the below line to add the MCP23017 library or other
 # ones when adding their cmake file to the mbed directory

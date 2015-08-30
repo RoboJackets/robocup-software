@@ -17,7 +17,8 @@ set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 # set the path to a bash script for moving files to the mbed's USB memory
 #set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh)
 set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-load.sh)
-set(HW_TEST_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-prgm.sh)
+# set(HW_TEST_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-prgm.sh)
+set(HW_TEST_SCRIPT ${MBED_COPY_SCRIPT})
 
 # sets many variables and paths related to building for the MBED
 set(MBED_ENV_SETUP_FILE ${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
