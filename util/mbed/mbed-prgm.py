@@ -27,6 +27,8 @@ parser.add_option("-b", "--baudrate", type="int" ,dest="baud",
                   help="baudrate used for the serial line", default=9600)
 parser.add_option("-n", "--no-fat-write", action="store_true", dest="no_mbed_write",
                   help="this flag will prevent from writing the binary to the mbed's USB storage area", default=False)
+parser.add_option("-p", "--get-path", action="store_true", dest="return_path",
+                  help="returns the path to the first connected mbed's serial port", default=False)
 parser.add_option("-l", "--load-memory", action="store_true", dest="load_bin",
                   help="loads the binary directly into the microcontroller's flash memory", default=False)
 parser.add_option("-w", "--wait", action="store_true", dest="block_serial",
@@ -35,11 +37,24 @@ parser.add_option("-w", "--wait", action="store_true", dest="block_serial",
 
 # The regex expression for finding mbed devices
 found_ports = list(Ports.grep(".*USB VID:PID=0d28:0204.*"))
-print str(len(found_ports)) + " mbed(s) found"
 
-srcFile = os.path.abspath(options.filename)
-destPath = os.path.abspath(options.destination)
+if options.return_path == True:
+    # not sure how things hold up with more than one connected
+    # mbed, so returning nothing if there's anything besides one.
+    if len(found_ports) == 1:
+        sys.exit(found_ports[0][0])
+    else:
+        sys.exit()
+
 thisDir = os.path.dirname(os.path.abspath(__file__))
+
+if options.filename:
+    srcFile = os.path.abspath(options.filename)
+
+if options.destination:
+    destPath = os.path.abspath(options.destination)
+
+print str(len(found_ports)) + " mbed(s) found"
 
 if options.no_mbed_write == False:
     # Move the binary file to the disk storage
@@ -106,18 +121,22 @@ if found_ports:
 
         # Now we let everything run
         print "--  starting program"
-        target.resume()
+        target.reset()
         sleep(3)
 
         signal.signal(signal.SIGINT, signal_handler)
+        canBlock = False
 
         # Once we receive the first byte, wait for a timeout period and print out everything that was received
         while(True):
             startupLogs += str(startup.read(256))
 
             # break once we've stopped receiving serial data
-            if startup.inWaiting() == 0 and not options.block_serial:
+            if startup.inWaiting() == 0 and not (options.block_serial and canBlock):
                 break
+
+            if startupLogs[:5] == "START":
+                canBlock = True;
 
             if options.block_serial and startupLogs[-4:] == "DONE":
                 # Trim to the expected result response
