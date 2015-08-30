@@ -7,7 +7,7 @@ var class_planning_1_1_tree =
     [ "clear", "class_planning_1_1_tree.html#aebea8cd6661be6de63ce2ebbf835a687", null ],
     [ "connect", "class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce", null ],
     [ "extend", "class_planning_1_1_tree.html#ae18f323a55ea3b91251b697f9176f646", null ],
-    [ "init", "class_planning_1_1_tree.html#a279c81eadb2bcc36b50bd4f5d7777c77", null ],
+    [ "init", "class_planning_1_1_tree.html#a466f6c523c05b331b367d4c4ca16e193", null ],
     [ "last", "class_planning_1_1_tree.html#ae5673a955cf95b8d5980b075fdd0d263", null ],
     [ "nearest", "class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c", null ],
     [ "start", "class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027", null ],

@@ -157,10 +157,10 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> drawLine(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a>&amp; line, <span class="keyword">const</span> QColor&amp; color = Qt::black,</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                  <span class="keyword">const</span> QString&amp; layer = QString());</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> drawLine(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&amp; p0, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&amp; p1,</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> drawLine(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> p0, <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> p1,</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                  <span class="keyword">const</span> QColor&amp; color = Qt::black,</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                  <span class="keyword">const</span> QString&amp; layer = QString());</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> drawCircle(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&amp; center, <span class="keywordtype">float</span> radius,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> drawCircle(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> center, <span class="keywordtype">float</span> radius,</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                    <span class="keyword">const</span> QColor&amp; color = Qt::black,</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                    <span class="keyword">const</span> QString&amp; layer = QString());</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_polygon.html">Geometry2d::Polygon</a>&amp; pts,</div>
@@ -174,7 +174,7 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> drawPolygon(<span class="keyword">const</span> std::vector&lt;Geometry2d::Point&gt;&amp; pts,</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                     <span class="keyword">const</span> QColor&amp; color = Qt::black,</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                     <span class="keyword">const</span> QString&amp; layer = QString());</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">void</span> drawText(<span class="keyword">const</span> QString&amp; text, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&amp; pos,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">void</span> drawText(<span class="keyword">const</span> QString&amp; text, <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos,</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                  <span class="keyword">const</span> QColor&amp; color = Qt::black,</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                  <span class="keyword">const</span> QString&amp; layer = QString());</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> drawShape(<span class="keyword">const</span> std::shared_ptr&lt;Geometry2d::Shape&gt;&amp; obs,</div>
@@ -210,8 +210,8 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="ttc" id="class_our_robot_html"><div class="ttname"><a href="class_our_robot.html">OurRobot</a></div><div class="ttdoc">A robot on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:120</div></div>
 <div class="ttc" id="class_geometry2d_1_1_arc_html"><div class="ttname"><a href="class_geometry2d_1_1_arc.html">Geometry2d::Arc</a></div><div class="ttdef"><b>Definition:</b> Arc.hpp:12</div></div>
 <div class="ttc" id="class_geometry2d_1_1_line_html"><div class="ttname"><a href="class_geometry2d_1_1_line.html">Geometry2d::Line</a></div><div class="ttdef"><b>Definition:</b> Line.hpp:9</div></div>
-<div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:17</div></div>
-<div class="ttc" id="class_geometry2d_1_1_polygon_html"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html">Geometry2d::Polygon</a></div><div class="ttdef"><b>Definition:</b> Polygon.hpp:10</div></div>
+<div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:15</div></div>
+<div class="ttc" id="class_geometry2d_1_1_polygon_html"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html">Geometry2d::Polygon</a></div><div class="ttdef"><b>Definition:</b> Polygon.hpp:11</div></div>
 <div class="ttc" id="class_robot_config_html"><div class="ttname"><a href="class_robot_config.html">RobotConfig</a></div><div class="ttdoc">Configuration per robot model. </div><div class="ttdef"><b>Definition:</b> RobotConfig.hpp:8</div></div>
 <div class="ttc" id="class_ball_html_a0f13620d6928b163e3c415e63f3abb5e"><div class="ttname"><a href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">Ball::time</a></div><div class="ttdeci">Time time</div><div class="ttdoc">Time at which this estimate is valid. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:44</div></div>
 <div class="ttc" id="class_opponent_robot_html"><div class="ttname"><a href="class_opponent_robot.html">OpponentRobot</a></div><div class="ttdoc">A robot that is not on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:579</div></div>
@@ -223,7 +223,7 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>SystemState.hpp</b></li>
-    <li class="footer">Generated on Sun Aug 30 2015 03:00:26 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Aug 30 2015 22:44:52 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
