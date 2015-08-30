@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PathPlanner.hpp"
+#include "SingleRobotPathPlanner.hpp"
 #include "Tree.hpp"
 #include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/Point.hpp>
@@ -13,6 +13,7 @@
 #include <list>
 
 namespace Planning {
+
 /** generate a random point on the floor */
 Geometry2d::Point randomPoint();
 
@@ -25,7 +26,7 @@ Geometry2d::Point randomPoint();
  * You can check out our interactive RRT applet on GitHub here:
  * https://github.com/RoboJackets/rrt.
  */
-class RRTPlanner : public PathPlanner {
+class RRTPlanner : public SingleRobotPathPlanner {
 public:
     RRTPlanner(int maxIterations);
     /**
@@ -95,4 +96,5 @@ protected:
                                     std::vector<double>& ks,
                                     std::vector<double>& ks2);
 };
-}
+
+} // namespace Planning
