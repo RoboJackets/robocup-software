@@ -1,7 +1,7 @@
 import constants
-import evaluation.window_evaluator
 import math
 import robocup
+import main
 
 
 ## Find the chance of a pass succeeding by looking at pass distance and what robots are in the way
@@ -21,8 +21,9 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     receive_seg = robocup.Segment(to_point + pass_perp*receive_seg_half_len,
         to_point + pass_perp*-receive_seg_half_len)
 
-    win_eval = evaluation.window_evaluator.WindowEvaluator()
-    win_eval.excluded_robots = excluded_robots
+    win_eval = robocup.WindowEvaluator(main.system_state())
+    for r in excluded_robots:
+        win_eval.add_excluded_robot(r)
     windows, best = win_eval.eval_pt_to_seg(from_point, receive_seg)
 
     # this is our estimate of the likelihood of the pass succeeding

@@ -68,7 +68,7 @@ class OurGoalKick(play.Play):
         center2 = self.subbehavior_with_name('center2')
 
         # see if we have a direct shot on their goal
-        win_eval = evaluation.window_evaluator.WindowEvaluator()
+        win_eval = robocup.WindowEvaluator(main.system_state())
         win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper()
         win_eval.min_chip_range = OurGoalKick.MinChipRange
         win_eval.max_chip_range = OurGoalKick.MaxChipRange

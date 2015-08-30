@@ -20,6 +20,16 @@ message DebugCircle
 	required float radius = 4;
 }
 
+message DebugArc
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	required Point center = 3;
+	required float radius = 4;
+	required float start = 5;
+	required float end = 6;
+}
+
 message DebugText
 {
 	optional uint32 color = 1;
@@ -42,8 +52,8 @@ message TestResult
 	optional string group = 3;
 }
 
-// Only the first LogFrame in a log file contains this.
-// It contains unchanging information about the soccer build and invocation.
+// Only the first LogFrame in a log file contains this. It contains unchanging
+// information about the soccer build and invocation.
 message LogConfig
 {
 	// Name of the program which generated this log
@@ -80,8 +90,9 @@ message LogFrame
 	repeated DebugPath debug_paths = 6;
 	repeated DebugPath debug_polygons = 7;
 	repeated DebugCircle debug_circles = 8;
-	repeated DebugText debug_texts = 9;
-	repeated string debug_layers = 10;
+	repeated DebugArc debug_arcs = 9;
+	repeated DebugText debug_texts = 10;
+	repeated string debug_layers = 11;
 
 	// Filtered world state and commands
 	message Robot
@@ -116,38 +127,38 @@ message LogFrame
 		required Point vel = 2;
 	}
 
-	repeated Robot self = 11;
-	repeated Robot opp = 12;
-	optional Ball ball = 13;
+	repeated Robot self = 12;
+	repeated Robot opp = 13;
+	optional Ball ball = 14;
 
 	// Data sent to the radio
-	optional RadioTx radio_tx = 14;
+	optional RadioTx radio_tx = 15;
 
 	// Which robot is under manual control
-	optional sint32 manual_id = 15 [default = -1];
+	optional sint32 manual_id = 16 [default = -1];
 
 	// True if our goal is on the +X side of vision
-	optional bool defend_plus_x = 16;
+	optional bool defend_plus_x = 17;
 
 	// Name of the current play
 	// NOTE: with the transition to a python-based gameplay system, we no longer log this.
 	//       Instead, we log the "Behavior Tree", which has the play name and all subbehavior names.
-	optional string play = 17;
+	optional string play = 18;
 	
 	// True if using each half of the field
-	optional bool use_our_half = 18 [default = true];
-	optional bool use_opponent_half = 19 [default = true];
+	optional bool use_our_half = 19 [default = true];
+	optional bool use_opponent_half = 20 [default = true];
 	
 	// results from testing
-	repeated TestResult testResults = 20;
+	repeated TestResult testResults = 21;
 
-	//	the description of the behavior tree
-	//	should show the hierarchy of behaviors and each behavior's state
-	optional string behavior_tree = 21;
+	// the description of the behavior tree
+	// should show the hierarchy of behaviors and each behavior's state
+	optional string behavior_tree = 22;
 
-	optional string team_name_yellow = 22;
-	optional string team_name_blue = 23;
+	optional string team_name_yellow = 23;
+	optional string team_name_blue = 24;
 	
 	// timestamp in microseconds since epoch
-    required uint64 timestamp = 24;
+    required uint64 timestamp = 25;
 }

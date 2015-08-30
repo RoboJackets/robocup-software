@@ -49,15 +49,6 @@ class TrianglePass(play.Play):
         ]
 
 
-    def all_subbehaviors_completed(self):
-        # for bhvr in self.all_subbehaviors():
-        #     if not bhvr.is_done_running():
-        #         return False
-        # return True
-
-        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
-
-
     def on_enter_setup(self):
         closestPt = min(self.triangle_points,
             key=lambda pt: pt.dist_to(main.ball().pos))

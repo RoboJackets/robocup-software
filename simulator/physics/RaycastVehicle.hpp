@@ -4,8 +4,8 @@
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without fee,
  * provided that the above copyright notice appear in all copies.
- * Erwin Coumans makes no representations about the suitability 
- * of this software for any purpose.  
+ * Erwin Coumans makes no representations about the suitability
+ * of this software for any purpose.
  * It is provided "as is" without express or implied warranty.
 */
 #ifndef RAYCASTVEHICLE_H
@@ -21,210 +21,166 @@
 class btDynamicsWorld;
 class btVehicleTuning;
 
-
-///rayCast vehicle, very special constraint that turn a rigidbody into a vehicle.
-class RaycastVehicle : public btActionInterface
-{
+/// rayCast vehicle, very special constraint that turn a rigidbody into a
+/// vehicle.
+class RaycastVehicle : public btActionInterface {
 public:
-	class btVehicleTuning
-	{
-	public:
-
-		btVehicleTuning()
-			:m_suspensionStiffness(btScalar(5.88)),
-			m_suspensionCompression(btScalar(0.83)),
-			m_suspensionDamping(btScalar(0.88)),
-			m_maxSuspensionTravelCm(btScalar(500.)),
-			m_frictionSlip(btScalar(10.5)),
-			m_maxSuspensionForce(btScalar(6000.))
-		{
-		}
-		btScalar	m_suspensionStiffness;
-		btScalar	m_suspensionCompression;
-		btScalar	m_suspensionDamping;
-		btScalar	m_maxSuspensionTravelCm;
-		btScalar	m_frictionSlip;
-		btScalar	m_maxSuspensionForce;
-
-	};
+    class btVehicleTuning {
+    public:
+        btVehicleTuning()
+            : m_suspensionStiffness(btScalar(5.88)),
+              m_suspensionCompression(btScalar(0.83)),
+              m_suspensionDamping(btScalar(0.88)),
+              m_maxSuspensionTravelCm(btScalar(500.)),
+              m_frictionSlip(btScalar(10.5)),
+              m_maxSuspensionForce(btScalar(6000.)) {}
+        btScalar m_suspensionStiffness;
+        btScalar m_suspensionCompression;
+        btScalar m_suspensionDamping;
+        btScalar m_maxSuspensionTravelCm;
+        btScalar m_frictionSlip;
+        btScalar m_maxSuspensionForce;
+    };
 
 public:
+    // constructor to create a car from an existing rigidbody
+    RaycastVehicle(const btVehicleTuning& tuning, btRigidBody* chassis,
+                   btVehicleRaycaster* raycaster);
 
-	//constructor to create a car from an existing rigidbody
-	RaycastVehicle(const btVehicleTuning& tuning,btRigidBody* chassis,	btVehicleRaycaster* raycaster );
+    virtual ~RaycastVehicle();
 
-	virtual ~RaycastVehicle() ;
+    /// btActionInterface interface
+    virtual void updateAction(btCollisionWorld* collisionWorld,
+                              btScalar step) override {
+        (void)collisionWorld;
+        updateVehicle(step);
+    }
 
+    /// btActionInterface interface
+    void debugDraw(btIDebugDraw* debugDrawer) override;
 
-	///btActionInterface interface
-	virtual void updateAction( btCollisionWorld* collisionWorld, btScalar step) override
-	{
-        (void) collisionWorld;
-		updateVehicle(step);
-	}
-	
+    const btTransform& getChassisWorldTransform() const;
 
-	///btActionInterface interface
-	void debugDraw(btIDebugDraw* debugDrawer) override;
-			
-	const btTransform& getChassisWorldTransform() const;
-	
-	btScalar rayCast(btWheelInfo& wheel);
+    btScalar rayCast(btWheelInfo& wheel);
 
-	virtual void updateVehicle(btScalar step);
-	
-	
-	void resetSuspension();
+    virtual void updateVehicle(btScalar step);
 
-	btScalar getSteeringValue(int wheel) const;
+    void resetSuspension();
 
-	void setSteeringValue(btScalar steering,int wheel);
+    btScalar getSteeringValue(int wheel) const;
 
+    void setSteeringValue(btScalar steering, int wheel);
 
-	void applyEngineForce(btScalar force, int wheel);
+    void applyEngineForce(btScalar force, int wheel);
 
-	const btTransform& getWheelTransformWS( int wheelIndex ) const;
+    const btTransform& getWheelTransformWS(int wheelIndex) const;
 
-	void updateWheelTransform( int wheelIndex, bool interpolatedTransform = true );
-	
-	btWheelInfo& addWheel(const btVector3& connectionPointCS0, const btVector3& wheelDirectionCS0,const btVector3& wheelAxleCS,btScalar suspensionRestLength,btScalar wheelRadius,const btVehicleTuning& tuning, bool isFrontWheel);
+    void updateWheelTransform(int wheelIndex,
+                              bool interpolatedTransform = true);
 
-	inline int getNumWheels() const {
-		return int (m_wheelInfo.size());
-	}
-	
-	btAlignedObjectArray<btWheelInfo> m_wheelInfo;
+    btWheelInfo& addWheel(const btVector3& connectionPointCS0,
+                          const btVector3& wheelDirectionCS0,
+                          const btVector3& wheelAxleCS,
+                          btScalar suspensionRestLength, btScalar wheelRadius,
+                          const btVehicleTuning& tuning, bool isFrontWheel);
 
+    inline int getNumWheels() const { return int(m_wheelInfo.size()); }
 
-	const btWheelInfo& getWheelInfo(int index) const;
-	btWheelInfo& getWheelInfo(int index);
+    btAlignedObjectArray<btWheelInfo> m_wheelInfo;
 
-	void updateWheelTransformsWS(btWheelInfo& wheel , bool interpolatedTransform = true);
+    const btWheelInfo& getWheelInfo(int index) const;
+    btWheelInfo& getWheelInfo(int index);
 
-	
-	void setBrake(btScalar brake,int wheelIndex);
+    void updateWheelTransformsWS(btWheelInfo& wheel,
+                                 bool interpolatedTransform = true);
 
-	void setPitchControl(btScalar pitch)
-	{
-		m_pitchControl = pitch;
-	}
-	
-	void updateSuspension(btScalar deltaTime);
+    void setBrake(btScalar brake, int wheelIndex);
 
-	virtual void updateFriction(btScalar	timeStep);
+    void setPitchControl(btScalar pitch) { m_pitchControl = pitch; }
 
+    void updateSuspension(btScalar deltaTime);
 
-	inline btRigidBody* getRigidBody()
-	{
-		return m_chassisBody;
-	}
+    virtual void updateFriction(btScalar timeStep);
 
-	const btRigidBody* getRigidBody() const
-	{
-		return m_chassisBody;
-	}
+    inline btRigidBody* getRigidBody() { return m_chassisBody; }
 
-	inline int	getRightAxis() const
-	{
-		return m_indexRightAxis;
-	}
-	inline int getUpAxis() const
-	{
-		return m_indexUpAxis;
-	}
+    const btRigidBody* getRigidBody() const { return m_chassisBody; }
 
-	inline int getForwardAxis() const
-	{
-		return m_indexForwardAxis;
-	}
+    inline int getRightAxis() const { return m_indexRightAxis; }
+    inline int getUpAxis() const { return m_indexUpAxis; }
 
-	
-	///Worldspace forward vector
-	btVector3 getForwardVector() const
-	{
-		const btTransform& chassisTrans = getChassisWorldTransform(); 
+    inline int getForwardAxis() const { return m_indexForwardAxis; }
 
-		btVector3 forwardW ( 
-			  chassisTrans.getBasis()[0][m_indexForwardAxis], 
-			  chassisTrans.getBasis()[1][m_indexForwardAxis], 
-			  chassisTrans.getBasis()[2][m_indexForwardAxis]); 
+    /// Worldspace forward vector
+    btVector3 getForwardVector() const {
+        const btTransform& chassisTrans = getChassisWorldTransform();
 
-		return forwardW;
-	}
+        btVector3 forwardW(chassisTrans.getBasis()[0][m_indexForwardAxis],
+                           chassisTrans.getBasis()[1][m_indexForwardAxis],
+                           chassisTrans.getBasis()[2][m_indexForwardAxis]);
 
-	///Velocity of vehicle (positive if velocity vector has same direction as foward vector)
-	btScalar getCurrentSpeedKmHour() const
-	{
-		return m_currentVehicleSpeedKmHour;
-	}
+        return forwardW;
+    }
 
-	virtual void setCoordinateSystem(int rightIndex,int upIndex,int forwardIndex)
-	{
-		m_indexRightAxis = rightIndex;
-		m_indexUpAxis = upIndex;
-		m_indexForwardAxis = forwardIndex;
-	}
+    /// Velocity of vehicle (positive if velocity vector has same direction as
+    /// foward vector)
+    btScalar getCurrentSpeedKmHour() const {
+        return m_currentVehicleSpeedKmHour;
+    }
 
+    virtual void setCoordinateSystem(int rightIndex, int upIndex,
+                                     int forwardIndex) {
+        m_indexRightAxis = rightIndex;
+        m_indexUpAxis = upIndex;
+        m_indexForwardAxis = forwardIndex;
+    }
 
-	///backwards compatibility
-	int getUserConstraintType() const
-	{
-		return m_userConstraintType ;
-	}
+    /// backwards compatibility
+    int getUserConstraintType() const { return m_userConstraintType; }
 
-	void setUserConstraintType(int userConstraintType)
-	{
-		m_userConstraintType = userConstraintType;
-	}
+    void setUserConstraintType(int userConstraintType) {
+        m_userConstraintType = userConstraintType;
+    }
 
-	void setUserConstraintId(int uid)
-	{
-		m_userConstraintId = uid;
-	}
+    void setUserConstraintId(int uid) { m_userConstraintId = uid; }
 
-	int getUserConstraintId() const
-	{
-		return m_userConstraintId;
-	}
+    int getUserConstraintId() const { return m_userConstraintId; }
 
 private:
-	btAlignedObjectArray<btVector3>	m_forwardWS;
-	btAlignedObjectArray<btVector3>	m_axle;
-	btAlignedObjectArray<btScalar>	m_forwardImpulse;
-	btAlignedObjectArray<btScalar>	m_sideImpulse;
+    btAlignedObjectArray<btVector3> m_forwardWS;
+    btAlignedObjectArray<btVector3> m_axle;
+    btAlignedObjectArray<btScalar> m_forwardImpulse;
+    btAlignedObjectArray<btScalar> m_sideImpulse;
 
-	///backwards compatibility
-	int	m_userConstraintType;
-	int	m_userConstraintId;
+    /// backwards compatibility
+    int m_userConstraintType;
+    int m_userConstraintId;
 
 private:
-	btScalar m_tau;
-	btScalar m_damping;
-	btVehicleRaycaster*	m_vehicleRaycaster;
-	btScalar m_pitchControl;
-	btScalar m_steeringValue; 
-	btScalar m_currentVehicleSpeedKmHour;
+    btScalar m_tau;
+    btScalar m_damping;
+    btVehicleRaycaster* m_vehicleRaycaster;
+    btScalar m_pitchControl;
+    btScalar m_steeringValue;
+    btScalar m_currentVehicleSpeedKmHour;
 
-	btRigidBody *m_chassisBody;
+    btRigidBody* m_chassisBody;
 
-	int m_indexRightAxis;
-	int m_indexUpAxis;
-	int	m_indexForwardAxis;
+    int m_indexRightAxis;
+    int m_indexUpAxis;
+    int m_indexForwardAxis;
 
-	void defaultInit(const btVehicleTuning& tuning);
+    void defaultInit(const btVehicleTuning& tuning);
 };
 
-class DefaultVehicleRaycaster : public btVehicleRaycaster
-{
-	btDynamicsWorld*	m_dynamicsWorld;
+class DefaultVehicleRaycaster : public btVehicleRaycaster {
+    btDynamicsWorld* m_dynamicsWorld;
+
 public:
-	DefaultVehicleRaycaster(btDynamicsWorld* world)
-		:m_dynamicsWorld(world)
-	{
-	}
+    DefaultVehicleRaycaster(btDynamicsWorld* world) : m_dynamicsWorld(world) {}
 
-	virtual void* castRay(const btVector3& from,const btVector3& to, btVehicleRaycasterResult& result) override;
+    virtual void* castRay(const btVector3& from, const btVector3& to,
+                          btVehicleRaycasterResult& result) override;
 };
 
-
-#endif //RAYCASTVEHICLE_H
+#endif  // RAYCASTVEHICLE_H
