@@ -2,7 +2,7 @@
 #include "Segment.hpp"
 #include <Constants.hpp>
 
-using namespace Geometry2d;
+namespace Geometry2d {
 
 Shape* Circle::clone() const { return new Circle(*this); }
 
@@ -105,16 +105,15 @@ int Circle::intersects(const Line& line, Point* i) const {
     }
 }
 
-bool Circle::containsPoint(const Point& pt) const {
+bool Circle::containsPoint(Point pt) const {
     return (pt - center).mag() < radius();
 }
 
-Point Circle::nearestPoint(const Geometry2d::Point& P) const {
+Point Circle::nearestPoint(Point P) const {
     return (P - center).normalized() * _r + center;
 }
 
-bool Circle::tangentPoints(const Geometry2d::Point& src, Geometry2d::Point* p1,
-                           Geometry2d::Point* p2) const {
+bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {
     if (!p1 && !p2) {
         return false;
     }
@@ -151,10 +150,12 @@ bool Circle::tangentPoints(const Geometry2d::Point& src, Geometry2d::Point* p1,
     return true;
 }
 
-bool Circle::hit(const Geometry2d::Point& pt) const {
+bool Circle::hit(Point pt) const {
     return pt.nearPoint(center, radius() + Robot_Radius);
 }
 
-bool Circle::hit(const Geometry2d::Segment& seg) const {
+bool Circle::hit(const Segment& seg) const {
     return seg.nearPoint(center, radius() + Robot_Radius);
 }
+
+}  // namespace Geometry2d

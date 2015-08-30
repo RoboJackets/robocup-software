@@ -5,7 +5,8 @@
 #include "Arc.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+
+namespace Geometry2d {
 
 vector<Point> Arc::intersects(const Line& line) const {
     // http://mathworld.wolfram.com/Circle2d-LineIntersection.html
@@ -76,3 +77,5 @@ vector<Point> Arc::intersects(const Segment& segment) const {
     }
     return candidates;
 }
+
+}  // namespace Geometry2d

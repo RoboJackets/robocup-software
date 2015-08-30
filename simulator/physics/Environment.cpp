@@ -261,7 +261,7 @@ void Environment::addBall(Geometry2d::Point pos) {
     printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos,
+void Environment::addRobot(bool blue, int id, Geometry2d::Point pos,
                            Robot::RobotRevision rev) {
     Robot* r = new Robot(this, id, rev, pos);
     r->initPhysics(blue);
@@ -355,7 +355,7 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
             r->radioTx(&cmd);
 
             // trigger signals to update visualization
-            const Geometry2d::Point& pos2 = r->getPosition();
+            Geometry2d::Point pos2 = r->getPosition();
             QVector3D pos3(pos2.x, pos2.y, 0.0);
             QVector3D axis(0.0, 0.0, 1.0);
         } else {

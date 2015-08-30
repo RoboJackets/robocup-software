@@ -27,10 +27,10 @@ public:
     InterpolatedPath() {}
 
     /** constructor with a single point */
-    InterpolatedPath(const Geometry2d::Point& p0);
+    InterpolatedPath(Geometry2d::Point p0);
 
     /** constructor from two points */
-    InterpolatedPath(const Geometry2d::Point& p0, const Geometry2d::Point& p1);
+    InterpolatedPath(Geometry2d::Point p0, Geometry2d::Point p1);
 
     // Adds an instant ot the end of the path for the given time
     // time should not bet less than the last time
@@ -82,7 +82,7 @@ public:
     float length(unsigned int start, unsigned int end) const;
 
     /** Returns the length of the path from the closet point found to @a pt */
-    float length(const Geometry2d::Point& pt) const;
+    float length(Geometry2d::Point pt) const;
 
     /** Returns number of waypoints */
     size_t size() const;
@@ -91,19 +91,19 @@ public:
     bool valid() const;
 
     // Returns the index of the point in this path nearest to pt.
-    int nearestIndex(const Geometry2d::Point& pt) const;
+    int nearestIndex(Geometry2d::Point pt) const;
 
     /** returns the nearest segement of @a pt to the path */
-    Geometry2d::Segment nearestSegment(const Geometry2d::Point& pt) const;
+    Geometry2d::Segment nearestSegment(Geometry2d::Point pt) const;
 
     // Returns the shortest distance from this path to the given point
-    float distanceTo(const Geometry2d::Point& pt) const;
+    float distanceTo(Geometry2d::Point pt) const;
 
     // Returns the start of the path
     boost::optional<Geometry2d::Point> start() const;
 
     // Returns a new path starting from a given point
-    void startFrom(const Geometry2d::Point& pt,
+    void startFrom(Geometry2d::Point pt,
                    Planning::InterpolatedPath& result) const;
 
     /**

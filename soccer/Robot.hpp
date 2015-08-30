@@ -146,12 +146,12 @@ public:
     /// segment for the location of the kicker
     const Geometry2d::Segment kickerBar() const;
     /// converts a point to the frame of reference of robot
-    Geometry2d::Point pointInRobotSpace(const Geometry2d::Point& pt) const;
+    Geometry2d::Point pointInRobotSpace(Geometry2d::Point pt) const;
 
     // simple checks to do geometry
     /** returns true if the position specified is behind the robot */
     // FIXME - Function name and comment don't match
-    bool behindBall(const Geometry2d::Point& ballPos) const;
+    bool behindBall(Geometry2d::Point ballPos) const;
 
     // Gets the robot quaternion.  Returns false (and does not change q) if not
     // available.
@@ -189,7 +189,7 @@ public:
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
      */
-    void move(const Geometry2d::Point& goal,
+    void move(Geometry2d::Point goal,
               Geometry2d::Point endVelocity = Geometry2d::Point());
 
     /**
@@ -198,7 +198,7 @@ public:
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
      */
-    void moveDirect(const Geometry2d::Point& goal, float endSpeed = 0);
+    void moveDirect(Geometry2d::Point goal, float endSpeed = 0);
 
     Time pathStartTime() const { return _pathStartTime; }
 
@@ -218,12 +218,12 @@ public:
     /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */
-    void worldVelocity(const Geometry2d::Point& targetWorldVel);
+    void worldVelocity(Geometry2d::Point targetWorldVel);
 
     /**
      * Face a point while remaining in place
      */
-    void face(const Geometry2d::Point& pt);
+    void face(Geometry2d::Point pt);
 
     /**
      * Remove the facing command
@@ -233,7 +233,7 @@ public:
     /**
      * The robot pivots around it's mouth toward the given target
      */
-    void pivot(const Geometry2d::Point& pivotTarget);
+    void pivot(Geometry2d::Point pivotTarget);
 
     /*
      * Enable dribbler (0 to 127)
