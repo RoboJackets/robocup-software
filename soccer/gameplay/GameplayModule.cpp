@@ -244,8 +244,8 @@ void Gameplay::GameplayModule::goalieID(int value) {
 /**
  * returns the group of obstacles for the field
  */
-Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
-    Geometry2d::CompositeShape obstacles;
+Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
+    Geometry2d::ShapeSet obstacles;
     if (_state->gameState.stayOnSide()) {
         obstacles.add(_sideObstacle);
     }
@@ -372,8 +372,8 @@ void Gameplay::GameplayModule::run() {
 
     /// determine global obstacles - field requirements
     /// Two versions - one set with goal area, another without for goalie
-    Geometry2d::CompositeShape global_obstacles = globalObstacles();
-    Geometry2d::CompositeShape obstacles_with_goals = global_obstacles;
+    Geometry2d::ShapeSet global_obstacles = globalObstacles();
+    Geometry2d::ShapeSet obstacles_with_goals = global_obstacles;
     obstacles_with_goals.add(_ourGoalArea);
     obstacles_with_goals.add(_theirGoalArea);
 

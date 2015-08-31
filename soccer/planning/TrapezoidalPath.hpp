@@ -4,7 +4,7 @@
 #include "MotionConstraints.hpp"
 #include "MotionInstant.hpp"
 #include <Configuration.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Segment.hpp>
@@ -71,7 +71,7 @@ public:
                              pathDirection * speedOut);
     }
 
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime = 0) const override {
         throw std::logic_error("This function is not implemented");
     }

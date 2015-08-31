@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <SystemState.hpp>
 #include "MotionInstant.hpp"
 
@@ -38,7 +38,7 @@ public:
      * @param[in] 	startTime The time on the path to start checking from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const = 0;
 
     /**

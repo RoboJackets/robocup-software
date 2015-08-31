@@ -1,15 +1,14 @@
+#include "RRTPlanner.hpp"
+#include <Constants.hpp>
+#include <Utils.hpp>
+#include <protobuf/LogFrame.pb.h>
+#include "motion/TrapezoidalMotion.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <algorithm>
-#include <Constants.hpp>
-#include <Utils.hpp>
 #include <Eigen/Dense>
-#include <protobuf/LogFrame.pb.h>
-
-#include "RRTPlanner.hpp"
-#include "motion/TrapezoidalMotion.hpp"
 
 using namespace std;
 using namespace Planning;
@@ -28,7 +27,7 @@ RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant startInstant, MotionInstant endInstant,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::CompositeShape* obstacles) {
+    const Geometry2d::ShapeSet* obstacles) {
     Planning::InterpolatedPath* path = new Planning::InterpolatedPath();
     Geometry2d::Point goal = endInstant.pos;
     _motionConstraints = motionConstraints;
@@ -162,8 +161,7 @@ Planning::InterpolatedPath* RRTPlanner::makePath() {
 }
 
 Planning::InterpolatedPath* RRTPlanner::optimize(
-    Planning::InterpolatedPath& path,
-    const Geometry2d::CompositeShape* obstacles,
+    Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi) {
     unsigned int start = 0;
 
@@ -175,18 +173,15 @@ Planning::InterpolatedPath* RRTPlanner::optimize(
     vector<MotionInstant>& pts = path.waypoints;
 
     // The set of obstacles the starting point was inside of
-    std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
-
-    obstacles->hit(pts[start].pos, startHitSet);
+    const auto startHitSet = obstacles->hitSet(pts[start].pos);
     int span = 2;
     while (span < pts.size()) {
         bool changed = false;
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
-            std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
-            if (obstacles->hit(
-                    Geometry2d::Segment(pts[i].pos, pts[i + span].pos),
-                    newHitSet)) {
+            const auto newHitSet = obstacles->hitSet(
+                Geometry2d::Segment(pts[i].pos, pts[i + span].pos));
+            if (!newHitSet.empty()) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
                         transitionValid = false;
@@ -225,8 +220,7 @@ float getTime(Planning::InterpolatedPath& path, int index,
 
 // TODO: Use targeted end velocity
 Planning::InterpolatedPath* RRTPlanner::cubicBezier(
-    Planning::InterpolatedPath& path,
-    const Geometry2d::CompositeShape* obstacles,
+    Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi) {
     int length = path.waypoints.size();
     int curvesNum = length - 1;

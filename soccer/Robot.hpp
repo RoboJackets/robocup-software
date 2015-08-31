@@ -318,7 +318,7 @@ public:
     void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
         _local_obstacles.add(obs);
     }
-    const Geometry2d::CompositeShape& localObstacles() const {
+    const Geometry2d::ShapeSet& localObstacles() const {
         return _local_obstacles;
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
@@ -371,7 +371,7 @@ public:
      * Replans the path if needed.
      * Sets some parameters on the path.
      */
-    void replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles);
+    void replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles);
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
@@ -433,7 +433,7 @@ protected:
     SystemState* _state;
 
     /// set of obstacles added by plays
-    Geometry2d::CompositeShape _local_obstacles;
+    Geometry2d::ShapeSet _local_obstacles;
 
     /// masks for obstacle avoidance
     RobotMask _self_avoid_mask, _opp_avoid_mask;
@@ -467,9 +467,9 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::CompositeShape createRobotObstacles(
-        const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
-        Geometry2d::CompositeShape result;
+    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+                                              const RobotMask& mask) const {
+        Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i)
             if (mask[i] > 0 && robots[i] && robots[i]->visible)
                 result.add(std::shared_ptr<Geometry2d::Shape>(
@@ -489,10 +489,11 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::CompositeShape createRobotObstacles(
-        const std::vector<ROBOT*>& robots, const RobotMask& mask,
-        Geometry2d::Point currentPosition, float checkRadius) const {
-        Geometry2d::CompositeShape result;
+    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+                                              const RobotMask& mask,
+                                              Geometry2d::Point currentPosition,
+                                              float checkRadius) const {
+        Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i)
             if (mask[i] > 0 && robots[i] && robots[i]->visible) {
                 if (currentPosition.distTo(robots[i]->pos) <= checkRadius) {

@@ -46,13 +46,13 @@ void Tree::clear() {
 }
 
 void Tree::init(Geometry2d::Point start,
-                const Geometry2d::CompositeShape* obstacles) {
+                const Geometry2d::ShapeSet* obstacles) {
     clear();
 
     _obstacles = obstacles;
 
     Point* p = new Point(start, nullptr);
-    _obstacles->hit(p->pos, p->hit);
+    p->hit = _obstacles->hitSet(p->pos);
     points.push_back(p);
 }
 
@@ -134,8 +134,9 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base) {
     // If this move touches any obstacles that the starting point didn't already
     // touch,
     // it has entered an obstacle and will be rejected.
-    std::set<shared_ptr<Geometry2d::Shape>> moveHit;
-    if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), moveHit)) {
+    std::set<shared_ptr<Geometry2d::Shape>> moveHit =
+        _obstacles->hitSet(Geometry2d::Segment(pos, base->pos));
+    if (!moveHit.empty()) {
         // We only care if there are any items in moveHit that are not in
         // point->hit, so
         // we don't store the result of set_difference.
@@ -152,7 +153,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base) {
 
     // Allow this point to be added to the tree
     Point* p = new Point(pos, base);
-    _obstacles->hit(p->pos, p->hit);
+    p->hit = std::move(moveHit);
     points.push_back(p);
 
     return p;
