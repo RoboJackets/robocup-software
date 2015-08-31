@@ -1,73 +1,65 @@
-#include <protobuf/LogFrame.pb.h>
 #include "InterpolatedPath.hpp"
-#include "Utils.hpp"
 #include "LogUtils.hpp"
-#include <stdexcept>
+#include "Utils.hpp"
+#include <protobuf/LogFrame.pb.h>
 
-#pragma mark InterpolatedPath
+#include <stdexcept>
 
 using namespace std;
 using namespace Geometry2d;
 
 namespace Planning {
-InterpolatedPath::InterpolatedPath(Geometry2d::Point p0) {
-    points.push_back(p0);
+
+InterpolatedPath::InterpolatedPath(Point p0) {
+    waypoints.emplace_back(p0, Point());
 }
 
-InterpolatedPath::InterpolatedPath(Geometry2d::Point p0, Geometry2d::Point p1) {
-    points.push_back(p0);
-    points.push_back(p1);
+InterpolatedPath::InterpolatedPath(Point p0, Point p1) {
+    waypoints.emplace_back(p0, Point());
+    waypoints.emplace_back(p1, Point());
 }
 
 float InterpolatedPath::length(unsigned int start) const {
-    if (points.empty() || start >= (points.size() - 1)) {
-        return 0;
-    }
-
-    float length = 0;
-    for (unsigned int i = start; i < (points.size() - 1); ++i) {
-        length += (points[i + 1] - points[i]).mag();
-    }
-    return length;
+    return length(start, waypoints.size() - 1);
 }
 
 float InterpolatedPath::length(unsigned int start, unsigned int end) const {
-    if (points.empty() || start >= (points.size() - 1)) {
+    if (waypoints.empty() || start >= (waypoints.size() - 1)) {
         return 0;
     }
 
     float length = 0;
     for (unsigned int i = start; i < end; ++i) {
-        length += (points[i + 1] - points[i]).mag();
+        length += (waypoints[i + 1].pos - waypoints[i].pos).mag();
     }
     return length;
 }
 
-boost::optional<Geometry2d::Point> InterpolatedPath::start() const {
-    if (points.empty())
+boost::optional<MotionInstant> InterpolatedPath::start() const {
+    if (waypoints.empty())
         return boost::none;
     else
-        return points.front();
+        return waypoints.front();
 }
 
 boost::optional<MotionInstant> InterpolatedPath::destination() const {
-    if (points.empty())
+    if (waypoints.empty())
         return boost::none;
     else
-        return MotionInstant(points.back(), vels.back());
+        return waypoints.back();
 }
 
 // Returns the index of the point in this path nearest to pt.
-int InterpolatedPath::nearestIndex(Geometry2d::Point pt) const {
-    if (points.size() == 0) {
+int InterpolatedPath::nearestIndex(Point pt) const {
+    if (waypoints.size() == 0) {
         return -1;
     }
 
     int index = 0;
-    float dist = pt.distTo(points[0]);
+    float dist = pt.distTo(waypoints[0].pos);
 
-    for (unsigned int i = 1; i < points.size(); ++i) {
-        float d = pt.distTo(points[i]);
+    for (unsigned int i = 1; i < waypoints.size(); ++i) {
+        float d = pt.distTo(waypoints[i].pos);
         if (d < dist) {
             dist = d;
             index = i;
@@ -77,8 +69,8 @@ int InterpolatedPath::nearestIndex(Geometry2d::Point pt) const {
     return index;
 }
 
-bool InterpolatedPath::hit(const Geometry2d::CompositeShape& obstacles,
-                           float& hitTime, float startTime) const {
+bool InterpolatedPath::hit(const CompositeShape& obstacles, float& hitTime,
+                           float startTime) const {
     size_t start = 0;
     for (float t : times) {
         start++;
@@ -88,21 +80,21 @@ bool InterpolatedPath::hit(const Geometry2d::CompositeShape& obstacles,
         }
     }
 
-    if (start >= points.size()) {
+    if (start >= waypoints.size()) {
         // Empty path or starting beyond end of path
         return false;
     }
 
     // This code disregards obstacles which the robot starts in. This allows the
     // robot to move out a obstacle if it is already in one.
-    std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
-    obstacles.hit(points[start], startHitSet);
+    std::set<std::shared_ptr<Shape>> startHitSet;
+    obstacles.hit(waypoints[start].pos, startHitSet);
 
-    for (size_t i = start; i < points.size() - 1; i++) {
-        std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
-        if (obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]),
+    for (size_t i = start; i < waypoints.size() - 1; i++) {
+        std::set<std::shared_ptr<Shape>> newHitSet;
+        if (obstacles.hit(Segment(waypoints[i].pos, waypoints[i + 1].pos),
                           newHitSet)) {
-            for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
+            for (std::shared_ptr<Shape> hit : newHitSet) {
                 // If it hits something, check if the hit was in the origional
                 // hitSet
                 if (startHitSet.find(hit) == startHitSet.end()) {
@@ -115,15 +107,15 @@ bool InterpolatedPath::hit(const Geometry2d::CompositeShape& obstacles,
     return false;
 }
 
-float InterpolatedPath::distanceTo(Geometry2d::Point pt) const {
+float InterpolatedPath::distanceTo(Point pt) const {
     int i = nearestIndex(pt);
     if (i < 0) {
         return 0;
     }
 
     float dist = -1;
-    for (unsigned int i = 0; i < (points.size() - 1); ++i) {
-        Geometry2d::Segment s(points[i], points[i + 1]);
+    for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
+        Segment s(waypoints[i].pos, waypoints[i + 1].pos);
         const float d = s.distTo(pt);
 
         if (dist < 0 || d < dist) {
@@ -134,16 +126,15 @@ float InterpolatedPath::distanceTo(Geometry2d::Point pt) const {
     return dist;
 }
 
-Geometry2d::Segment InterpolatedPath::nearestSegment(
-    Geometry2d::Point pt) const {
-    Geometry2d::Segment best;
+Segment InterpolatedPath::nearestSegment(Point pt) const {
+    Segment best;
     float dist = -1;
-    if (points.empty()) {
+    if (waypoints.empty()) {
         return best;
     }
 
-    for (unsigned int i = 0; i < (points.size() - 1); ++i) {
-        Geometry2d::Segment s(points[i], points[i + 1]);
+    for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
+        Segment s(waypoints[i].pos, waypoints[i + 1].pos);
         const float d = s.distTo(pt);
 
         if (dist < 0 || d < dist) {
@@ -155,53 +146,15 @@ Geometry2d::Segment InterpolatedPath::nearestSegment(
     return best;
 }
 
-void InterpolatedPath::startFrom(Geometry2d::Point pt,
-                                 InterpolatedPath& result) const {
-    // path will start at the current robot pose
-    result.clear();
-    result.points.push_back(pt);
-
-    if (points.empty()) return;
-
-    // handle simple paths
-    if (points.size() == 1) {
-        result.points.push_back(points.front());
-        return;
-    }
-
-    // find where to start the path
-    Geometry2d::Segment close_segment;
-    float dist = -1;
-    unsigned int i = (points.front().nearPoint(pt, 0.02)) ? 1 : 0;
-    vector<Geometry2d::Point>::const_iterator path_start = ++points.begin();
-    for (; i < (points.size() - 1); ++i) {
-        Geometry2d::Segment s(points[i], points[i + 1]);
-        const float d = s.distTo(pt);
-        if (dist < 0 || d < dist) {
-            close_segment = s;
-            dist = d;
-        }
-    }
-
-    // slice path
-    // new path will be pt, [closest point on nearest segment], [i+1 to end]
-    if (dist > 0.0 && dist < 0.02) {
-        Geometry2d::Point intersection_pt = close_segment.nearestPoint(pt);
-        result.points.push_back(intersection_pt);
-    }
-
-    result.points.insert(result.points.end(), path_start, points.end());
-}
-
-float InterpolatedPath::length(Geometry2d::Point pt) const {
+float InterpolatedPath::length(Point pt) const {
     float dist = -1;
     float length = 0;
-    if (points.empty()) {
+    if (waypoints.empty()) {
         return 0;
     }
 
-    for (unsigned int i = 0; i < (points.size() - 1); ++i) {
-        Geometry2d::Segment s(points[i], points[i + 1]);
+    for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
+        Segment s(waypoints[i].pos, waypoints[i + 1].pos);
 
         // add the segment length
         length += s.length();
@@ -211,7 +164,7 @@ float InterpolatedPath::length(Geometry2d::Point pt) const {
         // if point closer to this segment
         if (dist < 0 || d < dist) {
             // closest point on segment
-            Geometry2d::Point p = s.nearestPoint(pt);
+            Point p = s.nearestPoint(pt);
 
             // new best distance
             dist = d;
@@ -225,46 +178,19 @@ float InterpolatedPath::length(Geometry2d::Point pt) const {
     return length;
 }
 
-bool InterpolatedPath::getPoint(float distance, Geometry2d::Point& position,
-                                Geometry2d::Point& direction) const {
-    if (distance <= 0) {
-        position = points.front();
-        return false;
-    }
-    if (points.empty()) {
-        return false;
-    }
-    for (unsigned int i = 0; i < (points.size() - 1); ++i) {
-        Geometry2d::Point vector(points[i + 1] - points[i]);
-
-        float vectorLength = vector.mag();
-        distance -= vectorLength;
-
-        if (distance <= 0) {
-            distance += vectorLength;
-            position = points[i] + (vector * (distance / vectorLength));
-            direction = vector.normalized();
-            return true;
-        }
-    }
-    position = points.back();
-    return false;
-}
-
 void InterpolatedPath::draw(SystemState* const state,
                             const QColor& col = Qt::black,
                             const QString& layer = "Motion") const {
     Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
     dbg->set_layer(state->findDebugLayer(layer));
-    for (Geometry2d::Point pt : points) {
-        *dbg->add_points() = pt;
+    for (const MotionInstant& waypoint : waypoints) {
+        *dbg->add_points() = waypoint.pos;
     }
     dbg->set_color(color(col));
     return;
 }
 
-bool InterpolatedPath::evaluate(float t,
-                                MotionInstant& targetMotionInstant) const {
+boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
     if (t < 0) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
@@ -283,7 +209,7 @@ bool InterpolatedPath::evaluate(float t,
     multiple values
         linearSpeed);   //
 
-    Geometry2d::Point direction;
+    Point direction;
     if(!getPoint(linearPos, targetPosOut, direction)) {
         return false;
     }
@@ -291,11 +217,9 @@ bool InterpolatedPath::evaluate(float t,
     targetVelOut = direction * linearSpeed;
     */
     if (times.size() == 0) {
-        targetMotionInstant = MotionInstant();
-        return false;
+        return boost::none;
     } else if (times.size() == 1) {
-        targetMotionInstant = MotionInstant(points[0], vels[0]);
-        return false;
+        return boost::none;
     }
     if (t < times[0]) {
         debugThrow(
@@ -305,31 +229,27 @@ bool InterpolatedPath::evaluate(float t,
     int i = 0;
     while (times[i] <= t) {
         if (times[i] == t) {
-            targetMotionInstant = MotionInstant(points[i], vels[i]);
-            return true;
+            return waypoints[i];
         }
         i++;
         if (i == size()) {
-            targetMotionInstant = MotionInstant(points[i - 1], vels[i - 1]);
-            return false;
+            return boost::none;
         }
     }
     float deltaT = (times[i] - times[i - 1]);
     if (deltaT == 0) {
-        targetMotionInstant = MotionInstant(points[i], vels[i]);
-        return true;
+        return waypoints[i];
     }
     float constant = (t - times[i - 1]) / deltaT;
 
-    targetMotionInstant =
-        MotionInstant(points[i - 1] * (1 - constant) + points[i] * (constant),
-                      vels[i - 1] * (1 - constant) + vels[i] * (constant));
-    return true;
+    return MotionInstant(
+        waypoints[i - 1].pos * (1 - constant) + waypoints[i].pos * (constant),
+        waypoints[i - 1].vel * (1 - constant) + waypoints[i].vel * (constant));
 }
 
-size_t InterpolatedPath::size() const { return points.size(); }
+size_t InterpolatedPath::size() const { return waypoints.size(); }
 
-bool InterpolatedPath::valid() const { return !points.empty(); }
+bool InterpolatedPath::valid() const { return !waypoints.empty(); }
 
 float InterpolatedPath::getTime(int index) const { return times[index]; }
 
@@ -390,16 +310,16 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
     // Add the first points to the InterpolatedPath
     path->times.push_back(0);
     if (times[start] == startTime) {
-        path->points.push_back(points[start]);
-        path->vels.push_back(vels[start]);
+        path->waypoints.push_back(waypoints[start]);
     } else {
         float deltaT = (times[start + 1] - times[start]);
         float constant = (times[start + 1] - startTime) / deltaT;
-        Point startPos =
-            points[start + 1] * (1 - constant) + points[start] * (constant);
-        Point vi = vels[start + 1] * (1 - constant) + vels[start] * (constant);
-        path->points.push_back(startPos);
-        path->vels.push_back(vi);
+        Point startPos = waypoints[start + 1].pos * (1 - constant) +
+                         waypoints[start].pos * (constant);
+        Point vi = waypoints[start + 1].vel * (1 - constant) +
+                   waypoints[start].vel * (constant);
+
+        path->waypoints.emplace_back(startPos, vi);
     }
 
     // Find the last point in the InterpolatedPath
@@ -408,8 +328,8 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
     size_t end;
     if (endTime >= getDuration()) {
         end = size() - 1;
-        vf = vels[end];
-        endPos = points[end];
+        vf = waypoints[end].vel;
+        endPos = waypoints[end].pos;
     } else {
         end = start + 1;
         while (times[end] < endTime) {
@@ -417,23 +337,22 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
         }
         float deltaT = (times[end] - times[end - 1]);
         float constant = (times[end] - endTime) / deltaT;
-        // endTime = times[end];
-        vf = vels[end] * (1 - constant) + vels[end - 1] * (constant);
-        endPos = points[end] * (1 - constant) + points[end - 1] * (constant);
+        vf = waypoints[end].vel * (1 - constant) +
+             waypoints[end - 1].vel * (constant);
+        endPos = waypoints[end].pos * (1 - constant) +
+                 waypoints[end - 1].pos * constant;
     }
 
     // Add all the points in the middle
     size_t i = start + 1;
     while (i < end) {
-        path->points.push_back(points[i]);
-        path->vels.push_back(vels[i]);
+        path->waypoints.push_back(waypoints[i]);
         path->times.push_back(times[i] - startTime);
         i++;
     }
 
     // Add the last point
-    path->points.push_back(endPos);
-    path->vels.push_back(vf);
+    path->waypoints.emplace_back(endPos, vf);
     path->times.push_back(endTime - startTime);
 
     return unique_ptr<Path>(path);
@@ -442,4 +361,5 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
 unique_ptr<Path> InterpolatedPath::clone() const {
     return unique_ptr<Path>(new InterpolatedPath(*this));
 }
-}
+
+}  // namespace Planning

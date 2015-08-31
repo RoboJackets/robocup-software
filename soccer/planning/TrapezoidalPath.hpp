@@ -11,6 +11,7 @@
 #include <planning/Path.hpp>
 
 namespace Planning {
+
 /**
  * @brief Represents a straight-line path with a trapezoidal velocity profile
  *
@@ -53,8 +54,7 @@ public:
                                         maxSpeed, maxAcc, startSpeed, endSpeed);
     }
 
-    virtual bool evaluate(float time,
-                          MotionInstant& targetMotionInstant) const override {
+    virtual boost::optional<MotionInstant> evaluate(float time) const override {
         float distance;
         float speedOut;
         bool valid = TrapezoidalMotion(pathLength,  // PathLength
@@ -65,9 +65,10 @@ public:
                                        endSpeed,    // endSpeed
                                        distance,    // posOut
                                        speedOut);   // speedOut
-        targetMotionInstant.pos = pathDirection * distance + startPos;
-        targetMotionInstant.vel = pathDirection * speedOut;
-        return valid;
+        if (!valid) return boost::none;
+
+        return MotionInstant(pathDirection * distance + startPos,
+                             pathDirection * speedOut);
     }
 
     virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
@@ -100,4 +101,5 @@ public:
         return nullptr;
     }
 };
-}
+
+}  // namespace Planning

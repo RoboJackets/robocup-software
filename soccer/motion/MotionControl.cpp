@@ -12,6 +12,7 @@
 
 using namespace std;
 using namespace Geometry2d;
+using namespace Planning;
 
 #pragma mark Config Variables
 
@@ -132,12 +133,11 @@ void MotionControl::run() {
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
-    Planning::MotionInstant target;
+    MotionInstant target;
 
     // if no target position is given, we don't have a path to follow
     if (!_robot->path() ||
-        _robot->motionCommand().getCommandType() ==
-            Planning::MotionCommand::WorldVel) {
+        _robot->motionCommand().getCommandType() == MotionCommand::WorldVel) {
         target.vel =
             _robot->motionCommand().getWorldVel().rotated(-_robot->angle);
     } else {
@@ -171,17 +171,26 @@ void MotionControl::run() {
         // cout << "timeIntoPath: " << timeIntoPath << endl;
 
         // evaluate path - where should we be right now?
-        bool pathValidNow = _robot->path()->evaluate(timeIntoPath, target);
-        if (!pathValidNow) {
+        boost::optional<MotionInstant> optTarget =
+            _robot->path()->evaluate(timeIntoPath);
+        if (!optTarget) {
             target.vel = Geometry2d::Point();
+            target.pos = _robot->pos;
+        } else {
+            target = *optTarget;
         }
         // tracking error
         Point posError = target.pos - _robot->pos;
 
         // acceleration factor
-        Planning::MotionInstant nextTarget;
-        _robot->path()->evaluate(timeIntoPath + 1.0 / 60.0, nextTarget);
-        Point acceleration = (nextTarget.vel - target.vel) / 60.0f;
+        Point acceleration;
+        boost::optional<MotionInstant> nextTarget =
+            _robot->path()->evaluate(timeIntoPath + 1.0 / 60.0);
+        if (nextTarget) {
+            acceleration = (nextTarget->vel - target.vel) / 60.0f;
+        } else {
+            acceleration = {0, 0};
+        }
         Point accelFactor =
             acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
