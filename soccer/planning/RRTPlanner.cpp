@@ -33,8 +33,8 @@ std::unique_ptr<Path> RRTPlanner::run(
     if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
         path->setStartTime(timestamp());
-        path->times.push_back(0);
-        path->waypoints.emplace_back(start.pos, Geometry2d::Point());
+        path->waypoints.emplace_back(
+            MotionInstant(start.pos, Geometry2d::Point()), 0);
         return unique_ptr<Path>(path);
     }
 
@@ -42,14 +42,13 @@ std::unique_ptr<Path> RRTPlanner::run(
     goal.pos = findNonBlockedGoal(goal.pos, obstacles);
 
     // Run bi-directional RRT to generate a path.
-    InterpolatedPath* path =
-        runRRT(start, goal, motionConstraints, obstacles);
+    InterpolatedPath* path = runRRT(start, goal, motionConstraints, obstacles);
 
     // If RRT failed, the path will be empty, so we need to add a single point
     // to make it valid.
     if (path && path->waypoints.empty()) {
-        path->times.push_back(0);
-        path->waypoints.emplace_back(start.pos, Geometry2d::Point());
+        path->waypoints.emplace_back(
+            MotionInstant(start.pos, Geometry2d::Point()), 0);
     }
     return unique_ptr<Path>(path);
 }
@@ -144,17 +143,17 @@ InterpolatedPath* RRTPlanner::optimize(
         return nullptr;
     }
 
-    vector<MotionInstant>& pts = path.waypoints;
+    vector<InterpolatedPath::Entry>& pts = path.waypoints;
 
     // The set of obstacles the starting point was inside of
-    const auto startHitSet = obstacles->hitSet(pts[start].pos);
+    const auto startHitSet = obstacles->hitSet(pts[start].pos());
     int span = 2;
     while (span < pts.size()) {
         bool changed = false;
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
             const auto newHitSet = obstacles->hitSet(
-                Geometry2d::Segment(pts[i].pos, pts[i + span].pos));
+                Geometry2d::Segment(pts[i].pos(), pts[i + span].pos()));
             if (!newHitSet.empty()) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
@@ -205,14 +204,14 @@ InterpolatedPath* RRTPlanner::cubicBezier(
     vector<double> ks2(length - 1);
 
     for (int i = 0; i < length; i++) {
-        pointsX[i] = path.waypoints[i].pos.x;
-        pointsY[i] = path.waypoints[i].pos.y;
+        pointsX[i] = path.waypoints[i].pos().x;
+        pointsY[i] = path.waypoints[i].pos().y;
     }
     float startSpeed = vi.mag();
 
     // This is pretty hacky;
     Geometry2d::Point startDirection =
-        (path.waypoints[1].pos - path.waypoints[0].pos).normalized();
+        (path.waypoints[1].pos() - path.waypoints[0].pos()).normalized();
     if (startSpeed < 0.3) {
         startSpeed = 0.3;
         vi = startDirection * startSpeed;
@@ -220,7 +219,7 @@ InterpolatedPath* RRTPlanner::cubicBezier(
         vi = vi.mag() * (startDirection + vi.normalized()) / 2.0 * 0.8;
     }
 
-    float endSpeed = vf.mag();
+    const float endSpeed = vf.mag();
 
     for (int i = 0; i < curvesNum; i++) {
         ks[i] = 1.0 /
@@ -237,15 +236,13 @@ InterpolatedPath* RRTPlanner::cubicBezier(
     VectorXd solutionY = cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
 
     Geometry2d::Point p0, p1, p2, p3;
-    vector<MotionInstant> pts;
-    vector<float> times;
+    vector<InterpolatedPath::Entry> pts;
     const int interpolations = 10;
     double time = 0;
 
-    for (int i = 0; i < curvesNum; i++)  // access by reference to avoid copying
-    {
-        p0 = path.waypoints[i].pos;
-        p3 = path.waypoints[i + 1].pos;
+    for (int i = 0; i < curvesNum; i++) {
+        p0 = path.waypoints[i].pos();
+        p3 = path.waypoints[i + 1].pos();
         p1 = Geometry2d::Point(solutionX(i * 2), solutionY(i * 2));
         p2 = Geometry2d::Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
 
@@ -262,15 +259,12 @@ InterpolatedPath* RRTPlanner::cubicBezier(
                 3 * k * (-(p0 * pow(-1 + k * t, 2)) +
                          k * t * (2 * p2 - 3 * p2 * k * t + p3 * k * t) +
                          p1 * (1 - 4 * k * t + 3 * pow(k, 2) * pow(t, 2)));
-            pts.emplace_back(pos, vel);
-            times.push_back(time + t);
+            pts.emplace_back(MotionInstant(pos, vel), time + t);
         }
         time += 1.0 / ks[i];
     }
-    pts.emplace_back(path.waypoints[length - 1].pos, vf);
-    times.push_back(time);
+    pts.emplace_back(MotionInstant(path.waypoints[length - 1].pos(), vf), time);
     path.waypoints = pts;
-    path.times = times;
     return &path;
 }
 

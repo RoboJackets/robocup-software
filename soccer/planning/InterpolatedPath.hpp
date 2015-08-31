@@ -12,16 +12,29 @@ namespace Planning {
  * @brief Represents a motion path as a series of {pos, vel} pairs.
  *
  * @details The path represents a function of position given time that the robot
- * should follow.  A
- * line-segment-based path comes from the planner, then we use cubic bezier
- * curves to interpolate
- * and smooth it out.  This is done via the evaulate() method.
+ *     should follow.  A line-segment-based path comes from the planner, then we
+ *     use cubic bezier curves to interpolate and smooth it out.  This is done
+ *     via the evaulate() method.
  */
 class InterpolatedPath : public Path {
 public:
+    /// Each entry in InterpolatedPath is a MotionInstant and the time that the
+    /// robot should be at that position and velocity.
+    struct Entry {
+        Entry(MotionInstant inst, float t) : instant(inst), time(t) {}
+
+        MotionInstant instant;
+        float time;
+
+        Geometry2d::Point& pos() { return instant.pos; }
+        const Geometry2d::Point& pos() const { return instant.pos; }
+
+        Geometry2d::Point& vel() { return instant.vel; }
+        const Geometry2d::Point& vel() const { return instant.vel; }
+    };
+
     // Set of points in the path - used as waypoints
-    std::vector<MotionInstant> waypoints;
-    std::vector<float> times;
+    std::vector<Entry> waypoints;
 
     /** default path is empty */
     InterpolatedPath() {}
@@ -35,11 +48,10 @@ public:
     /// Adds an instant at the end of the path for the given time.
     /// Time should not bet less than the last time.
     void addInstant(float time, MotionInstant instant) {
-        if (!times.empty()) {
-            assert(time > times.back());
+        if (!waypoints.empty()) {
+            assert(time > waypoints.back().time);
         }
-        times.push_back(time);
-        waypoints.push_back(instant);
+        waypoints.push_back(Entry(instant, time));
     }
 
     // Overridden Path Methods
@@ -58,10 +70,7 @@ public:
     bool empty() const { return waypoints.empty(); }
 
     /// Erase all path contents
-    void clear() {
-        waypoints.clear();
-        times.clear();
-    }
+    void clear() { waypoints.clear(); }
 
     /**
      * Calulates the length of the path
