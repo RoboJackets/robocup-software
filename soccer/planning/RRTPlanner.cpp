@@ -14,7 +14,6 @@
 using namespace std;
 using namespace Planning;
 
-
 Geometry2d::Point Planning::randomPoint() {
     float x =
         Field_Dimensions::Current_Dimensions.FloorWidth() * (drand48() - 0.5f);
@@ -185,8 +184,9 @@ Planning::InterpolatedPath* RRTPlanner::optimize(
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
             std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
-            if (obstacles->hit(Geometry2d::Segment(pts[i].pos, pts[i + span].pos),
-                               newHitSet)) {
+            if (obstacles->hit(
+                    Geometry2d::Segment(pts[i].pos, pts[i + span].pos),
+                    newHitSet)) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
                         transitionValid = false;
@@ -295,9 +295,10 @@ Planning::InterpolatedPath* RRTPlanner::cubicBezier(
             t = ((float)j / (float)(interpolations)) / k;
             // 3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k
             // t + 3 k^2 t^2))
-            Geometry2d::Point vel = 3 * k * (-(p0 * pow(-1 + k * t, 2)) +
-                            k * t * (2 * p2 - 3 * p2 * k * t + p3 * k * t) +
-                            p1 * (1 - 4 * k * t + 3 * pow(k, 2) * pow(t, 2)));
+            Geometry2d::Point vel =
+                3 * k * (-(p0 * pow(-1 + k * t, 2)) +
+                         k * t * (2 * p2 - 3 * p2 * k * t + p3 * k * t) +
+                         p1 * (1 - 4 * k * t + 3 * pow(k, 2) * pow(t, 2)));
             pts.emplace_back(pos, vel);
             times.push_back(time + t);
         }
