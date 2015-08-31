@@ -77,10 +77,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 }
 
 OurRobot::OurRobot(int shell, SystemState* state)
-    : Robot(shell, true),
-      _path(),
-      _state(state),
-      _pathChangeHistory(PathChangeHistoryBufferSize) {
+    : Robot(shell, true), _path(), _state(state) {
     _cmdText = new std::stringstream();
 
     resetAvoidBall();
@@ -154,8 +151,6 @@ void OurRobot::resetForNextIteration() {
     if (verbose && visible)
         cout << "in OurRobot::resetForNextIteration()" << std::endl;
     robotText.clear();
-
-    _didSetPathThisIteration = false;
 
     _clearCmdText();
 
@@ -465,25 +460,9 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    _didSetPathThisIteration = true;
-
     _path = std::move(path);
     _pathInvalidated = false;
     _pathStartTime = timestamp();
-}
-
-int OurRobot::consecutivePathChangeCount() const {
-    int count = 0;
-    for (auto itr = _pathChangeHistory.begin(); itr != _pathChangeHistory.end();
-         itr++) {
-        if (*itr) {
-            count++;
-        } else {
-            break;
-        }
-    }
-
-    return count > 0 ? count - 1 : 0;
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
@@ -492,8 +471,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
 
     // if no goal, command robot to stop in place
     if (_state->gameState.state == GameState::Halt) {
-        // clear our history of path change times
-        _pathChangeHistory.clear();
         setPath(nullptr);
         return;
     }
@@ -665,10 +642,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
     if (_path) {
         _path->draw(_state, Qt::magenta, "Planning");
     }
-
-    _pathChangeHistory.push_back(_didSetPathThisIteration);
-
-    return;
 }
 
 bool OurRobot::charged() const {
