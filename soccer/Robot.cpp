@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace Geometry2d;
+using Planning::MotionInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
@@ -193,7 +194,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
         cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", "
              << goal.y << ")" << std::endl;
 
-    _motionCommand.setPathTarget(Planning::MotionInstant(goal, endVelocity));
+    _motionCommand.setPathTarget(MotionInstant(goal, endVelocity));
 
     // reset conflicting motion commands
     _motionConstraints.pivotTarget = boost::none;
@@ -530,7 +531,7 @@ void OurRobot::replanIfNeeded(
     if (_path && lastCommandType == _motionCommand.getCommandType()) {
         if (_motionCommand.getCommandType() ==
             Planning::MotionCommand::PathTarget) {
-            Planning::MotionInstant commandDestination =
+            MotionInstant commandDestination =
                 _motionCommand.getPlanningTarget();
 
             // if this number of microseconds passes since our last path plan,
@@ -541,11 +542,18 @@ void OurRobot::replanIfNeeded(
                 _pathInvalidated = true;
             }
 
-            Planning::MotionInstant target;
+            MotionInstant target;
             float timeIntoPath =
                 ((float)(timestamp() - _pathStartTime)) * TimestampToSecs +
                 1.0f / 60.0f;
-            _path->evaluate(timeIntoPath, target);
+
+            boost::optional<MotionInstant> optTarget = _path->evaluate(timeIntoPath);
+            if (optTarget) {
+                target = *optTarget;
+            } else {
+                // We went off the end of the path, so use the end for calculations.
+                target = *_path->destination();
+            }
 
             float pathError = (target.pos - pos).mag();
             float replanThreshold = *_motionConstraints._replan_threshold;
@@ -618,7 +626,7 @@ void OurRobot::replanIfNeeded(
             float endSpeed = _motionCommand.getDirectTarget(endTarget);
             switch (_motionCommand.getCommandType()) {
                 case Planning::MotionCommand::PathTarget:
-                    path = _planner->run(Planning::MotionInstant(pos, vel),
+                    path = _planner->run(MotionInstant(pos, vel),
                                          _motionCommand.getPlanningTarget(),
                                          _motionConstraints, &full_obstacles);
                     break;

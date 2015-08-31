@@ -20,4 +20,4 @@ public:
         const Geometry2d::CompositeShape* obstacles) = 0;
 };
 
-} // namespace Planning
+}  // namespace Planning
