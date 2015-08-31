@@ -461,7 +461,6 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     _path = std::move(path);
-    _pathInvalidated = false;
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
@@ -502,6 +501,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
                          QString("self_obstacles_%1").arg(shell()));
     _state->drawShapeSet(oppObs, Qt::gray,
                          QString("opp_obstacles_%1").arg(shell()));
+
+    // A series of checks below will set this to true if the path needs to be
+    // replanned
+    bool pathInvalidated = false;
+
     if (_path && lastCommandType == _motionCommand.getCommandType()) {
         if (_motionCommand.getCommandType() ==
             Planning::MotionCommand::PathTarget) {
@@ -513,7 +517,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
             const Time kPathExpirationInterval =
                 *_replanTimeout * SecsToTimestamp;
             if ((timestamp() - _path->startTime()) > kPathExpirationInterval) {
-                _pathInvalidated = true;
+                pathInvalidated = true;
             }
 
             MotionInstant target;
@@ -542,19 +546,19 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
             //  replanThreshold
             if (*_motionConstraints._replan_threshold != 0 &&
                 pathError > replanThreshold) {
-                _pathInvalidated = true;
+                pathInvalidated = true;
                 addText("pathError", Qt::red, "Motion");
             }
 
             if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
-                _pathInvalidated = true;
+                pathInvalidated = true;
                 addText("Evaulate Returned an invalid result", Qt::red,
                         "Motion");
             }
 
             float hitTime = 0;
             if (_path->hit(fullObstacles, hitTime, timeIntoPath)) {
-                _pathInvalidated = true;
+                pathInvalidated = true;
                 addText("Hit Obstacle", Qt::red, "Motion");
             }
 
@@ -566,7 +570,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
                     *_goalChangeThreshold ||
                 (_path->destination()->vel - commandDestination.vel).mag() >
                     *_goalChangeThreshold) {
-                _pathInvalidated = true;
+                pathInvalidated = true;
             }
         } else if (_motionCommand.getCommandType() ==
                    Planning::MotionCommand::DirectTarget) {
@@ -577,16 +581,16 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
                     *_goalChangeThreshold ||
                 (_path->destination()->vel.mag() - endSpeed) >
                     *_goalChangeThreshold) {
-                _pathInvalidated = true;
+                pathInvalidated = true;
             }
         } else {
-            _pathInvalidated = true;
+            pathInvalidated = true;
         }
     } else {
-        _pathInvalidated = true;
+        pathInvalidated = true;
     }
 
-    if (!_pathInvalidated) {
+    if (!pathInvalidated) {
         addText("Reusing path", Qt::white, "Planning");
     } else {
         Time leadTime =

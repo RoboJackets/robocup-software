@@ -438,10 +438,6 @@ protected:
 
     std::unique_ptr<Planning::Path> _path;  /// latest path
 
-    /// whenever the constraints for the robot path are changed, this is set
-    /// to true to trigger a replan
-    bool _pathInvalidated;
-
     /**
      * Creates a set of obstacles from a given robot team mask,
      * where mask values < 0 create no obstacle, and larger values
