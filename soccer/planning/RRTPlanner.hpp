@@ -40,15 +40,11 @@ public:
 
     /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
-    std::unique_ptr<Path> run(MotionInstant startInstant,
-                              MotionInstant motionCommand,
+    std::unique_ptr<Path> run(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet* obstacles) override;
 
 protected:
-    FixedStepTree _fixedStepTree0;
-    FixedStepTree _fixedStepTree1;
-
     /// maximum number of rrt iterations to run
     /// this does not include connect attempts
     unsigned int _maxIterations;
@@ -59,11 +55,9 @@ protected:
                                          const Geometry2d::ShapeSet* obstacles,
                                          int maxItr = 100);
 
-    /** makes a path from the last point of each tree
-     *  If the points don't match up...fail!
-     *  The final path will be from the start of tree0
-     *  to the start of tree1 */
-    Planning::InterpolatedPath* makePath(Geometry2d::Point vi, Geometry2d::Point vf,
+    /// Runs a bi-directional RRT to attempt to join the start and end states.
+    Planning::InterpolatedPath* runRRT(
+        MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles);
 
