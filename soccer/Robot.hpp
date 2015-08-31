@@ -363,7 +363,7 @@ public:
      * Replans the path if needed.
      * Sets some parameters on the path.
      */
-    void replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles);
+    void replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles);
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
@@ -372,11 +372,9 @@ public:
     bool chipper_available() const;
     bool kicker_available() const;
     bool dribbler_available() const;
-    bool driving_available(bool require_all = true) const;  // checks for motor
-                                                            // faults - allows
-                                                            // one wheel failure
-                                                            // if require_all =
-                                                            // false
+
+    // checks for motor faults - allows one wheel failure if require_all = false
+    bool driving_available(bool require_all = true) const;
 
     // lower level status checks
     bool hasBall() const;

@@ -465,7 +465,7 @@ void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     _pathStartTime = timestamp();
 }
 
-void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
+void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
     Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
     _lastCommandType = _motionCommand.getCommandType();
 
@@ -481,28 +481,27 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
     }
 
     // create and visualize obstacles
-    Geometry2d::ShapeSet full_obstacles(_local_obstacles);
+    Geometry2d::ShapeSet fullObstacles(_local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
-    Geometry2d::ShapeSet self_obs = createRobotObstacles(
-                             _state->self, _self_avoid_mask, this->pos,
-                             0.6 + this->vel.mag()),
-                         opp_obs =
-                             createRobotObstacles(_state->opp, _opp_avoid_mask);
+    const Geometry2d::ShapeSet selfObs = createRobotObstacles(
+        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
+    const Geometry2d::ShapeSet oppObs =
+        createRobotObstacles(_state->opp, _opp_avoid_mask);
 
     if (_state->ball.valid) {
         std::shared_ptr<Geometry2d::Shape> ball_obs = createBallObstacle();
         _state->drawShape(ball_obs, Qt::gray,
                           QString("ball_obstacles_%1").arg(shell()));
-        full_obstacles.add(ball_obs);
+        fullObstacles.add(ball_obs);
     }
-    full_obstacles.add(self_obs);
-    full_obstacles.add(opp_obs);
-    full_obstacles.add(global_obstacles);
+    fullObstacles.add(selfObs);
+    fullObstacles.add(oppObs);
+    fullObstacles.add(globalObstacles);
 
-    _state->drawShapeSet(self_obs, Qt::gray,
+    _state->drawShapeSet(selfObs, Qt::gray,
                          QString("self_obstacles_%1").arg(shell()));
-    _state->drawShapeSet(opp_obs, Qt::gray,
+    _state->drawShapeSet(oppObs, Qt::gray,
                          QString("opp_obstacles_%1").arg(shell()));
     if (_path && lastCommandType == _motionCommand.getCommandType()) {
         if (_motionCommand.getCommandType() ==
@@ -555,7 +554,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
             }
 
             float hitTime = 0;
-            if (_path->hit(full_obstacles, hitTime, timeIntoPath)) {
+            if (_path->hit(fullObstacles, hitTime, timeIntoPath)) {
                 _pathInvalidated = true;
                 addText("Hit Obstacle", Qt::red, "Motion");
             }
@@ -588,7 +587,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
         _pathInvalidated = true;
     }
 
-    // check if goal is close to previous goal to reuse path
     if (!_pathInvalidated) {
         addText("Reusing path", Qt::white, "Planning");
     } else {
@@ -606,7 +604,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
                 case Planning::MotionCommand::PathTarget:
                     path = _planner->run(MotionInstant(pos, vel),
                                          _motionCommand.getPlanningTarget(),
-                                         _motionConstraints, &full_obstacles);
+                                         _motionConstraints, &fullObstacles);
                     break;
                 case Planning::MotionCommand::DirectTarget:
                     path = unique_ptr<Planning::Path>(
@@ -619,7 +617,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
             }
             planning_attempts++;
 
-            // TODO fix this
+            // TODO: fix this
             // Due to a bug in the path planner, sometimes planning is
             // successful, other times it fails due to issues with NaN.
             // Planning happens in a loop here so we can retry for a limited
