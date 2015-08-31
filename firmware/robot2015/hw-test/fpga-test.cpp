@@ -84,7 +84,7 @@ bool fpgaInit(void)
         fclose(fp);
 
         pc.printf("--  closed %s\r\n", filename.c_str());
-        pc.printf("--  sent %u bytes\r\n", count);
+        pc.printf("--  sent %u bytes using frequency of %uHz\r\n", count, RJ_FPGA_SPI_FREQ);
 
         trigger = !trigger;
 
