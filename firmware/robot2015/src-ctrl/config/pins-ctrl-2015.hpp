@@ -20,6 +20,7 @@
 #define RJ_RADIO_INT            p10
 
 // This defines the FPGA's `PROG_B` pin.
+// 10k pull-up to 2.5V
 #define RJ_FPGA_PROG_B          p11
 
 // This defines the robot's Green `RDY` LED. This should always be configured as an OPEN DRAIN OUTPUT.
@@ -43,7 +44,8 @@
 // This defines the Piezo Speaker's pin.
 #define RJ_SPEAKER              p18
 
-// This defines the FPGA's `INIT_B` pin. This should always be configured as an OPEN DRAIN and has an external pull-up resistor.
+// This defines the FPGA's `INIT_B` pin.
+// 10k pull-up to 3.3V (HSWAP_EN = NC?)
 #define RJ_FPGA_INIT_B          p19
 
 // This defines one of the mbed's unused pins. It is not connected to anything on the 2015 Control Board rev. 1.
@@ -76,6 +78,7 @@
 #define RJ_RADIO_nCS            p29
 
 // This defines the FPGA's `DONE` pin.
+// 300 ohm pull-up to 2.5V
 #define RJ_FPGA_DONE            p30
 
 // This defines the pins used for a `Serial Connection` over the mbed's USB port (for use with a virtual serial connection to a computer)

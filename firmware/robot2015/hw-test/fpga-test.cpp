@@ -4,13 +4,15 @@
 #include <string>
 
 #include <helper-funcs.hpp>
-#include "SWSPI.h"
+#include <SWSPI.h>
 
 #include "robot-devices.hpp"
 
 const std::string filename = "rj-fpga.nib";
 const std::string filesystemname = "local";
 const std::string filepath = "/" + filesystemname + "/" + filename;
+
+LocalFileSystem local(filesystemname.c_str());
 
 DigitalOut good(LED1, 0);
 DigitalOut bad1(LED2, 0);
@@ -22,29 +24,32 @@ DigitalOut trigger(RJ_SPARE_IO, 0);     // line for triggering a logic analyzer 
 DigitalOut radio_nCS(RJ_RADIO_nCS, 1);  // keep the radio chip select line unselected
 DigitalOut cs(RJ_FPGA_nCS, 1);          // don't really care. no used for configuration
 DigitalIn done(RJ_FPGA_DONE);
-//DigitalInOut prog_b(RJ_FPGA_PROG_B, PIN_OUTPUT, PullUp, 1);
-DigitalOut prog_b(RJ_FPGA_PROG_B, 1);
-DigitalInOut init_b(RJ_FPGA_INIT_B, PIN_INPUT, PullUp, 1);
+DigitalInOut prog_b(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
+// DigitalOut prog_b(RJ_FPGA_PROG_B, 1);
+DigitalIn init_b(RJ_FPGA_INIT_B);
 
 bool testPass = false;
 bool batchedResult = false;
 
-void start_start_config(DigitalOut& p)
+
+// signals to the FPGA that we're about to start configuring it
+void start_flag_config(DigitalInOut& p)
 {
     p = !p;
     Thread::wait(1);
     p = !p;
     Thread::wait(1);
-    p = 0;
 }
 
+
+// returns TRUE on error
 bool fpgaInit(void)
 {
     trigger = !trigger;
 
-    LocalFileSystem local(filesystemname.c_str());
     // SPI spi(RJ_SPI_BUS);
-    SWSPI spi(RJ_SPI_MISO, NC, RJ_SPI_SCK);
+    // miso & mosi are intentionally switched here
+    SWSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
     char buf[10];
 
     //  8 bits per write, mode 3
@@ -56,16 +61,17 @@ bool fpgaInit(void)
     if ( fp != nullptr ) {
         fseek (fp, 0, SEEK_END);
         size_t filesize = ftell(fp);
+        fseek (fp, 0, SEEK_SET);
         size_t divisor = 15;
         int mod_by = filesize / divisor;
         size_t count;
 
-        pc.printf("--  successfully opened %s (%u bytes)\r\n", filename.c_str(), filesize);
+        pc.printf("--  opened %s (%u bytes)\r\n", filename.c_str(), filesize);
 
         do {
-            size_t count = fread(buf, 1, 1, fp);
+            size_t read_byte = fread(buf, 1, 1, fp);
 
-            if (count == 0) {
+            if (read_byte == 0) {
                 pc.printf("--  100%%\r\n");
                 break;
             }
@@ -74,30 +80,24 @@ bool fpgaInit(void)
             // config's pin is unconnected for data out & it always
             // returns high (if it was connected)
             spi.write(buf[0]);
+            count++;
 
-            // count++;
-            if (count % mod_by == 0) {
-                pc.printf(
-                    "--  %3.0f%%\t(0x%02X)\r\n",
-                    static_cast<float>((count * 100) / filesize)
-                );
-            }
-        } while (init_b.read() && !(done.read()));
+        } while (init_b == true || done == false);
 
         fclose(fp);
 
         pc.printf("--  closed %s\r\n", filename.c_str());
-        pc.printf("--  wrote %u bytes\r\n", count);
+        pc.printf("--  sent %u bytes\r\n", count);
 
         trigger = !trigger;
 
-        return count != filesize;
+        return false;
     } else {
 
         batchedResult = true;
         pc.printf("--  could not open %s", filepath.c_str());
 
-        return 1;
+        return true;
     }
 }
 
@@ -116,7 +116,7 @@ int main()
     live_light.start(250);
 
     // strobe the prob_b pin to reset any previous configurations for the FPGA
-    start_start_config(prog_b);
+    start_flag_config(prog_b);
 
     // wait for the FPGA to tell us it's ready for the bitstream
     for (int i = 0; i < 10; i++) {
@@ -149,11 +149,13 @@ int main()
     }
 
     if (j == 1000 && configFail == false) {
-        pc.printf("--  done pin timed out\t(POST CONFIGURATION ERROR)\r\n", configFail);
+        pc.printf("--  DONE pin timed out\t(POST CONFIGURATION ERROR)\r\n", configFail);
         batchedResult = true;
     } else if (j == 1000 && configFail == true) {
-        pc.printf("--  done pin timed out\t(CONFIGURATION WRITE ERROR)\r\n", configFail);
+        pc.printf("--  DONE pin timed out\t(CONFIGURATION WRITE ERROR)\r\n", configFail);
         batchedResult = true;
+    } else {
+        pc.printf("--  DONE pin state:\t%s\r\n", done ? "HIGH" : "LOW");
     }
 
     // Final results of the test
@@ -164,11 +166,11 @@ int main()
     pc.printf("=================================DONE");
 
     // Turn on the corresponding LED(s)
+    live_light.stop();
+    pwr = testPass;
     good = testPass;
     bad1 = !testPass;
     bad2 = !testPass;
-    live_light.stop();
-    pwr = testPass;
 
     while (true) {
         // Never return
