@@ -22,7 +22,7 @@ std::vector<unsigned int> freq2;
 
 int main()
 {
-    char cmd[2] = { 0x00 };
+    char buf[2] = { 0x00 };
 
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
@@ -35,12 +35,12 @@ int main()
     i2c.frequency(100000);
 
     for (unsigned int i = 0; i < 0xFF; i++) {
-        bool response = false;
+        bool ack, nack = false;
 
-        response = i2c.read(i, cmd, 1);
-        response |= i2c.read(i, cmd, 2);
+        ack = i2c.write(i);
+        // nack = i2c.read(i, buf, 2);
 
-        if (!response) {
+        if (ack && !nack) {
             freq1.push_back(i);
         }
     }
@@ -50,12 +50,12 @@ int main()
     i2c.frequency(400000);
 
     for (unsigned int i = 0; i < 0xFF; i++) {
-        bool response = false;
+        bool ack, nack = false;
 
-        response = i2c.read(i, cmd, 1);
-        response |= i2c.read(i, cmd, 2);
+        ack = i2c.write(i);
+        // nack = i2c.read(i, buf, 2);
 
-        if (!response) {
+        if (ack && !nack) {
             freq2.push_back(i);
         }
     }

@@ -25,12 +25,10 @@ DigitalOut radio_nCS(RJ_RADIO_nCS, 1);  // keep the radio chip select line unsel
 DigitalOut cs(RJ_FPGA_nCS, 1);          // don't really care. no used for configuration
 DigitalIn done(RJ_FPGA_DONE);
 DigitalInOut prog_b(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
-// DigitalOut prog_b(RJ_FPGA_PROG_B, 1);
 DigitalIn init_b(RJ_FPGA_INIT_B);
 
 bool testPass = false;
 bool batchedResult = false;
-
 
 // signals to the FPGA that we're about to start configuring it
 void start_flag_config(DigitalInOut& p)
@@ -40,7 +38,6 @@ void start_flag_config(DigitalInOut& p)
     p = !p;
     Thread::wait(1);
 }
-
 
 // returns TRUE on error
 bool fpgaInit(void)
