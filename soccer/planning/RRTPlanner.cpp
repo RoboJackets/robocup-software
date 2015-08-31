@@ -26,9 +26,11 @@ Geometry2d::Point randomPoint() {
 RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
 
 std::unique_ptr<Path> RRTPlanner::run(
-    MotionInstant start, MotionInstant goal,
+    MotionInstant start, MotionCommand cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles) {
+    MotionInstant goal = cmd.getPlanningTarget();
+
     // Simple case: no path
     if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
