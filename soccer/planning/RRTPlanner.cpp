@@ -38,7 +38,10 @@ std::unique_ptr<Path> RRTPlanner::run(
         return unique_ptr<Path>(path);
     }
 
-    /// Locate a goal point that is obstacle-free
+    // Locate a goal point that is obstacle-free
+    //
+    // TODO: only use this new non- blocked goal if it's better than the one
+    // from the previous planning iteration (if any)
     goal.pos = findNonBlockedGoal(goal.pos, obstacles);
 
     // Run bi-directional RRT to generate a path.
