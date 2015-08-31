@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
- *         ATMEL Microcontroller Software Support 
+ *         ATMEL Microcontroller Software Support
  * ----------------------------------------------------------------------------
  * Copyright (c) 2008, Atmel Corporation
  *
@@ -30,11 +30,11 @@
 //------------------------------------------------------------------------------
 /// \unit
 /// !Purpose
-/// 
+///
 /// Methods for remapping AT91SAM7S chips internal memory.
 ///
 /// !Usage
-/// 
+///
 /// -# Remap the Flash at address 0 using BOARD_RemapFlash.
 /// -# Remap the internal RAM at address 0 using BOARD_RemapRam.
 //------------------------------------------------------------------------------
@@ -46,8 +46,7 @@
 //         Exported functions
 //------------------------------------------------------------------------------
 
-extern void BOARD_RemapFlash( void );
-extern void BOARD_RemapRam( void );
+extern void BOARD_RemapFlash(void);
+extern void BOARD_RemapRam(void);
 
-#endif //#ifndef BOARD_MEMORIES_H
-
+#endif  //#ifndef BOARD_MEMORIES_H

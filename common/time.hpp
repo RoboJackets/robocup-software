@@ -2,14 +2,11 @@
 
 #include <sys/time.h>
 
-
 /// type for storing time in microseconds
 typedef uint64_t Time;
 
-
 /** returns the local system timestamp in microseconds */
-static inline Time timestamp()
-{
+static inline Time timestamp() {
     struct timeval time;
     gettimeofday(&time, nullptr);
 

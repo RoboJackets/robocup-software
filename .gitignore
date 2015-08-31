@@ -1,5 +1,4 @@
 *.kdev4
-*.pyc
 .sconsign.dblite
 .scons_variables
 /build
@@ -11,6 +10,10 @@
 /api_docs
 *~
 *.sublime-workspace
+
+# Python
+__pycache__/
+*.pyc
 
 # OS X desktop garbage files
 .DS_Store

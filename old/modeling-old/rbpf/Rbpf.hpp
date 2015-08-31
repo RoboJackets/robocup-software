@@ -47,62 +47,66 @@
 
 class Rbpf {
 public:
-	typedef boost::ptr_vector<RbpfState> ParticleVector;
+    typedef boost::ptr_vector<RbpfState> ParticleVector;
 
-	// X: initial state, (n x 1)
-	// P: initial state covariance, (n x n)
-	// k: the number of particles to be initialized.
-	// Where n = size of Kalman Filter state
-	Rbpf(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P, size_t _k);
+    // X: initial state, (n x 1)
+    // P: initial state covariance, (n x n)
+    // k: the number of particles to be initialized.
+    // Where n = size of Kalman Filter state
+    Rbpf(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P, size_t _k);
 
-	~Rbpf();
+    ~Rbpf();
 
-	// updates the filter with 2d observation [x;y], change in time dt, and no control input
-	void update(double x, double y, double dt);
+    // updates the filter with 2d observation [x;y], change in time dt, and no
+    // control input
+    void update(double x, double y, double dt);
 
-	// updates the filter for observation Z, control input U, and change in time dt
-	// U: control input, (m x 1)
-	// Z: measurement, (s x 1)
-	// dt: change in time
-	// Where m and s = size of the control and measurement input
-	void update(const rbpf::VectorNd &U, const rbpf::VectorSd &Z, double dt);
+    // updates the filter for observation Z, control input U, and change in time
+    // dt
+    // U: control input, (m x 1)
+    // Z: measurement, (s x 1)
+    // dt: change in time
+    // Where m and s = size of the control and measurement input
+    void update(const rbpf::VectorNd& U, const rbpf::VectorSd& Z, double dt);
 
-	// reinitialize the parameters from the config files - should be called each frame
-	void initParams();
+    // reinitialize the parameters from the config files - should be called each
+    // frame
+    void initParams();
 
-	void updateMultipleObs(double x[], double y[], double dt[], int numObs);
+    void updateMultipleObs(double x[], double y[], double dt[], int numObs);
 
-	// adds a model to the internal modelGraph
-	void addModel(RbpfModel* model);
+    // adds a model to the internal modelGraph
+    void addModel(RbpfModel* model);
 
-	// sets a transition probability in the modelGraph from model A to model B
-	void setTransProb(int AIdx, int BIdx, double weight);
+    // sets a transition probability in the modelGraph from model A to model B
+    void setTransProb(int AIdx, int BIdx, double weight);
 
-	// returns a pointer to the best particle state
-	RbpfState* getBestFilterState();
+    // returns a pointer to the best particle state
+    RbpfState* getBestFilterState();
 
-	//   Used for printing a Rbpf to a stream
-	friend std::ostream& operator<<(std::ostream& out, const Rbpf &rbpf);
+    //   Used for printing a Rbpf to a stream
+    friend std::ostream& operator<<(std::ostream& out, const Rbpf& rbpf);
 
-	int k;                     // number of particles
-	RbpfModelGraph modelGraph; // Graph of models
-	int n;                     // size of state vector
+    int k;                      // number of particles
+    RbpfModelGraph modelGraph;  // Graph of models
+    int n;                      // size of state vector
 
 protected:
-	ParticleVector particleVector;    // vector of particles, (k x 1)
-	ParticleVector tmpParticleVector; // vector of temp particles, (k*j x 1)
+    ParticleVector particleVector;     // vector of particles, (k x 1)
+    ParticleVector tmpParticleVector;  // vector of temp particles, (k*j x 1)
 
-	// Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian dist.
-	// X: point to be evaluated (2 x 1)
-	// Sigma: covariance matrix (2 x 2)
-	inline double gaussianPDF2D(const rbpf::VectorSd& X, const rbpf::MatrixSSd& Sigma);
+    // Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian dist.
+    // X: point to be evaluated (2 x 1)
+    // Sigma: covariance matrix (2 x 2)
+    inline double gaussianPDF2D(const rbpf::VectorSd& X,
+                                const rbpf::MatrixSSd& Sigma);
 
-	// resample k particles from out, with respect to their weights
-	// NOTE: in vector has its weight changed
-	void resampleParticles(ParticleVector &in, ParticleVector &out, int);
+    // resample k particles from out, with respect to their weights
+    // NOTE: in vector has its weight changed
+    void resampleParticles(ParticleVector& in, ParticleVector& out, int);
 
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 #endif /* RBPF_HPP_ */

@@ -4,21 +4,20 @@
 
 class Environment;
 
-class Entity
-{
+class Entity {
 public:
-	Entity(Environment *env);
-	virtual ~Entity();
+    Entity(Environment* env);
+    virtual ~Entity();
 
-	/** set position in world frame */
-	virtual void position(float x, float y) = 0;
+    /** set position in world frame */
+    virtual void position(float x, float y) = 0;
 
-	/** @return the world position */
-	virtual Geometry2d::Point getPosition() const;
+    /** @return the world position */
+    virtual Geometry2d::Point getPosition() const;
 
 private:
-	Entity& operator &= (Entity&);
+    Entity& operator&=(Entity&);
 
 protected:
-	Environment* _env;
+    Environment* _env;
 };

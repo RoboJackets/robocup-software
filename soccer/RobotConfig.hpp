@@ -7,61 +7,70 @@
  */
 class RobotConfig {
 public:
-	RobotConfig(Configuration *config, QString prefix);
-	~RobotConfig();
-	
-	struct PID {
-		PID(Configuration *config, QString prefix);
-		
-		ConfigDouble *p;
-		ConfigDouble *i;
-		ConfigInt *i_windup;	///	how many past errors to store.  -1 means store all
-		ConfigDouble *d;
-	};
+    RobotConfig(Configuration* config, QString prefix);
+    ~RobotConfig();
 
-	struct Kicker {
-		Kicker(Configuration *config, QString prefix);
+    struct PID {
+        PID(Configuration* config, QString prefix);
 
-		///	these limits are applied before sending the actual commands to the robots
-		ConfigDouble *maxKick;
-		ConfigDouble *maxChip;
-		// ConfigDouble *passKick;
-	};
+        ConfigDouble* p;
+        ConfigDouble* i;
+        ConfigInt*
+            i_windup;  /// how many past errors to store.  -1 means store all
+        ConfigDouble* d;
+    };
 
-	struct Dribbler {
-		Dribbler(Configuration *config, QString prefix);
+    struct Kicker {
+        Kicker(Configuration* config, QString prefix);
 
-		///	dribber values are multiplied by this before being sent to the robot
-		///	this was added because 2011 bots needed lower dribbler values than the 2008 model
-		ConfigDouble *multiplier;
-	};
+        /// these limits are applied before sending the actual commands to the
+        /// robots
+        ConfigDouble* maxKick;
+        ConfigDouble* maxChip;
+        // ConfigDouble *passKick;
+    };
 
-	struct Chipper {
-		Chipper(Configuration *config, QString prefix);
+    struct Dribbler {
+        Dribbler(Configuration* config, QString prefix);
 
-		ConfigDouble *calibrationSlope;
-		ConfigDouble *calibrationOffset;
-	};
-	
-	PID translation;
-	PID rotation;
+        /// dribber values are multiplied by this before being sent to the robot
+        /// this was added because 2011 bots needed lower dribbler values than
+        /// the 2008 model
+        ConfigDouble* multiplier;
+    };
 
-	Kicker kicker;
-	Dribbler dribbler;
-	Chipper chipper;
+    struct Chipper {
+        Chipper(Configuration* config, QString prefix);
 
-	///	convert from real units to bot "units"
-	ConfigDouble *velMultiplier;
-	ConfigDouble *angleVelMultiplier;
+        ConfigDouble* calibrationSlope;
+        ConfigDouble* calibrationOffset;
+    };
 
-	///	we multiply this by the bot's acceleration and add this to the output targetVel
-	ConfigDouble *accelerationMultiplier;
+    PID translation;
+    PID rotation;
 
-	//	when pivoting, we multiply the calculated x-velocity
-	//	of the robot by this value before sending it to the robot
-	ConfigDouble *pivotVelMultiplier;
+    Kicker kicker;
+    Dribbler dribbler;
+    Chipper chipper;
+
+    /// convert from real units to bot "units"
+    ConfigDouble* velMultiplier;
+    ConfigDouble* angleVelMultiplier;
+
+    // If a command velocity we're about to send is below this value in
+    // magniude, but greater than zero, we scale the velocity up to this
+    // magnitude.
+    ConfigDouble* minEffectiveVelocity;
+    ConfigDouble* minEffectiveAngularSpeed;
+
+    /// we multiply this by the bot's acceleration and add this to the output
+    /// targetVel
+    ConfigDouble* accelerationMultiplier;
+
+    // when pivoting, we multiply the calculated x-velocity of the robot by this
+    // value before sending it to the robot
+    ConfigDouble* pivotVelMultiplier;
 };
-
 
 /**
  * Provides per-robot overrides for a robot
@@ -69,11 +78,11 @@ public:
  */
 class RobotStatus {
 public:
-	RobotStatus(Configuration *config, QString prefix);
-	~RobotStatus() {}
+    RobotStatus(Configuration* config, QString prefix);
+    ~RobotStatus() {}
 
-	ConfigBool *chipper_enabled;
-	ConfigBool *kicker_enabled;
-	ConfigBool *ball_sense_enabled;
-	ConfigBool *dribbler_enabled;
+    ConfigBool* chipper_enabled;
+    ConfigBool* kicker_enabled;
+    ConfigBool* ball_sense_enabled;
+    ConfigBool* dribbler_enabled;
 };

@@ -14,7 +14,7 @@ SHORTNAMES=( )
 
 start_pending() {
     SHORTNAME="$1"
-    curl -u $USER:$TOKEN \
+    >/dev/null curl -s -u $USER:$TOKEN \
         -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} \
         -H "Content-Type: application/json" \
         -d '{"state":"pending", "description": "This check is pending. Please wait.", "context": '"\"circle/$SHORTNAME\""', "target_url": "http://www.robojackets.org/"}'
@@ -34,16 +34,16 @@ ci_task() {
 
     ${CMD} 2>&1 | tee "${ARTIFACT_DIR}/${SHORTNAME}.txt"
     if [ "${PIPESTATUS[0]}" = "0" ]; then
-        curl -u $USER:$TOKEN \
+        >/dev/null curl -s -u $USER:$TOKEN \
             -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} \
             -H "Content-Type: application/json" \
             -d '{"state":"success", "description": '"\"${DESCRIPTION}\""', "context": '"\"circle/${SHORTNAME}\""', "target_url": '""\"${LINK_PREFIX}${SHORTNAME}.txt\""}"
     else
-        curl -u $USER:$TOKEN \
+        >/dev/null curl -s -u $USER:$TOKEN \
             -X POST https://api.github.com/repos/robojackets/robocup-software/statuses/${SHA_SUM} \
             -H "Content-Type: application/json" \
             -d '{"state":"failure", "description": '"\"${DESCRIPTION}\""', "context": '"\"circle/${SHORTNAME}\""', "target_url": '""\"${LINK_PREFIX}${SHORTNAME}.txt\""}"
-        SUCCESS=false
+        SUCCESS=false >/dev/null
     fi
 }
 
@@ -70,9 +70,9 @@ sudo chown -R `whoami`:`whoami` ${HOME}/.ccache
 
 ci_task 'make' 'compile' 'A check to see if the code compiles'
 ci_task 'make test-soccer' 'test-soccer' 'A check to see if soccer tests pass'
-ci_task 'make robot2015' 'firmware' 'A check to see if firmware works'
+ci_task 'make robot2015' 'firmware' 'A check to see if firmware compiles'
 ci_task 'make test-firmware' 'test-firmware' 'A check to see if firmware tests pass'
-ci_task 'true' 'style' 'A check to see if style passes'
+ci_task 'make checkstyle' 'style' 'A check to see if style passes'
 
 # This script needs to be run prior with the --pending flag if you want to see pending flags
 if [ "$PENDING" = "true" ]; then

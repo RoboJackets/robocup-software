@@ -3,16 +3,13 @@
 //
 #include "mbed.h"
 
-int main()
-{
+int main() {
+    DigitalOut ledOne(LED1);
+    DigitalOut ledTwo(LED2);
 
-  DigitalOut ledOne(LED1);
-  DigitalOut ledTwo(LED2);
-
-  while(true)
-  {
-    wait(0.1);
-    ledOne = !ledOne;
-    ledTwo = !ledOne;
-  }
+    while (true) {
+        wait(0.1);
+        ledOne = !ledOne;
+        ledTwo = !ledOne;
+    }
 }
