@@ -4,11 +4,12 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include "TrapezoidalMotion.hpp"
+#include <Geometry2d/Util.hpp>
+#include <planning/MotionInstant.hpp>
 
 #include <cmath>
 #include <stdio.h>
 #include <algorithm>
-#include "planning/MotionInstant.hpp"
 
 using namespace std;
 using namespace Geometry2d;

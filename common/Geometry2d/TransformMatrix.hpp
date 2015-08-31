@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Point.hpp"
-#include "util.h"
 
 namespace Geometry2d {
 // A 2x3 transformation matrix.

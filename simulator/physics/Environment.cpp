@@ -5,7 +5,7 @@
 #include "Robot.hpp"
 #include <Constants.hpp>
 #include <Network.hpp>
-#include <Geometry2d/util.h>
+#include <Geometry2d/Util.hpp>
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
