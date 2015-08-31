@@ -36,8 +36,6 @@ std::unique_ptr<Path> RRTPlanner::run(
     vi = startInstant.vel;
     vf = endInstant.vel;
 
-    _obstacles = obstacles;
-
     // Simple case: no path
     if (startInstant.pos == goal) {
         path->times.push_back(0);
@@ -76,7 +74,7 @@ std::unique_ptr<Path> RRTPlanner::run(
     }
 
     // Extract the Path from the RRT trees
-    path = makePath(motionConstraints);
+    path = makePath(motionConstraints, obstacles);
 
     if (path && path->waypoints.empty()) {
         // FIXME: without these two lines, an empty path is returned which
@@ -113,7 +111,7 @@ Geometry2d::Point RRTPlanner::findNonBlockedGoal(
 }
 
 InterpolatedPath* RRTPlanner::makePath(
-    const MotionConstraints& motionConstraints) {
+    const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet* obstacles) {
     InterpolatedPath* newPath = new InterpolatedPath();
     newPath->setStartTime(timestamp());
 
@@ -132,7 +130,7 @@ InterpolatedPath* RRTPlanner::makePath(
     _fixedStepTree1.addPath(
         *newPath, p1, true);  // add the goal tree in reverse (aka p1 to root)
 
-    newPath = optimize(*newPath, _obstacles, motionConstraints, vi);
+    newPath = optimize(*newPath, obstacles, motionConstraints, vi);
 
     // TODO: evaluate the old path based on the closest segment and the distance
     // to the endpoint of that segment Otherwise, a new path will always be

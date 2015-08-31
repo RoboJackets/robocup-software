@@ -55,9 +55,6 @@ protected:
     /// this does not include connect attempts
     unsigned int _maxIterations;
 
-    /// latest obstacles
-    const Geometry2d::ShapeSet* _obstacles;
-
     /// If the given goal point is in an obstacle, uses an RRT to attempt to
     /// find a point that is close, but not blocked.
     Geometry2d::Point findNonBlockedGoal(Geometry2d::Point goal,
@@ -69,7 +66,7 @@ protected:
      *  The final path will be from the start of tree0
      *  to the start of tree1 */
     Planning::InterpolatedPath* makePath(
-        const MotionConstraints& motionConstraints);
+        const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet* obstacles);
 
     /** optimize the path
      *  Calles the cubicBezier optimization function.
