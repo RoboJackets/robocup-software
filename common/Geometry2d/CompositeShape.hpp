@@ -37,7 +37,7 @@ public:
     /// adds @compShape's subshapes to the receiver
     void add(const CompositeShape& compShape);
 
-    const std::vector<std::shared_ptr<Shape> >& subshapes() const {
+    const std::vector<std::shared_ptr<Shape>>& subshapes() const {
         return _subshapes;
     }
 
@@ -47,33 +47,6 @@ public:
     bool empty() { return _subshapes.empty(); }
 
     unsigned int size() const { return _subshapes.size(); }
-
-    /**
-     * Checks if a given object hits obstacles in the group
-     *
-     * @param obj The object to collision test
-     * @param hitSet A set to add the colliding obstacles to
-     * @return A bool telling whether or not there were any collisions
-     */
-    template <typename T>
-    bool hit(const T& obj, std::set<std::shared_ptr<Shape> >& hitSet) const {
-        for (const_iterator it = begin(); it != end(); ++it) {
-            if ((*it)->hit(obj)) {
-                hitSet.insert(*it);
-            }
-        }
-
-        return !hitSet.empty();
-    }
-
-    bool hit(Point pt, std::set<std::shared_ptr<Shape> >& hitSet) const {
-        return hit<Point>(pt, hitSet);
-    }
-
-    bool hit(const Segment& seg,
-             std::set<std::shared_ptr<Shape> >& hitSet) const {
-        return hit<Segment>(seg, hitSet);
-    }
 
     /**
      * Checks if a given shape is in it
@@ -97,8 +70,8 @@ public:
     bool hit(const Segment& seg) const override { return hit<Segment>(seg); }
 
     // STL typedefs
-    typedef std::vector<std::shared_ptr<Shape> >::const_iterator const_iterator;
-    typedef std::vector<std::shared_ptr<Shape> >::iterator iterator;
+    typedef std::vector<std::shared_ptr<Shape>>::const_iterator const_iterator;
+    typedef std::vector<std::shared_ptr<Shape>>::iterator iterator;
     typedef std::shared_ptr<Shape> value_type;
 
     // STL Interface
@@ -110,10 +83,11 @@ public:
 
     std::string toString() override {
         std::stringstream str;
-        str << "Composite<";
+        str << "CompositeShape<";
         for (int i = 0; i < _subshapes.size(); i++) {
             str << _subshapes[i]->toString() << ", ";
         }
+        str << ">";
 
         return str.str();
     }
@@ -122,11 +96,12 @@ public:
         return _subshapes[index];
     }
 
-    std::shared_ptr<Shape> operator[](unsigned int index) const {
+    std::shared_ptr<const Shape> operator[](unsigned int index) const {
         return _subshapes[index];
     }
 
 private:
-    std::vector<std::shared_ptr<Shape> > _subshapes;
+    std::vector<std::shared_ptr<Shape>> _subshapes;
 };
-}
+
+}  // namespace Geometry2d

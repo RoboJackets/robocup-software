@@ -2,7 +2,7 @@
 
 #include "SingleRobotPathPlanner.hpp"
 #include "Tree.hpp"
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
@@ -40,10 +40,10 @@ public:
 
     /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
-    std::unique_ptr<Path> run(
-        MotionInstant startInstant, MotionInstant motionCommand,
-        const MotionConstraints& motionConstraints,
-        const Geometry2d::CompositeShape* obstacles) override;
+    std::unique_ptr<Path> run(MotionInstant startInstant,
+                              MotionInstant motionCommand,
+                              const MotionConstraints& motionConstraints,
+                              const Geometry2d::ShapeSet* obstacles) override;
 
 protected:
     MotionConstraints _motionConstraints;
@@ -61,7 +61,7 @@ protected:
     unsigned int _maxIterations;
 
     /// latest obstacles
-    const Geometry2d::CompositeShape* _obstacles;
+    const Geometry2d::ShapeSet* _obstacles;
 
     /** makes a path from the last point of each tree
      *  If the points don't match up...fail!
@@ -73,8 +73,7 @@ protected:
      *  Calles the cubicBezier optimization function.
      */
     Planning::InterpolatedPath* optimize(
-        Planning::InterpolatedPath& path,
-        const Geometry2d::CompositeShape* obstacles,
+        Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi);
 
     /**
@@ -82,8 +81,7 @@ protected:
      * velocity planning
      */
     Planning::InterpolatedPath* cubicBezier(
-        Planning::InterpolatedPath& path,
-        const Geometry2d::CompositeShape* obstacles,
+        Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi);
 
     /**

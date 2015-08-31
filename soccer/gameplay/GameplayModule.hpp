@@ -9,6 +9,7 @@
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 
 #include <set>
 #include <QMutex>
@@ -139,7 +140,7 @@ private:
     /**
      * Returns the current set of global obstacles, including the field
      */
-    Geometry2d::CompositeShape globalObstacles() const;
+    Geometry2d::ShapeSet globalObstacles() const;
 
     int _our_score_last_frame;
 

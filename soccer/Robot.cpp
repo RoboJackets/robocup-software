@@ -486,8 +486,7 @@ int OurRobot::consecutivePathChangeCount() const {
     return count > 0 ? count - 1 : 0;
 }
 
-void OurRobot::replanIfNeeded(
-    const Geometry2d::CompositeShape& global_obstacles) {
+void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& global_obstacles) {
     Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
     _lastCommandType = _motionCommand.getCommandType();
 
@@ -505,14 +504,14 @@ void OurRobot::replanIfNeeded(
     }
 
     // create and visualize obstacles
-    Geometry2d::CompositeShape full_obstacles(_local_obstacles);
+    Geometry2d::ShapeSet full_obstacles(_local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
-    Geometry2d::CompositeShape self_obs = createRobotObstacles(
-                                   _state->self, _self_avoid_mask, this->pos,
-                                   0.6 + this->vel.mag()),
-                               opp_obs = createRobotObstacles(_state->opp,
-                                                              _opp_avoid_mask);
+    Geometry2d::ShapeSet self_obs = createRobotObstacles(
+                             _state->self, _self_avoid_mask, this->pos,
+                             0.6 + this->vel.mag()),
+                         opp_obs =
+                             createRobotObstacles(_state->opp, _opp_avoid_mask);
 
     if (_state->ball.valid) {
         std::shared_ptr<Geometry2d::Shape> ball_obs = createBallObstacle();
@@ -524,10 +523,10 @@ void OurRobot::replanIfNeeded(
     full_obstacles.add(opp_obs);
     full_obstacles.add(global_obstacles);
 
-    _state->drawCompositeShape(self_obs, Qt::gray,
-                               QString("self_obstacles_%1").arg(shell()));
-    _state->drawCompositeShape(opp_obs, Qt::gray,
-                               QString("opp_obstacles_%1").arg(shell()));
+    _state->drawShapeSet(self_obs, Qt::gray,
+                         QString("self_obstacles_%1").arg(shell()));
+    _state->drawShapeSet(opp_obs, Qt::gray,
+                         QString("opp_obstacles_%1").arg(shell()));
     if (_path && lastCommandType == _motionCommand.getCommandType()) {
         if (_motionCommand.getCommandType() ==
             Planning::MotionCommand::PathTarget) {

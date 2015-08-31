@@ -8,6 +8,7 @@
 #include <QColor>
 
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
@@ -103,23 +104,27 @@ public:
                    const QColor& color = Qt::black,
                    const QString& layer = QString());
     /** @ingroup drawing_functions */
-    void drawCompositeShape(const Geometry2d::CompositeShape& group,
-                            const QColor& color = Qt::black,
-                            const QString& layer = QString());
-
+    void drawShapeSet(const Geometry2d::ShapeSet& shapes,
+                      const QColor& color = Qt::black,
+                      const QString& layer = QString());
     Time timestamp;
     GameState gameState;
 
     /// All possible robots.
     ///
-    /// Robots that aren't on the field are present here because a robot may be
-    /// removed and replaced, and that particular robot may be important (e.g.
+    /// Robots that aren't on the field are present here because a robot may
+    /// be
+    /// removed and replaced, and that particular robot may be important
+    /// (e.g.
     /// goalie).
     ///
-    /// Plays need to keep Robot*'s around, so we can't just delete the robot
-    /// since the play needs to see that it is no longer visible.  We don't want
+    /// Plays need to keep Robot*'s around, so we can't just delete the
+    /// robot
+    /// since the play needs to see that it is no longer visible.  We don't
+    /// want
     /// multiple Robots for the same shell because that would give the
-    /// appearance that a new robot appeared when it was actually just pushed
+    /// appearance that a new robot appeared when it was actually just
+    /// pushed
     /// back on the field.
     std::vector<OurRobot*> self;
     std::vector<OpponentRobot*> opp;

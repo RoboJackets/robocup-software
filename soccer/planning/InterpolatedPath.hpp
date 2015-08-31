@@ -3,7 +3,7 @@
 #include <planning/Path.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Configuration.hpp>
 
 namespace Planning {
@@ -44,7 +44,7 @@ public:
 
     // Overridden Path Methods
     virtual boost::optional<MotionInstant> destination() const override;
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const override;
     virtual std::unique_ptr<Path> subPath(
         float startTime = 0,
