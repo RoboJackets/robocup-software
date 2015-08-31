@@ -71,9 +71,9 @@ void Tree::addPath(Planning::InterpolatedPath& path, Point* dest,
         ++n;
     }
 
-    path.points.reserve(path.points.size() + n);
+    path.waypoints.reserve(path.waypoints.size() + n);
     for (Point* pt : points) {
-        path.points.push_back(pt->pos);
+        path.waypoints.emplace_back(pt->pos, Geometry2d::Point());
     }
 }
 

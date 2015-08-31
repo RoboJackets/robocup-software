@@ -2,7 +2,9 @@
 
 using namespace std;
 using namespace Geometry2d;
+
 namespace Planning {
+
 CompositePath::CompositePath(unique_ptr<Path> path) { append(std::move(path)); }
 
 void CompositePath::append(unique_ptr<Path> path) {
@@ -20,27 +22,25 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-bool CompositePath::evaluate(float t,
-                             MotionInstant& targetMotionInstant) const {
+boost::optional<MotionInstant> CompositePath::evaluate(float t) const {
     if (t < 0) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
     }
 
     if (paths.empty()) {
-        return false;
+        return boost::none;
     }
-    for (const std::unique_ptr<Path>& path : paths) {
-        float timeLength = path->getDuration();
+    for (const std::unique_ptr<Path>& subpath : paths) {
+        float timeLength = subpath->getDuration();
         t -= timeLength;
         if (t <= 0 || timeLength == -1) {
             t += timeLength;
-            path->evaluate(t, targetMotionInstant);
-            return true;
+            return subpath->evaluate(t);
         }
     }
-    targetMotionInstant = destination().get();
-    return false;
+
+    return boost::none;
 }
 
 bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
@@ -195,4 +195,5 @@ unique_ptr<Path> CompositePath::clone() const {
     }
     return unique_ptr<Path>(newPath);
 }
-}
+
+}  // namespace Planning

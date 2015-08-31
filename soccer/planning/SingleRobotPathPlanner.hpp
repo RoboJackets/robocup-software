@@ -5,10 +5,11 @@
 #include <planning/Path.hpp>
 
 namespace Planning {
+
 /**
  * @brief Interface for Path Planners
  */
-class PathPlanner {
+class SingleRobotPathPlanner {
 public:
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
@@ -18,4 +19,5 @@ public:
         const MotionConstraints& motionConstraints,
         const Geometry2d::CompositeShape* obstacles) = 0;
 };
-}
+
+}  // namespace Planning
