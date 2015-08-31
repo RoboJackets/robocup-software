@@ -42,7 +42,7 @@ public:
         waypoints.push_back(instant);
     }
 
-    // Overriden Path Methods
+    // Overridden Path Methods
     virtual boost::optional<MotionInstant> destination() const override;
     virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
                      float startTime) const override;
@@ -57,7 +57,11 @@ public:
 
     bool empty() const { return waypoints.empty(); }
 
-    void clear() { waypoints.clear(); }
+    /// Erase all path contents
+    void clear() {
+        waypoints.clear();
+        times.clear();
+    }
 
     /**
      * Calulates the length of the path
@@ -98,21 +102,6 @@ public:
 
     /// Returns the start of the path or boost::none if the path is empty.
     boost::optional<MotionInstant> start() const;
-
-    // Returns a new path starting from a given point
-    // void startFrom(Geometry2d::Point pt,
-    //                Planning::InterpolatedPath& result) const;
-
-    /**
-     * Evaluates the point and velocity of the robot at a given distance in the
-     * path.  Similar to evaluate(), but gets the MotionInstant at a given
-     * distance rather than time into the path.
-     *
-     * @param[in] distance A given distance from the start of the path
-     * @return The MotionInstant at the given distance into the path.  Returns
-     *     boost::none if the given distance is not in the range of the path.
-     */
-    // boost::optional<MotionInstant> getPoint(float distance) const;
 
     /**
      * Estimates how long it would take for the robot to get to a certain point

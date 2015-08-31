@@ -146,43 +146,6 @@ Segment InterpolatedPath::nearestSegment(Point pt) const {
     return best;
 }
 
-// void InterpolatedPath::startFrom(Point pt, InterpolatedPath& result) const {
-//     // path will start at the current robot pose
-//     result.clear();
-//     result.points.push_back(pt);
-
-//     if (points.empty()) return;
-
-//     // handle simple paths
-//     if (points.size() == 1) {
-//         result.points.push_back(points.front());
-//         return;
-//     }
-
-//     // find where to start the path
-//     Segment close_segment;
-//     float dist = -1;
-//     unsigned int i = (points.front().nearPoint(pt, 0.02)) ? 1 : 0;
-//     vector<Point>::const_iterator path_start = ++points.begin();
-//     for (; i < (points.size() - 1); ++i) {
-//         Segment s(points[i], points[i + 1]);
-//         const float d = s.distTo(pt);
-//         if (dist < 0 || d < dist) {
-//             close_segment = s;
-//             dist = d;
-//         }
-//     }
-
-//     // slice path
-//     // new path will be pt, [closest point on nearest segment], [i+1 to end]
-//     if (dist > 0.0 && dist < 0.02) {
-//         Point intersection_pt = close_segment.nearestPoint(pt);
-//         result.points.push_back(intersection_pt);
-//     }
-
-//     result.points.insert(result.points.end(), path_start, points.end());
-// }
-
 float InterpolatedPath::length(Point pt) const {
     float dist = -1;
     float length = 0;
@@ -214,31 +177,6 @@ float InterpolatedPath::length(Point pt) const {
 
     return length;
 }
-
-// boos::optional<MotionInstant> InterpolatedPath::getPoint(float distance)
-// const {
-//     if (distance <= 0) {
-//         return boost::none;
-//     }
-//     if (points.empty()) {
-//         return boost::none;
-//     }
-//     for (unsigned int i = 0; i < (points.size() - 1); ++i) {
-//         Point vector(points[i + 1] - points[i]);
-
-//         float vectorLength = vector.mag();
-//         distance -= vectorLength;
-
-//         if (distance <= 0) {
-//             distance += vectorLength;
-//             position = points[i] + (vector * (distance / vectorLength));
-//             direction = vector.normalized();
-//             return true;
-//         }
-//     }
-
-//     return boost::none;
-// }
 
 void InterpolatedPath::draw(SystemState* const state,
                             const QColor& col = Qt::black,
