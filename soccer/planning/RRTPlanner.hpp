@@ -46,8 +46,6 @@ public:
                               const Geometry2d::ShapeSet* obstacles) override;
 
 protected:
-    MotionConstraints _motionConstraints;
-
     FixedStepTree _fixedStepTree0;
     FixedStepTree _fixedStepTree1;
 
@@ -70,7 +68,8 @@ protected:
      *  If the points don't match up...fail!
      *  The final path will be from the start of tree0
      *  to the start of tree1 */
-    Planning::InterpolatedPath* makePath();
+    Planning::InterpolatedPath* makePath(
+        const MotionConstraints& motionConstraints);
 
     /** optimize the path
      *  Calles the cubicBezier optimization function.
