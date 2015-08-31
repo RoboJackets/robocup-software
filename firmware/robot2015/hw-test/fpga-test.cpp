@@ -4,7 +4,7 @@
 #include <string>
 
 #include <helper-funcs.hpp>
-#include <SWSPI.h>
+#include <software-spi.hpp>
 
 #include "robot-devices.hpp"
 
@@ -46,12 +46,11 @@ bool fpgaInit(void)
 
     // SPI spi(RJ_SPI_BUS);
     // miso & mosi are intentionally switched here
-    SWSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
+    SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
     char buf[10];
 
     //  8 bits per write, mode 3
-    spi.format(8, 0);
-    spi.frequency(RJ_FPGA_SPI_FREQ);
+    //spi.format(8, 0);
 
     FILE* fp = fopen(filepath.c_str(), "r");
 
@@ -59,8 +58,8 @@ bool fpgaInit(void)
         fseek (fp, 0, SEEK_END);
         size_t filesize = ftell(fp);
         fseek (fp, 0, SEEK_SET);
-        size_t divisor = 15;
-        int mod_by = filesize / divisor;
+        //size_t divisor = 15;
+        //int mod_by = filesize / divisor;
         size_t count;
 
         pc.printf("--  opened %s (%u bytes)\r\n", filename.c_str(), filesize);
@@ -84,7 +83,7 @@ bool fpgaInit(void)
         fclose(fp);
 
         pc.printf("--  closed %s\r\n", filename.c_str());
-        pc.printf("--  sent %u bytes using frequency of %uHz\r\n", count, RJ_FPGA_SPI_FREQ);
+        pc.printf("--  sent %u bytes\r\n", count);
 
         trigger = !trigger;
 

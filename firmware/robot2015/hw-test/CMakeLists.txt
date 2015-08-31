@@ -11,6 +11,7 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
 
     set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR})
     set(TEST_UNIT_FILE "${HW_TEST_UNIT}-test.cpp")
+    # list(APPEND TEST_UNIT_FILE ../src-ctrl/drivers/fpga/fpga.cpp)
 
     string(SUBSTRING "${HW_TEST_UNIT}" 0 3 TEST_UNIT_BIN_FILE)
     set(TEST_UNIT_BIN_FILE "${TEST_UNIT_BIN_FILE}-test.bin")

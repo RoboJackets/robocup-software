@@ -206,7 +206,7 @@ set(SWSPI_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake)
 set(SWI2C_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake)
 
 # create a list of which accessory libraries we want to download and add to the common2015 library
-set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB})
+# set(MBED_ASSEC_LIBS ${SWSPI_MBED_LIB})
 
 # uncomment the below line to add the MCP23017 library or other
 # ones when adding their cmake file to the mbed directory

@@ -18,7 +18,7 @@ set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
 # subdirectories
-set(DRIVERS             cc1101 cc1201 cc1201/cfg)
+set(DRIVERS             cc1101 cc1201 cc1201/cfg software-spi)
 set(MODULES             CommModule CommLink Console)
 set(UTILS               assert fp16 logger numparser rtos-mgmt)
 
