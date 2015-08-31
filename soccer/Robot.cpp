@@ -462,7 +462,6 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     _path = std::move(path);
     _pathInvalidated = false;
-    _pathStartTime = timestamp();
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
@@ -513,13 +512,13 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
             // we automatically replan
             const Time kPathExpirationInterval =
                 *_replanTimeout * SecsToTimestamp;
-            if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+            if ((timestamp() - _path->startTime()) > kPathExpirationInterval) {
                 _pathInvalidated = true;
             }
 
             MotionInstant target;
             float timeIntoPath =
-                ((float)(timestamp() - _pathStartTime)) * TimestampToSecs +
+                ((float)(timestamp() - _path->startTime())) * TimestampToSecs +
                 1.0f / 60.0f;
 
             boost::optional<MotionInstant> optTarget =
@@ -611,6 +610,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
                         new Planning::TrapezoidalPath(
                             this->pos, this->vel.mag(), endTarget, endSpeed,
                             _motionConstraints));
+                    path->setStartTime(timestamp());
                     break;
                 default:
                     path = nullptr;

@@ -15,6 +15,7 @@ namespace Planning {
  */
 class Path {
 public:
+    Path() : _startTime(0) {}
     virtual ~Path() {}
 
     /**
@@ -82,5 +83,13 @@ public:
      * Returns a deep copy of the Path
      */
     virtual std::unique_ptr<Path> clone() const = 0;
+
+    /// The time the path starts at
+    const Time startTime() const { return _startTime; }
+    void setStartTime(Time t) { _startTime = t; }
+
+protected:
+    Time _startTime;
 };
-}
+
+}  // namespace Planning

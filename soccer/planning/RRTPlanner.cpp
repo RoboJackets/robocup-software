@@ -29,6 +29,7 @@ std::unique_ptr<Path> RRTPlanner::run(
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles) {
     Planning::InterpolatedPath* path = new Planning::InterpolatedPath();
+    path->setStartTime(timestamp());
     Geometry2d::Point goal = endInstant.pos;
     _motionConstraints = motionConstraints;
     vi = startInstant.vel;
@@ -128,6 +129,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 
 Planning::InterpolatedPath* RRTPlanner::makePath() {
     Planning::InterpolatedPath* newPath = new Planning::InterpolatedPath();
+    newPath->setStartTime(timestamp());
 
     Tree::Point* p0 = _fixedStepTree0.last();
     Tree::Point* p1 = _fixedStepTree1.last();

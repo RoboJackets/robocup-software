@@ -359,7 +359,11 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
 }
 
 unique_ptr<Path> InterpolatedPath::clone() const {
-    return unique_ptr<Path>(new InterpolatedPath(*this));
+    InterpolatedPath* cp = new InterpolatedPath();
+    cp->waypoints = waypoints;
+    cp->times = times;
+    cp->setStartTime(startTime());
+    return std::unique_ptr<Path>(cp);
 }
 
 }  // namespace Planning
