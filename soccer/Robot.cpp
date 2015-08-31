@@ -547,11 +547,13 @@ void OurRobot::replanIfNeeded(
                 ((float)(timestamp() - _pathStartTime)) * TimestampToSecs +
                 1.0f / 60.0f;
 
-            boost::optional<MotionInstant> optTarget = _path->evaluate(timeIntoPath);
+            boost::optional<MotionInstant> optTarget =
+                _path->evaluate(timeIntoPath);
             if (optTarget) {
                 target = *optTarget;
             } else {
-                // We went off the end of the path, so use the end for calculations.
+                // We went off the end of the path, so use the end for
+                // calculations.
                 target = *_path->destination();
             }
 
