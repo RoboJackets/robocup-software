@@ -204,23 +204,6 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
               << endl;
 }
 
-void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
-    if (!visible) return;
-
-    // sets flags for future movement
-    if (verbose)
-        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
-             << ", " << goal.y << ")" << endl;
-
-    _motionCommand.setDirectTarget(goal, endSpeed);
-
-    // reset conflicting motion commands
-    _motionConstraints.pivotTarget = boost::none;
-
-    *_cmdText << "moveDirect(" << goal.x << ", " << goal.y << ")" << endl;
-    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
-}
-
 void OurRobot::worldVelocity(Geometry2d::Point v) {
     _motionCommand.setWorldVel(v);
     setPath(nullptr);
@@ -594,17 +577,6 @@ void OurRobot::replanIfNeeded(
                     *_goalChangeThreshold) {
                 _pathInvalidated = true;
             }
-        } else if (_motionCommand.getCommandType() ==
-                   Planning::MotionCommand::DirectTarget) {
-            Geometry2d::Point endTarget;
-            float endSpeed = _motionCommand.getDirectTarget(endTarget);
-            if (!_path->destination() ||
-                (_path->destination()->pos - endTarget).mag() >
-                    *_goalChangeThreshold ||
-                (_path->destination()->vel.mag() - endSpeed) >
-                    *_goalChangeThreshold) {
-                _pathInvalidated = true;
-            }
         } else {
             _pathInvalidated = true;
         }
@@ -625,21 +597,14 @@ void OurRobot::replanIfNeeded(
         int planning_attempts = 0;
         while (!path) {
             Geometry2d::Point endTarget;
-            float endSpeed = _motionCommand.getDirectTarget(endTarget);
             switch (_motionCommand.getCommandType()) {
                 case Planning::MotionCommand::PathTarget:
                     path = _planner->run(MotionInstant(pos, vel),
                                          _motionCommand.getPlanningTarget(),
                                          _motionConstraints, &full_obstacles);
                     break;
-                case Planning::MotionCommand::DirectTarget:
-                    path = unique_ptr<Planning::Path>(
-                        new Planning::TrapezoidalPath(
-                            this->pos, this->vel.mag(), endTarget, endSpeed,
-                            _motionConstraints));
-                    break;
                 default:
-                    path = nullptr;
+                    debugThrow("Command Type not recognized");
             }
             planning_attempts++;
 
