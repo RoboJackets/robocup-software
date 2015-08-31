@@ -200,8 +200,6 @@ public:
      */
     void moveDirect(Geometry2d::Point goal, float endSpeed = 0);
 
-    Time pathStartTime() const { return _pathStartTime; }
-
     /**
      * Sets the angleVelocity in the robot's MotionConstraints
      */
@@ -439,8 +437,6 @@ protected:
     void setPath(std::unique_ptr<Planning::Path> path);
 
     std::unique_ptr<Planning::Path> _path;  /// latest path
-
-    Time _pathStartTime;
 
     /// whenever the constraints for the robot path are changed, this is set
     /// to true to trigger a replan

@@ -143,7 +143,8 @@ void MotionControl::run() {
 
         // convert from microseconds to seconds
         float timeIntoPath =
-            ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs +
+            ((float)(timestamp() - _robot->path()->startTime())) *
+                TimestampToSecs +
             1.0 / 60.0;
 
         // evaluate path - where should we be right now?
