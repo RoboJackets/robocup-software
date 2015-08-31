@@ -49,8 +49,6 @@ protected:
     FixedStepTree _fixedStepTree0;
     FixedStepTree _fixedStepTree1;
 
-    Geometry2d::Point vi;
-    Geometry2d::Point vf;
     /// maximum number of rrt iterations to run
     /// this does not include connect attempts
     unsigned int _maxIterations;
@@ -65,15 +63,17 @@ protected:
      *  If the points don't match up...fail!
      *  The final path will be from the start of tree0
      *  to the start of tree1 */
-    Planning::InterpolatedPath* makePath(
-        const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet* obstacles);
+    Planning::InterpolatedPath* makePath(Geometry2d::Point vi, Geometry2d::Point vf,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet* obstacles);
 
     /** optimize the path
-     *  Calles the cubicBezier optimization function.
+     *  Calls the cubicBezier optimization function.
      */
     Planning::InterpolatedPath* optimize(
         Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi);
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf);
 
     /**
      * Uses a cubicBezier to interpolate between the points on the path and add
@@ -81,7 +81,8 @@ protected:
      */
     Planning::InterpolatedPath* cubicBezier(
         Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi);
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf);
 
     /**
      * Helper function for cubicBezier() which uses Eigen matrices to solve for

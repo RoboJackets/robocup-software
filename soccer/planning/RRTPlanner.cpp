@@ -16,10 +16,9 @@ using namespace Eigen;
 namespace Planning {
 
 Geometry2d::Point randomPoint() {
-    float x =
-        Field_Dimensions::Current_Dimensions.FloorWidth() * (drand48() - 0.5f);
-    float y = Field_Dimensions::Current_Dimensions.FloorLength() * drand48() -
-              Field_Dimensions::Current_Dimensions.Border();
+    const auto& dims = Field_Dimensions::Current_Dimensions;
+    float x = dims.FloorWidth() * (drand48() - 0.5f);
+    float y = dims.FloorLength() * drand48() - dims.Border();
 
     return Geometry2d::Point(x, y);
 }
@@ -33,8 +32,6 @@ std::unique_ptr<Path> RRTPlanner::run(
     InterpolatedPath* path = new InterpolatedPath();
     path->setStartTime(timestamp());
     Geometry2d::Point goal = endInstant.pos;
-    vi = startInstant.vel;
-    vf = endInstant.vel;
 
     // Simple case: no path
     if (startInstant.pos == goal) {
@@ -74,7 +71,8 @@ std::unique_ptr<Path> RRTPlanner::run(
     }
 
     // Extract the Path from the RRT trees
-    path = makePath(motionConstraints, obstacles);
+    path = makePath(startInstant.vel, endInstant.vel, motionConstraints,
+                    obstacles);
 
     if (path && path->waypoints.empty()) {
         // FIXME: without these two lines, an empty path is returned which
@@ -111,7 +109,9 @@ Geometry2d::Point RRTPlanner::findNonBlockedGoal(
 }
 
 InterpolatedPath* RRTPlanner::makePath(
-    const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet* obstacles) {
+    Geometry2d::Point vi, Geometry2d::Point vf,
+    const MotionConstraints& motionConstraints,
+    const Geometry2d::ShapeSet* obstacles) {
     InterpolatedPath* newPath = new InterpolatedPath();
     newPath->setStartTime(timestamp());
 
@@ -130,7 +130,7 @@ InterpolatedPath* RRTPlanner::makePath(
     _fixedStepTree1.addPath(
         *newPath, p1, true);  // add the goal tree in reverse (aka p1 to root)
 
-    newPath = optimize(*newPath, obstacles, motionConstraints, vi);
+    newPath = optimize(*newPath, obstacles, motionConstraints, vi, vf);
 
     // TODO: evaluate the old path based on the closest segment and the distance
     // to the endpoint of that segment Otherwise, a new path will always be
@@ -148,7 +148,8 @@ InterpolatedPath* RRTPlanner::makePath(
 
 InterpolatedPath* RRTPlanner::optimize(
     InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
-    const MotionConstraints& motionConstraints, Geometry2d::Point vi) {
+    const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+    Geometry2d::Point vf) {
     unsigned int start = 0;
 
     if (path.empty()) {
@@ -187,7 +188,7 @@ InterpolatedPath* RRTPlanner::optimize(
         if (!changed) span++;
     }
     // Done with the path
-    return cubicBezier(path, obstacles, motionConstraints, vi);
+    return cubicBezier(path, obstacles, motionConstraints, vi, vf);
 }
 
 float getTime(InterpolatedPath& path, int index,
@@ -201,7 +202,8 @@ float getTime(InterpolatedPath& path, int index,
 // TODO: Use targeted end velocity
 InterpolatedPath* RRTPlanner::cubicBezier(
     InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
-    const MotionConstraints& motionConstraints, Geometry2d::Point vi) {
+    const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+    Geometry2d::Point vf) {
     int length = path.waypoints.size();
     int curvesNum = length - 1;
     if (curvesNum <= 0) {
