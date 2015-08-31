@@ -13,10 +13,10 @@ TEST(Path, nearestSegment) {
     Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
     InterpolatedPath path;
-    path.waypoints.emplace_back(p0, Point());
-    path.waypoints.emplace_back(p1, Point());
-    path.waypoints.emplace_back(p2, Point());
-    path.waypoints.emplace_back(p3, Point());
+    path.waypoints.emplace_back(MotionInstant(p0, Point()), 0);
+    path.waypoints.emplace_back(MotionInstant(p1, Point()), 0);
+    path.waypoints.emplace_back(MotionInstant(p2, Point()), 0);
+    path.waypoints.emplace_back(MotionInstant(p3, Point()), 0);
 
     Segment actSeg = path.nearestSegment(Point(0.5, -0.5));
     EXPECT_FLOAT_EQ(p0.x, actSeg.pt[0].x);
@@ -29,12 +29,9 @@ TEST(InterpolatedPath, evaluate) {
     Point p0(1, 1), p1(1, 2), p2(2, 2);
 
     InterpolatedPath path;
-    path.waypoints.emplace_back(p0, Point());
-    path.waypoints.emplace_back(p1, p1);
-    path.waypoints.emplace_back(p2, Point());
-    path.times.push_back(0);
-    path.times.push_back(3);
-    path.times.push_back(6);
+    path.waypoints.emplace_back(MotionInstant(p0, Point()), 0);
+    path.waypoints.emplace_back(MotionInstant(p1, p1), 3);
+    path.waypoints.emplace_back(MotionInstant(p2, Point()), 6);
 
     // path should be invalid and at end state when t > duration
     auto out = path.evaluate(1000);
@@ -43,12 +40,9 @@ TEST(InterpolatedPath, evaluate) {
 
 TEST(InterpolatedPath, subPath1) {
     InterpolatedPath path;
-    path.waypoints.emplace_back(Point(1, 1), Point(0, 0));
-    path.waypoints.emplace_back(Point(1, 2), Point(1, 1));
-    path.waypoints.emplace_back(Point(1, 3), Point(0, 0));
-    path.times.push_back(0);
-    path.times.push_back(3);
-    path.times.push_back(6);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 1), Point(0, 0)), 0);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 2), Point(1, 1)), 3);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 3), Point(0, 0)), 6);
 
     //  test invalid parameters to subPath()
     EXPECT_THROW(path.subPath(-1, 5), invalid_argument);
@@ -88,14 +82,10 @@ TEST(InterpolatedPath, subPath1) {
 TEST(InterpolatedPath, subpath2) {
     // Create a test path
     InterpolatedPath path;
-    path.waypoints.emplace_back(Point(1, 0), Point(0, 0));
-    path.waypoints.emplace_back(Point(1, 2), Point(-1, -1));
-    path.waypoints.emplace_back(Point(-2, 19), Point(1, 1));
-    path.waypoints.emplace_back(Point(1, 6), Point(0, 0));
-    path.times.push_back(0);
-    path.times.push_back(1);
-    path.times.push_back(3);
-    path.times.push_back(9);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 0), Point(0, 0)), 0);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 2), Point(-1, -1)), 1);
+    path.waypoints.emplace_back(MotionInstant(Point(-2, 19), Point(1, 1)), 3);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 6), Point(0, 0)), 9);
 
     // Create 6 subPaths of length 1.5
     vector<unique_ptr<Path>> subPaths;
@@ -124,14 +114,10 @@ TEST(InterpolatedPath, subpath2) {
 TEST(CompositePath, CompositeSubPath) {
     // Create a test path
     InterpolatedPath path;
-    path.waypoints.emplace_back(Point(1, 0), Point(0, 0));
-    path.waypoints.emplace_back(Point(1, 2), Point(-1, -1));
-    path.waypoints.emplace_back(Point(-2, 19), Point(1, 1));
-    path.waypoints.emplace_back(Point(1, 6), Point(0, 0));
-    path.times.push_back(0);
-    path.times.push_back(1);
-    path.times.push_back(3);
-    path.times.push_back(9);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 0), Point(0, 0)), 0);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 2), Point(-1, -1)), 1);
+    path.waypoints.emplace_back(MotionInstant(Point(-2, 19), Point(1, 1)), 3);
+    path.waypoints.emplace_back(MotionInstant(Point(1, 6), Point(0, 0)), 9);
 
     // Create 6 subPaths and rejoin them together into one compositePath
     CompositePath compositePath;
