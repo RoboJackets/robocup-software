@@ -1,5 +1,5 @@
 #include "TransformMatrix.hpp"
-#include "util.h"
+#include "Util.hpp"
 
 namespace Geometry2d {
 

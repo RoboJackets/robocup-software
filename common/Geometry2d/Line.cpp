@@ -1,6 +1,7 @@
 #include "Line.hpp"
 #include "Point.hpp"
 #include "Circle.hpp"
+#include "Util.hpp"
 
 namespace Geometry2d {
 

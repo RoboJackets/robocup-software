@@ -2,7 +2,6 @@
 
 #include "Shape.hpp"
 #include "Point.hpp"
-#include "util.h"
 
 #include <algorithm>
 

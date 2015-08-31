@@ -1,5 +1,6 @@
 #include "WindowEvaluator.hpp"
 #include "Constants.hpp"
+#include <Geometry2d/Util.hpp>
 
 #include <algorithm>
 #include <array>
