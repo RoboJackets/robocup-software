@@ -51,9 +51,6 @@ protected:
     FixedStepTree _fixedStepTree0;
     FixedStepTree _fixedStepTree1;
 
-    /** best goal point */
-    Geometry2d::Point _bestGoal;
-
     Geometry2d::Point vi;
     Geometry2d::Point vf;
     /// maximum number of rrt iterations to run
@@ -62,6 +59,12 @@ protected:
 
     /// latest obstacles
     const Geometry2d::ShapeSet* _obstacles;
+
+    /// If the given goal point is in an obstacle, uses an RRT to attempt to
+    /// find a point that is close, but not blocked.
+    Geometry2d::Point findNonBlockedGoal(Geometry2d::Point goal,
+                                         const Geometry2d::ShapeSet* obstacles,
+                                         int maxItr = 100);
 
     /** makes a path from the last point of each tree
      *  If the points don't match up...fail!

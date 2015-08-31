@@ -11,9 +11,11 @@
 #include <Eigen/Dense>
 
 using namespace std;
-using namespace Planning;
+using namespace Eigen;
 
-Geometry2d::Point Planning::randomPoint() {
+namespace Planning {
+
+Geometry2d::Point randomPoint() {
     float x =
         Field_Dimensions::Current_Dimensions.FloorWidth() * (drand48() - 0.5f);
     float y = Field_Dimensions::Current_Dimensions.FloorLength() * drand48() -
@@ -28,7 +30,7 @@ std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant startInstant, MotionInstant endInstant,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles) {
-    Planning::InterpolatedPath* path = new Planning::InterpolatedPath();
+    InterpolatedPath* path = new InterpolatedPath();
     path->setStartTime(timestamp());
     Geometry2d::Point goal = endInstant.pos;
     _motionConstraints = motionConstraints;
@@ -44,52 +46,11 @@ std::unique_ptr<Path> RRTPlanner::run(
         return unique_ptr<Path>(path);
     }
 
-    /// Locate a non blocked goal point
-    Geometry2d::Point newGoal = goal;
+    /// Locate a goal point that is obstacle-free
+    goal = findNonBlockedGoal(goal, obstacles);
 
-    if (obstacles && obstacles->hit(goal)) {
-        FixedStepTree goalTree;
-        goalTree.init(goal, obstacles);
-        goalTree.step = .1f;
-
-        // The starting point is in an obstacle extend the tree until we find an
-        // unobstructed point
-        for (int i = 0; i < 100; ++i) {
-            Geometry2d::Point r = randomPoint();
-
-            // extend to a random point
-            Tree::Point* newPoint = goalTree.extend(r);
-
-            // if the new point is not blocked, it becomes the new goal
-            if (newPoint && newPoint->hit.empty()) {
-                newGoal = newPoint->pos;
-                break;
-            }
-        }
-
-        // see if the new goal is better than old one must be at least a robot
-        // radius better else the move isn't worth it
-        const float oldDist = _bestGoal.distTo(goal);
-        const float newDist = newGoal.distTo(goal) + Robot_Radius;
-        if (newDist < oldDist || obstacles->hit(_bestGoal)) {
-            _bestGoal = newGoal;
-        }
-    } else {
-        _bestGoal = goal;
-    }
-
-    /// simple case of direct shot
-    /*
-    if (!obstacles->hit(Geometry2d::Segment(start, _bestGoal)))
-    {
-        path.points.push_back(start);
-        path.points.push_back(_bestGoal);
-        _bestPath = path;
-        return;
-    }
-    */
     _fixedStepTree0.init(startInstant.pos, obstacles);
-    _fixedStepTree1.init(_bestGoal, obstacles);
+    _fixedStepTree1.init(goal, obstacles);
     _fixedStepTree0.step = _fixedStepTree1.step = .15f;
 
     /// run global position best path search
@@ -115,7 +76,7 @@ std::unique_ptr<Path> RRTPlanner::run(
         swap(ta, tb);
     }
 
-    // see if we found a better global path
+    // Extract the Path from the RRT trees
     path = makePath();
 
     if (path && path->waypoints.empty()) {
@@ -127,8 +88,33 @@ std::unique_ptr<Path> RRTPlanner::run(
     return unique_ptr<Path>(path);
 }
 
-Planning::InterpolatedPath* RRTPlanner::makePath() {
-    Planning::InterpolatedPath* newPath = new Planning::InterpolatedPath();
+Geometry2d::Point RRTPlanner::findNonBlockedGoal(
+    Geometry2d::Point goal, const Geometry2d::ShapeSet* obstacles, int maxItr) {
+    if (obstacles && obstacles->hit(goal)) {
+        FixedStepTree goalTree;
+        goalTree.init(goal, obstacles);
+        goalTree.step = .1f;
+
+        // The starting point is in an obstacle extend the tree until we find an
+        // unobstructed point
+        for (int i = 0; i < maxItr; ++i) {
+            Geometry2d::Point r = randomPoint();
+
+            // extend to a random point
+            Tree::Point* newPoint = goalTree.extend(r);
+
+            // if the new point is not blocked, it becomes the new goal
+            if (newPoint && newPoint->hit.empty()) {
+                return newPoint->pos;
+            }
+        }
+    }
+
+    return goal;
+}
+
+InterpolatedPath* RRTPlanner::makePath() {
+    InterpolatedPath* newPath = new InterpolatedPath();
     newPath->setStartTime(timestamp());
 
     Tree::Point* p0 = _fixedStepTree0.last();
@@ -162,8 +148,8 @@ Planning::InterpolatedPath* RRTPlanner::makePath() {
     return newPath;
 }
 
-Planning::InterpolatedPath* RRTPlanner::optimize(
-    Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
+InterpolatedPath* RRTPlanner::optimize(
+    InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi) {
     unsigned int start = 0;
 
@@ -206,13 +192,7 @@ Planning::InterpolatedPath* RRTPlanner::optimize(
     return cubicBezier(path, obstacles, motionConstraints, vi);
 }
 
-Geometry2d::Point pow(Geometry2d::Point& p1, float i) {
-    return Geometry2d::Point(pow(p1.x, i), pow(p1.y, i));
-}
-
-using namespace Eigen;
-
-float getTime(Planning::InterpolatedPath& path, int index,
+float getTime(InterpolatedPath& path, int index,
               const MotionConstraints& motionConstraints, float startSpeed,
               float endSpeed) {
     return Trapezoidal::getTime(
@@ -221,8 +201,8 @@ float getTime(Planning::InterpolatedPath& path, int index,
 }
 
 // TODO: Use targeted end velocity
-Planning::InterpolatedPath* RRTPlanner::cubicBezier(
-    Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
+InterpolatedPath* RRTPlanner::cubicBezier(
+    InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi) {
     int length = path.waypoints.size();
     int curvesNum = length - 1;
@@ -348,3 +328,5 @@ VectorXd RRTPlanner::cubicBezierCalc(double vi, double vf,
         return solution;
     }
 }
+
+}  // namespace Planning
