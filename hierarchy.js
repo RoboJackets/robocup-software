@@ -91,9 +91,6 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "Planning::PathPlanner", "class_planning_1_1_path_planner.html", [
-      [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ]
-    ] ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
@@ -157,6 +154,12 @@ var hierarchy =
       [ "Geometry2d::CompositeShape", "class_geometry2d_1_1_composite_shape.html", null ],
       [ "Geometry2d::Polygon", "class_geometry2d_1_1_polygon.html", null ],
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
+    ] ],
+    [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
+      [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -234,9 +237,6 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

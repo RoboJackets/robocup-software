@@ -5,6 +5,7 @@ var searchData=
   ['add_5fshot_5fobstacle',['add_shot_obstacle',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a76799cbe5e02a0fa86419b182c660672',1,'gameplay::skills::_kick::_Kick']]],
   ['add_5fstate',['add_state',['../classgameplay_1_1fsm_1_1_state_machine.html#a63ff1a2e4424070390c17babba343017',1,'gameplay::fsm::StateMachine']]],
   ['add_5fsubbehavior',['add_subbehavior',['../classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a8af5729939e7fb71778b69cbdf9387d0',1,'gameplay::single_robot_composite_behavior::SingleRobotCompositeBehavior']]],
+  ['addinstant',['addInstant',['../class_planning_1_1_interpolated_path.html#a26ac5e81268f850693b0832a12654caa',1,'Planning::InterpolatedPath']]],
   ['addpath',['addPath',['../class_planning_1_1_tree.html#aa487c971664eb52a4070856b19d2b12a',1,'Planning::Tree']]],
   ['adjust_5fangle',['adjust_angle',['../classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a078cf71c43ec1b5bb09763a7900a4760',1,'gameplay::skills::angle_receive::AngleReceive']]],
   ['aim',['Aim',['../classgameplay_1_1skills_1_1aim_1_1_aim.html',1,'gameplay::skills::aim']]],

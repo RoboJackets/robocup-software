@@ -16,8 +16,8 @@ var searchData=
   ['resetfornextiteration',['resetForNextIteration',['../class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0',1,'OurRobot']]],
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a9fa9ccfbd33bb16648924d560e2b49c8',1,'gameplay::fsm::StateMachine']]],
-  ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay::constants']]],
   ['robot',['Robot',['../class_robot.html',1,'Robot'],['../class_robot.html#a241c0ca6e392b4c2fef481392d35531d',1,'Robot::Robot()']]],
+  ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay::constants']]],
   ['robotconfig',['RobotConfig',['../class_robot_config.html',1,'']]],
   ['robotfilter',['RobotFilter',['../class_robot_filter.html',1,'']]],
   ['robotmodel',['robotModel',['../class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481',1,'RobotStatusWidget']]],
@@ -33,7 +33,7 @@ var searchData=
   ['rotate',['rotate',['../class_geometry2d_1_1_point.html#a0d94c0285505aa1aab17c36505928bbb',1,'Geometry2d::Point::rotate(const Point &amp;origin, float angle)'],['../class_geometry2d_1_1_point.html#a6ccfeea670b14c267037f6185cb9d137',1,'Geometry2d::Point::rotate(float angle)'],['../class_geometry2d_1_1_point.html#ab9ba426c22a63b02d9488fc61368e5cf',1,'Geometry2d::Point::rotate(const Point &amp;pt, const Point &amp;origin, float angle)']]],
   ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
   ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]],
-  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_path_planner.html#a575b729dcb03e5eb3772e3206132d672',1,'Planning::PathPlanner::run()'],['../class_planning_1_1_r_r_t_planner.html#ae0bde0971be415a64fe3a65c1db67dca',1,'Planning::RRTPlanner::run()'],['../class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
+  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#ae0bde0971be415a64fe3a65c1db67dca',1,'Planning::RRTPlanner::run()'],['../class_planning_1_1_single_robot_path_planner.html#abc648613776d6b0545f160dcb4998199',1,'Planning::SingleRobotPathPlanner::run()'],['../class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
   ['rx_5fbuffer_5ffull_5fmsg',['RX_BUFFER_FULL_MSG',['../class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92',1,'Console']]],
   ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279',1,'OurRobot']]]
 ];

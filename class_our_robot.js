@@ -99,7 +99,7 @@ var class_our_robot =
     [ "_pathChangeHistory", "class_our_robot.html#a5db0b1e5c49680f2390595f870095046", null ],
     [ "_pathInvalidated", "class_our_robot.html#adac5bd2605e976a6fe96ca786947908b", null ],
     [ "_pathStartTime", "class_our_robot.html#a69916a94c5416050044d1e91d58b5cac", null ],
-    [ "_planner", "class_our_robot.html#a344f3a3fdc4fb9ffccb666e4d3bf6dc2", null ],
+    [ "_planner", "class_our_robot.html#af54ac733fa7263dde74e627745e6f2a6", null ],
     [ "_self_avoid_mask", "class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d", null ],
     [ "_state", "class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff", null ],
     [ "config", "class_our_robot.html#a0d772617dda85ce48b6ee3fe4b7746ef", null ],

@@ -123,9 +123,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a04425cbf8bfd7e54754272d88be99735"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04425cbf8bfd7e54754272d88be99735"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>TrapezoidalPath</b> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> startPos, float startSpeed, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> endPos, float endSpeed, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;constraints)</td></tr>
 <tr class="separator:a04425cbf8bfd7e54754272d88be99735"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6398e8a84842a23c8c5e830d5320a759"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_trapezoidal_path.html#a6398e8a84842a23c8c5e830d5320a759">evaluate</a> (float time, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &amp;targetMotionInstant) const override</td></tr>
-<tr class="memdesc:a6398e8a84842a23c8c5e830d5320a759"><td class="mdescLeft">&#160;</td><td class="mdescRight">A path describes the position and velocity a robot should be at for a particular time interval.  <a href="#a6398e8a84842a23c8c5e830d5320a759">More...</a><br/></td></tr>
-<tr class="separator:a6398e8a84842a23c8c5e830d5320a759"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7254d3690ccfe2a20dac4b9f8c93fa2"><td class="memItemLeft" align="right" valign="top">virtual boost::optional<br class="typebreak"/>
+&lt; <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_trapezoidal_path.html#af7254d3690ccfe2a20dac4b9f8c93fa2">evaluate</a> (float time) const override</td></tr>
+<tr class="memdesc:af7254d3690ccfe2a20dac4b9f8c93fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evalates the path at a given time and returns the target position and velocity of the robot.  <a href="#af7254d3690ccfe2a20dac4b9f8c93fa2">More...</a><br/></td></tr>
+<tr class="separator:af7254d3690ccfe2a20dac4b9f8c93fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7142bba9b22e8bac7a629f0d0e7c63c"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_trapezoidal_path.html#af7142bba9b22e8bac7a629f0d0e7c63c">hit</a> (const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;shape, float &amp;hitTime, float startTime=0) const override</td></tr>
 <tr class="memdesc:af7142bba9b22e8bac7a629f0d0e7c63c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#af7142bba9b22e8bac7a629f0d0e7c63c">More...</a><br/></td></tr>
 <tr class="separator:af7142bba9b22e8bac7a629f0d0e7c63c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -222,7 +223,7 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 
 </div>
 </div>
-<a class="anchor" id="a6398e8a84842a23c8c5e830d5320a759"></a>
+<a class="anchor" id="af7254d3690ccfe2a20dac4b9f8c93fa2"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -230,21 +231,11 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool Planning::TrapezoidalPath::evaluate </td>
+          <td class="memname">virtual boost::optional&lt;<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&gt; Planning::TrapezoidalPath::evaluate </td>
           <td>(</td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>t</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &amp;&#160;</td>
-          <td class="paramname"><em>targetMotionInstant</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
+          <td class="paramname"><em>t</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -254,18 +245,16 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 </table>
 </div><div class="memdoc">
 
-<p>A path describes the position and velocity a robot should be at for a particular time interval. </p>
-<p>This method evalates the path at a given time and returns the target position and velocity of the robot.</p>
+<p>This method evalates the path at a given time and returns the target position and velocity of the robot. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Time (in seconds) since the robot started the path. Throws an exception if t&lt;0 </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">targetMotionInstant</td><td>The position and velocity the robot would ideally be at at the given time </td></tr>
+    <tr><td class="paramname">t</td><td>Time (in seconds) since the robot started the path. Throws an exception if t&lt;0 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the path is valid at time , false if you've gone past the end </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...">MotionInstant</a> containing the position and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
 
-<p>Implements <a class="el" href="class_planning_1_1_path.html#aabd42049334d4ffa5d184e1df15b8d5c">Planning::Path</a>.</p>
+<p>Implements <a class="el" href="class_planning_1_1_path.html#ae5374f636290ac9cb6a4794d8ae79811">Planning::Path</a>.</p>
 
 </div>
 </div>
@@ -405,7 +394,7 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_trapezoidal_path.html">TrapezoidalPath</a></li>
-    <li class="footer">Generated on Mon Aug 31 2015 02:20:54 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Aug 31 2015 03:10:52 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

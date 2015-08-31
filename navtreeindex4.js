@@ -1,8 +1,5 @@
 var NAVTREEINDEX4 =
 {
-"class_referee_tab.html#a41fc85c07d45148363bd881f20267600":[11,0,51,18],
-"class_referee_tab.html#a464fa55d184a2ad803aeebf0fbbdc211":[11,0,51,2],
-"class_referee_tab.html#a471835961fd5de60b684d25e0283d9bc":[11,0,51,13],
 "class_referee_tab.html#a47362243403d9986431f0e91b1cc6bfb":[11,0,51,20],
 "class_referee_tab.html#a57619ce2c8f332d72a5fe535babcc933":[11,0,51,21],
 "class_referee_tab.html#a617792d659d2b00db1094a053406497c":[11,0,51,29],
@@ -249,5 +246,8 @@ var NAVTREEINDEX4 =
 "classcircle__near__ball_1_1_circle_near_ball.html#ad712b0c62d6e690640eb2c3cbb60f39f":[11,0,1,0,0],
 "classcircle__near__ball_1_1_circle_near_ball.html#afa00595485459d0766c80e08cd1e3daa":[11,0,1,0,3],
 "classcircle__on__center_1_1_circle_on_center.html":[11,0,2,0],
-"classcircle__on__center_1_1_circle_on_center.html#a5b963704f391988c626e280ec77cd297":[11,0,2,0,0]
+"classcircle__on__center_1_1_circle_on_center.html#a5b963704f391988c626e280ec77cd297":[11,0,2,0,0],
+"classcircle__on__center_1_1_circle_on_center.html#a7233a78ae75daa9e08ca329ecc42c16b":[11,0,2,0,1],
+"classcircle__on__center_1_1_circle_on_center.html#aaee3294d352d7e54064990ebc01d3ef5":[11,0,2,0,3],
+"classcircle__on__center_1_1_circle_on_center.html#ae76b3bac19f324c140d0e2e732709b9a":[11,0,2,0,2]
 };
