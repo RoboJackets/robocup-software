@@ -602,7 +602,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
             switch (_motionCommand.getCommandType()) {
                 case Planning::MotionCommand::PathTarget:
                     path = _planner->run(MotionInstant(pos, vel),
-                                         _motionCommand.getPlanningTarget(),
+                                         _motionCommand,
                                          _motionConstraints, &fullObstacles);
                     break;
                 case Planning::MotionCommand::DirectTarget:
