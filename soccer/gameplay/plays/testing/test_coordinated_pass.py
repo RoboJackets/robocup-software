@@ -41,4 +41,4 @@ class TestCoordinatedPass(play.Play):
 
         if pass_bhvr.receive_point == None:
             self.reset_receive_point()
-            
+

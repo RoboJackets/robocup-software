@@ -7,17 +7,16 @@
 /**
  * @brief Radio IO with robots in the simulator
  */
-class SimRadio: public Radio
-{
+class SimRadio : public Radio {
 public:
     SimRadio(bool blueTeam = false);
 
-	virtual bool isOpen() const override;
-	virtual void send(Packet::RadioTx &packet) override;
+    virtual bool isOpen() const override;
+    virtual void send(Packet::RadioTx& packet) override;
     virtual void receive() override;
     virtual void switchTeam(bool blueTeam) override;
-	
+
 private:
-	QUdpSocket _socket;
-	int _channel;
+    QUdpSocket _socket;
+    int _channel;
 };

@@ -1,5 +1,5 @@
 #include <boost/python.hpp>
 
 extern "C" {
-    PyObject *PyInit_robocup();
+PyObject* PyInit_robocup();
 }
