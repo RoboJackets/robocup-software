@@ -26,59 +26,30 @@ Geometry2d::Point randomPoint() {
 RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
 
 std::unique_ptr<Path> RRTPlanner::run(
-    MotionInstant startInstant, MotionInstant endInstant,
+    MotionInstant start, MotionInstant goal,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles) {
-    Geometry2d::Point goal = endInstant.pos;
-
     // Simple case: no path
-    if (startInstant.pos == goal) {
+    if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
         path->setStartTime(timestamp());
         path->times.push_back(0);
-        path->waypoints.emplace_back(startInstant.pos, Geometry2d::Point());
+        path->waypoints.emplace_back(start.pos, Geometry2d::Point());
         return unique_ptr<Path>(path);
     }
 
     /// Locate a goal point that is obstacle-free
-    goal = findNonBlockedGoal(goal, obstacles);
+    goal.pos = findNonBlockedGoal(goal.pos, obstacles);
 
-    _fixedStepTree0.init(startInstant.pos, obstacles);
-    _fixedStepTree1.init(goal, obstacles);
-    _fixedStepTree0.step = _fixedStepTree1.step = .15f;
+    // Run bi-directional RRT to generate a path.
+    InterpolatedPath* path =
+        runRRT(start, goal, motionConstraints, obstacles);
 
-    /// run global position best path search
-    Tree* ta = &_fixedStepTree0;
-    Tree* tb = &_fixedStepTree1;
-
-    for (unsigned int i = 0; i < _maxIterations; ++i) {
-        Geometry2d::Point r = randomPoint();
-
-        Tree::Point* newPoint = ta->extend(r);
-
-        if (newPoint) {
-            // try to connect the other tree to this point
-            if (tb->connect(newPoint->pos)) {
-                // trees connected
-                // done with global path finding
-                // the path is from start to goal
-                // makePath will handle the rest
-                break;
-            }
-        }
-
-        swap(ta, tb);
-    }
-
-    // Extract the Path from the RRT trees
-    InterpolatedPath* path = makePath(startInstant.vel, endInstant.vel, motionConstraints,
-                    obstacles);
-
+    // If RRT failed, the path will be empty, so we need to add a single point
+    // to make it valid.
     if (path && path->waypoints.empty()) {
-        // FIXME: without these two lines, an empty path is returned which
-        // causes errors down the line.
         path->times.push_back(0);
-        path->waypoints.emplace_back(startInstant.pos, Geometry2d::Point());
+        path->waypoints.emplace_back(start.pos, Geometry2d::Point());
     }
     return unique_ptr<Path>(path);
 }
@@ -108,42 +79,58 @@ Geometry2d::Point RRTPlanner::findNonBlockedGoal(
     return goal;
 }
 
-InterpolatedPath* RRTPlanner::makePath(
-    Geometry2d::Point vi, Geometry2d::Point vf,
-    const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles) {
-    InterpolatedPath* newPath = new InterpolatedPath();
-    newPath->setStartTime(timestamp());
+InterpolatedPath* RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
+                                     const MotionConstraints& motionConstraints,
+                                     const Geometry2d::ShapeSet* obstacles) {
+    InterpolatedPath* path = new InterpolatedPath();
+    path->setStartTime(timestamp());
 
-    Tree::Point* p0 = _fixedStepTree0.last();
-    Tree::Point* p1 = _fixedStepTree1.last();
+    // Initialize two RRT trees
+    FixedStepTree startTree;
+    FixedStepTree goalTree;
+    startTree.init(start.pos, obstacles);
+    goalTree.init(goal.pos, obstacles);
+    startTree.step = goalTree.step = .15f;
+
+    // Run bi-directional RRT algorithm
+    Tree* ta = &startTree;
+    Tree* tb = &goalTree;
+    for (unsigned int i = 0; i < _maxIterations; ++i) {
+        Geometry2d::Point r = randomPoint();
+
+        Tree::Point* newPoint = ta->extend(r);
+
+        if (newPoint) {
+            // try to connect the other tree to this point
+            if (tb->connect(newPoint->pos)) {
+                // trees connected
+                // done with global path finding
+                // the path is from start to goal
+                // runRRT will handle the rest
+                break;
+            }
+        }
+
+        swap(ta, tb);
+    }
+
+    Tree::Point* p0 = startTree.last();
+    Tree::Point* p1 = goalTree.last();
 
     // sanity check
     if (!p0 || !p1 || p0->pos != p1->pos) {
-        return newPath;
+        return path;
     }
 
     // extract path from RRTs
-    _fixedStepTree0.addPath(
-        *newPath,
-        p0);  // add the start tree first...normal order (aka from root to p0)
-    _fixedStepTree1.addPath(
-        *newPath, p1, true);  // add the goal tree in reverse (aka p1 to root)
+    // add the start tree first...normal order (aka from root to p0)
+    startTree.addPath(*path, p0);
+    // add the goal tree in reverse (aka p1 to root)
+    goalTree.addPath(*path, p1, true);
 
-    newPath = optimize(*newPath, obstacles, motionConstraints, vi, vf);
+    path = optimize(*path, obstacles, motionConstraints, start.vel, goal.vel);
 
-    // TODO: evaluate the old path based on the closest segment and the distance
-    // to the endpoint of that segment Otherwise, a new path will always be
-    // shorter than the old given we traveled some
-
-    /// Conditions to use new path
-    /// 1. old path is empty
-    /// 2. goal changed
-    /// 3. start changed -- maybe (Roman)
-    /// 3. new path is better
-    /// 4. old path not valid (hits obstacles)
-
-    return newPath;
+    return path;
 }
 
 InterpolatedPath* RRTPlanner::optimize(
