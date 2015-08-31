@@ -2,8 +2,9 @@
 
 #include "Shape.hpp"
 
-#include <vector>
 #include <memory>
+#include <set>
+#include <vector>
 
 namespace Geometry2d {
 
