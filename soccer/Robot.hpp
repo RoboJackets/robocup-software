@@ -203,14 +203,6 @@ public:
     Time pathStartTime() const { return _pathStartTime; }
 
     /**
-     * The number of consecutive times since now that we've set our path to
-     * something new. This causes issues in Motion Control because the path
-     * start time is constantly reset, so we track it here and compensate for it
-     * in MotionControl. See _pathChangeHistory for more info
-     */
-    int consecutivePathChangeCount() const;
-
-    /**
      * Sets the angleVelocity in the robot's MotionConstraints
      */
     void angleVelocity(const float angleVelocity);
@@ -518,29 +510,6 @@ protected:
 
 protected:
     friend class MotionControl;
-
-    /**
-     * There are a couple cases where the robot's path gets updated very often
-     * (almost every iteration):
-     * * the current path is blocked by an obstacle
-     * * the move() target keeps changing
-     *
-     * This causes the _pathStartTime to constantly be reset and motion control
-     * looks about zero seconds into the planned path and sends the robot a
-     * velocity command that's really really tiny, causing it to barely move at
-     * all.
-     *
-     * Our solution to this is to track the last N path changes in a circular
-     * buffer so we can tell if we're hitting this scenario.  If so, we can
-     * compensate, by having motion control look further into the path when
-     * commanding the robot.
-     */
-    boost::circular_buffer<bool> _pathChangeHistory;
-
-    /// the size of _pathChangeHistory
-    static const int PathChangeHistoryBufferSize = 10;
-
-    bool _didSetPathThisIteration;
 
 private:
     void _kick(uint8_t strength);

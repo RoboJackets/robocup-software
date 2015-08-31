@@ -22,15 +22,10 @@ REGISTER_CONFIGURABLE(MotionControl);
 ConfigDouble* MotionControl::_max_acceleration;
 ConfigDouble* MotionControl::_max_velocity;
 
-ConfigDouble* MotionControl::_path_change_boost;
-
 void MotionControl::createConfiguration(Configuration* cfg) {
     _max_acceleration =
         new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
     _max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
-
-    _path_change_boost =
-        new ConfigDouble(cfg, "MotionControl/PathChangeBoost", 0.5);
 }
 
 #pragma mark MotionControl
@@ -151,26 +146,6 @@ void MotionControl::run() {
             ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs +
             1.0 / 60.0;
 
-        // If the path is getting rapidly changed, we cheat so that the robot
-        // actually moves.
-        // See OurRobot._recentPathChangeTimes for more info.
-        // if (_robot->isRepeatedlyChangingPaths()) {
-        // 	timeIntoPath = max<float>(timeIntoPath,
-        // OurRobot::PathChangeHistoryBufferSize * 1.0f/60.0f * 0.8);
-        // 	cout << "Compensating!  new t = " << timeIntoPath << endl;
-        // }
-
-        // the 0.9 is a fudge factor
-        // we do this to compensate for lost command cycles
-        // double factor = *_path_jitter_compensation_factor;
-        // timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f *
-        // factor;
-        // cout << "------" << endl;
-        // cout << "path.startSpeed: " << _robot->path()->startSpeed << endl;
-        // cout << "botVel: (" << _robot->vel.x << ", " << _robot->vel.x << ")"
-        // << endl;
-        // cout << "timeIntoPath: " << timeIntoPath << endl;
-
         // evaluate path - where should we be right now?
         boost::optional<MotionInstant> optTarget =
             _robot->path()->evaluate(timeIntoPath);
@@ -196,12 +171,6 @@ void MotionControl::run() {
             acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
         target.vel += accelFactor;
-
-        // path change boost
-        if (_robot->consecutivePathChangeCount() > 0) {
-            float boost = *_path_change_boost;
-            target.vel += acceleration * boost;
-        }
 
         // PID on position
         target.vel.x += _positionXController.run(posError.x);
