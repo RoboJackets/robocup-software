@@ -112,101 +112,100 @@ $(document).ready(function(){initNavTree('_rect_8hpp_source.html','');});
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Shape.hpp&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;Point.hpp&quot;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;util.h&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;algorithm&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>Geometry2d {</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">class </span>Segment;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_geometry2d_1_1_rect.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_geometry2d_1_1_rect.html">Rect</a> : <span class="keyword">public</span> <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>() {}</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> p1) { pt[0] = pt[1] = p1; }</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> p1, <a class="code" href="class_geometry2d_1_1_point.html">Point</a> p2) {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        pt[0] = p1;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        pt[1] = p2;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    }</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; other) {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        pt[0] = other.pt[0];</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        pt[1] = other.pt[1];</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    }</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a>* clone() <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; operator+=(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> offset) {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        pt[0] += offset;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        pt[1] += offset;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; operator-=(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> offset) {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        pt[0] -= offset;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        pt[1] -= offset;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a> operator+(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> offset) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(pt[0] + offset, pt[1] + offset);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a> operator*(<span class="keywordtype">float</span> s) { <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(pt[0] * s, pt[1] * s); }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; operator*=(<span class="keywordtype">float</span> s) {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        pt[0] *= s;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        pt[1] *= s;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">bool</span> containsRect(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; other) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">bool</span> containsPoint(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> other) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> hit(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt)<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> containsPoint(pt); }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">bool</span> hit(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a>&amp; seg) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Point</a> center()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (pt[0] + pt[1]) / 2; }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> expand(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> expand(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; rect);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">float</span> minx()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::min(pt[0].x, pt[1].x); }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">float</span> miny()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::min(pt[0].y, pt[1].y); }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">float</span> maxx()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::max(pt[0].x, pt[1].x); }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">float</span> maxy()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::max(pt[0].y, pt[1].y); }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">bool</span> nearPoint(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt, <span class="keywordtype">float</span> threshold) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">bool</span> nearSegment(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a>&amp; seg, <span class="keywordtype">float</span> threshold) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">bool</span> intersects(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; other) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt[2];</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    std::string toString()<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        std::stringstream str;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        str &lt;&lt; <span class="stringliteral">&quot;Line&lt;&quot;</span> &lt;&lt; pt[0] &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; pt[1] &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordflow">return</span> str.str();</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;};</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span>Geometry2d {</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">class </span>Segment;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="class_geometry2d_1_1_rect.html">   11</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_geometry2d_1_1_rect.html">Rect</a> : <span class="keyword">public</span> <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a> {</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>() {}</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> p1) { pt[0] = pt[1] = p1; }</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> p1, <a class="code" href="class_geometry2d_1_1_point.html">Point</a> p2) {</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        pt[0] = p1;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        pt[1] = p2;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    }</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; other) {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        pt[0] = other.pt[0];</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        pt[1] = other.pt[1];</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    }</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="class_geometry2d_1_1_shape.html">Shape</a>* clone() <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; operator+=(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> offset) {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        pt[0] += offset;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        pt[1] += offset;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; operator-=(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> offset) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        pt[0] -= offset;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        pt[1] -= offset;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a> operator+(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> offset) {</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(pt[0] + offset, pt[1] + offset);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a> operator*(<span class="keywordtype">float</span> s) { <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>(pt[0] * s, pt[1] * s); }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; operator*=(<span class="keywordtype">float</span> s) {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        pt[0] *= s;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        pt[1] *= s;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    }</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">bool</span> containsRect(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">bool</span> containsPoint(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> other) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">bool</span> hit(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt)<span class="keyword"> const override </span>{ <span class="keywordflow">return</span> containsPoint(pt); }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">bool</span> hit(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a>&amp; seg) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Point</a> center()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (pt[0] + pt[1]) / 2; }</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> expand(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> expand(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; rect);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">float</span> minx()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::min(pt[0].x, pt[1].x); }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">float</span> miny()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::min(pt[0].y, pt[1].y); }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">float</span> maxx()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::max(pt[0].x, pt[1].x); }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">float</span> maxy()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> std::max(pt[0].y, pt[1].y); }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> nearPoint(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt, <span class="keywordtype">float</span> threshold) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">bool</span> nearSegment(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a>&amp; seg, <span class="keywordtype">float</span> threshold) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">bool</span> intersects(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_rect.html">Rect</a>&amp; other) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt[2];</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::string toString()<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        std::stringstream str;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        str &lt;&lt; <span class="stringliteral">&quot;Line&lt;&quot;</span> &lt;&lt; pt[0] &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; pt[1] &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span>;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">return</span> str.str();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;};</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div>
 <div class="ttc" id="class_geometry2d_1_1_segment_html"><div class="ttname"><a href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a></div><div class="ttdef"><b>Definition:</b> Segment.hpp:12</div></div>
 <div class="ttc" id="class_geometry2d_1_1_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a></div><div class="ttdoc">The shape class provides the interface to all shapes that are subclasses. </div><div class="ttdef"><b>Definition:</b> Shape.hpp:19</div></div>
-<div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:15</div></div>
-<div class="ttc" id="class_geometry2d_1_1_rect_html"><div class="ttname"><a href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a></div><div class="ttdef"><b>Definition:</b> Rect.hpp:12</div></div>
+<div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:13</div></div>
+<div class="ttc" id="class_geometry2d_1_1_rect_html"><div class="ttname"><a href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a></div><div class="ttdef"><b>Definition:</b> Rect.hpp:11</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><a class="el" href="dir_40506df144da4b42abe7ffe21204d9b9.html">Geometry2d</a></li><li class="navelem"><b>Rect.hpp</b></li>
-    <li class="footer">Generated on Mon Aug 31 2015 03:10:50 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Aug 31 2015 05:03:00 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

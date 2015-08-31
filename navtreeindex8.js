@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ad153d4548cf727c3109958fd0c4c22b3":[11,0,4,14,6,3,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aedaaa02d8f747fc8e7c64553f043635f":[11,0,4,14,6,3,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html":[11,0,4,14,6,3,0,0],
 "classgameplay_1_1timed__behavior_1_1_timed_behavior.html":[11,0,4,15,0],
@@ -242,6 +243,5 @@ var NAVTREEINDEX8 =
 "structcommand__t.html#a94ed95e8cfafc8f0003c9068648adeb9":[11,0,18,1],
 "structcommand__t.html#ac3e0119f9dad4e6bf296d097cb616f54":[11,0,18,4],
 "structcommand__t.html#aecafd32aee69a7a18c5a0ca6068b3a72":[11,0,18,3],
-"time_8hpp_source.html":[12,0,0,8],
-"util_8h_source.html":[12,0,0,0,10]
+"time_8hpp_source.html":[12,0,0,8]
 };

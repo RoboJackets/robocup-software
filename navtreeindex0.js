@@ -147,6 +147,7 @@ var NAVTREEINDEX0 =
 "_trapezoidal_path_8hpp_source.html":[12,0,2,4,8],
 "_tree_8hpp_source.html":[12,0,2,4,9],
 "_u_s_b_radio_8hpp_source.html":[12,0,2,5,4],
+"_util_8hpp_source.html":[12,0,0,0,10],
 "_utils_8hpp_source.html":[12,0,0,9],
 "_vision_dot_pattern_8hpp_source.html":[12,0,0,10],
 "_vision_receiver_8hpp_source.html":[12,0,2,29],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "class_configuration.html#afe8778c9553dc1ab93116c240b87c37c":[11,0,25,10],
 "class_console.html":[11,0,26],
 "class_debug_q_mutex.html":[11,0,27],
-"class_debug_q_mutex.html#a0c83fd3671fd84226adb041fab993cc0":[11,0,27,1],
-"class_debug_q_mutex.html#a32b802f6944bdf4862470b9ec7b5676e":[11,0,27,4]
+"class_debug_q_mutex.html#a0c83fd3671fd84226adb041fab993cc0":[11,0,27,1]
 };
