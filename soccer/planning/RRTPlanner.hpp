@@ -97,4 +97,4 @@ protected:
                                     std::vector<double>& ks2);
 };
 
-} // namespace Planning
+}  // namespace Planning

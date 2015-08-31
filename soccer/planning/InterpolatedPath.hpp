@@ -1,5 +1,5 @@
-
 #pragma once
+
 #include <planning/Path.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
@@ -7,6 +7,7 @@
 #include <Configuration.hpp>
 
 namespace Planning {
+
 /**
  * @brief Represents a motion path as a series of {pos, vel} pairs.
  *
@@ -19,8 +20,7 @@ namespace Planning {
 class InterpolatedPath : public Path {
 public:
     // Set of points in the path - used as waypoints
-    std::vector<Geometry2d::Point> points;
-    std::vector<Geometry2d::Point> vels;
+    std::vector<MotionInstant> waypoints;
     std::vector<float> times;
 
     /** default path is empty */
@@ -32,16 +32,14 @@ public:
     /** constructor from two points */
     InterpolatedPath(Geometry2d::Point p0, Geometry2d::Point p1);
 
-    // Adds an instant ot the end of the path for the given time
-    // time should not bet less than the last time
+    /// Adds an instant at the end of the path for the given time.
+    /// Time should not bet less than the last time.
     void addInstant(float time, MotionInstant instant) {
-        assert(points.size() == vels.size() && vels.size() == times.size());
         if (!times.empty()) {
             assert(time > times.back());
         }
         times.push_back(time);
-        points.push_back(instant.pos);
-        vels.push_back(instant.vel);
+        waypoints.push_back(instant);
     }
 
     // Overriden Path Methods
@@ -53,29 +51,28 @@ public:
         float endTime = std::numeric_limits<float>::infinity()) const override;
     virtual void draw(SystemState* const state, const QColor& color,
                       const QString& layer) const override;
-    virtual bool evaluate(float t,
-                          MotionInstant& targetMotionInstant) const override;
+    virtual boost::optional<MotionInstant> evaluate(float t) const override;
     virtual float getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 
-    bool empty() const { return points.empty(); }
+    bool empty() const { return waypoints.empty(); }
 
-    void clear() { points.clear(); }
+    void clear() { waypoints.clear(); }
 
     /**
      * Calulates the length of the path
      *
-     * \param[in] 	start Index of point in path to use at start point.
-     * \returns 	the length of the path starting at point (start).
+     * @param[in] start Index of point in path to use at start point.
+     * @return the length of the path starting at point (start).
      */
     float length(unsigned int start = 0) const;
 
     /**
      * Calulates the length of the path
      *
-     * \param[in] 	start Index of point in path to use at start point.
-     * \param[in] 	end Index of point in path to use at end point.
-     * \returns 	the length of the path starting at point (start) and ending
+     * @param[in] 	start Index of point in path to use at start point.
+     * @param[in] 	end Index of point in path to use at end point.
+     * @return the length of the path starting at point (start) and ending
      * at
      * point [end].
      */
@@ -99,37 +96,34 @@ public:
     // Returns the shortest distance from this path to the given point
     float distanceTo(Geometry2d::Point pt) const;
 
-    // Returns the start of the path
-    boost::optional<Geometry2d::Point> start() const;
+    /// Returns the start of the path or boost::none if the path is empty.
+    boost::optional<MotionInstant> start() const;
 
     // Returns a new path starting from a given point
-    void startFrom(Geometry2d::Point pt,
-                   Planning::InterpolatedPath& result) const;
+    // void startFrom(Geometry2d::Point pt,
+    //                Planning::InterpolatedPath& result) const;
 
     /**
      * Evaluates the point and velocity of the robot at a given distance in the
-     * path.
+     * path.  Similar to evaluate(), but gets the MotionInstant at a given
+     * distance rather than time into the path.
      *
-     * @param[in] 	distance A given distance the robot has traveled down the
-     * path from the start or t=0
-     * @param[out] 	position The position the robot given distance in the path
-     * @param[out] 	direction The target velocity of the robot at the given
-     * distance in the path
-     * @return 		true if the path is valid at the given distance, false if
-     * you've gone past the end
+     * @param[in] distance A given distance from the start of the path
+     * @return The MotionInstant at the given distance into the path.  Returns
+     *     boost::none if the given distance is not in the range of the path.
      */
-    bool getPoint(float distance, Geometry2d::Point& position,
-                  Geometry2d::Point& direction) const;
+    // boost::optional<MotionInstant> getPoint(float distance) const;
 
     /**
      * Estimates how long it would take for the robot to get to a certain point
      * in the path using
      * Trapezoidal motion.
      *
-     * @param[in] 	index Index of the point on the path
-     * @return 		the estimated time it would take for the robot to a point on
-     * the path starting from the start of the path
+     * @param index Index of the point on the path
+     * @return The estimated time it would take for the robot to a point on the
+     *     path starting from the start of the path
      */
     float getTime(int index) const;
 };
-}
+
+}  // namespace Planning

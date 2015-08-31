@@ -6,6 +6,7 @@
 #include <Configuration.hpp>
 
 namespace Planning {
+
 /**
  * @brief Represents a motion path made up of a series of Paths.
  *
@@ -33,8 +34,7 @@ public:
      */
     void append(std::unique_ptr<Path> path);
 
-    virtual bool evaluate(float t,
-                          MotionInstant& targetMotionInstant) const override;
+    virtual boost::optional<MotionInstant> evaluate(float t) const override;
     virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
                      float startTime = 0) const override;
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
@@ -46,4 +46,5 @@ public:
     virtual boost::optional<MotionInstant> destination() const override;
     virtual std::unique_ptr<Path> clone() const override;
 };
-}
+
+}  // namespace Planning
