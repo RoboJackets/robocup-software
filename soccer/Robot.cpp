@@ -3,6 +3,7 @@
 #include <modeling/RobotFilter.hpp>
 #include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>
+#include <planning/DirectTargetPathPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <RobotConfig.hpp>
@@ -82,7 +83,7 @@ OurRobot::OurRobot(int shell, SystemState* state)
 
     _motionControl = new MotionControl(this);
 
-    _planner = make_shared<Planning::RRTPlanner>(250);
+    _planner = nullptr;
 
     resetAvoidRobotRadii();
 
@@ -458,10 +459,24 @@ void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     _path = std::move(path);
 }
 
-void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
-    Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
-    _lastCommandType = _motionCommand.getCommandType();
+std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(Planning::MotionCommand::CommandType type) {
+    Planning::SingleRobotPathPlanner* planner = nullptr;
 
+    switch(type) {
+        case Planning::MotionCommand::PathTarget:
+            planner = new Planning::RRTPlanner(250);
+            break;
+        case Planning::MotionCommand::DirectTarget:
+            planner = new Planning::DirectTargetPathPlanner();
+            break;
+        default:
+            break;
+    }
+
+    return std::unique_ptr<Planning::SingleRobotPathPlanner>(planner);
+}
+
+void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
     // if no goal, command robot to stop in place
     if (_state->gameState.state == GameState::Halt) {
         setPath(nullptr);
@@ -492,60 +507,22 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
     fullObstacles.add(oppObs);
     fullObstacles.add(globalObstacles);
 
-    if (_motionCommand.getCommandType() ==
-        Planning::MotionCommand::PathTarget) {
-        // For PathTarget commands, just run the planner - it implements its own
-        // replan logic.
+    Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
+    _lastCommandType = _motionCommand.getCommandType();
 
-        // If we've changed command types, delete the previous path
-        if (lastCommandType != Planning::MotionCommand::PathTarget) {
-            _path = nullptr;
-        }
-        setPath(_planner->run(MotionInstant(this->pos, this->vel),
-                              _motionCommand, _motionConstraints,
-                              &fullObstacles, std::move(_path)));
-    } else if (_motionCommand.getCommandType() ==
-               Planning::MotionCommand::DirectTarget) {
-        // For DirectTarget commands, we replan if the goal position or velocity
-        // have changed beyond a certain threshold
-
-        bool pathInvalidated = false;
-        if (!_path ||
-            lastCommandType != Planning::MotionCommand::DirectTarget) {
-            pathInvalidated = true;
-        } else {
-            Geometry2d::Point endTarget;
-            float endSpeed = _motionCommand.getDirectTarget(endTarget);
-            float targetPosChange =
-                _path->destination()
-                    ? (_path->destination()->pos - endTarget).mag()
-                    : numeric_limits<float>::infinity();
-            float targetVelChange =
-                _path->destination()
-                    ? (_path->destination()->vel.mag() - endSpeed)
-                    : numeric_limits<float>::infinity();
-
-            if (targetPosChange >
-                    Planning::SingleRobotPathPlanner::goalChangeThreshold() ||
-                targetVelChange >
-                    Planning::SingleRobotPathPlanner::goalChangeThreshold()) {
-                // FIXME: goalChangeThreshold shouldn't be used for checking
-                // speed differences as it is in the above 'if' statement
-                pathInvalidated = true;
-            }
-        }
-
-        if (pathInvalidated) {
-            Geometry2d::Point endTarget;
-            float endSpeed = _motionCommand.getDirectTarget(endTarget);
-            auto path =
-                unique_ptr<Planning::Path>(new Planning::TrapezoidalPath(
-                    this->pos, this->vel.mag(), endTarget, endSpeed,
-                    _motionConstraints));
-            path->setStartTime(timestamp());
-            setPath(std::move(path));
-        }
+    // If we have a different type of motion command, discard the old path.
+    if (lastCommandType != _motionCommand.getCommandType()) {
+        _path = nullptr;
     }
+
+    // Make sure we're using the right planner
+    if (!_planner || lastCommandType != _motionCommand.getCommandType()) {
+        _planner = PlannerForCommandType(_motionCommand.getCommandType());
+    }
+
+    setPath(_planner->run(MotionInstant(this->pos, this->vel),
+                          _motionCommand, _motionConstraints,
+                          &fullObstacles, std::move(_path)));
 
     if (_path) {
         _path->draw(_state, Qt::magenta, "Planning");
