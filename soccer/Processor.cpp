@@ -397,15 +397,65 @@ void Processor::run() {
         _state.logFrame->set_team_name_blue(bluename);
         _state.logFrame->set_team_name_yellow(yellowname);
 
-        if (_gameplayModule) {
-            _gameplayModule->run();
+        // Run high-level soccer logic
+        _gameplayModule->run();
+
+        /// Collect global obstacles
+        Geometry2d::ShapeSet globalObstacles =
+            _gameplayModule->globalObstacles();
+        Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
+        globalObstaclesWithGoalZones.add(_gameplayModule->goalZoneObstacles());
+
+        // execute path planning for each robot
+        for (OurRobot* r : _state.self) {
+            if (r && r->visible) {
+                auto& globalObstaclesForBot =
+                    (r->shell() == _gameplayModule->goalieID() ||
+                     r->isPenaltyKicker)
+                        ? globalObstacles
+                        : globalObstaclesWithGoalZones;
+
+                if (_state.gameState.state == GameState::Halt) {
+                    r->setPath(nullptr);
+                    continue;
+                }
+
+                if (r->motionCommand().getCommandType() ==
+                    Planning::MotionCommand::WorldVel) {
+                    r->setPath(nullptr);
+                    continue;
+                }
+
+                // create and visualize obstacles
+                Geometry2d::ShapeSet fullObstacles =
+                    r->collectAllObstacles(globalObstaclesForBot);
+
+                // If we have a different type of motion command, discard the
+                // old path.
+                if (!r->pathPlanner() ||
+                    r->pathPlanner()->commandType() !=
+                        r->motionCommand().getCommandType()) {
+                    r->setPath(nullptr);
+                }
+
+                // Make sure we're using the right planner
+                if (!r->pathPlanner() ||
+                    r->pathPlanner()->commandType() !=
+                        r->motionCommand().getCommandType()) {
+                    r->setPathPlanner(Planning::PlannerForCommandType(
+                        r->motionCommand().getCommandType()));
+                }
+
+                r->setPath(r->pathPlanner()->run(
+                    Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
+                    r->motionConstraints(), &fullObstacles,
+                    std::move(r->path())));
+
+                if (r->path()) {
+                    r->path()->draw(&_state, Qt::magenta, "Planning");
+                }
+            }
         }
-
-        // TODO: run path planning
-        
-
-
-        
 
         // Run velocity controllers
         for (OurRobot* robot : _state.self) {

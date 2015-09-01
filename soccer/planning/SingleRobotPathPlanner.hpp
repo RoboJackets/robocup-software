@@ -37,7 +37,8 @@ private:
 
 /// Gets the subclass of SingleRobotPathPlanner responsible for handling the
 /// given command type.  Any new SingleRobotPathPlanner classes should be
-/// registered by placing them in this function's implementation in the .cpp file.
+/// registered by placing them in this function's implementation in the .cpp
+/// file.
 std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(
     Planning::MotionCommand::CommandType type);
 
