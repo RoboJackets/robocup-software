@@ -1,6 +1,7 @@
 #include "Rect.hpp"
 #include "Point.hpp"
 #include "Segment.hpp"
+#include <Constants.hpp>
 
 using namespace std;
 
@@ -56,6 +57,8 @@ bool Rect::hit(const Segment& seg) const {
            seg.intersects(
                Segment(Point(maxx(), maxy()), Point(maxx(), miny())));
 }
+
+bool Rect::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
 
 void Rect::expand(Point p) {
     pt[0].x = min(pt[0].x, p.x);

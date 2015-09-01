@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <SystemState.hpp>
 #include "MotionInstant.hpp"
 
@@ -15,6 +15,7 @@ namespace Planning {
  */
 class Path {
 public:
+    Path() : _startTime(0) {}
     virtual ~Path() {}
 
     /**
@@ -38,7 +39,7 @@ public:
      * @param[in] 	startTime The time on the path to start checking from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const = 0;
 
     /**
@@ -82,5 +83,13 @@ public:
      * Returns a deep copy of the Path
      */
     virtual std::unique_ptr<Path> clone() const = 0;
+
+    /// The time the path starts at
+    const Time startTime() const { return _startTime; }
+    void setStartTime(Time t) { _startTime = t; }
+
+protected:
+    Time _startTime;
 };
-}
+
+}  // namespace Planning

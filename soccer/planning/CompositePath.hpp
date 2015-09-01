@@ -2,7 +2,7 @@
 #include <planning/Path.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Configuration.hpp>
 
 namespace Planning {
@@ -11,8 +11,8 @@ namespace Planning {
  * @brief Represents a motion path made up of a series of Paths.
  *
  * @details The path represents a function of position given time that the robot
- * should follow.
- * The path is made up of other Paths and can be made up of CompositePaths.
+ *     should follow. The path is made up of other Paths and can be made up of
+ *     CompositePaths.
  */
 class CompositePath : public Path {
 private:
@@ -35,7 +35,7 @@ public:
     void append(std::unique_ptr<Path> path);
 
     virtual boost::optional<MotionInstant> evaluate(float t) const override;
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& shape, float& hitTime,
                      float startTime = 0) const override;
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
                       const QString& layer = "Motion") const override;

@@ -11,12 +11,12 @@ using namespace Geometry2d;
 namespace Planning {
 
 InterpolatedPath::InterpolatedPath(Point p0) {
-    waypoints.emplace_back(p0, Point());
+    waypoints.emplace_back(MotionInstant(p0, Point()), 0);
 }
 
 InterpolatedPath::InterpolatedPath(Point p0, Point p1) {
-    waypoints.emplace_back(p0, Point());
-    waypoints.emplace_back(p1, Point());
+    waypoints.emplace_back(MotionInstant(p0, Point()), 0);
+    waypoints.emplace_back(MotionInstant(p1, Point()), 1);
 }
 
 float InterpolatedPath::length(unsigned int start) const {
@@ -30,7 +30,7 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
 
     float length = 0;
     for (unsigned int i = start; i < end; ++i) {
-        length += (waypoints[i + 1].pos - waypoints[i].pos).mag();
+        length += (waypoints[i + 1].pos() - waypoints[i].pos()).mag();
     }
     return length;
 }
@@ -39,14 +39,14 @@ boost::optional<MotionInstant> InterpolatedPath::start() const {
     if (waypoints.empty())
         return boost::none;
     else
-        return waypoints.front();
+        return waypoints.front().instant;
 }
 
 boost::optional<MotionInstant> InterpolatedPath::destination() const {
     if (waypoints.empty())
         return boost::none;
     else
-        return waypoints.back();
+        return waypoints.back().instant;
 }
 
 // Returns the index of the point in this path nearest to pt.
@@ -56,10 +56,10 @@ int InterpolatedPath::nearestIndex(Point pt) const {
     }
 
     int index = 0;
-    float dist = pt.distTo(waypoints[0].pos);
+    float dist = pt.distTo(waypoints[0].pos());
 
     for (unsigned int i = 1; i < waypoints.size(); ++i) {
-        float d = pt.distTo(waypoints[i].pos);
+        float d = pt.distTo(waypoints[i].pos());
         if (d < dist) {
             dist = d;
             index = i;
@@ -69,12 +69,12 @@ int InterpolatedPath::nearestIndex(Point pt) const {
     return index;
 }
 
-bool InterpolatedPath::hit(const CompositeShape& obstacles, float& hitTime,
+bool InterpolatedPath::hit(const ShapeSet& obstacles, float& hitTime,
                            float startTime) const {
     size_t start = 0;
-    for (float t : times) {
+    for (auto& entry : waypoints) {
         start++;
-        if (t > startTime) {
+        if (entry.time > startTime) {
             start--;
             break;
         }
@@ -87,18 +87,18 @@ bool InterpolatedPath::hit(const CompositeShape& obstacles, float& hitTime,
 
     // This code disregards obstacles which the robot starts in. This allows the
     // robot to move out a obstacle if it is already in one.
-    std::set<std::shared_ptr<Shape>> startHitSet;
-    obstacles.hit(waypoints[start].pos, startHitSet);
+    std::set<std::shared_ptr<Shape>> startHitSet =
+        obstacles.hitSet(waypoints[start].pos());
 
     for (size_t i = start; i < waypoints.size() - 1; i++) {
-        std::set<std::shared_ptr<Shape>> newHitSet;
-        if (obstacles.hit(Segment(waypoints[i].pos, waypoints[i + 1].pos),
-                          newHitSet)) {
+        std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(
+            Segment(waypoints[i].pos(), waypoints[i + 1].pos()));
+        if (!newHitSet.empty()) {
             for (std::shared_ptr<Shape> hit : newHitSet) {
-                // If it hits something, check if the hit was in the origional
+                // If it hits something, check if the hit was in the original
                 // hitSet
                 if (startHitSet.find(hit) == startHitSet.end()) {
-                    hitTime = times[i];
+                    hitTime = waypoints[i].time;
                     return true;
                 }
             }
@@ -115,7 +115,7 @@ float InterpolatedPath::distanceTo(Point pt) const {
 
     float dist = -1;
     for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
-        Segment s(waypoints[i].pos, waypoints[i + 1].pos);
+        Segment s(waypoints[i].pos(), waypoints[i + 1].pos());
         const float d = s.distTo(pt);
 
         if (dist < 0 || d < dist) {
@@ -134,7 +134,7 @@ Segment InterpolatedPath::nearestSegment(Point pt) const {
     }
 
     for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
-        Segment s(waypoints[i].pos, waypoints[i + 1].pos);
+        Segment s(waypoints[i].pos(), waypoints[i + 1].pos());
         const float d = s.distTo(pt);
 
         if (dist < 0 || d < dist) {
@@ -154,7 +154,7 @@ float InterpolatedPath::length(Point pt) const {
     }
 
     for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
-        Segment s(waypoints[i].pos, waypoints[i + 1].pos);
+        Segment s(waypoints[i].pos(), waypoints[i + 1].pos());
 
         // add the segment length
         length += s.length();
@@ -183,8 +183,8 @@ void InterpolatedPath::draw(SystemState* const state,
                             const QString& layer = "Motion") const {
     Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
     dbg->set_layer(state->findDebugLayer(layer));
-    for (const MotionInstant& waypoint : waypoints) {
-        *dbg->add_points() = waypoint.pos;
+    for (const Entry& entry : waypoints) {
+        *dbg->add_points() = entry.pos();
     }
     dbg->set_color(color(col));
     return;
@@ -216,46 +216,45 @@ boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
 
     targetVelOut = direction * linearSpeed;
     */
-    if (times.size() == 0) {
-        return boost::none;
-    } else if (times.size() == 1) {
+    if (waypoints.size() == 0 || waypoints.size() == 1) {
         return boost::none;
     }
-    if (t < times[0]) {
+    if (t < waypoints[0].time) {
         debugThrow(
             invalid_argument("The start time should not be less than zero"));
     }
 
     int i = 0;
-    while (times[i] <= t) {
-        if (times[i] == t) {
-            return waypoints[i];
+    while (waypoints[i].time <= t) {
+        if (waypoints[i].time == t) {
+            return waypoints[i].instant;
         }
         i++;
         if (i == size()) {
             return boost::none;
         }
     }
-    float deltaT = (times[i] - times[i - 1]);
+    float deltaT = (waypoints[i].time - waypoints[i - 1].time);
     if (deltaT == 0) {
-        return waypoints[i];
+        return waypoints[i].instant;
     }
-    float constant = (t - times[i - 1]) / deltaT;
+    float constant = (t - waypoints[i - 1].time) / deltaT;
 
-    return MotionInstant(
-        waypoints[i - 1].pos * (1 - constant) + waypoints[i].pos * (constant),
-        waypoints[i - 1].vel * (1 - constant) + waypoints[i].vel * (constant));
+    return MotionInstant(waypoints[i - 1].pos() * (1 - constant) +
+                             waypoints[i].pos() * (constant),
+                         waypoints[i - 1].vel() * (1 - constant) +
+                             waypoints[i].vel() * (constant));
 }
 
 size_t InterpolatedPath::size() const { return waypoints.size(); }
 
-bool InterpolatedPath::valid() const { return !waypoints.empty(); }
-
-float InterpolatedPath::getTime(int index) const { return times[index]; }
+float InterpolatedPath::getTime(int index) const {
+    return waypoints[index].time;
+}
 
 float InterpolatedPath::getDuration() const {
-    if (times.size() > 0) {
-        return times.back();
+    if (waypoints.size() > 0) {
+        return waypoints.back().time;
     } else {
         return 0;
     }
@@ -294,7 +293,7 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
         return this->clone();
     }
 
-    InterpolatedPath* path = new InterpolatedPath();
+    InterpolatedPath* subpath = new InterpolatedPath();
 
     // Bound the endTime to a reasonable time.
     endTime = min(endTime, getDuration());
@@ -302,24 +301,23 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
     // Find the first point in the vector of points which will be included in
     // the subPath
     size_t start = 0;
-    while (times[start] <= startTime) {
+    while (waypoints[start].time <= startTime) {
         start++;
     }
     start--;
 
     // Add the first points to the InterpolatedPath
-    path->times.push_back(0);
-    if (times[start] == startTime) {
-        path->waypoints.push_back(waypoints[start]);
+    if (waypoints[start].time == startTime) {
+        subpath->waypoints.emplace_back(waypoints[start].instant, 0);
     } else {
-        float deltaT = (times[start + 1] - times[start]);
-        float constant = (times[start + 1] - startTime) / deltaT;
-        Point startPos = waypoints[start + 1].pos * (1 - constant) +
-                         waypoints[start].pos * (constant);
-        Point vi = waypoints[start + 1].vel * (1 - constant) +
-                   waypoints[start].vel * (constant);
+        float deltaT = (waypoints[start + 1].time - waypoints[start].time);
+        float constant = (waypoints[start + 1].time - startTime) / deltaT;
+        Point startPos = waypoints[start + 1].pos() * (1 - constant) +
+                         waypoints[start].pos() * (constant);
+        Point vi = waypoints[start + 1].vel() * (1 - constant) +
+                   waypoints[start].vel() * (constant);
 
-        path->waypoints.emplace_back(startPos, vi);
+        subpath->waypoints.emplace_back(MotionInstant(startPos, vi), 0);
     }
 
     // Find the last point in the InterpolatedPath
@@ -328,38 +326,41 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
     size_t end;
     if (endTime >= getDuration()) {
         end = size() - 1;
-        vf = waypoints[end].vel;
-        endPos = waypoints[end].pos;
+        vf = waypoints[end].vel();
+        endPos = waypoints[end].pos();
     } else {
         end = start + 1;
-        while (times[end] < endTime) {
+        while (waypoints[end].time < endTime) {
             end++;
         }
-        float deltaT = (times[end] - times[end - 1]);
-        float constant = (times[end] - endTime) / deltaT;
-        vf = waypoints[end].vel * (1 - constant) +
-             waypoints[end - 1].vel * (constant);
-        endPos = waypoints[end].pos * (1 - constant) +
-                 waypoints[end - 1].pos * constant;
+        float deltaT = (waypoints[end].time - waypoints[end - 1].time);
+        float constant = (waypoints[end].time - endTime) / deltaT;
+        vf = waypoints[end].vel() * (1 - constant) +
+             waypoints[end - 1].vel() * (constant);
+        endPos = waypoints[end].pos() * (1 - constant) +
+                 waypoints[end - 1].pos() * constant;
     }
 
     // Add all the points in the middle
     size_t i = start + 1;
     while (i < end) {
-        path->waypoints.push_back(waypoints[i]);
-        path->times.push_back(times[i] - startTime);
+        subpath->waypoints.emplace_back(waypoints[i].instant,
+                                        waypoints[i].time - startTime);
         i++;
     }
 
     // Add the last point
-    path->waypoints.emplace_back(endPos, vf);
-    path->times.push_back(endTime - startTime);
+    subpath->waypoints.emplace_back(MotionInstant(endPos, vf),
+                                    endTime - startTime);
 
-    return unique_ptr<Path>(path);
+    return unique_ptr<Path>(subpath);
 }
 
 unique_ptr<Path> InterpolatedPath::clone() const {
-    return unique_ptr<Path>(new InterpolatedPath(*this));
+    InterpolatedPath* cp = new InterpolatedPath();
+    cp->waypoints = waypoints;
+    cp->setStartTime(startTime());
+    return std::unique_ptr<Path>(cp);
 }
 
 }  // namespace Planning

@@ -91,17 +91,24 @@ void SystemState::drawShape(const std::shared_ptr<Geometry2d::Shape>& obs,
         std::dynamic_pointer_cast<Geometry2d::Circle>(obs);
     std::shared_ptr<Geometry2d::Polygon> polyObs =
         std::dynamic_pointer_cast<Geometry2d::Polygon>(obs);
+    std::shared_ptr<Geometry2d::CompositeShape> compObs =
+        std::dynamic_pointer_cast<Geometry2d::CompositeShape>(obs);
     if (circObs)
         drawCircle(circObs->center, circObs->radius(), color, layer);
     else if (polyObs)
         drawPolygon(polyObs->vertices, color, layer);
+    else if (compObs) {
+        for (const std::shared_ptr<Geometry2d::Shape>& obs :
+             compObs->subshapes())
+            drawShape(obs, color, layer);
+    }
 }
 
-void SystemState::drawCompositeShape(const Geometry2d::CompositeShape& group,
-                                     const QColor& color,
-                                     const QString& layer) {
-    for (const std::shared_ptr<Geometry2d::Shape>& obs : group)
-        drawShape(obs, color, layer);
+void SystemState::drawShapeSet(const Geometry2d::ShapeSet& shapes,
+                               const QColor& color, const QString& layer) {
+    for (auto& shape : shapes.shapes()) {
+        drawShape(shape, color, layer);
+    }
 }
 
 void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc,
