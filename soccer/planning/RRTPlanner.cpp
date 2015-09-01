@@ -159,7 +159,7 @@ Geometry2d::Point RRTPlanner::findNonBlockedGoal(
         // obstacles.
         float oldDist = (*prevGoal - goal).mag();
         float newDist = (newGoal - goal).mag();
-        if (newDist + Robot_Radius < oldDist || obstacles->hit(goal)) {
+        if (newDist + Robot_Radius < oldDist || obstacles->hit(*prevGoal)) {
             return newGoal;
         } else {
             return *prevGoal;
