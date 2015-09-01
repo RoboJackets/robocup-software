@@ -24,6 +24,7 @@ set(ROBOCUP_LIB_SRC
     "NewRefereeModule.cpp"
     "planning/CompositePath.cpp"
     "planning/InterpolatedPath.cpp"
+    "planning/IndependentMultiRobotPathPlanner.cpp"
     "planning/MotionConstraints.cpp"
     "planning/RRTPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
