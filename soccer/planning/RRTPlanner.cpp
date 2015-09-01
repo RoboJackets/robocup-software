@@ -110,26 +110,20 @@ std::unique_ptr<Path> RRTPlanner::run(
         return unique_ptr<Path>(path);
     }
 
+    // Locate a goal point that is obstacle-free
+    boost::optional<Geometry2d::Point> prevGoal;
+    if (prevPath) prevGoal = prevPath->destination()->pos;
+    goal.pos = findNonBlockedGoal(goal.pos, prevGoal, obstacles);
+
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
                      prevPath.get())) {
-        // TODO: the previous implementation of replanning (in
-        // OurRobot.replanIfNeeded()) did this in a loop in case planning
-        // failed.  Should we re-implement that logic here?
-
-        // Locate a goal point that is obstacle-free
-        //
-        // TODO: only use this new non- blocked goal if it's better than the one
-        // from the previous planning iteration (if any)
-        goal.pos = findNonBlockedGoal(goal.pos, obstacles);
-
         // Run bi-directional RRT to generate a path.
         InterpolatedPath* path =
             runRRT(start, goal, motionConstraints, obstacles);
 
         // If RRT failed, the path will be empty, so we need to add a single
-        // point
-        // to make it valid.
+        // point to make it valid.
         if (path && path->waypoints.empty()) {
             path->waypoints.emplace_back(
                 MotionInstant(start.pos, Geometry2d::Point()), 0);
@@ -141,7 +135,8 @@ std::unique_ptr<Path> RRTPlanner::run(
 }
 
 Geometry2d::Point RRTPlanner::findNonBlockedGoal(
-    Geometry2d::Point goal, const Geometry2d::ShapeSet* obstacles, int maxItr) {
+    Geometry2d::Point goal, boost::optional<Geometry2d::Point> prevGoal,
+    const Geometry2d::ShapeSet* obstacles, int maxItr) {
     if (obstacles && obstacles->hit(goal)) {
         FixedStepTree goalTree;
         goalTree.init(goal, obstacles);
@@ -149,6 +144,7 @@ Geometry2d::Point RRTPlanner::findNonBlockedGoal(
 
         // The starting point is in an obstacle extend the tree until we find an
         // unobstructed point
+        Geometry2d::Point newGoal;
         for (int i = 0; i < maxItr; ++i) {
             Geometry2d::Point r = randomPoint();
 
@@ -157,8 +153,22 @@ Geometry2d::Point RRTPlanner::findNonBlockedGoal(
 
             // if the new point is not blocked, it becomes the new goal
             if (newPoint && newPoint->hit.empty()) {
-                return newPoint->pos;
+                newGoal = newPoint->pos;
+                break;
             }
+        }
+
+        if (!prevGoal) return newGoal;
+
+        // Only use this newly-found point if it's closer to the desired goal by
+        // at least one robot radius or the old goal now collides with
+        // obstacles.
+        float oldDist = (*prevGoal - goal).mag();
+        float newDist = (newGoal - goal).mag();
+        if (newDist + Robot_Radius < oldDist || obstacles->hit(goal)) {
+            return newGoal;
+        } else {
+            return *prevGoal;
         }
     }
 

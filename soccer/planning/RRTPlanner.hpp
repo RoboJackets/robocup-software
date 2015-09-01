@@ -9,6 +9,7 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 
+#include <boost/optional.hpp>
 #include <Eigen/Dense>
 #include <list>
 
@@ -64,9 +65,9 @@ protected:
 
     /// If the given goal point is in an obstacle, uses an RRT to attempt to
     /// find a point that is close, but not blocked.
-    Geometry2d::Point findNonBlockedGoal(Geometry2d::Point goal,
-                                         const Geometry2d::ShapeSet* obstacles,
-                                         int maxItr = 100);
+    Geometry2d::Point findNonBlockedGoal(
+        Geometry2d::Point goal, boost::optional<Geometry2d::Point> prevGoal,
+        const Geometry2d::ShapeSet* obstacles, int maxItr = 100);
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     Planning::InterpolatedPath* runRRT(
