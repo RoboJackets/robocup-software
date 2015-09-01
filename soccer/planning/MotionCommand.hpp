@@ -44,4 +44,5 @@ private:
     // The type of command
     CommandType _commandType;
 };
-}
+
+}  // namespace Planning

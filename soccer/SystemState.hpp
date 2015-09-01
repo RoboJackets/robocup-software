@@ -8,6 +8,7 @@
 #include <QColor>
 
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
@@ -103,10 +104,9 @@ public:
                    const QColor& color = Qt::black,
                    const QString& layer = QString());
     /** @ingroup drawing_functions */
-    void drawCompositeShape(const Geometry2d::CompositeShape& group,
-                            const QColor& color = Qt::black,
-                            const QString& layer = QString());
-
+    void drawShapeSet(const Geometry2d::ShapeSet& shapes,
+                      const QColor& color = Qt::black,
+                      const QString& layer = QString());
     Time timestamp;
     GameState gameState;
 

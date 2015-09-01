@@ -57,7 +57,7 @@ public:
 
     bool containsPoint(Point other) const override;
 
-    bool hit(Point pt) const override { return containsPoint(pt); }
+    bool hit(Point pt) const override;
 
     bool hit(const Segment& seg) const override;
 
