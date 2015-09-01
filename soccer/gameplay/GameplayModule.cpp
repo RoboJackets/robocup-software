@@ -270,6 +270,13 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
     return obstacles;
 }
 
+Geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
+    Geometry2d::ShapeSet zones;
+    zones.add(_theirGoalArea);
+    zones.add(_ourGoalArea);
+    return zones;
+}
+
 /**
  * runs the current play
  */
@@ -370,62 +377,6 @@ void Gameplay::GameplayModule::run() {
         }
     }
     PyGILState_Release(state);
-
-    /// determine global obstacles - field requirements
-    /// Two versions - one set with goal area, another without for goalie
-    Geometry2d::ShapeSet global_obstacles = globalObstacles();
-    Geometry2d::ShapeSet obstacles_with_goals = global_obstacles;
-    obstacles_with_goals.add(_ourGoalArea);
-    obstacles_with_goals.add(_theirGoalArea);
-
-    /// execute path planning for each robot
-    for (OurRobot* r : _state->self) {
-        if (r && r->visible) {
-            auto& globalObstaclesForBot =
-                (r->shell() == _goalieID || r->isPenaltyKicker)
-                    ? global_obstacles
-                    : obstacles_with_goals;
-
-            if (_state->gameState.state == GameState::Halt) {
-                r->setPath(nullptr);
-                continue;
-            }
-
-            if (r->motionCommand().getCommandType() ==
-                Planning::MotionCommand::WorldVel) {
-                r->setPath(nullptr);
-                continue;
-            }
-
-            // create and visualize obstacles
-            Geometry2d::ShapeSet fullObstacles =
-                r->collectAllObstacles(globalObstaclesForBot);
-
-            // If we have a different type of motion command, discard the old
-            // path.
-            if (!r->pathPlanner() ||
-                r->pathPlanner()->commandType() !=
-                    r->motionCommand().getCommandType()) {
-                r->setPath(nullptr);
-            }
-
-            // Make sure we're using the right planner
-            if (!r->pathPlanner() ||
-                r->pathPlanner()->commandType() !=
-                    r->motionCommand().getCommandType()) {
-                r->setPathPlanner(Planning::PlannerForCommandType(
-                    r->motionCommand().getCommandType()));
-            }
-
-            r->setPath(r->pathPlanner()->run(
-                Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
-                r->motionConstraints(), &fullObstacles, std::move(r->path())));
-
-            if (r->path()) {
-                r->path()->draw(_state, Qt::magenta, "Planning");
-            }
-        }
-    }
 
     /// visualize
     if (_state->gameState.stayAwayFromBall() && _state->ball.valid) {

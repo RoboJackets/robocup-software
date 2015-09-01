@@ -101,6 +101,14 @@ public:
 
     void calculateFieldObstacles();
 
+    /**
+     * Returns the current set of global obstacles, including the field
+     */
+    Geometry2d::ShapeSet globalObstacles() const;
+
+    /// Returns a ShapeSet containing both goal zones
+    Geometry2d::ShapeSet goalZoneObstacles() const;
+
 protected:
     boost::python::object getRootPlay();
 
@@ -137,11 +145,6 @@ private:
     std::shared_ptr<Geometry2d::Polygon> _theirGoal;
 
     /// utility functions
-
-    /**
-     * Returns the current set of global obstacles, including the field
-     */
-    Geometry2d::ShapeSet globalObstacles() const;
 
     int _our_score_last_frame;
 
