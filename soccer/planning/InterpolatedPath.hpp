@@ -66,7 +66,6 @@ public:
     virtual boost::optional<MotionInstant> evaluate(float t) const override;
     virtual float getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
-    bool valid() const override { return !empty(); }
 
     bool empty() const { return waypoints.empty(); }
 

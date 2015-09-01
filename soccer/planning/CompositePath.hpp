@@ -45,7 +45,6 @@ public:
         float endTime = std::numeric_limits<float>::infinity()) const override;
     virtual boost::optional<MotionInstant> destination() const override;
     virtual std::unique_ptr<Path> clone() const override;
-    virtual bool valid() const override { return !paths.empty(); }
 };
 
 }  // namespace Planning
