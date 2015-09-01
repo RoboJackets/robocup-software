@@ -476,6 +476,27 @@ std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(Planning
     return std::unique_ptr<Planning::SingleRobotPathPlanner>(planner);
 }
 
+Geometry2d::ShapeSet OurRobot::collectAllObstacles(const Geometry2d::ShapeSet& globalObstacles) {
+    Geometry2d::ShapeSet fullObstacles(_local_obstacles);
+    // Adds our robots as obstacles only if they're within a certain distance
+    // from this robot. This distance increases with velocity.
+    const Geometry2d::ShapeSet selfObs = createRobotObstacles(
+        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
+    const Geometry2d::ShapeSet oppObs =
+        createRobotObstacles(_state->opp, _opp_avoid_mask);
+
+    if (_state->ball.valid) {
+        // _state->drawShape(ball_obs, Qt::gray,
+        //                   QString("ball_obstacles_%1").arg(shell()));
+        fullObstacles.add(createBallObstacle());
+    }
+    fullObstacles.add(selfObs);
+    fullObstacles.add(oppObs);
+    fullObstacles.add(globalObstacles);
+
+    return fullObstacles;
+}
+
 void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
     // if no goal, command robot to stop in place
     if (_state->gameState.state == GameState::Halt) {
@@ -489,23 +510,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
     }
 
     // create and visualize obstacles
-    Geometry2d::ShapeSet fullObstacles(_local_obstacles);
-    // Adds our robots as obstacles only if they're within a certain distance
-    // from this robot. This distance increases with velocity.
-    const Geometry2d::ShapeSet selfObs = createRobotObstacles(
-        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
-    const Geometry2d::ShapeSet oppObs =
-        createRobotObstacles(_state->opp, _opp_avoid_mask);
-
-    if (_state->ball.valid) {
-        std::shared_ptr<Geometry2d::Shape> ball_obs = createBallObstacle();
-        _state->drawShape(ball_obs, Qt::gray,
-                          QString("ball_obstacles_%1").arg(shell()));
-        fullObstacles.add(ball_obs);
-    }
-    fullObstacles.add(selfObs);
-    fullObstacles.add(oppObs);
-    fullObstacles.add(globalObstacles);
+    Geometry2d::ShapeSet fullObstacles = collectAllObstacles(globalObstacles);
 
     Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
     _lastCommandType = _motionCommand.getCommandType();

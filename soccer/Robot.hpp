@@ -313,6 +313,8 @@ public:
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
 
+    Geometry2d::ShapeSet collectAllObstacles(const Geometry2d::ShapeSet& globalObstacles);
+
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
 
