@@ -31,8 +31,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const Path* prevPath) const {
     if (!prevPath || !prevPath->valid()) return true;
 
-    // if this number of microseconds passes since our last path plan,
-    // we automatically replan
+    // if this number of microseconds passes since our last path plan, we
+    // automatically replan
     const Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
     if ((timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
         return true;
@@ -47,34 +47,28 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
     if (optTarget) {
         target = *optTarget;
     } else {
-        // We went off the end of the path, so use the end for
-        // calculations.
+        // We went off the end of the path, so use the end for calculations.
         target = *prevPath->destination();
     }
 
     float pathError = (target.pos - start.pos).mag();
     float replanThreshold = *motionConstraints._replan_threshold;
-    // state()->drawCircle(target.pos, replanThreshold, Qt::green,
-    //                     "MotionControl");
-    // addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 
     //  invalidate path if current position is more than the
     //  replanThreshold
     if (*motionConstraints._replan_threshold != 0 &&
         pathError > replanThreshold) {
         return true;
-        // addText("pathError", Qt::red, "Motion");
     }
 
+    // FIXME: we need to figure out what is causing NaN values here
     if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
         return true;
-        // addText("Evaulate Returned an invalid result", Qt::red, "Motion");
     }
 
     float hitTime = 0;
     if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
         return true;
-        // addText("Hit Obstacle", Qt::red, "Motion");
     }
 
     // if the destination of the current path is greater than X m away

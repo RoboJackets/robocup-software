@@ -10,6 +10,8 @@
 
 namespace Planning {
 
+/// The PlanRequest encapsulates all information that the planner needs to know
+/// about an individual robot in order to generate a path for it.
 struct PlanRequest {
     PlanRequest(MotionInstant start, MotionCommand command,
                 MotionConstraints constraints, std::unique_ptr<Path> prevPath,
