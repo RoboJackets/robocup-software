@@ -140,7 +140,7 @@ the team's repository will go smoothly. This helps when another member of the
 team reviews your code as well.
 
 Now that you have a merged branch, you should push the branch to your Github. 
-From Github, you can make a pull request from your repository against the 
+From Github, you can make a [pull request](https://help.github.com/articles/using-pull-requests/) from your repository against the 
 team's repository. This will notify an older team member that you are ready to
 have your contribution reviewed. Requirements for pull request standards are 
 listed in several sections below. The older team member may ask that you fix 
