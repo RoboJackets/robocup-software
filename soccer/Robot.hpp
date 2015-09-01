@@ -171,7 +171,7 @@ public:
      * Saving the pointer may lead to seg faults as it may be deleted by the
      * Robot who owns it.
      */
-    const Planning::Path* path() const { return _path.get(); }
+    std::unique_ptr<Planning::Path>& path() { return _path; }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -191,16 +191,6 @@ public:
      */
     void move(Geometry2d::Point goal,
               Geometry2d::Point endVelocity = Geometry2d::Point());
-
-    Time pathStartTime() const { return _pathStartTime; }
-
-    /**
-     * The number of consecutive times since now that we've set our path to
-     * something new. This causes issues in Motion Control because the path
-     * start time is constantly reset, so we track it here and compensate for it
-     * in MotionControl. See _pathChangeHistory for more info
-     */
-    int consecutivePathChangeCount() const;
 
     /**
      * Sets the angleVelocity in the robot's MotionConstraints
@@ -310,10 +300,13 @@ public:
     void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
         _local_obstacles.add(obs);
     }
-    const Geometry2d::CompositeShape& localObstacles() const {
+    const Geometry2d::ShapeSet& localObstacles() const {
         return _local_obstacles;
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
+
+    Geometry2d::ShapeSet collectAllObstacles(
+        const Geometry2d::ShapeSet& globalObstacles);
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -360,23 +353,15 @@ public:
     void shieldFromTeammates(float radius);
 
     /**
-     * Replans the path if needed.
-     * Sets some parameters on the path.
-     */
-    void replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles);
-
-    /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
      */
     bool chipper_available() const;
     bool kicker_available() const;
     bool dribbler_available() const;
-    bool driving_available(bool require_all = true) const;  // checks for motor
-                                                            // faults - allows
-                                                            // one wheel failure
-                                                            // if require_all =
-                                                            // false
+
+    // checks for motor faults - allows one wheel failure if require_all = false
+    bool driving_available(bool require_all = true) const;
 
     // lower level status checks
     bool hasBall() const;
@@ -419,34 +404,24 @@ public:
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
 
+    void setPath(std::unique_ptr<Planning::Path> path);
+
 protected:
     MotionControl* _motionControl;
 
     SystemState* _state;
 
     /// set of obstacles added by plays
-    Geometry2d::CompositeShape _local_obstacles;
+    Geometry2d::ShapeSet _local_obstacles;
 
     /// masks for obstacle avoidance
     RobotMask _self_avoid_mask, _opp_avoid_mask;
     float _avoidBallRadius;  /// radius of ball obstacle
 
     Planning::MotionCommand _motionCommand;
-    Planning::MotionCommand::CommandType _lastCommandType;
     MotionConstraints _motionConstraints;
 
-    std::shared_ptr<Planning::SingleRobotPathPlanner>
-        _planner;  /// single-robot RRT planner
-
-    void setPath(std::unique_ptr<Planning::Path> path);
-
     std::unique_ptr<Planning::Path> _path;  /// latest path
-
-    Time _pathStartTime;
-
-    /// whenever the constraints for the robot path are changed, this is set
-    /// to true to trigger a replan
-    bool _pathInvalidated;
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -459,9 +434,9 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::CompositeShape createRobotObstacles(
-        const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
-        Geometry2d::CompositeShape result;
+    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+                                              const RobotMask& mask) const {
+        Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i)
             if (mask[i] > 0 && robots[i] && robots[i]->visible)
                 result.add(std::shared_ptr<Geometry2d::Shape>(
@@ -481,10 +456,11 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::CompositeShape createRobotObstacles(
-        const std::vector<ROBOT*>& robots, const RobotMask& mask,
-        Geometry2d::Point currentPosition, float checkRadius) const {
-        Geometry2d::CompositeShape result;
+    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+                                              const RobotMask& mask,
+                                              Geometry2d::Point currentPosition,
+                                              float checkRadius) const {
+        Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i)
             if (mask[i] > 0 && robots[i] && robots[i]->visible) {
                 if (currentPosition.distTo(robots[i]->pos) <= checkRadius) {
@@ -509,29 +485,6 @@ protected:
 
 protected:
     friend class MotionControl;
-
-    /**
-     * There are a couple cases where the robot's path gets updated very often
-     * (almost every iteration):
-     * * the current path is blocked by an obstacle
-     * * the move() target keeps changing
-     *
-     * This causes the _pathStartTime to constantly be reset and motion control
-     * looks about zero seconds into the planned path and sends the robot a
-     * velocity command that's really really tiny, causing it to barely move at
-     * all.
-     *
-     * Our solution to this is to track the last N path changes in a circular
-     * buffer so we can tell if we're hitting this scenario.  If so, we can
-     * compensate, by having motion control look further into the path when
-     * commanding the robot.
-     */
-    boost::circular_buffer<bool> _pathChangeHistory;
-
-    /// the size of _pathChangeHistory
-    static const int PathChangeHistoryBufferSize = 10;
-
-    bool _didSetPathThisIteration;
 
 private:
     void _kick(uint8_t strength);
@@ -559,8 +512,6 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
-    static ConfigDouble* _goalChangeThreshold;
-    static ConfigDouble* _replanTimeout;
 };
 
 /**

@@ -4,11 +4,12 @@
 #include "MotionConstraints.hpp"
 #include "MotionInstant.hpp"
 #include <Configuration.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <planning/Path.hpp>
+#include <protobuf/LogFrame.pb.h>
 
 namespace Planning {
 
@@ -54,6 +55,8 @@ public:
                                         maxSpeed, maxAcc, startSpeed, endSpeed);
     }
 
+    virtual bool valid() const override { return true; }
+
     virtual boost::optional<MotionInstant> evaluate(float time) const override {
         float distance;
         float speedOut;
@@ -71,7 +74,7 @@ public:
                              pathDirection * speedOut);
     }
 
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime = 0) const override {
         throw std::logic_error("This function is not implemented");
     }
