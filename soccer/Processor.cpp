@@ -16,6 +16,7 @@
 #include <Robot.hpp>
 #include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
+#include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
@@ -85,6 +86,8 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _refereeModule = std::make_shared<NewRefereeModule>(_state);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
+    _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
+        new Planning::IndependentMultiRobotPathPlanner());
     vision.simulation = _simulation;
 }
 
@@ -404,18 +407,14 @@ void Processor::run() {
         Geometry2d::ShapeSet globalObstacles =
             _gameplayModule->globalObstacles();
         Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-        Geometry2d::ShapeSet goalZoneObstacles = _gameplayModule->goalZoneObstacles();
+        Geometry2d::ShapeSet goalZoneObstacles =
+            _gameplayModule->goalZoneObstacles();
         globalObstaclesWithGoalZones.add(goalZoneObstacles);
 
-        // execute path planning for each robot
+        // Build a plan request for each robot.
+        std::map<int, Planning::PlanRequest> requests;
         for (OurRobot* r : _state.self) {
             if (r && r->visible) {
-                auto& globalObstaclesForBot =
-                    (r->shell() == _gameplayModule->goalieID() ||
-                     r->isPenaltyKicker)
-                        ? globalObstacles
-                        : globalObstaclesWithGoalZones;
-
                 if (_state.gameState.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
@@ -427,35 +426,31 @@ void Processor::run() {
                     continue;
                 }
 
+                auto& globalObstaclesForBot =
+                    (r->shell() == _gameplayModule->goalieID() ||
+                     r->isPenaltyKicker)
+                        ? globalObstacles
+                        : globalObstaclesWithGoalZones;
+
                 // create and visualize obstacles
                 Geometry2d::ShapeSet fullObstacles =
                     r->collectAllObstacles(globalObstaclesForBot);
 
-                // If we have a different type of motion command, discard the
-                // old path.
-                if (!r->pathPlanner() ||
-                    r->pathPlanner()->commandType() !=
-                        r->motionCommand().getCommandType()) {
-                    r->setPath(nullptr);
-                }
-
-                // Make sure we're using the right planner
-                if (!r->pathPlanner() ||
-                    r->pathPlanner()->commandType() !=
-                        r->motionCommand().getCommandType()) {
-                    r->setPathPlanner(Planning::PlannerForCommandType(
-                        r->motionCommand().getCommandType()));
-                }
-
-                r->setPath(r->pathPlanner()->run(
+                Planning::PlanRequest request(
                     Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
-                    r->motionConstraints(), &fullObstacles,
-                    std::move(r->path())));
-
-                if (r->path()) {
-                    r->path()->draw(&_state, Qt::magenta, "Planning");
-                }
+                    r->motionConstraints(), std::move(r->path()),
+                    std::make_shared<ShapeSet>(fullObstacles));
+                requests[r->shell()] = std::move(request);
             }
+        }
+
+        // Run path planner and set the path for each robot that was planned for
+        auto paths = _pathPlanner->run(std::move(requests));
+        for (auto& entry : paths) {
+            OurRobot* r = _state.self[entry.first];
+            auto& path = entry.second;
+            path->draw(&_state, Qt::magenta, "Planning");
+            r->setPath(std::move(path));
         }
 
         // Visualize obstacles
