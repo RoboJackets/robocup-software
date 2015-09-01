@@ -5,9 +5,9 @@
 
 namespace Planning {
 
-/**
- * @brief Interface for Path Planners that plan paths for a set of robots.
- */
+/// Plans paths for a collection of robots using a SingleRobotPathPlanner for
+/// each.  This planner doesn't take other robots' paths into account when
+/// planning, which means that occasionally the planned paths will collide.
 class IndependentMultiRobotPathPlanner : public MultiRobotPathPlanner {
 public:
     virtual std::map<int, std::unique_ptr<Path>> run(
