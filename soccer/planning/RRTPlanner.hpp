@@ -40,14 +40,23 @@ public:
 
     /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
-    std::unique_ptr<Path> run(MotionInstant start, MotionCommand cmd,
-                              const MotionConstraints& motionConstraints,
-                              const Geometry2d::ShapeSet* obstacles) override;
+    std::unique_ptr<Path> run(
+        MotionInstant start, MotionCommand cmd,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet* obstacles,
+        std::unique_ptr<Path> prevPath = nullptr) override;
 
 protected:
     /// maximum number of rrt iterations to run
     /// this does not include connect attempts
     unsigned int _maxIterations;
+
+    /// Check to see if the previous path (if any) should be discarded and
+    /// replaced with a newly-planned one
+    bool shouldReplan(MotionInstant start, MotionInstant goal,
+                      const MotionConstraints& motionConstraints,
+                      const Geometry2d::ShapeSet* obstacles,
+                      const Path* prevPath) const;
 
     /// If the given goal point is in an obstacle, uses an RRT to attempt to
     /// find a point that is close, but not blocked.

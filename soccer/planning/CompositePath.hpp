@@ -11,8 +11,8 @@ namespace Planning {
  * @brief Represents a motion path made up of a series of Paths.
  *
  * @details The path represents a function of position given time that the robot
- * should follow.
- * The path is made up of other Paths and can be made up of CompositePaths.
+ *     should follow. The path is made up of other Paths and can be made up of
+ *     CompositePaths.
  */
 class CompositePath : public Path {
 private:
@@ -45,6 +45,7 @@ public:
         float endTime = std::numeric_limits<float>::infinity()) const override;
     virtual boost::optional<MotionInstant> destination() const override;
     virtual std::unique_ptr<Path> clone() const override;
+    virtual bool valid() const override { return !paths.empty(); }
 };
 
 }  // namespace Planning

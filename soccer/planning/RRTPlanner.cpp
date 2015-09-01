@@ -25,10 +25,80 @@ Geometry2d::Point randomPoint() {
 
 RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
 
+bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
+                              const MotionConstraints& motionConstraints,
+                              const Geometry2d::ShapeSet* obstacles,
+                              const Path* prevPath) const {
+    if (!prevPath || !prevPath->valid()) return true;
+
+    // if this number of microseconds passes since our last path plan,
+    // we automatically replan
+    const Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
+    if ((timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
+        return true;
+    }
+
+    float timeIntoPath =
+        ((float)(timestamp() - prevPath->startTime())) * TimestampToSecs +
+        1.0f / 60.0f;
+
+    MotionInstant target;
+    boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
+    if (optTarget) {
+        target = *optTarget;
+    } else {
+        // We went off the end of the path, so use the end for
+        // calculations.
+        target = *prevPath->destination();
+    }
+
+    float pathError = (target.pos - start.pos).mag();
+    float replanThreshold = *motionConstraints._replan_threshold;
+    // state()->drawCircle(target.pos, replanThreshold, Qt::green,
+    //                     "MotionControl");
+    // addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+
+    //  invalidate path if current position is more than the
+    //  replanThreshold
+    if (*motionConstraints._replan_threshold != 0 &&
+        pathError > replanThreshold) {
+        return true;
+        // addText("pathError", Qt::red, "Motion");
+    }
+
+    if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
+        return true;
+        // addText("Evaulate Returned an invalid result", Qt::red, "Motion");
+    }
+
+    float hitTime = 0;
+    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
+        return true;
+        // addText("Hit Obstacle", Qt::red, "Motion");
+    }
+
+    // if the destination of the current path is greater than X m away
+    // from the target destination, we invalidate the path. This
+    // situation could arise if the path destination changed.
+    float goalPosDiff = (prevPath->destination()->pos - goal.pos).mag();
+    float goalVelDiff = (prevPath->destination()->vel - goal.vel).mag();
+    if (goalPosDiff > goalChangeThreshold() ||
+        goalVelDiff > goalChangeThreshold()) {
+        // FIXME: goalChangeThreshold shouldn't be used for velocities as it
+        // is above
+        return true;
+    }
+
+    return false;
+}
+
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, MotionCommand cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles) {
+    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+    // This planner only works with commands of type 'PathTarget'
+    assert(cmd.getCommandType() == Planning::MotionCommand::PathTarget);
+
     MotionInstant goal = cmd.getPlanningTarget();
 
     // Simple case: no path
@@ -40,22 +110,34 @@ std::unique_ptr<Path> RRTPlanner::run(
         return unique_ptr<Path>(path);
     }
 
-    // Locate a goal point that is obstacle-free
-    //
-    // TODO: only use this new non- blocked goal if it's better than the one
-    // from the previous planning iteration (if any)
-    goal.pos = findNonBlockedGoal(goal.pos, obstacles);
+    // Replan if needed, otherwise return the previous path unmodified
+    if (shouldReplan(start, goal, motionConstraints, obstacles,
+                     prevPath.get())) {
+        // TODO: the previous implementation of replanning (in
+        // OurRobot.replanIfNeeded()) did this in a loop in case planning
+        // failed.  Should we re-implement that logic here?
 
-    // Run bi-directional RRT to generate a path.
-    InterpolatedPath* path = runRRT(start, goal, motionConstraints, obstacles);
+        // Locate a goal point that is obstacle-free
+        //
+        // TODO: only use this new non- blocked goal if it's better than the one
+        // from the previous planning iteration (if any)
+        goal.pos = findNonBlockedGoal(goal.pos, obstacles);
 
-    // If RRT failed, the path will be empty, so we need to add a single point
-    // to make it valid.
-    if (path && path->waypoints.empty()) {
-        path->waypoints.emplace_back(
-            MotionInstant(start.pos, Geometry2d::Point()), 0);
+        // Run bi-directional RRT to generate a path.
+        InterpolatedPath* path =
+            runRRT(start, goal, motionConstraints, obstacles);
+
+        // If RRT failed, the path will be empty, so we need to add a single
+        // point
+        // to make it valid.
+        if (path && path->waypoints.empty()) {
+            path->waypoints.emplace_back(
+                MotionInstant(start.pos, Geometry2d::Point()), 0);
+        }
+        return unique_ptr<Path>(path);
+    } else {
+        return prevPath;
     }
-    return unique_ptr<Path>(path);
 }
 
 Geometry2d::Point RRTPlanner::findNonBlockedGoal(

@@ -18,6 +18,8 @@ public:
     Path() : _startTime(0) {}
     virtual ~Path() {}
 
+    virtual bool valid() const = 0;
+
     /**
      * This method evalates the path at a given time and returns the target
      * position and velocity of the robot.
