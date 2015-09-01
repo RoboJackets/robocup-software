@@ -459,24 +459,8 @@ void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     _path = std::move(path);
 }
 
-std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(Planning::MotionCommand::CommandType type) {
-    Planning::SingleRobotPathPlanner* planner = nullptr;
-
-    switch(type) {
-        case Planning::MotionCommand::PathTarget:
-            planner = new Planning::RRTPlanner(250);
-            break;
-        case Planning::MotionCommand::DirectTarget:
-            planner = new Planning::DirectTargetPathPlanner();
-            break;
-        default:
-            break;
-    }
-
-    return std::unique_ptr<Planning::SingleRobotPathPlanner>(planner);
-}
-
-Geometry2d::ShapeSet OurRobot::collectAllObstacles(const Geometry2d::ShapeSet& globalObstacles) {
+Geometry2d::ShapeSet OurRobot::collectAllObstacles(
+    const Geometry2d::ShapeSet& globalObstacles) {
     Geometry2d::ShapeSet fullObstacles(_local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
@@ -495,43 +479,6 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(const Geometry2d::ShapeSet& g
     fullObstacles.add(globalObstacles);
 
     return fullObstacles;
-}
-
-void OurRobot::replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles) {
-    // if no goal, command robot to stop in place
-    if (_state->gameState.state == GameState::Halt) {
-        setPath(nullptr);
-        return;
-    }
-
-    if (_motionCommand.getCommandType() == Planning::MotionCommand::WorldVel) {
-        setPath(nullptr);
-        return;
-    }
-
-    // create and visualize obstacles
-    Geometry2d::ShapeSet fullObstacles = collectAllObstacles(globalObstacles);
-
-    Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
-    _lastCommandType = _motionCommand.getCommandType();
-
-    // If we have a different type of motion command, discard the old path.
-    if (lastCommandType != _motionCommand.getCommandType()) {
-        _path = nullptr;
-    }
-
-    // Make sure we're using the right planner
-    if (!_planner || lastCommandType != _motionCommand.getCommandType()) {
-        _planner = PlannerForCommandType(_motionCommand.getCommandType());
-    }
-
-    setPath(_planner->run(MotionInstant(this->pos, this->vel),
-                          _motionCommand, _motionConstraints,
-                          &fullObstacles, std::move(_path)));
-
-    if (_path) {
-        _path->draw(_state, Qt::magenta, "Planning");
-    }
 }
 
 bool OurRobot::charged() const {

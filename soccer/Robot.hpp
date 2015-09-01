@@ -171,7 +171,7 @@ public:
      * Saving the pointer may lead to seg faults as it may be deleted by the
      * Robot who owns it.
      */
-    const Planning::Path* path() const { return _path.get(); }
+    std::unique_ptr<Planning::Path>& path() { return _path; }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -313,7 +313,8 @@ public:
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
 
-    Geometry2d::ShapeSet collectAllObstacles(const Geometry2d::ShapeSet& globalObstacles);
+    Geometry2d::ShapeSet collectAllObstacles(
+        const Geometry2d::ShapeSet& globalObstacles);
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -358,12 +359,6 @@ public:
      * carrier.
      */
     void shieldFromTeammates(float radius);
-
-    /**
-     * Replans the path if needed.
-     * Sets some parameters on the path.
-     */
-    void replanIfNeeded(const Geometry2d::ShapeSet& globalObstacles);
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
@@ -417,6 +412,15 @@ public:
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
 
+    Planning::SingleRobotPathPlanner* pathPlanner() { return _planner.get(); }
+
+    void setPathPlanner(
+        std::unique_ptr<Planning::SingleRobotPathPlanner> planner) {
+        _planner = std::move(planner);
+    }
+
+    void setPath(std::unique_ptr<Planning::Path> path);
+
 protected:
     MotionControl* _motionControl;
 
@@ -430,13 +434,10 @@ protected:
     float _avoidBallRadius;  /// radius of ball obstacle
 
     Planning::MotionCommand _motionCommand;
-    Planning::MotionCommand::CommandType _lastCommandType;
     MotionConstraints _motionConstraints;
 
-    std::shared_ptr<Planning::SingleRobotPathPlanner>
+    std::unique_ptr<Planning::SingleRobotPathPlanner>
         _planner;  /// single-robot RRT planner
-
-    void setPath(std::unique_ptr<Planning::Path> path);
 
     std::unique_ptr<Planning::Path> _path;  /// latest path
 

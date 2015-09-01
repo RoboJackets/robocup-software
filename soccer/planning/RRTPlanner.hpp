@@ -38,6 +38,10 @@ public:
      */
     void maxIterations(int value) { _maxIterations = value; }
 
+    MotionCommand::CommandType commandType() const override {
+        return MotionCommand::CommandType::PathTarget;
+    }
+
     /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
     std::unique_ptr<Path> run(

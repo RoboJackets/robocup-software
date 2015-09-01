@@ -1,6 +1,7 @@
 
 #include <gameplay/GameplayModule.hpp>
 #include <Constants.hpp>
+#include <planning/MotionInstant.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <SystemState.hpp>
@@ -377,15 +378,52 @@ void Gameplay::GameplayModule::run() {
     obstacles_with_goals.add(_ourGoalArea);
     obstacles_with_goals.add(_theirGoalArea);
 
-    /// execute motion planning for each robot
+    /// execute path planning for each robot
     for (OurRobot* r : _state->self) {
         if (r && r->visible) {
-            /// set obstacles for the robots
-            if (r->shell() == _goalieID || r->isPenaltyKicker)
-                // The goalie and penalty kicker can enter the goal zone.
-                r->replanIfNeeded(global_obstacles);
-            else
-                r->replanIfNeeded(obstacles_with_goals);  /// all other robots
+            auto& globalObstaclesForBot =
+                (r->shell() == _goalieID || r->isPenaltyKicker)
+                    ? global_obstacles
+                    : obstacles_with_goals;
+
+            if (_state->gameState.state == GameState::Halt) {
+                r->setPath(nullptr);
+                continue;
+            }
+
+            if (r->motionCommand().getCommandType() ==
+                Planning::MotionCommand::WorldVel) {
+                r->setPath(nullptr);
+                continue;
+            }
+
+            // create and visualize obstacles
+            Geometry2d::ShapeSet fullObstacles =
+                r->collectAllObstacles(globalObstaclesForBot);
+
+            // If we have a different type of motion command, discard the old
+            // path.
+            if (!r->pathPlanner() ||
+                r->pathPlanner()->commandType() !=
+                    r->motionCommand().getCommandType()) {
+                r->setPath(nullptr);
+            }
+
+            // Make sure we're using the right planner
+            if (!r->pathPlanner() ||
+                r->pathPlanner()->commandType() !=
+                    r->motionCommand().getCommandType()) {
+                r->setPathPlanner(Planning::PlannerForCommandType(
+                    r->motionCommand().getCommandType()));
+            }
+
+            r->setPath(r->pathPlanner()->run(
+                Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
+                r->motionConstraints(), &fullObstacles, std::move(r->path())));
+
+            if (r->path()) {
+                r->path()->draw(_state, Qt::magenta, "Planning");
+            }
         }
     }
 
