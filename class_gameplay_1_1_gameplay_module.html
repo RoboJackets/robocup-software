@@ -166,6 +166,13 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>sendFieldDimensionsTo
 <tr class="separator:a33399a813ba047378703a512451330c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab76f2717e7ed13a7c738c081bf70be3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d">calculateFieldObstacles</a> ()</td></tr>
 <tr class="separator:ab76f2717e7ed13a7c738c081bf70be3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab44fd1cc3e855fd5cad3cd4c7d35ea02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#ab44fd1cc3e855fd5cad3cd4c7d35ea02">globalObstacles</a> () const </td></tr>
+<tr class="memdesc:ab44fd1cc3e855fd5cad3cd4c7d35ea02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the current set of global obstacles, including the field.  <a href="#ab44fd1cc3e855fd5cad3cd4c7d35ea02">More...</a><br/></td></tr>
+<tr class="separator:ab44fd1cc3e855fd5cad3cd4c7d35ea02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6373b2da0b7d86f6a524f0d2bdb936fa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6373b2da0b7d86f6a524f0d2bdb936fa"></a>
+<a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#a6373b2da0b7d86f6a524f0d2bdb936fa">goalZoneObstacles</a> () const </td></tr>
+<tr class="memdesc:a6373b2da0b7d86f6a524f0d2bdb936fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a ShapeSet containing both goal zones. <br/></td></tr>
+<tr class="separator:a6373b2da0b7d86f6a524f0d2bdb936fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -194,6 +201,25 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
       </table>
 </div><div class="memdoc">
 <p>Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line. </p>
+
+</div>
+</div>
+<a class="anchor" id="ab44fd1cc3e855fd5cad3cd4c7d35ea02"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> Gameplay::GameplayModule::globalObstacles </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the current set of global obstacles, including the field. </p>
+<p>returns the group of obstacles for the field </p>
+<p>Add non floor obstacles </p>
 
 </div>
 </div>
@@ -251,10 +277,6 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <p>prepare each bot for the next iteration by resetting temporary things</p>
 <p>Build a list of visible robots</p>
 <p>Run the current play</p>
-<p>determine global obstacles - field requirements Two versions - one set with goal area, another without for goalie</p>
-<p>execute motion planning for each robot</p>
-<p>set obstacles for the robots</p>
-<p>all other robots</p>
 <p>visualize </p>
 
 </div>
@@ -298,7 +320,7 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_gameplay.html">Gameplay</a></li><li class="navelem"><a class="el" href="class_gameplay_1_1_gameplay_module.html">GameplayModule</a></li>
-    <li class="footer">Generated on Tue Sep 1 2015 00:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Sep 1 2015 22:42:40 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

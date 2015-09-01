@@ -170,22 +170,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> ()</td></tr
 <tr class="memitem:a639f7b93dc4f173434823ce10126cb50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a639f7b93dc4f173434823ce10126cb50"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const </td></tr>
 <tr class="separator:a639f7b93dc4f173434823ce10126cb50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cc519c5a51c2009d0cca14ca158d0ab"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a4cc519c5a51c2009d0cca14ca158d0ab"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_composite_shape.html#a4cc519c5a51c2009d0cca14ca158d0ab">hit</a> (const T &amp;obj, std::set&lt; std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt; &gt; &amp;hitSet) const </td></tr>
-<tr class="memdesc:a4cc519c5a51c2009d0cca14ca158d0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given object hits obstacles in the group.  <a href="#a4cc519c5a51c2009d0cca14ca158d0ab">More...</a><br/></td></tr>
-<tr class="separator:a4cc519c5a51c2009d0cca14ca158d0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8eb7ea557877909f8cf0f22e0067e51"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8eb7ea557877909f8cf0f22e0067e51"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> pt, std::set&lt; std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt; &gt; &amp;hitSet) const </td></tr>
-<tr class="separator:ae8eb7ea557877909f8cf0f22e0067e51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6891bb2e28753f2b12cafd1675e16acd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6891bb2e28753f2b12cafd1675e16acd"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;seg, std::set&lt; std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt; &gt; &amp;hitSet) const </td></tr>
-<tr class="separator:a6891bb2e28753f2b12cafd1675e16acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada61cce38b616262762fe6776baab173"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:ada61cce38b616262762fe6776baab173"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_composite_shape.html#ada61cce38b616262762fe6776baab173">hit</a> (const T &amp;obj) const </td></tr>
 <tr class="memdesc:ada61cce38b616262762fe6776baab173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given shape is in it.  <a href="#ada61cce38b616262762fe6776baab173">More...</a><br/></td></tr>
 <tr class="separator:ada61cce38b616262762fe6776baab173"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e91d07262feb40014c7ef096a2740a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e91d07262feb40014c7ef096a2740a6"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> pt) const override</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_composite_shape.html#a3e91d07262feb40014c7ef096a2740a6">hit</a> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> pt) const override</td></tr>
+<tr class="memdesc:a3e91d07262feb40014c7ef096a2740a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the given point is within one robot radius of the shape. <br/></td></tr>
 <tr class="separator:a3e91d07262feb40014c7ef096a2740a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae29d68f3264be98552b8e6820c68f11b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae29d68f3264be98552b8e6820c68f11b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;seg) const override</td></tr>
@@ -208,9 +199,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> (
 <tr class="memitem:a486aef4e9642f47c86cbb0cd4b5c6359"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a486aef4e9642f47c86cbb0cd4b5c6359"></a>
 std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (unsigned int index)</td></tr>
 <tr class="separator:a486aef4e9642f47c86cbb0cd4b5c6359"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af989bf2f55f335559521c4f194e9510e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af989bf2f55f335559521c4f194e9510e"></a>
-std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (unsigned int index) const </td></tr>
-<tr class="separator:af989bf2f55f335559521c4f194e9510e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98a830fe96a52167dfcf7ed798db8189"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98a830fe96a52167dfcf7ed798db8189"></a>
+std::shared_ptr&lt; const <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (unsigned int index) const </td></tr>
+<tr class="separator:a98a830fe96a52167dfcf7ed798db8189"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A <a class="el" href="class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. ">Geometry2d::CompositeShape</a> is a <a class="el" href="class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. ">Shape</a> that is made up of other shapes. </p>
@@ -233,52 +224,6 @@ std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</
 <area shape="rect" id="node2" href="class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="39,5,189,32"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a4cc519c5a51c2009d0cca14ca158d0ab"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Geometry2d::CompositeShape::hit </td>
-          <td>(</td>
-          <td class="paramtype">const T &amp;&#160;</td>
-          <td class="paramname"><em>obj</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::set&lt; std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Shape</a> &gt; &gt; &amp;&#160;</td>
-          <td class="paramname"><em>hitSet</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Checks if a given object hits obstacles in the group. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">obj</td><td>The object to collision test </td></tr>
-    <tr><td class="paramname">hitSet</td><td>A set to add the colliding obstacles to </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A bool telling whether or not there were any collisions </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="ada61cce38b616262762fe6776baab173"></a>
 <div class="memitem">
 <div class="memproto">
@@ -324,7 +269,7 @@ template&lt;typename T &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_composite_shape.html">CompositeShape</a></li>
-    <li class="footer">Generated on Tue Sep 1 2015 00:33:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Sep 1 2015 22:42:41 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -170,9 +170,9 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> containsPoint(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">bool</span> hit(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_circle.html#aad5b89c5c7b3586901670ed26917516a">hit</a>(<a class="code" href="class_geometry2d_1_1_point.html">Point</a> pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">bool</span> hit(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a>&amp; pt) <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_geometry2d_1_1_circle.html#aad5b89c5c7b3586901670ed26917516a">hit</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_segment.html">Segment</a>&amp; pt) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// Returns the number of points at which this circle intersects the given</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">// circle.</span></div>
@@ -206,6 +206,7 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keyword">mutable</span> <span class="keywordtype">float</span> _rsq;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;};</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
+<div class="ttc" id="class_geometry2d_1_1_circle_html_aad5b89c5c7b3586901670ed26917516a"><div class="ttname"><a href="class_geometry2d_1_1_circle.html#aad5b89c5c7b3586901670ed26917516a">Geometry2d::Circle::hit</a></div><div class="ttdeci">bool hit(Point pt) const override</div><div class="ttdoc">Returns true if the given point is within one robot radius of the shape. </div><div class="ttdef"><b>Definition:</b> Circle.cpp:153</div></div>
 <div class="ttc" id="class_geometry2d_1_1_circle_html_afe58aca1bcf884f2635f129454525c42"><div class="ttname"><a href="class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42">Geometry2d::Circle::nearestPoint</a></div><div class="ttdeci">Point nearestPoint(Point p) const </div><div class="ttdoc">finds the point on the circle closest to  </div><div class="ttdef"><b>Definition:</b> Circle.cpp:112</div></div>
 <div class="ttc" id="class_geometry2d_1_1_segment_html"><div class="ttname"><a href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a></div><div class="ttdef"><b>Definition:</b> Segment.hpp:12</div></div>
 <div class="ttc" id="class_geometry2d_1_1_line_html"><div class="ttname"><a href="class_geometry2d_1_1_line.html">Geometry2d::Line</a></div><div class="ttdef"><b>Definition:</b> Line.hpp:9</div></div>
@@ -218,7 +219,7 @@ $(document).ready(function(){initNavTree('_circle_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><a class="el" href="dir_40506df144da4b42abe7ffe21204d9b9.html">Geometry2d</a></li><li class="navelem"><b>Circle.hpp</b></li>
-    <li class="footer">Generated on Tue Sep 1 2015 00:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Sep 1 2015 22:42:39 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

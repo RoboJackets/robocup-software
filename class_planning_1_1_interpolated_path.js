@@ -1,5 +1,6 @@
 var class_planning_1_1_interpolated_path =
 [
+    [ "Entry", "struct_planning_1_1_interpolated_path_1_1_entry.html", "struct_planning_1_1_interpolated_path_1_1_entry" ],
     [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html#aefbce884c4915674ae8cfa21e040a240", null ],
     [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html#aa800a35dff34617763db721e12a97ba6", null ],
     [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html#a3b61d33cc376a1809cf225b3b56bc7d0", null ],
@@ -13,7 +14,7 @@ var class_planning_1_1_interpolated_path =
     [ "evaluate", "class_planning_1_1_interpolated_path.html#a8a8a10c8025238a5a56a3d770e16d342", null ],
     [ "getDuration", "class_planning_1_1_interpolated_path.html#abf1b044be359b99c86c395ac9216dce5", null ],
     [ "getTime", "class_planning_1_1_interpolated_path.html#ae63a3df5106a5334019156bcbf8f7c45", null ],
-    [ "hit", "class_planning_1_1_interpolated_path.html#aece10e93b60fcaf8ace30de5fc7c995a", null ],
+    [ "hit", "class_planning_1_1_interpolated_path.html#a51e8c29b0b3c4afcfbfb66da11718ee8", null ],
     [ "length", "class_planning_1_1_interpolated_path.html#a553a22edf069f1e3a1fee0636c26fe3f", null ],
     [ "length", "class_planning_1_1_interpolated_path.html#a840780fe321cafd58e03d035d088e56f", null ],
     [ "length", "class_planning_1_1_interpolated_path.html#aff2c2f42c17e99f06a7266bc3080a2b6", null ],
@@ -22,7 +23,5 @@ var class_planning_1_1_interpolated_path =
     [ "size", "class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542", null ],
     [ "start", "class_planning_1_1_interpolated_path.html#ae78239cb80c045d628451f238efbc31b", null ],
     [ "subPath", "class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261", null ],
-    [ "valid", "class_planning_1_1_interpolated_path.html#aca44a774c67f00b0b0987f0deca6a94b", null ],
-    [ "times", "class_planning_1_1_interpolated_path.html#aebec808b402efb9f882f18fbe0a5a950", null ],
-    [ "waypoints", "class_planning_1_1_interpolated_path.html#a27824c9756b1ea690b91f3c32b4c42fe", null ]
+    [ "waypoints", "class_planning_1_1_interpolated_path.html#a6387ecd19b6fd3cfe83bbbe43a7cc825", null ]
 ];

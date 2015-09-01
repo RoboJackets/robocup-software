@@ -253,13 +253,18 @@ var annotated =
       [ "Rect", "class_geometry2d_1_1_rect.html", "class_geometry2d_1_1_rect" ],
       [ "Segment", "class_geometry2d_1_1_segment.html", "class_geometry2d_1_1_segment" ],
       [ "Shape", "class_geometry2d_1_1_shape.html", "class_geometry2d_1_1_shape" ],
+      [ "ShapeSet", "class_geometry2d_1_1_shape_set.html", "class_geometry2d_1_1_shape_set" ],
       [ "TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", "class_geometry2d_1_1_transform_matrix" ]
     ] ],
     [ "Planning", null, [
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
+      [ "DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", "class_planning_1_1_direct_target_path_planner" ],
+      [ "IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", "class_planning_1_1_independent_multi_robot_path_planner" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
       [ "MotionCommand", "class_planning_1_1_motion_command.html", "class_planning_1_1_motion_command" ],
       [ "MotionInstant", "struct_planning_1_1_motion_instant.html", "struct_planning_1_1_motion_instant" ],
+      [ "PlanRequest", "struct_planning_1_1_plan_request.html", "struct_planning_1_1_plan_request" ],
+      [ "MultiRobotPathPlanner", "class_planning_1_1_multi_robot_path_planner.html", "class_planning_1_1_multi_robot_path_planner" ],
       [ "Path", "class_planning_1_1_path.html", "class_planning_1_1_path" ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
       [ "SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", "class_planning_1_1_single_robot_path_planner" ],

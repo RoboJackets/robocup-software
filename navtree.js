@@ -34,14 +34,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_debug_q_mutex.html#a32b802f6944bdf4862470b9ec7b5676e",
-"class_geometry2d_1_1_polygon.html#a9f1e47d29166782739f056d05912930d",
-"class_our_robot.html#a93dbfda2cb5b00e16853ac117b0e5e49",
-"class_referee_tab.html#a471835961fd5de60b684d25e0283d9bc",
-"classcircle__on__center_1_1_circle_on_center.html#ae76b3bac19f324c140d0e2e732709b9a",
-"classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html#a3a508d75001099011cc5e607778a01ff",
-"classgameplay_1_1skills_1_1capture_1_1_capture.html#a46990c0ab70ae4c7dbe9618748dabebe",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ad153d4548cf727c3109958fd0c4c22b3"
+"class_configuration.html#afe8778c9553dc1ab93116c240b87c37c",
+"class_geometry2d_1_1_polygon.html#a725922c2d06c26975dada1c6a33041b8",
+"class_our_robot.html#a793a6f37a504b11f13a6ad0e889e4858",
+"class_radio.html#aadddbdbe509dfeb0e45ca1893067f898",
+"class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e",
+"classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html#a145c5ef4e378c8019e9bf1fa66e39119",
+"classgameplay_1_1skills_1_1bump_1_1_bump.html#a7cfc66efb1314feec0224fbb84560a92",
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649",
+"struct_robot_config_1_1_chipper.html#aca30a62e64cbf50c4bae0bed62e6cc4a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$class_protobuf_tree.html" title="ProtobufTree" alt="" coords="155,5,258,32"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="5,34,192,75"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_direct_target_path_planner.html" title="Simple path planner that generates a straight&#45;line path from the start instant to the goal..." alt="" coords="240,5,429,46"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="257,71,412,97"/>
 </map>

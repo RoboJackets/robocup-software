@@ -1,3 +1,4 @@
 <map id="Planning::SingleRobotPathPlanner" name="Planning::SingleRobotPathPlanner">
-<area shape="rect" id="node2" href="$class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="21,96,175,123"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_direct_target_path_planner.html" title="Simple path planner that generates a straight&#45;line path from the start instant to the goal..." alt="" coords="5,97,195,138"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="219,104,372,131"/>
 </map>

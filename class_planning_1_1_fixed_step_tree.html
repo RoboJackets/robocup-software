@@ -132,9 +132,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_tree.html#aebea8cd6661be6de63ce2ebbf835a687">clear</a> ()</td></tr>
 <tr class="memdesc:aebea8cd6661be6de63ce2ebbf835a687 inherit pub_methods_class_planning_1_1_tree"><td class="mdescLeft">&#160;</td><td class="mdescRight">cleanup the tree <br/></td></tr>
 <tr class="separator:aebea8cd6661be6de63ce2ebbf835a687 inherit pub_methods_class_planning_1_1_tree"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a466f6c523c05b331b367d4c4ca16e193 inherit pub_methods_class_planning_1_1_tree"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a466f6c523c05b331b367d4c4ca16e193"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> <a class="el" href="class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027">start</a>, const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *obstacles)</td></tr>
-<tr class="separator:a466f6c523c05b331b367d4c4ca16e193 inherit pub_methods_class_planning_1_1_tree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4103eb06ecbb53551849356d8e5eb6a2 inherit pub_methods_class_planning_1_1_tree"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4103eb06ecbb53551849356d8e5eb6a2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> <a class="el" href="class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027">start</a>, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles)</td></tr>
+<tr class="separator:a4103eb06ecbb53551849356d8e5eb6a2 inherit pub_methods_class_planning_1_1_tree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d2f09b93d7b662459ba7f89b9ebe32c inherit pub_methods_class_planning_1_1_tree"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d2f09b93d7b662459ba7f89b9ebe32c"></a>
 <a class="el" href="class_planning_1_1_tree_1_1_point.html">Point</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c">nearest</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt)</td></tr>
 <tr class="memdesc:a1d2f09b93d7b662459ba7f89b9ebe32c inherit pub_methods_class_planning_1_1_tree"><td class="mdescLeft">&#160;</td><td class="mdescRight">find the point of the tree closest to <em>pt</em> <br/></td></tr>
@@ -163,9 +163,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 std::list&lt; <a class="el" href="class_planning_1_1_tree_1_1_point.html">Point</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>points</b></td></tr>
 <tr class="separator:ac6f5b840a3052dacc2e914e64dc72c7e inherit pub_attribs_class_planning_1_1_tree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_planning_1_1_tree"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_planning_1_1_tree')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_planning_1_1_tree.html">Planning::Tree</a></td></tr>
-<tr class="memitem:a9b064d92a421c9b39f09b5bc35c45607 inherit pro_attribs_class_planning_1_1_tree"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b064d92a421c9b39f09b5bc35c45607"></a>
-const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_obstacles</b></td></tr>
-<tr class="separator:a9b064d92a421c9b39f09b5bc35c45607 inherit pro_attribs_class_planning_1_1_tree"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3597391b7df9f03da43e480e9e35b749 inherit pro_attribs_class_planning_1_1_tree"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3597391b7df9f03da43e480e9e35b749"></a>
+const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_obstacles</b></td></tr>
+<tr class="separator:a3597391b7df9f03da43e480e9e35b749 inherit pro_attribs_class_planning_1_1_tree"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>tree that grows based on fixed distance step </p>
@@ -185,7 +185,7 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_planning_1_1_fixed_step_tree__coll__graph.png" border="0" usemap="#_planning_1_1_fixed_step_tree_coll__map" alt="Collaboration graph"/></div>
 <map name="_planning_1_1_fixed_step_tree_coll__map" id="_planning_1_1_fixed_step_tree_coll__map">
-<area shape="rect" id="node2" href="class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways " alt="" coords="241,323,351,349"/><area shape="rect" id="node4" href="class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="103,125,253,152"/><area shape="rect" id="node5" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,13,147,40"/><area shape="rect" id="node7" href="class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="271,224,491,251"/><area shape="rect" id="node8" href="class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="306,125,456,152"/></map>
+<area shape="rect" id="node2" href="class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways " alt="" coords="258,323,368,349"/><area shape="rect" id="node4" href="class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="103,125,253,152"/><area shape="rect" id="node5" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,13,147,40"/><area shape="rect" id="node7" href="class_geometry2d_1_1_shape_set.html" title="This class maintains a collection of Shape objects. " alt="" coords="272,224,445,251"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="aae4e5be14b801ad75e26dbd78bb061d2"></a>
@@ -237,7 +237,7 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_fixed_step_tree.html">FixedStepTree</a></li>
-    <li class="footer">Generated on Tue Sep 1 2015 00:33:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Sep 1 2015 22:42:41 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

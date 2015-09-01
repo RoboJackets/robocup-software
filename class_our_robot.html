@@ -114,7 +114,6 @@ $(document).ready(function(){initNavTree('class_our_robot.html','');});
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="class_our_robot-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -137,10 +136,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6b6f72c2cfb6c0c5ff1eff82904fc04a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a">OurRobot</a> (int <a class="el" href="class_robot.html#a8ed316247241fadd6d59fc197df25e3e">shell</a>, <a class="el" href="class_system_state.html">SystemState</a> *state)</td></tr>
 <tr class="memdesc:a6b6f72c2cfb6c0c5ff1eff82904fc04a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>.  <a href="#a6b6f72c2cfb6c0c5ff1eff82904fc04a">More...</a><br/></td></tr>
 <tr class="separator:a6b6f72c2cfb6c0c5ff1eff82904fc04a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ff6c7f8f05d24ba8f24efcb0ad247a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ff6c7f8f05d24ba8f24efcb0ad247a3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a8ff6c7f8f05d24ba8f24efcb0ad247a3">~OurRobot</a> ()</td></tr>
-<tr class="memdesc:a8ff6c7f8f05d24ba8f24efcb0ad247a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">ourrobot deconstructor, deletes motion control and planner <br/></td></tr>
-<tr class="separator:a8ff6c7f8f05d24ba8f24efcb0ad247a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47574cba97a8970a1437e47e8657d032"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47574cba97a8970a1437e47e8657d032"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addStatusText</b> ()</td></tr>
 <tr class="separator:a47574cba97a8970a1437e47e8657d032"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,9 +172,9 @@ const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> 
 <tr class="memitem:a793a6f37a504b11f13a6ad0e889e4858"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a793a6f37a504b11f13a6ad0e889e4858"></a>
 <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>motionConstraints</b> ()</td></tr>
 <tr class="separator:a793a6f37a504b11f13a6ad0e889e4858"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07fa3651d43e3114c30d8fb43c0ff8da"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a07fa3651d43e3114c30d8fb43c0ff8da">path</a> () const </td></tr>
-<tr class="memdesc:a07fa3651d43e3114c30d8fb43c0ff8da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a temporary observing pointer to the path of the robot.  <a href="#a07fa3651d43e3114c30d8fb43c0ff8da">More...</a><br/></td></tr>
-<tr class="separator:a07fa3651d43e3114c30d8fb43c0ff8da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca7696a58d1d814b99fee416f3f9f7eb"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#aca7696a58d1d814b99fee416f3f9f7eb">path</a> ()</td></tr>
+<tr class="memdesc:aca7696a58d1d814b99fee416f3f9f7eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a temporary observing pointer to the path of the robot.  <a href="#aca7696a58d1d814b99fee416f3f9f7eb">More...</a><br/></td></tr>
+<tr class="separator:aca7696a58d1d814b99fee416f3f9f7eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9ab95dc3c42279734fe860609d6e9d0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9ab95dc3c42279734fe860609d6e9d0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0">resetForNextIteration</a> ()</td></tr>
 <tr class="memdesc:aa9ab95dc3c42279734fe860609d6e9d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">clears old radioTx stuff, resets robot debug text, and clears local obstacles <br/></td></tr>
@@ -198,12 +193,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a6f2a703f055c1cbbb04787e526d00b78"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a6f2a703f055c1cbbb04787e526d00b78">moveDirect</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> goal, float endSpeed=0)</td></tr>
 <tr class="memdesc:a6f2a703f055c1cbbb04787e526d00b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move to a given point bypassing the RRT Path planner.  <a href="#a6f2a703f055c1cbbb04787e526d00b78">More...</a><br/></td></tr>
 <tr class="separator:a6f2a703f055c1cbbb04787e526d00b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73b5400ff477cb2220b8a980ddb8da8f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73b5400ff477cb2220b8a980ddb8da8f"></a>
-Time&#160;</td><td class="memItemRight" valign="bottom"><b>pathStartTime</b> () const </td></tr>
-<tr class="separator:a73b5400ff477cb2220b8a980ddb8da8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb8d32e3580b30997915444bb907e262"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#afb8d32e3580b30997915444bb907e262">consecutivePathChangeCount</a> () const </td></tr>
-<tr class="memdesc:afb8d32e3580b30997915444bb907e262"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of consecutive times since now that we've set our path to something new.  <a href="#afb8d32e3580b30997915444bb907e262">More...</a><br/></td></tr>
-<tr class="separator:afb8d32e3580b30997915444bb907e262"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39e2201dd5932aa609b6f5aa7924af26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39e2201dd5932aa609b6f5aa7924af26"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a39e2201dd5932aa609b6f5aa7924af26">angleVelocity</a> (const float angleVelocity)</td></tr>
 <tr class="memdesc:a39e2201dd5932aa609b6f5aa7924af26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the angleVelocity in the robot's <a class="el" href="struct_motion_constraints.html" title="This class contains the motion constraints that the high-level logic sets for a robot. ">MotionConstraints</a>. <br/></td></tr>
@@ -284,12 +273,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>resetAvoidRobotRadii<
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70">localObstacles</a> (const std::shared_ptr&lt; <a class="el" href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a> &gt; &amp;obs)</td></tr>
 <tr class="memdesc:ad3ccf59f3c226b40774933432ce22a70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds an obstacle to the local set of obstacles for avoidance Cleared after every frame. <br/></td></tr>
 <tr class="separator:ad3ccf59f3c226b40774933432ce22a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8cc8f2f2c3ea908c64da121e5d409f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8cc8f2f2c3ea908c64da121e5d409f5"></a>
-const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>localObstacles</b> () const </td></tr>
-<tr class="separator:ad8cc8f2f2c3ea908c64da121e5d409f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa82e5d8c6963a828f4736c6b86cdcca7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa82e5d8c6963a828f4736c6b86cdcca7"></a>
+const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>localObstacles</b> () const </td></tr>
+<tr class="separator:aa82e5d8c6963a828f4736c6b86cdcca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe87bdafe987c05819d221d4ac84252c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe87bdafe987c05819d221d4ac84252c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clearLocalObstacles</b> ()</td></tr>
 <tr class="separator:abe87bdafe987c05819d221d4ac84252c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5e396bde288d55ad90bb4c5e587e805"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5e396bde288d55ad90bb4c5e587e805"></a>
+<a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&#160;</td><td class="memItemRight" valign="bottom"><b>collectAllObstacles</b> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;globalObstacles)</td></tr>
+<tr class="separator:ab5e396bde288d55ad90bb4c5e587e805"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af154e4d8545df3fda5b8bab6215c04f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af154e4d8545df3fda5b8bab6215c04f0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>approachAllOpponents</b> (bool enable=true)</td></tr>
 <tr class="separator:af154e4d8545df3fda5b8bab6215c04f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -340,9 +332,6 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>avoidTeammateRadius<
 <tr class="memitem:a9651d74f3d8839801adf5ab7ce509bf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a9651d74f3d8839801adf5ab7ce509bf7">shieldFromTeammates</a> (float radius)</td></tr>
 <tr class="memdesc:a9651d74f3d8839801adf5ab7ce509bf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the avoid radius of all teammates to  for this robot.  <a href="#a9651d74f3d8839801adf5ab7ce509bf7">More...</a><br/></td></tr>
 <tr class="separator:a9651d74f3d8839801adf5ab7ce509bf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95efbaa6f6668a9559edc7c29e992447"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a95efbaa6f6668a9559edc7c29e992447">replanIfNeeded</a> (const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;global_obstacles)</td></tr>
-<tr class="memdesc:a95efbaa6f6668a9559edc7c29e992447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replans the path if needed.  <a href="#a95efbaa6f6668a9559edc7c29e992447">More...</a><br/></td></tr>
-<tr class="separator:a95efbaa6f6668a9559edc7c29e992447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58360a0994fb157062277d397cb1f213"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58360a0994fb157062277d397cb1f213"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a58360a0994fb157062277d397cb1f213">chipper_available</a> () const </td></tr>
 <tr class="memdesc:a58360a0994fb157062277d397cb1f213"><td class="mdescLeft">&#160;</td><td class="mdescRight">status evaluations for choosing robots in behaviors - combines multiple checks <br/></td></tr>
@@ -398,6 +387,9 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>distanceToChipLandi
 <tr class="memitem:ab3e128db9435248307b91209b04396c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3e128db9435248307b91209b04396c9"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>chipPowerForDistance</b> (double distance)</td></tr>
 <tr class="separator:ab3e128db9435248307b91209b04396c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b0e5ed5c25cf218ebdbc4966c7ed720"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b0e5ed5c25cf218ebdbc4966c7ed720"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setPath</b> (std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt; <a class="el" href="class_our_robot.html#aca7696a58d1d814b99fee416f3f9f7eb">path</a>)</td></tr>
+<tr class="separator:a7b0e5ed5c25cf218ebdbc4966c7ed720"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_robot"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_robot')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_robot.html">Robot</a></td></tr>
 <tr class="memitem:a241c0ca6e392b4c2fef481392d35531d inherit pub_methods_class_robot"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot.html#a241c0ca6e392b4c2fef481392d35531d">Robot</a> (unsigned int <a class="el" href="class_robot.html#a8ed316247241fadd6d59fc197df25e3e">shell</a>, bool <a class="el" href="class_robot.html#a54366c96e4367b00216f42ae0405c552">self</a>)</td></tr>
 <tr class="memdesc:a241c0ca6e392b4c2fef481392d35531d inherit pub_methods_class_robot"><td class="mdescLeft">&#160;</td><td class="mdescRight">super class for all robots  <a href="#a241c0ca6e392b4c2fef481392d35531d">More...</a><br/></td></tr>
@@ -476,18 +468,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>visionFrame</b></td></
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a7b0e5ed5c25cf218ebdbc4966c7ed720"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b0e5ed5c25cf218ebdbc4966c7ed720"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a7b0e5ed5c25cf218ebdbc4966c7ed720">setPath</a> (std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt; <a class="el" href="class_our_robot.html#a07fa3651d43e3114c30d8fb43c0ff8da">path</a>)</td></tr>
-<tr class="memdesc:a7b0e5ed5c25cf218ebdbc4966c7ed720"><td class="mdescLeft">&#160;</td><td class="mdescRight">single-robot RRT planner <br/></td></tr>
-<tr class="separator:a7b0e5ed5c25cf218ebdbc4966c7ed720"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae659b832401f12a187df08165301e847"><td class="memTemplParams" colspan="2">template&lt;class ROBOT &gt; </td></tr>
-<tr class="memitem:ae659b832401f12a187df08165301e847"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ae659b832401f12a187df08165301e847">createRobotObstacles</a> (const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask) const </td></tr>
-<tr class="memdesc:ae659b832401f12a187df08165301e847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a set of obstacles from a given robot team mask, where mask values &lt; 0 create no obstacle, and larger values create an obstacle of a given radius.  <a href="#ae659b832401f12a187df08165301e847">More...</a><br/></td></tr>
-<tr class="separator:ae659b832401f12a187df08165301e847"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae2d18b5b0d6b35600bae7daeb88d7f0"><td class="memTemplParams" colspan="2">template&lt;class ROBOT &gt; </td></tr>
-<tr class="memitem:aae2d18b5b0d6b35600bae7daeb88d7f0"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_our_robot.html#aae2d18b5b0d6b35600bae7daeb88d7f0">createRobotObstacles</a> (const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> currentPosition, float checkRadius) const </td></tr>
-<tr class="memdesc:aae2d18b5b0d6b35600bae7daeb88d7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only adds obstacles within the checkRadius of the passed in position Creates a set of obstacles from a given robot team mask, where mask values &lt; 0 create no obstacle, and larger values create an obstacle of a given radius.  <a href="#aae2d18b5b0d6b35600bae7daeb88d7f0">More...</a><br/></td></tr>
-<tr class="separator:aae2d18b5b0d6b35600bae7daeb88d7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8096f39bcbd67ab9cac81263687b87"><td class="memTemplParams" colspan="2">template&lt;class ROBOT &gt; </td></tr>
+<tr class="memitem:a1c8096f39bcbd67ab9cac81263687b87"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1c8096f39bcbd67ab9cac81263687b87">createRobotObstacles</a> (const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask) const </td></tr>
+<tr class="memdesc:a1c8096f39bcbd67ab9cac81263687b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">latest path  <a href="#a1c8096f39bcbd67ab9cac81263687b87">More...</a><br/></td></tr>
+<tr class="separator:a1c8096f39bcbd67ab9cac81263687b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a096bfe0d36b529058f75fafa84aba04e"><td class="memTemplParams" colspan="2">template&lt;class ROBOT &gt; </td></tr>
+<tr class="memitem:a096bfe0d36b529058f75fafa84aba04e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a096bfe0d36b529058f75fafa84aba04e">createRobotObstacles</a> (const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> currentPosition, float checkRadius) const </td></tr>
+<tr class="memdesc:a096bfe0d36b529058f75fafa84aba04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Only adds obstacles within the checkRadius of the passed in position Creates a set of obstacles from a given robot team mask, where mask values &lt; 0 create no obstacle, and larger values create an obstacle of a given radius.  <a href="#a096bfe0d36b529058f75fafa84aba04e">More...</a><br/></td></tr>
+<tr class="separator:a096bfe0d36b529058f75fafa84aba04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7baa02e9ccb8c3882d50de92898974c5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7baa02e9ccb8c3882d50de92898974c5"></a>
 std::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="class_geometry2d_1_1_shape.html">Geometry2d::Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5">createBallObstacle</a> () const </td></tr>
@@ -506,10 +494,10 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a1a0db98c8a9a081f074390cdd609daff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a0db98c8a9a081f074390cdd609daff"></a>
 <a class="el" href="class_system_state.html">SystemState</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_state</b></td></tr>
 <tr class="separator:a1a0db98c8a9a081f074390cdd609daff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb63e8e4286349325bd43978f0fe3ea5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb63e8e4286349325bd43978f0fe3ea5"></a>
-<a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#afb63e8e4286349325bd43978f0fe3ea5">_local_obstacles</a></td></tr>
-<tr class="memdesc:afb63e8e4286349325bd43978f0fe3ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">set of obstacles added by plays <br/></td></tr>
-<tr class="separator:afb63e8e4286349325bd43978f0fe3ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f4a7efaf00dbd3d1f308553f69382e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f4a7efaf00dbd3d1f308553f69382e8"></a>
+<a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a0f4a7efaf00dbd3d1f308553f69382e8">_local_obstacles</a></td></tr>
+<tr class="memdesc:a0f4a7efaf00dbd3d1f308553f69382e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">set of obstacles added by plays <br/></td></tr>
+<tr class="separator:a0f4a7efaf00dbd3d1f308553f69382e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19192634cf02c79cbaf29b35d999a52d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a19192634cf02c79cbaf29b35d999a52d"></a>
 RobotMask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d">_self_avoid_mask</a></td></tr>
 <tr class="memdesc:a19192634cf02c79cbaf29b35d999a52d"><td class="mdescLeft">&#160;</td><td class="mdescRight">masks for obstacle avoidance <br/></td></tr>
@@ -524,40 +512,12 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>_avoidBallRadius</b>
 <a class="el" href="class_planning_1_1_motion_command.html">Planning::MotionCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a9625c9712133ce97beaac4e5b7500637">_motionCommand</a></td></tr>
 <tr class="memdesc:a9625c9712133ce97beaac4e5b7500637"><td class="mdescLeft">&#160;</td><td class="mdescRight">radius of ball obstacle <br/></td></tr>
 <tr class="separator:a9625c9712133ce97beaac4e5b7500637"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a920664e44a3de52a4144f95b41d0287c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a920664e44a3de52a4144f95b41d0287c"></a>
-Planning::MotionCommand::CommandType&#160;</td><td class="memItemRight" valign="bottom"><b>_lastCommandType</b></td></tr>
-<tr class="separator:a920664e44a3de52a4144f95b41d0287c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19e24abfe6033684e391ea99795702ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a19e24abfe6033684e391ea99795702ce"></a>
 <a class="el" href="struct_motion_constraints.html">MotionConstraints</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_motionConstraints</b></td></tr>
 <tr class="separator:a19e24abfe6033684e391ea99795702ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af54ac733fa7263dde74e627745e6f2a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af54ac733fa7263dde74e627745e6f2a6"></a>
-std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="class_planning_1_1_single_robot_path_planner.html">Planning::SingleRobotPathPlanner</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_planner</b></td></tr>
-<tr class="separator:af54ac733fa7263dde74e627745e6f2a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a395f7cf56030a3e767275461c9769956"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a395f7cf56030a3e767275461c9769956"></a>
 std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_path</b></td></tr>
 <tr class="separator:a395f7cf56030a3e767275461c9769956"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69916a94c5416050044d1e91d58b5cac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69916a94c5416050044d1e91d58b5cac"></a>
-Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a69916a94c5416050044d1e91d58b5cac">_pathStartTime</a></td></tr>
-<tr class="memdesc:a69916a94c5416050044d1e91d58b5cac"><td class="mdescLeft">&#160;</td><td class="mdescRight">latest path <br/></td></tr>
-<tr class="separator:a69916a94c5416050044d1e91d58b5cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adac5bd2605e976a6fe96ca786947908b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adac5bd2605e976a6fe96ca786947908b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#adac5bd2605e976a6fe96ca786947908b">_pathInvalidated</a></td></tr>
-<tr class="memdesc:adac5bd2605e976a6fe96ca786947908b"><td class="mdescLeft">&#160;</td><td class="mdescRight">whenever the constraints for the robot path are changed, this is set to true to trigger a replan <br/></td></tr>
-<tr class="separator:adac5bd2605e976a6fe96ca786947908b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5db0b1e5c49680f2390595f870095046"><td class="memItemLeft" align="right" valign="top">boost::circular_buffer&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a5db0b1e5c49680f2390595f870095046">_pathChangeHistory</a></td></tr>
-<tr class="memdesc:a5db0b1e5c49680f2390595f870095046"><td class="mdescLeft">&#160;</td><td class="mdescRight">There are a couple cases where the robot's path gets updated very often (almost every iteration):  <a href="#a5db0b1e5c49680f2390595f870095046">More...</a><br/></td></tr>
-<tr class="separator:a5db0b1e5c49680f2390595f870095046"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7378a60d887d546278d859db3f7b10f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad7378a60d887d546278d859db3f7b10f"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>_didSetPathThisIteration</b></td></tr>
-<tr class="separator:ad7378a60d887d546278d859db3f7b10f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
-Static Protected Attributes</h2></td></tr>
-<tr class="memitem:a4012973d95436aee7bbb8dc47474a1ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4012973d95436aee7bbb8dc47474a1ca"></a>
-static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a4012973d95436aee7bbb8dc47474a1ca">PathChangeHistoryBufferSize</a> = 10</td></tr>
-<tr class="memdesc:a4012973d95436aee7bbb8dc47474a1ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">the size of _pathChangeHistory <br/></td></tr>
-<tr class="separator:a4012973d95436aee7bbb8dc47474a1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -594,7 +554,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MotionControl</b></t
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_our_robot__coll__graph.png" border="0" usemap="#_our_robot_coll__map" alt="Collaboration graph"/></div>
 <map name="_our_robot_coll__map" id="_our_robot_coll__map">
-<area shape="rect" id="node2" href="class_robot.html" title="Robot" alt="" coords="1233,205,1292,232"/><area shape="rect" id="node9" href="class_opponent_robot.html" title="A robot that is not on our team. " alt="" coords="1547,208,1669,235"/><area shape="rect" id="node3" href="class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="835,77,925,104"/><area shape="rect" id="node4" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="478,49,621,76"/><area shape="rect" id="node11" href="class_ball.html" title="Our beliefs about the ball&#39;s position and velocity. " alt="" coords="1036,135,1081,161"/><area shape="rect" id="node6" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="824,573,936,600"/><area shape="rect" id="node7" href="class_system_state.html" title="Holds the positions of everything on the field. " alt="" coords="2141,365,2248,392"/><area shape="rect" id="node12" href="class_game_state.html" title="Holds the state of the game according to the referee. " alt="" coords="1852,543,1948,569"/><area shape="rect" id="node13" href="class_team_info.html" title="TeamInfo" alt="" coords="1569,736,1647,763"/><area shape="rect" id="node14" title="STL class. " alt="" coords="1219,787,1306,813"/><area shape="rect" id="node15" title="STL class. " alt="" coords="811,779,949,821"/><area shape="rect" id="node17" href="class_motion_control.html" title="Handles computer&#45;side motion control. " alt="" coords="1207,505,1318,532"/><area shape="rect" id="node18" href="struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="989,463,1128,489"/><area shape="rect" id="node19" href="class_config_double.html" title="ConfigDouble" alt="" coords="496,329,603,356"/><area shape="rect" id="node23" href="class_robot_config.html" title="Configuration per robot model. " alt="" coords="1213,341,1312,368"/><area shape="rect" id="node24" href="struct_robot_config_1_1_dribbler.html" title="RobotConfig::Dribbler" alt="" coords="802,229,958,256"/><area shape="rect" id="node25" href="struct_robot_config_1_1_kicker.html" title="RobotConfig::Kicker" alt="" coords="808,416,952,443"/><area shape="rect" id="node26" href="struct_robot_config_1_1_p_i_d.html" title="RobotConfig::PID" alt="" coords="817,128,943,155"/><area shape="rect" id="node28" href="struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="803,179,957,205"/><area shape="rect" id="node20" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,329,427,356"/><area shape="rect" id="node27" href="class_config_int.html" title="ConfigInt" alt="" coords="510,185,589,212"/><area shape="rect" id="node34" href="class_config_bool.html" title="ConfigBool" alt="" coords="504,491,595,517"/><area shape="rect" id="node21" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,329,237,356"/><area shape="rect" id="node29" href="class_planning_1_1_motion_command.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1165,685,1360,712"/><area shape="rect" id="node31" href="class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="1153,455,1373,481"/><area shape="rect" id="node32" href="class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="805,523,955,549"/><area shape="rect" id="node33" href="class_robot_status.html" title="Provides per&#45;robot overrides for a robot Should be updated for hardware revision. ..." alt="" coords="1009,624,1109,651"/></map>
+<area shape="rect" id="node2" href="class_robot.html" title="Robot" alt="" coords="1220,61,1279,88"/><area shape="rect" id="node9" href="class_opponent_robot.html" title="A robot that is not on our team. " alt="" coords="1521,91,1642,117"/><area shape="rect" id="node3" href="class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="835,61,925,88"/><area shape="rect" id="node4" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="478,33,621,60"/><area shape="rect" id="node11" href="class_ball.html" title="Our beliefs about the ball&#39;s position and velocity. " alt="" coords="1036,5,1081,32"/><area shape="rect" id="node6" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="824,171,936,197"/><area shape="rect" id="node7" href="class_system_state.html" title="Holds the positions of everything on the field. " alt="" coords="2115,199,2221,225"/><area shape="rect" id="node12" href="class_game_state.html" title="Holds the state of the game according to the referee. " alt="" coords="1825,379,1921,405"/><area shape="rect" id="node13" href="class_team_info.html" title="TeamInfo" alt="" coords="1542,671,1621,697"/><area shape="rect" id="node14" title="STL class. " alt="" coords="1206,671,1293,697"/><area shape="rect" id="node15" title="STL class. " alt="" coords="811,759,949,801"/><area shape="rect" id="node17" href="class_motion_control.html" title="Handles computer&#45;side motion control. " alt="" coords="1194,112,1305,139"/><area shape="rect" id="node18" href="struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="989,360,1128,387"/><area shape="rect" id="node19" href="class_config_double.html" title="ConfigDouble" alt="" coords="496,489,603,516"/><area shape="rect" id="node23" href="class_robot_config.html" title="Configuration per robot model. " alt="" coords="1200,523,1299,549"/><area shape="rect" id="node24" href="struct_robot_config_1_1_dribbler.html" title="RobotConfig::Dribbler" alt="" coords="802,465,958,492"/><area shape="rect" id="node25" href="struct_robot_config_1_1_kicker.html" title="RobotConfig::Kicker" alt="" coords="808,413,952,440"/><area shape="rect" id="node26" href="struct_robot_config_1_1_p_i_d.html" title="RobotConfig::PID" alt="" coords="817,572,943,599"/><area shape="rect" id="node28" href="struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="803,517,957,544"/><area shape="rect" id="node20" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,489,427,516"/><area shape="rect" id="node27" href="class_config_int.html" title="ConfigInt" alt="" coords="510,575,589,601"/><area shape="rect" id="node33" href="class_config_bool.html" title="ConfigBool" alt="" coords="504,361,595,388"/><area shape="rect" id="node21" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,489,237,516"/><area shape="rect" id="node29" href="class_planning_1_1_motion_command.html" title="This class contains the motion constraints that the gameplay logic sets for a robot. " alt="" coords="1152,292,1347,319"/><area shape="rect" id="node31" href="class_geometry2d_1_1_shape_set.html" title="This class maintains a collection of Shape objects. " alt="" coords="1163,409,1336,436"/><area shape="rect" id="node32" href="class_robot_status.html" title="Provides per&#45;robot overrides for a robot Should be updated for hardware revision. ..." alt="" coords="1009,235,1109,261"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a6b6f72c2cfb6c0c5ff1eff82904fc04a"></a>
@@ -674,25 +634,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MotionControl</b></t
 
 </div>
 </div>
-<a class="anchor" id="afb8d32e3580b30997915444bb907e262"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int OurRobot::consecutivePathChangeCount </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The number of consecutive times since now that we've set our path to something new. </p>
-<p>This causes issues in Motion Control because the path start time is constantly reset, so we track it here and compensate for it in <a class="el" href="class_motion_control.html" title="Handles computer-side motion control. ">MotionControl</a>. See _pathChangeHistory for more info </p>
-
-</div>
-</div>
-<a class="anchor" id="ae659b832401f12a187df08165301e847"></a>
+<a class="anchor" id="a1c8096f39bcbd67ab9cac81263687b87"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -702,7 +644,7 @@ template&lt;class ROBOT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> OurRobot::createRobotObstacles </td>
+          <td class="memname"><a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> OurRobot::createRobotObstacles </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; ROBOT * &gt; &amp;&#160;</td>
           <td class="paramname"><em>robots</em>, </td>
@@ -726,7 +668,8 @@ template&lt;class ROBOT &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Creates a set of obstacles from a given robot team mask, where mask values &lt; 0 create no obstacle, and larger values create an obstacle of a given radius. </p>
+<p>latest path </p>
+<p>Creates a set of obstacles from a given robot team mask, where mask values &lt; 0 create no obstacle, and larger values create an obstacle of a given radius</p>
 <p>NOTE: mask must not be set for this robot</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -737,7 +680,7 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="aae2d18b5b0d6b35600bae7daeb88d7f0"></a>
+<a class="anchor" id="a096bfe0d36b529058f75fafa84aba04e"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -747,7 +690,7 @@ template&lt;class ROBOT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> OurRobot::createRobotObstacles </td>
+          <td class="memname"><a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> OurRobot::createRobotObstacles </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; ROBOT * &gt; &amp;&#160;</td>
           <td class="paramname"><em>robots</em>, </td>
@@ -906,7 +849,7 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a07fa3651d43e3114c30d8fb43c0ff8da"></a>
+<a class="anchor" id="aca7696a58d1d814b99fee416f3f9f7eb"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -914,10 +857,10 @@ template&lt;class ROBOT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="class_planning_1_1_path.html">Planning::Path</a>* OurRobot::path </td>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="class_planning_1_1_path.html">Planning::Path</a>&gt;&amp; OurRobot::path </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -929,25 +872,6 @@ template&lt;class ROBOT &gt; </div>
 
 <p>Returns a temporary observing pointer to the path of the robot. </p>
 <p>This is only currently supported for legacy reasons. Saving the pointer may lead to seg faults as it may be deleted by the <a class="el" href="class_robot.html">Robot</a> who owns it. </p>
-
-</div>
-</div>
-<a class="anchor" id="a95efbaa6f6668a9559edc7c29e992447"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void OurRobot::replanIfNeeded </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;&#160;</td>
-          <td class="paramname"><em>global_obstacles</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Replans the path if needed. </p>
-<p>Sets some parameters on the path. </p>
 
 </div>
 </div>
@@ -992,35 +916,6 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a5db0b1e5c49680f2390595f870095046"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">boost::circular_buffer&lt;bool&gt; OurRobot::_pathChangeHistory</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>There are a couple cases where the robot's path gets updated very often (almost every iteration): </p>
-<ul>
-<li>the current path is blocked by an obstacle</li>
-<li>the <a class="el" href="class_our_robot.html#ab2b0fc1f00bf53277f5be70b5ce3de26" title="Move to a given point using the default RRT planner. ">move()</a> target keeps changing</li>
-</ul>
-<p>This causes the _pathStartTime to constantly be reset and motion control looks about zero seconds into the planned path and sends the robot a velocity command that's really really tiny, causing it to barely move at all.</p>
-<p>Our solution to this is to track the last N path changes in a circular buffer so we can tell if we're hitting this scenario. If so, we can compensate, by having motion control look further into the path when commanding the robot. </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/<a class="el" href="_robot_8hpp_source.html">Robot.hpp</a></li>
 <li>soccer/Robot.cpp</li>
@@ -1031,7 +926,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Tue Sep 1 2015 00:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Sep 1 2015 22:42:40 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

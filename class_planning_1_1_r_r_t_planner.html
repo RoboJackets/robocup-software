@@ -122,9 +122,9 @@ $(document).ready(function(){initNavTree('class_planning_1_1_r_r_t_planner.html'
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a25f6bc58821a42bb7b31ab4fc5c92799"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25f6bc58821a42bb7b31ab4fc5c92799"></a>
+<tr class="memitem:a8f9b907a63efa1a23476d8891dff5f7e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f9b907a63efa1a23476d8891dff5f7e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>RRTPlanner</b> (int <a class="el" href="class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c">maxIterations</a>)</td></tr>
-<tr class="separator:a25f6bc58821a42bb7b31ab4fc5c92799"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a8f9b907a63efa1a23476d8891dff5f7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a140a61e029018d1f1b84805fb5632d5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a140a61e029018d1f1b84805fb5632d5c"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c">maxIterations</a> () const </td></tr>
 <tr class="memdesc:a140a61e029018d1f1b84805fb5632d5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets the maximum number of iterations for the RRT algorithm <br/></td></tr>
@@ -133,57 +133,60 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#ab45eeb7da9dbe6cb822e01748cad5867">maxIterations</a> (int value)</td></tr>
 <tr class="memdesc:ab45eeb7da9dbe6cb822e01748cad5867"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the maximum number of iterations for th RRT algorithm <br/></td></tr>
 <tr class="separator:ab45eeb7da9dbe6cb822e01748cad5867"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0bde0971be415a64fe3a65c1db67dca"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#ae0bde0971be415a64fe3a65c1db67dca">run</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> startInstant, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> motionCommand, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *obstacles) override</td></tr>
-<tr class="memdesc:ae0bde0971be415a64fe3a65c1db67dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">run the path RRTplanner this will always populate path to be the path we need to travel  <a href="#ae0bde0971be415a64fe3a65c1db67dca">More...</a><br/></td></tr>
-<tr class="separator:ae0bde0971be415a64fe3a65c1db67dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3b4fb2c8d3af6d34fbb0173ae0b621c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3b4fb2c8d3af6d34fbb0173ae0b621c"></a>
+MotionCommand::CommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#af3b4fb2c8d3af6d34fbb0173ae0b621c">commandType</a> () const override</td></tr>
+<tr class="memdesc:af3b4fb2c8d3af6d34fbb0173ae0b621c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_planning_1_1_motion_command.html" title="This class contains the motion constraints that the gameplay logic sets for a robot. ">MotionCommand</a> type that this planner handles. <br/></td></tr>
+<tr class="separator:af3b4fb2c8d3af6d34fbb0173ae0b621c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b8183dbd96218176838c632dc81f5f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b8183dbd96218176838c632dc81f5f6"></a>
+std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a7b8183dbd96218176838c632dc81f5f6">run</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> cmd, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; prevPath=nullptr) override</td></tr>
+<tr class="memdesc:a7b8183dbd96218176838c632dc81f5f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">run the path RRTplanner this will always populate path to be the path we need to travel <br/></td></tr>
+<tr class="separator:a7b8183dbd96218176838c632dc81f5f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ac51cc04cd64cb3155c473763aef1217d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#ac51cc04cd64cb3155c473763aef1217d">makePath</a> ()</td></tr>
-<tr class="memdesc:ac51cc04cd64cb3155c473763aef1217d"><td class="mdescLeft">&#160;</td><td class="mdescRight">makes a path from the last point of each tree If the points don't match up...fail! The final path will be from the start of tree0 to the start of tree1  <a href="#ac51cc04cd64cb3155c473763aef1217d">More...</a><br/></td></tr>
-<tr class="separator:ac51cc04cd64cb3155c473763aef1217d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94810075ff582bba928f7b24a523d5b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94810075ff582bba928f7b24a523d5b8"></a>
-<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a94810075ff582bba928f7b24a523d5b8">optimize</a> (<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> &amp;path, const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *obstacles, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vi)</td></tr>
-<tr class="memdesc:a94810075ff582bba928f7b24a523d5b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">optimize the path Calles the cubicBezier optimization function. <br/></td></tr>
-<tr class="separator:a94810075ff582bba928f7b24a523d5b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4377c7c2fbea55392a06053d2516f138"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4377c7c2fbea55392a06053d2516f138"></a>
-<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a4377c7c2fbea55392a06053d2516f138">cubicBezier</a> (<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> &amp;path, const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *obstacles, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vi)</td></tr>
-<tr class="memdesc:a4377c7c2fbea55392a06053d2516f138"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses a cubicBezier to interpolate between the points on the path and add velocity planning. <br/></td></tr>
-<tr class="separator:a4377c7c2fbea55392a06053d2516f138"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab58d65b418521f4772531b7816972078"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab58d65b418521f4772531b7816972078"></a>
-Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#ab58d65b418521f4772531b7816972078">cubicBezierCalc</a> (double vi, double vf, std::vector&lt; double &gt; &amp;points, std::vector&lt; double &gt; &amp;ks, std::vector&lt; double &gt; &amp;ks2)</td></tr>
-<tr class="memdesc:ab58d65b418521f4772531b7816972078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="class_planning_1_1_r_r_t_planner.html#a4377c7c2fbea55392a06053d2516f138" title="Uses a cubicBezier to interpolate between the points on the path and add velocity planning...">cubicBezier()</a> which uses Eigen matrices to solve for the cubic bezier equations. <br/></td></tr>
-<tr class="separator:ab58d65b418521f4772531b7816972078"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43c789cf73ba8b48789c874c73d10816"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43c789cf73ba8b48789c874c73d10816"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a43c789cf73ba8b48789c874c73d10816">shouldReplan</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> goal, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, const <a class="el" href="class_planning_1_1_path.html">Path</a> *prevPath) const </td></tr>
+<tr class="memdesc:a43c789cf73ba8b48789c874c73d10816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check to see if the previous path (if any) should be discarded and replaced with a newly-planned one. <br/></td></tr>
+<tr class="separator:a43c789cf73ba8b48789c874c73d10816"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a370d18156fc0091f691e9eedfc48b049"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a370d18156fc0091f691e9eedfc48b049">findNonBlockedGoal</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> goal, boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt; prevGoal, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, int maxItr=100)</td></tr>
+<tr class="memdesc:a370d18156fc0091f691e9eedfc48b049"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the given goal point is in an obstacle, uses an RRT to attempt to find a point that is close, but not blocked.  <a href="#a370d18156fc0091f691e9eedfc48b049">More...</a><br/></td></tr>
+<tr class="separator:a370d18156fc0091f691e9eedfc48b049"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e7b74bc4b00f995b74f6e7f91306520"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e7b74bc4b00f995b74f6e7f91306520"></a>
+<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a3e7b74bc4b00f995b74f6e7f91306520">runRRT</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> goal, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles)</td></tr>
+<tr class="memdesc:a3e7b74bc4b00f995b74f6e7f91306520"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a bi-directional RRT to attempt to join the start and end states. <br/></td></tr>
+<tr class="separator:a3e7b74bc4b00f995b74f6e7f91306520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e4c9ceabc09d3f223fa720e7092d947"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e4c9ceabc09d3f223fa720e7092d947"></a>
+<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a2e4c9ceabc09d3f223fa720e7092d947">optimize</a> (<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> &amp;path, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vi, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vf)</td></tr>
+<tr class="memdesc:a2e4c9ceabc09d3f223fa720e7092d947"><td class="mdescLeft">&#160;</td><td class="mdescRight">optimize the path Calls the cubicBezier optimization function. <br/></td></tr>
+<tr class="separator:a2e4c9ceabc09d3f223fa720e7092d947"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e916aecd22a090ee7d92efea985bffc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e916aecd22a090ee7d92efea985bffc"></a>
+<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a6e916aecd22a090ee7d92efea985bffc">cubicBezier</a> (<a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> &amp;path, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vi, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vf)</td></tr>
+<tr class="memdesc:a6e916aecd22a090ee7d92efea985bffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses a cubicBezier to interpolate between the points on the path and add velocity planning. <br/></td></tr>
+<tr class="separator:a6e916aecd22a090ee7d92efea985bffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b5d8adb23e36218c390fa7e51603a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af2b5d8adb23e36218c390fa7e51603a9"></a>
+Eigen::VectorXd&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#af2b5d8adb23e36218c390fa7e51603a9">cubicBezierCalc</a> (double vi, double vf, std::vector&lt; double &gt; &amp;points, std::vector&lt; double &gt; &amp;ks, std::vector&lt; double &gt; &amp;ks2)</td></tr>
+<tr class="memdesc:af2b5d8adb23e36218c390fa7e51603a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for <a class="el" href="class_planning_1_1_r_r_t_planner.html#a6e916aecd22a090ee7d92efea985bffc" title="Uses a cubicBezier to interpolate between the points on the path and add velocity planning...">cubicBezier()</a> which uses Eigen matrices to solve for the cubic bezier equations. <br/></td></tr>
+<tr class="separator:af2b5d8adb23e36218c390fa7e51603a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a250b6258a2de72d9c9e939187c488f47"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a250b6258a2de72d9c9e939187c488f47"></a>
-<a class="el" href="struct_motion_constraints.html">MotionConstraints</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_motionConstraints</b></td></tr>
-<tr class="separator:a250b6258a2de72d9c9e939187c488f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03796a78ebff3e1b5d0a7e21830e3345"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03796a78ebff3e1b5d0a7e21830e3345"></a>
-<a class="el" href="class_planning_1_1_fixed_step_tree.html">FixedStepTree</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_fixedStepTree0</b></td></tr>
-<tr class="separator:a03796a78ebff3e1b5d0a7e21830e3345"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45365edad11d5ef25737fae933c5be95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45365edad11d5ef25737fae933c5be95"></a>
-<a class="el" href="class_planning_1_1_fixed_step_tree.html">FixedStepTree</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_fixedStepTree1</b></td></tr>
-<tr class="separator:a45365edad11d5ef25737fae933c5be95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f92c0ebfbc1f94d4b6926355c195d63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f92c0ebfbc1f94d4b6926355c195d63"></a>
-<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a3f92c0ebfbc1f94d4b6926355c195d63">_bestGoal</a></td></tr>
-<tr class="memdesc:a3f92c0ebfbc1f94d4b6926355c195d63"><td class="mdescLeft">&#160;</td><td class="mdescRight">best goal point <br/></td></tr>
-<tr class="separator:a3f92c0ebfbc1f94d4b6926355c195d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9c629a2d7ecc1d1c114c8ca084d46d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9c629a2d7ecc1d1c114c8ca084d46d5"></a>
-<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vi</b></td></tr>
-<tr class="separator:ab9c629a2d7ecc1d1c114c8ca084d46d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71525870e94405e87a53eebc2f0e9ecd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a71525870e94405e87a53eebc2f0e9ecd"></a>
-<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vf</b></td></tr>
-<tr class="separator:a71525870e94405e87a53eebc2f0e9ecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e333063b05159149291fd2defff89ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e333063b05159149291fd2defff89ac"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a3e333063b05159149291fd2defff89ac">_maxIterations</a></td></tr>
 <tr class="memdesc:a3e333063b05159149291fd2defff89ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum number of rrt iterations to run this does not include connect attempts <br/></td></tr>
 <tr class="separator:a3e333063b05159149291fd2defff89ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65337b8a9f0d6f37a6abaf1e4b53c571"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65337b8a9f0d6f37a6abaf1e4b53c571"></a>
-const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a65337b8a9f0d6f37a6abaf1e4b53c571">_obstacles</a></td></tr>
-<tr class="memdesc:a65337b8a9f0d6f37a6abaf1e4b53c571"><td class="mdescLeft">&#160;</td><td class="mdescRight">latest obstacles <br/></td></tr>
-<tr class="separator:a65337b8a9f0d6f37a6abaf1e4b53c571"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_methods_class_planning_1_1_single_robot_path_planner"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_planning_1_1_single_robot_path_planner')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_planning_1_1_single_robot_path_planner.html">Planning::SingleRobotPathPlanner</a></td></tr>
+<tr class="memitem:a56e59aa76a5788b92c87dd3bd86af4b7 inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a56e59aa76a5788b92c87dd3bd86af4b7"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>goalChangeThreshold</b> ()</td></tr>
+<tr class="separator:a56e59aa76a5788b92c87dd3bd86af4b7 inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a5d632fa74db18fcb606139807b0e7a inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a5d632fa74db18fcb606139807b0e7a"></a>
+static double&#160;</td><td class="memItemRight" valign="bottom"><b>replanTimeout</b> ()</td></tr>
+<tr class="separator:a0a5d632fa74db18fcb606139807b0e7a inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99ea7a6ad7998b313bd671afaf9f0197 inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99ea7a6ad7998b313bd671afaf9f0197"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
+<tr class="separator:a99ea7a6ad7998b313bd671afaf9f0197 inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Given a start point and an end point and some conditions, plans a path for a robot to get there. </p>
@@ -204,10 +207,10 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_planning_1_1_r_r_t_planner__coll__graph.png" border="0" usemap="#_planning_1_1_r_r_t_planner_coll__map" alt="Collaboration graph"/></div>
 <map name="_planning_1_1_r_r_t_planner_coll__map" id="_planning_1_1_r_r_t_planner_coll__map">
-<area shape="rect" id="node2" href="class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="1195,5,1381,46"/><area shape="rect" id="node3" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="45,89,187,116"/><area shape="rect" id="node14" href="class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="299,129,450,156"/><area shape="rect" id="node4" href="struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1219,283,1357,309"/><area shape="rect" id="node5" href="class_config_double.html" title="ConfigDouble" alt="" coords="912,309,1019,336"/><area shape="rect" id="node6" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="631,309,721,336"/><area shape="rect" id="node7" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="321,309,428,336"/><area shape="rect" id="node9" href="class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="566,196,786,223"/><area shape="rect" id="node12" href="class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways " alt="" coords="910,139,1021,165"/><area shape="rect" id="node10" href="class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="299,196,450,223"/><area shape="rect" id="node11" href="class_planning_1_1_fixed_step_tree.html" title="tree that grows based on fixed distance step " alt="" coords="1202,139,1374,165"/></map>
+<area shape="rect" id="node2" href="class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="5,6,192,47"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ac51cc04cd64cb3155c473763aef1217d"></a>
+<a class="anchor" id="a370d18156fc0091f691e9eedfc48b049"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -215,63 +218,28 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> * RRTPlanner::makePath </td>
+          <td class="memname"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> Planning::RRTPlanner::findNonBlockedGoal </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>makes a path from the last point of each tree If the points don't match up...fail! The final path will be from the start of tree0 to the start of tree1 </p>
-<p>Conditions to use new path</p>
-<ol type="1">
-<li>old path is empty</li>
-<li>goal changed</li>
-<li>start changed &ndash; maybe (Roman)</li>
-</ol>
-<ol type="1">
-<li>new path is better</li>
-<li>old path not valid (hits obstacles) </li>
-</ol>
-
-</div>
-</div>
-<a class="anchor" id="ae0bde0971be415a64fe3a65c1db67dca"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; RRTPlanner::run </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td>
-          <td class="paramname"><em>startInstant</em>, </td>
+          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td>
+          <td class="paramname"><em>goal</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td>
-          <td class="paramname"><em>motionCommand</em>, </td>
+          <td class="paramtype">boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td>
+          <td class="paramname"><em>prevGoal</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;&#160;</td>
-          <td class="paramname"><em>motionConstraints</em>, </td>
+          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *&#160;</td>
+          <td class="paramname"><em>obstacles</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *&#160;</td>
-          <td class="paramname"><em>obstacles</em>&#160;</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>maxItr</em> = <code>100</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -281,17 +249,12 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>run the path RRTplanner this will always populate path to be the path we need to travel </p>
-<p>Locate a non blocked goal point</p>
-<p>simple case of direct shot</p>
-<p>run global position best path search </p>
-
-<p>Implements <a class="el" href="class_planning_1_1_single_robot_path_planner.html#abc648613776d6b0545f160dcb4998199">Planning::SingleRobotPathPlanner</a>.</p>
+<p>If the given goal point is in an obstacle, uses an RRT to attempt to find a point that is close, but not blocked. </p>
 
 </div>
 </div>
@@ -305,7 +268,7 @@ const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d:
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_r_r_t_planner.html">RRTPlanner</a></li>
-    <li class="footer">Generated on Tue Sep 1 2015 00:33:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Sep 1 2015 22:42:41 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

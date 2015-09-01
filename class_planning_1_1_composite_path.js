@@ -8,6 +8,6 @@ var class_planning_1_1_composite_path =
     [ "draw", "class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4", null ],
     [ "evaluate", "class_planning_1_1_composite_path.html#a468f5377361780365626b691c4f97e39", null ],
     [ "getDuration", "class_planning_1_1_composite_path.html#a6ab16abe2a63f6ce12728ad15fed7fe0", null ],
-    [ "hit", "class_planning_1_1_composite_path.html#a178005e26072ef95f622d1d5fda7ab22", null ],
+    [ "hit", "class_planning_1_1_composite_path.html#a1624ba32ff5c9f5f3a4eca87e4db549a", null ],
     [ "subPath", "class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b", null ]
 ];

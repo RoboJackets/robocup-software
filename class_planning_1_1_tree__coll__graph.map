@@ -1,6 +1,5 @@
 <map id="Planning::Tree" name="Planning::Tree">
 <area shape="rect" id="node3" href="$class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="103,125,253,152"/>
 <area shape="rect" id="node4" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,13,147,40"/>
-<area shape="rect" id="node6" href="$class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="271,224,491,251"/>
-<area shape="rect" id="node7" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="306,125,456,152"/>
+<area shape="rect" id="node6" href="$class_geometry2d_1_1_shape_set.html" title="This class maintains a collection of Shape objects. " alt="" coords="272,224,445,251"/>
 </map>
