@@ -412,13 +412,6 @@ public:
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
 
-    Planning::SingleRobotPathPlanner* pathPlanner() { return _planner.get(); }
-
-    void setPathPlanner(
-        std::unique_ptr<Planning::SingleRobotPathPlanner> planner) {
-        _planner = std::move(planner);
-    }
-
     void setPath(std::unique_ptr<Planning::Path> path);
 
 protected:
@@ -435,9 +428,6 @@ protected:
 
     Planning::MotionCommand _motionCommand;
     MotionConstraints _motionConstraints;
-
-    std::unique_ptr<Planning::SingleRobotPathPlanner>
-        _planner;  /// single-robot RRT planner
 
     std::unique_ptr<Planning::Path> _path;  /// latest path
 
