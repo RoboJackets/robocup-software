@@ -54,6 +54,8 @@ public:
                                         maxSpeed, maxAcc, startSpeed, endSpeed);
     }
 
+    virtual bool valid() const override { return true; }
+
     virtual boost::optional<MotionInstant> evaluate(float time) const override {
         float distance;
         float speedOut;

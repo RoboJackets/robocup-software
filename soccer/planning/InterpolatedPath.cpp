@@ -248,8 +248,6 @@ boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
 
 size_t InterpolatedPath::size() const { return waypoints.size(); }
 
-bool InterpolatedPath::valid() const { return !waypoints.empty(); }
-
 float InterpolatedPath::getTime(int index) const {
     return waypoints[index].time;
 }

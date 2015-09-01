@@ -66,6 +66,7 @@ public:
     virtual boost::optional<MotionInstant> evaluate(float t) const override;
     virtual float getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
+    bool valid() const override { return !empty(); }
 
     bool empty() const { return waypoints.empty(); }
 
@@ -96,9 +97,6 @@ public:
 
     /** Returns number of waypoints */
     size_t size() const;
-
-    /** returns true if the path has non-zero size */
-    bool valid() const;
 
     // Returns the index of the point in this path nearest to pt.
     int nearestIndex(Geometry2d::Point pt) const;
