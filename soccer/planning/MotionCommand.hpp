@@ -5,11 +5,10 @@
 #include "planning/MotionInstant.hpp"
 
 namespace Planning {
+
 /**
- * This class contains the motion constraints that the high-level logic sets for
+ * This class contains the motion constraints that the gameplay logic sets for
  * a robot.
- * For position: set EITHER @motionTarget OR @targetWorldVel.
- * For angle: set EITHER @targetAngleVel OR @faceTarget.
  */
 class MotionCommand {
 public:
@@ -63,4 +62,5 @@ private:
     // The type of command
     CommandType _commandType;
 };
-}
+
+}  // namespace Planning

@@ -16,6 +16,7 @@
 #include <Robot.hpp>
 #include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
+#include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
@@ -85,6 +86,8 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _refereeModule = std::make_shared<NewRefereeModule>(_state);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
+    _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
+        new Planning::IndependentMultiRobotPathPlanner());
     vision.simulation = _simulation;
 }
 
@@ -397,8 +400,62 @@ void Processor::run() {
         _state.logFrame->set_team_name_blue(bluename);
         _state.logFrame->set_team_name_yellow(yellowname);
 
-        if (_gameplayModule) {
-            _gameplayModule->run();
+        // Run high-level soccer logic
+        _gameplayModule->run();
+
+        /// Collect global obstacles
+        Geometry2d::ShapeSet globalObstacles =
+            _gameplayModule->globalObstacles();
+        Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
+        Geometry2d::ShapeSet goalZoneObstacles =
+            _gameplayModule->goalZoneObstacles();
+        globalObstaclesWithGoalZones.add(goalZoneObstacles);
+
+        // Build a plan request for each robot.
+        std::map<int, Planning::PlanRequest> requests;
+        for (OurRobot* r : _state.self) {
+            if (r && r->visible) {
+                if (_state.gameState.state == GameState::Halt) {
+                    r->setPath(nullptr);
+                    continue;
+                }
+
+                if (r->motionCommand().getCommandType() ==
+                    Planning::MotionCommand::WorldVel) {
+                    r->setPath(nullptr);
+                    continue;
+                }
+
+                auto& globalObstaclesForBot =
+                    (r->shell() == _gameplayModule->goalieID() ||
+                     r->isPenaltyKicker)
+                        ? globalObstacles
+                        : globalObstaclesWithGoalZones;
+
+                // create and visualize obstacles
+                Geometry2d::ShapeSet fullObstacles =
+                    r->collectAllObstacles(globalObstaclesForBot);
+
+                Planning::PlanRequest request(
+                    Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
+                    r->motionConstraints(), std::move(r->path()),
+                    std::make_shared<ShapeSet>(fullObstacles));
+                requests[r->shell()] = std::move(request);
+            }
+        }
+
+        // Run path planner and set the path for each robot that was planned for
+        auto paths = _pathPlanner->run(std::move(requests));
+        for (auto& entry : paths) {
+            OurRobot* r = _state.self[entry.first];
+            auto& path = entry.second;
+            path->draw(&_state, Qt::magenta, "Planning");
+            r->setPath(std::move(path));
+        }
+
+        // Visualize obstacles
+        for (auto& shape : globalObstacles.shapes()) {
+            _state.drawShape(shape, Qt::black, "Global Obstacles");
         }
 
         // Run velocity controllers

@@ -43,7 +43,7 @@ boost::optional<MotionInstant> CompositePath::evaluate(float t) const {
     return boost::none;
 }
 
-bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
+bool CompositePath::hit(const ShapeSet& obstacles, float& hitTime,
                         float startTime) const {
     if (paths.empty()) {
         return false;
@@ -54,7 +54,7 @@ bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
         start++;
         float timeLength = path->getDuration();
         if (timeLength == std::numeric_limits<float>::infinity()) {
-            if (path->hit(shape, hitTime, startTime)) {
+            if (path->hit(obstacles, hitTime, startTime)) {
                 hitTime += totalTime;
                 return true;
             } else {
@@ -64,7 +64,7 @@ bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
         startTime -= timeLength;
         if (startTime <= 0) {
             startTime += timeLength;
-            if (path->hit(shape, hitTime, startTime)) {
+            if (path->hit(obstacles, hitTime, startTime)) {
                 hitTime += totalTime;
                 return true;
             }
@@ -75,7 +75,7 @@ bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
     }
 
     for (; start < paths.size(); start++) {
-        if (paths[start]->hit(shape, hitTime, 0)) {
+        if (paths[start]->hit(obstacles, hitTime, 0)) {
             hitTime += totalTime;
             return true;
         }
