@@ -27,6 +27,7 @@ class SystemState;
  * and the GameplayModule.
  */
 namespace Gameplay {
+
 /**
  * @brief Coordinator of high-level logic
  *

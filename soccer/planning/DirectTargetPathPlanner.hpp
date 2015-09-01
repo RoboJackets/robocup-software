@@ -3,17 +3,15 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "TrapezoidalPath.hpp"
 
-
 namespace Planning {
 
 class DirectTargetPathPlanner : public SingleRobotPathPlanner {
 public:
-
     virtual std::unique_ptr<Path> run(
         MotionInstant startInstant, MotionCommand cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
-        std::unique_ptr<Path> prevPath = nullptr) {
+        std::unique_ptr<Path> prevPath = nullptr) override {
         if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                          prevPath.get())) {
             Geometry2d::Point endTarget;
@@ -29,10 +27,14 @@ public:
         }
     }
 
+    MotionCommand::CommandType commandType() const override {
+        return MotionCommand::CommandType::DirectTarget;
+    }
+
     bool shouldReplan(MotionInstant startInstant, MotionCommand cmd,
                       const MotionConstraints& motionConstraints,
                       const Geometry2d::ShapeSet* obstacles,
-                      const Path* prevPath) {
+                      const Path* prevPath) const {
         if (!prevPath) {
             return true;
         } else {

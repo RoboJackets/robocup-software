@@ -401,6 +401,12 @@ void Processor::run() {
             _gameplayModule->run();
         }
 
+        // TODO: run path planning
+        
+
+
+        
+
         // Run velocity controllers
         for (OurRobot* robot : _state.self) {
             if (robot->visible) {

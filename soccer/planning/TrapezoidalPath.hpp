@@ -9,6 +9,7 @@
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <planning/Path.hpp>
+#include <protobuf/LogFrame.pb.h>
 
 namespace Planning {
 
