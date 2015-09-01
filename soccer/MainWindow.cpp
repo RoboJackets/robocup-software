@@ -31,8 +31,8 @@ QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 
 static const std::vector<QString> defaultHiddenLayers{
-    "MotionControl", "Obstacles", "Planning0", "Planning1",
-    "Planning2",     "Planning3", "Planning4", "Planning5"};
+    "MotionControl", "Global Obstacles", "Planning0", "Planning1",
+    "Planning2",     "Planning3",        "Planning4", "Planning5"};
 
 void calcMinimumWidth(QWidget* widget, QString text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);
