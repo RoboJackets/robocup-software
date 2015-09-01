@@ -6,7 +6,7 @@ contributions. It is not intended to be a technical guide.
 ## Initial Notes
 Contributing to open source presents a unique set of challenges, especially when
 dealing with large projects. Our project is approximately 50-80k lines of code,
-and is still very small by some open source standards. 
+and is still very small by some open source standards.
 
 This should not be discouraging, but rather informative. Most initial
 contributions will be small; it takes time to learn the project structure and any
@@ -21,14 +21,22 @@ Before starting, you'll need a Unix-like environment. This means you need to be
 running OSX or Ubuntu Linux (other flavors of Debian may work, but we do not
 officially support them or FedoraCore).
 
-You'll also need a Github account, which you can create [here](http://github.com).
+You'll also need a GitHub account, which you can create [here](http://github.com).
 Github is a web front-end for a program called Git, which allows multiple people to
-work on and contrubute to the same code base, at the same time.
+work on and contribute to the same code base, at the same time.
+
+Before you can begin work, you'll need to setup our RoboCup toolchain. You can
+run the script located in `util/ubuntu-setup` or which ever script applies to
+your operating system. All of the software technical documentation can be found 
+[here](http://robojackets.github.io/robocup-software/md_doc__build_systems.html).
 
 ## Git
+If you don't have an overall idea of what the competition is like and what its 
+goals are, you can brush up at the [RoboCup Wiki](http://wiki.robojackets.org/w/RoboCup).
+
 We use Git as our version control system (if you already know git, you can skip
 ahead). A Version control system allows many people to code for the same project 
-at the same time.
+at the same time. A "cheat-sheet" of Git commands can be found [here](http://www-rohan.sdsu.edu/acm/git.png).
 
 To ease new contributors into Git, I'll repeatedly use the analogy of the 
 classroom test.
@@ -47,7 +55,7 @@ you can pick the one you like the best, and more neatly copy the work on to the
 test you will hand in.
 
 Our master branch can be found [here](https://github.com/RoboJackets/robocup-software).
-The code in master is always neat and untouched. It can always compile. When you
+The code in latest master is always neat and untouched. It can always compile. When you
 first clone our codebase from git to view the simulator and soccer, you are
 using the code in master. It is in all respects, the master copy from which all
 other contributions are derived. Even if you are eventually given permission to
@@ -84,10 +92,11 @@ progress confused. You should use one (or several) peices of paper for each
 problem you are trying to solve, but should never use one sheet for multiple
 questions.
 
-For RoboCub you should create a new branch for every new item you'd like to work
+For RoboCup you should create a new branch for every new item you'd like to work
 on and for every bug or issue you have to fix. This ensures your master branch
-stays clean. You should never solve more than issue at a time and you should
-never have changes or additions for multiple things in the same branch. 
+stays clean. You should never solve more than one issue at a time and you should
+never have changes or additions for multiple things in the same branch. You can 
+look at a typical branching layout ![branchingModel](http://justinhileman.info/article/changing-history/git-flow.png).
 
 ### Remotes
 If Git is like a test, then remotes would be cheating. A remote allows you to
@@ -106,7 +115,8 @@ this independently if interested.
 ### Overall Workflow (important)
 If you read the previous sections, you may be a little overwhelmed. This section
 will describe how these elements interact to form a coherent workflow that will 
-allow you to make contributions more easily.
+allow you to make contributions more easily. You can view an overall diagram of 
+how data moves between team members and GitHub ![githubDataFlow](http://www.dalescott.net/wp-content/uploads/2012/09/centralized-github-4.png).
 
 Ensure you have a fork of the main repository and that you've cloned it onto
 your desktop. 
@@ -172,8 +182,14 @@ request has been accepted.
 you can repeat steps 4-7.
 9. Push the new radio firmware and submit a pull request.
 
+#### You Done Messed Up A-a-ron (and you need some help with Git)
+Don't panic! Git saves history every time you commit, and thus you should 
+always be able to recover and progress you've made and undo mistakes affecting 
+others. When in doubt consult [this](http://justinhileman.info/article/git-pretty/git-pretty.png). Feel free to ask for help at any time, and always ask for help when attempting 
+anything in the "DangerZone".
+
 ## Pull Request Requirements
-With large projects, originization and structure can break down fairly quickly 
+With large projects, organization and structure can break down fairly quickly 
 resulting in some bad spaghetti code. We want to avoid this as much as 
 possible. For this reason, every pull request will be reviewed by a more senior
 member of the team, currently Justin Buchanan. If your request isn't accepted 
