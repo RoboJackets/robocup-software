@@ -404,7 +404,8 @@ void Processor::run() {
         Geometry2d::ShapeSet globalObstacles =
             _gameplayModule->globalObstacles();
         Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-        globalObstaclesWithGoalZones.add(_gameplayModule->goalZoneObstacles());
+        Geometry2d::ShapeSet goalZoneObstacles = _gameplayModule->goalZoneObstacles();
+        globalObstaclesWithGoalZones.add(goalZoneObstacles);
 
         // execute path planning for each robot
         for (OurRobot* r : _state.self) {
@@ -455,6 +456,11 @@ void Processor::run() {
                     r->path()->draw(&_state, Qt::magenta, "Planning");
                 }
             }
+        }
+
+        // Visualize obstacles
+        for (auto& shape : globalObstacles.shapes()) {
+            _state.drawShape(shape, Qt::black, "Global Obstacles");
         }
 
         // Run velocity controllers
