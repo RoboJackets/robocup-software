@@ -5,8 +5,7 @@ namespace Planning {
 std::unique_ptr<Path> DirectTargetPathPlanner::run(
     MotionInstant startInstant, MotionCommand cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles,
-    std::unique_ptr<Path> prevPath) {
+    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
         Geometry2d::Point endTarget;

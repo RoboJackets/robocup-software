@@ -83,16 +83,11 @@ OurRobot::OurRobot(int shell, SystemState* state)
 
     _motionControl = new MotionControl(this);
 
-    _planner = nullptr;
-
     resetAvoidRobotRadii();
 
     _clearCmdText();
 }
 
-/**
- * ourrobot deconstructor, deletes motion control and planner
- */
 OurRobot::~OurRobot() {
     if (_motionControl) delete _motionControl;
     delete _cmdText;
