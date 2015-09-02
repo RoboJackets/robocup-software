@@ -1,10 +1,13 @@
 #pragma once
+
 #include <Geometry2d/Point.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <SystemState.hpp>
+#include "MotionInstant.hpp"
+
+#include <boost/optional.hpp>
 #include <QColor>
 #include <QString>
-#include "MotionInstant.hpp"
 
 namespace Planning {
 /**
@@ -12,24 +15,20 @@ namespace Planning {
  */
 class Path {
 public:
+    Path() : _startTime(0) {}
     virtual ~Path() {}
 
     /**
-     * A path describes the position and velocity a robot should be at for a
-     * particular time interval.  This method evalates the path at a given time
-     * and
-     * returns the target position and velocity of the robot.
+     * This method evalates the path at a given time and returns the target
+     * position and velocity of the robot.
      *
-     * @param[in] 	t Time (in seconds) since the robot started the path. Throws
-     * an exception if t<0
-     * @param[out] 	targetMotionInstant The position and velocity the robot
-     * would ideally be at at the given time
-     * @return 		true if the path is valid at time @t, false if you've gone
-     * past
-     * the end
+     * @param t Time (in seconds) since the robot started the path. Throws an
+     *     exception if t<0
+     * @return A MotionInstant containing the position and velocity at the given
+     *     time if @t is within the range of the path.  If @t is not within the
+     *     time range of this path, this method returns boost::none.
      */
-    virtual bool evaluate(float t,
-                          MotionInstant& targetMotionInstant) const = 0;
+    virtual boost::optional<MotionInstant> evaluate(float t) const = 0;
 
     /**
      * Returns true if the path hits an obstacle
@@ -40,7 +39,7 @@ public:
      * @param[in] 	startTime The time on the path to start checking from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const = 0;
 
     /**
@@ -84,5 +83,13 @@ public:
      * Returns a deep copy of the Path
      */
     virtual std::unique_ptr<Path> clone() const = 0;
+
+    /// The time the path starts at
+    const Time startTime() const { return _startTime; }
+    void setStartTime(Time t) { _startTime = t; }
+
+protected:
+    Time _startTime;
 };
-}
+
+}  // namespace Planning

@@ -13,7 +13,7 @@ public:
     /** base class for a tree point */
     class Point {
     public:
-        Point(const Geometry2d::Point& pos, Point* parent);
+        Point(Geometry2d::Point pos, Point* parent);
 
         // field position of the point
         Geometry2d::Point pos;
@@ -41,8 +41,7 @@ public:
     /** cleanup the tree */
     void clear();
 
-    void init(const Geometry2d::Point& start,
-              const Geometry2d::CompositeShape* obstacles);
+    void init(Geometry2d::Point start, const Geometry2d::ShapeSet* obstacles);
 
     /** find the point of the tree closest to @a pt */
     Point* nearest(Geometry2d::Point pt);
@@ -72,7 +71,7 @@ public:
     std::list<Point*> points;
 
 protected:
-    const Geometry2d::CompositeShape* _obstacles;
+    const Geometry2d::ShapeSet* _obstacles;
 };
 
 /** tree that grows based on fixed distance step */

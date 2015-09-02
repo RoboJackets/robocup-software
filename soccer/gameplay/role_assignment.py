@@ -140,7 +140,6 @@ class ImpossibleAssignmentError(RuntimeError): pass
 # the munkres library doesn't like infinity, so we use this instead
 MaxWeight = 10000000
 
-
 # multiply this by the distance between two points to get the cost
 PositionCostMultiplier = 1.0
 

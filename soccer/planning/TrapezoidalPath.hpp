@@ -4,13 +4,15 @@
 #include "MotionConstraints.hpp"
 #include "MotionInstant.hpp"
 #include <Configuration.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <planning/Path.hpp>
+#include <protobuf/LogFrame.pb.h>
 
 namespace Planning {
+
 /**
  * @brief Represents a straight-line path with a trapezoidal velocity profile
  *
@@ -53,8 +55,7 @@ public:
                                         maxSpeed, maxAcc, startSpeed, endSpeed);
     }
 
-    virtual bool evaluate(float time,
-                          MotionInstant& targetMotionInstant) const override {
+    virtual boost::optional<MotionInstant> evaluate(float time) const override {
         float distance;
         float speedOut;
         bool valid = TrapezoidalMotion(pathLength,  // PathLength
@@ -65,12 +66,13 @@ public:
                                        endSpeed,    // endSpeed
                                        distance,    // posOut
                                        speedOut);   // speedOut
-        targetMotionInstant.pos = pathDirection * distance + startPos;
-        targetMotionInstant.vel = pathDirection * speedOut;
-        return valid;
+        if (!valid) return boost::none;
+
+        return MotionInstant(pathDirection * distance + startPos,
+                             pathDirection * speedOut);
     }
 
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime = 0) const override {
         throw std::logic_error("This function is not implemented");
     }
@@ -100,4 +102,5 @@ public:
         return nullptr;
     }
 };
-}
+
+}  // namespace Planning

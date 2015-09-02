@@ -36,4 +36,5 @@ namespace Trapezoidal {
  */
 float getTime(float distance, float pathLength, float maxSpeed, float maxAcc,
               float startSpeed, float finalSpeed);
-}
+
+}  // namespace Trapezoidal

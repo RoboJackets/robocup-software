@@ -3,7 +3,8 @@
 #include <sstream>
 
 using namespace std;
-using namespace Geometry2d;
+
+namespace Geometry2d {
 
 Rect Segment::bbox() const {
     Rect bbox;
@@ -212,3 +213,5 @@ bool Segment::nearSegment(const Segment& other, float threshold) const {
                nearPoint(other.pt[1], threshold) || intersects(other);
     return ret;
 }
+
+}  // namespace Geometry2d
