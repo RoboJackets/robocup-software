@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include <logger.hpp>
 #include <helper-funcs.hpp>
 #include <software-spi.hpp>
 
@@ -27,6 +28,16 @@ DigitalIn done(RJ_FPGA_DONE);
 DigitalInOut prog_b(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
 DigitalIn init_b(RJ_FPGA_INIT_B);
 
+#define PORT_PIN_MOSI   (1 << 8)
+#define PORT_PIN_SCK    (1 << 7)
+#define PORT_PINS_MASK  (PORT_PIN_MOSI | PORT_PIN_SCK)
+
+#define PORT_MOSI(x)    (x ? PORT_PIN_MOSI : 0)
+#define PORT_SCK(x)     (x ? PORT_PIN_SCK : 0)
+#define GET_BIT(byte, shift)    (byte & (1 << shift) ? 1 : 0)
+
+PortOut sw_spi_port(Port0, PORT_PINS_MASK);
+
 bool testPass = false;
 bool batchedResult = false;
 
@@ -42,24 +53,22 @@ void start_flag_config(DigitalInOut& p)
 // returns TRUE on error
 bool fpgaInit(void)
 {
+    char buf[10];
     trigger = !trigger;
 
-    // SPI spi(RJ_SPI_BUS);
-    // miso & mosi are intentionally switched here
+    pc.printf("--  setting up SPI interface\r\n");
+    // MISO & MOSI are intentionally switched here
+    // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
     SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
-    char buf[10];
 
-    //  8 bits per write, mode 3
-    //spi.format(8, 0);
-
+    // open the bitstream file
     FILE* fp = fopen(filepath.c_str(), "r");
 
+    // send it out if successfully opened
     if ( fp != nullptr ) {
         fseek (fp, 0, SEEK_END);
         size_t filesize = ftell(fp);
         fseek (fp, 0, SEEK_SET);
-        //size_t divisor = 15;
-        //int mod_by = filesize / divisor;
         size_t count;
 
         pc.printf("--  opened %s (%u bytes)\r\n", filename.c_str(), filesize);
@@ -72,9 +81,6 @@ bool fpgaInit(void)
                 break;
             }
 
-            // reading any response is usesless because the fpga
-            // config's pin is unconnected for data out & it always
-            // returns high (if it was connected)
             spi.write(buf[0]);
             count++;
 
@@ -99,6 +105,11 @@ bool fpgaInit(void)
 
 int main()
 {
+    isLogging = RJ_LOGGING_EN;
+    rjLogLevel = INF3;
+
+    setISRPriorities();
+
     trigger = !trigger;
     Thread::wait(2);
     trigger = !trigger;
@@ -115,12 +126,12 @@ int main()
     start_flag_config(prog_b);
 
     // wait for the FPGA to tell us it's ready for the bitstream
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
         j++;
-        Thread::wait(100);
+        Thread::wait(10);
 
         // We're ready to start the configuration process when init_b goes high
-        if (init_b.read() == true)
+        if (init_b == true)
             break;
     }
 
