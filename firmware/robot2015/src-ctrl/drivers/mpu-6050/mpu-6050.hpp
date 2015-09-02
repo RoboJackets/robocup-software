@@ -8,13 +8,13 @@
 
 #include "mpu-6050-defines.hpp"
 #include "I2CMasterRtos.hpp"
- 
+
 
 /**
  * Defines
  */
 #ifndef MPU6050_ADDRESS
-#define MPU6050_ADDRESS             0x69 // address pin low (GND), default for InvenSense evaluation board
+#define MPU6050_ADDRESS             MPU6050_DEFAULT_ADDRESS
 #endif
 
 /**
@@ -60,7 +60,7 @@ class MPU6050
      * @param sda - mbed pin to use for the SDA I2C line.
      * @param scl - mbed pin to use for the SCL I2C line.
      */
-     MPU6050(PinName sda, PinName scl);
+     MPU6050(PinName sda, PinName scl, int freq = 400000);
 
 
      /**
