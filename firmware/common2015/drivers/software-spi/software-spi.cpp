@@ -83,8 +83,8 @@
 //     NVIC_GetVector(SW_SPI_TIMER_IRQn),
 //     software_spi_irq_handler
 //    );
-}
-}   // anonymous namespace
+// }
+// }   // anonymous namespace
 
 SoftwareSPI::SoftwareSPI(PinName mosi_pin, PinName miso_pin, PinName sck_pin, int bit_width)
 {
