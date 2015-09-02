@@ -3,7 +3,6 @@
 # these get installed using 'apt-get install ______' whenever the ubuntu-setup
 #   script is run
 
-
 # Build system
 ninja-build
 cmake
@@ -34,7 +33,10 @@ libbullet-dev
 
 # C/C++ compiler
 # tends to be faster and have more helpful error messages than gcc
-clang
+clang-3.6
+
+# C/C++ (and more) code-formatting tool
+clang-format-3.6
 
 # contains a ton of great C++ libraries
 libboost-all-dev

@@ -19,99 +19,97 @@ class Environment;
  * Create a new thread to act as a wrapper for the simulation
  */
 class SimulatorGLUTThread : public QThread {
-	Q_OBJECT;
+    Q_OBJECT;
 
 protected:
-	char ** _argv;
-	int _argc;
+    char** _argv;
+    int _argc;
 
-	Environment* _env;
+    Environment* _env;
 
-	// Drivable vehicle
-	Robot* _vehicle;
-	bool _blue;
+    // Drivable vehicle
+    Robot* _vehicle;
+    bool _blue;
 
-	// Dynamics/Collision Environment parts
-	SimEngine* _simEngine;
+    // Dynamics/Collision Environment parts
+    SimEngine* _simEngine;
 
-	// Camera components
-	GlutCamera* _camera;
+    // Camera components
+    GlutCamera* _camera;
 
-	// Additional camera components
-	float _cameraHeight;
-	float _minCameraDistance;
-	float _maxCameraDistance;
+    // Additional camera components
+    float _cameraHeight;
+    float _minCameraDistance;
+    float _maxCameraDistance;
 
 public:
-	typedef std::shared_ptr<SimulatorGLUTThread> shared_ptr;
+    typedef std::shared_ptr<SimulatorGLUTThread> shared_ptr;
 
-	/** need to pass arguments through to glut */
-	SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared, bool showWindow = true);
+    /** need to pass arguments through to glut */
+    SimulatorGLUTThread(int argc, char* argv[], const QString& configFile,
+                        bool sendShared, bool showWindow = true);
 
-	~SimulatorGLUTThread();
+    ~SimulatorGLUTThread();
 
-	/** access environment */
-	Environment* env() { return _env; }
+    /** access environment */
+    Environment* env() { return _env; }
 
-	void stop();
-
+    void stop();
 
 private:
-	// Re-implement the run function to start the process
-	void run() override;
-	
-	QMutex _mutex;
-	bool _stopped;
+    // Re-implement the run function to start the process
+    void run() override;
 
+    QMutex _mutex;
+    bool _stopped;
 
 public:
+    btDynamicsWorld* getDynamicsWorld();
 
-	btDynamicsWorld* getDynamicsWorld();
+    void stepSimulation();
 
-	void stepSimulation();
+    void setDrawClusters(bool drawClusters) {}
 
-	void setDrawClusters(bool drawClusters) {}
+    int getDebugMode() const;
 
-	int getDebugMode() const;
+    GlutCamera* camera() { return _camera; }
 
-	GlutCamera* camera() { return _camera; }
+    void setDebugMode(int mode);
 
-	void setDebugMode(int mode);
+    void clientMoveAndDisplay();
 
-	void clientMoveAndDisplay();
+    void clientResetScene();
 
-	void clientResetScene();
+    void displayCallback();
 
-	void displayCallback();
+    void updateCamera();
 
-	void updateCamera();
+    void nextVehicle();
 
-	void nextVehicle();
+    void displayProfileString(int xOffset, int yStart, char* message);
 
-	void displayProfileString(int xOffset,int yStart,char* message);
+    void showVehicleInfo(int& xOffset, int& yStart, int yIncr);
 
-	void showVehicleInfo(int& xOffset,int& yStart, int yIncr);
+    void specialKeyboard(int key, int x, int y);
 
-	void specialKeyboard(int key, int x, int y);
+    void specialKeyboardUp(int key, int x, int y);
 
-	void specialKeyboardUp(int key, int x, int y);
+    void render();
 
-	void render();
+    void initialize(const QString& configFile, bool sendShared);
 
-	void initialize(const QString& configFile, bool sendShared);
+    /// glut callbacks
 
-	/// glut callbacks
+    void keyboardCallback(unsigned char key, int x, int y);
 
-	void keyboardCallback(unsigned char key, int x, int y);
+    void keyboardUpCallback(unsigned char key, int x, int y) {}
 
-	void keyboardUpCallback(unsigned char key, int x, int y) {}
+    // physics initializations for objects
+    std::pair<btCollisionShape*, btTransform> addGround();
 
-	// physics initializations for objects
-	std::pair<btCollisionShape*, btTransform> addGround();
+    void addVehicle(btDynamicsWorld* m_dynamicsWorld,
+                    btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 
-	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
-			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
+    bool _showWindow;
 
-	bool _showWindow;
-
-}; // \class SimulatorGLUTThread
+};  // \class SimulatorGLUTThread

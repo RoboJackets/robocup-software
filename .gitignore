@@ -1,6 +1,4 @@
 *.kdev4
-*.pyc
-*.xls#
 .sconsign.dblite
 .scons_variables
 /build
@@ -13,6 +11,10 @@
 *~
 *.sublime-workspace
 
+# Python
+__pycache__/
+*.pyc
+
 # OS X desktop garbage files
 .DS_Store
 
@@ -21,7 +23,10 @@
 
 # IntelliJ
 .idea
+<<<<<<< HEAD
 
 rj-*.bin
 rj-*.nib
 *run/*-test.bin
+=======
+>>>>>>> master

@@ -6,12 +6,12 @@ import math
 
 def is_moving_towards_our_goal():
     # see if the ball is moving much
-    if main.ball().vel.mag() > 0.3:
+    if main.ball().vel.mag() > 0.1:
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
-            ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
+            ball_path = robocup.Line(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
 
-            fudge_factor = 0.05
+            fudge_factor = 0.15 # TODO: this could be tuned better
             WiderGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0 + fudge_factor, 0),
                                         robocup.Point(-constants.Field.GoalWidth / 2.0 - fudge_factor, 0))
 
@@ -34,6 +34,12 @@ GravitationalCoefficient = 9.81 # in m/s^2
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
 def predict(X_i, V_i, t):
     return X_i + (V_i * t) - (V_i.normalized() * 0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
+
+def predict_stop_time(start_speed):
+    return (start_speed / (FrictionCoefficient * GravitationalCoefficient))
+
+def predict_stop(X_i, V_i):
+    return predict(X_i, V_i, predict_stop_time(V_i.mag()))
 
 
 def rev_predict(V_i, dist):

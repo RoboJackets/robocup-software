@@ -6,68 +6,55 @@
 #include <vector>
 
 using namespace std;
-//using std::cout;
-//using std::endl;
+// using std::cout;
+// using std::endl;
 
-//Constructor
-KalmanFilter::KalmanFilter(filterConfig config, int id, string mat_file){
+// Constructor
+KalmanFilter::KalmanFilter(filterConfig config, int id, string mat_file) {
+    // get matrices for various interpolation values from file
+    ifstream file;
+    file.open(mat_file.c_str());
+    Vector<Vector> mat_data;
+    string mat_line;
+    if (file.isOpen()) {
+        while (!file.eof()) {
+            getline(file, mat_line);
+        }
+    }
 
-  //get matrices for various interpolation values from file
-  ifstream file;
-  file.open(mat_file.c_str());
-  Vector<Vector> mat_data;
-  string mat_line;
-  if (file.isOpen()){
-    while (! file.eof()){
-      getline(file, mat_line);
-      
-    }    
-  }
+    // set id for system
+    this->id = id;
 
+    // Initialize filter
+    // TODO: Adjust this to account for extra state vars in ball
+    this->kalman = cvCreateKalman(9, 9, 0);
 
-  //set id for system
-  this->id = id;
+    // check for type
+    this->config = config;
+    if (config == ROBOT) {
+        cout << "Creating Robot Filter, Entity ID: " << id << endl;
+        // create A system matrix
 
-  //Initialize filter
-  //TODO: Adjust this to account for extra state vars in ball
-  this->kalman = cvCreateKalman(9, 9, 0); 
- 
-  //check for type
-  this->config = config;
-  if (config == ROBOT){
-    cout << "Creating Robot Filter, Entity ID: " << id << endl;
-    //create A system matrix
-    
-    
-  } else if (config == BALL) {
-    cout << "Creating Ball Filter, Entity ID: " << id << endl;
-  }
-
-
-  
-
+    } else if (config == BALL) {
+        cout << "Creating Ball Filter, Entity ID: " << id << endl;
+    }
 }
 
 KalmanFilter::~KalmanFilter();
 
-//use functions
+// use functions
 
-//Returns the most recent corrected state
+// Returns the most recent corrected state
 pva_point KalmanFilter::getCurState();
 
-//Returns an interpolated prediction 
-//This value is adjusted to account for time since last 
-//filter update
+// Returns an interpolated prediction
+// This value is adjusted to account for time since last
+// filter update
 pva_point KalmanFilter::getInterpState();
 
-//Adds a new measurement
+// Adds a new measurement
 // Returns the corrected pva state
 pva_point KalmanFilter::update(p_point meas);
-
-
-
-
-
 
 // /// Basic Constructor
 // /// Allows for different filter configurations
@@ -76,8 +63,8 @@ pva_point KalmanFilter::update(p_point meas);
 // KalmanFilter::KalmanFilter(entityType type)
 // {
 //   this->config = type;
-  
-//   //set up the kalman filter with 
+
+//   //set up the kalman filter with
 //   //system models
 //   switch (type)
 //     {
@@ -89,14 +76,14 @@ pva_point KalmanFilter::update(p_point meas);
 //       break;
 //     case R_PV:
 //       cout << "Creating PV model for Robot" << endl;
-//       cout << "Not Implemented!" << endl;      
+//       cout << "Not Implemented!" << endl;
 // //       this->kalman = cvCreateKalman(6, 3, 0);
 //       break;
 //     case R_PVA:
 //       cout << "Creating PVA model for Robot" << endl;
 //       cout << "Not Implemented!" << endl;
 // //       this->kalman = cvCreateKalman(9, 3, 0);
-      
+
 //       break;
 //     case B_P:
 //       cout << "Creating P model for Ball" << endl;
@@ -108,13 +95,13 @@ pva_point KalmanFilter::update(p_point meas);
 //       cout << "Creating PV model for Ball" << endl;
 //       cout << "Not Implemented!" << endl;
 // //       this->kalman = cvCreateKalman(4, 2, 0);
-      
+
 //       break;
 //     case B_PVA:
 //       cout << "Creating PVA model for Ball" << endl;
 //       cout << "Not Implemented!" << endl;
 // //       this->kalman = cvCreateKalman(6, 2, 0);
-      
+
 //       break;
 //     default:
 //       cout << "Invalid input!" << endl;
@@ -134,7 +121,6 @@ pva_point KalmanFilter::update(p_point meas);
 //   cout << "Kalman Filter Created!" << endl;
 
 // }
-
 
 // void KalmanFilter::printState()
 // {
@@ -160,13 +146,10 @@ pva_point KalmanFilter::update(p_point meas);
 //   cout << "Py = " << cvmGet(this->kalman->state_post, 1, 0) << endl;
 // }
 
-
-
 // KalmanFilter::~KalmanFilter()
 // {
 //   cvReleaseKalman(&(this->kalman));
 // }
-
 
 // CvKalman* KalmanFilter::getFilter()
 // {
@@ -193,5 +176,3 @@ pva_point KalmanFilter::update(p_point meas);
 // {
 //   memcpy(this->kalman->data.fl, state, sizeof(state));
 // }
-
-
