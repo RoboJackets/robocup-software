@@ -37,6 +37,8 @@ set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
 
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
+#ignore formatting flags for printf
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
 # Use filenames relative to this directory for logging output paths
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -D__FILE_NAME__='\"$(subst ${CMAKE_CURRENT_LIST_DIR}/,,$(basename $(abspath $<)))\"'")
 
