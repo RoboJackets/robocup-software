@@ -43,11 +43,12 @@ void Task_Controller(void const* args)
 	imu.setAcceleroRange(MPU6050_ACCELERO_RANGE_2G);
 	imu.setSleepMode(false);
 
-	if (imu.testConnection()) {
+	char testResp;
+	if (testResp = imu.testConnection()) {
 		LOG(INIT, "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
 
 	} else {
-		LOG(SEVERE, "MPU6050 not found!\r\n    Falling back to sensorless control loop.");
+		LOG(SEVERE, "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to sensorless control loop.", testResp);
 		// TODO: Turn on the IMU's error LED here
 
 #else

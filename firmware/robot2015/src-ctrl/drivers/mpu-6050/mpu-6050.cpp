@@ -6,7 +6,7 @@
 #include <logger.hpp>
 
 
-MPU6050::MPU6050(PinName sda, PinName scl) : connection(sda, scl, 400000)
+MPU6050::MPU6050(PinName sda, PinName scl, int freq) : connection(sda, scl, freq)
 {
     setSleepMode(false);
     //Initializations:

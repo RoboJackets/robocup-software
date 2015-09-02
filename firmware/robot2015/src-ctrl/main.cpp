@@ -128,15 +128,15 @@ int main(void)
 	RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
 	init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
-	// Setup the IO Expander's hardware
-	MCP23017::Init();
+	// // Setup the IO Expander's hardware
+	// MCP23017::Init();
 
-	// Setup some extended LEDs and turn them on
-	IOExpanderDigitalOut led_err_m1(IOExpanderPinB0);
-	led_err_m1 = 1;
+	// // Setup some extended LEDs and turn them on
+	// IOExpanderDigitalOut led_err_m1(IOExpanderPinB0);
+	// led_err_m1 = 1;
 
-	uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
-	LOG(INIT, "Robot ID:\t%u", robot_id);
+	// uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
+	// LOG(INIT, "Robot ID:\t%u", robot_id);
 
 	motors_Init();
 
@@ -144,7 +144,7 @@ int main(void)
 	Thread controller_task(Task_Controller, nullptr, osPriorityRealtime);
 
 	// Start the thread task for handling radio communications
-	Thread comm_task(Task_CommCtrl, nullptr, osPriorityHigh);
+	Thread comm_task(Task_CommCtrl, nullptr, osPriorityAboveNormal);
 
 	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
