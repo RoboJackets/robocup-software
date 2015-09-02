@@ -89,7 +89,7 @@ modernize:
 	clang-modernize -p build -include=common,logging,simulator,soccer
 
 STYLE_EXCLUDE_DIRS=build \
-	third_party \
+	external \
 	firmware/robot/cpu/at91sam7s256 \
 	firmware/robot/cpu/at91sam7s321 \
 	firmware/robot/cpu/at91sam7s64 \
