@@ -2,87 +2,87 @@
 
 #include "software-spi.hpp"
 
-#include "pinmap.h"
-
 #include "logger.hpp"
-#include "timer-api.hpp"
 
-#define SW_SPI_TIMER            (LPC_TIM2)
-#define SW_SPI_TIMER_IRQn       (TIMER2_IRQn)
+// #include "pinmap.h"
+// #include "timer-api.hpp"
 
-namespace
-{
-const uint8_t timer_pconp_bit_num = 22;
-const uint8_t mosi_channel = 2;
-const uint8_t sck_channel = 1;
-const int match_count = 8;
+// #define SW_SPI_TIMER            (LPC_TIM2)
+// #define SW_SPI_TIMER_IRQn       (TIMER2_IRQn)
 
-bool isInit = false;
+// namespace
+// {
+// const uint8_t timer_pconp_bit_num = 22;
+// const uint8_t mosi_channel = 2;
+// const uint8_t sck_channel = 1;
+// const int match_count = 8;
 
-void software_spi_irq_handler(void)
-{
-    NVIC_DisableIRQ(SW_SPI_TIMER_IRQn);
+// bool isInit = false;
 
-    timer_ClearMatch(SW_SPI_TIMER, mosi_channel);
-    timer_ClearMatch(SW_SPI_TIMER, sck_channel);
+// void software_spi_irq_handler(void)
+// {
+//     NVIC_DisableIRQ(SW_SPI_TIMER_IRQn);
 
-    NVIC_ClearPendingIRQ(SW_SPI_TIMER_IRQn);
-    NVIC_EnableIRQ(SW_SPI_TIMER_IRQn);
-}
+//     timer_ClearMatch(SW_SPI_TIMER, mosi_channel);
+//     timer_ClearMatch(SW_SPI_TIMER, sck_channel);
 
-void setup_timer(LPC_TIM_TypeDef* timer, uint8_t match_num, bool enable_int = false)
-{
+//     NVIC_ClearPendingIRQ(SW_SPI_TIMER_IRQn);
+//     NVIC_EnableIRQ(SW_SPI_TIMER_IRQn);
+// }
 
-    NVIC_DisableIRQ(SW_SPI_TIMER_IRQn);
+// void setup_timer(LPC_TIM_TypeDef* timer, uint8_t match_num, bool enable_int = false)
+// {
 
-    // enable power for the timer
-    LPC_SC->PCONP |= 1 << timer_pconp_bit_num;
-    LOG(INF1, "Power enabled for PCONP[%u]", timer_pconp_bit_num);
+//     NVIC_DisableIRQ(SW_SPI_TIMER_IRQn);
 
-    // disable the timer and reset its counter for initilization
-    timer_Disable(timer);
-    timer_Reset(timer);
+//     // enable power for the timer
+//     LPC_SC->PCONP |= 1 << timer_pconp_bit_num;
+//     LOG(INF1, "Power enabled for PCONP[%u]", timer_pconp_bit_num);
 
-    // default to 1MHz (1 us ticks)
-    uint32_t prescale_count = (SystemCoreClock / 4) / 8000000;
-    timer_PrescaleSet(timer, prescale_count);
-    LOG(INF1, "Prescale count set to %u for channel %u", prescale_count, match_num);
+//     // disable the timer and reset its counter for initilization
+//     timer_Disable(timer);
+//     timer_Reset(timer);
 
-    // set the count for when to trigger the interrupt
-    timer_SetMatch(timer, match_num, match_count);
-    LOG(INF1, "Match count set to %u for channel %u", match_count, match_num);
+//     // default to 1MHz (1 us ticks)
+//     uint32_t prescale_count = (SystemCoreClock / 4) / 8000000;
+//     timer_PrescaleSet(timer, prescale_count);
+//     LOG(INF1, "Prescale count set to %u for channel %u", prescale_count, match_num);
 
-    // reset the counter when (counter == cnt)
-    timer_ResetOnMatchEnable(timer, match_num);
-    LOG(INF1, "Counter will RESET for channel %u", match_num);
+//     // set the count for when to trigger the interrupt
+//     timer_SetMatch(timer, match_num, match_count);
+//     LOG(INF1, "Match count set to %u for channel %u", match_count, match_num);
 
-    timer_MatchDisableInt(timer, match_num);
-    LOG(INF1, "Interrupt DISABLED for channel %u", match_num);
+//     // reset the counter when (counter == cnt)
+//     timer_ResetOnMatchEnable(timer, match_num);
+//     LOG(INF1, "Counter will RESET for channel %u", match_num);
 
-    // set to toggle the pin state on a match count - initial state of 0
-    timer_ExtMatchControlSet(timer, 0, TIMER_EXTMATCH_TOGGLE, match_num);
-    LOG(INF1, "Pin will TOGGLE for channel %u match", match_num);
+//     timer_MatchDisableInt(timer, match_num);
+//     LOG(INF1, "Interrupt DISABLED for channel %u", match_num);
 
-    // LOG(INIT,
-    //     "IRQ Addr:\t0x%08X\t(before remap)\r\n"
-    //     "  IRQ Priority:\t%10u\t(out of %u)\r\n"
-    //     "  IRQ Number:\t%10u",
-    //     NVIC_GetVector(SW_SPI_TIMER_IRQn),
-    //     NVIC_GetPriority(SW_SPI_TIMER_IRQn),
-    //     (1 << __NVIC_PRIO_BITS),
-    //     SW_SPI_TIMER_IRQn
-    //    );
+//     // set to toggle the pin state on a match count - initial state of 0
+//     timer_ExtMatchControlSet(timer, 0, TIMER_EXTMATCH_TOGGLE, match_num);
+//     LOG(INF1, "Pin will TOGGLE for channel %u match", match_num);
 
-    // // set the location of the interrupt callback
-    // NVIC_SetVector(SW_SPI_TIMER_IRQn, (uint32_t)software_spi_irq_handler);
-    // NVIC_EnableIRQ(SW_SPI_TIMER_IRQn);
+// LOG(INIT,
+//     "IRQ Addr:\t0x%08X\t(before remap)\r\n"
+//     "  IRQ Priority:\t%10u\t(out of %u)\r\n"
+//     "  IRQ Number:\t%10u",
+//     NVIC_GetVector(SW_SPI_TIMER_IRQn),
+//     NVIC_GetPriority(SW_SPI_TIMER_IRQn),
+//     (1 << __NVIC_PRIO_BITS),
+//     SW_SPI_TIMER_IRQn
+//    );
 
-    // LOG(INIT,
-    //     "IRQ Addr:\t0x%08X\t(after remap)\r\n"
-    //     "  Expected:\t0x%08X",
-    //     NVIC_GetVector(SW_SPI_TIMER_IRQn),
-    //     software_spi_irq_handler
-    //    );
+// // set the location of the interrupt callback
+// NVIC_SetVector(SW_SPI_TIMER_IRQn, (uint32_t)software_spi_irq_handler);
+// NVIC_EnableIRQ(SW_SPI_TIMER_IRQn);
+
+// LOG(INIT,
+//     "IRQ Addr:\t0x%08X\t(after remap)\r\n"
+//     "  Expected:\t0x%08X",
+//     NVIC_GetVector(SW_SPI_TIMER_IRQn),
+//     software_spi_irq_handler
+//    );
 }
 }   // anonymous namespace
 
