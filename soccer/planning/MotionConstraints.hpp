@@ -1,8 +1,10 @@
 #pragma once
 
+#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <boost/optional.hpp>
+
 
 /**
  * This class contains the motion constraints that the high-level logic sets for
@@ -53,6 +55,10 @@ struct MotionConstraints {
 
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
+
+    static double defaultMaxSpeed() {
+        return *_max_speed;
+    }
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_acceleration;

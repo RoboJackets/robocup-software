@@ -181,12 +181,15 @@ float InterpolatedPath::length(Point pt) const {
 void InterpolatedPath::draw(SystemState* const state,
                             const QColor& col = Qt::black,
                             const QString& layer = "Motion") const {
-    Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
+    Packet::DebugRobotPath* dbg = state->logFrame->add_debug_robot_paths();
     dbg->set_layer(state->findDebugLayer(layer));
+
     for (const Entry& entry : waypoints) {
-        *dbg->add_points() = entry.pos();
+        Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
+        *pt->mutable_pos() = entry.pos();
+        *pt->mutable_vel() = entry.vel();
     }
-    dbg->set_color(color(col));
+
     return;
 }
 
