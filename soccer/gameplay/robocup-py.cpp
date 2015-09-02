@@ -77,6 +77,12 @@ std::string Robot_repr(Robot* self) { return self->toString(); }
 
 Geometry2d::Point Robot_pos(Robot* self) { return self->pos; }
 
+// Sets a robot's position - this should never be used in gameplay code, but
+// is useful for testing.
+void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
+    self->pos = pos;
+}
+
 Geometry2d::Point Robot_vel(Robot* self) { return self->vel; }
 
 float Robot_angle(Robot* self) { return self->angle; }
@@ -136,12 +142,12 @@ void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
     if (other == nullptr) throw NullArgumentException("other");
-    return self->contains(*other);
+    return self->containsRect(*other);
 }
 
 bool Rect_contains_point(Geometry2d::Rect* self, Geometry2d::Point* pt) {
     if (pt == nullptr) throw NullArgumentException("pt");
-    return self->contains(*pt);
+    return self->containsPoint(*pt);
 }
 
 void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
@@ -554,6 +560,7 @@ BOOST_PYTHON_MODULE(robocup) {
              "whether or not this robot is on our team")
         .add_property("pos", &Robot_pos,
                       "position vector of the robot in meters")
+        .def("set_pos_for_testing", &Robot_set_pos_for_testing)
         .add_property("vel", &Robot_vel, "velocity vector of the robot in m/s")
         .add_property("angle", &Robot_angle, "angle of the robot in degrees")
         .add_property("angle_vel", &Robot_angle_vel,
@@ -678,4 +685,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
+
+    class_<std::shared_ptr<Configuration>>("Configuration")
+        .def("FromRegisteredConfigurables",
+             &Configuration::FromRegisteredConfigurables)
+        .staticmethod("FromRegisteredConfigurables");
 }

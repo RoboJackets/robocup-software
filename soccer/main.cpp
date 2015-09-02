@@ -132,10 +132,8 @@ int main(int argc, char* argv[]) {
                                                          : "soccer-real.cfg");
     }
 
-    Configuration config;
-    for (Configurable* obj : Configurable::configurables()) {
-        obj->createConfiguration(&config);
-    }
+    std::shared_ptr<Configuration> config =
+        Configuration::FromRegisteredConfigurables();
 
     Processor* processor = new Processor(sim);
     processor->blueTeam(blueTeam);
@@ -143,7 +141,7 @@ int main(int argc, char* argv[]) {
 
     // Load config file
     QString error;
-    if (!config.load(cfgFile, error)) {
+    if (!config->load(cfgFile, error)) {
         QMessageBox::critical(
             nullptr, "Soccer",
             QString("Can't read initial configuration %1:\n%2")
@@ -151,7 +149,7 @@ int main(int argc, char* argv[]) {
     }
 
     MainWindow* win = new MainWindow;
-    win->configuration(&config);
+    win->configuration(config.get());
     win->processor(processor);
 
     win->setUseRefChecked(!noref);

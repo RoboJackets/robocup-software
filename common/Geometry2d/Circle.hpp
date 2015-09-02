@@ -5,6 +5,7 @@
 #include "Line.hpp"
 
 namespace Geometry2d {
+
 class Circle : public Shape {
 public:
     Circle() {
@@ -12,7 +13,7 @@ public:
         _rsq = -1;
     }
 
-    Circle(const Point& c, float r) {
+    Circle(Point c, float r) {
         center = c;
         _r = r;
         _rsq = -1;
@@ -57,9 +58,9 @@ public:
         _rsq = -1;
     }
 
-    bool containsPoint(const Point& pt) const override;
+    bool containsPoint(Point pt) const override;
 
-    bool hit(const Point& pt) const override;
+    bool hit(Point pt) const override;
 
     bool hit(const Segment& pt) const override;
 
@@ -74,12 +75,11 @@ public:
     // are modified, where n is the return value.
     int intersects(const Line& line, Point* i = nullptr) const;
 
-    bool tangentPoints(const Geometry2d::Point& src,
-                       Geometry2d::Point* p1 = nullptr,
-                       Geometry2d::Point* p2 = nullptr) const;
+    bool tangentPoints(Point src, Point* p1 = nullptr,
+                       Point* p2 = nullptr) const;
 
-    // finds the point on the circle closest to P
-    Point nearestPoint(const Geometry2d::Point& P) const;
+    /// finds the point on the circle closest to @p
+    Point nearestPoint(Point p) const;
 
     Point center;
 

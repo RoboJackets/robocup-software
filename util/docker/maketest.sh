@@ -73,6 +73,7 @@ ci_task 'make test-soccer' 'test-soccer' 'A check to see if soccer tests pass'
 ci_task 'make robot2015' 'firmware' 'A check to see if firmware compiles'
 ci_task 'make test-firmware' 'test-firmware' 'A check to see if firmware tests pass'
 ci_task 'make checkstyle' 'style' 'A check to see if style passes'
+ci_task 'make test-python' 'test-python' 'A check to see if python unit tests pass'
 
 # This script needs to be run prior with the --pending flag if you want to see pending flags
 if [ "$PENDING" = "true" ]; then

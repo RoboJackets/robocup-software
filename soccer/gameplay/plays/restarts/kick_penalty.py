@@ -9,8 +9,6 @@ import tactics.penalty
 # one robot kicks the ball, the others just line up and wait
 class KickPenalty(play.Play):
 
-    in_penalty = False
-
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -33,9 +31,7 @@ class KickPenalty(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        if KickPenalty.in_penalty is False:
-            KickPenalty.in_penalty = gs.is_setup_state() and gs.is_our_penalty()
-        return 0 if KickPenalty.in_penalty else float("inf")
+        return 0 if gs.is_our_penalty() else float("inf")
 
     @classmethod
     def is_restart(cls):

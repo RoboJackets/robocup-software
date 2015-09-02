@@ -8,6 +8,7 @@
 #include <Constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
+#include <Geometry2d/Util.hpp>
 
 #include <QStyleOption>
 #include <QLayout>

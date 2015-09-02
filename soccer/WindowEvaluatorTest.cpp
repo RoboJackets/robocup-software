@@ -11,11 +11,6 @@ Configuration config;
 // evaluator, but is not actuallly in the way.  Should return one segment as
 // the result.
 TEST(WindowEvaluator, eval_pt_to_seg) {
-    // setup config system because window evaulator relies on it
-    for (Configurable* obj : Configurable::configurables()) {
-        obj->createConfiguration(&config);
-    }
-
     SystemState state;
     OurRobot* obstacleBot = state.self[0];
     obstacleBot->visible = true;

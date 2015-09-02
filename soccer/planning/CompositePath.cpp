@@ -2,7 +2,9 @@
 
 using namespace std;
 using namespace Geometry2d;
+
 namespace Planning {
+
 CompositePath::CompositePath(unique_ptr<Path> path) { append(std::move(path)); }
 
 void CompositePath::append(unique_ptr<Path> path) {
@@ -20,30 +22,28 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-bool CompositePath::evaluate(float t,
-                             MotionInstant& targetMotionInstant) const {
+boost::optional<MotionInstant> CompositePath::evaluate(float t) const {
     if (t < 0) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
     }
 
     if (paths.empty()) {
-        return false;
+        return boost::none;
     }
-    for (const std::unique_ptr<Path>& path : paths) {
-        float timeLength = path->getDuration();
+    for (const std::unique_ptr<Path>& subpath : paths) {
+        float timeLength = subpath->getDuration();
         t -= timeLength;
         if (t <= 0 || timeLength == -1) {
             t += timeLength;
-            path->evaluate(t, targetMotionInstant);
-            return true;
+            return subpath->evaluate(t);
         }
     }
-    targetMotionInstant = destination().get();
-    return false;
+
+    return boost::none;
 }
 
-bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
+bool CompositePath::hit(const ShapeSet& obstacles, float& hitTime,
                         float startTime) const {
     if (paths.empty()) {
         return false;
@@ -54,7 +54,7 @@ bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
         start++;
         float timeLength = path->getDuration();
         if (timeLength == std::numeric_limits<float>::infinity()) {
-            if (path->hit(shape, hitTime, startTime)) {
+            if (path->hit(obstacles, hitTime, startTime)) {
                 hitTime += totalTime;
                 return true;
             } else {
@@ -64,7 +64,7 @@ bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
         startTime -= timeLength;
         if (startTime <= 0) {
             startTime += timeLength;
-            if (path->hit(shape, hitTime, startTime)) {
+            if (path->hit(obstacles, hitTime, startTime)) {
                 hitTime += totalTime;
                 return true;
             }
@@ -75,7 +75,7 @@ bool CompositePath::hit(const CompositeShape& shape, float& hitTime,
     }
 
     for (; start < paths.size(); start++) {
-        if (paths[start]->hit(shape, hitTime, 0)) {
+        if (paths[start]->hit(obstacles, hitTime, 0)) {
             hitTime += totalTime;
             return true;
         }
@@ -195,4 +195,5 @@ unique_ptr<Path> CompositePath::clone() const {
     }
     return unique_ptr<Path>(newPath);
 }
-}
+
+}  // namespace Planning

@@ -159,7 +159,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
         unsigned int best = 0;
         for (unsigned int j = 0; j < goodObs.size(); ++j) {
             float d = goodObs[j]->pos.distTo(_possibleTracks[i].obs.pos);
-            if (field.contains(goodObs[j]->pos) &&
+            if (field.containsPoint(goodObs[j]->pos) &&
                 d <= Acquisition_Match_Distance &&
                 (bestDist < 0 || d < bestDist)) {
                 bestDist = d;
@@ -189,7 +189,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
 
     // Any remaining observations will start new tracks
     for (unsigned int i = 0; i < goodObs.size(); ++i) {
-        if (field.contains(goodObs[i]->pos)) {
+        if (field.containsPoint(goodObs[i]->pos)) {
             _possibleTracks.push_back(PossibleTrack(*goodObs[i]));
         }
     }
