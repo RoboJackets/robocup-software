@@ -3,6 +3,8 @@
 #include "mbed.h"
 #include "rtos.h"
 
+#include "logger.hpp"
+
 /**
  * Initializes the peripheral nested vector interrupt controller (PNVIC) with
  * appropriate values. Low values have the higest priority (with system
@@ -46,11 +48,22 @@ void setISRPriorities(void)
     //  begin raise priority section  //
     ////////////////////////////////////
 
-    //reestablish watchdog
+    // reestablish watchdog
     NVIC_SetPriority(WDT_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 0));
 
-    //TODO raise radio
-    //TODO raise others after discussion
+    // reestablish timers
+    // NVIC_SetPriority(TIMER0_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 1));
+    // NVIC_SetPriority(TIMER1_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 2));
+    // NVIC_SetPriority(TIMER2_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 3));
+    // NVIC_SetPriority(TIMER3_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 4));
+
+    // make TIMER #2 2nd in line t the watchdog timer
+    NVIC_SetPriority(TIMER2_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 1));
+
+    // this is the timer used in the mbed Ticker library
+    NVIC_SetPriority(TIMER3_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 2));
+
+    NVIC_SetPriority(I2C2_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 3));
 
     ////////////////////////////////////
     //  begin lower priotity section  //
@@ -59,17 +72,16 @@ void setISRPriorities(void)
     //set UART (console) interrupts to minimal priority
     //when debugging radio and other time sensitive operations, this
     //interrupt will need to be deferred.
-    NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 0));
-    NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
-    NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
-    NVIC_SetPriority(UART3_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 1));
+    NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 0));
 
-    //TODO lower others after discussion
+    // NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
+    // NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
+    // NVIC_SetPriority(UART3_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 1));
 
-    //NVIC_EnableIRQ(TIMER0_IRQn);
-    //NVIC_EnableIRQ(TIMER1_IRQn);
-    //NVIC_EnableIRQ(TIMER2_IRQn);
-    //NVIC_EnableIRQ(TIMER3_IRQn);
+    // NVIC_EnableIRQ(TIMER0_IRQn);
+    // NVIC_EnableIRQ(TIMER1_IRQn);
+    // NVIC_EnableIRQ(TIMER2_IRQn);
+    // NVIC_EnableIRQ(TIMER3_IRQn);
 
     __enable_irq();
 }
