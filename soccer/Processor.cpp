@@ -420,12 +420,6 @@ void Processor::run() {
                     continue;
                 }
 
-                if (r->motionCommand().getCommandType() ==
-                    Planning::MotionCommand::WorldVel) {
-                    r->setPath(nullptr);
-                    continue;
-                }
-
                 auto& globalObstaclesForBot =
                     (r->shell() == _gameplayModule->goalieID() ||
                      r->isPenaltyKicker)
