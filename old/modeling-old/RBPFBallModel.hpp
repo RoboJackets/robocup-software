@@ -7,23 +7,20 @@
 
 class Configuration;
 
-namespace Modeling
-{
-	class RBPFBallModel : public BallModel
-	{
-		public:
-			RBPFBallModel(RobotModel::RobotMap *robotMap, Configuration *config);
-			virtual ~RBPFBallModel();
+namespace Modeling {
+class RBPFBallModel : public BallModel {
+public:
+    RBPFBallModel(RobotModel::RobotMap* robotMap, Configuration* config);
+    virtual ~RBPFBallModel();
 
-		protected:
+protected:
+    // new particle filter implementation
+    Rbpf* raoBlackwellizedParticleFilter;
 
-			// new particle filter implementation
-			Rbpf* raoBlackwellizedParticleFilter;
+    /** implementation of the update function  - uses multiple observations */
+    virtual void update(float dtime);
 
-			/** implementation of the update function  - uses multiple observations */
-			virtual void update(float dtime);
-
-			/** simpler update for a single observation */
-			void singleUpdate(float dtime);
-	};
+    /** simpler update for a single observation */
+    void singleUpdate(float dtime);
+};
 }

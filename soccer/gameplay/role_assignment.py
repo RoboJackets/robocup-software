@@ -2,6 +2,7 @@ import munkres
 import evaluation.double_touch
 import robocup
 import logging
+import math
 
 
 # TODO arbitrary cost lambda property
@@ -33,6 +34,9 @@ class RoleRequirements:
         props.append("can_kick=" + str(self.require_kicking))
 
         return "; ".join(props)
+
+    def __repr__(self):
+        return str(self)
 
 
     @property
@@ -136,7 +140,6 @@ class ImpossibleAssignmentError(RuntimeError): pass
 # the munkres library doesn't like infinity, so we use this instead
 MaxWeight = 10000000
 
-
 # multiply this by the distance between two points to get the cost
 PositionCostMultiplier = 1.0
 
@@ -224,10 +227,16 @@ def assign_roles(robots, role_reqs):
             else:
                 if req.destination_shape != None:
                     cost += PositionCostMultiplier * req.destination_shape.dist_to(robot.pos)
-                if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
+                if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id():
                     cost += RobotChangeCost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
+
+            # the munkres library freezes when given NaN values, causing our
+            # whole program to hang and have to be restarted.  We check for it
+            # here and raise an exception if there's a NaN.
+            if (math.isnan(cost)):
+                raise ArithmeticError("NaN value encountered when building role assignment cost matrix")
 
             cost_row.append(cost)
         cost_matrix.append(cost_row)
@@ -269,7 +278,7 @@ def assign_roles(robots, role_reqs):
         insert_into_results(results, tree_mapping, reqs, None)
 
 
-    if total > MaxWeight:
+    if total >= MaxWeight:
         fail("No assignments possible that satisfy all constraints")
 
     return results

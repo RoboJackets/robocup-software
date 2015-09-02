@@ -13,128 +13,128 @@
 #endif
 #include <Configuration.hpp>
 
-namespace Modeling
-{
-	class RobotModel
-	{
-		public:
-			typedef std::shared_ptr<RobotModel> shared;
-			typedef std::map<unsigned int, RobotModel::shared> RobotMap;
+namespace Modeling {
+class RobotModel {
+public:
+    typedef std::shared_ptr<RobotModel> shared;
+    typedef std::map<unsigned int, RobotModel::shared> RobotMap;
 
-			// observations to be added from vision
-			typedef struct {
-				Geometry2d::Point pos;
-				float angle;
-				uint64_t time;
-			} Observation_t;
-			typedef std::vector<Observation_t> ObsVec;
+    // observations to be added from vision
+    typedef struct {
+        Geometry2d::Point pos;
+        float angle;
+        uint64_t time;
+    } Observation_t;
+    typedef std::vector<Observation_t> ObsVec;
 
-			struct Config
-			{
-				Config(Configuration *config);
-				
-				ConfigDouble posAlpha;
-				ConfigDouble posBeta;
-				ConfigDouble posGamma;
-				ConfigDouble angleAlpha;
-				ConfigDouble angleBeta;
-				ConfigDouble angleGamma;
-			};
-			
-			RobotModel(Config *config, int s);
+    struct Config {
+        Config(Configuration* config);
 
-			void observation(uint64_t time, Geometry2d::Point pos, float angle);
-			Geometry2d::Point predictPosAtTime(float dtime);
-			void update(uint64_t cur_time);
+        ConfigDouble posAlpha;
+        ConfigDouble posBeta;
+        ConfigDouble posGamma;
+        ConfigDouble angleAlpha;
+        ConfigDouble angleBeta;
+        ConfigDouble angleGamma;
+    };
 
-			// set/get
-			Geometry2d::Point pos() const { return _pos; }
-			Geometry2d::Point vel() const { return _vel; }
-			float angle() const { return _angle; }
-			float angleVel() const { return _angleVel; }
+    RobotModel(Config* config, int s);
 
-			int shell() const { return _shell; }
+    void observation(uint64_t time, Geometry2d::Point pos, float angle);
+    Geometry2d::Point predictPosAtTime(float dtime);
+    void update(uint64_t cur_time);
 
-			bool hasBall() const { return _haveBall; }
-			void hasBall(bool a) { _haveBall = a; }
+    // set/get
+    Geometry2d::Point pos() const { return _pos; }
+    Geometry2d::Point vel() const { return _vel; }
+    float angle() const { return _angle; }
+    float angleVel() const { return _angleVel; }
 
-			/**
-			 * Valid if there are new observations or if the robot has not timed out
-			 */
-			bool valid(uint64_t cur_time) const;
+    int shell() const { return _shell; }
 
-			uint64_t lastObservedTime;  /// The time used in the last observation, stored between frames
-			uint64_t lastUpdatedTime;   /// The last time we performed an update on the filter
+    bool hasBall() const { return _haveBall; }
+    void hasBall(bool a) { _haveBall = a; }
 
-		private:
-			unsigned int _shell;
+    /**
+     * Valid if there are new observations or if the robot has not timed out
+     */
+    bool valid(uint64_t cur_time) const;
 
-			ObsVec _observations;
+    uint64_t lastObservedTime;  /// The time used in the last observation,
+                                /// stored between frames
+    uint64_t
+        lastUpdatedTime;  /// The last time we performed an update on the filter
 
-			// Maximum time to coast a track (keep the track alive with no observations) in microseconds.
-			static const uint64_t MaxRobotCoastTime = 500000;
+private:
+    unsigned int _shell;
 
-			// Current filtered state
-			Geometry2d::Point _pos;
-			Geometry2d::Point _vel;
-			Geometry2d::Point _accel;
-			float _angle;
-			float _angleVel;
-			float _angleAccel;
+    ObsVec _observations;
 
-			Config *_config;
+    // Maximum time to coast a track (keep the track alive with no observations)
+    // in microseconds.
+    static const uint64_t MaxRobotCoastTime = 500000;
 
-			// Data from RadioRx
-			bool _haveBall;
+    // Current filtered state
+    Geometry2d::Point _pos;
+    Geometry2d::Point _vel;
+    Geometry2d::Point _accel;
+    float _angle;
+    float _angleVel;
+    float _angleAccel;
+
+    Config* _config;
+
+    // Data from RadioRx
+    bool _haveBall;
 
 #ifdef KALMANMODEL
-			//Difference Kalman Filter
-			DifferenceKalmanFilter *_posKalman;
-			DifferenceKalmanFilter *_angKalman;
+    // Difference Kalman Filter
+    DifferenceKalmanFilter* _posKalman;
+    DifferenceKalmanFilter* _angKalman;
 
-			/** Position **/
-			//State Transition Matrix
-			DMatrix posA;
-			//Input Transition Matrix
-			DMatrix posB;
-			//Initial Covariance Matrix
-			DMatrix posP;
-			//Process Covariance Matrix
-			DMatrix posQ;
-			//Measurement Covariance Matrix
-			DMatrix posR;
-			//Measurement Model
-			DMatrix posH;
-			//Measurement
-			DVector posZ;
-			//Input
-			DVector posU;
-			//Error
-			DVector posE;
-			//Initial Condition
-			DVector posX0;
+    /** Position **/
+    // State Transition Matrix
+    DMatrix posA;
+    // Input Transition Matrix
+    DMatrix posB;
+    // Initial Covariance Matrix
+    DMatrix posP;
+    // Process Covariance Matrix
+    DMatrix posQ;
+    // Measurement Covariance Matrix
+    DMatrix posR;
+    // Measurement Model
+    DMatrix posH;
+    // Measurement
+    DVector posZ;
+    // Input
+    DVector posU;
+    // Error
+    DVector posE;
+    // Initial Condition
+    DVector posX0;
 
-			/** Angle **/
-			//State Transition Matrix
-			DMatrix angA;
-			//Input Transition Matrix
-			DMatrix angB;
-			//Initial Covariance Matrix
-			DMatrix angP;
-			//Process Covariance Matrix
-			DMatrix angQ;
-			//Measurement Covariance Matrix
-			DMatrix angR;
-			//Measurement Model
-			DMatrix angH;
-			//Measurement
-			DVector angZ;
-			//Input
-			DVector angU;
-			//Error
-			DVector angE;
-			//Initial Condition
-			DVector angX0;
+    /** Angle **/
+    // State Transition Matrix
+    DMatrix angA;
+    // Input Transition Matrix
+    DMatrix angB;
+    // Initial Covariance Matrix
+    DMatrix angP;
+    // Process Covariance Matrix
+    DMatrix angQ;
+    // Measurement Covariance Matrix
+    DMatrix angR;
+    // Measurement Model
+    DMatrix angH;
+    // Measurement
+    DVector angZ;
+    // Input
+    DVector angU;
+    // Error
+    DVector angE;
+    // Initial Condition
+    DVector angX0;
 #endif
-	};
+};
 }

@@ -7,4 +7,4 @@ void host_com_vect(void);
 void host_gdo0_vect(void);
 void host_gdo2_vect(void);
 
-#endif // _HOST_H_
+#endif  // _HOST_H_

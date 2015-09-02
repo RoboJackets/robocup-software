@@ -17,18 +17,21 @@ class KickPenalty(play.Play):
             lambda: True,
             'immediately')
 
+        self.add_transition(behavior.Behavior.State.running,
+            behavior.Behavior.State.completed,
+            lambda: self.kicker.is_done_running(),
+            'when kicker finishes.')
 
-        kicker = tactics.penalty.Penalty()
-        self.add_subbehavior(kicker, 'kicker', required=True, priority=10)
+        self.kicker = tactics.penalty.Penalty()
+        self.add_subbehavior(self.kicker, 'kicker', required=True, priority=10)
 
         line = robocup.Segment(robocup.Point(1.5, 1), robocup.Point(1.5, 2.5))
         line_up = tactics.line_up.LineUp(line)
 
-
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if gs.is_setup_state() and gs.is_our_penalty() else float("inf")
+        return 0 if gs.is_our_penalty() else float("inf")
 
     @classmethod
     def is_restart(cls):
