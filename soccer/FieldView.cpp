@@ -9,6 +9,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Util.hpp>
+#include <planning/MotionConstraints.hpp>
 
 #include <QStyleOption>
 #include <QLayout>
@@ -321,6 +322,33 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pts.push_back(qpointf(path.points(i)));
             }
             p.drawPolyline(pts.data(), pts.size());
+        }
+    }
+
+    for (const DebugRobotPath& path : frame->debug_robot_paths()) {
+        if (path.layer() < 0 || layerVisible(path.layer())) {
+            for (int i = 0; i < path.points_size() - 1; ++i) {
+                const DebugRobotPath::DebugRobotPathPoint& from =
+                    path.points(i);
+                const DebugRobotPath::DebugRobotPathPoint& to =
+                    path.points(i + 1);
+
+                Geometry2d::Point avgVel =
+                    (Geometry2d::Point(path.points(i).vel()) +
+                     Geometry2d::Point(path.points(i + 1).vel())) /
+                    2;
+                float pcntMaxSpd = avgVel.mag() / MotionConstraints::defaultMaxSpeed();
+                QColor mixedColor(std::min((int)(255 * pcntMaxSpd), 255), 0,
+                                  std::min((int)(255 * (1 - pcntMaxSpd)), 255));
+                QPen pen(mixedColor);
+                pen.setCapStyle(Qt::RoundCap);
+                pen.setWidthF(0.03);
+                p.setPen(pen);
+
+                const Geometry2d::Point fromPos = Geometry2d::Point(from.pos());
+                const Geometry2d::Point toPos = Geometry2d::Point(to.pos());
+                p.drawLine(fromPos.toQPointF(), toPos.toQPointF());
+            }
         }
     }
 
