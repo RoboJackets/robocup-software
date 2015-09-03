@@ -5,7 +5,6 @@
 #include <planning/InterpolatedPath.hpp>
 #include <boost/optional.hpp>
 
-
 /**
  * This class contains the motion constraints that the high-level logic sets for
  * a robot.
@@ -56,9 +55,7 @@ struct MotionConstraints {
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
 
-    static double defaultMaxSpeed() {
-        return *_max_speed;
-    }
+    static double defaultMaxSpeed() { return *_max_speed; }
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_acceleration;
