@@ -4,9 +4,9 @@
 
 namespace Planning {
 
-/// Plans a path that accelerates the bot form its current velocity to the
-/// target velocity.  Ignores all obstacles.
-
+/// Plans a path that brings the robot to the given velocity as fast as
+/// possible.  Ignores all obstacles.
+///
 /// Used in the following behaviors:
 /// * Capture - fine approach
 /// * Bump - charge towards ball
@@ -19,6 +19,11 @@ public:
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
+
+    bool shouldReplan(MotionInstant startInstant, MotionCommand cmd,
+                      const MotionConstraints& motionConstraints,
+                      const Geometry2d::ShapeSet* obstacles,
+                      const Path* prevPath);
 
     virtual MotionCommand::CommandType commandType() const override {
         return MotionCommand::WorldVel;
