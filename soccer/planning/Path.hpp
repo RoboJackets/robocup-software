@@ -10,12 +10,13 @@
 #include <QString>
 
 namespace Planning {
+
 /**
  * @brief Abstract class representing a motion path
  */
 class Path {
 public:
-    Path() : _startTime(0) {}
+    Path(Time startTime = 0) : _startTime(startTime) {}
     virtual ~Path() {}
 
     /**
