@@ -4,8 +4,8 @@
 message(STATUS "downloading source files for the MODSERIAL library")
 
 ExternalProject_Add(modserial_library
-    HG_REPOSITORY       https://developer.mbed.org/users/AjK/code/MODSERIAL
-    HG_TAG              25:ae0408ebdd68
+    HG_REPOSITORY       https://developer.mbed.org/users/Sissors/code/MODSERIAL
+    HG_TAG              39:8ef4f91813fd
     CONFIGURE_COMMAND   ""
     BUILD_COMMAND       ""
     INSTALL_COMMAND     ""
@@ -27,8 +27,13 @@ list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/ISR_RX.cpp)
 list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/ISR_TX.cpp)
 list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/MODSERIAL_IRQ_INFO.cpp)
 
+list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/Device/MODSERIAL_LPC1768.cpp)
+list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/Device/MODSERIAL_LPC11U24.cpp)
+list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/Device/MODSERIAL_KL05Z.cpp)
+list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/Device/MODSERIAL_KL25Z.cpp)
+list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/Device/MODSERIAL_KSDK.cpp)
 
 # add the external project's path/src info into the accessory library lists
-set(MBED_ASSEC_LIBS_INCLUDES    ${MBED_ASSEC_LIBS_INCLUDES} ${SOURCE_DIR}       )
+set(MBED_ASSEC_LIBS_INCLUDES    ${MBED_ASSEC_LIBS_INCLUDES} ${SOURCE_DIR}        ${SOURCE_DIR}/Device)
 set(MBED_ASSEC_LIBS_SRCS        ${MBED_ASSEC_LIBS_SRCS}     ${MODSERIAL_SRC}     )
 set(MBED_ASSEC_LIBS_DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}  modserial_library    )
