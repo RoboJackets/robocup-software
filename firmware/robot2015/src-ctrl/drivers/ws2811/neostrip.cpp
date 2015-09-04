@@ -11,16 +11,13 @@
  * This library supports only the NXP LPC1768!
  */
 
-#include "mbed.h"
 #include "neostrip.hpp"
 
-// function to write to the strip, implemented in ARM assembly
-extern "C" void neo_out(NeoColor*, int);
+// #include <mbed.h>
 
-// FastIO register address and bitmask for the GPIO pin
-// because these are imported in the assembly
-uint32_t neo_fio_reg;
-uint32_t neo_bitmask;
+// uint32_t neo_bitmask;
+// uint32_t neo_fio_reg;
+// void neo_out(NeoColor*, int);
 
 NeoStrip::NeoStrip(PinName pin, int N) : N(N)
 {
@@ -48,7 +45,7 @@ void NeoStrip::setPixel(int p, int color)
 	int red = (color & 0xFF0000) >> 16;
 	int green = (color & 0x00FF00) >> 8;
 	int blue = (color & 0x0000FF);
-	
+
 	setPixel(p, red, green, blue);
 }
 

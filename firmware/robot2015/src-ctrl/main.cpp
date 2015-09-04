@@ -11,29 +11,30 @@
 
 // ADCDMA adc;
 // DMA dma;
+const std::string filename = "rj-fpga.nib";
+const std::string filesystemname = "local";
+const std::string filepath = "/" + filesystemname + "/" + filename;
 
 //global variables used by interrupt routine
-volatile int j = 0;
-float Analog_out_data[128];
-AnalogOut buzzer(RJ_SPEAKER);
+//volatile int j = 0;
+//float Analog_out_data[128];
+// AnalogOut buzzer(RJ_SPEAKER);
 
+// this is inverted - so off
+// DigitalOut rdy_led(RJ_RDY_LED, 1);
 
-// Sets the correct hardware configurations for pins connected to LEDs
+// Sets the correct hardware configurations for pins connected to leds
 void statusLights(bool state)
 {
-	DigitalInOut init_leds[4] = {
+	DigitalInOut init_leds[] = {
 		{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, state},
-		{RJ_RDY_LED, PIN_OUTPUT, OpenDrain, state},
-		{RJ_RX_LED, PIN_OUTPUT, OpenDrain, state},
-		{RJ_TX_LED, PIN_OUTPUT, OpenDrain, state}
+		{RJ_RX_LED,   PIN_OUTPUT, OpenDrain, state},
+		{RJ_TX_LED,   PIN_OUTPUT, OpenDrain, state},
+		{RJ_RDY_LED,  PIN_OUTPUT, OpenDrain, state}
 	};
 
 	for (int i = 0; i < 4; i++)
 		init_leds[i].mode(PullUp);
-
-	// Keeps the `ready` LED on after the others are turned off
-	if (state == 1)
-		init_leds[1] = 0;
 }
 void statusLightsON(void const* args)
 {
@@ -44,22 +45,112 @@ void statusLightsOFF(void const* args)
 	statusLights(1);
 }
 
+// // used to output next analog sample whenever a timer interrupt occurs
+// void Sample_timer_interrupt(void const* args)
+// {
+// 	// send next analog sample out to D to A
+// 	// buzzer = Analog_out_data[j];
+// 	// increment pointer and wrap around back to 0 at 128
+// 	j = (j + 1) & 0x07F;
+// }
 
-// used to output next analog sample whenever a timer interrupt occurs
-void Sample_timer_interrupt(void const* args)
+// void sampleInputs(void)
+// {
+// 	// Set global variables here for the config input values from the IO Expander.
+// 	// This is where the robot's ID comes from, so it's pretty important.
+// 	LOG(SEVERE, "Interrupt triggered!");
+// }
+
+extern "C" void HardFault_Handler(void)
 {
-	// send next analog sample out to D to A
-	buzzer = Analog_out_data[j];
-	// increment pointer and wrap around back to 0 at 128
-	j = (j + 1) & 0x07F;
+	__asm volatile
+	(
+	    " tst lr, #4                                                \n"
+	    " ite eq                                                    \n"
+	    " mrseq r0, msp                                             \n"
+	    " mrsne r0, psp                                             \n"
+	    " ldr r1, [r0, #24]                                         \n"
+	    " ldr r2, hard_fault_handler_2_const                        \n"
+	    " bx r2                                                     \n"
+	    " hard_fault_handler_2_const: .word HARD_FAULT_HANDLER    	\n"
+	);
+}
+
+extern "C" void HARD_FAULT_HANDLER(uint32_t* stackAddr)
+{
+	/* These are volatile to try and prevent the compiler/linker optimising them
+	away as the variables never actually get used.  If the debugger won't show the
+	values of the variables, make them global my moving their declaration outside
+	of this function. */
+	volatile uint32_t r0;
+	volatile uint32_t r1;
+	volatile uint32_t r2;
+	volatile uint32_t r3;
+	volatile uint32_t r12;
+	volatile uint32_t lr; /* Link register. */
+	volatile uint32_t pc; /* Program counter. */
+	volatile uint32_t psr;/* Program status register. */
+
+	r0 = stackAddr[0];
+	r1 = stackAddr[1];
+	r2 = stackAddr[2];
+	r3 = stackAddr[3];
+	r12 = stackAddr[4];
+	lr = stackAddr[5];
+	pc = stackAddr[6];
+	psr = stackAddr[7];
+
+	LOG(FATAL,
+	    "\r\n"
+	    "================================\r\n"
+	    "========== HARD FAULT ==========\r\n"
+	    "\r\n"
+	    "  MSP:\t0x%08X\r\n"
+	    "  HFSR:\t0x%08X\r\n"
+	    "  CFSR:\t0x%08X\r\n"
+	    "\r\n"
+	    "  r0:\t0x%08X\r\n"
+	    "  r1:\t0x%08X\r\n"
+	    "  r2:\t0x%08X\r\n"
+	    "  r3:\t0x%08X\r\n"
+	    "  r12:\t0x%08X\r\n"
+	    "  lr:\t0x%08X\r\n"
+	    "  pc:\t0x%08X\r\n"
+	    "  psr:\t0x%08X\r\n"
+	    "\r\n"
+	    "========== HARD FAULT ==========\r\n"
+	    "================================",
+	    __get_MSP,
+	    SCB->HFSR,
+	    SCB->CFSR,
+	    r0, r1, r2, r3, r12,
+	    lr, pc, psr
+	   );
+
+	// do nothing so everything remains unchanged for debugging
+	while (true) {};
 }
 
 
-void sampleInputs(void)
+extern "C" void NMI_Handler()
 {
-	// Set global variables here for the config input values from the IO Expander.
-	// This is where the robot's ID comes from, so it's pretty important.
-	LOG(SEVERE, "Interrupt triggered!");
+	printf("NMI Fault!\n");
+	//NVIC_SystemReset();
+}
+extern "C" void MemManage_Handler()
+{
+	printf("MemManage Fault!\n");
+	//NVIC_SystemReset();
+}
+extern "C" void BusFault_Handler()
+{
+	printf("BusFault Fault!\n");
+	//NVIC_SystemReset();
+}
+extern "C" void UsageFault_Handler()
+{
+	printf("UsageFault Fault!\n");
+	//NVIC_SystemReset();
 }
 
 
@@ -78,8 +169,8 @@ int main(void)
 
 	// precompute 128 sample points on one sine wave cycle
 	// used for continuous sine wave output later
-	for (int k = 0; k < 128; k++)
-		Analog_out_data[k] = ((1.0 + sin((float(k) / 128.0 * 6.28318530717959))) / 2.0);
+	// for (int k = 0; k < 128; k++)
+	// 	Analog_out_data[k] = ((1.0 + sin((float(k) / 128.0 * 6.28318530717959))) / 2.0);
 
 	// turn on timer interrupts to start sine wave output
 	// sample rate is 500Hz with 128 samples per cycle on sine wave
@@ -128,6 +219,31 @@ int main(void)
 	RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
 	init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
+#if RJ_FPGA_ENABLE
+	// Create an object for communicating with the FPGA
+	FPGA fpga(
+	    RJ_SPI_BUS,
+	    RJ_FPGA_nCS,
+	    RJ_FPGA_PROG_B,
+	    RJ_FPGA_INIT_B,
+	    RJ_FPGA_DONE
+	);
+
+	// This is where the FPGA is actually configured with the bitfile's name passed in
+	bool fpga_ready = fpga.Init(filepath);
+
+	if (fpga_ready == true) {
+
+		LOG(INIT, "FPGA Configuration Successful!");
+
+	} else {
+
+		LOG(FATAL, "FPGA Configuration Failed!");
+
+	}
+
+#endif
+
 	// // Setup the IO Expander's hardware
 	// MCP23017::Init();
 
@@ -141,7 +257,7 @@ int main(void)
 	motors_Init();
 
 	// Start the thread task for the on-board control loop
-	Thread controller_task(Task_Controller, nullptr, osPriorityRealtime);
+	Thread controller_task(Task_Controller, nullptr, osPriorityHigh);
 
 	// Start the thread task for handling radio communications
 	Thread comm_task(Task_CommCtrl, nullptr, osPriorityAboveNormal);
@@ -149,29 +265,12 @@ int main(void)
 	// Start the thread task for the serial console
 	Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
 
-	// Attach an interrupt callback for setting the buttons/switches states into the firmware anytime one of them changes
-	InterruptIn configInputs(RJ_IOEXP_INT);
-	configInputs.rise(&sampleInputs);
-
-
-#if RJ_FPGA_ENABLE
-	// Create an object for communicating with the FPGA
-	FPGA fpga(
-	    RJ_SPI_BUS,
-	    RJ_FPGA_nCS,
-	    RJ_FPGA_PROG_B,
-	    RJ_FPGA_INIT_B,
-	    RJ_FPGA_DONE
-	);
-
-	// This is where the FPGA is actually configured with the bitfile's name passed in
-	if (fpga.Init("rj-fpga.nib") == false) {
-		LOG(FATAL, "FPGA config failed!");
-	} else {
-		LOG(INIT, "FPGA configuration complete!");
-	}
-
-#endif
+	// Attach an interrupt callback for setting the buttons/switches states
+	// into the firmware anytime one of them changes
+	//
+	// ==== THIS CURRENTLY CAUSES A HARD FAULT WITH THE 2015 CTRL BOARD =====
+	// InterruptIn configInputs(RJ_IOEXP_INT);
+	// configInputs.rise(&sampleInputs);
 
 
 #ifdef LINK_TOC_PARAMS
@@ -183,7 +282,6 @@ int main(void)
 	osMailQId tocQID = osMailCreate(tocQueue.def(), NULL);
 
 	Thread toc_task(Task_TOC, &tocQID, osPriorityBelowNormal);
-
 
 	// Start the thread task for access to certain variables in the dynamic logging structure
 	MailHelper<RTP_t, 5> paramQueue;
@@ -257,9 +355,12 @@ int main(void)
 	*/
 
 	// LED3 turns on once we hit the end of initilization
-	DigitalOut ledThree(LED3, 1);
+	// DigitalOut ledThree(LED3, 1);
+
+	DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
 	while (1) {
+		rdy_led = !fpga_ready;
 		Thread::wait(1000);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
 	}
 }

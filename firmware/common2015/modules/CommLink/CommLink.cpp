@@ -97,7 +97,7 @@ void CommLink::rxThread(void const* arg)
     else
         threadPriority = osPriorityIdle;
 
-    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
+    LOG(INF1, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
 
     // Set the function to call on an interrupt trigger
     inst->_int_in->rise(inst, &CommLink::ISR);

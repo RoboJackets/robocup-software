@@ -111,6 +111,7 @@ class CommModule
     static void ResetCount(unsigned int portNbr);
     static void Close(unsigned int portNbr);
     static bool isReady(void);
+    static int  NumOpenSockets(void);
 
   protected:
     // NOP function for keeping a communication link active

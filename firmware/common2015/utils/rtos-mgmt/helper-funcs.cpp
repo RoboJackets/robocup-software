@@ -63,7 +63,7 @@ void setISRPriorities(void)
     // this is the timer used in the mbed Ticker library
     NVIC_SetPriority(TIMER3_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 2));
 
-    NVIC_SetPriority(I2C2_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 3));
+
 
     ////////////////////////////////////
     //  begin lower priotity section  //
@@ -73,6 +73,8 @@ void setISRPriorities(void)
     //when debugging radio and other time sensitive operations, this
     //interrupt will need to be deferred.
     NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 0));
+
+    NVIC_SetPriority(I2C2_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 1));
 
     // NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
     // NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));

@@ -50,8 +50,13 @@ static const uint8_t BASE_STATION_ADDR = 0x01;
  */
 void rxCallbackLinkTest(RTP_t* p)
 {
-	if (p->payload_size > 0) {
-		LOG(INIT, "Radio RX working!.\r\n    Received %u byte packet.", p->payload_size);
+	if (p->payload_size) {
+		LOG(INIT,
+		    "Loopback test successful!\r\n"
+		    "  '%s' (%u bytes)",
+		    &(p->payload),
+		    p->payload_size
+		   );
 	}
 }
 
@@ -112,6 +117,8 @@ void Task_CommCtrl(void const* args)
 		CommModule::RxHandler(&rxCallbackLinkTest, COMM_PORT_SETPOINT);
 		CommModule::openSocket(COMM_PORT_SETPOINT);
 
+		LOG(INIT, "%u sockets opened", CommModule::NumOpenSockets());
+
 	} else {
 		LOG(FATAL, "No radio interface found!\r\n    Terminating main radio thread.");
 		// TODO: Turn on radio error LED here
@@ -131,45 +138,30 @@ void Task_CommCtrl(void const* args)
 	 * the CommModule methods can be used from almost anywhere.
 	 */
 
+	while (CommModule::isReady() == false) {
+		Thread::wait(100);
+	}
+
+	// Thread::signal_wait(COMMUNICATION_TASK_START_SIGNAL, osWaitForever);
+
 	// == everything below this line all the way until the start of the while loop is test code ==
 
-	char buf[] = "Hello World!";
-
-	// Test RX by placing a dummy packet in the RX queue
-	RTP_t pck;
-	pck.header_link = RTP_HEADER(COMM_PORT_CONTROLLER, 1, false, false);
-	pck.payload_size = 25;
-	memset(pck.payload, 0xFF, pck.payload_size);
-	pck.address = BASE_STATION_ADDR;
+	std::string linkTestMsg = "Hello World!";
 
 	// Test RX acknowledgment with a packet structured to trigger the ACK response
 	RTP_t ack_pck;
 	ack_pck.header_link = RTP_HEADER(COMM_PORT_LINK_TEST, 1, true, false);
-	ack_pck.payload_size = sizeof(buf);
-	memcpy(ack_pck.payload, buf, sizeof(buf));
+	ack_pck.payload_size = linkTestMsg.length();
+	memcpy(ack_pck.payload, linkTestMsg.c_str(), ack_pck.payload_size);
 	ack_pck.address = BASE_STATION_ADDR;
 
-	LOG(INIT, "Placing dummy RX packet in radio buffer:\r\n    Payload:\t\"%s\"\t(%u bytes)", ack_pck.payload, ack_pck.payload_size);
+	LOG(INIT, "Placing link test packet in RX buffer:\r\n    Payload:\t\"%s\"\t(%u bytes)", ack_pck.payload, ack_pck.payload_size);
 
-	CommModule::receive(pck);
+	CommModule::receive(ack_pck);
 
 	while (true) {
-		/*
-		Thread::wait(100);
-
-		// Simulate some incoming packets on 2 different ports
-		//CommModule::receive(pck);
-
-		//Thread::wait(1);
-
-		// Now, simulate some incoming packets that sometimes request an ACK
-		//CommModule::receive(ack_pck);
-
-		CommModule::send(ack_pck);
-		*/
-
 		// CommModule::receive(pck);
-		Thread::wait(1500);
+		// Thread::wait(1500);
 		Thread::yield();
 
 		// CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.

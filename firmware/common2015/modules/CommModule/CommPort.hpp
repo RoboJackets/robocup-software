@@ -226,16 +226,12 @@ class CommPort
 
 
 
-
-
 // Function for defining how to sort a std::vector of CommPort objects
 template<class T>
 bool PortCompare(const CommPort<T>& a, const CommPort<T>& b)
 {
     return a < b;
 }
-
-
 
 
 // Class to manage the available/unavailable ports
@@ -285,6 +281,18 @@ class CommPorts : CommPort<T>
     int count(void) const
     {
         return ports.size();
+    }
+
+    int count_open(void) const
+    {
+        int count = 0;
+
+        for (auto it = ports.begin(); it != ports.end(); ++it) {
+            if (it->isOpen())
+                count++;
+        }
+
+        return count;
     }
 
     bool empty(void) const

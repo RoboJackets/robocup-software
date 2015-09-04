@@ -15,12 +15,12 @@
 */
 #define RJ_BOOT_LOG             false
 
-#define RJ_FPGA_ENABLE          false
+#define RJ_FPGA_ENABLE          true
 
 // ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES ** ============================= **
 
 // Enable/Disable the Radio Transceiver (915MHz band)
-#define RJ_RADIO_EN             false
+// #define RJ_RADIO_EN             false
 #define RJ_CC1201
 //#define RJ_CC1101
 

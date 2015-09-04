@@ -1,5 +1,7 @@
 #include "CommModule.hpp"
 
+#include "CommPort.hpp"
+
 #include "logger.hpp"
 
 
@@ -64,7 +66,6 @@ void CommModule::txThread(void const* arg)
 {
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority;
-    osEvent  evt;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
@@ -78,6 +79,8 @@ void CommModule::txThread(void const* arg)
 
     // Signal to the RX thread that it can begin
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
+
+    osEvent  evt;
 
     while (true) {
 
@@ -118,8 +121,6 @@ void CommModule::rxThread(void const* arg)
 {
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority;
-    RTP_t* p;
-    osEvent  evt;
 
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
@@ -130,6 +131,11 @@ void CommModule::rxThread(void const* arg)
         threadPriority = osPriorityIdle;
 
     LOG(INIT, "RX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", instance->_rxID, threadPriority);
+
+    _isReady = true;
+
+    RTP_t* p;
+    osEvent  evt;
 
     while (true) {
 
@@ -217,7 +223,7 @@ bool CommModule::openSocket(uint8_t portNbr)
 
     if ( _ports[portNbr].Open() ) {
         // Everything looks to be setup, go ahead and enable it
-        LOG(INIT, "Port %u opened", portNbr);
+        LOG(INF1, "Port %u opened", portNbr);
 
         return true;
     } else {
@@ -237,8 +243,6 @@ void CommModule::ready(void)
 
     // Start running the TX thread - it will trigger with to startup the RX thread
     osSignalSet(_txID, COMM_MODULE_SIGNAL_START_THREAD);
-
-    _isReady = true;
 }
 
 
@@ -336,4 +340,9 @@ void CommModule::Close(unsigned int portNbr)
 bool CommModule::isReady(void)
 {
     return _isReady;
+}
+
+int CommModule::NumOpenSockets(void)
+{
+    return _ports.count_open();
 }

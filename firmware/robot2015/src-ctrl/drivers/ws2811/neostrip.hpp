@@ -6,13 +6,14 @@
  *
  * Library for the control of Adafruit NeoPixel addressable RGB LEDs.
  */
-#ifndef TARGET_LPC1768
-#error NeoStrip only supports the NXP LPC1768!
-#else
 
 #pragma once
 
- // extern "C" void neo_out(NeoColor*, int);
+#include <mbed.h>
+
+#ifndef TARGET_LPC1768
+#error NeoStrip only supports the NXP LPC1768!
+#else
 
 // NeoColor struct definition to hold 24 bit
 // color data for each pixel, in GRB order
@@ -22,13 +23,20 @@ struct NeoColor {
 	uint8_t blue;
 };
 
+
+// FastIO register address and bitmask for the GPIO pin
+// because these are imported in the assembly
+extern "C" uint32_t neo_bitmask;
+extern "C" uint32_t neo_fio_reg;
+extern "C" void neo_out(NeoColor*, int);
+
 /**
  * NeoStrip objects manage the buffering and assigning of
  * addressable NeoPixels
  */
 class NeoStrip
 {
-public:
+  public:
 
 	/**
 	 * Create a NeoStrip object
@@ -92,7 +100,7 @@ public:
 	 */
 	void write(void);
 
-protected:
+  protected:
 	NeoColor* strip;	// pixel data buffer modified by setPixel() and used by neo_out()
 	int N;				// the number of pixels in the strip
 	int Nbytes;			// the number of bytes of pixel data (always N*3)

@@ -12,25 +12,20 @@
 # with the mbed NXP LPC1768 
 #
 ############################################
-	.text {a w x}
+
+	.file   "neocore.s"
+	.syntax unified
 
 	.thumb
+	.section ".text"
+	.align  2
 	
+# these 2 variables are set in the neostrip class
+	.global neo_out
 	.global neo_fio_reg
 	.global neo_bitmask
-
-.globl XPUT32
-XPUT32:
-    push {%lr}
-    # @ call an arm function from thumb asm
-    ldr %r2,=PUT32
-    mov %lr,pc
-    bx %r2
-    pop {%r2}
-    bx %r2
 	
 ############################################
-.thumb_func
 neo_write_pin:
 # Set the GPIO pin to the value passed in %r0 
 # Registers and bitmasks are stored in variables set by the C++ library 
@@ -40,7 +35,7 @@ neo_write_pin:
 	LDR		%r2, [%r2]
 
 	CMP		%r0, #0				@ VALUE == 0 ? 
-	ITE EQ					 	@ (IF-THEN-ELSE) ON NEXT TWO INSTRUCTIONS USING "EQ" FLAG 
+	ITE 	EQ				 	@ (IF-THEN-ELSE) ON NEXT TWO INSTRUCTIONS USING "EQ" FLAG 
 	STREQ	%r2, [%r1, #0x1C]	@ if==0, CLEAR BIT 
 	STRNE	%r2, [%r1, #0x18]	@ if==1, SET BIT 
 	BX		%lr
@@ -69,7 +64,7 @@ neo_zero:
 neo_one:
 # Output a NeoPixel one, composed of a long 
 # HIGH pulse and a short LOW pulse 
-	PUSH	{%lr}
+	PUSH	{lr}
 	MOV		%r0,  #1 
 	BL		neo_write_pin
 	
@@ -86,13 +81,20 @@ neo_one:
 	POP		{%lr}
 	BX		%lr
 	
+
 ############################################
+	.thumb_func
+	.type   neo_out, %function
+	.global neo_out
+neo_out:
 # void neo_out(int *data, int n)
 # Main function called from the C++ library 
 # %r0 contains a pointer to the array of color data to send 
 # %r1 contains the number of bytes of data to send 
-neo_out:
-	PUSH	{%lr, %r4, %r5, %r6, %r7, %r8}
+	.fnstart
+	.cantunwind
+
+	PUSH	{%r4, %r5, %r6, %r7, %r8, %lr}
 	MOV		%r7, %r1		 	@ move length to %r7 
 	MOV		%r6, %r0		 	@ move address to %r6 
 	
@@ -102,10 +104,16 @@ neo_byteloop:
 	
 neo_bitloop:
 	AND		%r3, %r5, %r4	 	@ mask current byte 
+
 	CMP		%r3, #0
-	BLEQ	neo_zero	 		@ send current bit 
-	BLNE	neo_one
-	
+	BEQ 	neo_zero_call
+	BL 		neo_one
+	B 		neo_one_done
+neo_zero_call:
+	BL 		neo_zero
+	B 		neo_one_done
+neo_one_done:
+
 	LSR		%r4, %r4, #1	 	@ shift bitmask right one 
 	CMP		%r4, #0		 		@ if still more bits, loop back 
 	BNE		neo_bitloop
@@ -117,8 +125,11 @@ neo_bitloop:
 
 	MOV		%r0, #0
 	BL		neo_write_pin
-	POP		{%r8, %r7, %r6, %r5, %r4, %lr}
+	POP		{%r4, %r5, %r6, %r7, %r8, %lr}
 	BX		%lr
+
+.fnend
+.size   neo_out, .-neo_out
 
 ############################################
 neo_delay:
@@ -229,4 +240,5 @@ neo_delay:
 
 neo_delay_end:
 	BX	 %lr
-	end 	@ end code region 
+	
+.end 	@ end code region 

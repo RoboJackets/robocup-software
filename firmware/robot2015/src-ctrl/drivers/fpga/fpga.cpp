@@ -1,7 +1,10 @@
 #include "fpga.hpp"
 
-#include "commands.hpp"
+#include <rtos.h>
 #include <logger.hpp>
+#include <software-spi.hpp>
+
+#include "commands.hpp"
 
 
 bool FPGA::isInit = false;
@@ -13,20 +16,9 @@ FPGA::FPGA(PinName _mosi, PinName _miso, PinName _sck, PinName _cs, PinName _pro
       progB(_progB, PIN_OUTPUT, OpenDrain, 1),
       initB(_initB),
       done(_done)
-{
-    // We force the PROG_B pin low to start a fresh configuration period in the constructor
-    isInit = false;
-
-    // However, it must be HIGH during configuration, we we bring it back HIGH here
-    wait_us(80);
-    // while(initB) { /* wait */ };
-    progB = 0;
-}
+{}
 
 
-/**
- *
- */
 FPGA::~FPGA(void)
 {
     isInit = false;
@@ -37,59 +29,105 @@ FPGA::~FPGA(void)
  * [FPGA::Init Setup the FPGA interface]
  * @return  [The initialization error code.]
  */
-bool FPGA::Init(const std::string& filename)
+bool FPGA::Init(const std::string& filepath)
 {
-    progB = 1;
-    wait_us(80);
-    while(!initB) { /* wait */ };
-    progB = 0;
+    int j = 0;
 
-    //  8 bits per write, mode 3 for polarity & phase of SPI transfers
-    spi.format(8, 3);
+    // toggle PROG_B to clear out anything prior
+    progB = !progB;
+    Thread::wait(1);
+    progB = !progB;
+    Thread::wait(1);
 
-    //  1MHz - pretty slow, we can boost this later
-    //  our max physical limit is 1/8 of the fpga system clock (18.4MHz), so 18.4/8 is the max
-    spi.frequency(2000000);
+    // wait for the FPGA to tell us it's ready for the bitstream
+    for (int i = 0; i < 100; i++) {
+        j++;
+        Thread::wait(10);
 
-    std::string filepath = "/local/";
-    filepath.append(filename);
+        // We're ready to start the configuration process when initB goes high
+        if (initB == true)
+            break;
+    }
 
-    FILE* fp = fopen(filepath.c_str(), "r");
+    // show INIT_B error if it never went low
+    if (j == 10) {
+        LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
+        return false;
+    }
 
-    if (fp == nullptr) {
-        LOG(SEVERE, "'%s' does not exist", filepath.c_str());
+
+    // Configure the FPGA with the bitstream file
+    if (send_config(filepath)) {
+        LOG(FATAL, "FPGA bitstream write error");
 
         return false;
-    } else {
-        int result = 0;
-        char buf[10];
+    }
 
-        LOG(INIT, "Opened FPGA bitfile:\t'%s'", filepath.c_str());
+    else {
+        // Wait some extra time in case the done pin needs time to be asserted
+        j = 0;
 
-        // Select the FPGA
-        cs = 0;
+        for (int i = 0; i < 1000; i++) {
+            Thread::wait(1); j++;
 
-        while (true) {
-            size_t bytes_read = fread(buf, 1, 1, fp);
-
-            if (bytes_read == 0)
-                break;
-
-            result = spi.write(buf[0]);
+            if (done == true) break;
         }
 
-        cs = 1;     // deselect
+        if (j == 1000) {
+            LOG(FATAL, "DONE pin timed out\t(POST CONFIGURATION ERROR)");
+
+            return false;
+        }
+        // everything worked are we're good to go!
+        else {
+            LOG(INF1, "DONE pin state:\t%s", done ? "HIGH" : "LOW");
+
+            isInit = true;
+            return true;
+        }
+    }
+}
+
+
+
+bool FPGA::send_config(const std::string& filepath)
+{
+    char buf[10];
+
+    // open the bitstream file
+    FILE* fp = fopen(filepath.c_str(), "r");
+
+    // send it out if successfully opened
+    if ( fp != nullptr ) {
+        // MISO & MOSI are intentionally switched here
+        // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
+        SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
+
+        fseek (fp, 0, SEEK_END);
+        size_t filesize = ftell(fp);
+        fseek (fp, 0, SEEK_SET);
+
+        LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(), filesize);
+
+        size_t read_byte;
+
+        do {
+            read_byte = fread(buf, 1, 1, fp);
+
+            if (read_byte == 0) break;
+
+            spi.write(buf[0]);
+
+        } while (initB == true || done == false);
 
         fclose(fp);
 
-        LOG(OK, "Got final byte from spi:\t0x%02X\r\n\tFPGA configured!", result);
+        return false;
+    } else {
 
-        // If configuration failed, the `DONE` pin will read HIGH, so we flip it to keep things lined up with the nullptr error above.
-        isInit = done;
+        LOG(INIT, "FPGA configuration failed\r\n    Unable to open %s", filepath.c_str());
 
-        DigitalOut tmpLED(LED3, 0);
-        tmpLED = !initB;
-
-        return isInit;
+        return true;
     }
 }
+
