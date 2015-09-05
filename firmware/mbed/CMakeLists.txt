@@ -1,5 +1,6 @@
 # set the path to where the ARM & AVR toolchains setup files are at so they can be used for all firmware directories
-set(ARM_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/arm_toolchain.cmake PARENT_SCOPE)
+set(ARM_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/arm_toolchain.cmake)
+set(ARM_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE} PARENT_SCOPE)
 
 # set which additional mbed libraries to grab at the bottom of arm_mbed.cmake
 foreach(assec_lib ${MBED_ASSEC_LIBS})
@@ -20,3 +21,7 @@ ExternalProject_Add(mbed_libraries
     UPDATE_COMMAND      ""
 )
 set_target_properties(mbed_libraries PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+ExternalProject_Get_Property(mbed_libraries SOURCE_DIR)
+
+set(MBED_SRC_PROJ_DIR ${SOURCE_DIR} PARENT_SCOPE)
