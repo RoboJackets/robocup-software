@@ -4,9 +4,10 @@
 # Set the mbed target processor and settings for cmake
 set(MBED_TARGET LPC1768)
 set(MBED_USE_RTOS true)
-set(MBED_USE_NET false)
+set(MBED_USE_ETH false)
 set(MBED_USE_USB false)
 set(MBED_USE_DSP false)
+set(MBED_USE_RPC true)
 
 # The name of the toolchain we're using.  Note: we don't actually set the CMake
 # toolchain here because it would require that all files compiled under this
