@@ -10,6 +10,7 @@ namespace mbed
 /// Provides an additonal "read from register"-function.
 class I2CMasterRtos
 {
+protected:
     I2CDriver m_drv;
 
 public:
@@ -20,7 +21,7 @@ public:
     *
     *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
     */
-    I2CMasterRtos(PinName sda, PinName scl, int freq = 400000):m_drv(sda,scl,freq) {}
+    I2CMasterRtos(PinName sda, PinName scl, int freq = 400000): m_drv(sda, scl, freq) {}
 
     /** Set the frequency of the I2C interface
      *
@@ -116,8 +117,8 @@ public:
     }
 
     /// Creates a stop condition on the I2C bus
-    /// If unsccessful because someone on the bus holds the scl line down it returns "false" after 23µs 
-    /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz and 3-4µs @ 400kHz. 
+    /// If unsccessful because someone on the bus holds the scl line down it returns "false" after 23µs
+    /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz and 3-4µs @ 400kHz.
     bool stop(void) {
         return m_drv.stopMaster();
     }

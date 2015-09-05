@@ -27,8 +27,8 @@ public:
      *
      *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
      */
-    I2CSlaveRtos(PinName sda, PinName scl, int freq=100000, int address=42)
-        :m_drv(sda,scl,100000,address) {}
+    I2CSlaveRtos(PinName sda, PinName scl, int freq = 100000, int address = 42)
+        : m_drv(sda, scl, 100000, address) {}
 
     /** Set the frequency of the I2C interface
      *
@@ -47,7 +47,7 @@ public:
      *  - WriteAddressed    - the master is writing to this slave
      *  - WriteGeneral      - the master is writing to all slave
      */
-    int receive(uint32_t timeout_ms=osWaitForever) {
+    int receive(uint32_t timeout_ms = osWaitForever) {
         return m_drv.receiveSlave(timeout_ms);
     }
 

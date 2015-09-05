@@ -14,7 +14,6 @@ namespace mbed
 class I2CDriver
 {
 public:
-    //static DigitalOut osci2;
     /// Status returned by the receiveSlave() function
     enum SlaveRxStatus {
         NoData         = 0,
@@ -30,7 +29,7 @@ public:
      *
      *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
      */
-    I2CDriver(PinName sda, PinName scl, int hz=100000, int slaveAdr=0);
+    I2CDriver(PinName sda, PinName scl, int hz = 100000, int slaveAdr = 0);
 
     /** Set the frequency of the I2C interface
     *
@@ -80,7 +79,7 @@ public:
      *  @returns
      *    the byte read
      */
-    int readMaster(int ack=1);
+    int readMaster(int ack = 1);
 
     /** Write to an I2C slave
      *
@@ -115,7 +114,7 @@ public:
      *  general call address.
      */
     void addressSlave(int address) {
-        m_slaveAdr=(address & 0xff) | 1;
+        m_slaveAdr = (address & 0xff) | 1;
     }
 
     /** Checks to see if this I2C Slave has been addressed.
@@ -127,7 +126,7 @@ public:
      *  - WriteAddressed    - the master is writing to this slave
      *  - WriteGeneral      - the master is writing to all slave
      */
-    int receiveSlave(uint32_t timeout_ms=osWaitForever);
+    int receiveSlave(uint32_t timeout_ms = osWaitForever);
 
     /** Read from an I2C master.
      *
