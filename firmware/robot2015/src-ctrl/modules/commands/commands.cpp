@@ -3,6 +3,7 @@
 #include <CommModule.hpp>
 #include <logger.hpp>
 #include <numparser.hpp>
+#include <mbed_rpc.h>
 
 #include "ds2411.hpp"
 #include "mem-iap.hpp"
@@ -129,7 +130,7 @@ static const std::vector<command_t> commands = {
 		false,
 		cmd_disconnectInterface,
 		"Disconnects the mbed interface chip from the microcontroller.",
-		"rmdev | unconnect"
+		"rmdev | unconnect [-P]"
 	},
 	{
 		{"isconn", "checkconn"},
@@ -179,6 +180,20 @@ static const std::vector<command_t> commands = {
 		comm_cmdProcess,
 		"Show information about the radio & perform basic radio tasks.",
 		"radio [ports | test-tx | test-rx] [[open, close, show, reset] <port_num>]"
+	},
+	{
+		{"rpc"},
+		false,
+		cmd_rpc,
+		"Execute RPC commands on the mbed.",
+		"rpc <rpc-command>"
+	},
+		{
+		{"rpc"},
+		false,
+		cmd_rpc,
+		"Execute RPC commands on the mbed.",
+		"rpc <rpc-command>"
 	}
 };
 
@@ -393,7 +408,7 @@ void cmd_ping(const vector<string>& args)
 	if (args.empty() == false) {
 		showInvalidArgs(args);
 	} else {
-		time_t sys_time = time(NULL);
+		time_t sys_time = time(nullptr);
 		Console::Flush();
 		printf("reply: %lu\r\n", sys_time);
 		Console::Flush();
@@ -429,6 +444,7 @@ void cmd_ls(const vector<string>& args)
 {
 	DIR* d;
 	struct dirent* p;
+
 	std::vector<std::string> filenames;
 
 	if (args.empty() == true) {
@@ -472,7 +488,7 @@ void cmd_info(const vector<string>& args)
 		char buf[33];
 		DS2411_t id;
 		unsigned int Interface[5] = { 0 };
-		time_t sys_time = time(NULL);
+		time_t sys_time = time(nullptr);
 		typedef void (*CallMe)(unsigned int[], unsigned int[]);
 
 		strftime(buf, 25, "%c", localtime(&sys_time));
@@ -567,11 +583,19 @@ void cmd_info(const vector<string>& args)
  */
 void cmd_disconnectInterface(const vector<string>& args)
 {
-	if (args.empty() == false) {
+	if (args.empty() > 1) {
 		showInvalidArgs(args);
 	} else {
-		mbed_interface_disconnect();
-		printf("Disconnected mbed interface.\r\n");
+		if (args.empty() == true) {
+
+			mbed_interface_disconnect();
+			printf("Disconnected mbed interface.\r\n");
+
+		} else if (strcmp(args.at(0).c_str(), "-P") == 0) {
+
+			printf("Powering down mbed interface.\r\n");
+			mbed_interface_powerdown();
+		}
 	}
 }
 
@@ -692,6 +716,28 @@ void cmd_logLevel(const vector<string>& args)
 	}
 }
 
+void cmd_rpc(const vector<string>& args)
+{
+	if (args.empty() == true) {
+		showInvalidArgs(args);
+
+	} else {
+		// remake the origin string
+		std::string in_buf("");
+		for (unsigned int i = 0; i < args.size(); i++) {
+			in_buf += args.at(i);
+		}
+
+		char out_buf[200];
+
+		// RpcDigitalOut led(LED2, "led2");
+
+		RPC::call(in_buf.c_str(), out_buf);
+
+		std::printf("%s\r\n", out_buf);
+	}
+}
+
 /**
  * [comm_cmdProcess description]
  * @param args [description]
@@ -699,7 +745,8 @@ void cmd_logLevel(const vector<string>& args)
 void comm_cmdProcess(const vector<string>& args)
 {
 	if (args.empty() == true) {
-		showInvalidArgs(args);
+		// Default to showing the list of ports
+		CommModule::PrintInfo(true);
 
 	} else if (args.size() == 1) {
 
@@ -708,19 +755,20 @@ void comm_cmdProcess(const vector<string>& args)
 
 		} else {
 			if (CommModule::isReady() == true) {
+				rtp::packet pck;
+				std::string msg = "LINK TEST PAYLOAD";
 
-				RTP_t pck;
-				pck.header_link = RTP_HEADER(COMM_PORT_LINK_TEST, 1, false, false);
-				pck.payload_size = 5;
-				memset(pck.payload, 0xFF, pck.payload_size);
-				pck.address = 0x01;
+				pck.header_link = RTP_HEADER(rtp::port::LINK, 1, true, false);
+				pck.payload_size = msg.length();
+				strcpy((char*)pck.payload, msg.c_str());
+				pck.address = BASE_STATION_ADDR;
 
 				if (strcmp(args.front().c_str(), "test-tx") == 0 ) {
-					printf("Placing %u byte dummy packet in TX buffer.\r\n", pck.payload_size);
+					printf("Placing %u byte packet in TX buffer.\r\n", pck.payload_size);
 					CommModule::send(pck);
 
 				} else if (strcmp(args.front().c_str(), "test-rx") == 0 ) {
-					printf("Placing %u byte dummy packet in RX buffer.\r\n", pck.payload_size);
+					printf("Placing %u byte packet in RX buffer.\r\n", pck.payload_size);
 					CommModule::receive(pck);
 
 				} else {
@@ -784,7 +832,7 @@ void executeLine(char* rawCommand)
 	char* endCmd;
 	char* cmds = strtok_r(rawCommand, ";", &endCmd);
 
-	while (cmds != NULL) {
+	while (cmds != nullptr) {
 
 		uint8_t argc = 0;
 		string cmdName = "\0";
@@ -794,7 +842,7 @@ void executeLine(char* rawCommand)
 		char* endArg;
 		char* pch = strtok_r(cmds, " ", &endArg);
 
-		while (pch != NULL) {
+		while (pch != nullptr) {
 
 			// Check args length
 			if (argc > MAX_COMMAND_ARGS) {
@@ -809,7 +857,7 @@ void executeLine(char* rawCommand)
 				args.push_back(pch);
 
 			argc++;
-			pch = strtok_r(NULL, " ", &endArg);
+			pch = strtok_r(nullptr, " ", &endArg);
 		}
 
 		if (cmdName.empty() == false) {
@@ -847,7 +895,6 @@ void executeLine(char* rawCommand)
 					break;
 				}
 			}
-
 			//if the command wasnt found, print an error
 			if (!commandFound) {
 				std::size_t pos = COMMAND_NOT_FOUND_MSG.find("%s");
@@ -862,7 +909,7 @@ void executeLine(char* rawCommand)
 			}
 		}
 
-		cmds = strtok_r(NULL, ";", &endCmd);
+		cmds = strtok_r(nullptr, ";", &endCmd);
 		Console::Flush();	// make sure we force everything out of stdout
 	}
 }
@@ -906,7 +953,7 @@ void showInvalidArgs(const vector<string>& args)
 }
 
 
-void showInvalidArgs(const string& s)
+void showInvalidArgs(const string & s)
 {
 	printf("Invalid argument '%s'.\r\n", s.c_str());
 }

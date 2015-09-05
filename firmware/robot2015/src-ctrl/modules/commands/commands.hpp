@@ -90,3 +90,5 @@ void cmd_baudrate(const std::vector<std::string>&);
 void cmd_switchHostname(const std::vector<std::string>&);
 void cmd_switchUser(const std::vector<std::string>&);
 void cmd_logLevel(const std::vector<std::string>&);
+void cmd_rpc(const std::vector<std::string>&);
+

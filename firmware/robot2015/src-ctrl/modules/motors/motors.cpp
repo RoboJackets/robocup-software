@@ -20,9 +20,9 @@
 
 #include "motors.hpp"
 
-#include "mbed.h"
+#include <mbed.h>
+#include <numparser.hpp>
 #include "commands.hpp"
-#include "numparser.hpp"
 
 #ifdef LINK_TOC_PARAMS
 #include "toc.hpp"

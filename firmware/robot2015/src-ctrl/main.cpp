@@ -1,7 +1,10 @@
 #include "robot.hpp"
 
+// ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
 #include <cstdarg>
-// #include <ctime>
+#include <ctime>
+#include <string>
+
 #include <logger.hpp>
 
 #include "commands.hpp"
@@ -9,40 +12,54 @@
 #include "TaskSignals.hpp"
 // #include "neostrip.cpp"
 
-// ADCDMA adc;
-// DMA dma;
+
 const std::string filename = "rj-fpga.nib";
 const std::string filesystemname = "local";
 const std::string filepath = "/" + filesystemname + "/" + filename;
 
-//global variables used by interrupt routine
-//volatile int j = 0;
-//float Analog_out_data[128];
-// AnalogOut buzzer(RJ_SPEAKER);
+const std::string sysDate = __DATE__;
+const std::string sysTime = __TIME__;
 
-// this is inverted - so off
-// DigitalOut rdy_led(RJ_RDY_LED, 1);
+// ADCDMA adc;
+// DMA dma;
 
-// Sets the correct hardware configurations for pins connected to leds
+
+/**
+ * @brief      { Sets the hardware configurations for the status LEDs & places into the given state }
+ *
+ * @param[in]  state  { the next state of the LEDs }
+ */
 void statusLights(bool state)
 {
 	DigitalInOut init_leds[] = {
-		{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, state},
-		{RJ_RX_LED,   PIN_OUTPUT, OpenDrain, state},
-		{RJ_TX_LED,   PIN_OUTPUT, OpenDrain, state},
-		{RJ_RDY_LED,  PIN_OUTPUT, OpenDrain, state}
+		{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
+		{RJ_RX_LED,   PIN_OUTPUT, OpenDrain, !state},
+		{RJ_TX_LED,   PIN_OUTPUT, OpenDrain, !state},
+		{RJ_RDY_LED,  PIN_OUTPUT, OpenDrain, !state}
 	};
 
 	for (int i = 0; i < 4; i++)
 		init_leds[i].mode(PullUp);
 }
+
+/**
+ * @brief      { Turns all status LEDs on }
+ *
+ * @param      args  { nothing }
+ */
 void statusLightsON(void const* args)
 {
-	statusLights(0);
+	statusLights(1);
 }
+
+/**
+ * @brief      { Turns all status LEDs on }
+ *
+ * @param      args  { nothing }
+ */
 void statusLightsOFF(void const* args)
 {
-	statusLights(1);
+	statusLights(0);
 }
 
 // // used to output next analog sample whenever a timer interrupt occurs
@@ -60,6 +77,7 @@ void statusLightsOFF(void const* args)
 // 	// This is where the robot's ID comes from, so it's pretty important.
 // 	LOG(SEVERE, "Interrupt triggered!");
 // }
+
 
 extern "C" void HardFault_Handler(void)
 {
@@ -167,11 +185,6 @@ int main(void)
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INIT;
 
-	// precompute 128 sample points on one sine wave cycle
-	// used for continuous sine wave output later
-	// for (int k = 0; k < 128; k++)
-	// 	Analog_out_data[k] = ((1.0 + sin((float(k) / 128.0 * 6.28318530717959))) / 2.0);
-
 	// turn on timer interrupts to start sine wave output
 	// sample rate is 500Hz with 128 samples per cycle on sine wave
 	// RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
@@ -181,28 +194,48 @@ int main(void)
 	 * clean on after a 'reboot' command is called;
 	 */
 	if (isLogging) {
-		printf("\r\n\r\n");
+		std::printf("\r\n\r\n");
 		fflush(stdout);
 	}
 
 	/* Set the system time to the most recently known time. The compilation
 	 * time is used here. The timestamp should always be the same when using GCC.
 	 */
-	/*
-	const char* sysTime = __DATE__ " " __TIME__;
-	struct tm tm;
+	//std::locale loc;
+	//const std::time_get<char>& tmget = std::use_facet <std::time_get<char> > (loc);
+	// std::istringstream ss(sysTime.c_str());
+	// std::ios::iostate state;
 
-	if ( !(strptime(sysTime, "%b %d %Y %H:%M:%S", &tm)) ) {	// 'Mmm DD YYYYHH:MM:SS'
-		LOG(SEVERE, "Unable to parse system time of %s", sysTime);
-	} else {
-		LOG(INIT, "Setting system time to %s", sysTime);
-		time_t buildTime = mktime(&tm);
-		set_time(buildTime);
-	}
-	*/
+	std::tm tt;
+	tt.tm_mon  = atoi(sysTime.substr(0, sysTime.find(' ')).c_str());
+	tt.tm_mday = atoi(sysTime.substr(tt.tm_mon, sysTime.find(' ')).c_str());
+	tt.tm_year = 1900 - atoi(sysTime.substr(tt.tm_mday).c_str());
+	tt.tm_hour = atoi(sysDate.substr(0, sysDate.find(';')).c_str());
+	tt.tm_min  = atoi(sysDate.substr(tt.tm_hour, sysDate.find(';')).c_str());
+	tt.tm_sec  = atoi(sysDate.substr(tt.tm_min).c_str());
+
+	// tmget.get_time(ss, std::time_get<char>::iter_type(), ss, state, &tt);
+	set_time(mktime(&tt));
+	// if (ss.fail()) {
+	// 	std::cout << "Parse failed" << std::endl;
+	// } else {
+
+	// LOG(INIT, "Setting system time to %d  %d  %d  %d:%d:%d", tt.tm_mon, tt.tm_mday, tt.tm_year, tt.tm_hour, tt.tm_min, tt.tm_sec);
+
+
+	//size_t strftime(sysTime.c_str(), sysTime.length(), "%b %d %Y %H:%M:%S", &tt);
 
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
+	//}
+
+	// if ( !(strptime(sysTime, "%b %d %Y %H:%M:%S", &tm)) ) {	// 'Mmm DD YYYYHH:MM:SS'
+	// 	LOG(SEVERE, "Unable to parse system time of %s", sysTime);
+	// } else {
+	// 	LOG(INIT, "Setting system time to %s", sysTime);
+	// 	time_t buildTime = mktime(&tm);
+	// 	set_time(buildTime);
+	// }
 
 	// Start a periodic blinking LED to show system activity
 	DigitalOut ledOne(LED1, 0);
@@ -239,7 +272,6 @@ int main(void)
 	} else {
 
 		LOG(FATAL, "FPGA Configuration Failed!");
-
 	}
 
 #endif
@@ -271,26 +303,6 @@ int main(void)
 	// ==== THIS CURRENTLY CAUSES A HARD FAULT WITH THE 2015 CTRL BOARD =====
 	// InterruptIn configInputs(RJ_IOEXP_INT);
 	// configInputs.rise(&sampleInputs);
-
-
-#ifdef LINK_TOC_PARAMS
-	TOCInit();
-
-	// Start the thread task for setting up a dynamic logging structure
-	MailHelper<RTP_t, 5> tocQueue;
-
-	osMailQId tocQID = osMailCreate(tocQueue.def(), NULL);
-
-	Thread toc_task(Task_TOC, &tocQID, osPriorityBelowNormal);
-
-	// Start the thread task for access to certain variables in the dynamic logging structure
-	MailHelper<RTP_t, 5> paramQueue;
-
-	osMailQId paramQID = osMailCreate(paramQueue.def(), NULL);
-
-	Thread param_task(Task_Param, &paramQID, osPriorityBelowNormal);
-
-#endif
 
 	/*
 	NeoStrip rgbLED(p21, 1);
@@ -325,33 +337,6 @@ int main(void)
 	}
 
 	adc.BurstRead();
-	*/
-
-	/*
-		RTP_t* paramBlk = (RTP_t*)osMailAlloc(paramQID, 1000);
-		paramBlk->subclass = 1;	// read channel
-		paramBlk->payload[0] = 1;	// read channel
-		osMailPut(paramQID, paramBlk);
-	*/
-
-
-	/*
-	 * Uncomment this block to show info about the bit packing of a radio packetls
-	 *
-	RTP_t pkt;
-	pkt.header_link = RTP_HEADER(0x0F, 0x00, true, true);
-	LOG(INIT,
-	    "Header:\t\t0x%02X\r\n"
-	    "Port:\t\t%u\r\n"
-	    "Subclass:\t%u\r\n"
-	    "ACK:\t\t%u\r\n"
-	    "SFS:\t\t%u",
-	    pkt.header_link,
-	    pkt.port,
-	    pkt.subclass,
-	    pkt.ack,
-	    pkt.sfs
-	   );
 	*/
 
 	// LED3 turns on once we hit the end of initilization

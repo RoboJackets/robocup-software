@@ -4,7 +4,6 @@
 // ** ================================================================================================= **
 
 #include "robot-devices.hpp"
-#include "robot-types.hpp"
 
 // Standard library headers
 #include <ctime>
@@ -40,9 +39,3 @@
 #include "dma.hpp"
 #include "controller.hpp"
 #include "fpga.hpp"
-
-
-#ifdef LINK_TOC_PARAMS
-#include "toc.hpp"
-#include "param.hpp"
-#endif
