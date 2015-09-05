@@ -4,7 +4,7 @@
 #include <rtos.h>
 
 #include "rj-macros.hpp"
-#include "robot-types.hpp"
+#include "rtp.hpp"
 #include "rtos-mgmt/thread-helper.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
@@ -36,9 +36,9 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  */
 class CommLink
 {
-  public:
+public:
     /// Defautl Constructor
-    CommLink(void) {};
+    CommLink() {};
 
     /// Constructor
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
@@ -59,11 +59,11 @@ class CommLink
     /// Determine if communication can occur with another device
     virtual bool isConnected(void) = 0;
 
-    /// Send & Receive through the RTP structure
-    void sendPacket(RTP_t*);
-    void receivePacket(RTP_t*);
+    /// Send & Receive through the rtp structure
+    void sendPacket(rtp::packet*);
+    void receivePacket(rtp::packet*);
 
-  protected:
+protected:
     virtual int32_t sendData(uint8_t*, uint8_t) = 0;    // write data out to the radio device using SPI
     virtual int32_t getData(uint8_t*, uint8_t*) = 0;   // read data in from the radio device using SPI
 
@@ -90,14 +90,14 @@ class CommLink
     DigitalOut*  _cs;       // Chip Select pointer
     InterruptIn* _int_in;    // Interrupt pin
 
-  private:
+private:
     // Used to help define the class's threads in the constructor
     friend void define_thread(osThreadDef_t&, void(*task)(void const* arg), osPriority, uint32_t, unsigned char*);
 
     /**
      * Data queue helper for RX queue.
      */
-    MailHelper<RTP_t, COMM_LINK_RX_QUEUE_SIZE>   _rxQueueHelper;
+    MailHelper<rtp::packet, COMM_LINK_RX_QUEUE_SIZE>   _rxQueueHelper;
 
     // Thread definitions and IDs
     osThreadDef_t   _rxDef;

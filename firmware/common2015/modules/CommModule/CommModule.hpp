@@ -3,7 +3,7 @@
 #include <mbed.h>
 #include <rtos.h>
 
-#include "robot-types.hpp"
+#include "rtp.hpp"
 #include "rtos-mgmt/thread-helper.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "Console.hpp"
@@ -24,7 +24,7 @@
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */
-typedef void                        (FunctionPtr_t)(RTP_t*);
+typedef void                        (FunctionPtr_t)(rtp::packet*);
 typedef CommPort<FunctionPtr_t>     CommPort_t;
 typedef CommPorts<FunctionPtr_t>    CommPorts_t;
 
@@ -39,12 +39,17 @@ extern CommPort_t _tmpPort;
  * firmware and distributing outgoing packets to the correct
  * hardware interface.
  */
+
+
+/**
+ * @brief      { A high-level firmware class for packet handling & routing }
+ */
 class CommModule
 {
-  private:
+private:
     static CommPorts_t      _ports;
 
-  public:
+public:
     // Class constants - set in CommModule.cpp
     static const int NBR_PORTS;
     static const int TX_QUEUE_SIZE;
@@ -54,7 +59,7 @@ class CommModule
 
     // Set a TX callback function on an object
     template <typename B>
-    static void TxHandler(B* obj, void(B::*mptr)(RTP_t*), uint8_t portNbr)
+    static void TxHandler(B* obj, void(B::*mptr)(rtp::packet*), uint8_t portNbr)
     {
         if ( !_ports[portNbr].Exists() ) {
 
@@ -74,7 +79,7 @@ class CommModule
 
     // Set an RX callback function on an object
     template <typename B>
-    static void RxHandler(B* obj, void(B::*mptr)(RTP_t*), uint8_t portNbr)
+    static void RxHandler(B* obj, void(B::*mptr)(rtp::packet*), uint8_t portNbr)
     {
         if ( !_ports[portNbr].Exists() ) {
 
@@ -93,15 +98,15 @@ class CommModule
     }
 
     // Set a normal RX callback function without an object
-    static void RxHandler(void(*ptr)(RTP_t*), uint8_t);
-    static void TxHandler(void(*ptr)(RTP_t*), uint8_t);
+    static void RxHandler(void(*ptr)(rtp::packet*), uint8_t);
+    static void TxHandler(void(*ptr)(rtp::packet*), uint8_t);
 
     // Open a socket connection for communicating.
     static bool openSocket(uint8_t);
 
-    // Send a RTP packet. The details of exactly how the packet will be sent are determined from the RTP packet's port and subclass values
-    static void send(RTP_t&);
-    static void receive(RTP_t&);
+    // Send a rtp::packet. The details of exactly how the packet will be sent are determined from the rtp::packet's port and subclass values
+    static void send(rtp::packet&);
+    static void receive(rtp::packet&);
 
     static unsigned int NumRXPackets(void);
     static unsigned int NumTXPackets(void);
@@ -113,7 +118,10 @@ class CommModule
     static bool isReady(void);
     static int  NumOpenSockets(void);
 
-  protected:
+    static void txLED(DigitalInOut*);
+    static void rxLED(DigitalInOut*);
+
+protected:
     // NOP function for keeping a communication link active
     void nopFunc(void);
 
@@ -125,7 +133,10 @@ class CommModule
     static osThreadId      _txID;
     static osThreadId      _rxID;
 
-  private:
+    DigitalInOut* _rxLED;
+    DigitalInOut* _txLED;
+
+private:
     // Private constructor
     CommModule();
 
@@ -153,6 +164,6 @@ class CommModule
     osMailQDef_t    _rxQDef;
 
     // Mail helper objects
-    MailHelper<RTP_t, COMM_MODULE_TX_QUEUE_SIZE>   _txQueueHelper;
-    MailHelper<RTP_t, COMM_MODULE_RX_QUEUE_SIZE>   _rxQueueHelper;
+    MailHelper<rtp::packet, COMM_MODULE_TX_QUEUE_SIZE>   _txQueueHelper;
+    MailHelper<rtp::packet, COMM_MODULE_RX_QUEUE_SIZE>   _rxQueueHelper;
 };

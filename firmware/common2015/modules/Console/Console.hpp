@@ -4,6 +4,9 @@
 
 #include <memory>
 
+// #include "MODDMA.h"
+#include "MODSERIAL.h"
+
 
 /**
  * enable scrolling vi sequence
@@ -30,24 +33,24 @@ class Console
   /**
    * new line character. Default '\r'
    */
-  static const char NEW_LINE_CHAR = 13;  //ASCII CR (\r) (0x0D)
+  static const char NEW_LINE_CHAR = '\r';  //ASCII CR (\r) (0x0D)
 
   /**
    * backspace flag char. (What char does the console send when the backspace key
    * is pressed?). Default DEL
    */
-  static const char BACKSPACE_FLAG_CHAR = 127; //ASCII DEL (0x7F)
+  static const char BACKSPACE_FLAG_CHAR = 0x7F; //ASCII DEL (0x7F)
 
   /**
    * backspace reply char. (What char causes screen to delete the last
    * character?). Default '\b'
    */
-  static const char BACKSPACE_REPLY_CHAR = 8;   //ASCII BK (\b) (0x08)
+  static const char BACKSPACE_REPLY_CHAR = '\b';   //ASCII BK (\b) (0x08)
 
   /**
    * when the console backspaces, what does the last character become. Default ' '
    */
-  static const char BACKSPACE_REPLACE_CHAR = 32;
+  static const char BACKSPACE_REPLACE_CHAR = ' ';
 
   /**
    * default ETX (0x3)
@@ -132,6 +135,9 @@ class Console
 
   void setHeader(void);
 
+  void RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
+  void TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
+
   static std::shared_ptr<Console> instance;
 
   // Flags for command execution states
@@ -155,6 +161,7 @@ class Console
   * Serial connection
   */
   Serial pc;
+  // MODSERIAL pc;
 
   /**
    * Receive buffer
@@ -181,10 +188,10 @@ class Console
   /**
    * receive buffer index
    */
-  uint8_t rxIndex = 0;
+  uint16_t rxIndex = 0;
 
   /**
    * transmission buffer index
    */
-  uint8_t txIndex = 0;
+  uint16_t txIndex = 0;
 };

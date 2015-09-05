@@ -53,6 +53,8 @@ void Console::Init(void)
 	instance->ClearTXBuffer();
 
 	// attach interrupt handlers
+	// instance->pc.attach(&Console::RXCallback_MODSERIAL, MODSERIAL::RxIrq);
+	// instance->pc.attach(&Console::TXCallback_MODSERIAL, MODSERIAL::TxIrq);
 	instance->pc.attach(instance.get(), &Console::RXCallback, Serial::RxIrq);
 	instance->pc.attach(instance.get(), &Console::TXCallback, Serial::TxIrq);
 
@@ -61,11 +63,6 @@ void Console::Init(void)
 	instance->txIndex = 0;
 
 	LOG(INF3, "Hello from the 'common2015' library!");
-
-	//printf(" ");
-	//Flush();
-	//printf("\b");
-	//Flush();
 }
 
 void Console::PrintHeader(void)
@@ -109,45 +106,46 @@ void Console::RXCallback(void)
 			char c = GETC();
 
 			// flag the start of an arrow key sequence
-			if (c == ARROW_KEY_SEQUENCE_ONE) {
-				flagOne = true;
-			}
+			// if (c == ARROW_KEY_SEQUENCE_ONE) {
+			// 	flagOne = true;
+			// }
 			// check if we're in a sequence if flagOne is set - do things if necessary
-			else if (flagOne) {
-				if (flagTwo) {
-					switch (c) {
-						case ARROW_UP_KEY:
-							PRINTF("\033M");
-							break;
+			// else if (flagOne) {
+			// 	if (flagTwo) {
+			// 		switch (c) {
+			// 		case ARROW_UP_KEY:
+			// 			PRINTF("\033M");
+			// 			break;
 
-						case ARROW_DOWN_KEY:
-							PRINTF("\033D");
-							break;
+			// 		case ARROW_DOWN_KEY:
+			// 			PRINTF("\033D");
+			// 			break;
 
-						default:
-							flagOne = false;
-							flagTwo = false;
-					}
+			// 		default:
+			// 			flagOne = false;
+			// 			flagTwo = false;
+			// 		}
 
-					Flush();
-					continue;
+			// 		Flush();
+			// 		continue;
 
-				} else {	// flagTwo not set
-					switch (c) {
-						case ARROW_KEY_SEQUENCE_TWO:
-							flagTwo = true;
-							break;
+			// 	} else {	// flagTwo not set
+			// 		switch (c) {
+			// 		case ARROW_KEY_SEQUENCE_TWO:
+			// 			flagTwo = true;
+			// 			break;
 
-						default:
-							flagOne = false;
-							break;
-					}
-				}
-			}
+			// 		default:
+			// 			flagOne = false;
+			// 			break;
+			// 		}
+			// 	}
+			// }
 
 			// if the buffer is full, ignore the chracter and print a
 			// warning to the console
-			if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR) {
+			if (rxIndex >= (BUFFER_LENGTH - 5) && c != BACKSPACE_FLAG_CHAR) {
+				rxIndex = 0;
 				PRINTF("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
 				Flush();
 
@@ -168,18 +166,21 @@ void Console::RXCallback(void)
 			}
 
 			// if a backspace is requested, handle it.
-			else if (c == BACKSPACE_FLAG_CHAR && rxIndex > instance->CONSOLE_HEADER.length()) {
-				//re-terminate the string
-				rxBuffer[--rxIndex] = '\0';
+			else if (c == BACKSPACE_FLAG_CHAR)
+				if (rxIndex > 0) {//instance->CONSOLE_HEADER.length()) {
+					//re-terminate the string
+					rxBuffer[--rxIndex] = '\0';
 
-				// 1) Move cursor back
-				// 2) Write a space to clear the character
-				// 3) Move back cursor again
-				PUTC(BACKSPACE_REPLY_CHAR);
-				PUTC(BACKSPACE_REPLACE_CHAR);
-				PUTC(BACKSPACE_REPLY_CHAR);
-				Flush();
-			}
+					// 1) Move cursor back
+					// 2) Write a space to clear the character
+					// 3) Move back cursor again
+					PUTC(BACKSPACE_REPLY_CHAR);
+					PUTC(BACKSPACE_REPLACE_CHAR);
+					PUTC(BACKSPACE_REPLY_CHAR);
+					Flush();
+				} else {
+					/* do nothing if we can't back space any more */
+				}
 
 			// set that a command break was requested flag if we received a break character
 			else if (c == BREAK_CHAR) {
@@ -189,7 +190,9 @@ void Console::RXCallback(void)
 			// No special character, add it to the buffer and return it to
 			// the terminal to be visible.
 			else {
-				rxBuffer[rxIndex++] = c;
+				if (!(c == ARROW_UP_KEY || c == ARROW_DOWN_KEY)) {
+					rxBuffer[rxIndex++] = c;
+				}
 				PUTC(c);
 				Flush();
 			}
@@ -278,13 +281,13 @@ void Console::CommandHandled(bool cmdDoneState)
 		instance->PRINTF("%s", instance->CONSOLE_HEADER.c_str());
 }
 
-void Console::changeHostname(const std::string& hostname)
+void Console::changeHostname(const std::string & hostname)
 {
 	instance->CONSOLE_HOSTNAME = hostname;
 	instance->setHeader();
 }
 
-void Console::changeUser(const std::string& user)
+void Console::changeUser(const std::string & user)
 {
 	instance->CONSOLE_USER = user;
 	instance->setHeader();
@@ -304,4 +307,15 @@ void Console::Baudrate(uint16_t baud)
 uint16_t Console::Baudrate(void)
 {
 	return instance->baudrate;
+}
+
+
+void Console::RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO * info)
+{
+	Console::RXCallback();
+}
+
+void Console::TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO * info)
+{
+	Console::TXCallback();
 }

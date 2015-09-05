@@ -92,17 +92,18 @@ void CommLink::rxThread(void const* arg)
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
+
     if (inst->_rxID != nullptr)
         threadPriority  = osThreadGetPriority(inst->_rxID);
     else
         threadPriority = osPriorityIdle;
 
-    LOG(INF1, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
 
     // Set the function to call on an interrupt trigger
     inst->_int_in->rise(inst, &CommLink::ISR);
 
-    RTP_t p;
+    rtp::packet p;
 
     while (true) {
         // [X] - 1 - Wait until new data has arrived - this is interrupt triggered by CommLink::ISR()
@@ -111,7 +112,7 @@ void CommLink::rxThread(void const* arg)
 
         // [X] - 2 - Get the received data from the external chip
         // =================
-        uint8_t rec_bytes = RTP_MAX_DATA_SIZE;
+        uint8_t rec_bytes = rtp::MAX_DATA_SZ;
         int32_t response = inst->getData(p.raw, &rec_bytes);
 
         LOG(INF3, "RX interrupt triggered");
@@ -121,9 +122,6 @@ void CommLink::rxThread(void const* arg)
             // [X] - 3 - Write the data to the CommModule object's rxQueue
             // =================
             CommModule::receive(p);
-
-            // [~] - 4 - Blink the RX LED for the hardware link
-            // =================
         }
     }   // while()
 
@@ -138,7 +136,7 @@ void CommLink::ready(void)
 }
 
 
-void CommLink::sendPacket(RTP_t* p)
+void CommLink::sendPacket(rtp::packet* p)
 {
     sendData(p->raw, p->total_size);
 }

@@ -2,7 +2,7 @@
 
 #include "mbed.h"
 #include "CommLink.hpp"
-#include "robot-types.hpp"
+#include "rtp.hpp"
 #include "CC1101-Defines.hpp"
 
 

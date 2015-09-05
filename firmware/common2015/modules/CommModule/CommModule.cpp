@@ -1,7 +1,14 @@
+/*! \file autolink.cpp
+
+  A link to CommModule::Init
+
+*/
+
 #include "CommModule.hpp"
 
 #include "CommPort.hpp"
 
+#include "helper-funcs.hpp"
 #include "logger.hpp"
 
 
@@ -75,6 +82,11 @@ void CommModule::txThread(void const* arg)
     else
         threadPriority = osPriorityIdle;
 
+    // Check for the existance of a TX LED to flash
+    if (instance->_txLED == nullptr) {
+        LOG(SEVERE, "TX LED unset at thread start!");
+    }
+
     LOG(INIT, "TX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", instance->_txID, threadPriority);
 
     // Signal to the RX thread that it can begin
@@ -84,13 +96,13 @@ void CommModule::txThread(void const* arg)
 
     while (true) {
 
-        // When a new RTP packet is put in the tx queue, begin operations (does nothing if no new data in queue)
+        // When a new rtp::packet is put in the tx queue, begin operations (does nothing if no new data in queue)
         evt = osMailGet(instance->_txQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
 
             // Get a pointer to the packet's memory location
-            RTP_t* p = (RTP_t*)evt.value.p;
+            rtp::packet* p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
             // if (osThreadSetPriority(_txID, osPriorityRealtime) == osOK) {
@@ -107,6 +119,8 @@ void CommModule::txThread(void const* arg)
 
             // Release the allocated memory once data is sent
             osMailFree(instance->_txQueue, p);
+
+            strobeStatusLED((void*)(instance->_txLED));
 
             // osThreadSetPriority(_txID, osPriorityNormal);
             // }
@@ -130,11 +144,16 @@ void CommModule::rxThread(void const* arg)
     else
         threadPriority = osPriorityIdle;
 
+    // Check for the existance of an RX LED to flash
+    if (instance->_rxLED == nullptr) {
+        LOG(SEVERE, "rX LED unset at thread start!");
+    }
+
     LOG(INIT, "RX communication module ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", instance->_rxID, threadPriority);
 
     _isReady = true;
 
-    RTP_t* p;
+    rtp::packet* p;
     osEvent  evt;
 
     while (true) {
@@ -144,7 +163,7 @@ void CommModule::rxThread(void const* arg)
 
         if (evt.status == osEventMail) {
             // get a pointer to where the data is stored
-            p = (RTP_t*)evt.value.p;
+            p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
             // if (osThreadSetPriority(_rxID, osPriorityRealtime) == osOK) {
@@ -161,6 +180,7 @@ void CommModule::rxThread(void const* arg)
 
             osMailFree(instance->_rxQueue, p);  // free memory allocated for mail
 
+            strobeStatusLED((void*)(instance->_rxLED));
             // osThreadSetPriority(_rxID, osPriorityNormal);
             // }
         }
@@ -170,7 +190,7 @@ void CommModule::rxThread(void const* arg)
 }
 
 
-void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
+void CommModule::RxHandler(void(*ptr)(rtp::packet*), uint8_t portNbr)
 {
     if ( !_ports[portNbr].Exists() ) {
 
@@ -188,7 +208,7 @@ void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
     ready();
 }
 
-void CommModule::TxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
+void CommModule::TxHandler(void(*ptr)(rtp::packet*), uint8_t portNbr)
 {
     if ( !_ports[portNbr].Exists() ) {
 
@@ -246,7 +266,7 @@ void CommModule::ready(void)
 }
 
 
-void CommModule::send(RTP_t& packet)
+void CommModule::send(rtp::packet& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
     if ( _ports[packet.port].isOpen() && _ports[packet.port].TXCallback() ) {
@@ -255,7 +275,7 @@ void CommModule::send(RTP_t& packet)
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
-        RTP_t* p = (RTP_t*)osMailAlloc(instance->_txQueue, osWaitForever);
+        rtp::packet* p = (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
@@ -271,14 +291,14 @@ void CommModule::send(RTP_t& packet)
 }
 
 
-void CommModule::receive(RTP_t& packet)
+void CommModule::receive(rtp::packet& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
     if ( _ports[packet.port].isOpen() && _ports[packet.port].RXCallback() ) {
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
-        RTP_t* p = (RTP_t*)osMailAlloc(instance->_rxQueue, osWaitForever);
+        rtp::packet* p = (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
@@ -345,4 +365,14 @@ bool CommModule::isReady(void)
 int CommModule::NumOpenSockets(void)
 {
     return _ports.count_open();
+}
+
+void CommModule::txLED(DigitalInOut* led)
+{
+    instance->_txLED = led;
+}
+
+void CommModule::rxLED(DigitalInOut* led)
+{
+    instance->_rxLED = led;
 }

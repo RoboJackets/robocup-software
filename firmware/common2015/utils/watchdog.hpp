@@ -1,3 +1,5 @@
+#pragma once
+
 #include "mbed.h"
 
 #define WDT_BASE    LPC_WDT
