@@ -9,7 +9,7 @@ set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(CONFIG_ROOT_NAME    ${CMAKE_CURRENT_SOURCE_DIR}/config)
 set(CONFIG_ROOT_NAME    ${CONFIG_ROOT_NAME} PARENT_SCOPE)
-set(DRIVERS             adc dma ds2411 fpga mcp23017 mem-iap mpu-6050 rtos-i2c)
+set(DRIVERS             adc dma ds2411 fpga mcp23017 mem-iap mpu-6050 rtos-i2c ws2811)
 set(MODULES             commands controller motors)
 
 # generate a list of directories that we need to include from the values set above
@@ -31,29 +31,20 @@ set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
 set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 
 # Find the assembly source files and make sure they're compiled using the C compiler
-# file(GLOB_RECURSE assm_SRC "*.s")
-# set(ASSM2015_INCLUDES ${${DRIVERS_ROOT_NAME}/ws2811})
-# set_property(SOURCE ${assm_SRC} PROPERTY LANGUAGE C)
-# set_source_files_properties(${assm_SRC} PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
-# add_library(assm_lib ${assm_SRC})
-# add_dependencies(assm_lib common2015)
-# target_link_libraries(assm_lib common2015)
-# target_include_directories(assm_lib PUBLIC ${ASSM2015_INCLUDES})
-# set_target_properties(assm_lib PROPERTIES EXCLUDE_FROM_ALL TRUE)
+file(GLOB_RECURSE assm_SRC "*.S")
+set_property(SOURCE ${assm_SRC} PROPERTY LANGUAGE C)
 
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC "*.cpp")
 
 # add the target for making the elf file
-add_executable(robot2015_elf ${robot2015_SRC})
+add_executable(robot2015_elf ${robot2015_SRC} ${assm_SRC})
 
 # specify that we depend on the common2015 library and link to it
 add_dependencies(robot2015_elf common2015)
 target_link_libraries(robot2015_elf common2015)
-# add_dependencies(robot2015_elf assm_lib)
-# target_link_libraries(robot2015_elf assm_lib)
 
-# include 
+# include directories
 target_include_directories(robot2015_elf PUBLIC ${ROBOT2015_ELF_INCLUDES})
 
 # the final product is the .bin file, not the elf one.  We hide this away in the build dir

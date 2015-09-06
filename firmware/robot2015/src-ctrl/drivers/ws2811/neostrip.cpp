@@ -13,11 +13,11 @@
 
 #include "neostrip.hpp"
 
-// #include <mbed.h>
+extern "C" void neo_out(NeoColor*, int);
 
-// uint32_t neo_bitmask;
-// uint32_t neo_fio_reg;
-// void neo_out(NeoColor*, int);
+uint32_t neo_bitmask;
+uint32_t neo_fio_reg;
+
 
 NeoStrip::NeoStrip(PinName pin, int N) : N(N)
 {

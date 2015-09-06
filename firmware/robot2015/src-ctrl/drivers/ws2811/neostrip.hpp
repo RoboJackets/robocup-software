@@ -24,12 +24,6 @@ struct NeoColor {
 };
 
 
-// FastIO register address and bitmask for the GPIO pin
-// because these are imported in the assembly
-extern "C" uint32_t neo_bitmask;
-extern "C" uint32_t neo_fio_reg;
-extern "C" void neo_out(NeoColor*, int);
-
 /**
  * NeoStrip objects manage the buffering and assigning of
  * addressable NeoPixels

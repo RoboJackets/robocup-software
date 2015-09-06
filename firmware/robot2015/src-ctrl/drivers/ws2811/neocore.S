@@ -13,17 +13,19 @@
 #
 ############################################
 
-	.file   "neocore.s"
+	.file   "neocore.S"
 	.syntax unified
 
 	.thumb
-	.section ".text"
+	#.section ".text"
 	.align  2
 	
 # these 2 variables are set in the neostrip class
 	.global neo_out
-	.global neo_fio_reg
-	.global neo_bitmask
+	.type   neo_out, %function
+
+	.extern neo_fio_reg
+	.extern neo_bitmask
 	
 ############################################
 neo_write_pin:
@@ -84,8 +86,6 @@ neo_one:
 
 ############################################
 	.thumb_func
-	.type   neo_out, %function
-	.global neo_out
 neo_out:
 # void neo_out(int *data, int n)
 # Main function called from the C++ library 
@@ -241,4 +241,4 @@ neo_delay:
 neo_delay_end:
 	BX	 %lr
 	
-.end 	@ end code region 
+.end

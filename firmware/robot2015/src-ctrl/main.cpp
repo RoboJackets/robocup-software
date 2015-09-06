@@ -10,7 +10,7 @@
 #include "commands.hpp"
 #include "io-expander.hpp"
 #include "TaskSignals.hpp"
-// #include "neostrip.cpp"
+#include "neostrip.hpp"
 
 
 const std::string filename = "rj-fpga.nib";
@@ -291,12 +291,12 @@ int main(void)
 	// InterruptIn configInputs(RJ_IOEXP_INT);
 	// configInputs.rise(&sampleInputs);
 
-	/*
-	NeoStrip rgbLED(p21, 1);
+
+	NeoStrip rgbLED(RJ_NEOPIXEL, 1);
 	rgbLED.setBrightness(1.0);
 	rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
 	rgbLED.write();
-	*/
+
 
 #if RJ_WATCHDOG_TIMER_EN
 	// Enable the watchdog timer if it's set in configurations.
