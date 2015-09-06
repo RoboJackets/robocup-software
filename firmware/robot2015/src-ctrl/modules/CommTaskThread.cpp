@@ -49,7 +49,7 @@ void rxCallbackLinkTest(rtp::packet* p)
 	if (p->payload_size) {
 		LOG(INIT,
 		    "Loopback test successful!\r\n"
-		    "  '%s' (%u bytes)",
+		    "    Received:\t'%s' (%u bytes)",
 		    &(p->payload),
 		    p->payload_size
 		   );
@@ -77,18 +77,18 @@ void Task_CommCtrl(void const* args)
 	// Startup the CommModule interface
 	CommModule::Init();
 
+	// Setup some lights that will blink whenever we send/receive packets
+	DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
+	DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
+	CommModule::rxLED(&rx_led);
+	CommModule::txLED(&tx_led);
+
 	// Create a new physical hardware communication link
 	CC1201 radio(
 	    RJ_SPI_BUS,
 	    RJ_RADIO_nCS,
 	    RJ_RADIO_INT
 	);
-
-	// Setup some lights that will blink whenever we send/receive packets
-	DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
-	DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
-	CommModule::rxLED(&rx_led);
-	CommModule::txLED(&tx_led);
 
 	/*
 	 * Ports are always displayed in ascending (lowest -> highest) order according

@@ -2,6 +2,7 @@
 #include "TaskSignals.hpp"
 
 #include <rtos.h>
+#include <mbed_rpc.h>
 #include <Console.hpp>
 #include <logger.hpp>
 
@@ -21,6 +22,12 @@ void Task_SerialConsole(void const* args)
     threadPriority  = osThreadGetPriority(threadID);
   else
     threadPriority = osPriorityIdle;
+
+  // Setup some of the RPC objects so we can create new ones in the console
+  RPC::add_rpc_class<RpcDigitalIn>();
+  RPC::add_rpc_class<RpcDigitalOut>();
+  RPC::add_rpc_class<RpcDigitalInOut>();
+  RPC::add_rpc_class<RpcSPI>();
 
   // Initalize the console buffer and save the char buffer's starting address
   Console::Init();

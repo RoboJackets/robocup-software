@@ -2,6 +2,7 @@
 #include "TaskSignals.hpp"
 
 #include <rtos.h>
+#include <RPCVariable.h>
 #include <logger.hpp>
 
 #include "motors.hpp"
@@ -14,6 +15,19 @@
 
 // Declaration for an alternative control loop thread for when the accel/gyro can't be used for whatever reason
 void Task_Controller_Sensorless(void const* args);
+
+
+namespace {
+// The gyro/accel values are given RPC read/write access here
+float gyroVals[3] = { 0 };
+float accelVals[3] = { 0 };
+RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
+RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
+RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
+RPCVariable<float> accelx(&accelVals[0], "accel-x");
+RPCVariable<float> accely(&accelVals[1], "accel-y");
+RPCVariable<float> accelz(&accelVals[2], "accel-z");
+}
 
 
 /**
@@ -33,9 +47,6 @@ void Task_Controller(void const* args)
 		threadPriority = osPriorityIdle;
 
 #if RJ_MPU_EN
-	float gyroVals[3] = { 0 };
-	float accelVals[3] = { 0 };
-
 	MPU6050 imu(RJ_I2C_BUS);
 
 	imu.setBW(MPU6050_BW_256);
@@ -44,7 +55,7 @@ void Task_Controller(void const* args)
 	imu.setSleepMode(false);
 
 	char testResp;
-	if (testResp = imu.testConnection()) {
+	if ( (testResp = imu.testConnection()) ) {
 		LOG(INIT, "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
 
 	} else {

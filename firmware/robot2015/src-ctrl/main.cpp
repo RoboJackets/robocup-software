@@ -17,9 +17,6 @@ const std::string filename = "rj-fpga.nib";
 const std::string filesystemname = "local";
 const std::string filepath = "/" + filesystemname + "/" + filename;
 
-const std::string sysDate = __DATE__;
-const std::string sysTime = __TIME__;
-
 // ADCDMA adc;
 // DMA dma;
 
@@ -185,57 +182,48 @@ int main(void)
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INIT;
 
-	// turn on timer interrupts to start sine wave output
-	// sample rate is 500Hz with 128 samples per cycle on sine wave
-	// RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
-	// sine_wave.start(1.0 / (500.0 * 128));
-
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;
 	 */
 	if (isLogging) {
-		std::printf("\r\n\r\n");
+		std::printf("\r\n");
 		fflush(stdout);
 	}
 
 	/* Set the system time to the most recently known time. The compilation
 	 * time is used here. The timestamp should always be the same when using GCC.
 	 */
-	//std::locale loc;
-	//const std::time_get<char>& tmget = std::use_facet <std::time_get<char> > (loc);
-	// std::istringstream ss(sysTime.c_str());
-	// std::ios::iostate state;
+	// time_t sys_time = time(nullptr);
 
-	std::tm tt;
-	tt.tm_mon  = atoi(sysTime.substr(0, sysTime.find(' ')).c_str());
-	tt.tm_mday = atoi(sysTime.substr(tt.tm_mon, sysTime.find(' ')).c_str());
-	tt.tm_year = 1900 - atoi(sysTime.substr(tt.tm_mday).c_str());
-	tt.tm_hour = atoi(sysDate.substr(0, sysDate.find(';')).c_str());
-	tt.tm_min  = atoi(sysDate.substr(tt.tm_hour, sysDate.find(';')).c_str());
-	tt.tm_sec  = atoi(sysDate.substr(tt.tm_min).c_str());
+	// // Only set the system time if we're powering up and were off before
+	// if (localtime(&sys_time)) {
+	// 	const std::string sysDate = __DATE__;
+	// 	const std::string sysTime = __TIME__;
+	// 	std::tm tt;
 
-	// tmget.get_time(ss, std::time_get<char>::iter_type(), ss, state, &tt);
-	set_time(mktime(&tt));
-	// if (ss.fail()) {
-	// 	std::cout << "Parse failed" << std::endl;
-	// } else {
+	// 	tt.tm_mon  = atoi(sysDate.substr(0, sysDate.find(' ')).c_str());
+	// 	tt.tm_mday = atoi(sysDate.substr(tt.tm_mon, sysDate.find_first_not_of(' ') - 1).c_str());
+	// 	tt.tm_year = atoi(sysDate.substr(tt.tm_mday).c_str());
 
-	// LOG(INIT, "Setting system time to %d  %d  %d  %d:%d:%d", tt.tm_mon, tt.tm_mday, tt.tm_year, tt.tm_hour, tt.tm_min, tt.tm_sec);
+	// 	tt.tm_hour = atoi(sysTime.substr(0, sysTime.find(';')).c_str());
+	// 	tt.tm_min  = atoi(sysTime.substr(tt.tm_hour, sysTime.find(';')).c_str());
+	// 	tt.tm_sec  = atoi(sysTime.substr(tt.tm_min, sysTime.find(' ')).c_str());
+	// 	tt.tm_year = 1900 - atoi(sysTime.substr(tt.tm_sec).c_str());
 
+	// 	set_time(mktime(&tt));
 
-	//size_t strftime(sysTime.c_str(), sysTime.length(), "%b %d %Y %H:%M:%S", &tt);
+	// 	//LOG(INIT, "Build%s", sysData.c_str(), sysTime.c_str());
+
+	// 	LOG(INIT,
+	// 	    "System time set to:\t%02u/%02u/%04u %02u:%02u:%02u",
+	// 	    tt.tm_mon, tt.tm_mday, tt.tm_year,
+	// 	    tt.tm_hour, tt.tm_min, tt.tm_sec
+	// 	   );
+	// }
+
 
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
-	//}
-
-	// if ( !(strptime(sysTime, "%b %d %Y %H:%M:%S", &tm)) ) {	// 'Mmm DD YYYYHH:MM:SS'
-	// 	LOG(SEVERE, "Unable to parse system time of %s", sysTime);
-	// } else {
-	// 	LOG(INIT, "Setting system time to %s", sysTime);
-	// 	time_t buildTime = mktime(&tm);
-	// 	set_time(buildTime);
-	// }
 
 	// Start a periodic blinking LED to show system activity
 	DigitalOut ledOne(LED1, 0);
@@ -244,9 +232,9 @@ int main(void)
 
 	// TODO: write a function that will recalibrate the radio for this.
 	// Reset the ticker on every received packet. For now, we just blink an LED.
-	DigitalOut led4(LED4, 0);
-	RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void*)&led4);
-	radio_timeout_task.start(300);
+	// DigitalOut led4(LED4, 0);
+	// RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void*)&led4);
+	// radio_timeout_task.start(300);
 
 	// Flip off the startup LEDs after a timeout period
 	RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
@@ -268,7 +256,6 @@ int main(void)
 	if (fpga_ready == true) {
 
 		LOG(INIT, "FPGA Configuration Successful!");
-
 	} else {
 
 		LOG(FATAL, "FPGA Configuration Failed!");

@@ -1,12 +1,11 @@
 #include "commands.hpp"
 
-#include <CommModule.hpp>
-#include <logger.hpp>
-#include <numparser.hpp>
 #include <mbed_rpc.h>
+#include <CommModule.hpp>
+#include <numparser.hpp>
+#include <logger.hpp>
 
 #include "ds2411.hpp"
-#include "mem-iap.hpp"
 
 
 namespace
@@ -188,7 +187,7 @@ static const std::vector<command_t> commands = {
 		"Execute RPC commands on the mbed.",
 		"rpc <rpc-command>"
 	},
-		{
+	{
 		{"rpc"},
 		false,
 		cmd_rpc,
@@ -671,7 +670,7 @@ void cmd_logLevel(const vector<string>& args)
 	} else if (args.empty() == true) {
 		printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 	} else {
-		bool storeVals = true;
+		// bool storeVals = true;
 
 		if (strcmp(args.front().c_str(), "on") == 0 || strcmp(args.front().c_str(), "enable") == 0) {
 			isLogging = true;
@@ -697,22 +696,22 @@ void cmd_logLevel(const vector<string>& args)
 				rjLogLevel = newLvl;
 				printf("New log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 			} else {
-				storeVals = false;
+				// storeVals = false;
 				printf("Log level unchanged. Level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
 			}
 		}
 
-		if ( storeVals == true ) {
-			// Store the new log level in FLASH memory
-			IAP iap;
-			char mem[MEM_SIZE] = { 0 };   //  memory, it should be aligned to word boundary
+		// if ( storeVals == true ) {
+		// 	// Store the new log level in FLASH memory
+		// 	IAP iap;
+		// 	char mem[MEM_SIZE] = { 0 };   //  memory, it should be aligned to word boundary
 
-			mem[0] = isLogging ? 0xFF : 0x00;
-			mem[1] = ( rjLogLevel & 0xFF );
+		// 	mem[0] = isLogging ? 0xFF : 0x00;
+		// 	mem[1] = ( rjLogLevel & 0xFF );
 
-			iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
-			iap.write( mem, sector_start_adress[TARGET_SECTOR], MEM_SIZE );
-		}
+		// 	iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
+		// 	iap.write( mem, sector_start_adress[TARGET_SECTOR], MEM_SIZE );
+		// }
 	}
 }
 
@@ -722,15 +721,13 @@ void cmd_rpc(const vector<string>& args)
 		showInvalidArgs(args);
 
 	} else {
-		// remake the origin string
-		std::string in_buf("");
-		for (unsigned int i = 0; i < args.size(); i++) {
-			in_buf += args.at(i);
+		// remake the original string so it can be passed to RPC
+		std::string in_buf(args.at(0));
+		for (unsigned int i = 1; i < args.size(); i++) {
+			in_buf += " " + args.at(i);
 		}
 
-		char out_buf[200];
-
-		// RpcDigitalOut led(LED2, "led2");
+		char out_buf[200] = { 0 };
 
 		RPC::call(in_buf.c_str(), out_buf);
 
