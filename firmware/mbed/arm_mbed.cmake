@@ -211,18 +211,23 @@ include_directories(${MBED_PATH})
 
 
 # set variables to each of the accessory library cmake project files
-set(RPC_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/mbed-rpc.cmake)
-set(MCP23017_MBED_LIB ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake)
-set(BURSTSPI_MBED_LIB ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake)
-set(SWSPI_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake)
-set(SWI2C_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake)
-set(MODSER_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/modserial.cmake)
-set(MODDMA_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/moddma.cmake)
+set(RPC_MBED_LIB        ${CMAKE_CURRENT_LIST_DIR}/mbed-rpc.cmake      )
+set(MCP23017_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake      )
+set(BURSTSPI_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake     )
+set(SWSPI_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake  )
+set(SWI2C_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake  )
+set(MODSER_MBED_LIB     ${CMAKE_CURRENT_LIST_DIR}/modserial.cmake     )
+set(MODDMA_MBED_LIB     ${CMAKE_CURRENT_LIST_DIR}/moddma.cmake        )
+set(PIXARRY_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/pixelarray.cmake    )
 
 # create a list of which accessory libraries we want to download and add to the common2015 library
-set(MBED_ASSEC_LIBS ${RPC_MBED_LIB} ${MODSER_MBED_LIB} ${MODDMA_MBED_LIB} ${BURSTSPI_MBED_LIB})
-
-# uncomment the below line to add the MCP23017 library or other
-# ones when adding their cmake file to the mbed directory
-# -------------------------------------------------------------
-# list(APPEND MBED_ASSEC_LIBS ${MCP23017_MBED_LIB})
+set(MBED_ASSEC_LIBS
+  ${RPC_MBED_LIB}
+  # ${MCP23017_MBED_LIB}
+  ${BURSTSPI_MBED_LIB}
+  # ${SWSPI_MBED_LIB}
+  # ${SWI2C_MBED_LIB}
+  ${MODSER_MBED_LIB}
+  ${MODDMA_MBED_LIB}
+  ${PIXARRY_MBED_LIB}
+)
