@@ -27,6 +27,10 @@ RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
 RPCVariable<float> accelx(&accelVals[0], "accel-x");
 RPCVariable<float> accely(&accelVals[1], "accel-y");
 RPCVariable<float> accelz(&accelVals[2], "accel-z");
+
+// Making a temporary variable to test out the writing side of RPC variables
+int testVar
+RPCVariable<int> test_var(&testVar, "var1");
 }
 
 
