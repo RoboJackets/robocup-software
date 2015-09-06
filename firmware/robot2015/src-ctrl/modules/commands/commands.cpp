@@ -186,13 +186,6 @@ static const std::vector<command_t> commands = {
 		cmd_rpc,
 		"Execute RPC commands on the mbed.",
 		"rpc <rpc-command>"
-	},
-	{
-		{"rpc"},
-		false,
-		cmd_rpc,
-		"Execute RPC commands on the mbed.",
-		"rpc <rpc-command>"
 	}
 };
 

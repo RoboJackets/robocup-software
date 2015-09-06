@@ -29,7 +29,7 @@ RPCVariable<float> accely(&accelVals[1], "accel-y");
 RPCVariable<float> accelz(&accelVals[2], "accel-z");
 
 // Making a temporary variable to test out the writing side of RPC variables
-int testVar
+int testVar;
 RPCVariable<int> test_var(&testVar, "var1");
 }
 
