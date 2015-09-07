@@ -51,7 +51,7 @@
   */
 class MPU6050
 {
-  public:
+public:
      /**
      * Constructor.
      *
@@ -228,9 +228,12 @@ class MPU6050
      */
      void read(uint8_t adress, uint8_t* data, int length);
 
-     bool selfTest(void);
+     // returns 6 values
+     void selfTest(float* results);
 
-  private:
+     void calibrate(float * dest1, float * dest2);
+
+private:
      I2CMasterRtos connection;
      uint8_t currentAcceleroRange;
      uint8_t currentGyroRange;
