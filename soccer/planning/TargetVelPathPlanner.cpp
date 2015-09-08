@@ -10,56 +10,12 @@ bool TargetVelPathPlanner::shouldReplan(
     MotionInstant startInstant, MotionCommand cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
-    if (!prevPath || !prevPath->destination()) return true;
-
-    // TODO: refactor the things that are in common with RRTPlanner
-
-    // if this number of microseconds passes since our last path plan, we
-    // automatically replan
-    const Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
-    if ((timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
+    if (SingleRobotPathPlanner::shouldReplan(startInstant, motionConstraints,
+                                             obstacles, prevPath)) {
         return true;
     }
 
-    float timeIntoPath =
-        ((float)(timestamp() - prevPath->startTime())) * TimestampToSecs +
-        1.0f / 60.0f;
-
-    MotionInstant target;
-    boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
-    if (optTarget) {
-        target = *optTarget;
-    } else {
-        // We went off the end of the path, so use the end for calculations.
-        target = *prevPath->destination();
-    }
-
-    float pathError = (target.pos - startInstant.pos).mag();
-    float replanThreshold = *motionConstraints._replan_threshold;
-
-    //  invalidate path if current position is more than the
-    //  replanThreshold
-    if (*motionConstraints._replan_threshold != 0 &&
-        pathError > replanThreshold) {
-        return true;
-    }
-
-    float hitTime = 0;
-    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
-        return true;
-    }
-
-    // // if the destination of the current path is greater than X m away
-    // // from the target destination, we invalidate the path. This
-    // // situation could arise if the path destination changed.
-    // float goalPosDiff = (prevPath->destination()->pos - goal.pos).mag();
-    // float goalVelDiff = (prevPath->destination()->vel - goal.vel).mag();
-    // if (goalPosDiff > goalChangeThreshold() ||
-    //     goalVelDiff > goalChangeThreshold()) {
-    //     // FIXME: goalChangeThreshold shouldn't be used for velocities as it
-    //     // is above
-    //     return true;
-    // }
+    // TODO: check for different target velocity
 
     // TODO: Check to see if previous obstacles moved out of the way and we can
     // move further than before

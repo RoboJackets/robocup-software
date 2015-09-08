@@ -16,25 +16,68 @@ void SingleRobotPathPlanner::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "PathPlanner/goalChangeThreshold", 0.025);
 }
 
-std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(
-    Planning::MotionCommand::CommandType type) {
-    Planning::SingleRobotPathPlanner* planner = nullptr;
+std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
+    MotionCommand::CommandType type) {
+    SingleRobotPathPlanner* planner = nullptr;
 
     switch (type) {
-        case Planning::MotionCommand::PathTarget:
-            planner = new Planning::RRTPlanner(250);
+        case MotionCommand::PathTarget:
+            planner = new RRTPlanner(250);
             break;
-        case Planning::MotionCommand::DirectTarget:
-            planner = new Planning::DirectTargetPathPlanner();
+        case MotionCommand::DirectTarget:
+            planner = new DirectTargetPathPlanner();
             break;
-        case Planning::MotionCommand::WorldVel:
-            planner = new Planning::TargetVelPathPlanner();
+        case MotionCommand::WorldVel:
+            planner = new TargetVelPathPlanner();
             break;
         default:
             break;
     }
 
-    return std::unique_ptr<Planning::SingleRobotPathPlanner>(planner);
+    return std::unique_ptr<SingleRobotPathPlanner>(planner);
+}
+
+bool SingleRobotPathPlanner::shouldReplan(
+    MotionInstant currentInstant, const MotionConstraints& motionConstraints,
+    const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
+    if (!prevPath || !prevPath->destination()) return true;
+
+    // if this number of microseconds passes since our last path plan, we
+    // automatically replan
+    const Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
+    if ((timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
+        return true;
+    }
+
+    // Evaluate where the path says the robot should be right now
+    float timeIntoPath =
+        ((float)(timestamp() - prevPath->startTime())) * TimestampToSecs +
+        1.0f / 60.0f;
+    MotionInstant target;
+    boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
+    if (optTarget) {
+        target = *optTarget;
+    } else {
+        // We went off the end of the path, so use the end for calculations.
+        target = *prevPath->destination();
+    }
+
+    // invalidate path if current position is more than the
+    // replanThreshold
+    float pathError = (target.pos - currentInstant.pos).mag();
+    float replanThreshold = *motionConstraints._replan_threshold;
+    if (*motionConstraints._replan_threshold != 0 &&
+        pathError > replanThreshold) {
+        return true;
+    }
+
+    // Replan if we enter new obstacles
+    float hitTime = 0;
+    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
+        return true;
+    }
+
+    return false;
 }
 
 }  // namespace Planning
