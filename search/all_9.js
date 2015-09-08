@@ -2,7 +2,7 @@ var searchData=
 [
   ['impossibleassignmenterror',['ImpossibleAssignmentError',['../classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html',1,'gameplay::role_assignment']]],
   ['independentmultirobotpathplanner',['IndependentMultiRobotPathPlanner',['../class_planning_1_1_independent_multi_robot_path_planner.html',1,'Planning']]],
-  ['init',['Init',['../class_console.html#aaf56023eb347d2c95eda4b9a878d0699',1,'Console::Init()'],['../class_geometry2d_1_1_polygon.html#a7d5975d00028560f5026d928ee6ee462',1,'Geometry2d::Polygon::init()']]],
+  ['init',['init',['../class_geometry2d_1_1_polygon.html#a7d5975d00028560f5026d928ee6ee462',1,'Geometry2d::Polygon::init()'],['../class_console.html#aaf56023eb347d2c95eda4b9a878d0699',1,'Console::Init()']]],
   ['intercept',['Intercept',['../classgameplay_1_1skills_1_1intercept_1_1_intercept.html',1,'gameplay::skills::intercept']]],
   ['intercept',['intercept',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#a55b07f2c6d5a158e1786d679c1c4078f',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
   ['interpolatedpath',['InterpolatedPath',['../class_planning_1_1_interpolated_path.html',1,'Planning']]],

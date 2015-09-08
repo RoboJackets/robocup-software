@@ -41,8 +41,8 @@ var NAVTREEINDEX =
 "class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e",
 "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html#a145c5ef4e378c8019e9bf1fa66e39119",
 "classgameplay_1_1skills_1_1bump_1_1_bump.html#a7cfc66efb1314feec0224fbb84560a92",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649",
-"struct_robot_config_1_1_chipper.html#aca30a62e64cbf50c4bae0bed62e6cc4a"
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a467b08d0245e7114cd3814bb0a683969",
+"struct_robot_config_1_1_dribbler.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

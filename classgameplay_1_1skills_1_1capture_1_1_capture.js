@@ -11,8 +11,6 @@ var classgameplay_1_1skills_1_1capture_1_1_capture =
     [ "execute_fine_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a21a293321d8264d930c8f71b2161904a", null ],
     [ "execute_running", "classgameplay_1_1skills_1_1capture_1_1_capture.html#adb5c2c09f744e802220823a58522a83f", null ],
     [ "find_intercept_point", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a4548881a8609d0d2f2842a9555387d17", null ],
-    [ "is_penalty", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a79c86932a49385dfcef7b75badeb1132", null ],
-    [ "is_penalty", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a79c86932a49385dfcef7b75badeb1132", null ],
     [ "on_enter_course_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a74a310e19e880deecff7bbafa5f9eadc", null ],
     [ "on_exit_course_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#ac16fb8016a920910c1ca36e2419ed2e0", null ],
     [ "role_requirements", "classgameplay_1_1skills_1_1capture_1_1_capture.html#aa9d2ef21744be50d70978bbece8db42a", null ],

@@ -1,7 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[11,0,4,14,6,3,0,14],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a3984aaf96d2d82f81260fc7a5526aafb":[11,0,4,14,6,3,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a467b08d0245e7114cd3814bb0a683969":[11,0,4,14,6,3,0,16],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a4fd3e448729a69f8e009d4cd819e8017":[11,0,4,14,6,3,0,11],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a543e2fe2298aed66f58888834b3d2506":[11,0,4,14,6,3,0,6],
@@ -74,8 +72,8 @@ var NAVTREEINDEX8 =
 "dir_e2e0da30d41e8fe178a64e0346be81e9.html":[12,0,1,0],
 "ds2411_8hpp_source.html":[12,0,1,0,0,2],
 "files.html":[12,0],
-"functions.html":[11,3,0],
 "functions.html":[11,3,0,0],
+"functions.html":[11,3,0],
 "functions_a.html":[11,3,0,1],
 "functions_b.html":[11,3,0,2],
 "functions_c.html":[11,3,0,3],
@@ -143,10 +141,10 @@ var NAVTREEINDEX8 =
 "group__matrices.html":[9,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[11,0,3,0,2],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[9,0,0],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[11,0,3,0,4],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[9,0,1],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[11,0,3,0,12],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[11,0,3,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[9,0,2],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[11,0,3,0,12],
 "hierarchy.html":[11,2],
 "index.html":[],
 "md_doc__build_systems.html":[0],
@@ -160,8 +158,8 @@ var NAVTREEINDEX8 =
 "md_doc__vision.html":[8],
 "modules.html":[9],
 "multicast_8hpp_source.html":[12,0,0,5],
-"namespace_gameplay.html":[11,0,3],
 "namespace_gameplay.html":[10,0,0],
+"namespace_gameplay.html":[11,0,3],
 "namespaces.html":[10,0],
 "pages.html":[],
 "radio_8hpp_source.html":[12,0,1,0,0,3],
@@ -249,5 +247,7 @@ var NAVTREEINDEX8 =
 "struct_processor_1_1_status.html#aeca03c528e4ca50f5ab31f9325bab3af":[11,0,47,0,3],
 "struct_processor_1_1_status.html#af951238657affdd2d4b1f2867ac57f4c":[11,0,47,0,2],
 "struct_robot_config_1_1_chipper.html":[11,0,53,0],
-"struct_robot_config_1_1_chipper.html#a8accf10376a9ed2ca7776f13c82ca214":[11,0,53,0,1]
+"struct_robot_config_1_1_chipper.html#a8accf10376a9ed2ca7776f13c82ca214":[11,0,53,0,1],
+"struct_robot_config_1_1_chipper.html#aca30a62e64cbf50c4bae0bed62e6cc4a":[11,0,53,0,0],
+"struct_robot_config_1_1_chipper.html#adfea0d80e221e0889c97e31089886306":[11,0,53,0,2]
 };
