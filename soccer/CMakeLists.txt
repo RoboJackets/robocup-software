@@ -30,6 +30,7 @@ set(ROBOCUP_LIB_SRC
     "planning/RRTPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
+    "planning/TrapezoidalPath.cpp"
     "planning/Tree.cpp"
     "Processor.cpp"
     "ProtobufTree.cpp"
