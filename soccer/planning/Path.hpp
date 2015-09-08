@@ -46,9 +46,9 @@ public:
     /**
      * Draws the path
      *
-     * @param[in]	state The SystemState to draw the path on
-     * @param[in] 	color The color the path should be drawn
-     * @param[in] 	layer The layer to draw the path on
+     * @param state The SystemState to draw the path on
+     * @param color The color the path should be drawn
+     * @param layer The layer to draw the path on
      */
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
                       const QString& layer = "Motion") const = 0;
@@ -56,7 +56,7 @@ public:
     /**
      * Returns how long it would take for the entire path to be traversed
      *
-     * @return 	The time from start to path completion or infinity if it never
+     * @return The time from start to path completion or infinity if it never
      * stops
      */
     virtual float getDuration() const = 0;
@@ -64,12 +64,11 @@ public:
     /**
      * Returns a subPath
      *
-     * @param[in]	startTime The startTime for from which the subPath should be
-     taken.
-     * @param[in] 	endTime The endTime from which the subPath should be
-     taken.
-     If it is greater than the duration fo the path,
-                         it should go to the end of the path.
+     * @param startTime The startTime for from which the subPath should be
+     *     taken.
+     * @param endTime The endTime from which the subPath should be taken. If it
+     *     is greater than the duration fo the path, it should go to the end of
+     *     the path.
      * @return 	A unique_ptr to the new subPath
      */
     virtual std::unique_ptr<Path> subPath(
