@@ -44,14 +44,15 @@ public:
                      float startTime) const = 0;
 
     /**
-     * Draws the path
+     * Draws the path.  The default implementation adds a DebugRobotPath to the
+     * SystemState that interpolates points along the path.
      *
      * @param state The SystemState to draw the path on
      * @param color The color the path should be drawn
      * @param layer The layer to draw the path on
      */
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const = 0;
+                      const QString& layer = "Motion") const;
 
     /**
      * Returns how long it would take for the entire path to be traversed

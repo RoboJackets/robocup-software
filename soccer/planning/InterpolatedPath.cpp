@@ -189,8 +189,6 @@ void InterpolatedPath::draw(SystemState* const state,
         *pt->mutable_pos() = entry.pos();
         *pt->mutable_vel() = entry.vel();
     }
-
-    return;
 }
 
 boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
