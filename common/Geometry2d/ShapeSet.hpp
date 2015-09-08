@@ -26,8 +26,10 @@ public:
     const std::vector<std::shared_ptr<Shape>> shapes() const { return _shapes; }
 
     void add(std::shared_ptr<Shape> shape) {
-        if (!shape) throw std::runtime_error("Attempt to add null shape to ShapeSet");
-        _shapes.push_back(shape); }
+        if (!shape)
+            throw std::runtime_error("Attempt to add null shape to ShapeSet");
+        _shapes.push_back(shape);
+    }
 
     void add(const ShapeSet& other) {
         for (auto shape : other.shapes()) {

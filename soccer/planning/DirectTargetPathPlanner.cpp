@@ -10,10 +10,9 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
                      prevPath.get())) {
         Geometry2d::Point endTarget;
         float endSpeed = cmd.getDirectTarget(endTarget);
-        auto path =
-            std::unique_ptr<Path>(new TrapezoidalPath(
-                startInstant.pos, startInstant.vel.mag(), endTarget, endSpeed,
-                motionConstraints));
+        auto path = std::unique_ptr<Path>(
+            new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
+                                endTarget, endSpeed, motionConstraints));
         path->setStartTime(timestamp());
         return std::move(path);
     } else {
@@ -42,10 +41,8 @@ bool DirectTargetPathPlanner::shouldReplan(
                 ? (prevPath->destination()->vel.mag() - endSpeed)
                 : std::numeric_limits<float>::infinity();
 
-        if (targetPosChange >
-                SingleRobotPathPlanner::goalChangeThreshold() ||
-            targetVelChange >
-                SingleRobotPathPlanner::goalChangeThreshold()) {
+        if (targetPosChange > SingleRobotPathPlanner::goalChangeThreshold() ||
+            targetVelChange > SingleRobotPathPlanner::goalChangeThreshold()) {
             // FIXME: goalChangeThreshold shouldn't be used for checking
             // speed differences as it is in the above 'if' statement
             return true;

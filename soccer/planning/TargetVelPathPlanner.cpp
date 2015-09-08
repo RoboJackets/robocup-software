@@ -61,8 +61,8 @@ bool TargetVelPathPlanner::shouldReplan(
     //     return true;
     // }
 
-
-    // TODO: Check to see if previous obstacles moved out of the way and we can move further than before
+    // TODO: Check to see if previous obstacles moved out of the way and we can
+    // move further than before
 
     return false;
 }
@@ -90,7 +90,7 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
 
     float minDist = 0;
     float maxDist =
-        sqrtf(powf(Field_Dimensions::Current_Dimensions.FloorLength(), 2)+
+        sqrtf(powf(Field_Dimensions::Current_Dimensions.FloorLength(), 2) +
               powf(Field_Dimensions::Current_Dimensions.FloorWidth(), 2));
 
     float nonblockedPathLen = minDist;
@@ -100,13 +100,12 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
         nonblockedPathLen = pathLen;
     }
 
-
     MotionConstraints moddedConstraints = motionConstraints;
     moddedConstraints.maxSpeed = cmd.getWorldVel().mag();
 
-    auto path =  std::unique_ptr<Path>(new TrapezoidalPath(start, startInstant.vel.mag(),
-                    start + nonblockedPathLen*dir, 0,
-                    moddedConstraints));
+    auto path = std::unique_ptr<Path>(new TrapezoidalPath(
+        start, startInstant.vel.mag(), start + nonblockedPathLen * dir, 0,
+        moddedConstraints));
     path->setStartTime(timestamp());
     return std::move(path);
 }
