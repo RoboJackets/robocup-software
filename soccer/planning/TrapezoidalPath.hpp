@@ -75,14 +75,13 @@ public:
     // TODO: only return true for *new* obstacles
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float initialTime = 0) const override {
-
-        for (Time t = initialTime*TimestampToSecs + startTime();
-            t < startTime() + duration*SecsToTimestamp;
-            t += 0.25*SecsToTimestamp) {
-            auto instant = evaluate((t-startTime())*TimestampToSecs);
+        for (Time t = initialTime * TimestampToSecs + startTime();
+             t < startTime() + duration * SecsToTimestamp;
+             t += 0.25 * SecsToTimestamp) {
+            auto instant = evaluate((t - startTime()) * TimestampToSecs);
             if (instant) {
                 for (auto& shape : obstacles.shapes()) {
-                    hitTime = t*TimestampToSecs;
+                    hitTime = t * TimestampToSecs;
                     if (shape->hit(instant->pos)) return true;
                 }
             }
