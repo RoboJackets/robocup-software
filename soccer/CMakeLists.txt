@@ -27,6 +27,7 @@ set(ROBOCUP_LIB_SRC
     "planning/InterpolatedPath.cpp"
     "planning/IndependentMultiRobotPathPlanner.cpp"
     "planning/MotionConstraints.cpp"
+    "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"

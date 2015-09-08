@@ -43,9 +43,6 @@ public:
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float initialTime = 0) const override;
 
-    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const override;
-
     virtual float getDuration() const override { return duration; }
 
     virtual std::unique_ptr<Path> subPath(
