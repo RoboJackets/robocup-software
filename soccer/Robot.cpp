@@ -3,7 +3,6 @@
 #include <modeling/RobotFilter.hpp>
 #include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>
-#include <planning/DirectTargetPathPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <RobotConfig.hpp>
@@ -188,23 +187,6 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
     *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
     *_cmdText << "endVelocity(" << endVelocity.x << ", " << endVelocity.y << ")"
               << endl;
-}
-
-void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
-    if (!visible) return;
-
-    // sets flags for future movement
-    if (verbose)
-        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
-             << ", " << goal.y << ")" << endl;
-
-    _motionCommand.setDirectTarget(goal, endSpeed);
-
-    // reset conflicting motion commands
-    _motionConstraints.pivotTarget = boost::none;
-
-    *_cmdText << "moveDirect(" << goal.x << ", " << goal.y << ")" << endl;
-    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {

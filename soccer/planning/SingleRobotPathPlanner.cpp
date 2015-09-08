@@ -1,5 +1,4 @@
 #include "SingleRobotPathPlanner.hpp"
-#include "DirectTargetPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 
 namespace Planning {
@@ -22,9 +21,6 @@ std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(
     switch (type) {
         case Planning::MotionCommand::PathTarget:
             planner = new Planning::RRTPlanner(250);
-            break;
-        case Planning::MotionCommand::DirectTarget:
-            planner = new Planning::DirectTargetPathPlanner();
             break;
         default:
             break;
