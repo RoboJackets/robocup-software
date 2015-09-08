@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <boost/optional.hpp>
@@ -53,6 +54,8 @@ struct MotionConstraints {
 
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
+
+    static double defaultMaxSpeed() { return *_max_speed; }
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_acceleration;

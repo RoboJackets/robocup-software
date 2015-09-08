@@ -144,13 +144,10 @@ qt5_add_resources(LOG_VIEWER_RSRC ui/log_icons.qrc)
 qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
 set(LOG_VIEWER_SRC
     "LogViewer.cpp"
-    "FieldView.cpp"
-   	"ProtobufTree.cpp"
-   	"StripChart.cpp"
 )
 add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
-qt5_use_modules(log_viewer Core Widgets OpenGL Svg)
-target_link_libraries(log_viewer common)
+qt5_use_modules(log_viewer Core Widgets OpenGL Svg Xml)
+target_link_libraries(log_viewer robocup)
 
 
 # Add a test runner target "test-soccer" to run all tests in this directory
