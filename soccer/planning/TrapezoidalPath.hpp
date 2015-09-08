@@ -35,81 +35,27 @@ private:
 public:
     TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                     Geometry2d::Point endPos, float endSpeed,
-                    const MotionConstraints& constraints)
-        : startPos(startPos),
-          startSpeed(startSpeed),
-          endPos(endPos),
-          endSpeed(endSpeed),
-          pathLength((startPos - endPos).mag()),
-          maxAcc(constraints.maxAcceleration),
-          maxSpeed(constraints.maxSpeed),
-          pathDirection((endPos - startPos).normalized()) {
-        float minSpeed = maxSpeed;
-        if (startSpeed < minSpeed) {
-            startSpeed = minSpeed;
-        }
+                    const MotionConstraints& constraints);
 
-        // Precalculate the duration of the path
-        duration = Trapezoidal::getTime(pathLength,  // distance
-                                        pathLength,  // pathLength
-                                        maxSpeed, maxAcc, startSpeed, endSpeed);
-    }
-
-    virtual boost::optional<MotionInstant> evaluate(float time) const override {
-        float distance;
-        float speedOut;
-        bool valid = TrapezoidalMotion(pathLength,  // PathLength
-                                       maxSpeed,    // maxSpeed
-                                       maxAcc,      // maxAcc
-                                       time,        // time
-                                       startSpeed,  // startSpeed
-                                       endSpeed,    // endSpeed
-                                       distance,    // posOut
-                                       speedOut);   // speedOut
-        if (!valid) return boost::none;
-
-        return MotionInstant(pathDirection * distance + startPos,
-                             pathDirection * speedOut);
-    }
+    virtual boost::optional<MotionInstant> evaluate(float time) const override;
 
     // TODO: only return true for *new* obstacles
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float initialTime = 0) const override {
-        for (Time t = initialTime * TimestampToSecs + startTime();
-             t < startTime() + duration * SecsToTimestamp;
-             t += 0.25 * SecsToTimestamp) {
-            auto instant = evaluate((t - startTime()) * TimestampToSecs);
-            if (instant) {
-                for (auto& shape : obstacles.shapes()) {
-                    hitTime = t * TimestampToSecs;
-                    if (shape->hit(instant->pos)) return true;
-                }
-            }
-        }
-
-        return false;
-    }
+                     float initialTime = 0) const override;
 
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const override {
-        Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
-        dbg->set_layer(state->findDebugLayer(layer));
-        *dbg->add_points() = startPos;
-        *dbg->add_points() = endPos;
-    }
+                      const QString& layer = "Motion") const override;
 
     virtual float getDuration() const override { return duration; }
 
     virtual std::unique_ptr<Path> subPath(
         float startTime = 0,
-        float endTime = std::numeric_limits<float>::infinity()) const override {
-        debugThrow("This function is not implemented");
-        return nullptr;
-    }
+        float endTime = std::numeric_limits<float>::infinity()) const override;
 
     virtual boost::optional<MotionInstant> destination() const override {
         return MotionInstant(endPos, pathDirection * endSpeed);
     }
+
     virtual std::unique_ptr<Path> clone() const override {
         debugThrow("This function is not implemented");
         return nullptr;
