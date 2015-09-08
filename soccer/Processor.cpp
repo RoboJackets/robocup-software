@@ -439,8 +439,8 @@ void Processor::run() {
         }
 
         // Run path planner and set the path for each robot that was planned for
-        auto paths = _pathPlanner->run(std::move(requests));
-        for (auto& entry : paths) {
+        auto pathsById = _pathPlanner->run(std::move(requests));
+        for (auto& entry : pathsById) {
             OurRobot* r = _state.self[entry.first];
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");

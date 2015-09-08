@@ -72,9 +72,23 @@ public:
                              pathDirection * speedOut);
     }
 
+    // TODO: only return true for *new* obstacles
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float startTime = 0) const override {
-        throw std::logic_error("This function is not implemented");
+                     float initialTime = 0) const override {
+
+        for (Time t = initialTime*TimestampToSecs + startTime();
+            t < startTime() + duration*SecsToTimestamp;
+            t += 0.25*SecsToTimestamp) {
+            auto instant = evaluate((t-startTime())*TimestampToSecs);
+            if (instant) {
+                for (auto& shape : obstacles.shapes()) {
+                    hitTime = t*TimestampToSecs;
+                    if (shape->hit(instant->pos)) return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
