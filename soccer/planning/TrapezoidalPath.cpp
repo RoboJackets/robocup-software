@@ -24,8 +24,7 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                                     maxSpeed, maxAcc, startSpeed, endSpeed);
 }
 
-boost::optional<MotionInstant> TrapezoidalPath::evaluate(
-    float time) const {
+boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
     float distance;
     float speedOut;
     bool valid = TrapezoidalMotion(pathLength,  // PathLength
@@ -59,8 +58,7 @@ bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
     return false;
 }
 
-void TrapezoidalPath::draw(SystemState* const state,
-                           const QColor& color,
+void TrapezoidalPath::draw(SystemState* const state, const QColor& color,
                            const QString& layer) const {
     Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
     dbg->set_layer(state->findDebugLayer(layer));
@@ -68,9 +66,8 @@ void TrapezoidalPath::draw(SystemState* const state,
     *dbg->add_points() = endPos;
 }
 
-std::unique_ptr<Path> TrapezoidalPath::subPath(
-    float startTime,
-    float endTime) const {
+std::unique_ptr<Path> TrapezoidalPath::subPath(float startTime,
+                                               float endTime) const {
     debugThrow("This function is not implemented");
     return nullptr;
 }

@@ -29,45 +29,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet* obstacles,
                               const Path* prevPath) const {
-    if (!prevPath || !prevPath->destination()) return true;
-
-    // if this number of microseconds passes since our last path plan, we
-    // automatically replan
-    const Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
-    if ((timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
-        return true;
-    }
-
-    float timeIntoPath =
-        ((float)(timestamp() - prevPath->startTime())) * TimestampToSecs +
-        1.0f / 60.0f;
-
-    MotionInstant target;
-    boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
-    if (optTarget) {
-        target = *optTarget;
-    } else {
-        // We went off the end of the path, so use the end for calculations.
-        target = *prevPath->destination();
-    }
-
-    float pathError = (target.pos - start.pos).mag();
-    float replanThreshold = *motionConstraints._replan_threshold;
-
-    //  invalidate path if current position is more than the
-    //  replanThreshold
-    if (*motionConstraints._replan_threshold != 0 &&
-        pathError > replanThreshold) {
-        return true;
-    }
-
-    // FIXME: we need to figure out what is causing NaN values here
-    if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
-        return true;
-    }
-
-    float hitTime = 0;
-    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
+    if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
+                                             obstacles, prevPath)) {
         return true;
     }
 

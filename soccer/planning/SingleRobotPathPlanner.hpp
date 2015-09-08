@@ -30,6 +30,18 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    /// Checks if the previous path is no longer valid and needs to be
+    /// re-planned.  This method does the following checks:
+    /// * Is path non-null?
+    /// * Does it have a valid destination()?
+    /// * Is the robot too far away from where the path says it should be?  (see
+    ///   the replan threshold)
+    /// * Does the path enter new obstacles?
+    static bool shouldReplan(MotionInstant currentInstant,
+                             const MotionConstraints& motionConstraints,
+                             const Geometry2d::ShapeSet* obstacles,
+                             const Path* prevPath);
+
 private:
     static ConfigDouble* _goalChangeThreshold;
     static ConfigDouble* _replanTimeout;
