@@ -160,10 +160,3 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if main.ball().valid:
             reqs.destination_shape = main.ball().pos
         return reqs
-
-    @property
-    def is_penalty(self):
-        return self._is_penalty
-    @is_penalty.setter
-    def is_penalty(self, value):
-        self._is_penalty = value
