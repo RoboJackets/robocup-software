@@ -87,7 +87,7 @@ public:
     virtual std::unique_ptr<Path> clone() const = 0;
 
     /// The time the path starts at
-    const Time startTime() const { return _startTime; }
+    Time startTime() const { return _startTime; }
     void setStartTime(Time t) { _startTime = t; }
 
 protected:
