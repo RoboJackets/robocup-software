@@ -66,7 +66,8 @@ public:
      *
      * @param[in]	startTime The startTime for from which the subPath should be
      taken.
-     * @param[in] 	endTime The endTime from which the subPath should be taken.
+     * @param[in] 	endTime The endTime from which the subPath should be
+     taken.
      If it is greater than the duration fo the path,
                          it should go to the end of the path.
      * @return 	A unique_ptr to the new subPath

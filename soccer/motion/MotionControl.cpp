@@ -75,12 +75,16 @@ void MotionControl::run() {
         // TrapezoidalMotion(
         // 	abs(angleError),					// dist
         // 	motionConstraints.maxAngleSpeed,	// max deg/sec
-        // 	30,									// max deg/sec^2
-        // 	0.1 ,								// time into path
+        // 	30,									// max
+        // deg/sec^2
+        // 	0.1 ,								// time into
+        // path
         // 	_robot->angleVel,					// start speed
-        // 	0,									// final speed
+        // 	0,									// final
+        // speed
         // 	targetAngle,
-        // 	targetW 							// ignored
+        // 	targetW 							//
+        // ignored
         // 	);
 
         // // PID on angle
