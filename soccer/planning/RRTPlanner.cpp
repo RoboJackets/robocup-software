@@ -1,4 +1,5 @@
 #include "RRTPlanner.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -70,7 +71,8 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Locate a goal point that is obstacle-free
     boost::optional<Geometry2d::Point> prevGoal;
     if (prevPath) prevGoal = prevPath->end().pos;
-    goal.pos = findNonBlockedGoal(goal.pos, prevGoal, obstacles);
+    goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
+        goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
@@ -89,47 +91,6 @@ std::unique_ptr<Path> RRTPlanner::run(
     } else {
         return prevPath;
     }
-}
-
-Geometry2d::Point RRTPlanner::findNonBlockedGoal(
-    Geometry2d::Point goal, boost::optional<Geometry2d::Point> prevGoal,
-    const Geometry2d::ShapeSet* obstacles, int maxItr) {
-    if (obstacles && obstacles->hit(goal)) {
-        FixedStepTree goalTree;
-        goalTree.init(goal, obstacles);
-        goalTree.step = .1f;
-
-        // The starting point is in an obstacle extend the tree until we find an
-        // unobstructed point
-        Geometry2d::Point newGoal;
-        for (int i = 0; i < maxItr; ++i) {
-            Geometry2d::Point r = randomPoint();
-
-            // extend to a random point
-            Tree::Point* newPoint = goalTree.extend(r);
-
-            // if the new point is not blocked, it becomes the new goal
-            if (newPoint && newPoint->hit.empty()) {
-                newGoal = newPoint->pos;
-                break;
-            }
-        }
-
-        if (!prevGoal) return newGoal;
-
-        // Only use this newly-found point if it's closer to the desired goal by
-        // at least one robot radius or the old goal now collides with
-        // obstacles.
-        float oldDist = (*prevGoal - goal).mag();
-        float newDist = (newGoal - goal).mag();
-        if (newDist + Robot_Radius < oldDist || obstacles->hit(*prevGoal)) {
-            return newGoal;
-        } else {
-            return *prevGoal;
-        }
-    }
-
-    return goal;
 }
 
 InterpolatedPath* RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,

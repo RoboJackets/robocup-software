@@ -63,12 +63,6 @@ protected:
                       const Geometry2d::ShapeSet* obstacles,
                       const Path* prevPath) const;
 
-    /// If the given goal point is in an obstacle, uses an RRT to attempt to
-    /// find a point that is close, but not blocked.
-    Geometry2d::Point findNonBlockedGoal(
-        Geometry2d::Point goal, boost::optional<Geometry2d::Point> prevGoal,
-        const Geometry2d::ShapeSet* obstacles, int maxItr = 100);
-
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     Planning::InterpolatedPath* runRRT(
         MotionInstant start, MotionInstant goal,
