@@ -29,7 +29,7 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet* obstacles,
                               const Path* prevPath) const {
-    if (!prevPath || !prevPath->destination()) return true;
+    if (!prevPath || !prevPath->valid()) return true;
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
@@ -48,7 +48,7 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
         target = *optTarget;
     } else {
         // We went off the end of the path, so use the end for calculations.
-        target = *prevPath->destination();
+        target = prevPath->end();
     }
 
     float pathError = (target.pos - start.pos).mag();
@@ -74,8 +74,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
     // if the destination of the current path is greater than X m away
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
-    float goalPosDiff = (prevPath->destination()->pos - goal.pos).mag();
-    float goalVelDiff = (prevPath->destination()->vel - goal.vel).mag();
+    float goalPosDiff = (prevPath->end().pos - goal.pos).mag();
+    float goalVelDiff = (prevPath->end().vel - goal.vel).mag();
     if (goalPosDiff > goalChangeThreshold() ||
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
@@ -106,7 +106,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 
     // Locate a goal point that is obstacle-free
     boost::optional<Geometry2d::Point> prevGoal;
-    if (prevPath) prevGoal = prevPath->destination()->pos;
+    if (prevPath) prevGoal = prevPath->end().pos;
     goal.pos = findNonBlockedGoal(goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
