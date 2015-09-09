@@ -33,11 +33,6 @@ const float Ball_Avoid_Small = 2.0 * Ball_Radius;
  */
 const bool verbose = false;
 
-/**
- * super class for all robots
- *@param shell this is a robot id number
- *@param self is robot on our team?
- */
 Robot::Robot(unsigned int shell, bool self) {
     visible = false;
     _shell = shell;
@@ -47,9 +42,7 @@ Robot::Robot(unsigned int shell, bool self) {
 
     _filter = new RobotFilter();
 }
-/**
- * deconstructor, deletesRobotFilter
- */
+
 Robot::~Robot() {
     delete _filter;
     _filter = nullptr;
@@ -98,9 +91,6 @@ void OurRobot::addStatusText() {
 
     if (!rxIsFresh()) {
         addText("No RX", statusColor, "Status");
-
-        // No more status is available
-        return;
     }
 }
 
@@ -116,10 +106,11 @@ void OurRobot::addText(const QString& text, const QColor& qc,
 
 bool OurRobot::avoidOpponents() const {
     // checks for avoiding all opponents
-    for (size_t i = 0; i < Num_Shells; ++i)
+    for (size_t i = 0; i < Num_Shells; ++i) {
         if (_state->opp[i] && _state->opp[i]->visible &&
             _opp_avoid_mask[i] < 0.1)
             return false;
+    }
     return true;
 }
 
