@@ -28,7 +28,7 @@ private:
 
     const float pathLength;
     const float maxAcc;
-    const float maxSpeed;
+    const float _maxSpeed;
 
     float duration;
 
@@ -44,6 +44,10 @@ public:
                      float initialTime = 0) const override;
 
     virtual float getDuration() const override { return duration; }
+
+    float maxSpeed() const {
+        return _maxSpeed;
+    }
 
     virtual std::unique_ptr<Path> subPath(
         float startTime = 0,

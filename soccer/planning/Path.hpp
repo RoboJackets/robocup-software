@@ -25,9 +25,7 @@ public:
     virtual ~Path() {}
 
     /// Returns true if the path is non-empty
-    virtual bool valid() const {
-        return true;
-    }
+    virtual bool valid() const { return true; }
 
     /**
      * This method evalates the path at a given time and returns the target
@@ -86,7 +84,8 @@ public:
         float startTime = 0,
         float endTime = std::numeric_limits<float>::infinity()) const = 0;
 
-    /// Endpoints of the path.  Will raise an InvalidPathException if the path is not valid.
+    /// Endpoints of the path.  Will raise an InvalidPathException if the path
+    /// is not valid.
     virtual MotionInstant start() const = 0;
     virtual MotionInstant end() const = 0;
 

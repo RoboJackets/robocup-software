@@ -32,14 +32,12 @@ bool DirectTargetPathPlanner::shouldReplan(
         // have changed beyond a certain threshold
         Geometry2d::Point endTarget;
         float endSpeed = cmd.getDirectTarget(endTarget);
-        float targetPosChange =
-            prevPath->valid()
-                ? (prevPath->end().pos - endTarget).mag()
-                : std::numeric_limits<float>::infinity();
-        float targetVelChange =
-            prevPath->valid()
-                ? (prevPath->end().vel.mag() - endSpeed)
-                : std::numeric_limits<float>::infinity();
+        float targetPosChange = prevPath->valid()
+                                    ? (prevPath->end().pos - endTarget).mag()
+                                    : std::numeric_limits<float>::infinity();
+        float targetVelChange = prevPath->valid()
+                                    ? (prevPath->end().vel.mag() - endSpeed)
+                                    : std::numeric_limits<float>::infinity();
 
         if (targetPosChange > SingleRobotPathPlanner::goalChangeThreshold() ||
             targetVelChange > SingleRobotPathPlanner::goalChangeThreshold()) {

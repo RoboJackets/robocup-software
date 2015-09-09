@@ -37,6 +37,9 @@ public:
     /// * Is the robot too far away from where the path says it should be?  (see
     ///   the replan threshold)
     /// * Does the path enter new obstacles?
+    ///
+    /// Subclasses will generally use this method in addition to their own
+    /// planner-specific checks to determine if a replan is necessary.
     static bool shouldReplan(MotionInstant currentInstant,
                              const MotionConstraints& motionConstraints,
                              const Geometry2d::ShapeSet* obstacles,
