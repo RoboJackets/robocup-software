@@ -90,14 +90,14 @@ NET "spi_master_miso" LOC="P139";
 NET "spi_master_mosi" LOC="P140";
 NET "spi_master_sck" LOC="P135";
 # These are the driver chip select pins for the SPI master
-NET "drv_ncs<0>" LOC="P131" | PULLUP;
-NET "drv_ncs<1>" LOC="P126" | PULLUP;
-NET "drv_ncs<2>" LOC="P130" | PULLUP;
-NET "drv_ncs<3>" LOC="P34" | PULLUP;
-NET "drv_ncs<4>" LOC="P35" | PULLUP;
+NET "drv_ncs<0>" LOC="P131";
+NET "drv_ncs<1>" LOC="P126";
+NET "drv_ncs<2>" LOC="P130";
+NET "drv_ncs<3>" LOC="P34";
+NET "drv_ncs<4>" LOC="P35";
 # These are the ADC chip select pins for the SPI master
-NET "adc_ncs<0>" LOC="P132" | PULLUP;
-NET "adc_ncs<1>" LOC="P134" | PULLUP;
+NET "adc_ncs<0>" LOC="P132";
+NET "adc_ncs<1>" LOC="P134";
 
 #################################################
 #                Timing Specs.                  #

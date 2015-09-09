@@ -47,8 +47,8 @@ output reg fault = 0;
 // Local parameters that can not be altered outside of this file
 // ===============================================
 localparam NUM_PHASES =                 3;  // This will always be constant
-localparam STARTUP_COUNTER_WIDTH =      10; // Counter for startup time period. Time expires when register overflows to 0 and is incremented according to HALL_CHECK_COUNTER_WIDTH
-localparam HALL_STATE_STEADY_COUNT =    50; // Threshold value in determining when the hall effect sensor is locked into an error state
+localparam STARTUP_COUNTER_WIDTH =      5; // Counter for startup time period. Time expires when register overflows to 0 and is incremented according to HALL_CHECK_COUNTER_WIDTH
+localparam HALL_STATE_STEADY_COUNT =    31; // Threshold value in determining when the hall effect sensor is locked into an error state
 
 // Derived local parameters
 // ===============================================
@@ -85,16 +85,16 @@ wire [2:0] z, u;
 
 // Counter registers for hall check and startup timers
 reg [STARTUP_COUNTER_WIDTH-1:0] startup_counter = 0;
-reg [HALL_CHECK_CLOCK_WIDTH-1:0] hall_check_time = 0;
 
 // Count values for consecuitive hall effect sensor states
-reg [HALL_CHECK_COUNTER_WIDTH-1:0] hall_hardware_err_cnt = 0;
-reg [HALL_CHECK_COUNTER_WIDTH-1:0] hall_disconnected_cnt = 0;
-reg [HALL_CHECK_COUNTER_WIDTH-1:0] hall_reconnect_cnt = 0;
+reg [HALL_CHECK_COUNTER_WIDTH-1:0]  hall_hardware_err_cnt = 0,
+                                    hall_disconnected_cnt = 0,
+                                    hall_reconnect_cnt = 0,
+                                    hall_check_time = 0;
 
 // Error flags
-reg hardware_fault_latched = 0;
-reg disconnect_fault_latched = 0;
+reg hardware_fault_latched = 0,
+    disconnect_fault_latched = 0;
 
 // Variable used for instantiation of the number of phases
 genvar j;

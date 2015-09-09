@@ -1,7 +1,7 @@
 // Top module for the FPGA logic
 
 `include "BLDC_Motor.v"
-`include "SPI_Slave.v"
+`include "SPI_Slave2.v"
 
 `ifdef CMAKE_SCRIPT
 `include "git_version.vh"
@@ -130,8 +130,8 @@ wire [ HALL_COUNT_WIDTH	   - 1:0 ] hall_count [ NUM_HALL_SENS - 1:0 ];
 wire [ NUM_HALL_SENS 	   - 1:0 ] hall_faults;
 
 reg  [ DUTY_CYCLE_WIDTH	   - 1:0 ] duty_cycle 		 [ NUM_MOTORS    - 1:0 ];
-reg  [ ENCODER_COUNT_WIDTH - 1:0 ] enc_count_offset  [ NUM_ENCODERS  - 1:0 ];
-reg  [ HALL_COUNT_WIDTH	   - 1:0 ] hall_count_offset [ NUM_HALL_SENS - 1:0 ];
+//reg  [ ENCODER_COUNT_WIDTH - 1:0 ] enc_count_offset  [ NUM_ENCODERS  - 1:0 ];
+//reg  [ HALL_COUNT_WIDTH	   - 1:0 ] hall_count_offset [ NUM_HALL_SENS - 1:0 ];
 
 
 // Command types for SPI access
@@ -152,31 +152,35 @@ localparam CMD_STROBE_START 		= CMD_RW_TYPE_BASE + 'h10;
 localparam CMD_TOGGLE_MOTOR_EN	 	= CMD_RW_TYPE_BASE + CMD_STROBE_START;
 
 // Response & request buffer sizes
-localparam SPI_SLAVE_RES_BUF_LEN = 64;
+localparam SPI_SLAVE_RES_BUF_LEN = 32;
 localparam SPI_SLAVE_REQ_BUF_LEN = SPI_SLAVE_RES_BUF_LEN;
 localparam SPI_SLAVE_COUNTER_WIDTH = `LOG2(SPI_SLAVE_RES_BUF_LEN);
 
 
 // These are for triggering the storage of values outside of the SPI's SCK domain
-reg tx_vals_flag;
-reg rx_vals_flag = 0;
-reg reset_hall_counts = 0;
-reg reset_encoder_counts = 0;
-reg motors_en;
+reg tx_vals_flag = 0,
+	rx_vals_flag = 0,
+	reset_hall_counts = 0,
+	reset_encoder_counts = 0,
+	motors_en;
 reg [ SPI_SLAVE_COUNTER_WIDTH - 1:0 ] 	spi_slave_byte_count ;
 reg [ SPI_SLAVE_DATA_WIDTH - 1:0 ] 		spi_slave_res_buf [ SPI_SLAVE_RES_BUF_LEN - 1:0 ],		// response & request buffers
 										spi_slave_req_buf [ SPI_SLAVE_REQ_BUF_LEN - 1:0 ];
 reg [ SPI_SLAVE_DATA_WIDTH - 1:0 ]		spi_slave_di;	// latched every incoming byte & also store the first byte as the command byte
 
 wire [ SPI_SLAVE_DATA_WIDTH - 1:0 ] spi_slave_do;
-wire spi_slave_start_strobe = ( (spi_slave_ncs_s == 0) && (spi_slave_ncs_d == 1) );
-wire spi_slave_end_strobe	= ( (spi_slave_ncs_s == 1) && (spi_slave_ncs_d == 0) );
+wire spi_slave_start_strobe = ( (spi_slave_ncs_s == 0) && (spi_slave_ncs_d == 1) ),
+ 	 spi_slave_end_strobe	= ( (spi_slave_ncs_s == 1) && (spi_slave_ncs_d == 0) );
 
-reg  spi_slave_byte_sent = 0;
+wire spi_slave_byte_done;
+reg  spi_slave_byte_done_d;
 // The command_byte is always the first byte in the request buffer when selected. The command byte ignores the MSB.
 wire [ SPI_SLAVE_DATA_WIDTH - 2:0 ] command_byte 	= spi_slave_byte_count > 0 ? spi_slave_req_buf[0][ SPI_SLAVE_DATA_WIDTH - 2:0 ] : 0;
 // The top bit of a command byte is a flag that can be sent over the SPI slave bus to write/read the values for specified commands starting at the CMD_RW_TYPE_BASE address
 wire 								command_rw 		= spi_slave_byte_count > 0 ? spi_slave_req_buf[0][ SPI_SLAVE_DATA_WIDTH - 1 ] : 0;
+
+wire spi_slave_load_byte_flag = (spi_slave_byte_done == 0) && (spi_slave_byte_done_d == 1);
+
 
 // `define SIMULATION
 `ifdef SIMULATION
@@ -198,22 +202,18 @@ initial begin
 end
 `endif
 
-// reg spi_slave_req_buf_we;
 
-// The module that takes care of the lower level SPI details
-SPI_Slave #(
-	.CPOL 	( SPI_SLAVE_CPOL ),
-	.CPHA 	( SPI_SLAVE_CPHA )
-	) spi_slave_module (
+SPI_Slave2 spi_slave_module (
     .clk 	( sysclk 				),
-    .ncs 	( spi_slave_ncs_s 		),
-    .mosi 	( spi_slave_mosi_s 		),
-    .miso 	( spi_slave_miso_o 		),
-    .sck 	( spi_slave_sck 		),
-    .done 	( spi_slave_byte_done	),
-    .din 	( spi_slave_di 			),
-    .dout 	( spi_slave_do 			)
+    .SCK 	(  	spi_slave_sck	),
+    .MOSI 	( spi_slave_mosi_s 		),
+    .MISO 	( spi_slave_miso_o 		),
+    .SSEL 	( spi_slave_ncs_s 		),
+    .DONE (spi_slave_byte_done),
+    .BYTE_RECEIVED 	( spi_slave_do	),
+    .BYTE_TO_SEND(spi_slave_di)
 );
+
 
 // When the byte count changes, we need to find our next byte that we want to load for the data out
 //always @( negedge spi_slave_byte_sent, posedge spi_slave_ncs_s, posedge spi_slave_end_strobe, posedge spi_slave_start_strobe )
@@ -229,12 +229,15 @@ begin : SPI_LOAD_BYTE
 	end else if ( spi_slave_start_strobe ) begin
 		// Set the command byte if it's the first received byte.
 		spi_slave_byte_count <= 0;
-		spi_slave_di <= 'h80 + hall_faults;
 		rx_vals_flag <= 0;
 		tx_vals_flag <= 0;
 
 	end else begin
-		if ( spi_slave_byte_sent ) begin
+		if (spi_slave_byte_done == 1 && spi_slave_byte_count == 0) begin
+
+			spi_slave_req_buf[0] <= spi_slave_do;
+
+		end else if ( spi_slave_load_byte_flag ) begin
 			// For everything else, increment the byte counter & load the TX/RX buffers with the correct bytes based upon the first received byte
 			spi_slave_byte_count <= spi_slave_byte_count + 1;
 			// Place the received one in the request buffer
@@ -254,9 +257,13 @@ begin : SPI_LOAD_BYTE
 	end
 end
 
+always @( negedge sysclk )	spi_slave_byte_done_d <= spi_slave_byte_done;
 
 always @( negedge sysclk )
 begin : SPI_LOAD_RESPONSE_BUFFER
+	
+	spi_slave_res_buf[ 0 ] <= 'h80 + hall_faults;
+
 	// If the flag is set to load the response buffer, reset the flag & do just that. We know that the 'command_byte' is valid if this flag is set.
 	if ( tx_vals_flag == 1 ) begin
 		if ( command_rw == CMD_READ_TYPE ) begin
@@ -268,40 +275,40 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 					// Encoder inputs are latched here so all readings are from the same time
 					for (j = 0; j < NUM_ENCODER_GEN; j = j + 1)
 					begin : LATCH_ENC_COUNTS_ON_UPDATE
-						spi_slave_res_buf[2*j]		<=	enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
-						spi_slave_res_buf[2*j+1]	<=	enc_count[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH];
+						spi_slave_res_buf[2*j+1]		<=	enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
+						spi_slave_res_buf[2*j+2]	<=	enc_count[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH];
 					end
 
 					// spi_slave_di <= enc_count[0][SPI_SLAVE_DATA_WIDTH-1:0]; 	// We MUST load in the first value for every command within this case statement!!
 				end
 
-				CMD_READ_MTR_1_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_1_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_2_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_2_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_3_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_3_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_4_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_4_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_5_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_5_DATA	: 
+				// begin
+				// end
 
 				CMD_ENCODER_COUNT :
 				begin
 					// Encoder inputs are latched here so all readings are from the same time
 					for (j = 0; j < NUM_ENCODERS; j = j + 1) 
 					begin : LATCH_ENC_COUNTS
-						spi_slave_res_buf[2*j] 		<=	enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0] + enc_count_offset[j][SPI_SLAVE_DATA_WIDTH-1:0];
-						spi_slave_res_buf[2*j+1] 	<=	enc_count[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH] + enc_count_offset[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH];
+						spi_slave_res_buf[2*j+1] 		<=	enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];// + enc_count_offset[j][SPI_SLAVE_DATA_WIDTH-1:0];
+						spi_slave_res_buf[2*j+2] 	<=	enc_count[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH];// + enc_count_offset[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH];
 					end
 					// We MUST load in the first value for every command within this case statement!!
 					// spi_slave_di <= enc_count[0][SPI_SLAVE_DATA_WIDTH-1:0] + enc_count_offset[0][SPI_SLAVE_DATA_WIDTH-1:0];
@@ -311,7 +318,7 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 				begin
 					// Encoder inputs are latched here so all readings are from the same time
 					for (j = 0; j < NUM_HALL_SENS; j = j + 1) 
-						spi_slave_res_buf[j] 	<=	hall_count[j][HALL_COUNT_WIDTH-1:0] + hall_count_offset[j][HALL_COUNT_WIDTH-1:0];
+						spi_slave_res_buf[j+1] 	<=	hall_count[j][HALL_COUNT_WIDTH-1:0];// + hall_count_offset[j][HALL_COUNT_WIDTH-1:0];
 					// We MUST load in the first value for every command within this case statement!!
 					// spi_slave_di <= hall_count[0][HALL_COUNT_WIDTH-1:0] +  hall_count_offset[0][HALL_COUNT_WIDTH-1:0];
 				end
@@ -319,9 +326,9 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 				default : 	
 				begin
 					// Default is to set everything to 0
-					for (j = 0; j < SPI_SLAVE_RES_BUF_LEN; j = j + 1) 
+					for (j = 0; j < (SPI_SLAVE_RES_BUF_LEN - 1); j = j + 1) 
 					begin : RESET_RESPONSE_BUF_ON_READ_DEFAULT
-						spi_slave_res_buf[j] 	<=	'h00;
+						spi_slave_res_buf[j+1] 	<=	'h00;
 					end
 
 					// spi_slave_di <= 'h00;
@@ -331,9 +338,9 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 
 		end else begin
 			// The command type was a write type, so just reset the response buffer
-			for (j = 0; j < SPI_SLAVE_RES_BUF_LEN; j = j + 1) 
+			for (j = 0; j < (SPI_SLAVE_RES_BUF_LEN - 1); j = j + 1) 
 			begin : RESET_RESPONSE_BUF_ON_WRITE
-				spi_slave_res_buf[j] 	<=	'h00;
+				spi_slave_res_buf[j+1] 	<=	'h00;
 			end
 
 			// spi_slave_di <= 'h00;
@@ -353,50 +360,50 @@ begin : SPI_SORT_REQUEST_BUFFER
 			// If the byte count is 2, we need to go back and decode our first byte so we know what data to send out for everything else
 			case ( command_byte )
 
-				CMD_READ_MTR_1_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_1_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_2_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_2_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_3_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_3_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_4_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_4_DATA	: 
+				// begin
+				// end
 
-				CMD_READ_MTR_5_DATA	: 
-				begin
-				end
+				// CMD_READ_MTR_5_DATA	: 
+				// begin
+				// end
 
-				CMD_ENCODER_COUNT :
-				begin
-					if ( (spi_slave_byte_count - 1) == 2*NUM_ENCODERS ) begin
-						// Set the encoder counts
-						for ( j = 0; j < NUM_ENCODERS; j = j + 1 ) 
-						begin : SET_ENCODER_COUNT_OFFSET
-							enc_count_offset[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH]	<=	spi_slave_req_buf[2*j+1]; 	// The received data bytes start at index 1 (not 0)
-							enc_count_offset[j][SPI_SLAVE_DATA_WIDTH-1:0] 					<=	spi_slave_req_buf[2*j+2];
-						end
+				// CMD_ENCODER_COUNT :
+				// begin
+				// 	if ( (spi_slave_byte_count - 1) == 2*NUM_ENCODERS ) begin
+				// 		// Set the encoder counts
+				// 		for ( j = 0; j < NUM_ENCODERS; j = j + 1 ) 
+				// 		begin : SET_ENCODER_COUNT_OFFSET
+				// 			enc_count_offset[j][ENCODER_COUNT_WIDTH-1:SPI_SLAVE_DATA_WIDTH]	<=	spi_slave_req_buf[2*j+1]; 	// The received data bytes start at index 1 (not 0)
+				// 			enc_count_offset[j][SPI_SLAVE_DATA_WIDTH-1:0] 					<=	spi_slave_req_buf[2*j+2];
+				// 		end
 
-						reset_encoder_counts <= 1;
-					end
-				end
+				// 		reset_encoder_counts <= 1;
+				// 	end
+				// end
 
-				CMD_HALL_COUNT :
-				begin
-					// Encoder inputs are latched here so all readings are from the same time
-					for (j = 0; j < NUM_HALL_SENS; j = j + 1)
-					begin : SET_HALL_COUNT_OFFSET
-						hall_count_offset[j] 	<= 	spi_slave_req_buf[j+1][HALL_COUNT_WIDTH-1:0];
-					end
+				// CMD_HALL_COUNT :
+				// begin
+				// 	// Encoder inputs are latched here so all readings are from the same time
+				// 	for (j = 0; j < NUM_HALL_SENS; j = j + 1)
+				// 	begin : SET_HALL_COUNT_OFFSET
+				// 		hall_count_offset[j] 	<= 	spi_slave_req_buf[j+1][HALL_COUNT_WIDTH-1:0];
+				// 	end
 
-					reset_hall_counts <= 1;
-				end
+				// 	reset_hall_counts <= 1;
+				// end
 
 				CMD_TOGGLE_MOTOR_EN :
 				begin

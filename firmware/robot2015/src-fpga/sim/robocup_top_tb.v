@@ -207,7 +207,7 @@ initial wait ( start_spinning_motors ) begin
 
     spi_off();
 
-    repeat(20) begin
+    repeat(5) begin
         #20000 spi_on();
 
         spi(8'h30);     // disable all motors

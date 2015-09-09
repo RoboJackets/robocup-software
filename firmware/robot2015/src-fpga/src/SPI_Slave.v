@@ -57,57 +57,68 @@ module SPI_Slave #(
 
   always @( negedge clk ) begin
       if ( falling_edge ) begin
-          data_dn <= {data_q[6:0], mosi_q};       // read data in and shift
+          data_dn <= {data_dn[6:0], mosi_q};       // read data in and shift
           bit_ct_dn <= bit_ct_q + 1;           // increment the bit counter
 
-          if (bit_ct_q == 3'b111) begin         // if we are on the last bit
+          if (bit_ct_dn == 3'b111) begin         // if we are on the last bit
             dout_dn <= {data_q[6:0], mosi_q};     // output the byte
             done_dn <= 1;                      // set transfer done flag
             data_dn <= din;                       // read in new byte
           end
 
-          miso_dn <= data_q[7];                   // output MSB for other sck polarity
+          miso_dn <= data_dn[7];                   // output MSB for other sck polarity
       end else if ( rising_edge ) begin
-          data_dp <= {data_q[6:0], mosi_q};       // read data in and shift
+          data_dp <= {data_dp[6:0], mosi_q};       // read data in and shift
           bit_ct_dp <= bit_ct_q + 1;           // increment the bit counter
 
-          if (bit_ct_q == 3'b111) begin         // if we are on the last bit
+          if (bit_ct_dp == 3'b111) begin         // if we are on the last bit
             dout_dp <= {data_q[6:0], mosi_q};     // output the byte
             done_dp <= 1;                      // set transfer done flag
             data_dp <= din;                       // read in new byte
           end
 
-          miso_dp <= data_q[7];                   // output MSB for other sck polarity
+          miso_dp <= data_dp[7];                   // output MSB for other sck polarity
       end
   end
 
-  always @( posedge clk ) begin
+always @( posedge clk ) begin
+  if (ncs) begin
+      // bit_ct_dp <= 0;                 // reset bit counter
+      // data_dp <= din;                 // read in data
+      // miso_dp <= data_q[7];           // output MSB
+
+      // bit_ct_dn <= 0;                 // reset bit counter
+      // data_dn <= din;                 // read in data
+      // miso_dn <= data_q[7];           // output MSB
+      done_q <= 0;
+      //bit_ct_q <= bit_ct_dn;
+      //dout_q <= dout_dn;
+      miso_q <= 0;
+      mosi_q <= 0;
+      data_q <= 0;
+      data_dp <= din;
+      data_dn <= din;
+  end else begin
+
+    data_q <= (CPOL ^ CPHA) == 1 ? data_dn : data_dp; 
+
     if (CPOL ^ CPHA) begin
       done_q <= done_dn;
       bit_ct_q <= bit_ct_dn;
       dout_q <= dout_dn;
       miso_q <= miso_dp;
       mosi_q <= mosi_dn;
-      data_q <= data_dn;
+      // data_q <= data_dn;
     end else begin
       done_q <= done_dp;
       bit_ct_q <= bit_ct_dp;
       dout_q <= dout_dp;
       miso_q <= miso_dn;
       mosi_q <= mosi_dp;
-      data_q <= data_dp;
+      // data_q <= data_dp;
     end
+  end
 
-    //if (ncs_q) begin                           // if slave select is high (deselcted)
-      //bit_ct_dp <= 0;                        // reset bit counter
-      //data_dp <= din;                           // read in data
-      //miso_dp <= data_q[7];                     // output MSB
-
-      //bit_ct_dn <= 0;                        // reset bit counter
-      //data_dn <= din;                           // read in data
-      //miso_dn <= data_q[7];                     // output MSB
-    //end
-     
     sck_q <= sck;
     ncs_q <= ncs;
     sck_old_q <= sck_q;
