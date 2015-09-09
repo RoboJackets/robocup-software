@@ -34,6 +34,9 @@ public:
      */
     void append(std::unique_ptr<Path> path);
 
+    virtual bool valid() const override {
+        return !paths.empty();
+    }
     virtual boost::optional<MotionInstant> evaluate(float t) const override;
     virtual bool hit(const Geometry2d::ShapeSet& shape, float& hitTime,
                      float startTime = 0) const override;
@@ -43,7 +46,8 @@ public:
     virtual std::unique_ptr<Path> subPath(
         float startTime = 0,
         float endTime = std::numeric_limits<float>::infinity()) const override;
-    virtual boost::optional<MotionInstant> destination() const override;
+    virtual MotionInstant start() const override;
+    virtual MotionInstant end() const override;
     virtual std::unique_ptr<Path> clone() const override;
 };
 

@@ -10,6 +10,12 @@
 #include <QString>
 
 namespace Planning {
+
+class InvalidPathException : public std::runtime_error {
+public:
+    InvalidPathException() : std::runtime_error("Invalid path") {}
+};
+
 /**
  * @brief Abstract class representing a motion path
  */
@@ -17,6 +23,11 @@ class Path {
 public:
     Path() : _startTime(0) {}
     virtual ~Path() {}
+
+    /// Returns true if the path is non-empty
+    virtual bool valid() const {
+        return true;
+    }
 
     /**
      * This method evalates the path at a given time and returns the target
@@ -74,10 +85,9 @@ public:
         float startTime = 0,
         float endTime = std::numeric_limits<float>::infinity()) const = 0;
 
-    /**
-     * Returns the destination point of the path if it has one
-     */
-    virtual boost::optional<MotionInstant> destination() const = 0;
+    /// Endpoints of the path.  Will raise an InvalidPathException if the path is not valid.
+    virtual MotionInstant start() const = 0;
+    virtual MotionInstant end() const = 0;
 
     /**
      * Returns a deep copy of the Path
