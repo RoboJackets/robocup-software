@@ -55,9 +55,7 @@ public:
     }
 
     // Overridden Path Methods
-    virtual bool valid() const override {
-        return !waypoints.empty();
-    }
+    virtual bool valid() const override { return !waypoints.empty(); }
     virtual MotionInstant end() const override;
     virtual MotionInstant start() const override;
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,

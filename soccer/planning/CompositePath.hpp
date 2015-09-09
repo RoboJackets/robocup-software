@@ -34,9 +34,7 @@ public:
      */
     void append(std::unique_ptr<Path> path);
 
-    virtual bool valid() const override {
-        return !paths.empty();
-    }
+    virtual bool valid() const override { return !paths.empty(); }
     virtual boost::optional<MotionInstant> evaluate(float t) const override;
     virtual bool hit(const Geometry2d::ShapeSet& shape, float& hitTime,
                      float startTime = 0) const override;
