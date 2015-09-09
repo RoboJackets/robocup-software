@@ -5,46 +5,42 @@ namespace Planning {
 TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                                  Geometry2d::Point endPos, float endSpeed,
                                  const MotionConstraints& constraints)
-    : startPos(startPos),
-      startSpeed(startSpeed),
-      endPos(endPos),
-      endSpeed(endSpeed),
-      pathLength((startPos - endPos).mag()),
-      maxAcc(constraints.maxAcceleration),
+    : _startPos(startPos),
+      _startSpeed(std::min(startSpeed, constraints.maxSpeed)),
+      _endPos(endPos),
+      _endSpeed(endSpeed),
+      _pathLength((startPos - endPos).mag()),
+      _maxAcc(constraints.maxAcceleration),
       _maxSpeed(constraints.maxSpeed),
-      pathDirection((endPos - startPos).normalized()) {
-    float minSpeed = _maxSpeed;
-    if (startSpeed < minSpeed) {
-        startSpeed = minSpeed;
-    }
-
+      _pathDirection((endPos - startPos).normalized()) {
     // Precalculate the duration of the path
-    duration = Trapezoidal::getTime(pathLength,  // distance
-                                    pathLength,  // pathLength
-                                    _maxSpeed, maxAcc, startSpeed, endSpeed);
+    _duration =
+        Trapezoidal::getTime(_pathLength,  // distance
+                             _pathLength,  // pathLength
+                             _maxSpeed, _maxAcc, _startSpeed, _endSpeed);
 }
 
 boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
     float distance;
     float speedOut;
-    bool valid = TrapezoidalMotion(pathLength,  // PathLength
+    bool valid = TrapezoidalMotion(_pathLength,  // PathLength
                                    _maxSpeed,    // maxSpeed
-                                   maxAcc,      // maxAcc
-                                   time,        // time
-                                   startSpeed,  // startSpeed
-                                   endSpeed,    // endSpeed
-                                   distance,    // posOut
-                                   speedOut);   // speedOut
+                                   _maxAcc,      // maxAcc
+                                   time,         // time
+                                   _startSpeed,  // startSpeed
+                                   _endSpeed,    // endSpeed
+                                   distance,     // posOut
+                                   speedOut);    // speedOut
     if (!valid) return boost::none;
 
-    return MotionInstant(pathDirection * distance + startPos,
-                         pathDirection * speedOut);
+    return MotionInstant(_pathDirection * distance + _startPos,
+                         _pathDirection * speedOut);
 }
 
 bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                           float initialTime) const {
     for (Time t = initialTime * TimestampToSecs + startTime();
-         t < startTime() + duration * SecsToTimestamp;
+         t < startTime() + _duration * SecsToTimestamp;
          t += 0.25 * SecsToTimestamp) {
         auto instant = evaluate((t - startTime()) * TimestampToSecs);
         if (instant) {
