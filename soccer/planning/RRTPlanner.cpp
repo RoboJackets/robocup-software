@@ -37,8 +37,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
     // if the destination of the current path is greater than X m away
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
-    float goalPosDiff = (prevPath->destination()->pos - goal.pos).mag();
-    float goalVelDiff = (prevPath->destination()->vel - goal.vel).mag();
+    float goalPosDiff = (prevPath->end().pos - goal.pos).mag();
+    float goalVelDiff = (prevPath->end().vel - goal.vel).mag();
     if (goalPosDiff > goalChangeThreshold() ||
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
@@ -69,7 +69,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 
     // Locate a goal point that is obstacle-free
     boost::optional<Geometry2d::Point> prevGoal;
-    if (prevPath) prevGoal = prevPath->destination()->pos;
+    if (prevPath) prevGoal = prevPath->end().pos;
     goal.pos = findNonBlockedGoal(goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified

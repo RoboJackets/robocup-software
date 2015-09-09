@@ -93,11 +93,18 @@ void CompositePath::draw(SystemState* const state, const QColor& color,
 
 float CompositePath::getDuration() const { return duration; }
 
-boost::optional<MotionInstant> CompositePath::destination() const {
+MotionInstant CompositePath::start() const {
     if (paths.empty()) {
-        return boost::none;
+        throw InvalidPathException();
     }
-    return paths.back()->destination();
+    return paths.front()->start();
+}
+
+MotionInstant CompositePath::end() const {
+    if (paths.empty()) {
+        throw InvalidPathException();
+    }
+    return paths.back()->end();
 }
 
 unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const {

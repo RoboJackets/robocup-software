@@ -49,10 +49,14 @@ public:
         float startTime = 0,
         float endTime = std::numeric_limits<float>::infinity()) const override;
 
-    virtual boost::optional<MotionInstant> destination() const override {
+    virtual MotionInstant end() const override {
         return MotionInstant(endPos, pathDirection * endSpeed);
     }
 
+    virtual MotionInstant start() const override {
+      return MotionInstant(startPos, pathDirection * startSpeed);
+    }
+    
     virtual std::unique_ptr<Path> clone() const override {
         debugThrow("This function is not implemented");
         return nullptr;
