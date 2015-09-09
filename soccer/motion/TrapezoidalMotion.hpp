@@ -1,9 +1,9 @@
 #pragma once
 
 /**
- * This function evaluates a motion situation using "bang-bang".
- * The robot accelerates at maxAcceleration until it hits max
- * speed, then decelerates at max acc to the end point.
+ * This function evaluates a motion situation using "bang-bang". The robot
+ * accelerates at maxAcceleration until it hits max speed, then decelerates at
+ * max acc to the end point.
  *
  * @param[in] 	pathLength The total distance we are trying to travel
  * @param[in] 	timeIntoLap How long since we started moving along the trapezoid

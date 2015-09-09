@@ -69,7 +69,8 @@ bool TargetVelPathPlanner::shouldReplan(
             "TargetVelPathPlanner expected a prevPath of type "
             "'TrapezoidalPath'");
     }
-    const float velChange = cmd.getWorldVel().mag() - trapezoidalPath->maxSpeed();
+    const float velChange =
+        cmd.getWorldVel().mag() - trapezoidalPath->maxSpeed();
     const float threshold =
         0.1;  // TODO: config value?  time-dependent threshold?
     if (velChange > threshold) {
@@ -100,8 +101,9 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
         MotionConstraints moddedConstraints = motionConstraints;
         moddedConstraints.maxSpeed = cmd.getWorldVel().mag();
 
-        auto path = std::unique_ptr<Path>(new TrapezoidalPath(
-            startInstant.pos, startInstant.vel.mag(), endpoint, 0, moddedConstraints));
+        auto path = std::unique_ptr<Path>(
+            new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
+                                endpoint, 0, moddedConstraints));
         path->setStartTime(timestamp());
         return std::move(path);
     } else {
