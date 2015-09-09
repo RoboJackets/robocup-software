@@ -11,9 +11,9 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
       endSpeed(endSpeed),
       pathLength((startPos - endPos).mag()),
       maxAcc(constraints.maxAcceleration),
-      maxSpeed(constraints.maxSpeed),
+      _maxSpeed(constraints.maxSpeed),
       pathDirection((endPos - startPos).normalized()) {
-    float minSpeed = maxSpeed;
+    float minSpeed = _maxSpeed;
     if (startSpeed < minSpeed) {
         startSpeed = minSpeed;
     }
@@ -21,14 +21,14 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
     // Precalculate the duration of the path
     duration = Trapezoidal::getTime(pathLength,  // distance
                                     pathLength,  // pathLength
-                                    maxSpeed, maxAcc, startSpeed, endSpeed);
+                                    _maxSpeed, maxAcc, startSpeed, endSpeed);
 }
 
 boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
     float distance;
     float speedOut;
     bool valid = TrapezoidalMotion(pathLength,  // PathLength
-                                   maxSpeed,    // maxSpeed
+                                   _maxSpeed,    // maxSpeed
                                    maxAcc,      // maxAcc
                                    time,        // time
                                    startSpeed,  // startSpeed
