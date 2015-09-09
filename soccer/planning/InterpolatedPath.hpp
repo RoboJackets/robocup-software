@@ -56,8 +56,8 @@ public:
 
     // Overridden Path Methods
     virtual bool valid() const override { return !waypoints.empty(); }
-    virtual MotionInstant end() const override;
     virtual MotionInstant start() const override;
+    virtual MotionInstant end() const override;
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const override;
     virtual std::unique_ptr<Path> subPath(
