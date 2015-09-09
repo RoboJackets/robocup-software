@@ -11,6 +11,7 @@
 
 namespace Planning {
 
+/// This exception is thrown when an empty Path is queried for its start or end.
 class InvalidPathException : public std::runtime_error {
 public:
     InvalidPathException() : std::runtime_error("Invalid path") {}
