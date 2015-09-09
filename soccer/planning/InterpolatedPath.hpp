@@ -55,7 +55,11 @@ public:
     }
 
     // Overridden Path Methods
-    virtual boost::optional<MotionInstant> destination() const override;
+    virtual bool valid() const override {
+        return !waypoints.empty();
+    }
+    virtual MotionInstant end() const override;
+    virtual MotionInstant start() const override;
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const override;
     virtual std::unique_ptr<Path> subPath(
@@ -105,9 +109,6 @@ public:
 
     // Returns the shortest distance from this path to the given point
     float distanceTo(Geometry2d::Point pt) const;
-
-    /// Returns the start of the path or boost::none if the path is empty.
-    boost::optional<MotionInstant> start() const;
 
     /**
      * Estimates how long it would take for the robot to get to a certain point

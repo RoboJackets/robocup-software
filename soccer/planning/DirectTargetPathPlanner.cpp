@@ -33,12 +33,12 @@ bool DirectTargetPathPlanner::shouldReplan(
         Geometry2d::Point endTarget;
         float endSpeed = cmd.getDirectTarget(endTarget);
         float targetPosChange =
-            prevPath->destination()
-                ? (prevPath->destination()->pos - endTarget).mag()
+            prevPath->valid()
+                ? (prevPath->end().pos - endTarget).mag()
                 : std::numeric_limits<float>::infinity();
         float targetVelChange =
-            prevPath->destination()
-                ? (prevPath->destination()->vel.mag() - endSpeed)
+            prevPath->valid()
+                ? (prevPath->end().vel.mag() - endSpeed)
                 : std::numeric_limits<float>::infinity();
 
         if (targetPosChange > SingleRobotPathPlanner::goalChangeThreshold() ||

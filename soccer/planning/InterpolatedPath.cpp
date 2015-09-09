@@ -35,16 +35,16 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
     return length;
 }
 
-boost::optional<MotionInstant> InterpolatedPath::start() const {
+MotionInstant InterpolatedPath::start() const {
     if (waypoints.empty())
-        return boost::none;
+        throw InvalidPathException();
     else
         return waypoints.front().instant;
 }
 
-boost::optional<MotionInstant> InterpolatedPath::destination() const {
+MotionInstant InterpolatedPath::end() const {
     if (waypoints.empty())
-        return boost::none;
+        throw InvalidPathException();
     else
         return waypoints.back().instant;
 }
