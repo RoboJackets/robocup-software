@@ -12,10 +12,10 @@ namespace Planning {
  */
 class MotionCommand {
 public:
-    enum CommandType { PathTarget, WorldVel, DirectTarget };
+    enum CommandType { PathTarget, WorldVel, DirectTarget, None };
 
     MotionCommand()
-        : _commandType(WorldVel),
+        : _commandType(None),
           _targetMotionInstant(),
           _targetWorldVel(),
           _directTarget(),
