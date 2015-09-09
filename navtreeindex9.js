@@ -1,7 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"struct_robot_config_1_1_dribbler.html":[11,0,53,1],
-"struct_robot_config_1_1_dribbler.html#a65e1488817d5ba4f41685865bf30e0b3":[11,0,53,1,0],
 "struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[11,0,53,1,1],
 "struct_robot_config_1_1_kicker.html":[11,0,53,2],
 "struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b":[11,0,53,2,2],

@@ -8,7 +8,6 @@ var searchData=
   ['resetfornextiteration',['resetForNextIteration',['../class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0',1,'OurRobot']]],
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a9fa9ccfbd33bb16648924d560e2b49c8',1,'gameplay::fsm::StateMachine']]],
-  ['robot',['Robot',['../class_robot.html#a241c0ca6e392b4c2fef481392d35531d',1,'Robot']]],
   ['robotmodel',['robotModel',['../class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481',1,'RobotStatusWidget']]],
   ['role_5frequirements',['role_requirements',['../classgameplay_1_1behavior_1_1_behavior.html#aa1fa41d4554baf2bb107acf6f63c480b',1,'gameplay.behavior.Behavior.role_requirements()'],['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html#ab88cbb780cd064713cedfb64f0bf1267',1,'gameplay.composite_behavior.CompositeBehavior.role_requirements()'],['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#aad045fd5eabbd199e7933f96e4918324',1,'gameplay.skills.pass_receive.PassReceive.role_requirements()'],['../classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#a5f737128a76bd67fda695a45199a39c5',1,'gameplay.tactics.penalty.Penalty.role_requirements()']]],
   ['root_5fpath',['root_path',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html#abbb36f0d7368f6d11ea650b15c89b852',1,'gameplay::fs_watcher::FsWatcher']]],

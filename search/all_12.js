@@ -16,7 +16,7 @@ var searchData=
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a9fa9ccfbd33bb16648924d560e2b49c8',1,'gameplay::fsm::StateMachine']]],
   ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay::constants']]],
-  ['robot',['Robot',['../class_robot.html',1,'Robot'],['../class_robot.html#a241c0ca6e392b4c2fef481392d35531d',1,'Robot::Robot()']]],
+  ['robot',['Robot',['../class_robot.html',1,'']]],
   ['robotconfig',['RobotConfig',['../class_robot_config.html',1,'']]],
   ['robotfilter',['RobotFilter',['../class_robot_filter.html',1,'']]],
   ['robotmodel',['robotModel',['../class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481',1,'RobotStatusWidget']]],
