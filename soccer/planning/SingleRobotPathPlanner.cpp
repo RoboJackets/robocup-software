@@ -53,14 +53,9 @@ bool SingleRobotPathPlanner::shouldReplan(
     float timeIntoPath =
         ((float)(timestamp() - prevPath->startTime())) * TimestampToSecs +
         1.0f / 60.0f;
-    MotionInstant target;
     boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
-    if (optTarget) {
-        target = *optTarget;
-    } else {
-        // We went off the end of the path, so use the end for calculations.
-        target = prevPath->end();
-    }
+    // If we went off the end of the path, use the end for calculations.
+    MotionInstant target = optTarget ? *optTarget : prevPath->end();
 
     // invalidate path if current position is more than the
     // replanThreshold
