@@ -11,11 +11,6 @@
 
 namespace Planning {
 
-class InvalidPathException : public std::runtime_error {
-public:
-    InvalidPathException() : std::runtime_error("Invalid path") {}
-};
-
 /**
  * @brief Abstract class representing a motion path
  */
@@ -23,9 +18,6 @@ class Path {
 public:
     Path(Time startTime = 0) : _startTime(startTime) {}
     virtual ~Path() {}
-
-    /// Returns true if the path is non-empty
-    virtual bool valid() const { return true; }
 
     /**
      * This method evalates the path at a given time and returns the target
