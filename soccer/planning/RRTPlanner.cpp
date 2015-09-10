@@ -29,7 +29,7 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet* obstacles,
                               const Path* prevPath) const {
-    if (!prevPath || !prevPath->valid()) return true;
+    if (!prevPath) return true;
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
