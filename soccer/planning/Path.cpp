@@ -15,7 +15,7 @@ void Path::draw(SystemState* const state, const QColor& color,
     const float duration = getDuration();
     const float desiredStep =
         0.25;  // draw the path by interpolating every x seconds
-    const float segmentCount = ceilf(duration / desiredStep);
+    const float segmentCount = roundf(duration / desiredStep);
     const float step = duration / segmentCount;
 
     auto addPoint = [dbg](MotionInstant instant) {
