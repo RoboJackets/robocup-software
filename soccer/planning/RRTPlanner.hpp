@@ -15,9 +15,6 @@
 
 namespace Planning {
 
-/** generate a random point on the floor */
-Geometry2d::Point randomPoint();
-
 /**
  * @brief Given a start point and an end point and some conditions, plans a path
  * for a robot to get there.
