@@ -148,11 +148,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a75f37da922b9d6ff873a082ab4084c9b"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a4e4c8631d541278708db9f12bc5d3cbb">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const override</td></tr>
 <tr class="memdesc:a75f37da922b9d6ff873a082ab4084c9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a subPath.  <a href="#a75f37da922b9d6ff873a082ab4084c9b">More...</a><br/></td></tr>
 <tr class="separator:a75f37da922b9d6ff873a082ab4084c9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afeadd1b82197ab960743e3dfe8f4855d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afeadd1b82197ab960743e3dfe8f4855d"></a>
-virtual boost::optional<br class="typebreak"/>
-&lt; <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#afeadd1b82197ab960743e3dfe8f4855d">destination</a> () const override</td></tr>
-<tr class="memdesc:afeadd1b82197ab960743e3dfe8f4855d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the destination point of the path if it has one. <br/></td></tr>
-<tr class="separator:afeadd1b82197ab960743e3dfe8f4855d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a477619c223a121d2eb6a05e13b55c5f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a477619c223a121d2eb6a05e13b55c5f6"></a>
+virtual <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a477619c223a121d2eb6a05e13b55c5f6">start</a> () const override</td></tr>
+<tr class="memdesc:a477619c223a121d2eb6a05e13b55c5f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start instant of the path. <br/></td></tr>
+<tr class="separator:a477619c223a121d2eb6a05e13b55c5f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bc63d19e7c3bb1af48c2c7babe49476"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bc63d19e7c3bb1af48c2c7babe49476"></a>
+virtual <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a6bc63d19e7c3bb1af48c2c7babe49476">end</a> () const override</td></tr>
+<tr class="memdesc:a6bc63d19e7c3bb1af48c2c7babe49476"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destination instant of the path. <br/></td></tr>
+<tr class="separator:a6bc63d19e7c3bb1af48c2c7babe49476"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ae76a00762203c43efa4ec6ed1ecc37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ae76a00762203c43efa4ec6ed1ecc37"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_composite_path.html#a7ae76a00762203c43efa4ec6ed1ecc37">clone</a> () const override</td></tr>
 <tr class="memdesc:a7ae76a00762203c43efa4ec6ed1ecc37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a>. <br/></td></tr>
@@ -398,8 +401,8 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <p>Returns a subPath. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">startTime</td><td>The startTime for from which the subPath should be taken. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">endTime</td><td>The endTime from which the subPath should be taken. If it is greater than the duration fo the path, it should go to the end of the path. </td></tr>
+    <tr><td class="paramname">startTime</td><td>The startTime for from which the subPath should be taken. </td></tr>
+    <tr><td class="paramname">endTime</td><td>The endTime from which the subPath should be taken. If it is greater than the duration fo the path, it should go to the end of the path. </td></tr>
   </table>
   </dd>
 </dl>
@@ -419,7 +422,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_composite_path.html">CompositePath</a></li>
-    <li class="footer">Generated on Wed Sep 9 2015 19:14:19 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Sep 10 2015 02:51:39 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

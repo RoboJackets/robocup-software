@@ -17,7 +17,7 @@ var searchData=
   ['size',['size',['../class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542',1,'Planning::InterpolatedPath']]],
   ['spin',['spin',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html#a100de7075392515c4dff56d48543db60',1,'gameplay.composite_behavior.CompositeBehavior.spin()'],['../classgameplay_1_1fsm_1_1_state_machine.html#aa33ace9c403176134bf81d2930ff2a1d',1,'gameplay.fsm.StateMachine.spin()']]],
   ['spinkickwatcher',['spinKickWatcher',['../class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45',1,'NewRefereeModule']]],
-  ['start',['start',['../class_planning_1_1_interpolated_path.html#ae78239cb80c045d628451f238efbc31b',1,'Planning::InterpolatedPath::start()'],['../class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027',1,'Planning::Tree::start()']]],
+  ['start',['start',['../class_planning_1_1_composite_path.html#a477619c223a121d2eb6a05e13b55c5f6',1,'Planning::CompositePath::start()'],['../class_planning_1_1_interpolated_path.html#a761331d200bb99f4821e1cc07ae6d71c',1,'Planning::InterpolatedPath::start()'],['../class_planning_1_1_path.html#ac0a4c1b57eff66cd292ec116edfba41b',1,'Planning::Path::start()'],['../class_planning_1_1_trapezoidal_path.html#a50d83d61e4fb11f2cb0a66c3868e5aad',1,'Planning::TrapezoidalPath::start()'],['../class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027',1,'Planning::Tree::start()']]],
   ['starttime',['startTime',['../class_planning_1_1_path.html#a4e4c8631d541278708db9f12bc5d3cbb',1,'Planning::Path']]],
   ['stop',['stop',['../class_our_robot.html#ad06cbfbea4234c95cbe813e1c8910363',1,'OurRobot']]],
   ['stopped',['stopped',['../class_motion_control.html#a0d8a00158b08f848c7bd03f65f2bb2b8',1,'MotionControl']]],

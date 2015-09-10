@@ -37,12 +37,12 @@ var NAVTREEINDEX =
 "class_configuration.html#afe8778c9553dc1ab93116c240b87c37c",
 "class_geometry2d_1_1_polygon.html#a725922c2d06c26975dada1c6a33041b8",
 "class_our_robot.html#a793a6f37a504b11f13a6ad0e889e4858",
-"class_radio.html#aadddbdbe509dfeb0e45ca1893067f898",
-"class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e",
-"classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html#a145c5ef4e378c8019e9bf1fa66e39119",
-"classgameplay_1_1skills_1_1bump_1_1_bump.html",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649",
-"struct_robot_config_1_1_chipper.html#adfea0d80e221e0889c97e31089886306"
+"class_radio.html#a6f7eaeb68a566caa6fc22a08b5744c7a",
+"class_window_evaluator.html#a71232e59601b090acd8716f17647c788",
+"classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up.html#a375c9f2f37a94cad33a465d7ec8d0dc6",
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#adee09c9adc573333932d034065161824",
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html",
+"struct_robot_config_1_1_chipper.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
