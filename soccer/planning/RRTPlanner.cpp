@@ -65,7 +65,7 @@ std::unique_ptr<Path> RRTPlanner::run(
     boost::optional<Geometry2d::Point> prevGoal;
     if (prevPath) prevGoal = prevPath->end().pos;
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
-        goal.pos, prevGoal, obstacles);
+        goal.pos, prevGoal, *obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,

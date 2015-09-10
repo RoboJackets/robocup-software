@@ -14,14 +14,17 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().pos;
     const Point unblocked =
-        findNonBlockedGoal(startInstant.pos, optPrevPt, obstacles);
+        findNonBlockedGoal(startInstant.pos, optPrevPt, *obstacles);
 
     // reuse path if there's not a significantly better spot to target
     if (prevPath && unblocked == prevPath->end().pos) {
         return std::move(prevPath);
     }
 
-    // TODO: build a bezier path instead of a trapezoidal one
+    // TODO(justbuchanan): build a bezier path instead of a trapezoidal one.  As
+    // is, the path isn't dynamically feasible if the robot has any initial
+    // velocity.  We could potentially even use a kinodynamic RRT in
+    // findNonBlockedGoal() so it takes initial velocity into account
 
     auto path = std::unique_ptr<Path>(
         new TrapezoidalPath(startInstant.pos, motionConstraints.maxSpeed,
@@ -31,11 +34,11 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
 }
 
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
-    Point goal, boost::optional<Point> prevGoal, const ShapeSet* obstacles,
+    Point goal, boost::optional<Point> prevGoal, const ShapeSet& obstacles,
     int maxItr) {
-    if (obstacles && obstacles->hit(goal)) {
+    if (obstacles.hit(goal)) {
         FixedStepTree goalTree;
-        goalTree.init(goal, obstacles);
+        goalTree.init(goal, &obstacles);
         goalTree.step = .1f;  // TODO: config system
 
         // The starting point is in an obstacle, extend the tree until we find
@@ -62,7 +65,7 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
         float oldDist = (*prevGoal - goal).mag();
         float newDist = (newGoal - goal).mag();
         // TODO: add config value for the threshold, don't use Robot_Radius.
-        if (newDist + Robot_Radius < oldDist || obstacles->hit(*prevGoal)) {
+        if (newDist + Robot_Radius < oldDist || obstacles.hit(*prevGoal)) {
             return newGoal;
         } else {
             return *prevGoal;
