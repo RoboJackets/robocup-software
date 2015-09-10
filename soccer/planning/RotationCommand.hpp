@@ -2,35 +2,34 @@
 
 #include "Geometry2d/Point.hpp"
 #include "MotionConstraints.hpp"
-#include "RotationPlanner.hpp"
 
 namespace Planning {
     struct RotationCommand {
     public:
-        virtual ~RotationCommand() = default;
         enum CommandType { FacePoint, FaceAngle };
-        virtual std::shared_ptr<RotationPlanner> getDefaultPlanner() const {
-            return nullptr;
-        };
 
-        virtual CommandType getCommandType() const = 0;
+        virtual ~RotationCommand() = default;
+
+        CommandType getCommandType() const {
+            return commandType;
+        }
+
     protected:
-        RotationCommand() {}
+        RotationCommand(CommandType command) : commandType(command) {}
+
+    private:
+        const CommandType commandType;
     };
 
     struct FacePointCommand : public RotationCommand {
-        explicit FacePointCommand(Geometry2d::Point target): targetPos(target) {}
-        virtual CommandType getCommandType() const override {
-            return RotationCommand::FacePoint;
-        }
+        explicit FacePointCommand(Geometry2d::Point target): RotationCommand(FacePoint), targetPos(target) {}
+
         const Geometry2d::Point targetPos;
     };
 
     struct FaceAngleCommand : public RotationCommand {
-        explicit FaceAngleCommand(float radians): targetAngle(radians) {}
-        virtual CommandType getCommandType() const override {
-            return RotationCommand::FaceAngle;
-        }
+        explicit FaceAngleCommand(float radians): RotationCommand(FaceAngle), targetAngle(radians) {}
+
         const float targetAngle;
     };
 
