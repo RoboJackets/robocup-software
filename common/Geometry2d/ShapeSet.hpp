@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <set>
+#include <sstream>
 #include <vector>
 
 namespace Geometry2d {
@@ -66,6 +67,15 @@ public:
     template <typename T>
     bool hit(const T& obj) const {
         return !hitSet<T>(obj).empty();
+    }
+
+    friend std::ostream& operator<<(std::ostream& out, const ShapeSet& shapeSet) {
+        out << "ShapeSet: {";
+        for (const auto& shape : shapeSet.shapes()) {
+            out << shape->toString() << ", ";
+        }
+        out << "}";
+        return out;
     }
 
 private:
