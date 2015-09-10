@@ -70,29 +70,6 @@ void MotionControl::run() {
         float targetAngleFinal = (targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
-        // float targetW;
-        // float targetAngle;
-        // TrapezoidalMotion(
-        // 	abs(angleError),					// dist
-        // 	motionConstraints.maxAngleSpeed,	// max deg/sec
-        // 	30,									// max
-        // deg/sec^2
-        // 	0.1 ,								// time into
-        // path
-        // 	_robot->angleVel,					// start speed
-        // 	0,									// final
-        // speed
-        // 	targetAngle,
-        // 	targetW 							//
-        // ignored
-        // 	);
-
-        // // PID on angle
-        // if(angleError<0) {
-        // 	targetW = - targetW;
-        // }
-        // targetW = _angleController.run(targetAngle);
-
         targetW = _angleController.run(angleError);
 
         // limit W

@@ -27,8 +27,7 @@ public:
     const std::vector<std::shared_ptr<Shape>> shapes() const { return _shapes; }
 
     void add(std::shared_ptr<Shape> shape) {
-        if (!shape)
-            throw std::runtime_error("Attempt to add null shape to ShapeSet");
+        assert(shape != nullptr);
         _shapes.push_back(shape);
     }
 
