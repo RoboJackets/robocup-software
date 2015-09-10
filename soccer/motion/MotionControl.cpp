@@ -62,33 +62,13 @@ void MotionControl::run() {
     if (constraints.targetAngleVel) {
         targetW = *constraints.targetAngleVel;
     } else if (constraints.faceTarget || constraints.pivotTarget) {
-        Geometry2d::Point targetPt = constraints.pivotTarget
-                                         ? *constraints.pivotTarget
-                                         : *constraints.faceTarget;
+        Point targetPt = constraints.pivotTarget ? *constraints.pivotTarget
+                                                 : *constraints.faceTarget;
 
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
         float targetAngleFinal = (targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
-
-        // float targetW;
-        // float targetAngle;
-        // TrapezoidalMotion(
-        // 	abs(angleError),					// dist
-        // 	motionConstraints.maxAngleSpeed,	// max deg/sec
-        // 	30,									// max deg/sec^2
-        // 	0.1 ,								// time into path
-        // 	_robot->angleVel,					// start speed
-        // 	0,									// final speed
-        // 	targetAngle,
-        // 	targetW 							// ignored
-        // 	);
-
-        // // PID on angle
-        // if(angleError<0) {
-        // 	targetW = - targetW;
-        // }
-        // targetW = _angleController.run(targetAngle);
 
         targetW = _angleController.run(angleError);
 
@@ -132,10 +112,9 @@ void MotionControl::run() {
     MotionInstant target;
 
     // if no target position is given, we don't have a path to follow
-    if (!_robot->path() ||
-        _robot->motionCommand().getCommandType() == MotionCommand::WorldVel) {
-        target.vel =
-            _robot->motionCommand().getWorldVel().rotated(-_robot->angle);
+    if (!_robot->path()) {
+        _targetBodyVel(Point(0, 0));
+        return;
     } else {
         //
         // Path following
@@ -151,7 +130,7 @@ void MotionControl::run() {
         boost::optional<MotionInstant> optTarget =
             _robot->path()->evaluate(timeIntoPath);
         if (!optTarget) {
-            target.vel = Geometry2d::Point();
+            target.vel = Point();
             target.pos = _robot->pos;
         } else {
             target = *optTarget;

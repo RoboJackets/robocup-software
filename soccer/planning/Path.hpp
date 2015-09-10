@@ -16,7 +16,7 @@ namespace Planning {
  */
 class Path {
 public:
-    Path() : _startTime(0) {}
+    Path(Time startTime = 0) : _startTime(startTime) {}
     virtual ~Path() {}
 
     /**
@@ -44,19 +44,20 @@ public:
                      float startTime) const = 0;
 
     /**
-     * Draws the path
+     * Draws the path.  The default implementation adds a DebugRobotPath to the
+     * SystemState that interpolates points along the path.
      *
-     * @param[in]	state The SystemState to draw the path on
-     * @param[in] 	color The color the path should be drawn
-     * @param[in] 	layer The layer to draw the path on
+     * @param state The SystemState to draw the path on
+     * @param color The color the path should be drawn
+     * @param layer The layer to draw the path on
      */
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const = 0;
+                      const QString& layer = "Motion") const;
 
     /**
      * Returns how long it would take for the entire path to be traversed
      *
-     * @return 	The time from start to path completion or infinity if it never
+     * @return The time from start to path completion or infinity if it never
      * stops
      */
     virtual float getDuration() const = 0;
@@ -86,7 +87,7 @@ public:
     virtual std::unique_ptr<Path> clone() const = 0;
 
     /// The time the path starts at
-    const Time startTime() const { return _startTime; }
+    Time startTime() const { return _startTime; }
     void setStartTime(Time t) { _startTime = t; }
 
 protected:
