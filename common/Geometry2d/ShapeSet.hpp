@@ -69,7 +69,8 @@ public:
         return !hitSet<T>(obj).empty();
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const ShapeSet& shapeSet) {
+    friend std::ostream& operator<<(std::ostream& out,
+                                    const ShapeSet& shapeSet) {
         out << "ShapeSet: {";
         for (const auto& shape : shapeSet.shapes()) {
             out << shape->toString() << ", ";

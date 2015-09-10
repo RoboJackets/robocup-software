@@ -48,7 +48,8 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
                                        const Geometry2d::ShapeSet* obstacles) {
             Geometry2d::Segment pathSegment(
                 start, start + dir * (scaledDist / rangeScaleFactor));
-            // Returns true if a path of the given distance doesn't hit obstacles
+            // Returns true if a path of the given distance doesn't hit
+            // obstacles
             return !obstacles->hit(pathSegment);
         });
     const float nonblockedPathLen = *val / rangeScaleFactor;
