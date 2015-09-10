@@ -213,7 +213,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                  true);  // Blue
         p.setPen(yellowPen);
         drawText(p, QPointF(0, 1.75),
-                 QString(frame->team_name_yellow().c_str()), true);  // Yellow
+                 QString(frame->team_name_yellow().c_str()),
+                 true);  // Yellow
         p.setFont(savedFont);
     }
 

@@ -458,7 +458,8 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
     if (_state->ball.valid) {
         // _state->drawShape(ball_obs, Qt::gray,
         //                   QString("ball_obstacles_%1").arg(shell()));
-        fullObstacles.add(createBallObstacle());
+        auto ballObs = createBallObstacle();
+        if (ballObs) fullObstacles.add(ballObs);
     }
     fullObstacles.add(selfObs);
     fullObstacles.add(oppObs);
