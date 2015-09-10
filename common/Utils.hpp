@@ -14,6 +14,10 @@
 #include <vector>
 #include <QtWidgets>
 
+#include <boost/make_unique.hpp>
+
+using boost::make_unique;
+
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
 template <class exception>
