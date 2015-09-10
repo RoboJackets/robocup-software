@@ -1,6 +1,9 @@
 #include "SingleRobotPathPlanner.hpp"
 #include <Geometry2d/Point.hpp>
 
+class Configuration;
+class ConfigDouble;
+
 namespace Planning {
 
 /// This planner finds a path to quickly get out of an obstacle.  If the start
@@ -24,6 +27,21 @@ public:
     static Geometry2d::Point findNonBlockedGoal(
         Geometry2d::Point pt, boost::optional<Geometry2d::Point> prevPt,
         const Geometry2d::ShapeSet& obstacles, int maxItr = 300);
+
+    static void createConfiguration(Configuration* cfg);
+
+    static float stepSize() { return *_stepSize; }
+
+    static float goalChangeThreshold() { return *_goalChangeThreshold; }
+
+private:
+    /// Step size for the RRT used to find an unblocked point in
+    /// findNonBlockedGoal()
+    static ConfigDouble* _stepSize;
+
+    /// A newly-found unblocked goal must be this much closer to the start
+    /// position than the previous point in order to be used.
+    static ConfigDouble* _goalChangeThreshold;
 };
 
 }  // namespace Planning

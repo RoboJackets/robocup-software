@@ -4,9 +4,7 @@
 #include <cmath>
 #include <boost/range/irange.hpp>
 
-#include <iostream>
 using namespace std;
-
 using namespace Geometry2d;
 
 namespace Planning {
