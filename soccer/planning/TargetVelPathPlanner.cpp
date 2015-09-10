@@ -1,5 +1,6 @@
 #include "TargetVelPathPlanner.hpp"
 #include "TrapezoidalPath.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
 #include <cmath>
 #include <boost/range/irange.hpp>
@@ -97,11 +98,13 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     assert(cmd.getCommandType() == MotionCommand::WorldVel);
 
-    // if (obstacles->hit(startInstant.pos)) {
-    // TODO: what do if start pos is inside an obstacle?
-    // Compare the time to get OUT of an obstacle with obeying velocity to
-    // an EscapeObstaclesPlanner path.
-    // }
+    // If the start point is in an obstacle, escape from it
+    if (obstacles->hit(startInstant.pos)) {
+        EscapeObstaclesPathPlanner escapePlanner;
+        return escapePlanner.run(startInstant, MotionCommand(),
+                                 motionConstraints, obstacles,
+                                 std::move(prevPath));
+    }
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
