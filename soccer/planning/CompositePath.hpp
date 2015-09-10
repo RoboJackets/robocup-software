@@ -43,7 +43,8 @@ public:
     virtual std::unique_ptr<Path> subPath(
         float startTime = 0,
         float endTime = std::numeric_limits<float>::infinity()) const override;
-    virtual boost::optional<MotionInstant> destination() const override;
+    virtual MotionInstant start() const override;
+    virtual MotionInstant end() const override;
     virtual std::unique_ptr<Path> clone() const override;
 };
 
