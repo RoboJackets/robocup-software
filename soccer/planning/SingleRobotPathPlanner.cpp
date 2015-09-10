@@ -40,7 +40,7 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 bool SingleRobotPathPlanner::shouldReplan(
     MotionInstant currentInstant, const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
-    if (!prevPath || !prevPath->valid()) return true;
+    if (!prevPath) return true;
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan

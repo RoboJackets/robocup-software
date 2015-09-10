@@ -7,8 +7,6 @@ namespace Planning {
 // the path at fixed time intervals form t = 0 to t = duration.
 void Path::draw(SystemState* const state, const QColor& color,
                 const QString& layer) const {
-    if (!valid()) return;
-
     Packet::DebugRobotPath* dbg = state->logFrame->add_debug_robot_paths();
     dbg->set_layer(state->findDebugLayer(layer));
 
