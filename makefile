@@ -28,6 +28,10 @@ test-python: all
 pylint:
 	cd soccer && pylint -E gameplay
 
+behavior-diagrams: all
+	cd soccer/gameplay && python3 generate_fsm_diagrams.py
+	@echo "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
+
 clean:
 	cd build && make $(MAKE_FLAGS) clean || true
 	rm -rf build
