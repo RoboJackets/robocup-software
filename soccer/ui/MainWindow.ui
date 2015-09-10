@@ -1475,7 +1475,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="layoutWidget">
+             <widget class="QWidget" name="layoutWidget1">
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
                 <number>2</number>
