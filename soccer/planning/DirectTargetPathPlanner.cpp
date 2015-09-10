@@ -28,19 +28,12 @@ bool DirectTargetPathPlanner::shouldReplan(
     if (!prevPath) {
         return true;
     } else {
-        // For DirectTarget commands, we replan if the goal position or
-        // velocity
+        // For DirectTarget commands, we replan if the goal position or velocity
         // have changed beyond a certain threshold
         Geometry2d::Point endTarget;
         float endSpeed = cmd.getDirectTarget(endTarget);
-        float targetPosChange =
-            prevPath->destination()
-                ? (prevPath->destination()->pos - endTarget).mag()
-                : std::numeric_limits<float>::infinity();
-        float targetVelChange =
-            prevPath->destination()
-                ? (prevPath->destination()->vel.mag() - endSpeed)
-                : std::numeric_limits<float>::infinity();
+        float targetPosChange = (prevPath->end().pos - endTarget).mag();
+        float targetVelChange = prevPath->end().vel.mag() - endSpeed;
 
         if (targetPosChange >
                 Planning::SingleRobotPathPlanner::goalChangeThreshold() ||

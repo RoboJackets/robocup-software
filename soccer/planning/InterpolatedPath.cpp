@@ -35,19 +35,11 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
     return length;
 }
 
-boost::optional<MotionInstant> InterpolatedPath::start() const {
-    if (waypoints.empty())
-        return boost::none;
-    else
-        return waypoints.front().instant;
+MotionInstant InterpolatedPath::start() const {
+    return waypoints.front().instant;
 }
 
-boost::optional<MotionInstant> InterpolatedPath::destination() const {
-    if (waypoints.empty())
-        return boost::none;
-    else
-        return waypoints.back().instant;
-}
+MotionInstant InterpolatedPath::end() const { return waypoints.back().instant; }
 
 // Returns the index of the point in this path nearest to pt.
 int InterpolatedPath::nearestIndex(Point pt) const {
