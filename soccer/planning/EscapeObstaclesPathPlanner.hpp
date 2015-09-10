@@ -3,6 +3,8 @@
 
 namespace Planning {
 
+/// This planner finds a path to quickly get out of an obstacle.  If the start
+/// point isn't in an obstacle, returns a path containing only the start point.
 class EscapeObstaclesPathPlanner : public SingleRobotPathPlanner {
 public:
     virtual std::unique_ptr<Path> run(
@@ -16,10 +18,12 @@ public:
         return MotionCommand::None;
     }
 
-    /// TODO: refactor this into two methods - one applies the filtering
+    /// Uses an RRT to find a point near to @pt that isn't blocked by obstacles.
+    /// If @prevPt is give, only uses a newly-found point if it is closer to @pt
+    /// by a configurable threshold.
     static Geometry2d::Point findNonBlockedGoal(
         Geometry2d::Point pt, boost::optional<Geometry2d::Point> prevPt,
-        const Geometry2d::ShapeSet* obstacles, int maxItr = 300);
+        const Geometry2d::ShapeSet& obstacles, int maxItr = 300);
 };
 
 }  // namespace Planning
