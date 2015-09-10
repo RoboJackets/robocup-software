@@ -1,6 +1,7 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "TrapezoidalPath.hpp"
-#include "RRTPlanner.hpp"  // for randomPoint() - TODO: move randomPoint() to a common place
+#include "Tree.hpp"
+#include "Util.hpp"
 
 using namespace Geometry2d;
 
@@ -41,7 +42,7 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
         // an unobstructed point
         Point newGoal;
         for (int i = 0; i < maxItr; ++i) {
-            Point r = randomPoint();
+            Point r = RandomFieldLocation();
 
             // extend to a random point
             Tree::Point* newPoint = goalTree.extend(r);

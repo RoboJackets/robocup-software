@@ -4,6 +4,7 @@
 #include <Utils.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include "motion/TrapezoidalMotion.hpp"
+#include "Util.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,14 +16,6 @@ using namespace std;
 using namespace Eigen;
 
 namespace Planning {
-
-Geometry2d::Point randomPoint() {
-    const auto& dims = Field_Dimensions::Current_Dimensions;
-    float x = dims.FloorWidth() * (drand48() - 0.5f);
-    float y = dims.FloorLength() * drand48() - dims.Border();
-
-    return Geometry2d::Point(x, y);
-}
 
 RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
 
@@ -110,7 +103,7 @@ InterpolatedPath* RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     Tree* ta = &startTree;
     Tree* tb = &goalTree;
     for (unsigned int i = 0; i < _maxIterations; ++i) {
-        Geometry2d::Point r = randomPoint();
+        Geometry2d::Point r = RandomFieldLocation();
 
         Tree::Point* newPoint = ta->extend(r);
 

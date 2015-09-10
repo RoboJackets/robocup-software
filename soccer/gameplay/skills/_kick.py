@@ -148,8 +148,11 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         if pt != None:
             # segment centered at the target point that's @width wide and perpendicular to the shot
             shot_perp = (main.ball().pos - pt).perp_ccw().normalized()
-            width = 0.5
 
+            # Make the shot triangle obstacle a fixed width at the end unless
+            # we're aiming at a segment. In that case, just use the length of
+            # the segment.
+            width = 0.5
             if isinstance(self.target, robocup.Segment):
                 width = self.target.length()
 
