@@ -10,12 +10,6 @@ namespace Planning {
 
 /// Plans a path that brings the robot to the given velocity as fast as
 /// possible.  Avoids obstacles.
-///
-/// Used in the following behaviors:
-/// * Capture - fine approach
-/// * Bump - charge towards ball
-/// * LineKick - charge
-/// * PassReceive - receiving state
 class TargetVelPathPlanner : public SingleRobotPathPlanner {
 public:
     virtual std::unique_ptr<Path> run(
