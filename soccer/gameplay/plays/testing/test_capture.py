@@ -2,13 +2,13 @@ import play
 import behavior
 import skills.move
 import skills.capture
-import single_robot_composite_behavior
 import enum
 import robocup
 import role_assignment
 
+
 # this test repeatedly runs the capture behavior
-- class TestCapture(play.Play):
+class TestCapture(play.Play):
 
     class State(enum.Enum):
         setup = 1
@@ -23,17 +23,17 @@ import role_assignment
         self.add_state(TestCapture.State.capturing, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-            Capturer.State.setup,
+            TestCapture.State.setup,
             lambda: True,
             'immediately')
 
-        self.add_transition(Capturer.State.setup,
-            Capturer.State.capturing,
+        self.add_transition(TestCapture.State.setup,
+            TestCapture.State.capturing,
             lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
             'robot away from ball')
 
-        self.add_transition(Capturer.State.capturing,
-            Capturer.State.setup,
+        self.add_transition(TestCapture.State.capturing,
+            TestCapture.State.setup,
             lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
             'successful capture')
 
