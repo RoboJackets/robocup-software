@@ -87,13 +87,17 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
 }
 
 std::unique_ptr<Path> RRTPlanner::run(
-    MotionInstant start, MotionCommand cmd,
+    MotionInstant start,
+    const std::unique_ptr<MotionCommand>& cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
-    // This planner only works with commands of type 'PathTarget'
-    assert(cmd.getCommandType() == Planning::MotionCommand::PathTarget);
 
-    MotionInstant goal = cmd.getPlanningTarget();
+    assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
+    Planning::PathTargetCommand target = *static_cast<Planning::PathTargetCommand*>(cmd.get());
+
+    // This planner only works with commands of type 'PathTarget'
+
+    MotionInstant goal = target.pathGoal;
 
     // Simple case: no path
     if (start.pos == goal.pos) {

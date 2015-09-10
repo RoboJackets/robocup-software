@@ -46,7 +46,8 @@ public:
     /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
     std::unique_ptr<Path> run(
-        MotionInstant start, MotionCommand cmd,
+        MotionInstant start,
+        const std::unique_ptr<MotionCommand>& cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;

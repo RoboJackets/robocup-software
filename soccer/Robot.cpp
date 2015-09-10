@@ -161,8 +161,10 @@ void OurRobot::resetForNextIteration() {
 }
 
 void OurRobot::resetMotionConstraints() {
+    _rotationConstraints = Planning::RotationConstraints();
     _motionConstraints = MotionConstraints();
-    _motionCommand = Planning::MotionCommand();
+    _motionCommand = make_unique<Planning::WorldVelTargetCommand>(Geometry2d::Point(0,0));
+    _rotationCommand = nullptr;
 }
 
 void OurRobot::stop() {
@@ -179,10 +181,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
         cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", "
              << goal.y << ")" << std::endl;
 
-    _motionCommand.setPathTarget(MotionInstant(goal, endVelocity));
-
-    // reset conflicting motion commands
-    _motionConstraints.pivotTarget = boost::none;
+    _motionCommand = make_unique<Planning::PathTargetCommand>(MotionInstant(goal, endVelocity));
 
     *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
     *_cmdText << "endVelocity(" << endVelocity.x << ", " << endVelocity.y << ")"
@@ -190,27 +189,16 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
-    _motionCommand.setWorldVel(v);
+    _motionCommand = make_unique<Planning::WorldVelTargetCommand>(v);
     setPath(nullptr);
     *_cmdText << "worldVel(" << v.x << ", " << v.y << ")" << endl;
 }
 
-void OurRobot::angleVelocity(float targetAngleVel) {
-    _motionConstraints.targetAngleVel = fixAngleRadians(targetAngleVel);
-
-    // reset other conflicting motion commands
-    _motionConstraints.faceTarget = boost::none;
-    _motionConstraints.pivotTarget = boost::none;
-
-    *_cmdText << "angleVelocity(" << targetAngleVel << ")" << endl;
-}
-
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-    _motionConstraints.pivotTarget = pivotTarget;
+    _rotationCommand = nullptr;
 
     // reset other conflicting motion commands
-    _motionCommand.setWorldVel(Geometry2d::Point());
-    _motionConstraints.faceTarget = boost::none;
+    _motionCommand = make_unique<Planning::PivotCommand>(pivotTarget);
     setPath(nullptr);
 
     *_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")"
@@ -250,16 +238,13 @@ void OurRobot::dribble(uint8_t speed) {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-    _motionConstraints.faceTarget = pt;
-
-    // reset conflicting motion commands
-    _motionConstraints.pivotTarget = boost::none;
+    _rotationCommand = make_unique<Planning::FacePointCommand>(pt);
 
     *_cmdText << "face(" << pt.x << ", " << pt.y << ")" << endl;
 }
 
 void OurRobot::faceNone() {
-    _motionConstraints.faceTarget = boost::none;
+    _rotationCommand = nullptr;
 
     *_cmdText << "faceNone()" << endl;
 }

@@ -6,6 +6,7 @@
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
+#include "planning/RotationCommand.hpp"
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <Utils.hpp>
@@ -165,6 +166,8 @@ public:
 
     MotionConstraints& motionConstraints() { return _motionConstraints; }
 
+    const std::unique_ptr<Planning::RotationCommand>& rotationCommand() const { return _rotationCommand; }
+
     /**
      * Returns a temporary observing pointer to the path of the robot.
      * This is only currently supported for legacy reasons.
@@ -191,11 +194,6 @@ public:
      */
     void move(Geometry2d::Point goal,
               Geometry2d::Point endVelocity = Geometry2d::Point());
-
-    /**
-     * Sets the angleVelocity in the robot's MotionConstraints
-     */
-    void angleVelocity(const float angleVelocity);
 
     /**
      * Sets the worldVelocity in the robot's MotionConstraints
@@ -376,9 +374,18 @@ public:
     Packet::RadioRx& radioRx() { return _radioRx; }
     const Packet::RadioRx& radioRx() const { return _radioRx; }
 
-    const Planning::MotionCommand motionCommand() const {
+    const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
         return _motionCommand;
     }
+
+    const Planning::RotationConstraints& rotationConstraints() const {
+        return _rotationConstraints;
+    }
+
+    Planning::RotationConstraints& rotationConstraints() {
+        return _rotationConstraints;
+    }
+
 
     MotionControl* motionControl() const { return _motionControl; }
 
@@ -418,8 +425,11 @@ protected:
     RobotMask _self_avoid_mask, _opp_avoid_mask;
     float _avoidBallRadius;  /// radius of ball obstacle
 
-    Planning::MotionCommand _motionCommand;
+    std::unique_ptr<Planning::MotionCommand> _motionCommand;
     MotionConstraints _motionConstraints;
+    std::unique_ptr<Planning::RotationCommand> _rotationCommand;
+    Planning::RotationConstraints _rotationConstraints;
+
 
     std::unique_ptr<Planning::Path> _path;  /// latest path
 
