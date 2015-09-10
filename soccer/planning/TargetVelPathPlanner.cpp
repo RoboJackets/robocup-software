@@ -2,6 +2,10 @@
 #include "TrapezoidalPath.hpp"
 #include <Configuration.hpp>
 #include <cmath>
+#include <boost/range/irange.hpp>
+
+#include <iostream>
+using namespace std;
 
 using namespace Geometry2d;
 
@@ -12,8 +16,8 @@ REGISTER_CONFIGURABLE(TargetVelPathPlanner);
 ConfigDouble* TargetVelPathPlanner::_targetVelChangeReplanThreshold;
 
 void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
-    _targetVelChangeReplanThreshold =
-        new ConfigDouble(cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05);
+    _targetVelChangeReplanThreshold = new ConfigDouble(
+        cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05);
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
@@ -29,18 +33,26 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
         sqrtf(powf(Field_Dimensions::Current_Dimensions.FloorLength(), 2) +
               powf(Field_Dimensions::Current_Dimensions.FloorWidth(), 2));
 
-    // TODO: do binary search instead of linear and use a greater resolution
-    // than 10cm
-    //
     // We iteratively test different distances from the current point in the
     // direction of the target velocity.  We choose the furthest point away that
-    // is non-blocked.
-    float nonblockedPathLen = minDist;
-    for (float pathLen = minDist; pathLen < maxDist; pathLen += 0.1) {
-        Geometry2d::Segment pathSegment(start, start + (pathLen * dir));
-        if (obstacles->hit(pathSegment)) break;
-        nonblockedPathLen = pathLen;
-    }
+    // is non-blocked.  Searching for the furthest non-blocked distance is done
+    // through binary search using std::loser_bound.  We use boost ranges to
+    // represent a numeric range.  It only works with integers, so we prescale
+    // by 100, giving us cm accuracy with the result.
+    constexpr float rangeScaleFactor = 100;
+    const auto scaledDistRange =
+        boost::irange(minDist * rangeScaleFactor, maxDist * rangeScaleFactor);
+    auto val = std::lower_bound(
+        scaledDistRange.begin(), scaledDistRange.end(), obstacles,
+        [start, dir, rangeScaleFactor](int scaledDist,
+                                       const Geometry2d::ShapeSet* obstacles) {
+            Geometry2d::Segment pathSegment(
+                start, start + dir * (scaledDist / rangeScaleFactor));
+            // Returns true if a path of the given distance doesn't hit obstacles
+            return !obstacles->hit(pathSegment);
+        });
+    const float nonblockedPathLen = *val / rangeScaleFactor;
+
     return start + dir * nonblockedPathLen;
 }
 
@@ -87,9 +99,9 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
     assert(cmd.getCommandType() == MotionCommand::WorldVel);
 
     // if (obstacles->hit(startInstant.pos)) {
-        // TODO: what do if start pos is inside an obstacle?
-        // Compare the time to get OUT of an obstacle with obeying velocity to
-        // an EscapeObstaclesPlanner path.
+    // TODO: what do if start pos is inside an obstacle?
+    // Compare the time to get OUT of an obstacle with obeying velocity to
+    // an EscapeObstaclesPlanner path.
     // }
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
