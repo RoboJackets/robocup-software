@@ -57,8 +57,8 @@ bool SingleRobotPathPlanner::shouldReplan(
     // If we went off the end of the path, use the end for calculations.
     MotionInstant target = optTarget ? *optTarget : prevPath->end();
 
-    // invalidate path if current position is more than the
-    // replanThreshold
+    // invalidate path if current position is more than the replanThreshold away
+    // from where it's supposed to be right now
     float pathError = (target.pos - currentInstant.pos).mag();
     float replanThreshold = *motionConstraints._replan_threshold;
     if (*motionConstraints._replan_threshold != 0 &&
