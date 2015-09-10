@@ -3,11 +3,11 @@
 #include "Shape.hpp"
 #include "Point.hpp"
 
-#include <algorithm>
-
 namespace Geometry2d {
 class Segment;
 
+/// Represents a rectangle by storing two opposite corners.  They may be upper-
+/// left and lower-right or any other pair of diagonal corners.
 class Rect : public Shape {
 public:
     Rect() {}
@@ -80,8 +80,12 @@ public:
 
     std::string toString() override {
         std::stringstream str;
-        str << "Line<" << pt[0] << ", " << pt[1] << ">";
+        str << *this;
         return str.str();
+    }
+
+    friend std::ostream& operator<<(std::ostream& out, const Rect& rect) {
+        return out << "Rect<" << rect.pt[0] << ", " << rect.pt[1] << ">";
     }
 };
 }

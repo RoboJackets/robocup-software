@@ -15,22 +15,23 @@ void Path::draw(SystemState* const state, const QColor& color,
     const float duration = getDuration();
     const float desiredStep =
         0.25;  // draw the path by interpolating every x seconds
-    const float segmentCount = ceilf(duration / desiredStep);
+    const float segmentCount = roundf(duration / desiredStep);
     const float step = duration / segmentCount;
+
+    auto addPoint = [dbg](MotionInstant instant) {
+        Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
+        *pt->mutable_pos() = instant.pos;
+        *pt->mutable_vel() = instant.vel;
+    };
 
     // Draw points along the path except the last one
     for (int i = 0; i < segmentCount; ++i) {
         float t = i * step;
-        MotionInstant instant = *evaluate(t);
-        Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
-        *pt->mutable_pos() = instant.pos;
-        *pt->mutable_vel() = instant.vel;
+        addPoint(*evaluate(t));
     }
 
     // Draw the last point of the path
-    Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
-    *pt->mutable_pos() = end().pos;
-    *pt->mutable_vel() = end().vel;
+    addPoint(end());
 }
 
 }  // namespace Planning
