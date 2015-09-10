@@ -9,7 +9,7 @@ class ConfigDouble;
 namespace Planning {
 
 /// Plans a path that brings the robot to the given velocity as fast as
-/// possible.  Ignores all obstacles.
+/// possible.  Avoids obstacles.
 ///
 /// Used in the following behaviors:
 /// * Capture - fine approach

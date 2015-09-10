@@ -88,19 +88,22 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     assert(cmd.getCommandType() == MotionCommand::WorldVel);
 
-    if (obstacles->hit(startInstant.pos)) {
+    // if (obstacles->hit(startInstant.pos)) {
         // TODO: what do if start pos is inside an obstacle?
         // Compare the time to get OUT of an obstacle with obeying velocity to
         // an EscapeObstaclesPlanner path.
-    }
+    // }
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
+        // Choose the furthest endpoint we can that doesn't hit obstacles
         Point endpoint = calculateNonblockedPathEndpoint(
             startInstant.pos, cmd.getWorldVel(), obstacles);
         MotionConstraints moddedConstraints = motionConstraints;
         moddedConstraints.maxSpeed = cmd.getWorldVel().mag();
 
+        // Make a path from the start point in the direction of the target vel
+        // that ends at the calculated endpoint
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
                                 endpoint, 0, moddedConstraints));
