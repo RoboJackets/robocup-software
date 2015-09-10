@@ -2,10 +2,23 @@
 #include "TrapezoidalPath.hpp"
 #include "Tree.hpp"
 #include "Util.hpp"
+#include <Configuration.hpp>
 
 using namespace Geometry2d;
 
 namespace Planning {
+
+REGISTER_CONFIGURABLE(EscapeObstaclesPathPlanner);
+
+ConfigDouble* EscapeObstaclesPathPlanner::_stepSize;
+ConfigDouble* EscapeObstaclesPathPlanner::_goalChangeThreshold;
+
+void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
+    _stepSize =
+        new ConfigDouble(cfg, "EscapeObstaclesPathPlanner/stepSize", 0.1);
+    _goalChangeThreshold = new ConfigDouble(
+        cfg, "EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
+}
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     MotionInstant startInstant, MotionCommand cmd,
@@ -39,7 +52,7 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     if (obstacles.hit(goal)) {
         FixedStepTree goalTree;
         goalTree.init(goal, &obstacles);
-        goalTree.step = .1f;  // TODO: config system
+        goalTree.step = stepSize();
 
         // The starting point is in an obstacle, extend the tree until we find
         // an unobstructed point
@@ -60,12 +73,12 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
         if (!prevGoal) return newGoal;
 
         // Only use this newly-found point if it's closer to the desired goal by
-        // at least one robot radius or the old goal now collides with
+        // at least a certain threshold or the old goal now collides with
         // obstacles.
         float oldDist = (*prevGoal - goal).mag();
         float newDist = (newGoal - goal).mag();
-        // TODO: add config value for the threshold, don't use Robot_Radius.
-        if (newDist + Robot_Radius < oldDist || obstacles.hit(*prevGoal)) {
+        if (newDist + *_goalChangeThreshold < oldDist ||
+            obstacles.hit(*prevGoal)) {
             return newGoal;
         } else {
             return *prevGoal;
