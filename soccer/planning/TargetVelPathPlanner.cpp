@@ -40,8 +40,8 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     // represent a numeric range.  It only works with integers, so we prescale
     // by 100, giving us cm accuracy with the result.
     constexpr float rangeScaleFactor = 100;
-    const auto scaledDistRange =
-        boost::irange(minDist * rangeScaleFactor, maxDist * rangeScaleFactor);
+    const auto scaledDistRange = boost::irange(
+        (int)(minDist * rangeScaleFactor), (int)(maxDist * rangeScaleFactor));
     auto val = std::lower_bound(
         scaledDistRange.begin(), scaledDistRange.end(), obstacles,
         [start, dir, rangeScaleFactor](int scaledDist,
