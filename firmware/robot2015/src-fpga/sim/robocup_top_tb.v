@@ -190,9 +190,9 @@ initial wait ( start_spinning_motors ) begin
     spi(8'h00);
     spi_off();
 
-    // Read encoder counts - no update of duty cycle
+    // Read duty cycles
     spi_on();
-    spi(8'h91);
+    spi(8'h93);
 
     spi(8'h00);
     spi(8'h00);

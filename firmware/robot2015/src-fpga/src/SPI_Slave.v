@@ -1,129 +1,73 @@
 `ifndef _SPI_SLAVE_
 `define _SPI_SLAVE_
 
-module SPI_Slave #(
-  parameter       CPOL = ( 0 ),
-                  CPHA = ( 0 )
-  )(
-  input           clk,
-  input           ncs,
-  input           mosi,
-  output          miso,
-  input           sck,
-  output          done,
-  input   [7:0]   din,
-  output  [7:0]   dout
-);
-   
-  reg ncs_q,
-      sck_q,            sck_old_q,
-      mosi_dp,          mosi_dn,    mosi_q,
-      done_dp,          done_dn,    done_q,
-      miso_dp,          miso_dn,    miso_q;
+module SPI_Slave (clk, SCK, MOSI, MISO, SSEL, DONE, BYTE_TO_SEND, BYTE_RECEIVED);
+input         clk, SCK, SSEL, MOSI;
+input  [7:0]  BYTE_TO_SEND;
+output        MISO, DONE;
+output [7:0]  BYTE_RECEIVED;
 
-  reg [7:0] data_dp,    data_dn,    data_q,
-            dout_dp,    dout_dn,    dout_q;
+// sync SCK to the FPGA clock using a 3-bits shift register
+reg [2:0] SCKr;  always @(posedge clk) SCKr <= {SCKr[1:0], SCK};
+wire SCK_risingedge = (SCKr[2:1]==2'b01),  // now we can detect SCK rising edges
+     SCK_fallingedge = (SCKr[2:1]==2'b10);  // and falling edges
 
-  reg [2:0] bit_ct_dp,  bit_ct_dn,  bit_ct_q;
+// same thing for SSEL
+reg [2:0] SSELr;  always @(posedge clk) SSELr <= {SSELr[1:0], SSEL};
+wire SSEL_active = ~SSELr[1],
+     SSEL_startmessage = (SSELr[2:1]==2'b10),  // message starts at falling edge
+     SSEL_endmessage = (SSELr[2:1]==2'b01);  // message stops at rising edge
 
-  wire  rising_edge  = !sck_old_q  &&   sck_q,
-        falling_edge =  sck_old_q  &&  !sck_q;
-   
+// and for MOSI
+reg [1:0] MOSIr;  always @(posedge clk) MOSIr <= {MOSIr[0], MOSI};
+wire MOSI_data = MOSIr[1];
 
-  assign miso = miso_q;
-  assign done = done_q;
-  assign dout = dout_q;
+// we handle SPI in 8-bits format, so we need a 3 bits counter to count the bits as they come in
+reg [2:0] bitcnt;
+// reg byte_received;  // high when a byte has been received
+reg [7:0] byte_data_received,
+          byte_data_sent,
+          byte_rec_;
 
+reg done_;
 
-   /*
-  always @(*) begin
-    ss_d = ss;
-    sck_d = sck;
-    sck_old_d = sck_q;
-    
-    mosi_dp = mosi;
-    miso_dp = miso_q;
-    done_dp = 0;
-    bit_ct_dp = bit_ct_q;
-    dout_dp = dout_q;
+assign MISO = byte_data_sent[7];  // send MSB first
+assign DONE = done_;
+assign BYTE_RECEIVED = byte_rec_;
 
-    mosi_dn = mosi;
-    miso_dn = miso_q;
-    done_dn = 0;
-    bit_ct_dn = bit_ct_q;
-    dout_dn = dout_q;
+always @(posedge clk)
+begin
+  if (~SSEL_active)
+    bitcnt <= 3'b000;
+
+  else if(SCK_risingedge)
+  begin
+    bitcnt <= bitcnt + 1;
+
+    // implement a shift-left register (since we receive the data MSB first)
+    byte_data_received <= {byte_data_received[6:0], MOSI_data};
   end
-  */
+end
 
-  always @( negedge clk ) begin
-      if ( falling_edge ) begin
-          data_dn <= {data_dn[6:0], mosi_q};       // read data in and shift
-          bit_ct_dn <= bit_ct_q + 1;           // increment the bit counter
+always @(posedge clk) done_ <= SSEL_active && SCK_risingedge && (bitcnt==3'b111);
 
-          if (bit_ct_dn == 3'b111) begin         // if we are on the last bit
-            dout_dn <= {data_q[6:0], mosi_q};     // output the byte
-            done_dn <= 1;                      // set transfer done flag
-            data_dn <= din;                       // read in new byte
-          end
+always @(negedge clk) byte_rec_ <= done_ ? byte_data_received : byte_rec_;
 
-          miso_dn <= data_dn[7];                   // output MSB for other sck polarity
-      end else if ( rising_edge ) begin
-          data_dp <= {data_dp[6:0], mosi_q};       // read data in and shift
-          bit_ct_dp <= bit_ct_q + 1;           // increment the bit counter
-
-          if (bit_ct_dp == 3'b111) begin         // if we are on the last bit
-            dout_dp <= {data_q[6:0], mosi_q};     // output the byte
-            done_dp <= 1;                      // set transfer done flag
-            data_dp <= din;                       // read in new byte
-          end
-
-          miso_dp <= data_dp[7];                   // output MSB for other sck polarity
-      end
+always @(posedge clk)
+if(SSEL_active)
+begin
+  if ( SSEL_startmessage )
+     byte_data_sent <= BYTE_TO_SEND;  // first byte sent in a message is the message count
+   else
+  if ( SCK_fallingedge )
+  begin
+    if ( bitcnt == 3'b0 )
+      byte_data_sent <= BYTE_TO_SEND;  // after that, we send 0s
+    else
+      byte_data_sent <= {byte_data_sent[6:0], 1'b0};
   end
+end
 
-always @( posedge clk ) begin
-  if (ncs) begin
-      // bit_ct_dp <= 0;                 // reset bit counter
-      // data_dp <= din;                 // read in data
-      // miso_dp <= data_q[7];           // output MSB
-
-      // bit_ct_dn <= 0;                 // reset bit counter
-      // data_dn <= din;                 // read in data
-      // miso_dn <= data_q[7];           // output MSB
-      done_q <= 0;
-      //bit_ct_q <= bit_ct_dn;
-      //dout_q <= dout_dn;
-      miso_q <= 0;
-      mosi_q <= 0;
-      data_q <= 0;
-      data_dp <= din;
-      data_dn <= din;
-  end else begin
-
-    data_q <= (CPOL ^ CPHA) == 1 ? data_dn : data_dp; 
-
-    if (CPOL ^ CPHA) begin
-      done_q <= done_dn;
-      bit_ct_q <= bit_ct_dn;
-      dout_q <= dout_dn;
-      miso_q <= miso_dp;
-      mosi_q <= mosi_dn;
-      // data_q <= data_dn;
-    end else begin
-      done_q <= done_dp;
-      bit_ct_q <= bit_ct_dp;
-      dout_q <= dout_dp;
-      miso_q <= miso_dn;
-      mosi_q <= mosi_dp;
-      // data_q <= data_dp;
-    end
-  end
-
-    sck_q <= sck;
-    ncs_q <= ncs;
-    sck_old_q <= sck_q;
-  end
-   
 endmodule
 
 `endif
