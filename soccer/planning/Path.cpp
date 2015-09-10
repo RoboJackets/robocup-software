@@ -18,19 +18,20 @@ void Path::draw(SystemState* const state, const QColor& color,
     const float segmentCount = ceilf(duration / desiredStep);
     const float step = duration / segmentCount;
 
-    // Draw points along the path except the last one
-    for (int i = 0; i < segmentCount; ++i) {
-        float t = i * step;
-        MotionInstant instant = *evaluate(t);
+    auto addPoint = [dbg](MotionInstant instant) {
         Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
         *pt->mutable_pos() = instant.pos;
         *pt->mutable_vel() = instant.vel;
+    };
+
+    // Draw points along the path except the last one
+    for (int i = 0; i < segmentCount; ++i) {
+        float t = i * step;
+        addPoint(*evaluate(t));
     }
 
     // Draw the last point of the path
-    Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
-    *pt->mutable_pos() = end().pos;
-    *pt->mutable_vel() = end().vel;
+    addPoint(end());
 }
 
 }  // namespace Planning
