@@ -1,5 +1,9 @@
 var NAVTREEINDEX9 =
 {
+"struct_processor_1_1_status.html#a430b4dcdb1048670ba6c8cd7c1260472":[11,0,47,0,0],
+"struct_processor_1_1_status.html#a57087a4013507c660a7a728853339585":[11,0,47,0,4],
+"struct_processor_1_1_status.html#a5b7c9c04889d3e8344191dd25035be0d":[11,0,47,0,1],
+"struct_processor_1_1_status.html#aeca03c528e4ca50f5ab31f9325bab3af":[11,0,47,0,3],
 "struct_processor_1_1_status.html#af951238657affdd2d4b1f2867ac57f4c":[11,0,47,0,2],
 "struct_robot_config_1_1_chipper.html":[11,0,53,0],
 "struct_robot_config_1_1_chipper.html#a8accf10376a9ed2ca7776f13c82ca214":[11,0,53,0,1],

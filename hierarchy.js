@@ -163,7 +163,8 @@ var hierarchy =
     [ "Geometry2d::ShapeSet", "class_geometry2d_1_1_shape_set.html", null ],
     [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
       [ "Planning::DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", null ],
-      [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ]
+      [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
+      [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [

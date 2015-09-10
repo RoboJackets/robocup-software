@@ -121,20 +121,23 @@ $(document).ready(function(){initNavTree('class_planning_1_1_path.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ab6e3a68352940c52e732ba122e7a9c98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6e3a68352940c52e732ba122e7a9c98"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (Time <a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a>=0)</td></tr>
+<tr class="separator:ab6e3a68352940c52e732ba122e7a9c98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5374f636290ac9cb6a4794d8ae79811"><td class="memItemLeft" align="right" valign="top">virtual boost::optional<br class="typebreak"/>
 &lt; <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ae5374f636290ac9cb6a4794d8ae79811">evaluate</a> (float t) const =0</td></tr>
 <tr class="memdesc:ae5374f636290ac9cb6a4794d8ae79811"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evalates the path at a given time and returns the target position and velocity of the robot.  <a href="#ae5374f636290ac9cb6a4794d8ae79811">More...</a><br/></td></tr>
 <tr class="separator:ae5374f636290ac9cb6a4794d8ae79811"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c437343a10eadfc1b6fec0530d8282d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, float &amp;hitTime, float <a class="el" href="class_planning_1_1_path.html#a4e4c8631d541278708db9f12bc5d3cbb">startTime</a>) const =0</td></tr>
+<tr class="memitem:a6c437343a10eadfc1b6fec0530d8282d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, float &amp;hitTime, float <a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a>) const =0</td></tr>
 <tr class="memdesc:a6c437343a10eadfc1b6fec0530d8282d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#a6c437343a10eadfc1b6fec0530d8282d">More...</a><br/></td></tr>
 <tr class="separator:a6c437343a10eadfc1b6fec0530d8282d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a6d71132a1bc261968aa7fcbb141b1a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a8a6d71132a1bc261968aa7fcbb141b1a">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const =0</td></tr>
-<tr class="memdesc:a8a6d71132a1bc261968aa7fcbb141b1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#a8a6d71132a1bc261968aa7fcbb141b1a">More...</a><br/></td></tr>
-<tr class="separator:a8a6d71132a1bc261968aa7fcbb141b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba1ec0b69ad45b7dca7886dc1aa64e9b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const </td></tr>
+<tr class="memdesc:aba1ec0b69ad45b7dca7886dc1aa64e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#aba1ec0b69ad45b7dca7886dc1aa64e9b">More...</a><br/></td></tr>
+<tr class="separator:aba1ec0b69ad45b7dca7886dc1aa64e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4886548615206bd2f95a5b2628889688"><td class="memItemLeft" align="right" valign="top">virtual float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688">getDuration</a> () const =0</td></tr>
 <tr class="memdesc:a4886548615206bd2f95a5b2628889688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how long it would take for the entire path to be traversed.  <a href="#a4886548615206bd2f95a5b2628889688">More...</a><br/></td></tr>
 <tr class="separator:a4886548615206bd2f95a5b2628889688"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addd308038986255e995c00208a1094f5"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#addd308038986255e995c00208a1094f5">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a4e4c8631d541278708db9f12bc5d3cbb">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const =0</td></tr>
+<tr class="memitem:addd308038986255e995c00208a1094f5"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#addd308038986255e995c00208a1094f5">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const =0</td></tr>
 <tr class="memdesc:addd308038986255e995c00208a1094f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a subPath.  <a href="#addd308038986255e995c00208a1094f5">More...</a><br/></td></tr>
 <tr class="separator:addd308038986255e995c00208a1094f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0a4c1b57eff66cd292ec116edfba41b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0a4c1b57eff66cd292ec116edfba41b"></a>
@@ -149,10 +152,10 @@ virtual <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInsta
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76">clone</a> () const =0</td></tr>
 <tr class="memdesc:a05ea5649bd6ce649ca974e50983dbc76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a>. <br/></td></tr>
 <tr class="separator:a05ea5649bd6ce649ca974e50983dbc76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e4c8631d541278708db9f12bc5d3cbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e4c8631d541278708db9f12bc5d3cbb"></a>
-const Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a4e4c8631d541278708db9f12bc5d3cbb">startTime</a> () const </td></tr>
-<tr class="memdesc:a4e4c8631d541278708db9f12bc5d3cbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br/></td></tr>
-<tr class="separator:a4e4c8631d541278708db9f12bc5d3cbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a852b9b073f197f61dea6f896f05cba48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a852b9b073f197f61dea6f896f05cba48"></a>
+Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a> () const </td></tr>
+<tr class="memdesc:a852b9b073f197f61dea6f896f05cba48"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br/></td></tr>
+<tr class="separator:a852b9b073f197f61dea6f896f05cba48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22189b47092c05e405e9111576bd009c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22189b47092c05e405e9111576bd009c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setStartTime</b> (Time t)</td></tr>
 <tr class="separator:a22189b47092c05e405e9111576bd009c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,7 +178,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <area shape="rect" id="node2" href="class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="5,80,187,107"/><area shape="rect" id="node3" href="class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="211,80,400,107"/><area shape="rect" id="node4" href="class_planning_1_1_trapezoidal_path.html" title="Represents a straight&#45;line path with a trapezoidal velocity profile. " alt="" coords="425,80,607,107"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a8a6d71132a1bc261968aa7fcbb141b1a"></a>
+<a class="anchor" id="aba1ec0b69ad45b7dca7886dc1aa64e9b"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -183,7 +186,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Planning::Path::draw </td>
+          <td class="memname">void Planning::Path::draw </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_system_state.html">SystemState</a> *const&#160;</td>
           <td class="paramname"><em>state</em>, </td>
@@ -208,22 +211,23 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Draws the path. </p>
+<p>The default implementation adds a DebugRobotPath to the <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> that interpolates points along the path.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">state</td><td>The <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> to draw the path on </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">color</td><td>The color the path should be drawn </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">layer</td><td>The layer to draw the path on </td></tr>
+    <tr><td class="paramname">state</td><td>The <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> to draw the path on </td></tr>
+    <tr><td class="paramname">color</td><td>The color the path should be drawn </td></tr>
+    <tr><td class="paramname">layer</td><td>The layer to draw the path on </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_planning_1_1_trapezoidal_path.html#a570d82cddbe78e00e1b0db9d3eaf30d5">Planning::TrapezoidalPath</a>, <a class="el" href="class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb">Planning::InterpolatedPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4">Planning::CompositePath</a>.</p>
+<p>Reimplemented in <a class="el" href="class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb">Planning::InterpolatedPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4">Planning::CompositePath</a>.</p>
 
 </div>
 </div>
@@ -258,7 +262,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...">MotionInstant</a> containing the position and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
 
-<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#a8a8a10c8025238a5a56a3d770e16d342">Planning::InterpolatedPath</a>, <a class="el" href="class_planning_1_1_trapezoidal_path.html#af7254d3690ccfe2a20dac4b9f8c93fa2">Planning::TrapezoidalPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a468f5377361780365626b691c4f97e39">Planning::CompositePath</a>.</p>
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#a8a8a10c8025238a5a56a3d770e16d342">Planning::InterpolatedPath</a>, <a class="el" href="class_planning_1_1_trapezoidal_path.html#aa595732da857804f805f65d1fff6d60f">Planning::TrapezoidalPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a468f5377361780365626b691c4f97e39">Planning::CompositePath</a>.</p>
 
 </div>
 </div>
@@ -286,7 +290,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <p>Returns how long it would take for the entire path to be traversed. </p>
 <dl class="section return"><dt>Returns</dt><dd>The time from start to path completion or infinity if it never stops </dd></dl>
 
-<p>Implemented in <a class="el" href="class_planning_1_1_trapezoidal_path.html#a558fcae4d2777c9d12251fc5a687e459">Planning::TrapezoidalPath</a>, <a class="el" href="class_planning_1_1_interpolated_path.html#abf1b044be359b99c86c395ac9216dce5">Planning::InterpolatedPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a6ab16abe2a63f6ce12728ad15fed7fe0">Planning::CompositePath</a>.</p>
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#abf1b044be359b99c86c395ac9216dce5">Planning::InterpolatedPath</a>, <a class="el" href="class_planning_1_1_trapezoidal_path.html#a558fcae4d2777c9d12251fc5a687e459">Planning::TrapezoidalPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a6ab16abe2a63f6ce12728ad15fed7fe0">Planning::CompositePath</a>.</p>
 
 </div>
 </div>
@@ -339,7 +343,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if it hits an obstacle, otherwise false </dd></dl>
 
-<p>Implemented in <a class="el" href="class_planning_1_1_trapezoidal_path.html#a647e19ac756e50e18919d480653684ae">Planning::TrapezoidalPath</a>, <a class="el" href="class_planning_1_1_interpolated_path.html#a51e8c29b0b3c4afcfbfb66da11718ee8">Planning::InterpolatedPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a1624ba32ff5c9f5f3a4eca87e4db549a">Planning::CompositePath</a>.</p>
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#a51e8c29b0b3c4afcfbfb66da11718ee8">Planning::InterpolatedPath</a>, <a class="el" href="class_planning_1_1_trapezoidal_path.html#a3f54db3f8540655fae33e6489efbce7d">Planning::TrapezoidalPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a1624ba32ff5c9f5f3a4eca87e4db549a">Planning::CompositePath</a>.</p>
 
 </div>
 </div>
@@ -385,12 +389,13 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A unique_ptr to the new subPath </dd></dl>
 
-<p>Implemented in <a class="el" href="class_planning_1_1_trapezoidal_path.html#aed1954b0e8b011d365b1381ac3f228b7">Planning::TrapezoidalPath</a>, <a class="el" href="class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261">Planning::InterpolatedPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b">Planning::CompositePath</a>.</p>
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261">Planning::InterpolatedPath</a>, <a class="el" href="class_planning_1_1_trapezoidal_path.html#a0171be9c4ed3118e658362bde7a8e571">Planning::TrapezoidalPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b">Planning::CompositePath</a>.</p>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/planning/<a class="el" href="_path_8hpp_source.html">Path.hpp</a></li>
+<li>soccer/planning/Path.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -398,7 +403,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Thu Sep 10 2015 19:52:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Sep 10 2015 20:18:32 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"class_configuration.html#afbb1965bdd68c3bff1113d231f2ce76b":[11,0,25,9],
 "class_configuration.html#afe8778c9553dc1ab93116c240b87c37c":[11,0,25,10],
 "class_console.html":[11,0,26],
 "class_debug_q_mutex.html":[11,0,27],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "class_geometry2d_1_1_polygon.html#a4f552f0ced1366edbeb181ec8ca9d3cd":[11,0,5,5,8],
 "class_geometry2d_1_1_polygon.html#a5d2649f6f4c60d9b9baa6c19e15f1e2b":[11,0,5,5,14],
 "class_geometry2d_1_1_polygon.html#a5d9cd6f9e8ab7446f2fd091d1bdfdcd0":[11,0,5,5,17],
-"class_geometry2d_1_1_polygon.html#a5f840a57858f1e806348fa1de289acb1":[11,0,5,5,7],
-"class_geometry2d_1_1_polygon.html#a6edc450266e08db0396875e2eb908f0e":[11,0,5,5,15]
+"class_geometry2d_1_1_polygon.html#a5f840a57858f1e806348fa1de289acb1":[11,0,5,5,7]
 };

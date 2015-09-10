@@ -141,6 +141,9 @@ static double&#160;</td><td class="memItemRight" valign="bottom"><b>replanTimeou
 <tr class="memitem:a99ea7a6ad7998b313bd671afaf9f0197"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99ea7a6ad7998b313bd671afaf9f0197"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
 <tr class="separator:a99ea7a6ad7998b313bd671afaf9f0197"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46c274740b97d30e8f5e9aecefb891ae"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a46c274740b97d30e8f5e9aecefb891ae">shouldReplan</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> currentInstant, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, const <a class="el" href="class_planning_1_1_path.html">Path</a> *prevPath)</td></tr>
+<tr class="memdesc:a46c274740b97d30e8f5e9aecefb891ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#a46c274740b97d30e8f5e9aecefb891ae">More...</a><br/></td></tr>
+<tr class="separator:a46c274740b97d30e8f5e9aecefb891ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Interface for <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a> Planners. </p>
@@ -151,8 +154,65 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_planning_1_1_single_robot_path_planner__inherit__graph.png" border="0" usemap="#_planning_1_1_single_robot_path_planner_inherit__map" alt="Inheritance graph"/></div>
 <map name="_planning_1_1_single_robot_path_planner_inherit__map" id="_planning_1_1_single_robot_path_planner_inherit__map">
-<area shape="rect" id="node2" href="class_planning_1_1_direct_target_path_planner.html" title="Simple path planner that generates a straight&#45;line path from the start instant to the goal..." alt="" coords="5,97,195,138"/><area shape="rect" id="node3" href="class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="219,104,372,131"/></map>
+<area shape="rect" id="node2" href="class_planning_1_1_direct_target_path_planner.html" title="Simple path planner that generates a straight&#45;line path from the start instant to the goal..." alt="" coords="255,5,444,46"/><area shape="rect" id="node3" href="class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="272,71,427,97"/><area shape="rect" id="node4" href="class_planning_1_1_target_vel_path_planner.html" title="Plans a path that brings the robot to the given velocity as fast as possible. " alt="" coords="240,121,459,148"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a46c274740b97d30e8f5e9aecefb891ae"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Planning::SingleRobotPathPlanner::shouldReplan </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td>
+          <td class="paramname"><em>currentInstant</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;&#160;</td>
+          <td class="paramname"><em>motionConstraints</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *&#160;</td>
+          <td class="paramname"><em>obstacles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_planning_1_1_path.html">Path</a> *&#160;</td>
+          <td class="paramname"><em>prevPath</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Checks if the previous path is no longer valid and needs to be re-planned. </p>
+<p>This method does the following checks:</p>
+<ul>
+<li>Is path non-null?</li>
+<li>Does it have a valid destination()?</li>
+<li>Is the robot too far away from where the path says it should be? (see the replan threshold)</li>
+<li>Does the path enter new obstacles?</li>
+</ul>
+<p>Subclasses will generally use this method in addition to their own planner-specific checks to determine if a replan is necessary. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/planning/<a class="el" href="_single_robot_path_planner_8hpp_source.html">SingleRobotPathPlanner.hpp</a></li>
 <li>soccer/planning/SingleRobotPathPlanner.cpp</li>
@@ -163,7 +223,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_single_robot_path_planner.html">SingleRobotPathPlanner</a></li>
-    <li class="footer">Generated on Thu Sep 10 2015 19:52:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Sep 10 2015 20:18:32 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

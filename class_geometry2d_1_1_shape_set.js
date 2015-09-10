@@ -8,5 +8,6 @@ var class_geometry2d_1_1_shape_set =
     [ "hit", "class_geometry2d_1_1_shape_set.html#a7f3a8e968f480c318540956cd218df01", null ],
     [ "hitSet", "class_geometry2d_1_1_shape_set.html#af09af0ebea60c77ce0e9647b9f963335", null ],
     [ "shapes", "class_geometry2d_1_1_shape_set.html#a020564cb7e46e4114359fd9131eab63d", null ],
-    [ "shapes", "class_geometry2d_1_1_shape_set.html#a94f4ba6ca6bd3197ce8a3deee9b22265", null ]
+    [ "shapes", "class_geometry2d_1_1_shape_set.html#a94f4ba6ca6bd3197ce8a3deee9b22265", null ],
+    [ "operator<<", "class_geometry2d_1_1_shape_set.html#a3d76a29aa41e36a419574535540bd562", null ]
 ];
