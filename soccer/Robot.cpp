@@ -161,7 +161,7 @@ void OurRobot::resetForNextIteration() {
 }
 
 void OurRobot::resetMotionConstraints() {
-    _rotationConstraints = Planning::RotationConstraints();
+    _rotationConstraints = RotationConstraints();
     _motionConstraints = MotionConstraints();
     _motionCommand = make_unique<Planning::WorldVelTargetCommand>(Geometry2d::Point(0,0));
     _rotationCommand = nullptr;

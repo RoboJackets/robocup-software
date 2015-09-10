@@ -5,6 +5,7 @@
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
+#include <planning/RotationConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
 #include "planning/RotationCommand.hpp"
 #include <protobuf/RadioRx.pb.h>
@@ -378,11 +379,11 @@ public:
         return _motionCommand;
     }
 
-    const Planning::RotationConstraints& rotationConstraints() const {
+    const RotationConstraints& rotationConstraints() const {
         return _rotationConstraints;
     }
 
-    Planning::RotationConstraints& rotationConstraints() {
+    RotationConstraints& rotationConstraints() {
         return _rotationConstraints;
     }
 
@@ -428,7 +429,7 @@ protected:
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
     MotionConstraints _motionConstraints;
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
-    Planning::RotationConstraints _rotationConstraints;
+    RotationConstraints _rotationConstraints;
 
 
     std::unique_ptr<Planning::Path> _path;  /// latest path

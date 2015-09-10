@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Geometry2d/Point.hpp"
-#include "MotionConstraints.hpp"
 
 namespace Planning {
     struct RotationCommand {
@@ -31,13 +30,5 @@ namespace Planning {
         explicit FaceAngleCommand(float radians): RotationCommand(FaceAngle), targetAngle(radians) {}
 
         const float targetAngle;
-    };
-
-    struct RotationConstraints {
-    public:
-        RotationConstraints() : maxSpeed(*MotionConstraints::_max_rotation_speed),
-                        maxAccel(*MotionConstraints::_max_rotation_acceleration) { }
-        float maxSpeed;
-        float maxAccel;
     };
 }

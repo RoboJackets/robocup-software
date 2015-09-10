@@ -31,8 +31,6 @@ struct MotionConstraints {
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_speed;
-    static ConfigDouble* _max_rotation_speed;
-    static ConfigDouble* _max_rotation_acceleration;
     static ConfigDouble* _replan_threshold;
     static ConfigDouble* _replan_lead_time;
 };
