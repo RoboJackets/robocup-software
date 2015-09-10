@@ -13,7 +13,7 @@ ConfigDouble* TargetVelPathPlanner::_targetVelChangeReplanThreshold;
 
 void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
     _targetVelChangeReplanThreshold =
-        new ConfigDouble(cfg, "TargetVelPathPlanner/replanThreshold", 0.05);
+        new ConfigDouble(cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05);
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
@@ -71,9 +71,7 @@ bool TargetVelPathPlanner::shouldReplan(
     }
     const float velChange =
         cmd.getWorldVel().mag() - trapezoidalPath->maxSpeed();
-    const float threshold =
-        0.1;  // TODO: config value?  time-dependent threshold?
-    if (velChange > threshold) {
+    if (velChange > *_targetVelChangeReplanThreshold) {
         return true;
     }
 
