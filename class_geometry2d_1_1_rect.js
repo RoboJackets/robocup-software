@@ -25,5 +25,6 @@ var class_geometry2d_1_1_rect =
     [ "operator+=", "class_geometry2d_1_1_rect.html#aab6c9864694a0b928fd996b4887a7ee0", null ],
     [ "operator-=", "class_geometry2d_1_1_rect.html#a45c40ca1cc9b75658933f0475f747c1b", null ],
     [ "toString", "class_geometry2d_1_1_rect.html#a5450069b38e4fe8f9d8a495ce42f38bb", null ],
+    [ "operator<<", "class_geometry2d_1_1_rect.html#a729ddc4e5633a601a2813d124209056f", null ],
     [ "pt", "class_geometry2d_1_1_rect.html#a43dc6332f4bc632fc213c9f3a0f66261", null ]
 ];
