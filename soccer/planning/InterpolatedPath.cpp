@@ -36,18 +36,10 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
 }
 
 MotionInstant InterpolatedPath::start() const {
-    if (waypoints.empty())
-        throw InvalidPathException();
-    else
-        return waypoints.front().instant;
+    return waypoints.front().instant;
 }
 
-MotionInstant InterpolatedPath::end() const {
-    if (waypoints.empty())
-        throw InvalidPathException();
-    else
-        return waypoints.back().instant;
-}
+MotionInstant InterpolatedPath::end() const { return waypoints.back().instant; }
 
 // Returns the index of the point in this path nearest to pt.
 int InterpolatedPath::nearestIndex(Point pt) const {
