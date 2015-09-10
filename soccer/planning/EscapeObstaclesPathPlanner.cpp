@@ -58,10 +58,8 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
         // an unobstructed point
         Point newGoal;
         for (int i = 0; i < maxItr; ++i) {
-            Point r = RandomFieldLocation();
-
-            // extend to a random point
-            Tree::Point* newPoint = goalTree.extend(r);
+            // extend towards a random point
+            Tree::Point* newPoint = goalTree.extend(RandomFieldLocation());
 
             // if the new point is not blocked, it becomes the new goal
             if (newPoint && newPoint->hit.empty()) {
@@ -70,15 +68,13 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
             }
         }
 
-        if (!prevGoal) return newGoal;
+        if (!prevGoal || obstacles.hit(*prevGoal)) return newGoal;
 
         // Only use this newly-found point if it's closer to the desired goal by
-        // at least a certain threshold or the old goal now collides with
-        // obstacles.
+        // at least a certain threshold
         float oldDist = (*prevGoal - goal).mag();
         float newDist = (newGoal - goal).mag();
-        if (newDist + *_goalChangeThreshold < oldDist ||
-            obstacles.hit(*prevGoal)) {
+        if (newDist + *_goalChangeThreshold < oldDist) {
             return newGoal;
         } else {
             return *prevGoal;
