@@ -10,6 +10,7 @@
 #include <cmath>
 #include <stdio.h>
 #include <algorithm>
+#include <typeinfo>
 
 using namespace std;
 using namespace Geometry2d;
@@ -59,16 +60,33 @@ void MotionControl::run() {
     ////////////////////////////////////////////////////////////////////
 
     float targetW = 0;
-    if (constraints.targetAngleVel) {
-        targetW = *constraints.targetAngleVel;
-    } else if (constraints.faceTarget || constraints.pivotTarget) {
-        Geometry2d::Point targetPt = constraints.pivotTarget
-                                         ? *constraints.pivotTarget
-                                         : *constraints.faceTarget;
+    auto &rotationCommand = _robot->rotationCommand();
+    const auto &rotationConstraints = _robot->rotationConstraints();
+
+    boost::optional<Geometry2d::Point> targetPt;
+    const auto &motionCommand = _robot->motionCommand();
+    if (motionCommand->getCommandType() == MotionCommand::Pivot) {
+        PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
+        targetPt = command.pivotTarget;
+    }
+    if (rotationCommand != nullptr ) {
+        try {
+            Planning::FacePointCommand* facePointCommand = dynamic_cast<Planning::FacePointCommand *>(rotationCommand.get());
+            targetPt= facePointCommand->targetPos;
+        } catch (std::bad_cast exception) {
+            std::string message;
+            message.append("Support for the command ");
+            message.append(typeid(rotationCommand).name());
+            message.append(" is not implemented");
+            debugThrow(message);
+        }
+    }
+
+    if (targetPt) {
 
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        float targetAngleFinal = (targetPt - _robot->pos).angle();
+        float targetAngleFinal = (*targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
         // float targetW;
@@ -93,11 +111,11 @@ void MotionControl::run() {
         targetW = _angleController.run(angleError);
 
         // limit W
-        if (abs(targetW) > (constraints.maxAngleSpeed)) {
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
             if (targetW > 0) {
-                targetW = (constraints.maxAngleSpeed);
+                targetW = (rotationConstraints.maxSpeed);
             } else {
-                targetW = -(constraints.maxAngleSpeed);
+                targetW = -(rotationConstraints.maxSpeed);
             }
         }
 
@@ -112,7 +130,7 @@ void MotionControl::run() {
     _targetAngleVel(targetW);
 
     // handle body velocity for pivot command
-    if (constraints.pivotTarget) {
+    if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         float r = Robot_Radius;
         const float FudgeFactor = *_robot->config->pivotVelMultiplier;
         float speed = r * targetW * RadiansToDegrees * FudgeFactor;
@@ -130,13 +148,13 @@ void MotionControl::run() {
     ////////////////////////////////////////////////////////////////////
 
     MotionInstant target;
-
     // if no target position is given, we don't have a path to follow
-    if (!_robot->path() ||
-        _robot->motionCommand().getCommandType() == MotionCommand::WorldVel) {
-        target.vel =
-            _robot->motionCommand().getWorldVel().rotated(-_robot->angle);
+    if (motionCommand->getCommandType() == MotionCommand::WorldVel) {
+        const WorldVelTargetCommand velCommand = *(static_cast<const WorldVelTargetCommand*>(motionCommand.get()));
+        target.vel = velCommand.worldVel.rotated(-_robot->angle);
+
     } else {
+
         //
         // Path following
         //

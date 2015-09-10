@@ -420,8 +420,8 @@ void Processor::run() {
                     continue;
                 }
 
-                if (r->motionCommand().getCommandType() ==
-                    Planning::MotionCommand::WorldVel) {
+                if (r->motionCommand()->getCommandType() == Planning::MotionCommand::WorldVel ||
+                        r->motionCommand()->getCommandType() == Planning::MotionCommand::Pivot) {
                     r->setPath(nullptr);
                     continue;
                 }
@@ -436,11 +436,10 @@ void Processor::run() {
                 Geometry2d::ShapeSet fullObstacles =
                     r->collectAllObstacles(globalObstaclesForBot);
 
-                Planning::PlanRequest request(
-                    Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
+                requests[r->shell()] = Planning::PlanRequest(
+                    Planning::MotionInstant(r->pos, r->vel), r->motionCommand()->clone(),
                     r->motionConstraints(), std::move(r->path()),
                     std::make_shared<ShapeSet>(fullObstacles));
-                requests[r->shell()] = std::move(request);
             }
         }
 

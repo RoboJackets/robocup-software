@@ -17,7 +17,8 @@ public:
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
     virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, MotionCommand cmd,
+        MotionInstant startInstant,
+        const std::unique_ptr<MotionCommand>& cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) = 0;
