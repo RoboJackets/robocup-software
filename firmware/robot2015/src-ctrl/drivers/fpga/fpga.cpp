@@ -9,6 +9,17 @@
 
 bool FPGA::isInit = false;
 
+namespace
+{
+enum {
+    CMD_EN_DIS_MTRS = 0x30,
+    CMD_R_ENC_W_VEL = 0x80,
+    CMD_READ_HALLS  = 0x92,
+    CMD_READ_DUTY   = 0x93,
+    CMD_READ_HASH   = 0x94
+};
+}
+
 
 FPGA::FPGA(PinName _mosi, PinName _miso, PinName _sck, PinName _cs, PinName _progB, PinName _initB, PinName _done)
     : spi(_mosi, _miso, _sck),
@@ -83,11 +94,17 @@ bool FPGA::Init(const std::string& filepath)
             LOG(INF1, "DONE pin state:\t%s", done ? "HIGH" : "LOW");
 
             isInit = true;
+
+            cs = 1;
+
+            spi = SPI(RJ_SPI_BUS);
+            spi.format(8, 0);
+            spi.frequency(2000000);
+
             return true;
         }
     }
 }
-
 
 
 bool FPGA::send_config(const std::string& filepath)
@@ -131,3 +148,83 @@ bool FPGA::send_config(const std::string& filepath)
     }
 }
 
+
+uint8_t FPGA::read_halls(uint8_t* halls, size_t size)
+{
+    uint8_t status;
+
+    cs = !cs;
+    status = spi.write(CMD_READ_HALLS);
+
+    for (int i = 0; i < 5; i++)
+        halls[i] = spi.write(0x00);
+
+    cs = !cs;
+
+    return status;
+}
+
+
+uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size)
+{
+    uint8_t status;
+
+    cs = !cs;
+    status = spi.write(CMD_READ_DUTY);
+
+    for (int i = 0; i < 5; i++) {
+        duty_cycles[i]  = (spi.write(0x00) << 8);
+        duty_cycles[i] |= spi.write(0x00);
+    }
+
+    cs = !cs;
+
+    return status;
+}
+
+
+uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut, uint16_t* enc_deltas, size_t size_enc)
+{
+    uint8_t status;
+
+    // Check for valid duty cycles values
+    for (int i = 0; i < 5; i++)
+        if (duty_cycles[i] > 0x3FF) return 0x7F;
+
+    cs = !cs;
+    status = spi.write(CMD_R_ENC_W_VEL);
+
+    for (int i = 0; i < 5; i++) {
+        enc_deltas[i]  = (spi.write(duty_cycles[i] & 0xFF) << 8);
+        enc_deltas[i] |= spi.write(duty_cycles[i] >> 8);
+    }
+
+    cs = !cs;
+
+    return status;
+}
+
+
+uint32_t FPGA::git_hash(void)
+{
+    uint32_t hash = 0;
+
+    cs = !cs;
+    spi.write(CMD_READ_HASH);
+
+    for (int i = 0; i < 4; i++)
+        hash |= (spi.write(0x00) << (8 * i));
+
+    cs = !cs;
+}
+
+uint8_t FPGA::motors_en(bool state)
+{
+    uint8_t status;
+
+    cs = !cs;
+    status = spi.write(CMD_EN_DIS_MTRS | (state << 7));
+    cs = !cs;
+
+    return status;
+}

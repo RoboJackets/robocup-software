@@ -60,6 +60,17 @@ void Task_Controller(void const* args)
 
 	char testResp;
 	if ( (testResp = imu.testConnection()) ) {
+
+		float resultRatio[6];
+		imu.selfTest(resultRatio);
+		LOG(INIT,
+		    "IMU self test results:\r\n"
+		    "    Accel (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)\r\n"
+		    "    Gyro  (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)",
+		    resultRatio[0], resultRatio[1], resultRatio[2],
+		    resultRatio[3], resultRatio[4], resultRatio[5]
+		   );
+
 		LOG(INIT, "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
 
 	} else {

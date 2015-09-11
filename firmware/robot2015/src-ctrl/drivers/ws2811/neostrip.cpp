@@ -14,9 +14,8 @@
 #include "neostrip.hpp"
 
 extern "C" void neo_out(NeoColor*, int);
-
-uint32_t neo_bitmask;
-uint32_t neo_fio_reg;
+extern "C" uint32_t neo_bitmask;
+extern "C" uint32_t neo_fio_reg;
 
 
 NeoStrip::NeoStrip(PinName pin, int N) : N(N)
@@ -25,7 +24,7 @@ NeoStrip::NeoStrip(PinName pin, int N) : N(N)
 	Nbytes = N * 3;
 	strip = (NeoColor*)malloc(N * sizeof(NeoColor));
 
-	if (strip == NULL) {
+	if (strip == nullptr) {
 		printf("NeoStrip: ERROR unable to malloc strip data");
 		N = 0;
 	}

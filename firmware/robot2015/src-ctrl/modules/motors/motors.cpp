@@ -1,33 +1,9 @@
-/**
- * RoboJackets: RoboCup SSL Firmware
- *
- * Copyright (C) 2015 RoboJackets JJ
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, in version 3.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * motors.cpp - BLDC data structures.
- */
-
 #include "motors.hpp"
 
 #include <mbed.h>
 #include <numparser.hpp>
-#include "commands.hpp"
 
-#ifdef LINK_TOC_PARAMS
-#include "toc.hpp"
-#include "param.hpp"
-#endif
+#include "commands.hpp"
 
 
 motor_t mtrEx = {
@@ -46,11 +22,9 @@ motor_t mtrEx = {
 
 std::array<motor_t, 5> motors;
 
-
 void motors_Init(void)
 {
 	// ahhh just make a dummy vector of info for now...
-
 	motors.fill(mtrEx);
 	motors.at(0).desc = "Dribbler";
 	motors.at(1).desc += "1";
@@ -117,15 +91,3 @@ void motors_cmdProcess(const std::vector<std::string>& args)
 			motors_PrintMotor(motors.at(motorIDs.at(i)));
 	}
 }
-
-
-#ifdef LINK_TOC_PARAMS
-PARAM_GROUP_START(mtrs)
-PARAM_ADD(PARAM_UINT16, mDtV, &motors[0].targetVel)
-PARAM_GROUP_STOP(mtrs)
-
-LOG_GROUP_START(mDV)
-LOG_ADD(LOG_UINT16, trgt, &motors[0].targetVel)
-LOG_ADD(LOG_UINT16, adj, &motors[0].adjVel)
-LOG_GROUP_STOP(mDV)
-#endif

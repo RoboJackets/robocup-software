@@ -4,6 +4,7 @@
 #include <cstdarg>
 #include <ctime>
 #include <string>
+#include <array>
 
 #include <logger.hpp>
 
@@ -12,6 +13,7 @@
 #include "TaskSignals.hpp"
 #include "neostrip.hpp"
 
+#include "buzzer.hpp"
 
 const std::string filename = "rj-fpga.nib";
 const std::string filesystemname = "local";
@@ -175,6 +177,11 @@ extern "C" void UsageFault_Handler()
  */
 int main(void)
 {
+	// NeoStrip rgbLED(RJ_NEOPIXEL, 1);
+	// rgbLED.setBrightness(0.2);
+	// rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+	// rgbLED.write();
+
 	// Turn on some startup LEDs to show they're working, they are turned off before we hit the while loop
 	statusLightsON(nullptr);
 
@@ -286,16 +293,9 @@ int main(void)
 
 	// Attach an interrupt callback for setting the buttons/switches states
 	// into the firmware anytime one of them changes
-	//
-	// ==== THIS CURRENTLY CAUSES A HARD FAULT WITH THE 2015 CTRL BOARD =====
+	
 	// InterruptIn configInputs(RJ_IOEXP_INT);
 	// configInputs.rise(&sampleInputs);
-
-
-	NeoStrip rgbLED(RJ_NEOPIXEL, 1);
-	rgbLED.setBrightness(1.0);
-	rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-	rgbLED.write();
 
 
 #if RJ_WATCHDOG_TIMER_EN
@@ -326,14 +326,67 @@ int main(void)
 	adc.BurstRead();
 	*/
 
-	// LED3 turns on once we hit the end of initilization
-	// DigitalOut ledThree(LED3, 1);
+	// Buzzer buzz;
+	// buzz.play(969.0, 500, 0.6);
+	// Thread::wait(50);
+	// buzz.play(800.0, 500, 0.8);
+	// Thread::wait(50);
+	// buzz.play(920.0, 500, 1.0);
+	//buzz.play(0, 100, 0);
 
 	DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
-	while (1) {
+	if (fpga_ready) {
+		// NeoStrip rgbLED(RJ_NEOPIXEL, 1);
+		// rgbLED.setBrightness(1.0);
+		// rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+		// rgbLED.write();
+	}
+
+	std::array<uint16_t, 5> duty_cycles_r = { 0 };
+	std::array<uint16_t, 5> duty_cycles_w = { 2, 7, 3, 15, 120 };
+	std::array<uint16_t, 5> enc_deltas = { 0 };
+	uint8_t status_byte, j = 0;
+	bool motor_on = false;
+
+	LOG(INIT, "FPGA git commit hash:\t0x%08X", fpga.git_hash());
+
+	while (true) {
+
 		rdy_led = !fpga_ready;
 		Thread::wait(1000);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
+
+		for (size_t i = 0; i < duty_cycles_w.size(); i++)
+			duty_cycles_w[i] += 50;
+
+		status_byte = fpga.read_duty_cycles(duty_cycles_r.data(), duty_cycles_r.size());
+
+		LOG(OK,
+		    "DUTY CYCLES\t(read):\r\n"
+		    "    (0x%02X)\t0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X",
+		    status_byte, duty_cycles_r.at(0), duty_cycles_r.at(1),
+		    duty_cycles_r.at(2), duty_cycles_r.at(3), duty_cycles_r.at(4)
+		   );
+
+		status_byte = fpga.set_duty_get_enc(duty_cycles_w.data(), duty_cycles_w.size(),
+		                                    enc_deltas.data(), enc_deltas.size());
+
+		LOG(OK,
+		    "ENC DELTAS\t(duty cycle write to values on 2nd lines):\r\n"
+		    "    (0x%02X)\t0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X\r\n"
+		    "            \t0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X",
+		    status_byte,
+		    enc_deltas.at(0), 	enc_deltas.at(1), 	 enc_deltas.at(2),    enc_deltas.at(3),    enc_deltas.at(4),
+		    duty_cycles_w.at(0), duty_cycles_w.at(1), duty_cycles_w.at(2), duty_cycles_w.at(3), duty_cycles_w.at(4)
+		   );
+
+		if (j > 2) {
+			fpga.motors_en(motor_on);
+			motor_on = !motor_on;
+			j = 0;
+		}
+
+		j++;
 	}
 }
 
