@@ -30,7 +30,7 @@ private:
     const float _maxAcc;
     const float _maxSpeed;
 
-    float _duration;
+    const float _duration;
 
 public:
     TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
