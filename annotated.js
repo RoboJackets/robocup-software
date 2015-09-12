@@ -259,6 +259,7 @@ var annotated =
     [ "Planning", null, [
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
       [ "DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", "class_planning_1_1_direct_target_path_planner" ],
+      [ "EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", "class_planning_1_1_escape_obstacles_path_planner" ],
       [ "IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", "class_planning_1_1_independent_multi_robot_path_planner" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
       [ "MotionCommand", "class_planning_1_1_motion_command.html", "class_planning_1_1_motion_command" ],

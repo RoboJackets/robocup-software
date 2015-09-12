@@ -148,9 +148,6 @@ Protected Member Functions</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a43c789cf73ba8b48789c874c73d10816">shouldReplan</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> goal, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, const <a class="el" href="class_planning_1_1_path.html">Path</a> *prevPath) const </td></tr>
 <tr class="memdesc:a43c789cf73ba8b48789c874c73d10816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check to see if the previous path (if any) should be discarded and replaced with a newly-planned one. <br/></td></tr>
 <tr class="separator:a43c789cf73ba8b48789c874c73d10816"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a370d18156fc0091f691e9eedfc48b049"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a370d18156fc0091f691e9eedfc48b049">findNonBlockedGoal</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> goal, boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt; prevGoal, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, int maxItr=100)</td></tr>
-<tr class="memdesc:a370d18156fc0091f691e9eedfc48b049"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the given goal point is in an obstacle, uses an RRT to attempt to find a point that is close, but not blocked.  <a href="#a370d18156fc0091f691e9eedfc48b049">More...</a><br/></td></tr>
-<tr class="separator:a370d18156fc0091f691e9eedfc48b049"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e7b74bc4b00f995b74f6e7f91306520"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e7b74bc4b00f995b74f6e7f91306520"></a>
 <a class="el" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a3e7b74bc4b00f995b74f6e7f91306520">runRRT</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> goal, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles)</td></tr>
 <tr class="memdesc:a3e7b74bc4b00f995b74f6e7f91306520"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a bi-directional RRT to attempt to join the start and end states. <br/></td></tr>
@@ -212,55 +209,6 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 <map name="_planning_1_1_r_r_t_planner_coll__map" id="_planning_1_1_r_r_t_planner_coll__map">
 <area shape="rect" id="node2" href="class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="5,6,192,47"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a370d18156fc0091f691e9eedfc48b049"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> Planning::RRTPlanner::findNonBlockedGoal </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td>
-          <td class="paramname"><em>goal</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td>
-          <td class="paramname"><em>prevGoal</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *&#160;</td>
-          <td class="paramname"><em>obstacles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>maxItr</em> = <code>100</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>If the given goal point is in an obstacle, uses an RRT to attempt to find a point that is close, but not blocked. </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/planning/<a class="el" href="_r_r_t_planner_8hpp_source.html">RRTPlanner.hpp</a></li>
 <li>soccer/planning/RRTPlanner.cpp</li>
@@ -271,7 +219,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_r_r_t_planner.html">RRTPlanner</a></li>
-    <li class="footer">Generated on Thu Sep 10 2015 20:57:56 for GT RoboCup SSL by
+    <li class="footer">Generated on Sat Sep 12 2015 16:33:46 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

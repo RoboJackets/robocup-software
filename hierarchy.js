@@ -163,8 +163,12 @@ var hierarchy =
     [ "Geometry2d::ShapeSet", "class_geometry2d_1_1_shape_set.html", null ],
     [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
       [ "Planning::DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", null ],
+      [ "Planning::EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -242,9 +246,6 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],
