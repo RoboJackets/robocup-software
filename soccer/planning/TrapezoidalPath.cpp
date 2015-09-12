@@ -12,13 +12,12 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
       _pathLength((startPos - endPos).mag()),
       _maxAcc(constraints.maxAcceleration),
       _maxSpeed(constraints.maxSpeed),
-      _pathDirection((endPos - startPos).normalized()) {
-    // Precalculate the duration of the path
-    _duration =
-        Trapezoidal::getTime(_pathLength,  // distance
-                             _pathLength,  // pathLength
-                             _maxSpeed, _maxAcc, _startSpeed, _endSpeed);
-}
+      _pathDirection((endPos - startPos).normalized()),
+      // Precalculate the duration of the path
+      _duration(Trapezoidal::getTime(_pathLength,  // distance
+                                     _pathLength,  // pathLength
+                                     _maxSpeed, _maxAcc, _startSpeed,
+                                     _endSpeed)) {}
 
 boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
     float distance;
