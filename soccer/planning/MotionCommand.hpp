@@ -9,7 +9,7 @@ namespace Planning {
 
 class MotionCommand {
 public:
-    enum CommandType { PathTarget, WorldVel, Pivot, DirectPathTarget };
+    enum CommandType { PathTarget, WorldVel, Pivot, DirectPathTarget, None };
     virtual ~MotionCommand() = default;
     CommandType getCommandType() const { return commandType; }
     virtual std::unique_ptr<Planning::MotionCommand> clone() const = 0;
@@ -21,6 +21,14 @@ protected:
 private:
     // The type of command
     const CommandType commandType;
+};
+
+struct EmptyCommand : public MotionCommand {
+    EmptyCommand() : MotionCommand(MotionCommand::None) {};
+
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<EmptyCommand>();
+    }
 };
 
 struct PathTargetCommand : public MotionCommand {
