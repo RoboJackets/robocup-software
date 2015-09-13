@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "TargetVelPathPlanner.hpp"
+#include "planning/MotionCommand.hpp"
 #include <Geometry2d/Point.hpp>
 
 using namespace Geometry2d;
@@ -8,8 +9,8 @@ namespace Planning {
 
 TEST(TargetVelPathPlannerTest, run) {
     MotionInstant startInstant({0, 0}, {0, 0});
-    MotionCommand cmd;
-    cmd.setWorldVel({0, 1});
+    WorldVelTargetCommand command(Point(0, 1));
+
     MotionConstraints motionConstraints;
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
