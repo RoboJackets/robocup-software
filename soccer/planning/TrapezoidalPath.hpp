@@ -22,47 +22,47 @@ namespace Planning {
  */
 class TrapezoidalPath : public Path {
 private:
-  const Geometry2d::Point _startPos, _endPos;
-  const Geometry2d::Point _pathDirection;
-  const float _startSpeed, _endSpeed;
+    const Geometry2d::Point _startPos, _endPos;
+    const Geometry2d::Point _pathDirection;
+    const float _startSpeed, _endSpeed;
 
-  const float _pathLength;
-  const float _maxAcc;
-  const float _maxSpeed;
+    const float _pathLength;
+    const float _maxAcc;
+    const float _maxSpeed;
 
-  float _duration;
+    float _duration;
 
 public:
-  TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
-                  Geometry2d::Point endPos, float endSpeed,
-                  const MotionConstraints &constraints);
+    TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
+                    Geometry2d::Point endPos, float endSpeed,
+                    const MotionConstraints& constraints);
 
-  virtual boost::optional<MotionInstant> evaluate(float time) const override;
+    virtual boost::optional<MotionInstant> evaluate(float time) const override;
 
-  // TODO: only return true for *new* obstacles
-  virtual bool hit(const Geometry2d::ShapeSet &obstacles, float &hitTime,
-                   float initialTime = 0) const override;
+    // TODO: only return true for *new* obstacles
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
+                     float initialTime = 0) const override;
 
-  virtual float getDuration() const override { return _duration; }
+    virtual float getDuration() const override { return _duration; }
 
-  float maxSpeed() const { return _maxSpeed; }
+    float maxSpeed() const { return _maxSpeed; }
 
-  virtual std::unique_ptr<Path> subPath(
-      float startTime = 0,
-      float endTime = std::numeric_limits<float>::infinity()) const override;
+    virtual std::unique_ptr<Path> subPath(
+        float startTime = 0,
+        float endTime = std::numeric_limits<float>::infinity()) const override;
 
-  virtual MotionInstant end() const override {
-    return MotionInstant(_endPos, _pathDirection * _endSpeed);
-  }
+    virtual MotionInstant end() const override {
+        return MotionInstant(_endPos, _pathDirection * _endSpeed);
+    }
 
-  virtual MotionInstant start() const override {
-    return MotionInstant(_startPos, _pathDirection * _startSpeed);
-  }
+    virtual MotionInstant start() const override {
+        return MotionInstant(_startPos, _pathDirection * _startSpeed);
+    }
 
-  virtual std::unique_ptr<Path> clone() const override {
-    debugThrow("This function is not implemented");
-    return nullptr;
-  }
+    virtual std::unique_ptr<Path> clone() const override {
+        debugThrow("This function is not implemented");
+        return nullptr;
+    }
 };
 
-} // namespace Planning
+}  // namespace Planning

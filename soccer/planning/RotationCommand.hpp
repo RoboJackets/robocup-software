@@ -5,30 +5,30 @@
 namespace Planning {
 struct RotationCommand {
 public:
-  enum CommandType { FacePoint, FaceAngle };
+    enum CommandType { FacePoint, FaceAngle };
 
-  virtual ~RotationCommand() = default;
+    virtual ~RotationCommand() = default;
 
-  CommandType getCommandType() const { return commandType; }
+    CommandType getCommandType() const { return commandType; }
 
 protected:
-  RotationCommand(CommandType command) : commandType(command) {}
+    RotationCommand(CommandType command) : commandType(command) {}
 
 private:
-  const CommandType commandType;
+    const CommandType commandType;
 };
 
 struct FacePointCommand : public RotationCommand {
-  explicit FacePointCommand(Geometry2d::Point target)
-      : RotationCommand(FacePoint), targetPos(target) {}
+    explicit FacePointCommand(Geometry2d::Point target)
+        : RotationCommand(FacePoint), targetPos(target) {}
 
-  const Geometry2d::Point targetPos;
+    const Geometry2d::Point targetPos;
 };
 
 struct FaceAngleCommand : public RotationCommand {
-  explicit FaceAngleCommand(float radians)
-      : RotationCommand(FaceAngle), targetAngle(radians) {}
+    explicit FaceAngleCommand(float radians)
+        : RotationCommand(FaceAngle), targetAngle(radians) {}
 
-  const float targetAngle;
+    const float targetAngle;
 };
 }

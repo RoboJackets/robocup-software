@@ -12,32 +12,30 @@ namespace Planning {
 /// possible.  Avoids obstacles.
 class TargetVelPathPlanner : public SingleRobotPathPlanner {
 public:
-  virtual std::unique_ptr<Path>
-  run(MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
-      const MotionConstraints &motionConstraints,
-      const Geometry2d::ShapeSet *obstacles,
-      std::unique_ptr<Path> prevPath = nullptr) override;
+    virtual std::unique_ptr<Path> run(
+        MotionInstant startInstant, const MotionCommand* cmd,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet* obstacles,
+        std::unique_ptr<Path> prevPath = nullptr) override;
 
-  virtual MotionCommand::CommandType commandType() const override {
-    return MotionCommand::WorldVel;
-  }
+    virtual MotionCommand::CommandType commandType() const override {
+        return MotionCommand::WorldVel;
+    }
 
-  static void createConfiguration(Configuration *cfg);
+    static void createConfiguration(Configuration* cfg);
 
 private:
-  bool shouldReplan(MotionInstant startInstant,
-                    const std::unique_ptr<MotionCommand> &cmd,
-                    const MotionConstraints &motionConstraints,
-                    const Geometry2d::ShapeSet *obstacles,
-                    const Path *prevPath);
-  Geometry2d::Point
-  calculateNonblockedPathEndpoint(Geometry2d::Point start,
-                                  Geometry2d::Point dir,
-                                  const Geometry2d::ShapeSet *obstacles);
+    bool shouldReplan(MotionInstant startInstant, const MotionCommand* cmd,
+                      const MotionConstraints& motionConstraints,
+                      const Geometry2d::ShapeSet* obstacles,
+                      const Path* prevPath);
+    Geometry2d::Point calculateNonblockedPathEndpoint(
+        Geometry2d::Point start, Geometry2d::Point dir,
+        const Geometry2d::ShapeSet* obstacles);
 
-  /// If the desired target velocity changes by this much, the path is
-  /// replanned
-  static ConfigDouble *_targetVelChangeReplanThreshold;
+    /// If the desired target velocity changes by this much, the path is
+    /// replanned
+    static ConfigDouble* _targetVelChangeReplanThreshold;
 };
 
-} // namespace Planning
+}  // namespace Planning
