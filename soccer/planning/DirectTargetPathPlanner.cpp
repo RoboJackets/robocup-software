@@ -13,7 +13,7 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
-        Geometry2d::Point endTarget;
+        Geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
@@ -38,7 +38,7 @@ bool DirectTargetPathPlanner::shouldReplan(
     } else {
         // For DirectTarget commands, we replan if the goal position or velocity
         // have changed beyond a certain threshold
-        Geometry2d::Point endTarget;
+        Geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         float targetPosChange = (prevPath->end().pos - endTarget).mag();
         float targetVelChange = prevPath->end().vel.mag() - endSpeed;

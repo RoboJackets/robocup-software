@@ -54,7 +54,7 @@ struct DirectPathTargetCommand : public MotionCommand {
         return std::make_unique<DirectPathTargetCommand>(*this);
     }
     explicit DirectPathTargetCommand(const MotionInstant& goal)
-        : MotionCommand(MotionCommand::PathTarget), pathGoal(goal){};
+        : MotionCommand(MotionCommand::DirectPathTarget), pathGoal(goal){};
     MotionInstant pathGoal;
 };
 }  // namespace Planning
