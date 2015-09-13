@@ -22,7 +22,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
         }
 
         paths[shell] = _planners[shell]->run(
-            request.start, request.motionCommand, request.constraints,
+            request.start, request.motionCommand.get(), request.constraints,
             request.obstacles.get(), std::move(request.prevPath));
     }
 

@@ -58,16 +58,16 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 }
 
 bool TargetVelPathPlanner::shouldReplan(
-    MotionInstant startInstant, const std::unique_ptr<MotionCommand>& cmd,
+    MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
-    WorldVelTargetCommand command = [&]() {
+    WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
         if (cmd->getCommandType() == MotionCommand::WorldVel) {
-            return *static_cast<WorldVelTargetCommand*>(cmd.get());
+            return *static_cast<const WorldVelTargetCommand*>(cmd);
         } else if (cmd->getCommandType() == MotionCommand::Pivot) {
             return WorldVelTargetCommand(
-                static_cast<PivotCommand*>(cmd.get())->pivotTarget);
+                static_cast<const PivotCommand*>(cmd)->pivotTarget);
         }
         throw("That Command is not support by the TargetVelPathPlanner");
     }();
@@ -105,16 +105,16 @@ bool TargetVelPathPlanner::shouldReplan(
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
 std::unique_ptr<Path> TargetVelPathPlanner::run(
-    MotionInstant startInstant, const std::unique_ptr<MotionCommand>& cmd,
+    MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
-    WorldVelTargetCommand command = [&]() {
+    WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
         if (cmd->getCommandType() == MotionCommand::WorldVel) {
-            return *static_cast<WorldVelTargetCommand*>(cmd.get());
+            return *static_cast<const WorldVelTargetCommand*>(cmd);
         } else if (cmd->getCommandType() == MotionCommand::Pivot) {
             return WorldVelTargetCommand(
-                static_cast<PivotCommand*>(cmd.get())->pivotTarget);
+                static_cast<const PivotCommand*>(cmd)->pivotTarget);
         }
         throw("That Command is not support by the TargetVelPathPlanner");
     }();
