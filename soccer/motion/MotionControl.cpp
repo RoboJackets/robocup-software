@@ -89,25 +89,6 @@ void MotionControl::run() {
         float targetAngleFinal = (*targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
-        // float targetW;
-        // float targetAngle;
-        // TrapezoidalMotion(
-        // 	abs(angleError),					// dist
-        // 	motionConstraints.maxAngleSpeed,	// max deg/sec
-        // 	30,									// max deg/sec^2
-        // 	0.1 ,								// time into path
-        // 	_robot->angleVel,					// start speed
-        // 	0,									// final speed
-        // 	targetAngle,
-        // 	targetW 							// ignored
-        // 	);
-
-        // // PID on angle
-        // if(angleError<0) {
-        // 	targetW = - targetW;
-        // }
-        // targetW = _angleController.run(targetAngle);
-
         targetW = _angleController.run(angleError);
 
         // limit W
@@ -149,10 +130,9 @@ void MotionControl::run() {
 
     MotionInstant target;
     // if no target position is given, we don't have a path to follow
-    if (motionCommand->getCommandType() == MotionCommand::WorldVel) {
-        const WorldVelTargetCommand velCommand = *(static_cast<const WorldVelTargetCommand*>(motionCommand.get()));
-        target.vel = velCommand.worldVel.rotated(-_robot->angle);
-
+    if (!_robot->path()) {
+        _targetBodyVel(Point(0, 0));
+        return;
     } else {
 
         //
@@ -169,7 +149,7 @@ void MotionControl::run() {
         boost::optional<MotionInstant> optTarget =
             _robot->path()->evaluate(timeIntoPath);
         if (!optTarget) {
-            target.vel = Geometry2d::Point();
+            target.vel = Point();
             target.pos = _robot->pos;
         } else {
             target = *optTarget;

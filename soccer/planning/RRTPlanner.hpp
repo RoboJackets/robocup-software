@@ -40,7 +40,7 @@ public:
     void maxIterations(int value) { _maxIterations = value; }
 
     MotionCommand::CommandType commandType() const override {
-        return MotionCommand::CommandType::PathTarget;
+        return MotionCommand::PathTarget;
     }
 
     /// run the path RRTplanner
