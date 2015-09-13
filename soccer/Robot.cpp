@@ -165,6 +165,20 @@ void OurRobot::stop() {
   *_cmdText << "stop()\n";
 }
 
+void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
+    if (!visible) return;
+
+    // sets flags for future movement
+    if (verbose)
+        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
+             << ", " << goal.y << ")" << endl;
+
+    _motionCommand = make_unique<Planning::DirectPathTargetCommand>(MotionInstant(goal, (pos-goal).normalized()*endSpeed));
+
+    *_cmdText << "moveDirect(" << goal << ")" << endl;
+    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
+}
+
 void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
   if (!visible)
     return;

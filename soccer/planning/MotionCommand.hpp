@@ -9,7 +9,7 @@ namespace Planning {
 
 class MotionCommand {
 public:
-  enum CommandType { PathTarget, WorldVel, Pivot };
+  enum CommandType { PathTarget, WorldVel, Pivot, DirectPathTarget };
   virtual ~MotionCommand() = default;
   CommandType getCommandType() const { return commandType; }
   virtual std::unique_ptr<Planning::MotionCommand> clone() const = 0;
@@ -49,4 +49,12 @@ struct PivotCommand : public MotionCommand {
   Geometry2d::Point pivotTarget;
 };
 
+struct DirectPathTargetCommand : public MotionCommand {
+  virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+    return std::make_unique<DirectPathTargetCommand>(*this);
+  }
+  explicit DirectPathTargetCommand(const MotionInstant &goal)
+          : MotionCommand(MotionCommand::PathTarget), pathGoal(goal){};
+  MotionInstant pathGoal;
+};
 } // namespace Planning

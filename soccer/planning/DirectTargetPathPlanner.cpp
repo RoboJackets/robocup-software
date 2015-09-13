@@ -1,15 +1,21 @@
 #include "DirectTargetPathPlanner.hpp"
+#include "MotionCommand.hpp"
 
 namespace Planning {
 
 std::unique_ptr<Path> DirectTargetPathPlanner::run(
-    MotionInstant startInstant, MotionCommand cmd,
+    MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+
+    assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
+    Planning::DirectPathTargetCommand command =
+            *static_cast<Planning::DirectPathTargetCommand *>(cmd.get());
+
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
         Geometry2d::Point endTarget;
-        float endSpeed = cmd.getDirectTarget(endTarget);
+        float endSpeed = command.pathGoal.vel.mag();
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
                                 endTarget, endSpeed, motionConstraints));
@@ -21,16 +27,21 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
 }
 
 bool DirectTargetPathPlanner::shouldReplan(
-    MotionInstant startInstant, MotionCommand cmd,
+    MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) const {
+
+    assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
+    Planning::DirectPathTargetCommand command =
+            *static_cast<Planning::DirectPathTargetCommand *>(cmd.get());
+
     if (!prevPath) {
         return true;
     } else {
         // For DirectTarget commands, we replan if the goal position or velocity
         // have changed beyond a certain threshold
         Geometry2d::Point endTarget;
-        float endSpeed = cmd.getDirectTarget(endTarget);
+        float endSpeed = command.pathGoal.vel.mag();
         float targetPosChange = (prevPath->end().pos - endTarget).mag();
         float targetVelChange = prevPath->end().vel.mag() - endSpeed;
 
