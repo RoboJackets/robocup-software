@@ -13,10 +13,14 @@
 #include <typeinfo>
 #include <vector>
 #include <QtWidgets>
-
-#include <boost/make_unique.hpp>
-
-using boost::make_unique;
+#include <memory>
+namespace std {
+template<typename T, typename... Args>
+unique_ptr<T> make_unique(Args&&... args)
+{
+    return unique_ptr<T>(new T(forward<Args>(args)...));
+}
+}
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
