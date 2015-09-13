@@ -1,6 +1,8 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
+#include "TargetVelPathPlanner.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 
 namespace Planning {
@@ -31,6 +33,9 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
         case MotionCommand::Pivot:
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
+            break;
+        case MotionCommand::None:
+            planner = new EscapeObstaclesPathPlanner();
             break;
         default:
             debugThrow("Command not implemented");

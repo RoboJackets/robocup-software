@@ -1,12 +1,11 @@
 #include "TargetVelPathPlanner.hpp"
 #include "TrapezoidalPath.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
 #include <cmath>
 #include <boost/range/irange.hpp>
 
-#include <iostream>
 using namespace std;
-
 using namespace Geometry2d;
 
 namespace Planning {
@@ -118,11 +117,7 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
         }
         throw("That Command is not support by the TargetVelPathPlanner");
     }();
-    // if (obstacles->hit(startInstant.pos)) {
-    // TODO: what do if start pos is inside an obstacle?
-    // Compare the time to get OUT of an obstacle with obeying velocity to
-    // an EscapeObstaclesPlanner path.
-    // }
+    
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
