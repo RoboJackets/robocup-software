@@ -4,13 +4,12 @@
 namespace Planning {
 
 std::unique_ptr<Path> DirectTargetPathPlanner::run(
-    MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
+    MotionInstant startInstant, const std::unique_ptr<MotionCommand>& cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
-
     assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
     Planning::DirectPathTargetCommand command =
-            *static_cast<Planning::DirectPathTargetCommand *>(cmd.get());
+        *static_cast<Planning::DirectPathTargetCommand*>(cmd.get());
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
@@ -27,13 +26,12 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
 }
 
 bool DirectTargetPathPlanner::shouldReplan(
-    MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
+    MotionInstant startInstant, const std::unique_ptr<MotionCommand>& cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) const {
-
     assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
     Planning::DirectPathTargetCommand command =
-            *static_cast<Planning::DirectPathTargetCommand *>(cmd.get());
+        *static_cast<Planning::DirectPathTargetCommand*>(cmd.get());
 
     if (!prevPath) {
         return true;
