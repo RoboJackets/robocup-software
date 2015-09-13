@@ -15,14 +15,15 @@ public:
     }
 
     virtual std::unique_ptr<Path> run(
-            MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
-                                      const MotionConstraints &motionConstraints,
-                                      const Geometry2d::ShapeSet *obstacles,
+        MotionInstant startInstant, const std::unique_ptr<MotionCommand>& cmd,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
 
-    bool shouldReplan(MotionInstant startInstant, const std::unique_ptr<MotionCommand> &cmd,
-                      const MotionConstraints &motionConstraints,
-                      const Geometry2d::ShapeSet *obstacles,
+    bool shouldReplan(MotionInstant startInstant,
+                      const std::unique_ptr<MotionCommand>& cmd,
+                      const MotionConstraints& motionConstraints,
+                      const Geometry2d::ShapeSet* obstacles,
                       const Path* prevPath) const;
 };
 
