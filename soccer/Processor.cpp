@@ -420,6 +420,11 @@ void Processor::run() {
                     continue;
                 }
 
+                // Visualize local obstacles
+                for (auto& shape : r->localObstacles().shapes()) {
+                    _state.drawShape(shape, Qt::black, "LocalObstacles");
+                }
+
                 auto& globalObstaclesForBot =
                     (r->shell() == _gameplayModule->goalieID() ||
                      r->isPenaltyKicker)
@@ -434,7 +439,7 @@ void Processor::run() {
                     Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->motionConstraints(),
                     std::move(r->path()),
-                    std::make_shared<ShapeSet>(fullObstacles));
+                    std::make_shared<ShapeSet>(std::move(fullObstacles)));
             }
         }
 
