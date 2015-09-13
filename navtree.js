@@ -41,8 +41,8 @@ var NAVTREEINDEX =
 "class_window.html#acebd88edef8cb7257677df3f5a35dd02",
 "classgameplay_1_1plays_1_1stopped_1_1_stopped.html#a8de2bbe653d682094a72b5d44c0230bc",
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a29ca49df546b34a008bebe2fafc80d62",
-"struct_planning_1_1_plan_request.html#a990054a2e74a3857352decbabd219d2c"
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528",
+"struct_planning_1_1_plan_request.html#a98e981dbad53b764d63e90c51f497374"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
