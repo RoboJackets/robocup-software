@@ -213,6 +213,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.reset_correct_location()
         self.kicked_time = time.time()
 
+    def on_exit_receiving(self):
+        self.remove_subbehavior('capture')
+
     ## Create a good_area, that determines where a good pass should be,
     # return true if the ball has exited that area.
     #
