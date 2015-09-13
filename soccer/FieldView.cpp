@@ -9,6 +9,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Util.hpp>
+#include <planning/MotionConstraints.hpp>
 
 #include <QStyleOption>
 #include <QLayout>
@@ -159,61 +160,6 @@ void FieldView::drawWorldSpace(QPainter& p) {
     // Draw the field
     drawField(p, frame);
 
-    // maps robots to their comet trails, so we can draw a path of where each
-    // robot has been over the past X frames the pair used as a key is of the
-    // form (team, robot_id).  Blue team = 1, yellow = 2. we only draw trails
-    // for robots that exist in the current frame
-    map<pair<int, int>, QPainterPath> cometTrails;
-
-    /// populate @cometTrails with the past locations of each robot
-    int pastLocationCount = 50;  // number of past locations to show
-    const float prev_loc_scale = 0.4;
-    for (int i = 0; i < pastLocationCount + 1 && i < _history->size(); i++) {
-        const LogFrame* oldFrame = _history->at(i).get();
-        if (oldFrame) {
-            for (const SSL_WrapperPacket& wrapper : oldFrame->raw_vision()) {
-                if (!wrapper.has_detection()) {
-                    // useless
-                    continue;
-                }
-
-                const SSL_DetectionFrame& detect = wrapper.detection();
-
-                for (const SSL_DetectionRobot& r : detect.robots_blue()) {
-                    pair<int, int> key(1, r.robot_id());
-                    if (cometTrails.find(key) != cometTrails.end() || i == 0) {
-                        QPointF pt(r.x() / 1000, r.y() / 1000);
-                        if (i == 0)
-                            cometTrails[key].moveTo(pt);
-                        else
-                            cometTrails[key].lineTo(pt);
-                    }
-                }
-
-                for (const SSL_DetectionRobot& r : detect.robots_yellow()) {
-                    pair<int, int> key(2, r.robot_id());
-                    if (cometTrails.find(key) != cometTrails.end() || i == 0) {
-                        QPointF pt(r.x() / 1000, r.y() / 1000);
-                        if (i == 0)
-                            cometTrails[key].moveTo(pt);
-                        else
-                            cometTrails[key].lineTo(pt);
-                    }
-                }
-            }
-        }
-    }
-
-    // draw robot comet trails
-    const float cometTrailPenSize = 0.05;
-    for (auto& kv : cometTrails) {
-        QColor color = kv.first.first == 1 ? Qt::blue : Qt::yellow;
-        QPen pen(color, cometTrailPenSize);
-        pen.setCapStyle(Qt::RoundCap);
-        p.setPen(pen);
-        p.drawPath(kv.second);
-    }
-
     // Raw vision
     if (showRawBalls || showRawRobots) {
         tempPen.setColor(QColor(0xcc, 0xcc, 0xcc));
@@ -267,7 +213,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                  true);  // Blue
         p.setPen(yellowPen);
         drawText(p, QPointF(0, 1.75),
-                 QString(frame->team_name_yellow().c_str()), true);  // Yellow
+                 QString(frame->team_name_yellow().c_str()),
+                 true);  // Yellow
         p.setFont(savedFont);
     }
 
@@ -321,6 +268,34 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pts.push_back(qpointf(path.points(i)));
             }
             p.drawPolyline(pts.data(), pts.size());
+        }
+    }
+
+    for (const DebugRobotPath& path : frame->debug_robot_paths()) {
+        if (path.layer() < 0 || layerVisible(path.layer())) {
+            for (int i = 0; i < path.points_size() - 1; ++i) {
+                const DebugRobotPath::DebugRobotPathPoint& from =
+                    path.points(i);
+                const DebugRobotPath::DebugRobotPathPoint& to =
+                    path.points(i + 1);
+
+                Geometry2d::Point avgVel =
+                    (Geometry2d::Point(path.points(i).vel()) +
+                     Geometry2d::Point(path.points(i + 1).vel())) /
+                    2;
+                float pcntMaxSpd =
+                    avgVel.mag() / MotionConstraints::defaultMaxSpeed();
+                QColor mixedColor(std::min((int)(255 * pcntMaxSpd), 255), 0,
+                                  std::min((int)(255 * (1 - pcntMaxSpd)), 255));
+                QPen pen(mixedColor);
+                pen.setCapStyle(Qt::RoundCap);
+                pen.setWidthF(0.03);
+                p.setPen(pen);
+
+                const Geometry2d::Point fromPos = Geometry2d::Point(from.pos());
+                const Geometry2d::Point toPos = Geometry2d::Point(to.pos());
+                p.drawLine(fromPos.toQPointF(), toPos.toQPointF());
+            }
         }
     }
 
@@ -388,6 +363,51 @@ void FieldView::drawTeamSpace(QPainter& p) {
         }
     }
     p.setBrush(Qt::NoBrush);
+
+    // maps robots to their comet trails, so we can draw a path of where each
+    // robot has been over the past X frames the pair used as a key is of the
+    // form (team, robot_id).  Blue team = 1, yellow = 2. we only draw trails
+    // for robots that exist in the current frame
+    map<pair<int, int>, QPainterPath> cometTrails;
+
+    /// populate @cometTrails with the past locations of each robot
+    int pastLocationCount = 40;  // number of past locations to show
+    for (int i = 0; i < pastLocationCount + 1 && i < _history->size(); i++) {
+        const LogFrame* oldFrame = _history->at(i).get();
+        if (oldFrame) {
+            for (const LogFrame::Robot& r : oldFrame->self()) {
+                pair<int, int> key(1, r.shell());
+                if (cometTrails.find(key) != cometTrails.end() || i == 0) {
+                    QPointF pt = qpointf(r.pos());
+                    if (i == 0)
+                        cometTrails[key].moveTo(pt);
+                    else
+                        cometTrails[key].lineTo(pt);
+                }
+            }
+
+            for (const LogFrame::Robot& r : oldFrame->self()) {
+                pair<int, int> key(2, r.shell());
+                if (cometTrails.find(key) != cometTrails.end() || i == 0) {
+                    QPointF pt = qpointf(r.pos());
+                    if (i == 0)
+                        cometTrails[key].moveTo(pt);
+                    else
+                        cometTrails[key].lineTo(pt);
+                }
+            }
+        }
+    }
+
+    // draw robot comet trails
+    const float cometTrailPenSize = 0.07;
+    for (auto& kv : cometTrails) {
+        QColor color = kv.first.first == 1 ? Qt::blue : Qt::yellow;
+        QPen pen(color, cometTrailPenSize);
+        pen.setCapStyle(Qt::RoundCap);
+        p.setPen(pen);
+        p.drawPath(kv.second);
+    }
 
     // Text positioning vectors
     QPointF rtX = qpointf(Geometry2d::Point(0, 1).rotated(-_rotate * 90));
