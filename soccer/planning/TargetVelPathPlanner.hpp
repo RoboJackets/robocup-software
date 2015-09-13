@@ -13,7 +13,8 @@ namespace Planning {
 class TargetVelPathPlanner : public SingleRobotPathPlanner {
 public:
     virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, MotionCommand cmd,
+        MotionInstant startInstant,
+        const std::unique_ptr<MotionCommand>& cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
@@ -25,9 +26,10 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    bool shouldReplan(MotionInstant startInstant, MotionCommand cmd,
-                      const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet* obstacles,
+    bool shouldReplan(MotionInstant startInstant,
+        const std::unique_ptr<MotionCommand>& cmd,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet* obstacles,
                       const Path* prevPath);
     Geometry2d::Point calculateNonblockedPathEndpoint(
         Geometry2d::Point start, Geometry2d::Point dir,
