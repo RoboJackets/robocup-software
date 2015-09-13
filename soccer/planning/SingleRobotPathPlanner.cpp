@@ -1,5 +1,6 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
+#include "DirectTargetPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 
 namespace Planning {
@@ -18,14 +19,13 @@ void SingleRobotPathPlanner::createConfiguration(Configuration *cfg) {
 std::unique_ptr<SingleRobotPathPlanner>
 PlannerForCommandType(MotionCommand::CommandType type) {
   SingleRobotPathPlanner *planner = nullptr;
-
   switch (type) {
   case MotionCommand::PathTarget:
     planner = new RRTPlanner(250);
     break;
-  // case MotionCommand::DirectTarget:
-  //   planner = new DirectTargetPathPlanner();
-  //    break;
+   case MotionCommand::DirectPathTarget:
+     planner = new DirectTargetPathPlanner();
+      break;
 
   // TODO Undo this hack to use TargetVelPlanner to do Pivot
   case MotionCommand::Pivot:

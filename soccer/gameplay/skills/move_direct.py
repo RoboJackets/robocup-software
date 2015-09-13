@@ -46,7 +46,7 @@ class MoveDirect(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         if self.pos != None:
-            self.robot.move_direct_to(self.pos)
+            self.robot.move_to_direct(self.pos)
 
 
     def role_requirements(self):
