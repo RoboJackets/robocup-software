@@ -173,7 +173,7 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
              << ", " << goal.y << ")" << endl;
 
     _motionCommand = make_unique<Planning::DirectPathTargetCommand>(
-        MotionInstant(goal, (pos - goal).normalized() * endSpeed));
+        MotionInstant(goal, (goal - pos).normalized() * endSpeed));
 
     *_cmdText << "moveDirect(" << goal << ")" << endl;
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
