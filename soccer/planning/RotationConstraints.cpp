@@ -8,8 +8,8 @@ ConfigDouble* RotationConstraints::_max_rotation_acceleration;
 
 void RotationConstraints::createConfiguration(Configuration* cfg) {
     _max_rotation_speed = new ConfigDouble(
-        cfg, "MotionConstraints/Max Rotation Speed", 2.0);  //  radians / second
+        cfg, "RotationConstraints/Max Rotation Speed", 2.0);  //  radians / second
     _max_rotation_acceleration =
-        new ConfigDouble(cfg, "MotionConstraints/Max Rotation Acceleration",
+        new ConfigDouble(cfg, "RotationConstraints/Max Rotation Acceleration",
                          2);  //  radians / second^2
 }
