@@ -10,7 +10,6 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <sys/time.h>
-#include <typeinfo>
 #include <vector>
 #include <QtWidgets>
 #include <memory>

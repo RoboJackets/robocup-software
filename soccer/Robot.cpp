@@ -155,7 +155,7 @@ void OurRobot::resetMotionConstraints() {
     _rotationConstraints = RotationConstraints();
     _motionConstraints = MotionConstraints();
     _motionCommand = make_unique<Planning::EmptyCommand>();
-    _rotationCommand = nullptr;
+    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
 }
 
 void OurRobot::stop() {
@@ -202,7 +202,7 @@ void OurRobot::worldVelocity(Geometry2d::Point v) {
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-    _rotationCommand = nullptr;
+    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
 
     // reset other conflicting motion commands
     _motionCommand = make_unique<Planning::PivotCommand>(pivotTarget);
@@ -251,7 +251,7 @@ void OurRobot::face(Geometry2d::Point pt) {
 }
 
 void OurRobot::faceNone() {
-    _rotationCommand = nullptr;
+    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
 
     *_cmdText << "faceNone()" << endl;
 }
