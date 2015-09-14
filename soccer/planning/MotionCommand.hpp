@@ -28,7 +28,7 @@ private:
 };
 
 struct EmptyCommand : public MotionCommand {
-    EmptyCommand() : MotionCommand(MotionCommand::None) {};
+    EmptyCommand() : MotionCommand(MotionCommand::None){};
 
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<EmptyCommand>();

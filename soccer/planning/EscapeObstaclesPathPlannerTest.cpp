@@ -18,7 +18,8 @@ TEST(EscapeObstaclesPathPlanner, run) {
     obstacles.add(std::make_shared<Circle>(Point(0, 0), circleRadius));
 
     EscapeObstaclesPathPlanner planner;
-    auto path = planner.run(startInstant, &cmd, MotionConstraints(), &obstacles);
+    auto path =
+        planner.run(startInstant, &cmd, MotionConstraints(), &obstacles);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 
