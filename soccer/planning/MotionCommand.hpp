@@ -7,6 +7,10 @@
 
 namespace Planning {
 
+/*
+ * This is a superclass for different MotionCommands.
+ * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget, None
+ */
 class MotionCommand {
 public:
     enum CommandType { PathTarget, WorldVel, Pivot, DirectPathTarget, None };
