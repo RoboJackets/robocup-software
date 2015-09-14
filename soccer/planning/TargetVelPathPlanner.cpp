@@ -57,9 +57,20 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 }
 
 bool TargetVelPathPlanner::shouldReplan(
-    MotionInstant startInstant, MotionCommand cmd,
+    MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
+    // TODO Undo this hack to use TargetVelPlanner to do Pivot
+    WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
+        if (cmd->getCommandType() == MotionCommand::WorldVel) {
+            return *static_cast<const WorldVelTargetCommand*>(cmd);
+        } else if (cmd->getCommandType() == MotionCommand::Pivot) {
+            return WorldVelTargetCommand(
+                static_cast<const PivotCommand*>(cmd)->pivotTarget);
+        }
+        throw("That Command is not support by the TargetVelPathPlanner");
+    }();
+
     if (SingleRobotPathPlanner::shouldReplan(startInstant, motionConstraints,
                                              obstacles, prevPath))
         return true;
@@ -67,7 +78,7 @@ bool TargetVelPathPlanner::shouldReplan(
     // See if obstacles have changed such that the end point is significantly
     // different
     const Point newEndpoint = calculateNonblockedPathEndpoint(
-        prevPath->start().pos, cmd.getWorldVel(), obstacles);
+        prevPath->start().pos, command.worldVel, obstacles);
     const float endChange = (newEndpoint - prevPath->end().pos).mag();
     if (endChange > SingleRobotPathPlanner::goalChangeThreshold()) {
         return true;
@@ -82,7 +93,7 @@ bool TargetVelPathPlanner::shouldReplan(
             "'TrapezoidalPath'");
     }
     const float velChange =
-        cmd.getWorldVel().mag() - trapezoidalPath->maxSpeed();
+        command.worldVel.mag() - trapezoidalPath->maxSpeed();
     if (velChange > *_targetVelChangeReplanThreshold) {
         return true;
     }
@@ -93,26 +104,35 @@ bool TargetVelPathPlanner::shouldReplan(
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
 std::unique_ptr<Path> TargetVelPathPlanner::run(
-    MotionInstant startInstant, MotionCommand cmd,
+    MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
-    assert(cmd.getCommandType() == MotionCommand::WorldVel);
-
     // If the start point is in an obstacle, escape from it
     if (obstacles->hit(startInstant.pos)) {
         EscapeObstaclesPathPlanner escapePlanner;
-        return escapePlanner.run(startInstant, MotionCommand(),
-                                 motionConstraints, obstacles,
-                                 std::move(prevPath));
+        EmptyCommand emptyCommand;
+        return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
+                                 obstacles, std::move(prevPath));
     }
+
+    // TODO Undo this hack to use TargetVelPlanner to do Pivot
+    WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
+        if (cmd->getCommandType() == MotionCommand::WorldVel) {
+            return *static_cast<const WorldVelTargetCommand*>(cmd);
+        } else if (cmd->getCommandType() == MotionCommand::Pivot) {
+            return WorldVelTargetCommand(
+                static_cast<const PivotCommand*>(cmd)->pivotTarget);
+        }
+        throw("That Command is not support by the TargetVelPathPlanner");
+    }();
 
     if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
                      prevPath.get())) {
         // Choose the furthest endpoint we can that doesn't hit obstacles
         Point endpoint = calculateNonblockedPathEndpoint(
-            startInstant.pos, cmd.getWorldVel(), obstacles);
+            startInstant.pos, command.worldVel, obstacles);
         MotionConstraints moddedConstraints = motionConstraints;
-        moddedConstraints.maxSpeed = cmd.getWorldVel().mag();
+        moddedConstraints.maxSpeed = command.worldVel.mag();
 
         // Make a path from the start point in the direction of the target vel
         // that ends at the calculated endpoint

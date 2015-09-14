@@ -14,14 +14,15 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
         // Make sure we have the right planner.  If it changes from last time,
         // delete the old path.
         if (!prevPlanner ||
-            prevPlanner->commandType() != request.command.getCommandType()) {
+            prevPlanner->commandType() !=
+                request.motionCommand->getCommandType()) {
             _planners[shell] =
-                PlannerForCommandType(request.command.getCommandType());
+                PlannerForCommandType(request.motionCommand->getCommandType());
             request.prevPath = nullptr;
         }
 
         paths[shell] = _planners[shell]->run(
-            request.start, request.command, request.constraints,
+            request.start, request.motionCommand.get(), request.constraints,
             request.obstacles.get(), std::move(request.prevPath));
     }
 

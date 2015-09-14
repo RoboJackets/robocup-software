@@ -10,7 +10,7 @@ namespace Planning {
 TEST(EscapeObstaclesPathPlanner, run) {
     // The robot is at the origin
     MotionInstant startInstant({0, 0}, {0, 0});
-    MotionCommand cmd;  // "None" command
+    EmptyCommand cmd;  // "None" command
 
     // Add an circle of radius 5 centered at the origin as an obstacle
     ShapeSet obstacles;
@@ -18,7 +18,8 @@ TEST(EscapeObstaclesPathPlanner, run) {
     obstacles.add(std::make_shared<Circle>(Point(0, 0), circleRadius));
 
     EscapeObstaclesPathPlanner planner;
-    auto path = planner.run(startInstant, cmd, MotionConstraints(), &obstacles);
+    auto path =
+        planner.run(startInstant, &cmd, MotionConstraints(), &obstacles);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 

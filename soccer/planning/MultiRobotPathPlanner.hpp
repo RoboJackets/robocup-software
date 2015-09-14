@@ -13,19 +13,19 @@ namespace Planning {
 /// The PlanRequest encapsulates all information that the planner needs to know
 /// about an individual robot in order to generate a path for it.
 struct PlanRequest {
-    PlanRequest(MotionInstant start, MotionCommand command,
+    PlanRequest(MotionInstant start, std::unique_ptr<MotionCommand> command,
                 MotionConstraints constraints, std::unique_ptr<Path> prevPath,
-                std::shared_ptr<const Geometry2d::ShapeSet> obstacles)
+                std::shared_ptr<const Geometry2d::ShapeSet> obs)
         : start(start),
-          command(command),
+          motionCommand(std::move(command)),
           constraints(constraints),
           prevPath(std::move(prevPath)),
-          obstacles(obstacles) {}
+          obstacles(obs) {}
 
     PlanRequest() {}
 
     MotionInstant start;
-    MotionCommand command;
+    std::unique_ptr<MotionCommand> motionCommand;
     MotionConstraints constraints;
     std::unique_ptr<Path> prevPath;
     std::shared_ptr<const Geometry2d::ShapeSet> obstacles;

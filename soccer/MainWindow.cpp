@@ -41,7 +41,7 @@ void calcMinimumWidth(QWidget* widget, QString text) {
 }
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-    qRegisterMetaType<QVector<int> >("QVector<int>");
+    qRegisterMetaType<QVector<int>>("QVector<int>");
 
     _quaternion_demo = nullptr;
 
