@@ -10,7 +10,6 @@
 #include <cmath>
 #include <stdio.h>
 #include <algorithm>
-#include <typeinfo>
 
 using namespace std;
 using namespace Geometry2d;
@@ -69,19 +68,17 @@ void MotionControl::run() {
         PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
         targetPt = command.pivotTarget;
     }
-    if (rotationCommand != nullptr) {
-        try {
-            Planning::FacePointCommand* facePointCommand =
-                dynamic_cast<Planning::FacePointCommand*>(
-                    rotationCommand.get());
-            targetPt = facePointCommand->targetPos;
-        } catch (std::bad_cast exception) {
-            std::string message;
-            message.append("Support for the command ");
-            message.append(typeid(rotationCommand).name());
-            message.append(" is not implemented");
-            debugThrow(message);
-        }
+
+    switch (rotationCommand->getCommandType()) {
+        case RotationCommand::FacePoint:
+            targetPt = static_cast<const Planning::FacePointCommand *>(rotationCommand.get())->targetPos;
+            break;
+        case RotationCommand::None:
+            //do nothing
+            break;
+        default:
+            debugThrow("RotationCommand Not implemented");
+            break;
     }
 
     if (targetPt) {

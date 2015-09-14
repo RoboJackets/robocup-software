@@ -5,7 +5,7 @@
 namespace Planning {
 struct RotationCommand {
 public:
-    enum CommandType { FacePoint, FaceAngle };
+    enum CommandType { FacePoint, FaceAngle, None };
 
     virtual ~RotationCommand() = default;
 
@@ -30,5 +30,9 @@ struct FaceAngleCommand : public RotationCommand {
         : RotationCommand(FaceAngle), targetAngle(radians) {}
 
     const float targetAngle;
+};
+
+struct EmptyAngleCommand : public RotationCommand {
+    EmptyAngleCommand() : RotationCommand(None) {}
 };
 }
