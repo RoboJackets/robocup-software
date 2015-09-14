@@ -108,11 +108,13 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
 
+    // If the start point is in an obstacle, escape from it
     if (obstacles->hit(startInstant.pos)) {
         EscapeObstaclesPathPlanner escapePlanner;
         EmptyCommand emptyCommand;
         return escapePlanner.run(startInstant, &emptyCommand, motionConstraints, obstacles, std::move(prevPath));
     }
+
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
     WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
         if (cmd->getCommandType() == MotionCommand::WorldVel) {
