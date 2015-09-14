@@ -1,0 +1,4 @@
+<map id="Planning::WorldVelTargetCommand" name="Planning::WorldVelTargetCommand">
+<area shape="rect" id="node2" href="$class_planning_1_1_motion_command.html" title="Planning::MotionCommand" alt="" coords="5,5,200,32"/>
+<area shape="rect" id="node3" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="225,5,367,32"/>
+</map>

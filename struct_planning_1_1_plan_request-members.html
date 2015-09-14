@@ -114,10 +114,10 @@ $(document).ready(function(){initNavTree('struct_planning_1_1_plan_request.html'
 
 <p>This is the complete list of members for <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>, including all inherited members.</p>
 <table class="directory">
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>command</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>constraints</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>constraints</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>motionCommand</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>obstacles</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>PlanRequest</b>(MotionInstant start, MotionCommand command, MotionConstraints constraints, std::unique_ptr&lt; Path &gt; prevPath, std::shared_ptr&lt; const Geometry2d::ShapeSet &gt; obstacles) (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>PlanRequest</b>(MotionInstant start, std::unique_ptr&lt; MotionCommand &gt; command, MotionConstraints constraints, std::unique_ptr&lt; Path &gt; prevPath, std::shared_ptr&lt; const Geometry2d::ShapeSet &gt; obs) (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>PlanRequest</b>() (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>prevPath</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>start</b> (defined in <a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a>)</td><td class="entry"><a class="el" href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></td><td class="entry"></td></tr>
@@ -126,7 +126,7 @@ $(document).ready(function(){initNavTree('struct_planning_1_1_plan_request.html'
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Sep 13 2015 18:39:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Sep 14 2015 05:15:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

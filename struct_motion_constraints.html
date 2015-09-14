@@ -132,31 +132,12 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a0bcc511453b4a71fdd7529e00cd5d7b6"><td class="memItemLeft" align="right" valign="top">boost::optional&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_motion_constraints.html#a0bcc511453b4a71fdd7529e00cd5d7b6">targetAngleVel</a></td></tr>
-<tr class="memdesc:a0bcc511453b4a71fdd7529e00cd5d7b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angle target.  <a href="#a0bcc511453b4a71fdd7529e00cd5d7b6">More...</a><br/></td></tr>
-<tr class="separator:a0bcc511453b4a71fdd7529e00cd5d7b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73556444afd501a847005ecbf4de9063"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73556444afd501a847005ecbf4de9063"></a>
-boost::optional<br class="typebreak"/>
-&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063">faceTarget</a></td></tr>
-<tr class="memdesc:a73556444afd501a847005ecbf4de9063"><td class="mdescLeft">&#160;</td><td class="mdescRight">A global point on the field that the robot should face towards. <br/></td></tr>
-<tr class="separator:a73556444afd501a847005ecbf4de9063"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc6299843f20efa93ac3bf153938730c"><td class="memItemLeft" align="right" valign="top">boost::optional<br class="typebreak"/>
-&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_motion_constraints.html#acc6299843f20efa93ac3bf153938730c">pivotTarget</a></td></tr>
-<tr class="memdesc:acc6299843f20efa93ac3bf153938730c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pivot target.  <a href="#acc6299843f20efa93ac3bf153938730c">More...</a><br/></td></tr>
-<tr class="separator:acc6299843f20efa93ac3bf153938730c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab97184be0becd18734a3a62b99904349"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_motion_constraints.html#ab97184be0becd18734a3a62b99904349">maxAngleSpeed</a></td></tr>
-<tr class="memdesc:ab97184be0becd18734a3a62b99904349"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angle constraints.  <a href="#ab97184be0becd18734a3a62b99904349">More...</a><br/></td></tr>
-<tr class="separator:ab97184be0becd18734a3a62b99904349"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50ac8502cbbb4f8a56f848b2ecbc1220"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220">maxSpeed</a></td></tr>
-<tr class="memdesc:a50ac8502cbbb4f8a56f848b2ecbc1220"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position constraints.  <a href="#a50ac8502cbbb4f8a56f848b2ecbc1220">More...</a><br/></td></tr>
+<tr class="memdesc:a50ac8502cbbb4f8a56f848b2ecbc1220"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each instance has a set of speed/acceleration limits that are used for path following They default to the global config values defined below, but can be overridden by setting these.  <a href="#a50ac8502cbbb4f8a56f848b2ecbc1220">More...</a><br/></td></tr>
 <tr class="separator:a50ac8502cbbb4f8a56f848b2ecbc1220"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a191c3c93ef993bace920aee4fcd45a68"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a191c3c93ef993bace920aee4fcd45a68"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b></td></tr>
 <tr class="separator:a191c3c93ef993bace920aee4fcd45a68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73099498892078e6f421055efbdafb26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73099498892078e6f421055efbdafb26"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_motion_constraints.html#a73099498892078e6f421055efbdafb26">endSpeed</a> = 0</td></tr>
-<tr class="memdesc:a73099498892078e6f421055efbdafb26"><td class="mdescLeft">&#160;</td><td class="mdescRight">The speed we should be going when we reach the end of the path. <br/></td></tr>
-<tr class="separator:a73099498892078e6f421055efbdafb26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -166,9 +147,6 @@ static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</t
 <tr class="memitem:aca3238cbbb18fd12872c296bfd511093"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca3238cbbb18fd12872c296bfd511093"></a>
 static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_max_speed</b></td></tr>
 <tr class="separator:aca3238cbbb18fd12872c296bfd511093"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe2e84f78e202af13db4a88285f76d14"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe2e84f78e202af13db4a88285f76d14"></a>
-static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_max_angle_speed</b></td></tr>
-<tr class="separator:afe2e84f78e202af13db4a88285f76d14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4192f39f70ca2dd6b1c28acde8ac45f7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4192f39f70ca2dd6b1c28acde8ac45f7"></a>
 static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>_replan_threshold</b></td></tr>
 <tr class="separator:a4192f39f70ca2dd6b1c28acde8ac45f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,21 +167,6 @@ static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</t
 <area shape="rect" id="node2" href="class_config_double.html" title="ConfigDouble" alt="" coords="21,251,128,277"/><area shape="rect" id="node3" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="29,173,120,200"/><area shape="rect" id="node4" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="21,83,128,109"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="ab97184be0becd18734a3a62b99904349"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float MotionConstraints::maxAngleSpeed</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Angle constraints. </p>
-<p>defaults to the config value </p>
-
-</div>
-</div>
 <a class="anchor" id="a50ac8502cbbb4f8a56f848b2ecbc1220"></a>
 <div class="memitem">
 <div class="memproto">
@@ -214,38 +177,8 @@ static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</t
       </table>
 </div><div class="memdoc">
 
-<p>Position constraints. </p>
-<p>Each instance has a set of speed/acceleration limits that are used for path following They default to the global config values defined below, but can be overridden by setting these. This is useful for going slower while carrying the ball or when trying to do precise movements. </p>
-
-</div>
-</div>
-<a class="anchor" id="acc6299843f20efa93ac3bf153938730c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">boost::optional&lt;<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&gt; MotionConstraints::pivotTarget</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Pivot target. </p>
-<p>A global point on the field that the robot should pivot towards </p>
-
-</div>
-</div>
-<a class="anchor" id="a0bcc511453b4a71fdd7529e00cd5d7b6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">boost::optional&lt;float&gt; MotionConstraints::targetAngleVel</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Angle target. </p>
-<p>Angular velocity in rad/s counterclockwise </p>
+<p>Each instance has a set of speed/acceleration limits that are used for path following They default to the global config values defined below, but can be overridden by setting these. </p>
+<p>This is useful for going slower while carrying the ball or when trying to do precise movements. </p>
 
 </div>
 </div>
@@ -259,7 +192,7 @@ static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="struct_motion_constraints.html">MotionConstraints</a></li>
-    <li class="footer">Generated on Sun Sep 13 2015 18:39:45 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Sep 14 2015 05:15:03 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

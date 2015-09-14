@@ -1,0 +1,4 @@
+<map id="Planning::FacePointCommand" name="Planning::FacePointCommand">
+<area shape="rect" id="node2" href="$struct_planning_1_1_rotation_command.html" title="Planning::RotationCommand" alt="" coords="5,5,208,32"/>
+<area shape="rect" id="node3" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="233,5,375,32"/>
+</map>

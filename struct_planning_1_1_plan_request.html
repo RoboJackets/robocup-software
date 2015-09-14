@@ -121,18 +121,18 @@ $(document).ready(function(){initNavTree('struct_planning_1_1_plan_request.html'
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aaba41e8d50da1bc96c3a5f7611b50072"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaba41e8d50da1bc96c3a5f7611b50072"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>PlanRequest</b> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> command, <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> constraints, std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; prevPath, std::shared_ptr&lt; const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &gt; obstacles)</td></tr>
-<tr class="separator:aaba41e8d50da1bc96c3a5f7611b50072"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8196be1aa3df03509db38c59a125776f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8196be1aa3df03509db38c59a125776f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>PlanRequest</b> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, std::unique_ptr&lt; <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> &gt; command, <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> constraints, std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; prevPath, std::shared_ptr&lt; const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &gt; obs)</td></tr>
+<tr class="separator:a8196be1aa3df03509db38c59a125776f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a98e981dbad53b764d63e90c51f497374"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98e981dbad53b764d63e90c51f497374"></a>
 <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td><td class="memItemRight" valign="bottom"><b>start</b></td></tr>
 <tr class="separator:a98e981dbad53b764d63e90c51f497374"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af93569374c8a61c926bb611292529d98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af93569374c8a61c926bb611292529d98"></a>
-<a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><b>command</b></td></tr>
-<tr class="separator:af93569374c8a61c926bb611292529d98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6354050958f22d98251d8f8ded493960"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6354050958f22d98251d8f8ded493960"></a>
+std::unique_ptr&lt; <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>motionCommand</b></td></tr>
+<tr class="separator:a6354050958f22d98251d8f8ded493960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7a5cc9a79e574b436a143a8d408b655"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7a5cc9a79e574b436a143a8d408b655"></a>
 <a class="el" href="struct_motion_constraints.html">MotionConstraints</a>&#160;</td><td class="memItemRight" valign="bottom"><b>constraints</b></td></tr>
 <tr class="separator:ac7a5cc9a79e574b436a143a8d408b655"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,7 +153,7 @@ std::shared_ptr&lt; const <br class="typebreak"/>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="struct_planning_1_1_plan_request__coll__graph.png" border="0" usemap="#_planning_1_1_plan_request_coll__map" alt="Collaboration graph"/></div>
 <map name="_planning_1_1_plan_request_coll__map" id="_planning_1_1_plan_request_coll__map">
-<area shape="rect" id="node2" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity..." alt="" coords="807,21,977,48"/><area shape="rect" id="node3" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="478,21,621,48"/><area shape="rect" id="node5" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="493,76,605,103"/><area shape="rect" id="node6" href="struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="823,139,961,165"/><area shape="rect" id="node7" href="class_config_double.html" title="ConfigDouble" alt="" coords="496,180,603,207"/><area shape="rect" id="node8" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,180,427,207"/><area shape="rect" id="node9" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,180,237,207"/><area shape="rect" id="node11" href="class_planning_1_1_motion_command.html" title="This class contains the motion constraints that the gameplay logic sets for a robot. " alt="" coords="795,189,989,216"/></map>
+<area shape="rect" id="node3" href="class_planning_1_1_motion_command.html" title="Planning::MotionCommand" alt="" coords="477,11,672,37"/><area shape="rect" id="node4" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity..." alt="" coords="853,71,1024,97"/><area shape="rect" id="node5" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="503,71,646,97"/><area shape="rect" id="node7" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="519,125,631,152"/><area shape="rect" id="node8" href="struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="869,201,1008,228"/><area shape="rect" id="node9" href="class_config_double.html" title="ConfigDouble" alt="" coords="521,215,628,241"/><area shape="rect" id="node10" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,215,427,241"/><area shape="rect" id="node11" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,215,237,241"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>soccer/planning/<a class="el" href="_multi_robot_path_planner_8hpp_source.html">MultiRobotPathPlanner.hpp</a></li>
@@ -164,7 +164,7 @@ std::shared_ptr&lt; const <br class="typebreak"/>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="struct_planning_1_1_plan_request.html">PlanRequest</a></li>
-    <li class="footer">Generated on Sun Sep 13 2015 18:39:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Sep 14 2015 05:15:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

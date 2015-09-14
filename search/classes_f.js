@@ -2,9 +2,11 @@ var searchData=
 [
   ['passreceive',['PassReceive',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html',1,'gameplay::skills::pass_receive']]],
   ['path',['Path',['../class_planning_1_1_path.html',1,'Planning']]],
+  ['pathtargetcommand',['PathTargetCommand',['../struct_planning_1_1_path_target_command.html',1,'Planning']]],
   ['penalty',['Penalty',['../classgameplay_1_1tactics_1_1penalty_1_1_penalty.html',1,'gameplay::tactics::penalty']]],
-  ['pid',['Pid',['../class_pid.html',1,'']]],
   ['pid',['PID',['../struct_robot_config_1_1_p_i_d.html',1,'RobotConfig']]],
+  ['pid',['Pid',['../class_pid.html',1,'']]],
+  ['pivotcommand',['PivotCommand',['../struct_planning_1_1_pivot_command.html',1,'Planning']]],
   ['pivoter',['Pivoter',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html',1,'gameplay::plays::tuning::tune_pivot']]],
   ['pivotkick',['PivotKick',['../classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html',1,'gameplay::skills::pivot_kick']]],
   ['planrequest',['PlanRequest',['../struct_planning_1_1_plan_request.html',1,'Planning']]],

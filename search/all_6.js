@@ -2,10 +2,11 @@ var searchData=
 [
   ['face',['Face',['../classgameplay_1_1skills_1_1face_1_1_face.html',1,'gameplay::skills::face']]],
   ['face',['face',['../class_our_robot.html#adac3cebda90989e3a99510110b2dab6c',1,'OurRobot']]],
+  ['faceanglecommand',['FaceAngleCommand',['../struct_planning_1_1_face_angle_command.html',1,'Planning']]],
   ['faceangleerrorthreshold',['FaceAngleErrorThreshold',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#adba2eb92fe8d4ed002e13be4bf73186b',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['facenone',['faceNone',['../class_our_robot.html#a0ec11b895af861e0dce869bfe0b3c7ed',1,'OurRobot']]],
+  ['facepointcommand',['FacePointCommand',['../struct_planning_1_1_face_point_command.html',1,'Planning']]],
   ['facer',['Facer',['../classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html',1,'gameplay::plays::tuning::tune_facing']]],
-  ['facetarget',['faceTarget',['../struct_motion_constraints.html#a73556444afd501a847005ecbf4de9063',1,'MotionConstraints']]],
   ['field',['Field',['../classgameplay_1_1constants_1_1_field.html',1,'gameplay::constants']]],
   ['field_5fdimensions',['Field_Dimensions',['../struct_field___dimensions.html',1,'']]],
   ['fieldview',['FieldView',['../class_field_view.html',1,'']]],

@@ -121,19 +121,19 @@ $(document).ready(function(){initNavTree('_multi_robot_path_planner_8hpp_source.
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>Planning {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="struct_planning_1_1_plan_request.html">   15</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_planning_1_1_plan_request.html">PlanRequest</a> {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="struct_planning_1_1_plan_request.html">PlanRequest</a>(<a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a> command,</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="struct_planning_1_1_plan_request.html">PlanRequest</a>(<a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, std::unique_ptr&lt;MotionCommand&gt; command,</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;                <a class="code" href="struct_motion_constraints.html">MotionConstraints</a> constraints, std::unique_ptr&lt;Path&gt; prevPath,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                std::shared_ptr&lt;const Geometry2d::ShapeSet&gt; obstacles)</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                std::shared_ptr&lt;const Geometry2d::ShapeSet&gt; obs)</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        : start(start),</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;          command(command),</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;          motionCommand(std::move(command)),</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;          constraints(constraints),</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;          prevPath(std::move(prevPath)),</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;          obstacles(obstacles) {}</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;          obstacles(obs) {}</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <a class="code" href="struct_planning_1_1_plan_request.html">PlanRequest</a>() {}</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a> command;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    std::unique_ptr&lt;MotionCommand&gt; motionCommand;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="struct_motion_constraints.html">MotionConstraints</a> constraints;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    std::unique_ptr&lt;Path&gt; prevPath;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    std::shared_ptr&lt;const Geometry2d::ShapeSet&gt; obstacles;</div>
@@ -149,7 +149,6 @@ $(document).ready(function(){initNavTree('_multi_robot_path_planner_8hpp_source.
 <div class="ttc" id="struct_planning_1_1_plan_request_html"><div class="ttname"><a href="struct_planning_1_1_plan_request.html">Planning::PlanRequest</a></div><div class="ttdoc">The PlanRequest encapsulates all information that the planner needs to know about an individual robot...</div><div class="ttdef"><b>Definition:</b> MultiRobotPathPlanner.hpp:15</div></div>
 <div class="ttc" id="class_planning_1_1_multi_robot_path_planner_html"><div class="ttname"><a href="class_planning_1_1_multi_robot_path_planner.html">Planning::MultiRobotPathPlanner</a></div><div class="ttdoc">Interface for Path Planners that plan paths for a set of robots. </div><div class="ttdef"><b>Definition:</b> MultiRobotPathPlanner.hpp:37</div></div>
 <div class="ttc" id="struct_planning_1_1_motion_instant_html"><div class="ttname"><a href="struct_planning_1_1_motion_instant.html">Planning::MotionInstant</a></div><div class="ttdoc">This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...</div><div class="ttdef"><b>Definition:</b> MotionInstant.hpp:11</div></div>
-<div class="ttc" id="class_planning_1_1_motion_command_html"><div class="ttname"><a href="class_planning_1_1_motion_command.html">Planning::MotionCommand</a></div><div class="ttdoc">This class contains the motion constraints that the gameplay logic sets for a robot. </div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:13</div></div>
 <div class="ttc" id="struct_motion_constraints_html"><div class="ttname"><a href="struct_motion_constraints.html">MotionConstraints</a></div><div class="ttdoc">This class contains the motion constraints that the high-level logic sets for a robot. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:14</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -157,7 +156,7 @@ $(document).ready(function(){initNavTree('_multi_robot_path_planner_8hpp_source.
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><a class="el" href="dir_28df16f06401fa4b261f014c0f6bda1e.html">planning</a></li><li class="navelem"><b>MultiRobotPathPlanner.hpp</b></li>
-    <li class="footer">Generated on Sun Sep 13 2015 18:39:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Sep 14 2015 05:15:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

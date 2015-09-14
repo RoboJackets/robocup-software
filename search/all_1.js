@@ -19,7 +19,6 @@ var searchData=
   ['angle',['angle',['../class_robot_pose.html#a2369c296d2dfaf5a61147cadc215883a',1,'RobotPose::angle()'],['../classgameplay_1_1skills_1_1face_1_1_face.html#a1a84d7145d19ca8b6fde1acd7e847c14',1,'gameplay.skills.face.Face.angle()'],['../class_geometry2d_1_1_point.html#a67ea60681c7172fa1ef5ad7b2e04174d',1,'Geometry2d::Point::angle()']]],
   ['anglereceive',['AngleReceive',['../classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html',1,'gameplay::skills::angle_receive']]],
   ['angleto',['angleTo',['../class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb',1,'Geometry2d::Point']]],
-  ['anglevelocity',['angleVelocity',['../class_our_robot.html#a39e2201dd5932aa609b6f5aa7924af26',1,'OurRobot']]],
   ['append',['append',['../class_planning_1_1_composite_path.html#aa7dbe5c31ab2a5f25fbf785fd0f173f7',1,'Planning::CompositePath']]],
   ['approachopponent',['approachOpponent',['../class_our_robot.html#afcf2cd89c218915086882fef528e2fd2',1,'OurRobot::approachOpponent(unsigned shell_id) const '],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
   ['arc',['Arc',['../class_geometry2d_1_1_arc.html',1,'Geometry2d']]],

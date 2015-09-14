@@ -1,10 +1,10 @@
 <map id="Planning::PlanRequest" name="Planning::PlanRequest">
-<area shape="rect" id="node2" href="$struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity..." alt="" coords="807,21,977,48"/>
-<area shape="rect" id="node3" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="478,21,621,48"/>
-<area shape="rect" id="node5" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="493,76,605,103"/>
-<area shape="rect" id="node6" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="823,139,961,165"/>
-<area shape="rect" id="node7" href="$class_config_double.html" title="ConfigDouble" alt="" coords="496,180,603,207"/>
-<area shape="rect" id="node8" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,180,427,207"/>
-<area shape="rect" id="node9" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,180,237,207"/>
-<area shape="rect" id="node11" href="$class_planning_1_1_motion_command.html" title="This class contains the motion constraints that the gameplay logic sets for a robot. " alt="" coords="795,189,989,216"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_motion_command.html" title="Planning::MotionCommand" alt="" coords="477,11,672,37"/>
+<area shape="rect" id="node4" href="$struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity..." alt="" coords="853,71,1024,97"/>
+<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="503,71,646,97"/>
+<area shape="rect" id="node7" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="519,125,631,152"/>
+<area shape="rect" id="node8" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="869,201,1008,228"/>
+<area shape="rect" id="node9" href="$class_config_double.html" title="ConfigDouble" alt="" coords="521,215,628,241"/>
+<area shape="rect" id="node10" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,215,427,241"/>
+<area shape="rect" id="node11" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,215,237,241"/>
 </map>

@@ -72,7 +72,13 @@ var hierarchy =
       [ "Geometry2d::Segment", "class_geometry2d_1_1_segment.html", null ]
     ] ],
     [ "Logger", "class_logger.html", null ],
-    [ "Planning::MotionCommand", "class_planning_1_1_motion_command.html", null ],
+    [ "Planning::MotionCommand", "class_planning_1_1_motion_command.html", [
+      [ "Planning::DirectPathTargetCommand", "struct_planning_1_1_direct_path_target_command.html", null ],
+      [ "Planning::EmptyCommand", "struct_planning_1_1_empty_command.html", null ],
+      [ "Planning::PathTargetCommand", "struct_planning_1_1_path_target_command.html", null ],
+      [ "Planning::PivotCommand", "struct_planning_1_1_pivot_command.html", null ],
+      [ "Planning::WorldVelTargetCommand", "struct_planning_1_1_world_vel_target_command.html", null ]
+    ] ],
     [ "MotionConstraints", "struct_motion_constraints.html", null ],
     [ "MotionControl", "class_motion_control.html", null ],
     [ "Planning::MotionInstant", "struct_planning_1_1_motion_instant.html", null ],
@@ -95,11 +101,11 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "Pid", "class_pid.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
+    [ "Pid", "class_pid.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
-    [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
+    [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
     ] ],
@@ -151,6 +157,12 @@ var hierarchy =
     ] ],
     [ "RobotStatus", "class_robot_status.html", null ],
     [ "gameplay.role_assignment.RoleRequirements", "classgameplay_1_1role__assignment_1_1_role_requirements.html", null ],
+    [ "Planning::RotationCommand", "struct_planning_1_1_rotation_command.html", [
+      [ "Planning::EmptyAngleCommand", "struct_planning_1_1_empty_angle_command.html", null ],
+      [ "Planning::FaceAngleCommand", "struct_planning_1_1_face_angle_command.html", null ],
+      [ "Planning::FacePointCommand", "struct_planning_1_1_face_point_command.html", null ]
+    ] ],
+    [ "RotationConstraints", "struct_rotation_constraints.html", null ],
     [ "RuntimeError", null, [
       [ "gameplay.role_assignment.ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ]
     ] ],
@@ -166,9 +178,6 @@ var hierarchy =
       [ "Planning::EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -246,6 +255,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],
