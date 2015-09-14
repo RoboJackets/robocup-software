@@ -11,7 +11,7 @@ namespace Planning {
 class EscapeObstaclesPathPlanner : public SingleRobotPathPlanner {
 public:
     virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, MotionCommand cmd,
+        MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;

@@ -21,9 +21,11 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
-    MotionInstant startInstant, MotionCommand cmd,
+    MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints, const ShapeSet* obstacles,
     std::unique_ptr<Path> prevPath) {
+    assert(cmd->getCommandType() == MotionCommand::None);
+
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().pos;
     const Point unblocked =

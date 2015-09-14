@@ -89,6 +89,11 @@ float Robot_angle(Robot* self) { return self->angle; }
 
 float Robot_angle_vel(Robot* self) { return self->angleVel; }
 
+void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
+    if (to == nullptr) throw NullArgumentException("to");
+    self->moveDirect(*to);
+}
+
 void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
                               Geometry2d::Point* vf) {
     if (endPos == nullptr || vf == nullptr) throw NullArgumentException();
@@ -98,11 +103,6 @@ void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
 void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
     self->move(*to);
-}
-
-void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
-    if (to == nullptr) throw NullArgumentException("to");
-    self->moveDirect(*to);
 }
 
 void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
@@ -121,7 +121,7 @@ void OurRobot_set_avoid_teammate_radius(OurRobot* self, unsigned shellID,
 }
 
 void OurRobot_set_max_angle_speed(OurRobot* self, float maxAngleSpeed) {
-    self->motionConstraints().maxAngleSpeed = maxAngleSpeed;
+    self->rotationConstraints().maxSpeed = maxAngleSpeed;
 }
 
 void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id,
@@ -575,7 +575,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
         .def("set_world_vel", &OurRobot::worldVelocity)
-        .def("set_angle_vel", &OurRobot::angleVelocity)
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)
         .def("set_max_angle_speed", OurRobot_set_max_angle_speed)
