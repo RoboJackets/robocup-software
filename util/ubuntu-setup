@@ -82,6 +82,9 @@ if $OVERWRITE_SOURCES; then
     # Copy sources.list to sources.list.old if sources.list.old is empty
     if [ -f "/etc/apt/sources.list" ]; then
         mv -n /etc/apt/sources.list /etc/apt/sources.list.old
+    else
+        echo "A prior /etc/apt/sources.list was not found! This probably means you are on a non-debian based system! To force override, run: touch /etc/apt/sources.list" 1>&2
+        exit 1
     fi
 
     # BE CAREFUL HERE...
