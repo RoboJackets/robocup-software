@@ -104,6 +104,14 @@ Configuration::Configuration() {
     _doc.appendChild(_doc.createElement("config"));
 }
 
+std::shared_ptr<Configuration> Configuration::FromRegisteredConfigurables() {
+    std::shared_ptr<Configuration> config = std::make_shared<Configuration>();
+    for (Configurable* obj : Configurable::configurables()) {
+        obj->createConfiguration(config.get());
+    }
+    return config;
+}
+
 void Configuration::addItem(ConfigItem* item) {
     _allItems.push_back(item);
 

@@ -27,7 +27,7 @@ public:
     @param other the point to find the distance to
     @return the distance to the point from the line
     */
-    float distTo(const Point& other) const;
+    float distTo(Point other) const;
 
     /**
     Applies a transformation matrix to the line.

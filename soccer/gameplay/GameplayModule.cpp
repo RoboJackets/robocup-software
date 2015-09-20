@@ -1,6 +1,7 @@
 
 #include <gameplay/GameplayModule.hpp>
 #include <Constants.hpp>
+#include <planning/MotionInstant.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <SystemState.hpp>
@@ -244,8 +245,8 @@ void Gameplay::GameplayModule::goalieID(int value) {
 /**
  * returns the group of obstacles for the field
  */
-Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
-    Geometry2d::CompositeShape obstacles;
+Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
+    Geometry2d::ShapeSet obstacles;
     if (_state->gameState.stayOnSide()) {
         obstacles.add(_sideObstacle);
     }
@@ -267,6 +268,13 @@ Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
     obstacles.add(_theirGoal);
 
     return obstacles;
+}
+
+Geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
+    Geometry2d::ShapeSet zones;
+    zones.add(_theirGoalArea);
+    zones.add(_ourGoalArea);
+    return zones;
 }
 
 /**
@@ -369,25 +377,6 @@ void Gameplay::GameplayModule::run() {
         }
     }
     PyGILState_Release(state);
-
-    /// determine global obstacles - field requirements
-    /// Two versions - one set with goal area, another without for goalie
-    Geometry2d::CompositeShape global_obstacles = globalObstacles();
-    Geometry2d::CompositeShape obstacles_with_goals = global_obstacles;
-    obstacles_with_goals.add(_ourGoalArea);
-    obstacles_with_goals.add(_theirGoalArea);
-
-    /// execute motion planning for each robot
-    for (OurRobot* r : _state->self) {
-        if (r && r->visible) {
-            /// set obstacles for the robots
-            if (r->shell() == _goalieID || r->isPenaltyKicker)
-                // The goalie and penalty kicker can enter the goal zone.
-                r->replanIfNeeded(global_obstacles);
-            else
-                r->replanIfNeeded(obstacles_with_goals);  /// all other robots
-        }
-    }
 
     /// visualize
     if (_state->gameState.stayAwayFromBall() && _state->ball.valid) {

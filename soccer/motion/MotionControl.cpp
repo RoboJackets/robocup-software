@@ -4,14 +4,16 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include "TrapezoidalMotion.hpp"
+#include <Geometry2d/Util.hpp>
+#include <planning/MotionInstant.hpp>
 
 #include <cmath>
 #include <stdio.h>
 #include <algorithm>
-#include "planning/MotionInstant.hpp"
 
 using namespace std;
 using namespace Geometry2d;
+using namespace Planning;
 
 #pragma mark Config Variables
 
@@ -20,15 +22,10 @@ REGISTER_CONFIGURABLE(MotionControl);
 ConfigDouble* MotionControl::_max_acceleration;
 ConfigDouble* MotionControl::_max_velocity;
 
-ConfigDouble* MotionControl::_path_change_boost;
-
 void MotionControl::createConfiguration(Configuration* cfg) {
     _max_acceleration =
         new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
     _max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
-
-    _path_change_boost =
-        new ConfigDouble(cfg, "MotionControl/PathChangeBoost", 0.5);
 }
 
 #pragma mark MotionControl
@@ -62,45 +59,43 @@ void MotionControl::run() {
     ////////////////////////////////////////////////////////////////////
 
     float targetW = 0;
-    if (constraints.targetAngleVel) {
-        targetW = *constraints.targetAngleVel;
-    } else if (constraints.faceTarget || constraints.pivotTarget) {
-        const Geometry2d::Point& targetPt = constraints.pivotTarget
-                                                ? *constraints.pivotTarget
-                                                : *constraints.faceTarget;
+    auto& rotationCommand = _robot->rotationCommand();
+    const auto& rotationConstraints = _robot->rotationConstraints();
 
+    boost::optional<Geometry2d::Point> targetPt;
+    const auto& motionCommand = _robot->motionCommand();
+    if (motionCommand->getCommandType() == MotionCommand::Pivot) {
+        PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
+        targetPt = command.pivotTarget;
+    }
+
+    switch (rotationCommand->getCommandType()) {
+        case RotationCommand::FacePoint:
+            targetPt = static_cast<const Planning::FacePointCommand*>(
+                           rotationCommand.get())->targetPos;
+            break;
+        case RotationCommand::None:
+            // do nothing
+            break;
+        default:
+            debugThrow("RotationCommand Not implemented");
+            break;
+    }
+
+    if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        float targetAngleFinal = (targetPt - _robot->pos).angle();
+        float targetAngleFinal = (*targetPt - _robot->pos).angle();
         float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
-
-        // float targetW;
-        // float targetAngle;
-        // TrapezoidalMotion(
-        // 	abs(angleError),					// dist
-        // 	motionConstraints.maxAngleSpeed,	// max deg/sec
-        // 	30,									// max deg/sec^2
-        // 	0.1 ,								// time into path
-        // 	_robot->angleVel,					// start speed
-        // 	0,									// final speed
-        // 	targetAngle,
-        // 	targetW 							// ignored
-        // 	);
-
-        // // PID on angle
-        // if(angleError<0) {
-        // 	targetW = - targetW;
-        // }
-        // targetW = _angleController.run(targetAngle);
 
         targetW = _angleController.run(angleError);
 
         // limit W
-        if (abs(targetW) > (constraints.maxAngleSpeed)) {
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
             if (targetW > 0) {
-                targetW = (constraints.maxAngleSpeed);
+                targetW = (rotationConstraints.maxSpeed);
             } else {
-                targetW = -(constraints.maxAngleSpeed);
+                targetW = -(rotationConstraints.maxSpeed);
             }
         }
 
@@ -115,7 +110,7 @@ void MotionControl::run() {
     _targetAngleVel(targetW);
 
     // handle body velocity for pivot command
-    if (constraints.pivotTarget) {
+    if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         float r = Robot_Radius;
         const float FudgeFactor = *_robot->config->pivotVelMultiplier;
         float speed = r * targetW * RadiansToDegrees * FudgeFactor;
@@ -132,14 +127,11 @@ void MotionControl::run() {
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
-    Planning::MotionInstant target;
-
+    MotionInstant target;
     // if no target position is given, we don't have a path to follow
-    if (!_robot->path() ||
-        _robot->motionCommand().getCommandType() ==
-            Planning::MotionCommand::WorldVel) {
-        target.vel =
-            _robot->motionCommand().getWorldVel().rotated(-_robot->angle);
+    if (!_robot->path()) {
+        _targetBodyVel(Point(0, 0));
+        return;
     } else {
         //
         // Path following
@@ -147,51 +139,35 @@ void MotionControl::run() {
 
         // convert from microseconds to seconds
         float timeIntoPath =
-            ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs +
+            ((float)(timestamp() - _robot->path()->startTime())) *
+                TimestampToSecs +
             1.0 / 60.0;
 
-        // If the path is getting rapidly changed, we cheat so that the robot
-        // actually moves.
-        // See OurRobot._recentPathChangeTimes for more info.
-        // if (_robot->isRepeatedlyChangingPaths()) {
-        // 	timeIntoPath = max<float>(timeIntoPath,
-        // OurRobot::PathChangeHistoryBufferSize * 1.0f/60.0f * 0.8);
-        // 	cout << "Compensating!  new t = " << timeIntoPath << endl;
-        // }
-
-        // the 0.9 is a fudge factor
-        // we do this to compensate for lost command cycles
-        // double factor = *_path_jitter_compensation_factor;
-        // timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f *
-        // factor;
-        // cout << "------" << endl;
-        // cout << "path.startSpeed: " << _robot->path()->startSpeed << endl;
-        // cout << "botVel: (" << _robot->vel.x << ", " << _robot->vel.x << ")"
-        // << endl;
-        // cout << "timeIntoPath: " << timeIntoPath << endl;
-
         // evaluate path - where should we be right now?
-        bool pathValidNow = _robot->path()->evaluate(timeIntoPath, target);
-        if (!pathValidNow) {
-            target.vel = Geometry2d::Point();
+        boost::optional<MotionInstant> optTarget =
+            _robot->path()->evaluate(timeIntoPath);
+        if (!optTarget) {
+            target.vel = Point();
+            target.pos = _robot->pos;
+        } else {
+            target = *optTarget;
         }
         // tracking error
         Point posError = target.pos - _robot->pos;
 
         // acceleration factor
-        Planning::MotionInstant nextTarget;
-        _robot->path()->evaluate(timeIntoPath + 1.0 / 60.0, nextTarget);
-        Point acceleration = (nextTarget.vel - target.vel) / 60.0f;
+        Point acceleration;
+        boost::optional<MotionInstant> nextTarget =
+            _robot->path()->evaluate(timeIntoPath + 1.0 / 60.0);
+        if (nextTarget) {
+            acceleration = (nextTarget->vel - target.vel) / 60.0f;
+        } else {
+            acceleration = {0, 0};
+        }
         Point accelFactor =
             acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
         target.vel += accelFactor;
-
-        // path change boost
-        if (_robot->consecutivePathChangeCount() > 0) {
-            float boost = *_path_change_boost;
-            target.vel += acceleration * boost;
-        }
 
         // PID on position
         target.vel.x += _positionXController.run(posError.x);

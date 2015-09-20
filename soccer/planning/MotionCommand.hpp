@@ -3,64 +3,70 @@
 #include <Geometry2d/Point.hpp>
 #include <boost/optional.hpp>
 #include "planning/MotionInstant.hpp"
+#include "Utils.hpp"
 
 namespace Planning {
-/**
- * This class contains the motion constraints that the high-level logic sets for
- * a robot.
- * For position: set EITHER @motionTarget OR @targetWorldVel.
- * For angle: set EITHER @targetAngleVel OR @faceTarget.
+
+/*
+ * This is a superclass for different MotionCommands.
+ * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget, None
  */
 class MotionCommand {
 public:
-    enum CommandType { PathTarget, WorldVel, DirectTarget };
+    enum CommandType { PathTarget, WorldVel, Pivot, DirectPathTarget, None };
+    virtual ~MotionCommand() = default;
+    CommandType getCommandType() const { return commandType; }
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const = 0;
 
-    MotionCommand()
-        : _commandType(WorldVel),
-          _targetMotionInstant(),
-          _targetWorldVel(),
-          _directTarget(),
-          _directEndSpeed(){};
-
-    void setPathTarget(MotionInstant target) {
-        _targetMotionInstant = target;
-        _commandType = PathTarget;
-    }
-
-    void setWorldVel(Geometry2d::Point targetVel) {
-        _targetWorldVel = targetVel;
-        _commandType = WorldVel;
-    }
-
-    void setDirectTarget(Geometry2d::Point target, float endSpeed) {
-        _directTarget = target;
-        _directEndSpeed = endSpeed;
-        _commandType = DirectTarget;
-    }
-
-    MotionInstant getPlanningTarget() const { return _targetMotionInstant; }
-
-    float getDirectTarget(Geometry2d::Point& directTarget) const {
-        directTarget = _directTarget;
-        return _directEndSpeed;
-    }
-
-    Geometry2d::Point getWorldVel() const { return _targetWorldVel; }
-
-    CommandType getCommandType() const { return _commandType; }
+protected:
+    MotionCommand(const MotionCommand& that) = default;
+    MotionCommand(CommandType command) : commandType(command) {}
 
 private:
-    /// A point on the field that the robot should use path-planning to get to
-    MotionInstant _targetMotionInstant;
-
-    Geometry2d::Point _directTarget;
-    float _directEndSpeed;
-
-    /// Set the velocity in world coordinates directly (circumvents path
-    /// planning)
-    Geometry2d::Point _targetWorldVel;
-
     // The type of command
-    CommandType _commandType;
+    const CommandType commandType;
 };
-}
+
+struct EmptyCommand : public MotionCommand {
+    EmptyCommand() : MotionCommand(MotionCommand::None){};
+
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<EmptyCommand>();
+    }
+};
+
+struct PathTargetCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<PathTargetCommand>(*this);
+    }
+    explicit PathTargetCommand(const MotionInstant& goal)
+        : MotionCommand(MotionCommand::PathTarget), pathGoal(goal){};
+    MotionInstant pathGoal;
+};
+
+struct WorldVelTargetCommand : public MotionCommand {
+    explicit WorldVelTargetCommand(Geometry2d::Point vel)
+        : MotionCommand(MotionCommand::WorldVel), worldVel(vel){};
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<WorldVelTargetCommand>(*this);
+    }
+    Geometry2d::Point worldVel;
+};
+struct PivotCommand : public MotionCommand {
+    explicit PivotCommand(Geometry2d::Point target)
+        : MotionCommand(MotionCommand::Pivot), pivotTarget(target){};
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<PivotCommand>(*this);
+    }
+    Geometry2d::Point pivotTarget;
+};
+
+struct DirectPathTargetCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<DirectPathTargetCommand>(*this);
+    }
+    explicit DirectPathTargetCommand(const MotionInstant& goal)
+        : MotionCommand(MotionCommand::DirectPathTarget), pathGoal(goal){};
+    MotionInstant pathGoal;
+};
+}  // namespace Planning
