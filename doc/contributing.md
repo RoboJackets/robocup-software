@@ -97,6 +97,7 @@ on and for every bug or issue you have to fix. This ensures your master branch
 stays clean. You should never solve more than one issue at a time and you should
 never have changes or additions for multiple things in the same branch. You can 
 look at a typical branching layout.
+
 ![branchingModel](http://justinhileman.info/article/changing-history/git-flow.png)
 
 ### Remotes
@@ -119,6 +120,7 @@ If you read the previous sections, you may be a little overwhelmed. This section
 will describe how these elements interact to form a coherent workflow that will 
 allow you to make contributions more easily. You can view an overall diagram of 
 how data moves between team members and GitHub. 
+
 ![githubDataFlow](http://www.dalescott.net/wp-content/uploads/2012/09/centralized-github-4.png)
 
 Ensure you have a fork of the main repository and that you've cloned it onto
