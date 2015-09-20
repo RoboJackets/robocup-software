@@ -1,7 +1,7 @@
 #include "Polygon.hpp"
 #include <Constants.hpp>
 
-using namespace Geometry2d;
+namespace Geometry2d {
 
 Polygon::Polygon(const Rect& rect) {
     vertices.resize(4);
@@ -55,7 +55,7 @@ bool Polygon::intersects(const Polygon& other) const {
 
 bool Polygon::containsVertex(const Polygon& other) const {
     for (unsigned int i = 0; i < other.vertices.size(); ++i) {
-        if (contains(other.vertices[i])) {
+        if (containsPoint(other.vertices[i])) {
             return true;
         }
     }
@@ -63,8 +63,8 @@ bool Polygon::containsVertex(const Polygon& other) const {
     return false;
 }
 
-bool Polygon::nearPoint(const Point& pt, float threshold) const {
-    if (contains(pt)) {
+bool Polygon::nearPoint(Point pt, float threshold) const {
+    if (containsPoint(pt)) {
         return true;
     }
 
@@ -82,7 +82,7 @@ bool Polygon::nearPoint(const Point& pt, float threshold) const {
 }
 
 bool Polygon::nearSegment(const Segment& seg, float threshold) const {
-    if (contains(seg.pt[0]) || contains(seg.pt[1])) {
+    if (containsPoint(seg.pt[0]) || containsPoint(seg.pt[1])) {
         return true;
     }
 
@@ -99,7 +99,7 @@ bool Polygon::nearSegment(const Segment& seg, float threshold) const {
     return false;
 }
 
-bool Polygon::contains(const Point& pt) const {
+bool Polygon::containsPoint(Point pt) const {
     // FIXME (Ben) - Replace this with the optimized wrap-number test.
 
     // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.h
@@ -155,8 +155,10 @@ bool Polygon::contains(const Point& pt) const {
     return count != 0;
 }
 
-bool Polygon::hit(const Point& pt) const { return nearPoint(pt, Robot_Radius); }
+bool Polygon::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
 
 bool Polygon::hit(const Segment& seg) const {
     return nearSegment(seg, Robot_Radius);
 }
+
+}  // namespace Geometry2d

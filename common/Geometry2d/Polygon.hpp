@@ -7,6 +7,7 @@
 #include "Segment.hpp"
 
 namespace Geometry2d {
+
 class Polygon : public Shape {
 public:
     Polygon() {}
@@ -24,26 +25,25 @@ public:
 
     Shape* clone() const override;
 
-    bool containsPoint(const Point& pt) const override { return contains(pt); }
+    bool containsPoint(Point pt) const override;
 
-    bool contains(const Point& pt) const;
     bool intersects(const Rect& rect) const;
     bool intersects(const Polygon& other) const;
 
-    bool hit(const Geometry2d::Point& pt) const override;
-    bool hit(const Geometry2d::Segment& seg) const override;
+    bool hit(Point pt) const override;
+    bool hit(const Segment& seg) const override;
 
     /// Returns true if this polygon contains any vertex of other.
     bool containsVertex(const Polygon& other) const;
 
-    bool nearPoint(const Point& pt, float threshold) const;
+    bool nearPoint(Point pt, float threshold) const;
     bool nearSegment(const Segment& seg, float threshold) const;
 
     Rect bbox() const;
 
     std::vector<Point> vertices;
 
-    void addVertex(const Point& pt) { vertices.push_back(pt); }
+    void addVertex(Point pt) { vertices.push_back(pt); }
 
     std::string toString() override {
         std::stringstream str;

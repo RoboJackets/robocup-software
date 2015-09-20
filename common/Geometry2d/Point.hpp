@@ -6,8 +6,6 @@
 #include <protobuf/Point.pb.h>
 #include <sstream>
 
-#include "util.h"
-
 namespace Geometry2d {
 /**
 Simple class to represent a point in 2d space. Uses floating point coordinates
