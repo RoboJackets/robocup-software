@@ -22,7 +22,7 @@ running OSX or Ubuntu Linux (other flavors of Debian may work, but we do not
 officially support them or FedoraCore).
 
 You'll also need a GitHub account, which you can create [here](http://github.com).
-Github is a web front-end for a program called Git, which allows multiple people to
+GitHub is a web front-end for a program called Git, which allows multiple people to
 work on and contribute to the same code base, at the same time.
 
 Before you can begin work, you'll need to setup our RoboCup toolchain. You can
@@ -68,7 +68,7 @@ to copy any relevant information to your own paper and solve the problems there.
 This gives you the freedom to play around with rephrasing and solving questions,
 without distuirbing others.
 
-Forking a repository on Github duplicates the project, but you are given full
+Forking a repository on GitHub duplicates the project, but you are given full
 write access to your own duplicate. Now you can delete, recreate, and add code
 relevent to your contribution without harming the progress of others. This 
 duplicate is known as your repository and every team member has a fork. This is 
@@ -96,12 +96,14 @@ For RoboCup you should create a new branch for every new item you'd like to work
 on and for every bug or issue you have to fix. This ensures your master branch
 stays clean. You should never solve more than one issue at a time and you should
 never have changes or additions for multiple things in the same branch. You can 
-look at a typical branching layout ![branchingModel](http://justinhileman.info/article/changing-history/git-flow.png).
+look at a typical branching layout.
+![branchingModel](http://justinhileman.info/article/changing-history/git-flow.png)
 
 ### Remotes
-If Git is like a test, then remotes would be cheating. A remote allows you to
-view the solution(s) of another classmate, and pull those additions into your 
-repostory as if they were on the classroom whiteboard.
+If Git is like a test, then remotes would be copying/collabortaion (cheating 
+to some people). A remote allows you to view the solution(s) of another 
+classmate, and pull those additions into your repostory as if they were on the 
+classroom whiteboard.
 
 In software this can be particularly useful if a team member is working on some
 new code that may not be perfect yet, but isn't ready to be folded into master. 
@@ -116,7 +118,8 @@ this independently if interested.
 If you read the previous sections, you may be a little overwhelmed. This section
 will describe how these elements interact to form a coherent workflow that will 
 allow you to make contributions more easily. You can view an overall diagram of 
-how data moves between team members and GitHub ![githubDataFlow](http://www.dalescott.net/wp-content/uploads/2012/09/centralized-github-4.png).
+how data moves between team members and GitHub. 
+![githubDataFlow](http://www.dalescott.net/wp-content/uploads/2012/09/centralized-github-4.png)
 
 Ensure you have a fork of the main repository and that you've cloned it onto
 your desktop. 
@@ -134,13 +137,13 @@ You now have a branch with your contribution, but you haven't contributed until
 the code makes it into the main repository. This involves several steps. First,
 any changes others have made in the team's repository need to be merged into 
 your code. If there are any conflics Git can't resolve automatically, it is 
-your job to to solve those errors. By merging changes into your contribution, 
+your job to [resolve](https://help.github.com/articles/resolving-a-merge-conflict-from-the-command-line) those errors. By merging changes into your contribution, 
 rather than the other way around, you ensure the act of bringing your code into 
 the team's repository will go smoothly. This helps when another member of the 
 team reviews your code as well.
 
-Now that you have a merged branch, you should push the branch to your Github. 
-From Github, you can make a [pull request](https://help.github.com/articles/using-pull-requests/) from your repository against the 
+Now that you have a merged branch, you should push the branch to your GitHub. 
+From GitHub, you can make a [pull request](https://help.github.com/articles/using-pull-requests/) from your repository against the 
 team's repository. This will notify an older team member that you are ready to
 have your contribution reviewed. Requirements for pull request standards are 
 listed in several sections below. The older team member may ask that you fix 
@@ -159,9 +162,9 @@ If you've done all this successfully, you are now an official contributor.
 
 #### Example (with technical details)
 Here we will work through a very possible scenario that may arise while 
-contributing to the project. At this point, you should have created a Github 
+contributing to the project. At this point, you should have created a GitHub 
 account and forked the main RoboCup repository. You should also look at 
-creating a ssh key for Github [here](https://help.github.com/articles/generating-ssh-keys/). 
+creating a ssh key for GitHub [here](https://help.github.com/articles/generating-ssh-keys/). 
 
 1. Clone your repository.
 2. You've decided to write some radio firmware. Create a new branch for radio
