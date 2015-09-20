@@ -26,12 +26,13 @@ public:
         return nullptr;
     }
 
-    virtual bool containsPoint(const Point& pt) const {
+    virtual bool containsPoint(Point pt) const {
         throw std::runtime_error("Unimplemented method");
         return false;
     }
 
-    virtual bool hit(const Point& pt) const {
+    /// Returns true if the given point is within one robot radius of the shape
+    virtual bool hit(Point pt) const {
         throw std::runtime_error("Unimplemented method");
         return false;
     }
@@ -41,15 +42,12 @@ public:
         return false;
     }
 
-    virtual std::string toString() {
-        std::stringstream str;
-        str << "Shape";
-        return str.str();
-    }
+    virtual std::string toString() { return "Shape"; }
 
     friend std::ostream& operator<<(std::ostream& stream, Shape& shape) {
         stream << shape.toString();
         return stream;
     }
 };
-}
+
+}  // namespace Geometry2d
