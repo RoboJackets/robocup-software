@@ -31,8 +31,9 @@ QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 
 static const std::vector<QString> defaultHiddenLayers{
-    "MotionControl", "Planning0", "Planning1", "Planning2",
-    "Planning3",     "Planning4", "Planning5"};
+    "MotionControl", "Global Obstacles", "Local Obstacles",
+    "Planning0",     "Planning1",        "Planning2",
+    "Planning3",     "Planning4",        "Planning5"};
 
 void calcMinimumWidth(QWidget* widget, QString text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);
@@ -40,7 +41,7 @@ void calcMinimumWidth(QWidget* widget, QString text) {
 }
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
-    qRegisterMetaType<QVector<int> >("QVector<int>");
+    qRegisterMetaType<QVector<int>>("QVector<int>");
 
     _quaternion_demo = nullptr;
 

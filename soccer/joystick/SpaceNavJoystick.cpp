@@ -1,4 +1,5 @@
 #include "SpaceNavJoystick.hpp"
+#include <Geometry2d/Util.hpp>
 #include <spnav.h>
 #include <iostream>
 

@@ -6,8 +6,6 @@
 #include <protobuf/Point.pb.h>
 #include <sstream>
 
-#include "util.h"
-
 namespace Geometry2d {
 /**
 Simple class to represent a point in 2d space. Uses floating point coordinates
@@ -280,8 +278,7 @@ public:
     Point perpCCW() const { return Point(-y, x); }
 
     /** saturates the magnitude of a vector */
-    static Geometry2d::Point saturate(const Geometry2d::Point& value,
-                                      float max) {
+    static Geometry2d::Point saturate(Geometry2d::Point value, float max) {
         float mag = value.mag();
         if (mag > fabs(max)) {
             return value.normalized() * fabs(max);

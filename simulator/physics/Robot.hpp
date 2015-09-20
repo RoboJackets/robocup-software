@@ -69,7 +69,7 @@ protected:
 
 public:
     Robot(Environment* env, unsigned int id, Robot::RobotRevision rev,
-          const Geometry2d::Point& startPos);
+          Geometry2d::Point startPos);
     ~Robot();
 
     void initPhysics(const bool& blue);

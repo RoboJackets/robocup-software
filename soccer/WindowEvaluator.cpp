@@ -1,5 +1,6 @@
 #include "WindowEvaluator.hpp"
 #include "Constants.hpp"
+#include <Geometry2d/Util.hpp>
 
 #include <algorithm>
 #include <array>
@@ -212,7 +213,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     return make_pair(windows, best);
 }
 
-void WindowEvaluator::fill_shot_success(Window& window, const Point& origin) {
+void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto shot_vector = window.segment.center() - origin;
     auto shot_distance = shot_vector.mag();
 

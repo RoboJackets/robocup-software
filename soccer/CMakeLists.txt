@@ -23,10 +23,19 @@ set(ROBOCUP_LIB_SRC
     "motion/TrapezoidalMotion.cpp"
     "NewRefereeModule.cpp"
     "planning/CompositePath.cpp"
+    "planning/DirectTargetPathPlanner.cpp"
+    "planning/EscapeObstaclesPathPlanner.cpp"
     "planning/InterpolatedPath.cpp"
+    "planning/IndependentMultiRobotPathPlanner.cpp"
     "planning/MotionConstraints.cpp"
+    "planning/RotationConstraints.cpp"
+    "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
+    "planning/SingleRobotPathPlanner.cpp"
+    "planning/TargetVelPathPlanner.cpp"
+    "planning/TrapezoidalPath.cpp"
     "planning/Tree.cpp"
+    "planning/Util.cpp"
     "Processor.cpp"
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
@@ -141,22 +150,22 @@ qt5_add_resources(LOG_VIEWER_RSRC ui/log_icons.qrc)
 qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
 set(LOG_VIEWER_SRC
     "LogViewer.cpp"
-    "FieldView.cpp"
-   	"ProtobufTree.cpp"
-   	"StripChart.cpp"
 )
 add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
-qt5_use_modules(log_viewer Core Widgets OpenGL Svg)
-target_link_libraries(log_viewer common)
+qt5_use_modules(log_viewer Core Widgets OpenGL Svg Xml)
+target_link_libraries(log_viewer robocup)
 
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "BatteryProfileTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
+    "planning/EscapeObstaclesPathPlannerTest.cpp"
+    "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
     "WindowEvaluatorTest.cpp"
 )

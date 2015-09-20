@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Point.hpp"
-#include "util.h"
 
 namespace Geometry2d {
 // A 2x3 transformation matrix.
@@ -29,7 +28,7 @@ public:
         _m[5] = f;
     }
 
-    TransformMatrix(const Geometry2d::Point& origin, float rotation = 0,
+    TransformMatrix(Geometry2d::Point origin, float rotation = 0,
                     bool mirror = false, float scale = 1);
 
     TransformMatrix operator*(const TransformMatrix& other) const {

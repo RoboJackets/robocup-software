@@ -4,100 +4,65 @@
 #include "MotionConstraints.hpp"
 #include "MotionInstant.hpp"
 #include <Configuration.hpp>
-#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <planning/Path.hpp>
+#include <protobuf/LogFrame.pb.h>
 
 namespace Planning {
+
 /**
  * @brief Represents a straight-line path with a trapezoidal velocity profile
  *
  * @details The path represents a function of position given time that the robot
- * should follow.
- * The path is made up of other Paths and can be made up of CompositePaths.
+ *     should follow. The path is made up of other Paths and can be made up of
+ *     CompositePaths.
  */
 class TrapezoidalPath : public Path {
 private:
-    const Geometry2d::Point startPos, endPos;
-    const Geometry2d::Point pathDirection;
-    const float startSpeed, endSpeed;
+    const Geometry2d::Point _startPos, _endPos;
+    const Geometry2d::Point _pathDirection;
+    const float _startSpeed, _endSpeed;
 
-    const float pathLength;
-    const float maxAcc;
-    const float maxSpeed;
+    const float _pathLength;
+    const float _maxAcc;
+    const float _maxSpeed;
 
-    float duration;
+    const float _duration;
 
 public:
     TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                     Geometry2d::Point endPos, float endSpeed,
-                    const MotionConstraints& constraints)
-        : startPos(startPos),
-          startSpeed(startSpeed),
-          endPos(endPos),
-          endSpeed(endSpeed),
-          pathLength((startPos - endPos).mag()),
-          maxAcc(constraints.maxAcceleration),
-          maxSpeed(constraints.maxSpeed),
-          pathDirection((endPos - startPos).normalized()) {
-        float minSpeed = maxSpeed;
-        if (startSpeed < minSpeed) {
-            startSpeed = minSpeed;
-        }
+                    const MotionConstraints& constraints);
 
-        // Precalculate the duration of the path
-        duration = Trapezoidal::getTime(pathLength,  // distance
-                                        pathLength,  // pathLength
-                                        maxSpeed, maxAcc, startSpeed, endSpeed);
-    }
+    virtual boost::optional<MotionInstant> evaluate(float time) const override;
 
-    virtual bool evaluate(float time,
-                          MotionInstant& targetMotionInstant) const override {
-        float distance;
-        float speedOut;
-        bool valid = TrapezoidalMotion(pathLength,  // PathLength
-                                       maxSpeed,    // maxSpeed
-                                       maxAcc,      // maxAcc
-                                       time,        // time
-                                       startSpeed,  // startSpeed
-                                       endSpeed,    // endSpeed
-                                       distance,    // posOut
-                                       speedOut);   // speedOut
-        targetMotionInstant.pos = pathDirection * distance + startPos;
-        targetMotionInstant.vel = pathDirection * speedOut;
-        return valid;
-    }
+    // TODO: only return true for *new* obstacles
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
+                     float initialTime = 0) const override;
 
-    virtual bool hit(const Geometry2d::CompositeShape& shape, float& hitTime,
-                     float startTime = 0) const override {
-        throw std::logic_error("This function is not implemented");
-    }
+    virtual float getDuration() const override { return _duration; }
 
-    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const override {
-        Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
-        dbg->set_layer(state->findDebugLayer(layer));
-        *dbg->add_points() = startPos;
-        *dbg->add_points() = endPos;
-    }
-
-    virtual float getDuration() const override { return duration; }
+    float maxSpeed() const { return _maxSpeed; }
 
     virtual std::unique_ptr<Path> subPath(
         float startTime = 0,
-        float endTime = std::numeric_limits<float>::infinity()) const override {
-        debugThrow("This function is not implemented");
-        return nullptr;
+        float endTime = std::numeric_limits<float>::infinity()) const override;
+
+    virtual MotionInstant end() const override {
+        return MotionInstant(_endPos, _pathDirection * _endSpeed);
     }
 
-    virtual boost::optional<MotionInstant> destination() const override {
-        return MotionInstant(endPos, pathDirection * endSpeed);
+    virtual MotionInstant start() const override {
+        return MotionInstant(_startPos, _pathDirection * _startSpeed);
     }
+
     virtual std::unique_ptr<Path> clone() const override {
         debugThrow("This function is not implemented");
         return nullptr;
     }
 };
-}
+
+}  // namespace Planning

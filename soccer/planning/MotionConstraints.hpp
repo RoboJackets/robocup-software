@@ -1,7 +1,8 @@
 #pragma once
 
+#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
-#include <planning/InterpolatedPath.hpp>
+#include <Configuration.hpp>
 #include <boost/optional.hpp>
 
 /**
@@ -12,30 +13,6 @@
  */
 struct MotionConstraints {
     MotionConstraints();
-
-    /// Angle target
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /// Angular velocity in rad/s counterclockwise
-    boost::optional<float> targetAngleVel;
-
-    /// A global point on the field that the robot should face towards
-    boost::optional<Geometry2d::Point> faceTarget;
-
-    /// Pivot target
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /// A global point on the field that the robot should pivot towards
-    boost::optional<Geometry2d::Point> pivotTarget;
-
-    /// Angle constraints
-    ////////////////////////////////////////////////////////////////////////////////
-
-    /// defaults to the config value
-    float maxAngleSpeed;
-
-    /// Position constraints
-    ////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Each instance has a set of speed/acceleration limits that are used for
@@ -48,16 +25,14 @@ struct MotionConstraints {
     float maxSpeed;
     float maxAcceleration;
 
-    /// The speed we should be going when we reach the end of the path
-    float endSpeed = 0;
-
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
+
+    static double defaultMaxSpeed() { return *_max_speed; }
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_speed;
-    static ConfigDouble* _max_angle_speed;
     static ConfigDouble* _replan_threshold;
     static ConfigDouble* _replan_lead_time;
 };
