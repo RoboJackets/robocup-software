@@ -420,10 +420,9 @@ void Processor::run() {
                     continue;
                 }
 
-                if (r->motionCommand().getCommandType() ==
-                    Planning::MotionCommand::WorldVel) {
-                    r->setPath(nullptr);
-                    continue;
+                // Visualize local obstacles
+                for (auto& shape : r->localObstacles().shapes()) {
+                    _state.drawShape(shape, Qt::black, "LocalObstacles");
                 }
 
                 auto& globalObstaclesForBot =
@@ -436,17 +435,17 @@ void Processor::run() {
                 Geometry2d::ShapeSet fullObstacles =
                     r->collectAllObstacles(globalObstaclesForBot);
 
-                Planning::PlanRequest request(
-                    Planning::MotionInstant(r->pos, r->vel), r->motionCommand(),
-                    r->motionConstraints(), std::move(r->path()),
-                    std::make_shared<ShapeSet>(fullObstacles));
-                requests[r->shell()] = std::move(request);
+                requests[r->shell()] = Planning::PlanRequest(
+                    Planning::MotionInstant(r->pos, r->vel),
+                    r->motionCommand()->clone(), r->motionConstraints(),
+                    std::move(r->path()),
+                    std::make_shared<ShapeSet>(std::move(fullObstacles)));
             }
         }
 
         // Run path planner and set the path for each robot that was planned for
-        auto paths = _pathPlanner->run(std::move(requests));
-        for (auto& entry : paths) {
+        auto pathsById = _pathPlanner->run(std::move(requests));
+        for (auto& entry : pathsById) {
             OurRobot* r = _state.self[entry.first];
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");

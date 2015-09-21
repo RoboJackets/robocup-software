@@ -17,7 +17,7 @@ public:
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
     virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, MotionCommand cmd,
+        MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) = 0;
@@ -29,6 +29,21 @@ public:
     static double replanTimeout() { return *_replanTimeout; }
 
     static void createConfiguration(Configuration* cfg);
+
+    /// Checks if the previous path is no longer valid and needs to be
+    /// re-planned.  This method does the following checks:
+    /// * Is path non-null?
+    /// * Does it have a valid destination()?
+    /// * Is the robot too far away from where the path says it should be?  (see
+    ///   the replan threshold)
+    /// * Does the path enter new obstacles?
+    ///
+    /// Subclasses will generally use this method in addition to their own
+    /// planner-specific checks to determine if a replan is necessary.
+    static bool shouldReplan(MotionInstant currentInstant,
+                             const MotionConstraints& motionConstraints,
+                             const Geometry2d::ShapeSet* obstacles,
+                             const Path* prevPath);
 
 private:
     static ConfigDouble* _goalChangeThreshold;

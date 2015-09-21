@@ -14,7 +14,7 @@
                 "old",
                 "soccer/gameplay/cpp-old",
                 "sslrefbox",
-                "third_party",
+                "external",
                 "watchdog"
             ],
             "file_exclude_patterns": [

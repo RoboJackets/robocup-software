@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <set>
+#include <sstream>
 #include <vector>
 
 namespace Geometry2d {
@@ -25,7 +26,10 @@ public:
     std::vector<std::shared_ptr<Shape>> shapes() { return _shapes; }
     const std::vector<std::shared_ptr<Shape>> shapes() const { return _shapes; }
 
-    void add(std::shared_ptr<Shape> shape) { _shapes.push_back(shape); }
+    void add(std::shared_ptr<Shape> shape) {
+        assert(shape != nullptr);
+        _shapes.push_back(shape);
+    }
 
     void add(const ShapeSet& other) {
         for (auto shape : other.shapes()) {
@@ -62,6 +66,16 @@ public:
     template <typename T>
     bool hit(const T& obj) const {
         return !hitSet<T>(obj).empty();
+    }
+
+    friend std::ostream& operator<<(std::ostream& out,
+                                    const ShapeSet& shapeSet) {
+        out << "ShapeSet: {";
+        for (const auto& shape : shapeSet.shapes()) {
+            out << shape->toString() << ", ";
+        }
+        out << "}";
+        return out;
     }
 
 private:

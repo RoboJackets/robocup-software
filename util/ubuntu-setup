@@ -1,18 +1,20 @@
 #!/bin/bash -e
 
-HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-nf | --nofirmware] [-h | --help]
+HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-nf | --nofirmware] [-osl | --overwrite-sources-list ] [-h | --help]
 
-\tyes:\t\tassume no user input
-\tnoclobber:\tdont install 3rd party repositories
-\tclobber:\tInstall 3rd party repositories
-\tfirmware:\tInstall firmware repository
-\tnofirmware:\tPrevents installation of firmware deps firmware repository
-\thelp:\t\tprint this message!
+\tyes:\t\t\tassume no user input
+\tnoclobber:\t\tdont install 3rd party repositories
+\tclobber:\t\tInstall 3rd party repositories
+\tfirmware:\t\tInstall firmware repository
+\tnofirmware:\t\tPrevents installation of firmware deps firmware repository
+\toverwrite-sources-list:\tOverwrites the sources.list with gatech mirrors for faster ubuntu-setup at gatech. Works only on Ubuntu 14.04
+\thelp:\t\t\tprint this message!
 
 This script will need root privileges"
 
 # defaults!
 YES=false
+OVERWRITE_SOURCES=false
 
 # if we change this to true, please put it in the below if statment, as debian already has a good version...
 if [ -z "$(cat /etc/os-release | grep -i '^NAME=.*Debian')" ]; then # dont add repositories on debian, compatability issues?
@@ -46,6 +48,10 @@ do
             # This option turns off the addition of the firmware repositories
             FIRMWARE=false
             ;;
+        -osl|--overwrite-sources-list)
+            # This option overwrites the sources list for faster downloads
+            OVERWRITE_SOURCES=true
+            ;;
         -h|--help)
             echo -e "$HELP_STR"
             exit 1
@@ -63,6 +69,34 @@ done
 if [ $UID -ne 0 ]; then
 	echo "-- Becoming root"
 	exec sudo $0 $@
+fi
+
+if $OVERWRITE_SOURCES; then
+    read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON UBUNTU 14.04 [yN]: " yn
+    case $yn in
+        [Yy]* ) ;;
+        [Nn]* ) exit;;
+        * ) exit ;;
+    esac
+
+    # Copy sources.list to sources.list.old if sources.list.old is empty
+    if [ -f "/etc/apt/sources.list" ]; then
+        mv -n /etc/apt/sources.list /etc/apt/sources.list.old
+    else
+        echo "A prior /etc/apt/sources.list was not found! This probably means you are on a non-debian based system! To force override, run: touch /etc/apt/sources.list" 1>&2
+        exit 1
+    fi
+
+    # BE CAREFUL HERE...
+    cat <<EOF >/etc/apt/sources.list
+deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty main restricted universe
+deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty main restricted universe
+deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-security main restricted universe
+deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-security main restricted universe
+deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-updates main restricted universe
+deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-updates main restricted universe
+EOF
+
 fi
 
 # add repo for backport of cmake3 from debian testing

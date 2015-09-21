@@ -1,8 +1,10 @@
 #include "RRTPlanner.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include "motion/TrapezoidalMotion.hpp"
+#include "Util.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,67 +17,22 @@ using namespace Eigen;
 
 namespace Planning {
 
-Geometry2d::Point randomPoint() {
-    const auto& dims = Field_Dimensions::Current_Dimensions;
-    float x = dims.FloorWidth() * (drand48() - 0.5f);
-    float y = dims.FloorLength() * drand48() - dims.Border();
-
-    return Geometry2d::Point(x, y);
-}
-
 RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
 
 bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet* obstacles,
                               const Path* prevPath) const {
-    if (!prevPath || !prevPath->destination()) return true;
-
-    // if this number of microseconds passes since our last path plan, we
-    // automatically replan
-    const Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
-    if ((timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
-        return true;
-    }
-
-    float timeIntoPath =
-        ((float)(timestamp() - prevPath->startTime())) * TimestampToSecs +
-        1.0f / 60.0f;
-
-    MotionInstant target;
-    boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
-    if (optTarget) {
-        target = *optTarget;
-    } else {
-        // We went off the end of the path, so use the end for calculations.
-        target = *prevPath->destination();
-    }
-
-    float pathError = (target.pos - start.pos).mag();
-    float replanThreshold = *motionConstraints._replan_threshold;
-
-    //  invalidate path if current position is more than the
-    //  replanThreshold
-    if (*motionConstraints._replan_threshold != 0 &&
-        pathError > replanThreshold) {
-        return true;
-    }
-
-    // FIXME: we need to figure out what is causing NaN values here
-    if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
-        return true;
-    }
-
-    float hitTime = 0;
-    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
+    if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
+                                             obstacles, prevPath)) {
         return true;
     }
 
     // if the destination of the current path is greater than X m away
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
-    float goalPosDiff = (prevPath->destination()->pos - goal.pos).mag();
-    float goalVelDiff = (prevPath->destination()->vel - goal.vel).mag();
+    float goalPosDiff = (prevPath->end().pos - goal.pos).mag();
+    float goalVelDiff = (prevPath->end().vel - goal.vel).mag();
     if (goalPosDiff > goalChangeThreshold() ||
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
@@ -87,13 +44,15 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
 }
 
 std::unique_ptr<Path> RRTPlanner::run(
-    MotionInstant start, MotionCommand cmd,
+    MotionInstant start, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     // This planner only works with commands of type 'PathTarget'
-    assert(cmd.getCommandType() == Planning::MotionCommand::PathTarget);
+    assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
+    Planning::PathTargetCommand target =
+        *static_cast<const Planning::PathTargetCommand*>(cmd);
 
-    MotionInstant goal = cmd.getPlanningTarget();
+    MotionInstant goal = target.pathGoal;
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -106,8 +65,9 @@ std::unique_ptr<Path> RRTPlanner::run(
 
     // Locate a goal point that is obstacle-free
     boost::optional<Geometry2d::Point> prevGoal;
-    if (prevPath) prevGoal = prevPath->destination()->pos;
-    goal.pos = findNonBlockedGoal(goal.pos, prevGoal, obstacles);
+    if (prevPath) prevGoal = prevPath->end().pos;
+    goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
+        goal.pos, prevGoal, *obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
@@ -128,47 +88,6 @@ std::unique_ptr<Path> RRTPlanner::run(
     }
 }
 
-Geometry2d::Point RRTPlanner::findNonBlockedGoal(
-    Geometry2d::Point goal, boost::optional<Geometry2d::Point> prevGoal,
-    const Geometry2d::ShapeSet* obstacles, int maxItr) {
-    if (obstacles && obstacles->hit(goal)) {
-        FixedStepTree goalTree;
-        goalTree.init(goal, obstacles);
-        goalTree.step = .1f;
-
-        // The starting point is in an obstacle extend the tree until we find an
-        // unobstructed point
-        Geometry2d::Point newGoal;
-        for (int i = 0; i < maxItr; ++i) {
-            Geometry2d::Point r = randomPoint();
-
-            // extend to a random point
-            Tree::Point* newPoint = goalTree.extend(r);
-
-            // if the new point is not blocked, it becomes the new goal
-            if (newPoint && newPoint->hit.empty()) {
-                newGoal = newPoint->pos;
-                break;
-            }
-        }
-
-        if (!prevGoal) return newGoal;
-
-        // Only use this newly-found point if it's closer to the desired goal by
-        // at least one robot radius or the old goal now collides with
-        // obstacles.
-        float oldDist = (*prevGoal - goal).mag();
-        float newDist = (newGoal - goal).mag();
-        if (newDist + Robot_Radius < oldDist || obstacles->hit(*prevGoal)) {
-            return newGoal;
-        } else {
-            return *prevGoal;
-        }
-    }
-
-    return goal;
-}
-
 InterpolatedPath* RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                      const MotionConstraints& motionConstraints,
                                      const Geometry2d::ShapeSet* obstacles) {
@@ -186,7 +105,7 @@ InterpolatedPath* RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     Tree* ta = &startTree;
     Tree* tb = &goalTree;
     for (unsigned int i = 0; i < _maxIterations; ++i) {
-        Geometry2d::Point r = randomPoint();
+        Geometry2d::Point r = RandomFieldLocation();
 
         Tree::Point* newPoint = ta->extend(r);
 
