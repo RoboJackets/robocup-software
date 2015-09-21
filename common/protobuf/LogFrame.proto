@@ -5,6 +5,17 @@ import "messages_robocup_ssl_wrapper.proto";
 import "RadioTx.proto";
 import "RadioRx.proto";
 
+message DebugRobotPath
+{
+	message DebugRobotPathPoint {
+		required Point pos = 2;
+		required Point vel = 3;
+	}
+
+	optional sint32 layer = 1 [default = -1];
+	repeated DebugRobotPathPoint points = 3;
+}
+
 message DebugPath
 {
 	optional uint32 color = 1;
@@ -87,6 +98,7 @@ message LogFrame
 	optional uint64 command_time = 5;
 
 	// Debug graphics
+	repeated DebugRobotPath debug_robot_paths = 26;
 	repeated DebugPath debug_paths = 6;
 	repeated DebugPath debug_polygons = 7;
 	repeated DebugCircle debug_circles = 8;

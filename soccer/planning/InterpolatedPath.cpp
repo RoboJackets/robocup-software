@@ -35,19 +35,11 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
     return length;
 }
 
-boost::optional<MotionInstant> InterpolatedPath::start() const {
-    if (waypoints.empty())
-        return boost::none;
-    else
-        return waypoints.front().instant;
+MotionInstant InterpolatedPath::start() const {
+    return waypoints.front().instant;
 }
 
-boost::optional<MotionInstant> InterpolatedPath::destination() const {
-    if (waypoints.empty())
-        return boost::none;
-    else
-        return waypoints.back().instant;
-}
+MotionInstant InterpolatedPath::end() const { return waypoints.back().instant; }
 
 // Returns the index of the point in this path nearest to pt.
 int InterpolatedPath::nearestIndex(Point pt) const {
@@ -181,13 +173,14 @@ float InterpolatedPath::length(Point pt) const {
 void InterpolatedPath::draw(SystemState* const state,
                             const QColor& col = Qt::black,
                             const QString& layer = "Motion") const {
-    Packet::DebugPath* dbg = state->logFrame->add_debug_paths();
+    Packet::DebugRobotPath* dbg = state->logFrame->add_debug_robot_paths();
     dbg->set_layer(state->findDebugLayer(layer));
+
     for (const Entry& entry : waypoints) {
-        *dbg->add_points() = entry.pos();
+        Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
+        *pt->mutable_pos() = entry.pos();
+        *pt->mutable_vel() = entry.vel();
     }
-    dbg->set_color(color(col));
-    return;
 }
 
 boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {

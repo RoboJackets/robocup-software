@@ -15,9 +15,6 @@
 
 namespace Planning {
 
-/** generate a random point on the floor */
-Geometry2d::Point randomPoint();
-
 /**
  * @brief Given a start point and an end point and some conditions, plans a path
  * for a robot to get there.
@@ -40,13 +37,13 @@ public:
     void maxIterations(int value) { _maxIterations = value; }
 
     MotionCommand::CommandType commandType() const override {
-        return MotionCommand::CommandType::PathTarget;
+        return MotionCommand::PathTarget;
     }
 
     /// run the path RRTplanner
     /// this will always populate path to be the path we need to travel
     std::unique_ptr<Path> run(
-        MotionInstant start, MotionCommand cmd,
+        MotionInstant start, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
@@ -62,12 +59,6 @@ protected:
                       const MotionConstraints& motionConstraints,
                       const Geometry2d::ShapeSet* obstacles,
                       const Path* prevPath) const;
-
-    /// If the given goal point is in an obstacle, uses an RRT to attempt to
-    /// find a point that is close, but not blocked.
-    Geometry2d::Point findNonBlockedGoal(
-        Geometry2d::Point goal, boost::optional<Geometry2d::Point> prevGoal,
-        const Geometry2d::ShapeSet* obstacles, int maxItr = 100);
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     Planning::InterpolatedPath* runRRT(
