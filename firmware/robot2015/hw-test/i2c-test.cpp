@@ -38,7 +38,7 @@ int main()
         bool ack, nack = false;
 
         ack = i2c.write(i);
-        // nack = i2c.read(i, buf, 2);
+        nack = i2c.read(i, buf, 2);
 
         if (ack && !nack) {
             freq1.push_back(i);
@@ -53,7 +53,7 @@ int main()
         bool ack, nack = false;
 
         ack = i2c.write(i);
-        // nack = i2c.read(i, buf, 2);
+        nack = i2c.read(i, buf, 2);
 
         if (ack && !nack) {
             freq2.push_back(i);

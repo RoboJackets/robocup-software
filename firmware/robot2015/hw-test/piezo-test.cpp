@@ -19,7 +19,7 @@ bool testPass = false;
 bool batchedResult = false;
 
 // number of points in the sine wave
-const int numPts = 128;
+const int numPts = 32;
 
 // constexpr math functions based on https://github.com/pkeir/ctfft
 // computation tolerance threshold
@@ -73,15 +73,46 @@ constexpr float my_generator(std::size_t curr, std::size_t total)
 volatile int j = 0;
 
 // compile time lookup table of sine wave elements - ranges from 0.0 to 1.0
-const auto analog_out_data = generate_array<numPts>(my_generator);
+const auto analog_data = generate_array<numPts>(my_generator);
+auto analog_data_scaled = generate_array<numPts>(my_generator);
 
 // used to output next analog sample whenever a timer interrupt occurs
-void Sample_timer_interrupt(void const* args)
+void analog_out_interrupt(void const* args)
 {
     // send next analog sample out to D to A
-    buzzer = analog_out_data.at(j);
+    buzzer = analog_data.at(j);
     // increment pointer and wrap around back to 0 at 128
     j = (j + 1) & 0x07F;
+}
+
+// class method to play a note based on AnalogOut class
+void play_note(float freq, int dur, float vol = 1.0)
+{
+    // scale samples using current volume level arg
+    for (int i = 0; i < numPts; i++) {
+        analog_data_scaled.at(i) = vol * analog_data.at(i);
+    }
+
+    // reset to start of sample array
+    j = 0;
+
+    RtosTimer sin_wave(analog_out_interrupt, osTimerPeriodic);
+    sin_wave.start(1.0 / (freq * numPts));
+
+    // turn on timer interrupts to start sine wave output
+    // Sample_Period.attach(this, &Speaker::Sample_timer_interrupt, 1.0 / (freq * 32.0));
+
+    // play note for specified time
+    Thread::wait(dur);
+    // turns off timer interrupts
+    //Sample_Period.detach();
+
+    sin_wave.stop();
+
+    // sets output to mid range - analog zero
+    // buzzer.write_u16(32768);
+    buzzer.write(0);
+
 }
 
 int main()
@@ -95,25 +126,32 @@ int main()
     // Show the lookup table elements
     pc.printf("--  showing sin lookup table:\r\n");
 
-    for (std::size_t i = 0; i != analog_out_data.size(); ++i) {
-        pc.printf("%01.5f\t\t", analog_out_data.at(i));
+    for (std::size_t i = 0; i != analog_data.size(); ++i) {
+        pc.printf("%01.5f\t\t", analog_data.at(i));
 
         if (i % 4 == 3)
             pc.printf("\r\n");
     }
 
+    play_note(969.0, 300, 0.01);
+    Thread::wait(100);
+    play_note(800.0, 300, 0.06);
+    Thread::wait(100);
+    play_note(920.0, 300, 0.075);
+    play_note(0, 100, 0);
+
     // turn on timer interrupts to start sine wave output
     // sample rate is 500Hz
-    RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
-    sine_wave.start(1.0 / (500.0 * numPts));
+    // RtosTimer sine_wave(Sample_timer_interrupt, osTimerPeriodic);
+    // sine_wave.start(1.0 / (500.0 * numPts));
 
-    Thread::wait(1000);
+    // Thread::wait(300);
 
     // now we stop the piezo from playing
-    sine_wave.stop();
+    // sine_wave.stop();
 
     // Final results of the test
-    testPass = analog_out_data.size() == numPts;
+    testPass = analog_data.size() == numPts;
 
     pc.printf("\r\n=================================\r\n");
     pc.printf("========== TEST %s ==========\r\n", testPass ? "PASSED" : "FAILED");

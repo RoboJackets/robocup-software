@@ -28,16 +28,6 @@ DigitalIn done(RJ_FPGA_DONE);
 DigitalInOut prog_b(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
 DigitalIn init_b(RJ_FPGA_INIT_B);
 
-#define PORT_PIN_MOSI   (1 << 8)
-#define PORT_PIN_SCK    (1 << 7)
-#define PORT_PINS_MASK  (PORT_PIN_MOSI | PORT_PIN_SCK)
-
-#define PORT_MOSI(x)    (x ? PORT_PIN_MOSI : 0)
-#define PORT_SCK(x)     (x ? PORT_PIN_SCK : 0)
-#define GET_BIT(byte, shift)    (byte & (1 << shift) ? 1 : 0)
-
-PortOut sw_spi_port(Port0, PORT_PINS_MASK);
-
 bool testPass = false;
 bool batchedResult = false;
 
@@ -105,11 +95,6 @@ bool fpgaInit(void)
 
 int main()
 {
-    isLogging = RJ_LOGGING_EN;
-    rjLogLevel = INF3;
-
-    setISRPriorities();
-
     trigger = !trigger;
     Thread::wait(2);
     trigger = !trigger;
