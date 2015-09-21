@@ -24,12 +24,12 @@ output reg [COUNTER_WIDTH-1:0] count = 0;
 
 // Local parameters that can not be altered outside of this file
 // ===============================================
-localparam STEP_1 = 3'b101;
-localparam STEP_2 = 3'b100;
-localparam STEP_3 = 3'b110;
-localparam STEP_4 = 3'b010;
-localparam STEP_5 = 3'b011;
-localparam STEP_6 = 3'b001;
+localparam STEP_1 = 'b101;
+localparam STEP_2 = 'b100;
+localparam STEP_3 = 'b110;
+localparam STEP_4 = 'b010;
+localparam STEP_5 = 'b011;
+localparam STEP_6 = 'b001;
 
 
 // Register and Wire declarations
@@ -39,7 +39,7 @@ reg [2:0] hall_d = 0;   // The hall effect sensor value delayed by one clock cyc
 
 // Combinational logic
 // ===============================================
-assign count_up =
+wire count_up =
     ( ( hall_d == STEP_1 ) && ( hall == STEP_2 ) ) ||
     ( ( hall_d == STEP_2 ) && ( hall == STEP_3 ) ) ||
     ( ( hall_d == STEP_3 ) && ( hall == STEP_4 ) ) ||
@@ -47,7 +47,7 @@ assign count_up =
     ( ( hall_d == STEP_5 ) && ( hall == STEP_6 ) ) ||
     ( ( hall_d == STEP_6 ) && ( hall == STEP_1 ) );
 
-assign count_down =
+wire count_down =
     ( ( hall_d == STEP_6 ) && ( hall == STEP_5 ) ) ||
     ( ( hall_d == STEP_5 ) && ( hall == STEP_4 ) ) ||
     ( ( hall_d == STEP_4 ) && ( hall == STEP_3 ) ) ||

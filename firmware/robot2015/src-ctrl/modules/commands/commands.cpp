@@ -174,6 +174,13 @@ static const std::vector<command_t> commands = {
 		"motor <motor_id>"
 	},
 	{
+		{"motorscroll"},
+		true,
+		motors_cmdScroll,
+		"Continuously update the console with new motor values.",
+		"motorscroll"
+	},
+	{
 		{"radio"},
 		false,
 		comm_cmdProcess,
@@ -418,7 +425,7 @@ void cmd_resetMbed(const vector<string>& args)
 	if (args.empty() == false) {
 		showInvalidArgs(args);
 	} else {
-		printf("The system is going down for reboot NOW!\r\n\r\n");
+		printf("The system is going down for reboot NOW!\033[0J\r\n");
 		Console::Flush();
 
 		// give some time for the feedback to get back to the console
@@ -484,21 +491,21 @@ void cmd_info(const vector<string>& args)
 		typedef void (*CallMe)(unsigned int[], unsigned int[]);
 
 		strftime(buf, 25, "%c", localtime(&sys_time));
-		printf("Sys Time:\t%s\r\n", buf);
+		printf("\tSys Time:\t%s\r\n", buf);
 
 		// kernel information
-		printf("Kernel Ver:\t%s\r\n", osKernelSystemId);
-		printf("API Ver:\t%u\r\n", osCMSIS);
+		printf("\tKernel Ver:\t%s\r\n", osKernelSystemId);
+		printf("\tAPI Ver:\t%u\r\n", osCMSIS);
 
-		printf("Commit Hash:\t%s\r\nCommit Date:\t%s\r\nCommit Author:\t%s\r\n",
+		printf("\tCommit Hash:\t%s\r\n\tCommit Date:\t%s\r\n\tCommit Author:\t%s\r\n",
 		       git_version_hash,
 		       git_head_date,
 		       git_head_author
 		      );
 
-		printf("Build Date:\t%s %s\r\n", __DATE__, __TIME__);
+		printf("\tBuild Date:\t%s %s\r\n", __DATE__, __TIME__);
 
-		printf("Base ID:\t");
+		printf("\tBase ID:\t");
 
 		if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
 			printf("N/A\r\n");
@@ -510,7 +517,7 @@ void cmd_info(const vector<string>& args)
 		if (mbed_interface_uid(buf) == -1)
 			memcpy(buf, "N/A\0", 4);
 
-		printf("mbed UID:\t0x%s\r\n", buf);
+		printf("\tmbed UID:\t0x%s\r\n", buf);
 
 		// Prints out a serial number, taken from the mbed forms
 		// https://developer.mbed.org/forum/helloworld/topic/2048/
@@ -519,26 +526,26 @@ void cmd_info(const vector<string>& args)
 		CallMe_entry(Interface, Interface);
 
 		if (!Interface[0])
-			printf("MCU UID:\t%u %u %u %u\r\n",
+			printf("\tMCU UID:\t%u %u %u %u\r\n",
 			       Interface[1],
 			       Interface[2],
 			       Interface[3],
 			       Interface[4]
 			      );
 		else
-			printf("MCU UID:\t\tN/A\r\n");
+			printf("\tMCU UID:\t\tN/A\r\n");
 
 		// Should be 0x26013F37
 		Interface[0] = 54;
 		CallMe_entry(Interface, Interface);
 
 		if (!Interface[0])
-			printf("MCU ID:\t\t%u\r\n", Interface[1]);
+			printf("\tMCU ID:\t\t%u\r\n", Interface[1]);
 		else
-			printf("MCU ID:\t\tN/A\r\n");
+			printf("\tMCU ID:\t\tN/A\r\n");
 
 		// show info about the core processor. ARM cortex-m3 in our case
-		printf("CPUID:\t\t0x%08lX\r\n", SCB->CPUID);
+		printf("\tCPUID:\t\t0x%08lX\r\n", SCB->CPUID);
 
 
 		// ** NOTE: THE mbed_interface_mac() function does not work! It hangs the mbed... **
@@ -563,7 +570,7 @@ void cmd_info(const vector<string>& args)
 			uint8_t regVal = LPC_USB->USBCmdData;	// get the byte
 			LPC_USB->USBDevIntClr = 0x20;	// clear the CDFULL interrupt bit
 
-			printf("USB Byte:\t0x%02\r\n", regVal);
+			printf("\tUSB Byte:\t0x%02\r\n", regVal);
 		*/
 	}
 }

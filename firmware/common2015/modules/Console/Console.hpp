@@ -18,13 +18,17 @@ const std::string ENABLE_SCROLL_SEQ = "\033[r";
  */
 const std::string CLEAR_SCREEN_SEQ = "\033[2J";
 
+const std::string ANSI_SD = "\033[1T";
+
+const std::string ANSI_SU = "\033[1S";
+
 /**
  * Manages serial-over-USB communication with the PC
  */
 class Console
 {
 
- public:
+public:
   /**
    * max buffer length. Default 400 (five lines)
    */
@@ -56,6 +60,9 @@ class Console
    * default ETX (0x3)
    */
   static const char BREAK_CHAR = 3;
+
+  static const char ESC_START = 0x1B;
+  static const char ESC_SEQ_START = '[';
 
   /**
    * define the sequence for arrow key flags
@@ -118,8 +125,11 @@ class Console
   static uint16_t Baudrate(void);
 
   static void PrintHeader(void);
+  static void ShowLogo(void);
+  static void SetEscEnd(char c);
+  static const std::string& GetHostResponse(void);
 
- private:
+private:
   // Constructor is only used in init branch of Instance()
   Console();
 
@@ -184,6 +194,15 @@ class Console
    */
   bool flagOne = false;
   bool flagTwo = false;
+
+  bool esc_en = false;
+  bool esc_seq_en = false;
+  bool esc_host_res_rdy = false;
+
+  std::string esc_host_res;
+
+  char esc_host_end_char = 'R';
+
 
   /**
    * receive buffer index

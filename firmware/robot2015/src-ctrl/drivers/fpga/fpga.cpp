@@ -6,6 +6,7 @@
 
 #include "commands.hpp"
 
+FPGA* FPGA::instance = nullptr;
 
 bool FPGA::isInit = false;
 
@@ -14,27 +15,26 @@ namespace
 enum {
     CMD_EN_DIS_MTRS = 0x30,
     CMD_R_ENC_W_VEL = 0x80,
+    CMD_READ_ENC    = 0x91,
     CMD_READ_HALLS  = 0x92,
     CMD_READ_DUTY   = 0x93,
     CMD_READ_HASH   = 0x94
 };
 }
 
-
-FPGA::FPGA(PinName _mosi, PinName _miso, PinName _sck, PinName _cs, PinName _progB, PinName _initB, PinName _done)
-    : spi(_mosi, _miso, _sck),
-      cs(_cs, 1),
-      progB(_progB, PIN_OUTPUT, OpenDrain, 1),
-      initB(_initB),
-      done(_done)
-{}
-
-
-FPGA::~FPGA(void)
+FPGA* FPGA::Instance(void)
 {
-    isInit = false;
-}
+    if ( instance == nullptr ) {
+        instance = new FPGA;
+        instance->spi = new SPI(RJ_SPI_BUS);
+        instance->progB = new DigitalInOut(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
+        instance->initB = new DigitalIn(RJ_FPGA_INIT_B);
+        instance->done = new DigitalIn(RJ_FPGA_DONE);
+        instance->cs = new DigitalOut(RJ_FPGA_nCS);
+    }
 
+    return instance;
+}
 
 /**
  * [FPGA::Init Setup the FPGA interface]
@@ -45,9 +45,9 @@ bool FPGA::Init(const std::string& filepath)
     int j = 0;
 
     // toggle PROG_B to clear out anything prior
-    progB = !progB;
+    *progB = !(*progB);
     Thread::wait(1);
-    progB = !progB;
+    *progB = !(*progB);
     Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
@@ -56,7 +56,7 @@ bool FPGA::Init(const std::string& filepath)
         Thread::wait(10);
 
         // We're ready to start the configuration process when initB goes high
-        if (initB == true)
+        if (*initB == true)
             break;
     }
 
@@ -81,7 +81,7 @@ bool FPGA::Init(const std::string& filepath)
         for (int i = 0; i < 1000; i++) {
             Thread::wait(1); j++;
 
-            if (done == true) break;
+            if (*done == true) break;
         }
 
         if (j == 1000) {
@@ -91,15 +91,13 @@ bool FPGA::Init(const std::string& filepath)
         }
         // everything worked are we're good to go!
         else {
-            LOG(INF1, "DONE pin state:\t%s", done ? "HIGH" : "LOW");
+            LOG(INF1, "DONE pin state:\t%s", *done ? "HIGH" : "LOW");
 
             isInit = true;
 
-            cs = 1;
-
-            spi = SPI(RJ_SPI_BUS);
-            spi.format(8, 0);
-            spi.frequency(2000000);
+            cs->write(1);
+            spi->format(8, 0);
+            spi->frequency(1000000);
 
             return true;
         }
@@ -135,7 +133,7 @@ bool FPGA::send_config(const std::string& filepath)
 
             spi.write(buf[0]);
 
-        } while (initB == true || done == false);
+        } while (*initB == true || *done == false);
 
         fclose(fp);
 
@@ -153,13 +151,34 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size)
 {
     uint8_t status;
 
-    cs = !cs;
-    status = spi.write(CMD_READ_HALLS);
+    mutex.lock();
+    *cs = !(*cs);
+    status = spi->write(CMD_READ_HALLS);
 
-    for (int i = 0; i < 5; i++)
-        halls[i] = spi.write(0x00);
+    for (int i = 0; i < size; i++)
+        halls[i] = spi->write(0x00);
 
-    cs = !cs;
+    *cs = !(*cs);
+    mutex.unlock();
+
+    return status;
+}
+
+uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size)
+{
+    uint8_t status;
+
+    mutex.lock();
+    *cs = !(*cs);
+    status = spi->write(CMD_READ_ENC);
+
+    for (int i = 0; i < size; i++) {
+        enc_counts[i]  = (spi->write(0x00) << 8);
+        enc_counts[i] |= spi->write(0x00);
+    }
+
+    *cs = !(*cs);
+    mutex.unlock();
 
     return status;
 }
@@ -169,15 +188,17 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size)
 {
     uint8_t status;
 
-    cs = !cs;
-    status = spi.write(CMD_READ_DUTY);
+    mutex.lock();
+    *cs = !(*cs);
+    status = spi->write(CMD_READ_DUTY);
 
-    for (int i = 0; i < 5; i++) {
-        duty_cycles[i]  = (spi.write(0x00) << 8);
-        duty_cycles[i] |= spi.write(0x00);
+    for (int i = 0; i < size; i++) {
+        duty_cycles[i]  = (spi->write(0x00) << 8);
+        duty_cycles[i] |= spi->write(0x00);
     }
 
-    cs = !cs;
+    *cs = !(*cs);
+    mutex.unlock();
 
     return status;
 }
@@ -188,18 +209,20 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut, uint16_t*
     uint8_t status;
 
     // Check for valid duty cycles values
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < size_dut; i++)
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
-    cs = !cs;
-    status = spi.write(CMD_R_ENC_W_VEL);
+    mutex.lock();
+    *cs = !(*cs);
+    status = spi->write(CMD_R_ENC_W_VEL);
 
-    for (int i = 0; i < 5; i++) {
-        enc_deltas[i]  = (spi.write(duty_cycles[i] & 0xFF) << 8);
-        enc_deltas[i] |= spi.write(duty_cycles[i] >> 8);
+    for (int i = 0; i < size_enc; i++) {
+        enc_deltas[i]  = (spi->write(duty_cycles[i] & 0xFF) << 8);
+        enc_deltas[i] |= spi->write(duty_cycles[i] >> 8);
     }
 
-    cs = !cs;
+    *cs = !(*cs);
+    mutex.unlock();
 
     return status;
 }
@@ -207,24 +230,32 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut, uint16_t*
 
 uint32_t FPGA::git_hash(void)
 {
-    uint32_t hash = 0;
+    return 0xFF;
 
-    cs = !cs;
-    spi.write(CMD_READ_HASH);
+    // uint32_t hash = 0;
 
-    for (int i = 0; i < 4; i++)
-        hash |= (spi.write(0x00) << (8 * i));
+    // mutex.lock();
+    // *cs = !(*cs);
+    // spi->write(CMD_READ_HASH);
 
-    cs = !cs;
+    // for (int i = 0; i < 4; i++)
+    //     hash |= (spi->write(0x00) << (8 * i));
+
+    // *cs = !(*cs);
+    // mutex.unlock();
+
+    // return hash;
 }
 
 uint8_t FPGA::motors_en(bool state)
 {
     uint8_t status;
 
-    cs = !cs;
-    status = spi.write(CMD_EN_DIS_MTRS | (state << 7));
-    cs = !cs;
+    mutex.lock();
+    *cs = !(*cs);
+    status = spi->write(CMD_EN_DIS_MTRS | (state << 7));
+    *cs = !(*cs);
+    mutex.unlock();
 
     return status;
 }

@@ -9,7 +9,7 @@
 
 
 const std::string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
-const std::string Console::COMMAND_BREAK_MSG = "*BREAK*";
+const std::string Console::COMMAND_BREAK_MSG = "*BREAK*\033[K";
 
 shared_ptr<Console> Console::instance;
 
@@ -41,13 +41,6 @@ void Console::Init(void)
 	// set baud rate, store the value before
 	Baudrate(9600);
 
-	// Uncomment this is you don't want to see any logging
-	// statements that were called before this is setup
-	//Flush();
-	//printf(ENABLE_SCROLL_SEQ.c_str());
-	//printf(CLEAR_SCREEN_SEQ.c_str());
-	//Flush();
-
 	// clear buffers
 	instance->ClearRXBuffer();
 	instance->ClearTXBuffer();
@@ -61,6 +54,9 @@ void Console::Init(void)
 	// reset indicces
 	instance->rxIndex = 0;
 	instance->txIndex = 0;
+
+	// Default for a host response escaped input terminating character
+	// instance->SetEscEnd('R');
 
 	LOG(INF3, "Hello from the 'common2015' library!");
 }
@@ -190,11 +186,40 @@ void Console::RXCallback(void)
 			// No special character, add it to the buffer and return it to
 			// the terminal to be visible.
 			else {
-				if (!(c == ARROW_UP_KEY || c == ARROW_DOWN_KEY)) {
-					rxBuffer[rxIndex++] = c;
+				if ( (c != ESC_START) && (esc_en == false) )  {
+
+					if (!(c == ARROW_UP_KEY || c == ARROW_DOWN_KEY)) {
+						rxBuffer[rxIndex++] = c;
+					}
+
+					esc_host_res = "";
+					PUTC(c);
+					Flush();
+
 				}
-				PUTC(c);
-				Flush();
+
+				else {
+
+					if ( esc_seq_en == true ) {
+						esc_host_res += c;
+					}
+
+					if ( c == ESC_START ) {
+						esc_en = true;
+					} else if ( c == ESC_SEQ_START ) {
+						esc_seq_en = true;
+					} else if ( c == esc_host_end_char ) {
+						// Remove the terminating character
+						esc_host_res.pop_back();
+						// Set the flag for knowing we've received an expected response
+						esc_host_res_rdy = true;
+						// Reset everything back to normal
+						esc_en = false;
+						esc_seq_en = false;
+					}
+
+				}
+
 			}
 		}
 	}
@@ -202,9 +227,9 @@ void Console::RXCallback(void)
 
 void Console::TXCallback(void)
 {
-	NVIC_DisableIRQ(UART0_IRQn);
+	//NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
-	NVIC_EnableIRQ(UART0_IRQn);
+	//NVIC_EnableIRQ(UART0_IRQn);
 }
 
 void Console::ConComCheck(void)
@@ -277,8 +302,10 @@ void Console::CommandHandled(bool cmdDoneState)
 	command_ready = false;
 
 	// print out the header without a newline first
-	if (iter_break_req == false)
+	if (iter_break_req == false) {
 		instance->PRINTF("%s", instance->CONSOLE_HEADER.c_str());
+		Flush();
+	}
 }
 
 void Console::changeHostname(const std::string & hostname)
@@ -295,7 +322,8 @@ void Console::changeUser(const std::string & user)
 
 void Console::setHeader(void)
 {
-	instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
+	instance->CONSOLE_HEADER = "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[33m" + instance->CONSOLE_HOSTNAME + " \033[36m$\033[0m \033[0J\033[5m";
+	//instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
 }
 
 void Console::Baudrate(uint16_t baud)
@@ -309,7 +337,6 @@ uint16_t Console::Baudrate(void)
 	return instance->baudrate;
 }
 
-
 void Console::RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO * info)
 {
 	Console::RXCallback();
@@ -318,4 +345,38 @@ void Console::RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO * info)
 void Console::TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO * info)
 {
 	Console::TXCallback();
+}
+
+void Console::SetEscEnd(char c)
+{
+	instance->esc_host_end_char = c;
+}
+
+const std::string& Console::GetHostResponse(void)
+{
+	if ( instance->esc_host_res_rdy == true ) {
+
+		instance->esc_host_res_rdy = false;
+
+		return instance->esc_host_res;
+	} else {
+
+		return "";
+	}
+}
+
+void Console::ShowLogo(void)
+{
+	Flush();
+
+	instance->PRINTF (
+	    "   _____       _                _            _        _\r\n"
+	    "  |  __ \\     | |              | |          | |      | |      \r\n"
+	    "  | |__) |___ | |__   ___      | | __ _  ___| | _____| |_ ___ \r\n"
+	    "  |  _  // _ \\| '_ \\ / _ \\ _   | |/ _` |/ __| |/ / _ \\ __/ __|\r\n"
+	    "  | | \\ \\ (_) | |_) | (_) | |__| | (_| | (__|   <  __/ |_\\__ \\\r\n"
+	    "  |_|  \\_\\___/|_.__/ \\___/ \\____/ \\__,_|\\___|_|\\_\\___|\\__|___/\r\n"
+	);
+
+	Flush();
 }

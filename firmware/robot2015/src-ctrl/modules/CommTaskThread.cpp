@@ -142,7 +142,7 @@ void Task_CommCtrl(void const* args)
 
 	// Wait until the threads with the CommModule class are all started up and ready
 	while (CommModule::isReady() == false) {
-		Thread::wait(100);
+		Thread::wait(50);
 	}
 
 	// Additional waiting can be used here if needed

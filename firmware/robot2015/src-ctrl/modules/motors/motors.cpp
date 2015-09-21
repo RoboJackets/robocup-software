@@ -1,8 +1,12 @@
 #include "motors.hpp"
 
 #include <mbed.h>
+#include <rtos.h>
+#include <Console.hpp>
 #include <numparser.hpp>
 
+
+#include "fpga.hpp"
 #include "commands.hpp"
 
 
@@ -54,12 +58,44 @@ void motors_PrintMotor(motor_t& mtr)
 }
 
 
+void motors_cmdScroll(const std::vector<std::string>& args)
+{
+	std::array<uint16_t, 5> duty_cycles = { 0 };
+	std::array<uint8_t, 5>  halls = { 0 };
+	std::array<uint16_t, 5> enc_deltas = { 0 };
+
+	FPGA::Instance()->read_duty_cycles(duty_cycles.data(), duty_cycles.size());
+
+	FPGA::Instance()->read_halls(halls.data(), halls.size());
+
+	uint8_t status_byte = FPGA::Instance()->read_encs(enc_deltas.data(), enc_deltas.size());
+
+	printf("\033[?25l\033[25mMotors Enabled: \033[K%s\033E", status_byte & 0x20 ? "YES" : "NO");
+
+	for (int i = 0; i < duty_cycles.size(); i++) {
+		printf("  Motor %u\tVel: 0x\033[K%03X\tHall: %3u\tEnc: %5u%s\033E",
+		       i + 1,
+		       duty_cycles.at(i),
+		       halls.at(i),
+		       enc_deltas.at(i),
+		       (status_byte & (1 << i)) ? "FAULT" : ""
+		      );
+	}
+	//printf("\033[u\033[?25h");
+	printf("\033[%uA\033[?25h", duty_cycles.size() + 1);
+	Console::Flush();
+
+	Thread::wait(250);
+}
+
+
 // The console function to run with the 'motor' command
 void motors_cmdProcess(const std::vector<std::string>& args)
 {
 	if (args.empty() == true) {
 		printf("Must specify a motor ID!\r\n");
 	} else {
+		// Default to displaying motor info
 		std::vector<uint8_t> motorIDs;
 
 		// Check for valid motor ID arguments
@@ -72,22 +108,58 @@ void motors_cmdProcess(const std::vector<std::string>& args)
 
 				// they gave us an invalid motor ID...
 				if (mtrID > 4) {
-					printf("Motor with ID %u does not exist.\r\n", mtrID);
-					return;
+					break;
 				}
 
 				// Push the ID into the vector if it's not already in it
 				if (std::find(motorIDs.begin(), motorIDs.end(), mtrID) == motorIDs.end())
 					motorIDs.push_back(mtrID);
-
-			} else {
-				showInvalidArgs(args.at(i));
-				break;
 			}
 		}
 
-		// If we make it to this point, all arguments given are valid motor ID numbers - without duplicate entries
-		for (unsigned int i = 0; i < motorIDs.size(); i++)
-			motors_PrintMotor(motors.at(motorIDs.at(i)));
+		if (motorIDs.empty() == false) {
+			if (strcmp(args.at(motorIDs.size()).c_str(), "--set") == 0 || strcmp(args.at(motorIDs.size()).c_str(), "-s") == 0) {
+
+				std::array<uint16_t, 5> duty_cycles_r;
+				std::array<uint16_t, 5> duty_cycles_w;
+				std::array<uint8_t, 5>  halls;
+				std::array<uint16_t, 5> enc_deltas;
+
+				uint16_t new_vel = (uint16_t)atoi(args.at(motorIDs.size() + 1).c_str());
+
+				FPGA::Instance()->read_duty_cycles(duty_cycles_r.data(), duty_cycles_r.size());
+				std::memcpy (duty_cycles_w.data(), duty_cycles_r.data(), duty_cycles_r.size());
+
+				FPGA::Instance()->read_halls(halls.data(), halls.size());
+
+				for (unsigned int i = 0; i < motorIDs.size(); i++) {
+					duty_cycles_w.at(i) = new_vel;
+				}
+
+				uint8_t status_byte = FPGA::Instance()->set_duty_get_enc(duty_cycles_w.data(), duty_cycles_w.size(),
+				                      enc_deltas.data(), enc_deltas.size());
+
+				for (unsigned int i = 0; i < motorIDs.size(); i++) {
+					printf("  Motor %u\tVel: 0x\033[K%03X -> 0x%03X\tHall: %3u\tEnc: %5u%s\033E",
+					       motorIDs.at(i),
+					       duty_cycles_r.at(motorIDs.at(i)), duty_cycles_w.at(motorIDs.at(i)),
+					       halls.at(motorIDs.at(i)),
+					       enc_deltas.at(motorIDs.at(i)),
+					       (status_byte & (1 << motorIDs.at(i))) ? "FAULT" : ""
+					      );
+				}
+
+			} else {
+				// If we make it to this point, all arguments given are valid motor ID numbers - without duplicate entries
+				for (unsigned int i = 0; i < motorIDs.size(); i++)
+					motors_PrintMotor(motors.at(motorIDs.at(i)));
+
+				return;
+			}
+
+		} else {
+
+			showInvalidArgs(args.at(0));
+		}
 	}
 }

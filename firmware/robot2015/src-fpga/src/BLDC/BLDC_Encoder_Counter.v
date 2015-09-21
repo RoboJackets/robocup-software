@@ -24,16 +24,16 @@ output reg [COUNT_WIDTH-1:0] count = 0;
 
 // Local parameters that can not be altered outside of this file.
 // ===============================================
-localparam STEP_0 = 2'b00;
-localparam STEP_1 = 2'b01;
-localparam STEP_2 = 2'b10;
-localparam STEP_3 = 2'b11;
+localparam STEP_0 = 'b00;
+localparam STEP_1 = 'b01;
+localparam STEP_2 = 'b10;
+localparam STEP_3 = 'b11;
 
 
 // Register and Wire declarations
 // ===============================================
-reg [1:0] enc_s = STEP_0;    // The synced encoder tick
-reg [1:0] enc_d = STEP_0;    // The delayed encoder tick by one clock cycle
+reg [1:0] enc_s;    // The synced encoder tick
+reg [1:0] enc_d;    // The delayed encoder tick by one clock cycle
 
 wire count_up =
     ( ( enc_d == STEP_0 ) && ( enc_s == STEP_1 ) ) ||
@@ -49,7 +49,7 @@ wire count_down =
 
 
 // Begin main logic
-always @(posedge clk) begin : ENCODER_COUNTER
+always @(posedge clk) begin
 
     enc_s <= enc;
     enc_d <= enc_s;

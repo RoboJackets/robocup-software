@@ -207,6 +207,19 @@ initial wait ( start_spinning_motors ) begin
 
     spi_off();
 
+    #10000
+
+    spi_on();
+    spi(8'h93);
+
+    spi(8'h08);
+    spi(8'h0a);
+    spi(8'h02);
+    spi(8'h05);
+    spi(8'h03);
+
+    spi_off();
+
     repeat(5) begin
         #20000 spi_on();
 

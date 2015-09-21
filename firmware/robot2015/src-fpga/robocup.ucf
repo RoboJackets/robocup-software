@@ -9,71 +9,75 @@ NET "sysclk" LOC="P50";
 #################################################
 #                     Phases                    #
 #################################################
-NET "phase_aH<0>" LOC="P29";                    # Dribbler
-NET "phase_aL<0>" LOC="P26";
-NET "phase_bH<0>" LOC="P25";
-NET "phase_bL<0>" LOC="P23";
-NET "phase_cH<0>" LOC="P21";
-NET "phase_cL<0>" LOC="P70";
+NET "phase_aH<0>" LOC="P93";                    # Drive Motor 1
+NET "phase_aL<0>" LOC="P94";
+NET "phase_bH<0>" LOC="P96";
+NET "phase_bL<0>" LOC="P97";
+NET "phase_cH<0>" LOC="P98";
+NET "phase_cL<0>" LOC="P103";
 
-NET "phase_aH<1>" LOC="P93";                    # Drive Motor 1
-NET "phase_aL<1>" LOC="P94";
-NET "phase_bH<1>" LOC="P96";
-NET "phase_bL<1>" LOC="P97";
-NET "phase_cH<1>" LOC="P98";
-NET "phase_cL<1>" LOC="P103";
+NET "phase_aH<1>" LOC="P5";                     # Drive Motor 2
+NET "phase_aL<1>" LOC="P7";
+NET "phase_bH<1>" LOC="P8";
+NET "phase_bL<1>" LOC="P10";
+NET "phase_cH<1>" LOC="P14";
+NET "phase_cL<1>" LOC="P15";
 
-NET "phase_aH<2>" LOC="P5";                     # Drive Motor 2
-NET "phase_aL<2>" LOC="P7";
-NET "phase_bH<2>" LOC="P8";
-NET "phase_bL<2>" LOC="P10";
-NET "phase_cH<2>" LOC="P14";
-NET "phase_cL<2>" LOC="P15";
+NET "phase_aH<2>" LOC="P16";                    # Drive Motor 3
+NET "phase_aL<2>" LOC="P17";
+NET "phase_bH<2>" LOC="P82";
+NET "phase_bL<2>" LOC="P81";
+NET "phase_cH<2>" LOC="P77";
+NET "phase_cL<2>" LOC="P76";
 
-NET "phase_aH<3>" LOC="P16";                    # Drive Motor 3
-NET "phase_aL<3>" LOC="P17";
-NET "phase_bH<3>" LOC="P82";
-NET "phase_bL<3>" LOC="P81";
-NET "phase_cH<3>" LOC="P77";
-NET "phase_cL<3>" LOC="P76";
+NET "phase_aH<3>" LOC="P124";                   # Drive Motor 4
+NET "phase_aL<3>" LOC="P125";
+NET "phase_bH<3>" LOC="P83";
+NET "phase_bL<3>" LOC="P85";
+NET "phase_cH<3>" LOC="P86";
+NET "phase_cL<3>" LOC="P87";
 
-NET "phase_aH<4>" LOC="P124";                   # Drive Motor 4
-NET "phase_aL<4>" LOC="P125";
-NET "phase_bH<4>" LOC="P83";
-NET "phase_bL<4>" LOC="P85";
-NET "phase_cH<4>" LOC="P86";
-NET "phase_cL<4>" LOC="P87";
+NET "phase_aH<4>" LOC="P29";                    # Dribbler
+NET "phase_aL<4>" LOC="P26";
+NET "phase_bH<4>" LOC="P25";
+NET "phase_bL<4>" LOC="P23";
+NET "phase_cH<4>" LOC="P21";
+NET "phase_cL<4>" LOC="P70";
 
 #################################################
 #                  Hall Sensors                 #
 #################################################
-NET "hall_a<0>" LOC="P88" | PULLUP;             # Dribbler
-NET "hall_b<0>" LOC="P91" | PULLUP;
-NET "hall_c<0>" LOC="P92" | PULLUP;
-NET "hall_a<1>" LOC="P104" | PULLUP;            # Drive Motor 1
-NET "hall_b<1>" LOC="P105" | PULLUP;
-NET "hall_c<1>" LOC="P106" | PULLUP;
-NET "hall_a<2>" LOC="P116" | PULLUP;            # Drive Motor 2
-NET "hall_b<2>" LOC="P113" | PULLUP;
-NET "hall_c<2>" LOC="P112" | PULLUP;
-NET "hall_a<3>" LOC="P75" | PULLUP;             # Drive Motor 3
-NET "hall_b<3>" LOC="P74" | PULLUP;
-NET "hall_c<3>" LOC="P68" | PULLUP;
-NET "hall_a<4>" LOC="P117" | PULLUP;            # Drive Motor 4
-NET "hall_b<4>" LOC="P122" | PULLUP;
-NET "hall_c<4>" LOC="P123" | PULLUP;
+NET "hall_a<0>" LOC="P104";            # Drive Motor 1
+NET "hall_b<0>" LOC="P105";
+NET "hall_c<0>" LOC="P106";
+NET "hall_a<1>" LOC="P116";            # Drive Motor 2
+NET "hall_b<1>" LOC="P113";
+NET "hall_c<1>" LOC="P112";
+NET "hall_a<2>" LOC="P75";            # Drive Motor 3
+NET "hall_b<2>" LOC="P74";
+NET "hall_c<2>" LOC="P68";
+NET "hall_a<3>" LOC="P117";            # Drive Motor 4
+NET "hall_b<3>" LOC="P122";
+NET "hall_c<3>" LOC="P123";
+NET "hall_a<4>" LOC="P88";            # Dribbler
+NET "hall_b<4>" LOC="P91";
+NET "hall_c<4>" LOC="P92";
+
+NET "hall_*" PULLUP;
 
 #################################################
 #                    Encoders                   #
 #################################################
-NET "enc_a<1>" LOC="P101";
-NET "enc_b<1>" LOC="P95";
-NET "enc_a<2>" LOC="P12";
-NET "enc_b<2>" LOC="P6";
-NET "enc_a<3>" LOC="P31";
-NET "enc_b<3>" LOC="P24";
-NET "enc_a<4>" LOC="P89";
-NET "enc_b<4>" LOC="P84";
+NET "enc_a<0>" LOC="P101";
+NET "enc_b<0>" LOC="P95";
+NET "enc_a<1>" LOC="P12";
+NET "enc_b<1>" LOC="P6";
+NET "enc_a<2>" LOC="P31";
+NET "enc_b<2>" LOC="P24";
+NET "enc_a<3>" LOC="P89";
+NET "enc_b<3>" LOC="P84";
+
+NET "enc_*" PULLUP;
 
 #################################################
 #                   SPI Slave                   #

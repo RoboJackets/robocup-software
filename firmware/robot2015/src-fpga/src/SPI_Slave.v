@@ -15,12 +15,14 @@ wire SCK_risingedge = (SCKr[2:1]==2'b01),  // now we can detect SCK rising edges
 // same thing for SSEL
 reg [2:0] SSELr;  always @(posedge clk) SSELr <= {SSELr[1:0], SSEL};
 wire SSEL_active = ~SSELr[1],
-     SSEL_startmessage = (SSELr[2:1]==2'b10),  // message starts at falling edge
+     SSEL_startmessage = (SSELr[2:1]=='b10),  // message starts at falling edge
      SSEL_endmessage = (SSELr[2:1]==2'b01);  // message stops at rising edge
 
 // and for MOSI
 reg [1:0] MOSIr;  always @(posedge clk) MOSIr <= {MOSIr[0], MOSI};
 wire MOSI_data = MOSIr[1];
+
+reg [1:0] DONE_d; always @(posedge clk) DONE_d <= {DONE_d[0], DONE};
 
 // we handle SPI in 8-bits format, so we need a 3 bits counter to count the bits as they come in
 reg [2:0] bitcnt;
@@ -29,11 +31,13 @@ reg [7:0] byte_data_received,
           byte_data_sent,
           byte_rec_;
 
-reg done_;
+//reg done_;
 
 assign MISO = byte_data_sent[7];  // send MSB first
-assign DONE = done_;
+// signal to load the next byte half an SCK  period before we latch it
+assign DONE = SSEL_active && SCK_fallingedge && (bitcnt==3'b000);
 assign BYTE_RECEIVED = byte_rec_;
+// DONE && clk ? byte_data_received : 'hFF;
 
 always @(posedge clk)
 begin
@@ -42,29 +46,34 @@ begin
 
   else if(SCK_risingedge)
   begin
-    bitcnt <= bitcnt + 1;
+    bitcnt <= bitcnt + 3'b001;
 
     // implement a shift-left register (since we receive the data MSB first)
     byte_data_received <= {byte_data_received[6:0], MOSI_data};
   end
 end
 
-always @(posedge clk) done_ <= SSEL_active && SCK_risingedge && (bitcnt==3'b111);
+//always @(posedge clk) done_ <= SSEL_active && SCK_risingedge && (bitcnt==3'b111);
 
-always @(negedge clk) byte_rec_ <= done_ ? byte_data_received : byte_rec_;
+always @(negedge clk) byte_rec_ <= DONE ? byte_data_received : byte_rec_;
 
-always @(posedge clk)
+always @(negedge clk)
 if(SSEL_active)
 begin
-  if ( SSEL_startmessage )
-     byte_data_sent <= BYTE_TO_SEND;  // first byte sent in a message is the message count
-   else
+  // if ( SSEL_startmessage )
+  //    byte_data_sent <= BYTE_TO_SEND;  // first byte sent in a message is the message count
+  //  else
+  if ( (bitcnt == 3'b000 && DONE_d == 2'b10) || SSEL_startmessage ) begin
+    byte_data_sent <= BYTE_TO_SEND;  // after that, we send 0s   
+  end else
+
   if ( SCK_fallingedge )
   begin
-    if ( bitcnt == 3'b0 )
-      byte_data_sent <= BYTE_TO_SEND;  // after that, we send 0s
-    else
+    if ( bitcnt != 3'b000 ) begin
+//      byte_data_sent <= BYTE_TO_SEND;  // after that, we send 0s
+    //else
       byte_data_sent <= {byte_data_sent[6:0], 1'b0};
+      end
   end
 end
 

@@ -24,10 +24,10 @@ void Task_SerialConsole(void const* args)
     threadPriority = osPriorityIdle;
 
   // Setup some of the RPC objects so we can create new ones in the console
-  RPC::add_rpc_class<RpcDigitalIn>();
+  // RPC::add_rpc_class<RpcDigitalIn>();
   RPC::add_rpc_class<RpcDigitalOut>();
   RPC::add_rpc_class<RpcDigitalInOut>();
-  RPC::add_rpc_class<RpcSPI>();
+  // RPC::add_rpc_class<RpcSPI>();
 
   // Initalize the console buffer and save the char buffer's starting address
   Console::Init();
@@ -37,6 +37,21 @@ void Task_SerialConsole(void const* args)
 
   // Let everyone know we're ok
   LOG(INIT, "Serial console ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", threadID, threadPriority);
+
+  // Lower our priority so we will yield to other, more important, startup tasks
+  if (osThreadSetPriority(threadID, osPriorityLow) == osOK) {
+    // Yield to other threads during startup so that the below lines will print to the console last
+    Thread::yield();
+
+    // Reset our priorty here and make sure we've successfully raised it back up
+    if (osThreadSetPriority(threadID, threadPriority) != osOK) {
+      LOG(SEVERE, "Console configuration error");
+      osThreadTerminate(threadID);
+    }
+  }
+
+  // Display RoboJackets if we're up and running at this point during startup
+  Console::ShowLogo();
 
   // Print out the header to show the user we're ready for input
   Console::PrintHeader();

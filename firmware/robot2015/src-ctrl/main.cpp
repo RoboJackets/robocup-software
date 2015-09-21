@@ -11,9 +11,10 @@
 #include "commands.hpp"
 #include "io-expander.hpp"
 #include "TaskSignals.hpp"
-#include "neostrip.hpp"
+//#include "neostrip.hpp"
+//#include "buzzer.hpp"
 
-#include "buzzer.hpp"
+#define _EXTERN extern "C"
 
 const std::string filename = "rj-fpga.nib";
 const std::string filesystemname = "local";
@@ -21,7 +22,7 @@ const std::string filepath = "/" + filesystemname + "/" + filename;
 
 // ADCDMA adc;
 // DMA dma;
-
+// DigitalOut null_radio_cs_init(RJ_RADIO_nCS, 1);
 
 /**
  * @brief      { Sets the hardware configurations for the status LEDs & places into the given state }
@@ -78,7 +79,7 @@ void statusLightsOFF(void const* args)
 // }
 
 
-extern "C" void HardFault_Handler(void)
+_EXTERN void HardFault_Handler(void)
 {
 	__asm volatile
 	(
@@ -93,7 +94,7 @@ extern "C" void HardFault_Handler(void)
 	);
 }
 
-extern "C" void HARD_FAULT_HANDLER(uint32_t* stackAddr)
+_EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr)
 {
 	/* These are volatile to try and prevent the compiler/linker optimising them
 	away as the variables never actually get used.  If the debugger won't show the
@@ -149,22 +150,25 @@ extern "C" void HARD_FAULT_HANDLER(uint32_t* stackAddr)
 }
 
 
-extern "C" void NMI_Handler()
+_EXTERN void NMI_Handler()
 {
 	printf("NMI Fault!\n");
 	//NVIC_SystemReset();
 }
-extern "C" void MemManage_Handler()
+
+_EXTERN void MemManage_Handler()
 {
 	printf("MemManage Fault!\n");
 	//NVIC_SystemReset();
 }
-extern "C" void BusFault_Handler()
+
+_EXTERN void BusFault_Handler()
 {
 	printf("BusFault Fault!\n");
 	//NVIC_SystemReset();
 }
-extern "C" void UsageFault_Handler()
+
+_EXTERN void UsageFault_Handler()
 {
 	printf("UsageFault Fault!\n");
 	//NVIC_SystemReset();
@@ -188,12 +192,14 @@ int main(void)
 	// Set the default logging configurations
 	isLogging = RJ_LOGGING_EN;
 	rjLogLevel = INIT;
+	//rjLogLevel = SEVERE;
 
 	/* Always send out an empty line at startup for keeping the console
 	 * clean on after a 'reboot' command is called;
 	 */
 	if (isLogging) {
-		std::printf("\r\n");
+		// reset the console's default settings and enable the cursor
+		printf("\033[0m\033[?25h");
 		fflush(stdout);
 	}
 
@@ -228,7 +234,6 @@ int main(void)
 	// 	   );
 	// }
 
-
 	// Setup the interrupt priorities before launching each subsystem's task thread.
 	setISRPriorities();
 
@@ -247,28 +252,26 @@ int main(void)
 	RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
 	init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
-#if RJ_FPGA_ENABLE
-	// Create an object for communicating with the FPGA
-	FPGA fpga(
-	    RJ_SPI_BUS,
-	    RJ_FPGA_nCS,
-	    RJ_FPGA_PROG_B,
-	    RJ_FPGA_INIT_B,
-	    RJ_FPGA_DONE
-	);
-
 	// This is where the FPGA is actually configured with the bitfile's name passed in
-	bool fpga_ready = fpga.Init(filepath);
+	bool fpga_ready = FPGA::Instance()->Init(filepath);
 
+	/* We MUST wait for the FPGA to COMPLETELY configure before moving on because of
+	 * threading with the shared the SPI. If we don't explicitly halt main (it's just
+	 * considered another thread), then the chip select lines will not be in the correct
+	 * states for communicating between devices exclusively. Many bus faults occured on the
+	 * road to finding this problem and then determining how to fix it.
+	 */
 	if (fpga_ready == true) {
 
 		LOG(INIT, "FPGA Configuration Successful!");
+		osSignalSet(Thread::gettid(), MAIN_TASK_CONTINUE);
 	} else {
 
 		LOG(FATAL, "FPGA Configuration Failed!");
+		osSignalSet(Thread::gettid(), MAIN_TASK_CONTINUE);
 	}
 
-#endif
+	Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
 	// // Setup the IO Expander's hardware
 	// MCP23017::Init();
@@ -293,7 +296,7 @@ int main(void)
 
 	// Attach an interrupt callback for setting the buttons/switches states
 	// into the firmware anytime one of them changes
-	
+
 	// InterruptIn configInputs(RJ_IOEXP_INT);
 	// configInputs.rise(&sampleInputs);
 
@@ -343,50 +346,24 @@ int main(void)
 		// rgbLED.write();
 	}
 
-	std::array<uint16_t, 5> duty_cycles_r = { 0 };
-	std::array<uint16_t, 5> duty_cycles_w = { 2, 7, 3, 15, 120 };
-	std::array<uint16_t, 5> enc_deltas = { 0 };
-	uint8_t status_byte, j = 0;
-	bool motor_on = false;
+	// LOG(INIT, "FPGA git commit hash:\t0x%08X", FPGA::Instance()->git_hash());
 
-	LOG(INIT, "FPGA git commit hash:\t0x%08X", fpga.git_hash());
+	// Clear out the header for the console
+	FPGA::Instance()->motors_en(true);
+
+	// const std::string ANSI_CLR_LINE = "\033[2K";
+	// const std::string ANSI_BOLD = "\033[44m;1m";
+
+	// const std::string ANSI_VT_ID = "\033[";
+	// const std::string ANSI_ED = "\033[J"; 	// erase display
+
+	// const std::string ANSI_DSR = "\033[5n"; 	// device status report
+	// const std::string ANSI_CUR_POS = "\033[6n";
 
 	while (true) {
 
 		rdy_led = !fpga_ready;
-		Thread::wait(1000);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
-
-		for (size_t i = 0; i < duty_cycles_w.size(); i++)
-			duty_cycles_w[i] += 50;
-
-		status_byte = fpga.read_duty_cycles(duty_cycles_r.data(), duty_cycles_r.size());
-
-		LOG(OK,
-		    "DUTY CYCLES\t(read):\r\n"
-		    "    (0x%02X)\t0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X",
-		    status_byte, duty_cycles_r.at(0), duty_cycles_r.at(1),
-		    duty_cycles_r.at(2), duty_cycles_r.at(3), duty_cycles_r.at(4)
-		   );
-
-		status_byte = fpga.set_duty_get_enc(duty_cycles_w.data(), duty_cycles_w.size(),
-		                                    enc_deltas.data(), enc_deltas.size());
-
-		LOG(OK,
-		    "ENC DELTAS\t(duty cycle write to values on 2nd lines):\r\n"
-		    "    (0x%02X)\t0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X\r\n"
-		    "            \t0x%04X, 0x%04X, 0x%04X, 0x%04X, 0x%04X",
-		    status_byte,
-		    enc_deltas.at(0), 	enc_deltas.at(1), 	 enc_deltas.at(2),    enc_deltas.at(3),    enc_deltas.at(4),
-		    duty_cycles_w.at(0), duty_cycles_w.at(1), duty_cycles_w.at(2), duty_cycles_w.at(3), duty_cycles_w.at(4)
-		   );
-
-		if (j > 2) {
-			fpga.motors_en(motor_on);
-			motor_on = !motor_on;
-			j = 0;
-		}
-
-		j++;
+		Thread::wait(100);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
 	}
 }
 
