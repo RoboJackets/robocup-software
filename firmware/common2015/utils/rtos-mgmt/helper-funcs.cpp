@@ -63,7 +63,15 @@ void setISRPriorities(void)
     // this is the timer used in the mbed Ticker library
     NVIC_SetPriority(TIMER3_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 2));
 
+    // Brown-Out Detect
+    NVIC_SetPriority(BOD_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 4));
 
+    // The I2C interface that's in use
+    NVIC_SetPriority(I2C2_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 1));
+
+    // The SPI interface that's in use.
+    NVIC_SetPriority(SPI_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 2));
+    // NVIC_SetPriority(SSP0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 2));
 
     ////////////////////////////////////
     //  begin lower priotity section  //
@@ -72,9 +80,8 @@ void setISRPriorities(void)
     //set UART (console) interrupts to minimal priority
     //when debugging radio and other time sensitive operations, this
     //interrupt will need to be deferred.
-    NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 0));
+    NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 4));
 
-    NVIC_SetPriority(I2C2_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 1));
 
     // NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
     // NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
