@@ -12,17 +12,33 @@ HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber]
 
 This script will need root privileges"
 
+DISTRO_STR="The linux distro you are using is not supported by ubuntu-setup. Please file an issue if you want to request your debian based distro to be added."
+
 # defaults!
-YES=false
 OVERWRITE_SOURCES=false
+YES=false
 
 # if we change this to true, please put it in the below if statment, as debian already has a good version...
-if [ -z "$(cat /etc/os-release | grep -i '^NAME=.*Debian')" ]; then # dont add repositories on debian, compatability issues?
-    ADD_REPOS=true
-    FIRMWARE=true
-else
+if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # dont add repositories on debian, compatability issues?
+    echo "[WARN] You are using a flavor of debian. This configuration is not officially supported..." >&2
     ADD_REPOS=false
     FIRMWARE=false
+elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
+    if cat /etc/os-release | grep -iq '^VERSION=.*14.04'; then # Using Ubuntu 14.04
+        echo "Ubuntu 14.04 Detected..."
+        ADD_REPOS=true
+        FIRMWARE=true
+    elif cat /etc/os-release | grep -iq '^VERSION=.*15.04'; then # Using Ubuntu 14.04
+        echo "Ubuntu 15.04 Detected..."
+        ADD_REPOS=false
+        FIRMWARE=false
+    else
+        echo "$DISTRO_STR" >&2
+        exit 1
+    fi
+else
+    echo "$DISTRO_STR" >&2
+    exit 1
 fi
 
 # parse command line args
