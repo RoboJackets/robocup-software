@@ -56,7 +56,7 @@ set(ROBOCUP_LIB_SRC
 if(APPLE)
     # help CMake find gl.h, glu.h, etc on OS X
     link_directories(/opt/X11/lib/)
-    include_directories(/opt/X11/include/)
+    include_directories(SYSTEM /opt/X11/include/)
     # lib dir for spnav
     link_directories(/usr/local/lib/)
 endif()

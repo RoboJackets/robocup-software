@@ -42,7 +42,7 @@ message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
 
 # Google Protobuf
 find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIR})
+include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIR})
 
 # Python
 if(APPLE)
