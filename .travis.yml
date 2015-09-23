@@ -7,8 +7,8 @@ branches:
     - master
 
 before_install:
-  - brew update
-  - brew upgrade
+  - brew update > brew-update.log
+  - brew upgrade > brew-upgrade.log
   - util/osx-setup
 
 cache:
