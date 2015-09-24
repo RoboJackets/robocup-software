@@ -8,8 +8,7 @@ git config --global user.name "$GIT_USERNAME"
 git config --global user.email $GIT_EMAIL
 mkdir -p api_docs
 git clone -b gh-pages git://github.com/robojackets/robocup-software api_docs/html
-doxygen
-cp doxygen.css api_docs/html
+make apidocs
 cd api_docs/html
 git add --all
 git commit -m 'auto-updated api docs'
