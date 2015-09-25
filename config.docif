@@ -6,7 +6,7 @@
 
 # @REQUIRED
 # A docker baseimage repostiory. Create one on the docker hub
-BASEIMAGE_REPO="jgkamat/vipaint-baseimage"
+BASEIMAGE_REPO="robojackets/robocup-baseimage"
 
 # If true, ${BASEIMAGE_REPO}:master is pushed when on master.
 # Defaults to false.
@@ -15,7 +15,7 @@ PUSH_BASEIMAGE="true"
 # @REQUIRED
 # The github repository location, for sendings status updates to
 # This is CASE SENSITIVE!!
-GITHUB_REPO='jgkamat/ViPaint'
+GITHUB_REPO='RoboJackets/robocup-software'
 
 # The url to point to when a status check is pending.
 # Will point to https://github.com/jgkamat/DoCIF if unset.
