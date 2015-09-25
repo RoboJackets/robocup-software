@@ -7,3 +7,6 @@
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = git://github.com/robojackets/style-configs
+[submodule "external/DoCIF"]
+	path = external/DoCIF
+	url = https://github.com/jgkamat/DoCIF.git
