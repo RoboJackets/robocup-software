@@ -28,8 +28,8 @@ USER developer
 ENV HOME /home/developer
 
 # do everything in root's home
-RUN mkdir -p /home/developer/robocup-software
-WORKDIR /home/developer/robocup-software
+RUN mkdir -p /home/developer/project
+WORKDIR /home/developer/project
 
 # Add a docker init system and use it
 ADD https://github.com/ohjames/smell-baron/releases/download/v0.1.0/smell-baron /bin/smell-baron
