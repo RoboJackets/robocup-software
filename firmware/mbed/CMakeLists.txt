@@ -2,7 +2,7 @@
 # all official libraries
 include(ExternalProject)
 ExternalProject_Add(mbed_libraries
-    GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/third_party/mbed_lib_build_tools
+    GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools
     CONFIGURE_COMMAND ""
     BUILD_COMMAND python2 ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS}
     INSTALL_COMMAND ""

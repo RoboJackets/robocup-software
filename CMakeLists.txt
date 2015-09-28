@@ -26,12 +26,20 @@ endif()
 # TODO: make this easier to specify when running `make` on the command-line
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 
+# Turn some compiler warnings into errors
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=delete-non-virtual-dtor -Werror=uninitialized")
+
 # Qt5
 if(APPLE)
     # look for the homebrew-installed version of Qt5
     find_package(Qt5Widgets
         REQUIRED
         PATHS /usr/local/Cellar/qt5/*)
+
+    # this directory is included by default, but we mark it as SYSTEM so
+    # warnings in external headers don't show up every time we build
+    include_directories(SYSTEM /usr/local/include/)
+
 else()
     find_package(Qt5Widgets REQUIRED)
 endif()
@@ -80,7 +88,7 @@ endif()
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIR})
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # libusb
 find_package(libusb-1.0 REQUIRED)

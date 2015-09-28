@@ -7,4 +7,4 @@ void device_com_vect(void);
 void device_gdo0_vect(void);
 void device_gdo2_vect(void);
 
-#endif // _DEVICE_H_
+#endif  // _DEVICE_H_

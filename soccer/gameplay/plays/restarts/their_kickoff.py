@@ -2,7 +2,7 @@ import play
 import behavior
 import robocup
 import tactics.positions.defender
-import tactics.circle_near_ball
+import tactics.stopped.circle_near_ball
 import main
 
 
@@ -19,7 +19,7 @@ class TheirKickoff(play.Play):
 
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
-        circle_up = tactics.circle_near_ball.CircleNearBall()
+        circle_up = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(circle_up, 'circle_up')
 
 

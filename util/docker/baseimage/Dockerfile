@@ -7,6 +7,10 @@ MAINTAINER Jay Kamat github@jgkamat.33mail.com
 # Setup apt to be happy with no console input
 ENV DEBIAN_FRONTEND noninteractive
 
+# Use UTF-8
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+
 # setup apt tools and other goodies we want
 RUN apt-get update --fix-missing && apt-get -y install apt-utils wget curl htop iputils-ping vim-nox less debconf-utils w3m git software-properties-common sudo scons screen && apt-get clean
 
