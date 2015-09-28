@@ -26,28 +26,32 @@
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 class RbpfModelRolling : public RbpfModel {
 public:
-	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config);
-	virtual ~RbpfModelRolling();
+    RbpfModelRolling(Modeling::RobotModel::RobotMap* _robotMap,
+                     Configuration* config);
+    virtual ~RbpfModelRolling();
 
-	// reinitialize the parameters from the config files - should be called each frame
-	void initParams();
+    // reinitialize the parameters from the config files - should be called each
+    // frame
+    void initParams();
 
 protected:
-	ConfigDouble::shared_ptr _processNoiseSqrdPos;
-	ConfigDouble::shared_ptr _processNoiseSqrdVel;
-	ConfigDouble::shared_ptr _processNoiseSqrdAcc;
-	ConfigDouble::shared_ptr _measurementNoiseSqrd;
-	
-	void transitionModel(rbpf::VectorNd &X, const rbpf::VectorMd &U, double dt) const;
-	void computeTransitionJacobian(double dt);
-	void observationModel(const rbpf::VectorNd &X, rbpf::VectorSd &out) const;
-	void computeObservationJacobian(double dt);
+    ConfigDouble::shared_ptr _processNoiseSqrdPos;
+    ConfigDouble::shared_ptr _processNoiseSqrdVel;
+    ConfigDouble::shared_ptr _processNoiseSqrdAcc;
+    ConfigDouble::shared_ptr _measurementNoiseSqrd;
 
-	// initialization functions to pull from config file
-	virtual void initializeQ();
-	virtual void initializeR();
+    void transitionModel(rbpf::VectorNd& X, const rbpf::VectorMd& U,
+                         double dt) const;
+    void computeTransitionJacobian(double dt);
+    void observationModel(const rbpf::VectorNd& X, rbpf::VectorSd& out) const;
+    void computeObservationJacobian(double dt);
+
+    // initialization functions to pull from config file
+    virtual void initializeQ();
+    virtual void initializeR();
+
 public:
-  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 #endif /* RBPFMODELROLLING_HPP_ */

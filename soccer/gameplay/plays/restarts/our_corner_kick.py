@@ -25,12 +25,15 @@ class OurCornerKick(play.Play):
 
 
         self.kicker = skills.line_kick.LineKick()
-        # FIXME: settings
-        # self.kicker.use_chipper = True
+        self.kicker.use_chipper = True
         self.kicker.chip_power = OurCornerKick.ChipperPower # TODO: base this on the target dist from the bot
         self.kicker.min_chip_range = OurCornerKick.MinChipRange
         self.kicker.max_chip_range = OurCornerKick.MaxChipRange
         self.add_subbehavior(self.kicker, 'kicker', required=True, priority=5)
+
+        # larger avoid ball radius for line kick setup so we don't run over the ball backwards
+        self.kicker.setup_ball_avoid = constants.Field.CenterRadius - constants.Robot.Radius
+        self.kicker.drive_around_dist = constants.Field.CenterRadius - constants.Robot.Radius
 
         self.center1 = skills.move.Move()
         self.add_subbehavior(self.center1, 'center1', required=False, priority=4)
