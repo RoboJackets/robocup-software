@@ -36,4 +36,5 @@ echo "-- Disabling AppNap for simulator"
 defaults write org.robojackets.robocup.simulator NSAppSleepDisabled -bool YES
 
 echo "-- Updating submodules"
+git submodule sync
 git submodule update --init
