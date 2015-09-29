@@ -106,10 +106,10 @@ CLEAN_COMMAND="make clean || true"
 
 # Environmental variables to make available to the build environment
 ENV_VARS=()
-ENV_VARS+=("GH_PUSH_TOKEN")  # To be used by autoupdating script
+ENV_VARS+=("GH_TOKEN")  # To be used by autoupdating script
 
 # Command to run when deploying. Leave blank for no deploy.
 # Make sure any secrets these commands need are added to ENV_VARS
-DEPLOY_COMMAND="echo My secrets are $GH_USER"
+DEPLOY_COMMAND="./autoupdate-docs.sh"
 
 ################################################################################
