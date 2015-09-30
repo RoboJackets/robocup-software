@@ -14,7 +14,7 @@ machine:
 
 checkout:
   post:
-    - git submodule update --init
+    - git submodule sync && git submodule update --init
 
 dependencies:
   pre:
