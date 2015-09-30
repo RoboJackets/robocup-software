@@ -7,6 +7,13 @@ define cmake_build_target
 	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
 endef
 
+# Similar to the above build target command, but for firmware.  This is used
+# because CMake can only handle one toolchain at a time, so we build the MBED-
+# targeted code separately.
+define cmake_build_target_fw
+	mkdir -p build/firmware
+	cd build/firmware && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS)
+endef
 
 all:
 	$(call cmake_build_target, all)
@@ -56,17 +63,17 @@ robot-prog-samba:
 
 # robot 2015 firmware
 robot2015:
-	$(call cmake_build_target, robot2015)
+	$(call cmake_build_target_fw, robot2015)
 
 robot2015-prog:
-	$(call cmake_build_target, robot2015-prog)
+	$(call cmake_build_target_fw, robot2015-prog)
 
 # Base station 2015 firmware
 base2015:
-	$(call cmake_build_target, base2015)
+	$(call cmake_build_target_fw, base2015)
 
 base2015-prog:
-	$(call cmake_build_target, base2015-prog)
+	$(call cmake_build_target_fw, base2015-prog)
 
 # Robot FPGA
 fpga2011:
