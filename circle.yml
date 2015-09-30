@@ -14,7 +14,11 @@ machine:
 
 checkout:
   post:
-    - git submodule sync && git submodule update --init
+    # This is a hack, but it's the only thing that works at the moment :/
+    - git submodule sync
+    - git submodule update --init || true
+    - git submodule sync
+    - git submodule update --init
 
 dependencies:
   pre:
