@@ -100,6 +100,12 @@ modernize:
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build/modernize -include=common,logging,simulator,soccer
 
+apidocs:
+	doxygen doc/Doxyfile
+	cp doc/doxygen.css api_docs/html/
+	@echo -e "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
+
+
 STYLE_EXCLUDE_DIRS=build \
 	external \
 	firmware/robot/cpu/at91sam7s256 \

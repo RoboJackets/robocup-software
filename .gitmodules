@@ -3,7 +3,7 @@
 	url = https://github.com/mbedmicro/mbed.git
 [submodule "external/googletest"]
 	path = external/googletest
-	url = https://git.chromium.org/git/external/googletest.git
+	url = https://github.com/google/googletest
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = git://github.com/robojackets/style-configs
