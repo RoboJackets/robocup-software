@@ -26,7 +26,7 @@ misrepresented as being the original software.
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btMatrix3x3.h"
