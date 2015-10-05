@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include "Rbpf.hpp"
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 using namespace LinAlg;

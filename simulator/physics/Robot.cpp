@@ -7,7 +7,7 @@
 
 #include <Utils.hpp>
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 
 #include <Geometry2d/TransformMatrix.hpp>
 
