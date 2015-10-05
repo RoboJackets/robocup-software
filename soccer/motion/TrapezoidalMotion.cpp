@@ -1,5 +1,5 @@
 #include "TrapezoidalMotion.hpp"
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "Utils.hpp"
 
