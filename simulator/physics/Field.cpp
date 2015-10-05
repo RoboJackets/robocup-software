@@ -1,7 +1,7 @@
 #include "Field.hpp"
 #include <physics/Environment.hpp>
 #include <vector>
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
