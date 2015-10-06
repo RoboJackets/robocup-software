@@ -2,5 +2,5 @@
 <area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="73,245,213,272"/>
 <area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="38,155,249,197"/>
 <area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="43,80,244,107"/>
-<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="43,5,245,32"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="43,5,245,32"/>
 </map>

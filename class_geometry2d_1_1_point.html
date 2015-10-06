@@ -198,7 +198,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a6ed5c08d2d6593452ca07f3b93f10a71"><td class="mdescLeft">&#160;</td><td class="mdescRight">computes the magnitude of the point, as if it were a vector  <a href="#a6ed5c08d2d6593452ca07f3b93f10a71">More...</a><br/></td></tr>
 <tr class="separator:a6ed5c08d2d6593452ca07f3b93f10a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaafa7c842d0f79280fbf1b03bcae411f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#aaafa7c842d0f79280fbf1b03bcae411f">magsq</a> () const </td></tr>
-<tr class="memdesc:aaafa7c842d0f79280fbf1b03bcae411f"><td class="mdescLeft">&#160;</td><td class="mdescRight">computes magnitude squared this is faster than <a class="el" href="class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71" title="computes the magnitude of the point, as if it were a vector ">mag()</a>  <a href="#aaafa7c842d0f79280fbf1b03bcae411f">More...</a><br/></td></tr>
+<tr class="memdesc:aaafa7c842d0f79280fbf1b03bcae411f"><td class="mdescLeft">&#160;</td><td class="mdescRight">computes magnitude squared this is faster than mag()  <a href="#aaafa7c842d0f79280fbf1b03bcae411f">More...</a><br/></td></tr>
 <tr class="separator:aaafa7c842d0f79280fbf1b03bcae411f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fcdfc771eda6de52ffb3cee4096f15f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a2fcdfc771eda6de52ffb3cee4096f15f">clamp</a> (float max)</td></tr>
 <tr class="memdesc:a2fcdfc771eda6de52ffb3cee4096f15f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restricts the point to a given magnitude.  <a href="#a2fcdfc771eda6de52ffb3cee4096f15f">More...</a><br/></td></tr>
@@ -212,7 +212,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a6ccfeea670b14c267037f6185cb9d137"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeab18a2ec5e60bcd00498bb29bcf3048"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeab18a2ec5e60bcd00498bb29bcf3048"></a>
 <a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048">rotated</a> (float <a class="el" href="class_geometry2d_1_1_point.html#a67ea60681c7172fa1ef5ad7b2e04174d">angle</a>) const </td></tr>
-<tr class="memdesc:aeab18a2ec5e60bcd00498bb29bcf3048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Like <a class="el" href="class_geometry2d_1_1_point.html#a0d94c0285505aa1aab17c36505928bbb" title="rotates the point around another point by specified angle in the CCW direction ">rotate()</a>, but returns a new point instead of changing *this. <br/></td></tr>
+<tr class="memdesc:aeab18a2ec5e60bcd00498bb29bcf3048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Like rotate(), but returns a new point instead of changing *this. <br/></td></tr>
 <tr class="separator:aeab18a2ec5e60bcd00498bb29bcf3048"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c3908ca392de0f0416dc8a5b739374e"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a2c3908ca392de0f0416dc8a5b739374e">distTo</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other) const </td></tr>
 <tr class="memdesc:a2c3908ca392de0f0416dc8a5b739374e"><td class="mdescLeft">&#160;</td><td class="mdescRight">computes the distance from the current point to another  <a href="#a2c3908ca392de0f0416dc8a5b739374e">More...</a><br/></td></tr>
@@ -306,7 +306,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </div><div class="memdoc">
 
 <p>default constrctor. </p>
-<p>initializes point to (0,0) usage as <a class="el" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. ">Point</a> p = <a class="el" href="class_geometry2d_1_1_point.html#a8e0ac151ee451f036d322d24677bc691" title="default constrctor. ">Point()</a>; </p>
+<p>initializes point to (0,0) usage as Point p = Point(); </p>
 
 </div>
 </div>
@@ -343,7 +343,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </div><div class="memdoc">
 
 <p>overloaded constructor. </p>
-<p>sets the point to x,y usage as <a class="el" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. ">Point</a> p = Point(x,y); </p>
+<p>sets the point to x,y usage as Point p = Point(x,y); </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">x</td><td>the x coordinate </td></tr>
@@ -527,7 +527,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </table>
 </div><div class="memdoc">
 
-<p>computes magnitude squared this is faster than <a class="el" href="class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71" title="computes the magnitude of the point, as if it were a vector ">mag()</a> </p>
+<p>computes magnitude squared this is faster than mag() </p>
 <dl class="section return"><dt>Returns</dt><dd>the magnitude squared </dd></dl>
 
 </div>
@@ -584,7 +584,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_point.html">Point</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:04 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:39 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

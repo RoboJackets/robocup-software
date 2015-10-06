@@ -181,12 +181,12 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><b>getR
 <tr class="separator:a1986f0e589596c0a0f0bc843d916ef73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af79e2d81e20080376a8b4072228252d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af79e2d81e20080376a8b4072228252d2"></a>
 boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2">getMainModule</a> ()</td></tr>
-<tr class="memdesc:af79e2d81e20080376a8b4072228252d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets the instance of the main.py module that's loaded at <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> <br/></td></tr>
+<tr class="memdesc:af79e2d81e20080376a8b4072228252d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets the instance of the main.py module that's loaded at GameplayModule <br/></td></tr>
 <tr class="separator:af79e2d81e20080376a8b4072228252d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Coordinator of high-level logic. </p>
-<p>The gameplay module has an embedded python interpreter and serves as the bridge between our python and c++ code. The python side of things is responsible for high-level gameplay. At each iteration of the main run loop, the <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> calls into python, which does all of the high-level planning, resulting in updated motion targets, etc for the robots. The <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> then executes path planning for each <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>. </p>
+<p>The gameplay module has an embedded python interpreter and serves as the bridge between our python and c++ code. The python side of things is responsible for high-level gameplay. At each iteration of the main run loop, the GameplayModule calls into python, which does all of the high-level planning, resulting in updated motion targets, etc for the robots. The GameplayModule then executes path planning for each OurRobot. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="ab76f2717e7ed13a7c738c081bf70be3d"></a>
 <div class="memitem">
@@ -320,7 +320,7 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_gameplay.html">Gameplay</a></li><li class="navelem"><a class="el" href="class_gameplay_1_1_gameplay_module.html">GameplayModule</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:03 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:38 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

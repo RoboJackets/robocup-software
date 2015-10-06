@@ -1,5 +1,5 @@
 <map id="gameplay.plays.tuning.test_jittery_motion.Jitterer" name="gameplay.plays.tuning.test_jittery_motion.Jitterer">
 <area shape="rect" id="node2" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="5,155,224,197"/>
 <area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="14,80,215,107"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="13,5,216,32"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="13,5,216,32"/>
 </map>

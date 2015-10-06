@@ -34,5 +34,5 @@
 <area shape="rect" id="node37" href="$classgameplay_1_1root__play_1_1_root_play.html" title="The RootPlay is basically the python&#45;side of the c++ GameplayModule it coordinates the selection of t..." alt="" coords="1003,2096,1205,2123"/>
 <area shape="rect" id="node2" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="507,1037,719,1078"/>
 <area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,1044,458,1071"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,1044,208,1071"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,1044,208,1071"/>
 </map>

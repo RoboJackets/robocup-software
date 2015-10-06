@@ -7,7 +7,7 @@
 <area shape="rect" id="node48" href="$classgameplay_1_1tactics_1_1line__up_1_1_line_up.html" title="gameplay.tactics.line\l_up.LineUp" alt="" coords="809,2533,964,2574"/>
 <area shape="rect" id="node49" href="$classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html" title="A tactic that causes a robot to pass to another one, who scores on the goal as fast as possible..." alt="" coords="788,2598,985,2639"/>
 <area shape="rect" id="node2" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,2409,458,2436"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,2409,208,2436"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,2409,208,2436"/>
 <area shape="rect" id="node5" href="$classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html" title="gameplay.plays.offense.basic\l_122.Basic122" alt="" coords="1096,5,1304,46"/>
 <area shape="rect" id="node6" href="$classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html" title="gameplay.plays.offense.two\l_side_attack.TwoSideAttack" alt="" coords="1101,70,1299,111"/>
 <area shape="rect" id="node7" href="$classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html" title="gameplay.plays.restarts.defend\l_penalty.DefendPenalty" alt="" coords="1089,135,1311,177"/>

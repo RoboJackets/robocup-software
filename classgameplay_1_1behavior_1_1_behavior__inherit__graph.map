@@ -2,7 +2,7 @@
 <area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="510,1031,722,1073"/>
 <area shape="rect" id="node37" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="507,1498,725,1539"/>
 <area shape="rect" id="node49" href="$classgameplay_1_1timed__behavior_1_1_timed_behavior.html" title="TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it. " alt="" coords="521,1563,711,1605"/>
-<area shape="rect" id="node2" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,1505,208,1532"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,1505,208,1532"/>
 <area shape="rect" id="node4" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="831,816,972,843"/>
 <area shape="rect" id="node31" href="$classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="783,1193,1019,1249"/>
 <area shape="rect" id="node32" href="$classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html" title="gameplay.tactics.behavior\l_sequence.BehaviorSequence" alt="" coords="794,867,1009,909"/>

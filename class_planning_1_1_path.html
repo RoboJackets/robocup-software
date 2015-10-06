@@ -150,7 +150,7 @@ virtual <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInsta
 <tr class="separator:a9feca73922e905ddf5f72397e81b8ebd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05ea5649bd6ce649ca974e50983dbc76"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05ea5649bd6ce649ca974e50983dbc76"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76">clone</a> () const =0</td></tr>
-<tr class="memdesc:a05ea5649bd6ce649ca974e50983dbc76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a>. <br/></td></tr>
+<tr class="memdesc:a05ea5649bd6ce649ca974e50983dbc76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the Path. <br/></td></tr>
 <tr class="separator:a05ea5649bd6ce649ca974e50983dbc76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a852b9b073f197f61dea6f896f05cba48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a852b9b073f197f61dea6f896f05cba48"></a>
 Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a> () const </td></tr>
@@ -217,10 +217,10 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 </div><div class="memdoc">
 
 <p>Draws the path. </p>
-<p>The default implementation adds a DebugRobotPath to the <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> that interpolates points along the path.</p>
+<p>The default implementation adds a DebugRobotPath to the SystemState that interpolates points along the path.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">state</td><td>The <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> to draw the path on </td></tr>
+    <tr><td class="paramname">state</td><td>The SystemState to draw the path on </td></tr>
     <tr><td class="paramname">color</td><td>The color the path should be drawn </td></tr>
     <tr><td class="paramname">layer</td><td>The layer to draw the path on </td></tr>
   </table>
@@ -260,7 +260,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...">MotionInstant</a> containing the position and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A MotionInstant containing the position and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
 
 <p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#a8a8a10c8025238a5a56a3d770e16d342">Planning::InterpolatedPath</a>, <a class="el" href="class_planning_1_1_trapezoidal_path.html#aa595732da857804f805f65d1fff6d60f">Planning::TrapezoidalPath</a>, and <a class="el" href="class_planning_1_1_composite_path.html#a468f5377361780365626b691c4f97e39">Planning::CompositePath</a>.</p>
 
@@ -403,7 +403,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:04 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:39 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

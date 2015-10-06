@@ -10,6 +10,6 @@
 <area shape="rect" id="node2" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="507,189,725,230"/>
 <area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,229,458,256"/>
 <area shape="rect" id="node5" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="510,254,722,295"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,229,208,256"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,229,208,256"/>
 <area shape="rect" id="node9" href="$classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html" title="AngleReceive accepts a receive_point as a parameter and gets setup there to catch the ball It transit..." alt="" coords="1373,123,1536,165"/>
 </map>

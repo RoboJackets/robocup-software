@@ -100,30 +100,104 @@ $(document).ready(function(){initNavTree('md_doc__gameplay.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title"><a class="el" href="namespace_gameplay.html" title="Higher-level logic for soccer. ">Gameplay</a> </div>  </div>
+<div class="title">Gameplay </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This document covers the basics of our high-level soccer code including Plays, Behaviors, and game state evaluation. This code resides in <a href="https://github.com/RoboJackets/robocup-software/tree/master/soccer/gameplay">soccer/gameplay</a>.</p>
-<h2>Play Structure</h2>
-<p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <b>Behaviors</b>, <b>Tactics</b>, and <b>Plays</b>. There is one Goalie (optionally) and one Play.</p>
-<div align="center">
-<img src="dot_inline_dotgraph_1.png" alt="dot_inline_dotgraph_1.png" border="0" usemap="#dot_inline_dotgraph_1.map"/>
-<map name="dot_inline_dotgraph_1.map" id="dot_inline_dotgraph_1.map"></map>
-</div>
-<h3>Skill</h3>
-<p>Skills are simple Behaviors that apply to a single robot and are instances of the SingleRobotBehavior class.</p>
-<h3>Tactic</h3>
-<p>Tactics are Behaviors that apply to one or more robots and are higher-level than a Skill. Note: there is no Tactic class, the distinction between it and other behaviors is mostly for organizational purposes.</p>
-<h3>Play</h3>
-<p>Plays are the highest-level actions and there is only one active at any given time. Plays are responsible for coordinating actions amongst all available robot and are generally made up of Behaviors and Tactics.</p>
+<p>As with any complex system, it's important to have some well-defined structure to keep things manageable. The <code>soccer</code> program is split up into several different layers for this purpose, with the gameplay layer being the most high-level. The gameplay layer is managed by the GameplayModule and evaluates the current state of the field (where the robots and ball are) and the state of the game (is it a kickoff, penalty kick, etc). This information is contained in the c++ <a class="el" href="class_system_state.html">SystemState</a> class and the <a class="el" href="class_game_state.html">GameState class</a>, respectively. The result of running the GameplayModule is a motion command for each of the robots as well as kick and dribble commands. Layers of the software stack below the gameplay layer ideally don't know anything about soccer and just orchestrate robot motion, radio communication, network communication, etc.</p>
+<p>When the gameplay module is running, its job is to select the best play from a list of enabled plays by choosing the one with the lowest <a class="el" href="classgameplay_1_1play_1_1_play.html#a3a7c13e330fea8e8d01c6f6692b5388b">score()</a> value. Plays are enabled and disabled through the GUI with the checkboxes next to play names. See the annotated screenshot below for more info.</p>
+<div class="image">
+<img src="soccer-with-gameplay-annotations.png" alt="soccer-with-gameplay-annotations.png"/>
+<div class="caption">
+soccer screenshot with gameplay annotations</div></div>
+ <h2>Play Structure</h2>
+<p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <a href="soccer/gameplay/skills">Skills</a>, <a href="soccer/gameplay/tactics">Tactics</a>, and <a href="soccer/gameplay/plays">Plays</a>. There is one Goalie (optionally) and one <a class="el" href="classgameplay_1_1play_1_1_play.html">Play</a> object.</p>
+<p><b>Skills</b> are behaviors that apply to a single robot. They include things like <a class="el" href="classgameplay_1_1skills_1_1capture_1_1_capture.html">capturing the ball</a>, <a class="el" href="classgameplay_1_1skills_1_1move_1_1_move.html">moving to a particular position on the field</a>, and <a class="el" href="classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html">kicking the ball</a>.</p>
+<p><b>Tactics</b> can coordinate a single robot or many and generally incapsulate more complex behavior than <b>skills</b>. This includes things such as <a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html">passing</a>, <a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html">defense</a>, and <a class="el" href="classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html">the goalie</a>.</p>
+<p><b>Plays</b> are responsible for coordinating the whole team of robots (although some robots may be unused). At a given time, the <code>soccer</code> program is running at most one play.</p>
+<p>Used together, skills, tactics, and plays form a tree structure with the Play at the root and other behaviors below it. The C++ <code>GameplayModule</code> tells the current play to run, which in turn tells each of its sub-behaviors to run.</p>
+<h2>Gameplay structure</h2>
+<p>Every behavior in soccer is a state machine that subclasses the main <a class="el" href="classgameplay_1_1fsm_1_1_state_machine.html">StateMachine class</a>. This class has methods for adding states and transitions between them as well as utility methods for showing textual and graphical descriptions of a state machine and it's sub-machines. One nifty usage of this feature is that we can easily view a diagram of every skill, tactic, and play in our library.</p>
+<div class="fragment"><div class="line"><span class="preprocessor"># Run this in a terminal in the robocup-software folder to make the diagrams</span></div>
+<div class="line"><span class="preprocessor">$ make behavior-diagrams</span></div>
+</div><!-- fragment --><p>After running the above command, open up the <code>soccer/gameplay/diagrams</code> folder and browse around to see a diagram for each behavior. Below is the state diagram for the <a class="el" href="classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html">PivotKick</a> behavior. A good exercise if you're new to writing plays is to compare the PivotKick <b>init</b>() method's state machine declarations to what you see in the diagram below.</p>
+<div class="image">
+<img src="PivotKick-state-diagram.png" alt="PivotKick-state-diagram.png"/>
+<div class="caption">
+PivotKick state diagram</div></div>
 <h2>Creating a Play</h2>
-<p>Making a new play is as simple as adding a new python file somewhere inside the <code>soccer/gameplay/plays</code> directory and writing a subclass of <code>Play</code> inside of it. There is no need to register the play, soccer will see the file in that folder and display it in the Play Config Tab. </p>
+<p>Making a new play is as simple as adding a new python file somewhere inside the <code>soccer/gameplay/plays</code> directory and creating a subclass of <code>Play</code> inside of it. There is no need to register the play, soccer will see the file in that folder and display it in the Plays tab in <code>soccer</code>. Generally when writing a new play, it's a good idea to base its initial structure on an existing play. A good example play to look at is the LineUp play.</p>
+<p>Every play begins by declaring a python class that subclasses the Play class:</p>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="keyword">import</span> play</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">class </span>MyNewPlay(play.Play):</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;    <span class="keyword">def </span>__init__(self):</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;        <span class="comment"># call superclass constructor</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;        super().__init__(continuous=<span class="keyword">False</span>)</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        <span class="comment"># TODO: declare states and transitions if needed</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        <span class="comment">#       see fsm.py for more info on these methods.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <span class="comment"># Most plays transition from Start to Running right away</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        self.add_transition(behavior.Behavior.State.start,</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;                behavior.Behavior.State.running,</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                <span class="keyword">lambda</span>: <span class="keyword">True</span>,</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                <span class="stringliteral">&#39;immediately&#39;</span>)</div>
+</div><!-- fragment --><p>After declaring the play, it's time to add in the appropriate states and state transitions to your play. Every subclass of <a class="el" href="classgameplay_1_1behavior_1_1_behavior.html">the Behavior class</a> automatically inherits some pre-defined states including <code>Start</code>, <code>Running</code>, and <code>Completed</code> and is initially started in the <code>Start</code> state. It's your job as the writer of a new play to define a state transition from <code>Start</code> to <code>Running</code> or a substate of <code>Running</code>.</p>
+<p>The gameplay system automatically declares three methods for every state added to a behavior: on_enter_&lt;NAME&gt;, on_exit_&lt;NAME&gt;, execute_&lt;NAME&gt;. Where &lt;NAME&gt; is the name of the state. This allows us to conveniently execute code whenever we transition states or have code run repeatedly while we're in the state.</p>
+<p>An incredibly simple example of a play that just moves a robot to a certain position on the field could be implemented as follows:</p>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="keyword">import</span> play</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="keyword">import</span> skills.move</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">import</span> robocup</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">class </span>MoveOneRobot(play.Play):</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="keyword">def </span>__init__(self):</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        super().__init__(continuous=<span class="keyword">False</span>)</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;        self.add_transition(behavior.Behavior.State.start,</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;                behavior.Behavior.State.running,</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                <span class="keyword">lambda</span>: <span class="keyword">True</span>,</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;                <span class="stringliteral">&#39;immediately&#39;</span>)</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">def </span>on_enter_running(self):</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment"># Add a &quot;Move&quot; subbehavior that tells a robot to a specified (x, y) location</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        m = skills.move.Move(robocup.Point(0, 2)))</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        self.add_subbehavior(m, name=<span class="stringliteral">&#39;move&#39;</span>, required=<span class="keyword">True</span>)</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">def </span>on_exit_running(self):</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="comment"># When the running state is over, we remove the subbehavior</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        self.remove_subbehavior(<span class="stringliteral">&#39;move&#39;</span>)</div>
+</div><!-- fragment --><h2>Role Assignment</h2>
+<p>When writing a play, you are defining a set of actions that should be taken by different robots on the field. One important thing to note though is that you don't choose which robots will fulfill these roles directly. Instead, you can define what attributes a robot should have in order for them to be a good fit for the role. At each iteration of the main run loop, the role assignment system examines the role requirements for each running behavior and uses an optimal matching algorithm (the <a href="https://en.wikipedia.org/wiki/Hungarian_algorithm">hungarian algorithm</a>) to find the best robot to assign to each role. In order to implement custom assignment logic for your behavior, you'll need to override the <a class="el" href="classgameplay_1_1behavior_1_1_behavior.html#aa1fa41d4554baf2bb107acf6f63c480b">role_requirements() method</a>.</p>
+<h2>RoboCup python module</h2>
+<p>We use a 3rd-party library called Boost Python to create an interface between the C++ code that makes up the majority of our <code>soccer</code> program and the gameplay system that's written in python. Boost Python is used to create a python module called "robocup" that python code can <em>import</em> in order to access our C++ classes and functions. The C++ classes and functions available to the python interface are created through "wrappers" in the <a href="soccer/gameplay/robocup-py.cpp">robocup-py.cpp</a> file. The "robocup" python module is compiled as a part of our project when you run <code>make</code> and is placed in the <code>run</code> directory as <code>robocup.so</code>. This can be imported like any other python module like so:</p>
+<div class="fragment"><div class="line">cd robocup-software</div>
+<div class="line"><span class="preprocessor"># Run python interpreter and import the module</span></div>
+<div class="line"><span class="preprocessor"></span>python3</div>
+<div class="line">&lt;blockquote&gt;</div>
+<div class="line">&lt;blockquote&gt;</div>
+<div class="line"><span class="keyword">import</span> robocup</div>
+<div class="line"></div>
+<div class="line">&lt;/blockquote&gt;</div>
+<div class="line"></div>
+<div class="line">&lt;/blockquote&gt;</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor"># Use the help function to see a list of available classes and functions</span></div>
+<div class="line"><span class="preprocessor"></span>&lt;blockquote&gt;</div>
+<div class="line">&lt;blockquote&gt;</div>
+<div class="line">help(robocup)</div>
+<div class="line"></div>
+<div class="line">&lt;/blockquote&gt;</div>
+<div class="line"></div>
+<div class="line">&lt;/blockquote&gt;</div>
+</div><!-- fragment --><h2>Visualization</h2>
+<p>Many plays provide visualizations for the actions they are performing to make it easier for the user to quickly see what's happening. For example, the Defense tactic draws red triangles from opponent robots and the ball to our goal to help visualize our defense's effective coverage. This functionality is provided by the many drawing methods provided by the <a class="el" href="class_system_state.html">SystemState</a> class. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:03 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:38 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

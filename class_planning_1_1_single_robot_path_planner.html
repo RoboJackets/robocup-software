@@ -116,18 +116,18 @@ $(document).ready(function(){initNavTree('class_planning_1_1_single_robot_path_p
 </div><!--header-->
 <div class="contents">
 
-<p>Interface for <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a> Planners.  
+<p>Interface for Path Planners.  
  <a href="class_planning_1_1_single_robot_path_planner.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:adae3eb09a1fcdf179bf792da262221e1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adae3eb09a1fcdf179bf792da262221e1"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#adae3eb09a1fcdf179bf792da262221e1">run</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> startInstant, const <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> *cmd, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> *obstacles, std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; prevPath=nullptr)=0</td></tr>
-<tr class="memdesc:adae3eb09a1fcdf179bf792da262221e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a> subject to the specified MotionContraints. <br/></td></tr>
+<tr class="memdesc:adae3eb09a1fcdf179bf792da262221e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br/></td></tr>
 <tr class="separator:adae3eb09a1fcdf179bf792da262221e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4639ec1ebd831d32d15a878419f33f3f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4639ec1ebd831d32d15a878419f33f3f"></a>
 virtual MotionCommand::CommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a4639ec1ebd831d32d15a878419f33f3f">commandType</a> () const =0</td></tr>
-<tr class="memdesc:a4639ec1ebd831d32d15a878419f33f3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> type that this planner handles. <br/></td></tr>
+<tr class="memdesc:a4639ec1ebd831d32d15a878419f33f3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The MotionCommand type that this planner handles. <br/></td></tr>
 <tr class="separator:a4639ec1ebd831d32d15a878419f33f3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
@@ -146,7 +146,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 <tr class="separator:a46c274740b97d30e8f5e9aecefb891ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Interface for <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a> Planners. </p>
+<div class="textblock"><p>Interface for Path Planners. </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for Planning::SingleRobotPathPlanner:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -223,7 +223,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_single_robot_path_planner.html">SingleRobotPathPlanner</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:04 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:39 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

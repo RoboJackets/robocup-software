@@ -1,7 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="node2" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="1171,5,1277,32"/>
 <area shape="rect" id="node3" href="$classgameplay_1_1root__play_1_1_root_play.html" title="The RootPlay is basically the python&#45;side of the c++ GameplayModule it coordinates the selection of t..." alt="" coords="1123,56,1325,83"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,2780,208,2807"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,2780,208,2807"/>
 <area shape="rect" id="node5" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,2751,458,2777"/>
 <area shape="rect" id="node69" href="$classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html" title="A state machine that tracks the double touch rule. " alt="" coords="257,2802,457,2843"/>
 <area shape="rect" id="node6" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="510,2277,722,2318"/>

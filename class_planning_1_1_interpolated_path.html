@@ -123,7 +123,7 @@ $(document).ready(function(){initNavTree('class_planning_1_1_interpolated_path.h
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_planning_1_1_interpolated_path_1_1_entry.html">Entry</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each entry in <a class="el" href="class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. ">InterpolatedPath</a> is a <a class="el" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...">MotionInstant</a> and the time that the robot should be at that position and velocity.  <a href="struct_planning_1_1_interpolated_path_1_1_entry.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Each entry in InterpolatedPath is a MotionInstant and the time that the robot should be at that position and velocity.  <a href="struct_planning_1_1_interpolated_path_1_1_entry.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -169,7 +169,7 @@ virtual <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInsta
 <tr class="separator:abf1b044be359b99c86c395ac9216dce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad32897dcaddb33b8e9ff517e3d020536"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad32897dcaddb33b8e9ff517e3d020536"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_interpolated_path.html#ad32897dcaddb33b8e9ff517e3d020536">clone</a> () const override</td></tr>
-<tr class="memdesc:ad32897dcaddb33b8e9ff517e3d020536"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the <a class="el" href="class_planning_1_1_path.html" title="Abstract class representing a motion path. ">Path</a>. <br/></td></tr>
+<tr class="memdesc:ad32897dcaddb33b8e9ff517e3d020536"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the Path. <br/></td></tr>
 <tr class="separator:ad32897dcaddb33b8e9ff517e3d020536"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7ffe119e72aaa36c82a266bb211c705"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7ffe119e72aaa36c82a266bb211c705"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const </td></tr>
@@ -328,10 +328,10 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 </div><div class="memdoc">
 
 <p>Draws the path. </p>
-<p>The default implementation adds a DebugRobotPath to the <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> that interpolates points along the path.</p>
+<p>The default implementation adds a DebugRobotPath to the SystemState that interpolates points along the path.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">state</td><td>The <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> to draw the path on </td></tr>
+    <tr><td class="paramname">state</td><td>The SystemState to draw the path on </td></tr>
     <tr><td class="paramname">color</td><td>The color the path should be drawn </td></tr>
     <tr><td class="paramname">layer</td><td>The layer to draw the path on </td></tr>
   </table>
@@ -371,7 +371,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...">MotionInstant</a> containing the position and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A MotionInstant containing the position and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
 
 <p>Implements <a class="el" href="class_planning_1_1_path.html#ae5374f636290ac9cb6a4794d8ae79811">Planning::Path</a>.</p>
 
@@ -600,7 +600,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_interpolated_path.html">InterpolatedPath</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:04 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:39 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

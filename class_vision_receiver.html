@@ -164,7 +164,7 @@ std::vector&lt; <a class="el" href="class_vision_packet.html">VisionPacket</a> *
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Receives vision packets over UDP and places them in a buffer until they are read. </p>
 <p>When start() is called, a new thread is spawned that listens on a UDP port for packets. If sim = true, it tries both simulator ports until one works. Otherwise, it connects to the port specified in the constructor.</p>
-<p>Whenever a new packet comes in (encoded as Google Protobuf), it is parsed into an SSL_WrapperPacket and placed onto the circular buffer . They remain there until they are retrieved with <a class="el" href="class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4" title="Copies the vector of packets and then clears it. ">getPackets()</a>. </p>
+<p>Whenever a new packet comes in (encoded as Google Protobuf), it is parsed into an SSL_WrapperPacket and placed onto the circular buffer . They remain there until they are retrieved with getPackets(). </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for VisionReceiver:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -197,7 +197,7 @@ std::vector&lt; <a class="el" href="class_vision_packet.html">VisionPacket</a> *
 </div><div class="memdoc">
 
 <p>Copies the vector of packets and then clears it. </p>
-<p>The vector contains only packets received since the last time this was called (or since the <a class="el" href="class_vision_receiver.html" title="Receives vision packets over UDP and places them in a buffer until they are read. ...">VisionReceiver</a> was started, if getPackets has never been called).</p>
+<p>The vector contains only packets received since the last time this was called (or since the VisionReceiver was started, if getPackets has never been called).</p>
 <p>The caller is responsible for freeing the packets after this function returns. </p>
 
 </div>
@@ -212,7 +212,7 @@ std::vector&lt; <a class="el" href="class_vision_packet.html">VisionPacket</a> *
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_vision_receiver.html">VisionReceiver</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:39:03 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 6 2015 21:38:38 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
