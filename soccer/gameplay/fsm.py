@@ -4,7 +4,8 @@ import graphviz as gv
 import subprocess
 
 
-## generic hierarchial state machine class
+## @brief generic hierarchial state machine class.
+#
 # states can have substates.  If the machine is in a state, then it is also implicitly in that state's parent state
 # this basically provides for polymorphism/subclassing of state machines
 #
