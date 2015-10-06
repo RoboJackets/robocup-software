@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include <Geometry2d/Point.hpp>
 #include <motion/TrapezoidalMotion.hpp>
-#include <math.h>
+#include <cmath>
 #include <iostream>
 
 using namespace std;

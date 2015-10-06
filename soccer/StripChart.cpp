@@ -3,7 +3,7 @@
 #include <QPainter>
 
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>

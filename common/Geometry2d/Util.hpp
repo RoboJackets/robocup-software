@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 
 const float DegreesToRadians = M_PI / 180.0;
 const float RadiansToDegrees = 180.0 / M_PI;
