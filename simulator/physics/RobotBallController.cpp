@@ -1,7 +1,7 @@
 #include "RobotBallController.hpp"
 #include "Robot.hpp"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
-#include <math.h>
+#include <cmath>
 #include <Utils.hpp>
 // DEBUG
 #include <stdio.h>
