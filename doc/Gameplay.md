@@ -124,12 +124,13 @@ This can be imported like any other python module like so:
 
 ~~~{.sh}
 cd robocup-software
+
 # Run python interpreter and import the module
 python3
->> import robocup
+import robocup
 
 # Use the help function to see a list of available classes and functions
->> help(robocup)
+help(robocup)
 ~~~
 
 
