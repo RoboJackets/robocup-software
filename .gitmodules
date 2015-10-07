@@ -1,6 +1,12 @@
-[submodule "third_party/mbed_lib_build_tools"]
-	path = third_party/mbed_lib_build_tools
+[submodule "external/mbed_lib_build_tools"]
+	path = external/mbed_lib_build_tools
 	url = https://github.com/mbedmicro/mbed.git
-[submodule "third_party/googletest"]
-	path = third_party/googletest
-	url = https://git.chromium.org/git/external/googletest.git
+[submodule "external/googletest"]
+	path = external/googletest
+	url = https://github.com/google/googletest
+[submodule "external/style-configs"]
+	path = external/style-configs
+	url = git://github.com/robojackets/style-configs
+[submodule "external/DoCIF"]
+	path = external/DoCIF
+	url = https://github.com/jgkamat/DoCIF.git

@@ -7,44 +7,38 @@
 #include <QUdpSocket>
 #include <protobuf/SimCommand.pb.h>
 
-class SimFieldView: public FieldView
-{
-	Q_OBJECT;
-	
-	public:
-		SimFieldView(QWidget *parent = nullptr);
-		
-		void sendSimCommand(const Packet::SimCommand &cmd);
-		
-	Q_SIGNALS:
-		// Emitted when the user selects a robot.
-		// The robot is identified by shell number.
-		// shell may be -1 to select no robot.
-		void robotSelected(int shell);
-	
-	protected:
-		virtual void mouseReleaseEvent(QMouseEvent*) override;
-		virtual void mousePressEvent(QMouseEvent*) override;
-		virtual void mouseMoveEvent(QMouseEvent*) override;
-		
-		virtual void drawTeamSpace(QPainter &p) override;
-		
-	private:
-		// Places the ball at a position on the screen
-		void placeBall(QPointF pos);
-		
-		QUdpSocket _simCommandSocket;
-		
-		// True while a line is being dragged from the ball
-		enum
-		{
-			DRAG_NONE = 0,
-			DRAG_PLACE,
-			DRAG_SHOOT
-		} _dragMode;
-		
-		int _dragRobot;
-		int _dragRobotBlue;
-		Geometry2d::Point _dragTo;
-		Geometry2d::Point _shot;
+class SimFieldView : public FieldView {
+    Q_OBJECT;
+
+public:
+    SimFieldView(QWidget* parent = nullptr);
+
+    void sendSimCommand(const Packet::SimCommand& cmd);
+
+Q_SIGNALS:
+    // Emitted when the user selects a robot.
+    // The robot is identified by shell number.
+    // shell may be -1 to select no robot.
+    void robotSelected(int shell);
+
+protected:
+    virtual void mouseReleaseEvent(QMouseEvent*) override;
+    virtual void mousePressEvent(QMouseEvent*) override;
+    virtual void mouseMoveEvent(QMouseEvent*) override;
+
+    virtual void drawTeamSpace(QPainter& p) override;
+
+private:
+    // Places the ball at a position on the screen
+    void placeBall(QPointF pos);
+
+    QUdpSocket _simCommandSocket;
+
+    // True while a line is being dragged from the ball
+    enum { DRAG_NONE = 0, DRAG_PLACE, DRAG_SHOOT } _dragMode;
+
+    int _dragRobot;
+    int _dragRobotBlue;
+    Geometry2d::Point _dragTo;
+    Geometry2d::Point _shot;
 };

@@ -7,6 +7,13 @@ define cmake_build_target
 	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
 endef
 
+# Similar to the above build target command, but for firmware.  This is used
+# because CMake can only handle one toolchain at a time, so we build the MBED-
+# targeted code separately.
+define cmake_build_target_fw
+	mkdir -p build/firmware
+	cd build/firmware && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS)
+endef
 
 all:
 	$(call cmake_build_target, all)
@@ -17,6 +24,10 @@ run-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
 	cd run; ./soccer -sim
+run-sim2play: all
+	-pkill -f './simulator --headless'
+	cd run; ./simulator --headless &
+	cd run; ./soccer -sim -y & ./soccer -sim -b
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
@@ -31,6 +42,10 @@ test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
 	cd soccer && pylint -E gameplay
+
+behavior-diagrams: all
+	cd soccer/gameplay && python3 generate_fsm_diagrams.py
+	@echo "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
 
 clean:
 	cd build && ninja clean || true
@@ -48,17 +63,17 @@ robot-prog-samba:
 
 # robot 2015 firmware
 robot2015:
-	$(call cmake_build_target, robot2015)
+	$(call cmake_build_target_fw, robot2015)
 
 robot2015-prog:
-	$(call cmake_build_target, robot2015-prog)
+	$(call cmake_build_target_fw, robot2015-prog)
 
 # Base station 2015 firmware
 base2015:
-	$(call cmake_build_target, base2015)
+	$(call cmake_build_target_fw, base2015)
 
 base2015-prog:
-	$(call cmake_build_target, base2015-prog)
+	$(call cmake_build_target_fw, base2015-prog)
 
 # Robot FPGA
 fpga2011:
@@ -76,6 +91,7 @@ base2011:
 base2011-prog:
 	cd firmware; scons base2011; sudo scons base2011-prog
 
+
 static-analysis:
 	mkdir -p build/static-analysis
 	cd build/static-analysis; scan-build cmake ../.. -Wno-dev -DSTATIC_ANALYSIS=ON && scan-build -o output make $(MAKE_FLAGS)
@@ -90,3 +106,26 @@ modernize:
 	# transformations, rather than all transformations that it's capable of.
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build/modernize -include=common,logging,simulator,soccer
+
+apidocs:
+	doxygen doc/Doxyfile
+	cp doc/doxygen.css api_docs/html/
+	@echo -e "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
+
+
+STYLE_EXCLUDE_DIRS=build \
+	external \
+	firmware/robot/cpu/at91sam7s256 \
+	firmware/robot/cpu/at91sam7s321 \
+	firmware/robot/cpu/at91sam7s64 \
+	firmware/robot/cpu/usb \
+	firmware/robot/cpu/invensense \
+	firmware/robot2015 \
+	firmware/common2015
+# automatically format code according to our style config defined in .clang-format
+pretty:
+	@stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+# check if everything in our codebase is in accordance with the style config defined in .clang-format
+# a nonzero exit code indicates that there's a formatting error somewhere
+checkstyle:
+	@stylize --diffbase=master --clang_style=file --yapf_style=file --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check

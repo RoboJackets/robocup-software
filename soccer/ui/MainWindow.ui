@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1405</width>
-    <height>902</height>
+    <width>1331</width>
+    <height>827</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -49,7 +49,26 @@
           <number>0</number>
          </property>
          <item>
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="fastHalt">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Halt</string>
            </property>
@@ -69,7 +88,26 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="fastStop">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Stop</string>
            </property>
@@ -89,7 +127,26 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="fastReady">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Ready</string>
            </property>
@@ -109,7 +166,26 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="fastForceStart">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Force Start</string>
            </property>
@@ -129,7 +205,26 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_13">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="fastKickoffYellow">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Kickoff Yellow</string>
            </property>
@@ -149,7 +244,26 @@
           </widget>
          </item>
          <item>
+          <spacer name="horizontalSpacer_14">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QPushButton" name="fastKickoffBlue">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string>Kickoff Blue</string>
            </property>
@@ -167,6 +281,19 @@
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_16">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -217,8 +344,15 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
-            <number>15</number>
+            <number>0</number>
            </property>
+           <item>
+            <widget class="QLabel" name="logTime">
+             <property name="text">
+              <string>00:00</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
@@ -253,6 +387,19 @@
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="logPlaybackPrevFrame">
              <property name="toolTip">
               <string>Play log backwards</string>
@@ -273,6 +420,19 @@
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="logPlaybackPause">
              <property name="toolTip">
               <string>Pause log playback</string>
@@ -291,6 +451,19 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="logPlaybackNextFrame">
@@ -316,6 +489,19 @@
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_8">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QPushButton" name="logPlaybackPlay">
              <property name="toolTip">
               <string>Play log forwards quickly</string>
@@ -334,6 +520,19 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_9">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="logPlaybackLive">
@@ -1244,7 +1443,7 @@ p, li { white-space: pre-wrap; }
              <property name="handleWidth">
               <number>10</number>
              </property>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="spacing">
                 <number>2</number>
@@ -1276,7 +1475,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget1">
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
                 <number>2</number>
@@ -1616,7 +1815,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1405</width>
+     <width>1331</width>
      <height>19</height>
     </rect>
    </property>
@@ -1664,6 +1863,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionUseOpponentHalf"/>
     <addaction name="menu_Radio_channel"/>
     <addaction name="menuVision_Channel"/>
+    <addaction name="separator"/>
+    <addaction name="actionUse_External_Referee"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1694,6 +1895,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionDampedRotation"/>
     <addaction name="actionDampedTranslation"/>
+    <addaction name="actionUse_Field_Oriented_Controls"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
@@ -1954,7 +2156,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Primary Half</string>
@@ -1972,6 +2174,9 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Full Field</string>
    </property>
@@ -1982,6 +2187,25 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Team Names</string>
+   </property>
+  </action>
+  <action name="actionUse_External_Referee">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use External Referee</string>
+   </property>
+  </action>
+  <action name="actionUse_Field_Oriented_Controls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Field-Oriented Controls</string>
    </property>
   </action>
  </widget>

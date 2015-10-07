@@ -40,7 +40,6 @@
  *  \author  Jon S. Olson
  */
 
-
 #ifndef DIFFERENCE_KALMAN_H_
 #define DIFFERENCE_KALMAN_H_
 
@@ -48,107 +47,106 @@
 
 #ifdef __cplusplus
 
-
 /** Discrete time or Kalman Filter with fixed timestep
  */
 class DifferenceKalmanFilter {
+public:
+    /** Constructor.  Note that this method WILL MALLOC.  That means you
+        probably shouldn't go constructing these objects willy-nilly in
+        realtime code.
 
- public:
-  /** Constructor.  Note that this method WILL MALLOC.  That means you
-      probably shouldn't go constructing these objects willy-nilly in
-      realtime code.
+        Dimensions: n is the number of states, m is the number of
+        inputs, s in the number of measurements.
 
-      Dimensions: n is the number of states, m is the number of
-      inputs, s in the number of measurements.
+        \param _F state transition matrix
+        \param _B control transformation matrix
+        \param _x initial system state (if known) or an empty n-element column
+       vector
+        \param _P initial error covariance and storage for computed error
+       covariance, \f${\bf P} \in \Re^{n\times n}\f$
+        \param _Q process noise covariance, \f${\bf Q} \in \Re^{n\times n}\f$
+        \param _R measurement noise covariance, \f${\bf R} \in \Re^{s\times
+       s}\f$
+        \param _H observation model: z = H x, \f${\bf H} \in \Re^{s\times n}\f$
+     */
+    DifferenceKalmanFilter(DMatrix* _F, DMatrix* _B, DVector* _x, DMatrix* _P,
+                           DMatrix* _Q, DMatrix* _R, DMatrix* _H);
+    /** Destructor.
 
-      \param _F state transition matrix
-      \param _B control transformation matrix
-      \param _x initial system state (if known) or an empty n-element column vector
-      \param _P initial error covariance and storage for computed error covariance, \f${\bf P} \in \Re^{n\times n}\f$
-      \param _Q process noise covariance, \f${\bf Q} \in \Re^{n\times n}\f$
-      \param _R measurement noise covariance, \f${\bf R} \in \Re^{s\times s}\f$
-      \param _H observation model: z = H x, \f${\bf H} \in \Re^{s\times n}\f$
-   */
-  DifferenceKalmanFilter( DMatrix *_F, DMatrix *_B, DVector *_x,
-                DMatrix *_P, DMatrix *_Q, DMatrix *_R, DMatrix *_H );
-  /** Destructor.
+        Frees all tmps that were malloc'ed by the constructor.  Does not
+        free the matrices and vectors passed to the constructor.
+     */
+    ~DifferenceKalmanFilter();
 
-      Frees all tmps that were malloc'ed by the constructor.  Does not
-      free the matrices and vectors passed to the constructor.
-   */
-  ~DifferenceKalmanFilter();
+    /** Linear forward prediction
+     */
+    void predict(const DVector* u);
+    /** Kalman correction step.
+     */
+    int correct(const DVector* z);
 
+    /**Returns pointer to the state vector.*/
+    DVector* state() { return x; }
 
-  /** Linear forward prediction
-   */
-  void predict(const DVector *u);
-  /** Kalman correction step.
-   */
-  int correct(const DVector *z);
+protected:
+    /// estimated state (after update)
+    DVector* x;
+    /// error covariance (after update)
+    DMatrix* P;
+    /// process noise covariance
+    DMatrix* Q;
+    /// measurement noise covariance
+    DMatrix* R;
 
-  /**Returns pointer to the state vector.*/
-  DVector *state() { return x; }
+    /// observation model (z = H x)
+    DMatrix* H;
 
- protected:
+    /// System transition model
+    DMatrix* F;
+    /// Control transition model
+    DMatrix* B;
 
-  /// estimated state (after update)
-  DVector *x;
-  /// error covariance (after update)
-  DMatrix *P;
-  /// process noise covariance
-  DMatrix *Q;
-  /// measurement noise covariance
-  DMatrix *R;
+    /// computed kalman gain
+    DMatrix* K;
 
-  /// observation model (z = H x)
-  DMatrix *H;
+    /// predicted state (prior to update)
+    DVector* xPrime;
 
-  /// System transition model
-  DMatrix *F;
-  /// Control transition model
-  DMatrix *B;
+    /// predicted estimate covariance (prior to update)
+    DMatrix* PPrime;
 
-  /// computed kalman gain
-  DMatrix *K;
+    /// Measurement innovation (i.e., error)
+    DVector* y;
 
-  /// predicted state (prior to update)
-  DVector *xPrime;
+    /// Covariance innovation
+    DMatrix* S;
 
-  /// predicted estimate covariance (prior to update)
-  DMatrix *PPrime;
+    // tmps
 
-  /// Measurement innovation (i.e., error)
-  DVector *y;
+    DVector* tmp_n_1;  ///< tmp var
+    DVector* tmp_n_2;  ///< tmp var
+    DVector* tmp_s_1;  ///< tmp var
 
-  /// Covariance innovation
-  DMatrix *S;
+    DMatrix* tmp_sn_1;  ///< tmp var
+    DMatrix* tmp_ns_1;  ///< tmp var
+    DMatrix* tmp_ss_1;  ///< tmp var
+    DMatrix* tmp_nn_1;  ///< tmp var
+    DMatrix* tmp_nn_2;  ///< tmp var
+    DMatrix* tmp_nm_1;  ///< tmp var
 
-  // tmps
+    int* ipiv;           ///< tmp var for pivots
+    unsigned int lwork;  ///< length of ipiv
+    double* work;        ///< tmp var for inversion work
 
-  DVector *tmp_n_1; ///< tmp var
-  DVector *tmp_n_2; ///< tmp var
-  DVector  *tmp_s_1; ///< tmp var
+    /// Identity matrix
+    DMatrix* I_nn;
 
-  DMatrix *tmp_sn_1;  ///< tmp var
-  DMatrix *tmp_ns_1;  ///< tmp var
-  DMatrix  *tmp_ss_1;  ///< tmp var
-  DMatrix  *tmp_nn_1;  ///< tmp var
-  DMatrix  *tmp_nn_2;  ///< tmp var
-  DMatrix  *tmp_nm_1;  ///< tmp var
-
-  int *ipiv; ///< tmp var for pivots
-  unsigned int lwork; ///< length of ipiv
-  double *work; ///< tmp var for inversion work
-
-  /// Identity matrix
-  DMatrix *I_nn;
-
-  /// length of state vector, x
-  unsigned int n;
-  /// length of input vector, u
-  unsigned int m;
-  /// length of measurement vector, z
-  unsigned int s;
+    /// length of state vector, x
+    unsigned int n;
+    /// length of input vector, u
+    unsigned int m;
+    /// length of measurement vector, z
+    unsigned int s;
 };
 
 #endif

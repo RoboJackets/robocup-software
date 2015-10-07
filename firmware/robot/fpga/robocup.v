@@ -1,15 +1,15 @@
 // Signal naming conventions:
-//	signal_s is a copy of the signal synchronized to the master clock.
-//		(only applies to signals sampled from inputs)
-//	signal_d is a copy of the signal delayed from signal_s by one clock.
-//	signal_d2 is a copy of the signal delayed from signal_s by two clocks.
+// signal_s is a copy of the signal synchronized to the master clock.
+// 	(only applies to signals sampled from inputs)
+// signal_d is a copy of the signal delayed from signal_s by one clock.
+// signal_d2 is a copy of the signal delayed from signal_s by two clocks.
 //
 // To prevent glitches:
 // All inputs MUST be synchronized before use.
 // All outputs MUST be driven directly from registers, not from combinational logic.
 // "always" blocks should only be clocked directly by sysclk (18.432MHz).
-//		The exception is when using an always block to write combinational logic.
-//		ALL registers must be synchronized to sysclk.  Do not use gated or divided clocks.
+// 	The exception is when using an always block to write combinational logic.
+// 	ALL registers must be synchronized to sysclk.  Do not use gated or divided clocks.
 //
 // "begin" and "end" should always be used where applicable to prevent stupid bugs.
 // I know it's ugly.

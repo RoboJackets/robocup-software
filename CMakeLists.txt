@@ -22,9 +22,17 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 endif()
 
+# Because we use ninja, we have to explicitly turn on color output for the compiler
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
+endif()
+
 # Build in debug mode
 # TODO: make this easier to specify when running `make` on the command-line
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+# Turn some compiler warnings into errors
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=delete-non-virtual-dtor -Werror=uninitialized")
 
 # Qt5
 if(APPLE)
@@ -32,6 +40,11 @@ if(APPLE)
     find_package(Qt5Widgets
         REQUIRED
         PATHS /usr/local/Cellar/qt5/*)
+
+    # this directory is included by default, but we mark it as SYSTEM so
+    # warnings in external headers don't show up every time we build
+    include_directories(SYSTEM /usr/local/include/)
+
 else()
     find_package(Qt5Widgets REQUIRED)
 endif()
@@ -39,7 +52,7 @@ message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
 
 # Google Protobuf
 find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIR})
+include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIR})
 
 # Python
 if(APPLE)
@@ -68,7 +81,7 @@ if(APPLE)
 
     # search for the python library
     find_library(PYTHON_LIBRARIES
-        NAMES python3.4 python3.3 python3.2 python3
+        NAMES python3.5 python3.4 python3.3 python3.2 python3
         PATHS ${PYTHON_LINK_DIRS})
     if(NOT PYTHON_LIBRARIES)
         message(FATAL_ERROR "Unable to find python 3 library")
@@ -80,7 +93,7 @@ endif()
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIR})
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # libusb
 find_package(libusb-1.0 REQUIRED)

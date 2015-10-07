@@ -1,6 +1,5 @@
 import single_robot_behavior
 import robocup
-import evaluation.window_evaluator
 import constants
 import main
 import role_assignment
@@ -88,7 +87,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
                 self._aim_target_point = self.target
             elif isinstance(self.target, robocup.Segment):
                 if self.use_windowing:
-                    win_eval = evaluation.window_evaluator.WindowEvaluator()
+                    win_eval = robocup.WindowEvaluator(main.system_state())
                     for key, value in self.win_eval_params.items():
                         setattr(win_eval, key, value)
                     win_eval.chip_enabled = self.robot.has_chipper() and self.use_chipper
@@ -149,7 +148,14 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         if pt != None:
             # segment centered at the target point that's @width wide and perpendicular to the shot
             shot_perp = (main.ball().pos - pt).perp_ccw().normalized()
-            width = 0.2
+
+            # Make the shot triangle obstacle a fixed width at the end unless
+            # we're aiming at a segment. In that case, just use the length of
+            # the segment.
+            width = 0.5
+            if isinstance(self.target, robocup.Segment):
+                width = self.target.length()
+
             a = pt + shot_perp * width / 2.0
             b = pt - shot_perp * width / 2.0
 

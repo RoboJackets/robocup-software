@@ -4,6 +4,7 @@ import skills.move
 import skills.capture
 import enum
 import robocup
+import role_assignment
 
 
 # this test repeatedly runs the capture behavior
@@ -15,6 +16,8 @@ class TestCapture(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
+
+        self.shell_id = None
 
         self.add_state(TestCapture.State.setup, behavior.Behavior.State.running)
         self.add_state(TestCapture.State.capturing, behavior.Behavior.State.running)
@@ -47,3 +50,17 @@ class TestCapture(play.Play):
         self.add_subbehavior(m, 'move', required=True)
     def on_exit_setup(self):
         self.remove_subbehavior('move')
+
+
+    def execute_running(self):
+        for bhvr in self.all_subbehaviors():
+            if bhvr.robot != None:
+                self.shell_id = bhvr.robot.shell_id()
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        if self.shell_id != None:
+            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+                req.previous_shell_id = self.shell_id
+        return reqs
