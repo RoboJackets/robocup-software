@@ -19,3 +19,4 @@ eigen
 bullet --with-shared
 protobuf
 clang-format
+graphviz
