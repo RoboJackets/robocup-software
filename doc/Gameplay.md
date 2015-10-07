@@ -11,7 +11,7 @@ The result of running the \ref GameplayModule is a motion command for each of th
 When the gameplay module is running, its job is to select the best play from a list of enabled plays by choosing the one with the lowest \ref gameplay.play.Play.score() "score()" value.  Plays are enabled and disabled through the GUI with the checkboxes next to play names.  See the annotated screenshot below for more info.
 
 
-![soccer screenshot with gameplay annotations](soccer-with-gameplay-annotations.png)
+<img src="soccer-with-gameplay-annotations.png" width="1000"></img>
 
 ## Play Structure
 
