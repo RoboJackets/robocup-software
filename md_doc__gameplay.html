@@ -172,24 +172,13 @@ PivotKick state diagram</div></div>
 <h2>RoboCup python module</h2>
 <p>We use a 3rd-party library called Boost Python to create an interface between the C++ code that makes up the majority of our <code>soccer</code> program and the gameplay system that's written in python. Boost Python is used to create a python module called "robocup" that python code can <em>import</em> in order to access our C++ classes and functions. The C++ classes and functions available to the python interface are created through "wrappers" in the <a href="soccer/gameplay/robocup-py.cpp">robocup-py.cpp</a> file. The "robocup" python module is compiled as a part of our project when you run <code>make</code> and is placed in the <code>run</code> directory as <code>robocup.so</code>. This can be imported like any other python module like so:</p>
 <div class="fragment"><div class="line">cd robocup-software</div>
+<div class="line"></div>
 <div class="line"><span class="preprocessor"># Run python interpreter and import the module</span></div>
 <div class="line"><span class="preprocessor"></span>python3</div>
-<div class="line">&lt;blockquote&gt;</div>
-<div class="line">&lt;blockquote&gt;</div>
 <div class="line"><span class="keyword">import</span> robocup</div>
 <div class="line"></div>
-<div class="line">&lt;/blockquote&gt;</div>
-<div class="line"></div>
-<div class="line">&lt;/blockquote&gt;</div>
-<div class="line"></div>
 <div class="line"><span class="preprocessor"># Use the help function to see a list of available classes and functions</span></div>
-<div class="line"><span class="preprocessor"></span>&lt;blockquote&gt;</div>
-<div class="line">&lt;blockquote&gt;</div>
-<div class="line">help(robocup)</div>
-<div class="line"></div>
-<div class="line">&lt;/blockquote&gt;</div>
-<div class="line"></div>
-<div class="line">&lt;/blockquote&gt;</div>
+<div class="line"><span class="preprocessor">help(robocup)</span></div>
 </div><!-- fragment --><h2>Visualization</h2>
 <p>Many plays provide visualizations for the actions they are performing to make it easier for the user to quickly see what's happening. For example, the Defense tactic draws red triangles from opponent robots and the ball to our goal to help visualize our defense's effective coverage. This functionality is provided by the many drawing methods provided by the <a class="el" href="class_system_state.html">SystemState</a> class. </p>
 </div></div><!-- contents -->
@@ -197,7 +186,7 @@ PivotKick state diagram</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 6 2015 21:38:38 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Oct 7 2015 01:57:50 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
