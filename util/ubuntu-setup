@@ -115,17 +115,19 @@ EOF
 
 fi
 
-# add repo for backport of cmake3 from debian testing
-# TODO remove this once ubuntu ships cmake3
 if $ADD_REPOS; then
+    # add repo for backport of cmake3 from debian testing
+    # TODO remove this once ubuntu ships cmake3
     apt-add-repository -y ppa:packetlost/cmake
+
+    # for newer compilers
+    add-apt-repository ppa:ubuntu-toolchain-r/test
 fi
 
 if $FIRMWARE; then
     add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 fi
 
-# apt get install cmake is taken care of by requirements
 
 apt-get update
 
@@ -153,6 +155,11 @@ fi
 
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
+
+if [ "$(clang --version | grep -Eo '[0-9]+\.[0-9]+' | head -n1)" \< "3.5" ]; then
+    echo "-- Symlinking clang-3.5 to clang"
+    ln -sf $(which clang-3.5) /usr/bin/clang
+fi
 
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
