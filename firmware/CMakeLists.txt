@@ -49,7 +49,7 @@ set(FIRMWARE_TEST_SRC
     "common2015/ExampleTest.cpp"
 )
 add_executable(test-firmware ${FIRMWARE_TEST_SRC})
-target_link_libraries(test-firmware ${GTEST_BOTH_LIBRARIES})
+target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 add_dependencies(test-firmware googletest)
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)
