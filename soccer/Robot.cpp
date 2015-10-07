@@ -154,8 +154,8 @@ void OurRobot::resetForNextIteration() {
 void OurRobot::resetMotionConstraints() {
     _rotationConstraints = RotationConstraints();
     _motionConstraints = MotionConstraints();
-    _motionCommand = make_unique<Planning::EmptyCommand>();
-    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
+    _motionCommand = rj::make_unique<Planning::EmptyCommand>();
+    _rotationCommand = rj::make_unique<Planning::EmptyAngleCommand>();
 }
 
 void OurRobot::stop() {
@@ -172,7 +172,7 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
         cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
              << ", " << goal.y << ")" << endl;
 
-    _motionCommand = make_unique<Planning::DirectPathTargetCommand>(
+    _motionCommand = rj::make_unique<Planning::DirectPathTargetCommand>(
         MotionInstant(goal, (goal - pos).normalized() * endSpeed));
 
     *_cmdText << "moveDirect(" << goal << ")" << endl;
@@ -187,7 +187,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
         cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", "
              << goal.y << ")" << std::endl;
 
-    _motionCommand = make_unique<Planning::PathTargetCommand>(
+    _motionCommand = rj::make_unique<Planning::PathTargetCommand>(
         MotionInstant(goal, endVelocity));
 
     *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
@@ -196,16 +196,16 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
-    _motionCommand = make_unique<Planning::WorldVelTargetCommand>(v);
+    _motionCommand = rj::make_unique<Planning::WorldVelTargetCommand>(v);
     setPath(nullptr);
     *_cmdText << "worldVel(" << v.x << ", " << v.y << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
+    _rotationCommand = rj::make_unique<Planning::EmptyAngleCommand>();
 
     // reset other conflicting motion commands
-    _motionCommand = make_unique<Planning::PivotCommand>(pivotTarget);
+    _motionCommand = rj::make_unique<Planning::PivotCommand>(pivotTarget);
     setPath(nullptr);
 
     *_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")"
@@ -245,13 +245,13 @@ void OurRobot::dribble(uint8_t speed) {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-    _rotationCommand = make_unique<Planning::FacePointCommand>(pt);
+    _rotationCommand = rj::make_unique<Planning::FacePointCommand>(pt);
 
     *_cmdText << "face(" << pt.x << ", " << pt.y << ")" << endl;
 }
 
 void OurRobot::faceNone() {
-    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
+    _rotationCommand = rj::make_unique<Planning::EmptyAngleCommand>();
 
     *_cmdText << "faceNone()" << endl;
 }
