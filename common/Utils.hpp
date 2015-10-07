@@ -13,12 +13,6 @@
 #include <vector>
 #include <QtWidgets>
 #include <memory>
-namespace rj {
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-}
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
