@@ -111,7 +111,7 @@ $(document).ready(function(){initNavTree('md_doc__gameplay.html','');});
 <div class="caption">
 soccer screenshot with gameplay annotations</div></div>
  <h2>Play Structure</h2>
-<p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <a href="soccer/gameplay/skills">Skills</a>, <a href="soccer/gameplay/tactics">Tactics</a>, and <a href="soccer/gameplay/plays">Plays</a>. There is one Goalie (optionally) and one <a class="el" href="classgameplay_1_1play_1_1_play.html">Play</a> object.</p>
+<p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/skills">Skills</a>, <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/tactics">Tactics</a>, and <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/plays">Plays</a>. There is one Goalie (optionally) and one <a class="el" href="classgameplay_1_1play_1_1_play.html">Play</a> object.</p>
 <p><b>Skills</b> are behaviors that apply to a single robot. They include things like <a class="el" href="classgameplay_1_1skills_1_1capture_1_1_capture.html">capturing the ball</a>, <a class="el" href="classgameplay_1_1skills_1_1move_1_1_move.html">moving to a particular position on the field</a>, and <a class="el" href="classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html">kicking the ball</a>.</p>
 <p><b>Tactics</b> can coordinate a single robot or many and generally incapsulate more complex behavior than <b>skills</b>. This includes things such as <a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html">passing</a>, <a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html">defense</a>, and <a class="el" href="classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html">the goalie</a>.</p>
 <p><b>Plays</b> are responsible for coordinating the whole team of robots (although some robots may be unused). At a given time, the <code>soccer</code> program is running at most one play.</p>
@@ -161,7 +161,7 @@ PivotKick state diagram</div></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">def </span>on_enter_running(self):</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="comment"># Add a &quot;Move&quot; subbehavior that tells a robot to a specified (x, y) location</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        m = skills.move.Move(robocup.Point(0, 2)))</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        m = skills.move.Move(robocup.Point(0, 2))</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        self.add_subbehavior(m, name=<span class="stringliteral">&#39;move&#39;</span>, required=<span class="keyword">True</span>)</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">def </span>on_exit_running(self):</div>
@@ -170,7 +170,7 @@ PivotKick state diagram</div></div>
 </div><!-- fragment --><h2>Role Assignment</h2>
 <p>When writing a play, you are defining a set of actions that should be taken by different robots on the field. One important thing to note though is that you don't choose which robots will fulfill these roles directly. Instead, you can define what attributes a robot should have in order for them to be a good fit for the role. At each iteration of the main run loop, the role assignment system examines the role requirements for each running behavior and uses an optimal matching algorithm (the <a href="https://en.wikipedia.org/wiki/Hungarian_algorithm">hungarian algorithm</a>) to find the best robot to assign to each role. In order to implement custom assignment logic for your behavior, you'll need to override the <a class="el" href="classgameplay_1_1behavior_1_1_behavior.html#aa1fa41d4554baf2bb107acf6f63c480b">role_requirements() method</a>.</p>
 <h2>RoboCup python module</h2>
-<p>We use a 3rd-party library called Boost Python to create an interface between the C++ code that makes up the majority of our <code>soccer</code> program and the gameplay system that's written in python. Boost Python is used to create a python module called "robocup" that python code can <em>import</em> in order to access our C++ classes and functions. The C++ classes and functions available to the python interface are created through "wrappers" in the <a href="soccer/gameplay/robocup-py.cpp">robocup-py.cpp</a> file. The "robocup" python module is compiled as a part of our project when you run <code>make</code> and is placed in the <code>run</code> directory as <code>robocup.so</code>. This can be imported like any other python module like so:</p>
+<p>We use a 3rd-party library called Boost Python to create an interface between the C++ code that makes up the majority of our <code>soccer</code> program and the gameplay system that's written in python. Boost Python is used to create a python module called "robocup" that python code can <em>import</em> in order to access our C++ classes and functions. The C++ classes and functions available to the python interface are created through "wrappers" in the <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/robocup-py.cpp">robocup-py.cpp</a> file. The "robocup" python module is compiled as a part of our project when you run <code>make</code> and is placed in the <code>run</code> directory as <code>robocup.so</code>. This can be imported like any other python module like so:</p>
 <div class="fragment"><div class="line">cd robocup-software</div>
 <div class="line"></div>
 <div class="line"><span class="preprocessor"># Run python interpreter and import the module</span></div>
@@ -186,7 +186,7 @@ PivotKick state diagram</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Oct 7 2015 01:57:50 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Oct 7 2015 02:00:40 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
