@@ -33,7 +33,7 @@ libbullet-dev
 
 # C/C++ compiler
 # tends to be faster and have more helpful error messages than gcc
-clang-3.5
+clang-3.6
 
 # for newer C++ stdlib
 g++-4.9
