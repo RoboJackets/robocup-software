@@ -112,7 +112,7 @@ $(document).ready(function(){initNavTree('md_doc__gameplay.html','');});
 <h2>Play Structure</h2>
 <p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/skills">Skills</a>, <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/tactics">Tactics</a>, and <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/plays">Plays</a>. There is one Goalie (optionally) and one <a class="el" href="classgameplay_1_1play_1_1_play.html">Play</a> object.</p>
 <p><b>Skills</b> are behaviors that apply to a single robot. They include things like <a class="el" href="classgameplay_1_1skills_1_1capture_1_1_capture.html">capturing the ball</a>, <a class="el" href="classgameplay_1_1skills_1_1move_1_1_move.html">moving to a particular position on the field</a>, and <a class="el" href="classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html">kicking the ball</a>.</p>
-<p><b>Tactics</b> can coordinate a single robot or many and generally incapsulate more complex behavior than <b>skills</b>. This includes things such as <a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html">passing</a>, <a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html">defense</a>, and <a class="el" href="classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html">the goalie</a>.</p>
+<p><b>Tactics</b> can coordinate a single robot or many and generally encapsulate more complex behavior than <b>skills</b>. This includes things such as <a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html">passing</a>, <a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html">defense</a>, and <a class="el" href="classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html">the goalie</a>.</p>
 <p><b>Plays</b> are responsible for coordinating the whole team of robots (although some robots may be unused). At a given time, the <code>soccer</code> program is running at most one play.</p>
 <p>Used together, skills, tactics, and plays form a tree structure with the Play at the root and other behaviors below it. The C++ <code>GameplayModule</code> tells the current play to run, which in turn tells each of its sub-behaviors to run.</p>
 <h2>Gameplay structure</h2>
@@ -185,7 +185,7 @@ PivotKick state diagram</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Oct 7 2015 02:44:51 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Oct 7 2015 02:55:58 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
