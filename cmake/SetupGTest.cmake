@@ -15,10 +15,12 @@ set_target_properties(googletest PROPERTIES EXCLUDE_FROM_ALL TRUE)
 ExternalProject_Get_Property(googletest source_dir)
 include_directories(${source_dir}/include)
 
-# specify link libraries
+# specify link directory where the built gtest libs are placed
 ExternalProject_Get_Property(googletest binary_dir)
-set(GTEST_BOTH_LIBRARIES
-    ${binary_dir}/libgtest.a
-    ${binary_dir}/libgtest_main.a
+link_directories(${binary_dir})
+
+set(GTEST_LIBRARIES
+    libgtest.a
+    libgtest_main.a
     pthread
 )
