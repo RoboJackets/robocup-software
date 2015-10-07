@@ -11,45 +11,45 @@
 #include "RobotModel.hpp"
 
 /** World modeling system */
-namespace Modeling
-{
-	class BallModel;
+namespace Modeling {
+class BallModel;
 
-	class WorldModel
-	{
-		public:
-			WorldModel(SystemState *state, Configuration *config);
-			~WorldModel();
+class WorldModel {
+public:
+    WorldModel(SystemState* state, Configuration* config);
+    ~WorldModel();
 
-			void run(bool blueTeam, const std::vector<const SSL_DetectionFrame *> &teamVision);
+    void run(bool blueTeam,
+             const std::vector<const SSL_DetectionFrame*>& teamVision);
 
-		protected:
-			// useful typedefs
-			typedef std::vector<RobotModel::shared> RobotVector;
+protected:
+    // useful typedefs
+    typedef std::vector<RobotModel::shared> RobotVector;
 
-			RobotModel::Config _robotConfig;
-			
-			SystemState *_state;
+    RobotModel::Config _robotConfig;
 
-			// Add to opponents' shell IDs to get track map keys.
-			static const int OppOffset = 256;
+    SystemState* _state;
 
-			/** Slots for players */
-			RobotVector _selfPlayers, _oppPlayers;
+    // Add to opponents' shell IDs to get track map keys.
+    static const int OppOffset = 256;
 
-			/** utility functions for update logic */
-			void addRobotObseration(const SSL_DetectionRobot &robot, uint64_t timestamp,
-					std::vector<RobotModel::shared>& players);
-			void updateRobots(std::vector<RobotModel::shared>& players, uint64_t cur_time);
-			void addRobotRxData(OurRobot *robot);
+    /** Slots for players */
+    RobotVector _selfPlayers, _oppPlayers;
 
-			/** general ball model - switchable between different versions */
-			BallModel * _ballModel;
+    /** utility functions for update logic */
+    void addRobotObseration(const SSL_DetectionRobot& robot, uint64_t timestamp,
+                            std::vector<RobotModel::shared>& players);
+    void updateRobots(std::vector<RobotModel::shared>& players,
+                      uint64_t cur_time);
+    void addRobotRxData(OurRobot* robot);
 
-			/** allow for searching by robot ID (both self and opp) */
-			RobotModel::RobotMap _robotMap;
-			
-			// Add to vision packet times to get local times
-			uint64_t _visionTimeOffset;
-	};
+    /** general ball model - switchable between different versions */
+    BallModel* _ballModel;
+
+    /** allow for searching by robot ID (both self and opp) */
+    RobotModel::RobotMap _robotMap;
+
+    // Add to vision packet times to get local times
+    uint64_t _visionTimeOffset;
+};
 }

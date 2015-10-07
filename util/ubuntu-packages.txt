@@ -3,7 +3,6 @@
 # these get installed using 'apt-get install ______' whenever the ubuntu-setup
 #   script is run
 
-
 # Build system
 ninja-build
 cmake
@@ -38,6 +37,8 @@ clang-3.5
 
 # for newer C++ stdlib
 g++-4.9
+
+clang-format-3.6
 
 # contains a ton of great C++ libraries
 libboost-all-dev

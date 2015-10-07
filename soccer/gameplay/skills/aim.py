@@ -170,7 +170,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             # if we detect this big of an error, we just default to using bot_angle_rad
             if abs(ball_angle_rad - bot_angle_rad) > math.pi / 3.0:
                 ball_angle_rad = bot_angle_rad
-            ball_angle_bias = 0.6   # NOTE: THIS IS TUNABLE
+            ball_angle_bias = 0.4   # NOTE: THIS IS TUNABLE
             aim_angle = ball_angle_rad*ball_angle_bias + (1.0 - ball_angle_bias)*bot_angle_rad
 
             # the line we're aiming down
@@ -217,7 +217,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.recalculate()
 
         # slowly pivot toward the target
-        self.robot.set_max_angle_speed(6)
+        self.robot.set_max_angle_speed(4)
         self.robot.pivot(self._face_target)
         self.robot.set_dribble_speed(self.dribbler_speed)
 

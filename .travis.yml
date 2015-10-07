@@ -1,9 +1,14 @@
 
 language: objective-c
 
+# only run travis-ci on master
+branches:
+  only:
+    - master
+
 before_install:
-  - brew update
-  - brew upgrade
+  - brew update > brew-update.log
+  - brew upgrade > brew-upgrade.log
   - util/osx-setup
 
 cache:
