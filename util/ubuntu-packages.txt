@@ -38,6 +38,7 @@ clang-3.6
 # for newer C++ stdlib
 g++-4.9
 
+# C/C++ (and more) code-formatting tool
 clang-format-3.6
 
 # contains a ton of great C++ libraries
