@@ -16,7 +16,7 @@ When the gameplay module is running, its job is to select the best play from a l
 ## Play Structure
 
 The high-level strategy code is organized to be as modular as possible.
-To do this, it's been split up into three main parts: [Skills](soccer/gameplay/skills), [Tactics](soccer/gameplay/tactics), and [Plays](soccer/gameplay/plays).
+To do this, it's been split up into three main parts: [Skills](https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/skills), [Tactics](https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/tactics), and [Plays](https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/plays).
 There is one Goalie (optionally) and one \ref gameplay.play.Play "Play" object.
 
 **Skills** are behaviors that apply to a single robot.
@@ -96,7 +96,7 @@ class MoveOneRobot(play.Play):
 
     def on_enter_running(self):
         # Add a "Move" subbehavior that tells a robot to a specified (x, y) location
-        m = skills.move.Move(robocup.Point(0, 2)))
+        m = skills.move.Move(robocup.Point(0, 2))
         self.add_subbehavior(m, name='move', required=True)
 
     def on_exit_running(self):
@@ -118,7 +118,7 @@ In order to implement custom assignment logic for your behavior, you'll need to 
 
 We use a 3rd-party library called Boost Python to create an interface between the C++ code that makes up the majority of our `soccer` program and the gameplay system that's written in python.
 Boost Python is used to create a python module called "robocup" that python code can *import* in order to access our C++ classes and functions.
-The C++ classes and functions available to the python interface are created through "wrappers" in the [robocup-py.cpp](soccer/gameplay/robocup-py.cpp) file.
+The C++ classes and functions available to the python interface are created through "wrappers" in the [robocup-py.cpp](https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/robocup-py.cpp) file.
 The "robocup" python module is compiled as a part of our project when you run `make` and is placed in the `run` directory as `robocup.so`.
 This can be imported like any other python module like so:
 
