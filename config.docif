@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 # A sample config file for DoCIF
-#
 # This is just a shell file that is sourced by DoCIF scripts.
 
 # @REQUIRED
@@ -85,6 +84,7 @@ SETUP_SHA_FILES+=("./util/ubuntu-setup")
 SETUP_SHA_FILES+=("./util/requirements2.txt")
 SETUP_SHA_FILES+=("./util/requirements3.txt")
 SETUP_SHA_FILES+=("./util/ubuntu-packages.txt")
+SETUP_SHA_FILES+=("./util/docker/baseimage/Dockerfile")
 
 # @REQUIRED
 # Commands to run when testing. Each index will have it's own status token
@@ -97,7 +97,7 @@ TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
 TEST_COMMANDS+=( 'make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
-TEST_COMMANDS+=("coveralls -b build -r build -E '.*((googletest)|(gtest)|(protobuf)).*' --gcov-options '\-lp';test-python;A check to see if python unit tests pass")
+TEST_COMMANDS+=("coveralls -b build -r build -E '.*((googletest)|(gtest)|(protobuf)).*' --gcov-options '\-lp' > /dev/null;test-python;A check to see if python unit tests pass")
 
 # @RECCOMENDED
 # Clean command. Cleans the build files so there is no way the previous build can interfere. Add if you run
