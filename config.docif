@@ -97,6 +97,7 @@ TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
 TEST_COMMANDS+=( 'make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
+TEST_COMMANDS+=( 'coveralls -b build -r build -E ".*((googletest)|(gtest)|(protobuf)).*" --gcov-options "\-lp";test-python;A check to see if python unit tests pass' )
 
 # @RECCOMENDED
 # Clean command. Cleans the build files so there is no way the previous build can interfere. Add if you run
@@ -107,6 +108,10 @@ CLEAN_COMMAND="make clean || true"
 # Environmental variables to make available to the build environment
 ENV_VARS=()
 ENV_VARS+=("GH_TOKEN")  # To be used by autoupdating script
+ENV_VARS+=("COVERALLS_REPO_TOKEN")
+ENV_VARS+=("CIRCLE_BUILD_NUM")
+ENV_VARS+=("CIRCLE_BRANCH")
+ENV_VARS+=("CIRCLE_SHA1")
 
 # Command to run when deploying. Leave blank for no deploy.
 # Make sure any secrets these commands need are added to ENV_VARS
