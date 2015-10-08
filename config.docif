@@ -97,7 +97,10 @@ TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
 TEST_COMMANDS+=( 'make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
-TEST_COMMANDS+=("coveralls -b build -r build -E '.*((googletest)|(gtest)|(protobuf)).*' --gcov-options '\-lp' > /dev/null;test-python;A check to see if python unit tests pass")
+TEST_COMMANDS+=("coveralls -b build -r . \
+    -e build/tmp/ -e build/src/ -e build/simulator/ -e build/firmware/ \
+    -E '(^.*((moc_)|(automoc)).*$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$)' \
+    --gcov-options '\-lp'")
 
 # @RECCOMENDED
 # Clean command. Cleans the build files so there is no way the previous build can interfere. Add if you run
