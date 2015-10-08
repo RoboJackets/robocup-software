@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-
 HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-nf | --nofirmware] [-osl | --overwrite-sources-list ] [-h | --help]
 
 \tyes:\t\t\tassume no user input
@@ -131,7 +130,6 @@ fi
 if $FIRMWARE; then
     add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 fi
-
 
 apt-get update
 
