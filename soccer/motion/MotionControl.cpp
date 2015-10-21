@@ -147,8 +147,9 @@ void MotionControl::run() {
         boost::optional<MotionInstant> optTarget =
             _robot->path()->evaluate(timeIntoPath);
         if (!optTarget) {
+            // use the path end if our timeIntoPath is greater than the duration
             target.vel = Point();
-            target.pos = _robot->pos;
+            target.pos = _robot->path()->end().pos;
         } else {
             target = *optTarget;
         }
