@@ -14,7 +14,7 @@ class QUdpSocket;
 class VisionPacket {
 public:
     /// Local time when the packet was received
-    Time receivedTime;
+    RJ::Time receivedTime;
 
     /// protobuf message from the vision system
     SSL_WrapperPacket wrapper;

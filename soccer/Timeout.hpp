@@ -16,17 +16,17 @@ public:
         reset();
     }
 
-    void reset() { _startTime = timestamp(); }
+    void reset() { _startTime = RJ::timestamp(); }
 
     void setIntervalInSeconds(float seconds) {
-        _interval = (Time)(seconds * 1000.0f);
+        _interval = (RJ::Time)(seconds * 1000.0f);
     }
 
-    void setIntervalInMilliseconds(Time ms) { _interval = ms; }
+    void setIntervalInMilliseconds(RJ::Time ms) { _interval = ms; }
 
-    bool isTimedOut() { return timestamp() - _startTime > _interval; }
+    bool isTimedOut() { return RJ::timestamp() - _startTime > _interval; }
 
 private:
-    Time _interval;
-    Time _startTime;
+    RJ::Time _interval;
+    RJ::Time _startTime;
 };
