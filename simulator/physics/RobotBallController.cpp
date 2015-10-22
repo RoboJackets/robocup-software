@@ -191,7 +191,8 @@ void RobotBallController::dribblerStep() {
 
 void RobotBallController::kickerStep() {
     if (!_ball) return;
-    if (_kick && (timestamp() - _lastKicked) > RechargeTime && chargerWorks) {
+    if (_kick && (RJ::timestamp() - _lastKicked) > RechargeTime &&
+        chargerWorks) {
         btVector3 dir =
             _parent->getRigidBody()->getWorldTransform().getOrigin();
         dir -= _ghostObject->getWorldTransform().getOrigin();
@@ -213,7 +214,7 @@ void RobotBallController::kickerStep() {
         _kick = 0;
         _chip = false;
 
-        _lastKicked = timestamp();
+        _lastKicked = RJ::timestamp();
     }
 }
 
@@ -234,7 +235,7 @@ void RobotBallController::prepareKick(uint64_t power, bool chip) {
         _chip = false;
         _kickSpeed = 0;
     }
-    if ((timestamp() - _lastKicked) > RechargeTime && chargerWorks) {
+    if ((RJ::timestamp() - _lastKicked) > RechargeTime && chargerWorks) {
         _kick = power;
         // determine the kick speed
         _chip = chip;  // && _rev == rev2011;
@@ -253,5 +254,5 @@ void RobotBallController::prepareDribbler(uint64_t dribble) {
 bool RobotBallController::hasBall() { return _ball != nullptr; }
 
 bool RobotBallController::getKickerStatus() {
-    return (timestamp() - _lastKicked) > RechargeTime ? 1 : 0;
+    return (RJ::timestamp() - _lastKicked) > RechargeTime ? 1 : 0;
 }

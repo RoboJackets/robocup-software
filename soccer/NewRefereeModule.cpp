@@ -147,7 +147,7 @@ void NewRefereeModule::run() {
         }
 
         NewRefereePacket* packet = new NewRefereePacket;
-        packet->receivedTime = timestamp();
+        packet->receivedTime = RJ::timestamp();
         this->received_time = packet->receivedTime;
         if (!packet->wrapper.ParseFromArray(buf, size)) {
             fprintf(stderr,

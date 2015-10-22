@@ -81,7 +81,7 @@ void VisionReceiver::run() {
 
         // Parse the protobuf message
         VisionPacket* packet = new VisionPacket;
-        packet->receivedTime = timestamp();
+        packet->receivedTime = RJ::timestamp();
         if (!packet->wrapper.ParseFromArray(buf, size)) {
             fprintf(stderr,
                     "VisionReceiver: got bad packet of %d bytes from %s:%d\n",
