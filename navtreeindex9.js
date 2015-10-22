@@ -1,5 +1,16 @@
 var NAVTREEINDEX9 =
 {
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a816c31b83fe7b5b4c3abf5dbbbd4a494":[11,0,6,4,0,4],
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a8e922f07c96d1c4766d4fcc172c59498":[11,0,6,4,0,1],
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a95dd1c2a1e736b0ab79db8d2a217ca4c":[11,0,6,4,0,5],
+"struct_planning_1_1_interpolated_path_1_1_entry.html#add21f2a0eb1dfcfa1f5bdc5b5e52dfa1":[11,0,6,4,0,6],
+"struct_planning_1_1_interpolated_path_1_1_entry.html#ae0559530ca91401ea2567ae412e49378":[11,0,6,4,0,2],
+"struct_planning_1_1_motion_instant.html":[11,0,6,11],
+"struct_planning_1_1_motion_instant.html#a80cd2a490ca55c652c4f560cfd90805c":[11,0,6,11,1],
+"struct_planning_1_1_motion_instant.html#a867b7a0fa2220b6f3e21d622f0b8102a":[11,0,6,11,4],
+"struct_planning_1_1_motion_instant.html#a88b26a4a0fa115a3eb1f44ca77d6d605":[11,0,6,11,2],
+"struct_planning_1_1_motion_instant.html#ab03fbbffbb861d3a46948e1ef65f94a5":[11,0,6,11,0],
+"struct_planning_1_1_motion_instant.html#af543ee52c2e3be1f11de4be4089d5523":[11,0,6,11,3],
 "struct_planning_1_1_path_target_command.html":[11,0,6,7],
 "struct_planning_1_1_path_target_command.html#a5da5c7d8a33e34ff942307f56cc6e9d1":[11,0,6,7,1],
 "struct_planning_1_1_path_target_command.html#ae83f4bec1b76c3cc1fff7f54da6ea0d0":[11,0,6,7,2],
