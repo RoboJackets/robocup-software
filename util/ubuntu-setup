@@ -160,6 +160,8 @@ fi
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
+# Use ubuntu's 'update-alternatives' to select the newer compiler as the default
+# See issue #468 on GitHub
 if [ "$SYSTEM" = "ubuntu-14.04" ]; then
     sudo update-alternatives --install /usr/bin/g++ g++ $(command -v g++-4.9) 40
     sudo update-alternatives --set g++ $(command -v g++-4.9)
