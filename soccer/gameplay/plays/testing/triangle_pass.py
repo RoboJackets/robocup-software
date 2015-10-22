@@ -25,7 +25,7 @@ class TrianglePass(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
-        # register states
+        # register states - they're both substates of "running"
         self.add_state(TrianglePass.State.setup,
             behavior.Behavior.State.running)
         self.add_state(TrianglePass.State.passing,
