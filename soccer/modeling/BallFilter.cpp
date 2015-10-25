@@ -26,7 +26,7 @@ void BallFilter::update(const BallObservation* obs) {
     _estimate.time = obs->time;
 }
 
-void BallFilter::predict(Time time, Ball* out, float* velocityUncertainty) {
+void BallFilter::predict(RJ::Time time, Ball* out, float* velocityUncertainty) {
     if (velocityUncertainty) {
         *velocityUncertainty = 2 + _estimate.vel.mag() * 0.5;
     }
