@@ -39,10 +39,10 @@ var NAVTREEINDEX =
 "class_our_robot.html#a639eecf0232af72c5845feca21ee9d70",
 "class_protobuf_tree.html#ac78fd033bbd6f3576ed966bfab2db3b0",
 "class_window.html#a942c8fb56496b89fa96a4924ec3775ca",
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick_1_1_state.html",
+"classgameplay_1_1plays_1_1stopped_1_1_stopped.html",
 "classgameplay_1_1skills_1_1aim_1_1_aim.html#aec1c5a7674da23529d7a5acc56fda1ee",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed0360fc34a1d8f004d2349362bdb72",
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a816c31b83fe7b5b4c3abf5dbbbd4a494"
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html",
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a8e922f07c96d1c4766d4fcc172c59498"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
