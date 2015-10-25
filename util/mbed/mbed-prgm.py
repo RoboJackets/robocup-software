@@ -14,7 +14,7 @@ from pyOCD.board import MbedBoard
 # still show what we know at that moment in time.
 startupLogs = ""
 def signal_handler(signal, frame):
-    print startupLogs
+    print(startupLogs)
     sys.exit(0)
 
 # Command line argument options
@@ -54,11 +54,11 @@ if options.filename:
 if options.destination:
     destPath = os.path.abspath(options.destination)
 
-print str(len(found_ports)) + " mbed(s) found"
+print(str(len(found_ports)) + " mbed(s) found")
 
 if options.no_mbed_write == False:
     # Move the binary file to the disk storage
-    print "loading '" + str(srcFile) + "' to '" + str(destPath) + "'"
+    print("loading '" + str(srcFile) + "' to '" + str(destPath) + "'")
     copy(srcFile, destPath)
  
 # Reset all of the mbed(s)
@@ -78,7 +78,7 @@ if found_ports:
         sleep(break_time)
         serial.close()
 
-    print "--  '" + str(os.path.basename(srcFile)) + "' copied to mbed"
+    print("--  '" + str(os.path.basename(srcFile)) + "' copied to mbed")
 
     if options.load_bin:
         # We use the pyOCD library here for interfacing with the microcontroller's core directly
@@ -97,18 +97,18 @@ if found_ports:
             if success == 1:
                 board = MbedBoard.chooseBoard()
             else:
-                print "--  unable to find mounted mbed. Mount mbed and try again"
+                print("--  unable to find mounted mbed. Mount mbed and try again")
                 sys.exit(0)
 
         target = board.target
         flash = board.flash
 
         # Half the core of the MCU & load directly into flash
-        print "--  loading binary directly into memory..."
+        print("--  loading binary directly into memory...")
         target.halt()
         flash.flashBinary(srcFile)
         target.resetStopOnReset()
-        print "    done"
+        print("    done")
         
         # Now we reset it and setup a serial connection for reading the startup logs
         startup = Serial(str(found_ports[0][0]), timeout = 2)
@@ -120,7 +120,7 @@ if found_ports:
             startup.timeout = 0;
 
         # Now we let everything run
-        print "--  starting program"
+        print("--  starting program")
         target.reset()
         sleep(3)
 
@@ -146,16 +146,16 @@ if found_ports:
 
         # Show some additional breaks in the output if we're not running a hardware test
         if not options.block_serial:
-            print "========== BEGIN STARTUP LOGS =========="
+            print("========== BEGIN STARTUP LOGS ==========")
         else:
             # otherwise we just put a blank line for the test results
-            print ""
+            print("")
         
-        print startupLogs
+        print(startupLogs)
 
         if not options.block_serial:
-            print "=========== END STARTUP LOGS ==========="
+            print("=========== END STARTUP LOGS ===========")
 
 else:
-    print "--  no mbed(s) found"
+    print("--  no mbed(s) found")
     sys.exit(0)
