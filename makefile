@@ -45,7 +45,7 @@ pylint:
 
 behavior-diagrams: all
 	cd soccer/gameplay && python3 generate_fsm_diagrams.py
-	@echo "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
+	@echo -e "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
 
 clean:
 	cd build && ninja clean || true

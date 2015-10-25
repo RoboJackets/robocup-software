@@ -33,7 +33,7 @@ for behavior_type in ['skills', 'tactics', 'plays']:
             module_path = entry[0]
             dirpath = 'diagrams/' + '/'.join(module_path[:-1])
             mkdir_p(dirpath)
-            filepath = dirpath + "/" + klass.__name__ + ".png"
+            filepath = dirpath + "/" + klass.__name__
             klass().write_diagram_png(filepath)
             print("generated " + filepath)
         except Exception as e:
