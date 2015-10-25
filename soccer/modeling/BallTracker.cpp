@@ -17,8 +17,8 @@ static const float Distance_Limit = 0.2;
 static const float Acquisition_Match_Distance = 0.5;
 
 // Age of a track, in microseconds, at which is it dropped
-static const Time Drop_Possible_Track_Time = 500000;
-static const Time Drop_Real_Track_Time = 500000;
+static const RJ::Time Drop_Possible_Track_Time = 500000;
+static const RJ::Time Drop_Real_Track_Time = 500000;
 
 static const float Position_Uncertainty = 0.5;
 
@@ -89,10 +89,10 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
 	}
 #endif
 
-    Time now = timestamp();
+    RJ::Time now = RJ::timestamp();
 
     // FIXME - What time?
-    Time predictTime = now;
+    RJ::Time predictTime = now;
 
     // Rectangle that defines the boundaries of the field.
     // Note that we are working in team space.

@@ -285,7 +285,7 @@ void USBRadio::receive() {
 }
 
 void USBRadio::handleRxData(uint8_t* buf) {
-    Time rx_time = timestamp();
+    RJ::Time rx_time = RJ::timestamp();
 
     _reversePackets.push_back(RadioRx());
     RadioRx& packet = _reversePackets.back();

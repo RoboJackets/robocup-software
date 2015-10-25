@@ -57,7 +57,7 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Simple case: no path
     if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
-        path->setStartTime(timestamp());
+        path->setStartTime(RJ::timestamp());
         path->waypoints.emplace_back(
             MotionInstant(start.pos, Geometry2d::Point()), 0);
         return unique_ptr<Path>(path);
@@ -92,7 +92,7 @@ InterpolatedPath* RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                      const MotionConstraints& motionConstraints,
                                      const Geometry2d::ShapeSet* obstacles) {
     InterpolatedPath* path = new InterpolatedPath();
-    path->setStartTime(timestamp());
+    path->setStartTime(RJ::timestamp());
 
     // Initialize two RRT trees
     FixedStepTree startTree;

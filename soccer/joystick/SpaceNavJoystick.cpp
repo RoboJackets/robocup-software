@@ -63,7 +63,7 @@ void SpaceNavJoystick::update() {
             //  would change dribbler
             //  speed unusably quickly.  Instead we have a delay between each
             //  increment
-            Time now = timestamp();
+            RJ::Time now = RJ::timestamp();
             const Time DribbleStepTime = 300000;
 
             if ((abs<int>(sev.motion.y) > DribblerAxisDeadzone) &&
@@ -118,9 +118,11 @@ void SpaceNavJoystick::open() {
     _daemonTried = true;
     if (!_daemonConnected) {
         cerr << "Unable to connect to spacenav daemon.  Make sure spacenavd is "
-                "running if you want to use a 3d mouse to drive" << endl;
+                "running if you want to use a 3d mouse to drive"
+             << endl;
     } else {
         cout << "Connected to spacenav daemon!  If a 3d mouse is connected, "
-                "you can use it to drive" << endl;
+                "you can use it to drive"
+             << endl;
     }
 }
