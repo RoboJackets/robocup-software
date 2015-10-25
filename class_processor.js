@@ -38,5 +38,5 @@ var class_processor =
     [ "useFieldOrientedManualDrive", "class_processor.html#a53e5e4890e47a1c3b95c0119a15295e1", null ],
     [ "useOpponentHalf", "class_processor.html#abe2acdc734aece774c9dd262a217ba1a", null ],
     [ "useOurHalf", "class_processor.html#a761db266f4f8c46829387e50ec2a8c5a", null ],
-    [ "firstLogTime", "class_processor.html#a3461ecf24cb193dcc45e825ac4e4ac98", null ]
+    [ "firstLogTime", "class_processor.html#a6054b33c659311189ec258f5116cafaf", null ]
 ];

@@ -210,7 +210,7 @@ $(document).ready(function(){initNavTree('_new_referee_module_8hpp_source.html',
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
 <div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="class_new_referee_packet.html">  107</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_new_referee_packet.html">NewRefereePacket</a> {</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="class_new_referee_packet.html#a8bce4e0b812bf5c92f6b1e89ed670985">  110</a></span>&#160;    Time <a class="code" href="class_new_referee_packet.html#a8bce4e0b812bf5c92f6b1e89ed670985">receivedTime</a>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="class_new_referee_packet.html#acf78573f58b10fd8d08e1f896acbcb75">  110</a></span>&#160;    RJ::Time <a class="code" href="class_new_referee_packet.html#acf78573f58b10fd8d08e1f896acbcb75">receivedTime</a>;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
 <div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="class_new_referee_packet.html#a485e1b6a00f69aea2151ba496ebac6d0">  113</a></span>&#160;    SSL_Referee <a class="code" href="class_new_referee_packet.html#a485e1b6a00f69aea2151ba496ebac6d0">wrapper</a>;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;};</div>
@@ -235,8 +235,8 @@ $(document).ready(function(){initNavTree('_new_referee_module_8hpp_source.html',
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="comment">// The UNIX timestamp when the packet was sent, in microseconds.</span></div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="comment">// Divide by 1,000,000 to get a time_t.</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    Time sent_time;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    Time received_time;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    RJ::Time sent_time;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    RJ::Time received_time;</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="comment">// The number of microseconds left in the stage.</span></div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="comment">// The following stages have this value; the rest do not:</span></div>
@@ -258,7 +258,7 @@ $(document).ready(function(){initNavTree('_new_referee_module_8hpp_source.html',
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="comment">// The UNIX timestamp when the command was issued, in microseconds.</span></div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="comment">// This value changes only when a new command is issued, not on each packet.</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    Time command_timestamp;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    RJ::Time command_timestamp;</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <a class="code" href="class_team_info.html">TeamInfo</a> yellow_info;</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <a class="code" href="class_team_info.html">TeamInfo</a> blue_info;</div>
@@ -297,8 +297,8 @@ $(document).ready(function(){initNavTree('_new_referee_module_8hpp_source.html',
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordtype">bool</span> _useExternalRef = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;};</div>
+<div class="ttc" id="class_new_referee_packet_html_acf78573f58b10fd8d08e1f896acbcb75"><div class="ttname"><a href="class_new_referee_packet.html#acf78573f58b10fd8d08e1f896acbcb75">NewRefereePacket::receivedTime</a></div><div class="ttdeci">RJ::Time receivedTime</div><div class="ttdoc">Local time when the packet was received. </div><div class="ttdef"><b>Definition:</b> NewRefereeModule.hpp:110</div></div>
 <div class="ttc" id="class_new_referee_packet_html_a485e1b6a00f69aea2151ba496ebac6d0"><div class="ttname"><a href="class_new_referee_packet.html#a485e1b6a00f69aea2151ba496ebac6d0">NewRefereePacket::wrapper</a></div><div class="ttdeci">SSL_Referee wrapper</div><div class="ttdoc">protobuf message from the vision system </div><div class="ttdef"><b>Definition:</b> NewRefereeModule.hpp:113</div></div>
-<div class="ttc" id="class_new_referee_packet_html_a8bce4e0b812bf5c92f6b1e89ed670985"><div class="ttname"><a href="class_new_referee_packet.html#a8bce4e0b812bf5c92f6b1e89ed670985">NewRefereePacket::receivedTime</a></div><div class="ttdeci">Time receivedTime</div><div class="ttdoc">Local time when the packet was received. </div><div class="ttdef"><b>Definition:</b> NewRefereeModule.hpp:110</div></div>
 <div class="ttc" id="class_team_info_html"><div class="ttname"><a href="class_team_info.html">TeamInfo</a></div><div class="ttdef"><b>Definition:</b> TeamInfo.hpp:9</div></div>
 <div class="ttc" id="class_new_referee_module_html_a81f595e25744665fa3722a8588c42c45"><div class="ttname"><a href="class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45">NewRefereeModule::spinKickWatcher</a></div><div class="ttdeci">void spinKickWatcher()</div><div class="ttdef"><b>Definition:</b> NewRefereeModule.cpp:177</div></div>
 <div class="ttc" id="class_new_referee_module_html"><div class="ttname"><a href="class_new_referee_module.html">NewRefereeModule</a></div><div class="ttdoc">The ref module listens to a port for referee packets over the network. </div><div class="ttdef"><b>Definition:</b> NewRefereeModule.hpp:130</div></div>
@@ -311,7 +311,7 @@ $(document).ready(function(){initNavTree('_new_referee_module_8hpp_source.html',
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>NewRefereeModule.hpp</b></li>
-    <li class="footer">Generated on Sun Oct 25 2015 17:43:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Oct 25 2015 17:48:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

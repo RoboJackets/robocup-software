@@ -11,5 +11,5 @@ var class_space_nav_joystick =
     [ "_controlValues", "class_space_nav_joystick.html#af774ef46297051dd7236a16b3ba2f99d", null ],
     [ "_daemonConnected", "class_space_nav_joystick.html#adf55182e0a5ca13cf460c13b9a4fc77e", null ],
     [ "_daemonTried", "class_space_nav_joystick.html#a0b1cdef61c06dbf9a9bbf2f24548e25a", null ],
-    [ "_lastDribbleTime", "class_space_nav_joystick.html#a3bedaa40626a85d28741b0f4d779ec80", null ]
+    [ "_lastDribbleTime", "class_space_nav_joystick.html#aace1734076bc1806f742102da6bfc87b", null ]
 ];

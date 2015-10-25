@@ -177,10 +177,10 @@ $(document).ready(function(){initNavTree('_processor_8hpp_source.html','');});
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            lastRadioRxTime = 0;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        Time lastLoopTime;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        Time lastVisionTime;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        Time lastRefereeTime;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        Time lastRadioRxTime;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        RJ::Time lastLoopTime;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        RJ::Time lastVisionTime;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        RJ::Time lastRefereeTime;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        RJ::Time lastRadioRxTime;</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    };</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> createConfiguration(<a class="code" href="class_configuration.html">Configuration</a>* cfg);</div>
@@ -264,7 +264,7 @@ $(document).ready(function(){initNavTree('_processor_8hpp_source.html','');});
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="comment">// Time of the first LogFrame</span></div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    Time firstLogTime;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    RJ::Time firstLogTime;</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774">run</a>() <span class="keyword">override</span>;</div>
@@ -363,7 +363,7 @@ $(document).ready(function(){initNavTree('_processor_8hpp_source.html','');});
 <div class="ttc" id="struct_processor_1_1_status_html"><div class="ttname"><a href="struct_processor_1_1_status.html">Processor::Status</a></div><div class="ttdef"><b>Definition:</b> Processor.hpp:77</div></div>
 <div class="ttc" id="class_our_robot_html"><div class="ttname"><a href="class_our_robot.html">OurRobot</a></div><div class="ttdoc">A robot on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:122</div></div>
 <div class="ttc" id="class_robot_status_html"><div class="ttname"><a href="class_robot_status.html">RobotStatus</a></div><div class="ttdoc">Provides per-robot overrides for a robot Should be updated for hardware revision. ...</div><div class="ttdef"><b>Definition:</b> RobotConfig.hpp:79</div></div>
-<div class="ttc" id="class_ball_tracker_html"><div class="ttname"><a href="class_ball_tracker.html">BallTracker</a></div><div class="ttdef"><b>Definition:</b> BallTracker.hpp:19</div></div>
+<div class="ttc" id="class_ball_tracker_html"><div class="ttname"><a href="class_ball_tracker.html">BallTracker</a></div><div class="ttdef"><b>Definition:</b> BallTracker.hpp:20</div></div>
 <div class="ttc" id="class_vision_receiver_html"><div class="ttname"><a href="class_vision_receiver.html">VisionReceiver</a></div><div class="ttdoc">Receives vision packets over UDP and places them in a buffer until they are read. ...</div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:35</div></div>
 <div class="ttc" id="class_processor_html_a1a61818c88b94200bba7f56a5cc7de76"><div class="ttname"><a href="class_processor.html#a1a61818c88b94200bba7f56a5cc7de76">Processor::blueTeam</a></div><div class="ttdeci">void blueTeam(bool value)</div><div class="ttdoc">sets the team </div><div class="ttdef"><b>Definition:</b> Processor.cpp:147</div></div>
 <div class="ttc" id="class_geometry2d_1_1_transform_matrix_html"><div class="ttname"><a href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a></div><div class="ttdef"><b>Definition:</b> TransformMatrix.hpp:11</div></div>
@@ -380,7 +380,7 @@ $(document).ready(function(){initNavTree('_processor_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>Processor.hpp</b></li>
-    <li class="footer">Generated on Sun Oct 25 2015 17:43:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Oct 25 2015 17:48:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

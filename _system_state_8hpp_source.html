@@ -141,14 +141,14 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="class_ball.html">Ball</a>() {</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        valid = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <a class="code" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">time</a> = 0;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <a class="code" href="class_ball.html#abf88311b4afc4372737653ce004390c2">time</a> = 0;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vel;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">bool</span> valid;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">   45</a></span>&#160;    Time <a class="code" href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">time</a>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_ball.html#abf88311b4afc4372737653ce004390c2">   45</a></span>&#160;    RJ::Time <a class="code" href="class_ball.html#abf88311b4afc4372737653ce004390c2">time</a>;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
 <div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="class_system_state.html">   55</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_system_state.html">SystemState</a> {</div>
@@ -184,7 +184,7 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">void</span> drawShapeSet(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a>&amp; shapes,</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                      <span class="keyword">const</span> QColor&amp; color = Qt::black,</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                      <span class="keyword">const</span> QString&amp; layer = QString());</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    Time timestamp;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    RJ::Time timestamp;</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="class_game_state.html">GameState</a> gameState;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
 <div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="class_system_state.html#a34cadeb82436b321dea1144d12191759">  124</a></span>&#160;    std::vector&lt;OurRobot*&gt; <span class="keyword">self</span>;</div>
@@ -213,8 +213,8 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div class="ttc" id="class_geometry2d_1_1_line_html"><div class="ttname"><a href="class_geometry2d_1_1_line.html">Geometry2d::Line</a></div><div class="ttdef"><b>Definition:</b> Line.hpp:9</div></div>
 <div class="ttc" id="class_geometry2d_1_1_polygon_html"><div class="ttname"><a href="class_geometry2d_1_1_polygon.html">Geometry2d::Polygon</a></div><div class="ttdef"><b>Definition:</b> Polygon.hpp:11</div></div>
 <div class="ttc" id="class_robot_config_html"><div class="ttname"><a href="class_robot_config.html">RobotConfig</a></div><div class="ttdoc">Configuration per robot model. </div><div class="ttdef"><b>Definition:</b> RobotConfig.hpp:8</div></div>
-<div class="ttc" id="class_ball_html_a0f13620d6928b163e3c415e63f3abb5e"><div class="ttname"><a href="class_ball.html#a0f13620d6928b163e3c415e63f3abb5e">Ball::time</a></div><div class="ttdeci">Time time</div><div class="ttdoc">Time at which this estimate is valid. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:45</div></div>
 <div class="ttc" id="class_opponent_robot_html"><div class="ttname"><a href="class_opponent_robot.html">OpponentRobot</a></div><div class="ttdoc">A robot that is not on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:539</div></div>
+<div class="ttc" id="class_ball_html_abf88311b4afc4372737653ce004390c2"><div class="ttname"><a href="class_ball.html#abf88311b4afc4372737653ce004390c2">Ball::time</a></div><div class="ttdeci">RJ::Time time</div><div class="ttdoc">Time at which this estimate is valid. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:45</div></div>
 <div class="ttc" id="class_system_state_html"><div class="ttname"><a href="class_system_state.html">SystemState</a></div><div class="ttdoc">Holds the positions of everything on the field. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:55</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:13</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -223,7 +223,7 @@ $(document).ready(function(){initNavTree('_system_state_8hpp_source.html','');})
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>SystemState.hpp</b></li>
-    <li class="footer">Generated on Sun Oct 25 2015 17:43:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Oct 25 2015 17:48:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

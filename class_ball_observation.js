@@ -1,6 +1,6 @@
 var class_ball_observation =
 [
-    [ "BallObservation", "class_ball_observation.html#adff79300e076617b5eb1eca55bb08823", null ],
+    [ "BallObservation", "class_ball_observation.html#a3cb3086cfafc699c6fd624cbfc83345f", null ],
     [ "pos", "class_ball_observation.html#a2cedf29f0ab1995246ab9e54626dfc58", null ],
-    [ "time", "class_ball_observation.html#a68ae2bcd1cfb3b6e589492c6804ed50c", null ]
+    [ "time", "class_ball_observation.html#a366e98d8292453e12b4a2034248474d5", null ]
 ];

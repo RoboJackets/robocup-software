@@ -121,14 +121,14 @@ $(document).ready(function(){initNavTree('class_planning_1_1_path.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab6e3a68352940c52e732ba122e7a9c98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6e3a68352940c52e732ba122e7a9c98"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (Time <a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a>=0)</td></tr>
-<tr class="separator:ab6e3a68352940c52e732ba122e7a9c98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef744fb60b98785e43ea06d050f6e4b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef744fb60b98785e43ea06d050f6e4b2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a73839e9697e5d85a1aa3cbc4f67a5e0a">startTime</a>=0)</td></tr>
+<tr class="separator:aef744fb60b98785e43ea06d050f6e4b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5374f636290ac9cb6a4794d8ae79811"><td class="memItemLeft" align="right" valign="top">virtual boost::optional<br class="typebreak"/>
 &lt; <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ae5374f636290ac9cb6a4794d8ae79811">evaluate</a> (float t) const =0</td></tr>
 <tr class="memdesc:ae5374f636290ac9cb6a4794d8ae79811"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evalates the path at a given time and returns the target position and velocity of the robot.  <a href="#ae5374f636290ac9cb6a4794d8ae79811">More...</a><br/></td></tr>
 <tr class="separator:ae5374f636290ac9cb6a4794d8ae79811"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c437343a10eadfc1b6fec0530d8282d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, float &amp;hitTime, float <a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a>) const =0</td></tr>
+<tr class="memitem:a6c437343a10eadfc1b6fec0530d8282d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, float &amp;hitTime, float <a class="el" href="class_planning_1_1_path.html#a73839e9697e5d85a1aa3cbc4f67a5e0a">startTime</a>) const =0</td></tr>
 <tr class="memdesc:a6c437343a10eadfc1b6fec0530d8282d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#a6c437343a10eadfc1b6fec0530d8282d">More...</a><br/></td></tr>
 <tr class="separator:a6c437343a10eadfc1b6fec0530d8282d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba1ec0b69ad45b7dca7886dc1aa64e9b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const </td></tr>
@@ -137,7 +137,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4886548615206bd2f95a5b2628889688"><td class="memItemLeft" align="right" valign="top">virtual float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688">getDuration</a> () const =0</td></tr>
 <tr class="memdesc:a4886548615206bd2f95a5b2628889688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how long it would take for the entire path to be traversed.  <a href="#a4886548615206bd2f95a5b2628889688">More...</a><br/></td></tr>
 <tr class="separator:a4886548615206bd2f95a5b2628889688"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addd308038986255e995c00208a1094f5"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#addd308038986255e995c00208a1094f5">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const =0</td></tr>
+<tr class="memitem:addd308038986255e995c00208a1094f5"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#addd308038986255e995c00208a1094f5">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a73839e9697e5d85a1aa3cbc4f67a5e0a">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const =0</td></tr>
 <tr class="memdesc:addd308038986255e995c00208a1094f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a subPath.  <a href="#addd308038986255e995c00208a1094f5">More...</a><br/></td></tr>
 <tr class="separator:addd308038986255e995c00208a1094f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0a4c1b57eff66cd292ec116edfba41b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0a4c1b57eff66cd292ec116edfba41b"></a>
@@ -152,19 +152,19 @@ virtual <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInsta
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76">clone</a> () const =0</td></tr>
 <tr class="memdesc:a05ea5649bd6ce649ca974e50983dbc76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the Path. <br/></td></tr>
 <tr class="separator:a05ea5649bd6ce649ca974e50983dbc76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a852b9b073f197f61dea6f896f05cba48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a852b9b073f197f61dea6f896f05cba48"></a>
-Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a852b9b073f197f61dea6f896f05cba48">startTime</a> () const </td></tr>
-<tr class="memdesc:a852b9b073f197f61dea6f896f05cba48"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br/></td></tr>
-<tr class="separator:a852b9b073f197f61dea6f896f05cba48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22189b47092c05e405e9111576bd009c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22189b47092c05e405e9111576bd009c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setStartTime</b> (Time t)</td></tr>
-<tr class="separator:a22189b47092c05e405e9111576bd009c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73839e9697e5d85a1aa3cbc4f67a5e0a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73839e9697e5d85a1aa3cbc4f67a5e0a"></a>
+RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a73839e9697e5d85a1aa3cbc4f67a5e0a">startTime</a> () const </td></tr>
+<tr class="memdesc:a73839e9697e5d85a1aa3cbc4f67a5e0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br/></td></tr>
+<tr class="separator:a73839e9697e5d85a1aa3cbc4f67a5e0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad980082e3747389041d0177f09555e18"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad980082e3747389041d0177f09555e18"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setStartTime</b> (RJ::Time t)</td></tr>
+<tr class="separator:ad980082e3747389041d0177f09555e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:afde9ab65732202809dd00ec77a4bf86c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afde9ab65732202809dd00ec77a4bf86c"></a>
-Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
-<tr class="separator:afde9ab65732202809dd00ec77a4bf86c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ffd94762a6360f53b152ed0c0af241c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ffd94762a6360f53b152ed0c0af241c"></a>
+RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
+<tr class="separator:a6ffd94762a6360f53b152ed0c0af241c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract class representing a motion path. </p>
@@ -403,7 +403,7 @@ Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Sun Oct 25 2015 17:43:47 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Oct 25 2015 17:48:03 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

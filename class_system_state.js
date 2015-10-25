@@ -19,5 +19,5 @@ var class_system_state =
     [ "logFrame", "class_system_state.html#af1d2d245231e05f0f057b275ed4a7318", null ],
     [ "opp", "class_system_state.html#a46676fe7ecb35869b780db5b464ac901", null ],
     [ "self", "class_system_state.html#a34cadeb82436b321dea1144d12191759", null ],
-    [ "timestamp", "class_system_state.html#ab06c155b28573b21199784b2a489bf06", null ]
+    [ "timestamp", "class_system_state.html#affbc6a82a0ec079fb42f2d54ec8938ee", null ]
 ];
