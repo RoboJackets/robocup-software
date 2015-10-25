@@ -40,7 +40,7 @@ void RobotFilter::update(const RobotObservation* obs) {
     _estimate[s].visionFrame = obs->frameNumber;
 }
 
-void RobotFilter::predict(Time time, RobotPose* robot) {
+void RobotFilter::predict(RJ::Time time, RobotPose* robot) {
     int bestSource = -1;
     double bestDTime = 0;
     for (int s = 0; s < Num_Cameras; ++s) {

@@ -254,7 +254,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot* data) {
 Packet::RadioRx Robot::radioRx() const {
     Packet::RadioRx packet;
 
-    packet.set_timestamp(timestamp());
+    packet.set_timestamp(RJ::timestamp());
     packet.set_battery(15.0f);
     packet.set_rssi(1.0f);
     packet.set_kicker_status(_controller->getKickerStatus());
