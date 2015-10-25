@@ -72,7 +72,8 @@ void MotionControl::run() {
     switch (rotationCommand->getCommandType()) {
         case RotationCommand::FacePoint:
             targetPt = static_cast<const Planning::FacePointCommand*>(
-                           rotationCommand.get())->targetPos;
+                           rotationCommand.get())
+                           ->targetPos;
             break;
         case RotationCommand::None:
             // do nothing
@@ -139,7 +140,7 @@ void MotionControl::run() {
 
         // convert from microseconds to seconds
         float timeIntoPath =
-            ((float)(timestamp() - _robot->path()->startTime())) *
+            ((float)(RJ::timestamp() - _robot->path()->startTime())) *
                 TimestampToSecs +
             1.0 / 60.0;
 
@@ -219,7 +220,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     if (_lastCmdTime == -1) {
         targetVel.clamp(*_max_acceleration);
     } else {
-        float dt = (float)((timestamp() - _lastCmdTime) / 1000000.0f);
+        float dt = (float)((RJ::timestamp() - _lastCmdTime) / 1000000.0f);
         Point targetAccel = (targetVel - _lastVelCmd) / dt;
         targetAccel.clamp(*_max_acceleration);
 
@@ -233,7 +234,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
 
     // track these values so we can limit acceleration
     _lastVelCmd = targetVel;
-    _lastCmdTime = timestamp();
+    _lastCmdTime = RJ::timestamp();
 
     // velocity multiplier
     targetVel *= *_robot->config->velMultiplier;

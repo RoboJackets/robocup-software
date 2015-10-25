@@ -18,7 +18,7 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
                                 endTarget, endSpeed, motionConstraints));
-        path->setStartTime(timestamp());
+        path->setStartTime(RJ::timestamp());
         return std::move(path);
     } else {
         return std::move(prevPath);

@@ -168,7 +168,7 @@ void Processor::runModels(
     vector<BallObservation> ballObservations;
 
     for (const SSL_DetectionFrame* frame : detectionFrames) {
-        Time time = frame->t_capture() * SecsToTimestamp;
+        RJ::Time time = frame->t_capture() * SecsToTimestamp;
 
         // Add ball observations
         ballObservations.reserve(ballObservations.size() +
@@ -234,7 +234,7 @@ void Processor::run() {
     bool first = true;
     // main loop
     while (_running) {
-        Time startTime = timestamp();
+        RJ::Time startTime = RJ::timestamp();
         int delta_us = startTime - curStatus.lastLoopTime;
         _framerate = 1000000.0 / delta_us;
         curStatus.lastLoopTime = startTime;
@@ -249,7 +249,7 @@ void Processor::run() {
 
         // Make a new log frame
         _state.logFrame = std::make_shared<Packet::LogFrame>();
-        _state.logFrame->set_timestamp(timestamp());
+        _state.logFrame->set_timestamp(RJ::timestamp());
         _state.logFrame->set_command_time(startTime + Command_Latency);
         _state.logFrame->set_use_our_half(_useOurHalf);
         _state.logFrame->set_use_opponent_half(_useOpponentHalf);
@@ -568,7 +568,7 @@ void Processor::run() {
         ////////////////
         // Timing
 
-        Time endTime = timestamp();
+        RJ::Time endTime = RJ::timestamp();
         int lastFrameTime = endTime - startTime;
         if (lastFrameTime < _framePeriod) {
             // Use system usleep, not QThread::usleep.
