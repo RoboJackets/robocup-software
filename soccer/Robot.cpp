@@ -141,7 +141,7 @@ void OurRobot::resetForNextIteration() {
     radioTx.set_decel(10);
 
     if (charged()) {
-        _lastChargedTime = timestamp();
+        _lastChargedTime = RJ::timestamp();
     }
 
     _local_obstacles.clear();
@@ -233,7 +233,7 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged()) ? 0.0 : (float)(timestamp() - _lastChargedTime) *
+    return (charged()) ? 0.0 : (float)(RJ::timestamp() - _lastChargedTime) *
                                    TimestampToSecs;
 }
 
@@ -524,15 +524,15 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
     }
 }
 
-bool OurRobot::rxIsFresh(Time age) const {
-    return (timestamp() - _radioRx.timestamp()) < age;
+bool OurRobot::rxIsFresh(RJ::Time age) const {
+    return (RJ::timestamp() - _radioRx.timestamp()) < age;
 }
 
-Time OurRobot::lastKickTime() const { return _lastKickTime; }
+RJ::Time OurRobot::lastKickTime() const { return _lastKickTime; }
 
 void OurRobot::radioRxUpdated() {
     if (_radioRx.kicker_status() < _lastKickerStatus) {
-        _lastKickTime = timestamp();
+        _lastKickTime = RJ::timestamp();
     }
     _lastKickerStatus = _radioRx.kicker_status();
 }
