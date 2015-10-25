@@ -2,6 +2,7 @@
 
 #include <BulletDynamics/Dynamics/btActionInterface.h>
 #include "SimEngine.hpp"
+#include <Utils.hpp>
 
 #include <stdint.h>
 
