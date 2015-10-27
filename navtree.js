@@ -41,9 +41,9 @@ var NAVTREEINDEX =
 "class_protobuf_tree.html#ac78fd033bbd6f3576ed966bfab2db3b0",
 "class_window.html#a942c8fb56496b89fa96a4924ec3775ca",
 "classgameplay_1_1plays_1_1stopped_1_1_stopped.html",
-"classgameplay_1_1skills_1_1aim_1_1_aim.html#aec1c5a7674da23529d7a5acc56fda1ee",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html",
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a816c31b83fe7b5b4c3abf5dbbbd4a494"
+"classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html",
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528",
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a95dd1c2a1e736b0ab79db8d2a217ca4c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
