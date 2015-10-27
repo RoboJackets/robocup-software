@@ -322,7 +322,7 @@ void Console::changeUser(const std::string & user)
 
 void Console::setHeader(void)
 {
-	instance->CONSOLE_HEADER = "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[33m" + instance->CONSOLE_HOSTNAME + " \033[36m$\033[0m \033[0J\033[5m";
+	instance->CONSOLE_HEADER = "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[33m" + instance->CONSOLE_HOSTNAME + " \033[36m$\033[0m \033[0J\033[0m";
 	//instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
 }
 
