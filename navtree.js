@@ -2,6 +2,7 @@ var NAVTREE =
 [
   [ "GT RoboCup SSL", "index.html", [
     [ "Build Systems", "md_doc__build_systems.html", null ],
+    [ "Contributing Guide", "md_doc_contributing.html", null ],
     [ "Documentation", "md_doc__documentation.html", null ],
     [ "Gameplay", "md_doc__gameplay.html", null ],
     [ "Motion Control", "md_doc__motion_control.html", null ],
@@ -42,7 +43,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1plays_1_1stopped_1_1_stopped.html",
 "classgameplay_1_1skills_1_1aim_1_1_aim.html#aec1c5a7674da23529d7a5acc56fda1ee",
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html",
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a8e922f07c96d1c4766d4fcc172c59498"
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a816c31b83fe7b5b4c3abf5dbbbd4a494"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
