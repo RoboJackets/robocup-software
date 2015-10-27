@@ -53,7 +53,7 @@ coverage:
 	coveralls -b ${COV_BUILD_DIR} -r . \
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
 		-e ${COV_BUILD_DIR}/simulator/ -e ${COV_BUILD_DIR}/firmware/ \
-		-E '(^.*((moc_)|(automoc)|(ui_)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
+		-E '(^.*((moc_)|(automoc)|(ui_)|([Tt]est)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
 		--gcov-options '\-lp'
 
 behavior-diagrams: all
