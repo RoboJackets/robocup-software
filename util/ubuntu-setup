@@ -124,7 +124,7 @@ if $ADD_REPOS; then
     apt-add-repository -y ppa:packetlost/cmake
 
     # for newer compilers
-    add-apt-repository ppa:ubuntu-toolchain-r/test
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test
 fi
 
 if $FIRMWARE; then
