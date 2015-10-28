@@ -146,7 +146,7 @@ void Task_CommCtrl(void const* args)
 	}
 
 	// Additional waiting can be used here if needed
-	// Thread::signal_wait(COMMUNICATION_TASK_START_SIGNAL, osWaitForever);
+	Thread::signal_wait(COMMUNICATION_TASK_START_SIGNAL, osWaitForever);
 
 	// == everything below this line all the way until the start of the while loop is test code ==
 	const std::string linkTestMsg = "Hello World!";

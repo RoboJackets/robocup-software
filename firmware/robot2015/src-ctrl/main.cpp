@@ -286,7 +286,7 @@ int main(void)
 	motors_Init();
 
 	// Start the thread task for the on-board control loop
-	Thread controller_task(Task_Controller, nullptr, osPriorityHigh);
+	// Thread controller_task(Task_Controller, nullptr, osPriorityHigh);
 
 	// Start the thread task for handling radio communications
 	Thread comm_task(Task_CommCtrl, nullptr, osPriorityAboveNormal);
