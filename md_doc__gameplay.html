@@ -172,6 +172,12 @@ PivotKick state diagram</div></div>
 <p>We use a 3rd-party library called Boost Python to create an interface between the C++ code that makes up the majority of our <code>soccer</code> program and the gameplay system that's written in python. Boost Python is used to create a python module called "robocup" that python code can <em>import</em> in order to access our C++ classes and functions. The C++ classes and functions available to the python interface are created through "wrappers" in the <a href="https://github.com/RoboJackets/robocup-software/blob/master/soccer/gameplay/robocup-py.cpp">robocup-py.cpp</a> file. The "robocup" python module is compiled as a part of our project when you run <code>make</code> and is placed in the <code>run</code> directory as <code>robocup.so</code>. This can be imported like any other python module like so:</p>
 <div class="fragment"><div class="line">cd robocup-software</div>
 <div class="line"></div>
+<div class="line"><span class="preprocessor"># Ensure that the latest version of the &#39;robocup&#39; python module is built</span></div>
+<div class="line"><span class="preprocessor"></span>make</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor"># The python module is placed in the &#39;run&#39; directory as &#39;robocup.so&#39;</span></div>
+<div class="line"><span class="preprocessor"></span>cd run</div>
+<div class="line"></div>
 <div class="line"><span class="preprocessor"># Run python interpreter and import the module</span></div>
 <div class="line"><span class="preprocessor"></span>python3</div>
 <div class="line"><span class="keyword">import</span> robocup</div>
@@ -185,7 +191,7 @@ PivotKick state diagram</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 27 2015 19:42:45 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Oct 28 2015 05:17:11 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
