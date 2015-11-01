@@ -43,6 +43,19 @@ test-python: all
 pylint:
 	cd soccer && pylint -E gameplay
 
+COV_BUILD_DIR=build/coverage
+coverage:
+	mkdir -p ${COV_BUILD_DIR}
+	cd ${COV_BUILD_DIR} && cmake -GNinja -Wno-dev --target test-soccer test-firmware  \
+		-D CMAKE_CXX_FLAGS="--coverage" ../../ && ninja test-soccer test-firmware
+	run/test-soccer		# Kind of hacky, but w/e
+	run/test-firmware
+	coveralls -b ${COV_BUILD_DIR} -r . \
+		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
+		-e ${COV_BUILD_DIR}/simulator/ -e ${COV_BUILD_DIR}/firmware/ \
+		-E '(^.*((moc_)|(automoc)|(ui_)|([Tt]est)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
+		--gcov-options '\-lp'
+
 behavior-diagrams: all
 	cd soccer/gameplay && python3 generate_fsm_diagrams.py
 	@echo -e "\n=> Open up 'soccer/gameplay/diagrams' to view behavior state machine diagrams"
