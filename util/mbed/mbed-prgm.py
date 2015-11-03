@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys, os, subprocess, signal
 from time import sleep
 from shutil import copy
