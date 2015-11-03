@@ -160,7 +160,7 @@ int IAP::compare( char* source_addr, char* target_addr, int size )
     return ( (int)IAP_result[ 0 ] );
 }
 
-int IAP::read_BootVer(void)
+int IAP::read_BootVer()
 {
     IAP_command[0] = IAPCommand_Read_Boot_Code_version;
     IAP_result[1] = 0; // not sure if in high or low bits.

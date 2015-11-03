@@ -68,7 +68,7 @@ public:
      *
      * @return True for a working connection, false for an error
      */
-     bool testConnection(void);
+     bool testConnection();
 
      /**
      * Sets the bandwidth of the digital low-pass filter
@@ -101,21 +101,21 @@ public:
      *
      * @return 16-bit signed integer x-axis accelero data
      */
-     int getAcceleroRawX(void);
+     int getAcceleroRawX();
 
      /**
      * Reads the accelero y-axis.
      *
      * @return 16-bit signed integer y-axis accelero data
      */
-     int getAcceleroRawY(void);
+     int getAcceleroRawY();
 
      /**
      * Reads the accelero z-axis.
      *
      * @return 16-bit signed integer z-axis accelero data
      */
-     int getAcceleroRawZ(void);
+     int getAcceleroRawZ();
 
      /**
      * Reads all accelero data.
@@ -147,21 +147,21 @@ public:
      *
      * @return 16-bit signed integer x-axis gyro data
      */
-     int getGyroRawX(void);
+     int getGyroRawX();
 
      /**
      * Reads the gyro y-axis.
      *
      * @return 16-bit signed integer y-axis gyro data
      */
-     int getGyroRawY(void);
+     int getGyroRawY();
 
      /**
      * Reads the gyro z-axis.
      *
      * @return 16-bit signed integer z-axis gyro data
      */
-     int getGyroRawZ(void);
+     int getGyroRawZ();
 
      /**
      * Reads all gyro data.
@@ -184,16 +184,16 @@ public:
      *
      * @return 16 bit signed integer with the raw temperature register value
      */
-     int getTempRaw(void);
+     int getTempRaw();
 
      /**
      * Returns current temperature
      *
      * @returns float with the current temperature
      */
-     float getTemp(void);
+     float getTemp();
 
-     uint8_t getRate(void);
+     uint8_t getRate();
 
      /**
      * Sets the sleep mode of the MPU6050

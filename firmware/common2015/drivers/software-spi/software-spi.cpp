@@ -19,7 +19,7 @@
 
 // bool isInit = false;
 
-// void software_spi_irq_handler(void)
+// void software_spi_irq_handler()
 // {
 //     NVIC_DisableIRQ(SW_SPI_TIMER_IRQn);
 
@@ -151,7 +151,7 @@ SoftwareSPI::~SoftwareSPI()
     delete sck;
 }
 
-// void SoftwareSPI::setup(void)
+// void SoftwareSPI::setup()
 // {
 //     if (mosi_timer_base == sck_timer_base) {
 //         setup_timer((LPC_TIM_TypeDef*)sck_timer_base, sck_channel);

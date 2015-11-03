@@ -44,20 +44,20 @@ public:
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
     /// Deconstructor
-    virtual ~CommLink(void) {}; // Don't forget to include deconstructor implementation in derived classes that frees memory
+    virtual ~CommLink() {}; // Don't forget to include deconstructor implementation in derived classes that frees memory
 
     // Class constants for the data queue sizes
     static const int RX_QUEUE_SIZE;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
-    virtual void reset(void) = 0;
+    virtual void reset() = 0;
 
     /// Perform tests to determine if the hardware is able to properly function
-    virtual int32_t selfTest(void) = 0;
+    virtual int32_t selfTest() = 0;
 
     /// Determine if communication can occur with another device
-    virtual bool isConnected(void) = 0;
+    virtual bool isConnected() = 0;
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
@@ -67,12 +67,12 @@ protected:
     virtual int32_t sendData(uint8_t*, uint8_t) = 0;    // write data out to the radio device using SPI
     virtual int32_t getData(uint8_t*, uint8_t*) = 0;   // read data in from the radio device using SPI
 
-    void ISR(void);
-    void toggle_cs(void);
+    void ISR();
+    void toggle_cs();
 
     /// Used for giving derived classes a standaradized way to inform the base class that it is ready for communication and to begin the threads
-    void ready(void);   // Always call CommLink::ready() after derived class is ready for communication
-    void setup_spi(void);
+    void ready();   // Always call CommLink::ready() after derived class is ready for communication
+    void setup_spi();
 
     // The data queues for temporarily holding received packets
     osMailQId   _rxQueue;
@@ -107,10 +107,10 @@ private:
     static void rxThread(void const*);
 
     // Methods for initializing a transceiver's pins for communication
-    void setup(void);
+    void setup();
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC, PinName = NC);
-    void setup_cs(void);
-    void setup_interrupt(void);
+    void setup_cs();
+    void setup_interrupt();
 
     // Used for tracking the number of link-level communication interfaces
     static unsigned int _nbr_links;

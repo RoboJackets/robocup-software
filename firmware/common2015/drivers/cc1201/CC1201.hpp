@@ -11,7 +11,7 @@ enum ext_flag_t { EXT_FLAG_OFF, EXT_FLAG_ON };
 class CC1201 : public CommLink
 {
   public:
-	CC1201(void);
+	CC1201();
 
 	CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin = NC, int rssiOffset = CC1201_DEFAULT_RSSI_OFFSET);
 
@@ -21,17 +21,17 @@ class CC1201 : public CommLink
 
 	virtual int32_t getData(uint8_t*, uint8_t*);
 
-	virtual void reset(void);
+	virtual void reset();
 
-	virtual int32_t selfTest(void);
+	virtual int32_t selfTest();
 
-	virtual bool isConnected(void);
+	virtual bool isConnected();
 
-	void powerOnReset(void);
+	void powerOnReset();
 
-	uint8_t mode(void);
+	uint8_t mode();
 
-	uint8_t status(void);
+	uint8_t status();
 
 	// TODO: Move any direct register reads/writes & strobes to protected when done testing
 	uint8_t strobe(uint8_t);
@@ -44,16 +44,16 @@ class CC1201 : public CommLink
 
 	uint8_t writeReg(uint8_t, uint8_t*, uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
-	void flush_tx(void);
-	void flush_rx(void);
-	void calibrate(void);
-	void update_rssi(void);
-	float rssi(void);
-	uint8_t idle(void);
-	uint8_t rand(void);
-	uint8_t freqUpdate(void);
-	float freq(void);
-	bool isLocked(void);
+	void flush_tx();
+	void flush_rx();
+	void calibrate();
+	void update_rssi();
+	float rssi();
+	uint8_t idle();
+	uint8_t rand();
+	uint8_t freqUpdate();
+	float freq();
+	bool isLocked();
 
   protected:
 	void set_rssi_offset(int8_t offset);

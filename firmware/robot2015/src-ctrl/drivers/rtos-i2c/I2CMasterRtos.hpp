@@ -112,14 +112,14 @@ public:
     /** Creates a start condition on the I2C bus
      */
 
-    void start(void) {
+    void start() {
         m_drv.startMaster();
     }
 
     /// Creates a stop condition on the I2C bus
     /// If unsccessful because someone on the bus holds the scl line down it returns "false" after 23µs
     /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz and 3-4µs @ 400kHz.
-    bool stop(void) {
+    bool stop() {
         return m_drv.stopMaster();
     }
 

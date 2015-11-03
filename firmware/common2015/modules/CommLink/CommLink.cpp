@@ -52,7 +52,7 @@ void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, P
 }
 
 
-void CommLink::setup_spi(void)
+void CommLink::setup_spi()
 {
     if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
         _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
@@ -62,7 +62,7 @@ void CommLink::setup_spi(void)
 }
 
 
-void CommLink::setup_cs(void)
+void CommLink::setup_cs()
 {
     if (_cs_pin != NC) {
         _cs = new DigitalOut(_cs_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
@@ -71,7 +71,7 @@ void CommLink::setup_cs(void)
 }
 
 
-void CommLink::setup_interrupt(void)
+void CommLink::setup_interrupt()
 {
     if (_int_pin != NC) {
         _int_in = new InterruptIn(_int_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
@@ -130,7 +130,7 @@ void CommLink::rxThread(void const* arg)
 
 
 // Called by the derived class to begin thread operations
-void CommLink::ready(void)
+void CommLink::ready()
 {
     osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD);
 }
@@ -143,13 +143,13 @@ void CommLink::sendPacket(rtp::packet* p)
 
 
 // Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
-void CommLink::ISR(void)
+void CommLink::ISR()
 {
     osSignalSet(_rxID , COMM_LINK_SIGNAL_RX_TRIGGER);
 }
 
 
-void CommLink::toggle_cs(void)
+void CommLink::toggle_cs()
 {
     *_cs = !*_cs;
 }

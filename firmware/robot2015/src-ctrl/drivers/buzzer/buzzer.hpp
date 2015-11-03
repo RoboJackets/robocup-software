@@ -14,7 +14,7 @@ public:
 
     void play(float freq, int dur, float vol = 1.0);
 
-    int getIndex(void);
+    int getIndex();
     void setIndex(int newIndex);
 
 private:

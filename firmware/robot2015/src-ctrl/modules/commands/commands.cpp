@@ -916,7 +916,7 @@ void executeLine(char* rawCommand)
  * Executes iterative commands, and is nonblocking regardless
  * of if an iterative command is not running or not.
  */
-void executeIterativeCommand(void)
+void executeIterativeCommand()
 {
 	if (itCmdState == true) {
 		if (Console::IterCmdBreakReq() == true) {

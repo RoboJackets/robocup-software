@@ -65,7 +65,7 @@ struct command_t {
  * Command functions.
  */
 void executeLine(char*);
-void executeIterativeCommand(void);
+void executeIterativeCommand();
 void showInvalidArgs(const std::vector<std::string>&);
 void showInvalidArgs(const std::string&);
 

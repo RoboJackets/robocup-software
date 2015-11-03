@@ -4,7 +4,7 @@
 #include "logger.hpp"
 
 
-CC1201::CC1201(void) : CommLink() {};
+CC1201::CC1201() : CommLink() {};
 
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin, int rssiOffset) :
@@ -23,7 +23,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 }
 
 
-CC1201::~CC1201(void)
+CC1201::~CC1201()
 {
 	if (_spi)
 		delete _spi;
@@ -285,7 +285,7 @@ uint8_t CC1201::strobe(uint8_t addr)
 	return ret;
 }
 
-uint8_t CC1201::mode(void)
+uint8_t CC1201::mode()
 {
 	return 0x1F & readReg(CC1201EXT_MARCSTATE, EXT_FLAG_ON);
 }
@@ -297,13 +297,13 @@ uint8_t CC1201::status(uint8_t addr)
 }
 
 
-uint8_t CC1201::status(void)
+uint8_t CC1201::status()
 {
 	return strobe(CC1201_STROBE_SNOP);
 }
 
 
-void CC1201::reset(void)
+void CC1201::reset()
 {
 	idle();
 	toggle_cs();
@@ -321,7 +321,7 @@ void CC1201::reset(void)
 	_isInit = false;
 }
 
-int32_t CC1201::selfTest(void)
+int32_t CC1201::selfTest()
 {
 	if (_isInit == true)
 		return 0;
@@ -345,13 +345,13 @@ int32_t CC1201::selfTest(void)
 	}
 }
 
-bool CC1201::isConnected(void)
+bool CC1201::isConnected()
 {
 	return _isInit;
 }
 
 uint8_t recurseCount = 0;
-void CC1201::powerOnReset(void)
+void CC1201::powerOnReset()
 {
 	if (_isInit == false)
 		return;
@@ -407,7 +407,7 @@ void CC1201::powerOnReset(void)
 }
 
 
-void CC1201::flush_tx(void)
+void CC1201::flush_tx()
 {
 	idle();
 	strobe(CC1201_STROBE_SFTX);
@@ -415,7 +415,7 @@ void CC1201::flush_tx(void)
 }
 
 
-void CC1201::flush_rx(void)
+void CC1201::flush_rx()
 {
 	idle();
 	strobe(CC1201_STROBE_SFRX);
@@ -423,14 +423,14 @@ void CC1201::flush_rx(void)
 }
 
 
-void CC1201::calibrate(void)
+void CC1201::calibrate()
 {
 	idle();
 	strobe(CC1201_STROBE_SCAL);
 }
 
 
-void CC1201::update_rssi(void)
+void CC1201::update_rssi()
 {
 	uint8_t offset = 0;
 
@@ -447,12 +447,12 @@ void CC1201::update_rssi(void)
 	LOG(INF3, "RSSI Register Val: 0x%02X", offset);
 }
 
-float CC1201::rssi(void)
+float CC1201::rssi()
 {
 	return _rssi;
 }
 
-uint8_t CC1201::idle(void)
+uint8_t CC1201::idle()
 {
 	uint8_t status_byte = strobe(CC1201_STROBE_SIDLE);
 
@@ -464,18 +464,18 @@ uint8_t CC1201::idle(void)
 	return status_byte;
 }
 
-uint8_t CC1201::rand(void)
+uint8_t CC1201::rand()
 {
 	writeReg(CC1201EXT_RNDGEN, 0x80, EXT_FLAG_ON);
 	return readReg(CC1201EXT_RNDGEN, EXT_FLAG_ON);
 }
 
-uint8_t CC1201::freqUpdate(void)
+uint8_t CC1201::freqUpdate()
 {
 	return strobe(CC1201_STROBE_SAFC);
 }
 
-float CC1201::freq(void)
+float CC1201::freq()
 {
 	uint8_t buf[5];
 	uint16_t freq_offset;
@@ -498,7 +498,7 @@ float CC1201::freq(void)
 	return freq;
 }
 
-bool CC1201::isLocked(void)
+bool CC1201::isLocked()
 {
 	// This is only valid in RX, TX, & FSTXON
 	return (readReg(CC1201EXT_FSCAL_CTRL, EXT_FLAG_ON) & 0x01);

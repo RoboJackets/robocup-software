@@ -99,7 +99,7 @@ void Buzzer::play(float freq, int dur, float vol)
     //buzzer.write(0);
 }
 
-int Buzzer::getIndex(void)
+int Buzzer::getIndex()
 {
     return j;
 }

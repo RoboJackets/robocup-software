@@ -22,7 +22,7 @@ enum {
 };
 }
 
-FPGA* FPGA::Instance(void)
+FPGA* FPGA::Instance()
 {
     if ( instance == nullptr ) {
         instance = new FPGA;
@@ -228,7 +228,7 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut, uint16_t*
 }
 
 
-uint32_t FPGA::git_hash(void)
+uint32_t FPGA::git_hash()
 {
     return 0xFF;
 

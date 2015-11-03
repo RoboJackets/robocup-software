@@ -20,7 +20,7 @@ void MCP23017::set_config(PinName sda, PinName scl, int i2cAddress)
        );
 }
 
-shared_ptr<MCP23017>& MCP23017::Instance(void)
+shared_ptr<MCP23017>& MCP23017::Instance()
 {
     if (instance.get() == nullptr)
         instance.reset(new MCP23017);
@@ -28,7 +28,7 @@ shared_ptr<MCP23017>& MCP23017::Instance(void)
     return instance;
 }
 
-bool MCP23017::Init(void)
+bool MCP23017::Init()
 {
     auto instance = Instance();
 
@@ -51,7 +51,7 @@ bool MCP23017::Init(void)
  * reset
  * Set configuration (IOCON) and direction(IODIR) registers to initial state
  */
-void MCP23017::reset(void)
+void MCP23017::reset()
 {
     // First make sure that the device is in BANK=0 mode
     writeRegister(0x05, (unsigned char)0x04);
@@ -239,7 +239,7 @@ void MCP23017::digitalWrite(int pin, int val)
 /*-----------------------------------------------------------------------------
  * digitalWordRead
  */
-unsigned short MCP23017::digitalWordRead(void)
+unsigned short MCP23017::digitalWordRead()
 {
     return readRegister(GPIO);
 }

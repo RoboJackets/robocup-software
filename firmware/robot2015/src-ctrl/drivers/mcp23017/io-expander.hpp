@@ -70,7 +70,7 @@ class IOExpanderDigitalOut
   /*
    * Returns 0 if pin is low, 1 if pin is high
    */
-  int read(void)
+  int read()
   {
     return MCP23017::read_bit(m_pin);
   }
@@ -105,7 +105,7 @@ class IOExpanderDigitalOut
   /*
    * Allows the pin to return its value like a simple integer variable
    */
-  operator int(void)
+  operator int()
   {
     return read();
   }
