@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <functional>
+#include <stdexcept>
 
 template <class T>
 class CommPort
@@ -274,8 +275,7 @@ class CommPorts : CommPort<T>
             return *& (*pIt);
         }
 
-        CommPort<T> tmpPort(0);
-        return tmpPort;
+        throw std::out_of_range("Unable to find port with given number");
     }
 
     int count() const
