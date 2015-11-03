@@ -13,8 +13,6 @@ class CC1201 : public CommLink
   public:
 	CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin = NC, int rssiOffset = CC1201_DEFAULT_RSSI_OFFSET);
 
-	virtual ~CC1201();
-
 	virtual int32_t sendData(const uint8_t* buf, uint8_t len);
 
 	virtual int32_t getData(uint8_t* buf, uint8_t* lenOut);

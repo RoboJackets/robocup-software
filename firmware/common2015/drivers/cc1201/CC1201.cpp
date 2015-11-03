@@ -5,9 +5,8 @@
 
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin, int rssiOffset) :
-	CommLink(mosi, miso, sck, cs, intPin)
+	CommLink(mosi, miso, sck, cs, intPin), _isInit(false)
 {
-	//powerOnReset();
 	_offset_reg_written = false;
 	reset();
 	set_rssi_offset(rssiOffset);
@@ -17,11 +16,6 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 		LOG(INIT, "CC1201 ready!");
 		CommLink::ready();
 	}
-}
-
-
-CC1201::~CC1201()
-{
 }
 
 

@@ -22,11 +22,6 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_
     }
 }
 
-// Deconstructor
-CC1101::~CC1101()
-{
-}
-
 
 int32_t CC1101::powerUp()
 {

@@ -22,9 +22,6 @@ public:
      * @param int_pin Interrupt pin
      */
     CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin = NC);
-    
-    /// Deconstructor
-    virtual ~CC1101();
 
     // These must have implementations in the CC1101 class since it is a derived class of the base class CommLink
     /// Perform a soft reset for the transceiver

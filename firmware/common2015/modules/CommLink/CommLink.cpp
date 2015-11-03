@@ -14,9 +14,8 @@ CommLink::CommLink(PinName mosi,
     PinName sck,
     PinName cs,
     PinName int_pin)
-    : _cs(cs), _int_in(int_pin),
-      _spi(mosi, miso, sck),
-      _rxQueueHelper(), _miso_pin(miso)
+    : _miso_pin(miso), _spi(mosi, miso, sck), _cs(cs), _int_in(int_pin),
+      _rxQueueHelper()
 {
     chip_deselect();
 
