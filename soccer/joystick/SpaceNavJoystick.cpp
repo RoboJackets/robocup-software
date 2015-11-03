@@ -64,7 +64,7 @@ void SpaceNavJoystick::update() {
             //  speed unusably quickly.  Instead we have a delay between each
             //  increment
             RJ::Time now = RJ::timestamp();
-            const Time DribbleStepTime = 300000;
+            const RJ::Time DribbleStepTime = 300000;
 
             if ((abs<int>(sev.motion.y) > DribblerAxisDeadzone) &&
                 ((now - _lastDribbleTime) > DribbleStepTime)) {
