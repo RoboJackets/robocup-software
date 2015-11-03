@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys, os, subprocess, signal
 from time import sleep
 from shutil import copy
@@ -7,7 +9,6 @@ from os.path import join, abspath, dirname
 from serial import Serial
 import serial.tools.list_ports as Ports
 from optparse import OptionParser
-import pyOCD
 from pyOCD.board import MbedBoard
 
 # Setup an interrupt callback so if the script has to be killed, it will 
@@ -15,7 +16,8 @@ from pyOCD.board import MbedBoard
 startupLogs = ""
 def signal_handler(signal, frame):
     print(startupLogs)
-    sys.exit(0)
+    sys.exit(1)
+signal.signal(signal.SIGINT, signal_handler)
 
 # Command line argument options
 parser = OptionParser()
@@ -124,11 +126,10 @@ if found_ports:
         target.reset()
         sleep(3)
 
-        signal.signal(signal.SIGINT, signal_handler)
         canBlock = False
 
         # Once we receive the first byte, wait for a timeout period and print out everything that was received
-        while(True):
+        while True:
             startupLogs += str(startup.read(256))
 
             # break once we've stopped receiving serial data

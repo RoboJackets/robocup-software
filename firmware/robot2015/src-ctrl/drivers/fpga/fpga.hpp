@@ -29,8 +29,6 @@ private:
     Mutex           mutex;
 
     FPGA() {};
-    FPGA(FPGA const&) {};
-    FPGA& operator=(FPGA const&) {};
 
     SPI*             spi;
     DigitalOut*      cs;
