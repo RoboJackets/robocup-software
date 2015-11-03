@@ -11,8 +11,6 @@ enum ext_flag_t { EXT_FLAG_OFF, EXT_FLAG_ON };
 class CC1201 : public CommLink
 {
   public:
-	CC1201();
-
 	CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin = NC, int rssiOffset = CC1201_DEFAULT_RSSI_OFFSET);
 
 	virtual ~CC1201();
