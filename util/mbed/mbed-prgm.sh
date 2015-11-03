@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script that loads a progam directly into the mbed microcontroller's flash memory and launches its execution
+# Script that loads a progam directly into the mbed microcontroller's flash memory and launches it
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 SCRIPT_NAME=`basename "$0"`
