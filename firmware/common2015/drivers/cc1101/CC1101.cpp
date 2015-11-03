@@ -2,13 +2,7 @@
 
 #include "logger.hpp"
 
-// Default constructor
-CC1101::CC1101() :
-    CommLink()
-{
-}
 
-// Main constructor
 CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin) :
     CommLink(mosi, miso, sck, cs, int_pin)
 {
@@ -31,14 +25,6 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_
 // Deconstructor
 CC1101::~CC1101()
 {
-    if (_spi)
-        delete _spi;
-
-    if (_cs)
-        delete _cs;
-
-    if (_int_in)
-        delete _int_in;
 }
 
 
@@ -112,7 +98,7 @@ int32_t CC1101::selfTest()
 void CC1101::set_init_vars()
 {
     // define the initial state of an unselected chip
-    *_cs = 1;
+    chip_deselect();
     _channel = 1;
     _address = 0x00;
 
@@ -227,12 +213,19 @@ void CC1101::put_rf_settings()
 
 void CC1101::power_on_reset()
 {
+    LOG(WARN, "CC1101::power_on_reset() called, but not implemented");
+    /*
+    *****
+    NOTE: this block was commented out by Justin - I changed a few things
+    that would require reworking a lot of this method.  It can be done, but isn't worth it at the moment.
+    *****
+
     LOG(INF1, "Beginning Power-on-Reset routine...");
 
     delete _spi;
 
     // make sure chip is not selected
-    *_cs = 1;
+    chip_deselect();
 
     DigitalOut *SI = new DigitalOut(_mosi_pin);
     DigitalOut *SCK = new DigitalOut(_sck_pin);
@@ -243,14 +236,14 @@ void CC1101::power_on_reset()
     *SCK = 1;
 
     // toggle chip select and remain in high state afterwards
-    toggle_cs();
-    toggle_cs();
+    chip_select();
+    chip_deselect();
 
     // wait at least 40us
     wait_us(45);
 
     // pull CSn low & wait for the serial out line to go low
-    *_cs = 0;
+    chip_select();
 
     while (*SO);
 
@@ -270,19 +263,19 @@ void CC1101::power_on_reset()
     while (*SO2);
 
     // make sure chip is deselected before returning
-    *_cs = 1;
+    chip_deselect();
 
     // reestablish the SPI bus for the final time after removing the DigitalIn object
     delete SO2;
     setup_spi();
 
     LOG(INF1, "CC1101 Power-on-Reset complete");
+    */
 }
 
 // 2nd ighest level of initilization routines behind CC1101::setup();
 void CC1101::init()
 {
-
     power_on_reset();
 
     // Send all configuration values to the CC1101 registers
@@ -432,11 +425,11 @@ int32_t CC1101::getData(uint8_t *buf, uint8_t *length)
 // Read Register
 uint8_t CC1101::read_reg(uint8_t addr)
 {
-    _spi->frequency(8000000);
-    toggle_cs();
-    _spi->write(addr | CCXXX1_READ_SINGLE);
-    uint8_t x = _spi->write(0);
-    toggle_cs();
+    _spi.frequency(8000000);
+    chip_select();
+    _spi.write(addr | CCXXX1_READ_SINGLE);
+    uint8_t x = _spi.write(0);
+    chip_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF2, "== Single Register Read ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, x);
@@ -445,15 +438,14 @@ uint8_t CC1101::read_reg(uint8_t addr)
 }   // read_reg
 void CC1101::read_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
 {
-    _spi->frequency(5000000);
-    toggle_cs();
-    _spi->write(addr | CCXXX1_READ_BURST);
+    _spi.frequency(5000000);
+    chip_select();
+    _spi.write(addr | CCXXX1_READ_BURST);
 
     for (uint8_t i = 0; i < count; i++) {
-        buffer[i] = _spi->write(0);
+        buffer[i] = _spi.write(0);
     }
-
-    toggle_cs();
+    chip_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF1, "== Burst Register Read ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
@@ -465,11 +457,11 @@ void CC1101::read_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
 // Write Register
 void CC1101::write_reg(uint8_t addr, uint8_t value)
 {
-    _spi->frequency(8000000);
-    toggle_cs();
-    _spi->write(addr);
-    _spi->write(value);
-    toggle_cs();
+    _spi.frequency(8000000);
+    chip_select();
+    _spi.write(addr);
+    _spi.write(value);
+    chip_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF2, "== Single Register Write ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, value);
@@ -477,15 +469,15 @@ void CC1101::write_reg(uint8_t addr, uint8_t value)
 }   // write_reg
 void CC1101::write_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
 {
-    _spi->frequency(5000000);
-    toggle_cs();
-    _spi->write(addr | CCXXX1_WRITE_BURST);
+    _spi.frequency(5000000);
+    chip_select();
+    _spi.write(addr | CCXXX1_WRITE_BURST);
 
     for (uint8_t i = 0; i < count; i++) {
-        _spi->write(buffer[i]);
+        _spi.write(buffer[i]);
     }
 
-    toggle_cs();
+    chip_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF2, "== Burst Register Write ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
@@ -496,10 +488,10 @@ void CC1101::write_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
 // Strobe
 uint8_t CC1101::strobe(uint8_t addr)
 {
-    _spi->frequency(8000000);
-    toggle_cs();
-    uint8_t x = _spi->write(addr);
-    toggle_cs();
+    _spi.frequency(8000000);
+    chip_select();
+    uint8_t x = _spi.write(addr);
+    chip_deselect();
     return x;
 }   // strobe
 
@@ -670,13 +662,13 @@ uint8_t CC1101::status()
 
 uint8_t CC1101::status(uint8_t addr)
 {
-    _spi->frequency(8000000);
-    toggle_cs();
-    _spi->write(addr | CCXXX1_READ_BURST);
-    uint8_t x = _spi->write(0);
-    toggle_cs();
+    _spi.frequency(8000000);
+    chip_select();
+    _spi.write(addr | CCXXX1_READ_BURST);
+    uint8_t x = _spi.write(0);
+    chip_deselect();
     return x;
-}   // status
+}
 
 
 // SET FREQUENCY

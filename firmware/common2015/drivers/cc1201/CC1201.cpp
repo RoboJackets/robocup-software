@@ -22,18 +22,10 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 
 CC1201::~CC1201()
 {
-	if (_spi)
-		delete _spi;
-
-	if (_cs)
-		delete _cs;
-
-	if (_int_in)
-		delete _int_in;
 }
 
 
-int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
+int32_t CC1201::sendData(const uint8_t* buf, uint8_t size)
 {
 	// Return if there's no functional radio transceiver - the system will lockup otherwise
 	if (_isInit == false)
@@ -137,10 +129,10 @@ uint8_t CC1201::readReg(uint8_t addr, ext_flag_t ext_flag)
 
 	addr &= 0xBF; // Should be redundant but leaving for security. We don't want to accidently do a burst read.
 
-	toggle_cs();
-	_spi->write(addr | CC1201_READ);
-	returnVal = _spi->write(0x00);
-	toggle_cs();
+	chip_select();
+	_spi.write(addr | CC1201_READ);
+	returnVal = _spi.write(0x00);
+	chip_deselect();
 
 	return returnVal;
 }
@@ -156,13 +148,13 @@ uint8_t CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len, ext_flag_t e
 	if ( ext_flag == EXT_FLAG_ON )
 		return readRegExt(addr, buffer, len);
 
-	toggle_cs();
-	status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
+	chip_select();
+	status_byte = _spi.write(addr | CC1201_READ | CC1201_BURST);
 
 	for (uint8_t i = 0; i < len; i++)
-		buffer[i] = _spi->write(0x00);
+		buffer[i] = _spi.write(0x00);
 
-	toggle_cs();
+	chip_deselect();
 
 	return status_byte;
 }
@@ -176,14 +168,14 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t value, ext_flag_t ext_flag)
 	if (ext_flag == EXT_FLAG_ON)
 		return writeRegExt(addr, value);
 
-	toggle_cs();
-	status_byte = _spi->write(addr);
-	_spi->write(value);
-	toggle_cs();
+	chip_select();
+	status_byte = _spi.write(addr);
+	_spi.write(value);
+	chip_deselect();
 
 	return status_byte;
 }
-uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, ext_flag_t ext_flag)
+uint8_t CC1201::writeReg(uint8_t addr, const uint8_t* buffer, uint8_t len, ext_flag_t ext_flag)
 {
 	uint8_t status_byte;
 	addr &= 0x7F; // Don't accidently do a read
@@ -191,13 +183,13 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, ext_flag_t 
 	if (ext_flag == EXT_FLAG_ON)
 		return writeRegExt(addr, buffer, len);
 
-	toggle_cs();
-	status_byte = _spi->write(addr | CC1201_BURST);
+	chip_select();
+	status_byte = _spi.write(addr | CC1201_BURST);
 
 	for (uint8_t i = 0; i < len; i++)
-		_spi->write(buffer[i]);
+		_spi.write(buffer[i]);
 
-	toggle_cs();
+	chip_deselect();
 
 	return status_byte;
 }
@@ -211,11 +203,11 @@ uint8_t CC1201::readRegExt(uint8_t addr)
 	// Only callable from readReg(), so no checks needed
 	uint8_t returnVal;
 
-	toggle_cs();
-	_spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
-	_spi->write(addr);
-	returnVal = _spi->write(0x00);
-	toggle_cs();
+	chip_select();
+	_spi.write(CC1201_EXTENDED_ACCESS | CC1201_READ);
+	_spi.write(addr);
+	returnVal = _spi.write(0x00);
+	chip_deselect();
 
 	return returnVal;
 }
@@ -224,14 +216,14 @@ uint8_t CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
 	// Only callable from readReg(), so no checks needed
 	uint8_t status_byte;
 
-	toggle_cs();
-	status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
-	_spi->write(addr);
+	chip_select();
+	status_byte = _spi.write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
+	_spi.write(addr);
 
 	for (int i = 0; i < len; i++)
-		buffer[i] = _spi->write(0x00);
+		buffer[i] = _spi.write(0x00);
 
-	toggle_cs();
+	chip_deselect();
 
 	return status_byte;
 }
@@ -242,27 +234,27 @@ uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t value)
 	// Only callable from writeReg(), so no checks needed
 	uint8_t status_byte;
 
-	toggle_cs();
-	status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
-	_spi->write(addr);
-	_spi->write(value);
-	toggle_cs();
+	chip_select();
+	status_byte = _spi.write(CC1201_EXTENDED_ACCESS);
+	_spi.write(addr);
+	_spi.write(value);
+	chip_deselect();
 
 	return status_byte;
 }
-uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
+uint8_t CC1201::writeRegExt(uint8_t addr, const uint8_t* buffer, uint8_t len)
 {
 	// Only callable from writeReg(), so no checks needed
 	uint8_t status_byte;
 
-	toggle_cs();
-	status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_BURST);
-	_spi->write(addr);
+	chip_select();
+	status_byte = _spi.write(CC1201_EXTENDED_ACCESS | CC1201_BURST);
+	_spi.write(addr);
 
 	for (uint8_t i = 0; i < len; i++)
-		_spi->write(buffer[i]);
+		_spi.write(buffer[i]);
 
-	toggle_cs();
+	chip_deselect();
 
 	return status_byte;
 }
@@ -275,9 +267,9 @@ uint8_t CC1201::strobe(uint8_t addr)
 		return -1;
 	}
 
-	toggle_cs();
-	uint8_t ret = _spi->write(addr);
-	toggle_cs();
+	chip_select();
+	uint8_t ret = _spi.write(addr);
+	chip_deselect();
 
 	return ret;
 }
@@ -303,9 +295,9 @@ uint8_t CC1201::status()
 void CC1201::reset()
 {
 	idle();
-	toggle_cs();
-	_spi->write(CC1201_STROBE_SRES);
-	toggle_cs();
+	chip_select();
+	_spi.write(CC1201_STROBE_SRES);
+	chip_deselect();
 
 	// Wait up to 300ms for the radio to do anything. Don't block everything else if it doesn't startup correctly
 	for (int i = 0; i < 300; i++) {
@@ -347,18 +339,10 @@ bool CC1201::isConnected()
 	return _isInit;
 }
 
-uint8_t recurseCount = 0;
 void CC1201::powerOnReset()
 {
 	if (_isInit == false)
 		return;
-
-	recurseCount++;
-
-	if (recurseCount >= 10) {
-		LOG(SEVERE, "Cannot calibrate radio -> system reset");
-		mbed_interface_reset();
-	}
 
 	LOG(INF1, "Beginning power on reset (POR)");
 	LOG(INF2, "Strobe SIDLE");
@@ -368,11 +352,11 @@ void CC1201::powerOnReset()
 	LOG(INF2, "IDLE strobe OK.");
 
 	LOG(INF2, "Force CS low");
-	*_cs = 0;
+	chip_select();
 	LOG(INF2, "Strobe SRES");
-	_spi->write(CC1201_STROBE_SRES);
+	_spi.write(CC1201_STROBE_SRES);
 	LOG(INF2, "dealloc SPI");
-	delete _spi;
+	// delete _spi;
 	LOG(INF2, "(MI)SO alloc digIn");
 	DigitalIn* SO = new DigitalIn(_miso_pin);
 
@@ -390,12 +374,10 @@ void CC1201::powerOnReset()
 		waitCycles--;
 	}
 
-	recurseCount = 0;
-
 	LOG(INF2, "dealloc digIn");
 	delete SO;
 	LOG(INF2, "force CSn high");
-	*_cs = 1;
+	chip_deselect();
 	LOG(INF2, "setup SPI");
 	setup_spi();
 	LOG(INF2, "POR COMPLETE!");

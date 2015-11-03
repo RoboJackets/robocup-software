@@ -15,9 +15,9 @@ class CC1201 : public CommLink
 
 	virtual ~CC1201();
 
-	virtual int32_t sendData(uint8_t*, uint8_t);
+	virtual int32_t sendData(const uint8_t* buf, uint8_t len);
 
-	virtual int32_t getData(uint8_t*, uint8_t*);
+	virtual int32_t getData(uint8_t* buf, uint8_t* lenOut);
 
 	virtual void reset();
 
@@ -40,7 +40,7 @@ class CC1201 : public CommLink
 
 	uint8_t writeReg(uint8_t, uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
-	uint8_t writeReg(uint8_t, uint8_t*, uint8_t, ext_flag_t = EXT_FLAG_OFF);
+	uint8_t writeReg(uint8_t, const uint8_t*, uint8_t, ext_flag_t = EXT_FLAG_OFF);
 
 	void flush_tx();
 	void flush_rx();
@@ -66,7 +66,7 @@ class CC1201 : public CommLink
 
 	uint8_t writeRegExt(uint8_t addr, uint8_t value);
 
-	uint8_t writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
+	uint8_t writeRegExt(uint8_t addr, const uint8_t* buffer, uint8_t len);
 
 	uint8_t twos_compliment(uint8_t val);
 

@@ -14,9 +14,6 @@
 class CC1101 : public CommLink
 {
 public:
-    /// Create a CC1101 hardware communication object
-    CC1101();
-    
     /** Create a CC1101 hardware communication object
      * @param mosi SPI data in pin
      * @param miso SPI data out pin
