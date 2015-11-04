@@ -48,19 +48,14 @@ class CommPort
     // Compare between 2 CommPort objects
     bool operator==(const CommPort& p) const
     {
-        return (this->Nbr() == p.Nbr());
-    }
-    // Compare between a CommPort object and a port number
-    bool operator==(unsigned int portNbr) const
-    {
-        return (this->Nbr() == portNbr ? true : false);
+        return this->Nbr() == p.Nbr();
     }
 
 
     // Overload the less than operator for sorting/finding ports using iterators
-    bool operator< (const CommPort& p) const
+    bool operator<(const CommPort& p) const
     {
-        return (this->Nbr() < p.Nbr() ? true : false);
+        return this->Nbr() < p.Nbr();
     }
 
 
