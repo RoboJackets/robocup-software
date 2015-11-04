@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: Do we need this script anymore?  It's been replaced by mbed-copy.sh
+
 # Script that loads a progam directly into the mbed microcontroller's flash memory and launches it
 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
