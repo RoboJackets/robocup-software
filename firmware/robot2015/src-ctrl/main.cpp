@@ -16,9 +16,6 @@
 
 #define _EXTERN extern "C"
 
-const std::string filename = "rj-fpga.nib";
-const std::string filesystemname = "local";
-const std::string filepath = "/" + filesystemname + "/" + filename;
 
 // ADCDMA adc;
 // DMA dma;
@@ -158,7 +155,7 @@ int main(void)
 	init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
 	// This is where the FPGA is actually configured with the bitfile's name passed in
-	bool fpga_ready = FPGA::Instance()->Init(filepath);
+	bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
 
 	/* We MUST wait for the FPGA to COMPLETELY configure before moving on because of
 	 * threading with the shared the SPI. If we don't explicitly halt main (it's just
@@ -266,7 +263,6 @@ int main(void)
 	// const std::string ANSI_CUR_POS = "\033[6n";
 
 	while (true) {
-
 		rdy_led = !fpga_ready;
 		Thread::wait(100);	// Ping back to main every 1 second seems to perform better than calling Thread::yeild() for some reason?
 	}
