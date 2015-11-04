@@ -657,7 +657,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID,
         painter.setBrush(Qt::yellow);
     }
 
-    painter.rotate(theta * RadiansToDegrees + 90);
+    painter.rotate(RadiansToDegrees(theta) + 90);
 
     int span = 40;
 
