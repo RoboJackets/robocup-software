@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-void setISRPriorities(void);
+void setISRPriorities();
 void imAlive(void const*);
 void strobeStatusLED(void const*);
 std::string decode_marcstate(uint8_t);

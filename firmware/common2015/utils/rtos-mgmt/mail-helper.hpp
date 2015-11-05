@@ -22,7 +22,7 @@ public:
 #endif
     };
 
-    osMailQDef_t* def(void) { return &_def; }
+    osMailQDef_t* def() { return &_def; }
 
 private:
     osMailQDef_t    _def;

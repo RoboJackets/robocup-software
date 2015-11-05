@@ -202,7 +202,7 @@ enum pck_addr_chk_t {
     ADDR_CHK_AND_BCAST_ALL = 3
 };
 
-/** Data structure for managing how the CC1101 handels packets */
+/** Data structure for managing how the CC1101 handles packets */
 typedef struct pck_ctrl_t {
     bool    whitening_en;
     bool    crc_en;

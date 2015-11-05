@@ -8,77 +8,30 @@ const int CommLink::RX_QUEUE_SIZE = COMM_LINK_RX_QUEUE_SIZE;
 
 const char* COMM_ERR_STRING[] = { FOREACH_COMM_ERR(GENERATE_STRING) };
 
-unsigned int CommLink::_nbr_links = 0;
 
-
-// =================== MAIN CONSTRUCTOR ==============
-CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin)
-    : _rxQueueHelper()
+CommLink::CommLink(PinName mosi,
+    PinName miso,
+    PinName sck,
+    PinName cs,
+    PinName int_pin)
+    : _miso_pin(miso), _spi(mosi, miso, sck), _cs(cs), _int_in(int_pin),
+      _rxQueueHelper()
 {
-    setup_pins(mosi, miso, sck, cs, int_pin);
-    setup();
+    chip_deselect();
 
-    _nbr_links++;
-}
+    // spi settings
+    _spi.format(8, 0);
+    _spi.frequency(5000000);
 
+    // interrupt pin settings
+    _int_in.mode(PullUp);
 
-// =================== CLASS SETUP ===================
-void CommLink::setup()
-{
-    // [X] - 1 - Initialize the hardware for communication.
-    // =================
-    setup_spi();
-    setup_cs();
-    setup_interrupt();
-
-    // [X] - 2 - Define the thread task for controlling the RX queue
-    // =================
+    // Define the thread task for controlling the RX queue
     define_thread(_rxDef, &CommLink::rxThread);
 
-    // [X] - 3 - Create the thread and pass it a pointer to the created object
-    // =================
+    // Create the thread and pass it a pointer to the created object
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 }
-
-
-// =================== PIN SETUP ===================
-void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin)
-{
-    _mosi_pin = mosi;
-    _miso_pin = miso;
-    _sck_pin = sck;
-    _cs_pin = cs;
-    _int_pin = int_pin;
-}
-
-
-void CommLink::setup_spi(void)
-{
-    if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
-        _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        _spi->format(8, 0);
-        _spi->frequency(5000000);
-    }
-}
-
-
-void CommLink::setup_cs(void)
-{
-    if (_cs_pin != NC) {
-        _cs = new DigitalOut(_cs_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        *_cs = 1;    // default to active low signal
-    }
-}
-
-
-void CommLink::setup_interrupt(void)
-{
-    if (_int_pin != NC) {
-        _int_in = new InterruptIn(_int_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        _int_in->mode(PullUp);
-    }
-}
-
 
 // =================== RX THREAD ===================
 // Task operations for placing received data into the received data queue
@@ -101,7 +54,7 @@ void CommLink::rxThread(void const* arg)
     LOG(INIT, "RX communication link ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d", inst->_rxID, threadPriority);
 
     // Set the function to call on an interrupt trigger
-    inst->_int_in->rise(inst, &CommLink::ISR);
+    inst->_int_in.rise(inst, &CommLink::ISR);
 
     rtp::packet p;
 
@@ -123,14 +76,14 @@ void CommLink::rxThread(void const* arg)
             // =================
             CommModule::receive(p);
         }
-    }   // while()
+    }
 
     osThreadTerminate(inst->_rxID);
 }
 
 
 // Called by the derived class to begin thread operations
-void CommLink::ready(void)
+void CommLink::ready()
 {
     osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD);
 }
@@ -143,13 +96,7 @@ void CommLink::sendPacket(rtp::packet* p)
 
 
 // Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
-void CommLink::ISR(void)
+void CommLink::ISR()
 {
-    osSignalSet(_rxID , COMM_LINK_SIGNAL_RX_TRIGGER);
-}
-
-
-void CommLink::toggle_cs(void)
-{
-    *_cs = !*_cs;
+    osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER);
 }

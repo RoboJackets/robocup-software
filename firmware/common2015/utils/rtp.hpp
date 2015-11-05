@@ -89,7 +89,7 @@ struct packet {
 
     packet() : adjusted(false) {};
 
-    void adjustSizes(void)
+    void adjustSizes()
     {
         if (adjusted == false) {
             payload_size += APP_HDR_SZ;
@@ -98,7 +98,7 @@ struct packet {
         }
     }
 
-    void resetSizes(void)
+    void resetSizes()
     {
         if (adjusted == true) {
             payload_size -= APP_HDR_SZ;
@@ -108,7 +108,7 @@ struct packet {
 
     }
 
-    uint8_t ACK_Header(void)
+    uint8_t ACK_Header()
     {
         return header_link;
     }

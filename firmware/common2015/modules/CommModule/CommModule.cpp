@@ -38,7 +38,7 @@ CommModule::CommModule() :
 {}
 
 
-void CommModule::Init(void)
+void CommModule::Init()
 {
     // [X] - 1.0 - Make sure we have an instance to work with
     auto instance = Instance();
@@ -60,7 +60,7 @@ void CommModule::Init(void)
 }
 
 
-shared_ptr<CommModule>& CommModule::Instance(void)
+shared_ptr<CommModule>& CommModule::Instance()
 {
     if (instance.get() == nullptr)
         instance.reset(new CommModule);
@@ -256,7 +256,7 @@ bool CommModule::openSocket(uint8_t portNbr)
 }
 
 
-void CommModule::ready(void)
+void CommModule::ready()
 {
     if (_isReady == true)
         return;
@@ -314,13 +314,13 @@ void CommModule::receive(rtp::packet& packet)
 }
 
 
-unsigned int CommModule::NumRXPackets(void)
+unsigned int CommModule::NumRXPackets()
 {
     return _ports.allRXPackets();
 }
 
 
-unsigned int CommModule::NumTXPackets(void)
+unsigned int CommModule::NumTXPackets()
 {
     return _ports.allTXPackets();
 }
@@ -340,7 +340,7 @@ void CommModule::PrintInfo(bool forceHeader)
 }
 
 
-void CommModule::PrintHeader(void)
+void CommModule::PrintHeader()
 {
     _ports.PrintHeader();
 }
@@ -357,12 +357,12 @@ void CommModule::Close(unsigned int portNbr)
     _ports[portNbr].Close();
 }
 
-bool CommModule::isReady(void)
+bool CommModule::isReady()
 {
     return _isReady;
 }
 
-int CommModule::NumOpenSockets(void)
+int CommModule::NumOpenSockets()
 {
     return _ports.count_open();
 }

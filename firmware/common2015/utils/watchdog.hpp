@@ -26,7 +26,7 @@ public:
     /**
      * Reset the timer to its originally set value
      */
-    static void Renew(void)
+    static void Renew()
     {
         WDT_BASE->WDFEED = 0xAA;
         WDT_BASE->WDFEED = 0x55;

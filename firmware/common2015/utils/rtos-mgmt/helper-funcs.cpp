@@ -20,7 +20,7 @@
  * doc/ARM-Cortex-M_Interrupt-Priorities.pdf from RJ root and the online
  * documentation regarding Interrupt Priority Registers (IPRs) first.
  */
-void setISRPriorities(void)
+void setISRPriorities()
 {
     __disable_irq();
 

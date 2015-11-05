@@ -88,62 +88,62 @@ public:
    * Console initialization routine. Attaches interrupt handlers and clears the
    * buffers.
    */
-  static void Init(void);
+  static void Init();
 
   /**
    * console communications check. should be called in the main loop.
    */
-  static void ConComCheck(void);
+  static void ConComCheck();
 
   /**
    * flushes stdout. Should be called after every putc or printf block.
    */
-  static void Flush(void);
+  static void Flush();
 
   /**
    * requests the main loop break
    */
-  static void RequestSystemStop(void);
+  static void RequestSystemStop();
 
   /**
    * returns if the main loop should break
    */
-  static bool IsSystemStopRequested(void);
+  static bool IsSystemStopRequested();
 
-  static bool IterCmdBreakReq(void);
+  static bool IterCmdBreakReq();
   static void IterCmdBreakReq(bool newState);
 
-  static char* rxBufferPtr(void);
+  static char* rxBufferPtr();
 
-  static bool CommandReady(void);
+  static bool CommandReady();
   static void CommandHandled(bool);
 
   static void changeHostname(const std::string&);
   static void changeUser(const std::string&);
 
   static void Baudrate(uint16_t);
-  static uint16_t Baudrate(void);
+  static uint16_t Baudrate();
 
-  static void PrintHeader(void);
-  static void ShowLogo(void);
+  static void PrintHeader();
+  static void ShowLogo();
   static void SetEscEnd(char c);
-  static const std::string& GetHostResponse(void);
+  static const std::string& GetHostResponse();
 
 private:
   // Constructor is only used in init branch of Instance()
   Console();
 
-  static std::shared_ptr<Console>& Instance(void);
+  static std::shared_ptr<Console>& Instance();
 
-  void ClearRXBuffer(void);
+  void ClearRXBuffer();
 
-  void ClearTXBuffer(void);
+  void ClearTXBuffer();
 
-  void RXCallback(void);
+  void RXCallback();
 
-  void TXCallback(void);
+  void TXCallback();
 
-  void setHeader(void);
+  void setHeader();
 
   void RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
   void TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);

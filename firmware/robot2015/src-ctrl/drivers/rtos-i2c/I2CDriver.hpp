@@ -145,7 +145,7 @@ public:
     *  @returns
     *    the byte read
     */
-    int readSlave(void);
+    int readSlave();
 
     /** Write to an I2C master.
      *
@@ -170,15 +170,15 @@ public:
 
 
     /// Creates a start condition on the I2C bus
-    void startMaster(void);
+    void startMaster();
 
     ///Creates a stop condition on the I2C bus
-    void stopSlave(void);
+    void stopSlave();
 
     /// Creates a stop condition on the I2C bus
     /// If unsccessful because someone on the bus holds the scl line down it returns "false" after 23µs
     /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz and 3-4µs @ 400kHz.
-    bool stopMaster(void);
+    bool stopMaster();
 
     /// Wait until the i2c driver becomes available.
     ///

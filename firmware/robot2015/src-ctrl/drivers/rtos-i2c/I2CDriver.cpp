@@ -144,14 +144,14 @@ int I2CDriver::writeMaster(int data)
     unlock();
     return ret;
 }
-void I2CDriver::startMaster(void)
+void I2CDriver::startMaster()
 {
     m_modeSlave = false;
     lockNconfig();
     i2c_start(&m_channel->i2c);
     unlock();
 }
-bool I2CDriver::stopMaster(void)
+bool I2CDriver::stopMaster()
 {
     m_modeSlave = false;
     lockNconfig();
@@ -159,7 +159,7 @@ bool I2CDriver::stopMaster(void)
     unlock();
     return ret;
 }
-void I2CDriver::stopSlave(void)
+void I2CDriver::stopSlave()
 {
     m_modeSlave = true;
     lockNconfig();
@@ -182,7 +182,7 @@ int I2CDriver::readSlave(char* data, int length)
     unlock();
     return ret;
 }
-int I2CDriver::readSlave(void)
+int I2CDriver::readSlave()
 {
     m_modeSlave = true;
     lockNconfig();

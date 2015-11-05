@@ -14,9 +14,6 @@
 class CC1101 : public CommLink
 {
 public:
-    /// Create a CC1101 hardware communication object
-    CC1101();
-    
     /** Create a CC1101 hardware communication object
      * @param mosi SPI data in pin
      * @param miso SPI data out pin
@@ -25,42 +22,39 @@ public:
      * @param int_pin Interrupt pin
      */
     CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin = NC);
-    
-    /// Deconstructor
-    virtual ~CC1101();
 
     // These must have implementations in the CC1101 class since it is a derived class of the base class CommLink
     /// Perform a soft reset for the transceiver
-    virtual void reset(void);
+    virtual void reset();
     
     /// Test the 
-    virtual int32_t selfTest(void);
+    virtual int32_t selfTest();
     
-    virtual bool isConnected(void);
+    virtual bool isConnected();
     
     /// Set the channel number
     void channel(uint16_t);
     
     /// Get the channel number
-    uint16_t channel(void);
+    uint16_t channel();
     
     /// Set an address for the transceiver used for packet filtering
     void address(uint8_t);
     
     /// Get the address of the transceiver
-    uint8_t address(void);
+    uint8_t address();
     
     /// Get the transceiver's operating datarate
-    uint16_t datarate(void);
+    uint16_t datarate();
     
     // The NOP command used to get the CC1101's status byte
-    uint8_t status(void);
+    uint8_t status();
     uint8_t status(uint8_t);
-    uint8_t lqi(void);
-    uint8_t version(void);
-    int16_t rssi(void);
+    uint8_t lqi();
+    uint8_t version();
+    int16_t rssi();
     
-    int32_t powerUp(void);
+    int32_t powerUp();
     
 protected:
     // These must have implementations in the CC1101 class since it is a derived class of the base class CommLink
@@ -77,33 +71,33 @@ protected:
     uint8_t strobe(uint8_t);
     
     // Send the TX or RX command strobe for placing the CC1101 in the respective state
-    void tx_mode(void);
-    void rx_mode(void);
-    void idle(void);
+    void tx_mode();
+    void rx_mode();
+    void idle();
     
     // Send the command strobe to flush the TX or RX buffers on the CC1101
-    void flush_tx(void);
-    void flush_rx(void);
+    void flush_tx();
+    void flush_rx();
     
     void freq(uint32_t);
     void datarate(uint32_t);    // set data rate
-    void put_rf_settings(void);
-    void init(void);
+    void put_rf_settings();
+    void init();
     
 private:
 
 
-    void calibrate(void);
+    void calibrate();
     void rssi(uint8_t);
-    uint8_t mode(void);
+    uint8_t mode();
     
-    void assign_modem_params(void);
-    void assign_packet_params(void);
+    void assign_modem_params();
+    void assign_packet_params();
     void interface_freq(uint32_t);
     void assign_channel_spacing(uint32_t);
-    void set_rf_settings(void);
-    void set_init_vars(void);
-    void power_on_reset(void);
+    void set_rf_settings();
+    void set_init_vars();
+    void power_on_reset();
     
     rf_settings_t rfSettings;
     radio_state_t      _mode;

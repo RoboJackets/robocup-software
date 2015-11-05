@@ -41,7 +41,7 @@ void start_flag_config(DigitalInOut& p)
 }
 
 // returns TRUE on error
-bool fpgaInit(void)
+bool fpgaInit()
 {
     char buf[10];
     trigger = !trigger;

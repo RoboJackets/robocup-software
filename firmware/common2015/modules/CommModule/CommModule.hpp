@@ -55,7 +55,7 @@ public:
     static const int TX_QUEUE_SIZE;
     static const int RX_QUEUE_SIZE;
 
-    static void Init(void);
+    static void Init();
 
     // Set a TX callback function on an object
     template <typename B>
@@ -108,22 +108,22 @@ public:
     static void send(rtp::packet&);
     static void receive(rtp::packet&);
 
-    static unsigned int NumRXPackets(void);
-    static unsigned int NumTXPackets(void);
+    static unsigned int NumRXPackets();
+    static unsigned int NumTXPackets();
 
     static void PrintInfo(bool forceHeader = false);
 
     static void ResetCount(unsigned int portNbr);
     static void Close(unsigned int portNbr);
-    static bool isReady(void);
-    static int  NumOpenSockets(void);
+    static bool isReady();
+    static int  NumOpenSockets();
 
     static void txLED(DigitalInOut*);
     static void rxLED(DigitalInOut*);
 
 protected:
     // NOP function for keeping a communication link active
-    void nopFunc(void);
+    void nopFunc();
 
     // Memory Queue IDs
     osMailQId   _txQueue;
@@ -140,7 +140,7 @@ private:
     // Private constructor
     CommModule();
 
-    static shared_ptr<CommModule>& Instance(void);
+    static shared_ptr<CommModule>& Instance();
 
     // Used to help define the class's threads in the constructor
     friend void define_thread(osThreadDef_t&, void(*task)(void const* arg), osPriority, uint32_t, unsigned char*);
@@ -149,9 +149,9 @@ private:
     static void txThread(void const*);
     static void rxThread(void const*);
 
-    static void ready(void);
+    static void ready();
 
-    static void PrintHeader(void);
+    static void PrintHeader();
 
     static std::shared_ptr<CommModule> instance;
 
