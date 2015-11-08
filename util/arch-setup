@@ -4,7 +4,7 @@ BASE=$(readlink -f $(dirname $0)/..)
 
 echo "-- Installing udev rules"
 sudo cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
-sudo udevadm control -R # reload rules
+sudo udevadm control --reload || true # reload rules
 
 echo "-- Installing required packages"
 sudo pacman -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages.txt)
