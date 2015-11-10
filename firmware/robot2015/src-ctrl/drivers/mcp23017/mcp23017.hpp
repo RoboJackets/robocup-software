@@ -41,11 +41,11 @@ enum {
 class MCP23017
 {
   public:
-    static bool Init(void);
+    static bool Init();
 
     /** Reset MCP23017 device to its power-on state
      */
-    static void reset(void);
+    static void reset();
 
     /** Write a 0/1 value to an output bit
      *
@@ -99,7 +99,7 @@ class MCP23017
     // See the data sheet for more information on what they do
 
     //Returns a word with the current pin states (ie contents of the GPIO register)
-    static unsigned short digitalWordRead(void);
+    static unsigned short digitalWordRead();
 
     // Allows you to write a word to the GPIO register
     static void digitalWordWrite(unsigned short w);
@@ -115,7 +115,7 @@ class MCP23017
     // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 = disabled)
     static void internalPullupMask(unsigned short mask);
 
-    static int read(void);
+    static int read();
 
     static void write(int data);
 
@@ -124,7 +124,7 @@ class MCP23017
     MCP23017() : _i2c(RJ_I2C_BUS) {  }
 
     static void set_config(PinName sda, PinName scl, int i2cAddress = RJ_IO_EXPANDER_I2C_ADDRESS);
-    static std::shared_ptr<MCP23017>& Instance(void);
+    static std::shared_ptr<MCP23017>& Instance();
     static std::shared_ptr<MCP23017> instance;
 
     I2CMasterRtos    _i2c;

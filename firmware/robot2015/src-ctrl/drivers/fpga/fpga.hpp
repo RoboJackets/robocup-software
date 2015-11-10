@@ -20,7 +20,7 @@ public:
     uint8_t  read_encs(uint16_t* enc_counts, size_t size);
     uint8_t  read_halls(uint8_t* halls, size_t size);
     uint8_t  motors_en(bool state);
-    uint32_t git_hash(void);
+    uint32_t git_hash();
     bool send_config(const std::string& filepath);
 
 private:

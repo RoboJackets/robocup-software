@@ -82,7 +82,7 @@ class NeoStrip
 	/**
 	 * Reset all pixels in the strip to be of (0x000000)
 	 */
-	void clear(void);
+	void clear();
 
 	/**
 	 * Write the colors out to the strip; this method must be called
@@ -92,7 +92,7 @@ class NeoStrip
 	 * each pixel takes approximately 30us to send, plus a 50us reset pulse
 	 * at the end.
 	 */
-	void write(void);
+	void write();
 
   protected:
 	NeoColor* strip;	// pixel data buffer modified by setPixel() and used by neo_out()

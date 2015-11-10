@@ -893,7 +893,7 @@ class MPU6050 {
             uint8_t dmpProcessFIFOPacket(const unsigned char *dmpData);
             uint8_t dmpReadAndProcessFIFOPacket(uint8_t numPackets, uint8_t *processed=NULL);
 
-            uint8_t dmpSetFIFOProcessedCallback(void (*func) (void));
+            uint8_t dmpSetFIFOProcessedCallback(void (*func) ());
 
             uint8_t dmpInitFIFOParam();
             uint8_t dmpCloseFIFO();
@@ -995,7 +995,7 @@ class MPU6050 {
             uint8_t dmpProcessFIFOPacket(const unsigned char *dmpData);
             uint8_t dmpReadAndProcessFIFOPacket(uint8_t numPackets, uint8_t *processed=NULL);
 
-            uint8_t dmpSetFIFOProcessedCallback(void (*func) (void));
+            uint8_t dmpSetFIFOProcessedCallback(void (*func) ());
 
             uint8_t dmpInitFIFOParam();
             uint8_t dmpCloseFIFO();

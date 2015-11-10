@@ -68,7 +68,7 @@ void statusLightsOFF(void const* args)
 // 	j = (j + 1) & 0x07F;
 // }
 
-// void sampleInputs(void)
+// void sampleInputs()
 // {
 // 	// Set global variables here for the config input values from the IO Expander.
 // 	// This is where the robot's ID comes from, so it's pretty important.
@@ -81,7 +81,7 @@ void statusLightsOFF(void const* args)
  * [main Main The entry point of the system where each submodule's thread is started.]
  * @return  [none]
  */
-int main(void)
+int main()
 {
 	// NeoStrip rgbLED(RJ_NEOPIXEL, 1);
 	// rgbLED.setBrightness(0.2);
@@ -307,7 +307,7 @@ LOG(OK,
 */
 
 
-_EXTERN void HardFault_Handler(void)
+_EXTERN void HardFault_Handler()
 {
 	__asm volatile
 	(

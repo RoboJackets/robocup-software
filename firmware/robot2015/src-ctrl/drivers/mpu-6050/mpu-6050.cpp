@@ -54,7 +54,7 @@ void MPU6050::setSleepMode(bool state)
     this->write(MPU6050_RA_PWR_MGMT_1, temp);
 }
 
-bool MPU6050::testConnection(void)
+bool MPU6050::testConnection()
 {
     uint8_t temp;
     temp = this->read(MPU6050_RA_WHO_AM_I);
@@ -72,7 +72,7 @@ void MPU6050::setBW(uint8_t BW)
     this->write(MPU6050_RA_CONFIG, temp);
 }
 
-uint8_t MPU6050::getRate(void)
+uint8_t MPU6050::getRate()
 {
     return this->read(MPU6050_RA_SMPLRT_DIV);
 }
@@ -106,7 +106,7 @@ void MPU6050::setAcceleroRange(uint8_t range)
     this->write(MPU6050_RA_ACCEL_CONFIG, temp);
 }
 
-int MPU6050::getAcceleroRawX(void)
+int MPU6050::getAcceleroRawX()
 {
     short retval;
     uint8_t data[2];
@@ -115,7 +115,7 @@ int MPU6050::getAcceleroRawX(void)
     return (int) retval;
 }
 
-int MPU6050::getAcceleroRawY(void)
+int MPU6050::getAcceleroRawY()
 {
     short retval;
     uint8_t data[2];
@@ -124,7 +124,7 @@ int MPU6050::getAcceleroRawY(void)
     return (int) retval;
 }
 
-int MPU6050::getAcceleroRawZ(void)
+int MPU6050::getAcceleroRawZ()
 {
     short retval;
     uint8_t data[2];
@@ -186,7 +186,7 @@ void MPU6050::setGyroRange(uint8_t range)
     this->write(MPU6050_RA_GYRO_CONFIG, temp);
 }
 
-int MPU6050::getGyroRawX(void)
+int MPU6050::getGyroRawX()
 {
     short retval;
     uint8_t data[2];
@@ -195,7 +195,7 @@ int MPU6050::getGyroRawX(void)
     return (int) retval;
 }
 
-int MPU6050::getGyroRawY(void)
+int MPU6050::getGyroRawY()
 {
     short retval;
     uint8_t data[2];
@@ -204,7 +204,7 @@ int MPU6050::getGyroRawY(void)
     return (int) retval;
 }
 
-int MPU6050::getGyroRawZ(void)
+int MPU6050::getGyroRawZ()
 {
     short retval;
     uint8_t data[2];
@@ -255,7 +255,7 @@ void MPU6050::getGyro(float* data)
 //--------------------------------------------------
 //-------------------Temperature--------------------
 //--------------------------------------------------
-int MPU6050::getTempRaw(void)
+int MPU6050::getTempRaw()
 {
     short retval;
     uint8_t data[2];
@@ -264,7 +264,7 @@ int MPU6050::getTempRaw(void)
     return (int) retval;
 }
 
-float MPU6050::getTemp(void)
+float MPU6050::getTemp()
 {
     float retval;
     retval = (float)this->getTempRaw();

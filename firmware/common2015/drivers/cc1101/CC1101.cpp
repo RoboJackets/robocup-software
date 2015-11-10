@@ -42,7 +42,7 @@ CC1101::~CC1101()
 }
 
 
-int32_t CC1101::powerUp(void)
+int32_t CC1101::powerUp()
 {
 
 #if CCXXX1_DEBUG_MODE > 0
@@ -60,7 +60,7 @@ int32_t CC1101::powerUp(void)
 }
 
 
-bool CC1101::isConnected(void)
+bool CC1101::isConnected()
 {
     // [] - 1 - Perform a check to ensure the CC1101 can provide communication with a secondary base station link
     // =================
@@ -73,7 +73,7 @@ bool CC1101::isConnected(void)
 }
 
 
-void CC1101::reset(void)
+void CC1101::reset()
 {
     // [X] - 1 - Perform a soft reset for the CC1101 transceiver
     // =================
@@ -81,7 +81,7 @@ void CC1101::reset(void)
 }
 
 
-int32_t CC1101::selfTest(void)
+int32_t CC1101::selfTest()
 {
     // [X] - 1 - Get the chip's version number and fail if different from what was expected.
     _chip_version = status(CCXXX1_VERSION);
@@ -109,7 +109,7 @@ int32_t CC1101::selfTest(void)
 }
 
 
-void CC1101::set_init_vars(void)
+void CC1101::set_init_vars()
 {
     // define the initial state of an unselected chip
     *_cs = 1;
@@ -225,7 +225,7 @@ void CC1101::put_rf_settings()
 }
 
 
-void CC1101::power_on_reset(void)
+void CC1101::power_on_reset()
 {
     LOG(INF1, "Beginning Power-on-Reset routine...");
 
@@ -280,7 +280,7 @@ void CC1101::power_on_reset(void)
 }
 
 // 2nd ighest level of initilization routines behind CC1101::setup();
-void CC1101::init(void)
+void CC1101::init()
 {
 
     power_on_reset();
@@ -307,7 +307,7 @@ void CC1101::init(void)
 }
 
 // Returns the current mode that the CC1101 is operating in
-uint8_t CC1101::mode(void)
+uint8_t CC1101::mode()
 {
     return status(CCXXX1_MARCSTATE);
 }
@@ -505,7 +505,7 @@ uint8_t CC1101::strobe(uint8_t addr)
 
 
 // Macro to calibrate the frequency synthesizer
-void CC1101::calibrate(void)
+void CC1101::calibrate()
 {
 #if DEBUG_MODE > 0
     LOG(INF1, "Calibrating frequency synthesizer");
@@ -533,13 +533,13 @@ void CC1101::address(uint8_t addr)
     // NOW, WRITE THE ADDRESS TO THE CC1101
 }
 
-uint8_t CC1101::lqi(void)
+uint8_t CC1101::lqi()
 {
     return 0x3F - (_lqi & 0x3F);
 }
 
 // returns the CC1101's VERSION register that specifices what exact chip version is being used
-uint8_t CC1101::version(void)
+uint8_t CC1101::version()
 {
     return _chip_version;
 }
@@ -561,7 +561,7 @@ void CC1101::channel(uint16_t chan)
 }
 
 // RSSI
-int16_t CC1101::rssi(void)
+int16_t CC1101::rssi()
 {
     return _rssi;
 }
@@ -579,7 +579,7 @@ void CC1101::rssi(uint8_t rssi_val)
 }   // rssi
 
 
-void CC1101::flush_rx(void)
+void CC1101::flush_rx()
 {
 #if DEBUG_MODE > 0
     LOG(INF1, "Clearing RX buffer...");
@@ -600,7 +600,7 @@ void CC1101::flush_rx(void)
 }
 
 
-void CC1101::flush_tx(void)
+void CC1101::flush_tx()
 {
 #if DEBUG_MODE > 0
     LOG(INF1, "Clearing TX buffer...");
@@ -621,7 +621,7 @@ void CC1101::flush_tx(void)
 }
 
 
-void CC1101::rx_mode(void)
+void CC1101::rx_mode()
 {
 #if DEBUG_MODE > 0
     LOG(INF1, "Sending RX_MODE strobe to CC1101");
@@ -635,7 +635,7 @@ void CC1101::rx_mode(void)
 }
 
 
-void CC1101::tx_mode(void)
+void CC1101::tx_mode()
 {
 #if DEBUG_MODE > 0
     LOG(INF1, "Sending TX_MODE strobe to CC1101");
@@ -648,7 +648,7 @@ void CC1101::tx_mode(void)
 #endif
 }
 
-void CC1101::idle(void)
+void CC1101::idle()
 {
 #if DEBUG_MODE > 0
     LOG(INF1, "Sending IDLE strobe to CC1101");
@@ -663,7 +663,7 @@ void CC1101::idle(void)
 
 
 // Status byte & status of a status register
-uint8_t CC1101::status(void)
+uint8_t CC1101::status()
 {
     return strobe(CCXXX1_SNOP);
 }
@@ -740,7 +740,7 @@ void CC1101::assign_channel_spacing(uint32_t spacing)
     // compute the register value and assign it
     rfSettings.MDMCFG0 = (spacing / (CCXXX1_CRYSTAL_FREQUENCY >> shift_val)) - 256;
 }
-void CC1101::set_rf_settings(void)
+void CC1101::set_rf_settings()
 {
     // set the fields for packet controls
     assign_packet_params();

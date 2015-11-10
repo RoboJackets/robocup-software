@@ -20,7 +20,7 @@ bool Console::command_ready = false;
 
 Console::Console() : pc(USBTX, USBRX) {  }
 
-shared_ptr<Console>& Console::Instance(void)
+shared_ptr<Console>& Console::Instance()
 {
 	if (instance.get() == nullptr)
 		instance.reset(new Console);
@@ -29,7 +29,7 @@ shared_ptr<Console>& Console::Instance(void)
 }
 
 
-void Console::Init(void)
+void Console::Init()
 {
 	auto instance = Instance();
 
@@ -61,7 +61,7 @@ void Console::Init(void)
 	LOG(INF3, "Hello from the 'common2015' library!");
 }
 
-void Console::PrintHeader(void)
+void Console::PrintHeader()
 {
 	// prints out a bash-like header
 	Flush();
@@ -69,22 +69,22 @@ void Console::PrintHeader(void)
 	Flush();
 }
 
-void Console::ClearRXBuffer(void)
+void Console::ClearRXBuffer()
 {
 	memset(rxBuffer, '\0', BUFFER_LENGTH);
 }
 
-void Console::ClearTXBuffer(void)
+void Console::ClearTXBuffer()
 {
 	memset(txBuffer, '\0', BUFFER_LENGTH);
 }
 
-void Console::Flush(void)
+void Console::Flush()
 {
 	fflush(stdout);
 }
 
-void Console::RXCallback(void)
+void Console::RXCallback()
 {
 	// If for some reason more than one character is in the buffer when the
 	// interrupt is called, handle them all.
@@ -225,14 +225,14 @@ void Console::RXCallback(void)
 	}
 }
 
-void Console::TXCallback(void)
+void Console::TXCallback()
 {
 	//NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
 	//NVIC_EnableIRQ(UART0_IRQn);
 }
 
-void Console::ConComCheck(void)
+void Console::ConComCheck()
 {
 	/*
 	 * Currently no way to check if a vbus has been disconnected or
@@ -253,18 +253,18 @@ void Console::ConComCheck(void)
 	return;
 }
 
-void Console::RequestSystemStop(void)
+void Console::RequestSystemStop()
 {
 	Instance()->sysStopReq = true;
 	instance.reset();
 }
 
-bool Console::IsSystemStopRequested(void)
+bool Console::IsSystemStopRequested()
 {
 	return Instance()->sysStopReq;
 }
 
-bool Console::IterCmdBreakReq(void)
+bool Console::IterCmdBreakReq()
 {
 	return iter_break_req;
 }
@@ -280,12 +280,12 @@ void Console::IterCmdBreakReq(bool newState)
 	}
 }
 
-char* Console::rxBufferPtr(void)
+char* Console::rxBufferPtr()
 {
 	return instance->rxBuffer;
 }
 
-bool Console::CommandReady(void)
+bool Console::CommandReady()
 {
 	return command_ready;
 }
@@ -320,7 +320,7 @@ void Console::changeUser(const std::string & user)
 	instance->setHeader();
 }
 
-void Console::setHeader(void)
+void Console::setHeader()
 {
 	instance->CONSOLE_HEADER = "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[33m" + instance->CONSOLE_HOSTNAME + " \033[36m$\033[0m \033[0J\033[0m";
 	//instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" + instance->CONSOLE_HOSTNAME + " $ ";
@@ -332,7 +332,7 @@ void Console::Baudrate(uint16_t baud)
 	instance->pc.baud(instance->baudrate);
 }
 
-uint16_t Console::Baudrate(void)
+uint16_t Console::Baudrate()
 {
 	return instance->baudrate;
 }
@@ -352,7 +352,7 @@ void Console::SetEscEnd(char c)
 	instance->esc_host_end_char = c;
 }
 
-const std::string& Console::GetHostResponse(void)
+const std::string& Console::GetHostResponse()
 {
 	if ( instance->esc_host_res_rdy == true ) {
 
@@ -365,7 +365,7 @@ const std::string& Console::GetHostResponse(void)
 	}
 }
 
-void Console::ShowLogo(void)
+void Console::ShowLogo()
 {
 	Flush();
 

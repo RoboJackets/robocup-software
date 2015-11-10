@@ -14,7 +14,7 @@ bool DMA::HandlerCalled = false;
 uint32_t DMA::destination_addr;
 
 
-extern "C" void DMA_IRQHandler(void)
+extern "C" void DMA_IRQHandler()
 {
   uint32_t chan_mask;
   uint32_t activeInterrupts = _LPC_DMA_ID->DMACIntTCStat;
@@ -56,7 +56,7 @@ extern "C" void DMA_IRQHandler(void)
 /**
  *
  */
-DMA::DMA(void)
+DMA::DMA()
 {
   isInit = false;
 }
@@ -65,7 +65,7 @@ DMA::DMA(void)
 /**
  *
  */
-DMA::~DMA(void)
+DMA::~DMA()
 {
   isInit = false;
 }
@@ -73,7 +73,7 @@ DMA::~DMA(void)
 /**
  * [DMA_Init description]
  */
-bool DMA::Init(void)
+bool DMA::Init()
 {
   return false;
 
@@ -150,7 +150,7 @@ void DMA::transfer_type(LPC_GPDMACH_TypeDef * dma_channel, uint8_t type)
 /**
  * [DMA::start description]
  */
-bool DMA::Start(void)
+bool DMA::Start()
 {
   if (isInit == false)
     return false;
@@ -193,7 +193,7 @@ void DMA::SetDst(uint32_t addr)
  * [DMA::find_channel description]
  * @return  [description]
  */
-uint8_t DMA::find_channel(void)
+uint8_t DMA::find_channel()
 {
   uint8_t channel;
 
@@ -229,7 +229,7 @@ uint8_t DMA::enable_controller(bool endianness)
  * [DMA::disable_controller description]
  * @return  [description]
  */
-uint8_t DMA::disable_controller(void)
+uint8_t DMA::disable_controller()
 {
   // Check for any enabled channels
   if (_LPC_DMA_ID->DMACEnbldChns & 0xFF)
@@ -255,7 +255,7 @@ void DMA::clear_error(uint8_t channel)
 /**
  * [DMA::clear_errors description]
  */
-void DMA::clear_errors(void)
+void DMA::clear_errors()
 {
   for (int i = 0; i < DMA_NUM_CHANNELS; i++)
     clear_error(i);
@@ -285,7 +285,7 @@ void DMA::disable_channel(LPC_GPDMACH_TypeDef * dma_channel)
 /**
  * [DMA::disable_channels description]
  */
-void DMA::disable_channels(void)
+void DMA::disable_channels()
 {
   for (int i = 0; i < DMA_NUM_CHANNELS; i++)
     disable_channel(_LPC_DMA_CHAN0 + i);
@@ -305,7 +305,7 @@ void DMA::set_periph_mode(uint8_t mode)
 /**
  * [DMA::reset_periph_modes description]
  */
-void DMA::reset_periph_modes(void)
+void DMA::reset_periph_modes()
 {
   LPC_SC->DMAREQSEL = 0x00;
 }

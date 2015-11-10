@@ -56,26 +56,26 @@ typedef struct ADCPin {
 class ADCDMA
 {
  public:
-  ADCDMA(void);
-  ~ADCDMA(void);
+  ADCDMA();
+  ~ADCDMA();
 
-  bool Start(void);
+  bool Start();
   void SetChannels(std::initializer_list<PinName> pins);
-  bool Poll(void);
+  bool Poll();
   uint32_t Read(uint8_t);
-  void BurstRead(void);
-  uint8_t Offset(void);
-  static void ADC_burst_on(void);
-  static void ADC_burst_off(void);
+  void BurstRead();
+  uint8_t Offset();
+  static void ADC_burst_on();
+  static void ADC_burst_off();
 
   static bool burstEn;
 
  protected:
-  bool InterruptTest(void);
+  bool InterruptTest();
   void enable_channel(uint8_t);
-  void enable_channels(void);
-  void deselect_channels(void);
-  bool init_channels(void);
+  void enable_channels();
+  void deselect_channels();
+  bool init_channels();
 
 
   static uint8_t dmaChannelNum;
@@ -95,10 +95,10 @@ class ADCDMA
   volatile uint32_t overrun_count;
   volatile uint32_t channel_flag;
 
-  void ADC_start(void);
-  void ADC_stop(void);
-  bool ADC_powerdown(void);
-  void ADC_IRQHandler(void);
+  void ADC_start();
+  void ADC_stop();
+  bool ADC_powerdown();
+  void ADC_IRQHandler();
 
 
 };

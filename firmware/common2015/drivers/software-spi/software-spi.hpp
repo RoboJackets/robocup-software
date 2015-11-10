@@ -51,7 +51,7 @@ class SoftwareSPI
     /** Destructor */
     ~SoftwareSPI();
 
-    // void setup(void);
+    // void setup();
 
     /** Specify SPI format
      *

@@ -27,7 +27,7 @@ bool ADCDMA::burstEn = false;
 /**
  *
  */
-ADCDMA::ADCDMA(void)
+ADCDMA::ADCDMA()
 {
   isInit = false;
   ADC_int_done = true;
@@ -46,7 +46,7 @@ ADCDMA::ADCDMA(void)
 /**
  *
  */
-ADCDMA::~ADCDMA(void)
+ADCDMA::~ADCDMA()
 {
   if (ADC_powerdown())
     LOG(INF3, "ADC DMA killed. All ADC interrupts removed.");
@@ -59,7 +59,7 @@ ADCDMA::~ADCDMA(void)
  */
 
 
-//ERR_t ADCDMA::Init(void)
+//ERR_t ADCDMA::Init()
 //{
 //  if (isInit)
 //return 0;
@@ -136,7 +136,7 @@ conf
  * [ADCDMA::Check Poll a DMA transfer for completion.]
  * @return  [Returns TRUE when the DMA transfer was complete & the function retreived the values.]
  */
-bool ADCDMA::Poll(void)
+bool ADCDMA::Poll()
 {
   // When transfer complete do this block.
   if (dmaTransferComplete[0]) {
@@ -160,7 +160,7 @@ bool ADCDMA::Poll(void)
 /**
  * [ADCDMA::InterruptTest description]
  */
-bool ADCDMA::InterruptTest(void)
+bool ADCDMA::InterruptTest()
 {
   /* Enable ADC Interrupt */
   NVIC_EnableIRQ(_LPC_ADC_IRQ);
@@ -192,7 +192,7 @@ bool ADCDMA::InterruptTest(void)
  * [ADCDMA::DMA_IRQHandler description]
  */
 /*
-void ADCDMA::DMA_IRQHandler(void)
+void ADCDMA::DMA_IRQHandler()
 {
   // if (Chip_DMA_Interrupt(LPC_GPDMA, ADCDMA::dmaChannelNum) == SUCCESS) {
   // channelTC++;
@@ -215,7 +215,7 @@ void ADCDMA::DMA_IRQHandler(void)
  * [ADC_IRQHandler description]
  */
 /*
-extern "C" void ADC_IRQHandler(void)
+extern "C" void ADC_IRQHandler()
 {
   // uint32_t dummy;
   uint32_t regVal;
@@ -267,7 +267,7 @@ extern "C" void ADC_IRQHandler(void)
  * [ADCDMA::Offset Retrieve the ADC offset value set by the bootloader at startup.]
  * @return  [ADC offset value]
  */
-uint8_t ADCDMA::Offset(void)
+uint8_t ADCDMA::Offset()
 {
   return ADC_GET_READING(_LPC_ADC_ID->ADTRM) & 0x0F;
 }
@@ -293,7 +293,7 @@ void ADCDMA::SetChannels(std::initializer_list<PinName> pins)
 }
 
 
-bool ADCDMA::Start(void)
+bool ADCDMA::Start()
 {
   return init_channels();
 }
@@ -303,7 +303,7 @@ bool ADCDMA::Start(void)
  * [ADCDMA::init_channels description]
  * @return  [description]
  */
-bool ADCDMA::init_channels(void)
+bool ADCDMA::init_channels()
 {
   // return FALSE if no channels (pins) have been added yet
   if (adc_chan.empty() || (isInit == false))
@@ -371,7 +371,7 @@ bool ADCDMA::init_channels(void)
 /**
  * [ADCDMA::ADC_start Start all ADC operations.]
  */
-void ADCDMA::ADC_start(void)
+void ADCDMA::ADC_start()
 {
   // make sure it's in operational mode
   _LPC_ADC_ID->ADCR |= ( 1 << 21 );
@@ -381,7 +381,7 @@ void ADCDMA::ADC_start(void)
 /**
  * [ADCDMA::ADC_stop description]
  */
-void ADCDMA::ADC_stop(void)
+void ADCDMA::ADC_stop()
 {
   // Stop conversion
   LPC_ADC->ADCR &= ~(1 << 24);
@@ -391,7 +391,7 @@ void ADCDMA::ADC_stop(void)
 /**
  * [ADCDMA::ADC_burst_on Turn on BURST reads.]
  */
-void ADCDMA::ADC_burst_on(void)
+void ADCDMA::ADC_burst_on()
 {
   if (burstEn == true)
     return;
@@ -404,7 +404,7 @@ void ADCDMA::ADC_burst_on(void)
 /**
  * [ADCDMA::ADC_burst_on Turn off BURST reads.]
  */
-void ADCDMA::ADC_burst_off(void)
+void ADCDMA::ADC_burst_off()
 {
   if (burstEn == false)
     return;
@@ -424,7 +424,7 @@ void ADCDMA::enable_channel(uint8_t channel)
 }
 
 
-void ADCDMA::enable_channels(void)
+void ADCDMA::enable_channels()
 {
   _LPC_ADC_ID->ADCR |= 0xFF;
 }
@@ -433,7 +433,7 @@ void ADCDMA::enable_channels(void)
 /**
  * [ADCDMA::deselect_channels description]
  */
-void ADCDMA::deselect_channels(void)
+void ADCDMA::deselect_channels()
 {
   _LPC_ADC_ID->ADCR &= ~(0xFF);
 }
@@ -442,7 +442,7 @@ void ADCDMA::deselect_channels(void)
 /**
  * [ADCDMA::ADC_stop Stop all ADC operations.]
  */
-bool ADCDMA::ADC_powerdown(void)
+bool ADCDMA::ADC_powerdown()
 {
   // place in power-down mode
   _LPC_ADC_ID->ADCR &= ~( 1 << 21 );
@@ -493,7 +493,7 @@ uint32_t ADCDMA::Read(uint8_t channel)
 /**
  * [ADCDMA::ADCBurstRead description]
  */
-void ADCDMA::BurstRead(void)
+void ADCDMA::BurstRead()
 {
   if (isInit == false)
     return;

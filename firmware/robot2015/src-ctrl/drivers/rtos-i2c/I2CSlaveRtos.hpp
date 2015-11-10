@@ -70,7 +70,7 @@ public:
      *  @returns
      *    the byte read
      */
-    int read(void) {
+    int read() {
         return m_drv.readSlave();
     }
 
@@ -112,7 +112,7 @@ public:
 
     /** Reset the I2C slave back into the known ready receiving state.
      */
-    void stop(void) {
+    void stop() {
         m_drv.stopSlave();
     }
 

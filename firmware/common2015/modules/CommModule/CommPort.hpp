@@ -63,7 +63,7 @@ class CommPort
     }
 
 
-    uint8_t Nbr(void) const
+    uint8_t Nbr() const
     {
         return this->nbr;
     }
@@ -80,7 +80,7 @@ class CommPort
 
 
     // Open a port or check if a port is capable of providing communication.
-    bool Open(void)
+    bool Open()
     {
         if (isReady()) {
             this->is_open = true;
@@ -91,18 +91,18 @@ class CommPort
         }
     }
 
-    void Close(void)
+    void Close()
     {
         is_open = false;
     }
 
 
     // Check if the port has already been opened.
-    bool isOpen(void) const
+    bool isOpen() const
     {
         return this->is_open;
     }
-    bool isClosed(void) const
+    bool isClosed() const
     {
         return !isOpen();
     }
@@ -122,29 +122,29 @@ class CommPort
 
 
     // Methods that return a reference to the TX/RX callback function pointers
-    std::function<T>& RXCallback(void)
+    std::function<T>& RXCallback()
     {
         return rx_callback;
     }
-    std::function<T>& TXCallback(void)
+    std::function<T>& TXCallback()
     {
         return tx_callback;
     }
 
 
     // Check if an RX/TX callback function has been set for the port.
-    bool hasTXCallback(void) const
+    bool hasTXCallback() const
     {
         return tx_callback != nullptr;
     }
-    bool hasRXCallback(void) const
+    bool hasRXCallback() const
     {
         return rx_callback != nullptr;
     }
 
 
     // Check if the port object is
-    bool Exists(void) const
+    bool Exists() const
     {
         if (hasRXCallback() || hasTXCallback()) {
             return true;
@@ -155,26 +155,26 @@ class CommPort
 
 
     // Returns a reference to the TX/RX packet count for modifying
-    unsigned int TXPackets(void) const
+    unsigned int TXPackets() const
     {
         return tx_packets;
     }
-    unsigned int RXPackets(void) const
+    unsigned int RXPackets() const
     {
         return rx_packets;
     }
-    unsigned int& TXPackets(void)
+    unsigned int& TXPackets()
     {
         return tx_packets;
     }
-    unsigned int& RXPackets(void)
+    unsigned int& RXPackets()
     {
         return rx_packets;
     }
 
 
     // Standard display function for a CommPort
-    void PrintPort(void) const
+    void PrintPort() const
     {
         printf("%2u\t\t%u\t%u\t%s\t\t%s\t\t%s\r\n",
                Nbr(),
@@ -191,7 +191,7 @@ class CommPort
 
   protected:
     // Returns the current packet counts to zero
-    void resetPacketCount(void)
+    void resetPacketCount()
     {
         RXPackets() = 0;
         TXPackets() = 0;
@@ -199,7 +199,7 @@ class CommPort
 
 
     // Returns true if the port can provide an RX callback routine
-    bool isReady(void) const
+    bool isReady() const
     {
         return (is_open ? true : hasRXCallback());
     }
@@ -242,7 +242,7 @@ class CommPorts : CommPort<T>
     typename std::vector<CommPort<T>> ports;
     typename std::vector<CommPort<T>>::iterator pIt;
 
-    const CommPorts<T>& sort(void)
+    const CommPorts<T>& sort()
     {
         std::sort(ports.begin(), ports.end(), PortCompare<T>);
         return *this;
@@ -278,12 +278,12 @@ class CommPorts : CommPort<T>
         return tmpPort;
     }
 
-    int count(void) const
+    int count() const
     {
         return ports.size();
     }
 
-    int count_open(void) const
+    int count_open() const
     {
         int count = 0;
 
@@ -295,14 +295,14 @@ class CommPorts : CommPort<T>
         return count;
     }
 
-    bool empty(void) const
+    bool empty() const
     {
         return ports.empty();
     }
 
 
     // Get the total count (across all ports) of each RX/TX packet count
-    unsigned int allRXPackets(void) const
+    unsigned int allRXPackets() const
     {
         unsigned int pcks = 0;
 
@@ -312,7 +312,7 @@ class CommPorts : CommPort<T>
 
         return pcks;
     }
-    unsigned int allTXPackets(void) const
+    unsigned int allTXPackets() const
     {
         unsigned int pcks = 0;
 
@@ -323,7 +323,7 @@ class CommPorts : CommPort<T>
         return pcks;
     }
 
-    void PrintPorts(void)
+    void PrintPorts()
     {
         if (empty() == false) {
 
@@ -335,13 +335,13 @@ class CommPorts : CommPort<T>
         }
     }
 
-    void PrintHeader(void)
+    void PrintHeader()
     {
         printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
         Console::Flush();
     }
 
-    void PrintFooter(void)
+    void PrintFooter()
     {
         printf("==========================\r\n"
                "Total:\t\t%u\t%u\r\n\r\n",
