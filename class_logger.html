@@ -159,6 +159,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><b>filename</b> () co
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The Logger stores and saves the state of the game at each point in time. </p>
+<p>The log stores things such as robot and ball position and velocity as well as debug information about the current play. See the LogFrame.proto file for a full list of what is stored in the log.</p>
 <p>This logger implements a circular buffer for recent history and writes all frames to disk.</p>
 <p>_history is a circular buffer.</p>
 <p>Consider a sequence number for each frame, where the first frame passed to addFrame() has a sequence number of zero and the sequence number is one greater for each subsequent frame.</p>
@@ -176,7 +177,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><b>filename</b> () co
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_logger.html">Logger</a></li>
-    <li class="footer">Generated on Tue Nov 10 2015 00:12:30 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 10 2015 00:32:31 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
