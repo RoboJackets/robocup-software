@@ -12,23 +12,35 @@ set(PY_LIBS)
 # ExternalProject_Get_Property(PY_TOOLS_DIR )
 set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed/mbed_libraries-prefix/src/mbed_libraries)
 
-# library roots
+# Main mbed library
 set(MBED_PATH          ${PY_TOOLS_DIR}/build/mbed)
-set(MBED_NET_PATH      ${PY_TOOLS_DIR}/build/net/eth)
+
+# Networking paths
+set(MBED_CELLULAR_PATH  ${PY_TOOLS_DIR}/build/net/cellular)
+set(MBED_ETH_PATH       ${PY_TOOLS_DIR}/build/net/eth)
+set(MBED_HTTPS_PATH     ${PY_TOOLS_DIR}/build/net/https)
+set(MBED_LWIP_PATH      ${PY_TOOLS_DIR}/build/net/lwip)
+
+# RPC path
+set(MBED_RPC_PATH      ${PY_TOOLS_DIR}/libraries/rpc)
+
+# RTOS path
 set(MBED_RTOS_PATH     ${PY_TOOLS_DIR}/build/rtos)
+
 set(MBED_USB_PATH      ${PY_TOOLS_DIR}/build/usb)
 set(MBED_USB_HOST_PATH ${PY_TOOLS_DIR}/build/usb_host)
 set(MBED_DSP_PATH      ${PY_TOOLS_DIR}/build/dsp)
+
 
 # ------------------------------------------------------------------------------
 # setup processor settings add aditional boards here
 #  LPC1768, LPC11U24, NRF51822, K64F
 
 # TARGET -> has to be set in CMakeLists.txt
-#
+# 
 # MBED_VENDOR -> CPU Manufacturer
-#
-message(STATUS "MBED target set to ${MBED_TARGET}")
+# 
+# message(STATUS "MBED target set to ${MBED_TARGET}")
 # the settings for mbed is really messed up ;)
 if(MBED_TARGET MATCHES "LPC1768")
   set(MBED_VENDOR "NXP")
@@ -37,7 +49,6 @@ if(MBED_TARGET MATCHES "LPC1768")
   set(MBED_CORE "cortex-m3")
   set(MBED_CORE_GENERIC "CORTEX_M")
   set(MBED_INSTRUCTIONSET "M3")
-
   set(MBED_STARTUP "startup_LPC17xx.o")
   set(MBED_SYSTEM "system_LPC17xx.o")
   set(MBED_LINK_TARGET ${MBED_TARGET})
@@ -49,7 +60,6 @@ elseif(MBED_TARGET MATCHES "LPC11U24")
   set(MBED_CORE_GENERIC "CORTEX_M")
   set(MBED_CORE "cortex-m0")
   set(MBED_INSTRUCTIONSET "M0")
-
   set(MBED_STARTUP "startup_LPC11xx.o")
   set(MBED_SYSTEM "system_LPC11Uxx.o")
   set(MBED_LINK_TARGET ${MBED_TARGET})
@@ -61,13 +71,13 @@ elseif(MBED_TARGET MATCHES "RBLAB_NRF51822")
   set(MBED_CORE_GENERIC "CORTEX_M")
   set(MBED_CORE "cortex-m0")
   set(MBED_INSTRUCTIONSET "M0")
-
   set(MBED_STARTUP "startup_NRF51822.o")
   set(MBED_SYSTEM "system_nrf51822.o")
   set(MBED_LINK_TARGET "NRF51822")
 
 else()
    message(FATAL_ERROR "No MBED_TARGET specified or available. Full stop :(")
+
 endif()
 
 # ------------------------------------------------------------------------------
@@ -81,7 +91,7 @@ SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_VENDOR}")
 SET(MBED_DEFINES "${MBED_DEFINES} -DTOOLCHAIN_GCC_ARM")
 SET(MBED_DEFINES "${MBED_DEFINES} -DTOOLCHAIN_GCC")
 
-SET(MBED_CMAKE_CXX_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=c++11")
+SET(MBED_CMAKE_CXX_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES}")
 SET(MBED_CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 
 
@@ -115,22 +125,22 @@ include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TA
 
 
 # add networking
-if(${MBED_USE_NET} STREQUAL "true")
+if(${MBED_USE_ETH} STREQUAL "true")
   #net
-  include_directories("${MBED_NET_PATH}")
-  include_directories("${MBED_NET_PATH}/EthernetInterface")
-  include_directories("${MBED_NET_PATH}/Socket")
-  include_directories("${MBED_NET_PATH}/lwip")
-  include_directories("${MBED_NET_PATH}/lwip/include")
-  include_directories("${MBED_NET_PATH}/lwip/include/ipv4")
-  include_directories("${MBED_NET_PATH}/lwip/include/lwip")
-  include_directories("${MBED_NET_PATH}/lwip/include/netif")
-  include_directories("${MBED_NET_PATH}/lwip-sys")
-  include_directories("${MBED_NET_PATH}/lwip-sys/arch")
-  include_directories("${MBED_NET_PATH}/lwip-eth/arch/TARGET_${MBED_VENDOR}")
+  include_directories("${MBED_ETH_PATH}")
+  include_directories("${MBED_ETH_PATH}/EthernetInterface")
+  include_directories("${MBED_ETH_PATH}/Socket")
+  include_directories("${MBED_ETH_PATH}/lwip")
+  include_directories("${MBED_ETH_PATH}/lwip/include")
+  include_directories("${MBED_ETH_PATH}/lwip/include/ipv4")
+  include_directories("${MBED_ETH_PATH}/lwip/include/lwip")
+  include_directories("${MBED_ETH_PATH}/lwip/include/netif")
+  include_directories("${MBED_ETH_PATH}/lwip-sys")
+  include_directories("${MBED_ETH_PATH}/lwip-sys/arch")
+  include_directories("${MBED_ETH_PATH}/lwip-eth/arch/TARGET_${MBED_VENDOR}")
 
   #library dir
-  set(PY_NET_LIB_DIR ${MBED_NET_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
+  set(PY_NET_LIB_DIR ${MBED_ETH_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
   #add static
   set(MBED_LIBS ${MBED_LIBS} libeth.a)
   #add build arg to py script command
@@ -194,7 +204,30 @@ if(${MBED_USE_DSP} STREQUAL "true")
   set(PY_LIBS ${PY_LIBS} --dsp)
 endif()
 
+# include the mbed paths and link the toolchain where this file is included in another file
 set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 link_directories(${MBED_LINK_DIRS})
-
 include_directories(${MBED_PATH})
+
+
+# set variables to each of the accessory library cmake project files
+set(RPC_MBED_LIB        ${CMAKE_CURRENT_LIST_DIR}/mbed-rpc.cmake      )
+set(MCP23017_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake      )
+set(BURSTSPI_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake     )
+set(SWSPI_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake  )
+set(SWI2C_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake  )
+set(MODSER_MBED_LIB     ${CMAKE_CURRENT_LIST_DIR}/modserial.cmake     )
+set(MODDMA_MBED_LIB     ${CMAKE_CURRENT_LIST_DIR}/moddma.cmake        )
+set(PIXARRY_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/pixelarray.cmake    )
+
+# create a list of which accessory libraries we want to download and add to the common2015 library
+set(MBED_ASSEC_LIBS
+  ${RPC_MBED_LIB}
+  # ${MCP23017_MBED_LIB}
+  ${BURSTSPI_MBED_LIB}
+  # ${SWSPI_MBED_LIB}
+  ${SWI2C_MBED_LIB}
+  ${MODSER_MBED_LIB}
+  ${MODDMA_MBED_LIB}
+  ${PIXARRY_MBED_LIB}
+)

@@ -23,3 +23,10 @@ __pycache__/
 
 # IntelliJ
 .idea
+<<<<<<< HEAD
+
+rj-*.bin
+rj-*.nib
+*run/*-test.bin
+=======
+>>>>>>> master

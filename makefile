@@ -1,4 +1,6 @@
 MAKE_FLAGS=--no-print-directory
+HW_UNIT=default
+all:
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -81,6 +83,56 @@ robot2015:
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
+# I2C bus hardware test
+robot2015-i2c: HW_UNIT=i2c 
+robot2015-i2c: robot2015-test
+robot2015-i2c-prog: HW_UNIT=i2c
+robot2015-i2c-prog: robot2015-test-prog
+
+# IO expander hardware test
+robot2015-io-expander: HW_UNIT=io-expander
+robot2015-io-expander: robot2015-test
+robot2015-io-expander-prog: HW_UNIT=io-expander
+robot2015-io-expander-prog: robot2015-test-prog
+
+# fpga hardware test
+robot2015-fpga: HW_UNIT=fpga
+robot2015-fpga: robot2015-test
+robot2015-fpga-prog: HW_UNIT=fpga
+robot2015-fpga-prog: robot2015-test-prog
+
+# piezo buzzer hardware test
+robot2015-piezo: HW_UNIT=piezo 
+robot2015-piezo: robot2015-test
+robot2015-piezo-prog: HW_UNIT=piezo
+robot2015-piezo-prog: robot2015-test-prog
+
+# general target for calling the hardware tests
+robot2015-test:
+	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test .. && make $(MAKE_FLAGS) robot2015-test
+robot2015-test-prog:
+	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test-prog .. && make $(MAKE_FLAGS) robot2015-test-prog
+
+# run the official mbed test binaries in hardware
+mbed-test:
+	mkdir -p build && cd build && cmake --target mbed-test .. && make $(MAKE_FLAGS) mbed-test
+
+# kicker 2015 firmware
+kicker2015:
+	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
+kicker2015-prog:
+	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
+
+# fpga 2015 synthesis
+fpga2015:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+fpga2015-prog:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015-prog
+
+# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
+firmware2015: robot2015 kicker2015 fpga2015 
+firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
+	
 # Base station 2015 firmware
 base2015:
 	$(call cmake_build_target_fw, base2015)
