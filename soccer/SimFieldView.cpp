@@ -20,7 +20,7 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     setMouseTracking(true);
 
     _posLabel = new QLabel(this);
-    QRect rect = QFontMetrics(_posLabel->font()).boundingRect("   X: 999, Y: 999");
+    QRect rect = QFontMetrics(_posLabel->font()).boundingRect("X: 999, Y: 999");
     _posLabel->setMinimumWidth(rect.width());
 }
 
@@ -75,8 +75,8 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
 void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 
-    _posLabel->move(me->pos());
-    QString s = "   X: ";
+    _posLabel->move(QPoint(me->pos().x() + 12, me->pos().y()));
+    QString s = "X: ";
     s += QString::number(me->pos().x());
     s += " Y: ";
     s += QString::number(me->pos().y());
