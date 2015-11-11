@@ -5,7 +5,6 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-#include <iostream>
 
 using namespace boost;
 using namespace Packet;
