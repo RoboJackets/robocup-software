@@ -73,7 +73,6 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 }
 
 void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
-
     _posLabel->move(QPoint(me->pos().x() + 12, me->pos().y()));
     QString s = "X: ";
     s += QString::number(me->pos().x());

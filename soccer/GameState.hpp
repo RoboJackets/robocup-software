@@ -6,7 +6,8 @@
  *
  * @details Contains information on what period of the game it is, what type of
  * play to run, team scores, time remaining, etc.  During normal gameplay, the
- * information in this class is received from the [ssl refbox](https://github.com/RoboCup-SSL/ssl-refbox)
+ * information in this class is received from the [ssl
+ * refbox](https://github.com/RoboCup-SSL/ssl-refbox)
  * program over the network.
  */
 class GameState {
