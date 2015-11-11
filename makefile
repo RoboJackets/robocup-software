@@ -50,7 +50,7 @@ coverage:
 		-D CMAKE_CXX_FLAGS="--coverage" ../../ && ninja test-soccer test-firmware
 	run/test-soccer		# Kind of hacky, but w/e
 	run/test-firmware
-	coveralls -b ${COV_BUILD_DIR} -r . \
+	-coveralls -b ${COV_BUILD_DIR} -r . \
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
 		-e ${COV_BUILD_DIR}/simulator/ -e ${COV_BUILD_DIR}/firmware/ \
 		-E '(^.*((moc_)|(automoc)|(ui_)|([Tt]est)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
@@ -123,7 +123,7 @@ modernize:
 apidocs:
 	doxygen doc/Doxyfile
 	cp doc/doxygen.css api_docs/html/
-	@echo -e "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
+	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
 
 STYLE_EXCLUDE_DIRS=build \
