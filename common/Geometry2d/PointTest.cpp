@@ -5,10 +5,18 @@
 using namespace std;
 using namespace Geometry2d;
 
+bool floatEqual(float a, float b) {
+    const float EPSILON = 0.00001;
+    return fabs(a-b) < EPSILON;
+}
+
+bool pointEqual(Point p1, Point p2) {
+    return floatEqual(p1.x, p2.x) && floatEqual(p1.y, p2.y);
+}
 /*
  * Tests the constructor and basic operators of the Point class
  */
-TEST(testPoint, basic) {
+TEST(Point, basic) {
     // Test Constructors
     Point defaultConstructed;
     EXPECT_FLOAT_EQ(defaultConstructed.x, 0);
@@ -66,9 +74,23 @@ TEST(testPoint, basic) {
     temp /= 2.5;
 
     EXPECT_EQ(Point(2.5 / 2.5, -4.5 / 2.5), temp);
+
+    EXPECT_FLOAT_EQ(5, Point(3,4).mag());
+    EXPECT_FLOAT_EQ(25, Point(3,4).magsq());
+    EXPECT_FLOAT_EQ(8, Point(2,2).magsq());
+    EXPECT_FLOAT_EQ(sqrtf(8), Point(2,2).mag());
+    EXPECT_FLOAT_EQ(3.5*5.5 + 4.5*6.5, Point(3.5,4.5).dot(Point(5.5,6.5)));
+
+
+    EXPECT_PRED_FORMAT2(pointEqual, direction())
+
 }
 
-TEST(testPoint, clampBig) {
+TEST(Point, rotation) {
+
+}
+
+TEST(Point, clampBig) {
     Point p0(10.0, 10.0);
     p0.clamp(10);
     EXPECT_FLOAT_EQ(10, p0.mag());
@@ -76,7 +98,7 @@ TEST(testPoint, clampBig) {
 
 //  if you clamp a vector to a value that's bigger
 //  than it's magnitued, it shouldn't change
-TEST(testPoint, clampSmall) {
+TEST(Point, clampSmall) {
     Point p0(10, 0);
     p0.clamp(15);
     EXPECT_FLOAT_EQ(10, p0.mag());
