@@ -5,6 +5,7 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <iostream>
 
 using namespace boost;
 using namespace Packet;
@@ -16,6 +17,11 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragMode = DRAG_NONE;
     _dragRobot = -1;
     _dragRobotBlue = false;
+    setMouseTracking(true);
+
+    _posLabel = new QLabel(this);
+    QRect rect = QFontMetrics(_posLabel->font()).boundingRect("   X: 999, Y: 999");
+    _posLabel->setMinimumWidth(rect.width());
 }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
@@ -68,6 +74,14 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 }
 
 void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
+
+    _posLabel->move(me->pos());
+    QString s = "   X: ";
+    s += QString::number(me->pos().x());
+    s += " Y: ";
+    s += QString::number(me->pos().y());
+    _posLabel->setText(s);
+
     switch (_dragMode) {
         case DRAG_SHOOT:
             _dragTo = _worldToTeam * _screenToWorld * me->pos();
