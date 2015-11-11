@@ -5,6 +5,7 @@
 
 #include <FieldView.hpp>
 #include <QUdpSocket>
+#include <QLabel>
 #include <protobuf/SimCommand.pb.h>
 
 class SimFieldView : public FieldView {
@@ -33,6 +34,9 @@ private:
     void placeBall(QPointF pos);
 
     QUdpSocket _simCommandSocket;
+
+    // The label used to display current coordinates of mouse
+    QLabel* _posLabel;
 
     // True while a line is being dragged from the ball
     enum { DRAG_NONE = 0, DRAG_PLACE, DRAG_SHOOT } _dragMode;
