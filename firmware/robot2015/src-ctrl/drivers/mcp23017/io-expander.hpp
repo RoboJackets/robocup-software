@@ -31,9 +31,10 @@ enum IOExpanderPin {
 
 
 /*
- * A digitalOut class meant to replicate basic functionality of the mBed digitalOut
+ * A digitalInOut class meant to replicate basic functionality of the
+ * mBed digitalOut and digitalIn
  */
-class IOExpanderDigitalOut
+class IOExpanderDigitalInOut
 {
  private:
   IOExpanderPin m_pin;
@@ -41,21 +42,26 @@ class IOExpanderDigitalOut
 
  public:
   // Default constructor will setup the hardware
-  IOExpanderDigitalOut()
+  IOExpanderDigitalInOut()
   {
     if (isInit == true)
-      return;
+    {
+        return;
+    }
 
     isInit = true;
   }
 
   // Other constructors for creating objects for pinouts
-  IOExpanderDigitalOut(IOExpanderPin)
+  IOExpanderDigitalInOut(IOExpanderPin pin)
   {
     if (isInit == true)
-      return;
+    {
+        return;
+    }
 
     isInit = true;
+    m_pin = pin;
   }
 
   /*
@@ -78,7 +84,7 @@ class IOExpanderDigitalOut
   /*
    * Allows the equals operator to write to a pin
    */
-  IOExpanderDigitalOut& operator= (int pin)
+  IOExpanderDigitalInOut& operator= (int pin)
   {
     write(pin);
     return *this;
@@ -87,7 +93,7 @@ class IOExpanderDigitalOut
   /*
    * Allows the equals operator to read the state of another IOExpander pin
    */
-  IOExpanderDigitalOut& operator= (IOExpanderDigitalOut& rhs)
+  IOExpanderDigitalInOut& operator= (IOExpanderDigitalInOut& rhs)
   {
     write(rhs.read());
     return *this;
@@ -96,7 +102,7 @@ class IOExpanderDigitalOut
   /*
    * Allows the equals operator to read the state of another normal IO pin
    */
-  IOExpanderDigitalOut& operator= (DigitalInOut& rhs)
+  IOExpanderDigitalInOut& operator= (DigitalInOut& rhs)
   {
     write(rhs.read());
     return *this;
@@ -111,4 +117,4 @@ class IOExpanderDigitalOut
   }
 };
 
-bool IOExpanderDigitalOut::isInit = false;
+bool IOExpanderDigitalInOut::isInit = false;
