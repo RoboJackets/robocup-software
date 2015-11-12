@@ -59,6 +59,9 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
         QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
     _posLabel->setMinimumWidth(rect.width());
     _posLabel->setStyleSheet("QLabel { color : red; }");
+
+    // enable mouse tracking so we can update position label
+    setMouseTracking(true);
 }
 
 void FieldView::leaveEvent(QEvent* event) { _posLabel->setVisible(false); }
