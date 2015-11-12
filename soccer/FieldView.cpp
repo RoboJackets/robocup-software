@@ -59,8 +59,20 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
         QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
     _posLabel->setMinimumWidth(rect.width());
     _posLabel->setStyleSheet("QLabel { color : red; }");
+}
 
-    _posCursor = new QCursor();
+void FieldView::leaveEvent(QEvent* event) { _posLabel->setVisible(false); }
+
+void FieldView::enterEvent(QEvent* event) { _posLabel->setVisible(true); }
+
+void FieldView::mouseMoveEvent(QMouseEvent* me) {
+    _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
+    Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    QString s = "X: ";
+    s += QString::number(roundf(pos.x * 100) / 100);
+    s += " Y: ";
+    s += QString::number(roundf(pos.y * 100) / 100);
+    _posLabel->setText(s);
 }
 
 std::shared_ptr<LogFrame> FieldView::currentFrame() {
@@ -85,18 +97,6 @@ void FieldView::paintEvent(QPaintEvent* e) {
 
     // antialiasing drastically improves rendering quality
     p.setRenderHint(QPainter::Antialiasing);
-
-    // Auto-hide _posLabel when cursor is out of field
-    QPoint pos = _posCursor->pos();
-    QPoint origin = QPoint(0, 0);
-    if (pos.x() < this->mapToGlobal(origin).x() ||
-        pos.y() < this->mapToGlobal(origin).y() ||
-        pos.x() > this->mapToGlobal(origin).x() + this->width() ||
-        pos.y() > this->mapToGlobal(origin).y() + this->height()) {
-        _posLabel->setVisible(false);
-    } else {
-        _posLabel->setVisible(true);
-    }
 
     if (!live) {
         // Non-live border

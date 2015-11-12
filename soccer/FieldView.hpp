@@ -54,6 +54,9 @@ public:
 protected:
     virtual void paintEvent(QPaintEvent* e) override;
     virtual void resizeEvent(QResizeEvent* e) override;
+    virtual void enterEvent(QEvent*) override;
+    virtual void leaveEvent(QEvent*) override;
+    virtual void mouseMoveEvent(QMouseEvent*) override;
 
     virtual void drawWorldSpace(QPainter& p);
     virtual void drawTeamSpace(QPainter& p);
@@ -75,8 +78,6 @@ protected:
 
     // Label used to display current coordinates of mouse
     QLabel* _posLabel;
-    // Cursor used to trace mouse position when it is out of widget
-    QCursor* _posCursor;
 
     // Rotation of the field in 90-degree increments (0 to 3).
     int _rotate;
