@@ -17,11 +17,6 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragRobot = -1;
     _dragRobotBlue = false;
     setMouseTracking(true);
-
-    _posLabel = new QLabel(this);
-    QRect rect =
-        QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
-    _posLabel->setMinimumWidth(rect.width());
 }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {

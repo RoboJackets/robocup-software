@@ -52,6 +52,15 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     p.setColor(QPalette::Window, QColor(0, 85.0, 0));
     setPalette(p);
     setAutoFillBackground(true);
+
+    // Initialize the label and cursor for hovering display
+    _posLabel = new QLabel(this);
+    QRect rect =
+        QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
+    _posLabel->setMinimumWidth(rect.width());
+    _posLabel->setStyleSheet("QLabel { color : red; }");
+
+    _posCursor = new QCursor();
 }
 
 std::shared_ptr<LogFrame> FieldView::currentFrame() {
@@ -76,6 +85,18 @@ void FieldView::paintEvent(QPaintEvent* e) {
 
     // antialiasing drastically improves rendering quality
     p.setRenderHint(QPainter::Antialiasing);
+
+    // Auto-hide _posLabel when cursor is out of field
+    QPoint pos = _posCursor->pos();
+    QPoint origin = QPoint(0, 0);
+    if (pos.x() < this->mapToGlobal(origin).x() ||
+        pos.y() < this->mapToGlobal(origin).y() ||
+        pos.x() > this->mapToGlobal(origin).x() + this->width() ||
+        pos.y() > this->mapToGlobal(origin).y() + this->height()) {
+        _posLabel->setVisible(false);
+    } else {
+        _posLabel->setVisible(true);
+    }
 
     if (!live) {
         // Non-live border
