@@ -9,6 +9,7 @@
 
 #include <set>
 #include <memory>
+#include <QLabel>
 
 class Logger;
 
@@ -71,6 +72,11 @@ protected:
     Geometry2d::TransformMatrix _screenToWorld;
     Geometry2d::TransformMatrix _worldToTeam;
     Geometry2d::TransformMatrix _teamToWorld;
+
+    // Label used to display current coordinates of mouse
+    QLabel* _posLabel;
+    // Cursor used to trace mouse position when it is out of widget
+    QCursor* _posCursor;
 
     // Rotation of the field in 90-degree increments (0 to 3).
     int _rotate;
