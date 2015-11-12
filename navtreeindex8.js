@@ -1,5 +1,9 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aabb7612bd9fe60c5bb807822d0cbc585":[12,0,4,14,6,1,0,11],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed0360fc34a1d8f004d2349362bdb72":[12,0,4,14,6,1,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html":[12,0,4,14,6,1,0,0],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html":[12,0,4,14,6,2,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528":[12,0,4,14,6,2,0,3],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528":[12,0,4,14,6,2,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a29ca49df546b34a008bebe2fafc80d62":[12,0,4,14,6,2,0,8],
@@ -13,8 +17,8 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html":[12,0,4,14,6,2,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html":[12,0,4,14,6,3,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a2b3807bee7f9df4c34785aafd7d1db99":[12,0,4,14,6,3,0,12],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,4,14,6,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,4,14,6,3,0,15],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,4,14,6,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a3984aaf96d2d82f81260fc7a5526aafb":[12,0,4,14,6,3,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a467b08d0245e7114cd3814bb0a683969":[12,0,4,14,6,3,0,16],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a4fd3e448729a69f8e009d4cd819e8017":[12,0,4,14,6,3,0,11],
@@ -97,8 +101,8 @@ var NAVTREEINDEX8 =
 "functions_d.html":[12,3,0,4],
 "functions_e.html":[12,3,0,5],
 "functions_f.html":[12,3,0,6],
-"functions_func.html":[12,3,1],
 "functions_func.html":[12,3,1,0],
+"functions_func.html":[12,3,1],
 "functions_func_a.html":[12,3,1,1],
 "functions_func_b.html":[12,3,1,2],
 "functions_func_c.html":[12,3,1,3],
@@ -156,10 +160,10 @@ var NAVTREEINDEX8 =
 "group__matrices.html":[10,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,3,0,2],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,3,0,4],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,3,0,12],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
 "hierarchy.html":[12,2],
 "index.html":[],
 "md_doc__build_systems.html":[0],
@@ -245,9 +249,5 @@ var NAVTREEINDEX8 =
 "struct_planning_1_1_face_point_command.html":[12,0,6,16],
 "struct_planning_1_1_face_point_command.html#a378e4b3185c100e6bf3c06123385bd70":[12,0,6,16,0],
 "struct_planning_1_1_face_point_command.html#ac1108492a3f0e820681da4cc1c542686":[12,0,6,16,1],
-"struct_planning_1_1_interpolated_path_1_1_entry.html":[12,0,6,4,0],
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a20e5945107ea0781d23782b9fe6fb74a":[12,0,6,4,0,0],
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a63ad7df28ccfe6e3542a2ce08a22821d":[12,0,6,4,0,3],
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a816c31b83fe7b5b4c3abf5dbbbd4a494":[12,0,6,4,0,4],
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a8e922f07c96d1c4766d4fcc172c59498":[12,0,6,4,0,1]
+"struct_planning_1_1_interpolated_path_1_1_entry.html":[12,0,6,4,0]
 };

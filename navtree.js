@@ -36,14 +36,14 @@ var NAVTREEINDEX =
 [
 ".html",
 "class_configuration.html#ad54e26ead2b671ab0733db7cf75ec272",
-"class_geometry2d_1_1_polygon.html#a5d9cd6f9e8ab7446f2fd091d1bdfdcd0",
-"class_our_robot.html#a639eecf0232af72c5845feca21ee9d70",
-"class_protobuf_tree.html#ac78fd033bbd6f3576ed966bfab2db3b0",
-"class_window.html#a942c8fb56496b89fa96a4924ec3775ca",
-"classgameplay_1_1plays_1_1stopped_1_1_stopped.html",
-"classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528",
-"struct_planning_1_1_interpolated_path_1_1_entry.html#a95dd1c2a1e736b0ab79db8d2a217ca4c"
+"class_geometry2d_1_1_polygon.html#a4106370f4b66a53fe69765dc84f2c654",
+"class_our_robot.html#a52e73bbe9a4e546a0103838e1a1da08e",
+"class_protobuf_tree.html#aa14929bd519566f13d832d8f555deb65a8748c0e0fb524378d15578035a3d9a58",
+"class_window.html#a1980b8e6cb4473297d8ca496be3fd97f",
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#af1257f1c23de3eafb4ca3848fbde6413",
+"classgameplay_1_1skills_1_1aim_1_1_aim.html#ae988523eb18b2303e280d2ebb60c10a8",
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aabb7612bd9fe60c5bb807822d0cbc585",
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a20e5945107ea0781d23782b9fe6fb74a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
