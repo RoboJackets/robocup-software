@@ -49,3 +49,8 @@ $ sudo spacenavd
 You can also use the systemd service file included with the libspnav source to have spacenavd run at bootup.
 
 See the docs for SpaceNavJoystick for more info and button layouts.
+
+
+TODO: Add in the actual descriptions
+
+![Status Panel](robot-status-panel.png "Status Panel")
