@@ -8,10 +8,12 @@ class OurRobot;
 
 /**
  * @brief Handles computer-side motion control
- * @details It is responsible for most of what gets sent out in a RadioTx
- *     packet. The MotionControl object is given an OurRobot at initialization
- *     and from then on will set the values in that robot's RadioTx packet
- *     directly whenever run() or stopped() is called.
+ * @details This class handles the details of creating velocity commands for a
+ *     robot given the desired path to follow.  It is responsible for most of
+ *     what gets sent out in a RadioTx packet. The MotionControl object is given
+ *     an OurRobot at initialization and from then on will set the values in
+ *     that robot's RadioTx packet directly whenever run() or stopped() is
+ *     called.
  */
 class MotionControl {
 public:
