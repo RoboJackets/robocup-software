@@ -175,7 +175,7 @@ modernize:
 apidocs:
 	doxygen doc/Doxyfile
 	cp doc/doxygen.css api_docs/html/
-	@echo -e "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
+	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
 
 STYLE_EXCLUDE_DIRS=build \
