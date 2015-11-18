@@ -1,7 +1,7 @@
 
 # set the AVR toolchain
-set(CMAKE_TOOLCHAIN_FILE ${ATTINY_TOOLCHAIN_FILE})
-include(${ATTINY_TOOLCHAIN_FILE})
+set(CMAKE_TOOLCHAIN_FILE attiny_toolchain.cmake)
+include(attiny_toolchain.cmake)
 
 # F_CPU specifies the frequency (in Hz) of the cpu clock so that the delay functions work appropriately
 # the ATTiny13 has an internal 9.6MHz clock with the prescaler, don't scale back
