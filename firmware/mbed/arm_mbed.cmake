@@ -2,15 +2,15 @@
 # Copyright by Uwe Arzt mailto:mail@uwe-arzt.de, https://uwe-arzt.de
 # under BSD License, see https://uwe-arzt.de/bsd-license/
 # ------------------------------------------------------------------------------
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
-set(PY_TOOLCHAIN_OPT "GCC_ARM")
-set(PY_MCU_OPT ${MBED_TARGET})
-set(PY_LIBS)
+set(MBED_TOOLCHAIN_OPT "GCC_ARM")
+set(MBED_OPT_LIBS)
 
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
-# ExternalProject_Get_Property(PY_TOOLS_DIR )
-set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed/mbed_libraries-prefix/src/mbed_libraries)
+set(MBED_LIBS_REPO_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_libraries-prefix/src/mbed_libraries)
+
 
 # ------------------------------------------------------------------------------
 # setup processor settings add aditional boards here
@@ -76,7 +76,7 @@ SET(MBED_CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 
 
 # Main mbed library
-set(MBED_PATH          ${PY_TOOLS_DIR}/build/mbed)
+set(MBED_PATH ${MBED_LIBS_REPO_DIR}/build/mbed)
 
 # ------------------------------------------------------------------------------
 # setup precompiled mbed files which will be needed for all projects
@@ -107,9 +107,8 @@ include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TA
 
 # add networking
 if(${MBED_USE_ETH})
-    set(MBED_ETH_PATH ${PY_TOOLS_DIR}/build/net/eth)
+    set(MBED_ETH_PATH ${MBED_LIBS_REPO_DIR}/build/net/eth)
 
-    #net
     include_directories("${MBED_ETH_PATH}")
     include_directories("${MBED_ETH_PATH}/EthernetInterface")
     include_directories("${MBED_ETH_PATH}/Socket")
@@ -122,36 +121,37 @@ if(${MBED_USE_ETH})
     include_directories("${MBED_ETH_PATH}/lwip-sys/arch")
     include_directories("${MBED_ETH_PATH}/lwip-eth/arch/TARGET_${MBED_VENDOR}")
 
-    #library dir
-    set(PY_NET_LIB_DIR ${MBED_ETH_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
-    set(MBED_LIBS ${MBED_LIBS} ${PY_NET_LIB_DIR}/libeth.a)
+    # library
+    set(MBED_NET_LIB_DIR ${MBED_ETH_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    set(MBED_LIBS ${MBED_LIBS} ${MBED_NET_LIB_DIR}/libeth.a)
 
-    #add build arg to py script command
-    set(PY_LIBS ${PY_LIBS} --eth)
+    # add build arg to py script command
+    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --eth)
 
     # supress lwip warnings with 0x11
     set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-literal-suffix")
 
-    #force rtos
+    # force rtos
     set(MBED_USE_RTOS true)
 endif()
 
 # add rtos
 if(${MBED_USE_RTOS})
-    set(MBED_RTOS_PATH     ${PY_TOOLS_DIR}/build/rtos)
+    set(MBED_RTOS_PATH ${MBED_LIBS_REPO_DIR}/build/rtos)
     include_directories("${MBED_RTOS_PATH}")
     include_directories("${MBED_RTOS_PATH}/TARGET_${MBED_CORE_GENERIC}")
 
-    set(PY_RTOS_LIB_DIR ${MBED_RTOS_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
-    set(MBED_LIBS ${MBED_LIBS} ${PY_RTOS_LIB_DIR}/librtos.a ${PY_RTOS_LIB_DIR}/librtx.a)
-    set(PY_LIBS ${PY_LIBS} --rtos)
+    set(MBED_RTOS_LIB_DIR ${MBED_RTOS_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    set(MBED_LIBS ${MBED_LIBS} ${MBED_RTOS_LIB_DIR}/librtos.a ${MBED_RTOS_LIB_DIR}/librtx.a)
+    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --rtos)
 endif()
 
 # add usb
 if(${MBED_USE_USB})
-    set(MBED_USB_PATH      ${PY_TOOLS_DIR}/build/usb)
-    set(MBED_USB_HOST_PATH ${PY_TOOLS_DIR}/build/usb_host)
-    #usb
+    set(MBED_USB_PATH      ${MBED_LIBS_REPO_DIR}/build/usb)
+    set(MBED_USB_HOST_PATH ${MBED_LIBS_REPO_DIR}/build/usb_host)
+
+    # usb
     include_directories("${MBED_USB_PATH}/USBAudio")
     include_directories("${MBED_USB_PATH}/USBDevice")
     include_directories("${MBED_USB_PATH}/USBHID")
@@ -159,7 +159,7 @@ if(${MBED_USE_USB})
     include_directories("${MBED_USB_PATH}/USBMSD")
     include_directories("${MBED_USB_PATH}/USBSerial")
 
-    #usb host
+    # usb host
     include_directories("${MBED_USB_HOST_PATH}/USBHost")
     include_directories("${MBED_USB_HOST_PATH}/USBHost3GModule")
     include_directories("${MBED_USB_HOST_PATH}/USBHostHID")
@@ -168,37 +168,36 @@ if(${MBED_USE_USB})
     include_directories("${MBED_USB_HOST_PATH}/USBHostMSD")
     include_directories("${MBED_USB_HOST_PATH}/USBHostSerial")
 
-    #library dirs
-    set(PY_USB_LIB_DIR      ${MBED_USB_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
-    set(PY_USB_HOST_LIB_DIR ${MBED_USB_HOST_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
-    #add statics
-    set(MBED_LIBS ${MBED_LIBS} libUSBDevice.a libUSBHost.a)
+    # libraries
+    set(MBED_USB_LIB_DIR      ${MBED_USB_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    set(MBED_USB_HOST_LIB_DIR ${MBED_USB_HOST_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    set(MBED_LIBS ${MBED_LIBS} ${MBED_USB_LIB_DIR}/libUSBDevice.a ${MBED_USB_HOST_LIB_DIR}/libUSBHost.a)
+
     #add build arg to py script command
-    set(PY_LIBS ${PY_LIBS} --usb --usb_host)
+    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --usb --usb_host)
 endif()
 
 # add dsp
 if(${MBED_USE_DSP})
-    set(MBED_DSP_PATH      ${PY_TOOLS_DIR}/build/dsp)
+    set(MBED_DSP_PATH ${MBED_LIBS_REPO_DIR}/build/dsp)
 
-    #dsp
     include_directories("${MBED_DSP_PATH}")
 
-    #library dir
-    set(PY_DSP_LIB_DIR ${MBED_DSP_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
-    #add static
-    set(MBED_LIBS ${MBED_LIBS} libcmsis_dsp.a libdsp.a)
-    #add build arg to py script command
-    set(PY_LIBS ${PY_LIBS} --dsp)
+    # library
+    set(MBED_DSP_LIB_DIR ${MBED_DSP_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    set(MBED_LIBS ${MBED_LIBS} ${MBED_DSP_LIB_DIR}/libcmsis_dsp.a ${MBED_DSP_LIB_DIR}/libdsp.a)
+
+    # add build arg to py script command
+    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --dsp)
 endif()
 
 # rpc
 if(${MBED_USE_RPC})
-    include_directories(${PY_TOOLS_DIR}/build/rpc)
+    include_directories(${MBED_LIBS_REPO_DIR}/build/rpc)
 
-    set(MBED_LIBS ${MBED_LIBS} ${PY_TOOLS_DIR}/build/rpc/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT}/librpc.a)
+    set(MBED_LIBS ${MBED_LIBS} ${MBED_LIBS_REPO_DIR}/build/rpc/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT}/librpc.a)
 
-    set(PY_LIBS ${PY_LIBS} --rpc)
+    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --rpc)
 endif()
 
 # include the mbed paths and link the toolchain where this file is included in another file
@@ -207,22 +206,16 @@ link_directories(${MBED_LINK_DIRS})
 include_directories(${MBED_PATH})
 
 
-# set variables to each of the accessory library cmake project files
-set(MCP23017_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake      )
-set(BURSTSPI_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake     )
-set(SWSPI_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake  )
-set(SWI2C_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake  )
-set(MODSER_MBED_LIB     ${CMAKE_CURRENT_LIST_DIR}/modserial.cmake     )
-set(MODDMA_MBED_LIB     ${CMAKE_CURRENT_LIST_DIR}/moddma.cmake        )
-set(PIXARRY_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/pixelarray.cmake    )
-
-# create a list of which accessory libraries we want to download and add to the common2015 library
-set(MBED_ASSEC_LIBS
-    # ${MCP23017_MBED_LIB}
-    ${BURSTSPI_MBED_LIB}
-    # ${SWSPI_MBED_LIB}
-    ${SWI2C_MBED_LIB}
-    ${MODSER_MBED_LIB}
-    ${MODDMA_MBED_LIB}
-    ${PIXARRY_MBED_LIB}
+# official MBED libraries
+include(ExternalProject)
+ExternalProject_Add(mbed_libraries
+    URL                 ${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools
+    CONFIGURE_COMMAND   ""
+    BUILD_COMMAND       python2 ${MBED_LIBS_REPO_DIR}/workspace_tools/build.py
+                                --mcu=${MBED_TARGET}
+                                --tool=${MBED_TOOLCHAIN_OPT}
+                                ${MBED_OPT_LIBS}
+    INSTALL_COMMAND     ""
+    UPDATE_COMMAND      ""
 )
+set_target_properties(mbed_libraries PROPERTIES EXCLUDE_FROM_ALL TRUE)

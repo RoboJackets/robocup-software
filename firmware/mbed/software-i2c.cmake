@@ -1,7 +1,5 @@
 # Software SPI allows non-standard SPI pins to be used for interfacing with SPI devices
 
-message(STATUS "downloading source files for the SoftwareI2C library")
-
 ExternalProject_Add(swi2c_library
     HG_REPOSITORY       https://developer.mbed.org/users/p3p/code/SoftwareI2C
     HG_TAG              2:8670e78c4b63

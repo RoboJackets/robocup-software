@@ -1,8 +1,6 @@
 # The MCP23017 is a Digital I/O expander chip that we use to get more I/O pins
 # This CMake script pulls down an MBED library for interfacing with it
 
-message(STATUS "downloading source files for the MODSERIAL library")
-
 ExternalProject_Add(modserial_library
     HG_REPOSITORY       https://developer.mbed.org/users/Sissors/code/MODSERIAL
     HG_TAG              39:8ef4f91813fd

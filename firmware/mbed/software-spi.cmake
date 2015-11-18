@@ -1,7 +1,5 @@
 # Software SPI allows non-standard SPI pins to be used for interfacing with SPI devices
 
-message(STATUS "downloading source files for the SWSPI library")
-
 ExternalProject_Add(swspi_library
     HG_REPOSITORY       https://developer.mbed.org/users/davervw/code/SWSPI
     HG_TAG              0:6a500a08c7fd

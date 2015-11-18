@@ -80,7 +80,7 @@ set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)
 # the official mbed test builds
 set(MBED_TEST_UNIT 1)
 add_custom_target(mbed-test
-    COMMAND sudo python2 ${PY_TOOLS_DIR}/workspace_tools/make.py --mcu=${MBED_TARGET} --tool=GCC_ARM
+    COMMAND sudo python2 ${MBED_LIBS_REPO_DIR}/workspace_tools/make.py --mcu=${MBED_TARGET} --tool=GCC_ARM
         --disk=/media/jonathan/MBED --serial=/dev/mbed --verbose -p ${MBED_TEST_UNIT} --jobs=0 --baud=9600
     DEPENDS mbed_libraries
     COMMENT "building mbed test binary"

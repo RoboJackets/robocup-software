@@ -1,8 +1,6 @@
 # The MCP23017 is a Digital I/O expander chip that we use to get more I/O pins
 # This CMake script pulls down an MBED library for interfacing with it
 
-message(STATUS "downloading source files for the MCP23017")
-
 ExternalProject_Add(mcp23017_library
     HG_REPOSITORY       https://developer.mbed.org/users/Nurbol/code/MCP23017
     HG_TAG              0:69c047b34ca6

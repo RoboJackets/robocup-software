@@ -1,8 +1,6 @@
 # MODDMA GPDMA Controller New features: transfer pins to memory buffer
 # under periodic timer control and send double buffers to DAC
 
-message(STATUS "downloading source files for the MODDMA library")
-
 ExternalProject_Add(moddma_library
     HG_REPOSITORY       https://developer.mbed.org/users/AjK/code/MODDMA
     HG_TAG              17:97a16bf2ff43

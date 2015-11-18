@@ -22,8 +22,7 @@ set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
 set(HW_TEST_SCRIPT ${MBED_COPY_SCRIPT})
 
 # sets many variables and paths related to building for the MBED
-set(MBED_ENV_SETUP_FILE ${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
-include(${MBED_ENV_SETUP_FILE})
+include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:
 # set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})

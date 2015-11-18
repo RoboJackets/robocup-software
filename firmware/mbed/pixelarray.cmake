@@ -8,8 +8,6 @@
 # take _too_ long). The main disadvantage is that it requires the use of
 # an SPI peripheral.
 
-message(STATUS "downloading source files for the PixelArray library")
-
 ExternalProject_Add(pixelarray_library
     HG_REPOSITORY       https://developer.mbed.org/users/JacobBramley/code/PixelArray
     HG_TAG              5:47802e75974e

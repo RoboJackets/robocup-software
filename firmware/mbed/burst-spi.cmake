@@ -3,8 +3,6 @@
 # and large payloads. With a small number of bytes the setting up and finishing
 # time will remove any advantage.
 
-message(STATUS "downloading source files for the BurstSPI library")
-
 ExternalProject_Add(burstspi_library
     HG_REPOSITORY       https://developer.mbed.org/users/Sissors/code/BurstSPI
     HG_TAG              13:bc069279eb37
