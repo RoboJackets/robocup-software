@@ -16,6 +16,7 @@ set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # firmware source files
 set(robot2015_SRC
+    "ball_sense.cpp"
     "commands.cpp"
     "console.cpp"
     "ds2411.cpp"

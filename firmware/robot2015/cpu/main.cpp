@@ -3,10 +3,12 @@
 #include "commands.hpp"
 #include "logger.hpp"
 #include "radio.hpp"
+#include "ball_sense.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
+
 
 /*
  * some forward declarations to make the code easier to read
@@ -119,6 +121,8 @@ void initConsoleRoutine(void)
 	{
 		Console::Init();
 
+		ball_sense b;
+
 		while (true)
 		{
 			//check console communications, currently does nothing
@@ -136,6 +140,8 @@ void initConsoleRoutine(void)
 			//main loop heartbeat
 			wait(0.1);
 			ledTwo = !ledTwo;
+
+			b.update_ball_sensor();
 		}
 
 		//clear light for main loop (shows its complete)
