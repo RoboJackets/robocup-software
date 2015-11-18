@@ -9,8 +9,8 @@ void analogUpdate(void const* args);
 
 class Buzzer : public AnalogOut {
 public:
-    Buzzer() : AnalogOut(RJ_SPEAKER) {};
-    ~Buzzer() {};
+    Buzzer() : AnalogOut(RJ_SPEAKER){};
+    ~Buzzer(){};
 
     void play(float freq, int dur, float vol = 1.0);
 

@@ -15,8 +15,7 @@ bool testPass = false;
 std::vector<unsigned int> freq1;
 std::vector<unsigned int> freq2;
 
-int main()
-{
+int main() {
     DigitalOut good(LED1, 0);
     DigitalOut bad1(LED2, 0);
     DigitalOut bad2(LED3, 0);
@@ -25,7 +24,7 @@ int main()
 
     SoftwareI2C i2c(RJ_I2C_SDA, RJ_I2C_SCL);
 
-    uint8_t buf[2] = { 0x01, 0x02};
+    uint8_t buf[2] = {0x01, 0x02};
 
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
@@ -37,7 +36,8 @@ int main()
     // Test on low bus frequency
     // i2c.frequency(100000);
 
-    // For both frequencies, we check 1 additional address that should always fail for the
+    // For both frequencies, we check 1 additional address that should always
+    // fail for the
     // case where there's a response on every valid address of the IO expander.
     for (unsigned int addrOffset = 0; addrOffset < 0xFF; addrOffset++) {
         bool nack, ack = false;
@@ -47,16 +47,17 @@ int main()
         // The MCP23017's sequence for reading a register
         // ACKS should be received both times, but we OR them
         // together for the test.
-        // ack = 
+        // ack =
         i2c.write(addr, 0x01);
         // pc.printf("ACK:\t%u\r\n", ack);
 
-        // nack = 
+        // nack =
         i2c.read(addr, buf, 2);
-//         pc.printf("NACK:\t%u\r\n    0x%02X\t0x%02X\r\n", nack);
-        pc.printf("Addr:\t0x%02X\r\n  Rec. 1:\t0x%02X\r\n  Rec. 2:\t0x%02X\r\n", addr, buf[0], buf[1]);
+        //         pc.printf("NACK:\t%u\r\n    0x%02X\t0x%02X\r\n", nack);
+        pc.printf("Addr:\t0x%02X\r\n  Rec. 1:\t0x%02X\r\n  Rec. 2:\t0x%02X\r\n",
+                  addr, buf[0], buf[1]);
 
-        //pc.printf("REG:\t%0x%04X\r\n\r\n", reg);
+        // pc.printf("REG:\t%0x%04X\r\n\r\n", reg);
 
         // if (ack && !nack) {
         //     freq1.push_back(addr);
@@ -80,22 +81,26 @@ int main()
     // }
 
     // // Test results
-    // pc.printf("\r\n100kHz Test:\t%s\t(%u ACKS)\r\n", freq1.empty() ? "FAIL" : "PASS", freq1.size());
-    // pc.printf("400kHz Test:\t%s\t(%u ACKS)\r\n", freq2.empty() ? "FAIL" : "PASS", freq2.size());
+    // pc.printf("\r\n100kHz Test:\t%s\t(%u ACKS)\r\n", freq1.empty() ? "FAIL" :
+    // "PASS", freq1.size());
+    // pc.printf("400kHz Test:\t%s\t(%u ACKS)\r\n", freq2.empty() ? "FAIL" :
+    // "PASS", freq2.size());
 
-    // Store the number of ACKs from the low frequency so we can just modify its vector instead of making a new one
+    // Store the number of ACKs from the low frequency so we can just modify its
+    // vector instead of making a new one
     size_t freq1_acks = freq1.size();
 
     // Merge the 2 vectors together & remove duplicate values
     freq1.insert(freq1.end(), freq2.begin(), freq2.end());
-    sort( freq1.begin(), freq1.end() );
-    freq1.erase( std::unique( freq1.begin(), freq1.end() ), freq1.end() );
+    sort(freq1.begin(), freq1.end());
+    freq1.erase(std::unique(freq1.begin(), freq1.end()), freq1.end());
 
     // Final results of the test
     testPass = (freq2.size() == freq1_acks) && freq1.size() == 9;
 
     pc.printf("\r\n=================================\r\n");
-    pc.printf("========== TEST %s ==========\r\n", testPass ? "PASSED" : "FAILED");
+    pc.printf("========== TEST %s ==========\r\n",
+              testPass ? "PASSED" : "FAILED");
     pc.printf("=================================DONE");
 
     // Turn on the corresponding LED(s)

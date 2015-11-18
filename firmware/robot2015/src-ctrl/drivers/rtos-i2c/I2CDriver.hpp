@@ -6,19 +6,16 @@
 
 #include "DigitalOut.h"
 
-
-namespace mbed
-{
+namespace mbed {
 /// I2C driver based on mbed RTOS and I2C-C-API.
 /// Supports Master and Slave mode
-class I2CDriver
-{
+class I2CDriver {
 public:
     /// Status returned by the receiveSlave() function
     enum SlaveRxStatus {
-        NoData         = 0,
-        ReadAddressed  = 1,
-        WriteGeneral   = 2,
+        NoData = 0,
+        ReadAddressed = 1,
+        WriteGeneral = 2,
         WriteAddressed = 3
     };
 
@@ -27,7 +24,8 @@ public:
      *  @param sda I2C data line pin
      *  @param scl I2C clock line pin
      *
-     *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
+     *  @note Has to be created in a thread context, i.e. within the main or
+     * some other function. A global delaration does not work
      */
     I2CDriver(PinName sda, PinName scl, int hz = 100000, int slaveAdr = 0);
 
@@ -35,9 +33,7 @@ public:
     *
     *  @param hz The bus frequency in hertz
     */
-    void frequency(int hz) {
-        m_freq = hz;
-    }
+    void frequency(int hz) { m_freq = hz; }
 
     /** Read from an I2C slave
      *
@@ -57,7 +53,8 @@ public:
 
     /** Read from a given I2C slave register
      *
-     * Performs a complete write-register-read-data-transaction. The bottom bit of
+     * Performs a complete write-register-read-data-transaction. The bottom bit
+     * of
      * the address is forced to 1 to indicate a read.
      *
      *  @param address 8-bit I2C slave address [ addr | 1 ]
@@ -70,7 +67,8 @@ public:
      *       0 on success (ack),
      *   non-0 on failure (nack)
      */
-    int readMaster(int address, uint8_t _register, char* data, int length, bool repeated = false);
+    int readMaster(int address, uint8_t _register, char* data, int length,
+                   bool repeated = false);
 
     /** Read a single byte from the I2C bus
      *
@@ -95,7 +93,8 @@ public:
      *       0 on success (ack),
      *   non-0 on failure (nack)
      */
-    int writeMaster(int address, const char *data, int length, bool repeated = false);
+    int writeMaster(int address, const char* data, int length,
+                    bool repeated = false);
 
     /** Write single byte out on the I2C bus
      *
@@ -113,9 +112,7 @@ public:
      *  signifcant bit). If set to 0, the slave will only respond to the
      *  general call address.
      */
-    void addressSlave(int address) {
-        m_slaveAdr = (address & 0xff) | 1;
-    }
+    void addressSlave(int address) { m_slaveAdr = (address & 0xff) | 1; }
 
     /** Checks to see if this I2C Slave has been addressed.
      *
@@ -136,9 +133,10 @@ public:
      *  @returns
      *       0 on success,
      *   non-0 otherwise
-     * ... no! instead it returns number of bytes read minus one ... weird, guess its a bug in the official lib
+     * ... no! instead it returns number of bytes read minus one ... weird,
+     * guess its a bug in the official lib
      */
-    int readSlave(char *data, int length);
+    int readSlave(char* data, int length);
 
     /** Read a single byte from an I2C master.
     *
@@ -156,7 +154,7 @@ public:
      *       0 on success,
      *   non-0 otherwise
      */
-    int writeSlave(const char *data, int length);
+    int writeSlave(const char* data, int length);
 
     /** Write a single byte to an I2C master.
     *
@@ -168,22 +166,25 @@ public:
     */
     int writeSlave(int data);
 
-
     /// Creates a start condition on the I2C bus
     void startMaster();
 
-    ///Creates a stop condition on the I2C bus
+    /// Creates a stop condition on the I2C bus
     void stopSlave();
 
     /// Creates a stop condition on the I2C bus
-    /// If unsccessful because someone on the bus holds the scl line down it returns "false" after 23µs
-    /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz and 3-4µs @ 400kHz.
+    /// If unsccessful because someone on the bus holds the scl line down it
+    /// returns "false" after 23µs
+    /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz
+    /// and 3-4µs @ 400kHz.
     bool stopMaster();
 
     /// Wait until the i2c driver becomes available.
     ///
-    /// Useful if you want to run a sequence of command without interrution by another thread.
-    /// There's no need to call this function for running single request, because all driver functions
+    /// Useful if you want to run a sequence of command without interrution by
+    /// another thread.
+    /// There's no need to call this function for running single request,
+    /// because all driver functions
     /// will lock the device for exclusive access automatically.
     void lock();
 

@@ -30,7 +30,8 @@
 //     NVIC_EnableIRQ(SW_SPI_TIMER_IRQn);
 // }
 
-// void setup_timer(LPC_TIM_TypeDef* timer, uint8_t match_num, bool enable_int = false)
+// void setup_timer(LPC_TIM_TypeDef* timer, uint8_t match_num, bool enable_int =
+// false)
 // {
 
 //     NVIC_DisableIRQ(SW_SPI_TIMER_IRQn);
@@ -46,11 +47,13 @@
 //     // default to 1MHz (1 us ticks)
 //     uint32_t prescale_count = (SystemCoreClock / 4) / 8000000;
 //     timer_PrescaleSet(timer, prescale_count);
-//     LOG(INF1, "Prescale count set to %u for channel %u", prescale_count, match_num);
+//     LOG(INF1, "Prescale count set to %u for channel %u", prescale_count,
+//     match_num);
 
 //     // set the count for when to trigger the interrupt
 //     timer_SetMatch(timer, match_num, match_count);
-//     LOG(INF1, "Match count set to %u for channel %u", match_count, match_num);
+//     LOG(INF1, "Match count set to %u for channel %u", match_count,
+//     match_num);
 
 //     // reset the counter when (counter == cnt)
 //     timer_ResetOnMatchEnable(timer, match_num);
@@ -86,8 +89,8 @@
 // }
 // }   // anonymous namespace
 
-SoftwareSPI::SoftwareSPI(PinName mosi_pin, PinName miso_pin, PinName sck_pin, int bit_width)
-{
+SoftwareSPI::SoftwareSPI(PinName mosi_pin, PinName miso_pin, PinName sck_pin,
+                         int bit_width) {
     mosi = new DigitalOut(mosi_pin, 0);
     miso = new DigitalIn(miso_pin);
     sck = new DigitalOut(sck_pin);
@@ -144,8 +147,7 @@ SoftwareSPI::SoftwareSPI(PinName mosi_pin, PinName miso_pin, PinName sck_pin, in
     // }
 }
 
-SoftwareSPI::~SoftwareSPI()
-{
+SoftwareSPI::~SoftwareSPI() {
     delete mosi;
     delete miso;
     delete sck;
@@ -157,14 +159,14 @@ SoftwareSPI::~SoftwareSPI()
 //         setup_timer((LPC_TIM_TypeDef*)sck_timer_base, sck_channel);
 //         setup_timer((LPC_TIM_TypeDef*)mosi_timer_base, mosi_channel, true);
 //     }
-//     // MOSI & SCK must be able to be controlled through a common hardware timer
+//     // MOSI & SCK must be able to be controlled through a common hardware
+//     timer
 //     else {
 //         LOG(FATAL, "MOSI and SCK do no share the same timer");
 //     }
 // }
 
-void SoftwareSPI::format(int bits, int mode)
-{
+void SoftwareSPI::format(int bits, int mode) {
     this->bits = bits;
     this->mode = mode;
     polarity = (mode >> 1) & 1;
@@ -172,23 +174,20 @@ void SoftwareSPI::format(int bits, int mode)
     sck->write(polarity);
 }
 
-int SoftwareSPI::write(int value)
-{
+int SoftwareSPI::write(int value) {
     int read = 0;
 
     for (int bit = bits - 1; bit >= 0; --bit) {
-        mosi->write( (value >> bit) & 0x01 );
+        mosi->write((value >> bit) & 0x01);
 
         if (phase == 0) {
-            if (miso->read())
-                read |= (1 << bit);
+            if (miso->read()) read |= (1 << bit);
         }
 
         sck->write(!polarity);
 
         if (phase == 1) {
-            if (miso->read())
-                read |= (1 << bit);
+            if (miso->read()) read |= (1 << bit);
         }
 
         sck->write(polarity);

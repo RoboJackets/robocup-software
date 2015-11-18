@@ -21,9 +21,11 @@ DigitalOut bad2(LED3, 0);
 DigitalOut pwr(LED4, 1);
 Serial pc(RJ_SERIAL_RXTX);
 
-DigitalOut trigger(RJ_SPARE_IO, 0);     // line for triggering a logic analyzer for debugging
-DigitalOut radio_nCS(RJ_RADIO_nCS, 1);  // keep the radio chip select line unselected
-DigitalOut cs(RJ_FPGA_nCS, 1);          // don't really care. no used for configuration
+DigitalOut trigger(RJ_SPARE_IO,
+                   0);  // line for triggering a logic analyzer for debugging
+DigitalOut radio_nCS(RJ_RADIO_nCS,
+                     1);        // keep the radio chip select line unselected
+DigitalOut cs(RJ_FPGA_nCS, 1);  // don't really care. no used for configuration
 DigitalIn done(RJ_FPGA_DONE);
 DigitalInOut prog_b(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
 DigitalIn init_b(RJ_FPGA_INIT_B);
@@ -32,8 +34,7 @@ bool testPass = false;
 bool batchedResult = false;
 
 // signals to the FPGA that we're about to start configuring it
-void start_flag_config(DigitalInOut& p)
-{
+void start_flag_config(DigitalInOut& p) {
     p = !p;
     Thread::wait(1);
     p = !p;
@@ -41,8 +42,7 @@ void start_flag_config(DigitalInOut& p)
 }
 
 // returns TRUE on error
-bool fpgaInit()
-{
+bool fpgaInit() {
     char buf[10];
     trigger = !trigger;
 
@@ -55,10 +55,10 @@ bool fpgaInit()
     FILE* fp = fopen(filepath.c_str(), "r");
 
     // send it out if successfully opened
-    if ( fp != nullptr ) {
-        fseek (fp, 0, SEEK_END);
+    if (fp != nullptr) {
+        fseek(fp, 0, SEEK_END);
         size_t filesize = ftell(fp);
-        fseek (fp, 0, SEEK_SET);
+        fseek(fp, 0, SEEK_SET);
         size_t count;
 
         pc.printf("--  opened %s (%u bytes)\r\n", filename.c_str(), filesize);
@@ -85,7 +85,6 @@ bool fpgaInit()
 
         return false;
     } else {
-
         batchedResult = true;
         pc.printf("--  could not open %s", filepath.c_str());
 
@@ -93,8 +92,7 @@ bool fpgaInit()
     }
 }
 
-int main()
-{
+int main() {
     trigger = !trigger;
     Thread::wait(2);
     trigger = !trigger;
@@ -116,8 +114,7 @@ int main()
         Thread::wait(10);
 
         // We're ready to start the configuration process when init_b goes high
-        if (init_b == true)
-            break;
+        if (init_b == true) break;
     }
 
     // show init_b error if it never went low
@@ -136,15 +133,16 @@ int main()
         j++;
         Thread::wait(1);
 
-        if (done.read() == true)
-            break;
+        if (done.read() == true) break;
     }
 
     if (j == 1000 && configFail == false) {
-        pc.printf("--  DONE pin timed out\t(POST CONFIGURATION ERROR)\r\n", configFail);
+        pc.printf("--  DONE pin timed out\t(POST CONFIGURATION ERROR)\r\n",
+                  configFail);
         batchedResult = true;
     } else if (j == 1000 && configFail == true) {
-        pc.printf("--  DONE pin timed out\t(CONFIGURATION WRITE ERROR)\r\n", configFail);
+        pc.printf("--  DONE pin timed out\t(CONFIGURATION WRITE ERROR)\r\n",
+                  configFail);
         batchedResult = true;
     } else {
         pc.printf("--  DONE pin state:\t%s\r\n", done ? "HIGH" : "LOW");
@@ -154,7 +152,8 @@ int main()
     testPass = done && !batchedResult;
 
     pc.printf("\r\n=================================\r\n");
-    pc.printf("========== TEST %s ==========\r\n", testPass ? "PASSED" : "FAILED");
+    pc.printf("========== TEST %s ==========\r\n",
+              testPass ? "PASSED" : "FAILED");
     pc.printf("=================================DONE");
 
     // Turn on the corresponding LED(s)

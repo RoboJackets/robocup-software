@@ -1,7 +1,11 @@
 #pragma once
 
-// ** ================================================================================================= **
-// ** ================================================================================================= **
+// **
+// =================================================================================================
+// **
+// **
+// =================================================================================================
+// **
 
 #include "robot-devices.hpp"
 
@@ -9,7 +13,8 @@
 #include <ctime>
 #include <cstdio>
 
-// Include the basic classes - Note: the header files included within "mbed.h" are listed here.
+// Include the basic classes - Note: the header files included within "mbed.h"
+// are listed here.
 #include <mbed.h>
 #include <rtos.h>
 
@@ -30,7 +35,7 @@
 
 #endif
 
-#endif  /* RJ_RADIO_EN */
+#endif /* RJ_RADIO_EN */
 
 #include <helper-funcs.hpp>
 #include <CommModule.hpp>

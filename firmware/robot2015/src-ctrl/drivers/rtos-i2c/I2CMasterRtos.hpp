@@ -2,14 +2,12 @@
 
 #include "I2CDriver.hpp"
 
-namespace mbed
-{
+namespace mbed {
 
 /// I2C master interface to the RTOS-I2CDriver.
 /// The interface is compatible to the original mbed I2C class.
 /// Provides an additonal "read from register"-function.
-class I2CMasterRtos
-{
+class I2CMasterRtos {
 protected:
     I2CDriver m_drv;
 
@@ -19,17 +17,17 @@ public:
     *  @param sda I2C data line pin
     *  @param scl I2C clock line pin
     *
-    *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
+    *  @note Has to be created in a thread context, i.e. within the main or some
+    * other function. A global delaration does not work
     */
-    I2CMasterRtos(PinName sda, PinName scl, int freq = 400000): m_drv(sda, scl, freq) {}
+    I2CMasterRtos(PinName sda, PinName scl, int freq = 400000)
+        : m_drv(sda, scl, freq) {}
 
     /** Set the frequency of the I2C interface
      *
      *  @param hz The bus frequency in hertz
      */
-    void frequency(int hz) {
-        m_drv.frequency(hz);
-    }
+    void frequency(int hz) { m_drv.frequency(hz); }
 
     /** Read from an I2C slave
      *
@@ -45,13 +43,14 @@ public:
      *       0 on success (ack),
      *   non-0 on failure (nack)
      */
-    int read(int address, char *data, int length = 1, bool repeated = false) {
-        return m_drv.readMaster( address, data, length, repeated);
+    int read(int address, char* data, int length = 1, bool repeated = false) {
+        return m_drv.readMaster(address, data, length, repeated);
     }
 
     /** Read from a given I2C slave register
     *
-    * Performs a complete write-register-read-data-transaction. The bottom bit of
+    * Performs a complete write-register-read-data-transaction. The bottom bit
+    * of
     * the address is forced to 1 to indicate a read.
     *
     *  @param address 8-bit I2C slave address [ addr | 1 ]
@@ -64,8 +63,9 @@ public:
     *       0 on success (ack),
     *   non-0 on failure (nack)
     */
-    int read(int address, uint8_t _register, char* data, int length = 1, bool repeated = false) {
-        return m_drv.readMaster( address, _register, data, length, repeated);
+    int read(int address, uint8_t _register, char* data, int length = 1,
+             bool repeated = false) {
+        return m_drv.readMaster(address, _register, data, length, repeated);
     }
 
     /** Read a single byte from the I2C bus
@@ -75,9 +75,7 @@ public:
      *  @returns
      *    the byte read
      */
-    int read(int ack) {
-        return m_drv.readMaster(ack);
-    }
+    int read(int ack) { return m_drv.readMaster(ack); }
 
     /** Write to an I2C slave
      *
@@ -93,7 +91,8 @@ public:
      *       0 on success (ack),
      *   non-0 on failure (nack)
      */
-    int write(int address, const char *data, int length = 1, bool repeated = false) {
+    int write(int address, const char* data, int length = 1,
+              bool repeated = false) {
         return m_drv.writeMaster(address, data, length, repeated);
     }
 
@@ -105,37 +104,30 @@ public:
      *    '1' if an ACK was received,
      *    '0' otherwise
      */
-    int write(int data) {
-        return m_drv.writeMaster(data);
-    }
+    int write(int data) { return m_drv.writeMaster(data); }
 
     /** Creates a start condition on the I2C bus
      */
 
-    void start() {
-        m_drv.startMaster();
-    }
+    void start() { m_drv.startMaster(); }
 
     /// Creates a stop condition on the I2C bus
-    /// If unsccessful because someone on the bus holds the scl line down it returns "false" after 23µs
-    /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz and 3-4µs @ 400kHz.
-    bool stop() {
-        return m_drv.stopMaster();
-    }
+    /// If unsccessful because someone on the bus holds the scl line down it
+    /// returns "false" after 23µs
+    /// In normal operation the stop shouldn't take longer than 12µs @ 100kHz
+    /// and 3-4µs @ 400kHz.
+    bool stop() { return m_drv.stopMaster(); }
 
     /// Wait until the interface becomes available.
     ///
-    /// Useful if you want to run a sequence of command without interrution by another thread.
-    /// There's no need to call this function for running single request, because all driver functions
+    /// Useful if you want to run a sequence of command without interrution by
+    /// another thread.
+    /// There's no need to call this function for running single request,
+    /// because all driver functions
     /// will lock the device for exclusive access automatically.
-    void lock() {
-        m_drv.lock();
-    }
+    void lock() { m_drv.lock(); }
 
     /// Unlock the interface that has previously been locked by the same thread.
-    void unlock() {
-        m_drv.unlock();
-    }
-
+    void unlock() { m_drv.unlock(); }
 };
 }

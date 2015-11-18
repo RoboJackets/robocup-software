@@ -2,21 +2,19 @@
 
 #include "I2CDriver.hpp"
 
-namespace mbed
-{
+namespace mbed {
 
 /// I2C slave interface to the RTOS-I2CDriver.
 /// The interface is compatible to the original mbed I2C class.
-class I2CSlaveRtos
-{
+class I2CSlaveRtos {
     I2CDriver m_drv;
 
 public:
     /// Status returned by the receiveSlave() function
     enum RxStatus {
-        NoData         = 0,
-        ReadAddressed  = 1,
-        WriteGeneral   = 2,
+        NoData = 0,
+        ReadAddressed = 1,
+        WriteGeneral = 2,
         WriteAddressed = 3
     };
 
@@ -25,7 +23,8 @@ public:
      *  @param sda I2C data line pin
      *  @param scl I2C clock line pin
      *
-     *  @note Has to be created in a thread context, i.e. within the main or some other function. A global delaration does not work
+     *  @note Has to be created in a thread context, i.e. within the main or
+     * some other function. A global delaration does not work
      */
     I2CSlaveRtos(PinName sda, PinName scl, int freq = 100000, int address = 42)
         : m_drv(sda, scl, 100000, address) {}
@@ -34,9 +33,7 @@ public:
      *
      *  @param hz The bus frequency in hertz
      */
-    void frequency(int hz) {
-        m_drv.frequency(hz);
-    }
+    void frequency(int hz) { m_drv.frequency(hz); }
 
     /** Checks to see if this I2C Slave has been addressed.
      *
@@ -59,20 +56,17 @@ public:
      *  @returns
      *       0 on success,
      *   non-0 otherwise
-     * ... no! instead it returns number of bytes read minus one ... weird, guess its a bug in the official lib
+     * ... no! instead it returns number of bytes read minus one ... weird,
+     * guess its a bug in the official lib
      */
-    int read(char *data, int length) {
-        return m_drv.readSlave(data, length);
-    }
+    int read(char* data, int length) { return m_drv.readSlave(data, length); }
 
     /** Read a single byte from an I2C master.
      *
      *  @returns
      *    the byte read
      */
-    int read() {
-        return m_drv.readSlave();
-    }
+    int read() { return m_drv.readSlave(); }
 
     /** Write to an I2C master.
      *
@@ -83,7 +77,7 @@ public:
      *       0 on success,
      *   non-0 otherwise
      */
-    int write(const char *data, int length) {
+    int write(const char* data, int length) {
         return m_drv.writeSlave(data, length);
     }
 
@@ -95,9 +89,7 @@ public:
      *    '1' if an ACK was received,
      *    '0' otherwise
      */
-    int write(int data) {
-        return m_drv.writeSlave(data);
-    }
+    int write(int data) { return m_drv.writeSlave(data); }
 
     /** Sets the I2C slave address.
      *
@@ -105,31 +97,22 @@ public:
      *  signifcant bit). If set to 0, the slave will only respond to the
      *  general call address.
      */
-    void address(int address) {
-        m_drv.addressSlave(address);
-    }
-
+    void address(int address) { m_drv.addressSlave(address); }
 
     /** Reset the I2C slave back into the known ready receiving state.
      */
-    void stop() {
-        m_drv.stopSlave();
-    }
-
+    void stop() { m_drv.stopSlave(); }
 
     /// Wait until the interface becomes available.
     ///
-    /// Useful if you want to run a sequence of command without interrution by another thread.
-    /// There's no need to call this function for running single request, because all driver functions
+    /// Useful if you want to run a sequence of command without interrution by
+    /// another thread.
+    /// There's no need to call this function for running single request,
+    /// because all driver functions
     /// will lock the device for exclusive access automatically.
-    void lock() {
-        m_drv.lock();
-    }
+    void lock() { m_drv.lock(); }
 
     /// Unlock the interface that has previously been locked by the same thread.
-    void unlock() {
-        m_drv.unlock();
-    }
-
+    void unlock() { m_drv.unlock(); }
 };
 }

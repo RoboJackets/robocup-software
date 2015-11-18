@@ -24,29 +24,29 @@
 
 #pragma once
 
-class SoftwareSPI
-{
-  private:
+class SoftwareSPI {
+private:
     DigitalOut* mosi;
     DigitalIn* miso;
     DigitalOut* sck;
     int port;
     int bits;
     int mode;
-    int polarity; // idle clock value
-    int phase; // 0=sample on leading (first) clock edge, 1=trailing (second)
+    int polarity;  // idle clock value
+    int phase;  // 0=sample on leading (first) clock edge, 1=trailing (second)
     int freq;
 
     uint32_t mosi_timer_base, mosi_pin_mode, sck_timer_base, sck_pin_mode;
 
-  public:
+public:
     /** Create SoftwareSPI object
      *
      *  @param mosi_pin
      *  @param miso_pin
      *  @param sck_pin
      */
-    SoftwareSPI(PinName mosi_pin, PinName miso_pin, PinName sck_pin, int bit_width = 8);
+    SoftwareSPI(PinName mosi_pin, PinName miso_pin, PinName sck_pin,
+                int bit_width = 8);
 
     /** Destructor */
     ~SoftwareSPI();

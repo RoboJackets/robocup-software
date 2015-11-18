@@ -8,10 +8,8 @@
 #include "robot-devices.hpp"
 #include "motors.hpp"
 
-
 void Task_CommCtrl(void const*);
 void comm_cmdProcess(const std::vector<std::string>&);
-
 
 // forward declaration for the console's task function
 void Task_SerialConsole(void const* args);
@@ -20,7 +18,6 @@ void Task_SerialConsole(void const* args);
  * Max number of command aliases.
  */
 static const uint8_t MAX_ALIASES = 5;
-
 
 /**
  * max command args safety check. Args are now vector based upon creation, so
@@ -32,33 +29,33 @@ static const uint8_t MAX_COMMAND_ARGS = 16;
  * command structure
  */
 struct command_t {
-	// command_t() = default;
+    // command_t() = default;
 
-	/**
-	 * aliases
-	 */
-	const std::array<std::string, MAX_ALIASES> aliases;
+    /**
+     * aliases
+     */
+    const std::array<std::string, MAX_ALIASES> aliases;
 
-	/**
-	 * iterative flag. Should the command be executed iteratively (in the
-	 * main loop) until the break signal is sent?
-	 */
-	const bool isIterative;
+    /**
+     * iterative flag. Should the command be executed iteratively (in the
+     * main loop) until the break signal is sent?
+     */
+    const bool isIterative;
 
-	/**
-	 * command handler function pointer
-	 */
-	void (*handler)(const std::vector<std::string>& args);
+    /**
+     * command handler function pointer
+     */
+    void (*handler)(const std::vector<std::string>& args);
 
-	/**
-	 * command description. Used by help
-	 */
-	const std::string description;
+    /**
+     * command description. Used by help
+     */
+    const std::string description;
 
-	/**
-	 * usage description. Used by help
-	 */
-	const std::string usage;
+    /**
+     * usage description. Used by help
+     */
+    const std::string usage;
 };
 
 /*
@@ -91,4 +88,3 @@ void cmd_switchHostname(const std::vector<std::string>&);
 void cmd_switchUser(const std::vector<std::string>&);
 void cmd_logLevel(const std::vector<std::string>&);
 void cmd_rpc(const std::vector<std::string>&);
-

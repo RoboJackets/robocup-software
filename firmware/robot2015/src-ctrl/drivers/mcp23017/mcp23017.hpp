@@ -6,28 +6,23 @@
 #include "pins-ctrl-2015.hpp"
 #include "I2CMasterRtos.hpp"
 
-
 // Register defines from data sheet - we set IOCON.BANK to 0
 // as it is easier to manage the registers sequentially.
 enum {
-    IODIR       = 0x00,
-    IPOL        = 0x02,
-    GPINTEN     = 0x04,
-    DEFVAL      = 0x06,
-    INTCON      = 0x08,
-    IOCON       = 0x0A,
-    GPPU        = 0x0C,
-    INTF        = 0x0E,
-    INTCAP      = 0x10,
-    GPIO        = 0x12,
-    OLAT        = 0x14
+    IODIR = 0x00,
+    IPOL = 0x02,
+    GPINTEN = 0x04,
+    DEFVAL = 0x06,
+    INTCON = 0x08,
+    IOCON = 0x0A,
+    GPPU = 0x0C,
+    INTF = 0x0E,
+    INTCAP = 0x10,
+    GPIO = 0x12,
+    OLAT = 0x14
 };
 
-enum {
-    DIR_OUTPUT  = 0,
-    DIR_INPUT   = 1
-};
-
+enum { DIR_OUTPUT = 0, DIR_INPUT = 1 };
 
 /** MCP23017 class
  *
@@ -38,9 +33,8 @@ enum {
  * @endcode
  *
  */
-class MCP23017
-{
-  public:
+class MCP23017 {
+public:
     static bool Init();
 
     /** Reset MCP23017 device to its power-on state
@@ -66,14 +60,14 @@ class MCP23017
      * @param   bit_number    bit number range 0 --> 15
      * @return                0/1 value read
      */
-    static int  read_bit(int bit_number);
+    static int read_bit(int bit_number);
 
     /** Read a 16-bit value from the device and apply mask
      *
      * @param   mask    16-bit mask value
      * @return          16-bit data with mask applied
      */
-    static int  read_mask(unsigned short mask);
+    static int read_mask(unsigned short mask);
 
     /** Configure an MCP23017 device
      *
@@ -81,11 +75,12 @@ class MCP23017
      * @param   pullup_config      100k pullup value (1 = enabled, 0 = disabled)
      * @param   polarity_config    polarity value (1 = flip, 0 = normal)
      */
-    static void config(unsigned short dir_config, unsigned short pullup_config, unsigned short polarity_config);
+    static void config(unsigned short dir_config, unsigned short pullup_config,
+                       unsigned short polarity_config);
 
-    static void writeRegister(int regAddress, unsigned char  val);
+    static void writeRegister(int regAddress, unsigned char val);
     static void writeRegister(int regAddress, unsigned short val);
-    static int  readRegister(int regAddress);
+    static int readRegister(int regAddress);
 
     /*-----------------------------------------------------------------------------
      * pinmode
@@ -93,12 +88,13 @@ class MCP23017
      */
     static void pinMode(int pin, int mode);
     static void digitalWrite(int pin, int val);
-    static int  digitalRead(int pin);
+    static int digitalRead(int pin);
 
     // These provide a more advanced mapping of the chip functionality
     // See the data sheet for more information on what they do
 
-    //Returns a word with the current pin states (ie contents of the GPIO register)
+    // Returns a word with the current pin states (ie contents of the GPIO
+    // register)
     static unsigned short digitalWordRead();
 
     // Allows you to write a word to the GPIO register
@@ -108,27 +104,30 @@ class MCP23017
     // if set to 1, it will flip the actual pin value.
     static void inputPolarityMask(unsigned short mask);
 
-    //Sets which pins are inputs or outputs (1 = input, 0 = output) NB Opposite to arduino's
-    //definition for these
+    // Sets which pins are inputs or outputs (1 = input, 0 = output) NB Opposite
+    // to arduino's
+    // definition for these
     static void inputOutputMask(unsigned short mask);
 
-    // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 = disabled)
+    // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 =
+    // disabled)
     static void internalPullupMask(unsigned short mask);
 
     static int read();
 
     static void write(int data);
 
+private:
+    MCP23017() : _i2c(RJ_I2C_BUS) {}
 
-  private:
-    MCP23017() : _i2c(RJ_I2C_BUS) {  }
-
-    static void set_config(PinName sda, PinName scl, int i2cAddress = RJ_IO_EXPANDER_I2C_ADDRESS);
+    static void set_config(PinName sda, PinName scl,
+                           int i2cAddress = RJ_IO_EXPANDER_I2C_ADDRESS);
     static std::shared_ptr<MCP23017>& Instance();
     static std::shared_ptr<MCP23017> instance;
 
-    I2CMasterRtos    _i2c;
-    PinName          _sda, _scl;
-    int              _i2cAddress;                        // physical I2C address
-    unsigned short   shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;     // Cached copies of the register values
+    I2CMasterRtos _i2c;
+    PinName _sda, _scl;
+    int _i2cAddress;  // physical I2C address
+    unsigned short shadow_GPIO, shadow_IODIR, shadow_GPPU,
+        shadow_IPOL;  // Cached copies of the register values
 };

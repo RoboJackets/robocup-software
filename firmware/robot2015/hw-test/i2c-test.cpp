@@ -20,9 +20,8 @@ bool batchedResult = false;
 std::vector<unsigned int> freq1;
 std::vector<unsigned int> freq2;
 
-int main()
-{
-    char buf[2] = { 0x00 };
+int main() {
+    char buf[2] = {0x00};
 
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
@@ -66,23 +65,26 @@ int main()
 
     // Merge the 2 vectors together & remove duplicate values
     freq1.insert(freq1.end(), freq2.begin(), freq2.end());
-    sort( freq1.begin(), freq1.end() );
-    freq1.erase( unique( freq1.begin(), freq1.end() ), freq1.end() );
+    sort(freq1.begin(), freq1.end());
+    freq1.erase(unique(freq1.begin(), freq1.end()), freq1.end());
 
-    pc.printf("ADDRS PASS:\t%u\r\nADDRS FAIL:\t%u\r\n", freq1.size(), 0xFF - freq1.size());
+    pc.printf("ADDRS PASS:\t%u\r\nADDRS FAIL:\t%u\r\n", freq1.size(),
+              0xFF - freq1.size());
 
-    if ( freq1.size() > 0xF0 ) {
+    if (freq1.size() > 0xF0) {
         batchedResult = true;
     }
 
-    for (std::vector<unsigned int>::iterator it = freq1.begin() ; it != freq1.end(); ++it)
+    for (std::vector<unsigned int>::iterator it = freq1.begin();
+         it != freq1.end(); ++it)
         pc.printf("    0x%02X\r\n", *it);
 
     // Final results of the test
     testPass = (!freq1.empty()) && (!batchedResult);
 
     pc.printf("\r\n=================================\r\n");
-    pc.printf("========== TEST %s ==========\r\n", testPass ? "PASSED" : "FAILED");
+    pc.printf("========== TEST %s ==========\r\n",
+              testPass ? "PASSED" : "FAILED");
     pc.printf("=================================DONE");
 
     // Turn on the corresponding LED(s)

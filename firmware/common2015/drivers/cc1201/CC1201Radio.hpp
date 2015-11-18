@@ -10,7 +10,7 @@
  * 		-*ALL* registers must be exported
  */
 #include "cc1201_rj_config_920mhz.hpp"
- 
+
 #ifndef SMARTRF_RADIO_CC1201
 #error "A valid Smart RF register configuration file was not loaded."
 #endif
