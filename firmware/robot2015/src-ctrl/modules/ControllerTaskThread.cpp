@@ -21,16 +21,16 @@ namespace {
 // The gyro/accel values are given RPC read/write access here
 float gyroVals[3] = { 0 };
 float accelVals[3] = { 0 };
-RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
-RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
-RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
-RPCVariable<float> accelx(&accelVals[0], "accel-x");
-RPCVariable<float> accely(&accelVals[1], "accel-y");
-RPCVariable<float> accelz(&accelVals[2], "accel-z");
+// RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
+// RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
+// RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
+// RPCVariable<float> accelx(&accelVals[0], "accel-x");
+// RPCVariable<float> accely(&accelVals[1], "accel-y");
+// RPCVariable<float> accelz(&accelVals[2], "accel-z");
 
 // Making a temporary variable to test out the writing side of RPC variables
-int testVar;
-RPCVariable<int> test_var(&testVar, "var1");
+// int testVar;
+// RPCVariable<int> test_var(&testVar, "var1");
 }
 
 

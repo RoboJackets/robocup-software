@@ -204,6 +204,15 @@ if(${MBED_USE_DSP} STREQUAL "true")
   set(PY_LIBS ${PY_LIBS} --dsp)
 endif()
 
+# rpc
+if(${MBED_USE_RPC} STREQUAL "true")
+    include_directories(${PY_TOOLS_DIR}/build/rpc)
+
+    set(MBED_LIBS ${MBED_LIBS} ${PY_TOOLS_DIR}/build/rpc/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT}/librpc.a)
+
+    set(PY_LIBS ${PY_LIBS} --rpc)
+endif()
+
 # include the mbed paths and link the toolchain where this file is included in another file
 set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 link_directories(${MBED_LINK_DIRS})
@@ -211,7 +220,6 @@ include_directories(${MBED_PATH})
 
 
 # set variables to each of the accessory library cmake project files
-set(RPC_MBED_LIB        ${CMAKE_CURRENT_LIST_DIR}/mbed-rpc.cmake      )
 set(MCP23017_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake      )
 set(BURSTSPI_MBED_LIB   ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake     )
 set(SWSPI_MBED_LIB      ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake  )
@@ -222,7 +230,6 @@ set(PIXARRY_MBED_LIB    ${CMAKE_CURRENT_LIST_DIR}/pixelarray.cmake    )
 
 # create a list of which accessory libraries we want to download and add to the common2015 library
 set(MBED_ASSEC_LIBS
-  ${RPC_MBED_LIB}
   # ${MCP23017_MBED_LIB}
   ${BURSTSPI_MBED_LIB}
   # ${SWSPI_MBED_LIB}
