@@ -127,10 +127,10 @@ def setFieldConstantsFromField_Dimensions(value):
     Field.OurHalf = robocup.Rect(robocup.Point(-Field.Width/2, 0), robocup.Point(Field.Width/2, Field.Length/2))
 
     Field.FieldBorders = [
-            robocup.Line(robocup.Point(-Width / 2.0, 0), robocup.Point(-Width / 2.0, Length)),
-            robocup.Line(robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0, Length)),
-            robocup.Line(robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),
-            robocup.Line(robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0)) ]
+            robocup.Line(robocup.Point(-Field.Width / 2.0, 0), robocup.Point(-Field.Width / 2.0, Field.Length)),
+            robocup.Line(robocup.Point(-Field.Width / 2.0, Field.Length), robocup.Point(Field.Width / 2.0, Field.Length)),
+            robocup.Line(robocup.Point(Field.Width / 2.0, Field.Length), robocup.Point(Field.Width / 2.0, 0)),
+            robocup.Line(robocup.Point(Field.Width / 2.0, 0), robocup.Point(-Field.Width / 2.0, 0)) ]
 
-    Field.FieldRect = robocup.Rect(robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))
+    Field.FieldRect = robocup.Rect(robocup.Point(-Field.Width / 2.0, 0), robocup.Point(Field.Width / 2.0, Field.Length))
 
