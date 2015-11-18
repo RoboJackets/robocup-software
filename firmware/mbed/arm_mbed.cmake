@@ -78,15 +78,6 @@ SET(MBED_CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 # Main mbed library
 set(MBED_PATH ${MBED_LIBS_REPO_DIR}/build/mbed)
 
-# ------------------------------------------------------------------------------
-# setup precompiled mbed files which will be needed for all projects
-set(MBED_OBJECTS
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_STARTUP}
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_SYSTEM}
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/cmsis_nvic.o
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/retarget.o
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/board.o
-)
 
 # ------------------------------------------------------------------------------
 # libraries for mbed
@@ -219,3 +210,24 @@ ExternalProject_Add(mbed_libraries
     UPDATE_COMMAND      ""
 )
 set_target_properties(mbed_libraries PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+
+# ------------------------------------------------------------------------------
+# setup precompiled mbed files which will be needed for all projects
+set(MBED_OBJECTS
+    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_STARTUP}
+    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_SYSTEM}
+    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/cmsis_nvic.o
+    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/retarget.o
+    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/board.o
+)
+
+# tell CMake that the obj files all come from the ExternalProject
+# otherwise it'll complain that the files can't be found
+foreach(mbed_obj ${MBED_OBJECTS})
+    add_custom_command(
+        OUTPUT      ${mbed_obj}
+        DEPENDS     mbed_libraries
+        COMMAND     ""
+    )
+endforeach()

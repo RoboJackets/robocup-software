@@ -43,16 +43,6 @@ endforeach()
 # append all of the accessory library include directories
 list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
 
-# tell CMake that the obj files all come from the ExternalProject
-# otherwise it'll complain that the files can't be found
-foreach(mbed_obj ${MBED_OBJECTS})
-    add_custom_command(
-        OUTPUT      ${mbed_obj}
-        DEPENDS     mbed_libraries
-        COMMAND     ""
-    )
-endforeach()
-
 # do the same thing for the accessory libraries 
 foreach(assec_lib_file ${MBED_ASSEC_LIBS_SRCS})
     add_custom_command(
