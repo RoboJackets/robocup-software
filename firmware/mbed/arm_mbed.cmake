@@ -20,7 +20,6 @@ set(MBED_LIBS_REPO_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_libraries-prefix/src/mbe
 # 
 # MBED_VENDOR -> CPU Manufacturer
 # 
-# message(STATUS "MBED target set to ${MBED_TARGET}")
 # the settings for mbed is really messed up ;)
 if(MBED_TARGET MATCHES "LPC1768")
     set(MBED_VENDOR "NXP")
