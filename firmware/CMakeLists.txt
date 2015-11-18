@@ -16,10 +16,8 @@ set(MBED_USE_RPC true)
 set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
 # set the path to a bash script for moving files to the mbed's USB memory
-#set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh)
 set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
 # set(HW_TEST_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-prgm.sh)
-set(HW_TEST_SCRIPT ${MBED_COPY_SCRIPT})
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
@@ -37,7 +35,7 @@ set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
 
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
-#ignore formatting flags for printf
+# ignore formatting flags for printf
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
 
 # suppress -rdynamic flag
