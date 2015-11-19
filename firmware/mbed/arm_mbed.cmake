@@ -63,6 +63,7 @@ endif()
 # compiler settings
 SET(COMMON_FLAGS "${COMMON_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -fno-exceptions -fno-builtin -MMD -fno-delete-null-pointer-checks")
 SET(COMMON_FLAGS "${COMMON_FLAGS} -mcpu=${MBED_CORE} -O2 -mthumb -fno-exceptions -msoft-float -ffunction-sections -fdata-sections -g -fno-common -fmessage-length=0")
+set(COMMON_FLAGS "${COMMON_FLAGS} ${CMAKE_CXX_FLAGS}")
 
 SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_TARGET}")
 SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_INSTRUCTIONSET}")
