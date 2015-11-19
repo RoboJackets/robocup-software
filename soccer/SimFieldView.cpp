@@ -129,7 +129,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     // Simulator drag-to-shoot
     std::shared_ptr<LogFrame> frame = currentFrame();
     if (_dragMode == DRAG_SHOOT && frame) {
-        p.setPen(QPen(Qt::white, 0.025f)); // TODO: smaller pen?
+        p.setPen(QPen(Qt::white, 0.025f));
         Geometry2d::Point ball = frame->ball().pos();
         p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 
