@@ -310,7 +310,7 @@ void Console::TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info) {
 
 void Console::SetEscEnd(char c) { instance->esc_host_end_char = c; }
 
-const std::string& Console::GetHostResponse() {
+std::string Console::GetHostResponse() {
     if (instance->esc_host_res_rdy == true) {
         instance->esc_host_res_rdy = false;
 

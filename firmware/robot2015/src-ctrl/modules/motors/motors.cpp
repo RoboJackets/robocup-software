@@ -57,7 +57,7 @@ void motors_cmdScroll(const std::vector<std::string>& args) {
     printf("\033[?25l\033[25mMotors Enabled: \033[K%s\033E",
            status_byte & 0x20 ? "YES" : "NO");
 
-    for (int i = 0; i < duty_cycles.size(); i++) {
+    for (size_t i = 0; i < duty_cycles.size(); i++) {
         printf("  Motor %u\tVel: 0x\033[K%03X\tHall: %3u\tEnc: %5u%s\033E",
                i + 1, duty_cycles.at(i), halls.at(i), enc_deltas.at(i),
                (status_byte & (1 << i)) ? "FAULT" : "");

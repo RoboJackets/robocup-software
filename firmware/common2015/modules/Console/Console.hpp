@@ -127,7 +127,7 @@ public:
     static void PrintHeader();
     static void ShowLogo();
     static void SetEscEnd(char c);
-    static const std::string& GetHostResponse();
+    static std::string GetHostResponse();
 
 private:
     // Constructor is only used in init branch of Instance()
