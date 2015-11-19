@@ -1,4 +1,5 @@
-# HW_TEST_UNIT should always be set to whatever comes before '-test.cpp' in their respective filename that contains main()
+# HW_TEST_UNIT should always be set to whatever comes before '-test.cpp' in
+# their respective filename that contains main().
 if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     # Include the arm toolchain for gcc
     set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
