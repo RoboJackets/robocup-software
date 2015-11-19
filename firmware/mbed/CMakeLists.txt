@@ -4,7 +4,6 @@ set(ARM_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE} PARENT_SCOPE)
 
 # create a list of which accessory libraries we want to download and add to the common2015 library
 set(MBED_ASSEC_LIBS
-    # ${CMAKE_CURRENT_LIST_DIR}/mcp23017.cmake
     ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake
     # ${CMAKE_CURRENT_LIST_DIR}/software-spi.cmake
     ${CMAKE_CURRENT_LIST_DIR}/software-i2c.cmake
