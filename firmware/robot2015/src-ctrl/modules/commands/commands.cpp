@@ -689,7 +689,6 @@ void comm_cmdProcess(const vector<string>& args) {
                     printf("Placing %u byte packet in RX buffer.\r\n",
                            pck.payload_size);
                     CommModule::receive(pck);
-
                 } else {
                     showInvalidArgs(args.front());
                 }
