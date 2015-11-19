@@ -149,7 +149,7 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     *cs = !(*cs);
     status = spi->write(CMD_READ_HALLS);
 
-    for (int i = 0; i < size; i++) halls[i] = spi->write(0x00);
+    for (size_t i = 0; i < size; i++) halls[i] = spi->write(0x00);
 
     *cs = !(*cs);
     mutex.unlock();
@@ -164,7 +164,7 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     *cs = !(*cs);
     status = spi->write(CMD_READ_ENC);
 
-    for (int i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         enc_counts[i] = (spi->write(0x00) << 8);
         enc_counts[i] |= spi->write(0x00);
     }
@@ -182,7 +182,7 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     *cs = !(*cs);
     status = spi->write(CMD_READ_DUTY);
 
-    for (int i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         duty_cycles[i] = (spi->write(0x00) << 8);
         duty_cycles[i] |= spi->write(0x00);
     }
@@ -198,14 +198,14 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
     uint8_t status;
 
     // Check for valid duty cycles values
-    for (int i = 0; i < size_dut; i++)
+    for (size_t i = 0; i < size_dut; i++)
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
     mutex.lock();
     *cs = !(*cs);
     status = spi->write(CMD_R_ENC_W_VEL);
 
-    for (int i = 0; i < size_enc; i++) {
+    for (size_t i = 0; i < size_enc; i++) {
         enc_deltas[i] = (spi->write(duty_cycles[i] & 0xFF) << 8);
         enc_deltas[i] |= spi->write(duty_cycles[i] >> 8);
     }
