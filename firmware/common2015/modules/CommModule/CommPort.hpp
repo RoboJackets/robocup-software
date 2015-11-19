@@ -188,8 +188,8 @@ public:
             return *&(*pIt);
         }
 
-        CommPort<T> tmpPort(0);
-        return tmpPort;
+
+        throw std::runtime_error("No port for the given number");
     }
 
     int count() const { return ports.size(); }
