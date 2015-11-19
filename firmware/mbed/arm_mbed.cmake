@@ -86,6 +86,7 @@ set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 # ------------------------------------------------------------------------------
 # linker settings
 set(MBED_CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
+set(MBED_CMAKE_EXE_LINKER_FLAGS "${MBED_CMAKE_EXE_LINKER_FLAGS} -T '${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_LINK_TARGET}.ld' -static")
 
 # ------------------------------------------------------------------------------
 # mbed
