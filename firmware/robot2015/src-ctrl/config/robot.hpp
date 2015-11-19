@@ -42,5 +42,4 @@
 
 #include "adc-dma.hpp"
 #include "dma.hpp"
-#include "controller.hpp"
 #include "fpga.hpp"
