@@ -149,8 +149,6 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
             p.setFont(font);
             drawText(p, _dragTo.toQPointF(),
                      QString("%1 m/s").arg(speed, 0, 'f', 1));
-
-
         }
     }
 }
