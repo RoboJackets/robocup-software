@@ -16,7 +16,7 @@ namespace Planning {
  */
 class Path {
 public:
-    Path(Time startTime = 0) : _startTime(startTime) {}
+    Path(RJ::Time startTime = 0) : _startTime(startTime) {}
     virtual ~Path() {}
 
     /**
@@ -87,11 +87,11 @@ public:
     virtual std::unique_ptr<Path> clone() const = 0;
 
     /// The time the path starts at
-    Time startTime() const { return _startTime; }
-    void setStartTime(Time t) { _startTime = t; }
+    RJ::Time startTime() const { return _startTime; }
+    void setStartTime(RJ::Time t) { _startTime = t; }
 
 protected:
-    Time _startTime;
+    RJ::Time _startTime;
 };
 
 }  // namespace Planning

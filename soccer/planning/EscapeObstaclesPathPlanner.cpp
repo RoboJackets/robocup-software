@@ -44,7 +44,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     auto path = std::unique_ptr<Path>(
         new TrapezoidalPath(startInstant.pos, motionConstraints.maxSpeed,
                             unblocked, 0, motionConstraints));
-    path->setStartTime(timestamp());
+    path->setStartTime(RJ::timestamp());
     return std::move(path);
 }
 

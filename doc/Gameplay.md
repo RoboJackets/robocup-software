@@ -137,6 +137,12 @@ This can be imported like any other python module like so:
 ~~~{.sh}
 cd robocup-software
 
+# Ensure that the latest version of the 'robocup' python module is built
+make
+
+# The python module is placed in the 'run' directory as 'robocup.so'
+cd run
+
 # Run python interpreter and import the module
 python3
 import robocup

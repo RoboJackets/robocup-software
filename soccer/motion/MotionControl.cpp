@@ -72,7 +72,8 @@ void MotionControl::run() {
     switch (rotationCommand->getCommandType()) {
         case RotationCommand::FacePoint:
             targetPt = static_cast<const Planning::FacePointCommand*>(
-                           rotationCommand.get())->targetPos;
+                           rotationCommand.get())
+                           ->targetPos;
             break;
         case RotationCommand::None:
             // do nothing
@@ -113,7 +114,7 @@ void MotionControl::run() {
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         float r = Robot_Radius;
         const float FudgeFactor = *_robot->config->pivotVelMultiplier;
-        float speed = r * targetW * RadiansToDegrees * FudgeFactor;
+        float speed = RadiansToDegrees(r * targetW * FudgeFactor);
         Point vel(speed, 0);
 
         // the robot body coordinate system is wierd...
@@ -139,7 +140,7 @@ void MotionControl::run() {
 
         // convert from microseconds to seconds
         float timeIntoPath =
-            ((float)(timestamp() - _robot->path()->startTime())) *
+            ((float)(RJ::timestamp() - _robot->path()->startTime())) *
                 TimestampToSecs +
             1.0 / 60.0;
 
@@ -147,8 +148,9 @@ void MotionControl::run() {
         boost::optional<MotionInstant> optTarget =
             _robot->path()->evaluate(timeIntoPath);
         if (!optTarget) {
+            // use the path end if our timeIntoPath is greater than the duration
             target.vel = Point();
-            target.pos = _robot->pos;
+            target.pos = _robot->path()->end().pos;
         } else {
             target = *optTarget;
         }
@@ -195,7 +197,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     angleVel *= *_robot->config->angleVelMultiplier;
 
     // convert units
-    angleVel *= RadiansToDegrees;
+    angleVel = RadiansToDegrees(angleVel);
 
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
@@ -218,7 +220,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     if (_lastCmdTime == -1) {
         targetVel.clamp(*_max_acceleration);
     } else {
-        float dt = (float)((timestamp() - _lastCmdTime) / 1000000.0f);
+        float dt = (float)((RJ::timestamp() - _lastCmdTime) / 1000000.0f);
         Point targetAccel = (targetVel - _lastVelCmd) / dt;
         targetAccel.clamp(*_max_acceleration);
 
@@ -232,7 +234,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
 
     // track these values so we can limit acceleration
     _lastVelCmd = targetVel;
-    _lastCmdTime = timestamp();
+    _lastCmdTime = RJ::timestamp();
 
     // velocity multiplier
     targetVel *= *_robot->config->velMultiplier;

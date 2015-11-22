@@ -69,6 +69,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 }
 
 void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
+    FieldView::mouseMoveEvent(me);
     switch (_dragMode) {
         case DRAG_SHOOT:
             _dragTo = _worldToTeam * _screenToWorld * me->pos();
