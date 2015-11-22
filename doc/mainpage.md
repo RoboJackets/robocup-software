@@ -11,20 +11,20 @@ There are some areas that are a little sparse and could use a little more info. 
 
 If you're new to our codebase, we'd recommend you start by checking out the following key components:
 
-* Processor
-* Gameplay::GameplayModule
-* The python play.Play class
-* SystemState
-* OurRobot
+* \ref Processor
+* \ref Gameplay::GameplayModule
+* The python \ref gameplay.play.Play "Play class"
+* \ref SystemState
+* \ref OurRobot
 
 
 A few other classes that are helpful for more understanding are:
 
-* Logger
-* RobotFilter
-* VisionReceiver
-* NewRefereeModule
-* GameState
-* Planning::RRTPlanner
-* Planning::Path
-* MotionControl
+* \ref Logger
+* \ref RobotFilter
+* \ref VisionReceiver
+* \ref NewRefereeModule
+* \ref GameState
+* \ref Planning::RRTPlanner
+* \ref Planning::Path
+* \ref MotionControl

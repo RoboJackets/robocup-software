@@ -9,6 +9,7 @@
 
 #include <set>
 #include <memory>
+#include <QLabel>
 
 class Logger;
 
@@ -53,6 +54,9 @@ public:
 protected:
     virtual void paintEvent(QPaintEvent* e) override;
     virtual void resizeEvent(QResizeEvent* e) override;
+    virtual void enterEvent(QEvent*) override;
+    virtual void leaveEvent(QEvent*) override;
+    virtual void mouseMoveEvent(QMouseEvent*) override;
 
     virtual void drawWorldSpace(QPainter& p);
     virtual void drawTeamSpace(QPainter& p);
@@ -71,6 +75,9 @@ protected:
     Geometry2d::TransformMatrix _screenToWorld;
     Geometry2d::TransformMatrix _worldToTeam;
     Geometry2d::TransformMatrix _teamToWorld;
+
+    // Label used to display current coordinates of mouse
+    QLabel* _posLabel;
 
     // Rotation of the field in 90-degree increments (0 to 3).
     int _rotate;

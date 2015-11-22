@@ -1,7 +1,6 @@
 import logging
 from enum import Enum
 import graphviz as gv
-import subprocess
 
 
 ## @brief generic hierarchial state machine class.
@@ -163,7 +162,7 @@ class StateMachine:
 
     # returns a graphviz.Digraph object
     def as_graphviz(self):
-        g = gv.Digraph(self.__class__.__name__)
+        g = gv.Digraph(self.__class__.__name__, format='png')
 
         cluster_index = 0
         subgraphs = {}
@@ -194,15 +193,10 @@ class StateMachine:
         return g
 
 
-    # returns a buffer containing the source code needed to generate a representative graphviz graph
-    def to_graphviz(self):
-        return self.as_graphviz().source.encode('latin-1')
-
-
     # writes a png file of the graphviz output to the specified location
     def write_diagram_png(self, filename):
-        p = subprocess.Popen(['dot', '-Tpng', '-o' + filename], stdin=subprocess.PIPE)
-        p.communicate(input=self.to_graphviz())
+        g = self.as_graphviz()
+        g.render(filename=filename, cleanup=True)
 
 
     @property

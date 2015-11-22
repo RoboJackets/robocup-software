@@ -38,7 +38,7 @@ boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
 
 bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                           float initialTime) const {
-    for (Time t = initialTime * TimestampToSecs + startTime();
+    for (RJ::Time t = initialTime * TimestampToSecs + startTime();
          t < startTime() + _duration * SecsToTimestamp;
          t += 0.25 * SecsToTimestamp) {
         auto instant = evaluate((t - startTime()) * TimestampToSecs);

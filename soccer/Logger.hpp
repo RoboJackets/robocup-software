@@ -3,6 +3,10 @@
  * time.
  *
  * @details
+ * The log stores things such as robot and ball position and velocity as well as
+ * debug information about the current play. See the LogFrame.proto file for a
+ * full list of what is stored in the log.
+ *
  * This logger implements a circular buffer for recent history and writes all
  * frames to disk.
  *
@@ -10,8 +14,7 @@
  *
  * Consider a sequence number for each frame, where the first frame passed
  * to addFrame() has a sequence number of zero and the sequence number is one
- * greater for
- * each subsequent frame.
+ * greater for each subsequent frame.
  *
  * _nextFrameNumber is the sequence number of the next frame to be stored by
  * addFrame().
@@ -21,12 +24,10 @@
  *
  * You can get a copy of a frame by passing its sequence number to getFrame().
  * If the frame is too old to be in the circular buffer (or the sequence number
- * is
- * beyond the most recent available) then getFrame() will return false.
+ * is beyond the most recent available) then getFrame() will return false.
  *
  * Frames are allocated as they are first needed.  The size of the circular
- * buffer
- * limits total memory usage.
+ * buffer limits total memory usage.
  */
 
 #pragma once
