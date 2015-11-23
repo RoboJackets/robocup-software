@@ -1,3 +1,5 @@
+#pragma once
+
 /** A software implemented SPI that can use any digital pins
  *
  * Useful when don't want to share a single SPI hardware among attached devices
@@ -5,7 +7,7 @@
  *
  * @code
  * #include "mbed.h"
- * #include "SoftwareSPI.hpp"
+ * #include "software-spi.hpp"
  *
  * SoftwareSPI spi(p5, p6, p7); // mosi, miso, sck
  *
@@ -21,9 +23,6 @@
  * }
  * @endcode
  */
-
-#pragma once
-
 class SoftwareSPI {
 private:
     DigitalOut* mosi;
@@ -50,8 +49,6 @@ public:
 
     /** Destructor */
     ~SoftwareSPI();
-
-    // void setup();
 
     /** Specify SPI format
      *
