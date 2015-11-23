@@ -32,13 +32,13 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
 class CommLink {
 public:
     /// Defautl Constructor
-    CommLink() {};
+    CommLink(){};
 
     /// Constructor
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
     /// Deconstructor
-    virtual ~CommLink() {}; // Don't forget to include deconstructor
+    virtual ~CommLink(){};  // Don't forget to include deconstructor
     // implementation in derived classes that frees
     // memory
 
