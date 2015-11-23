@@ -44,22 +44,8 @@ void setISRPriorities() {
     for (uint32_t IRQn = TIMER0_IRQn; IRQn <= CANActivity_IRQn; IRQn++)
         NVIC_SetPriority((IRQn_Type)IRQn, defaultPriority);
 
-    ////////////////////////////////////
-    //  begin raise priority section  //
-    ////////////////////////////////////
-
     // reestablish watchdog
     NVIC_SetPriority(WDT_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 0));
-
-    // reestablish timers
-    // NVIC_SetPriority(TIMER0_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 1));
-    // NVIC_SetPriority(TIMER1_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 2));
-    // NVIC_SetPriority(TIMER2_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 3));
-    // NVIC_SetPriority(TIMER3_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 4));
 
     // make TIMER #2 2nd in line t the watchdog timer
     NVIC_SetPriority(TIMER2_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 1));
@@ -75,28 +61,11 @@ void setISRPriorities() {
 
     // The SPI interface that's in use.
     NVIC_SetPriority(SPI_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 2));
-    // NVIC_SetPriority(SSP0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 2));
-
-    ////////////////////////////////////
-    //  begin lower priotity section  //
-    ////////////////////////////////////
 
     // set UART (console) interrupts to minimal priority
     // when debugging radio and other time sensitive operations, this
     // interrupt will need to be deferred.
     NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 4));
-
-    // NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3,
-    // 2));
-    // NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3,
-    // 2));
-    // NVIC_SetPriority(UART3_IRQn, NVIC_EncodePriority(priorityGrouping, 3,
-    // 1));
-
-    // NVIC_EnableIRQ(TIMER0_IRQn);
-    // NVIC_EnableIRQ(TIMER1_IRQn);
-    // NVIC_EnableIRQ(TIMER2_IRQn);
-    // NVIC_EnableIRQ(TIMER3_IRQn);
 
     __enable_irq();
 }
@@ -105,8 +74,9 @@ void setISRPriorities() {
  * Timer interrupt based light flicker. If this stops, the code triggered
  * a fault.
  */
-void imAlive(void const* args) {
-    DigitalOut* led = (DigitalOut*)args;
+void imAlive(void const* arg) {
+    DigitalOut* led =
+        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
 
     *led = !(*led);
     Thread::wait(40);
@@ -116,8 +86,9 @@ void imAlive(void const* args) {
 /**
  * @brief      { Flash an LED }
  */
-void strobeStatusLED(void const* args) {
-    DigitalInOut* led = (DigitalInOut*)args;
+void strobeStatusLED(void const* arg) {
+    DigitalInOut* led =
+        const_cast<DigitalInOut*>(reinterpret_cast<const DigitalInOut*>(arg));
 
     *led = !(*led);
     Thread::wait(30);
@@ -134,6 +105,10 @@ void define_thread(osThreadDef_t& t, void (*task)(void const* arg),
     t.tpriority = priority;
     t.stacksize = stack_size;
     t.stack_pointer = (uint32_t*)new unsigned char[t.stacksize];
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(t.stack_pointer != nullptr);
+#pragma GCC diagnostic pop
+
 #endif
 }
