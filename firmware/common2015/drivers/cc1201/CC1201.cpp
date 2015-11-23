@@ -2,12 +2,14 @@
 
 #include "CC1201Defines.hpp"
 #include "logger.hpp"
+#include "assert.hpp"
 
 CC1201::CC1201() : CommLink(){};
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
+    LOG(FATAL, "CC1201 constructor called");
     // powerOnReset();
     _offset_reg_written = false;
     reset();
@@ -21,6 +23,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
 }
 
 CC1201::~CC1201() {
+    LOG(FATAL, "CC1201 deconstructor called");
     if (_spi) delete _spi;
 
     if (_cs) delete _cs;
@@ -35,10 +38,10 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     if (size != (buf[0] + 1)) {
         LOG(SEVERE,
-            "Packet size values are inconsistent. %u bytes requested vs %u "
-            "bytes in packet.",
-            size, buf[0]);
-        return 1;
+            "Packet size is inconsistent with given "
+            "value of %u bytes. %u bytes found in buffer.",
+            buf[0], size);
+        return COMM_FUNC_BUF_ERR;
     }
 
     strobe(CC1201_STROBE_SFTX);
@@ -52,14 +55,14 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     if ((device_state & CC1201_TX_FIFO_ERROR) == CC1201_TX_FIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
         flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
-                     // state
+        // state
 
         // set in IDLE mode and strobe back into RX to ensure the states will
         // fall through calibration then return
         idle();
         strobe(CC1201_STROBE_SRX);
 
-        return 2;
+        return COMM_DEV_BUF_ERR;
     } else {
         strobe(CC1201_STROBE_STX);  // Enter TX mode
     }
@@ -73,16 +76,16 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     } while (bts != 0);
 
-    return 0;  // success
+    return COMM_SUCCESS;
 }
 
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     uint8_t device_state = freqUpdate();  // update frequency offset estimate &
-                                          // get the current state while at it
+    // get the current state while at it
     uint8_t num_rx_bytes = readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON);
 
     if (((*len) + 2) < num_rx_bytes) {
-        LOG(SEVERE, "%u bytes in RX FIFO with passed buffer size of %u bytes.",
+        LOG(SEVERE, "%u bytes in RX FIFO with given buffer size of %u bytes.",
             num_rx_bytes, *len);
 
         return COMM_FUNC_BUF_ERR;
@@ -93,12 +96,6 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
         strobe(CC1201_STROBE_SRX);
 
         return COMM_DEV_BUF_ERR;
-    }
-
-    // This is temporary
-    if (readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON) > 0) {
-        // This was a TX interrupt from the CC1201, not an RX
-        return COMM_FALSE_TRIG;
     }
 
     if (num_rx_bytes > 0) {
@@ -116,7 +113,7 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     // return back to RX mode
     strobe(CC1201_STROBE_SRX);
 
-    return COMM_SUCCESS;  // success
+    return COMM_SUCCESS;
 }
 
 /**
@@ -133,7 +130,7 @@ uint8_t CC1201::readReg(uint8_t addr, ext_flag_t ext_flag) {
     if (ext_flag == EXT_FLAG_ON) return readRegExt(addr);
 
     addr &= 0xBF;  // Should be redundant but leaving for security. We don't
-                   // want to accidently do a burst read.
+    // want to accidently do a burst read.
 
     toggle_cs();
     _spi->write(addr | CC1201_READ);
@@ -273,6 +270,8 @@ uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
 uint8_t CC1201::status() { return strobe(CC1201_STROBE_SNOP); }
 
 void CC1201::reset() {
+    int i = 0;
+
     idle();
     toggle_cs();
     _spi->write(CC1201_STROBE_SRES);
@@ -280,12 +279,14 @@ void CC1201::reset() {
 
     // Wait up to 300ms for the radio to do anything. Don't block everything
     // else if it doesn't startup correctly
-    for (int i = 0; i < 300; i++) {
+    for (i = 0; i < 300; i++) {
         if (~(idle()) & 0x80)  // Chip is ready when status byte's MSB is 0
             break;
         else
             Thread::wait(1);
     }
+
+    ASSERT(i < 300);
 
     _isInit = false;
 }
