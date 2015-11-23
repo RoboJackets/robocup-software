@@ -1,0 +1,14 @@
+
+(
+    from = 0,
+    datagrams = [
+        (
+            port = motionCommands,
+            data = "0x56000000000000"
+        ),
+        (
+            port = motionCommands,
+            data = "0x234123421000000000000000000000000000000000000000"
+        )
+    ]
+)
