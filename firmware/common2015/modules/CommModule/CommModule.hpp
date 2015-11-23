@@ -4,7 +4,7 @@
 #include <rtos.h>
 
 #include "rtp.hpp"
-#include "rtos-mgmt/thread-helper.hpp"
+#include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "Console.hpp"
 #include "CommPort.hpp"
@@ -41,12 +41,14 @@ private:
     static CommPorts_t _ports;
 
 public:
+    ~CommModule();
+
     // Class constants - set in CommModule.cpp
     static const size_t NBR_PORTS = 16;
     static const size_t TX_QUEUE_SIZE = 5;
     static const size_t RX_QUEUE_SIZE = 5;
 
-    static void Init();
+    static void Init(void);
 
     // Set a TX callback function on an object
     template <typename B>
@@ -105,15 +107,19 @@ public:
 
     static void ResetCount(unsigned int portNbr);
     static void Close(unsigned int portNbr);
-    static bool isReady();
-    static int NumOpenSockets();
+    static bool isReady(void);
+    static int NumOpenSockets(void);
 
     static void txLED(DigitalInOut*);
     static void rxLED(DigitalInOut*);
 
 protected:
     // NOP function for keeping a communication link active
-    void nopFunc();
+    void nopFunc(void);
+
+    /// Kill any threads and free the allocated stack.
+    /// Always call in any derived class's deconstructors!
+    void cleanup(void);
 
     // Memory Queue IDs
     osMailQId _txQueue;
@@ -140,9 +146,9 @@ private:
     static void txThread(void const*);
     static void rxThread(void const*);
 
-    static void ready();
+    static void ready(void);
 
-    static void PrintHeader();
+    static void PrintHeader(void);
 
     static std::shared_ptr<CommModule> instance;
 

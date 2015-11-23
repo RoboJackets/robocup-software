@@ -9,7 +9,6 @@ CC1201::CC1201() : CommLink(){};
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
-    LOG(FATAL, "CC1201 constructor called");
     // powerOnReset();
     _offset_reg_written = false;
     reset();
@@ -23,7 +22,6 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
 }
 
 CC1201::~CC1201() {
-    LOG(FATAL, "CC1201 deconstructor called");
     if (_spi) delete _spi;
 
     if (_cs) delete _cs;

@@ -5,7 +5,7 @@
 
 #include "rj-macros.hpp"
 #include "rtp.hpp"
-#include "rtos-mgmt/thread-helper.hpp"
+#include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
 
@@ -38,7 +38,7 @@ public:
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
     /// Deconstructor
-    virtual ~CommLink(){};  // Don't forget to include deconstructor
+    virtual ~CommLink();  // Don't forget to include deconstructor
     // implementation in derived classes that frees
     // memory
 
@@ -66,6 +66,10 @@ protected:
     virtual int32_t getData(
         uint8_t*,
         uint8_t*) = 0;  // read data in from the radio device using SPI
+
+    /// Kill any threads and free the allocated stack.
+    /// Always call in any derived class's deconstructors!
+    void cleanup(void);
 
     void ISR(void);
     void toggle_cs(void);

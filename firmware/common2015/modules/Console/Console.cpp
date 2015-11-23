@@ -78,47 +78,8 @@ void Console::RXCallback() {
 
         } else {
             // Otherwise, continue as normal
-
             // read the char that caused the interrupt
             char c = GETC();
-
-            // flag the start of an arrow key sequence
-            // if (c == ARROW_KEY_SEQUENCE_ONE) {
-            // 	flagOne = true;
-            // }
-            // check if we're in a sequence if flagOne is set - do things if
-            // necessary
-            // else if (flagOne) {
-            // 	if (flagTwo) {
-            // 		switch (c) {
-            // 		case ARROW_UP_KEY:
-            // 			PRINTF("\033M");
-            // 			break;
-
-            // 		case ARROW_DOWN_KEY:
-            // 			PRINTF("\033D");
-            // 			break;
-
-            // 		default:
-            // 			flagOne = false;
-            // 			flagTwo = false;
-            // 		}
-
-            // 		Flush();
-            // 		continue;
-
-            // 	} else {	// flagTwo not set
-            // 		switch (c) {
-            // 		case ARROW_KEY_SEQUENCE_TWO:
-            // 			flagTwo = true;
-            // 			break;
-
-            // 		default:
-            // 			flagOne = false;
-            // 			break;
-            // 		}
-            // 	}
-            // }
 
             // if the buffer is full, ignore the chracter and print a
             // warning to the console
@@ -170,37 +131,12 @@ void Console::RXCallback() {
             // No special character, add it to the buffer and return it to
             // the terminal to be visible.
             else {
-                if ((c != ESC_START) && (esc_en == false)) {
-                    if (!(c == ARROW_UP_KEY || c == ARROW_DOWN_KEY)) {
-                        rxBuffer[rxIndex++] = c;
-                    }
-
-                    esc_host_res = "";
-                    PUTC(c);
-                    Flush();
-
+                if (!(c == ARROW_UP_KEY || c == ARROW_DOWN_KEY ||
+                      c == ARROW_DOWN_KEY || c == ARROW_DOWN_KEY)) {
+                    rxBuffer[rxIndex++] = c;
                 }
-
-                else {
-                    if (esc_seq_en == true) {
-                        esc_host_res += c;
-                    }
-
-                    if (c == ESC_START) {
-                        esc_en = true;
-                    } else if (c == ESC_SEQ_START) {
-                        esc_seq_en = true;
-                    } else if (c == esc_host_end_char) {
-                        // Remove the terminating character
-                        esc_host_res.pop_back();
-                        // Set the flag for knowing we've received an expected
-                        // response
-                        esc_host_res_rdy = true;
-                        // Reset everything back to normal
-                        esc_en = false;
-                        esc_seq_en = false;
-                    }
-                }
+                PUTC(c);
+                Flush();
             }
         }
     }
@@ -210,28 +146,6 @@ void Console::TXCallback() {
     // NVIC_DisableIRQ(UART0_IRQn);
     // handle transmission interrupts if necessary here
     // NVIC_EnableIRQ(UART0_IRQn);
-}
-
-void Console::ConComCheck() {
-    /*
-     * Currently no way to check if a vbus has been disconnected or
-     * reconnected. Will continue to keep track of a beta library located
-     * here: http://developer.mbed.org/handbook/USBHostSerial
-     * Source here:
-     * http://developer.mbed.org/users/mbed_official/code/USBHost/file/607951c26872/USBHostSerial/USBHostSerial.cpp
-     * It's not present in our currently library, and is not working
-     * for most people. It could however, greatly reduce what we have to
-     * implement while adding more functionality.
-     */
-
-    /*
-     * Note for the above ^. The vbus can be monitored through ADC0, input 4.
-     * This is possible when bits 29..28 of the PINSEL3 register are set to
-     * 0b01.
-     *
-     * 		- Jon
-     */
-    return;
 }
 
 void Console::RequestSystemStop() {
@@ -287,7 +201,7 @@ void Console::changeUser(const std::string& user) {
 
 void Console::setHeader() {
     instance->CONSOLE_HEADER =
-        "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[33m" +
+        "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[01;33m" +
         instance->CONSOLE_HOSTNAME + " \033[36m$\033[0m \033[0J\033[0m";
     // instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" +
     // instance->CONSOLE_HOSTNAME + " $ ";
@@ -324,13 +238,14 @@ void Console::ShowLogo() {
     Flush();
 
     instance->PRINTF(
+        "\033[01;33m"
         "   _____       _                _            _        _\r\n"
         "  |  __ \\     | |              | |          | |      | |      \r\n"
         "  | |__) |___ | |__   ___      | | __ _  ___| | _____| |_ ___ \r\n"
         "  |  _  // _ \\| '_ \\ / _ \\ _   | |/ _` |/ __| |/ / _ \\ __/ __|\r\n"
         "  | | \\ \\ (_) | |_) | (_) | |__| | (_| | (__|   <  __/ |_\\__ \\\r\n"
         "  |_|  \\_\\___/|_.__/ \\___/ \\____/ "
-        "\\__,_|\\___|_|\\_\\___|\\__|___/\r\n");
+        "\\__,_|\\___|_|\\_\\___|\\__|___/\r\n\033[0m");
 
     Flush();
 }

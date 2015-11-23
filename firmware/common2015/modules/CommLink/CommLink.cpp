@@ -17,6 +17,21 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
     _nbr_links++;
 }
 
+CommLink::~CommLink() { cleanup(); }
+
+void CommLink::cleanup(void) {
+    // release created pin objects if they exist
+    if (_spi) delete _spi;
+    if (_cs) delete _cs;
+    if (_int_in) delete _int_in;
+
+    // terminate the thread we created
+    osThreadTerminate(_rxID);
+
+    // release the previsouly allocated stack
+    delete[](_rxDef.stack_pointer);
+}
+
 // =================== CLASS SETUP ===================
 void CommLink::setup(void) {
     // [X] - 1 - Initialize the hardware for communication.

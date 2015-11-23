@@ -91,11 +91,6 @@ public:
     static void Init();
 
     /**
-     * console communications check. should be called in the main loop.
-     */
-    static void ConComCheck();
-
-    /**
      * flushes stdout. Should be called after every putc or printf block.
      */
     static void Flush();

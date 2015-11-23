@@ -30,7 +30,19 @@ CommModule::CommModule()
       _txQueueHelper(),
       _rxQueueHelper() {}
 
-void CommModule::Init() {
+CommModule::~CommModule() { cleanup(); }
+
+void CommModule::cleanup(void) {
+    // terminate the threads
+    osThreadTerminate(_txID);
+    osThreadTerminate(_rxID);
+
+    // release the allocated memory
+    delete[](_txDef.stack_pointer);
+    delete[](_rxDef.stack_pointer);
+}
+
+void CommModule::Init(void) {
     // [X] - 1.0 - Make sure we have an instance to work with
     auto instance = Instance();
 
@@ -65,10 +77,8 @@ void CommModule::txThread(void const* arg) {
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    if (instance->_txID != nullptr)
-        threadPriority = osThreadGetPriority(instance->_txID);
-    else
-        threadPriority = osPriorityIdle;
+    threadPriority = osThreadGetPriority(instance->_txID);
+    ASSERT(instance->_txID != nullptr);
 
     // Check for the existance of a TX LED to flash
     if (instance->_txLED == nullptr) {
@@ -95,7 +105,7 @@ void CommModule::txThread(void const* arg) {
             rtp::packet* p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            // if (osThreadSetPriority(_txID, osPriorityRealtime) == osOK) {
+            ASSERT(osThreadSetPriority(_txID, osPriorityRealtime) == osOK);
 
             // Call the user callback function
             if (_ports[p->port].isOpen()) {
@@ -104,7 +114,7 @@ void CommModule::txThread(void const* arg) {
                 _ports[p->port]
                     .TXPackets()++;  // Increment the packet counter by 1
 
-                LOG(INF3, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
+                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port, p->subclass);
             }
 
@@ -113,8 +123,7 @@ void CommModule::txThread(void const* arg) {
 
             strobeStatusLED((void*)(instance->_txLED));
 
-            // osThreadSetPriority(_txID, osPriorityNormal);
-            // }
+            ASSERT(osThreadSetPriority(_txID, threadPriority) == osOK);
         }
     }
 
@@ -129,8 +138,8 @@ void CommModule::rxThread(void const* arg) {
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    ASSERT(instance->_rxID != nullptr);
     threadPriority = osThreadGetPriority(instance->_rxID);
+    ASSERT(instance->_rxID != nullptr);
 
     // Check for the existance of an RX LED to flash
     if (instance->_rxLED == nullptr) {
@@ -157,7 +166,7 @@ void CommModule::rxThread(void const* arg) {
             p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            // if (osThreadSetPriority(_rxID, osPriorityRealtime) == osOK) {
+            ASSERT(osThreadSetPriority(_rxID, osPriorityRealtime) == osOK);
 
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen()) {
@@ -165,7 +174,7 @@ void CommModule::rxThread(void const* arg) {
 
                 _ports[p->port].RXPackets()++;
 
-                LOG(INF3, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
+                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port, p->subclass);
             }
 
@@ -173,8 +182,7 @@ void CommModule::rxThread(void const* arg) {
                        p);  // free memory allocated for mail
 
             strobeStatusLED((void*)(instance->_rxLED));
-            // osThreadSetPriority(_rxID, osPriorityNormal);
-            // }
+            ASSERT(osThreadSetPriority(_rxID, threadPriority) == osOK);
         }
     }
 
@@ -217,8 +225,6 @@ bool CommModule::openSocket(uint8_t portNbr) {
 
         _ports += _tmpPort;
 
-        LOG(WARN, "Port %u established, but has no set callbacks", portNbr);
-
         ready();
 
         return _ports[portNbr].Open();
@@ -240,7 +246,7 @@ bool CommModule::openSocket(uint8_t portNbr) {
     }
 }
 
-void CommModule::ready() {
+void CommModule::ready(void) {
     if (_isReady == true) return;
 
     // Start running the TX thread - it will trigger with to startup the RX
@@ -250,7 +256,7 @@ void CommModule::ready() {
 
 void CommModule::send(rtp::packet& packet) {
     // [X] - 1 - Check to make sure a socket for the port exists
-    if (_ports[packet.port].isOpen() && _ports[packet.port].TXCallback()) {
+    if (_ports[packet.port].isOpen() && _ports[packet.port].hasTXCallback()) {
         packet.adjustSizes();
 
         // [X] - 1.1 - Allocate a block of memory for the data.
@@ -276,7 +282,7 @@ void CommModule::send(rtp::packet& packet) {
 
 void CommModule::receive(rtp::packet& packet) {
     // [X] - 1 - Check to make sure a socket for the port exists
-    if (_ports[packet.port].isOpen() && _ports[packet.port].RXCallback()) {
+    if (_ports[packet.port].isOpen() && _ports[packet.port].hasRXCallback()) {
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
         rtp::packet* p =
@@ -314,7 +320,7 @@ void CommModule::PrintInfo(bool forceHeader) {
     Console::Flush();
 }
 
-void CommModule::PrintHeader() { _ports.PrintHeader(); }
+void CommModule::PrintHeader(void) { _ports.PrintHeader(); }
 
 void CommModule::ResetCount(unsigned int portNbr) {
     _ports[portNbr].RXPackets() = 0;
@@ -323,9 +329,9 @@ void CommModule::ResetCount(unsigned int portNbr) {
 
 void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
 
-bool CommModule::isReady() { return _isReady; }
+bool CommModule::isReady(void) { return _isReady; }
 
-int CommModule::NumOpenSockets() { return _ports.count_open(); }
+int CommModule::NumOpenSockets(void) { return _ports.count_open(); }
 
 void CommModule::txLED(DigitalInOut* led) { instance->_txLED = led; }
 
