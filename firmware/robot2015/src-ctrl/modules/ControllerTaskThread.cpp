@@ -10,7 +10,7 @@
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
-#define CONTROL_LOOP_WAIT_MS 20
+static const int CONTROL_LOOP_WAIT_MS = 20;
 
 // Declaration for an alternative control loop thread for when the accel/gyro
 // can't be used for whatever reason
