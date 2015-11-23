@@ -1,6 +1,6 @@
 
-`ifndef _SPI_SLAVE_
-`define _SPI_SLAVE_
+`ifndef _SPI_MASTER_
+`define _SPI_MASTER_
 
 module spi #(parameter CLK_DIV = 2)(
     input clk,
