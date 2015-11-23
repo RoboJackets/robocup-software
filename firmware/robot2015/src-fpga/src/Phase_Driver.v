@@ -1,5 +1,3 @@
-//`include "phase_driver.vh"
-
 /**
 This module is responsible for driving one phase of the BLDC. It generates both
 the low and high side PWM (Pulse Width Modulation) signals necessary for the

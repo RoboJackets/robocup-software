@@ -1,4 +1,7 @@
-   
+
+`ifndef _MOTOR_BOARD_COMM_
+`define _MOTOR_BOARD_COMM_
+
 module Motor_Board_Comm (
     output [4:0] drv_ncs,
     output [1:0] adc_ncs,
@@ -48,3 +51,5 @@ generate for (i = 0; i < 7; i = i + 1) begin: SPI_Master_Inst
 endgenerate
 
 endmodule
+
+`endif
