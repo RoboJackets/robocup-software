@@ -2,9 +2,6 @@
 
 #include "logger.hpp"
 
-// Default constructor
-CC1101::CC1101() : CommLink() {}
-
 // Main constructor
 CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName int_pin)
@@ -24,15 +21,6 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs,
 
         LOG(INIT, "CC1101 Ready!");
     }
-}
-
-// Deconstructor
-CC1101::~CC1101() {
-    if (_spi) delete _spi;
-
-    if (_cs) delete _cs;
-
-    if (_int_in) delete _int_in;
 }
 
 int32_t CC1101::powerUp() {

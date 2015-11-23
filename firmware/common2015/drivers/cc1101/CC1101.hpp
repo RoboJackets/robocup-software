@@ -13,7 +13,7 @@
 class CC1101 : public CommLink {
 public:
     /// Create a CC1101 hardware communication object
-    CC1101();
+    CC1101(){};
 
     /** Create a CC1101 hardware communication object
      * @param mosi SPI data in pin
@@ -26,7 +26,7 @@ public:
            PinName int_pin = NC);
 
     /// Deconstructor
-    virtual ~CC1101();
+    virtual ~CC1101() { CommLink::cleanup(); }
 
     // These must have implementations in the CC1101 class since it is a derived
     // class of the base class CommLink

@@ -2,18 +2,7 @@
 #include <string>
 
 #include "CC1201Radio.hpp"
-
 #include "logger.hpp"
-
-/**
- * default constructor
- */
-CC1201Config::CC1201Config() {}
-
-/**
- * default destructor
- */
-CC1201Config::~CC1201Config() {}
 
 /**
  * configuration faults queue initialization

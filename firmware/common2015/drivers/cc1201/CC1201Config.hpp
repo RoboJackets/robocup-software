@@ -47,12 +47,12 @@ public:
     /**
      * default constructor
      */
-    CC1201Config();
+    CC1201Config(){};
 
     /**
      * default destructor
      */
-    ~CC1201Config();
+    ~CC1201Config(){};
 
     /*
      * see CC1201 doc for proper descriptions
