@@ -38,7 +38,8 @@ public:
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
     /// Virtual deconstructor
-    /// Always define and call CommLink::cleanup() in a derived class's deconstructor!
+    /// Always define and call CommLink::cleanup() in a derived class's
+    /// deconstructor!
     virtual ~CommLink();
 
     // Class constants for data queues
