@@ -10,11 +10,7 @@
 
 #include "helper-funcs.hpp"
 #include "logger.hpp"
-
-// Set the class's constants for streamlined use in other areas of the code
-const int CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
-const int CommModule::RX_QUEUE_SIZE = COMM_MODULE_RX_QUEUE_SIZE;
-const int CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
+#include "assert.hpp"
 
 // Class declarations since everything in CommModule is static
 bool CommModule::_isReady = false;
@@ -133,10 +129,8 @@ void CommModule::rxThread(void const* arg) {
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    if (instance->_rxID != nullptr)
-        threadPriority = osThreadGetPriority(instance->_rxID);
-    else
-        threadPriority = osPriorityIdle;
+    ASSERT(instance->_rxID != nullptr);
+    threadPriority = osThreadGetPriority(instance->_rxID);
 
     // Check for the existance of an RX LED to flash
     if (instance->_rxLED == nullptr) {

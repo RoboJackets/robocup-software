@@ -14,9 +14,6 @@
 #include <functional>
 #include <memory>
 
-#define COMM_MODULE_TX_QUEUE_SIZE 5
-#define COMM_MODULE_RX_QUEUE_SIZE 5
-#define COMM_MODULE_NBR_PORTS 16
 #define COMM_MODULE_SIGNAL_START_THREAD 0x01
 
 /* These define the function pointer type that's used for every callback
@@ -45,9 +42,9 @@ private:
 
 public:
     // Class constants - set in CommModule.cpp
-    static const int NBR_PORTS;
-    static const int TX_QUEUE_SIZE;
-    static const int RX_QUEUE_SIZE;
+    static const size_t NBR_PORTS = 16;
+    static const size_t TX_QUEUE_SIZE = 5;
+    static const size_t RX_QUEUE_SIZE = 5;
 
     static void Init();
 
@@ -158,6 +155,6 @@ private:
     osMailQDef_t _rxQDef;
 
     // Mail helper objects
-    MailHelper<rtp::packet, COMM_MODULE_TX_QUEUE_SIZE> _txQueueHelper;
-    MailHelper<rtp::packet, COMM_MODULE_RX_QUEUE_SIZE> _rxQueueHelper;
+    MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;
+    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
 };
