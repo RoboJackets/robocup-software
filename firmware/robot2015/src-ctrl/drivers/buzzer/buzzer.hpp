@@ -14,9 +14,6 @@ public:
     ~Buzzer() {};
 
     void play(float freq, int dur, float vol = 1.0);
-    int getIndex(void);
-    void setIndex(int newIndex);
-
 private:
     friend void analogUpdate(void const* args);
 
