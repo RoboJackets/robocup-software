@@ -11,10 +11,6 @@
 #include "commands.hpp"
 #include "io-expander.hpp"
 #include "TaskSignals.hpp"
-//#include "neostrip.hpp"
-//#include "buzzer.hpp"
-
-#define _EXTERN extern "C"
 
 void Task_Controller(void const* args);
 
@@ -34,26 +30,14 @@ void statusLights(bool state) {
 }
 
 /**
- * @brief      { Turns all status LEDs on }
- *
- * @param      args  { nothing }
+ * @brief      { Turn all status LEDs on }
  */
 void statusLightsON(void const* args) { statusLights(1); }
 
 /**
- * @brief      { Turns all status LEDs on }
- *
- * @param      args  { nothing }
+ * @brief      { Turn all status LEDs off }
  */
 void statusLightsOFF(void const* args) { statusLights(0); }
-
-// void sampleInputs()
-// {
-//  // Set global variables here for the config input values from the IO
-// Expander.
-//  // This is where the robot's ID comes from, so it's pretty important.
-//  LOG(SEVERE, "Interrupt triggered!");
-// }
 
 /**
  * [main Main The entry point of the system where each submodule's thread is
@@ -61,10 +45,21 @@ void statusLightsOFF(void const* args) { statusLights(0); }
  * @return  [none]
  */
 int main() {
-    // NeoStrip rgbLED(RJ_NEOPIXEL, 1);
-    // rgbLED.setBrightness(0.2);
-    // rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-    // rgbLED.write();
+    // clear any extraneous rx serial bytes
+    if (1) {
+        Serial s(RJ_SERIAL_RXTX);
+        // flush rx queue?
+        while (s.readable()) {
+            s.getc();
+        }
+        // print out the baudrate we're using as a last resort to let the user
+        // know
+        // they may or may not see it depending on many factors
+        s.baud(9600);
+        std::printf("BAUDRATE: 57600\n");
+        s.baud(57600);
+        fflush(stdout);
+    }
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
@@ -83,16 +78,6 @@ int main() {
         fflush(stdout);
     }
 
-    // clear any extraneous rx serial bytes
-    if (1) {
-        Serial s(RJ_SERIAL_RXTX);
-        while (s.readable()) {
-            s.getc();
-        }
-        while (!s.writeable()) { /* wait */
-        }
-    }
-
     // Setup the interrupt priorities before launching each subsystem's task
     // thread.
     setISRPriorities();
@@ -101,12 +86,6 @@ int main() {
     DigitalOut ledOne(LED1, 0);
     RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
     live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
-
-    // TODO: write a function that will recalibrate the radio for this.
-    // Reset the ticker on every received packet. For now, we just blink an LED.
-    // DigitalOut led4(LED4, 0);
-    // RtosTimer radio_timeout_task(imAlive, osTimerPeriodic, (void*)&led4);
-    // radio_timeout_task.start(300);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
@@ -136,16 +115,6 @@ int main() {
 
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
-    // // Setup the IO Expander's hardware
-    // MCP23017::Init();
-
-    // // Setup some extended LEDs and turn them on
-    // IOExpanderDigitalOut led_err_m1(IOExpanderPinB0);
-    // led_err_m1 = 1;
-
-    // uint8_t robot_id = MCP23017::digitalWordRead() & 0x0F;
-    // LOG(INIT, "Robot ID:\t%u", robot_id);
-
     motors_Init();
 
     // Start the thread task for the on-board control loop
@@ -157,12 +126,6 @@ int main() {
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
 
-// Attach an interrupt callback for setting the buttons/switches states
-// into the firmware anytime one of them changes
-
-// InterruptIn configInputs(RJ_IOEXP_INT);
-// configInputs.rise(&sampleInputs);
-
 #if RJ_WATCHDOG_TIMER_EN
     // Enable the watchdog timer if it's set in configurations.
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
@@ -171,25 +134,22 @@ int main() {
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
     if (fpga_ready) {
-        // NeoStrip rgbLED(RJ_NEOPIXEL, 1);
-        // rgbLED.setBrightness(1.0);
-        // rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-        // rgbLED.write();
+        // TODO: set RGB LED to green, otherwise set it to red.
     }
 
-    // LOG(INIT, "FPGA git commit hash:\t0x%08X", FPGA::Instance()->git_hash());
-
-    // Clear out the header for the console
+    // Make sure all of the motors are enabled
     FPGA::Instance()->motors_en(true);
 
     while (true) {
+        // make sure we can always reach back to main by
+        // renewing the watchdog timer periodicly
         rdy_led = !fpga_ready;
-        Thread::wait(
-            2000);  // Ping back to main every now and then seems to perform
-        // better than calling Thread::yeild() for some
-        // reason?
+        Watchdog::Renew();
+        Thread::wait(2 * RJ_WATCHDOG_TIMER_VALUE);
     }
 }
+
+#define _EXTERN extern "C"
 
 _EXTERN void HardFault_Handler() {
     __asm volatile(
@@ -205,11 +165,9 @@ _EXTERN void HardFault_Handler() {
 
 _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
     /* These are volatile to try and prevent the compiler/linker optimising them
-    away as the variables never actually get used.  If the debugger won't show
-    the
-    values of the variables, make them global my moving their declaration
-    outside
-    of this function. */
+     * away as the variables never actually get used.  If the debugger won't
+     * show the values of the variables, make them global my moving their
+     * declaration outside of this function. */
     volatile uint32_t r0;
     volatile uint32_t r1;
     volatile uint32_t r2;
@@ -251,26 +209,14 @@ _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
         __get_MSP, SCB->HFSR, SCB->CFSR, r0, r1, r2, r3, r12, lr, pc, psr);
 
     // do nothing so everything remains unchanged for debugging
-    while (true) {
-    };
+    while (true)
+        ;
 }
 
-_EXTERN void NMI_Handler() {
-    printf("NMI Fault!\n");
-    // NVIC_SystemReset();
-}
+_EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }
 
-_EXTERN void MemManage_Handler() {
-    printf("MemManage Fault!\n");
-    // NVIC_SystemReset();
-}
+_EXTERN void MemManage_Handler() { std::printf("MemManage Fault!\n"); }
 
-_EXTERN void BusFault_Handler() {
-    printf("BusFault Fault!\n");
-    // NVIC_SystemReset();
-}
+_EXTERN void BusFault_Handler() { std::printf("BusFault Fault!\n"); }
 
-_EXTERN void UsageFault_Handler() {
-    printf("UsageFault Fault!\n");
-    // NVIC_SystemReset();
-}
+_EXTERN void UsageFault_Handler() { std::printf("UsageFault Fault!\n"); }
