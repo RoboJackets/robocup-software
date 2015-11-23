@@ -17,21 +17,21 @@ template <std::size_t... Is>
 struct seq {};
 
 template <std::size_t N, std::size_t... Is>
-struct gen_seq : gen_seq < N - 1, N - 1, Is... > {};
+struct gen_seq : gen_seq<N - 1, N - 1, Is...> {};
 
 template <std::size_t... Is>
 struct gen_seq<0, Is...> : seq<Is...> {};
 
 template <class Generator, std::size_t... Is>
 constexpr auto lut_generator_helper(Generator g, seq<Is...>)
--> std::array < decltype(g(std::size_t{}, sizeof...(Is))), sizeof...(Is) > {
+    -> std::array<decltype(g(std::size_t{}, sizeof...(Is))), sizeof...(Is)> {
     return {{g(Is, sizeof...(Is))...}};
 }
 
 template <std::size_t tcount, class Generator>
 constexpr auto lut_generator(Generator g)
--> decltype(lut_generator_helper(g, gen_seq<tcount> {})) {
-    return lut_generator_helper(g, gen_seq<tcount> {});
+    -> decltype(lut_generator_helper(g, gen_seq<tcount>{})) {
+    return lut_generator_helper(g, gen_seq<tcount>{});
 }
 
 // number of points in the sine wave
@@ -48,8 +48,7 @@ const size_t numPts = 32;
 // Check out /firmware/common2015/util/const-math.hpp for the math operations
 // that could be used to generate a lookup table at compile time.
 constexpr float wave_lut(std::size_t curr, std::size_t total) {
-    return ((1.0 +
-             sin_const(static_cast<float>(curr) / numPts * 2 * M_PI)) /
+    return ((1.0 + sin_const(static_cast<float>(curr) / numPts * 2 * M_PI)) /
             2.0);
 }
 

@@ -10,10 +10,11 @@
  */
 class Buzzer : public AnalogOut {
 public:
-    Buzzer(PinName = RJ_SPEAKER) : AnalogOut(RJ_SPEAKER) {};
-    ~Buzzer() {};
+    Buzzer(PinName = RJ_SPEAKER) : AnalogOut(RJ_SPEAKER){};
+    ~Buzzer(){};
 
     void play(float freq, int dur, float vol = 1.0);
+
 private:
     friend void analogUpdate(void const* args);
 

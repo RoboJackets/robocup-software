@@ -188,7 +188,6 @@ public:
             return *&(*pIt);
         }
 
-
         throw std::runtime_error("No port for the given number");
     }
 

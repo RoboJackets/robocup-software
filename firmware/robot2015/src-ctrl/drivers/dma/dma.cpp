@@ -108,7 +108,8 @@ bool DMA::Init() {
          | DMA_SET_SRC_SIZE(DMA_BURST_SIZE_1)  // Set burst size to 1 unless
                                                // there are 4 or 8 ADC
                                                // transfers/request
-         | DMA_SET_DST_SIZE(DMA_BURST_SIZE_1) |
+         |
+         DMA_SET_DST_SIZE(DMA_BURST_SIZE_1) |
          DMA_SET_SRC_WIDTH(DMA_WIDTH_WORD) | DMA_SET_DST_WIDTH(DMA_WIDTH_WORD) |
          DMA_SET_SRC_INCREMENT_MODE(DMA_ADDR_INCREMENT_NO) |
          DMA_SET_DST_INCREMENT_MODE(DMA_ADDR_INCREMENT_YES) |
