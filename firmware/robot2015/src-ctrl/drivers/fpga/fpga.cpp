@@ -42,6 +42,15 @@ FPGA* FPGA::Instance() {
 bool FPGA::Init(const std::string& filepath) {
     int j = 0;
 
+    // make sure the binary exists before doing anything
+    FILE* fp = fopen(filepath.c_str(), "r");
+    if (fp == nullptr) {
+        LOG(FATAL, "No FPGA bitfile!");
+        return false;
+    }
+
+    fclose(fp);
+
     // toggle PROG_B to clear out anything prior
     *progB = !(*progB);
     Thread::wait(1);
@@ -58,7 +67,7 @@ bool FPGA::Init(const std::string& filepath) {
     }
 
     // show INIT_B error if it never went low
-    if (j == 10) {
+    if (!(j < 100)) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
         return false;
     }
@@ -137,6 +146,8 @@ bool FPGA::send_config(const std::string& filepath) {
     } else {
         LOG(INIT, "FPGA configuration failed\r\n    Unable to open %s",
             filepath.c_str());
+
+        fclose(fp);
 
         return true;
     }
