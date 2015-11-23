@@ -622,19 +622,6 @@ void cmd_logLevel(const vector<string>& args) {
                        LOG_LEVEL_STRING[rjLogLevel]);
             }
         }
-
-        // if ( storeVals == true ) {
-        // 	// Store the new log level in FLASH memory
-        // 	IAP iap;
-        // 	char mem[MEM_SIZE] = { 0 };   //  memory, it should be aligned to
-        // word boundary
-
-        // 	mem[0] = isLogging ? 0xFF : 0x00;
-        // 	mem[1] = ( rjLogLevel & 0xFF );
-
-        // 	iap.prepare( TARGET_SECTOR, TARGET_SECTOR );
-        // 	iap.write( mem, sector_start_adress[TARGET_SECTOR], MEM_SIZE );
-        // }
     }
 }
 

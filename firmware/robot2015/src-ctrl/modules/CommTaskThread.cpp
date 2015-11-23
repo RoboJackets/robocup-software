@@ -69,7 +69,6 @@ void Task_CommCtrl(void const* args) {
 
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority = osThreadGetPriority(threadID);
-    ASSERT(threadID != nullptr);
 
     // Startup the CommModule interface
     CommModule::Init();
@@ -151,9 +150,6 @@ void Task_CommCtrl(void const* args) {
     while (CommModule::isReady() == false) {
         Thread::wait(50);
     }
-
-    // Additional waiting can be used here if needed
-    // Thread::signal_wait(COMMUNICATION_TASK_START_SIGNAL, osWaitForever);
 
     // == everything below this line all the way until the start of the while
     // loop is test code ==
