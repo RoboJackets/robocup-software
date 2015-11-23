@@ -1,4 +1,4 @@
-# Software SPI allows non-standard SPI pins to be used for interfacing with SPI devices
+# Software I2C allows non-standard I2C pins to be used for interfacing with I2C devices
 
 ExternalProject_Add(swi2c_library
     HG_REPOSITORY       https://developer.mbed.org/users/p3p/code/SoftwareI2C
