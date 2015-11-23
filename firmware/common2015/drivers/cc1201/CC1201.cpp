@@ -1,13 +1,16 @@
 #include "CC1201.hpp"
 
-#include "CC1201Defines.hpp"
+#include "ti/defines.hpp"
 #include "logger.hpp"
 
-CC1201::CC1201() : CommLink(){};
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
-               PinName intPin, int rssiOffset)
+               PinName intPin, const registerSetting_t* regs, size_t len, int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
+
+    // set initial configuration
+    setConfig(regs, len);
+
     // powerOnReset();
     _offset_reg_written = false;
     reset();
@@ -45,11 +48,11 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     // [X] - 1 - Send the data to the CC1201.
     // =================
-    uint8_t device_state = writeReg(CC1201_TX_FIFO, buf, size);
+    uint8_t device_state = writeReg(CC1201_SINGLE_TXFIFO, buf, size);
 
     // [X] - 4 - Enter the TX state.
     // =================
-    if ((device_state & CC1201_TX_FIFO_ERROR) == CC1201_TX_FIFO_ERROR) {
+    if ((device_state & CC1201_STATE_TXFIFO_ERROR) == CC1201_STATE_TXFIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
         flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
                      // state
@@ -68,7 +71,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     uint8_t bts = 1;
 
     do {
-        bts = readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON);
+        bts = readReg(CC1201_NUM_TXBYTES, EXT_FLAG_ON);
         Thread::wait(2);
 
     } while (bts != 0);
@@ -79,7 +82,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     uint8_t device_state = freqUpdate();  // update frequency offset estimate &
                                           // get the current state while at it
-    uint8_t num_rx_bytes = readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON);
+    uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES, EXT_FLAG_ON);
 
     if (((*len) + 2) < num_rx_bytes) {
         LOG(SEVERE, "%u bytes in RX FIFO with passed buffer size of %u bytes.",
@@ -88,7 +91,7 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
         return COMM_FUNC_BUF_ERR;
     }
 
-    if ((device_state & CC1201_RX_FIFO_ERROR) == CC1201_RX_FIFO_ERROR) {
+    if ((device_state & CC1201_STATE_RXFIFO_ERROR) == CC1201_STATE_RXFIFO_ERROR) {
         flush_rx();  // flush RX FIFO buffer and place back into RX state
         strobe(CC1201_STROBE_SRX);
 
@@ -96,7 +99,7 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     // This is temporary
-    if (readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON) > 0) {
+    if (readReg(CC1201_NUM_TXBYTES, EXT_FLAG_ON) > 0) {
         // This was a TX interrupt from the CC1201, not an RX
         return COMM_FALSE_TRIG;
     }
@@ -122,7 +125,7 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
 /**
  * reads a standard register
  */
-uint8_t CC1201::readReg(uint8_t addr, ext_flag_t ext_flag) {
+uint8_t CC1201::readReg(uint16_t addr, ext_flag_t ext_flag) {
     uint8_t returnVal;
 
     if ((addr == 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
@@ -142,7 +145,7 @@ uint8_t CC1201::readReg(uint8_t addr, ext_flag_t ext_flag) {
 
     return returnVal;
 }
-uint8_t CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len,
+uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len,
                         ext_flag_t ext_flag) {
     uint8_t status_byte;
 
@@ -163,7 +166,9 @@ uint8_t CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len,
     return status_byte;
 }
 
-uint8_t CC1201::writeReg(uint8_t addr, uint8_t value, ext_flag_t ext_flag) {
+uint8_t CC1201::writeReg(uint16_t addr, uint8_t value, ext_flag_t ext_flag) {
+    // TODO: re-implement for extended register access
+
     uint8_t status_byte;
     addr &= 0x3F;  // Don't accidently do a burst or read
 
@@ -176,7 +181,7 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t value, ext_flag_t ext_flag) {
 
     return status_byte;
 }
-uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len,
+uint8_t CC1201::writeReg(uint16_t addr, uint8_t* buffer, uint8_t len,
                          ext_flag_t ext_flag) {
     uint8_t status_byte;
     addr &= 0x7F;  // Don't accidently do a read
@@ -193,63 +198,61 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len,
     return status_byte;
 }
 
-/**
- * reads an extended register
- */
-uint8_t CC1201::readRegExt(uint8_t addr) {
-    // Only callable from readReg(), so no checks needed
-    uint8_t returnVal;
 
-    toggle_cs();
-    _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
-    _spi->write(addr);
-    returnVal = _spi->write(0x00);
-    toggle_cs();
+// uint8_t CC1201::readRegExt(uint8_t addr) {
+//     // Only callable from readReg(), so no checks needed
+//     uint8_t returnVal;
 
-    return returnVal;
-}
-uint8_t CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len) {
-    // Only callable from readReg(), so no checks needed
-    uint8_t status_byte;
+//     toggle_cs();
+//     _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
+//     _spi->write(addr);
+//     returnVal = _spi->write(0x00);
+//     toggle_cs();
 
-    toggle_cs();
-    status_byte =
-        _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
-    _spi->write(addr);
+//     return returnVal;
+// }
+// uint8_t CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len) {
+//     // Only callable from readReg(), so no checks needed
+//     uint8_t status_byte;
 
-    for (int i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
+//     toggle_cs();
+//     status_byte =
+//         _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
+//     _spi->write(addr);
 
-    toggle_cs();
+//     for (int i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
 
-    return status_byte;
-}
+//     toggle_cs();
 
-uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t value) {
-    // Only callable from writeReg(), so no checks needed
-    uint8_t status_byte;
+//     return status_byte;
+// }
 
-    toggle_cs();
-    status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
-    _spi->write(addr);
-    _spi->write(value);
-    toggle_cs();
+// uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t value) {
+//     // Only callable from writeReg(), so no checks needed
+//     uint8_t status_byte;
 
-    return status_byte;
-}
-uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len) {
-    // Only callable from writeReg(), so no checks needed
-    uint8_t status_byte;
+//     toggle_cs();
+//     status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
+//     _spi->write(addr);
+//     _spi->write(value);
+//     toggle_cs();
 
-    toggle_cs();
-    status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_BURST);
-    _spi->write(addr);
+//     return status_byte;
+// }
+// uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len) {
+//     // Only callable from writeReg(), so no checks needed
+//     uint8_t status_byte;
 
-    for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
+//     toggle_cs();
+//     status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_BURST);
+//     _spi->write(addr);
 
-    toggle_cs();
+//     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
 
-    return status_byte;
-}
+//     toggle_cs();
+
+//     return status_byte;
+// }
 
 uint8_t CC1201::strobe(uint8_t addr) {
     if (addr > 0x3d || addr < 0x30) {
@@ -265,7 +268,7 @@ uint8_t CC1201::strobe(uint8_t addr) {
 }
 
 uint8_t CC1201::mode() {
-    return 0x1F & readReg(CC1201EXT_MARCSTATE, EXT_FLAG_ON);
+    return 0x1F & readReg(CC1201_MARCSTATE, EXT_FLAG_ON);
 }
 
 uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
@@ -293,13 +296,13 @@ void CC1201::reset() {
 int32_t CC1201::selfTest() {
     if (_isInit == true) return 0;
 
-    _chip_version = readReg(CC1201EXT_PARTNUMBER, EXT_FLAG_ON);
+    _chip_version = readReg(CC1201_PARTNUMBER, EXT_FLAG_ON);
 
-    if (_chip_version != CC1201_EXPECTED_PART_NUMBER) {
+    if (_chip_version != CC1201_EXPECTED_PARTNUMBER) {
         LOG(FATAL,
             "CC1201 part number error:\r\n"
             "    Found:\t0x%02X (expected 0x%02X)",
-            _chip_version, CC1201_EXPECTED_PART_NUMBER);
+            _chip_version, CC1201_EXPECTED_PARTNUMBER);
 
         return -1;
     } else {
@@ -368,14 +371,14 @@ void CC1201::flush_tx() {
     idle();
     strobe(CC1201_STROBE_SFTX);
     LOG(WARN, "%u bytes flushed from TX FIFO buffer.",
-        readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON));
+        readReg(CC1201_NUM_TXBYTES, EXT_FLAG_ON));
 }
 
 void CC1201::flush_rx() {
     idle();
     strobe(CC1201_STROBE_SFRX);
     LOG(WARN, "%u bytes flushed from RX FIFO buffer.",
-        readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON));
+        readReg(CC1201_NUM_RXBYTES, EXT_FLAG_ON));
 }
 
 void CC1201::calibrate() {
@@ -388,7 +391,7 @@ void CC1201::update_rssi() {
 
     // Only use the top MSB for simplicity. 1 dBm resolution.
     if (_offset_reg_written) {
-        offset = readReg(CC1201EXT_RSSI1, EXT_FLAG_ON);
+        offset = readReg(CC1201_RSSI1, EXT_FLAG_ON);
         _rssi = static_cast<float>((int8_t)twos_compliment(offset));
 
         LOG(INF3, "RSSI is from device.");
@@ -413,8 +416,8 @@ uint8_t CC1201::idle() {
 }
 
 uint8_t CC1201::rand() {
-    writeReg(CC1201EXT_RNDGEN, 0x80, EXT_FLAG_ON);
-    return readReg(CC1201EXT_RNDGEN, EXT_FLAG_ON);
+    writeReg(CC1201_RNDGEN, 0x80, EXT_FLAG_ON);
+    return readReg(CC1201_RNDGEN, EXT_FLAG_ON);
 }
 
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
@@ -427,7 +430,7 @@ float CC1201::freq() {
 
     freqUpdate();
 
-    readReg(CC1201EXT_FREQOFF1, buf, 5, EXT_FLAG_ON);
+    readReg(CC1201_FREQOFF1, buf, 5, EXT_FLAG_ON);
 
     freq_offset = (buf[0] << 8) | (buf[1]);
     freq_offset = (~freq_offset) + 1;
@@ -443,7 +446,7 @@ float CC1201::freq() {
 
 bool CC1201::isLocked() {
     // This is only valid in RX, TX, & FSTXON
-    return (readReg(CC1201EXT_FSCAL_CTRL, EXT_FLAG_ON) & 0x01);
+    return readReg(CC1201_FSCAL_CTRL, EXT_FLAG_ON) & 0x01;
 }
 
 void CC1201::set_rssi_offset(int8_t offset) {
@@ -458,3 +461,12 @@ void CC1201::set_rssi_offset(int8_t offset) {
 }
 
 uint8_t CC1201::twos_compliment(uint8_t val) { return -(unsigned int)val; }
+
+
+void CC1201::setConfig(const registerSetting_t* regs, size_t len) {
+    if (!regs) return;
+
+    for (int i = 0; i < len; ++i) {
+        writeReg(regs[i].addr, regs[i].value);
+    }
+}
