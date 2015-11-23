@@ -14,7 +14,10 @@
 void Task_SerialConsole(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(threadID != nullptr);
+#pragma GCC diagnostic pop
 
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
@@ -36,15 +39,22 @@ void Task_SerialConsole(void const* args) {
         "Serial console ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d",
         threadID, threadPriority);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
     // Lower our priority so we will yield to other, more important, startup
     // tasks
     ASSERT(osThreadSetPriority(threadID, osPriorityLow) == osOK);
+#pragma GCC diagnostic pop
+
     // Yield to other threads during startup so that the below lines will
     // print to the console last
     Thread::yield();
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
     // Reset our priorty
     ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);
+#pragma GCC diagnostic pop
 
     // Display RoboJackets if we're up and running at this point during startup
     Console::ShowLogo();
@@ -58,16 +68,23 @@ void Task_SerialConsole(void const* args) {
 
         // If there is a new command to handle, parse and process it
         if (Console::CommandReady() == true) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
             // Increase the thread's priority first so we can make sure the
             // scheduler will select it to run
             ASSERT(osThreadSetPriority(threadID, osPriorityAboveNormal) ==
                    osOK);
+#pragma GCC diagnostic pop
+
             // Disable UART interrupts & execute the command
             NVIC_DisableIRQ(UART0_IRQn);
             executeLine(Console::rxBufferPtr());
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
             // Now, reset the priority of the thread to its idle state
             ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);
+#pragma GCC diagnostic pop
             Console::CommandHandled(true);
 
             // Enable UART interrupts again

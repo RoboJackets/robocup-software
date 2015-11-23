@@ -57,9 +57,9 @@ const auto analog_data = lut_generator<numPts>(wave_lut);
 auto analog_data_scaled = lut_generator<numPts>(wave_lut);
 
 // used to output next analog sample whenever a timer interrupt occurs
-void analogUpdate(void const* args) {
+void analogUpdate(void const* arg) {
     // grab a pointer to the buzzer object
-    Buzzer* buzz = (Buzzer*)args;
+    Buzzer* buzz = const_cast<Buzzer*>(reinterpret_cast<const Buzzer*>(arg));
     // cycle through the index value for the lookup table
     buzz->j = (buzz->j + 1) % numPts;
     // send next analog sample out to DAC

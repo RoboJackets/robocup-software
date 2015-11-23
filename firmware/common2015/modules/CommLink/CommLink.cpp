@@ -80,7 +80,8 @@ void CommLink::setup_interrupt(void) {
 // =================== RX THREAD ===================
 // Task operations for placing received data into the received data queue
 void CommLink::rxThread(void const* arg) {
-    CommLink* inst = (CommLink*)arg;
+    CommLink* inst =
+        const_cast<CommLink*>(reinterpret_cast<const CommLink*>(arg));
 
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority;
@@ -88,7 +89,10 @@ void CommLink::rxThread(void const* arg) {
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(inst->_rxID != nullptr);
+#pragma GCC diagnostic pop
     threadPriority = osThreadGetPriority(inst->_rxID);
 
     LOG(INIT,
