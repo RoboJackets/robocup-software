@@ -4,6 +4,7 @@
 #include "rtos.h"
 
 #include "logger.hpp"
+#include "assert.hpp"
 
 /**
  * Initializes the peripheral nested vector interrupt controller (PNVIC) with
@@ -121,4 +122,18 @@ void strobeStatusLED(void const* args) {
     *led = !(*led);
     Thread::wait(30);
     *led = !(*led);
+}
+
+// Helper function for creating a class that uses a
+// member function for the object's thread operations.
+// Take note that this allocates a stack!
+void define_thread(osThreadDef_t& t, void (*task)(void const* arg),
+                   osPriority priority, uint32_t stack_size) {
+#ifdef CMSIS_OS_RTX
+    t.pthread = task;
+    t.tpriority = priority;
+    t.stacksize = stack_size;
+    t.stack_pointer = (uint32_t*)new unsigned char[t.stacksize];
+    ASSERT(t.stack_pointer != nullptr);
+#endif
 }
