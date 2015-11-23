@@ -158,7 +158,7 @@ private:
     std::string CONSOLE_HOSTNAME;
 
     /**
-    * Serial (over USB) baud rate. Default 9600. Screen default 9600
+    * Serial (over USB) baud rate.
     */
     uint16_t baudrate;
 

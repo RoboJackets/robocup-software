@@ -32,7 +32,7 @@ void Console::Init() {
     instance->setHeader();
 
     // set baud rate, store the value before
-    Baudrate(9600);
+    Baudrate(57600);
 
     // clear buffers
     instance->ClearRXBuffer();
@@ -143,9 +143,9 @@ void Console::RXCallback() {
 }
 
 void Console::TXCallback() {
-    // NVIC_DisableIRQ(UART0_IRQn);
+    NVIC_DisableIRQ(UART0_IRQn);
     // handle transmission interrupts if necessary here
-    // NVIC_EnableIRQ(UART0_IRQn);
+    NVIC_EnableIRQ(UART0_IRQn);
 }
 
 void Console::RequestSystemStop() {
@@ -201,7 +201,7 @@ void Console::changeUser(const std::string& user) {
 
 void Console::setHeader() {
     instance->CONSOLE_HEADER =
-        "\033[36m" + instance->CONSOLE_USER + "\033[34m@\033[01;33m" +
+        "\033[36m" + instance->CONSOLE_USER + "\033[1;32m@\033[01;33m" +
         instance->CONSOLE_HOSTNAME + " \033[36m$\033[0m \033[0J\033[0m";
     // instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" +
     // instance->CONSOLE_HOSTNAME + " $ ";

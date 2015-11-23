@@ -13,7 +13,6 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
     : _rxQueueHelper() {
     setup_pins(mosi, miso, sck, cs, int_pin);
     setup();
-
     _nbr_links++;
 }
 
@@ -34,18 +33,15 @@ void CommLink::cleanup(void) {
 
 // =================== CLASS SETUP ===================
 void CommLink::setup(void) {
-    // [X] - 1 - Initialize the hardware for communication.
-    // =================
+    // Initialize the hardware for communication
     setup_spi();
     setup_cs();
     setup_interrupt();
 
-    // [X] - 2 - Define the thread task for controlling the RX queue
-    // =================
+    // Define the thread task for controlling the RX queue
     define_thread(_rxDef, &CommLink::rxThread);
 
-    // [X] - 3 - Create the thread and pass it a pointer to the created object
-    // =================
+    // Create the thread and pass it a pointer to the created object
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 }
 
@@ -61,8 +57,7 @@ void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs,
 
 void CommLink::setup_spi(int baudrate) {
     if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
-        _spi = new SPI(_mosi_pin, _miso_pin,
-                       _sck_pin);  // DON'T FORGET TO DELETE IN DERIVED CLASS
+        _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);
         _spi->format(8, 0);
         _spi->frequency(baudrate);
     }
@@ -70,16 +65,14 @@ void CommLink::setup_spi(int baudrate) {
 
 void CommLink::setup_cs(void) {
     if (_cs_pin != NC) {
-        _cs =
-            new DigitalOut(_cs_pin);  // DON'T FORGET TO DELETE IN DERIVED CLASS
-        *_cs = 1;                     // default to active low signal
+        _cs = new DigitalOut(_cs_pin);
+        *_cs = 1;  // default to active low signal
     }
 }
 
 void CommLink::setup_interrupt(void) {
     if (_int_pin != NC) {
-        _int_in = new InterruptIn(
-            _int_pin);  // DON'T FORGET TO DELETE IN DERIVED CLASS
+        _int_in = new InterruptIn(_int_pin);
         _int_in->mode(PullUp);
     }
 }
@@ -109,21 +102,18 @@ void CommLink::rxThread(void const* arg) {
     rtp::packet p;
 
     while (true) {
-        // [X] - 1 - Wait until new data has arrived - this is interrupt
-        // triggered by CommLink::ISR()
-        // =================
+        // Wait until new data has arrived
+        // this is triggered by CommLink::ISR()
         osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
 
-        // [X] - 2 - Get the received data from the external chip
-        // =================
+        // Get the received data from the external chip
         uint8_t rec_bytes = rtp::MAX_DATA_SZ;
         int32_t response = inst->getData(p.raw, &rec_bytes);
 
         LOG(INF3, "RX interrupt triggered");
 
         if (response == COMM_SUCCESS) {
-            // [X] - 3 - Write the data to the CommModule object's rxQueue
-            // =================
+            // Write the data to the CommModule object's rxQueue
             CommModule::receive(p);
         }
     }
@@ -143,3 +133,5 @@ void CommLink::sendPacket(rtp::packet* p) { sendData(p->raw, p->total_size); }
 void CommLink::ISR(void) { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 
 void CommLink::toggle_cs(void) { *_cs = !*_cs; }
+
+uint8_t CommLink::twos_compliment(uint8_t val) { return -(unsigned int)val; }

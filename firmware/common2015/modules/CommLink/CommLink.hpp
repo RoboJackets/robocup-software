@@ -37,10 +37,9 @@ public:
     /// Constructor
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
-    /// Deconstructor
-    virtual ~CommLink();  // Don't forget to include deconstructor
-    // implementation in derived classes that frees
-    // memory
+    /// Virtual deconstructor
+    /// Always define and call CommLink::cleanup() in a derived class's deconstructor!
+    virtual ~CommLink();
 
     // Class constants for data queues
     static const size_t RX_QUEUE_SIZE = 3;
@@ -58,6 +57,7 @@ public:
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
+
     void receivePacket(rtp::packet*);
 
 protected:
@@ -69,17 +69,21 @@ protected:
 
     /// Kill any threads and free the allocated stack.
     /// Always call in any derived class's deconstructors!
-    void cleanup(void);
+    void cleanup();
 
-    void ISR(void);
-    void toggle_cs(void);
+    void ISR();
+
+    void toggle_cs();
 
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads
-    void ready(
-        void);  // Always call CommLink::ready() after derived class is ready
-    // for communication
-    void setup_spi(int baudrate = defaultBaud);
+    //
+    // Always call CommLink::ready() after derived class is ready
+    void ready();
+
+    void setup_spi(int baudrate = DEFAULT_BAUD);
+
+    uint8_t twos_compliment(uint8_t val);
 
     // The data queues for temporarily holding received packets
     osMailQId _rxQueue;
@@ -95,12 +99,12 @@ protected:
     DigitalOut* _cs;       // Chip Select pointer
     InterruptIn* _int_in;  // Interrupt pin
 
-    static const int defaultBaud = 5000000;
+    static const int DEFAULT_BAUD = 5000000;
 
 private:
     // Used to help define the class's threads in the constructor
     friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t, unsigned char*);
+                              osPriority, uint32_t);
 
     /**
      * Data queue helper for RX queue.
@@ -116,9 +120,12 @@ private:
 
     // Methods for initializing a transceiver's pins for communication
     void setup(void);
+
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
                     PinName = NC);
+
     void setup_cs(void);
+
     void setup_interrupt(void);
 
     // Used for tracking the number of link-level communication interfaces
