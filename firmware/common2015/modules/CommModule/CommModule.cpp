@@ -273,21 +273,18 @@ void CommModule::ready(void) {
 }
 
 void CommModule::send(rtp::packet& packet) {
-    // [X] - 1 - Check to make sure a socket for the port exists
+    // Check to make sure a socket for the port exists
     if (_ports[packet.port].isOpen() && _ports[packet.port].hasTXCallback()) {
         packet.adjustSizes();
 
-        // [X] - 1.1 - Allocate a block of memory for the data.
-        // =================
+        // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
 
-        // [X] - 1.2 - Copy the contents into the allocated memory block
-        // =================
+        // Copy the contents into the allocated memory block
         std::memcpy(p, &packet, packet.total_size);
 
-        // [X] - 1.3 - Place the passed packet into the txQueue.
-        // =================
+        // Place the passed packet into the txQueue.
         osMailPut(instance->_txQueue, p);
 
     } else {
@@ -299,19 +296,17 @@ void CommModule::send(rtp::packet& packet) {
 }
 
 void CommModule::receive(rtp::packet& packet) {
-    // [X] - 1 - Check to make sure a socket for the port exists
+    // Check to make sure a socket for the port exists
     if (_ports[packet.port].isOpen() && _ports[packet.port].hasRXCallback()) {
-        // [X] - 1.1 - Allocate a block of memory for the data.
-        // =================
+        // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
 
-        // [X] - 1.2 - Copy the contents into the allocated memory block
-        // =================
+        // Copy the contents into the allocated memory block
         std::memcpy(p, &packet, packet.total_size);
+        p->resetSizes();
 
-        // [X] - 1.3 - Place the passed packet into the rxQueue.
-        // =================
+        // Place the passed packet into the rxQueue.
         osMailPut(instance->_rxQueue, p);
 
     } else {
