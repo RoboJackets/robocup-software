@@ -19,4 +19,4 @@
 /**
  * [assertFail This is called when an assertion fails.]
  */
-void assertFail(char* expr, char* file, int line);
+void assertFail(const char* expr, const char* file, int line);
