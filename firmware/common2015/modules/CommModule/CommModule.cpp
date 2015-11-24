@@ -26,9 +26,9 @@ CommPort_t _tmpPort;
 // Default constructor
 CommModule::CommModule()
     :  // [X] - 1.1 - Define the data queues.
-      // =================
-      _txQueueHelper(),
-      _rxQueueHelper() {}
+       // =================
+       _txQueueHelper(),
+       _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
@@ -117,8 +117,8 @@ void CommModule::txThread(void const* arg) {
             if (_ports[p->port].isOpen()) {
                 _ports[p->port].TXCallback()(p);
 
-                _ports[p->port]
-                    .TXPackets()++;  // Increment the packet counter by 1
+                // Increment the packet counter by 1
+                _ports[p->port].TXPackets()++;
 
                 LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port, p->subclass);
@@ -187,6 +187,7 @@ void CommModule::rxThread(void const* arg) {
             if (_ports[p->port].isOpen()) {
                 _ports[p->port].RXCallback()(p);
 
+                // Increment the packet counter by 1
                 _ports[p->port].RXPackets()++;
 
                 LOG(INF2, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
@@ -272,17 +273,15 @@ void CommModule::ready(void) {
     osSignalSet(_txID, COMM_MODULE_SIGNAL_START_THREAD);
 }
 
-void CommModule::send(rtp::packet& packet) {
+void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
     if (_ports[packet.port].isOpen() && _ports[packet.port].hasTXCallback()) {
-        packet.adjustSizes();
-
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
 
         // Copy the contents into the allocated memory block
-        std::memcpy(p, &packet, packet.total_size);
+        *p = packet;
 
         // Place the passed packet into the txQueue.
         osMailPut(instance->_txQueue, p);
@@ -295,7 +294,7 @@ void CommModule::send(rtp::packet& packet) {
     }
 }
 
-void CommModule::receive(rtp::packet& packet) {
+void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
     if (_ports[packet.port].isOpen() && _ports[packet.port].hasRXCallback()) {
         // Allocate a block of memory for the data.
@@ -303,8 +302,7 @@ void CommModule::receive(rtp::packet& packet) {
             (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
 
         // Copy the contents into the allocated memory block
-        std::memcpy(p, &packet, packet.total_size);
-        p->resetSizes();
+        *p = packet;
 
         // Place the passed packet into the rxQueue.
         osMailPut(instance->_rxQueue, p);

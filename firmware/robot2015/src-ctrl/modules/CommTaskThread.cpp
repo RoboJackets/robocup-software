@@ -48,9 +48,8 @@ callback function.
 
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck;
-    ack_pck.header_link = p->ACK_Header();
+    memcpy(&ack_pck, p, p->total_size);
     ack_pck.ack = false;
-    memcpy((&ack_pck)->payload, p->payload, p->payload_size);
     CommModule::send(ack_pck);
 }
 
@@ -64,7 +63,7 @@ void loopback_rx_cb(rtp::packet* p) {
             "Loopback rx successful!\r\n"
             "    Received:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
-            &(p->payload), p->payload_size, (p->ack ? "SET" : "UNSET"));
+            p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
@@ -77,7 +76,7 @@ void loopback_tx_cb(rtp::packet* p) {
             "Loopback tx successful!\r\n"
             "    Sent:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
-            &(p->payload), p->payload_size, (p->ack ? "SET" : "UNSET"));
+            p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
     } else {
         LOG(WARN, "Sent empty packet on loopback interface");
     }

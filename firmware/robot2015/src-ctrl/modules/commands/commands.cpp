@@ -58,96 +58,113 @@ static const std::vector<command_t> commands = {
         "usage"},
     */
 
-    {{"alias", "a"},
-     false,
-     cmd_alias,
-     "Lists aliases for commands.",
-     "alias | a"},
+    {   {"alias", "a"},
+        false,
+        cmd_alias,
+        "Lists aliases for commands.",
+        "alias | a"
+    },
     {{"clear", "cls"}, false, cmd_clear, "Clears the screen.", "clear | cls"},
-    {{"echo"},
-     false,
-     cmd_echo,
-     "Echos text for debugging the serial link.",
-     "echo <text>"},
-    {{"exit", "quit"},
-     false,
-     cmd_exitSys,
-     "Breaks the main loop.",
-     "exit | quit"},
-    {{"help", "h", "?"},
-     false,
-     cmd_help,
-     "Prints this message.",
-     "help | h | ? [[--list | -l] | [--all | -a] | <command names>]"},
+    {   {"echo"},
+        false,
+        cmd_echo,
+        "Echos text for debugging the serial link.",
+        "echo <text>"
+    },
+    {   {"exit", "quit"},
+        false,
+        cmd_exitSys,
+        "Breaks the main loop.",
+        "exit | quit"
+    },
+    {   {"help", "h", "?"},
+        false,
+        cmd_help,
+        "Prints this message.",
+        "help | h | ? [[--list | -l] | [--all | -a] | <command names>]"
+    },
     {{"ping"}, true, cmd_ping, "Check console responsiveness.", "ping"},
-    {{"ls", "l"},
-     false,
-     cmd_ls,
-     "List contents of current directory",  //\r\n",  Bugs:\t\tsometimes
-     // displays train animations.",
-     "ls | l [folder/device]"},
-    {{"info", "version", "i"},
-     false,
-     cmd_info,
-     "Display information about the current version of the firmware.",
-     "info | version | i"},
-    {{"reboot", "reset", "restart"},
-     false,
-     cmd_resetMbed,
-     "Resets the mbed (like pushing the reset button).",
-     "reboot | reset | restart"},
-    {{"rmdev", "unconnect"},
-     false,
-     cmd_disconnectInterface,
-     "Disconnects the mbed interface chip from the microcontroller.",
-     "rmdev | unconnect [-P]"},
-    {{"isconn", "checkconn"},
-     false,
-     cmd_checkInterfaceConn,
-     "Checks the connection with a debugging unit.",
-     "isconn | checkconn"},
-    {{"baud", "baudrate"},
-     false,
-     cmd_baudrate,
-     "Set the serial link's baudrate.",
-     "baud | baudrate [[--list | -l] | [<target_rate>]]"},
-    {{"su", "user"},
-     false,
-     cmd_switchUser,
-     "Set active user.",
-     "su | user <new_username>"},
-    {{"host", "hostname"},
-     false,
-     cmd_switchHostname,
-     "Set the system hostname.",
-     "host | hostname <new_hostname>"},
-    {{"loglvl", "loglevel"},
-     false,
-     cmd_logLevel,
-     "Change the active logging output level.",
-     "loglvl | loglevel {+,-}..."},
-    {{"motor"},
-     false,
-     motors_cmdProcess,
-     "Show information about the motors.",
-     "motor <motor_id>"},
-    {{"motorscroll"},
-     true,
-     motors_cmdScroll,
-     "Continuously update the console with new motor values.",
-     "motorscroll"},
-    {{"radio"},
-     false,
-     comm_cmdProcess,
-     "Show information about the radio & perform basic radio tasks.",
-     "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
-     "reset] "
-     "<port_num>]"},
-    {{"rpc"},
-     false,
-     cmd_rpc,
-     "Execute RPC commands on the mbed.",
-     "rpc <rpc-command>"},
+    {   {"ls", "l"},
+        false,
+        cmd_ls,
+        "List contents of current directory",  //\r\n",  Bugs:\t\tsometimes
+        // displays train animations.",
+        "ls | l [folder/device]"
+    },
+    {   {"info", "version", "i"},
+        false,
+        cmd_info,
+        "Display information about the current version of the firmware.",
+        "info | version | i"
+    },
+    {   {"reboot", "reset", "restart"},
+        false,
+        cmd_resetMbed,
+        "Resets the mbed (like pushing the reset button).",
+        "reboot | reset | restart"
+    },
+    {   {"rmdev", "unconnect"},
+        false,
+        cmd_disconnectInterface,
+        "Disconnects the mbed interface chip from the microcontroller.",
+        "rmdev | unconnect [-P]"
+    },
+    {   {"isconn", "checkconn"},
+        false,
+        cmd_checkInterfaceConn,
+        "Checks the connection with a debugging unit.",
+        "isconn | checkconn"
+    },
+    {   {"baud", "baudrate"},
+        false,
+        cmd_baudrate,
+        "Set the serial link's baudrate.",
+        "baud | baudrate [[--list | -l] | [<target_rate>]]"
+    },
+    {   {"su", "user"},
+        false,
+        cmd_switchUser,
+        "Set active user.",
+        "su | user <new_username>"
+    },
+    {   {"host", "hostname"},
+        false,
+        cmd_switchHostname,
+        "Set the system hostname.",
+        "host | hostname <new_hostname>"
+    },
+    {   {"loglvl", "loglevel"},
+        false,
+        cmd_logLevel,
+        "Change the active logging output level.",
+        "loglvl | loglevel {+,-}..."
+    },
+    {   {"motor"},
+        false,
+        motors_cmdProcess,
+        "Show information about the motors.",
+        "motor <motor_id>"
+    },
+    {   {"motorscroll"},
+        true,
+        motors_cmdScroll,
+        "Continuously update the console with new motor values.",
+        "motorscroll"
+    },
+    {   {"radio"},
+        false,
+        comm_cmdProcess,
+        "Show information about the radio & perform basic radio tasks.",
+        "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
+        "reset] "
+        "<port_num>]"
+    },
+    {   {"rpc"},
+        false,
+        cmd_rpc,
+        "Execute RPC commands on the mbed.",
+        "rpc <rpc-command>"
+    },
     {{"ps"}, false, cmd_ps, "List information about all active threads.", "ps"},
 };
 
@@ -166,12 +183,12 @@ void cmd_alias(const vector<string>& args) {
             uint8_t a = 0;
 
             while (a < commands[i].aliases.size() &&
-                   commands[i].aliases[a] != "\0") {
+                    commands[i].aliases[a] != "\0") {
                 printf("%s", commands[i].aliases[a].c_str());
 
                 // print commas
                 if (a < commands[i].aliases.size() - 1 &&
-                    commands[i].aliases[a + 1] != "\0") {
+                        commands[i].aliases[a + 1] != "\0") {
                     printf(", ");
                 }
 
@@ -197,12 +214,12 @@ void cmd_alias(const vector<string>& args) {
                     uint8_t a = 0;
 
                     while (a < commands[cmdInd].aliases.size() &&
-                           commands[cmdInd].aliases[a] != "\0") {
+                            commands[cmdInd].aliases[a] != "\0") {
                         printf("\t%s", commands[cmdInd].aliases[a].c_str());
 
                         // print commas
                         if (a < commands[cmdInd].aliases.size() - 1 &&
-                            commands[cmdInd].aliases[a + 1] != "\0") {
+                                commands[cmdInd].aliases[a + 1] != "\0") {
                             printf(",");
                         }
 
@@ -276,7 +293,7 @@ void cmd_help(const vector<string>& args) {
     // Prints all commands - either as a list block or all detailed
     else {
         if (strcmp(args[0].c_str(), "--list") == 0 ||
-            strcmp(args[0].c_str(), "-l") == 0) {
+                strcmp(args[0].c_str(), "-l") == 0) {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 if (i % 5 == 4) {
                     printf("%s\r\n", commands[i].aliases[0].c_str());
@@ -537,7 +554,8 @@ void cmd_checkInterfaceConn(const vector<string>& args) {
 void cmd_baudrate(const vector<string>& args) {
     std::vector<int> valid_rates = {110,   300,    600,    1200,   2400,
                                     4800,  9600,   14400,  19200,  38400,
-                                    57600, 115200, 230400, 460800, 921600};
+                                    57600, 115200, 230400, 460800, 921600
+                                   };
 
     if (args.size() > 1) {
         showInvalidArgs(args);
@@ -547,7 +565,7 @@ void cmd_baudrate(const vector<string>& args) {
         std::string str_baud = args.front();
 
         if (strcmp(str_baud.c_str(), "--list") == 0 ||
-            strcmp(str_baud.c_str(), "-l") == 0) {
+                strcmp(str_baud.c_str(), "-l") == 0) {
             printf("Valid baudrates:\r\n");
 
             for (unsigned int i = 0; i < valid_rates.size(); i++)
@@ -557,7 +575,7 @@ void cmd_baudrate(const vector<string>& args) {
             int new_rate = atoi(str_baud.c_str());
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
-                valid_rates.end()) {
+                    valid_rates.end()) {
                 Console::Baudrate(new_rate);
                 printf("New baudrate: %u\r\n", new_rate);
             } else {
@@ -597,7 +615,7 @@ void cmd_logLevel(const vector<string>& args) {
         // bool storeVals = true;
 
         if (strcmp(args.front().c_str(), "on") == 0 ||
-            strcmp(args.front().c_str(), "enable") == 0) {
+                strcmp(args.front().c_str(), "enable") == 0) {
             isLogging = true;
             printf("Logging enabled.\r\n");
         } else if (strcmp(args.front().c_str(), "off") == 0 ||
@@ -689,7 +707,7 @@ void comm_cmdProcess(const vector<string>& args) {
 
                 pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
                 pck.payload_size = msg.length();
-                strcpy((char*)pck.payload, msg.c_str());
+                memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
                 pck.address = BASE_STATION_ADDR;
 
                 if (strcmp(args.front().c_str(), "test-tx") == 0) {
@@ -703,6 +721,7 @@ void comm_cmdProcess(const vector<string>& args) {
                 } else if (strcmp(args.front().c_str(), "loopback") == 0) {
                     pck.ack = true;
                     pck.subclass = 2;
+                    pck.address = LOOPBACK_ADDR;
                     printf(
                         "Placing %u byte packet in TX buffer with ACK set.\r\n",
                         pck.payload_size);
