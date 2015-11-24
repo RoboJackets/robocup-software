@@ -1,6 +1,5 @@
 #include "CC1201.hpp"
 
-#include "ti/defines.hpp"
 #include "logger.hpp"
 
 
@@ -71,7 +70,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     uint8_t bts = 1;
 
     do {
-        bts = readReg(CC1201_NUM_TXBYTES, EXT_FLAG_ON);
+        bts = readReg(CC1201_NUM_TXBYTES);
         Thread::wait(2);
 
     } while (bts != 0);
@@ -82,7 +81,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     uint8_t device_state = freqUpdate();  // update frequency offset estimate &
                                           // get the current state while at it
-    uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES, EXT_FLAG_ON);
+    uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
 
     if (((*len) + 2) < num_rx_bytes) {
         LOG(SEVERE, "%u bytes in RX FIFO with passed buffer size of %u bytes.",
@@ -99,13 +98,13 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     // This is temporary
-    if (readReg(CC1201_NUM_TXBYTES, EXT_FLAG_ON) > 0) {
+    if (readReg(CC1201_NUM_TXBYTES) > 0) {
         // This was a TX interrupt from the CC1201, not an RX
         return COMM_FALSE_TRIG;
     }
 
     if (num_rx_bytes > 0) {
-        device_state = readReg(CC1201_RX_FIFO, buf, num_rx_bytes);
+        device_state = readReg(CC1201_SINGLE_RXFIFO, buf, num_rx_bytes);
         *len = num_rx_bytes;
 
         LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
@@ -125,15 +124,13 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
 /**
  * reads a standard register
  */
-uint8_t CC1201::readReg(uint16_t addr, ext_flag_t ext_flag) {
+uint8_t CC1201::readReg(uint16_t addr) {
     uint8_t returnVal;
 
-    if ((addr == 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
-        LOG(WARN, "Invalid address: %02X", addr);
-        return 0xFF;
-    }
-
-    if (ext_flag == EXT_FLAG_ON) return readRegExt(addr);
+    // if ((addr == 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
+    //     LOG(WARN, "Invalid address: %02X", addr);
+    //     return 0xFF;
+    // }
 
     addr &= 0xBF;  // Should be redundant but leaving for security. We don't
                    // want to accidently do a burst read.
@@ -145,16 +142,15 @@ uint8_t CC1201::readReg(uint16_t addr, ext_flag_t ext_flag) {
 
     return returnVal;
 }
-uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len,
-                        ext_flag_t ext_flag) {
+uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
     uint8_t status_byte;
 
-    if ((addr >= 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
-        LOG(WARN, "Invalid address: %02X", addr);
-        return 0xFF;
-    }
+    // if ((addr >= 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
+    //     LOG(WARN, "Invalid address: %02X", addr);
+    //     return 0xFF;
+    // }
 
-    if (ext_flag == EXT_FLAG_ON) return readRegExt(addr, buffer, len);
+    // if (ext_flag == EXT_FLAG_ON) return readRegExt(addr, buffer, len);
 
     toggle_cs();
     status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
@@ -166,13 +162,13 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len,
     return status_byte;
 }
 
-uint8_t CC1201::writeReg(uint16_t addr, uint8_t value, ext_flag_t ext_flag) {
+uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
     // TODO: re-implement for extended register access
 
     uint8_t status_byte;
     addr &= 0x3F;  // Don't accidently do a burst or read
 
-    if (ext_flag == EXT_FLAG_ON) return writeRegExt(addr, value);
+    // if (ext_flag == EXT_FLAG_ON) return writeRegExt(addr, value);
 
     toggle_cs();
     status_byte = _spi->write(addr);
@@ -181,12 +177,11 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value, ext_flag_t ext_flag) {
 
     return status_byte;
 }
-uint8_t CC1201::writeReg(uint16_t addr, uint8_t* buffer, uint8_t len,
-                         ext_flag_t ext_flag) {
+uint8_t CC1201::writeReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
     uint8_t status_byte;
     addr &= 0x7F;  // Don't accidently do a read
 
-    if (ext_flag == EXT_FLAG_ON) return writeRegExt(addr, buffer, len);
+    // if (ext_flag == EXT_FLAG_ON) return writeRegExt(addr, buffer, len);
 
     toggle_cs();
     status_byte = _spi->write(addr | CC1201_BURST);
@@ -268,12 +263,10 @@ uint8_t CC1201::strobe(uint8_t addr) {
 }
 
 uint8_t CC1201::mode() {
-    return 0x1F & readReg(CC1201_MARCSTATE, EXT_FLAG_ON);
+    return 0x1F & readReg(CC1201_MARCSTATE);
 }
 
 uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
-
-uint8_t CC1201::status() { return strobe(CC1201_STROBE_SNOP); }
 
 void CC1201::reset() {
     idle();
@@ -296,7 +289,7 @@ void CC1201::reset() {
 int32_t CC1201::selfTest() {
     if (_isInit == true) return 0;
 
-    _chip_version = readReg(CC1201_PARTNUMBER, EXT_FLAG_ON);
+    _chip_version = readReg(CC1201_PARTNUMBER);
 
     if (_chip_version != CC1201_EXPECTED_PARTNUMBER) {
         LOG(FATAL,
@@ -371,14 +364,14 @@ void CC1201::flush_tx() {
     idle();
     strobe(CC1201_STROBE_SFTX);
     LOG(WARN, "%u bytes flushed from TX FIFO buffer.",
-        readReg(CC1201_NUM_TXBYTES, EXT_FLAG_ON));
+        readReg(CC1201_NUM_TXBYTES));
 }
 
 void CC1201::flush_rx() {
     idle();
     strobe(CC1201_STROBE_SFRX);
     LOG(WARN, "%u bytes flushed from RX FIFO buffer.",
-        readReg(CC1201_NUM_RXBYTES, EXT_FLAG_ON));
+        readReg(CC1201_NUM_RXBYTES));
 }
 
 void CC1201::calibrate() {
@@ -391,7 +384,7 @@ void CC1201::update_rssi() {
 
     // Only use the top MSB for simplicity. 1 dBm resolution.
     if (_offset_reg_written) {
-        offset = readReg(CC1201_RSSI1, EXT_FLAG_ON);
+        offset = readReg(CC1201_RSSI1);
         _rssi = static_cast<float>((int8_t)twos_compliment(offset));
 
         LOG(INF3, "RSSI is from device.");
@@ -416,8 +409,8 @@ uint8_t CC1201::idle() {
 }
 
 uint8_t CC1201::rand() {
-    writeReg(CC1201_RNDGEN, 0x80, EXT_FLAG_ON);
-    return readReg(CC1201_RNDGEN, EXT_FLAG_ON);
+    writeReg(CC1201_RNDGEN, 0x80);
+    return readReg(CC1201_RNDGEN);
 }
 
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
@@ -430,7 +423,7 @@ float CC1201::freq() {
 
     freqUpdate();
 
-    readReg(CC1201_FREQOFF1, buf, 5, EXT_FLAG_ON);
+    readReg(CC1201_FREQOFF1, buf, 5);
 
     freq_offset = (buf[0] << 8) | (buf[1]);
     freq_offset = (~freq_offset) + 1;
@@ -446,7 +439,7 @@ float CC1201::freq() {
 
 bool CC1201::isLocked() {
     // This is only valid in RX, TX, & FSTXON
-    return readReg(CC1201_FSCAL_CTRL, EXT_FLAG_ON) & 0x01;
+    return readReg(CC1201_FSCAL_CTRL) & 0x01;
 }
 
 void CC1201::set_rssi_offset(int8_t offset) {
@@ -466,7 +459,7 @@ uint8_t CC1201::twos_compliment(uint8_t val) { return -(unsigned int)val; }
 void CC1201::setConfig(const registerSetting_t* regs, size_t len) {
     if (!regs) return;
 
-    for (int i = 0; i < len; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         writeReg(regs[i].addr, regs[i].value);
     }
 }

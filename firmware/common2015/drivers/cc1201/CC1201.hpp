@@ -3,6 +3,7 @@
 #include "mbed.h"
 #include "rtos.h"
 #include "CommLink.hpp"
+#include "ti/defines.hpp"
 
 #define CC1201_DEFAULT_RSSI_OFFSET (-81)
 
@@ -37,7 +38,7 @@ public:
 
     uint8_t mode();
 
-    uint8_t status();
+    uint8_t status(uint8_t strobe = CC1201_STROBE_SNOP);
 
     // TODO: Move any direct register reads/writes & strobes to protected when
     // done testing
@@ -70,8 +71,6 @@ protected:
     void setConfig(const registerSetting_t* regs, size_t len);
 
 private:
-    uint8_t status(uint16_t addr);
-
     uint8_t twos_compliment(uint8_t val);
 
     uint8_t _lqi;
