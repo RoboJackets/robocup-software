@@ -1,11 +1,14 @@
 #include "commands.hpp"
 
+#include <rtos.h>
 #include <mbed_rpc.h>
 #include <CommModule.hpp>
 #include <numparser.hpp>
 #include <logger.hpp>
 
 #include "ds2411.hpp"
+
+extern struct OS_XCB os_rdy;
 
 namespace {
 /**
@@ -137,13 +140,16 @@ static const std::vector<command_t> commands = {
      false,
      comm_cmdProcess,
      "Show information about the radio & perform basic radio tasks.",
-     "radio [ports | test-tx | test-rx] [[open, close, show, reset] "
+     "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
+     "reset] "
      "<port_num>]"},
     {{"rpc"},
      false,
      cmd_rpc,
      "Execute RPC commands on the mbed.",
-     "rpc <rpc-command>"}};
+     "rpc <rpc-command>"},
+    {{"ps"}, false, cmd_ps, "List information about all active threads.", "ps"},
+};
 
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
@@ -477,23 +483,23 @@ void cmd_info(const vector<string>& args) {
            SOMEHOW]
             *****
 
-            LPC_USB->USBDevIntClr = (0x01 << 3);	// clear the DEV_STAT
+            LPC_USB->USBDevIntClr = (0x01 << 3);    // clear the DEV_STAT
            interrupt bit before beginning
-            LPC_USB->USBDevIntClr = (0x03 << 4);	// make sure CCEmpty &
+            LPC_USB->USBDevIntClr = (0x03 << 4);    // make sure CCEmpty &
            CDFull are cleared before starting
             // Sending a COMMAND transfer type for getting the [USB] device
            status. We expect 1 byte.
             LPC_USB->USBCmdCode = (0x05 << 8) | (0xFE << 16);
-            while (!(LPC_USB->USBDevIntSt & 0x10));	// wait for the command
+            while (!(LPC_USB->USBDevIntSt & 0x10)); // wait for the command
            to be completed
-            LPC_USB->USBDevIntClr = 0x10;	// clear the CCEmpty interrupt bit
+            LPC_USB->USBDevIntClr = 0x10;   // clear the CCEmpty interrupt bit
 
             // Now we request a read transfer type for getting the same thing
             LPC_USB->USBCmdCode = (0x02 << 8) | (0xFE << 16);
-            while (!(LPC_USB->USBDevIntSt & 0x20));	// Wait for CDFULL. data
+            while (!(LPC_USB->USBDevIntSt & 0x20)); // Wait for CDFULL. data
            ready after this in USBCmdData
-            uint8_t regVal = LPC_USB->USBCmdData;	// get the byte
-            LPC_USB->USBDevIntClr = 0x20;	// clear the CDFULL interrupt bit
+            uint8_t regVal = LPC_USB->USBCmdData;   // get the byte
+            LPC_USB->USBDevIntClr = 0x20;   // clear the CDFULL interrupt bit
 
             printf("\tUSB Byte:\t0x%02\r\n", regVal);
         */
@@ -602,7 +608,7 @@ void cmd_logLevel(const vector<string>& args) {
             // this will return a signed int, so the level
             // could increase or decrease...or stay the same.
             int newLvl = (int)rjLogLevel;  // rjLogLevel is unsigned, so we'll
-                                           // need to change that first
+            // need to change that first
             newLvl += logLvlChange(args.front());
 
             if (newLvl >= LOG_LEVEL_END) {
@@ -644,6 +650,25 @@ void cmd_rpc(const vector<string>& args) {
     }
 }
 
+void cmd_ps(const vector<string>& args) {
+    if (args.empty() != true) {
+        showInvalidArgs(args);
+    } else {
+        unsigned int num_threads = 0;
+        P_TCB p_b = (P_TCB)&os_rdy;
+        std::printf("ID\tPRIOR\tB_PRIOR\tSTATE\tDELTA TIME\r\n");
+        // iterate over the linked list of tasks
+        while (p_b != NULL) {
+            std::printf("%u\t%u\t%u\t%u\t%u\r\n", p_b->task_id, p_b->prio,
+                        p_b->state, p_b->delta_time);
+
+            num_threads++;
+            p_b = p_b->p_lnk;
+        }
+        std::printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
+    }
+}
+
 /**
  * [comm_cmdProcess description]
  * @param args [description]
@@ -654,7 +679,7 @@ void comm_cmdProcess(const vector<string>& args) {
         CommModule::PrintInfo(true);
 
     } else if (args.size() == 1) {
-        if (strcmp(args.front().c_str(), "ports") == 0) {
+        if (strcmp(args.front().c_str(), "port") == 0) {
             CommModule::PrintInfo(true);
 
         } else {
@@ -662,7 +687,7 @@ void comm_cmdProcess(const vector<string>& args) {
                 rtp::packet pck;
                 std::string msg = "LINK TEST PAYLOAD";
 
-                pck.header_link = RTP_HEADER(rtp::port::LINK, 1, true, false);
+                pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
                 pck.payload_size = msg.length();
                 strcpy((char*)pck.payload, msg.c_str());
                 pck.address = BASE_STATION_ADDR;
@@ -671,11 +696,17 @@ void comm_cmdProcess(const vector<string>& args) {
                     printf("Placing %u byte packet in TX buffer.\r\n",
                            pck.payload_size);
                     CommModule::send(pck);
-
                 } else if (strcmp(args.front().c_str(), "test-rx") == 0) {
                     printf("Placing %u byte packet in RX buffer.\r\n",
                            pck.payload_size);
                     CommModule::receive(pck);
+                } else if (strcmp(args.front().c_str(), "loopback") == 0) {
+                    pck.ack = true;
+                    pck.subclass = 2;
+                    printf(
+                        "Placing %u byte packet in TX buffer with ACK set.\r\n",
+                        pck.payload_size);
+                    CommModule::send(pck);
                 } else {
                     showInvalidArgs(args.front());
                 }
@@ -799,7 +830,7 @@ void executeLine(char* rawCommand) {
                 std::size_t pos = COMMAND_NOT_FOUND_MSG.find("%s");
 
                 if (pos == std::string::npos) {  // no format specifier found in
-                                                 // our defined message
+                    // our defined message
                     printf("%s\r\n", COMMAND_NOT_FOUND_MSG.c_str());
                 } else {
                     std::string not_found_cmd = COMMAND_NOT_FOUND_MSG;
