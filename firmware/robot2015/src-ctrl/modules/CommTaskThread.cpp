@@ -3,6 +3,7 @@
 #include "TaskSignals.hpp"
 
 #include <rtos.h>
+#include <helper-funcs.hpp>
 #include <CommModule.hpp>
 #include <CommPort.hpp>
 #include <CC1201Radio.hpp>
@@ -45,17 +46,42 @@ CommModule.send(pck);           // Send it!
 callback function.
 */
 
+void loopback_ack_pck(rtp::packet* p) {
+    rtp::packet ack_pck;
+    ack_pck.header_link = p->ACK_Header();
+    ack_pck.ack = false;
+    memcpy((&ack_pck)->payload, p->payload, p->payload_size);
+    CommModule::send(ack_pck);
+}
+
 /**
  * [rx_callback This is executed for a successfully received radio packet.]
  * @param p [none]
  */
-void rxCallbackLinkTest(rtp::packet* p) {
+void loopback_rx_cb(rtp::packet* p) {
     if (p->payload_size) {
         LOG(INIT,
-            "Loopback test successful!\r\n"
-            "    Received:\t'%s' (%u bytes)",
-            &(p->payload), p->payload_size);
+            "Loopback rx successful!\r\n"
+            "    Received:\t'%s' (%u bytes)\r\n"
+            "    ACK:\t%s\r\n",
+            &(p->payload), p->payload_size, (p->ack ? "SET" : "UNSET"));
+    } else {
+        LOG(WARN, "Received empty packet on loopback interface");
     }
+    if (p->ack) loopback_ack_pck(p);
+}
+
+void loopback_tx_cb(rtp::packet* p) {
+    if (p->payload_size) {
+        LOG(INIT,
+            "Loopback tx successful!\r\n"
+            "    Sent:\t'%s' (%u bytes)\r\n"
+            "    ACK:\t%s\r\n",
+            &(p->payload), p->payload_size, (p->ack ? "SET" : "UNSET"));
+    } else {
+        LOG(WARN, "Sent empty packet on loopback interface");
+    }
+    CommModule::receive(*p);
 }
 
 /**
@@ -105,21 +131,20 @@ void Task_CommCtrl(void const* args) {
             radio.freq(), threadID, threadPriority);
 
         // Open a socket for running tests across the link layer
-        CommModule::RxHandler(&rxCallbackLinkTest, rtp::port::LINK);
-        CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::LINK);
+        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
+        CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
         CommModule::openSocket(
             rtp::port::LINK);  // returns true if port was successfully opened.
 
         // The usual way of opening a port.
-        CommModule::RxHandler(&rxCallbackLinkTest, rtp::port::DISCOVER);
+        CommModule::RxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
         CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
                               rtp::port::DISCOVER);
         CommModule::openSocket(rtp::port::DISCOVER);
 
         // This port won't open since there's no RX callback to invoke. The
         // packets are simply dropped.
-        CommModule::RxHandler(&rxCallbackLinkTest, rtp::port::LOG);
+        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LOG);
         CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
                               rtp::port::LOG);
         CommModule::openSocket(rtp::port::LOG);
@@ -128,7 +153,7 @@ void Task_CommCtrl(void const* args) {
         // invoked since it knows where to send an RX packet.
         CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
                               rtp::port::SETPOINT);
-        CommModule::RxHandler(&rxCallbackLinkTest, rtp::port::SETPOINT);
+        CommModule::RxHandler(&loopback_rx_cb, rtp::port::SETPOINT);
         CommModule::openSocket(rtp::port::SETPOINT);
 
         LOG(INIT, "%u sockets opened", CommModule::NumOpenSockets());
@@ -140,8 +165,8 @@ void Task_CommCtrl(void const* args) {
         // TODO: Turn on radio error LED here
 
         // Always keep the link test port open regardless
-        CommModule::RxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::LINK);
+        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
+        CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
         CommModule::openSocket(rtp::port::LINK);
 
         osThreadTerminate(threadID);

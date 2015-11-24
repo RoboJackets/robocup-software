@@ -69,6 +69,8 @@ int main() {
     isLogging = RJ_LOGGING_EN;
     rjLogLevel = INIT;
 
+    LOG(INIT, "Threads:\t%u", get_num_threads());
+
     /* Always send out an empty line at startup for keeping the console
      * clean on after a 'reboot' command is called;
      */
