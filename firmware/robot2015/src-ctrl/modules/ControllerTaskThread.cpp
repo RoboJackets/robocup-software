@@ -39,10 +39,7 @@ float accelVals[3] = {0};
 void Task_Controller(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(threadID != nullptr);
-#pragma GCC diagnostic pop
 
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
@@ -121,10 +118,7 @@ void Task_Controller(void const* args) {
 void Task_Controller_Sensorless(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(threadID != nullptr);
-#pragma GCC diagnostic pop
 
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);

@@ -105,10 +105,7 @@ void define_thread(osThreadDef_t& t, void (*task)(void const* arg),
     t.tpriority = priority;
     t.stacksize = stack_size;
     t.stack_pointer = (uint32_t*)new unsigned char[t.stacksize];
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(t.stack_pointer != nullptr);
-#pragma GCC diagnostic pop
 
 #endif
 }

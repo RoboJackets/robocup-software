@@ -89,10 +89,7 @@ void CommLink::rxThread(void const* arg) {
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(inst->_rxID != nullptr);
-#pragma GCC diagnostic pop
     threadPriority = osThreadGetPriority(inst->_rxID);
 
     LOG(INIT,

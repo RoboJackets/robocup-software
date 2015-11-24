@@ -65,10 +65,7 @@ void rxCallbackLinkTest(rtp::packet* p) {
 void Task_CommCtrl(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(threadID != nullptr);
-#pragma GCC diagnostic pop
 
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority = osThreadGetPriority(threadID);

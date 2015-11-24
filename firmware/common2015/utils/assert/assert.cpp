@@ -9,6 +9,6 @@
  * @param file [The filename where the failure occured.]
  * @param line [The line number where the failure occured.]
  */
-void assertFail(char* expr, char* file, int line) {
+void assertFail(const char* expr, const char* file, int line) {
     error("assertation failed: %s, file: %s, line %d \n", expr, file, line);
 }

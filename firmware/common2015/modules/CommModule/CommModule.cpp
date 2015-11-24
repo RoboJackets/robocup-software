@@ -78,10 +78,7 @@ void CommModule::txThread(void const* arg) {
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
     threadPriority = osThreadGetPriority(instance->_txID);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(instance->_txID != nullptr);
-#pragma GCC diagnostic pop
 
     // Check for the existance of a TX LED to flash
     if (instance->_txLED == nullptr) {
@@ -107,11 +104,8 @@ void CommModule::txThread(void const* arg) {
             // Get a pointer to the packet's memory location
             rtp::packet* p = (rtp::packet*)evt.value.p;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
             // Bump up the thread's priority
             ASSERT(osThreadSetPriority(_txID, osPriorityRealtime) == osOK);
-#pragma GCC diagnostic pop
 
             // Call the user callback function
             if (_ports[p->port].isOpen()) {
@@ -129,10 +123,7 @@ void CommModule::txThread(void const* arg) {
 
             strobeStatusLED((void*)(instance->_txLED));
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
             ASSERT(osThreadSetPriority(_txID, threadPriority) == osOK);
-#pragma GCC diagnostic pop
         }
     }
 
@@ -148,10 +139,7 @@ void CommModule::rxThread(void const* arg) {
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
     threadPriority = osThreadGetPriority(instance->_rxID);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
     ASSERT(instance->_rxID != nullptr);
-#pragma GCC diagnostic pop
 
     // Check for the existance of an RX LED to flash
     if (instance->_rxLED == nullptr) {
@@ -177,11 +165,8 @@ void CommModule::rxThread(void const* arg) {
             // get a pointer to where the data is stored
             p = (rtp::packet*)evt.value.p;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
             // Bump up the thread's priority
             ASSERT(osThreadSetPriority(_rxID, osPriorityRealtime) == osOK);
-#pragma GCC diagnostic pop
 
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen()) {
@@ -197,10 +182,7 @@ void CommModule::rxThread(void const* arg) {
                        p);  // free memory allocated for mail
 
             strobeStatusLED((void*)(instance->_rxLED));
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wwrite-strings"
             ASSERT(osThreadSetPriority(_rxID, threadPriority) == osOK);
-#pragma GCC diagnostic pop
         }
     }
 
