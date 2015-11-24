@@ -84,6 +84,11 @@ public:
     static const std::string COMMAND_BREAK_MSG;
 
     /**
+     * Deconstructor
+     */
+    ~Console();
+
+    /**
      * Console initialization routine. Attaches interrupt handlers and clears
      * the
      * buffers.

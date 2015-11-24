@@ -17,6 +17,8 @@ bool Console::command_ready = false;
 
 Console::Console() : pc(USBTX, USBRX) {}
 
+Console::~Console() { instance.reset(); }
+
 shared_ptr<Console>& Console::Instance() {
     if (instance.get() == nullptr) instance.reset(new Console);
 
@@ -148,10 +150,7 @@ void Console::TXCallback() {
     NVIC_EnableIRQ(UART0_IRQn);
 }
 
-void Console::RequestSystemStop() {
-    Instance()->sysStopReq = true;
-    instance.reset();
-}
+void Console::RequestSystemStop() { Instance()->sysStopReq = true; }
 
 bool Console::IsSystemStopRequested() { return Instance()->sysStopReq; }
 
