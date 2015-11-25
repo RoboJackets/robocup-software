@@ -81,8 +81,6 @@ set(MBED_PATH ${MBED_LIBS_REPO_DIR}/build/mbed)
 
 # ------------------------------------------------------------------------------
 # libraries for mbed
-# TODO(justbuchanan): don't hardcode the version number
-link_directories(/usr/lib/gcc/arm-none-eabi/4.9.3/thumb/)
 set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 
 # ------------------------------------------------------------------------------
