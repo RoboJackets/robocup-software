@@ -45,6 +45,13 @@
 
 #define CC1201_EXPECTED_PARTNUMBER 0x21
 
+// First byte of extended register address space
+#define CC1201_EXTENDED_ACCESS 0x2F
+
+// Access modifiers (pg 114 of user guide)
+#define CC1201_READ 0x80 
+#define CC1201_BURST 0x40
+
 
 /******************************************************************************
  * CONSTANTS

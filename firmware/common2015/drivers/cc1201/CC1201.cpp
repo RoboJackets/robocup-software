@@ -36,7 +36,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     strobe(CC1201_STROBE_SFTX);
 
     // Send the data to the CC1201.
-    uint8_t device_state = writeReg(CC1201_SINGLE_TX_FIFO, buf, size);
+    uint8_t device_state = writeReg(CC1201_SINGLE_TXFIFO, buf, size);
 
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) == CC1201_STATE_TXFIFO_ERROR) {
@@ -108,17 +108,13 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
 uint8_t CC1201::readReg(uint16_t addr) {
     uint8_t returnVal;
 
-    // if ((addr == 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
-    //     LOG(WARN, "Invalid address: %02X", addr);
-    //     return 0xFF;
-    // }
-
-    // Should be redundant but just to be sure... we don't want to accidently do
-    // a burst read.
-    addr &= 0xBF;
-
     toggle_cs();
-    _spi->write(addr | CC1201_READ);
+    if (addr >= CC1201_EXTENDED_ACCESS) {
+        _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
+        _spi->write(addr & 0xFF);
+    } else {
+        _spi->write(addr | CC1201_READ);
+    }
     returnVal = _spi->write(0x00);
     toggle_cs();
 
@@ -127,109 +123,50 @@ uint8_t CC1201::readReg(uint16_t addr) {
 uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
     uint8_t status_byte;
 
-    // if ((addr >= 0x2F) & (ext_flag == EXT_FLAG_OFF)) {
-    //     LOG(WARN, "Invalid address: %02X", addr);
-    //     return 0xFF;
-    // }
-
-    // if (ext_flag == EXT_FLAG_ON) return readRegExt(addr, buffer, len);
-
     toggle_cs();
-    status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
-
+    if (addr >= CC1201_EXTENDED_ACCESS) {
+        status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
+        _spi->write(addr & 0xFF);
+    } else {
+        status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
+    }
     for (uint8_t i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
-
     toggle_cs();
 
     return status_byte;
 }
 
 uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
-    // TODO: re-implement for extended register access
-
     uint8_t status_byte;
-    addr &= 0x3F;  // Don't accidently do a burst or read
-
-    // if (ext_flag == EXT_FLAG_ON) return writeRegExt(addr, value);
 
     toggle_cs();
-    status_byte = _spi->write(addr);
+    if (addr >= CC1201_EXTENDED_ACCESS) {
+        status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
+        _spi->write(addr & 0xFF);
+    } else {
+        status_byte = _spi->write(addr);
+    }
     _spi->write(value);
     toggle_cs();
 
     return status_byte;
 }
-uint8_t CC1201::writeReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
-    uint8_t status_byte;
-    addr &= 0x7F;  // Don't accidently do a read
 
-    // if (ext_flag == EXT_FLAG_ON) return writeRegExt(addr, buffer, len);
+uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
+    uint8_t status_byte;
 
     toggle_cs();
-    status_byte = _spi->write(addr | CC1201_BURST);
-
+    if (addr >= CC1201_EXTENDED_ACCESS) {
+        status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
+        _spi->write(addr & 0xFF | CC1201_BURST); // write lower byte of address
+    } else {
+        status_byte = _spi->write(addr | CC1201_BURST); // write lower byte of address
+    }
     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
-
     toggle_cs();
 
     return status_byte;
 }
-
-
-// uint8_t CC1201::readRegExt(uint8_t addr) {
-//     // Only callable from readReg(), so no checks needed
-//     uint8_t returnVal;
-
-//     toggle_cs();
-//     _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
-//     _spi->write(addr);
-//     returnVal = _spi->write(0x00);
-//     toggle_cs();
-
-//     return returnVal;
-// }
-// uint8_t CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len) {
-//     // Only callable from readReg(), so no checks needed
-//     uint8_t status_byte;
-
-//     toggle_cs();
-//     status_byte =
-//         _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
-//     _spi->write(addr);
-
-//     for (int i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
-
-//     toggle_cs();
-
-//     return status_byte;
-// }
-
-// uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t value) {
-//     // Only callable from writeReg(), so no checks needed
-//     uint8_t status_byte;
-
-//     toggle_cs();
-//     status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
-//     _spi->write(addr);
-//     _spi->write(value);
-//     toggle_cs();
-
-//     return status_byte;
-// }
-// uint8_t CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len) {
-//     // Only callable from writeReg(), so no checks needed
-//     uint8_t status_byte;
-
-//     toggle_cs();
-//     status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_BURST);
-//     _spi->write(addr);
-
-//     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
-
-//     toggle_cs();
-
-//     return status_byte;
-// }
 
 uint8_t CC1201::strobe(uint8_t addr) {
     if (addr > 0x3d || addr < 0x30) {
