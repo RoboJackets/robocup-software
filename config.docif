@@ -45,7 +45,6 @@ GH_USER_VAR="GIT_USERNAME"
 # Variable holing the email of the Status Token
 GH_EMAIL_VAR="GIT_EMAIL"
 
-
 # The project root INSIDE THE DOCKER CONTAINER
 # Reccomended to leave as default (not set)
 # This will act as the 'current directory' within the project
