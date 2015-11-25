@@ -1,16 +1,19 @@
-#include "robot.hpp"
-
-// ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
+// std library includes
+#include <iostream>
 #include <cstdarg>
-#include <ctime>
 #include <string>
-#include <array>
-
+// mbed library includes
+#include <mbed.h>
+#include <rtos.h>
+// common2015 library includes
+#include <watchdog.hpp>
+#include <helper-funcs.hpp>
 #include <logger.hpp>
-
-#include "commands.hpp"
-#include "io-expander.hpp"
+// local includes
 #include "TaskSignals.hpp"
+#include "robot-devices.hpp"
+#include "commands.hpp"
+#include "fpga.hpp"
 
 void Task_Controller(void const* args);
 
@@ -56,9 +59,9 @@ int main() {
         // know
         // they may or may not see it depending on many factors
         s.baud(9600);
-        std::printf("BAUDRATE: 57600\n");
+        cout << "BAUDRATE: 57600" << endl;
         s.baud(57600);
-        fflush(stdout);
+        cout << flush;
     }
 
     // Turn on some startup LEDs to show they're working, they are turned off
@@ -72,11 +75,7 @@ int main() {
     /* Always send out an empty line at startup for keeping the console
      * clean on after a 'reboot' command is called;
      */
-    if (isLogging) {
-        // reset the console's default settings and enable the cursor
-        printf("\033[0m\033[?25h");
-        fflush(stdout);
-    }
+    if (isLogging) cout << "\033[0m\033[?25h" << flush;
 
     // Setup the interrupt priorities before launching each subsystem's task
     // thread.
@@ -141,10 +140,12 @@ int main() {
     FPGA::Instance()->motors_en(true);
 
     while (true) {
+#if RJ_WATCHDOG_TIMER_EN
+        Watchdog::Renew();
+#endif
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
         rdy_led = !fpga_ready;
-        Watchdog::Renew();
         Thread::wait(2 * RJ_WATCHDOG_TIMER_VALUE);
     }
 }
@@ -213,10 +214,10 @@ _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
         ;
 }
 
-_EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }
+_EXTERN void NMI_Handler() { printf("NMI Fault!\n"); }
 
-_EXTERN void MemManage_Handler() { std::printf("MemManage Fault!\n"); }
+_EXTERN void MemManage_Handler() { printf("MemManage Fault!\n"); }
 
-_EXTERN void BusFault_Handler() { std::printf("BusFault Fault!\n"); }
+_EXTERN void BusFault_Handler() { printf("BusFault Fault!\n"); }
 
-_EXTERN void UsageFault_Handler() { std::printf("UsageFault Fault!\n"); }
+_EXTERN void UsageFault_Handler() { printf("UsageFault Fault!\n"); }
