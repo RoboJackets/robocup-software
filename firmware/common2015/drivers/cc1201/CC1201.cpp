@@ -1,16 +1,14 @@
 #include "CC1201.hpp"
 
 #include "logger.hpp"
-
+#include "assert.hpp"
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len, int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
-
     // set initial configuration
     setConfig(regs, len);
 
-    // powerOnReset();
     _offset_reg_written = false;
     reset();
     set_rssi_offset(rssiOffset);
@@ -22,14 +20,6 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
     }
 }
 
-CC1201::~CC1201() {
-    if (_spi) delete _spi;
-
-    if (_cs) delete _cs;
-
-    if (_int_in) delete _int_in;
-}
-
 int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
@@ -37,36 +27,34 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     if (size != (buf[0] + 1)) {
         LOG(SEVERE,
-            "Packet size values are inconsistent. %u bytes requested vs %u "
-            "bytes in packet.",
+            "Packet size is inconsistent with expected number of "
+            "bytes! %u bytes expected, %u bytes found in buffer.",
             size, buf[0]);
-        return 1;
+        return COMM_FUNC_BUF_ERR;
     }
 
     strobe(CC1201_STROBE_SFTX);
 
-    // [X] - 1 - Send the data to the CC1201.
-    // =================
-    uint8_t device_state = writeReg(CC1201_SINGLE_TXFIFO, buf, size);
+    // Send the data to the CC1201.
+    uint8_t device_state = writeReg(CC1201_SINGLE_TX_FIFO, buf, size);
 
-    // [X] - 4 - Enter the TX state.
-    // =================
+    // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) == CC1201_STATE_TXFIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
         flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
-                     // state
+        // state
 
         // set in IDLE mode and strobe back into RX to ensure the states will
         // fall through calibration then return
         idle();
         strobe(CC1201_STROBE_SRX);
 
-        return 2;
+        return COMM_DEV_BUF_ERR;
     } else {
         strobe(CC1201_STROBE_STX);  // Enter TX mode
     }
 
-    // [X] - 5 - Wait until radio's TX buffer is emptied
+    // Wait until radio's TX buffer is emptied
     uint8_t bts = 1;
 
     do {
@@ -75,16 +63,16 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     } while (bts != 0);
 
-    return 0;  // success
+    return COMM_SUCCESS;
 }
 
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     uint8_t device_state = freqUpdate();  // update frequency offset estimate &
-                                          // get the current state while at it
+    // get the current state while at it
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
 
     if (((*len) + 2) < num_rx_bytes) {
-        LOG(SEVERE, "%u bytes in RX FIFO with passed buffer size of %u bytes.",
+        LOG(SEVERE, "%u bytes in RX FIFO with given buffer size of %u bytes.",
             num_rx_bytes, *len);
 
         return COMM_FUNC_BUF_ERR;
@@ -95,12 +83,6 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
         strobe(CC1201_STROBE_SRX);
 
         return COMM_DEV_BUF_ERR;
-    }
-
-    // This is temporary
-    if (readReg(CC1201_NUM_TXBYTES) > 0) {
-        // This was a TX interrupt from the CC1201, not an RX
-        return COMM_FALSE_TRIG;
     }
 
     if (num_rx_bytes > 0) {
@@ -114,11 +96,10 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     update_rssi();
-
     // return back to RX mode
     strobe(CC1201_STROBE_SRX);
 
-    return COMM_SUCCESS;  // success
+    return COMM_SUCCESS;
 }
 
 /**
@@ -132,8 +113,9 @@ uint8_t CC1201::readReg(uint16_t addr) {
     //     return 0xFF;
     // }
 
-    addr &= 0xBF;  // Should be redundant but leaving for security. We don't
-                   // want to accidently do a burst read.
+    // Should be redundant but just to be sure... we don't want to accidently do
+    // a burst read.
+    addr &= 0xBF;
 
     toggle_cs();
     _spi->write(addr | CC1201_READ);
@@ -276,7 +258,7 @@ void CC1201::reset() {
 
     // Wait up to 300ms for the radio to do anything. Don't block everything
     // else if it doesn't startup correctly
-    for (int i = 0; i < 300; i++) {
+    for (size_t i = 0; i < 300; i++) {
         if (~(idle()) & 0x80)  // Chip is ready when status byte's MSB is 0
             break;
         else
@@ -306,59 +288,6 @@ int32_t CC1201::selfTest() {
 }
 
 bool CC1201::isConnected() { return _isInit; }
-
-uint8_t recurseCount = 0;
-void CC1201::powerOnReset() {
-    if (_isInit == false) return;
-
-    recurseCount++;
-
-    if (recurseCount >= 10) {
-        LOG(SEVERE, "Cannot calibrate radio -> system reset");
-        mbed_interface_reset();
-    }
-
-    LOG(INF1, "Beginning power on reset (POR)");
-    LOG(INF2, "Strobe SIDLE");
-
-    idle();
-
-    LOG(INF2, "IDLE strobe OK.");
-
-    LOG(INF2, "Force CS low");
-    *_cs = 0;
-    LOG(INF2, "Strobe SRES");
-    _spi->write(CC1201_STROBE_SRES);
-    LOG(INF2, "dealloc SPI");
-    delete _spi;
-    LOG(INF2, "(MI)SO alloc digIn");
-    DigitalIn* SO = new DigitalIn(_miso_pin);
-
-    LOG(INF2, "wait for olliscator assertion");
-    uint8_t waitCycles = 20;
-
-    while (*SO) {
-        if (waitCycles == 0) {
-            LOG(WARN, "calibration settled assertion timeout -> retry");
-            return;
-        }
-
-        Thread::wait(5);
-        waitCycles--;
-    }
-
-    recurseCount = 0;
-
-    LOG(INF2, "dealloc digIn");
-    delete SO;
-    LOG(INF2, "force CSn high");
-    *_cs = 1;
-    LOG(INF2, "setup SPI");
-    setup_spi();
-    LOG(INF2, "POR COMPLETE!");
-
-    _isInit = false;
-}
 
 void CC1201::flush_tx() {
     idle();
@@ -402,6 +331,7 @@ uint8_t CC1201::idle() {
 
     if (_isInit == false) return status_byte;
 
+    // block until we've reached idle
     while (mode() != 0x01)
         ;
 
@@ -447,14 +377,8 @@ void CC1201::set_rssi_offset(int8_t offset) {
     if (_offset_reg_written == true) return;
 
     _offset_reg_written = true;
-
-    // uint8_t offset_c = offset;
-    uint8_t offset_c = twos_compliment(offset);
-    writeReg(CC1201_AGC_GAIN_ADJUST, offset_c);
+    writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(offset));
 }
-
-uint8_t CC1201::twos_compliment(uint8_t val) { return -(unsigned int)val; }
-
 
 void CC1201::setConfig(const registerSetting_t* regs, size_t len) {
     if (!regs) return;

@@ -254,11 +254,11 @@ void MPU6050::selfTest(float* results) {
 
     // Configure the accelerometer for self-test
     write(MPU6050_RA_ACCEL_CONFIG, 0xF0);  // Enable self test on all three axes
-                                           // and set accelerometer range to +/-
-                                           // 8 g
-    write(MPU6050_RA_GYRO_CONFIG, 0xE0);   // Enable self test on all three axes
-                                           // and set gyro range to +/- 250
-                                           // degrees/s
+    // and set accelerometer range to +/-
+    // 8 g
+    write(MPU6050_RA_GYRO_CONFIG, 0xE0);  // Enable self test on all three axes
+    // and set gyro range to +/- 250
+    // degrees/s
 
     // Delay a while to let the device execute the self-test
     Thread::wait(0.25);
@@ -361,7 +361,7 @@ void MPU6050::calibrate(float* dest1, float* dest2) {
     write(MPU6050_RA_CONFIG, 0x01);       // Set low-pass filter to 188 Hz
     write(MPU6050_RA_SMPLRT_DIV, 0x00);   // Set sample rate to 1 kHz
     write(MPU6050_RA_GYRO_CONFIG, 0x00);  // Set gyro full-scale to 250 degrees
-                                          // per second, maximum sensitivity
+    // per second, maximum sensitivity
     write(MPU6050_RA_ACCEL_CONFIG,
           0x00);  // Set accelerometer full-scale to 2 g, maximum sensitivity
 
@@ -369,8 +369,8 @@ void MPU6050::calibrate(float* dest1, float* dest2) {
     // calculation
     write(MPU6050_RA_USER_CTRL, 0x40);  // Enable FIFO
     write(MPU6050_RA_FIFO_EN, 0x78);    // Enable gyro and accelerometer sensors
-                                        // for FIFO  (max size 1024 bytes in
-                                        // MPU-6050)
+    // for FIFO  (max size 1024 bytes in
+    // MPU-6050)
     Thread::wait(0.08);  // accumulate 80 samples in 80 milliseconds = 960 bytes
 
     // At end of sample accumulation, turn off FIFO sensor read
@@ -425,11 +425,11 @@ void MPU6050::calibrate(float* dest1, float* dest2) {
     // Construct the gyro biases for push to the hardware gyro bias registers,
     // which are reset to zero upon device startup
     data[0] = (-gyro_bias[0] / 4 >> 8) & 0xFF;  // Divide by 4 to get 32.9 LSB
-                                                // per deg/s to conform to
-                                                // expected bias input format
+    // per deg/s to conform to
+    // expected bias input format
     data[1] = (-gyro_bias[0] / 4) & 0xFF;  // Biases are additive, so change
-                                           // sign on calculated average gyro
-                                           // biases
+    // sign on calculated average gyro
+    // biases
     data[2] = (-gyro_bias[1] / 4 >> 8) & 0xFF;
     data[3] = (-gyro_bias[1] / 4) & 0xFF;
     data[4] = (-gyro_bias[2] / 4 >> 8) & 0xFF;
@@ -469,7 +469,7 @@ void MPU6050::calibrate(float* dest1, float* dest2) {
     accel_bias_reg[2] = (int16_t)((int16_t)data[0] << 8) | data[1];
 
     uint32_t mask = 1uL;  // Define mask for temperature compensation bit 0 of
-                          // lower byte of accelerometer bias registers
+    // lower byte of accelerometer bias registers
     uint8_t mask_bit[3] = {
         0, 0,
         0};  // Define array to hold mask bit for each accelerometer bias axis
@@ -477,32 +477,32 @@ void MPU6050::calibrate(float* dest1, float* dest2) {
     for (ii = 0; ii < 3; ii++) {
         if (accel_bias_reg[ii] & mask)
             mask_bit[ii] = 0x01;  // If temperature compensation bit is set,
-                                  // record that fact in mask_bit
+        // record that fact in mask_bit
     }
 
     // Construct total accelerometer bias, including calculated average
     // accelerometer bias from above
     accel_bias_reg[0] -= (accel_bias[0] / 8);  // Subtract calculated averaged
-                                               // accelerometer bias scaled to
-                                               // 2048 LSB/g (16 g full scale)
+    // accelerometer bias scaled to
+    // 2048 LSB/g (16 g full scale)
     accel_bias_reg[1] -= (accel_bias[1] / 8);
     accel_bias_reg[2] -= (accel_bias[2] / 8);
 
     data[0] = (accel_bias_reg[0] >> 8) & 0xFF;
     data[1] = (accel_bias_reg[0]) & 0xFF;
     data[1] = data[1] | mask_bit[0];  // preserve temperature compensation bit
-                                      // when writing back to accelerometer bias
-                                      // registers
+    // when writing back to accelerometer bias
+    // registers
     data[2] = (accel_bias_reg[1] >> 8) & 0xFF;
     data[3] = (accel_bias_reg[1]) & 0xFF;
     data[3] = data[3] | mask_bit[1];  // preserve temperature compensation bit
-                                      // when writing back to accelerometer bias
-                                      // registers
+    // when writing back to accelerometer bias
+    // registers
     data[4] = (accel_bias_reg[2] >> 8) & 0xFF;
     data[5] = (accel_bias_reg[2]) & 0xFF;
     data[5] = data[5] | mask_bit[2];  // preserve temperature compensation bit
-                                      // when writing back to accelerometer bias
-                                      // registers
+    // when writing back to accelerometer bias
+    // registers
 
     // Push accelerometer biases to hardware registers
     //  write(XA_OFFSET_H, data[0]);

@@ -76,15 +76,17 @@ static void i2cRtos_isr(uint32_t ch) {
     int stat = i2c_status(tr->obj);
     int stay = 0;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
     switch (tr->cmd) {
         case readMst:
             switch (stat) {
                 case 0x50:  // Data byte has been received; ACK has been
-                            // returned.
+                    // returned.
                     (tr->rData)[tr->cnt] = (char)(I2C_DAT(tr->obj) & 0xff);
 
                 case 0x40:  // SLA+R has been transmitted; ACK has been
-                            // received.
+                    // received.
                     ++(tr->cnt);
                     if (tr->cnt != tr->len - 1)
                         i2c_conset(tr->obj, 0, 0, 0, 1);
@@ -95,7 +97,7 @@ static void i2cRtos_isr(uint32_t ch) {
                     break;
 
                 case 0x58:  // Data byte has been received; NOT ACK has been
-                            // returned.
+                    // returned.
                     (tr->rData)[tr->cnt] = (char)(I2C_DAT(tr->obj) & 0xff);
                     stat = 0;
                     break;
@@ -105,10 +107,10 @@ static void i2cRtos_isr(uint32_t ch) {
         case writeMst:
             switch (stat) {
                 case 0x18:  // SLA+W has been transmitted; ACK has been
-                            // received.
+                // received.
 
                 case 0x28:  // SLA+W has been transmitted; NOT ACK has been
-                            // received.
+                    // received.
                     if (++(tr->cnt) != tr->len) {
                         I2C_DAT(tr->obj) = (tr->wData)[tr->cnt];
                         stay = 1;
@@ -121,10 +123,10 @@ static void i2cRtos_isr(uint32_t ch) {
         case readSlv:
             ++(tr->cnt);
             if (stat == 0x80 || stat == 0x90)  // Previously addressed with own
-                                               // SLA address(0x80) or geberal
-                                               // call (0x90); DATA has been
-                                               // received; ACK has been
-                                               // returned.
+                // SLA address(0x80) or geberal
+                // call (0x90); DATA has been
+                // received; ACK has been
+                // returned.
                 (tr->rData)[tr->cnt] = I2C_DAT(tr->obj) & 0xFF;
             stay = (stat == 0x80 || stat == 0x90 || stat == 0x060 ||
                     stat == 0x70) &&
@@ -138,11 +140,12 @@ static void i2cRtos_isr(uint32_t ch) {
         case writeSlv:
             ++(tr->cnt);
             stay = tr->cnt < tr->len && stat == 0xb8;  // Data byte in I2DAT has
-                                                       // been transmitted; ACK
-                                                       // has been received.
+            // been transmitted; ACK
+            // has been received.
             if (stay) I2C_DAT(tr->obj) = tr->wData[tr->cnt];
             break;
     }
+#pragma GCC diagnostic pop
 
     if (stay) {
         // sequence not finished => stay in ISR mode and trigger next i2c by
@@ -185,7 +188,7 @@ static inline void i2cRtos_wait_and_see(i2c_t* obj, int ch,
 {
     struct IsrIrqSem* iis = &(isrIrqSem[ch]);
     __disable_irq();  // evil, but don't want the next three lines to be
-                      // interrupted
+    // interrupted
     i2c_clear_SI(obj);
     NVIC_ClearPendingIRQ(iis->irq);
     NVIC_EnableIRQ(iis->irq);
@@ -239,8 +242,8 @@ int i2cRtos_write(i2c_t* obj, int address, const char* data, int length,
     // gpio_write(&gpio[1], 0);
     int ch = i2c_get_channel(obj);
     struct I2cIsrTransfer* tr = &(i2c_transfer[ch]);  // evilive fill it locally
-                                                      // and then copy it in one
-                                                      // go to (volatile) mem?
+    // and then copy it in one
+    // go to (volatile) mem?
     tr->obj = obj;
     tr->cmd = writeMst;
     tr->len = length;
@@ -309,8 +312,8 @@ int i2cRtos_slave_receive(i2c_t* obj, uint32_t tmOut) {
 int i2cRtos_slave_read(i2c_t* obj, char* data, int length) {
     int ch = i2c_get_channel(obj);
     struct I2cIsrTransfer* tr = &(i2c_transfer[ch]);  // evilive fill it locally
-                                                      // and then copy it in one
-                                                      // go to (volatile) mem?
+    // and then copy it in one
+    // go to (volatile) mem?
     tr->obj = obj;
     tr->cmd = readSlv;
     tr->len = length;
@@ -331,8 +334,8 @@ int i2cRtos_slave_write(i2c_t* obj, const char* data, int length) {
     }
     int ch = i2c_get_channel(obj);
     struct I2cIsrTransfer* tr = &(i2c_transfer[ch]);  // evilive fill it locally
-                                                      // and then copy it in one
-                                                      // go to (volatile) mem?
+    // and then copy it in one
+    // go to (volatile) mem?
     tr->obj = obj;
     tr->cmd = writeSlv;
     tr->len = length;

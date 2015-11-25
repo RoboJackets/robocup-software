@@ -18,7 +18,7 @@ set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
 # subdirectories
-set(DRIVERS             cc1101 cc1201 cc1201/cfg software-spi)
+set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c software-spi)
 set(MODULES             CommModule CommLink Console)
 set(UTILS               assert fp16 logger numparser rtos-mgmt)
 
@@ -66,16 +66,6 @@ target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS})
 
 # only build firmware library if required
 set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)
-
-# the official mbed test builds
-set(MBED_TEST_UNIT 1)
-add_custom_target(mbed-test
-    COMMAND sudo python2 ${MBED_LIBS_REPO_DIR}/workspace_tools/make.py --mcu=${MBED_TARGET} --tool=GCC_ARM
-        --disk=/media/jonathan/MBED --serial=/dev/mbed --verbose -p ${MBED_TEST_UNIT} --jobs=0 --baud=9600
-    DEPENDS mbed_libraries
-    COMMENT "building mbed test binary"
-)
-set_target_properties(mbed-test PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # See common/CMakeLists for more info on how this works
 add_custom_command(

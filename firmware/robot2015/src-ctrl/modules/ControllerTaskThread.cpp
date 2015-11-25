@@ -4,13 +4,14 @@
 #include <rtos.h>
 #include <RPCVariable.h>
 #include <logger.hpp>
+#include <assert.hpp>
 
 #include "motors.hpp"
 #include "mpu-6050.hpp"
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
-#define CONTROL_LOOP_WAIT_MS 20
+static const int CONTROL_LOOP_WAIT_MS = 20;
 
 // Declaration for an alternative control loop thread for when the accel/gyro
 // can't be used for whatever reason
@@ -38,14 +39,10 @@ float accelVals[3] = {0};
 void Task_Controller(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
+    ASSERT(threadID != nullptr);
 
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
-
-    if (threadID != nullptr)
-        threadPriority = osThreadGetPriority(threadID);
-    else
-        threadPriority = osPriorityIdle;
+    // Store our priority so we know what to reset it to after running a command
+    osPriority threadPriority = osThreadGetPriority(threadID);
 
 #if RJ_MPU_EN
     MPU6050 imu(RJ_I2C_BUS);
@@ -82,12 +79,10 @@ void Task_Controller(void const* args) {
         "IMU disabled in config file\r\n    Falling back to sensorless control "
         "loop.");
 #endif
-        // Start a thread that can function without the IMU, then terminate this
-        // thread
-        Thread controller_task(Task_Controller_Sensorless, nullptr,
-                               osPriorityRealtime);
+        // Start a thread that can function without the IMU, terminate us if it
+        // ever returns
+        Task_Controller_Sensorless(&imu);
         osThreadTerminate(threadID);
-
         return;
 
 #if RJ_MPU_EN
@@ -123,14 +118,10 @@ void Task_Controller(void const* args) {
 void Task_Controller_Sensorless(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
+    ASSERT(threadID != nullptr);
 
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
-
-    if (threadID != nullptr)
-        threadPriority = osThreadGetPriority(threadID);
-    else
-        threadPriority = osPriorityIdle;
+    // Store our priority so we know what to reset it to after running a command
+    osPriority threadPriority = osThreadGetPriority(threadID);
 
     LOG(INIT,
         "Sensorless control loop ready!\r\n    Thread ID:\t%u\r\n    "

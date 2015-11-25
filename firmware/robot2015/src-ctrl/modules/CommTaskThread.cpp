@@ -8,6 +8,7 @@
 #include <CC1201Radio.hpp>
 #include <CC1201Config.hpp>
 #include <logger.hpp>
+#include <assert.hpp>
 
 /*
  * Information about the radio protocol can be found at:
@@ -17,13 +18,13 @@
 /*
 * Example of sending a packet.
 
-rtp::packet pck;				// Declare a new packet structure
+rtp::packet pck;                // Declare a new packet structure
 
-pck.port = 8;					// What port should the packet be routed to?
-pck.subclass = 1;				// What subclass of the port is this for?
-pck.ack = false;				// Do we need an acknowledgment or is this an
+pck.port = 8;                   // What port should the packet be routed to?
+pck.subclass = 1;               // What subclass of the port is this for?
+pck.ack = false;                // Do we need an acknowledgment or is this an
 acknowledgment response?
-pck.sfs = false;				// Is the size field Significant? (Almost always
+pck.sfs = false;                // Is the size field Significant? (Almost always
 'No')
 
 // The lines above can be set with the 'RTP_HEADER' macro as an alternative.
@@ -31,14 +32,14 @@ pck.sfs = false;				// Is the size field Significant? (Almost always
 //
 // pck.header_link = RTP_HEADER(rtp::packet::port::DISCOVER, 1, false, false);
 
-pck.address = 255;				// Who are we sending the packet to? (255 is
+pck.address = 255;              // Who are we sending the packet to? (255 is
 broadcast address)
-pck.payload_size = 25;			// How many bytes are in the payload of the
+pck.payload_size = 25;          // How many bytes are in the payload of the
 packet?
 
-memset(pck.payload, 0xFF, pck.payload_size);	// fill with 25 arbitrary bytes
+memset(pck.payload, 0xFF, pck.payload_size);    // fill with 25 arbitrary bytes
 
-CommModule.send(pck);			// Send it!
+CommModule.send(pck);           // Send it!
 
 // Note: A packet with a requested ACK must be accounted for within the RX
 callback function.
@@ -64,14 +65,10 @@ void rxCallbackLinkTest(rtp::packet* p) {
 void Task_CommCtrl(void const* args) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
+    ASSERT(threadID != nullptr);
 
     // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
-
-    if (threadID != nullptr)
-        threadPriority = osThreadGetPriority(threadID);
-    else
-        threadPriority = osPriorityIdle;
+    osPriority threadPriority = osThreadGetPriority(threadID);
 
     // Startup the CommModule interface
     CommModule::Init();
@@ -140,8 +137,7 @@ void Task_CommCtrl(void const* args) {
         // TODO: Turn on radio error LED here
 
         // Always keep the link test port open regardless
-        CommModule::RxHandler(nullptr, rtp::port::LINK);
-        CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
+        CommModule::RxHandler((CommLink*)&radio, &CommLink::sendPacket,
                               rtp::port::LINK);
         CommModule::openSocket(rtp::port::LINK);
 
@@ -154,9 +150,6 @@ void Task_CommCtrl(void const* args) {
     while (CommModule::isReady() == false) {
         Thread::wait(50);
     }
-
-    // Additional waiting can be used here if needed
-    Thread::signal_wait(COMMUNICATION_TASK_START_SIGNAL, osWaitForever);
 
     // == everything below this line all the way until the start of the while
     // loop is test code ==

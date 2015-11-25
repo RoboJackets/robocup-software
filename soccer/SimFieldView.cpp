@@ -5,6 +5,7 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <QFont>
 
 using namespace boost;
 using namespace Packet;
@@ -46,7 +47,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         _dragMode = DRAG_PLACE;
     } else if (me->button() == Qt::RightButton && frame) {
         if (frame->has_ball() &&
-            pos.nearPoint(frame->ball().pos(), Ball_Radius)) {
+            pos.nearPoint(frame->ball().pos(), 10 * Ball_Radius)) {
             // Drag to shoot the ball
             _dragMode = DRAG_SHOOT;
             _dragTo = pos;
@@ -129,12 +130,12 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     // Simulator drag-to-shoot
     std::shared_ptr<LogFrame> frame = currentFrame();
     if (_dragMode == DRAG_SHOOT && frame) {
-        p.setPen(QPen(Qt::white, 0.1f));
+        p.setPen(QPen(Qt::white, 0.025f));
         Geometry2d::Point ball = frame->ball().pos();
         p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 
         if (ball != _dragTo) {
-            p.setPen(QPen(Qt::gray, 0.1f));
+            p.setPen(QPen(Qt::gray, 0.025f));
 
             _shot = (ball - _dragTo) * ShootScale;
             float speed = _shot.mag();
@@ -143,6 +144,9 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
             p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
 
             p.setPen(Qt::black);
+            QFont font;
+            font.setPixelSize(30);
+            p.setFont(font);
             drawText(p, _dragTo.toQPointF(),
                      QString("%1 m/s").arg(speed, 0, 'f', 1));
         }

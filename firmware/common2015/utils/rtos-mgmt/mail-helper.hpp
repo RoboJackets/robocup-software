@@ -1,8 +1,9 @@
 #pragma once
 
 #include "mbed.h"
-#include "cmsis.h"
-//#include "rtos.h"
+#include "rtos.h"
+
+// Helper function for using an rtos mail queue within a class
 
 template <class T, unsigned int size>
 class MailHelper {

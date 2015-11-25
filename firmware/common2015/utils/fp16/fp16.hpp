@@ -1,3 +1,5 @@
+#pragma once
+
 /**
  * RoboJackets: RoboCup SSL Firmware
  *
@@ -32,8 +34,6 @@
  *  * Rounding seems to give at least 11 bits precision
  *  * Faster and smaller than the GCC implementation
  */
-
-#pragma once
 
 #include <stdint.h>
 

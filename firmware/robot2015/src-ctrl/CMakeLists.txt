@@ -9,7 +9,7 @@ set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(CONFIG_ROOT_NAME    ${CMAKE_CURRENT_SOURCE_DIR}/config)
 set(CONFIG_ROOT_NAME    ${CONFIG_ROOT_NAME} PARENT_SCOPE)
-set(DRIVERS             adc buzzer dma ds2411 fpga mcp23017 mem-iap mpu-6050 rtos-i2c ws2811)
+set(DRIVERS             adc buzzer dma ds2411 fpga mcp23017 mpu-6050 ws2811)
 set(MODULES             commands motors)
 
 # generate a list of directories that we need to include from the values set above

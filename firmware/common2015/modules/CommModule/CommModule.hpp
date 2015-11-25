@@ -4,7 +4,7 @@
 #include <rtos.h>
 
 #include "rtp.hpp"
-#include "rtos-mgmt/thread-helper.hpp"
+#include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "Console.hpp"
 #include "CommPort.hpp"
@@ -14,9 +14,6 @@
 #include <functional>
 #include <memory>
 
-#define COMM_MODULE_TX_QUEUE_SIZE 5
-#define COMM_MODULE_RX_QUEUE_SIZE 5
-#define COMM_MODULE_NBR_PORTS 16
 #define COMM_MODULE_SIGNAL_START_THREAD 0x01
 
 /* These define the function pointer type that's used for every callback
@@ -44,12 +41,14 @@ private:
     static CommPorts_t _ports;
 
 public:
-    // Class constants - set in CommModule.cpp
-    static const int NBR_PORTS;
-    static const int TX_QUEUE_SIZE;
-    static const int RX_QUEUE_SIZE;
+    ~CommModule();
 
-    static void Init();
+    // Class constants - set in CommModule.cpp
+    static const size_t NBR_PORTS = 16;
+    static const size_t TX_QUEUE_SIZE = 5;
+    static const size_t RX_QUEUE_SIZE = 5;
+
+    static void Init(void);
 
     // Set a TX callback function on an object
     template <typename B>
@@ -108,15 +107,19 @@ public:
 
     static void ResetCount(unsigned int portNbr);
     static void Close(unsigned int portNbr);
-    static bool isReady();
-    static int NumOpenSockets();
+    static bool isReady(void);
+    static int NumOpenSockets(void);
 
     static void txLED(DigitalInOut*);
     static void rxLED(DigitalInOut*);
 
 protected:
     // NOP function for keeping a communication link active
-    void nopFunc();
+    void nopFunc(void);
+
+    /// Kill any threads and free the allocated stack.
+    /// Always call in any derived class's deconstructors!
+    void cleanup(void);
 
     // Memory Queue IDs
     osMailQId _txQueue;
@@ -143,9 +146,9 @@ private:
     static void txThread(void const*);
     static void rxThread(void const*);
 
-    static void ready();
+    static void ready(void);
 
-    static void PrintHeader();
+    static void PrintHeader(void);
 
     static std::shared_ptr<CommModule> instance;
 
@@ -158,6 +161,6 @@ private:
     osMailQDef_t _rxQDef;
 
     // Mail helper objects
-    MailHelper<rtp::packet, COMM_MODULE_TX_QUEUE_SIZE> _txQueueHelper;
-    MailHelper<rtp::packet, COMM_MODULE_RX_QUEUE_SIZE> _rxQueueHelper;
+    MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;
+    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
 };

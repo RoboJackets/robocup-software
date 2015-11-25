@@ -11,15 +11,8 @@ const char* LOG_LEVEL_STRING[] = {FOREACH_LEVEL(GENERATE_STRING)};
 /* The initial logging level shows startup info along with any
  * warning messages [but hopefully there's none of those :) ].
  */
-
-/**
- * Active logging.
- */
 volatile bool isLogging;  // = RJ_LOGGING_EN;
 
-/**
- * Current log level.
- */
 volatile uint8_t rjLogLevel;
 
 Mutex log_mutex;

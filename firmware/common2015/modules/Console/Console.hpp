@@ -84,16 +84,16 @@ public:
     static const std::string COMMAND_BREAK_MSG;
 
     /**
+     * Deconstructor
+     */
+    ~Console();
+
+    /**
      * Console initialization routine. Attaches interrupt handlers and clears
      * the
      * buffers.
      */
     static void Init();
-
-    /**
-     * console communications check. should be called in the main loop.
-     */
-    static void ConComCheck();
 
     /**
      * flushes stdout. Should be called after every putc or printf block.
@@ -163,7 +163,7 @@ private:
     std::string CONSOLE_HOSTNAME;
 
     /**
-    * Serial (over USB) baud rate. Default 9600. Screen default 9600
+    * Serial (over USB) baud rate.
     */
     uint16_t baudrate;
 

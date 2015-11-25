@@ -6,8 +6,7 @@
 
 #define ARM_MATH_CM3
 
-// ** ============================= ** DEBUGGING OPTIONS **
-// ============================= **
+// ** DEBUGGING OPTIONS ** ============================= **
 /*
     This will enable/disable a `Log File` that is created at the mbed's startup.
    The file is written
@@ -21,11 +20,9 @@
 
 #define RJ_FPGA_ENABLE true
 
-// ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES **
-// ============================= **
+// ** ENABLE / DISABLE INTERFACES ** ============================= **
 
 // Enable/Disable the Radio Transceiver (915MHz band)
-// #define RJ_RADIO_EN             false
 #define RJ_CC1201
 //#define RJ_CC1101
 

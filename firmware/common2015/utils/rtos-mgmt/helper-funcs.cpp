@@ -4,6 +4,7 @@
 #include "rtos.h"
 
 #include "logger.hpp"
+#include "assert.hpp"
 
 /**
  * Initializes the peripheral nested vector interrupt controller (PNVIC) with
@@ -43,22 +44,8 @@ void setISRPriorities() {
     for (uint32_t IRQn = TIMER0_IRQn; IRQn <= CANActivity_IRQn; IRQn++)
         NVIC_SetPriority((IRQn_Type)IRQn, defaultPriority);
 
-    ////////////////////////////////////
-    //  begin raise priority section  //
-    ////////////////////////////////////
-
     // reestablish watchdog
     NVIC_SetPriority(WDT_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 0));
-
-    // reestablish timers
-    // NVIC_SetPriority(TIMER0_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 1));
-    // NVIC_SetPriority(TIMER1_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 2));
-    // NVIC_SetPriority(TIMER2_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 3));
-    // NVIC_SetPriority(TIMER3_IRQn, NVIC_EncodePriority(priorityGrouping, 0,
-    // 4));
 
     // make TIMER #2 2nd in line t the watchdog timer
     NVIC_SetPriority(TIMER2_IRQn, NVIC_EncodePriority(priorityGrouping, 0, 1));
@@ -74,28 +61,11 @@ void setISRPriorities() {
 
     // The SPI interface that's in use.
     NVIC_SetPriority(SPI_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 2));
-    // NVIC_SetPriority(SSP0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 2));
-
-    ////////////////////////////////////
-    //  begin lower priotity section  //
-    ////////////////////////////////////
 
     // set UART (console) interrupts to minimal priority
     // when debugging radio and other time sensitive operations, this
     // interrupt will need to be deferred.
     NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 4));
-
-    // NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3,
-    // 2));
-    // NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3,
-    // 2));
-    // NVIC_SetPriority(UART3_IRQn, NVIC_EncodePriority(priorityGrouping, 3,
-    // 1));
-
-    // NVIC_EnableIRQ(TIMER0_IRQn);
-    // NVIC_EnableIRQ(TIMER1_IRQn);
-    // NVIC_EnableIRQ(TIMER2_IRQn);
-    // NVIC_EnableIRQ(TIMER3_IRQn);
 
     __enable_irq();
 }
@@ -104,8 +74,9 @@ void setISRPriorities() {
  * Timer interrupt based light flicker. If this stops, the code triggered
  * a fault.
  */
-void imAlive(void const* args) {
-    DigitalOut* led = (DigitalOut*)args;
+void imAlive(void const* arg) {
+    DigitalOut* led =
+        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
 
     *led = !(*led);
     Thread::wait(40);
@@ -115,118 +86,26 @@ void imAlive(void const* args) {
 /**
  * @brief      { Flash an LED }
  */
-void strobeStatusLED(void const* args) {
-    DigitalInOut* led = (DigitalInOut*)args;
+void strobeStatusLED(void const* arg) {
+    DigitalInOut* led =
+        const_cast<DigitalInOut*>(reinterpret_cast<const DigitalInOut*>(arg));
 
     *led = !(*led);
     Thread::wait(30);
     *led = !(*led);
 }
 
-std::string decode_marcstate(uint8_t b) {
-    std::string state;
+// Helper function for creating a class that uses a
+// member function for the object's thread operations.
+// Take note that this allocates a stack!
+void define_thread(osThreadDef_t& t, void (*task)(void const* arg),
+                   osPriority priority, uint32_t stack_size) {
+#ifdef CMSIS_OS_RTX
+    t.pthread = task;
+    t.tpriority = priority;
+    t.stacksize = stack_size;
+    t.stack_pointer = (uint32_t*)new unsigned char[t.stacksize];
+    ASSERT(t.stack_pointer != nullptr);
 
-    switch (b & 0x1F) {
-        case 0x00:
-            state = "SLEEP";
-            break;
-
-        case 0x01:
-            state = "IDLE";
-            break;
-
-        case 0x02:
-            state = "XOFF";
-            break;
-
-        case 0x03:
-            state = "BIAS_SETTLE_MC";
-            break;
-
-        case 0x04:
-            state = "REG_SETTLE_MC";
-            break;
-
-        case 0x05:
-            state = "MANCAL";
-            break;
-
-        case 0x06:
-            state = "BIAS_SETTLE";
-            break;
-
-        case 0x07:
-            state = "REG_SETTLE";
-            break;
-
-        case 0x08:
-            state = "STARTCAL";
-            break;
-
-        case 0x09:
-            state = "BWBOOST";
-            break;
-
-        case 0x0A:
-            state = "FS_LOCK";
-            break;
-
-        case 0x0B:
-            state = "IFADCON";
-            break;
-
-        case 0x0C:
-            state = "ENDCAL";
-            break;
-
-        case 0x0D:
-            state = "RX";
-            break;
-
-        case 0x0E:
-            state = "RX_END";
-            break;
-
-        case 0x0F:
-            state = "RXDCM";
-            break;
-
-        case 0x10:
-            state = "TXRX_SWITCH";
-            break;
-
-        case 0x11:
-            state = "RX_FIFO_ERR";
-            break;
-
-        case 0x12:
-            state = "FSTXON";
-            break;
-
-        case 0x13:
-            state = "TX";
-            break;
-
-        case 0x14:
-            state = "TX_END";
-            break;
-
-        case 0x15:
-            state = "RXTX_SWITCH";
-            break;
-
-        case 0x16:
-            state = "TX_FIFO_ERR";
-            break;
-
-        case 0x17:
-            state = "IFADCON_TXRX";
-            break;
-
-        default:
-            state = "ERROR DECODING STATE";
-            break;
-    }
-
-    return state;
+#endif
 }

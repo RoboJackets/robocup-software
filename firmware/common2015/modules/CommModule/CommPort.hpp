@@ -27,16 +27,6 @@ public:
         resetPacketCount();
     };
 
-    // Copy constructor
-    CommPort(const CommPort<T>& p)
-        : is_open(p.is_open),
-          rx_packets(p.rx_packets),
-          tx_packets(p.tx_packets),
-          rx_callback(p.rx_callback),
-          tx_callback(p.tx_callback) {
-        Nbr(p.Nbr());
-    };
-
     // Compare between 2 CommPort objects
     bool operator==(const CommPort& p) const {
         return (this->Nbr() == p.Nbr());
@@ -51,7 +41,7 @@ public:
         return (this->Nbr() < p.Nbr() ? true : false);
     }
 
-    uint8_t Nbr() const { return this->nbr; }
+    uint8_t Nbr(void) const { return this->nbr; }
 
     void Nbr(uint8_t _nbr) {
         if (_nbr == 0)
@@ -63,7 +53,7 @@ public:
     }
 
     // Open a port or check if a port is capable of providing communication.
-    bool Open() {
+    bool Open(void) {
         if (isReady()) {
             this->is_open = true;
 
@@ -73,7 +63,7 @@ public:
         }
     }
 
-    void Close() { is_open = false; }
+    void Close(void) { is_open = false; }
 
     // Check if the port has already been opened.
     bool isOpen() const { return this->is_open; }
@@ -90,27 +80,24 @@ public:
     }
 
     // Methods that return a reference to the TX/RX callback function pointers
-    std::function<T>& RXCallback() { return rx_callback; }
-    std::function<T>& TXCallback() { return tx_callback; }
+    std::function<T>& RXCallback(void) { return rx_callback; }
+    std::function<T>& TXCallback(void) { return tx_callback; }
 
     // Check if an RX/TX callback function has been set for the port.
-    bool hasTXCallback() const { return tx_callback != nullptr; }
-    bool hasRXCallback() const { return rx_callback != nullptr; }
+    bool hasTXCallback(void) const { return tx_callback != nullptr; }
+    bool hasRXCallback(void) const { return rx_callback != nullptr; }
 
-    // Check if the port object is
-    bool Exists() const {
-        if (hasRXCallback() || hasTXCallback()) {
-            return true;
-        } else {
-            return this->is_valid;
-        }
+    // Check if the port object is a valid port
+    // this will be false when indexing a non-existent port number
+    bool Exists(void) const {
+        return (hasRXCallback() || hasTXCallback()) ? true : this->is_valid;
     }
 
-    // Returns a reference to the TX/RX packet count for modifying
-    unsigned int TXPackets() const { return tx_packets; }
-    unsigned int RXPackets() const { return rx_packets; }
-    unsigned int& TXPackets() { return tx_packets; }
-    unsigned int& RXPackets() { return rx_packets; }
+    // Get a value or reference to the TX/RX packet count for modifying
+    unsigned int TXPackets(void) const { return tx_packets; }
+    unsigned int RXPackets(void) const { return rx_packets; }
+    unsigned int& TXPackets(void) { return tx_packets; }
+    unsigned int& RXPackets(void) { return rx_packets; }
 
     // Standard display function for a CommPort
     void PrintPort() const {
@@ -123,19 +110,19 @@ public:
 
 protected:
     // Returns the current packet counts to zero
-    void resetPacketCount() {
+    void resetPacketCount(void) {
         RXPackets() = 0;
         TXPackets() = 0;
     }
 
     // Returns true if the port can provide an RX callback routine
-    bool isReady() const { return (is_open ? true : hasRXCallback()); }
+    bool isReady(void) const { return (is_open ? true : hasRXCallback()); }
 
 private:
     // The number assigned to the port
     uint8_t nbr;
 
-    // If the port is greater than 0, it is a valid port object
+    // Is it a valid port object
     bool is_valid;
 
     // If the port is open, it will also be valid
@@ -162,8 +149,9 @@ class CommPorts : CommPort<T> {
 private:
     typename std::vector<CommPort<T>> ports;
     typename std::vector<CommPort<T>>::iterator pIt;
+    CommPort<T> blackhole_port;
 
-    const CommPorts<T>& sort() {
+    const CommPorts<T>& sort(void) {
         std::sort(ports.begin(), ports.end(), PortCompare<T>);
         return *this;
     }
@@ -179,6 +167,13 @@ private:
     }
 
 public:
+    // constructor
+    CommPorts<T>() {
+        // create a null port that we can return for invalid indexing for the []
+        // operator
+        blackhole_port = CommPort<T>();
+    }
+
     CommPorts<T> operator+=(const CommPort<T>& p) { return this->add(p); }
 
     CommPort<T>& operator[](const int portNbr) {
@@ -188,13 +183,13 @@ public:
             return *&(*pIt);
         }
 
-
-        throw std::runtime_error("No port for the given number");
+        return blackhole_port;
+        // throw std::runtime_error("No port for the given number");
     }
 
-    int count() const { return ports.size(); }
+    int count(void) const { return ports.size(); }
 
-    int count_open() const {
+    int count_open(void) const {
         int count = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
@@ -204,10 +199,10 @@ public:
         return count;
     }
 
-    bool empty() const { return ports.empty(); }
+    bool empty(void) const { return ports.empty(); }
 
     // Get the total count (across all ports) of each RX/TX packet count
-    unsigned int allRXPackets() const {
+    unsigned int allRXPackets(void) const {
         unsigned int pcks = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
@@ -216,7 +211,7 @@ public:
 
         return pcks;
     }
-    unsigned int allTXPackets() const {
+    unsigned int allTXPackets(void) const {
         unsigned int pcks = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
@@ -226,7 +221,7 @@ public:
         return pcks;
     }
 
-    void PrintPorts() {
+    void PrintPorts(void) {
         if (empty() == false) {
             PrintHeader();
 
@@ -236,12 +231,12 @@ public:
         }
     }
 
-    void PrintHeader() {
+    void PrintHeader(void) {
         printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
         Console::Flush();
     }
 
-    void PrintFooter() {
+    void PrintFooter(void) {
         printf(
             "==========================\r\n"
             "Total:\t\t%u\t%u\r\n\r\n",

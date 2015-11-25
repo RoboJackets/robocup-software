@@ -5,14 +5,12 @@
 
 #include "rj-macros.hpp"
 #include "rtp.hpp"
-#include "rtos-mgmt/thread-helper.hpp"
+#include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
 
-#define COMM_LINK_RX_QUEUE_SIZE 3
 #define COMM_LINK_SIGNAL_START_THREAD 0x01
 #define COMM_LINK_SIGNAL_RX_TRIGGER 0x02
-#define COMM_LINK_BUFFER_SIZE 64
 
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
@@ -39,26 +37,28 @@ public:
     /// Constructor
     CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
 
-    /// Deconstructor
-    virtual ~CommLink(){};  // Don't forget to include deconstructor
-                            // implementation in derived classes that frees
-                            // memory
+    /// Virtual deconstructor
+    /// Always define and call CommLink::cleanup() in a derived class's
+    /// deconstructor!
+    virtual ~CommLink();
 
-    // Class constants for the data queue sizes
-    static const int RX_QUEUE_SIZE;
+    // Class constants for data queues
+    static const size_t RX_QUEUE_SIZE = 3;
+    static const size_t BUFFER_SIZE = 64;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
-    virtual void reset() = 0;
+    virtual void reset(void) = 0;
 
     /// Perform tests to determine if the hardware is able to properly function
-    virtual int32_t selfTest() = 0;
+    virtual int32_t selfTest(void) = 0;
 
     /// Determine if communication can occur with another device
-    virtual bool isConnected() = 0;
+    virtual bool isConnected(void) = 0;
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
+
     void receivePacket(rtp::packet*);
 
 protected:
@@ -68,19 +68,27 @@ protected:
         uint8_t*,
         uint8_t*) = 0;  // read data in from the radio device using SPI
 
+    /// Kill any threads and free the allocated stack.
+    /// Always call in any derived class's deconstructors!
+    void cleanup();
+
     void ISR();
+
     void toggle_cs();
 
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads
-    void ready();  // Always call CommLink::ready() after derived class is ready
-                   // for communication
-    void setup_spi();
+    //
+    // Always call CommLink::ready() after derived class is ready
+    void ready();
+
+    void setup_spi(int baudrate = DEFAULT_BAUD);
+
+    uint8_t twos_compliment(uint8_t val);
 
     // The data queues for temporarily holding received packets
     osMailQId _rxQueue;
 
-    // ============== PIN NAMES ==============
     // SPI bus pins
     PinName _miso_pin;
     PinName _mosi_pin;
@@ -88,20 +96,21 @@ protected:
     PinName _cs_pin;   // CS pin
     PinName _int_pin;  // Interrupt pin
 
-    // ============== PIN OBJECTS ==============
     SPI* _spi;             // SPI pointer
     DigitalOut* _cs;       // Chip Select pointer
     InterruptIn* _int_in;  // Interrupt pin
 
+    static const int DEFAULT_BAUD = 5000000;
+
 private:
     // Used to help define the class's threads in the constructor
     friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t, unsigned char*);
+                              osPriority, uint32_t);
 
     /**
      * Data queue helper for RX queue.
      */
-    MailHelper<rtp::packet, COMM_LINK_RX_QUEUE_SIZE> _rxQueueHelper;
+    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
 
     // Thread definitions and IDs
     osThreadDef_t _rxDef;
@@ -111,14 +120,17 @@ private:
     static void rxThread(void const*);
 
     // Methods for initializing a transceiver's pins for communication
-    void setup();
+    void setup(void);
+
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
                     PinName = NC);
-    void setup_cs();
-    void setup_interrupt();
+
+    void setup_cs(void);
+
+    void setup_interrupt(void);
 
     // Used for tracking the number of link-level communication interfaces
     static unsigned int _nbr_links;
 
-    uint8_t buf[COMM_LINK_BUFFER_SIZE];
+    uint8_t buf[BUFFER_SIZE];
 };

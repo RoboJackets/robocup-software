@@ -3,7 +3,11 @@
 #include <cstdint>
 #include <string>
 
-void setISRPriorities();
+#include <cmsis_os.h>
+
+void setISRPriorities(void);
 void imAlive(void const*);
 void strobeStatusLED(void const*);
-std::string decode_marcstate(uint8_t);
+void define_thread(osThreadDef_t&, void (*task)(void const* arg),
+                   osPriority = osPriorityNormal,
+                   uint32_t = DEFAULT_STACK_SIZE);

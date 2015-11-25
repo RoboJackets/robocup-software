@@ -3,94 +3,91 @@
 #include <array>
 
 #include <helper-funcs.hpp>
+#include <const-math.hpp>
 
-// constexpr math functions based on https://github.com/pkeir/ctfft
-// computation tolerance threshold
-constexpr float tol = 0.001;
-
-constexpr float cube_const(const float x) { return x * x * x; }
-
-// Based on the triple-angle formula: sin 3x = 3 sin x - 4 sin ^3 x
-constexpr float sin_helper(const float x) {
-    return x < tol ? x : 3 * (sin_helper(x / 3.0)) -
-                             4 * cube_const(sin_helper(x / 3.0));
-}
-
-constexpr float sin_const(const float x) {
-    return sin_helper(x < 0 ? -x + 3.141592653589793 : x);
-}
+/*
+ * These must be extern here since conexpr is taken advantage
+ * of to compute lookup tables at compile time. I feel like this
+ * isn't the right way to do this though...
+ */
+extern constexpr double sin_const(const double);
 
 // by Xeo, from http://stackoverflow.com/a/13294458/420683
 template <std::size_t... Is>
 struct seq {};
+
 template <std::size_t N, std::size_t... Is>
 struct gen_seq : gen_seq<N - 1, N - 1, Is...> {};
+
 template <std::size_t... Is>
 struct gen_seq<0, Is...> : seq<Is...> {};
 
 template <class Generator, std::size_t... Is>
-constexpr auto generate_array_helper(Generator g, seq<Is...>)
+constexpr auto lut_generator_helper(Generator g, seq<Is...>)
     -> std::array<decltype(g(std::size_t{}, sizeof...(Is))), sizeof...(Is)> {
     return {{g(Is, sizeof...(Is))...}};
 }
 
 template <std::size_t tcount, class Generator>
-constexpr auto generate_array(Generator g)
-    -> decltype(generate_array_helper(g, gen_seq<tcount>{})) {
-    return generate_array_helper(g, gen_seq<tcount>{});
+constexpr auto lut_generator(Generator g)
+    -> decltype(lut_generator_helper(g, gen_seq<tcount>{})) {
+    return lut_generator_helper(g, gen_seq<tcount>{});
 }
 
 // number of points in the sine wave
-const int numPts = 32;
+const size_t numPts = 32;
 
-// the generator for computing the sin wave elements
-constexpr float my_generator(std::size_t curr, std::size_t total) {
-    return ((1.0 +
-             sin_const(static_cast<float>(curr) / numPts * 6.28318530717959)) /
+// Definition for how the indexes of our lookup table are calculated.
+//
+// Many different sounds can be created by combining multiple singals
+// and computing an array length that is the least common multiple of
+// all of individual periods. Then change the indexing technique for playing
+// different sounds from the single lookup table. For now...we have
+// a basic sin wave.
+//
+// Check out /firmware/common2015/util/const-math.hpp for the math operations
+// that could be used to generate a lookup table at compile time.
+constexpr float wave_lut(std::size_t curr, std::size_t total) {
+    return ((1.0 + sin_const(static_cast<float>(curr) / numPts * 2 * M_PI)) /
             2.0);
 }
 
-// compile time lookup table of sine wave elements - ranges from 0.0 to 1.0
-const auto analog_data = generate_array<numPts>(my_generator);
-auto analog_data_scaled = generate_array<numPts>(my_generator);
+// lookup table for a sine wave - ranges from 0.0 to 1.0
+const auto analog_data = lut_generator<numPts>(wave_lut);
+auto analog_data_scaled = lut_generator<numPts>(wave_lut);
 
 // used to output next analog sample whenever a timer interrupt occurs
-void analogUpdate(void const* args) {
-    Buzzer* buzz = (Buzzer*)args;
-
-    // increment pointer and wrap around back to 0 at 128
-    int j = buzz->getIndex();
-
-    // send next analog sample out to D to A
-    buzz->write(analog_data.at(j));
-
-    j = ((j == (numPts - 1)) ? 0 : (j + 1));
-
-    buzz->setIndex(j);
+void analogUpdate(void const* arg) {
+    // grab a pointer to the buzzer object
+    Buzzer* buzz = const_cast<Buzzer*>(reinterpret_cast<const Buzzer*>(arg));
+    // cycle through the index value for the lookup table
+    buzz->j = (buzz->j + 1) % numPts;
+    // send next analog sample out to DAC
+    buzz->write(analog_data_scaled.at(buzz->j));
 }
 
 // class method to play a note based on AnalogOut class
 void Buzzer::play(float freq, int dur, float vol) {
-    // scale samples using current volume level arg
-    for (int i = 0; i < numPts; i++) {
+    // we create a new array here where each value is scaled by some
+    // value. This changes the buzzer's volume.
+    for (size_t i = 0; i < numPts; i++)
         analog_data_scaled.at(i) = vol * analog_data.at(i);
-    }
 
-    // reset to start of sample array
+    // reset our lut index
     j = 0;
 
+    // setup an interrupt timer that updates the currenly set
+    // value at the given duration. This depends on our playing
+    // frequency's period and the number of elements in our lookup table.
     RtosTimer sin_wave(analogUpdate, osTimerPeriodic, (void*)this);
     sin_wave.start(1.0 / (freq * numPts));
 
-    // play note for specified time
+    // keep the timer interrupt active for however long we
+    // need to play this note. Disabling the interrupt once
+    // we've waiting long enough
     Thread::wait(dur);
     sin_wave.stop();
 
     // sets output to mid range - analog zero
     write_u16(32768);
-    // buzzer.write(0);
 }
-
-int Buzzer::getIndex() { return j; }
-
-void Buzzer::setIndex(int newIndex) { j = newIndex; }
