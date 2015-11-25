@@ -40,7 +40,7 @@ for i in $MBED_DEVICES_PATH; do
     echo Installing on $i
     sudo mkdir -p /mnt/script/MBED
     sudo mount $i /mnt/script/MBED
-    sudo cp $1 /mnt/script/MBED/
+    sudo cp -f -b $1 /mnt/script/MBED/
 
 
     if [ "$SHA2" != "$(sha256sum /mnt/script/MBED/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')" ]; then
