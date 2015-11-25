@@ -597,8 +597,6 @@ ostream& cmd_logLevel(ostream& s, const vector<string>& args) {
     } else if (args.empty() == true) {
         s << "Log level: %s\r\n" << LOG_LEVEL_STRING[rjLogLevel];
     } else {
-        // bool storeVals = true;
-
         if (strcmp(args.front().c_str(), "on") == 0 ||
             strcmp(args.front().c_str(), "enable") == 0) {
             isLogging = true;
