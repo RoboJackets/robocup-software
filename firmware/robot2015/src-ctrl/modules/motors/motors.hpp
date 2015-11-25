@@ -45,6 +45,6 @@ struct motor_t {
 };
 
 void motors_Init();
-void motors_PrintMotor(motor_t&);
-void motors_cmdProcess(const std::vector<std::string>& args);
-void motors_cmdScroll(const std::vector<std::string>& args);
+std::ostream& cmd_motors_print(std::ostream&, const motor_t&);
+std::ostream& cmd_motors(std::ostream&, const std::vector<std::string>&);
+std::ostream& cmd_motors_scroll(std::ostream&, const std::vector<std::string>&);
