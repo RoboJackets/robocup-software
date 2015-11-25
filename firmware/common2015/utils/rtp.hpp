@@ -87,7 +87,7 @@ struct packet {
 
     bool adjusted;
 
-    packet() : adjusted(false) {};
+    packet() : adjusted(false){};
 
     void adjustSizes() {
         if (adjusted == false) {

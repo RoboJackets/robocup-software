@@ -26,9 +26,9 @@ CommPort_t _tmpPort;
 // Default constructor
 CommModule::CommModule()
     :  // [X] - 1.1 - Define the data queues.
-       // =================
-       _txQueueHelper(),
-       _rxQueueHelper() {}
+      // =================
+      _txQueueHelper(),
+      _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
