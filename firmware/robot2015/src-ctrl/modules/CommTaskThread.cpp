@@ -9,6 +9,8 @@
 #include <logger.hpp>
 #include <assert.hpp>
 
+#include <CC1201Radio.hpp>
+
 /*
  * Information about the radio protocol can be found at:
  * https://www.overleaf.com/2187548nsfdps
@@ -79,7 +81,7 @@ void Task_CommCtrl(void const* args) {
     CommModule::txLED(&tx_led);
 
     // Create a new physical hardware communication link
-    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT);
+    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings, sizeof(preferredSettings)/sizeof(registerSetting_t));
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
