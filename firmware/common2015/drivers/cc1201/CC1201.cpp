@@ -3,6 +3,10 @@
 #include "logger.hpp"
 #include "assert.hpp"
 
+// check that the address byte doesn't have any non-address bits set
+// see "3.2 Access Types" in User Guide
+#define ASSERT_IS_ADDR(addr) ASSERT(((addr) >= 0x00 && (addr) <= 0x2e) || ((addr) >= 0x2F00 && (addr) <= 0x2FFF))
+
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len, int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
@@ -106,6 +110,8 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
  * reads a standard register
  */
 uint8_t CC1201::readReg(uint16_t addr) {
+    ASSERT_IS_ADDR(addr);
+
     uint8_t returnVal;
 
     toggle_cs();
@@ -121,6 +127,8 @@ uint8_t CC1201::readReg(uint16_t addr) {
     return returnVal;
 }
 uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
+    ASSERT_IS_ADDR(addr);
+
     uint8_t status_byte;
 
     toggle_cs();
@@ -137,11 +145,13 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
 }
 
 uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
+    ASSERT_IS_ADDR(addr);
+
     uint8_t status_byte;
 
     toggle_cs();
     if (addr >= CC1201_EXTENDED_ACCESS) {
-        status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
+        status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE);
         _spi->write(addr & 0xFF);
     } else {
         status_byte = _spi->write(addr);
@@ -152,15 +162,18 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
     return status_byte;
 }
 
+
 uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
+    ASSERT_IS_ADDR(addr);
+
     uint8_t status_byte;
 
     toggle_cs();
     if (addr >= CC1201_EXTENDED_ACCESS) {
-        status_byte = _spi->write(CC1201_EXTENDED_ACCESS);
-        _spi->write(addr & 0xFF | CC1201_BURST); // write lower byte of address
+        status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
+        _spi->write(addr & 0xFF); // write lower byte of address
     } else {
-        status_byte = _spi->write(addr | CC1201_BURST); // write lower byte of address
+        status_byte = _spi->write(addr | CC1201_WRITE | CC1201_BURST); // write lower byte of address
     }
     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
     toggle_cs();

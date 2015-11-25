@@ -50,6 +50,7 @@
 
 // Access modifiers (pg 114 of user guide)
 #define CC1201_READ 0x80 
+#define CC1201_WRITE 0x00
 #define CC1201_BURST 0x40
 
 
