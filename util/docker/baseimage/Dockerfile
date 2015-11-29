@@ -39,11 +39,5 @@ ENV HOME /home/developer
 RUN mkdir -p /home/developer/project
 WORKDIR /home/developer/project
 
-# Add a docker init system and use it
-ADD https://github.com/ohjames/smell-baron/releases/download/v0.1.0/smell-baron /bin/smell-baron
-RUN sudo chown developer:developer /bin/smell-baron \
-        && sudo chmod a+x /bin/smell-baron
-ENTRYPOINT ["/bin/smell-baron"]
-
 # This image is not meant to be run directly, it has not been compiled yet!
 # In addition, it does not contain any source code, only dependencies
