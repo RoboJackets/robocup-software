@@ -45,7 +45,6 @@ GH_USER_VAR="GIT_USERNAME"
 # Variable holing the email of the Status Token
 GH_EMAIL_VAR="GIT_EMAIL"
 
-
 # The project root INSIDE THE DOCKER CONTAINER
 # Reccomended to leave as default (not set)
 # This will act as the 'current directory' within the project
@@ -95,7 +94,7 @@ TEST_COMMANDS=()
 TEST_COMMANDS+=( 'make;compile;A check to see if the code compiles' )
 TEST_COMMANDS+=( 'make test-soccer;test-soccer;A check to see if soccer tests pass' )
 TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
-TEST_COMMANDS+=( 'make base2015;base-station-2015;A check to see if base station firmware compiles' )
+TEST_COMMANDS+=( 'make base2015;base2015;A check to see if base station firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
 TEST_COMMANDS+=( 'make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
