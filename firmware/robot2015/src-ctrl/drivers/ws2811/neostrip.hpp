@@ -4,7 +4,7 @@
  *
  * Allen Wild
  * March 2014
- * 
+ *
  * Jonathan Jones
  * November 2015
  *
@@ -100,9 +100,11 @@ public:
     void write();
 
 protected:
-    NeoColor* _strip;  // pixel data buffer modified by setPixel() and used by neo_out()
-    gpio_t* _neopin;  // gpio struct for initialization and getting register addresses
-    size_t _N;            // the number of pixels in the strip
+    NeoColor* _strip;  // pixel data buffer modified by setPixel() and used by
+                       // neo_out()
+    gpio_t* _neopin;   // gpio struct for initialization and getting register
+                       // addresses
+    size_t _N;         // the number of pixels in the strip
     float _bright;     // the master strip brightness
 };
 

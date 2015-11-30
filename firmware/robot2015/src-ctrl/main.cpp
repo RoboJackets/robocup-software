@@ -11,6 +11,7 @@
 #include "commands.hpp"
 #include "io-expander.hpp"
 #include "TaskSignals.hpp"
+#include "neostrip.hpp"
 
 void Task_Controller(void const* args);
 
@@ -132,6 +133,13 @@ int main() {
 #endif
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+
+    NeoStrip rgbLED(RJ_NEOPIXEL, 2);
+    rgbLED.clear();
+    rgbLED.brightness(0.1);
+    rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+    rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+    rgbLED.write();
 
     if (fpga_ready) {
         // TODO: set RGB LED to green, otherwise set it to red.

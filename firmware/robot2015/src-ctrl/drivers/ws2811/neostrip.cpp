@@ -22,9 +22,7 @@ extern "C" void neo_out(NeoColor* strip, uint32_t nBytes);
 volatile uint32_t neo_bitmask = 0;
 volatile uint32_t* neo_fio_reg = 0;
 
-NeoStrip::NeoStrip(PinName pin, size_t N, float bright)
-    : _N(N)
-{
+NeoStrip::NeoStrip(PinName pin, size_t N, float bright) : _N(N) {
     _strip = new NeoColor[N];
     _neopin = new gpio_t;
     brightness(bright);
@@ -42,13 +40,9 @@ NeoStrip::~NeoStrip() {
     delete[] _strip;
 }
 
-void NeoStrip::brightness(float bright) {
-    _bright = bright;
-}
+void NeoStrip::brightness(float bright) { _bright = bright; }
 
-float NeoStrip::brightness() {
-    return _bright;
-}
+float NeoStrip::brightness() { return _bright; }
 
 void NeoStrip::setPixel(size_t p, int color) {
     int red = (color & 0xFF0000) >> 16;
@@ -85,8 +79,8 @@ void NeoStrip::clear() {
 }
 
 void NeoStrip::write() {
-    __disable_irq();         // disable interrupts
+    __disable_irq();          // disable interrupts
     neo_out(_strip, _N * 3);  // output to the strip
-    __enable_irq();          // enable interrupts
-    wait_us(50);             // wait 50us for the reset pulse
+    __enable_irq();           // enable interrupts
+    wait_us(50);              // wait 50us for the reset pulse
 }
