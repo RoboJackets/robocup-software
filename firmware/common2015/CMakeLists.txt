@@ -20,7 +20,7 @@ set(UTILS_ROOT_NAME     utils)
 # subdirectories
 set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c software-spi)
 set(MODULES             CommModule CommLink Console)
-set(UTILS               assert fp16 logger numparser rtos-mgmt)
+set(UTILS               assert logger numparser rtos-mgmt)
 
 # generate a list of directories that we need to include from the values set above
 set(common2015_INCLUDE_DIRS 
