@@ -9,15 +9,17 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
     set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
     set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
-
-    set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR})
+    
+    set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR} ../src-ctrl/drivers/ws2811)
     set(TEST_UNIT_FILE "${HW_TEST_UNIT}-test.cpp")
+
     # list(APPEND TEST_UNIT_FILE ../src-ctrl/drivers/fpga/fpga.cpp)
+    list(APPEND TEST_UNIT_FILE ../src-ctrl/drivers/ws2811/neostrip.cpp)
 
     string(SUBSTRING "${HW_TEST_UNIT}" 0 3 TEST_UNIT_BIN_FILE)
     set(TEST_UNIT_BIN_FILE "${TEST_UNIT_BIN_FILE}-test.bin")
 
-    add_executable(robot2015_test_ELF ${TEST_UNIT_FILE})
+    add_executable(robot2015_test_ELF ${TEST_UNIT_FILE} ${asm_SRC})
 
     # specify that we depend on the common2015 library and link to it
     add_dependencies(robot2015_test_ELF common2015)
@@ -43,7 +45,7 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
 
     add_custom_target(robot2015-test-prog
         arm-none-eabi-objcopy -O binary robot2015_test_ELF ${TEST_UNIT_BIN_FILE}
-        COMMAND ${HW_TEST_SCRIPT} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_UNIT_BIN_FILE}
+        COMMAND ${MBED_COPY_SCRIPT} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_UNIT_BIN_FILE}
         DEPENDS robot2015-test
         COMMENT "Copying ${HW_TEST_UNIT}'s test binary over to the mbed"
     )

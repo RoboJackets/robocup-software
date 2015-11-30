@@ -30,15 +30,11 @@ set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
 set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 
-# Find the assembly source files and make sure they're compiled using the C compiler
-file(GLOB_RECURSE assm_SRC "*.S")
-set_property(SOURCE ${assm_SRC} PROPERTY LANGUAGE C)
-
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC "*.cpp")
 
 # add the target for making the elf file
-add_executable(robot2015_elf ${robot2015_SRC} ${assm_SRC})
+add_executable(robot2015_elf ${robot2015_SRC} ${asm_SRC})
 
 # specify that we depend on the common2015 library and link to it
 add_dependencies(robot2015_elf common2015)
