@@ -117,7 +117,7 @@ robot2015-neopixel-prog: robot2015-test-prog
 robot2015-test:
 	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
 robot2015-test-prog:
-	$(call cmake_build_target_fw, robot2015-prog, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
+	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
 
 # kicker 2015 firmware
 kicker2015:
