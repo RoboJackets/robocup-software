@@ -9,6 +9,9 @@
 #include "ds2411.hpp"
 #include "neostrip.hpp"
 
+using std::string;
+using std::vector;
+
 extern struct OS_XCB os_rdy;
 
 namespace {
@@ -26,19 +29,19 @@ const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 /**
  * indicates if the command held in "iterativeCommand"
  */
-volatile bool itCmdState = false;
+volatile bool iterative_command_state = false;
 
 /**
  * current iterative command args
  */
-vector<string> iterativeCommandArgs;
+vector<string> iterative_command_args;
 
 /**
  * the current iterative command handler
  */
-void (*iterativeCommandHandler)(const vector<string>& args);
+void (*iterative_command_handler)(cmd_args_t& args);
 
-}  // anonymous namespace
+}  // end of anonymous namespace
 
 // Create an object to help find files
 LocalFileSystem local("local");
@@ -164,7 +167,7 @@ static const std::vector<command_t> commands = {
 * for those commands.
 */
 
-void cmd_alias(const vector<string>& args) {
+void cmd_alias(cmd_args_t& args) {
     // If no args given, list all aliases
     if (args.empty() == true) {
         for (uint8_t i = 0; i < commands.size(); i++) {
@@ -232,7 +235,7 @@ void cmd_alias(const vector<string>& args) {
 /**
 * Clears the console.
 */
-void cmd_console_clear(const vector<string>& args) {
+void cmd_console_clear(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
     } else {
@@ -245,7 +248,7 @@ void cmd_console_clear(const vector<string>& args) {
 /**
  * Echos text.
  */
-void cmd_console_echo(const vector<string>& args) {
+void cmd_console_echo(cmd_args_t& args) {
     for (uint8_t argInd = 0; argInd < args.size(); argInd++)
         printf("%s ", args[argInd].c_str());
 
@@ -256,7 +259,7 @@ void cmd_console_echo(const vector<string>& args) {
  * Requests a system stop. (breaks main loop, or whatever implementation this
  * links to).
  */
-void cmd_console_exit(const vector<string>& args) {
+void cmd_console_exit(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
     } else {
@@ -268,7 +271,7 @@ void cmd_console_exit(const vector<string>& args) {
 /**
  * Prints command help.
  */
-void cmd_help(const vector<string>& args) {
+void cmd_help(cmd_args_t& args) {
     // printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
 
     // Prints all commands, with details
@@ -316,7 +319,7 @@ void cmd_help(const vector<string>& args) {
     }
 }
 
-void cmd_help_detail(const vector<string>& args) {
+void cmd_help_detail(cmd_args_t& args) {
     // iterate through args
     for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
         // iterate through commands
@@ -349,7 +352,7 @@ void cmd_help_detail(const vector<string>& args) {
 /**
  * Console responsiveness test.
  */
-void cmd_ping(const vector<string>& args) {
+void cmd_ping(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
     } else {
@@ -365,7 +368,7 @@ void cmd_ping(const vector<string>& args) {
 /**
  * Resets the mbed (should be the equivalent of pressing the reset button).
  */
-void cmd_interface_reset(const vector<string>& args) {
+void cmd_interface_reset(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
     } else {
@@ -382,7 +385,7 @@ void cmd_interface_reset(const vector<string>& args) {
 /**
  * Lists files.
  */
-void cmd_ls(const vector<string>& args) {
+void cmd_ls(cmd_args_t& args) {
     DIR* d;
     struct dirent* p;
 
@@ -419,7 +422,7 @@ void cmd_ls(const vector<string>& args) {
 /**
  * Prints system info.
  */
-void cmd_info(const vector<string>& args) {
+void cmd_info(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
 
@@ -518,7 +521,7 @@ void cmd_info(const vector<string>& args) {
  * [cmd_disconnectMbed description]
  * @param args [description]
  */
-void cmd_interface_disconnect(const vector<string>& args) {
+void cmd_interface_disconnect(cmd_args_t& args) {
     if (args.empty() > 1) {
         show_invalid_args(args);
     } else {
@@ -533,7 +536,7 @@ void cmd_interface_disconnect(const vector<string>& args) {
     }
 }
 
-void cmd_interface_check_conn(const vector<string>& args) {
+void cmd_interface_check_conn(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
     } else {
@@ -542,7 +545,7 @@ void cmd_interface_check_conn(const vector<string>& args) {
     }
 }
 
-void cmd_baudrate(const vector<string>& args) {
+void cmd_baudrate(cmd_args_t& args) {
     std::vector<int> valid_rates = {110,   300,    600,    1200,   2400,
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600};
@@ -580,7 +583,7 @@ void cmd_baudrate(const vector<string>& args) {
     }
 }
 
-void cmd_console_user(const vector<string>& args) {
+void cmd_console_user(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
     } else {
@@ -588,7 +591,7 @@ void cmd_console_user(const vector<string>& args) {
     }
 }
 
-void cmd_console_hostname(const vector<string>& args) {
+void cmd_console_hostname(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
     } else {
@@ -596,7 +599,7 @@ void cmd_console_hostname(const vector<string>& args) {
     }
 }
 
-void cmd_log_level(const vector<string>& args) {
+void cmd_log_level(cmd_args_t& args) {
     if (args.size() > 1) {
         show_invalid_args(args);
     } else if (args.empty() == true) {
@@ -639,7 +642,7 @@ void cmd_log_level(const vector<string>& args) {
     }
 }
 
-void cmd_rpc(const vector<string>& args) {
+void cmd_rpc(cmd_args_t& args) {
     if (args.empty() == true) {
         show_invalid_args(args);
 
@@ -658,7 +661,7 @@ void cmd_rpc(const vector<string>& args) {
     }
 }
 
-void cmd_led(const vector<string>& args) {
+void cmd_led(cmd_args_t& args) {
     if (args.empty() == true) {
         show_invalid_args(args);
     } else {
@@ -701,7 +704,7 @@ void cmd_led(const vector<string>& args) {
     }
 }
 
-void cmd_ps(const vector<string>& args) {
+void cmd_ps(cmd_args_t& args) {
     if (args.empty() != true) {
         show_invalid_args(args);
     } else {
@@ -724,7 +727,7 @@ void cmd_ps(const vector<string>& args) {
  * [cmd_radio description]
  * @param args [description]
  */
-void cmd_radio(const vector<string>& args) {
+void cmd_radio(cmd_args_t& args) {
     if (args.empty() == true) {
         // Default to showing the list of ports
         CommModule::PrintInfo(true);
@@ -858,15 +861,15 @@ void execute_line(char* rawCommand) {
                     // args and flag the loop to execute on each
                     // iteration.
                     if (commands[cmdInd].isIterative) {
-                        itCmdState = false;
+                        iterative_command_state = false;
 
                         // Sets the current arg count, args, and
                         // command function in fields to be used
                         // in the iterative call.
-                        iterativeCommandArgs = args;
-                        iterativeCommandHandler = commands[cmdInd].handler;
+                        iterative_command_args = args;
+                        iterative_command_handler = commands[cmdInd].handler;
 
-                        itCmdState = true;
+                        iterative_command_state = true;
                     }
                     // If the command is not iterative, execute it
                     // once immeidately.
@@ -902,20 +905,20 @@ void execute_line(char* rawCommand) {
  * of if an iterative command is not running or not.
  */
 void execute_iterative_command() {
-    if (itCmdState == true) {
+    if (iterative_command_state == true) {
         if (Console::IterCmdBreakReq() == true) {
-            itCmdState = false;
+            iterative_command_state = false;
 
             // reset the flag for receiving a break character in the Console
             // class
             Console::IterCmdBreakReq(false);
         } else {
-            iterativeCommandHandler(iterativeCommandArgs);
+            iterative_command_handler(iterative_command_args);
         }
     }
 }
 
-void show_invalid_args(const vector<string>& args) {
+void show_invalid_args(cmd_args_t& args) {
     printf("Invalid arguments");
 
     if (args.empty() == false) {

@@ -46,7 +46,7 @@ struct command_t {
     /**
      * command handler function pointer
      */
-    void (*handler)(const std::vector<std::string>& args);
+    void (*handler)(cmd_args_t& args);
 
     /**
      * command description. Used by help
@@ -64,7 +64,7 @@ struct command_t {
  */
 void execute_line(char*);
 void execute_iterative_command();
-void show_invalid_args(const std::vector<std::string>&);
+void show_invalid_args(cmd_args_t&);
 void show_invalid_args(const std::string&);
 
 /*
@@ -73,22 +73,22 @@ void show_invalid_args(const std::string&);
  * Alphabetical order please.
  */
 void cmd_alias(cmd_args_t&);
-void cmd_baudrate(const std::vector<std::string>&);
-void cmd_console_clear(const std::vector<std::string>&);
-void cmd_console_echo(const std::vector<std::string>&);
-void cmd_console_exit(const std::vector<std::string>&);
-void cmd_console_hostname(const std::vector<std::string>&);
-void cmd_console_user(const std::vector<std::string>&);
-void cmd_help(const std::vector<std::string>&);
-void cmd_help_detail(const std::vector<std::string>&);
-void cmd_info(const std::vector<std::string>&);
-void cmd_interface_check_conn(const std::vector<std::string>&);
-void cmd_interface_disconnect(const std::vector<std::string>&);
-void cmd_interface_reset(const std::vector<std::string>&);
-void cmd_led(const std::vector<std::string>& args);
-void cmd_log_level(const std::vector<std::string>&);
-void cmd_ls(const std::vector<std::string>&);
-void cmd_ping(const std::vector<std::string>&);
-void cmd_ps(const std::vector<std::string>& args);
-void cmd_radio(const std::vector<std::string>&);
-void cmd_rpc(const std::vector<std::string>&);
+void cmd_baudrate(cmd_args_t&);
+void cmd_console_clear(cmd_args_t&);
+void cmd_console_echo(cmd_args_t&);
+void cmd_console_exit(cmd_args_t&);
+void cmd_console_hostname(cmd_args_t&);
+void cmd_console_user(cmd_args_t&);
+void cmd_help(cmd_args_t&);
+void cmd_help_detail(cmd_args_t&);
+void cmd_info(cmd_args_t&);
+void cmd_interface_check_conn(cmd_args_t&);
+void cmd_interface_disconnect(cmd_args_t&);
+void cmd_interface_reset(cmd_args_t&);
+void cmd_led(cmd_args_t&);
+void cmd_log_level(cmd_args_t&);
+void cmd_ls(cmd_args_t&);
+void cmd_ping(cmd_args_t&);
+void cmd_ps(cmd_args_t&);
+void cmd_radio(cmd_args_t&);
+void cmd_rpc(cmd_args_t&);
