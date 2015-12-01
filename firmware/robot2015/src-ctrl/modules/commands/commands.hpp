@@ -41,12 +41,12 @@ struct command_t {
      * iterative flag. Should the command be executed iteratively (in the
      * main loop) until the break signal is sent?
      */
-    const bool isIterative;
+    const bool is_iterative;
 
     /**
      * command handler function pointer
      */
-    void (*handler)(cmd_args_t& args);
+    int (*handler)(cmd_args_t& args);
 
     /**
      * command description. Used by help
@@ -72,23 +72,23 @@ void show_invalid_args(const std::string&);
  *
  * Alphabetical order please.
  */
-void cmd_alias(cmd_args_t&);
-void cmd_baudrate(cmd_args_t&);
-void cmd_console_clear(cmd_args_t&);
-void cmd_console_echo(cmd_args_t&);
-void cmd_console_exit(cmd_args_t&);
-void cmd_console_hostname(cmd_args_t&);
-void cmd_console_user(cmd_args_t&);
-void cmd_help(cmd_args_t&);
-void cmd_help_detail(cmd_args_t&);
-void cmd_info(cmd_args_t&);
-void cmd_interface_check_conn(cmd_args_t&);
-void cmd_interface_disconnect(cmd_args_t&);
-void cmd_interface_reset(cmd_args_t&);
-void cmd_led(cmd_args_t&);
-void cmd_log_level(cmd_args_t&);
-void cmd_ls(cmd_args_t&);
-void cmd_ping(cmd_args_t&);
-void cmd_ps(cmd_args_t&);
-void cmd_radio(cmd_args_t&);
-void cmd_rpc(cmd_args_t&);
+int cmd_alias(cmd_args_t&);
+int cmd_baudrate(cmd_args_t&);
+int cmd_console_clear(cmd_args_t&);
+int cmd_console_echo(cmd_args_t&);
+int cmd_console_exit(cmd_args_t&);
+int cmd_console_hostname(cmd_args_t&);
+int cmd_console_user(cmd_args_t&);
+int cmd_help(cmd_args_t&);
+int cmd_help_detail(cmd_args_t&);
+int cmd_info(cmd_args_t&);
+int cmd_interface_check_conn(cmd_args_t&);
+int cmd_interface_disconnect(cmd_args_t&);
+int cmd_interface_reset(cmd_args_t&);
+int cmd_led(cmd_args_t&);
+int cmd_log_level(cmd_args_t&);
+int cmd_ls(cmd_args_t&);
+int cmd_ping(cmd_args_t&);
+int cmd_ps(cmd_args_t&);
+int cmd_radio(cmd_args_t&);
+int cmd_rpc(cmd_args_t&);

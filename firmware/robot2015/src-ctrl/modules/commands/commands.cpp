@@ -1,5 +1,7 @@
 #include "commands.hpp"
 
+#include <map>
+
 #include <rtos.h>
 #include <mbed_rpc.h>
 #include <CommModule.hpp>
@@ -39,7 +41,7 @@ vector<string> iterative_command_args;
 /**
  * the current iterative command handler
  */
-void (*iterative_command_handler)(cmd_args_t& args);
+int (*iterative_command_handler)(cmd_args_t& args);
 
 }  // end of anonymous namespace
 
@@ -185,7 +187,7 @@ static const vector<command_t> commands = {
 * Lists aliases for commands, if args are present, it will only list aliases
 * for those commands.
 */
-void cmd_alias(cmd_args_t& args) {
+int cmd_alias(cmd_args_t& args) {
     // If no args given, list all aliases
     if (args.empty() == true) {
         for (uint8_t i = 0; i < commands.size(); i++) {
@@ -248,54 +250,64 @@ void cmd_alias(cmd_args_t& args) {
             printf("\r\n");
         }
     }
+
+    return 0;
 }
 
 /**
 * Clears the console.
 */
-void cmd_console_clear(cmd_args_t& args) {
+int cmd_console_clear(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
+        return 1;
     } else {
         Console::Flush();
         printf(ENABLE_SCROLL_SEQ.c_str());
         printf(CLEAR_SCREEN_SEQ.c_str());
     }
+
+    return 0;
 }
 
 /**
  * Echos text.
  */
-void cmd_console_echo(cmd_args_t& args) {
+int cmd_console_echo(cmd_args_t& args) {
     for (uint8_t argInd = 0; argInd < args.size(); argInd++)
         printf("%s ", args[argInd].c_str());
 
     printf("\r\n");
+
+    return 0;
 }
 
 /**
  * Requests a system stop. (breaks main loop, or whatever implementation this
  * links to).
  */
-void cmd_console_exit(cmd_args_t& args) {
+int cmd_console_exit(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
+        return 1;
     } else {
         printf("Shutting down serial console. Goodbye!\r\n");
         Console::RequestSystemStop();
     }
+
+    return 0;
 }
 
 /**
  * Prints command help.
  */
-void cmd_help(cmd_args_t& args) {
+int cmd_help(cmd_args_t& args) {
     // printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
 
     // Prints all commands, with details
     if (args.empty() == true) {
         // Default to a short listing of all the commands
-        for (uint8_t i = 0; i < commands.size(); i++)
+        for (size_t i = 0; i < commands.size(); i++)
             printf("\t%s:\t%s\r\n", commands[i].aliases[0].c_str(),
                    commands[i].description.c_str());
 
@@ -324,7 +336,7 @@ void cmd_help(cmd_args_t& args) {
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
                     commands[i].aliases.front().c_str(),
-                    (commands[i].isIterative ? " [ITERATIVE]" : ""),
+                    (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
         } else {
@@ -335,9 +347,11 @@ void cmd_help(cmd_args_t& args) {
 
         printf("\r\n");
     }
+
+    return 0;
 }
 
-void cmd_help_detail(cmd_args_t& args) {
+int cmd_help_detail(cmd_args_t& args) {
     // iterate through args
     for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
         // iterate through commands
@@ -355,7 +369,7 @@ void cmd_help_detail(cmd_args_t& args) {
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
                     commands[i].aliases.front().c_str(),
-                    (commands[i].isIterative ? " [ITERATIVE]" : ""),
+                    (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
         }
@@ -364,14 +378,17 @@ void cmd_help_detail(cmd_args_t& args) {
             printf("Command \"%s\" not found.\r\n", args.at(argInd).c_str());
         }
     }
+
+    return 0;
 }
 
 /**
  * Console responsiveness test.
  */
-void cmd_ping(cmd_args_t& args) {
+int cmd_ping(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
+        return 1;
     } else {
         time_t sys_time = time(nullptr);
         Console::Flush();
@@ -380,14 +397,17 @@ void cmd_ping(cmd_args_t& args) {
 
         Thread::wait(600);
     }
+
+    return 0;
 }
 
 /**
  * Resets the mbed (should be the equivalent of pressing the reset button).
  */
-void cmd_interface_reset(cmd_args_t& args) {
+int cmd_interface_reset(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
+        return 1;
     } else {
         printf("The system is going down for reboot NOW!\033[0J\r\n");
         Console::Flush();
@@ -397,12 +417,14 @@ void cmd_interface_reset(cmd_args_t& args) {
 
         mbed_interface_reset();
     }
+
+    return 0;
 }
 
 /**
  * Lists files.
  */
-void cmd_ls(cmd_args_t& args) {
+int cmd_ls(cmd_args_t& args) {
     DIR* d;
     struct dirent* p;
 
@@ -432,17 +454,19 @@ void cmd_ls(cmd_args_t& args) {
             printf("Could not find %s\r\n", args.front().c_str());
         }
 
-        LOG(FATAL, "CODE ERROR! FIX ME!");
+        return 1;
     }
+
+    return 0;
 }
 
 /**
  * Prints system info.
  */
-void cmd_info(cmd_args_t& args) {
+int cmd_info(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
-
+        return 1;
     } else {
         char buf[33];
         DS2411_t id;
@@ -533,15 +557,18 @@ void cmd_info(cmd_args_t& args) {
             printf("\tUSB Byte:\t0x%02\r\n", regVal);
         */
     }
+
+    return 0;
 }
 
 /**
  * [cmd_disconnectMbed description]
  * @param args [description]
  */
-void cmd_interface_disconnect(cmd_args_t& args) {
+int cmd_interface_disconnect(cmd_args_t& args) {
     if (args.empty() > 1) {
         show_invalid_args(args);
+        return 1;
     } else {
         if (args.empty() == true) {
             mbed_interface_disconnect();
@@ -552,18 +579,23 @@ void cmd_interface_disconnect(cmd_args_t& args) {
             mbed_interface_powerdown();
         }
     }
+
+    return 0;
 }
 
-void cmd_interface_check_conn(cmd_args_t& args) {
+int cmd_interface_check_conn(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
+        return 1;
     } else {
         printf("mbed interface connected: %s\r\n",
                mbed_interface_connected() ? "YES" : "NO");
     }
+
+    return 0;
 }
 
-void cmd_baudrate(cmd_args_t& args) {
+int cmd_baudrate(cmd_args_t& args) {
     std::vector<int> valid_rates = {110,   300,    600,    1200,   2400,
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600
@@ -571,6 +603,7 @@ void cmd_baudrate(cmd_args_t& args) {
 
     if (args.size() > 1) {
         show_invalid_args(args);
+        return 1;
     } else if (args.empty() == true) {
         printf("Baudrate: %u\r\n", Console::Baudrate());
     } else if (args.size() == 1) {
@@ -600,27 +633,36 @@ void cmd_baudrate(cmd_args_t& args) {
             printf("Invalid argument \"%s\".\r\n", str_baud.c_str());
         }
     }
+
+    return 0;
 }
 
-void cmd_console_user(cmd_args_t& args) {
+int cmd_console_user(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
+        return 1;
     } else {
         Console::changeUser(args.front());
     }
+
+    return 0;
 }
 
-void cmd_console_hostname(cmd_args_t& args) {
+int cmd_console_hostname(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
+        return 1;
     } else {
         Console::changeHostname(args.front());
     }
+
+    return 0;
 }
 
-void cmd_log_level(cmd_args_t& args) {
+int cmd_log_level(cmd_args_t& args) {
     if (args.size() > 1) {
         show_invalid_args(args);
+        return 1;
     } else if (args.empty() == true) {
         printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
     } else {
@@ -659,12 +701,14 @@ void cmd_log_level(cmd_args_t& args) {
             }
         }
     }
+
+    return 0;
 }
 
-void cmd_rpc(cmd_args_t& args) {
+int cmd_rpc(cmd_args_t& args) {
     if (args.empty() == true) {
         show_invalid_args(args);
-
+        return 1;
     } else {
         // remake the original string so it can be passed to RPC
         std::string in_buf(args.at(0));
@@ -678,54 +722,87 @@ void cmd_rpc(cmd_args_t& args) {
 
         std::printf("%s\r\n", out_buf);
     }
+
+    return 0;
 }
 
-void cmd_led(cmd_args_t& args) {
+int cmd_led(cmd_args_t& args) {
     if (args.empty() == true) {
         show_invalid_args(args);
+        return 1;
     } else {
-        NeoStrip led(RJ_NEOPIXEL, 1);
-        // if (args.size() > 1) {
+        NeoStrip led(RJ_NEOPIXEL);
+        led.setFromDefaultBrightness();
+        led.setFromDefaultColor();
+
         if (strcmp(args.front().c_str(), "brightness") == 0) {
-            float bri;
-            // if ( !(istringstream(args.at(1)) >> bri) ) bri = 0.0;
-            bri = 0.3;
-            NeoStrip::brightness(bri);
-            led.write();
-        } else if (strcmp(args.front().c_str(), "color") == 0) {
-            if (strcmp(args.at(1).c_str(), "red") == 0) {
-                led.setPixel(1, 0xFF, 0x00, 0x00);
-            } else if (strcmp(args.at(1).c_str(), "green") == 0) {
-                led.setPixel(1, 0x00, 0xFF, 0x00);
-            } else if (strcmp(args.at(1).c_str(), "blue") == 0) {
-                led.setPixel(1, 0x00, 0x00, 0xFF);
-            } else if (strcmp(args.at(1).c_str(), "white") == 0) {
-                led.setPixel(1, 0xFF, 0xFF, 0xFF);
+            if (args.size() > 1) {
+                float bri = atof(args.at(1).c_str());
+                printf("Setting LED brightness to %.2f.\r\n", bri);
+                if (bri > 0 && bri <= 1.0) {
+                    NeoStrip::defaultBrightness(bri);
+                    led.setFromDefaultBrightness();
+                    led.setFromDefaultColor();
+                } else {
+                    printf(
+                        "Invalid brightness level of %.2f. Use 'state' command "
+                        "to toggle LED's state.\r\n", bri);
+                }
             } else {
-                led.setPixel(1, 0xC7, 0xC7, 0xC7);
-                // istringstream r(args.at(1));
-                // istringstream g(args.at(2));
-                // istringstream b(args.at(3));
+                printf("Current brightness:\t%.2f\r\n", led.brightness());
             }
+        } else if (strcmp(args.front().c_str(), "color") == 0) {
+            if (args.size() > 1) {
+                std::map<std::string, NeoColor> colors;
+                // order for struct is green, red, blue
+                colors["red"] = {0x00, 0xFF, 0x00};
+                colors["green"] = {0xFF, 0x00, 0x00};
+                colors["blue"] = {0x00, 0x00, 0xFF};
+                colors["yellow"] = {0xFF, 0xFF, 0x00};
+                colors["purple"] = {0x00, 0xFF, 0xFF};
+                colors["white"] = {0xFF, 0xFF, 0xFF};
+                auto it = colors.find(args.at(1));
+                if (it != colors.end()) {
+                    printf("Changing color to %s.\r\n", it->first.c_str());
+                    led.setPixel(1, it->second.red, it->second.green, it->second.blue);
+                } else {
+                    show_invalid_args(args);
+                    return 1;
+                }
+            } else {
+                return 1;
+            }
+            // push out the changes to the led
             led.write();
         } else if (strcmp(args.front().c_str(), "state") == 0) {
-            if (strcmp(args.at(1).c_str(), "on") == 0) {
-                NeoStrip::brightness(0.5);
-            } else if (strcmp(args.at(1).c_str(), "off") == 0) {
-                NeoStrip::brightness(0.0);
+            if (args.size() > 1) {
+                if (strcmp(args.at(1).c_str(), "on") == 0) {
+                    printf("Turning LED on.\r\n");
+                } else if (strcmp(args.at(1).c_str(), "off") == 0) {
+                    printf("Turning LED off.\r\n");
+                    led.brightness(0.0);
+                } else {
+                    show_invalid_args(args.at(1));
+                    return 1;
+                }
+                led.setFromDefaultColor();
             } else {
-                show_invalid_args(args);
+                return 1;
             }
+            // push out the changes to the led
             led.write();
         } else {
             show_invalid_args(args);
+            return 1;
         }
     }
+    return 0;
 }
 
-void cmd_ps(cmd_args_t& args) {
+int cmd_ps(cmd_args_t& args) {
     if (args.empty() != true) {
         show_invalid_args(args);
+        return 1;
     } else {
         unsigned int num_threads = 0;
         P_TCB p_b = (P_TCB)&os_rdy;
@@ -740,13 +817,15 @@ void cmd_ps(cmd_args_t& args) {
         }
         std::printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
+
+    return 0;
 }
 
 /**
  * [cmd_radio description]
  * @param args [description]
  */
-void cmd_radio(cmd_args_t& args) {
+int cmd_radio(cmd_args_t& args) {
     if (args.empty() == true) {
         // Default to showing the list of ports
         CommModule::PrintInfo(true);
@@ -783,6 +862,7 @@ void cmd_radio(cmd_args_t& args) {
                     CommModule::send(pck);
                 } else {
                     show_invalid_args(args.front());
+                    return 1;
                 }
             } else {
                 printf("The radio interface is not ready.\r\n");
@@ -818,16 +898,22 @@ void cmd_radio(cmd_args_t& args) {
 
                 } else {
                     show_invalid_args(args);
+                    return 1;
                 }
             } else {
                 show_invalid_args(args.at(2));
+                return 1;
             }
         } else {
             show_invalid_args(args.at(2));
+            return 1;
         }
     } else {
         show_invalid_args(args);
+        return 1;
     }
+
+    return 0;
 }
 
 /**
@@ -879,7 +965,7 @@ void execute_line(char* rawCommand) {
                     // iteration of the loop, set the handler and
                     // args and flag the loop to execute on each
                     // iteration.
-                    if (commands[cmdInd].isIterative) {
+                    if (commands[cmdInd].is_iterative) {
                         iterative_command_state = false;
 
                         // Sets the current arg count, args, and
@@ -887,13 +973,17 @@ void execute_line(char* rawCommand) {
                         // in the iterative call.
                         iterative_command_args = args;
                         iterative_command_handler = commands[cmdInd].handler;
-
                         iterative_command_state = true;
                     }
                     // If the command is not iterative, execute it
                     // once immeidately.
                     else {
-                        commands[cmdInd].handler(args);
+                        int exitState = commands[cmdInd].handler(args);
+                        if (exitState != 0) {
+                            printf("\r\n");
+                            cmd_args_t cmdN = {cmdName};
+                            cmd_help_detail(cmdN);
+                        }
                     }
 
                     break;

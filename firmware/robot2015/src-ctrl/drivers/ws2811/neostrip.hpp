@@ -47,7 +47,7 @@ public:
      * @param pin The mbed data pin name
      * @param N The number of pixels in the strip
      */
-    NeoStrip(PinName pin, unsigned int N, float bright = 1.0);
+    NeoStrip(PinName pin, unsigned int N = 1);
 
     /**
      * Deconstructor for cleaning up memory
@@ -64,8 +64,8 @@ public:
      *
      * @param bright The brightness scale between 0 and 1.0
      */
-    static void brightness(float bright);
-    static float brightness();
+    void brightness(float bright);
+    float brightness();
 
     /**
      * Set a single pixel to the specified color.
@@ -110,6 +110,10 @@ public:
      */
     void write();
 
+    void setFromDefaultBrightness();
+    void setFromDefaultColor();
+    static void defaultBrightness(float bright);
+
 protected:
     // pixel data used in setPixel() and neo_out()
     NeoColor* _strip;
@@ -117,7 +121,11 @@ protected:
     gpio_t* _neopin;
     // the number of pixels in the strip
     unsigned int _n;
-    // brightness, static since assuming
+    // brightness
+    float _bright;
+    // default statics since assuming
     // all objects use same hardware
-    static float _bright;
+    static NeoColor* _default_color;
+    static float* _default_bright;
+    static unsigned int _objs;
 };

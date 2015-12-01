@@ -30,12 +30,21 @@ extern "C" void neo_out(NeoColor* strip, uint32_t nBytes);
 volatile uint32_t neo_bitmask = 0;
 volatile uint32_t* neo_fio_reg = 0;
 
-float NeoStrip::_bright;
+unsigned int NeoStrip::_objs;
+float* NeoStrip::_default_bright;
+NeoColor* NeoStrip::_default_color;
 
-NeoStrip::NeoStrip(PinName pin, unsigned int N, float bright) : _n(N) {
+NeoStrip::NeoStrip(PinName pin, unsigned int N) : _n(N) {
     _strip = new NeoColor[_n];
     _neopin = new gpio_t;
-    brightness(bright);
+    _objs++;
+
+    if (_objs == 1) {
+        _default_color = _strip;
+        _default_bright = &_bright;
+    } else {
+        _n = 1;
+    }
 
     // setup the pin to be an output
     gpio_init_out_ex(_neopin, pin, 0);
@@ -48,6 +57,7 @@ NeoStrip::NeoStrip(PinName pin, unsigned int N, float bright) : _n(N) {
 NeoStrip::~NeoStrip() {
     delete _neopin;
     delete[] _strip;
+    _objs--;
 }
 
 void NeoStrip::brightness(float bright) { _bright = bright; }
@@ -94,3 +104,13 @@ void NeoStrip::write() {
     __enable_irq();           // enable interrupts
     wait_us(50);              // wait 50us for the reset pulse
 }
+
+void NeoStrip::setFromDefaultColor() {
+    _strip->red = static_cast<uint8_t>(_default_color->red * _bright);
+    _strip->green = static_cast<uint8_t>(_default_color->green * _bright);
+    _strip->blue = static_cast<uint8_t>(_default_color->blue * _bright);
+}
+
+void NeoStrip::setFromDefaultBrightness() { _bright = *_default_bright; }
+
+void NeoStrip::defaultBrightness(float bright) { *_default_bright = bright; }
