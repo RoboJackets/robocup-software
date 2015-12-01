@@ -722,6 +722,7 @@ int cmd_led(cmd_args_t& args) {
                     NeoStrip::defaultBrightness(bri);
                     led.setFromDefaultBrightness();
                     led.setFromDefaultColor();
+                    led.write();
                 } else {
                     printf(
                         "Invalid brightness level of %.2f. Use 'state' command "
