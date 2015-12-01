@@ -1,12 +1,12 @@
-#include "commands.hpp"
-#include "TaskSignals.hpp"
-
 #include <rtos.h>
 #include <mbed_rpc.h>
 
 #include <Console.hpp>
 #include <logger.hpp>
 #include <assert.hpp>
+
+#include "task-signals.hpp"
+#include "commands.hpp"
 
 /**
  * Initializes the console

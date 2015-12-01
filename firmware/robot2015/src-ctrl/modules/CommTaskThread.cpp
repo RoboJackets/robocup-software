@@ -1,15 +1,15 @@
-#include "pins-ctrl-2015.hpp"
-#include "robot-config.hpp"
-#include "TaskSignals.hpp"
-
 #include <rtos.h>
-#include <helper-funcs.hpp>
+
 #include <CommModule.hpp>
 #include <CommPort.hpp>
 #include <CC1201Radio.hpp>
 #include <CC1201Config.hpp>
+#include <helper-funcs.hpp>
 #include <logger.hpp>
 #include <assert.hpp>
+
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 
 /*
  * Information about the radio protocol can be found at:
