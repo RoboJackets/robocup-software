@@ -129,8 +129,8 @@ void Task_CommCtrl(void const* args) {
         // Open a socket for running tests across the link layer
         CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
         CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
-        CommModule::openSocket(
-            rtp::port::LINK);  // returns true if port was successfully opened.
+        // returns true if port was successfully opened.
+        CommModule::openSocket(rtp::port::LINK);
 
         // The usual way of opening a port.
         CommModule::RxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
@@ -156,7 +156,8 @@ void Task_CommCtrl(void const* args) {
 
     } else {
         LOG(FATAL,
-            "No radio interface found!\r\n    Terminating main radio thread.");
+            "No radio interface found!\r\n"
+            "\tTerminating main radio thread.");
 
         // TODO: Turn on radio error LED here
 
@@ -188,8 +189,8 @@ void Task_CommCtrl(void const* args) {
     ack_pck.address = BASE_STATION_ADDR;
 
     LOG(INIT,
-        "Placing link test packet in RX buffer:\r\n    Payload:\t%s\t(%u "
-        "bytes)",
+        "Placing link test packet in RX buffer:\r\n"
+        "\tPayload:\t%s\t(%u bytes)",
         (char*)ack_pck.payload, ack_pck.payload_size);
 
     CommModule::receive(ack_pck);

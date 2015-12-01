@@ -42,7 +42,7 @@ void motors_PrintMotor(motor_t& mtr) {
         mtr.status.drvStatus[1]);
 }
 
-void motors_cmdScroll(const std::vector<std::string>& args) {
+void cmd_motors_scroll(const std::vector<std::string>& args) {
     std::array<uint16_t, 5> duty_cycles = {0};
     std::array<uint8_t, 5> halls = {0};
     std::array<uint16_t, 5> enc_deltas = {0};
@@ -70,7 +70,7 @@ void motors_cmdScroll(const std::vector<std::string>& args) {
 }
 
 // The console function to run with the 'motor' command
-void motors_cmdProcess(const std::vector<std::string>& args) {
+void cmd_motors(const std::vector<std::string>& args) {
     if (args.empty() == true) {
         printf("Must specify a motor ID!\r\n");
     } else {
@@ -143,7 +143,7 @@ void motors_cmdProcess(const std::vector<std::string>& args) {
             }
 
         } else {
-            showInvalidArgs(args.at(0));
+            show_invalid_args(args.at(0));
         }
     }
 }

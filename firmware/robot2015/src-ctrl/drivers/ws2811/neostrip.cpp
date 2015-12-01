@@ -1,24 +1,32 @@
-/**********************************************
-* NeoStrip.cpp
-*
-* Allen Wild
-* March 2014
-*
-* Jonathan Jones
-* November 2015
-*
-* Controls a strip of Adafruit NeoPixels, addressable RGB LEDs
-* Currently, because of the global nature of the IO register and bitmask
-* variables,
-* it is only possible to use one NeoStrip instance at a time.
-*
-* This library supports only the NXP LPC1768!
-*/
+/*
+ * NeoStrip.cpp
+ *
+ * Allen Wild
+ * March 2014
+ *
+ * Jonathan Jones
+ * November 2015
+ *
+ * Controls a strip of Adafruit NeoPixels, addressable RGB LEDs
+ * Currently, because of the global nature of the IO register and bitmask
+ * variables,
+ * it is only possible to use one NeoStrip instance at a time.
+ *
+ * This library supports only the NXP LPC1768!
+ */
 
 #include "neostrip.hpp"
 
+/*
+ * This function is defined in the assembly code and is declared
+ * as a global function.
+ */
 extern "C" void neo_out(NeoColor* strip, uint32_t nBytes);
 
+/*
+ * This is where the memory for these variables is actually allocated and
+ * initialized. These are declared as global symbols in the assembly.
+ */
 volatile uint32_t neo_bitmask = 0;
 volatile uint32_t* neo_fio_reg = 0;
 

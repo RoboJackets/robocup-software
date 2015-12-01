@@ -18,11 +18,17 @@
 #error NeoStrip only supports the NXP LPC1768!
 #endif
 
+/**
+ * These store register info that the
+ * assembly code needs.
+ */
 extern volatile uint32_t* neo_fio_reg;
 extern volatile uint32_t neo_bitmask;
 
-// NeoColor struct definition to hold 24 bit
-// color data for each pixel, in GRB order
+/**
+ * NeoColor struct definition to hold 24 bit
+ * color data for each pixel, in GRB order.
+ */
 struct NeoColor {
     uint8_t green;
     uint8_t red;
@@ -42,6 +48,10 @@ public:
      * @param N The number of pixels in the strip
      */
     NeoStrip(PinName pin, unsigned int N, float bright = 1.0);
+
+    /**
+     * Deconstructor for cleaning up memory
+     */
     ~NeoStrip();
 
     /**
@@ -101,10 +111,13 @@ public:
     void write();
 
 protected:
-    NeoColor* _strip;  // pixel data buffer modified by setPixel() and used by
-                       // neo_out()
-    gpio_t* _neopin;   // gpio struct for initialization and getting register
-                       // addresses
-    unsigned int _n;         // the number of pixels in the strip
-    static float _bright;     // the master strip brightness
+    // pixel data used in setPixel() and neo_out()
+    NeoColor* _strip;
+    // gpio struct for pin setup, should really be static
+    gpio_t* _neopin;
+    // the number of pixels in the strip
+    unsigned int _n;
+    // brightness, static since assuming
+    // all objects use same hardware
+    static float _bright;
 };
