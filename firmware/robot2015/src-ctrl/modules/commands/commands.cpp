@@ -63,125 +63,105 @@ static const vector<command_t> commands = {
         "description",
         "usage"},
     */
-    {   {"alias", "a"},
-        false,
-        cmd_alias,
-        "Lists aliases for commands.",
-        "alias | a"
-    },
-    {   {"baud", "baudrate"},
-        false,
-        cmd_baudrate,
-        "Set the serial link's baudrate.",
-        "baud | baudrate [[--list | -l] | [<target_rate>]]"
-    },
-    {   {"clear", "cls"},
-        false,
-        cmd_console_clear,
-        "Clears the screen.",
-        "clear | cls"
-    },
-    {   {"echo"},
-        false,
-        cmd_console_echo,
-        "Echos text for debugging the serial link.",
-        "echo <text>"
-    },
-    {   {"exit", "quit"},
-        false,
-        cmd_console_exit,
-        "Breaks the main loop.",
-        "exit | quit"
-    },
-    {   {"help", "h", "?"},
-        false,
-        cmd_help,
-        "Prints this message.",
-        "help | h | ? [[--list|-l] | [--all|-a] | <command names>]"
-    },
-    {   {"host", "hostname"},
-        false,
-        cmd_console_hostname,
-        "Set the system hostname.",
-        "host | hostname <new_hostname>"
-    },
-    {   {"info", "version", "i"},
-        false,
-        cmd_info,
-        "Display information about the current version of the firmware.",
-        "info | version | i"
-    },
-    {   {"isconn", "checkconn"},
-        false,
-        cmd_interface_check_conn,
-        "Checks the connection with a debugging unit.",
-        "isconn | checkconn"
-    },
-    {   {"led"},
-        false,
-        cmd_led,
-        "Change the color and brightness of LED(s).",
-        "led [brightness|state|color] [<level>|<on|off>|<color]"
-    },
-    {   {"loglvl", "loglevel"},
-        false,
-        cmd_log_level,
-        "Change the active logging output level.",
-        "loglvl | loglevel {+,-}..."
-    },
-    {   {"ls", "l"},
-        false,
-        cmd_ls,
-        "List contents of current directory",
-        "ls | l [folder/device]"
-    },
-    {   {"motor"},
-        false,
-        cmd_motors,
-        "Show information about the motors.",
-        "motor <motor_id>"
-    },
-    {   {"motorscroll"},
-        true,
-        cmd_motors_scroll,
-        "Continuously update the console with new motor values.",
-        "motorscroll"
-    },
+    {{"alias", "a"},
+     false,
+     cmd_alias,
+     "Lists aliases for commands.",
+     "alias | a"},
+    {{"baud", "baudrate"},
+     false,
+     cmd_baudrate,
+     "Set the serial link's baudrate.",
+     "baud | baudrate [[--list | -l] | [<target_rate>]]"},
+    {{"clear", "cls"},
+     false,
+     cmd_console_clear,
+     "Clears the screen.",
+     "clear | cls"},
+    {{"echo"},
+     false,
+     cmd_console_echo,
+     "Echos text for debugging the serial link.",
+     "echo <text>"},
+    {{"exit", "quit"},
+     false,
+     cmd_console_exit,
+     "Breaks the main loop.",
+     "exit | quit"},
+    {{"help", "h", "?"},
+     false,
+     cmd_help,
+     "Prints this message.",
+     "help | h | ? [[--list|-l] | [--all|-a] | <command names>]"},
+    {{"host", "hostname"},
+     false,
+     cmd_console_hostname,
+     "Set the system hostname.",
+     "host | hostname <new_hostname>"},
+    {{"info", "version", "i"},
+     false,
+     cmd_info,
+     "Display information about the current version of the firmware.",
+     "info | version | i"},
+    {{"isconn", "checkconn"},
+     false,
+     cmd_interface_check_conn,
+     "Checks the connection with a debugging unit.",
+     "isconn | checkconn"},
+    {{"led"},
+     false,
+     cmd_led,
+     "Change the color and brightness of LED(s).",
+     "led [brightness|state|color] [<level>|<on|off>|<color]"},
+    {{"loglvl", "loglevel"},
+     false,
+     cmd_log_level,
+     "Change the active logging output level.",
+     "loglvl | loglevel {+,-}..."},
+    {{"ls", "l"},
+     false,
+     cmd_ls,
+     "List contents of current directory",
+     "ls | l [folder/device]"},
+    {{"motor"},
+     false,
+     cmd_motors,
+     "Show information about the motors.",
+     "motor <motor_id>"},
+    {{"motorscroll"},
+     true,
+     cmd_motors_scroll,
+     "Continuously update the console with new motor values.",
+     "motorscroll"},
     {{"ping"}, true, cmd_ping, "Check console responsiveness.", "ping"},
     {{"ps"}, false, cmd_ps, "List information about all active threads.", "ps"},
-    {   {"radio"},
-        false,
-        cmd_radio,
-        "Show information about the radio & perform basic radio tasks.",
-        "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
-        "reset] "
-        "<port_num>]"
-    },
-    {   {"reboot", "reset", "restart"},
-        false,
-        cmd_interface_reset,
-        "Resets the mbed (like pushing the reset button).",
-        "reboot | reset | restart"
-    },
-    {   {"rmdev", "unconnect"},
-        false,
-        cmd_interface_disconnect,
-        "Disconnects the mbed interface chip from the microcontroller.",
-        "rmdev | unconnect [-P]"
-    },
-    {   {"rpc"},
-        false,
-        cmd_rpc,
-        "Execute RPC commands on the mbed.",
-        "rpc <rpc-command>"
-    },
-    {   {"su", "user"},
-        false,
-        cmd_console_user,
-        "Set active user.",
-        "su | user <new_username>"
-    }
-};
+    {{"radio"},
+     false,
+     cmd_radio,
+     "Show information about the radio & perform basic radio tasks.",
+     "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
+     "reset] "
+     "<port_num>]"},
+    {{"reboot", "reset", "restart"},
+     false,
+     cmd_interface_reset,
+     "Resets the mbed (like pushing the reset button).",
+     "reboot | reset | restart"},
+    {{"rmdev", "unconnect"},
+     false,
+     cmd_interface_disconnect,
+     "Disconnects the mbed interface chip from the microcontroller.",
+     "rmdev | unconnect [-P]"},
+    {{"rpc"},
+     false,
+     cmd_rpc,
+     "Execute RPC commands on the mbed.",
+     "rpc <rpc-command>"},
+    {{"su", "user"},
+     false,
+     cmd_console_user,
+     "Set active user.",
+     "su | user <new_username>"}};
 
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
@@ -197,12 +177,12 @@ int cmd_alias(cmd_args_t& args) {
             uint8_t a = 0;
 
             while (a < commands[i].aliases.size() &&
-                    commands[i].aliases[a] != "\0") {
+                   commands[i].aliases[a] != "\0") {
                 printf("%s", commands[i].aliases[a].c_str());
 
                 // print commas
                 if (a < commands[i].aliases.size() - 1 &&
-                        commands[i].aliases[a + 1] != "\0") {
+                    commands[i].aliases[a + 1] != "\0") {
                     printf(", ");
                 }
 
@@ -228,12 +208,12 @@ int cmd_alias(cmd_args_t& args) {
                     uint8_t a = 0;
 
                     while (a < commands[cmdInd].aliases.size() &&
-                            commands[cmdInd].aliases[a] != "\0") {
+                           commands[cmdInd].aliases[a] != "\0") {
                         printf("\t%s", commands[cmdInd].aliases[a].c_str());
 
                         // print commas
                         if (a < commands[cmdInd].aliases.size() - 1 &&
-                                commands[cmdInd].aliases[a + 1] != "\0") {
+                            commands[cmdInd].aliases[a + 1] != "\0") {
                             printf(",");
                         }
 
@@ -317,7 +297,7 @@ int cmd_help(cmd_args_t& args) {
     // Prints all commands - either as a list block or all detailed
     else {
         if (strcmp(args[0].c_str(), "--list") == 0 ||
-                strcmp(args[0].c_str(), "-l") == 0) {
+            strcmp(args[0].c_str(), "-l") == 0) {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 if (i % 5 == 4) {
                     printf("%s\r\n", commands[i].aliases[0].c_str());
@@ -598,8 +578,7 @@ int cmd_interface_check_conn(cmd_args_t& args) {
 int cmd_baudrate(cmd_args_t& args) {
     std::vector<int> valid_rates = {110,   300,    600,    1200,   2400,
                                     4800,  9600,   14400,  19200,  38400,
-                                    57600, 115200, 230400, 460800, 921600
-                                   };
+                                    57600, 115200, 230400, 460800, 921600};
 
     if (args.size() > 1) {
         show_invalid_args(args);
@@ -610,7 +589,7 @@ int cmd_baudrate(cmd_args_t& args) {
         std::string str_baud = args.front();
 
         if (strcmp(str_baud.c_str(), "--list") == 0 ||
-                strcmp(str_baud.c_str(), "-l") == 0) {
+            strcmp(str_baud.c_str(), "-l") == 0) {
             printf("Valid baudrates:\r\n");
 
             for (unsigned int i = 0; i < valid_rates.size(); i++)
@@ -620,7 +599,7 @@ int cmd_baudrate(cmd_args_t& args) {
             int new_rate = atoi(str_baud.c_str());
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
-                    valid_rates.end()) {
+                valid_rates.end()) {
                 Console::Baudrate(new_rate);
                 printf("New baudrate: %u\r\n", new_rate);
             } else {
@@ -669,7 +648,7 @@ int cmd_log_level(cmd_args_t& args) {
         // bool storeVals = true;
 
         if (strcmp(args.front().c_str(), "on") == 0 ||
-                strcmp(args.front().c_str(), "enable") == 0) {
+            strcmp(args.front().c_str(), "enable") == 0) {
             isLogging = true;
             printf("Logging enabled.\r\n");
         } else if (strcmp(args.front().c_str(), "off") == 0 ||
@@ -746,7 +725,8 @@ int cmd_led(cmd_args_t& args) {
                 } else {
                     printf(
                         "Invalid brightness level of %.2f. Use 'state' command "
-                        "to toggle LED's state.\r\n", bri);
+                        "to toggle LED's state.\r\n",
+                        bri);
                 }
             } else {
                 printf("Current brightness:\t%.2f\r\n", led.brightness());
@@ -764,7 +744,8 @@ int cmd_led(cmd_args_t& args) {
                 auto it = colors.find(args.at(1));
                 if (it != colors.end()) {
                     printf("Changing color to %s.\r\n", it->first.c_str());
-                    led.setPixel(1, it->second.red, it->second.green, it->second.blue);
+                    led.setPixel(1, it->second.red, it->second.green,
+                                 it->second.blue);
                 } else {
                     show_invalid_args(args);
                     return 1;
