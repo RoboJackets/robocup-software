@@ -10,12 +10,13 @@
  *
  * Library for the control of Adafruit NeoPixel addressable RGB LEDs.
  */
+#include <cstddef>
 
 #include <mbed.h>
 
 #ifndef TARGET_LPC1768
 #error NeoStrip only supports the NXP LPC1768!
-#else
+#endif
 
 extern volatile uint32_t* neo_fio_reg;
 extern volatile uint32_t neo_bitmask;
@@ -40,7 +41,7 @@ public:
      * @param pin The mbed data pin name
      * @param N The number of pixels in the strip
      */
-    NeoStrip(PinName pin, size_t N, float bright = 1.0);
+    NeoStrip(PinName pin, unsigned int N, float bright = 1.0);
     ~NeoStrip();
 
     /**
@@ -53,8 +54,8 @@ public:
      *
      * @param bright The brightness scale between 0 and 1.0
      */
-    void brightness(float bright);
-    float brightness();
+    static void brightness(float bright);
+    static float brightness();
 
     /**
      * Set a single pixel to the specified color.
@@ -104,8 +105,6 @@ protected:
                        // neo_out()
     gpio_t* _neopin;   // gpio struct for initialization and getting register
                        // addresses
-    size_t _N;         // the number of pixels in the strip
-    float _bright;     // the master strip brightness
+    unsigned int _n;         // the number of pixels in the strip
+    static float _bright;     // the master strip brightness
 };
-
-#endif

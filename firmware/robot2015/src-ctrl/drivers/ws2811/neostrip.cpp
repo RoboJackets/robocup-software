@@ -22,8 +22,10 @@ extern "C" void neo_out(NeoColor* strip, uint32_t nBytes);
 volatile uint32_t neo_bitmask = 0;
 volatile uint32_t* neo_fio_reg = 0;
 
-NeoStrip::NeoStrip(PinName pin, size_t N, float bright) : _N(N) {
-    _strip = new NeoColor[N];
+float NeoStrip::_bright;
+
+NeoStrip::NeoStrip(PinName pin, unsigned int N, float bright) : _n(N) {
+    _strip = new NeoColor[_n];
     _neopin = new gpio_t;
     brightness(bright);
 
@@ -54,9 +56,9 @@ void NeoStrip::setPixel(size_t p, int color) {
 void NeoStrip::setPixel(size_t p, uint8_t red, uint8_t green, uint8_t blue) {
     // set the given pixel's RGB values
     // the array is indexed modulo _N to avoid overflow
-    _strip[p % _N].red = static_cast<uint8_t>(red * _bright);
-    _strip[p % _N].green = static_cast<uint8_t>(green * _bright);
-    _strip[p % _N].blue = static_cast<uint8_t>(blue * _bright);
+    _strip[p % _n].red = static_cast<uint8_t>(red * _bright);
+    _strip[p % _n].green = static_cast<uint8_t>(green * _bright);
+    _strip[p % _n].blue = static_cast<uint8_t>(blue * _bright);
 }
 
 void NeoStrip::setPixels(size_t p, size_t n, const int* colors) {
@@ -71,7 +73,7 @@ void NeoStrip::setPixels(size_t p, size_t n, const int* colors) {
 }
 
 void NeoStrip::clear() {
-    for (size_t i = 0; i < _N; i++) {
+    for (size_t i = 0; i < _n; i++) {
         _strip[i].red = 0;
         _strip[i].green = 0;
         _strip[i].blue = 0;
@@ -80,7 +82,7 @@ void NeoStrip::clear() {
 
 void NeoStrip::write() {
     __disable_irq();          // disable interrupts
-    neo_out(_strip, _N * 3);  // output to the strip
+    neo_out(_strip, _n * 3);  // output to the strip
     __enable_irq();           // enable interrupts
     wait_us(50);              // wait 50us for the reset pulse
 }
