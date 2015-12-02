@@ -13,6 +13,7 @@
 #endif
 
 #define BASE_STATION_ADDR (1)
+#define LOOPBACK_ADDR (127)
 
 namespace rtp {
 /// The number of bytes we must account for outsize of anything hardware related
@@ -20,7 +21,7 @@ static const unsigned int APP_HDR_SZ = 1;
 
 /// The number of bytes we must account for when communicating the size of a raw
 /// payload to any hardware device
-static const unsigned int LINK_HDR_SZ = 1;
+static const unsigned int LINK_HDR_SZ = 2;
 
 ///
 static const unsigned int MAX_DATA_SZ = 122;

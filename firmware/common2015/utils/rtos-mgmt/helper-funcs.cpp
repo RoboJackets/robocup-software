@@ -6,6 +6,9 @@
 #include "logger.hpp"
 #include "assert.hpp"
 
+// The head of the linked list of active threads
+extern struct OS_XCB os_rdy;
+
 /**
  * Initializes the peripheral nested vector interrupt controller (PNVIC) with
  * appropriate values. Low values have the higest priority (with system
@@ -93,6 +96,19 @@ void strobeStatusLED(void const* arg) {
     *led = !(*led);
     Thread::wait(30);
     *led = !(*led);
+}
+
+// returns how many active threads there are
+unsigned int get_num_threads() {
+    unsigned int num_threads = 0;
+    P_TCB p_b = (P_TCB)&os_rdy;
+
+    while (p_b != NULL) {
+        num_threads++;
+        p_b = p_b->p_lnk;
+    }
+
+    return num_threads;
 }
 
 // Helper function for creating a class that uses a

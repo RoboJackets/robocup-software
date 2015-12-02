@@ -8,11 +8,9 @@
 #include "robot-devices.hpp"
 #include "motors.hpp"
 
-void Task_CommCtrl(void const*);
-void comm_cmdProcess(const std::vector<std::string>&);
-
-// forward declaration for the console's task function
+// forward declaration of tasks
 void Task_SerialConsole(void const* args);
+void Task_CommCtrl(void const*);
 
 /**
  * Max number of command aliases.
@@ -26,11 +24,14 @@ static const uint8_t MAX_ALIASES = 5;
 static const uint8_t MAX_COMMAND_ARGS = 16;
 
 /**
+ * typedef for a command function's argument(s)
+ */
+typedef const std::vector<std::string> cmd_args_t;
+
+/**
  * command structure
  */
 struct command_t {
-    // command_t() = default;
-
     /**
      * aliases
      */
@@ -40,12 +41,12 @@ struct command_t {
      * iterative flag. Should the command be executed iteratively (in the
      * main loop) until the break signal is sent?
      */
-    const bool isIterative;
+    const bool is_iterative;
 
     /**
      * command handler function pointer
      */
-    void (*handler)(const std::vector<std::string>& args);
+    int (*handler)(cmd_args_t& args);
 
     /**
      * command description. Used by help
@@ -61,30 +62,33 @@ struct command_t {
 /*
  * Command functions.
  */
-void executeLine(char*);
-void executeIterativeCommand();
-void showInvalidArgs(const std::vector<std::string>&);
-void showInvalidArgs(const std::string&);
+void execute_line(char*);
+void execute_iterative_command();
+void show_invalid_args(cmd_args_t&);
+void show_invalid_args(const std::string&);
 
 /*
  * Command definitions. Some command functions have circular definitions.
  *
  * Alphabetical order please.
  */
-void cmd_alias(const std::vector<std::string>&);
-void cmd_clear(const std::vector<std::string>&);
-void cmd_echo(const std::vector<std::string>&);
-void cmd_exitSys(const std::vector<std::string>&);
-void cmd_help(const std::vector<std::string>&);
-void cmd_help_detail(const std::vector<std::string>&);
-void cmd_ping(const std::vector<std::string>&);
-void cmd_ls(const std::vector<std::string>&);
-void cmd_info(const std::vector<std::string>&);
-void cmd_resetMbed(const std::vector<std::string>&);
-void cmd_disconnectInterface(const std::vector<std::string>&);
-void cmd_checkInterfaceConn(const std::vector<std::string>&);
-void cmd_baudrate(const std::vector<std::string>&);
-void cmd_switchHostname(const std::vector<std::string>&);
-void cmd_switchUser(const std::vector<std::string>&);
-void cmd_logLevel(const std::vector<std::string>&);
-void cmd_rpc(const std::vector<std::string>&);
+int cmd_alias(cmd_args_t&);
+int cmd_baudrate(cmd_args_t&);
+int cmd_console_clear(cmd_args_t&);
+int cmd_console_echo(cmd_args_t&);
+int cmd_console_exit(cmd_args_t&);
+int cmd_console_hostname(cmd_args_t&);
+int cmd_console_user(cmd_args_t&);
+int cmd_help(cmd_args_t&);
+int cmd_help_detail(cmd_args_t&);
+int cmd_info(cmd_args_t&);
+int cmd_interface_check_conn(cmd_args_t&);
+int cmd_interface_disconnect(cmd_args_t&);
+int cmd_interface_reset(cmd_args_t&);
+int cmd_led(cmd_args_t&);
+int cmd_log_level(cmd_args_t&);
+int cmd_ls(cmd_args_t&);
+int cmd_ping(cmd_args_t&);
+int cmd_ps(cmd_args_t&);
+int cmd_radio(cmd_args_t&);
+int cmd_rpc(cmd_args_t&);

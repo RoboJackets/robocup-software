@@ -107,23 +107,29 @@ robot2015-piezo: robot2015-test
 robot2015-piezo-prog: HW_UNIT=piezo
 robot2015-piezo-prog: robot2015-test-prog
 
+# neopixel hardware test
+robot2015-neopixel: HW_UNIT=neopixel
+robot2015-neopixel: robot2015-test
+robot2015-neopixel-prog: HW_UNIT=neopixel
+robot2015-neopixel-prog: robot2015-test-prog
+
 # general target for calling the hardware tests
 robot2015-test:
-	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test .. && make $(MAKE_FLAGS) robot2015-test
+	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
 robot2015-test-prog:
-	mkdir -p build && cd build && cmake -DHW_TEST_UNIT:STRING=$(HW_UNIT) --target robot2015-test-prog .. && make $(MAKE_FLAGS) robot2015-test-prog
+	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
 
 # kicker 2015 firmware
 kicker2015:
-	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
+	$(call cmake_build_target_fw, kicker2015)
 kicker2015-prog:
-	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
+	$(call cmake_build_target_fw, kicker2015-prog)
 
 # fpga 2015 synthesis
 fpga2015:
-	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+	$(call cmake_build_target_fw, fpga2015)
 fpga2015-prog:
-	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015-prog
+	$(call cmake_build_target_fw, fpga2015-prog)
 
 # Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
 firmware2015: robot2015 kicker2015 fpga2015 
@@ -132,7 +138,6 @@ firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
 # Base station 2015 firmware
 base2015:
 	$(call cmake_build_target_fw, base2015)
-
 base2015-prog:
 	$(call cmake_build_target_fw, base2015-prog)
 

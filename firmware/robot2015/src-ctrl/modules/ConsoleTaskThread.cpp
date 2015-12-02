@@ -1,12 +1,12 @@
-#include "commands.hpp"
-#include "TaskSignals.hpp"
-
 #include <rtos.h>
 #include <mbed_rpc.h>
 
 #include <Console.hpp>
 #include <logger.hpp>
 #include <assert.hpp>
+
+#include "task-signals.hpp"
+#include "commands.hpp"
 
 /**
  * Initializes the console
@@ -33,7 +33,9 @@ void Task_SerialConsole(void const* args) {
 
     // Let everyone know we're ok
     LOG(INIT,
-        "Serial console ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d",
+        "Serial console ready!\r\n"
+        "\tThread ID:\t%u\r\n"
+        "\tPriority:\t%d",
         threadID, threadPriority);
 
     // Lower our priority so we will yield to other, more important, startup
@@ -55,7 +57,7 @@ void Task_SerialConsole(void const* args) {
 
     while (true) {
         // Execute any active iterative command
-        executeIterativeCommand();
+        execute_iterative_command();
 
         // If there is a new command to handle, parse and process it
         if (Console::CommandReady() == true) {
@@ -66,7 +68,7 @@ void Task_SerialConsole(void const* args) {
 
             // Disable UART interrupts & execute the command
             NVIC_DisableIRQ(UART0_IRQn);
-            executeLine(Console::rxBufferPtr());
+            execute_line(Console::rxBufferPtr());
 
             // Now, reset the priority of the thread to its idle state
             ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);

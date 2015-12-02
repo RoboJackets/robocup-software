@@ -17,10 +17,10 @@ set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
 # set the path to a bash script for moving files to the mbed's USB memory
 set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
-# set(HW_TEST_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-prgm.sh)
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
+
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:
 # set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
@@ -29,14 +29,14 @@ include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
-
 # enable C++11
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
-
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
 # ignore formatting flags for printf
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
+# generate debugging information for gdb
+# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -g")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")

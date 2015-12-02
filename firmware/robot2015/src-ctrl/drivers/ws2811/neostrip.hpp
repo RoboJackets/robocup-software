@@ -1,22 +1,34 @@
+#pragma once
 /**
  * NeoStrip.h
  *
  * Allen Wild
  * March 2014
  *
+ * Jonathan Jones
+ * November 2015
+ *
  * Library for the control of Adafruit NeoPixel addressable RGB LEDs.
  */
-
-#pragma once
+#include <cstddef>
 
 #include <mbed.h>
 
 #ifndef TARGET_LPC1768
 #error NeoStrip only supports the NXP LPC1768!
-#else
+#endif
 
-// NeoColor struct definition to hold 24 bit
-// color data for each pixel, in GRB order
+/**
+ * These store register info that the
+ * assembly code needs.
+ */
+extern volatile uint32_t* neo_fio_reg;
+extern volatile uint32_t neo_bitmask;
+
+/**
+ * NeoColor struct definition to hold 24 bit
+ * color data for each pixel, in GRB order.
+ */
 struct NeoColor {
     uint8_t green;
     uint8_t red;
@@ -35,7 +47,12 @@ public:
      * @param pin The mbed data pin name
      * @param N The number of pixels in the strip
      */
-    NeoStrip(PinName pin, int N);
+    NeoStrip(PinName pin, unsigned int N = 1);
+
+    /**
+     * Deconstructor for cleaning up memory
+     */
+    ~NeoStrip();
 
     /**
      * Set an overall brightness scale for the entire strip.
@@ -47,7 +64,8 @@ public:
      *
      * @param bright The brightness scale between 0 and 1.0
      */
-    void setBrightness(float bright);
+    void brightness(float bright);
+    float brightness();
 
     /**
      * Set a single pixel to the specified color.
@@ -59,13 +77,13 @@ public:
      * @param color A 24-bit color packed into a single int,
      * using standard hex color codes (e.g. 0xFF0000 is red)
      */
-    void setPixel(int p, int color);
+    void setPixel(size_t p, int color);
 
     /**
      * Set a single pixel to the specified color, with red, green, and blue
      * values in separate arguments.
      */
-    void setPixel(int p, uint8_t red, uint8_t green, uint8_t blue);
+    void setPixel(size_t p, uint8_t red, uint8_t green, uint8_t blue);
 
     /**
      * Set n pixels starting at pixel p.
@@ -75,7 +93,7 @@ public:
      * @param colors An array of length n containing the 24-bit colors for each
      * pixel
      */
-    void setPixels(int p, int n, const int* colors);
+    void setPixels(size_t p, size_t n, const int* colors);
 
     /**
      * Reset all pixels in the strip to be of (0x000000)
@@ -92,14 +110,22 @@ public:
      */
     void write();
 
-protected:
-    NeoColor* strip;  // pixel data buffer modified by setPixel() and used by
-                      // neo_out()
-    int N;            // the number of pixels in the strip
-    int Nbytes;       // the number of bytes of pixel data (always N*3)
-    float bright;     // the master strip brightness
-    gpio_t
-        gpio;  // gpio struct for initialization and getting register addresses
-};
+    void setFromDefaultBrightness();
+    void setFromDefaultColor();
+    static void defaultBrightness(float bright);
 
-#endif
+protected:
+    // pixel data used in setPixel() and neo_out()
+    NeoColor* _strip;
+    // gpio struct for pin setup, should really be static
+    gpio_t* _neopin;
+    // the number of pixels in the strip
+    unsigned int _n;
+    // brightness
+    float _bright;
+    // default statics since assuming
+    // all objects use same hardware
+    static NeoColor* _default_color;
+    static float* _default_bright;
+    static unsigned int _objs;
+};

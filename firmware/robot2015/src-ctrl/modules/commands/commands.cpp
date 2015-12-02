@@ -1,11 +1,20 @@
 #include "commands.hpp"
 
+#include <map>
+
+#include <rtos.h>
 #include <mbed_rpc.h>
 #include <CommModule.hpp>
 #include <numparser.hpp>
 #include <logger.hpp>
 
 #include "ds2411.hpp"
+#include "neostrip.hpp"
+
+using std::string;
+using std::vector;
+
+extern struct OS_XCB os_rdy;
 
 namespace {
 /**
@@ -22,19 +31,19 @@ const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 /**
  * indicates if the command held in "iterativeCommand"
  */
-volatile bool itCmdState = false;
+volatile bool iterative_command_state = false;
 
 /**
  * current iterative command args
  */
-vector<string> iterativeCommandArgs;
+vector<string> iterative_command_args;
 
 /**
  * the current iterative command handler
  */
-void (*iterativeCommandHandler)(const vector<string>& args);
+int (*iterative_command_handler)(cmd_args_t& args);
 
-}  // anonymous namespace
+}  // end of anonymous namespace
 
 // Create an object to help find files
 LocalFileSystem local("local");
@@ -45,8 +54,8 @@ LocalFileSystem local("local");
  * Alphabetical order please (here addition and in handler function
  * declaration).
  */
-static const std::vector<command_t> commands = {
-    /* COMMAND TEMPALATE
+static const vector<command_t> commands = {
+    /* command definition example
     {
         {"<alias>", "<alias2>", "<alias...>"},
         is the command iterative,
@@ -54,103 +63,111 @@ static const std::vector<command_t> commands = {
         "description",
         "usage"},
     */
-
     {{"alias", "a"},
      false,
      cmd_alias,
      "Lists aliases for commands.",
      "alias | a"},
-    {{"clear", "cls"}, false, cmd_clear, "Clears the screen.", "clear | cls"},
+    {{"baud", "baudrate"},
+     false,
+     cmd_baudrate,
+     "Set the serial link's baudrate.",
+     "baud | baudrate [[--list | -l] | [<target_rate>]]"},
+    {{"clear", "cls"},
+     false,
+     cmd_console_clear,
+     "Clears the screen.",
+     "clear | cls"},
     {{"echo"},
      false,
-     cmd_echo,
+     cmd_console_echo,
      "Echos text for debugging the serial link.",
      "echo <text>"},
     {{"exit", "quit"},
      false,
-     cmd_exitSys,
+     cmd_console_exit,
      "Breaks the main loop.",
      "exit | quit"},
     {{"help", "h", "?"},
      false,
      cmd_help,
      "Prints this message.",
-     "help | h | ? [[--list | -l] | [--all | -a] | <command names>]"},
-    {{"ping"}, true, cmd_ping, "Check console responsiveness.", "ping"},
-    {{"ls", "l"},
+     "help | h | ? [[--list|-l] | [--all|-a] | <command names>]"},
+    {{"host", "hostname"},
      false,
-     cmd_ls,
-     "List contents of current directory",  //\r\n",  Bugs:\t\tsometimes
-     // displays train animations.",
-     "ls | l [folder/device]"},
+     cmd_console_hostname,
+     "Set the system hostname.",
+     "host | hostname <new_hostname>"},
     {{"info", "version", "i"},
      false,
      cmd_info,
      "Display information about the current version of the firmware.",
      "info | version | i"},
-    {{"reboot", "reset", "restart"},
-     false,
-     cmd_resetMbed,
-     "Resets the mbed (like pushing the reset button).",
-     "reboot | reset | restart"},
-    {{"rmdev", "unconnect"},
-     false,
-     cmd_disconnectInterface,
-     "Disconnects the mbed interface chip from the microcontroller.",
-     "rmdev | unconnect [-P]"},
     {{"isconn", "checkconn"},
      false,
-     cmd_checkInterfaceConn,
+     cmd_interface_check_conn,
      "Checks the connection with a debugging unit.",
      "isconn | checkconn"},
-    {{"baud", "baudrate"},
+    {{"led"},
      false,
-     cmd_baudrate,
-     "Set the serial link's baudrate.",
-     "baud | baudrate [[--list | -l] | [<target_rate>]]"},
-    {{"su", "user"},
-     false,
-     cmd_switchUser,
-     "Set active user.",
-     "su | user <new_username>"},
-    {{"host", "hostname"},
-     false,
-     cmd_switchHostname,
-     "Set the system hostname.",
-     "host | hostname <new_hostname>"},
+     cmd_led,
+     "Change the color and brightness of LED(s).",
+     "led [brightness|state|color] [<level>|<on|off>|<color]"},
     {{"loglvl", "loglevel"},
      false,
-     cmd_logLevel,
+     cmd_log_level,
      "Change the active logging output level.",
      "loglvl | loglevel {+,-}..."},
+    {{"ls", "l"},
+     false,
+     cmd_ls,
+     "List contents of current directory",
+     "ls | l [folder/device]"},
     {{"motor"},
      false,
-     motors_cmdProcess,
+     cmd_motors,
      "Show information about the motors.",
      "motor <motor_id>"},
     {{"motorscroll"},
      true,
-     motors_cmdScroll,
+     cmd_motors_scroll,
      "Continuously update the console with new motor values.",
      "motorscroll"},
+    {{"ping"}, true, cmd_ping, "Check console responsiveness.", "ping"},
+    {{"ps"}, false, cmd_ps, "List information about all active threads.", "ps"},
     {{"radio"},
      false,
-     comm_cmdProcess,
+     cmd_radio,
      "Show information about the radio & perform basic radio tasks.",
-     "radio [ports | test-tx | test-rx] [[open, close, show, reset] "
+     "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
+     "reset] "
      "<port_num>]"},
+    {{"reboot", "reset", "restart"},
+     false,
+     cmd_interface_reset,
+     "Resets the mbed (like pushing the reset button).",
+     "reboot | reset | restart"},
+    {{"rmdev", "unconnect"},
+     false,
+     cmd_interface_disconnect,
+     "Disconnects the mbed interface chip from the microcontroller.",
+     "rmdev | unconnect [-P]"},
     {{"rpc"},
      false,
      cmd_rpc,
      "Execute RPC commands on the mbed.",
-     "rpc <rpc-command>"}};
+     "rpc <rpc-command>"},
+    {{"su", "user"},
+     false,
+     cmd_console_user,
+     "Set active user.",
+     "su | user <new_username>"}};
 
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
 * for those commands.
 */
-
-void cmd_alias(const vector<string>& args) {
+int cmd_alias(cmd_args_t& args) {
     // If no args given, list all aliases
     if (args.empty() == true) {
         for (uint8_t i = 0; i < commands.size(); i++) {
@@ -213,54 +230,64 @@ void cmd_alias(const vector<string>& args) {
             printf("\r\n");
         }
     }
+
+    return 0;
 }
 
 /**
 * Clears the console.
 */
-void cmd_clear(const vector<string>& args) {
+int cmd_console_clear(cmd_args_t& args) {
     if (args.empty() == false) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         Console::Flush();
         printf(ENABLE_SCROLL_SEQ.c_str());
         printf(CLEAR_SCREEN_SEQ.c_str());
     }
+
+    return 0;
 }
 
 /**
  * Echos text.
  */
-void cmd_echo(const vector<string>& args) {
+int cmd_console_echo(cmd_args_t& args) {
     for (uint8_t argInd = 0; argInd < args.size(); argInd++)
         printf("%s ", args[argInd].c_str());
 
     printf("\r\n");
+
+    return 0;
 }
 
 /**
  * Requests a system stop. (breaks main loop, or whatever implementation this
  * links to).
  */
-void cmd_exitSys(const vector<string>& args) {
+int cmd_console_exit(cmd_args_t& args) {
     if (args.empty() == false) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         printf("Shutting down serial console. Goodbye!\r\n");
         Console::RequestSystemStop();
     }
+
+    return 0;
 }
 
 /**
  * Prints command help.
  */
-void cmd_help(const vector<string>& args) {
+int cmd_help(cmd_args_t& args) {
     // printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
 
     // Prints all commands, with details
     if (args.empty() == true) {
         // Default to a short listing of all the commands
-        for (uint8_t i = 0; i < commands.size(); i++)
+        for (size_t i = 0; i < commands.size(); i++)
             printf("\t%s:\t%s\r\n", commands[i].aliases[0].c_str(),
                    commands[i].description.c_str());
 
@@ -289,7 +316,7 @@ void cmd_help(const vector<string>& args) {
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
                     commands[i].aliases.front().c_str(),
-                    (commands[i].isIterative ? " [ITERATIVE]" : ""),
+                    (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
         } else {
@@ -300,9 +327,11 @@ void cmd_help(const vector<string>& args) {
 
         printf("\r\n");
     }
+
+    return 0;
 }
 
-void cmd_help_detail(const vector<string>& args) {
+int cmd_help_detail(cmd_args_t& args) {
     // iterate through args
     for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
         // iterate through commands
@@ -320,24 +349,26 @@ void cmd_help_detail(const vector<string>& args) {
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
                     commands[i].aliases.front().c_str(),
-                    (commands[i].isIterative ? " [ITERATIVE]" : ""),
+                    (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
         }
-
         // if the command wasn't found, notify
         if (!commandFound) {
             printf("Command \"%s\" not found.\r\n", args.at(argInd).c_str());
         }
     }
+
+    return 0;
 }
 
 /**
  * Console responsiveness test.
  */
-void cmd_ping(const vector<string>& args) {
+int cmd_ping(cmd_args_t& args) {
     if (args.empty() == false) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         time_t sys_time = time(nullptr);
         Console::Flush();
@@ -346,14 +377,17 @@ void cmd_ping(const vector<string>& args) {
 
         Thread::wait(600);
     }
+
+    return 0;
 }
 
 /**
  * Resets the mbed (should be the equivalent of pressing the reset button).
  */
-void cmd_resetMbed(const vector<string>& args) {
+int cmd_interface_reset(cmd_args_t& args) {
     if (args.empty() == false) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         printf("The system is going down for reboot NOW!\033[0J\r\n");
         Console::Flush();
@@ -363,12 +397,14 @@ void cmd_resetMbed(const vector<string>& args) {
 
         mbed_interface_reset();
     }
+
+    return 0;
 }
 
 /**
  * Lists files.
  */
-void cmd_ls(const vector<string>& args) {
+int cmd_ls(cmd_args_t& args) {
     DIR* d;
     struct dirent* p;
 
@@ -398,17 +434,19 @@ void cmd_ls(const vector<string>& args) {
             printf("Could not find %s\r\n", args.front().c_str());
         }
 
-        LOG(FATAL, "CODE ERROR! FIX ME!");
+        return 1;
     }
+
+    return 0;
 }
 
 /**
  * Prints system info.
  */
-void cmd_info(const vector<string>& args) {
+int cmd_info(cmd_args_t& args) {
     if (args.empty() == false) {
-        showInvalidArgs(args);
-
+        show_invalid_args(args);
+        return 1;
     } else {
         char buf[33];
         DS2411_t id;
@@ -424,9 +462,10 @@ void cmd_info(const vector<string>& args) {
         printf("\tAPI Ver:\t%u\r\n", osCMSIS);
 
         printf(
-            "\tCommit Hash:\t%s\r\n\tCommit Date:\t%s\r\n\tCommit "
+            "\tCommit Hash:\t%s%s\r\n\tCommit Date:\t%s\r\n\tCommit "
             "Author:\t%s\r\n",
-            git_version_hash, git_head_date, git_head_author);
+            git_version_hash, git_version_dirty ? " (dirty)" : "",
+            git_head_date, git_head_author);
 
         printf("\tBuild Date:\t%s %s\r\n", __DATE__, __TIME__);
 
@@ -477,36 +516,39 @@ void cmd_info(const vector<string>& args) {
            SOMEHOW]
             *****
 
-            LPC_USB->USBDevIntClr = (0x01 << 3);	// clear the DEV_STAT
+            LPC_USB->USBDevIntClr = (0x01 << 3);    // clear the DEV_STAT
            interrupt bit before beginning
-            LPC_USB->USBDevIntClr = (0x03 << 4);	// make sure CCEmpty &
+            LPC_USB->USBDevIntClr = (0x03 << 4);    // make sure CCEmpty &
            CDFull are cleared before starting
             // Sending a COMMAND transfer type for getting the [USB] device
            status. We expect 1 byte.
             LPC_USB->USBCmdCode = (0x05 << 8) | (0xFE << 16);
-            while (!(LPC_USB->USBDevIntSt & 0x10));	// wait for the command
+            while (!(LPC_USB->USBDevIntSt & 0x10)); // wait for the command
            to be completed
-            LPC_USB->USBDevIntClr = 0x10;	// clear the CCEmpty interrupt bit
+            LPC_USB->USBDevIntClr = 0x10;   // clear the CCEmpty interrupt bit
 
             // Now we request a read transfer type for getting the same thing
             LPC_USB->USBCmdCode = (0x02 << 8) | (0xFE << 16);
-            while (!(LPC_USB->USBDevIntSt & 0x20));	// Wait for CDFULL. data
+            while (!(LPC_USB->USBDevIntSt & 0x20)); // Wait for CDFULL. data
            ready after this in USBCmdData
-            uint8_t regVal = LPC_USB->USBCmdData;	// get the byte
-            LPC_USB->USBDevIntClr = 0x20;	// clear the CDFULL interrupt bit
+            uint8_t regVal = LPC_USB->USBCmdData;   // get the byte
+            LPC_USB->USBDevIntClr = 0x20;   // clear the CDFULL interrupt bit
 
             printf("\tUSB Byte:\t0x%02\r\n", regVal);
         */
     }
+
+    return 0;
 }
 
 /**
  * [cmd_disconnectMbed description]
  * @param args [description]
  */
-void cmd_disconnectInterface(const vector<string>& args) {
+int cmd_interface_disconnect(cmd_args_t& args) {
     if (args.empty() > 1) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         if (args.empty() == true) {
             mbed_interface_disconnect();
@@ -517,24 +559,30 @@ void cmd_disconnectInterface(const vector<string>& args) {
             mbed_interface_powerdown();
         }
     }
+
+    return 0;
 }
 
-void cmd_checkInterfaceConn(const vector<string>& args) {
+int cmd_interface_check_conn(cmd_args_t& args) {
     if (args.empty() == false) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         printf("mbed interface connected: %s\r\n",
                mbed_interface_connected() ? "YES" : "NO");
     }
+
+    return 0;
 }
 
-void cmd_baudrate(const vector<string>& args) {
+int cmd_baudrate(cmd_args_t& args) {
     std::vector<int> valid_rates = {110,   300,    600,    1200,   2400,
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600};
 
     if (args.size() > 1) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else if (args.empty() == true) {
         printf("Baudrate: %u\r\n", Console::Baudrate());
     } else if (args.size() == 1) {
@@ -564,27 +612,36 @@ void cmd_baudrate(const vector<string>& args) {
             printf("Invalid argument \"%s\".\r\n", str_baud.c_str());
         }
     }
+
+    return 0;
 }
 
-void cmd_switchUser(const vector<string>& args) {
+int cmd_console_user(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         Console::changeUser(args.front());
     }
+
+    return 0;
 }
 
-void cmd_switchHostname(const vector<string>& args) {
+int cmd_console_hostname(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else {
         Console::changeHostname(args.front());
     }
+
+    return 0;
 }
 
-void cmd_logLevel(const vector<string>& args) {
+int cmd_log_level(cmd_args_t& args) {
     if (args.size() > 1) {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     } else if (args.empty() == true) {
         printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
     } else {
@@ -602,7 +659,7 @@ void cmd_logLevel(const vector<string>& args) {
             // this will return a signed int, so the level
             // could increase or decrease...or stay the same.
             int newLvl = (int)rjLogLevel;  // rjLogLevel is unsigned, so we'll
-                                           // need to change that first
+            // need to change that first
             newLvl += logLvlChange(args.front());
 
             if (newLvl >= LOG_LEVEL_END) {
@@ -623,12 +680,14 @@ void cmd_logLevel(const vector<string>& args) {
             }
         }
     }
+
+    return 0;
 }
 
-void cmd_rpc(const vector<string>& args) {
+int cmd_rpc(cmd_args_t& args) {
     if (args.empty() == true) {
-        showInvalidArgs(args);
-
+        show_invalid_args(args);
+        return 1;
     } else {
         // remake the original string so it can be passed to RPC
         std::string in_buf(args.at(0));
@@ -642,19 +701,119 @@ void cmd_rpc(const vector<string>& args) {
 
         std::printf("%s\r\n", out_buf);
     }
+
+    return 0;
+}
+
+int cmd_led(cmd_args_t& args) {
+    if (args.empty() == true) {
+        show_invalid_args(args);
+        return 1;
+    } else {
+        NeoStrip led(RJ_NEOPIXEL);
+        led.setFromDefaultBrightness();
+        led.setFromDefaultColor();
+
+        if (strcmp(args.front().c_str(), "brightness") == 0) {
+            if (args.size() > 1) {
+                float bri = atof(args.at(1).c_str());
+                printf("Setting LED brightness to %.2f.\r\n", bri);
+                if (bri > 0 && bri <= 1.0) {
+                    NeoStrip::defaultBrightness(bri);
+                    led.setFromDefaultBrightness();
+                    led.setFromDefaultColor();
+                    led.write();
+                } else {
+                    printf(
+                        "Invalid brightness level of %.2f. Use 'state' command "
+                        "to toggle LED's state.\r\n",
+                        bri);
+                }
+            } else {
+                printf("Current brightness:\t%.2f\r\n", led.brightness());
+            }
+        } else if (strcmp(args.front().c_str(), "color") == 0) {
+            if (args.size() > 1) {
+                std::map<std::string, NeoColor> colors;
+                // order for struct is green, red, blue
+                colors["red"] = {0x00, 0xFF, 0x00};
+                colors["green"] = {0xFF, 0x00, 0x00};
+                colors["blue"] = {0x00, 0x00, 0xFF};
+                colors["yellow"] = {0xFF, 0xFF, 0x00};
+                colors["purple"] = {0x00, 0xFF, 0xFF};
+                colors["white"] = {0xFF, 0xFF, 0xFF};
+                auto it = colors.find(args.at(1));
+                if (it != colors.end()) {
+                    printf("Changing color to %s.\r\n", it->first.c_str());
+                    led.setPixel(1, it->second.red, it->second.green,
+                                 it->second.blue);
+                } else {
+                    show_invalid_args(args);
+                    return 1;
+                }
+            } else {
+                return 1;
+            }
+            // push out the changes to the led
+            led.write();
+        } else if (strcmp(args.front().c_str(), "state") == 0) {
+            if (args.size() > 1) {
+                if (strcmp(args.at(1).c_str(), "on") == 0) {
+                    printf("Turning LED on.\r\n");
+                } else if (strcmp(args.at(1).c_str(), "off") == 0) {
+                    printf("Turning LED off.\r\n");
+                    led.brightness(0.0);
+                } else {
+                    show_invalid_args(args.at(1));
+                    return 1;
+                }
+                led.setFromDefaultColor();
+            } else {
+                return 1;
+            }
+            // push out the changes to the led
+            led.write();
+        } else {
+            show_invalid_args(args);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int cmd_ps(cmd_args_t& args) {
+    if (args.empty() != true) {
+        show_invalid_args(args);
+        return 1;
+    } else {
+        unsigned int num_threads = 0;
+        P_TCB p_b = (P_TCB)&os_rdy;
+        std::printf("ID\tPRIOR\tB_PRIOR\tSTATE\tDELTA TIME\r\n");
+        // iterate over the linked list of tasks
+        while (p_b != NULL) {
+            std::printf("%u\t%u\t%u\t%u\t%u\r\n", p_b->task_id, p_b->prio,
+                        p_b->state, p_b->delta_time);
+
+            num_threads++;
+            p_b = p_b->p_lnk;
+        }
+        std::printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
+    }
+
+    return 0;
 }
 
 /**
- * [comm_cmdProcess description]
+ * [cmd_radio description]
  * @param args [description]
  */
-void comm_cmdProcess(const vector<string>& args) {
+int cmd_radio(cmd_args_t& args) {
     if (args.empty() == true) {
         // Default to showing the list of ports
         CommModule::PrintInfo(true);
 
     } else if (args.size() == 1) {
-        if (strcmp(args.front().c_str(), "ports") == 0) {
+        if (strcmp(args.front().c_str(), "port") == 0) {
             CommModule::PrintInfo(true);
 
         } else {
@@ -662,22 +821,30 @@ void comm_cmdProcess(const vector<string>& args) {
                 rtp::packet pck;
                 std::string msg = "LINK TEST PAYLOAD";
 
-                pck.header_link = RTP_HEADER(rtp::port::LINK, 1, true, false);
+                pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
                 pck.payload_size = msg.length();
-                strcpy((char*)pck.payload, msg.c_str());
+                memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
                 pck.address = BASE_STATION_ADDR;
 
                 if (strcmp(args.front().c_str(), "test-tx") == 0) {
                     printf("Placing %u byte packet in TX buffer.\r\n",
                            pck.payload_size);
                     CommModule::send(pck);
-
                 } else if (strcmp(args.front().c_str(), "test-rx") == 0) {
                     printf("Placing %u byte packet in RX buffer.\r\n",
                            pck.payload_size);
                     CommModule::receive(pck);
+                } else if (strcmp(args.front().c_str(), "loopback") == 0) {
+                    pck.ack = true;
+                    pck.subclass = 2;
+                    pck.address = LOOPBACK_ADDR;
+                    printf(
+                        "Placing %u byte packet in TX buffer with ACK set.\r\n",
+                        pck.payload_size);
+                    CommModule::send(pck);
                 } else {
-                    showInvalidArgs(args.front());
+                    show_invalid_args(args.front());
+                    return 1;
                 }
             } else {
                 printf("The radio interface is not ready.\r\n");
@@ -712,17 +879,23 @@ void comm_cmdProcess(const vector<string>& args) {
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
                 } else {
-                    showInvalidArgs(args);
+                    show_invalid_args(args);
+                    return 1;
                 }
             } else {
-                showInvalidArgs(args.at(2));
+                show_invalid_args(args.at(2));
+                return 1;
             }
         } else {
-            showInvalidArgs(args.at(2));
+            show_invalid_args(args.at(2));
+            return 1;
         }
     } else {
-        showInvalidArgs(args);
+        show_invalid_args(args);
+        return 1;
     }
+
+    return 0;
 }
 
 /**
@@ -730,7 +903,7 @@ void comm_cmdProcess(const vector<string>& args) {
  *
  * Much of this taken from `console.c` from the old robot firmware (2011).
  */
-void executeLine(char* rawCommand) {
+void execute_line(char* rawCommand) {
     char* endCmd;
     char* cmds = strtok_r(rawCommand, ";", &endCmd);
 
@@ -774,21 +947,25 @@ void executeLine(char* rawCommand) {
                     // iteration of the loop, set the handler and
                     // args and flag the loop to execute on each
                     // iteration.
-                    if (commands[cmdInd].isIterative) {
-                        itCmdState = false;
+                    if (commands[cmdInd].is_iterative) {
+                        iterative_command_state = false;
 
                         // Sets the current arg count, args, and
                         // command function in fields to be used
                         // in the iterative call.
-                        iterativeCommandArgs = args;
-                        iterativeCommandHandler = commands[cmdInd].handler;
-
-                        itCmdState = true;
+                        iterative_command_args = args;
+                        iterative_command_handler = commands[cmdInd].handler;
+                        iterative_command_state = true;
                     }
                     // If the command is not iterative, execute it
                     // once immeidately.
                     else {
-                        commands[cmdInd].handler(args);
+                        int exitState = commands[cmdInd].handler(args);
+                        if (exitState != 0) {
+                            printf("\r\n");
+                            cmd_args_t cmdN = {cmdName};
+                            cmd_help_detail(cmdN);
+                        }
                     }
 
                     break;
@@ -799,7 +976,7 @@ void executeLine(char* rawCommand) {
                 std::size_t pos = COMMAND_NOT_FOUND_MSG.find("%s");
 
                 if (pos == std::string::npos) {  // no format specifier found in
-                                                 // our defined message
+                    // our defined message
                     printf("%s\r\n", COMMAND_NOT_FOUND_MSG.c_str());
                 } else {
                     std::string not_found_cmd = COMMAND_NOT_FOUND_MSG;
@@ -818,21 +995,21 @@ void executeLine(char* rawCommand) {
  * Executes iterative commands, and is nonblocking regardless
  * of if an iterative command is not running or not.
  */
-void executeIterativeCommand() {
-    if (itCmdState == true) {
+void execute_iterative_command() {
+    if (iterative_command_state == true) {
         if (Console::IterCmdBreakReq() == true) {
-            itCmdState = false;
+            iterative_command_state = false;
 
             // reset the flag for receiving a break character in the Console
             // class
             Console::IterCmdBreakReq(false);
         } else {
-            iterativeCommandHandler(iterativeCommandArgs);
+            iterative_command_handler(iterative_command_args);
         }
     }
 }
 
-void showInvalidArgs(const vector<string>& args) {
+void show_invalid_args(cmd_args_t& args) {
     printf("Invalid arguments");
 
     if (args.empty() == false) {
@@ -849,6 +1026,6 @@ void showInvalidArgs(const vector<string>& args) {
     printf("\r\n");
 }
 
-void showInvalidArgs(const string& s) {
+void show_invalid_args(const string& s) {
     printf("Invalid argument '%s'.\r\n", s.c_str());
 }

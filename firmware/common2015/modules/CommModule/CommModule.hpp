@@ -97,8 +97,8 @@ public:
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values
-    static void send(rtp::packet&);
-    static void receive(rtp::packet&);
+    static void send(const rtp::packet&);
+    static void receive(const rtp::packet&);
 
     static unsigned int NumRXPackets();
     static unsigned int NumTXPackets();

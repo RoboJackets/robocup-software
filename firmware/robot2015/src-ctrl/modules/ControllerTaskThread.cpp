@@ -1,11 +1,11 @@
-#include "robot-devices.hpp"
-#include "TaskSignals.hpp"
-
 #include <rtos.h>
 #include <RPCVariable.h>
+
 #include <logger.hpp>
 #include <assert.hpp>
 
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 #include "motors.hpp"
 #include "mpu-6050.hpp"
 
@@ -21,6 +21,7 @@ namespace {
 // The gyro/accel values are given RPC read/write access here
 float gyroVals[3] = {0};
 float accelVals[3] = {0};
+
 // RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
 // RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
 // RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
