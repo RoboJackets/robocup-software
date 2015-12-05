@@ -22,4 +22,4 @@ KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6119", SYMLI
 # MBED
 # Note: the '%n' in SYMLINK is replaced with the device number so if there are multiple
 #       mbeds connected, they get unique names
-KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", SYMLINK+="mbed%n"
+KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", SYMLINK+="mbed%n", MODE="0660", GROUP="plugdev"
