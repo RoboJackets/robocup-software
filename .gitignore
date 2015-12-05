@@ -29,6 +29,9 @@ __pycache__/
 # IntelliJ
 .idea
 
+# clang symlink
+/clang
+
 # output binaries
 run/*.bin
 run/*.nib
