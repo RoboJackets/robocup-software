@@ -17,7 +17,7 @@ ATTR{idVendor}=="03eb", ATTR{idProduct}=="6119", MODE="0660", GROUP="plugdev", S
 
 LABEL="robocup_rules_end"
 
-KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6119", SYMLINK+="robot"
+KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6119", SYMLINK+="robot", MODE="0660", GROUP="plugdev"
 
 # MBED
 # Note: the '%n' in SYMLINK is replaced with the device number so if there are multiple
