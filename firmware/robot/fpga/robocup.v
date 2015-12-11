@@ -1,15 +1,15 @@
 // Signal naming conventions:
-// signal_s is a copy of the signal synchronized to the master clock.
-// 	(only applies to signals sampled from inputs)
-// signal_d is a copy of the signal delayed from signal_s by one clock.
-// signal_d2 is a copy of the signal delayed from signal_s by two clocks.
+//	signal_s is a copy of the signal synchronized to the master clock.
+//		(only applies to signals sampled from inputs)
+//	signal_d is a copy of the signal delayed from signal_s by one clock.
+//	signal_d2 is a copy of the signal delayed from signal_s by two clocks.
 //
 // To prevent glitches:
 // All inputs MUST be synchronized before use.
 // All outputs MUST be driven directly from registers, not from combinational logic.
 // "always" blocks should only be clocked directly by sysclk (18.432MHz).
-// 	The exception is when using an always block to write combinational logic.
-// 	ALL registers must be synchronized to sysclk.  Do not use gated or divided clocks.
+//		The exception is when using an always block to write combinational logic.
+//		ALL registers must be synchronized to sysclk.  Do not use gated or divided clocks.
 //
 // "begin" and "end" should always be used where applicable to prevent stupid bugs.
 // I know it's ugly.
@@ -18,12 +18,11 @@
 // simulation as on the real hardware.
 // Use includes rather than a project file to make integration into a simulation easier.
 
-//`include "motor.v"
+`include "motor.v"
 `include "kicker.v"
 `include "encoder.v"
 `include "kicker_i2c.v"
 `include "hall_counter.v"
-`include "Motor_Wrapper.v" //added to incorporate new motor driver code
 
 // Conventions:
 //  Hall effect sensor vectors are [2:0] which maps to {a, b, c}.
@@ -370,11 +369,11 @@ hall_counter hall_counter_4(sysclk, hall_sync_4, hall_count_4);
 hall_counter hall_counter_5(sysclk, hall_sync_5, hall_count_5);
 
 // Motor drivers
-Motor_Wrapper md_1(sysclk, pwm_phase, motor_dir[1], motor_speed_1, drive_mode_1, hall_sync_1, {m1a_h, m1a_l, m1b_h, m1b_l, m1c_h, m1c_l}, motor_fault[1]);
-Motor_Wrapper md_2(sysclk, pwm_phase, motor_dir[2], motor_speed_2, drive_mode_2, hall_sync_2, {m2a_h, m2a_l, m2b_h, m2b_l, m2c_h, m2c_l}, motor_fault[2]);
-Motor_Wrapper md_3(sysclk, pwm_phase, motor_dir[3], motor_speed_3, drive_mode_3, hall_sync_3, {m3a_h, m3a_l, m3b_h, m3b_l, m3c_h, m3c_l}, motor_fault[3]);
-Motor_Wrapper md_4(sysclk, pwm_phase, motor_dir[4], motor_speed_4, drive_mode_4, hall_sync_4, {m4a_h, m4a_l, m4b_h, m4b_l, m4c_h, m4c_l}, motor_fault[4]);
-Motor_Wrapper md_5(sysclk, pwm_phase, motor_dir[5], motor_speed_5, drive_mode_5, hall_sync_5, {m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l}, motor_fault[5]);
+motor md_1(sysclk, pwm_phase, motor_dir[1], motor_speed_1, drive_mode_1, hall_sync_1, {m1a_h, m1a_l, m1b_h, m1b_l, m1c_h, m1c_l}, motor_fault[1]);
+motor md_2(sysclk, pwm_phase, motor_dir[2], motor_speed_2, drive_mode_2, hall_sync_2, {m2a_h, m2a_l, m2b_h, m2b_l, m2c_h, m2c_l}, motor_fault[2]);
+motor md_3(sysclk, pwm_phase, motor_dir[3], motor_speed_3, drive_mode_3, hall_sync_3, {m3a_h, m3a_l, m3b_h, m3b_l, m3c_h, m3c_l}, motor_fault[3]);
+motor md_4(sysclk, pwm_phase, motor_dir[4], motor_speed_4, drive_mode_4, hall_sync_4, {m4a_h, m4a_l, m4b_h, m4b_l, m4c_h, m4c_l}, motor_fault[4]);
+motor md_5(sysclk, pwm_phase, motor_dir[5], motor_speed_5, drive_mode_5, hall_sync_5, {m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l}, motor_fault[5]);
 
 // Encoders
 encoder counter1(sysclk, {m1enc_a, m1enc_b}, encoder_1);
