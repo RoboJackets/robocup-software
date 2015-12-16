@@ -51,10 +51,11 @@ public:
     RobotPose()
         : visible(false), angle(0), angleVel(0), time(0), visionFrame(0) {
         // normalize angle so it's always positive
-        while (angle < 0) angle += 2.0 * M_PI;
+        // while (angle < 0) angle += 2.0 * M_PI;
     }
 
     bool visible;
+
     Geometry2d::Point pos;
     Geometry2d::Point vel;
     /// angle in radians.  0 radians means the robot is aimed along the x-axis
@@ -68,6 +69,7 @@ public:
 
 class Robot : public RobotPose {
 public:
+
     Robot(unsigned int shell, bool self);
     ~Robot();
 
