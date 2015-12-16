@@ -32,15 +32,7 @@ const float Ball_Avoid_Small = 2.0 * Ball_Radius;
  */
 const bool verbose = false;
 
-Robot::Robot(unsigned int shell, bool self) {
-    visible = false;
-    _shell = shell;
-    _self = self;
-    angle = 0;
-    angleVel = 0;
-
-    _filter = new RobotFilter();
-}
+Robot::Robot(unsigned int shell, bool self) : RobotPose(), _shell(shell), _self(self), _filter(new RobotFilter()) {}
 
 Robot::~Robot() {
     delete _filter;

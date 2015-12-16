@@ -20,7 +20,7 @@ public:
     virtual ~Path() {}
 
     /**
-     * This method evalates the path at a given time and returns the target
+     * This method evaluates the path at a given time and returns the target
      * position and velocity of the robot.
      *
      * @param t Time (in seconds) since the robot started the path. Throws an
