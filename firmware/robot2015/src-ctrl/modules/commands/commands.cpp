@@ -819,10 +819,10 @@ int cmd_radio(cmd_args_t& args) {
         } else {
             if (CommModule::isReady() == true) {
                 rtp::packet pck;
-                std::string msg = "LINK TEST PAYLOAD";
+                const std::string msg = "LINK TEST PAYLOAD";
 
                 pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
-                pck.payload_size = msg.length();
+                pck.payload_size = msg.length() + 1;
                 memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
                 pck.address = BASE_STATION_ADDR;
 

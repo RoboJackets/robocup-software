@@ -8,6 +8,7 @@
 #include <helper-funcs.hpp>
 #include <watchdog.hpp>
 #include <logger.hpp>
+#include <assert.hpp>
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
@@ -49,16 +50,19 @@ void statusLightsOFF(void const* args) { statusLights(0); }
  * @return  [none]
  */
 int main() {
+    // Store the thread's ID
+    static const osThreadId mainID = Thread::gettid();
+    ASSERT(mainID != nullptr);
+
     // clear any extraneous rx serial bytes
     if (1) {
         Serial s(RJ_SERIAL_RXTX);
         // flush rx queue?
-        while (s.readable()) {
-            s.getc();
-        }
-        // print out the baudrate we're using as a last resort to let the user
-        // know
-        // they may or may not see it depending on many factors
+        while (s.readable()) s.getc();
+
+        // print out the baudrate we're using as a last resort
+        // to let the user know they may or may not see it
+        // depending on many factors.
         s.baud(9600);
         std::printf("BAUDRATE: 57600\n");
         s.baud(57600);
@@ -111,10 +115,10 @@ int main() {
      */
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
-        osSignalSet(Thread::gettid(), MAIN_TASK_CONTINUE);
+        osSignalSet(mainID, MAIN_TASK_CONTINUE);
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
-        osSignalSet(Thread::gettid(), MAIN_TASK_CONTINUE);
+        osSignalSet(mainID, MAIN_TASK_CONTINUE);
     }
 
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
@@ -122,13 +126,13 @@ int main() {
     motors_Init();
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, nullptr, osPriorityHigh);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
 
     // Start the thread task for handling radio communications
-    Thread comm_task(Task_CommCtrl, nullptr, osPriorityAboveNormal);
+    Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
 
     // Start the thread task for the serial console
-    Thread console_task(Task_SerialConsole, nullptr, osPriorityBelowNormal);
+    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
 
 #if RJ_WATCHDOG_TIMER_EN
     // Enable the watchdog timer if it's set in configurations.
@@ -150,6 +154,15 @@ int main() {
 
     // Make sure all of the motors are enabled
     FPGA::Instance()->motors_en(true);
+
+    // Wait for all threads to get to their ready state
+    for (size_t i = 0; i < 3; ++i)
+        Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+
+    // Release each thread into its operations in a structured manner
+    controller_task.signal_set(SUB_TASK_CONTINUE);
+    comm_task.signal_set(SUB_TASK_CONTINUE);
+    console_task.signal_set(SUB_TASK_CONTINUE);
 
     while (true) {
         // make sure we can always reach back to main by

@@ -12,6 +12,8 @@
  * Initializes the console
  */
 void Task_SerialConsole(void const* args) {
+    const osThreadId* mainID = (const osThreadId*)args;
+
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -38,16 +40,9 @@ void Task_SerialConsole(void const* args) {
         "\tPriority:\t%d",
         threadID, threadPriority);
 
-    // Lower our priority so we will yield to other, more important, startup
-    // tasks
-    ASSERT(osThreadSetPriority(threadID, osPriorityLow) == osOK);
-
-    // Yield to other threads during startup so that the below lines will
-    // print to the console last
-    Thread::yield();
-
-    // Reset our priorty
-    ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);
+    // Signal back to main and wait until we're signaled to continue
+    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     // Display RoboJackets if we're up and running at this point during startup
     Console::ShowLogo();
