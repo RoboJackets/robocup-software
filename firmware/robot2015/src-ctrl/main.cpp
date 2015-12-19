@@ -169,7 +169,13 @@ int main() {
         // renewing the watchdog timer periodicly
         rdy_led = !fpga_ready;
         Watchdog::Renew();
-        Thread::wait(2 * RJ_WATCHDOG_TIMER_VALUE);
+        // toggle the neopixel between green & blue
+        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+        rgbLED.write();
+        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
+        rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
+        rgbLED.write();
+        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
     }
 }
 
