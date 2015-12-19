@@ -857,6 +857,21 @@ int cmd_radio(cmd_args_t& args) {
             if (strcmp(args.at(1).c_str(), "show") == 0) {
                 CommModule::PrintInfo(true);
             }
+        } else if (strcmp(args.front().c_str(), "loopback") == 0) {
+            if (CommModule::isReady() == true) {
+                rtp::packet pck;
+                const std::string msg(args.at(1));
+
+                pck.header_link = RTP_HEADER(rtp::port::LINK, 1, true, false);
+                pck.payload_size = msg.length() + 1;
+                memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
+                pck.subclass = 2;
+                pck.address = LOOPBACK_ADDR;
+                printf("Placing %u byte packet in TX buffer with ACK set.\r\n",
+                       pck.payload_size);
+                LOG(INIT, "size:\t%d", args.size());
+                CommModule::send(pck);
+            }
         }
     } else if (args.size() == 3) {
         if (strcmp(args.front().c_str(), "ports") == 0) {
