@@ -166,36 +166,39 @@ void Task_CommCtrl(void const* args) {
         CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
         CommModule::openSocket(rtp::port::LINK);
 
-        osThreadTerminate(threadID);
-        return;
+        // osThreadTerminate(threadID);
+        // return;
     }
-
-    // Wait until the threads with the CommModule class are all started up and
-    // ready
-    while (CommModule::isReady() == false) {
-        Thread::wait(50);
-    }
-
-    // == everything below this line all the way until the start of the while
-    // loop is test code ==
-    const std::string linkTestMsg = "Hello World!";
-
-    // Test RX acknowledgment with a packet structured to trigger the ACK
-    // response
-    rtp::packet ack_pck;
-    ack_pck.header_link = RTP_HEADER(rtp::port::LINK, 1, true, false);
-    ack_pck.payload_size = linkTestMsg.length();
-    strcpy((char*)ack_pck.payload, (char*)linkTestMsg.c_str());
-    ack_pck.address = BASE_STATION_ADDR;
-
-    LOG(INIT,
-        "Placing link test packet in RX buffer:\r\n"
-        "\tPayload:\t%s\t(%u bytes)",
-        (char*)ack_pck.payload, ack_pck.payload_size);
-
-    CommModule::receive(ack_pck);
 
     while (true) {
+        // Wait until the threads with the CommModule class are all started up
+        // and
+        // ready
+        while (CommModule::isReady() == false) {
+            Thread::wait(50);
+        }
+
+        // == everything below this line all the way until the start
+        // of the while loop is test code ==
+        const std::string linkTestMsg = "Hello World!";
+
+        // Test RX acknowledgment with a packet structured to trigger the ACK
+        // response
+        rtp::packet ack_pck;
+        ack_pck.header_link = RTP_HEADER(rtp::port::LINK, 1, true, false);
+        ack_pck.payload_size = linkTestMsg.length();
+        memcpy((char*)ack_pck.payload, linkTestMsg.c_str(),
+               ack_pck.payload_size + 1);
+        ack_pck.address = BASE_STATION_ADDR;
+        ack_pck.address = LOOPBACK_ADDR;
+
+        LOG(INIT,
+            "Placing link test packet in RX buffer:\r\n"
+            "\tPayload:\t%s\t(%u bytes)",
+            (char*)ack_pck.payload, ack_pck.payload_size);
+
+        CommModule::receive(ack_pck);
+
         Thread::wait(1500);
         Thread::yield();
 
