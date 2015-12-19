@@ -172,8 +172,8 @@ void Task_CommCtrl(void const* args) {
         osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
         Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-        // osThreadTerminate(threadID);
-        // return;
+        osThreadTerminate(threadID);
+        return;
     }
 
     // Wait until the threads with the CommModule class are all started up
