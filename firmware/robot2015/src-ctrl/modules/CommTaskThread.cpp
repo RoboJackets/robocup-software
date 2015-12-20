@@ -170,7 +170,7 @@ void Task_CommCtrl(void const* args) {
     } else {
         LOG(FATAL,
             "No radio interface found!\r\n"
-            "\tTerminating main radio thread.");
+            "    Terminating main radio thread.");
 
         // TODO: Turn on radio error LED here
 
@@ -213,7 +213,7 @@ void Task_CommCtrl(void const* args) {
 
     LOG(INIT,
         "Placing link test packet in RX buffer:\r\n"
-        "\tPayload:\t%s\t(%u bytes)",
+        "    Payload:\t%s\t(%u bytes)",
         (char*)ack_pck.payload, ack_pck.payload_size);
 
     CommModule::receive(ack_pck);
