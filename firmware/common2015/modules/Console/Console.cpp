@@ -83,6 +83,12 @@ void Console::RXCallback() {
             // read the char that caused the interrupt
             char c = GETC();
 
+            if (esc_flag_one == true && esc_flag_two == true) {
+                esc_en = true;
+            } else {
+                esc_en = false;
+            }
+
             // if the buffer is full, ignore the chracter and print a
             // warning to the console
             if (rxIndex >= (BUFFER_LENGTH - 5) && c != BACKSPACE_FLAG_CHAR) {
@@ -103,6 +109,10 @@ void Console::RXCallback() {
                 Flush();
                 rxBuffer[rxIndex] = '\0';
 
+                if (history.size() >= MAX_HISTORY) history.pop_front();
+                if (rxIndex != 0) history.push_back(rxBuffer);
+
+                history_index = 0;
                 command_ready = true;
                 command_handled = false;
             }
@@ -130,15 +140,74 @@ void Console::RXCallback() {
                 iter_break_req = true;
             }
 
-            // No special character, add it to the buffer and return it to
-            // the terminal to be visible.
-            else {
-                if (!(c == ARROW_UP_KEY || c == ARROW_DOWN_KEY ||
-                      c == ARROW_DOWN_KEY || c == ARROW_DOWN_KEY)) {
+            else if (c == ESCAPE_SEQ_ONE) {
+                esc_flag_one = true;
+            }
+
+            else if (c == ESCAPE_SEQ_TWO) {
+                if (esc_flag_one == true) {
+                    esc_flag_two = true;
+                } else {
+                    esc_flag_two = false;
+                }
+            }
+
+            else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
+                if (esc_en == false) {
                     rxBuffer[rxIndex++] = c;
+                    PUTC(c);
+                    Flush();
+                } else {
+                    if (history_index < 0) history_index = 0;
+                    if (history_index >= history.size())
+                        history_index =
+                            history.size() - (history.empty() ? 0 : 1);
+
+                    if (history.size() > 0 &&
+                        !(rxIndex == 0 && c == ARROW_DOWN_KEY)) {
+                        std::string cmd =
+                            history.at(history.size() - 1 - history_index);
+                        PRINTF("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
+                        rxIndex = cmd.size();
+                        memcpy(rxBuffer, cmd.c_str(), rxIndex + 1);
+                    }
+
+                    switch (c) {
+                        case ARROW_UP_KEY:
+                            history_index++;
+                            break;
+                        case ARROW_DOWN_KEY:
+                            history_index--;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                esc_flag_one = false;
+                esc_flag_two = false;
+            }
+
+            else if (c == ARROW_LEFT_KEY || c == ARROW_RIGHT_KEY) {
+                if (esc_en == false) {
+                    rxBuffer[rxIndex++] = c;
+                } else {
+                    PUTC(ESCAPE_SEQ_ONE);
+                    PUTC(ESCAPE_SEQ_TWO);
                 }
                 PUTC(c);
                 Flush();
+                esc_flag_one = false;
+                esc_flag_two = false;
+            }
+
+            // No special character, add it to the buffer and return it to
+            // the terminal to be visible.
+            else {
+                rxBuffer[rxIndex++] = c;
+                PUTC(c);
+                Flush();
+                esc_flag_one = false;
+                esc_flag_two = false;
             }
         }
     }
