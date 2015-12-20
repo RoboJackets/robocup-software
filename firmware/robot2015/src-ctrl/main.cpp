@@ -167,6 +167,8 @@ int main() {
     comm_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
+    ASSERT(osThreadSetPriority(mainID, osPriorityLow) == osOK);
+
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
