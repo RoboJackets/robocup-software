@@ -174,12 +174,12 @@ public:
     }
 
     /**
-     * Returns a temporary observing pointer to the path of the robot.
-     * This is only currently supported for legacy reasons.
-     * Saving the pointer may lead to seg faults as it may be deleted by the
-     * Robot who owns it.
+     * Returns a const reference to the path of the robot.
      */
-    std::unique_ptr<Planning::Path>& path() { return _path; }
+    const Planning::Path& path() {
+        //return *angleFunctionPath.path;
+        return angleFunctionPath;
+    }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -440,8 +440,9 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RotationConstraints _rotationConstraints;
 
-    std::unique_ptr<Planning::Path> _path;  /// latest path
+    //std::unique_ptr<Planning::Path> _path;  /// latest path
 
+    Planning::AngleFunctionPath angleFunctionPath;
     /**
      * Creates a set of obstacles from a given robot team mask,
      * where mask values < 0 create no obstacle, and larger values

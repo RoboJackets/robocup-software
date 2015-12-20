@@ -438,7 +438,7 @@ void Processor::run() {
                 requests[r->shell()] = Planning::PlanRequest(
                     Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->motionConstraints(),
-                    std::move(r->path()),
+                    std::move(r->angleFunctionPath.path),
                     std::make_shared<ShapeSet>(std::move(fullObstacles)));
             }
         }

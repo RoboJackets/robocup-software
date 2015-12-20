@@ -27,12 +27,12 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     assert(cmd->getCommandType() == MotionCommand::None);
 
     boost::optional<Point> optPrevPt;
-    if (prevPath) optPrevPt = prevPath->end().pos;
+    if (prevPath) optPrevPt = prevPath->end().motion.pos;
     const Point unblocked =
         findNonBlockedGoal(startInstant.pos, optPrevPt, *obstacles);
 
     // reuse path if there's not a significantly better spot to target
-    if (prevPath && unblocked == prevPath->end().pos) {
+    if (prevPath && unblocked == prevPath->end().motion.pos) {
         return std::move(prevPath);
     }
 

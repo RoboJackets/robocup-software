@@ -32,9 +32,10 @@ namespace Planning {
      * angle and rotation velocity.
      */
     struct AngleInstant {
-        explicit AngleInstant(float angle = 0, float angleVel = 0) : angle(angle), angleVel(angleVel) {};
-        float angle;
-        float angleVel;
+        explicit AngleInstant(boost::optional<float> angle = boost::none, boost::optional<float> angleVel = boost::none)
+                : angle(angle), angleVel(angleVel) {};
+        boost::optional<float> angle;
+        boost::optional<float> angleVel;
 
         //TODO ashaw596 implement stream operator
     };
@@ -46,10 +47,10 @@ namespace Planning {
      */
     struct RobotInstant {
         explicit RobotInstant(MotionInstant motion = MotionInstant(),
-                              AngleInstant angle = AngleInstant())
+                              boost::optional<AngleInstant> angle = boost::none)
                 : motion(motion), angle(angle) {}
         MotionInstant motion;
-        AngleInstant angle;
+        boost::optional<AngleInstant> angle;
 
         //TODO ashaw596  implement stream operator
     };
