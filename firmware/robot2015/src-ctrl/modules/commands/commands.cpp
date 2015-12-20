@@ -64,105 +64,110 @@ static const vector<command_t> commands = {
         "description",
         "usage"},
     */
-    {{"alias", "a"},
-     false,
-     cmd_alias,
-     "Lists aliases for commands.",
-     "alias | a"},
+
+    {{"alias", "a"}, false, cmd_alias, "List aliases for commands.", "alias"},
+
     {{"baud", "baudrate"},
      false,
      cmd_baudrate,
-     "Set the serial link's baudrate.",
-     "baud | baudrate [[--list | -l] | [<target_rate>]]"},
-    {{"clear", "cls"},
-     false,
-     cmd_console_clear,
-     "Clears the screen.",
-     "clear | cls"},
+     "set the active baudrate.",
+     "baud [[--list|-l] | <rate>]"},
+
+    {{"clear", "cls"}, false, cmd_console_clear, "Clears the screen.", "clear"},
+
     {{"echo"},
      false,
      cmd_console_echo,
-     "Echos text for debugging the serial link.",
-     "echo <text>"},
+     "echo text back to the console.",
+     "echo [<text>...]"},
+
     {{"exit", "quit"},
      false,
      cmd_console_exit,
-     "Breaks the main loop.",
-     "exit | quit"},
+     "terminate the console thread.",
+     "exit"},
+
     {{"help", "h", "?"},
      false,
      cmd_help,
-     "Prints this message.",
-     "help | h | ? [[--list|-l] | [--all|-a] | <command names>]"},
+     "print this message.",
+     "help [{[--list|-l], [--all|-a]}] [<command name>...]"},
+
     {{"host", "hostname"},
      false,
      cmd_console_hostname,
-     "Set the system hostname.",
-     "host | hostname <new_hostname>"},
-    {{"info", "version", "i"},
-     false,
-     cmd_info,
-     "Display information about the current version of the firmware.",
-     "info | version | i"},
+     "set system hostname.",
+     "host <new-name>"},
+
+    {{"info", "version", "i"}, false, cmd_info, "Display system info.", "info"},
+
     {{"isconn", "checkconn"},
      false,
      cmd_interface_check_conn,
-     "Checks the connection with a debugging unit.",
-     "isconn | checkconn"},
+     "determine the mbed interface's connectivity state.",
+     "isconn"},
+
     {{"led"},
      false,
      cmd_led,
-     "Change the color and brightness of LED(s).",
-     "led [brightness|state|color] [<level>|<on|off>|<color]"},
+     "control the RGB LED.",
+     "led {bright <level>, state {on,off}, color <color>}"},
+
     {{"loglvl", "loglevel"},
      false,
      cmd_log_level,
-     "Change the active logging output level.",
-     "loglvl | loglevel {+,-}..."},
-    {{"ls", "l"},
-     false,
-     cmd_ls,
-     "List contents of current directory",
-     "ls | l [folder/device]"},
-    {{"motor"},
+     "set the console's log level.",
+     "loglvl {+,-}..."},
+
+    {{"ls", "l"}, false, cmd_ls, "List contents of current directory", "ls"},
+
+    {{"motors"},
      false,
      cmd_motors,
-     "Show information about the motors.",
-     "motor <motor_id>"},
+     "show/set motor parameters.",
+     "motors {on, off, show, set <motor-id> <duty-cycle>}"},
+
     {{"motorscroll"},
      true,
      cmd_motors_scroll,
-     "Continuously update the console with new motor values.",
+     "show motor info (until receiving Ctrl-C).",
      "motorscroll"},
-    {{"ping"}, true, cmd_ping, "Check console responsiveness.", "ping"},
-    {{"ps"}, false, cmd_ps, "List information about all active threads.", "ps"},
+
+    {{"ping"}, true, cmd_ping, "check the console's responsiveness.", "ping"},
+
+    {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
+
     {{"radio"},
      false,
      cmd_radio,
-     "Show information about the radio & perform basic radio tasks.",
-     "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
-     "reset] "
-     "<port_num>]"},
+     "test radio connectivity.",
+     "radio [{port {open,close,show,reset} <port-num>, test-tx, test-rx, "
+     "loopback "
+     "[<message>], stress-test <count> <delay> <pck-size>}]"},
+
     {{"reboot", "reset", "restart"},
      false,
      cmd_interface_reset,
-     "Resets the mbed (like pushing the reset button).",
-     "reboot | reset | restart"},
-    {{"rmdev", "unconnect"},
+     "perform a software reset.",
+     "reboot"},
+
+    {{"rmdev"},
      false,
      cmd_interface_disconnect,
-     "Disconnects the mbed interface chip from the microcontroller.",
-     "rmdev | unconnect [-P]"},
+     "disconnect the mbed interface chip.",
+     "rmdev [-P]"},
+
     {{"rpc"},
      false,
      cmd_rpc,
-     "Execute RPC commands on the mbed.",
-     "rpc <rpc-command>"},
+     "execute RPC commands.",
+     "rpc <rpc-cmd> [<rpc-arg>...]"},
+
     {{"su", "user"},
      false,
      cmd_console_user,
-     "Set active user.",
-     "su | user <new_username>"}};
+     "set the active user.",
+     "su <user>"}};
 
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
@@ -283,8 +288,6 @@ int cmd_console_exit(cmd_args_t& args) {
  * Prints command help.
  */
 int cmd_help(cmd_args_t& args) {
-    // printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
-
     // Prints all commands, with details
     if (args.empty() == true) {
         // Default to a short listing of all the commands
@@ -549,18 +552,20 @@ int cmd_info(cmd_args_t& args) {
  * @param args [description]
  */
 int cmd_interface_disconnect(cmd_args_t& args) {
-    if (args.empty() > 1) {
+    if (args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else {
-        if (args.empty() == true) {
-            mbed_interface_disconnect();
-            printf("Disconnected mbed interface.\r\n");
+    }
 
-        } else if (strcmp(args.at(0).c_str(), "-P") == 0) {
-            printf("Powering down mbed interface.\r\n");
-            mbed_interface_powerdown();
-        }
+    else if (args.empty() == true) {
+        mbed_interface_disconnect();
+        printf("Disconnected mbed interface.\r\n");
+
+    }
+
+    else if (strcmp(args.front().c_str(), "-P") == 0) {
+        printf("Powering down mbed interface.\r\n");
+        mbed_interface_powerdown();
     }
 
     return 0;
@@ -570,7 +575,9 @@ int cmd_interface_check_conn(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
         return 1;
-    } else {
+    }
+
+    else {
         printf("mbed interface connected: %s\r\n",
                mbed_interface_connected() ? "YES" : "NO");
     }
@@ -583,12 +590,11 @@ int cmd_baudrate(cmd_args_t& args) {
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600};
 
-    if (args.size() > 1) {
-        show_invalid_args(args);
-        return 1;
-    } else if (args.empty() == true) {
+    if (args.empty() == true || args.size() > 1) {
         printf("Baudrate: %u\r\n", Console::Baudrate());
-    } else if (args.size() == 1) {
+    }
+
+    else if (args.size() == 1) {
         std::string str_baud = args.front();
 
         if (strcmp(str_baud.c_str(), "--list") == 0 ||
@@ -612,7 +618,8 @@ int cmd_baudrate(cmd_args_t& args) {
                     new_rate);
             }
         } else {
-            printf("Invalid argument \"%s\".\r\n", str_baud.c_str());
+            show_invalid_args(args);
+            return 1;
         }
     }
 
@@ -623,7 +630,9 @@ int cmd_console_user(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else {
+    }
+
+    else {
         Console::changeUser(args.front());
     }
 
@@ -634,7 +643,9 @@ int cmd_console_hostname(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else {
+    }
+
+    else {
         Console::changeHostname(args.front());
     }
 
@@ -645,9 +656,13 @@ int cmd_log_level(cmd_args_t& args) {
     if (args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else if (args.empty() == true) {
+    }
+
+    else if (args.empty() == true) {
         printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
-    } else {
+    }
+
+    else {
         // bool storeVals = true;
 
         if (strcmp(args.front().c_str(), "on") == 0 ||
@@ -717,7 +732,7 @@ int cmd_led(cmd_args_t& args) {
         led.setFromDefaultBrightness();
         led.setFromDefaultColor();
 
-        if (strcmp(args.front().c_str(), "brightness") == 0) {
+        if (strcmp(args.front().c_str(), "bright") == 0) {
             if (args.size() > 1) {
                 float bri = atof(args.at(1).c_str());
                 printf("Setting LED brightness to %.2f.\r\n", bri);

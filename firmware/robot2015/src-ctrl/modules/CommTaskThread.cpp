@@ -114,8 +114,8 @@ void Task_CommCtrl(void const* args) {
     static DigitalOut rx_led(LED2, 0);
     RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
     RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
-    rx_led_ticker.start(200);
-    tx_led_ticker.start(200);
+    rx_led_ticker.start(150);
+    tx_led_ticker.start(150);
 
     // Create a new physical hardware communication link
     CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT);

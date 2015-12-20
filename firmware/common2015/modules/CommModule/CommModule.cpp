@@ -83,17 +83,14 @@ void CommModule::txThread(void const* arg) {
     threadPriority = osThreadGetPriority(instance->_txID);
     ASSERT(instance->_txID != nullptr);
 
-    // Check for the existance of a TX LED to flash
-    if (instance->_txLED == nullptr) {
-        LOG(SEVERE, "TX LED unset at thread start!");
-    }
+    // Start up a ticker that disables the strobing TX LED. This is essentially
+    // a watchdog timer for the TX LED's activity light
+    RtosTimer led_ticker_timeout(commLightsTimeout_TX, osTimerOnce, nullptr);
 
     LOG(INIT,
         "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
         instance->_txID, threadPriority);
-
-    RtosTimer led_ticker_timeout(commLightsTimeout_TX, osTimerOnce, nullptr);
 
     // Signal to the RX thread that it can begin
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
@@ -101,7 +98,7 @@ void CommModule::txThread(void const* arg) {
     osEvent evt;
 
     while (true) {
-        // When a new rtp::packet is put in the tx queue, begin operations (does
+        // When a new rtp::packet is put in the TX queue, begin operations (does
         // nothing if no new data in queue)
         evt = osMailGet(instance->_txQueue, osWaitForever);
 
@@ -149,17 +146,14 @@ void CommModule::rxThread(void const* arg) {
     threadPriority = osThreadGetPriority(instance->_rxID);
     ASSERT(instance->_rxID != nullptr);
 
-    // Check for the existance of an RX LED to flash
-    if (instance->_rxLED == nullptr) {
-        LOG(SEVERE, "rX LED unset at thread start!");
-    }
+    // Start up a ticker that disables the strobing RX LED. This is essentially
+    // a watchdog timer for the RX LED's activity light
+    RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
 
     LOG(INIT,
         "RX communication module ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
         instance->_rxID, threadPriority);
-
-    RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
 
     _isReady = true;
 
@@ -167,7 +161,7 @@ void CommModule::rxThread(void const* arg) {
     osEvent evt;
 
     while (true) {
-        // Wait until new data is placed in the class's rxQueue from a CommLink
+        // Wait until new data is placed in the class's RX queue from a CommLink
         // class
         evt = osMailGet(instance->_rxQueue, osWaitForever);
 
@@ -339,7 +333,3 @@ void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
 bool CommModule::isReady(void) { return _isReady; }
 
 int CommModule::NumOpenSockets(void) { return _ports.count_open(); }
-
-void CommModule::txLED(DigitalInOut* led) { instance->_txLED = led; }
-
-void CommModule::rxLED(DigitalInOut* led) { instance->_rxLED = led; }
