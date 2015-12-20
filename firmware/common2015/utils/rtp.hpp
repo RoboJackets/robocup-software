@@ -87,6 +87,11 @@ struct packet {
 
     bool adjusted;
 
+    packet(const packet& p) : total_size(p.total_size) {
+        memcpy(raw, p.raw, total_size);
+        resetSizes();
+    }
+
     packet() : adjusted(false){};
 
     void adjustSizes() {

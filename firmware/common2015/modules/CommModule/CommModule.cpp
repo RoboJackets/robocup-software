@@ -6,6 +6,8 @@
 
 #include "CommModule.hpp"
 
+#include <ctime>
+
 #include "CommPort.hpp"
 
 #include "helper-funcs.hpp"
@@ -53,8 +55,9 @@ void CommModule::Init(void) {
 
     // [X] - 1.2 - Define the TX & RX task threads.
     // =================
-    define_thread(instance->_txDef, &CommModule::txThread);
-    define_thread(instance->_rxDef, &CommModule::rxThread);
+    define_thread(instance->_txDef, &CommModule::txThread, osPriorityHigh);
+    define_thread(instance->_rxDef, &CommModule::rxThread,
+                  osPriorityAboveNormal);
 
     // [X] - 1.3 - Create the TX & RX threads - pass them a pointer to the
     // created object.
@@ -90,6 +93,8 @@ void CommModule::txThread(void const* arg) {
         "Priority:\t%d",
         instance->_txID, threadPriority);
 
+    RtosTimer led_ticker_timeout(commLightsTimeout_TX, osTimerOnce, nullptr);
+
     // Signal to the RX thread that it can begin
     osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
 
@@ -121,7 +126,10 @@ void CommModule::txThread(void const* arg) {
             // Release the allocated memory once data is sent
             osMailFree(instance->_txQueue, p);
 
-            strobeStatusLED((void*)(instance->_txLED));
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            led_ticker_timeout.start(300);
+            commLightsRenew_TX();
 
             ASSERT(osThreadSetPriority(_txID, threadPriority) == osOK);
         }
@@ -151,6 +159,8 @@ void CommModule::rxThread(void const* arg) {
         "Priority:\t%d",
         instance->_rxID, threadPriority);
 
+    RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
+
     _isReady = true;
 
     rtp::packet* p;
@@ -179,10 +189,14 @@ void CommModule::rxThread(void const* arg) {
                     p->port, p->subclass);
             }
 
-            osMailFree(instance->_rxQueue,
-                       p);  // free memory allocated for mail
+            // free memory allocated for mail
+            osMailFree(instance->_rxQueue, p);
 
-            strobeStatusLED((void*)(instance->_rxLED));
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            led_ticker_timeout.start(300);
+            commLightsRenew_RX();
+
             ASSERT(osThreadSetPriority(_rxID, threadPriority) == osOK);
         }
     }
