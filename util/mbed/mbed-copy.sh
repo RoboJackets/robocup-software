@@ -52,10 +52,12 @@ MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 for i in $MBED_SERIAL_PATH; do
 python3 - <<PY_END
 
-import serial;
+import serial
 try:
     print("Attempting reboot on $i")
-    serial.Serial("$i").sendBreak()
+    s = serial.Serial("$i", baudrate=57600, timeout=5)
+    s.sendBreak()
+    s.close()
     print("Reboot started")
 except:
     print("Failed to reboot $i")
