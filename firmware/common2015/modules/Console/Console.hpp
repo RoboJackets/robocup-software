@@ -126,6 +126,7 @@ public:
 
     static void PrintHeader();
     static void ShowLogo();
+    static void SetTitle(const std::string&);
     static void SetEscEnd(char c);
     static std::string GetHostResponse();
 

@@ -248,3 +248,8 @@ void Console::ShowLogo() {
 
     Flush();
 }
+
+void Console::SetTitle(const std::string& title) {
+    instance->PRINTF("\033]0;%s\007", title.c_str());
+    Flush();
+}
