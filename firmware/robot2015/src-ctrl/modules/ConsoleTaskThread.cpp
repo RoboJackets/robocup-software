@@ -50,6 +50,9 @@ void Task_SerialConsole(void const* args) {
     // Print out the header to show the user we're ready for input
     Console::PrintHeader();
 
+    // Set the title of the terminal window
+    Console::SetTitle(std::string("RoboJackets"));
+
     while (true) {
         // Execute any active iterative command
         execute_iterative_command();

@@ -47,9 +47,10 @@ callback function.
 */
 
 void loopback_ack_pck(rtp::packet* p) {
-    rtp::packet ack_pck;
-    memcpy(&ack_pck, p, p->total_size);
+    rtp::packet ack_pck = *p;
     ack_pck.ack = false;
+    ack_pck.sfs = true;
+    ack_pck.payload_size = 0;
     CommModule::send(ack_pck);
 }
 
@@ -64,9 +65,12 @@ void loopback_rx_cb(rtp::packet* p) {
             "    Received:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
             p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
+    } else if (p->sfs) {
+        LOG(OK, "Loopback rx ACK successful!\r\n");
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
+
     if (p->ack) loopback_ack_pck(p);
 }
 
@@ -77,9 +81,12 @@ void loopback_tx_cb(rtp::packet* p) {
             "    Sent:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
             p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
+    } else if (p->sfs) {
+        LOG(OK, "Loopback tx ACK successful!\r\n");
     } else {
         LOG(WARN, "Sent empty packet on loopback interface");
     }
+
     CommModule::receive(*p);
 }
 
@@ -101,10 +108,14 @@ void Task_CommCtrl(void const* args) {
     CommModule::Init();
 
     // Setup some lights that will blink whenever we send/receive packets
-    DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
-    DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
-    CommModule::rxLED(&rx_led);
-    CommModule::txLED(&tx_led);
+    // static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
+    // static const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
+    static DigitalOut tx_led(LED3, 0);
+    static DigitalOut rx_led(LED2, 0);
+    RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
+    RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
+    rx_led_ticker.start(200);
+    tx_led_ticker.start(200);
 
     // Create a new physical hardware communication link
     CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT);
@@ -171,6 +182,11 @@ void Task_CommCtrl(void const* args) {
         // signal back to main and wait until we're signaled to continue
         osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
         Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
+
+        while (true) {
+            Thread::wait(5000);
+            Thread::yield();
+        }
 
         osThreadTerminate(threadID);
         return;

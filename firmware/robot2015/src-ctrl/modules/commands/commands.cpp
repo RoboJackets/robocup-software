@@ -908,6 +908,35 @@ int cmd_radio(cmd_args_t& args) {
             show_invalid_args(args.at(2));
             return 1;
         }
+    } else if (args.size() >= 4) {
+        if (strcmp(args.front().c_str(), "stress-test") == 0) {
+            unsigned int packet_cnt = atoi(args.at(1).c_str());
+            unsigned int ms_delay = atoi(args.at(2).c_str());
+            unsigned int pck_size = atoi(args.at(3).c_str());
+            rtp::packet pck;
+            const std::string msg = std::string(pck_size - 2, '~') + ".";
+
+            pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
+            pck.payload_size = msg.length() + 1;
+            memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
+            pck.subclass = 3;
+            pck.address = LOOPBACK_ADDR;
+            if (args.size() > 4)
+                pck.ack = true;
+            printf(
+                "Beginning radio stress test with %u %sACK, %u byte "
+                "packets. %ums delay between packets.\r\n",
+                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload_size, ms_delay);
+
+            int start_tick = clock();
+            for (size_t i = 0; i < packet_cnt; ++i) {
+                Thread::wait(ms_delay);
+                CommModule::send(pck);
+            }
+            printf("Stress test finished in %.1fms.\r\n",
+                   (clock() - start_tick) /
+                       static_cast<double>(CLOCKS_PER_SEC) * 1000);
+        }
     } else {
         show_invalid_args(args);
         return 1;
@@ -915,6 +944,8 @@ int cmd_radio(cmd_args_t& args) {
 
     return 0;
 }
+
+int cmd_imu(cmd_args_t& args) { return 0; }
 
 /**
  * Command executor.
