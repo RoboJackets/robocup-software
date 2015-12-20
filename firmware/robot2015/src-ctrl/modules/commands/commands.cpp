@@ -921,12 +921,12 @@ int cmd_radio(cmd_args_t& args) {
             memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
             pck.subclass = 3;
             pck.address = LOOPBACK_ADDR;
-            if (args.size() > 4)
-                pck.ack = true;
+            if (args.size() > 4) pck.ack = true;
             printf(
                 "Beginning radio stress test with %u %sACK, %u byte "
                 "packets. %ums delay between packets.\r\n",
-                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload_size, ms_delay);
+                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload_size,
+                ms_delay);
 
             int start_tick = clock();
             for (size_t i = 0; i < packet_cnt; ++i) {
