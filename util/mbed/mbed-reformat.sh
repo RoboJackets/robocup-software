@@ -43,9 +43,6 @@ else
     
     echo "--  mounting $MBED_DEV to $MNT_DIR"
     mount -t auto "$MBED_DEV" "$MNT_DIR"
-
-    # echo "--  mounting $MBED_DEVICES_PATH to $MNT_DIR"
-    # sudo mount -t auto "$MBED_DEVICES_PATH" "$MNT_DIR"
 fi
 
 exit 1
