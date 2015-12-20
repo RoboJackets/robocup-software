@@ -144,13 +144,16 @@ int main() {
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
     rgbLED.clear();
     rgbLED.brightness(0.1);
-    rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-    rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
-    rgbLED.write();
 
     if (fpga_ready) {
         // TODO: set RGB LED to green, otherwise set it to red.
+        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+    } else {
+        rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
     }
+
+    rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+    rgbLED.write();
 
     // Make sure all of the motors are enabled
     FPGA::Instance()->motors_en(true);
@@ -170,7 +173,7 @@ int main() {
         rdy_led = !fpga_ready;
         Watchdog::Renew();
         // toggle the neopixel between green & blue
-        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+        rgbLED.setPixel(0, 0xFF * !fpga_ready, 0xFF * fpga_ready, 0x00);
         rgbLED.write();
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
         rgbLED.setPixel(0, 0x00, 0x00, 0xFF);

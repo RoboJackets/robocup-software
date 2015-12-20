@@ -1,6 +1,7 @@
 #include "commands.hpp"
 
 #include <map>
+#include <ctime>
 
 #include <rtos.h>
 #include <mbed_rpc.h>
@@ -456,6 +457,8 @@ int cmd_info(cmd_args_t& args) {
 
         strftime(buf, 25, "%c", localtime(&sys_time));
         printf("\tSys Time:\t%s\r\n", buf);
+        printf("\tRuntime:\t%.1fs\r\n",
+               (clock() - start_s) / static_cast<double>(CLOCKS_PER_SEC));
 
         // kernel information
         printf("\tKernel Ver:\t%s\r\n", osKernelSystemId);
@@ -505,7 +508,7 @@ int cmd_info(cmd_args_t& args) {
         // show info about the core processor. ARM cortex-m3 in our case
         printf("\tCPUID:\t\t0x%08lX\r\n", SCB->CPUID);
 
-        // ** NOTE: THE mbed_interface_mac() function does not work! It hangs
+        // ** NOTE: The `mbed_interface_mac()` function does not work! It hangs
         // the mbed... **
 
         /*

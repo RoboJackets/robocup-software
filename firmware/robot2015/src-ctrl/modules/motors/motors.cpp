@@ -18,6 +18,8 @@ motor_t mtrEx = {
 
 std::array<motor_t, 5> motors;
 
+int start_s = clock();
+
 void motors_Init() {
     // ahhh just make a dummy vector of info for now...
     motors.fill(mtrEx);

@@ -2,6 +2,7 @@
 
 // Includes
 #include <cstdint>
+#include <ctime>
 #include <array>
 #include <vector>
 
@@ -11,6 +12,8 @@
  * So we'll leave the MOTOR_MAX_SAMPLES at a minimum in the struct.
  */
 #define MOTOR_MAX_SAMPLES 2
+
+extern int start_s;
 
 typedef uint16_t motorVel_t;
 
