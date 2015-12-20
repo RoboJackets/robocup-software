@@ -145,9 +145,9 @@ void Console::RXCallback() {
 }
 
 void Console::TXCallback() {
-    NVIC_DisableIRQ(UART0_IRQn);
+    // NVIC_DisableIRQ(UART0_IRQn);
     // handle transmission interrupts if necessary here
-    NVIC_EnableIRQ(UART0_IRQn);
+    // NVIC_EnableIRQ(UART0_IRQn);
 }
 
 void Console::RequestSystemStop() { Instance()->sysStopReq = true; }
