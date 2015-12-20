@@ -57,7 +57,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 }
 
 OurRobot::OurRobot(int shell, SystemState* state)
-    : Robot(shell, true), _path(), _state(state) {
+    : Robot(shell, true), _state(state) {
     _cmdText = new std::stringstream();
 
     resetAvoidBall();
@@ -417,7 +417,7 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    _path = std::move(path);
+    angleFunctionPath.path = std::move(path);
 }
 
 Geometry2d::ShapeSet OurRobot::collectAllObstacles(
