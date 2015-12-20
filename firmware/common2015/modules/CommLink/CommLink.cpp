@@ -5,15 +5,11 @@
 
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
-unsigned int CommLink::_nbr_links = 0;
-
-// =================== MAIN CONSTRUCTOR ==============
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
                    PinName int_pin)
     : _rxQueueHelper() {
     setup_pins(mosi, miso, sck, cs, int_pin);
     setup();
-    _nbr_links++;
 }
 
 CommLink::~CommLink() { cleanup(); }
@@ -31,7 +27,6 @@ void CommLink::cleanup(void) {
     delete[](_rxDef.stack_pointer);
 }
 
-// =================== CLASS SETUP ===================
 void CommLink::setup(void) {
     // Initialize the hardware for communication
     setup_spi();
@@ -45,7 +40,6 @@ void CommLink::setup(void) {
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 }
 
-// =================== PIN SETUP ===================
 void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs,
                           PinName int_pin) {
     _mosi_pin = mosi;
