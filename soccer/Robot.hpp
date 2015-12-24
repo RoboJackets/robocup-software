@@ -169,8 +169,8 @@ public:
 
     MotionConstraints& motionConstraints() { return _motionConstraints; }
 
-    const std::unique_ptr<Planning::RotationCommand>& rotationCommand() const {
-        return _rotationCommand;
+    const Planning::RotationCommand& rotationCommand() const {
+        return *_rotationCommand;
     }
 
     /**
