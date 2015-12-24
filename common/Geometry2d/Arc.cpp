@@ -31,7 +31,8 @@ vector<Point> Arc::intersects(const Line& line) const {
         // One point
         Point p{det * dy / drsq + cx, -det * dx / drsq + cy};
 
-        auto angle = _center.angleTo(p);
+        //TODO ashaw596 CHECK this part. Seems suspect since angleTo is really angleBetween
+        auto angle = _center.angleBetween(p);
         if (angle > _start_angle && angle < _end_angle) {
             return {p};
         } else {

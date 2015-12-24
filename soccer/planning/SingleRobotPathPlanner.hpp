@@ -5,6 +5,7 @@
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
+#include "planning/RotationCommand.hpp"
 
 namespace Planning {
 
@@ -57,4 +58,5 @@ private:
 std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(
     Planning::MotionCommand::CommandType type);
 
+boost::optional<std::function<AngleInstant(MotionInstant)>> angleFunctionForCommandType(const Planning::RotationCommand &command);
 }  // namespace Planning

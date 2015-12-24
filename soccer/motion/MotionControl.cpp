@@ -55,6 +55,17 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
+
+    float timeIntoPath =
+            ((float)(RJ::timestamp() - _robot->path().startTime())) *
+            TimestampToSecs +
+            1.0 / 60.0;
+
+    // evaluate path - where should we be right now?
+    boost::optional<RobotInstant> optTarget =
+            _robot->path().evaluate(timeIntoPath);
+
+
     // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
@@ -69,11 +80,10 @@ void MotionControl::run() {
         targetPt = command.pivotTarget;
     }
 
-    switch (rotationCommand->getCommandType()) {
+/*
+    switch (rotationCommand.getCommandType()) {
         case RotationCommand::FacePoint:
-            targetPt = static_cast<const Planning::FacePointCommand*>(
-                           rotationCommand.get())
-                           ->targetPos;
+            targetPt = static_cast<const Planning::FacePointCommand&>(rotationCommand).targetPos;
             break;
         case RotationCommand::None:
             // do nothing
@@ -82,23 +92,42 @@ void MotionControl::run() {
             debugThrow("RotationCommand Not implemented");
             break;
     }
+    */
+    float targetAngleFinal = 0;
+    if (optTarget) {
+        std::cout<<"optTarget"<<std::endl;
+        if (optTarget->angle) {
 
+            std::cout<<"optTarget->angle"<<std::endl;
+            if (optTarget->angle->angle) {
+
+                std::cout<<"optTarget->final"<<std::endl;
+                targetAngleFinal = *optTarget->angle->angle;
+                std::cout<<targetAngleFinal<<std::endl;
+            }
+        }
+    }
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        float targetAngleFinal = (*targetPt - _robot->pos).angle();
-        float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
+        std::cout<<"targetPt"<<std::endl;
+        targetAngleFinal = (*targetPt - _robot->pos).angle();
+    }
 
-        targetW = _angleController.run(angleError);
 
-        // limit W
-        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
-            if (targetW > 0) {
-                targetW = (rotationConstraints.maxSpeed);
-            } else {
-                targetW = -(rotationConstraints.maxSpeed);
-            }
+    float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
+
+    std::cout<<"angleError:"<< angleError<<std::endl;
+    targetW = _angleController.run(angleError);
+
+    // limit W
+    if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+        if (targetW > 0) {
+            targetW = (rotationConstraints.maxSpeed);
+        } else {
+            targetW = -(rotationConstraints.maxSpeed);
         }
+    }
 
         /*
         _robot->addText(QString("targetW: %1").arg(targetW));
@@ -106,9 +135,8 @@ void MotionControl::run() {
         _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
         _robot->addText(QString("angle: %1").arg(_robot->angle));
         */
-    }
-
     _targetAngleVel(targetW);
+    //_targetAngleVel(targetW);
 
     // handle body velocity for pivot command
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
@@ -141,14 +169,7 @@ void MotionControl::run() {
         //
 
         // convert from microseconds to seconds
-    float timeIntoPath =
-        ((float)(RJ::timestamp() - _robot->path().startTime())) *
-            TimestampToSecs +
-        1.0 / 60.0;
 
-    // evaluate path - where should we be right now?
-    boost::optional<RobotInstant> optTarget =
-        _robot->path().evaluate(timeIntoPath);
     if (!optTarget) {
         // use the path end if our timeIntoPath is greater than the duration
         target.vel = Point();

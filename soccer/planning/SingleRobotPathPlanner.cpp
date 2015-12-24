@@ -45,6 +45,34 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
     return std::unique_ptr<SingleRobotPathPlanner>(planner);
 }
 
+boost::optional<std::function<AngleInstant(MotionInstant)>> angleFunctionForCommandType(const Planning::RotationCommand &command) {
+    switch (command.getCommandType()) {
+        case RotationCommand::FacePoint: {
+            Geometry2d::Point targetPt = static_cast<const Planning::FacePointCommand&>(command).targetPos;
+            std::function<AngleInstant(MotionInstant)> function = [targetPt](
+                    MotionInstant instant) {
+                return AngleInstant(instant.pos.angleTo(targetPt));
+                //return AngleInstant((targetPt - instant.pos).angle());
+            };
+            //std::cout<<"FacePoint"<<std::endl;
+            return function;
+        }
+        case RotationCommand::FaceAngle: {
+            float angle = static_cast<const Planning::FaceAngleCommand&>(command).targetAngle;
+            std::function<AngleInstant(MotionInstant)> function = [angle](
+                    MotionInstant instant) {
+                return AngleInstant(angle);
+            };
+            return function;
+        }
+        case RotationCommand::None:
+            return boost::none;
+        default:
+            debugThrow("RotationCommand Not implemented");
+            return boost::none;
+    }
+}
+
 bool SingleRobotPathPlanner::shouldReplan(
     MotionInstant currentInstant, const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
