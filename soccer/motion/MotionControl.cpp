@@ -64,6 +64,9 @@ void MotionControl::run() {
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
             _robot->path().evaluate(timeIntoPath);
+    if (!optTarget) {
+        optTarget = _robot->path().end();
+    }
 
 
     // Angle control //////////////////////////////////////////////////
@@ -75,35 +78,23 @@ void MotionControl::run() {
 
     boost::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
+
+    float targetAngleFinal = 0;
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
         targetPt = command.pivotTarget;
-    }
+    } else {
+        if (optTarget) {
+            std::cout << "optTarget" << std::endl;
+            if (optTarget->angle) {
 
-/*
-    switch (rotationCommand.getCommandType()) {
-        case RotationCommand::FacePoint:
-            targetPt = static_cast<const Planning::FacePointCommand&>(rotationCommand).targetPos;
-            break;
-        case RotationCommand::None:
-            // do nothing
-            break;
-        default:
-            debugThrow("RotationCommand Not implemented");
-            break;
-    }
-    */
-    float targetAngleFinal = 0;
-    if (optTarget) {
-        std::cout<<"optTarget"<<std::endl;
-        if (optTarget->angle) {
+                std::cout << "optTarget->angle" << std::endl;
+                if (optTarget->angle->angle) {
 
-            std::cout<<"optTarget->angle"<<std::endl;
-            if (optTarget->angle->angle) {
-
-                std::cout<<"optTarget->final"<<std::endl;
-                targetAngleFinal = *optTarget->angle->angle;
-                std::cout<<targetAngleFinal<<std::endl;
+                    std::cout << "optTarget->final" << std::endl;
+                    targetAngleFinal = *optTarget->angle->angle;
+                    std::cout << targetAngleFinal << std::endl;
+                }
             }
         }
     }
