@@ -5,12 +5,14 @@
 
 // check that the address byte doesn't have any non-address bits set
 // see "3.2 Access Types" in User Guide
-#define ASSERT_IS_ADDR(addr) ASSERT(((addr) >= 0x00 && (addr) <= 0x2e) \
-|| ((addr) >= 0x2F00 && (addr) <= 0x2FFF) \
-|| ((addr) >= 0x3E00 && (addr) <= 0x3EFF))
+#define ASSERT_IS_ADDR(addr)                         \
+    ASSERT(((addr) >= 0x00 && (addr) <= 0x2e) ||     \
+           ((addr) >= 0x2F00 && (addr) <= 0x2FFF) || \
+           ((addr) >= 0x3E00 && (addr) <= 0x3EFF))
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
-               PinName intPin, const registerSetting_t* regs, size_t len, int rssiOffset)
+               PinName intPin, const registerSetting_t* regs, size_t len,
+               int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
     // set initial configuration
     setConfig(regs, len);
@@ -45,7 +47,8 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     uint8_t device_state = writeReg(CC1201_SINGLE_TXFIFO, buf, size);
 
     // Enter the TX state.
-    if ((device_state & CC1201_STATE_TXFIFO_ERROR) == CC1201_STATE_TXFIFO_ERROR) {
+    if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
+        CC1201_STATE_TXFIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
         flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
         // state
@@ -84,7 +87,8 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
         return COMM_FUNC_BUF_ERR;
     }
 
-    if ((device_state & CC1201_STATE_RXFIFO_ERROR) == CC1201_STATE_RXFIFO_ERROR) {
+    if ((device_state & CC1201_STATE_RXFIFO_ERROR) ==
+        CC1201_STATE_RXFIFO_ERROR) {
         flush_rx();  // flush RX FIFO buffer and place back into RX state
         strobe(CC1201_STROBE_SRX);
 
@@ -135,7 +139,8 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
 
     toggle_cs();
     if (addr >= CC1201_EXTENDED_ACCESS) {
-        status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
+        status_byte =
+            _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
         _spi->write(addr & 0xFF);
     } else {
         status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
@@ -164,7 +169,6 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
     return status_byte;
 }
 
-
 uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
     ASSERT_IS_ADDR(addr);
 
@@ -172,10 +176,12 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
 
     toggle_cs();
     if (addr >= CC1201_EXTENDED_ACCESS) {
-        status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
-        _spi->write(addr & 0xFF); // write lower byte of address
+        status_byte =
+            _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
+        _spi->write(addr & 0xFF);  // write lower byte of address
     } else {
-        status_byte = _spi->write(addr | CC1201_WRITE | CC1201_BURST); // write lower byte of address
+        status_byte = _spi->write(addr | CC1201_WRITE |
+                                  CC1201_BURST);  // write lower byte of address
     }
     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
     toggle_cs();
@@ -196,9 +202,7 @@ uint8_t CC1201::strobe(uint8_t addr) {
     return ret;
 }
 
-uint8_t CC1201::mode() {
-    return 0x1F & readReg(CC1201_MARCSTATE);
-}
+uint8_t CC1201::mode() { return 0x1F & readReg(CC1201_MARCSTATE); }
 
 uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
 
