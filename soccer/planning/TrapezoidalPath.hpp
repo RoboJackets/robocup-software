@@ -56,7 +56,8 @@ public:
     }
 
     virtual RobotInstant start() const override {
-        return RobotInstant(MotionInstant(_startPos, _pathDirection * _startSpeed));
+        return RobotInstant(
+            MotionInstant(_startPos, _pathDirection * _startSpeed));
     }
 
     virtual std::unique_ptr<Path> clone() const override {

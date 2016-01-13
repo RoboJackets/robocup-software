@@ -55,19 +55,17 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
-
     float timeIntoPath =
-            ((float)(RJ::timestamp() - _robot->path().startTime())) *
+        ((float)(RJ::timestamp() - _robot->path().startTime())) *
             TimestampToSecs +
-            1.0 / 60.0;
+        1.0 / 60.0;
 
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
-            _robot->path().evaluate(timeIntoPath);
+        _robot->path().evaluate(timeIntoPath);
     if (!optTarget) {
         optTarget = _robot->path().end();
     }
-
 
     // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
@@ -87,10 +85,8 @@ void MotionControl::run() {
         if (optTarget) {
             std::cout << "optTarget" << std::endl;
             if (optTarget->angle) {
-
                 std::cout << "optTarget->angle" << std::endl;
                 if (optTarget->angle->angle) {
-
                     std::cout << "optTarget->final" << std::endl;
                     targetAngleFinal = *optTarget->angle->angle;
                     std::cout << targetAngleFinal << std::endl;
@@ -101,14 +97,13 @@ void MotionControl::run() {
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        std::cout<<"targetPt"<<std::endl;
+        std::cout << "targetPt" << std::endl;
         targetAngleFinal = (*targetPt - _robot->pos).angle();
     }
 
-
     float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
-    std::cout<<"angleError:"<< angleError<<std::endl;
+    std::cout << "angleError:" << angleError << std::endl;
     targetW = _angleController.run(angleError);
 
     // limit W
@@ -120,12 +115,12 @@ void MotionControl::run() {
         }
     }
 
-        /*
-        _robot->addText(QString("targetW: %1").arg(targetW));
-        _robot->addText(QString("angleError: %1").arg(angleError));
-        _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-        _robot->addText(QString("angle: %1").arg(_robot->angle));
-        */
+    /*
+    _robot->addText(QString("targetW: %1").arg(targetW));
+    _robot->addText(QString("angleError: %1").arg(angleError));
+    _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
+    _robot->addText(QString("angle: %1").arg(_robot->angle));
+    */
     _targetAngleVel(targetW);
     //_targetAngleVel(targetW);
 
@@ -149,17 +144,17 @@ void MotionControl::run() {
 
     MotionInstant target;
     // if no target position is given, we don't have a path to follow
-//    if (!_robot->path()) {
-//        _targetBodyVel(Point(0, 0));
-//        std::cout<<"No Path"<<std::endl;
-//        debugThrow("No Path set");
-//        return;
-//    } else {
-        //
-        // Path following
-        //
+    //    if (!_robot->path()) {
+    //        _targetBodyVel(Point(0, 0));
+    //        std::cout<<"No Path"<<std::endl;
+    //        debugThrow("No Path set");
+    //        return;
+    //    } else {
+    //
+    // Path following
+    //
 
-        // convert from microseconds to seconds
+    // convert from microseconds to seconds
 
     if (!optTarget) {
         // use the path end if our timeIntoPath is greater than the duration
@@ -196,7 +191,7 @@ void MotionControl::run() {
 
     // convert from world to body coordinates
     target.vel = target.vel.rotated(-_robot->angle);
-//    }
+    //    }
 
     this->_targetBodyVel(target.vel);
 }

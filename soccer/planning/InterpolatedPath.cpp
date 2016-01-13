@@ -39,7 +39,9 @@ RobotInstant InterpolatedPath::start() const {
     return RobotInstant(waypoints.front().instant);
 }
 
-RobotInstant InterpolatedPath::end() const { return RobotInstant(waypoints.back().instant); }
+RobotInstant InterpolatedPath::end() const {
+    return RobotInstant(waypoints.back().instant);
+}
 
 // Returns the index of the point in this path nearest to pt.
 int InterpolatedPath::nearestIndex(Point pt) const {
@@ -234,9 +236,9 @@ boost::optional<RobotInstant> InterpolatedPath::evaluate(float t) const {
     float constant = (t - waypoints[i - 1].time) / deltaT;
 
     return RobotInstant(MotionInstant(waypoints[i - 1].pos() * (1 - constant) +
-                             waypoints[i].pos() * (constant),
-                         waypoints[i - 1].vel() * (1 - constant) +
-                             waypoints[i].vel() * (constant)));
+                                          waypoints[i].pos() * (constant),
+                                      waypoints[i - 1].vel() * (1 - constant) +
+                                          waypoints[i].vel() * (constant)));
 }
 
 size_t InterpolatedPath::size() const { return waypoints.size(); }

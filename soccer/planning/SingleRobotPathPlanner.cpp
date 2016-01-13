@@ -48,24 +48,27 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
     return std::unique_ptr<SingleRobotPathPlanner>(planner);
 }
 
-boost::optional<std::function<AngleInstant(MotionInstant)>> angleFunctionForCommandType(const Planning::RotationCommand &command) {
+boost::optional<std::function<AngleInstant(MotionInstant)>>
+angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
         case RotationCommand::FacePoint: {
-            Geometry2d::Point targetPt = static_cast<const Planning::FacePointCommand&>(command).targetPos;
+            Geometry2d::Point targetPt =
+                static_cast<const Planning::FacePointCommand&>(command)
+                    .targetPos;
             std::function<AngleInstant(MotionInstant)> function = [targetPt](
-                    MotionInstant instant) {
+                MotionInstant instant) {
                 return AngleInstant(instant.pos.angleTo(targetPt));
-                //return AngleInstant((targetPt - instant.pos).angle());
+                // return AngleInstant((targetPt - instant.pos).angle());
             };
-            //std::cout<<"FacePoint"<<std::endl;
+            // std::cout<<"FacePoint"<<std::endl;
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle = static_cast<const Planning::FaceAngleCommand&>(command).targetAngle;
+            float angle =
+                static_cast<const Planning::FaceAngleCommand&>(command)
+                    .targetAngle;
             std::function<AngleInstant(MotionInstant)> function = [angle](
-                    MotionInstant instant) {
-                return AngleInstant(angle);
-            };
+                MotionInstant instant) { return AngleInstant(angle); };
             return function;
         }
         case RotationCommand::None:
@@ -94,7 +97,8 @@ bool SingleRobotPathPlanner::shouldReplan(
         1.0f / 60.0f;
     boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
-    MotionInstant target = optTarget ? optTarget->motion : prevPath->end().motion;
+    MotionInstant target =
+        optTarget ? optTarget->motion : prevPath->end().motion;
 
     // invalidate path if current position is more than the replanThreshold away
     // from where it's supposed to be right now
