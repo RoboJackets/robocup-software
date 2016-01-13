@@ -4,6 +4,7 @@
 #include "TargetVelPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
+#include "PivotPathPlanner.hpp"
 
 namespace Planning {
 
@@ -31,6 +32,8 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 
         // TODO Undo this hack to use TargetVelPlanner to do Pivot
         case MotionCommand::Pivot:
+            planner = new PivotPathPlanner();
+            break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
             break;
