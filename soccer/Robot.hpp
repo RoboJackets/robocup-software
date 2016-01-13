@@ -69,7 +69,6 @@ public:
 
 class Robot : public RobotPose {
 public:
-
     Robot(unsigned int shell, bool self);
     ~Robot();
 
@@ -177,7 +176,7 @@ public:
      * Returns a const reference to the path of the robot.
      */
     const Planning::Path& path() {
-        //return *angleFunctionPath.path;
+        // return *angleFunctionPath.path;
         return angleFunctionPath;
     }
 
@@ -440,7 +439,7 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RotationConstraints _rotationConstraints;
 
-    //std::unique_ptr<Planning::Path> _path;  /// latest path
+    // std::unique_ptr<Planning::Path> _path;  /// latest path
 
     Planning::AngleFunctionPath angleFunctionPath;
     /**

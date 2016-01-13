@@ -451,7 +451,8 @@ void Processor::run() {
             path->draw(&_state, Qt::magenta, "Planning");
             r->setPath(std::move(path));
 
-            r->angleFunctionPath.angleFunction = angleFunctionForCommandType(r->rotationCommand());
+            r->angleFunctionPath.angleFunction =
+                angleFunctionForCommandType(r->rotationCommand());
         }
 
         // Visualize obstacles

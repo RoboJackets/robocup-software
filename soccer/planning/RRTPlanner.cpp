@@ -195,13 +195,14 @@ float getTime(InterpolatedPath& path, int index,
         motionConstraints.maxAcceleration, startSpeed, endSpeed);
 }
 
-std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateVelocityPath (std::vector<Geometry2d::Point>& points,
-                                                                  const Geometry2d::ShapeSet& obstacles,
-                                                                  const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-                                                                  Geometry2d::Point vf) {
-    //TODO redo this. This is a terrible hack implementation
-    InterpolatedPath *path = new InterpolatedPath();
-    for (Geometry2d::Point&pt : points) {
+std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateVelocityPath(
+    std::vector<Geometry2d::Point>& points,
+    const Geometry2d::ShapeSet& obstacles,
+    const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+    Geometry2d::Point vf) {
+    // TODO redo this. This is a terrible hack implementation
+    InterpolatedPath* path = new InterpolatedPath();
+    for (Geometry2d::Point& pt : points) {
         // Each point in the path is given a time of zero - the actual time will
         // be calculated later by the planner
         path->waypoints.emplace_back(MotionInstant(pt, Geometry2d::Point()), 0);

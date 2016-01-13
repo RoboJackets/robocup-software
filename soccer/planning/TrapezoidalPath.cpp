@@ -33,7 +33,7 @@ boost::optional<RobotInstant> TrapezoidalPath::evaluate(float time) const {
     if (!valid) return boost::none;
 
     return RobotInstant(MotionInstant(_pathDirection * distance + _startPos,
-                         _pathDirection * speedOut));
+                                      _pathDirection * speedOut));
 }
 
 bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,

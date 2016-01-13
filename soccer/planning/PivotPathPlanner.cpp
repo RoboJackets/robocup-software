@@ -20,27 +20,25 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
         cfg, "PivotPathPlanner/velChangeReplanThreshold", 0.05);
 }
 
-bool PivotPathPlanner::shouldReplan(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
-
+bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
+                                    const MotionCommand* cmd,
+                                    const MotionConstraints& motionConstraints,
+                                    const Geometry2d::ShapeSet* obstacles,
+                                    const Path* prevPath) {
     PivotCommand command = *dynamic_cast<const PivotCommand*>(cmd);
-    //TODO Implement This
+    // TODO Implement This
     return true;
 }
-
 
 std::unique_ptr<Path> PivotPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
-
     EscapeObstaclesPathPlanner escapePlanner;
     EmptyCommand emptyCommand;
     return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
                              obstacles, std::move(prevPath));
-    //return nullptr;
+    // return nullptr;
 
     if (cmd->getCommandType() != Planning::MotionCommand::Pivot) {
         debugThrow("Pivot PathPlanner doesn't support this commandType.");
@@ -55,27 +53,24 @@ std::unique_ptr<Path> PivotPathPlanner::run(
                                  obstacles, std::move(prevPath));
     }
 
-
-
     PivotCommand command = *static_cast<const PivotCommand*>(cmd);
     Point pivotTarget = command.pivotTarget;
     startInstant.pos;
     float r = Robot_Radius;
-    //const float FudgeFactor = *_robot->config->pivotVelMultiplier;
-    //float speed = RadiansToDegrees(r * targetW * FudgeFactor);
-    //Point vel(speed, 0);
+    // const float FudgeFactor = *_robot->config->pivotVelMultiplier;
+    // float speed = RadiansToDegrees(r * targetW * FudgeFactor);
+    // Point vel(speed, 0);
 
     // the robot body coordinate system is wierd...
-    //vel.rotate(-M_PI_2);
+    // vel.rotate(-M_PI_2);
 
     //_targetBodyVel(vel);
     vector<Point> points;
     Point vi;
     Point vf;
 
-    return RRTPlanner::generateVelocityPath(points, *obstacles, motionConstraints, vi, vf);
-
-
+    return RRTPlanner::generateVelocityPath(points, *obstacles,
+                                            motionConstraints, vi, vf);
 }
 
 }  // namespace Planning

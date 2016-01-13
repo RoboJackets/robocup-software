@@ -291,9 +291,7 @@ public:
         return acos(normalized().dot(other.normalized()));
     }
 
-    float angleTo(const Point& other) const {
-        return (other - *this).angle();
-    }
+    float angleTo(const Point& other) const { return (other - *this).angle(); }
 
     float cross(const Point& other) const { return x * other.y - y * other.x; }
 
