@@ -36,9 +36,11 @@ std::unique_ptr<Path> PivotPathPlanner::run(
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     EscapeObstaclesPathPlanner escapePlanner;
     EmptyCommand emptyCommand;
+    //TODO implement actual Pivoting
     return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
                              obstacles, std::move(prevPath));
-    // return nullptr;
+    /*
+
 
     if (cmd->getCommandType() != Planning::MotionCommand::Pivot) {
         debugThrow("Pivot PathPlanner doesn't support this commandType.");
@@ -71,6 +73,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(
 
     return RRTPlanner::generateVelocityPath(points, *obstacles,
                                             motionConstraints, vi, vf);
+    */
 }
 
 }  // namespace Planning
