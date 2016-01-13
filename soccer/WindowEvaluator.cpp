@@ -186,8 +186,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     for (auto& w : windows) {
         w.segment = Segment{p0 + delta * w.t0, p0 + delta * w.t1};
-        w.a0 = (w.segment.pt[0] - origin).angle() * RadiansToDegrees;
-        w.a1 = (w.segment.pt[1] - origin).angle() * RadiansToDegrees;
+        w.a0 = RadiansToDegrees((w.segment.pt[0] - origin).angle());
+        w.a1 = RadiansToDegrees((w.segment.pt[1] - origin).angle());
         fill_shot_success(w, origin);
     }
 
