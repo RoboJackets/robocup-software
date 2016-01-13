@@ -102,10 +102,14 @@ TEST(InterpolatedPath, subpath2) {
 
             ASSERT_NE(boost::none, org);
             ASSERT_NE(boost::none, sub);
-            EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001) << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001) << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001) << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
+                << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
+                << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
+                << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i+j="
+                                                                       << i + j;
         }
     }
 }
@@ -134,9 +138,12 @@ TEST(CompositePath, CompositeSubPath) {
 
         ASSERT_NE(boost::none, org);
         ASSERT_NE(boost::none, sub);
-        EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001) << "i=" << i;
-        EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001) << "i=" << i;
-        EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001) << "i=" << i;
+        EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001) << "i="
+                                                                    << i;
+        EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001) << "i="
+                                                                    << i;
+        EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001) << "i="
+                                                                    << i;
         EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i=" << i;
     }
 
@@ -156,10 +163,14 @@ TEST(CompositePath, CompositeSubPath) {
             auto sub = subPaths[i]->evaluate(j);
             ASSERT_NE(boost::none, org);
             ASSERT_NE(boost::none, sub);
-            EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001) << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001) << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001) << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
+                << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
+                << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
+                << "i+j=" << i + j;
+            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i+j="
+                                                                       << i + j;
         }
     }
 }
