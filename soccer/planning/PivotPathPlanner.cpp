@@ -36,7 +36,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     EscapeObstaclesPathPlanner escapePlanner;
     EmptyCommand emptyCommand;
-    //TODO implement actual Pivoting
+    // TODO implement actual Pivoting
     return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
                              obstacles, std::move(prevPath));
     /*
