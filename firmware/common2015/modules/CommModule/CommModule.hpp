@@ -110,9 +110,6 @@ public:
     static bool isReady(void);
     static int NumOpenSockets(void);
 
-    static void txLED(DigitalInOut*);
-    static void rxLED(DigitalInOut*);
-
 protected:
     // NOP function for keeping a communication link active
     void nopFunc(void);
@@ -128,9 +125,6 @@ protected:
     // Thread IDs
     static osThreadId _txID;
     static osThreadId _rxID;
-
-    DigitalInOut* _rxLED;
-    DigitalInOut* _txLED;
 
 private:
     // Private constructor

@@ -6,6 +6,8 @@
 
 #include "CommModule.hpp"
 
+#include <ctime>
+
 #include "CommPort.hpp"
 
 #include "helper-funcs.hpp"
@@ -53,8 +55,9 @@ void CommModule::Init(void) {
 
     // [X] - 1.2 - Define the TX & RX task threads.
     // =================
-    define_thread(instance->_txDef, &CommModule::txThread);
-    define_thread(instance->_rxDef, &CommModule::rxThread);
+    define_thread(instance->_txDef, &CommModule::txThread, osPriorityHigh);
+    define_thread(instance->_rxDef, &CommModule::rxThread,
+                  osPriorityAboveNormal);
 
     // [X] - 1.3 - Create the TX & RX threads - pass them a pointer to the
     // created object.
@@ -80,10 +83,9 @@ void CommModule::txThread(void const* arg) {
     threadPriority = osThreadGetPriority(instance->_txID);
     ASSERT(instance->_txID != nullptr);
 
-    // Check for the existance of a TX LED to flash
-    if (instance->_txLED == nullptr) {
-        LOG(SEVERE, "TX LED unset at thread start!");
-    }
+    // Start up a ticker that disables the strobing TX LED. This is essentially
+    // a watchdog timer for the TX LED's activity light
+    RtosTimer led_ticker_timeout(commLightsTimeout_TX, osTimerOnce, nullptr);
 
     LOG(INIT,
         "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
@@ -96,7 +98,7 @@ void CommModule::txThread(void const* arg) {
     osEvent evt;
 
     while (true) {
-        // When a new rtp::packet is put in the tx queue, begin operations (does
+        // When a new rtp::packet is put in the TX queue, begin operations (does
         // nothing if no new data in queue)
         evt = osMailGet(instance->_txQueue, osWaitForever);
 
@@ -121,7 +123,10 @@ void CommModule::txThread(void const* arg) {
             // Release the allocated memory once data is sent
             osMailFree(instance->_txQueue, p);
 
-            strobeStatusLED((void*)(instance->_txLED));
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            led_ticker_timeout.start(300);
+            commLightsRenew_TX();
 
             ASSERT(osThreadSetPriority(_txID, threadPriority) == osOK);
         }
@@ -141,10 +146,9 @@ void CommModule::rxThread(void const* arg) {
     threadPriority = osThreadGetPriority(instance->_rxID);
     ASSERT(instance->_rxID != nullptr);
 
-    // Check for the existance of an RX LED to flash
-    if (instance->_rxLED == nullptr) {
-        LOG(SEVERE, "rX LED unset at thread start!");
-    }
+    // Start up a ticker that disables the strobing RX LED. This is essentially
+    // a watchdog timer for the RX LED's activity light
+    RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
 
     LOG(INIT,
         "RX communication module ready!\r\n    Thread ID:\t%u\r\n    "
@@ -157,7 +161,7 @@ void CommModule::rxThread(void const* arg) {
     osEvent evt;
 
     while (true) {
-        // Wait until new data is placed in the class's rxQueue from a CommLink
+        // Wait until new data is placed in the class's RX queue from a CommLink
         // class
         evt = osMailGet(instance->_rxQueue, osWaitForever);
 
@@ -179,10 +183,14 @@ void CommModule::rxThread(void const* arg) {
                     p->port, p->subclass);
             }
 
-            osMailFree(instance->_rxQueue,
-                       p);  // free memory allocated for mail
+            // free memory allocated for mail
+            osMailFree(instance->_rxQueue, p);
 
-            strobeStatusLED((void*)(instance->_rxLED));
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            led_ticker_timeout.start(300);
+            commLightsRenew_RX();
+
             ASSERT(osThreadSetPriority(_rxID, threadPriority) == osOK);
         }
     }
@@ -325,7 +333,3 @@ void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
 bool CommModule::isReady(void) { return _isReady; }
 
 int CommModule::NumOpenSockets(void) { return _ports.count_open(); }
-
-void CommModule::txLED(DigitalInOut* led) { instance->_txLED = led; }
-
-void CommModule::rxLED(DigitalInOut* led) { instance->_rxLED = led; }

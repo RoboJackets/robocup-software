@@ -71,9 +71,7 @@ protected:
     /// Kill any threads and free the allocated stack.
     /// Always call in any derived class's deconstructors!
     void cleanup();
-
     void ISR();
-
     void toggle_cs();
 
     /// Used for giving derived classes a standaradized way to inform the base
@@ -81,9 +79,7 @@ protected:
     //
     // Always call CommLink::ready() after derived class is ready
     void ready();
-
     void setup_spi(int baudrate = DEFAULT_BAUD);
-
     uint8_t twos_compliment(uint8_t val);
 
     // The data queues for temporarily holding received packets
@@ -121,16 +117,8 @@ private:
 
     // Methods for initializing a transceiver's pins for communication
     void setup(void);
-
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
                     PinName = NC);
-
     void setup_cs(void);
-
     void setup_interrupt(void);
-
-    // Used for tracking the number of link-level communication interfaces
-    static unsigned int _nbr_links;
-
-    uint8_t buf[BUFFER_SIZE];
 };

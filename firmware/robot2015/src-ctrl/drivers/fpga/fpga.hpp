@@ -13,9 +13,9 @@ public:
     static FPGA* Instance();
 
     bool Init(const std::string& filepath);
-
     uint8_t set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
                              uint16_t* enc_deltas, size_t size_enc);
+    uint8_t set_duty_cycles(uint16_t* duty_cycles, size_t size);
     uint8_t read_duty_cycles(uint16_t* duty_cycles, size_t size);
     uint8_t read_encs(uint16_t* enc_counts, size_t size);
     uint8_t read_halls(uint8_t* halls, size_t size);
@@ -24,11 +24,11 @@ public:
     bool send_config(const std::string& filepath);
 
 private:
+    FPGA(){};
+
     static bool isInit;
     static FPGA* instance;
     Mutex mutex;
-
-    FPGA(){};
 
     SPI* spi;
     DigitalOut* cs;

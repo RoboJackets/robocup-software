@@ -204,6 +204,28 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     return status;
 }
 
+uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
+    uint8_t status;
+
+    // Check for valid duty cycles values
+    for (size_t i = 0; i < size; i++)
+        if (duty_cycles[i] > 0x3FF) return 0x7F;
+
+    mutex.lock();
+    *cs = !(*cs);
+    status = spi->write(CMD_R_ENC_W_VEL);
+
+    for (size_t i = 0; i < size; i++) {
+        spi->write(duty_cycles[i] & 0xFF);
+        spi->write(duty_cycles[i] >> 8);
+    }
+
+    *cs = !(*cs);
+    mutex.unlock();
+
+    return status;
+}
+
 uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
                                uint16_t* enc_deltas, size_t size_enc) {
     uint8_t status;
