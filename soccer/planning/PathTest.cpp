@@ -34,7 +34,7 @@ TEST(InterpolatedPath, evaluate) {
 
     // path should be invalid and at end state when t > duration
     auto out = path.evaluate(1000);
-    ASSERT_EQ(boost::none, out);
+    ASSERT_FALSE(out);
 }
 
 TEST(InterpolatedPath, subPath1) {
@@ -54,7 +54,7 @@ TEST(InterpolatedPath, subPath1) {
     unique_ptr<Path> subPath = path.subPath(1, 5);
     float midTime = (5 - 1) / 2.0;
     auto mid = subPath->evaluate(midTime);
-    ASSERT_NE(boost::none, mid);
+    ASSERT_TRUE(mid);
     EXPECT_FLOAT_EQ(Point(1, 1).x, mid->motion.vel.x);
 
     //  mid velocity of subpath should be the same as velocity of original path
@@ -65,7 +65,7 @@ TEST(InterpolatedPath, subPath1) {
 
     //  test the subpath at t = 0
     auto start = subPath->evaluate(0);
-    ASSERT_NE(boost::none, start);
+    ASSERT_TRUE(start);
 
     //  the starting velocity of the subpath should be somewhere between the 0
     //  and the velocity at the middle
@@ -100,8 +100,8 @@ TEST(InterpolatedPath, subpath2) {
             auto org = path.evaluate(i * 1.5 + j);
             auto sub = subPaths[i]->evaluate(j);
 
-            ASSERT_NE(boost::none, org);
-            ASSERT_NE(boost::none, sub);
+            ASSERT_TRUE(org);
+            ASSERT_TRUE(sub);
             EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
                 << "i+j=" << i + j;
             EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
@@ -136,8 +136,8 @@ TEST(CompositePath, CompositeSubPath) {
         auto sub = compositePath.evaluate(i);
         if (!org && !sub) break;
 
-        ASSERT_NE(boost::none, org);
-        ASSERT_NE(boost::none, sub);
+        ASSERT_TRUE(org);
+        ASSERT_TRUE(sub);
         EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001) << "i="
                                                                     << i;
         EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001) << "i="
@@ -161,8 +161,8 @@ TEST(CompositePath, CompositeSubPath) {
         for (float j = 0; j < 1; j += 0.1) {
             auto org = path.evaluate(i * 1 + j);
             auto sub = subPaths[i]->evaluate(j);
-            ASSERT_NE(boost::none, org);
-            ASSERT_NE(boost::none, sub);
+            ASSERT_TRUE(org);
+            ASSERT_TRUE(sub);
             EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
                 << "i+j=" << i + j;
             EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
