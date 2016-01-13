@@ -140,7 +140,7 @@ void RobotWidget::paintEvent(QPaintEvent* event) {
             }
 
             //  rotate to alight the x-axis with the wheel radius
-            painter.rotate((angle + M_PI / 2) * RadiansToDegrees);
+            painter.rotate(RadiansToDegrees(angle) + 90);
 
             painter.setBrush(Qt::gray);
             const float wheelRounding = 0.01;
