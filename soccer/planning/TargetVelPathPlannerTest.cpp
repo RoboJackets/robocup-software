@@ -28,7 +28,8 @@ TEST(TargetVelPathPlannerTest, run) {
     // Ensure that the path moves in the direction of the target world velocity
     // (positive y-axis)
     boost::optional<RobotInstant> instant = path->evaluate(0.1);
-    ASSERT_NE(boost::none, instant);
+    //ASSERT_NE(boost::none, instant);
+    ASSERT_FALSE(instant);
     EXPECT_FLOAT_EQ(0, instant->motion.pos.x);
     EXPECT_GT(instant->motion.pos.y, 0);
 }
