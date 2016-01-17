@@ -303,6 +303,12 @@ void Processor::run() {
             curStatus.lastVisionTime = packet->receivedTime;
             if (packet->wrapper.has_detection()) {
                 SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
+                SSL_GeometryData* geom = packet->wrapper.mutable_geometry();
+
+                // DEMO: Test out field sizes
+                SSL_GeometryFieldSize* fieldSize =
+                    geom->mutable_field();
+                cout << "Len: " << fieldSize->field_length() << " Width: " << fieldSize->field_width() << endl;
 
                 // FIXME - Account for network latency
                 double rt = packet->receivedTime / 1000000.0;
