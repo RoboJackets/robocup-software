@@ -2,16 +2,16 @@
 #     /etc/init.d/udev restart
 
 # auto-mount and auto-unmount the mbed's flash storage
-KERNEL!="sd[a-z]", ATTRS{idVendor}!="0d28", ATTRS{idProduct}!="0204", ATTRS{manufacturer}!="MBED", GOTO="automount_mbed_end"
-IMPORT{program}="/sbin/blkid -o udev -p %N"
-ENV{ID_FS_LABEL}!="", ENV{MNT_DIR}="mbed-%k", ENV{MOUNT_GID}="46"
-ENV{ID_FS_LABEL}=="", GOTO="automount_mbed_end"
+# KERNEL!="sd[a-z]", ATTRS{idVendor}!="0d28", ATTRS{idProduct}!="0204", ATTRS{manufacturer}!="MBED", GOTO="automount_mbed_end"
+# IMPORT{program}="/sbin/blkid -o udev -p %N"
+# ENV{ID_FS_LABEL}!="", ENV{MNT_DIR}="mbed-%k", ENV{MOUNT_GID}="46"
+# ENV{ID_FS_LABEL}=="", GOTO="automount_mbed_end"
 
-ACTION=="add", ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{MNT_OPTS}="relatime,utf8,gid=%E{MOUNT_GID},umask=002"
-ACTION=="add", RUN+="/bin/mkdir -p /mnt/robot2015/%E{MNT_DIR}", RUN+="/bin/mount -o $env{MNT_OPTS} %r/%k /mnt/robot2015/%E{MNT_DIR}"
-ACTION=="remove", RUN+="/bin/umount -l /mnt/robot2015/%E{MNT_DIR}", RUN+="/bin/rmdir /mnt/robot2015/%E{MNT_DIR}", RUN+="/bin/rmdir --ignore-fail-on-non-empty /mnt/robot2015"
+# ACTION=="add", ENV{ID_FS_TYPE}=="vfat|ntfs", ENV{MNT_OPTS}="relatime,utf8,gid=%E{MOUNT_GID},umask=002"
+# ACTION=="add", RUN+="/bin/mkdir -p /mnt/robot2015/%E{MNT_DIR}", RUN+="/bin/mount -o $env{MNT_OPTS} %r/%k /mnt/robot2015/%E{MNT_DIR}"
+# ACTION=="remove", RUN+="/bin/umount -l /mnt/robot2015/%E{MNT_DIR}", RUN+="/bin/rmdir /mnt/robot2015/%E{MNT_DIR}", RUN+="/bin/rmdir --ignore-fail-on-non-empty /mnt/robot2015"
 # ACTION=="remove", RUN+="/usr/bin/find /mnt/robot2015/ -type d -empty -delete"
-LABEL="automount_mbed_end"
+# LABEL="automount_mbed_end"
 
 # Rules for the 2011 hardware
 SUBSYSTEM!="usb_device", ACTION!="add", GOTO="robot2011_end"
