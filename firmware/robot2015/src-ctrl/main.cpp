@@ -12,10 +12,16 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+#include "task-globals.hpp"
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "neostrip.hpp"
+
+// task globals
+uint16_t comm_err = 0;
+uint16_t fpga_err = 0;
+uint16_t imu_err = 0;
 
 void Task_Controller(void const* args);
 
@@ -116,10 +122,15 @@ int main() {
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
+        fpga_err &= ~(1 << 1);
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
+        fpga_err |= 1 << 1;
     }
+
+    // the error code is valid now
+    fpga_err |= 1 << 0;
 
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
@@ -145,11 +156,12 @@ int main() {
     rgbLED.clear();
     rgbLED.brightness(0.1);
 
-    if (fpga_ready) {
-        // TODO: set RGB LED to green, otherwise set it to red.
-        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-    } else {
+    if (fpga_err > 1) {
+        // red - error
         rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
+    } else {
+        // green - no error...yet
+        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
     }
 
     rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
@@ -175,12 +187,12 @@ int main() {
         rdy_led = !fpga_ready;
         Watchdog::Renew();
         // toggle the neopixel between green & blue
-        rgbLED.setPixel(0, 0xFF * !fpga_ready, 0xFF * fpga_ready, 0x00);
-        rgbLED.write();
-        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
-        rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-        rgbLED.write();
-        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
+        // rgbLED.setPixel(0, 0xFF * !fpga_ready, 0xFF * fpga_ready, 0x00);
+        // rgbLED.write();
+        // Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
+        // rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
+        // rgbLED.write();
+        // Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
     }
 }
 

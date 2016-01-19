@@ -83,16 +83,13 @@ bool FPGA::Init(const std::string& filepath) {
         // Wait some extra time in case the done pin needs time to be asserted
         j = 0;
 
-        for (int i = 0; i < 1000; i++) {
+        for (; j < 1000; j++) {
             Thread::wait(1);
-            j++;
-
             if (*done == true) break;
         }
 
         if (j == 1000) {
             LOG(FATAL, "DONE pin timed out\t(POST CONFIGURATION ERROR)");
-
             return false;
         }
         // everything worked are we're good to go!
