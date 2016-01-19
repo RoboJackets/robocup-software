@@ -111,8 +111,8 @@ int main() {
     // This is where the FPGA is actually configured with the bitfile's name
     // passed in
     bool fpga_ready;
-    // fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
-    fpga_ready = false;
+    fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    // fpga_ready = false;
 
     /* We MUST wait for the FPGA to COMPLETELY configure before moving on
      * because of
