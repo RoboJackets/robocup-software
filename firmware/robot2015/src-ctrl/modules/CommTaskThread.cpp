@@ -10,6 +10,7 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+#include "task-globals.hpp"
 
 /*
  * Information about the radio protocol can be found at:

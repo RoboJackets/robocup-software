@@ -6,6 +6,7 @@
 #include <assert.hpp>
 
 #include "task-signals.hpp"
+#include "task-globals.hpp"
 #include "commands.hpp"
 
 /**
