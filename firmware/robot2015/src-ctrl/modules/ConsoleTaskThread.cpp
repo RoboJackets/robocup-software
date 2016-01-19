@@ -62,15 +62,17 @@ void Task_SerialConsole(void const* args) {
         if (Console::CommandReady() == true) {
             // Increase the thread's priority first so we can make sure the
             // scheduler will select it to run
-            ASSERT(osThreadSetPriority(threadID, osPriorityAboveNormal) ==
-                   osOK);
+            osStatus tState = osThreadSetPriority(threadID, osPriorityAboveNormal);
+            ASSERT(tState == osOK);
 
             // Disable UART interrupts & execute the command
             NVIC_DisableIRQ(UART0_IRQn);
             execute_line(Console::rxBufferPtr());
 
             // Now, reset the priority of the thread to its idle state
-            ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);
+            tState = osThreadSetPriority(threadID, threadPriority);
+            ASSERT(tState == osOK);
+            
             Console::CommandHandled(true);
 
             // Enable UART interrupts again

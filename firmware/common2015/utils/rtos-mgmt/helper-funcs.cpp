@@ -113,15 +113,11 @@ void commLightsTask(DigitalOut& led, bool tx_rx_led_en) {
 }
 
 void commLightsTask_TX(void const* arg) {
-    // DigitalInOut* led = const_cast<DigitalOut*>(reinterpret_cast<const
-    // DigitalInOut*>(arg));
     DigitalOut* led =
         const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
     commLightsTask(*led, comm_led_tx_en);
 }
 void commLightsTask_RX(void const* arg) {
-    // DigitalInOut* led = const_cast<DigitalOut*>(reinterpret_cast<const
-    // DigitalInOut*>(arg));
     DigitalOut* led =
         const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
     commLightsTask(*led, comm_led_rx_en);

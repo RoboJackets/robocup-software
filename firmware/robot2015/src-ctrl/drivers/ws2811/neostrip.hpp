@@ -83,7 +83,7 @@ public:
      * Set a single pixel to the specified color, with red, green, and blue
      * values in separate arguments.
      */
-    void setPixel(size_t p, uint8_t red, uint8_t green, uint8_t blue);
+    void setPixel(size_t p, unsigned int red, unsigned int green, unsigned int blue);
 
     /**
      * Set n pixels starting at pixel p.

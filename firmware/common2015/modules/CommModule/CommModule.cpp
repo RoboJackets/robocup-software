@@ -14,6 +14,8 @@
 #include "logger.hpp"
 #include "assert.hpp"
 
+#define COMM_MODULE_SIGNAL_START_THREAD (1 << 0)
+
 // Class declarations since everything in CommModule is static
 bool CommModule::_isReady = false;
 osThreadId CommModule::_txID;
@@ -27,10 +29,9 @@ CommPort_t _tmpPort;
 
 // Default constructor
 CommModule::CommModule()
-    :  // [X] - 1.1 - Define the data queues.
-       // =================
-       _txQueueHelper(),
-       _rxQueueHelper() {}
+    :
+    _txQueueHelper(),
+    _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
@@ -45,21 +46,20 @@ void CommModule::cleanup(void) {
 }
 
 void CommModule::Init(void) {
-    // [X] - 1.0 - Make sure we have an instance to work with
+    // Make sure we have an instance to work with
     auto instance = Instance();
 
-    // [X] - 1.1 - Create the data queues.
+    // Create the data queues.
     // =================
     instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
     instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), nullptr);
 
-    // [X] - 1.2 - Define the TX & RX task threads.
-    // =================
+    // Define the TX & RX task threads.
     define_thread(instance->_txDef, &CommModule::txThread, osPriorityHigh);
     define_thread(instance->_rxDef, &CommModule::rxThread,
                   osPriorityAboveNormal);
 
-    // [X] - 1.3 - Create the TX & RX threads - pass them a pointer to the
+    // Create the TX & RX threads - pass them a pointer to the
     // created object.
     // =================
     _txID = osThreadCreate(&(instance->_txDef), nullptr);
@@ -144,7 +144,7 @@ void CommModule::rxThread(void const* arg) {
     // Only continue past this point once at least one (1) hardware link is
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
-    // set this immediately after our wait is released
+    // set this true immediately after we are released execution
     _isReady = true;
 
     threadPriority = osThreadGetPriority(instance->_rxID);
@@ -238,8 +238,6 @@ bool CommModule::openSocket(uint8_t portNbr) {
 
         _ports += _tmpPort;
 
-        ready();
-
         return _ports[portNbr].Open();
     }
 
@@ -253,7 +251,7 @@ bool CommModule::openSocket(uint8_t portNbr) {
         // makes it this far if trying to open port 0 without any setup.
         // TX callback function was never set
         LOG(WARN,
-            "Must set TX & RX callback functions before opening socket.\r\n");
+            "Must set at least the RX callback function before opening socket on port %u.", portNbr);
 
         return false;
     }

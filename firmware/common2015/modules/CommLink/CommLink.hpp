@@ -9,9 +9,6 @@
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
 
-#define COMM_LINK_SIGNAL_START_THREAD 0x01
-#define COMM_LINK_SIGNAL_RX_TRIGGER 0x02
-
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
     ERR(COMM_FAILURE)         \
@@ -43,8 +40,8 @@ public:
     virtual ~CommLink();
 
     // Class constants for data queues
-    static const size_t RX_QUEUE_SIZE = 3;
-    static const size_t BUFFER_SIZE = 64;
+    static const size_t RX_QUEUE_SIZE = 2;
+    // static const size_t BUFFER_SIZE = 64;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device

@@ -33,9 +33,10 @@ void Task_Controller(void const* args);
  */
 void statusLights(bool state) {
     DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
+        {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
+        {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
+        {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}
+    };
 
     for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
 }
@@ -63,14 +64,12 @@ int main() {
     // clear any extraneous rx serial bytes
     if (1) {
         Serial s(RJ_SERIAL_RXTX);
-        // flush rx queue?
+        // flush rx queue
         while (s.readable()) s.getc();
 
         // print out the baudrate we're using as a last resort
         // to let the user know they may or may not see it
         // depending on many factors.
-        s.baud(9600);
-        std::printf("BAUDRATE: 57600\n");
         s.baud(57600);
         fflush(stdout);
     }
@@ -96,6 +95,10 @@ int main() {
     // thread.
     setISRPriorities();
 
+    // Force off since the neopixel's hardware is stateless from previous settings
+    NeoStrip rgbLED(RJ_NEOPIXEL, 2);
+    rgbLED.clear();
+
     // Start a periodic blinking LED to show system activity
     DigitalOut ledOne(LED1, 0);
     RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
@@ -107,7 +110,9 @@ int main() {
 
     // This is where the FPGA is actually configured with the bitfile's name
     // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    bool fpga_ready;
+    // fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    fpga_ready = false;
 
     /* We MUST wait for the FPGA to COMPLETELY configure before moving on
      * because of
@@ -122,19 +127,28 @@ int main() {
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
-        fpga_err &= ~(1 << 1);
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
+        // The console can sometimes be thrown off by a failure to open
+        // the FPGA's bitfile if it doesn't exist. So we send out control
+        // characters to fix that - whether or not that was actually the error.
+        printf("\033[0m\033[?25h");
+        fflush(stdout);
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
-        fpga_err |= 1 << 1;
     }
-
-    // the error code is valid now
-    fpga_err |= 1 << 0;
 
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
-    motors_Init();
+    fpga_err |= 1 << !fpga_ready;
+    // the error code is valid now
+    fpga_err |= 1 << 0;
+
+    // Set the RGB LEDs to a medium blue while the threads are started up
+    float defaultBrightness = 0.01f;
+    rgbLED.brightness(3 * defaultBrightness);
+    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
+    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
+    rgbLED.write();
 
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
@@ -145,54 +159,72 @@ int main() {
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
 
-#if RJ_WATCHDOG_TIMER_EN
-    // Enable the watchdog timer if it's set in configurations.
-    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
-#endif
-
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
-    NeoStrip rgbLED(RJ_NEOPIXEL, 2);
-    rgbLED.clear();
-    rgbLED.brightness(0.1);
-
-    if (fpga_err > 1) {
-        // red - error
-        rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
-    } else {
-        // green - no error...yet
-        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-    }
-
-    rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
-    rgbLED.write();
-
     // Make sure all of the motors are enabled
-    FPGA::Instance()->motors_en(true);
+    motors_Init();
+    // FPGA::Instance()->motors_en(true);
 
     // Wait for all threads to get to their ready state
     for (size_t i = 0; i < 3; ++i)
         Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+
+    // Set error indicators
+    if (fpga_err > 1) {
+        // orange - error
+        rgbLED.brightness(4 * defaultBrightness);
+        rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
+    } else {
+        // green - no error...yet
+        rgbLED.brightness(defaultBrightness);
+        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+    }
+
+    if (comm_err > 1) {
+        // orange - error
+        rgbLED.brightness(4 * defaultBrightness);
+        rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
+    } else {
+        // green - no error...yet
+        rgbLED.brightness(defaultBrightness);
+        rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+    }
+
+    if (comm_err > 1 && fpga_err > 1) {
+        // bright as hell to make sure they know
+        rgbLED.brightness(8 * defaultBrightness);
+        // well, damn. everything is broke as hell
+        rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
+        rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
+    }
+
+    // push out the LED changes to the hardware
+    rgbLED.write();
+
+    // Set the watdog timer's initial config
+    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
     comm_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
-    ASSERT(osThreadSetPriority(mainID, osPriorityNormal) == osOK);
+    osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
+    ASSERT(tState == osOK);
+
+    rdy_led = fpga_ready;
 
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
-        rdy_led = !fpga_ready;
+        rdy_led = !rdy_led;
         Watchdog::Renew();
-        // toggle the neopixel between green & blue
-        // rgbLED.setPixel(0, 0xFF * !fpga_ready, 0xFF * fpga_ready, 0x00);
-        // rgbLED.write();
-        // Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
-        // rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-        // rgbLED.write();
-        // Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 1000);
+
+        // continually reset the console text
+        printf("\033[0m\033[?25h");
+        fflush(stdout);
+
+        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 750);
     }
 }
 

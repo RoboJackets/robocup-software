@@ -17,6 +17,8 @@
 
 #include "neostrip.hpp"
 
+#include <algorithm>
+
 /*
  * This function is defined in the assembly code and is declared
  * as a global function.
@@ -71,18 +73,18 @@ void NeoStrip::setPixel(size_t p, int color) {
     setPixel(p, red, green, blue);
 }
 
-void NeoStrip::setPixel(size_t p, uint8_t red, uint8_t green, uint8_t blue) {
+void NeoStrip::setPixel(size_t p, unsigned int red, unsigned int green, unsigned int blue) {
     // set the given pixel's RGB values
     // the array is indexed modulo _N to avoid overflow
-    _strip[p % _n].red = static_cast<uint8_t>(red * _bright);
-    _strip[p % _n].green = static_cast<uint8_t>(green * _bright);
-    _strip[p % _n].blue = static_cast<uint8_t>(blue * _bright);
+    _strip[p % _n].red = static_cast<uint8_t>(static_cast<float>(red) * _bright);
+    _strip[p % _n].green = static_cast<uint8_t>(static_cast<float>(green) * _bright);
+    _strip[p % _n].blue = static_cast<uint8_t>(static_cast<float>(blue) * _bright);
 }
 
 void NeoStrip::setPixels(size_t p, size_t n, const int* colors) {
     int r, g, b;
-
-    for (size_t i = 0; i < n; i++) {
+    size_t nMin = static_cast<size_t>(std::min(n, _n));
+    for (size_t i = 0; i < nMin; i++) {
         r = (colors[i] & 0xFF0000) >> 16;
         g = (colors[i] & 0x00FF00) >> 8;
         b = colors[i] & 0x0000FF;
@@ -91,11 +93,10 @@ void NeoStrip::setPixels(size_t p, size_t n, const int* colors) {
 }
 
 void NeoStrip::clear() {
-    for (size_t i = 0; i < _n; i++) {
-        _strip[i].red = 0;
-        _strip[i].green = 0;
-        _strip[i].blue = 0;
-    }
+    for (size_t i = 0; i < _n; i++)
+        setPixel(i, 0);
+
+    write();
 }
 
 void NeoStrip::write() {

@@ -87,6 +87,8 @@ struct packet {
 
     bool adjusted;
 
+    // packet& operator=(const packet& rhs) {};
+
     packet(const packet& p) : total_size(p.total_size) {
         memcpy(raw, p.raw, total_size);
         resetSizes();

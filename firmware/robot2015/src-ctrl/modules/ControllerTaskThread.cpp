@@ -13,7 +13,7 @@
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
-static const int CONTROL_LOOP_WAIT_MS = 7;
+static const int CONTROL_LOOP_WAIT_MS = 10;
 
 // Declaration for an alternative control loop thread for when the accel/gyro
 // can't be used for whatever reason
@@ -72,18 +72,31 @@ void Task_Controller(void const* args) {
             "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d",
             threadID, threadPriority);
 
+        // Set the error code's valid bit
+        imu_err |= 1 << 0;
+
     } else {
         LOG(SEVERE,
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
             "sensorless control loop.",
             testResp);
 
-// TODO: Turn on the IMU's error LED here
+        // Set the error flag - bit positions are pretty arbitruary as of now
+        imu_err |= 1 << 1;
+
+        // Set the error code's valid bit
+        imu_err |= 1 << 0;
 
 #else
     LOG(INIT,
         "IMU disabled in config file\r\n    Falling back to sensorless control "
         "loop.");
+
+    // Set the error flag - bit positions are pretty arbitruary as of now
+    imu_err |= 1 << 2;
+
+    // Set the error code's valid bit
+    imu_err |= 1 << 0;
 #endif
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
@@ -97,7 +110,7 @@ void Task_Controller(void const* args) {
 
 #endif
 
-    osThreadSetPriority(threadID, osPriorityNormal);
+    // osThreadSetPriority(threadID, osPriorityNormal);
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);

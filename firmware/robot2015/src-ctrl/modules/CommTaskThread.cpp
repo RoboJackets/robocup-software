@@ -55,6 +55,21 @@ void loopback_ack_pck(rtp::packet* p) {
     CommModule::send(ack_pck);
 }
 
+void legacy_rx_cb(rtp::packet* p) {
+    if (p->payload_size) {
+        LOG(OK,
+            "Legacy rx successful!\r\n"
+            "    Received:\t'%s' (%u bytes)\r\n",
+            p->payload, p->payload_size);
+    } else if (p->sfs) {
+        LOG(OK, "Legacy rx ACK successful!\r\n");
+    } else {
+        LOG(WARN, "Received empty packet on Legacy interface");
+    }
+
+    if (p->ack) loopback_ack_pck(p);
+}
+
 /**
  * [rx_callback This is executed for a successfully received radio packet.]
  * @param p [none]
@@ -109,10 +124,10 @@ void Task_CommCtrl(void const* args) {
     CommModule::Init();
 
     // Setup some lights that will blink whenever we send/receive packets
-    // static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
-    // static const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
-    static DigitalOut tx_led(LED3, 0);
-    static DigitalOut rx_led(LED2, 0);
+    static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
+    static const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
+    // static DigitalOut tx_led(LED3, 0);
+    // static DigitalOut rx_led(LED2, 0);
     RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
     RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
     rx_led_ticker.start(150);
@@ -133,7 +148,7 @@ void Task_CommCtrl(void const* args) {
         CC1201Config* radioConfig = new CC1201Config();
         radioConfig = CC1201Config::resetConfiguration(radioConfig);
         CC1201Config::loadConfiguration(radioConfig, &radio);
-        CC1201Config::verifyConfiguration(radioConfig, &radio);
+        // CC1201Config::verifyConfiguration(radioConfig, &radio);
 
         LOG(INIT,
             "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    "
@@ -143,7 +158,6 @@ void Task_CommCtrl(void const* args) {
         // Open a socket for running tests across the link layer
         CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
         CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
-        // returns true if port was successfully opened.
         CommModule::openSocket(rtp::port::LINK);
 
         // The usual way of opening a port.
@@ -159,12 +173,11 @@ void Task_CommCtrl(void const* args) {
                               rtp::port::LOG);
         CommModule::openSocket(rtp::port::LOG);
 
-        // There's no TX callback for this port, but it will still open when
-        // invoked since it knows where to send an RX packet.
+        // Legacy port
         CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::SETPOINT);
-        CommModule::RxHandler(&loopback_rx_cb, rtp::port::SETPOINT);
-        CommModule::openSocket(rtp::port::SETPOINT);
+                              rtp::port::LEGACY);
+        CommModule::RxHandler(&legacy_rx_cb, rtp::port::LEGACY);
+        CommModule::openSocket(rtp::port::LEGACY);
 
         LOG(INIT, "%u sockets opened", CommModule::NumOpenSockets());
 
@@ -173,12 +186,16 @@ void Task_CommCtrl(void const* args) {
             "No radio interface found!\r\n"
             "    Terminating main radio thread.");
 
-        // TODO: Turn on radio error LED here
-
         // Always keep the link test port open regardless
         CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
         CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
         CommModule::openSocket(rtp::port::LINK);
+
+        // Set the error flag - bit positions are pretty arbitruary as of now
+        comm_err |= 1 << 1;
+
+        // Set the error code's valid bit
+        comm_err |= 1 << 0;
 
         // signal back to main and wait until we're signaled to continue
         osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
@@ -199,25 +216,8 @@ void Task_CommCtrl(void const* args) {
         Thread::wait(50);
     }
 
-    // == everything below this line all the way until the start
-    // of the while loop is test code ==
-    const std::string linkTestMsg = "Hello World!";
-
-    // Test RX acknowledgment with a packet structured to trigger the ACK
-    // response
-    rtp::packet ack_pck;
-    ack_pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
-    ack_pck.payload_size = linkTestMsg.length() + 1;
-    memcpy((char*)ack_pck.payload, linkTestMsg.c_str(), ack_pck.payload_size);
-    // ack_pck.address = BASE_STATION_ADDR;
-    ack_pck.address = LOOPBACK_ADDR;
-
-    LOG(INIT,
-        "Placing link test packet in RX buffer:\r\n"
-        "    Payload:\t%s\t(%u bytes)",
-        (char*)ack_pck.payload, ack_pck.payload_size);
-
-    CommModule::receive(ack_pck);
+    // Set the error code's valid bit
+    comm_err |= 1 << 0;
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
