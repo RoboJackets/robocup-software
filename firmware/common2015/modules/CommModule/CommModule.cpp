@@ -28,9 +28,9 @@ CommPort_t _tmpPort;
 // Default constructor
 CommModule::CommModule()
     :  // [X] - 1.1 - Define the data queues.
-      // =================
-      _txQueueHelper(),
-      _rxQueueHelper() {}
+       // =================
+       _txQueueHelper(),
+       _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
@@ -107,7 +107,8 @@ void CommModule::txThread(void const* arg) {
             rtp::packet* p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            ASSERT(osThreadSetPriority(_txID, osPriorityRealtime) == osOK);
+            osStatus tState = osThreadSetPriority(_txID, osPriorityRealtime);
+            ASSERT(tState == osOK);
 
             // Call the user callback function
             if (_ports[p->port].isOpen()) {
@@ -128,7 +129,8 @@ void CommModule::txThread(void const* arg) {
             led_ticker_timeout.start(300);
             commLightsRenew_TX();
 
-            ASSERT(osThreadSetPriority(_txID, threadPriority) == osOK);
+            tState = osThreadSetPriority(_txID, threadPriority);
+            ASSERT(tState == osOK);
         }
     }
 
@@ -142,6 +144,8 @@ void CommModule::rxThread(void const* arg) {
     // Only continue past this point once at least one (1) hardware link is
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
+    // set this immediately after our wait is released
+    _isReady = true;
 
     threadPriority = osThreadGetPriority(instance->_rxID);
     ASSERT(instance->_rxID != nullptr);
@@ -154,8 +158,6 @@ void CommModule::rxThread(void const* arg) {
         "RX communication module ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
         instance->_rxID, threadPriority);
-
-    _isReady = true;
 
     rtp::packet* p;
     osEvent evt;
@@ -170,7 +172,8 @@ void CommModule::rxThread(void const* arg) {
             p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            ASSERT(osThreadSetPriority(_rxID, osPriorityRealtime) == osOK);
+            osStatus tState = osThreadSetPriority(_rxID, osPriorityRealtime);
+            ASSERT(tState == osOK);
 
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen()) {
@@ -191,7 +194,8 @@ void CommModule::rxThread(void const* arg) {
             led_ticker_timeout.start(300);
             commLightsRenew_RX();
 
-            ASSERT(osThreadSetPriority(_rxID, threadPriority) == osOK);
+            tState = osThreadSetPriority(_rxID, threadPriority);
+            ASSERT(tState == osOK);
         }
     }
 
