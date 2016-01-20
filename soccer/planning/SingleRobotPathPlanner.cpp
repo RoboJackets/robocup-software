@@ -42,6 +42,7 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             break;
         default:
             debugThrow("Command not implemented");
+            planner = new EscapeObstaclesPathPlanner();
             break;
     }
 
