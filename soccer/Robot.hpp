@@ -439,19 +439,17 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RotationConstraints _rotationConstraints;
 
-    // std::unique_ptr<Planning::Path> _path;  /// latest path
-
-    Planning::AngleFunctionPath angleFunctionPath;
-    /**
-     * Creates a set of obstacles from a given robot team mask,
-     * where mask values < 0 create no obstacle, and larger values
-     * create an obstacle of a given radius
-     *
-     * NOTE: mask must not be set for this robot
-     *
-     * @param robots is the set of robots to use to create a mask - either self
-     * or opp from _state
-     */
+    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
+                                                    /**
+                                                     * Creates a set of obstacles from a given robot team mask,
+                                                     * where mask values < 0 create no obstacle, and larger values
+                                                     * create an obstacle of a given radius
+                                                     *
+                                                     * NOTE: mask must not be set for this robot
+                                                     *
+                                                     * @param robots is the set of robots to use to create a mask - either self
+                                                     * or opp from _state
+                                                     */
     template <class ROBOT>
     Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask) const {

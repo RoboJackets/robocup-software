@@ -83,13 +83,9 @@ void MotionControl::run() {
         targetPt = command.pivotTarget;
     } else {
         if (optTarget) {
-            std::cout << "optTarget" << std::endl;
             if (optTarget->angle) {
-                std::cout << "optTarget->angle" << std::endl;
                 if (optTarget->angle->angle) {
-                    std::cout << "optTarget->final" << std::endl;
                     targetAngleFinal = *optTarget->angle->angle;
-                    std::cout << targetAngleFinal << std::endl;
                 }
             }
         }
@@ -97,13 +93,11 @@ void MotionControl::run() {
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        std::cout << "targetPt" << std::endl;
         targetAngleFinal = (*targetPt - _robot->pos).angle();
     }
 
     float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
-    std::cout << "angleError:" << angleError << std::endl;
     targetW = _angleController.run(angleError);
 
     // limit W
@@ -141,21 +135,9 @@ void MotionControl::run() {
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-
     MotionInstant target;
-    // if no target position is given, we don't have a path to follow
-    //    if (!_robot->path()) {
-    //        _targetBodyVel(Point(0, 0));
-    //        std::cout<<"No Path"<<std::endl;
-    //        debugThrow("No Path set");
-    //        return;
-    //    } else {
-    //
-    // Path following
-    //
 
     // convert from microseconds to seconds
-
     if (!optTarget) {
         // use the path end if our timeIntoPath is greater than the duration
         target.vel = Point();

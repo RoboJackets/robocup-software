@@ -32,10 +32,6 @@ private:
     Geometry2d::Point calculateNonblockedPathEndpoint(
         Geometry2d::Point start, Geometry2d::Point dir,
         const Geometry2d::ShapeSet* obstacles);
-
-    /// If the desired target velocity changes by this much, the path is
-    /// replanned
-    static ConfigDouble* _targetVelChangeReplanThreshold;
 };
 
 }  // namespace Planning
