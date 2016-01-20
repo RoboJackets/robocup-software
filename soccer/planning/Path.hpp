@@ -19,14 +19,15 @@ public:
     Path(RJ::Time startTime = 0) : _startTime(startTime) {}
     virtual ~Path() {}
 
-    // TODO ashaw596 fix this
     /*
      * This method evaluates the path at a given time and returns the target
-     * position and velocity of the robot.
+     * angle,
+     * position, and velocity of the robot.
      *
      * @param t Time (in seconds) since the robot started the path. Throws an
      *     exception if t<0
-     * @return A MotionInstant containing the position and velocity at the given
+     * @return A RobotInstant containing the angle, position, and velocity at
+     * the given
      *     time if @t is within the range of the path.  If @t is not within the
      *     time range of this path, this method returns boost::none.
      */
