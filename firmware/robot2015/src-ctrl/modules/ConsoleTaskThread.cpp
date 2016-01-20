@@ -66,7 +66,7 @@ void Task_SerialConsole(void const* args) {
             ASSERT(tState == osOK);
 
             // Disable UART interrupts & execute the command
-            NVIC_DisableIRQ(UART0_IRQn);
+            // NVIC_DisableIRQ(UART0_IRQn);
             execute_line(Console::rxBufferPtr());
 
             // Now, reset the priority of the thread to its idle state
@@ -76,7 +76,7 @@ void Task_SerialConsole(void const* args) {
             Console::CommandHandled(true);
 
             // Enable UART interrupts again
-            NVIC_EnableIRQ(UART0_IRQn);
+            // NVIC_EnableIRQ(UART0_IRQn);
         }
 
         // Check if a system stop is requested

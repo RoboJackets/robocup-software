@@ -129,15 +129,16 @@ int main() {
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
-        // The console can sometimes be thrown off by a failure to open
-        // the FPGA's bitfile if it doesn't exist. So we send out control
-        // characters to fix that - whether or not that was actually the error.
-        printf("\033[0m\033[?25h");
-        fflush(stdout);
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
     }
 
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+
+    // The console can sometimes be thrown off by a failure to open
+    // the FPGA's bitfile if it doesn't exist. So we send out control
+    // characters to fix that - whether or not that was actually the error.
+    printf("\033[0m\033[?25h");
+    fflush(stdout);
 
     fpga_err |= 1 << !fpga_ready;
     // the error code is valid now
@@ -163,7 +164,7 @@ int main() {
 
     // Make sure all of the motors are enabled
     motors_Init();
-    // FPGA::Instance()->motors_en(true);
+    FPGA::Instance()->motors_en(true);
 
     // Wait for all threads to get to their ready state
     for (size_t i = 0; i < 3; ++i)
@@ -221,8 +222,8 @@ int main() {
         Watchdog::Renew();
 
         // continually reset the console text
-        printf("\033[0m\033[?25h");
-        fflush(stdout);
+        // printf("\033[0m\033[?25h");
+        // fflush(stdout);
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 750);
     }

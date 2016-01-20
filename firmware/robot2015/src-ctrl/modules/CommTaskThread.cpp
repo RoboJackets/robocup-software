@@ -197,6 +197,10 @@ void Task_CommCtrl(void const* args) {
         // Set the error code's valid bit
         comm_err |= 1 << 0;
 
+        while (CommModule::isReady() == false) {
+            Thread::wait(50);
+        }
+
         // signal back to main and wait until we're signaled to continue
         osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
         Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
