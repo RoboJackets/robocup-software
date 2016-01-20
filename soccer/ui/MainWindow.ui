@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1331</width>
-    <height>827</height>
+    <width>1095</width>
+    <height>752</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -865,7 +865,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0,0,0,1">
+       <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0,0">
         <item>
          <widget class="Line" name="line_2">
           <property name="orientation">
@@ -1338,46 +1338,6 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Robot Status</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QListWidget" name="robotStatusList">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>300</width>
-            <height>378</height>
-           </size>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"> QListWidget::item { border-bottom: 1px solid gray; }</string>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::NoSelection</enum>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
@@ -1419,7 +1379,7 @@ p, li { white-space: pre-wrap; }
           <enum>QTabWidget::East</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="playsBehaviorsTab">
           <property name="sizePolicy">
@@ -1803,6 +1763,35 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="robotStatusTab">
+          <attribute name="title">
+           <string>Robot Status</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_13">
+           <item>
+            <widget class="QListWidget" name="robotStatusList">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>300</width>
+               <height>378</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"> QListWidget::item { border-bottom: 1px solid gray; }</string>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -1815,8 +1804,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1331</width>
-     <height>19</height>
+     <width>1095</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
