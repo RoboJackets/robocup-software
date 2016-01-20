@@ -2,6 +2,9 @@
 
 # This script takes the argument as a filename and copies it to all mbeds attached!
 
+# this causes the script to fail if any command below fails
+set -e
+
 # checks for file existence
 if [ ! -e "$1" ]; then
     echo "File $1 not found..."
@@ -37,45 +40,56 @@ IFS=$'\n'
 
 # loop through all mbed devices, mount them, copy over the bin file, and unmount them
 for i in $MBED_DEVICES_PATH; do
+
     echo Installing on $i
-    sudo mkdir -p /mnt/script/MBED
-    sudo mount $i /mnt/script/MBED
-    sudo cp $1 /mnt/script/MBED/
+    mnt_point="/mnt/script/$(basename "$i")"
 
+    sudo mkdir -p $mnt_point
+    sudo mount $i $mnt_point
+    sudo cp -f -b $1 $mnt_point
 
-    if [ "$SHA2" != "$(sha256sum /mnt/script/MBED/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')" ]; then
-        echo ERROR: Sha Hashes do not match, copy failed. Exiting...
+    # Call the golden command
+    sync
+    
+    # compute the sha256sum of the moved file before we can't access it anymore
+    SHA2_CP="$(sha256sum $mnt_point/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')"
+
+    # lazy unmount
+    sudo umount -l $mnt_point
+
+    # see if it is still mounted, if successful unmount, remove directory that was created earlier
+    if ! mount | grep "$mnt_point" &> /dev/null; then
+        if [ "$(ls -A $mnt_point)" ]; then
+            # dir not empty
+            :
+        else
+            # dir is empty
+            sudo rm -rf "$mnt_point"
+        fi
+    fi
+
+    if [ "$SHA2" != "$SHA2_CP" ]; then
+        echo "Error: Mismatched sha256sums, copy failed. Exiting..."
+        echo "    src:  $SHA2"
+        echo "    dst:  $SHA2_CP"
         exit 1
     else
-        echo Sha256sums of binary files match, copy successful!
+        echo "sha256sum matched, copy successful!"
+        echo "    sha256sum: $SHA2"
+        # unset this before the next iteration if there is one
+        SHA2_CP=""
     fi
-
-    sudo umount -l /mnt/script/MBED/
-    if [ $? -eq 0 ]; then
-        echo Unmount successful! Do not remove mbed until write light stops blinking!
-    else
-        echo UNMOUNT FAILED! PLEASE UNMOUNT /mnt/script/MBED MANUALLY!!!!
-    fi
-    sudo rmdir /mnt/script/MBED
-
-    # This part sends 'reboot\r' over the serial connection. -e enables escape codes, and -n omits the endline at the end of echo, which prints by default.
-    # \r is the character that represents the end of the command.
 done
 
-# here's hoping the copy takes less than 5 seconds
-# TODO find a better solution...
-sleep 4
+MEM_SPACE=$(($(stat --printf="%s" $1)/512))
+echo $(($MEM_SPACE/10))"."$(($MEM_SPACE%10))"% of available memory filled."
 
 # restart mbed code
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 
 for i in $MBED_SERIAL_PATH; do
     echo Attempting reboot on $i ...
-    # clear buffer, send reboot, enter
-
     # send break signal to all mbeds
     sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
-    # sudo bash -c "echo -ne '\rreboot\r' > $i"
 done
-
 

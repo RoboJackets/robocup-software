@@ -6,7 +6,7 @@
  * The log stores things such as robot and ball position and velocity as well as
  * debug information about the current play. See the LogFrame.proto file for a
  * full list of what is stored in the log.
- * 
+ *
  * This logger implements a circular buffer for recent history and writes all
  * frames to disk.
  *
