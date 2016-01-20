@@ -19,6 +19,8 @@ checkout:
 
 dependencies:
   pre:
+      # Fix config file containing direct refrences in ~/.ssh
+    - sed -i 's:/home/ubuntu:~:' ~/.ssh/config
       # set build status to pending on start
     - ./external/DoCIF/util/maketest.sh --pending
     - ./external/DoCIF/commands/buildbaseimage.sh

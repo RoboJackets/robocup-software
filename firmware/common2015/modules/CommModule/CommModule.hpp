@@ -1,111 +1,158 @@
 #pragma once
 
-#include "mbed.h"
-#include "cmsis_os.h"
-#include "RTP.hpp"
-#include "ThreadHelper.hpp"
-#include "MailHelper.hpp"
-#include "logger.hpp"
-#include "FunctionPointerRJ.hpp"
+#include <mbed.h>
+#include <rtos.h>
 
-#include <algorithm>    // std::binary_search, std::sort
+#include "rtp.hpp"
+#include "helper-funcs.hpp"
+#include "rtos-mgmt/mail-helper.hpp"
+#include "Console.hpp"
+#include "CommPort.hpp"
+
+#include <algorithm>
 #include <vector>
+#include <functional>
+#include <memory>
 
-#define COMM_MODULE_TX_QUEUE_SIZE           5
-#define COMM_MODULE_RX_QUEUE_SIZE           5
-#define COMM_MODULE_NBR_PORTS               16
-#define COMM_MODULE_SIGNAL_START_THREAD     0x01
+/* These define the function pointer type that's used for every callback
+ * function type set through the CommModule class.
+ */
+typedef void(FunctionPtr_t)(rtp::packet*);
+typedef CommPort<FunctionPtr_t> CommPort_t;
+typedef CommPorts<FunctionPtr_t> CommPorts_t;
 
-class CommLink;
+// forward declaration of the template is needed for the class
+extern CommPort_t _tmpPort;
 
-// Base class for a communication module
-class CommModule
-{
+/**
+ * The CommModule class provides the packet management routing
+ * by distributing incoming packets to the correct area of the
+ * firmware and distributing outgoing packets to the correct
+ * hardware interface.
+ */
+
+/**
+ * @brief      { A high-level firmware class for packet handling & routing }
+ */
+class CommModule {
+private:
+    static CommPorts_t _ports;
+
 public:
-    /// Default Constructor
-    CommModule();
+    ~CommModule();
 
-    // Deconstructor
-    virtual ~CommModule();
+    // Class constants
+    // Be careful of the queue sizes. The errors that result from
+    // over allocation are very tricky to catch.
+    static const size_t TX_QUEUE_SIZE = 3;
+    static const size_t RX_QUEUE_SIZE = 3;
 
-    // Class constants - set in CommModule.cpp
-    static const int NBR_PORTS;
-    static const int TX_QUEUE_SIZE;
-    static const int RX_QUEUE_SIZE;
+    static void Init(void);
+
+    // Set a TX callback function on an object
+    template <typename B>
+    static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
+        if (!_ports[portNbr].Exists()) {
+            CommPort_t _tmpPort(portNbr);
+
+            _tmpPort.TXCallback() = std::bind(mptr, obj, std::placeholders::_1);
+
+            _ports += _tmpPort;
+
+        } else {
+            _ports[portNbr].TXCallback() =
+                std::bind(mptr, obj, std::placeholders::_1);
+        }
+
+        ready();
+    }
+
+    // Set an RX callback function on an object
+    template <typename B>
+    static void RxHandler(B* obj, void (B::*mptr)(rtp::packet*),
+                          uint8_t portNbr) {
+        if (!_ports[portNbr].Exists()) {
+            CommPort_t _tmpPort(portNbr);
+
+            _tmpPort.RXCallback() = std::bind(mptr, obj, std::placeholders::_1);
+
+            _ports += _tmpPort;
+
+        } else {
+            _ports[portNbr].RXCallback() =
+                std::bind(mptr, obj, std::placeholders::_1);
+        }
+
+        ready();
+    }
+
+    // Set a normal RX callback function without an object
+    static void RxHandler(void (*ptr)(rtp::packet*), uint8_t);
+    static void TxHandler(void (*ptr)(rtp::packet*), uint8_t);
 
     // Open a socket connection for communicating.
-    template <typename T>
-    void TxHandler(T *tptr, void(T::*mptr)(RTP_t*), uint8_t portNbr) {
-        _txH_called[portNbr] = true;
-        ready();
-        _tx_handles[portNbr].attach(tptr, mptr);
-    }
-    
-    template <typename T>
-    void RxHandler(T *tptr, void(T::*mptr)(RTP_t*), uint8_t portNbr) {
-        _rxH_called[portNbr] = true;
-        ready();
-        _rx_handles[portNbr].attach(tptr, mptr);
-    }
+    static bool openSocket(uint8_t);
 
-    void TxHandler(void(*)(RTP_t*), uint8_t);
-    void RxHandler(void(*)(RTP_t*), uint8_t);
-    
-    void RxHandler(void(*)(void), uint8_t);
+    // Send a rtp::packet. The details of exactly how the packet will be sent
+    // are determined from the rtp::packet's port and subclass values
+    static void send(const rtp::packet&);
+    static void receive(const rtp::packet&);
 
-    void openSocket(uint8_t);
+    static unsigned int NumRXPackets();
+    static unsigned int NumTXPackets();
 
-    // Send a RTP packet. The details of exactly how the packet will be sent are determined from the RTP packet's port and subclass values
-    void send(RTP_t&);
-    void receive(RTP_t&);
-    
-    //osThreadId rxID(void);
+    static void PrintInfo(bool forceHeader = false);
+
+    static void ResetCount(unsigned int portNbr);
+    static void Close(unsigned int portNbr);
+    static bool isReady(void);
+    static int NumOpenSockets(void);
 
 protected:
-    // NOP function for keeping a oommunication link active
+    // NOP function for keeping a communication link active
     void nopFunc(void);
 
+    /// Kill any threads and free the allocated stack.
+    /// Always call in any derived class's deconstructors!
+    void cleanup(void);
+
     // Memory Queue IDs
-    osMailQId   _txQueue;
-    osMailQId   _rxQueue;
+    osMailQId _txQueue;
+    osMailQId _rxQueue;
 
     // Thread IDs
-    osThreadId      _txID;
-    osThreadId      _rxID;
-
-    std::vector<uint8_t> *_open_ports;
+    static osThreadId _txID;
+    static osThreadId _rxID;
 
 private:
+    // Private constructor
+    CommModule();
+
+    static shared_ptr<CommModule>& Instance();
+
     // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void(*task)(void const *arg), osPriority, uint32_t, unsigned char*);
+    friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
+                              osPriority, uint32_t, unsigned char*);
 
     // The working threads for handeling rx and tx data queues
     static void txThread(void const*);
     static void rxThread(void const*);
 
-    void ready(void);
+    static void ready(void);
 
-    static bool isReady;
+    static void PrintHeader(void);
+
+    static std::shared_ptr<CommModule> instance;
+
+    static bool _isReady;
 
     // Thread and Mail defintion data structures
-    osThreadDef_t   _txDef;
-    osThreadDef_t   _rxDef;
-    osMailQDef_t    _txQDef;
-    osMailQDef_t    _rxQDef;
+    osThreadDef_t _txDef;
+    osThreadDef_t _rxDef;
+    osMailQDef_t _txQDef;
+    osMailQDef_t _rxQDef;
 
     // Mail helper objects
-    MailHelper<RTP_t, COMM_MODULE_TX_QUEUE_SIZE>   _txQueueHelper;
-    MailHelper<RTP_t, COMM_MODULE_RX_QUEUE_SIZE>   _rxQueueHelper;
-
-    CommLink        *_link[COMM_MODULE_NBR_PORTS];
-
-    FunctionPointerRJ   _rx_handles[COMM_MODULE_NBR_PORTS];
-    FunctionPointerRJ   _tx_handles[COMM_MODULE_NBR_PORTS];
-    
-    bool    _txH_called[COMM_MODULE_NBR_PORTS];
-    bool    _rxH_called[COMM_MODULE_NBR_PORTS];
-
-    // Ignore for now
-    // bool _dynamic_stack;
+    MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;
+    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
 };
-

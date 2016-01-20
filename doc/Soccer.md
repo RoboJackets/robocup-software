@@ -49,3 +49,10 @@ $ sudo spacenavd
 You can also use the systemd service file included with the libspnav source to have spacenavd run at bootup.
 
 See the docs for SpaceNavJoystick for more info and button layouts.
+
+
+### Graphing
+
+The soccer program has a feature that allows graphing any of the numeric values in the 'Tree' tab.  Simply right-click on a value field, then click 'New Chart' or 'Add to ____' and a graph view will be shown at the bottom of the window.
+
+![Graphing](soccer-graphing.png "Graphing")
