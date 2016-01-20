@@ -58,9 +58,7 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             std::function<AngleInstant(MotionInstant)> function = [targetPt](
                 MotionInstant instant) {
                 return AngleInstant(instant.pos.angleTo(targetPt));
-                // return AngleInstant((targetPt - instant.pos).angle());
             };
-            // std::cout<<"FacePoint"<<std::endl;
             return function;
         }
         case RotationCommand::FaceAngle: {
