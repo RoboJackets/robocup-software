@@ -8,7 +8,6 @@ set -e
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 SCRIPT_NAME="$(basename "$0")"
 MNT_ROOT="$HOME/mbed-mount-"$(date +"%m-%d-%y-%T")""
-MNT_ROOT="$HOME/mbed-mount-01-20-16-21:53:43"
 
 function usage {
     echo "Usage: ./$SCRIPT_NAME <file-to-copy>"
