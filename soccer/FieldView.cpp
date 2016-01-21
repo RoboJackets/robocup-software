@@ -44,7 +44,7 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     showCoords = false;
     showDotPatterns = false;
     showTeamNames = false;
-    _rotate = 1;
+    _rotate = 2;
     _history = nullptr;
 
     // Green background
