@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
+    // Set the font of the main window and its children to Arial
+    this->setStyleSheet("font-family: Arial");
+
     _ui.logTree->history(&_history);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
@@ -66,7 +69,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
     _currentPlay = new QLabel();
     _currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _currentPlay->setStyleSheet("font-family: Arial");
     _currentPlay->setToolTip("Current Play");
     _currentPlay->setAlignment(Qt::AlignCenter);
     _currentPlay->setObjectName("current_play_name");
@@ -75,27 +77,23 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
     _logFile = new QLabel();
     _logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _logFile->setStyleSheet("font-family: Arial");
     _logFile->setToolTip("Log File");
     statusBar()->addPermanentWidget(_logFile);
 
     _viewFPS = new QLabel();
     _viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _viewFPS->setStyleSheet("font-family: Arial");
     _viewFPS->setToolTip("Display Framerate");
     calcMinimumWidth(_viewFPS, "View: 00.0 fps");
     statusBar()->addPermanentWidget(_viewFPS);
 
     _procFPS = new QLabel();
     _procFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _procFPS->setStyleSheet("font-family: Arial");
     _procFPS->setToolTip("Processing Framerate");
     calcMinimumWidth(_procFPS, "Proc: 00.0 fps");
     statusBar()->addPermanentWidget(_procFPS);
 
     _logMemory = new QLabel();
     _logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _logMemory->setStyleSheet("font-family: Arial");
     _logMemory->setToolTip("Log Memory Usage");
     _logMemory->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     calcMinimumWidth(_logMemory, "Log: 000000/000000 000000 kiB");
