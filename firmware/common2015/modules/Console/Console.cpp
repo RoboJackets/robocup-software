@@ -213,7 +213,7 @@ void Console::RXCallback() {
 void Console::TXCallback() {
     // NVIC_DisableIRQ(UART0_IRQn);
 
-    /* 
+    /*
      * Handle transmission interrupts
      * here if necessary here.
     */

@@ -3,8 +3,8 @@
 #include "logger.hpp"
 #include "assert.hpp"
 
-#define COMM_LINK_SIGNAL_START_THREAD   (1 << 0)
-#define COMM_LINK_SIGNAL_RX_TRIGGER     (1 << 1)
+#define COMM_LINK_SIGNAL_START_THREAD (1 << 0)
+#define COMM_LINK_SIGNAL_RX_TRIGGER (1 << 1)
 
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 

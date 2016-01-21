@@ -51,7 +51,8 @@ public:
 
     // Set a TX callback function on an object
     template <typename B>
-    static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
+    static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*),
+                          uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
             CommPort_t _tmpPort(portNbr);
 

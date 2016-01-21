@@ -28,10 +28,7 @@ std::shared_ptr<CommModule> CommModule::instance;
 CommPort_t _tmpPort;
 
 // Default constructor
-CommModule::CommModule()
-    :
-    _txQueueHelper(),
-    _rxQueueHelper() {}
+CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
@@ -249,7 +246,9 @@ bool CommModule::openSocket(uint8_t portNbr) {
         // makes it this far if trying to open port 0 without any setup.
         // TX callback function was never set
         LOG(WARN,
-            "Must set at least the RX callback function before opening socket on port %u.", portNbr);
+            "Must set at least the RX callback function before opening socket "
+            "on port %u.",
+            portNbr);
 
         return false;
     }
