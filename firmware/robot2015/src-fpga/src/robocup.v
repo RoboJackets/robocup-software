@@ -2,8 +2,8 @@
 
 `include "BLDC_Motor.v"
 `include "SPI_Slave.v"
+`include "SPI_Master.v"
 //`include "git_version.vh"
-
 
 module robocup #(
 	parameter 		NUM_MOTORS 				= 	(  5 ),
@@ -77,13 +77,11 @@ begin : SYNC_INPUTS
 	// Hall inputs
 	for (j = 0; j < NUM_HALL_SENS; j = j + 1)
 	begin : GEN_HALL_ARRAY
-
 		hall_s[j]		<=	{ hall_a[j], hall_b[j], hall_c[j] };
 	end
 	// Encoder inputs
 	for (j = 0; j < NUM_ENCODERS; j = j + 1) 
 	begin : GEN_ENC_ARRAY
-
 		enc_s[j]		<=	{ enc_a[j], enc_b[j] };
 	end
 	// SPI slave inputs
@@ -144,19 +142,18 @@ localparam CMD_VERSION	 		= CMD_RW_TYPE_BASE + 4;
 // The command strobes start after the read/write command types
 localparam CMD_STROBE_START 		= CMD_RW_TYPE_BASE + 'h10;
 localparam CMD_TOGGLE_MOTOR_EN	 	= CMD_RW_TYPE_BASE + CMD_STROBE_START;
-
 // Response & request buffer sizes
 localparam SPI_SLAVE_RES_BUF_LEN = 15;
 localparam SPI_SLAVE_REQ_BUF_LEN = SPI_SLAVE_RES_BUF_LEN;
 localparam SPI_SLAVE_COUNTER_WIDTH = `LOG2(SPI_SLAVE_RES_BUF_LEN);
 
 // These are for triggering the storage of values outside of the SPI's SCK domain
-// reg tx_vals_flag = 0,
-	reg rx_vals_flag = 0,
-	motors_en = 1,
-	spi_slave_byte_done_d = 0;
-reg [ WATCHDOG_TIMER_WIDTH - 1:0 ] 		watchdog_timer = 0;
-reg [ SPI_SLAVE_COUNTER_WIDTH - 1:0 ] 	spi_slave_byte_count = 0;
+reg 									rx_vals_flag 			= 0,
+										motors_en 				= 1,
+										spi_slave_byte_done_d 	= 0;
+reg [ WATCHDOG_TIMER_WIDTH - 1:0 ] 		watchdog_timer 			= 0;
+reg [ WATCHDOG_TIMER_WIDTH - 1:0 ] 		watchdog_timer_l 		= 0;
+reg [ SPI_SLAVE_COUNTER_WIDTH - 1:0 ] 	spi_slave_byte_count 	= 0;
 reg [ SPI_SLAVE_DATA_WIDTH - 1:0 ] 		spi_slave_res_buf [ SPI_SLAVE_RES_BUF_LEN - 1:0 ],		// response & request buffers
 										spi_slave_req_buf [ SPI_SLAVE_REQ_BUF_LEN - 1:0 ];
 // reg [ SPI_SLAVE_DATA_WIDTH - 1:0 ]		spi_slave_di;	// latched every incoming byte & also store the first byte as the command byte
@@ -188,10 +185,21 @@ wire spi_slave_byte_done;
 // end
 // `endif
 
-// The command_byte is always the first byte in the request buffer when selected. The command byte ignores the MSB.
-//wire [ SPI_SLAVE_DATA_WIDTH - 2:0 ] command_byte 	= spi_slave_req_buf[0][ SPI_SLAVE_DATA_WIDTH - 2:0 ];
-// The top bit of a command byte is a flag that can be sent over the SPI slave bus to write/read the values for specified commands starting at the CMD_RW_TYPE_BASE address
-//wire 								command_rw 		= spi_slave_req_buf[0][ SPI_SLAVE_DATA_WIDTH - 1 ];
+wire spi_master_ncs = ~drv_ncs_o[1];
+
+SPI_Master spi_master_module (
+	.clk 			( sysclk 				),
+	.EN 			( 1						),
+	.SCK 			( spi_master_sck_o		),
+	.MOSI 			( spi_master_mosi_o		),
+	.MISO 			( spi_master_miso_s 	),
+	.SEL 			( spi_master_ncs		),
+	.START 			(  						),
+	.BUSY			(  						),
+	.VALID 			(  						),
+	.DATA_OUT 		( 						),
+	.DATA_IN 		( 16'hACAC 				)
+);
 
 wire tx_vals_flag = ( ( spi_slave_byte_count == 1 ) && ( spi_slave_byte_done_d == 1 ) );
 wire [ SPI_SLAVE_DATA_WIDTH - 1:0 ]		spi_slave_di = spi_slave_res_buf[ spi_slave_byte_count ];
@@ -200,6 +208,7 @@ wire [ SPI_SLAVE_DATA_WIDTH - 2:0 ] command_byte = ( ( spi_slave_byte_done_d == 
 wire 								command_rw 	 = ( ( spi_slave_byte_done_d == 1 ) && ( spi_slave_byte_count == 1 ) ) ? spi_slave_do[SPI_SLAVE_DATA_WIDTH - 1]   : spi_slave_req_buf[0][SPI_SLAVE_DATA_WIDTH - 1];
 reg [ SPI_SLAVE_DATA_WIDTH - 2:0 ] command_byte_l = 0;
 reg command_rw_l = 0;
+
 // SPI Slave module
 SPI_Slave spi_slave_module (
     .clk 			( sysclk 				),
@@ -208,8 +217,8 @@ SPI_Slave spi_slave_module (
     .MISO 			( spi_slave_miso_o 		),
     .SSEL 			( spi_slave_ncs_s 		),
     .DONE 			( spi_slave_byte_done 	),
-    .BYTE_RECEIVED 	( spi_slave_do			),
-    .BYTE_TO_SEND 	( spi_slave_di 			)
+    .DATA_IN 		( spi_slave_do			),
+    .DATA_OUT 		( spi_slave_di 			)
 );
 
 // When the byte count changes, we need to find our next byte that we want to load for the data out
@@ -218,16 +227,13 @@ always @( posedge sysclk )
 begin : SPI_LOAD_BYTE
 	// If the chip select line is toggled and it is now high, we are ending an SPI transfer, so reset everything & take action with what we received
 	if ( spi_slave_end_strobe ) begin
-		//spi_slave_di <= 0;
 		// Signal to do something with the received bytes & save how may bytes were received. We do this here so it will happen after we set the received byte count
 		rx_vals_flag <= 1;
-		//tx_vals_flag <= 0;
 		
 	end else if ( spi_slave_start_strobe ) begin
 		// Set the command byte if it's the first received byte.
 		spi_slave_byte_count <= 0;
 		rx_vals_flag <= 0;
-		//tx_vals_flag <= 0;
 
 	end else begin
 		if ( spi_slave_byte_done ) begin
@@ -237,43 +243,29 @@ begin : SPI_LOAD_BYTE
 			spi_slave_req_buf[ spi_slave_byte_count ] <= spi_slave_do;
 
 			if ( spi_slave_byte_count == 1 ) begin
-			// // 	// If we just received our first byte, set the flag to load the proper bytes that we'll send out
-			//	tx_vals_flag <= 1;
-			command_byte_l <= command_byte;
-			command_rw_l <= command_rw;
+				// // 	// If we just received our first byte, set the flag to load the proper bytes that we'll send out
+				command_byte_l <= command_byte;
+				command_rw_l <= command_rw;
 			end
-		//end else begin
-			// For the rest of the bytes, set the next outgoing byte
-			//spi_slave_di <= spi_slave_res_buf[ spi_slave_byte_count ];
-			
-			//	spi_slave_byte_count <= spi_slave_byte_count + 1;
-			//tx_vals_flag <= 0;
 		end
 
 		rx_vals_flag <= 0;
 	end
-
-	// Always load the first byte as the command byte
- 	// if (spi_slave_byte_done == 1 && spi_slave_byte_count == 0) begin
- 		
- 	// end
 end
-
-
 
 // We keep a delayed version of the byte_done flag from the SPI_Slave module for quickly loading the request type into the response buffer
 always @( posedge sysclk )	spi_slave_byte_done_d <= spi_slave_byte_done;
 
 always @( negedge sysclk )
 begin : SPI_LOAD_RESPONSE_BUFFER
-	
 	// Always place the first response byte for an SPI transfer into the zero index of the response buffer
 	spi_slave_res_buf[0] <= {2'b10, motors_en, hall_faults};
-	//spi_slave_res_buf[0] <= {'b10, motors_en, 'b1, enc_a[0], enc_b[0], enc_a[1], enc_b[1]};
-	watchdog_timer <= watchdog_timer + 1;
+	watchdog_timer_l <= watchdog_timer;
 
 	// If the flag is set to load the response buffer, reset the flag & do just that. We know that the 'command_byte' is valid if this flag is set.
 	if ( tx_vals_flag == 1 ) begin
+	
+		watchdog_timer <= 0;
 
 		if ( command_rw == CMD_READ_TYPE ) begin
 			// If the byte count is 2, we need to go back and decode our first byte so we know what data to send out for everything else
@@ -288,8 +280,8 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 						spi_slave_res_buf[2*j+2]	<=	enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
 					end
 
-					spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH)];
-					spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer[(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : (WATCHDOG_TIMER_WIDTH - (2 * SPI_SLAVE_DATA_WIDTH))];
+					spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer_l[WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH)];
+					spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer_l[(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : (WATCHDOG_TIMER_WIDTH - (2 * SPI_SLAVE_DATA_WIDTH))];
 				end
 
 				CMD_ENCODER_COUNT :
@@ -301,8 +293,8 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 						spi_slave_res_buf[2*j+2] 	<=	enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
 					end
 
-					spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH)];
-					spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer[(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : (WATCHDOG_TIMER_WIDTH - (2 * SPI_SLAVE_DATA_WIDTH))];
+					spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer_l[WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH)];
+					spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer_l[(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : (WATCHDOG_TIMER_WIDTH - (2 * SPI_SLAVE_DATA_WIDTH))];
 				end
 
 				CMD_HALL_COUNT :
@@ -339,11 +331,13 @@ begin : SPI_LOAD_RESPONSE_BUFFER
 						spi_slave_res_buf[j+1] 	<=	'hAA;
 					end
 				end
-
 			endcase // command_byte - read
 		end
-	end // tx_vals_flag
 
+	// tx_vals_flag
+	end else begin
+		watchdog_timer <= watchdog_timer + 1;
+	end 
 end // SPI_LOAD_RESPONSE_BUFFER
 
 
@@ -392,25 +386,21 @@ begin : SPI_SORT_REQUEST_BUFFER
 						motors_en <= 1;
 					end
 				end
-
 			endcase
-
 		end	// command_rw
 	end
-
 end 	// SPI_SORT_REQUEST_BUFFER
 
-always @(posedge sysclk) begin
-	if (watchdog_timer > (1 << WATCHDOG_TIMER_WIDTH) - 2) begin
-		// for ( j = 0; j < NUM_MOTORS; j = j + 1 ) 
-		// begin : WATCHDOG_EXPIRE
-		// 	duty_cycle[j]	<=	0;
-		// end
-	end
-end
 
-// This handles all of the SPI bus communications to/from the motor board
-// Motor_Board_Comm motor_board_comm_module();
+// always @(posedge sysclk) begin
+// 	if (watchdog_timer > (1 << WATCHDOG_TIMER_WIDTH) - 2) begin
+// 		for ( j = 0; j < NUM_MOTORS; j = j + 1 ) 
+// 		begin : WATCHDOG_EXPIRE
+// 			duty_cycle[j]	<=	0;
+// 		end
+// 	end
+// end
+
 
 // This is where all of the motors modules are instantiated
 generate
@@ -421,41 +411,20 @@ generate
 			.ENCODER_COUNT_WIDTH 	( ENCODER_COUNT_WIDTH 			),
 			.HALL_COUNT_WIDTH 		( HALL_COUNT_WIDTH 				)
 			) motor (
-			.clk 				( sysclk 		),
-			.en					( motors_en		),
-			.reset_hall_count 	( 0				),
-			.reset_enc_count 	( 0				),
-			.duty_cycle			( duty_cycle[i]	), 
-			.enc 				( enc_s[i] 		),
-			//.enc 				( { enc_a[i], enc_b[i] } ),
-			.hall 				( hall_s[i] 	),
-			.phaseH 			( phaseH_o[i]	),
-			.phaseL 			( phaseL_o[i]	), 
-			.enc_count 			( enc_count[i] 	),
-			.hall_count 		( hall_count[i] ),
-			.hall_fault 		( hall_faults[i])
+			.clk 					( sysclk 		),
+			.en						( motors_en		),
+			.reset_hall_count 		( 0				),
+			.reset_enc_count 		( 0				),
+			.duty_cycle				( duty_cycle[i]	), 
+			.enc 					( enc_s[i] 		),
+			.hall 					( hall_s[i] 	),
+			.phaseH 				( phaseH_o[i]	),
+			.phaseL 				( phaseL_o[i]	), 
+			.enc_count 				( enc_count[i] 	),
+			.hall_count 			( hall_count[i] ),
+			.hall_fault 			( hall_faults[i])
 		);
 	end
 endgenerate
-
-		// BLDC_Motor #(
-		// 	.MAX_DUTY_CYCLE 	 	( ( 1 << DUTY_CYCLE_WIDTH ) - 1 ),
-		// 	.ENCODER_COUNT_WIDTH 	( ENCODER_COUNT_WIDTH 			),
-		// 	.HALL_COUNT_WIDTH 		( HALL_COUNT_WIDTH 				)
-		// 	) drib_motor (
-		// 	.clk 				( sysclk 		),
-		// 	.en					( motors_en		),
-		// 	.reset_hall_count 	( 0				),
-		// 	.reset_enc_count 	( 0				),
-		// 	.duty_cycle			( duty_cycle[NUM_MOTORS-1]	), 
-		// 	.enc 				( 2'b00 		),
-		// 	//.enc 				( { enc_a[i], enc_b[i] } ),
-		// 	.hall 				( hall_s[NUM_MOTORS-1] 	),
-		// 	.phaseH 			( phaseH_o[NUM_MOTORS-1]	),
-		// 	.phaseL 			( phaseL_o[NUM_MOTORS-1]	), 
-		// 	//.enc_count 			( enc_count[i] 	),
-		// 	.hall_count 		( hall_count[NUM_MOTORS-1] ),
-		// 	.hall_fault 		( hall_faults[NUM_MOTORS-1])
-		// );
 
 endmodule 	// RoboCup

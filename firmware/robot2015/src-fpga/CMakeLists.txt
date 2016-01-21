@@ -116,7 +116,9 @@ add_custom_target(fpga2015bit
         -wd ${CMAKE_CURRENT_BINARY_DIR}
         -p  ${DEV_PARTNUM}
         -synth xst_verilog
-        -implement fast_runtime
+        # -implement fast_runtime
+        # -implement balanced.opt
+        -implement high_effort.opt
         -config bitgen
         ${TOP_LEVEL_NAME}
     COMMENT "Using Xilinx xflow to generate the FPGA's bitstream from ${NUM_SRCS} Verilog files"

@@ -6,7 +6,7 @@ module RoboCup_Top_tb;
 initial begin
     $dumpfile("RoboCup_Top_tb-results.vcd");
     $dumpvars(0,RoboCup_Top_tb);
- end
+end
 
 localparam NUM_MOTORS = 5;
 localparam SPI_SLAVE_DATA_WIDTH = 8;
