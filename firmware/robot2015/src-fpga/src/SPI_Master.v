@@ -100,7 +100,6 @@ begin
   if ( begin_transfer == 1 ) begin
     transfer_active <= 1;
     select <= 1;
-    data_in_l <= DATA_IN;
     valid_q <= 0;
   end else if ( end_transfer == 1 ) begin
     transfer_active <= 0;
@@ -119,7 +118,9 @@ begin
 
   miso_q <= MISO;
 
-  if ( transfer_active == 1 ) begin
+  if ( begin_transfer == 1 ) begin
+    data_in_l <= DATA_IN;
+  end else if ( transfer_active == 1 ) begin
     if ( SCK_fallingedge == 1 ) begin
       bitcnt <= bitcnt + 1;
       data_in_l <= {1'b0, data_in_l[DATA_BIT_WIDTH-1:1]};
