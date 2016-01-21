@@ -7,7 +7,6 @@
 #include "commands.hpp"
 
 FPGA* FPGA::instance = nullptr;
-
 bool FPGA::isInit = false;
 
 namespace {
@@ -46,10 +45,9 @@ bool FPGA::Init(const std::string& filepath) {
     FILE* fp = fopen(filepath.c_str(), "r");
     if (fp == nullptr) {
         LOG(FATAL, "No FPGA bitfile!");
-        
+
         return false;
     }
-
     fclose(fp);
 
     // toggle PROG_B to clear out anything prior
@@ -120,6 +118,8 @@ bool FPGA::send_config(const std::string& filepath) {
         // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
         SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
 
+        size_t read_byte;
+
         fseek(fp, 0, SEEK_END);
         size_t filesize = ftell(fp);
         fseek(fp, 0, SEEK_SET);
@@ -127,7 +127,7 @@ bool FPGA::send_config(const std::string& filepath) {
         LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(),
             filesize);
 
-        size_t read_byte;
+        mutex.lock();
 
         do {
             read_byte = fread(buf, 1, 1, fp);
@@ -138,9 +138,12 @@ bool FPGA::send_config(const std::string& filepath) {
 
         } while (*initB == true || *done == false);
 
+        mutex.unlock();
+
         fclose(fp);
 
         return false;
+
     } else {
         LOG(INIT, "FPGA configuration failed\r\n    Unable to open %s",
             filepath.c_str());
