@@ -8,7 +8,8 @@
 #include "fpga.hpp"
 #include "commands.hpp"
 
-static const int NUM_MOTORS = 5;
+namespace {
+const int NUM_MOTORS = 5;
 
 motor_t mtrEx = {
     .vel = 0x4D,
@@ -16,18 +17,19 @@ motor_t mtrEx = {
     .enc = {0x23, 0x18},
     .status = {.encOK = false, .hallOK = true, .drvStatus = {0x26, 0x0F}},
     .desc = "Motor"};
+}
 
-std::array<motor_t, NUM_MOTORS> motors;
+std::vector<motor_t> motors(NUM_MOTORS, mtrEx);
 int start_s = clock();
 
 void motors_Init() {
-    // ahhh just make a dummy vector of info for now...
-    motors.fill(mtrEx);
-    motors.at(0).desc = "Dribb.";
-    motors.at(1).desc += "1";
-    motors.at(2).desc += "2";
-    motors.at(3).desc += "3";
-    motors.at(4).desc += "4";
+    // not sure why this sometimes causes a hard fault...
+    // this will be changed anyways once motors are working
+    // motors.at(0).desc = "Dribb.";
+    // motors.at(1).desc += "1";
+    // motors.at(2).desc += "2";
+    // motors.at(3).desc += "3";
+    // motors.at(4).desc += "4";
 }
 
 int cmd_motors_scroll(const std::vector<std::string>& args) {
@@ -40,8 +42,9 @@ int cmd_motors_scroll(const std::vector<std::string>& args) {
     uint8_t status_byte =
         FPGA::Instance()->read_encs(enc_deltas.data(), enc_deltas.size());
 
-    printf("\033[?25l\033[25mMotors Enabled: \033[K%s\033E",
-           status_byte & 0x20 ? "YES" : "NO");
+    // printf("\033[?25l\033[25mMotors Enabled: \033[K%s\033E",
+    //        status_byte & 0x20 ? "YES" : "NO");
+    printf("\033[?25l\033[25mStatus Byte: \033[K0x%02X\033E", status_byte);
     for (size_t i = 0; i < duty_cycles.size(); i++) {
         printf("\t%s \tVel: 0x%03X\tHall: %3u\tEnc: %5u%s\033E",
                motors.at(i).desc.c_str(), duty_cycles.at(i), halls.at(i),
