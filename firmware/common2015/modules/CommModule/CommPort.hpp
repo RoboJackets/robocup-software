@@ -239,7 +239,7 @@ public:
     void PrintFooter(void) {
         printf(
             "==========================\r\n"
-            "Total:\t\t%u\t%u\r\n\r\n",
+            "Total:\t\t%u\t%u\r\n",
             allRXPackets(), allTXPackets());
         Console::Flush();
     }

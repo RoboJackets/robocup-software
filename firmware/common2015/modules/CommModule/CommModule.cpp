@@ -50,7 +50,6 @@ void CommModule::Init(void) {
     auto instance = Instance();
 
     // Create the data queues.
-    // =================
     instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
     instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), nullptr);
 
@@ -61,7 +60,6 @@ void CommModule::Init(void) {
 
     // Create the TX & RX threads - pass them a pointer to the
     // created object.
-    // =================
     _txID = osThreadCreate(&(instance->_txDef), nullptr);
     _rxID = osThreadCreate(&(instance->_rxDef), nullptr);
 }
