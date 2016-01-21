@@ -62,21 +62,18 @@ void Task_SerialConsole(void const* args) {
         if (Console::CommandReady() == true) {
             // Increase the thread's priority first so we can make sure the
             // scheduler will select it to run
-            osStatus tState = osThreadSetPriority(threadID, osPriorityAboveNormal);
+            osStatus tState =
+                osThreadSetPriority(threadID, osPriorityAboveNormal);
             ASSERT(tState == osOK);
 
-            // Disable UART interrupts & execute the command
-            // NVIC_DisableIRQ(UART0_IRQn);
+            // Execute the command
             execute_line(Console::rxBufferPtr());
 
             // Now, reset the priority of the thread to its idle state
             tState = osThreadSetPriority(threadID, threadPriority);
             ASSERT(tState == osOK);
-            
-            Console::CommandHandled(true);
 
-            // Enable UART interrupts again
-            // NVIC_EnableIRQ(UART0_IRQn);
+            Console::CommandHandled(true);
         }
 
         // Check if a system stop is requested
