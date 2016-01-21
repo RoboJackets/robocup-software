@@ -49,7 +49,6 @@ void Task_Controller(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-#if RJ_MPU_EN
     MPU6050 imu(RJ_I2C_BUS);
 
     imu.setBW(MPU6050_BW_256);
@@ -83,32 +82,18 @@ void Task_Controller(void const* args) {
 
         // Set the error flag - bit positions are pretty arbitruary as of now
         imu_err |= 1 << 1;
-
         // Set the error code's valid bit
         imu_err |= 1 << 0;
 
-#else
-    LOG(INIT,
-        "IMU disabled in config file\r\n    Falling back to sensorless control "
-        "loop.");
-
-    // Set the error flag - bit positions are pretty arbitruary as of now
-    imu_err |= 1 << 2;
-
-    // Set the error code's valid bit
-    imu_err |= 1 << 0;
-#endif
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
         Task_Controller_Sensorless(mainID);
+
         // should never reach this point
         osThreadTerminate(threadID);
+
         return;
-
-#if RJ_MPU_EN
     }
-
-#endif
 
     // osThreadSetPriority(threadID, osPriorityNormal);
 
