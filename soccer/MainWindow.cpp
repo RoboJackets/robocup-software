@@ -56,9 +56,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
-    // Set the font of the main window and its children to Arial
-    this->setStyleSheet("font-family: Arial");
-
     _ui.logTree->history(&_history);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
