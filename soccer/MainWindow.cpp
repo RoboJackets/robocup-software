@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
+    // Set the width of logTime to prevent it from vibrating
+    calcMinimumWidth(_ui.logTime, "00:00.0");
+
     _ui.logTree->history(&_history);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;

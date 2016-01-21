@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1176</width>
+    <width>1370</width>
     <height>802</height>
    </rect>
   </property>
@@ -352,7 +352,7 @@
            <item>
             <widget class="QLabel" name="logTime">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -363,7 +363,7 @@
               </font>
              </property>
              <property name="text">
-              <string>00:00</string>
+              <string>00:00.0</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1404,7 +1404,7 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="minimumSize">
         <size>
-         <width>350</width>
+         <width>375</width>
          <height>0</height>
         </size>
        </property>
@@ -1843,7 +1843,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1176</width>
+     <width>1370</width>
      <height>22</height>
     </rect>
    </property>
@@ -1938,7 +1938,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>0 degrees</string>
@@ -1960,7 +1960,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>180 degrees</string>
