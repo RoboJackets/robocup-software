@@ -126,10 +126,16 @@ void Task_CommCtrl(void const* args) {
     // Setup some lights that will blink whenever we send/receive packets
     static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
     static const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
+
+    /* Uncomment the below DigitalOut lines and comment out the
+     * ones above to use the mbed's on-board LEDs.
+     */
     // static DigitalOut tx_led(LED3, 0);
     // static DigitalOut rx_led(LED2, 0);
+
     RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
     RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
+
     rx_led_ticker.start(150);
     tx_led_ticker.start(150);
 
