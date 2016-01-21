@@ -11,7 +11,7 @@ module robocup #(
 					NUM_ENCODERS 			= 	( NUM_MOTORS - 1 ),
 
 					SPI_MASTER_CPOL 		= 	(  0 ),
-					SPI_MASTER_CPHA 		= 	(  0 ),
+					SPI_MASTER_CPHA 		= 	(  1 ),
 					SPI_MASTER_DATA_WIDTH 	= 	( 16 ),
 
 					SPI_SLAVE_CPOL 			= 	(  0 ),
@@ -156,14 +156,11 @@ reg [ WATCHDOG_TIMER_WIDTH - 1:0 ] 		watchdog_timer_l 		= 0;
 reg [ SPI_SLAVE_COUNTER_WIDTH - 1:0 ] 	spi_slave_byte_count 	= 0;
 reg [ SPI_SLAVE_DATA_WIDTH - 1:0 ] 		spi_slave_res_buf [ SPI_SLAVE_RES_BUF_LEN - 1:0 ],		// response & request buffers
 										spi_slave_req_buf [ SPI_SLAVE_REQ_BUF_LEN - 1:0 ];
-// reg [ SPI_SLAVE_DATA_WIDTH - 1:0 ]		spi_slave_di;	// latched every incoming byte & also store the first byte as the command byte
 
 wire [ SPI_SLAVE_DATA_WIDTH - 1:0 ] spi_slave_do;
 wire spi_slave_start_strobe = ( (spi_slave_ncs_s == 0) && (spi_slave_ncs_d == 1) ),
  	 spi_slave_end_strobe	= ( (spi_slave_ncs_s == 1) && (spi_slave_ncs_d == 0) );
 wire spi_slave_byte_done;
-
-// wire 								spi_slave_load_byte_flag = (spi_slave_byte_done == 0) && (spi_slave_byte_done_d == 1);
 
 // // `define SIMULATION
 // `ifdef SIMULATION
@@ -185,7 +182,12 @@ wire spi_slave_byte_done;
 // end
 // `endif
 
-wire spi_master_ncs = ~drv_ncs_o[1];
+reg 									spi_master_start = 0;
+wire 									spi_master_ncs = ~drv_ncs_o[1];
+wire 									spi_master_busy,
+										spi_master_valid;
+wire [ SPI_MASTER_DATA_WIDTH - 1:0 ] 	spi_master_d0,
+										spi_master_di;
 
 SPI_Master spi_master_module (
 	.clk 			( sysclk 				),
@@ -194,11 +196,11 @@ SPI_Master spi_master_module (
 	.MOSI 			( spi_master_mosi_o		),
 	.MISO 			( spi_master_miso_s 	),
 	.SEL 			( spi_master_ncs		),
-	.START 			(  						),
-	.BUSY			(  						),
-	.VALID 			(  						),
-	.DATA_OUT 		( 						),
-	.DATA_IN 		( 16'hACAC 				)
+	.START 			( spi_master_start		),
+	.BUSY			( spi_master_busy		),
+	.VALID 			( spi_master_valid		),
+	.DATA_OUT 		( spi_master_d0			),
+	.DATA_IN 		( spi_master_di 		)
 );
 
 wire tx_vals_flag = ( ( spi_slave_byte_count == 1 ) && ( spi_slave_byte_done_d == 1 ) );
@@ -224,7 +226,7 @@ SPI_Slave spi_slave_module (
 // When the byte count changes, we need to find our next byte that we want to load for the data out
 //always @( negedge spi_slave_byte_sent, posedge spi_slave_ncs_s, posedge spi_slave_end_strobe, posedge spi_slave_start_strobe )
 always @( posedge sysclk )
-begin : SPI_LOAD_BYTE
+begin : SPI_SLAVE_LOAD_BYTE
 	// If the chip select line is toggled and it is now high, we are ending an SPI transfer, so reset everything & take action with what we received
 	if ( spi_slave_end_strobe ) begin
 		// Signal to do something with the received bytes & save how may bytes were received. We do this here so it will happen after we set the received byte count
@@ -257,7 +259,7 @@ end
 always @( posedge sysclk )	spi_slave_byte_done_d <= spi_slave_byte_done;
 
 always @( negedge sysclk )
-begin : SPI_LOAD_RESPONSE_BUFFER
+begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
 	// Always place the first response byte for an SPI transfer into the zero index of the response buffer
 	spi_slave_res_buf[0] <= {2'b10, motors_en, hall_faults};
 	watchdog_timer_l <= watchdog_timer;
@@ -351,9 +353,9 @@ begin : SPI_SORT_REQUEST_BUFFER
 				CMD_TOGGLE_MOTOR_EN :
 				begin
 					// Only take action if we received exactly 1 command byte
-					if ( spi_slave_byte_count == 0 ) begin
+					// if ( spi_slave_byte_count == 0 ) begin
 						motors_en <= 0;
-					end
+					// end
 				end
 			endcase // command_byte - write
 
@@ -382,9 +384,9 @@ begin : SPI_SORT_REQUEST_BUFFER
 				CMD_TOGGLE_MOTOR_EN :
 				begin
 					// Only take action if we received exactly 1 command byte
-					if ( spi_slave_byte_count == 0 ) begin
+					// if ( spi_slave_byte_count == 0 ) begin
 						motors_en <= 1;
-					end
+					// end
 				end
 			endcase
 		end	// command_rw
