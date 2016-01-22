@@ -17,17 +17,18 @@
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
 inline void debugLog(const std::exception& e) {
-    std::cerr<<e.what()<<std::endl;
+    std::cerr << e.what() << std::endl;
 }
 
-template <class T, typename std::enable_if<std::is_base_of<std::exception, T>::value, int>::type = 0>
+template <class T,
+          typename std::enable_if<std::is_base_of<std::exception, T>::value,
+                                  int>::type = 0>
 inline void debugThrow(const T& e) {
     debugLog(e);
     if (THROW_DEBUG_EXCEPTIONS) {
         throw e;
     }
 }
-
 
 inline void debugThrow(const std::string& string) {
     debugThrow(std::runtime_error(string));
