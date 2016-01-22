@@ -1,6 +1,5 @@
 #include "helper-funcs.hpp"
 
-#include "mbed.h"
 #include "rtos.h"
 
 #include "logger.hpp"
@@ -8,6 +7,11 @@
 
 // The head of the linked list of active threads
 extern struct OS_XCB os_rdy;
+
+namespace {
+bool comm_led_rx_en = false;
+bool comm_led_tx_en = false;
+}
 
 /**
  * Initializes the peripheral nested vector interrupt controller (PNVIC) with
@@ -89,14 +93,41 @@ void imAlive(void const* arg) {
 /**
  * @brief      { Flash an LED }
  */
-void strobeStatusLED(void const* arg) {
-    DigitalInOut* led =
-        const_cast<DigitalInOut*>(reinterpret_cast<const DigitalInOut*>(arg));
-
-    *led = !(*led);
-    Thread::wait(30);
-    *led = !(*led);
+void strobeStatusLED(DigitalInOut& led) {
+    led = !led;
+    Thread::wait(25);
+    led = !led;
 }
+void strobeStatusLED(DigitalOut& led) {
+    led = !led;
+    Thread::wait(25);
+    led = !led;
+}
+
+// all this to flash damn leds in a multithreaded environment...wtf
+void commLightsTask(DigitalInOut& led, bool tx_rx_led_en) {
+    if (tx_rx_led_en == true) strobeStatusLED(led);
+}
+void commLightsTask(DigitalOut& led, bool tx_rx_led_en) {
+    if (tx_rx_led_en == true) strobeStatusLED(led);
+}
+
+void commLightsTask_TX(void const* arg) {
+    DigitalOut* led =
+        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
+    commLightsTask(*led, comm_led_tx_en);
+}
+void commLightsTask_RX(void const* arg) {
+    DigitalOut* led =
+        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
+    commLightsTask(*led, comm_led_rx_en);
+}
+
+void commLightsTimeout_RX(void const* arg) { comm_led_rx_en = false; }
+void commLightsTimeout_TX(void const* arg) { comm_led_tx_en = false; }
+
+void commLightsRenew_RX() { comm_led_rx_en = true; }
+void commLightsRenew_TX() { comm_led_tx_en = true; }
 
 // returns how many active threads there are
 unsigned int get_num_threads() {

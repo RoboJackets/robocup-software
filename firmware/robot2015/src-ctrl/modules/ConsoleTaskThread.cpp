@@ -6,12 +6,15 @@
 #include <assert.hpp>
 
 #include "task-signals.hpp"
+#include "task-globals.hpp"
 #include "commands.hpp"
 
 /**
  * Initializes the console
  */
 void Task_SerialConsole(void const* args) {
+    const osThreadId* mainID = (const osThreadId*)args;
+
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -34,26 +37,22 @@ void Task_SerialConsole(void const* args) {
     // Let everyone know we're ok
     LOG(INIT,
         "Serial console ready!\r\n"
-        "\tThread ID:\t%u\r\n"
-        "\tPriority:\t%d",
+        "    Thread ID:\t%u\r\n"
+        "    Priority:\t%d",
         threadID, threadPriority);
 
-    // Lower our priority so we will yield to other, more important, startup
-    // tasks
-    ASSERT(osThreadSetPriority(threadID, osPriorityLow) == osOK);
-
-    // Yield to other threads during startup so that the below lines will
-    // print to the console last
-    Thread::yield();
-
-    // Reset our priorty
-    ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);
+    // Signal back to main and wait until we're signaled to continue
+    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     // Display RoboJackets if we're up and running at this point during startup
     Console::ShowLogo();
 
     // Print out the header to show the user we're ready for input
     Console::PrintHeader();
+
+    // Set the title of the terminal window
+    Console::SetTitle(std::string("RoboJackets"));
 
     while (true) {
         // Execute any active iterative command
@@ -63,19 +62,18 @@ void Task_SerialConsole(void const* args) {
         if (Console::CommandReady() == true) {
             // Increase the thread's priority first so we can make sure the
             // scheduler will select it to run
-            ASSERT(osThreadSetPriority(threadID, osPriorityAboveNormal) ==
-                   osOK);
+            osStatus tState =
+                osThreadSetPriority(threadID, osPriorityAboveNormal);
+            ASSERT(tState == osOK);
 
-            // Disable UART interrupts & execute the command
-            NVIC_DisableIRQ(UART0_IRQn);
+            // Execute the command
             execute_line(Console::rxBufferPtr());
 
             // Now, reset the priority of the thread to its idle state
-            ASSERT(osThreadSetPriority(threadID, threadPriority) == osOK);
-            Console::CommandHandled(true);
+            tState = osThreadSetPriority(threadID, threadPriority);
+            ASSERT(tState == osOK);
 
-            // Enable UART interrupts again
-            NVIC_EnableIRQ(UART0_IRQn);
+            Console::CommandHandled(true);
         }
 
         // Check if a system stop is requested

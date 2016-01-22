@@ -6,11 +6,15 @@
 
 #include "CommModule.hpp"
 
+#include <ctime>
+
 #include "CommPort.hpp"
 
 #include "helper-funcs.hpp"
 #include "logger.hpp"
 #include "assert.hpp"
+
+#define COMM_MODULE_SIGNAL_START_THREAD (1 << 0)
 
 // Class declarations since everything in CommModule is static
 bool CommModule::_isReady = false;
@@ -24,11 +28,7 @@ std::shared_ptr<CommModule> CommModule::instance;
 CommPort_t _tmpPort;
 
 // Default constructor
-CommModule::CommModule()
-    :  // [X] - 1.1 - Define the data queues.
-      // =================
-      _txQueueHelper(),
-      _rxQueueHelper() {}
+CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
@@ -43,22 +43,20 @@ void CommModule::cleanup(void) {
 }
 
 void CommModule::Init(void) {
-    // [X] - 1.0 - Make sure we have an instance to work with
+    // Make sure we have an instance to work with
     auto instance = Instance();
 
-    // [X] - 1.1 - Create the data queues.
-    // =================
+    // Create the data queues.
     instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
     instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), nullptr);
 
-    // [X] - 1.2 - Define the TX & RX task threads.
-    // =================
-    define_thread(instance->_txDef, &CommModule::txThread);
-    define_thread(instance->_rxDef, &CommModule::rxThread);
+    // Define the TX & RX task threads.
+    define_thread(instance->_txDef, &CommModule::txThread, osPriorityHigh);
+    define_thread(instance->_rxDef, &CommModule::rxThread,
+                  osPriorityAboveNormal);
 
-    // [X] - 1.3 - Create the TX & RX threads - pass them a pointer to the
+    // Create the TX & RX threads - pass them a pointer to the
     // created object.
-    // =================
     _txID = osThreadCreate(&(instance->_txDef), nullptr);
     _rxID = osThreadCreate(&(instance->_rxDef), nullptr);
 }
@@ -80,10 +78,9 @@ void CommModule::txThread(void const* arg) {
     threadPriority = osThreadGetPriority(instance->_txID);
     ASSERT(instance->_txID != nullptr);
 
-    // Check for the existance of a TX LED to flash
-    if (instance->_txLED == nullptr) {
-        LOG(SEVERE, "TX LED unset at thread start!");
-    }
+    // Start up a ticker that disables the strobing TX LED. This is essentially
+    // a watchdog timer for the TX LED's activity light
+    RtosTimer led_ticker_timeout(commLightsTimeout_TX, osTimerOnce, nullptr);
 
     LOG(INIT,
         "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
@@ -96,7 +93,7 @@ void CommModule::txThread(void const* arg) {
     osEvent evt;
 
     while (true) {
-        // When a new rtp::packet is put in the tx queue, begin operations (does
+        // When a new rtp::packet is put in the TX queue, begin operations (does
         // nothing if no new data in queue)
         evt = osMailGet(instance->_txQueue, osWaitForever);
 
@@ -105,7 +102,8 @@ void CommModule::txThread(void const* arg) {
             rtp::packet* p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            ASSERT(osThreadSetPriority(_txID, osPriorityRealtime) == osOK);
+            osStatus tState = osThreadSetPriority(_txID, osPriorityRealtime);
+            ASSERT(tState == osOK);
 
             // Call the user callback function
             if (_ports[p->port].isOpen()) {
@@ -121,9 +119,13 @@ void CommModule::txThread(void const* arg) {
             // Release the allocated memory once data is sent
             osMailFree(instance->_txQueue, p);
 
-            strobeStatusLED((void*)(instance->_txLED));
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            led_ticker_timeout.start(300);
+            commLightsRenew_TX();
 
-            ASSERT(osThreadSetPriority(_txID, threadPriority) == osOK);
+            tState = osThreadSetPriority(_txID, threadPriority);
+            ASSERT(tState == osOK);
         }
     }
 
@@ -137,27 +139,26 @@ void CommModule::rxThread(void const* arg) {
     // Only continue past this point once at least one (1) hardware link is
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
+    // set this true immediately after we are released execution
+    _isReady = true;
 
     threadPriority = osThreadGetPriority(instance->_rxID);
     ASSERT(instance->_rxID != nullptr);
 
-    // Check for the existance of an RX LED to flash
-    if (instance->_rxLED == nullptr) {
-        LOG(SEVERE, "rX LED unset at thread start!");
-    }
+    // Start up a ticker that disables the strobing RX LED. This is essentially
+    // a watchdog timer for the RX LED's activity light
+    RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
 
     LOG(INIT,
         "RX communication module ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
         instance->_rxID, threadPriority);
 
-    _isReady = true;
-
     rtp::packet* p;
     osEvent evt;
 
     while (true) {
-        // Wait until new data is placed in the class's rxQueue from a CommLink
+        // Wait until new data is placed in the class's RX queue from a CommLink
         // class
         evt = osMailGet(instance->_rxQueue, osWaitForever);
 
@@ -166,7 +167,8 @@ void CommModule::rxThread(void const* arg) {
             p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            ASSERT(osThreadSetPriority(_rxID, osPriorityRealtime) == osOK);
+            osStatus tState = osThreadSetPriority(_rxID, osPriorityRealtime);
+            ASSERT(tState == osOK);
 
             // Call the user callback function (if set)
             if (_ports[p->port].isOpen()) {
@@ -179,11 +181,16 @@ void CommModule::rxThread(void const* arg) {
                     p->port, p->subclass);
             }
 
-            osMailFree(instance->_rxQueue,
-                       p);  // free memory allocated for mail
+            // free memory allocated for mail
+            osMailFree(instance->_rxQueue, p);
 
-            strobeStatusLED((void*)(instance->_rxLED));
-            ASSERT(osThreadSetPriority(_rxID, threadPriority) == osOK);
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            led_ticker_timeout.start(300);
+            commLightsRenew_RX();
+
+            tState = osThreadSetPriority(_rxID, threadPriority);
+            ASSERT(tState == osOK);
         }
     }
 
@@ -226,8 +233,6 @@ bool CommModule::openSocket(uint8_t portNbr) {
 
         _ports += _tmpPort;
 
-        ready();
-
         return _ports[portNbr].Open();
     }
 
@@ -241,7 +246,9 @@ bool CommModule::openSocket(uint8_t portNbr) {
         // makes it this far if trying to open port 0 without any setup.
         // TX callback function was never set
         LOG(WARN,
-            "Must set TX & RX callback functions before opening socket.\r\n");
+            "Must set at least the RX callback function before opening socket "
+            "on port %u.",
+            portNbr);
 
         return false;
     }
@@ -325,7 +332,3 @@ void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
 bool CommModule::isReady(void) { return _isReady; }
 
 int CommModule::NumOpenSockets(void) { return _ports.count_open(); }
-
-void CommModule::txLED(DigitalInOut* led) { instance->_txLED = led; }
-
-void CommModule::rxLED(DigitalInOut* led) { instance->_rxLED = led; }

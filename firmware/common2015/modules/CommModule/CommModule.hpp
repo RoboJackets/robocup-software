@@ -14,8 +14,6 @@
 #include <functional>
 #include <memory>
 
-#define COMM_MODULE_SIGNAL_START_THREAD 0x01
-
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */
@@ -43,10 +41,11 @@ private:
 public:
     ~CommModule();
 
-    // Class constants - set in CommModule.cpp
-    static const size_t NBR_PORTS = 16;
-    static const size_t TX_QUEUE_SIZE = 5;
-    static const size_t RX_QUEUE_SIZE = 5;
+    // Class constants
+    // Be careful of the queue sizes. The errors that result from
+    // over allocation are very tricky to catch.
+    static const size_t TX_QUEUE_SIZE = 3;
+    static const size_t RX_QUEUE_SIZE = 3;
 
     static void Init(void);
 
@@ -102,9 +101,6 @@ public:
     static bool isReady(void);
     static int NumOpenSockets(void);
 
-    static void txLED(DigitalInOut*);
-    static void rxLED(DigitalInOut*);
-
 protected:
     // NOP function for keeping a communication link active
     void nopFunc(void);
@@ -120,9 +116,6 @@ protected:
     // Thread IDs
     static osThreadId _txID;
     static osThreadId _rxID;
-
-    DigitalInOut* _rxLED;
-    DigitalInOut* _txLED;
 
 private:
     // Private constructor

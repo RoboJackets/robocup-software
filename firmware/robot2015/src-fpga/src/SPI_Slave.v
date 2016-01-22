@@ -1,11 +1,12 @@
 `ifndef _SPI_SLAVE_
 `define _SPI_SLAVE_
 
-module SPI_Slave (clk, SCK, MOSI, MISO, SSEL, DONE, BYTE_TO_SEND, BYTE_RECEIVED);
+module SPI_Slave ( clk, SCK, MOSI, MISO, SSEL, DONE, DATA_OUT, DATA_IN );
+
 input         clk, SCK, SSEL, MOSI;
-input  [7:0]  BYTE_TO_SEND;
+input  [7:0]  DATA_OUT;
 output        MISO, DONE;
-output [7:0]  BYTE_RECEIVED;
+output [7:0]  DATA_IN;
 
 // sync SCK to the FPGA clock using a 3-bits shift register
 reg [2:0] SCKr;  always @(posedge clk) SCKr <= {SCKr[1:0], SCK};
@@ -26,18 +27,14 @@ reg [1:0] DONE_d; always @(posedge clk) DONE_d <= {DONE_d[0], DONE};
 
 // we handle SPI in 8-bits format, so we need a 3 bits counter to count the bits as they come in
 reg [2:0] bitcnt;
-// reg byte_received;  // high when a byte has been received
 reg [7:0] byte_data_received,
           byte_data_sent,
           byte_rec_;
 
-//reg done_;
-
 assign MISO = byte_data_sent[7];  // send MSB first
 // signal to load the next byte half an SCK  period before we latch it
 assign DONE = SSEL_active && SCK_fallingedge && (bitcnt==3'b000);
-assign BYTE_RECEIVED = byte_rec_;
-// DONE && clk ? byte_data_received : 'hFF;
+assign DATA_IN = byte_rec_;
 
 always @(posedge clk)
 begin
@@ -53,27 +50,20 @@ begin
   end
 end
 
-//always @(posedge clk) done_ <= SSEL_active && SCK_risingedge && (bitcnt==3'b111);
-
 always @(negedge clk) byte_rec_ <= DONE ? byte_data_received : byte_rec_;
 
 always @(negedge clk)
 if(SSEL_active)
 begin
-  // if ( SSEL_startmessage )
-  //    byte_data_sent <= BYTE_TO_SEND;  // first byte sent in a message is the message count
-  //  else
   if ( (bitcnt == 3'b000 && DONE_d == 2'b10) || SSEL_startmessage ) begin
-    byte_data_sent <= BYTE_TO_SEND;  // after that, we send 0s   
+    byte_data_sent <= DATA_OUT;  // after that, we send 0s   
   end else
 
   if ( SCK_fallingedge )
   begin
     if ( bitcnt != 3'b000 ) begin
-//      byte_data_sent <= BYTE_TO_SEND;  // after that, we send 0s
-    //else
       byte_data_sent <= {byte_data_sent[6:0], 1'b0};
-      end
+    end
   end
 end
 

@@ -1,21 +1,23 @@
 #include <rtos.h>
 #include <RPCVariable.h>
 
+#include <Console.hpp>
 #include <logger.hpp>
 #include <assert.hpp>
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+#include "task-globals.hpp"
 #include "motors.hpp"
 #include "mpu-6050.hpp"
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
-static const int CONTROL_LOOP_WAIT_MS = 20;
+static const int CONTROL_LOOP_WAIT_MS = 10;
 
 // Declaration for an alternative control loop thread for when the accel/gyro
 // can't be used for whatever reason
-void Task_Controller_Sensorless(void const* args);
+void Task_Controller_Sensorless(const osThreadId*);
 
 namespace {
 // The gyro/accel values are given RPC read/write access here
@@ -38,6 +40,8 @@ float accelVals[3] = {0};
  * initializes the motion controller thread
  */
 void Task_Controller(void const* args) {
+    const osThreadId* mainID = (const osThreadId*)args;
+
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -45,7 +49,6 @@ void Task_Controller(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-#if RJ_MPU_EN
     MPU6050 imu(RJ_I2C_BUS);
 
     imu.setBW(MPU6050_BW_256);
@@ -68,42 +71,48 @@ void Task_Controller(void const* args) {
             "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d",
             threadID, threadPriority);
 
+        // Set the error code's valid bit
+        imu_err |= 1 << 0;
+
     } else {
         LOG(SEVERE,
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
             "sensorless control loop.",
             testResp);
-// TODO: Turn on the IMU's error LED here
 
-#else
-    LOG(INIT,
-        "IMU disabled in config file\r\n    Falling back to sensorless control "
-        "loop.");
-#endif
+        // Set the error flag - bit positions are pretty arbitruary as of now
+        imu_err |= 1 << 1;
+        // Set the error code's valid bit
+        imu_err |= 1 << 0;
+
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
-        Task_Controller_Sensorless(&imu);
-        osThreadTerminate(threadID);
-        return;
+        Task_Controller_Sensorless(mainID);
 
-#if RJ_MPU_EN
+        // should never reach this point
+        osThreadTerminate(threadID);
+
+        return;
     }
 
-#endif
+    // osThreadSetPriority(threadID, osPriorityNormal);
 
-    osThreadSetPriority(threadID, osPriorityNormal);
+    // signal back to main and wait until we're signaled to continue
+    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        LOG(INF2,
-            "Gyro:\t"
-            "(% 1.2f, % 1.2f, % 1.2f)\r\n"
-            "Accel:\t"
-            "(% 1.2f, % 1.2f, % 1.2f)",
-            gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0], accelVals[1],
-            accelVals[2]);
+        // printf(
+        //     "\r\n\033[K"
+        //     "\t(% 1.2f, % 1.2f, % 1.2f)\r\n"
+        //     "\t(% 1.2f, % 1.2f, % 1.2f)\033[F\033[F",
+        //     gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0],
+        //     accelVals[1],
+        //     accelVals[2]);
+        // Console::Flush();
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
         Thread::yield();
@@ -116,7 +125,7 @@ void Task_Controller(void const* args) {
  * [Task_Controller_Sensorless]
  * @param args [description]
  */
-void Task_Controller_Sensorless(void const* args) {
+void Task_Controller_Sensorless(const osThreadId* mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -129,7 +138,11 @@ void Task_Controller_Sensorless(void const* args) {
         "Priority:\t%d",
         threadID, threadPriority);
 
-    while (1) {
+    // signal back to main and wait until we're signaled to continue
+    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
+
+    while (true) {
         Thread::wait(CONTROL_LOOP_WAIT_MS);
         Thread::yield();
     }

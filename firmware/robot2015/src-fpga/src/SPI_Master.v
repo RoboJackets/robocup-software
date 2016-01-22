@@ -1,103 +1,137 @@
-
 `ifndef _SPI_MASTER_
 `define _SPI_MASTER_
 
-module spi #(parameter CLK_DIV = 2)(
-    input clk,
-    input rst,
-    input miso,
-    output mosi,
-    output sck,
-    input start,
-    input[7:0] data_in,
-    output[7:0] data_out,
-    output busy,
-    output new_data
-  );
-   
-  localparam STATE_SIZE = 2;
-  localparam IDLE = 2'd0,
-    WAIT_HALF = 2'd1,
-    TRANSFER = 2'd2;
-   
-  reg [STATE_SIZE-1:0] state_d, state_q;
-   
-  reg [7:0] data_d, data_q;
-  reg [CLK_DIV-1:0] sck_d, sck_q;
-  reg mosi_d, mosi_q;
-  reg [2:0] ctr_d, ctr_q;
-  reg new_data_d, new_data_q;
-  reg [7:0] data_out_d, data_out_q;
-   
-  assign mosi = mosi_q;
-  assign sck = (~sck_q[CLK_DIV-1]) & (state_q == TRANSFER);
-  assign busy = state_q != IDLE;
-  assign data_out = data_out_q;
-  assign new_data = new_data_q;
-   
-  always @(*) begin
-    sck_d = sck_q;
-    data_d = data_q;
-    mosi_d = mosi_q;
-    ctr_d = ctr_q;
-    new_data_d = 1'b0;
-    data_out_d = data_out_q;
-    state_d = state_q;
-     
-    case (state_q)
-      IDLE: begin
-        sck_d = 4'b0;              // reset clock counter
-        ctr_d = 3'b0;              // reset bit counter
-        if (start == 1'b1) begin   // if start command
-          data_d = data_in;        // copy data to send
-          state_d = WAIT_HALF;     // change state
-        end
-      end
-      WAIT_HALF: begin
-        sck_d = sck_q + 1'b1;                  // increment clock counter
-        if (sck_q == {CLK_DIV-1{1'b1}}) begin  // if clock is half full (about to fall)
-          sck_d = 1'b0;                        // reset to 0
-          state_d = TRANSFER;                  // change state
-        end
-      end
-      TRANSFER: begin
-        sck_d = sck_q + 1'b1;                           // increment clock counter
-        if (sck_q == 4'b0000) begin                     // if clock counter is 0
-          mosi_d = data_q[7];                           // output the MSB of data
-        end else if (sck_q == {CLK_DIV-1{1'b1}}) begin  // else if it's half full (about to fall)
-          data_d = {data_q[6:0], miso};                 // read in data (shift in)
-        end else if (sck_q == {CLK_DIV{1'b1}}) begin    // else if it's full (about to rise)
-          ctr_d = ctr_q + 1'b1;                         // increment bit counter
-          if (ctr_q == 3'b111) begin                    // if we are on the last bit
-            state_d = IDLE;                             // change state
-            data_out_d = data_q;                        // output data
-            new_data_d = 1'b1;                          // signal data is valid
-          end
-        end
-      end
-    endcase
+// ClkDivide module
+module ClkDivide ( CLK_IN, EN, CLK_OUT );
+
+parameter DIVISION = 3;
+
+`include "log2-macro.v"     // This must be included here
+localparam WIDTH = `LOG2( DIVISION );
+
+input CLK_IN, EN;
+output CLK_OUT;
+
+reg [WIDTH-1:0] edge_cnt;
+
+// Posedge counter
+always @(posedge CLK_IN)
+begin
+  if ( EN == 0 ) begin
+    edge_cnt <= 0;
+  end else if ( edge_cnt >= DIVISION ) begin
+    edge_cnt <= 0;
+  end else begin
+    edge_cnt <= edge_cnt + 1;
   end
-   
-  always @(posedge clk) begin
-    if (rst) begin
-      ctr_q <= 3'b0;
-      data_q <= 8'b0;
-      sck_q <= 4'b0;
-      mosi_q <= 1'b0;
-      state_q <= IDLE;
-      data_out_q <= 8'b0;
-      new_data_q <= 1'b0;
-    end else begin
-      ctr_q <= ctr_d;
-      data_q <= data_d;
-      sck_q <= sck_d;
-      mosi_q <= mosi_d;
-      state_q <= state_d;
-      data_out_q <= data_out_d;
-      new_data_q <= new_data_d;
+end
+
+assign CLK_OUT = edge_cnt[WIDTH-1];
+
+endmodule // ClkDivide
+
+
+// SPI_Master module
+module SPI_Master ( clk, EN, SCK, MOSI, MISO, SEL, START, BUSY, VALID, DATA_OUT, DATA_IN );
+
+// Module parameters - passed parameters will overwrite the values here
+parameter DATA_BIT_WIDTH = 16;
+
+// Local parameters - can not be altered outside this module
+`include "log2-macro.v"     // This must be included here
+localparam DATA_BIT_COUNTER_WIDTH = `LOG2( DATA_BIT_WIDTH );
+
+input clk, EN, MISO, START;
+input [DATA_BIT_WIDTH-1:0]  DATA_IN;
+output MOSI, SEL, VALID, BUSY, SCK;
+output [DATA_BIT_WIDTH-1:0]  DATA_OUT;
+
+
+reg transfer_active;
+reg select;
+wire clksub;
+
+ClkDivide #(
+  .DIVISION ( 8                 )
+  ) sck_gen (
+  .CLK_IN   ( clk               ),
+  .EN       ( transfer_active   ),
+  .CLK_OUT  ( clksub            )
+);
+
+// 2 bit shift register for detecting rising edge of START input
+reg [1:0] STARTr;  always @(posedge clk) STARTr <= {STARTr[0], START};
+wire begin_transfer   =   ( STARTr == 2'b01 );
+
+reg [DATA_BIT_COUNTER_WIDTH-1:0] bitcnt;
+reg [DATA_BIT_WIDTH-1:0] byte_data_received,
+          byte_data_sent,
+          byte_rec_;
+
+reg [DATA_BIT_WIDTH-1:0] data_incoming_l;
+reg [DATA_BIT_WIDTH-1:0] data_in_l;
+reg [DATA_BIT_WIDTH-1:0] data_recv;
+
+wire end_transfer = ( transfer_active && ( bitcnt == DATA_BIT_WIDTH - 1 ) );
+
+reg valid_q;
+reg miso_q;
+
+assign VALID = valid_q;
+assign BUSY = transfer_active;
+assign SEL = select;
+assign SCK = clksub;
+assign MOSI = data_in_l[0] && transfer_active;
+assign DATA_OUT = valid_q ? data_incoming_l : 0;
+
+// rising/falling edges of SCK
+reg [2:0] SCKr;  always @(posedge clk) SCKr <= {SCKr[1:0], SCK};
+wire SCK_risingedge   =   ( SCKr[2:1] == 2'b01 ),  // now we can detect SCK rising edges
+     SCK_fallingedge  =   ( SCKr[2:1] == 2'b10 );  // and falling edges
+
+always @(posedge clk)
+begin
+  if (EN != 1) begin
+    transfer_active <= 0;
+    select <= 0;
+    valid_q <= 0;
+  end
+
+  if ( begin_transfer == 1 ) begin
+    transfer_active <= 1;
+    select <= 1;
+    valid_q <= 0;
+  end else if ( end_transfer == 1 ) begin
+    transfer_active <= 0;
+    select <= 0;
+    valid_q <= 1;
+  end
+end
+
+always @(negedge clk)
+begin
+  if (EN != 1) begin
+    bitcnt <= 0;
+    data_incoming_l <= 0;
+    data_in_l <= 0;
+  end
+
+  miso_q <= MISO;
+
+  if ( begin_transfer == 1 ) begin
+    data_in_l <= DATA_IN;
+  end else if ( transfer_active == 1 ) begin
+    if ( SCK_fallingedge == 1 ) begin
+      bitcnt <= bitcnt + 1;
+      data_in_l <= {1'b0, data_in_l[DATA_BIT_WIDTH-1:1]};
+    end else if ( SCK_risingedge == 1 ) begin
+      data_incoming_l <= {data_incoming_l[DATA_BIT_WIDTH-2:0], miso_q};
     end
+  end else begin
+    bitcnt <= 0;
   end
-   
+end
+
 endmodule
 
 `endif

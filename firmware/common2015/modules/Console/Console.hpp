@@ -1,8 +1,9 @@
 #pragma once
 
-#include <mbed.h>
-
+#include <deque>
 #include <memory>
+
+#include <mbed.h>
 
 // #include "MODDMA.h"
 #include "MODSERIAL.h"
@@ -66,10 +67,13 @@ public:
     /**
      * define the sequence for arrow key flags
      */
-    static const char ARROW_KEY_SEQUENCE_ONE = 27;
-    static const char ARROW_KEY_SEQUENCE_TWO = 91;
-    static const char ARROW_UP_KEY = 65;
-    static const char ARROW_DOWN_KEY = 66;
+    static const char ESCAPE_SEQ_ONE = 27;
+    // static const char ESCAPE_SEQ_ONE = '\033';
+    static const char ESCAPE_SEQ_TWO = '[';
+    static const char ARROW_UP_KEY = 'A';
+    static const char ARROW_DOWN_KEY = 'B';
+    static const char ARROW_LEFT_KEY = 'C';
+    static const char ARROW_RIGHT_KEY = 'D';
 
     static const char CMD_END_CHAR = ';';
 
@@ -126,6 +130,7 @@ public:
 
     static void PrintHeader();
     static void ShowLogo();
+    static void SetTitle(const std::string&);
     static void SetEscEnd(char c);
     static std::string GetHostResponse();
 
@@ -192,11 +197,9 @@ private:
      * flags for arrow key sequences. Arroy keys aren't in ASCII so we have to
      * process the the three key sequence
      */
-    bool flagOne = false;
-    bool flagTwo = false;
-
+    bool esc_flag_one = false;
+    bool esc_flag_two = false;
     bool esc_en = false;
-    bool esc_seq_en = false;
     bool esc_host_res_rdy = false;
 
     std::string esc_host_res;
@@ -212,4 +215,8 @@ private:
      * transmission buffer index
      */
     uint16_t txIndex = 0;
+
+    int MAX_HISTORY = 10;
+    int history_index = 0;
+    std::deque<std::string> history;
 };

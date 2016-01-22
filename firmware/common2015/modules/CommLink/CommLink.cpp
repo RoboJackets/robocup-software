@@ -3,17 +3,16 @@
 #include "logger.hpp"
 #include "assert.hpp"
 
+#define COMM_LINK_SIGNAL_START_THREAD (1 << 0)
+#define COMM_LINK_SIGNAL_RX_TRIGGER (1 << 1)
+
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
-unsigned int CommLink::_nbr_links = 0;
-
-// =================== MAIN CONSTRUCTOR ==============
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
                    PinName int_pin)
     : _rxQueueHelper() {
     setup_pins(mosi, miso, sck, cs, int_pin);
     setup();
-    _nbr_links++;
 }
 
 CommLink::~CommLink() { cleanup(); }
@@ -31,7 +30,6 @@ void CommLink::cleanup(void) {
     delete[](_rxDef.stack_pointer);
 }
 
-// =================== CLASS SETUP ===================
 void CommLink::setup(void) {
     // Initialize the hardware for communication
     setup_spi();
@@ -39,13 +37,12 @@ void CommLink::setup(void) {
     setup_interrupt();
 
     // Define the thread task for controlling the RX queue
-    define_thread(_rxDef, &CommLink::rxThread);
+    define_thread(_rxDef, &CommLink::rxThread, osPriorityNormal);
 
     // Create the thread and pass it a pointer to the created object
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 }
 
-// =================== PIN SETUP ===================
 void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs,
                           PinName int_pin) {
     _mosi_pin = mosi;
@@ -93,8 +90,8 @@ void CommLink::rxThread(void const* arg) {
     threadPriority = osThreadGetPriority(inst->_rxID);
 
     LOG(INIT,
-        "RX communication link ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
+        "RX communication link ready!\r\n    Thread ID:\t%u\r\n"
+        "    Priority:\t%d",
         inst->_rxID, threadPriority);
 
     // Set the function to call on an interrupt trigger

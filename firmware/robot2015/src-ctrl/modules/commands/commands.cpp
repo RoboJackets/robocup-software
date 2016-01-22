@@ -1,6 +1,7 @@
 #include "commands.hpp"
 
 #include <map>
+#include <ctime>
 
 #include <rtos.h>
 #include <mbed_rpc.h>
@@ -63,105 +64,110 @@ static const vector<command_t> commands = {
         "description",
         "usage"},
     */
-    {{"alias", "a"},
-     false,
-     cmd_alias,
-     "Lists aliases for commands.",
-     "alias | a"},
+
+    {{"alias", "a"}, false, cmd_alias, "List aliases for commands.", "alias"},
+
     {{"baud", "baudrate"},
      false,
      cmd_baudrate,
-     "Set the serial link's baudrate.",
-     "baud | baudrate [[--list | -l] | [<target_rate>]]"},
-    {{"clear", "cls"},
-     false,
-     cmd_console_clear,
-     "Clears the screen.",
-     "clear | cls"},
+     "set the active baudrate.",
+     "baud [[--list|-l] | <rate>]"},
+
+    {{"clear", "cls"}, false, cmd_console_clear, "Clears the screen.", "clear"},
+
     {{"echo"},
      false,
      cmd_console_echo,
-     "Echos text for debugging the serial link.",
-     "echo <text>"},
+     "echo text back to the console.",
+     "echo [<text>...]"},
+
     {{"exit", "quit"},
      false,
      cmd_console_exit,
-     "Breaks the main loop.",
-     "exit | quit"},
+     "terminate the console thread.",
+     "exit"},
+
     {{"help", "h", "?"},
      false,
      cmd_help,
-     "Prints this message.",
-     "help | h | ? [[--list|-l] | [--all|-a] | <command names>]"},
+     "print this message.",
+     "help [{[--list|-l], [--all|-a]}] [<command name>...]"},
+
     {{"host", "hostname"},
      false,
      cmd_console_hostname,
-     "Set the system hostname.",
-     "host | hostname <new_hostname>"},
-    {{"info", "version", "i"},
-     false,
-     cmd_info,
-     "Display information about the current version of the firmware.",
-     "info | version | i"},
+     "set system hostname.",
+     "host <new-name>"},
+
+    {{"info", "version", "i"}, false, cmd_info, "Display system info.", "info"},
+
     {{"isconn", "checkconn"},
      false,
      cmd_interface_check_conn,
-     "Checks the connection with a debugging unit.",
-     "isconn | checkconn"},
+     "determine the mbed interface's connectivity state.",
+     "isconn"},
+
     {{"led"},
      false,
      cmd_led,
-     "Change the color and brightness of LED(s).",
-     "led [brightness|state|color] [<level>|<on|off>|<color]"},
+     "control the RGB LED.",
+     "led {bright <level>, state {on,off}, color <color>}"},
+
     {{"loglvl", "loglevel"},
      false,
      cmd_log_level,
-     "Change the active logging output level.",
-     "loglvl | loglevel {+,-}..."},
-    {{"ls", "l"},
-     false,
-     cmd_ls,
-     "List contents of current directory",
-     "ls | l [folder/device]"},
-    {{"motor"},
+     "set the console's log level.",
+     "loglvl {+,-}..."},
+
+    {{"ls", "l"}, false, cmd_ls, "List contents of current directory", "ls"},
+
+    {{"motors"},
      false,
      cmd_motors,
-     "Show information about the motors.",
-     "motor <motor_id>"},
+     "show/set motor parameters.",
+     "motors {on, off, show, set <motor-id> <duty-cycle>}"},
+
     {{"motorscroll"},
      true,
      cmd_motors_scroll,
-     "Continuously update the console with new motor values.",
+     "show motor info (until receiving Ctrl-C).",
      "motorscroll"},
-    {{"ping"}, true, cmd_ping, "Check console responsiveness.", "ping"},
-    {{"ps"}, false, cmd_ps, "List information about all active threads.", "ps"},
+
+    {{"ping"}, true, cmd_ping, "check the console's responsiveness.", "ping"},
+
+    {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
+
     {{"radio"},
      false,
      cmd_radio,
-     "Show information about the radio & perform basic radio tasks.",
-     "radio [port | [test-tx | test-rx] <port-num>] [[open, close, show, "
-     "reset] "
-     "<port_num>]"},
+     "test radio connectivity.",
+     "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
+     "loopback "
+     "[<count>], stress-test <count> <delay> <pck-size>}]"},
+
     {{"reboot", "reset", "restart"},
      false,
      cmd_interface_reset,
-     "Resets the mbed (like pushing the reset button).",
-     "reboot | reset | restart"},
-    {{"rmdev", "unconnect"},
+     "perform a software reset.",
+     "reboot"},
+
+    {{"rmdev"},
      false,
      cmd_interface_disconnect,
-     "Disconnects the mbed interface chip from the microcontroller.",
-     "rmdev | unconnect [-P]"},
+     "disconnect the mbed interface chip.",
+     "rmdev [-P]"},
+
     {{"rpc"},
      false,
      cmd_rpc,
-     "Execute RPC commands on the mbed.",
-     "rpc <rpc-command>"},
+     "execute RPC commands.",
+     "rpc <rpc-cmd> [<rpc-arg>...]"},
+
     {{"su", "user"},
      false,
      cmd_console_user,
-     "Set active user.",
-     "su | user <new_username>"}};
+     "set the active user.",
+     "su <user>"}};
 
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
@@ -282,8 +288,6 @@ int cmd_console_exit(cmd_args_t& args) {
  * Prints command help.
  */
 int cmd_help(cmd_args_t& args) {
-    // printf("\r\nCtrl + C stops iterative commands\r\n\r\n");
-
     // Prints all commands, with details
     if (args.empty() == true) {
         // Default to a short listing of all the commands
@@ -324,8 +328,6 @@ int cmd_help(cmd_args_t& args) {
             // option flag
             cmd_help_detail(args);
         }
-
-        printf("\r\n");
     }
 
     return 0;
@@ -456,6 +458,8 @@ int cmd_info(cmd_args_t& args) {
 
         strftime(buf, 25, "%c", localtime(&sys_time));
         printf("\tSys Time:\t%s\r\n", buf);
+        printf("\tRuntime:\t%.1fs\r\n",
+               (clock() - start_s) / static_cast<double>(CLOCKS_PER_SEC));
 
         // kernel information
         printf("\tKernel Ver:\t%s\r\n", osKernelSystemId);
@@ -505,7 +509,7 @@ int cmd_info(cmd_args_t& args) {
         // show info about the core processor. ARM cortex-m3 in our case
         printf("\tCPUID:\t\t0x%08lX\r\n", SCB->CPUID);
 
-        // ** NOTE: THE mbed_interface_mac() function does not work! It hangs
+        // ** NOTE: The `mbed_interface_mac()` function does not work! It hangs
         // the mbed... **
 
         /*
@@ -546,18 +550,20 @@ int cmd_info(cmd_args_t& args) {
  * @param args [description]
  */
 int cmd_interface_disconnect(cmd_args_t& args) {
-    if (args.empty() > 1) {
+    if (args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else {
-        if (args.empty() == true) {
-            mbed_interface_disconnect();
-            printf("Disconnected mbed interface.\r\n");
+    }
 
-        } else if (strcmp(args.at(0).c_str(), "-P") == 0) {
-            printf("Powering down mbed interface.\r\n");
-            mbed_interface_powerdown();
-        }
+    else if (args.empty() == true) {
+        mbed_interface_disconnect();
+        printf("Disconnected mbed interface.\r\n");
+
+    }
+
+    else if (strcmp(args.front().c_str(), "-P") == 0) {
+        printf("Powering down mbed interface.\r\n");
+        mbed_interface_powerdown();
     }
 
     return 0;
@@ -567,7 +573,9 @@ int cmd_interface_check_conn(cmd_args_t& args) {
     if (args.empty() == false) {
         show_invalid_args(args);
         return 1;
-    } else {
+    }
+
+    else {
         printf("mbed interface connected: %s\r\n",
                mbed_interface_connected() ? "YES" : "NO");
     }
@@ -580,12 +588,11 @@ int cmd_baudrate(cmd_args_t& args) {
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600};
 
-    if (args.size() > 1) {
-        show_invalid_args(args);
-        return 1;
-    } else if (args.empty() == true) {
+    if (args.empty() == true || args.size() > 1) {
         printf("Baudrate: %u\r\n", Console::Baudrate());
-    } else if (args.size() == 1) {
+    }
+
+    else if (args.size() == 1) {
         std::string str_baud = args.front();
 
         if (strcmp(str_baud.c_str(), "--list") == 0 ||
@@ -609,7 +616,8 @@ int cmd_baudrate(cmd_args_t& args) {
                     new_rate);
             }
         } else {
-            printf("Invalid argument \"%s\".\r\n", str_baud.c_str());
+            show_invalid_args(args);
+            return 1;
         }
     }
 
@@ -620,7 +628,9 @@ int cmd_console_user(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else {
+    }
+
+    else {
         Console::changeUser(args.front());
     }
 
@@ -631,7 +641,9 @@ int cmd_console_hostname(cmd_args_t& args) {
     if (args.empty() == true || args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else {
+    }
+
+    else {
         Console::changeHostname(args.front());
     }
 
@@ -642,9 +654,13 @@ int cmd_log_level(cmd_args_t& args) {
     if (args.size() > 1) {
         show_invalid_args(args);
         return 1;
-    } else if (args.empty() == true) {
+    }
+
+    else if (args.empty() == true) {
         printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
-    } else {
+    }
+
+    else {
         // bool storeVals = true;
 
         if (strcmp(args.front().c_str(), "on") == 0 ||
@@ -714,7 +730,7 @@ int cmd_led(cmd_args_t& args) {
         led.setFromDefaultBrightness();
         led.setFromDefaultColor();
 
-        if (strcmp(args.front().c_str(), "brightness") == 0) {
+        if (strcmp(args.front().c_str(), "bright") == 0) {
             if (args.size() > 1) {
                 float bri = atof(args.at(1).c_str());
                 printf("Setting LED brightness to %.2f.\r\n", bri);
@@ -811,68 +827,75 @@ int cmd_radio(cmd_args_t& args) {
     if (args.empty() == true) {
         // Default to showing the list of ports
         CommModule::PrintInfo(true);
+        return 0;
+    }
 
-    } else if (args.size() == 1) {
-        if (strcmp(args.front().c_str(), "port") == 0) {
+    if (CommModule::isReady() == false) {
+        printf("The radio interface is not ready! Unseen bugs may occur!\r\n");
+    }
+
+    if (args.size() == 1 || args.size() == 2) {
+        rtp::packet pck;
+        const std::string msg = "LINK TEST PAYLOAD";
+        unsigned int portNbr = rtp::port::LINK;
+
+        pck.payload_size = msg.length() + 1;
+        memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
+        pck.address = BASE_STATION_ADDR;
+
+        if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
+
+        pck.header_link = RTP_HEADER(portNbr, 1, false, false);
+
+        if (strcmp(args.front().c_str(), "show") == 0) {
             CommModule::PrintInfo(true);
 
+        } else if (strcmp(args.front().c_str(), "test-tx") == 0) {
+            printf("Placing %u byte packet in TX buffer.\r\n",
+                   pck.payload_size);
+            CommModule::send(pck);
+
+        } else if (strcmp(args.front().c_str(), "test-rx") == 0) {
+            printf("Placing %u byte packet in RX buffer.\r\n",
+                   pck.payload_size);
+            CommModule::receive(pck);
+
+        } else if (strcmp(args.front().c_str(), "loopback") == 0) {
+            unsigned int i = 1;
+            if (args.size() > 1) {
+                i = atoi(args.at(1).c_str());
+                portNbr = rtp::port::LINK;
+            }
+
+            pck.header_link = RTP_HEADER(portNbr, 2, true, false);
+            pck.address = LOOPBACK_ADDR;
+            printf(
+                "Placing %u, %u byte packet(s) in TX buffer with ACK set.\r\n",
+                i, pck.payload_size);
+
+            for (size_t j = 0; j < i; ++j) {
+                rtp::packet pck2;
+                pck2 = pck;
+                pck2.adjustSizes();
+                CommModule::send(pck2);
+                Thread::wait(50);
+            }
+
         } else {
-            if (CommModule::isReady() == true) {
-                rtp::packet pck;
-                std::string msg = "LINK TEST PAYLOAD";
-
-                pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
-                pck.payload_size = msg.length();
-                memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
-                pck.address = BASE_STATION_ADDR;
-
-                if (strcmp(args.front().c_str(), "test-tx") == 0) {
-                    printf("Placing %u byte packet in TX buffer.\r\n",
-                           pck.payload_size);
-                    CommModule::send(pck);
-                } else if (strcmp(args.front().c_str(), "test-rx") == 0) {
-                    printf("Placing %u byte packet in RX buffer.\r\n",
-                           pck.payload_size);
-                    CommModule::receive(pck);
-                } else if (strcmp(args.front().c_str(), "loopback") == 0) {
-                    pck.ack = true;
-                    pck.subclass = 2;
-                    pck.address = LOOPBACK_ADDR;
-                    printf(
-                        "Placing %u byte packet in TX buffer with ACK set.\r\n",
-                        pck.payload_size);
-                    CommModule::send(pck);
-                } else {
-                    show_invalid_args(args.front());
-                    return 1;
-                }
-            } else {
-                printf("The radio interface is not ready.\r\n");
-            }
-        }
-    } else if (args.size() == 2) {
-        // Default to showing all port info if no specific port number is given
-        // for the 'show' option
-        if (strcmp(args.front().c_str(), "ports") == 0) {
-            if (strcmp(args.at(1).c_str(), "show") == 0) {
-                CommModule::PrintInfo(true);
-            }
+            show_invalid_args(args.front());
+            return 1;
         }
     } else if (args.size() == 3) {
-        if (strcmp(args.front().c_str(), "ports") == 0) {
+        if (strcmp(args.front().c_str(), "set") == 0) {
             if (isInt(args.at(2).c_str())) {
                 unsigned int portNbr = atoi(args.at(2).c_str());
 
-                if (strcmp(args.at(1).c_str(), "open") == 0) {
+                if (strcmp(args.at(1).c_str(), "up") == 0) {
                     CommModule::openSocket(portNbr);
 
-                } else if (strcmp(args.at(1).c_str(), "close") == 0) {
+                } else if (strcmp(args.at(1).c_str(), "down") == 0) {
                     CommModule::Close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
-
-                } else if (strcmp(args.at(1).c_str(), "show") == 0) {
-                    // Change to show only the requested port's info
-                    CommModule::PrintInfo(true);
 
                 } else if (strcmp(args.at(1).c_str(), "reset") == 0) {
                     CommModule::ResetCount(portNbr);
@@ -890,6 +913,35 @@ int cmd_radio(cmd_args_t& args) {
             show_invalid_args(args.at(2));
             return 1;
         }
+    } else if (args.size() >= 4) {
+        if (strcmp(args.front().c_str(), "stress-test") == 0) {
+            unsigned int packet_cnt = atoi(args.at(1).c_str());
+            unsigned int ms_delay = atoi(args.at(2).c_str());
+            unsigned int pck_size = atoi(args.at(3).c_str());
+            rtp::packet pck;
+            const std::string msg = std::string(pck_size - 2, '~') + ".";
+
+            pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
+            pck.payload_size = msg.length() + 1;
+            memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
+            pck.subclass = 3;
+            pck.address = LOOPBACK_ADDR;
+            if (args.size() > 4) pck.ack = true;
+            printf(
+                "Beginning radio stress test with %u %sACK, %u byte "
+                "packets. %ums delay between packets.\r\n",
+                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload_size,
+                ms_delay);
+
+            int start_tick = clock();
+            for (size_t i = 0; i < packet_cnt; ++i) {
+                Thread::wait(ms_delay);
+                CommModule::send(pck);
+            }
+            printf("Stress test finished in %.1fms.\r\n",
+                   (clock() - start_tick) /
+                       static_cast<double>(CLOCKS_PER_SEC) * 1000);
+        }
     } else {
         show_invalid_args(args);
         return 1;
@@ -897,6 +949,8 @@ int cmd_radio(cmd_args_t& args) {
 
     return 0;
 }
+
+int cmd_imu(cmd_args_t& args) { return 0; }
 
 /**
  * Command executor.

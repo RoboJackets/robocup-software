@@ -9,9 +9,6 @@
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
 
-#define COMM_LINK_SIGNAL_START_THREAD 0x01
-#define COMM_LINK_SIGNAL_RX_TRIGGER 0x02
-
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
     ERR(COMM_FAILURE)         \
@@ -43,8 +40,8 @@ public:
     virtual ~CommLink();
 
     // Class constants for data queues
-    static const size_t RX_QUEUE_SIZE = 3;
-    static const size_t BUFFER_SIZE = 64;
+    static const size_t RX_QUEUE_SIZE = 2;
+    // static const size_t BUFFER_SIZE = 64;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
@@ -71,9 +68,7 @@ protected:
     /// Kill any threads and free the allocated stack.
     /// Always call in any derived class's deconstructors!
     void cleanup();
-
     void ISR();
-
     void toggle_cs();
 
     /// Used for giving derived classes a standaradized way to inform the base
@@ -81,9 +76,7 @@ protected:
     //
     // Always call CommLink::ready() after derived class is ready
     void ready();
-
     void setup_spi(int baudrate = DEFAULT_BAUD);
-
     uint8_t twos_compliment(uint8_t val);
 
     // The data queues for temporarily holding received packets
@@ -121,16 +114,8 @@ private:
 
     // Methods for initializing a transceiver's pins for communication
     void setup(void);
-
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
                     PinName = NC);
-
     void setup_cs(void);
-
     void setup_interrupt(void);
-
-    // Used for tracking the number of link-level communication interfaces
-    static unsigned int _nbr_links;
-
-    uint8_t buf[BUFFER_SIZE];
 };
