@@ -67,7 +67,9 @@ void Task_SerialConsole(void const* args) {
             ASSERT(tState == osOK);
 
             // Execute the command
+            NVIC_DisableIRQ(UART0_IRQn);
             execute_line(Console::rxBufferPtr());
+            NVIC_EnableIRQ(UART0_IRQn);
 
             // Now, reset the priority of the thread to its idle state
             tState = osThreadSetPriority(threadID, threadPriority);

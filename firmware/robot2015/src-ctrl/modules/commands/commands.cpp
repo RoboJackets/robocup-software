@@ -561,7 +561,7 @@ int cmd_interface_disconnect(cmd_args_t& args) {
 
     }
 
-    else if (strcmp(args.front().c_str(), "-P") == 0) {
+    else if (args.front().compare("-P") == 0) {
         printf("Powering down mbed interface.\r\n");
         mbed_interface_powerdown();
     }
@@ -664,11 +664,11 @@ int cmd_log_level(cmd_args_t& args) {
         // bool storeVals = true;
 
         if (strcmp(args.front().c_str(), "on") == 0 ||
-            strcmp(args.front().c_str(), "enable") == 0) {
+            args.front().compare("enable") == 0) {
             isLogging = true;
             printf("Logging enabled.\r\n");
         } else if (strcmp(args.front().c_str(), "off") == 0 ||
-                   strcmp(args.front().c_str(), "disable") == 0) {
+                   args.front().compare("disable") == 0) {
             isLogging = false;
             printf("Logging disabled.\r\n");
         } else {
@@ -706,16 +706,14 @@ int cmd_rpc(cmd_args_t& args) {
         return 1;
     } else {
         // remake the original string so it can be passed to RPC
-        std::string in_buf(args.at(0));
-        for (unsigned int i = 1; i < args.size(); i++) {
-            in_buf += " " + args.at(i);
-        }
+        std::string in_buf("/RPC");
+        for (auto const& i : args) in_buf += " " + i;
 
-        char out_buf[200] = {0};
+        std::vector<char> out_buf(100);
 
-        RPC::call(in_buf.c_str(), out_buf);
+        RPC::call(in_buf.c_str(), out_buf.data());
 
-        std::printf("%s\r\n", out_buf);
+        printf("%s\r\n", out_buf.data());
     }
 
     return 0;
@@ -730,7 +728,7 @@ int cmd_led(cmd_args_t& args) {
         led.setFromDefaultBrightness();
         led.setFromDefaultColor();
 
-        if (strcmp(args.front().c_str(), "bright") == 0) {
+        if (args.front().compare("bright") == 0) {
             if (args.size() > 1) {
                 float bri = atof(args.at(1).c_str());
                 printf("Setting LED brightness to %.2f.\r\n", bri);
@@ -748,7 +746,7 @@ int cmd_led(cmd_args_t& args) {
             } else {
                 printf("Current brightness:\t%.2f\r\n", led.brightness());
             }
-        } else if (strcmp(args.front().c_str(), "color") == 0) {
+        } else if (args.front().compare("color") == 0) {
             if (args.size() > 1) {
                 std::map<std::string, NeoColor> colors;
                 // order for struct is green, red, blue
@@ -772,11 +770,11 @@ int cmd_led(cmd_args_t& args) {
             }
             // push out the changes to the led
             led.write();
-        } else if (strcmp(args.front().c_str(), "state") == 0) {
+        } else if (args.front().compare("state") == 0) {
             if (args.size() > 1) {
-                if (strcmp(args.at(1).c_str(), "on") == 0) {
+                if (args.at(1).compare("on") == 0) {
                     printf("Turning LED on.\r\n");
-                } else if (strcmp(args.at(1).c_str(), "off") == 0) {
+                } else if (args.at(1).compare("off") == 0) {
                     printf("Turning LED off.\r\n");
                     led.brightness(0.0);
                 } else {
@@ -840,27 +838,27 @@ int cmd_radio(cmd_args_t& args) {
         unsigned int portNbr = rtp::port::LINK;
 
         pck.payload_size = msg.length() + 1;
-        memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
+        memcpy((char*)pck.payload.data(), msg.c_str(), pck.payload_size);
         pck.address = BASE_STATION_ADDR;
 
         if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
 
         pck.header_link = RTP_HEADER(portNbr, 1, false, false);
 
-        if (strcmp(args.front().c_str(), "show") == 0) {
+        if (args.front().compare("show") == 0) {
             CommModule::PrintInfo(true);
 
-        } else if (strcmp(args.front().c_str(), "test-tx") == 0) {
+        } else if (args.front().compare("test-tx") == 0) {
             printf("Placing %u byte packet in TX buffer.\r\n",
                    pck.payload_size);
             CommModule::send(pck);
 
-        } else if (strcmp(args.front().c_str(), "test-rx") == 0) {
+        } else if (args.front().compare("test-rx") == 0) {
             printf("Placing %u byte packet in RX buffer.\r\n",
                    pck.payload_size);
             CommModule::receive(pck);
 
-        } else if (strcmp(args.front().c_str(), "loopback") == 0) {
+        } else if (args.front().compare("loopback") == 0) {
             unsigned int i = 1;
             if (args.size() > 1) {
                 i = atoi(args.at(1).c_str());
@@ -886,18 +884,18 @@ int cmd_radio(cmd_args_t& args) {
             return 1;
         }
     } else if (args.size() == 3) {
-        if (strcmp(args.front().c_str(), "set") == 0) {
+        if (args.front().compare("set") == 0) {
             if (isInt(args.at(2).c_str())) {
                 unsigned int portNbr = atoi(args.at(2).c_str());
 
-                if (strcmp(args.at(1).c_str(), "up") == 0) {
+                if (args.at(1).compare("up") == 0) {
                     CommModule::openSocket(portNbr);
 
-                } else if (strcmp(args.at(1).c_str(), "down") == 0) {
+                } else if (args.at(1).compare("down") == 0) {
                     CommModule::Close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
-                } else if (strcmp(args.at(1).c_str(), "reset") == 0) {
+                } else if (args.at(1).compare("reset") == 0) {
                     CommModule::ResetCount(portNbr);
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
@@ -914,7 +912,7 @@ int cmd_radio(cmd_args_t& args) {
             return 1;
         }
     } else if (args.size() >= 4) {
-        if (strcmp(args.front().c_str(), "stress-test") == 0) {
+        if (args.front().compare("stress-test") == 0) {
             unsigned int packet_cnt = atoi(args.at(1).c_str());
             unsigned int ms_delay = atoi(args.at(2).c_str());
             unsigned int pck_size = atoi(args.at(3).c_str());
@@ -923,7 +921,7 @@ int cmd_radio(cmd_args_t& args) {
 
             pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
             pck.payload_size = msg.length() + 1;
-            memcpy((char*)pck.payload, msg.c_str(), pck.payload_size);
+            memcpy((char*)pck.payload.data(), msg.c_str(), pck.payload_size);
             pck.subclass = 3;
             pck.address = LOOPBACK_ADDR;
             if (args.size() > 4) pck.ack = true;

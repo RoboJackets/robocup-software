@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #if __BIG_ENDIAN
 #define RTP_HEADER(port, subclass, ack, sfs)                                 \
@@ -41,12 +42,76 @@ enum port {
     LEGACY = 0x0E
 };
 
+namespace {
+// type of data field used in all packet classes
+typedef uint8_t packet_data_t;
+}
+
+/**
+ * @brief [brief description]
+ * @details [long description]
+ * @return [description]
+ */
+class layer_map {
+public:
+    typedef packet_data_t data_t;
+
+private:
+    typedef std::vector<data_t> datav_t;
+    typedef datav_t::iterator datav_it_t;
+    std::vector<data_t> d;
+
+public:
+    layer_map(size_t resv) { d.reserve(resv); }
+
+    datav_it_t pack() {
+        // make sure all files are in contiguous memory,
+        // then return iterator to beginning
+        return d.begin();
+    }
+
+    data_t* data() {
+        return d.data();
+    }
+};
+
+
+/**
+ * @brief [brief description]
+ * @details [long description]
+ *
+ * @param p [description]
+ * @return [description]
+ */
+class header_data : public layer_map {
+public:
+    enum type { control, tuning, ota, misc };
+
+    header_data() : layer_map(2) { t = control; };
+
+    type tt() {return t; }
+
+private:
+    type t;
+};
+
+/**
+ * @brief [brief description]
+ * @details [long description]
+ *
+ * @param p [description]
+ * @return [description]
+ */
+class payload_data : public layer_map {
+public:
+    payload_data() : layer_map(MAX_DATA_SZ) {};
+};
+
 /**
  * @brief      { Real-Time packet definition }
  */
-struct packet {
-    uint8_t total_size;
-
+class packet {
+public:
     union {  // [128 Bytes]
         struct {
             uint8_t raw[MAX_DATA_SZ + 6];  // [128 Bytes]
@@ -54,7 +119,7 @@ struct packet {
         struct {  // [128 Bytes]
             union {
                 struct {
-                    uint8_t header[APP_HDR_SZ + LINK_HDR_SZ];
+                    // uint8_t header[APP_HDR_SZ + LINK_HDR_SZ];
                 };
                 struct {
                     uint8_t payload_size;
@@ -74,7 +139,8 @@ struct packet {
                 };
             };
             struct {
-                uint8_t payload[MAX_DATA_SZ];  // [122 Bytes]
+                // uint8_t payload[MAX_DATA_SZ];  // [122 Bytes]
+                // std::vector payload
             };
             struct {
                 uint8_t rssi;  // [1 Byte]
@@ -85,16 +151,28 @@ struct packet {
         };
     };
 
+    rtp::header_data    header;
+    rtp::payload_data   payload;
+
+    uint8_t total_size;
     bool adjusted;
+
+    // pack() {
+    //     h.pack();
+    //     p.pack();
+
+    //     payload.insert(payload.begin(), header.begin(), header.end());
+    // }
 
     // packet& operator=(const packet& rhs) {};
 
     packet(const packet& p) : total_size(p.total_size) {
         memcpy(raw, p.raw, total_size);
         resetSizes();
+        // payload.reserve(MAX_DATA_SZ);
     }
 
-    packet() : adjusted(false){};
+    packet() : adjusted(false) {};
 
     void adjustSizes() {
         if (adjusted == false) {

@@ -60,7 +60,7 @@ void legacy_rx_cb(rtp::packet* p) {
         LOG(OK,
             "Legacy rx successful!\r\n"
             "    Received:\t'%s' (%u bytes)\r\n",
-            p->payload, p->payload_size);
+            p->payload.data(), p->payload_size);
     } else if (p->sfs) {
         LOG(OK, "Legacy rx ACK successful!\r\n");
     } else {
@@ -80,7 +80,7 @@ void loopback_rx_cb(rtp::packet* p) {
             "Loopback rx successful!\r\n"
             "    Received:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
-            p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
+            p->payload.data(), p->payload_size, (p->ack ? "SET" : "UNSET"));
     } else if (p->sfs) {
         LOG(OK, "Loopback rx ACK successful!\r\n");
     } else {
@@ -96,7 +96,7 @@ void loopback_tx_cb(rtp::packet* p) {
             "Loopback tx successful!\r\n"
             "    Sent:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
-            p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
+            p->payload.data(), p->payload_size, (p->ack ? "SET" : "UNSET"));
     } else if (p->sfs) {
         LOG(OK, "Loopback tx ACK successful!\r\n");
     } else {
