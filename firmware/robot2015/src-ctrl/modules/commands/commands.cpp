@@ -67,107 +67,123 @@ static const vector<command_t> commands = {
 
     {{"alias", "a"}, false, cmd_alias, "List aliases for commands.", "alias"},
 
-    {{"baud", "baudrate"},
-     false,
-     cmd_baudrate,
-     "set the active baudrate.",
-     "baud [[--list|-l] | <rate>]"},
+    {   {"baud", "baudrate"},
+        false,
+        cmd_baudrate,
+        "set the active baudrate.",
+        "baud [[--list|-l] | <rate>]"
+    },
 
     {{"clear", "cls"}, false, cmd_console_clear, "Clears the screen.", "clear"},
 
-    {{"echo"},
-     false,
-     cmd_console_echo,
-     "echo text back to the console.",
-     "echo [<text>...]"},
+    {   {"echo"},
+        false,
+        cmd_console_echo,
+        "echo text back to the console.",
+        "echo [<text>...]"
+    },
 
-    {{"exit", "quit"},
-     false,
-     cmd_console_exit,
-     "terminate the console thread.",
-     "exit"},
+    {   {"exit", "quit"},
+        false,
+        cmd_console_exit,
+        "terminate the console thread.",
+        "exit"
+    },
 
-    {{"help", "h", "?"},
-     false,
-     cmd_help,
-     "print this message.",
-     "help [{[--list|-l], [--all|-a]}] [<command name>...]"},
+    {   {"help", "h", "?"},
+        false,
+        cmd_help,
+        "print this message.",
+        "help [{[--list|-l], [--all|-a]}] [<command name>...]"
+    },
 
-    {{"host", "hostname"},
-     false,
-     cmd_console_hostname,
-     "set system hostname.",
-     "host <new-name>"},
+    {   {"host", "hostname"},
+        false,
+        cmd_console_hostname,
+        "set system hostname.",
+        "host <new-name>"
+    },
 
     {{"info", "version", "i"}, false, cmd_info, "Display system info.", "info"},
 
-    {{"isconn", "checkconn"},
-     false,
-     cmd_interface_check_conn,
-     "determine the mbed interface's connectivity state.",
-     "isconn"},
+    {   {"isconn", "checkconn"},
+        false,
+        cmd_interface_check_conn,
+        "determine the mbed interface's connectivity state.",
+        "isconn"
+    },
 
-    {{"led"},
-     false,
-     cmd_led,
-     "control the RGB LED.",
-     "led {bright <level>, state {on,off}, color <color>}"},
+    {   {"led"},
+        false,
+        cmd_led,
+        "control the RGB LED.",
+        "led {bright <level>, state {on,off}, color <color>}"
+    },
 
-    {{"loglvl", "loglevel"},
-     false,
-     cmd_log_level,
-     "set the console's log level.",
-     "loglvl {+,-}..."},
+    {   {"loglvl", "loglevel"},
+        false,
+        cmd_log_level,
+        "set the console's log level.",
+        "loglvl {+,-}..."
+    },
 
     {{"ls", "l"}, false, cmd_ls, "List contents of current directory", "ls"},
 
-    {{"motors"},
-     false,
-     cmd_motors,
-     "show/set motor parameters.",
-     "motors {on, off, show, set <motor-id> <duty-cycle>}"},
+    {   {"motors"},
+        false,
+        cmd_motors,
+        "show/set motor parameters.",
+        "motors {on, off, show, set <motor-id> <duty-cycle>}"
+    },
 
-    {{"motorscroll"},
-     true,
-     cmd_motors_scroll,
-     "show motor info (until receiving Ctrl-C).",
-     "motorscroll"},
+    {   {"motorscroll"},
+        true,
+        cmd_motors_scroll,
+        "show motor info (until receiving Ctrl-C).",
+        "motorscroll"
+    },
 
     {{"ping"}, true, cmd_ping, "check the console's responsiveness.", "ping"},
 
     {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
 
-    {{"radio"},
-     false,
-     cmd_radio,
-     "test radio connectivity.",
-     "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
-     "loopback "
-     "[<count>], stress-test <count> <delay> <pck-size>}]"},
+    {   {"radio"},
+        false,
+        cmd_radio,
+        "test radio connectivity.",
+        "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
+        "loopback "
+        "[<count>], stress-test <count> <delay> <pck-size>}]"
+    },
 
-    {{"reboot", "reset", "restart"},
-     false,
-     cmd_interface_reset,
-     "perform a software reset.",
-     "reboot"},
+    {   {"reboot", "reset", "restart"},
+        false,
+        cmd_interface_reset,
+        "perform a software reset.",
+        "reboot"
+    },
 
-    {{"rmdev"},
-     false,
-     cmd_interface_disconnect,
-     "disconnect the mbed interface chip.",
-     "rmdev [-P]"},
+    {   {"rmdev"},
+        false,
+        cmd_interface_disconnect,
+        "disconnect the mbed interface chip.",
+        "rmdev [-P]"
+    },
 
-    {{"rpc"},
-     false,
-     cmd_rpc,
-     "execute RPC commands.",
-     "rpc <rpc-cmd> [<rpc-arg>...]"},
+    {   {"rpc"},
+        false,
+        cmd_rpc,
+        "execute RPC commands.",
+        "rpc <rpc-cmd> [<rpc-arg>...]"
+    },
 
-    {{"su", "user"},
-     false,
-     cmd_console_user,
-     "set the active user.",
-     "su <user>"}};
+    {   {"su", "user"},
+        false,
+        cmd_console_user,
+        "set the active user.",
+        "su <user>"
+    }
+};
 
 /**
 * Lists aliases for commands, if args are present, it will only list aliases
@@ -183,12 +199,12 @@ int cmd_alias(cmd_args_t& args) {
             uint8_t a = 0;
 
             while (a < commands[i].aliases.size() &&
-                   commands[i].aliases[a] != "\0") {
+                    commands[i].aliases[a] != "\0") {
                 printf("%s", commands[i].aliases[a].c_str());
 
                 // print commas
                 if (a < commands[i].aliases.size() - 1 &&
-                    commands[i].aliases[a + 1] != "\0") {
+                        commands[i].aliases[a + 1] != "\0") {
                     printf(", ");
                 }
 
@@ -214,12 +230,12 @@ int cmd_alias(cmd_args_t& args) {
                     uint8_t a = 0;
 
                     while (a < commands[cmdInd].aliases.size() &&
-                           commands[cmdInd].aliases[a] != "\0") {
+                            commands[cmdInd].aliases[a] != "\0") {
                         printf("\t%s", commands[cmdInd].aliases[a].c_str());
 
                         // print commas
                         if (a < commands[cmdInd].aliases.size() - 1 &&
-                            commands[cmdInd].aliases[a + 1] != "\0") {
+                                commands[cmdInd].aliases[a + 1] != "\0") {
                             printf(",");
                         }
 
@@ -301,7 +317,7 @@ int cmd_help(cmd_args_t& args) {
     // Prints all commands - either as a list block or all detailed
     else {
         if (strcmp(args[0].c_str(), "--list") == 0 ||
-            strcmp(args[0].c_str(), "-l") == 0) {
+                strcmp(args[0].c_str(), "-l") == 0) {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 if (i % 5 == 4) {
                     printf("%s\r\n", commands[i].aliases[0].c_str());
@@ -586,7 +602,8 @@ int cmd_interface_check_conn(cmd_args_t& args) {
 int cmd_baudrate(cmd_args_t& args) {
     std::vector<int> valid_rates = {110,   300,    600,    1200,   2400,
                                     4800,  9600,   14400,  19200,  38400,
-                                    57600, 115200, 230400, 460800, 921600};
+                                    57600, 115200, 230400, 460800, 921600
+                                   };
 
     if (args.empty() == true || args.size() > 1) {
         printf("Baudrate: %u\r\n", Console::Baudrate());
@@ -596,7 +613,7 @@ int cmd_baudrate(cmd_args_t& args) {
         std::string str_baud = args.front();
 
         if (strcmp(str_baud.c_str(), "--list") == 0 ||
-            strcmp(str_baud.c_str(), "-l") == 0) {
+                strcmp(str_baud.c_str(), "-l") == 0) {
             printf("Valid baudrates:\r\n");
 
             for (unsigned int i = 0; i < valid_rates.size(); i++)
@@ -606,7 +623,7 @@ int cmd_baudrate(cmd_args_t& args) {
             int new_rate = atoi(str_baud.c_str());
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
-                valid_rates.end()) {
+                    valid_rates.end()) {
                 Console::Baudrate(new_rate);
                 printf("New baudrate: %u\r\n", new_rate);
             } else {
@@ -664,7 +681,7 @@ int cmd_log_level(cmd_args_t& args) {
         // bool storeVals = true;
 
         if (strcmp(args.front().c_str(), "on") == 0 ||
-            args.front().compare("enable") == 0) {
+                args.front().compare("enable") == 0) {
             isLogging = true;
             printf("Logging enabled.\r\n");
         } else if (strcmp(args.front().c_str(), "off") == 0 ||
@@ -833,29 +850,26 @@ int cmd_radio(cmd_args_t& args) {
     }
 
     if (args.size() == 1 || args.size() == 2) {
-        rtp::packet pck;
-        const std::string msg = "LINK TEST PAYLOAD";
+        rtp::packet pck("LINK TEST PAYLOAD");
         unsigned int portNbr = rtp::port::LINK;
-
-        pck.payload_size = msg.length() + 1;
-        memcpy((char*)pck.payload.data(), msg.c_str(), pck.payload_size);
-        pck.address = BASE_STATION_ADDR;
 
         if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
 
-        pck.header_link = RTP_HEADER(portNbr, 1, false, false);
+        pck.port(portNbr);
+        pck.subclass(1);
+        pck.address(BASE_STATION_ADDR);
 
         if (args.front().compare("show") == 0) {
             CommModule::PrintInfo(true);
 
         } else if (args.front().compare("test-tx") == 0) {
             printf("Placing %u byte packet in TX buffer.\r\n",
-                   pck.payload_size);
+                   pck.payload.size());
             CommModule::send(pck);
 
         } else if (args.front().compare("test-rx") == 0) {
             printf("Placing %u byte packet in RX buffer.\r\n",
-                   pck.payload_size);
+                   pck.payload.size());
             CommModule::receive(pck);
 
         } else if (args.front().compare("loopback") == 0) {
@@ -865,16 +879,18 @@ int cmd_radio(cmd_args_t& args) {
                 portNbr = rtp::port::LINK;
             }
 
-            pck.header_link = RTP_HEADER(portNbr, 2, true, false);
-            pck.address = LOOPBACK_ADDR;
+            pck.port(portNbr);
+            pck.subclass(2);
+            pck.ack(true);
+            pck.address(LOOPBACK_ADDR);
+
             printf(
                 "Placing %u, %u byte packet(s) in TX buffer with ACK set.\r\n",
-                i, pck.payload_size);
+                i, pck.payload.size());
 
             for (size_t j = 0; j < i; ++j) {
                 rtp::packet pck2;
                 pck2 = pck;
-                pck2.adjustSizes();
                 CommModule::send(pck2);
                 Thread::wait(50);
             }
@@ -916,19 +932,17 @@ int cmd_radio(cmd_args_t& args) {
             unsigned int packet_cnt = atoi(args.at(1).c_str());
             unsigned int ms_delay = atoi(args.at(2).c_str());
             unsigned int pck_size = atoi(args.at(3).c_str());
-            rtp::packet pck;
-            const std::string msg = std::string(pck_size - 2, '~') + ".";
+            rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
-            pck.header_link = RTP_HEADER(rtp::port::LINK, 1, false, false);
-            pck.payload_size = msg.length() + 1;
-            memcpy((char*)pck.payload.data(), msg.c_str(), pck.payload_size);
-            pck.subclass = 3;
-            pck.address = LOOPBACK_ADDR;
-            if (args.size() > 4) pck.ack = true;
+            pck.port(rtp::port::LINK);
+            pck.subclass(3);
+            pck.address(LOOPBACK_ADDR);
+            
+            if (args.size() > 4) pck.ack(true);
             printf(
                 "Beginning radio stress test with %u %sACK, %u byte "
                 "packets. %ums delay between packets.\r\n",
-                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload_size,
+                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload.size(),
                 ms_delay);
 
             int start_tick = clock();
@@ -938,7 +952,7 @@ int cmd_radio(cmd_args_t& args) {
             }
             printf("Stress test finished in %.1fms.\r\n",
                    (clock() - start_tick) /
-                       static_cast<double>(CLOCKS_PER_SEC) * 1000);
+                   static_cast<double>(CLOCKS_PER_SEC) * 1000);
         }
     } else {
         show_invalid_args(args);

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 #if __BIG_ENDIAN
 #define RTP_HEADER(port, subclass, ack, sfs)                                 \
@@ -17,15 +18,9 @@
 #define LOOPBACK_ADDR (127)
 
 namespace rtp {
-/// The number of bytes we must account for outsize of anything hardware related
-static const unsigned int APP_HDR_SZ = 1;
-
-/// The number of bytes we must account for when communicating the size of a raw
-/// payload to any hardware device
-static const unsigned int LINK_HDR_SZ = 2;
 
 ///
-static const unsigned int MAX_DATA_SZ = 122;
+static const unsigned int MAX_DATA_SZ = 120;
 
 /**
  * @brief      { port enumerations for different communication protocols }
@@ -44,6 +39,8 @@ enum port {
 
 namespace {
 // type of data field used in all packet classes
+// - must be 8 bits, (typedef used for eaiser compiler
+// type error debugging)
 typedef uint8_t packet_data_t;
 }
 
@@ -56,7 +53,7 @@ class layer_map {
 public:
     typedef packet_data_t data_t;
 
-private:
+protected:
     typedef std::vector<data_t> datav_t;
     typedef datav_t::iterator datav_it_t;
     std::vector<data_t> d;
@@ -70,11 +67,16 @@ public:
         return d.begin();
     }
 
-    data_t* data() {
-        return d.data();
+    data_t* data() { return d.data(); }
+
+    void show_data() {
+        for (auto const& i : d) printf("%02X ", i);
+    }
+
+    const size_t size() const {
+        return static_cast<const int>(d.size());
     }
 };
-
 
 /**
  * @brief [brief description]
@@ -87,12 +89,44 @@ class header_data : public layer_map {
 public:
     enum type { control, tuning, ota, misc };
 
-    header_data() : layer_map(2) { t = control; };
+    header_data()
+        : layer_map(3),
+          t(control),
+          address(0),
+          port_fields(0)
+    { };
 
-    type tt() {return t; }
+    datav_it_t pack(size_t payload_size) {
+        if (d.size()) return d.begin();
+        // payload size + number of bytes in header is top byte
+        // since that's required for the cc1101/cc1201 with
+        // variable packet sizes
+        d.push_back(payload_size + 2);
+        d.push_back(address);
+        d.push_back(port_fields);
+        return d.begin();
+    }
 
-private:
     type t;
+    data_t address;
+
+    friend class payload_data;
+
+    // common header byte - union so it's easier to put into vector
+    struct {
+        union {
+            struct {
+                data_t port_fields;
+            } __attribute__((packed));
+            struct {
+#if __BIG_ENDIAN
+                data_t sfs : 1, ack : 1, subclass : 2, port : 4;
+#else
+                data_t port : 4, subclass : 2, ack : 1, sfs : 1;
+#endif
+            } __attribute__((packed));
+        };
+    };
 };
 
 /**
@@ -105,6 +139,25 @@ private:
 class payload_data : public layer_map {
 public:
     payload_data() : layer_map(MAX_DATA_SZ) {};
+
+    datav_it_t pack() {
+        return d.begin();
+    }
+
+    datav_it_t add_header(const header_data& h) {
+        d.insert(d.begin(), h.d.begin(), h.d.end());
+        return d.begin();
+    }
+
+    template <class T>
+    void fill(const std::vector<T>& v) {
+        d = v;
+    }
+    void fill(const std::string& str) {
+        for (const char& c : str)
+            d.push_back(c);
+        d.push_back('\0');
+    }
 };
 
 /**
@@ -112,84 +165,75 @@ public:
  */
 class packet {
 public:
-    union {  // [128 Bytes]
-        struct {
-            uint8_t raw[MAX_DATA_SZ + 6];  // [128 Bytes]
-        };
-        struct {  // [128 Bytes]
-            union {
-                struct {
-                    // uint8_t header[APP_HDR_SZ + LINK_HDR_SZ];
-                };
-                struct {
-                    uint8_t payload_size;
-                    uint8_t address;
-                    union {
-                        struct {
-                            uint8_t header_link;
-                        } __attribute__((packed));
-                        struct {
-#if __BIG_ENDIAN
-                            uint8_t sfs : 1, ack : 1, subclass : 2, port : 4;
-#else
-                            uint8_t port : 4, subclass : 2, ack : 1, sfs : 1;
-#endif
-                        } __attribute__((packed));
-                    };
-                };
-            };
-            struct {
-                // uint8_t payload[MAX_DATA_SZ];  // [122 Bytes]
-                // std::vector payload
-            };
-            struct {
-                uint8_t rssi;  // [1 Byte]
-            };
-            struct {
-                uint8_t lqi;  // [1 Byte]
-            };
-        };
-    };
+    rtp::header_data header;
+    rtp::payload_data payload;
+    bool _packed;
 
-    rtp::header_data    header;
-    rtp::payload_data   payload;
-
-    uint8_t total_size;
-    bool adjusted;
-
-    // pack() {
-    //     h.pack();
-    //     p.pack();
-
-    //     payload.insert(payload.begin(), header.begin(), header.end());
-    // }
-
-    // packet& operator=(const packet& rhs) {};
-
-    packet(const packet& p) : total_size(p.total_size) {
-        memcpy(raw, p.raw, total_size);
-        resetSizes();
-        // payload.reserve(MAX_DATA_SZ);
+    packet() {};
+    packet(const std::string& s) {
+        payload.fill(s);
     }
 
-    packet() : adjusted(false) {};
-
-    void adjustSizes() {
-        if (adjusted == false) {
-            payload_size += APP_HDR_SZ;
-            total_size = payload_size + LINK_HDR_SZ;
-            adjusted = true;
-        }
+    packet_data_t* packed() {
+        return payload.data();
     }
 
-    void resetSizes() {
-        if (adjusted == true) {
-            payload_size -= APP_HDR_SZ;
-            total_size = 0;
-            adjusted = false;
-        }
+    size_t size() {
+        if (_packed == true)
+            return payload.size();
+        else
+            return payload.size() + header.size();
     }
 
-    uint8_t ACK_Header() { return header_link; }
+    const int port() const {
+        return static_cast<const int>(header.port);
+    }
+    template <class T>
+    void port(T p) {
+        header.port = static_cast<unsigned int>(p);
+    }
+
+    int subclass() {
+        return header.subclass;
+    }
+    template <class T>
+    void subclass(T c) {
+        header.subclass = static_cast<unsigned int>(c);
+    }
+
+    bool ack() {
+        return header.ack;
+    }
+    void ack(bool b) {
+        header.ack = b;
+    }
+
+    bool sfs() {
+        return header.sfs;
+    }
+    void sfs(bool b) {
+        header.sfs = b;
+    }
+
+    int address() {
+        return header.address;
+    }
+    void address(int a) {
+        header.address = static_cast<unsigned int>(a);
+    }
+
+    template <class T>
+    void recv(const std::vector<T>& v) {
+        payload.fill(v);
+        // sort out header
+    }
+
+private:
+    void pack() {
+        payload.pack();
+        header.pack(payload.size());
+        payload.add_header(header);
+        _packed = true;
+    }
 };
 }
