@@ -14,13 +14,13 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len,
                int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
-    // set initial configuration
-    setConfig(regs, len);
-
     _offset_reg_written = false;
     reset();
     set_rssi_offset(rssiOffset);
     selfTest();
+
+    // set initial configuration
+    setConfig(regs, len);
 
     if (_isInit == true) {
         LOG(INIT, "CC1201 ready!");
@@ -309,6 +309,8 @@ float CC1201::freq() {
 
     freqUpdate();
 
+    // read the 5 frequency related bytes in order:
+    // FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0
     readReg(CC1201_FREQOFF1, buf, 5);
 
     freq_offset = (buf[0] << 8) | (buf[1]);
