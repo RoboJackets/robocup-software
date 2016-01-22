@@ -139,7 +139,8 @@ void Task_CommCtrl(void const* args) {
     tx_led_ticker.start(150);
 
     // Create a new physical hardware communication link
-    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings, sizeof(preferredSettings)/sizeof(registerSetting_t));
+    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+                 sizeof(preferredSettings) / sizeof(registerSetting_t));
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
