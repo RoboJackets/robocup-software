@@ -163,7 +163,7 @@ public:
     //
     // If the stage runs over its specified time, this value
     // becomes negative.
-    int stage_time_left;
+    int stage_time_left = 0;
 
     // The number of commands issued since startup (mod 2^32).
     uint command_counter;
