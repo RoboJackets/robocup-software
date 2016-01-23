@@ -68,19 +68,18 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
     }
 
     Segment edges[4] = {Segment(pt[0], ur), Segment(ur, pt[1]),
-                       Segment(pt[0], ll), Segment(ll, pt[1])};
+                        Segment(pt[0], ll), Segment(ll, pt[1])};
 
     // If either endpoint of the segment is near an edge of the rect, then the
     // segment is near this rect.
-    for (Segment &edge: edges) {
-        if (edge.nearPoint(p1, threshold) ||
-            edge.nearPoint(p2, threshold))
+    for (Segment& edge : edges) {
+        if (edge.nearPoint(p1, threshold) || edge.nearPoint(p2, threshold))
             return true;
     }
 
     // If any edge of this rect intersects the segment, then the segment is near
     // this rect.
-    for (Segment &edge: edges) {
+    for (Segment& edge : edges) {
         if (seg.intersects(edge)) return true;
     }
 
@@ -97,11 +96,11 @@ bool Rect::nearPoint(Point other, float threshold) const {
     Point ur = Point(pt[1].x, pt[0].y);
     Point ll = Point(pt[0].x, pt[1].y);
     Segment edges[4] = {Segment(pt[0], ur), Segment(ur, pt[1]),
-                       Segment(pt[0], ll), Segment(ll, pt[1])};
+                        Segment(pt[0], ll), Segment(ll, pt[1])};
 
     // If any edge of this rect is near the point, then the point is near the
     // rect.
-    for (Segment &edge: edges) {
+    for (Segment& edge : edges) {
         if (edge.nearPoint(other, threshold)) return true;
     }
 
