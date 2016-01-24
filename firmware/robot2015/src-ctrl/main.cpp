@@ -153,7 +153,6 @@ int main() {
 
     // Make sure all of the motors are enabled
     motors_Init();
-    FPGA::Instance()->motors_en(true);
 
     // Wait for all threads to get to their ready state
     for (size_t i = 0; i < 3; ++i)
