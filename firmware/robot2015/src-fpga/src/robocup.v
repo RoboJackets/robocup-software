@@ -4,6 +4,7 @@
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
 `include "ClkDivide.v"
+`include "git_version.vh"
 
 module robocup #(
     parameter       NUM_MOTORS              =   ( 5 ),
