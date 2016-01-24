@@ -11,6 +11,7 @@
 
 #include "ds2411.hpp"
 #include "neostrip.hpp"
+#include "fpga.hpp"
 
 using std::string;
 using std::vector;
@@ -525,6 +526,16 @@ int cmd_info(cmd_args_t& args) {
         // show info about the core processor. ARM cortex-m3 in our case
         printf("\tCPUID:\t\t0x%08lX\r\n", SCB->CPUID);
 
+        // show the fpga version info
+        std::vector<uint8_t> fpga_version;
+        bool dirty_check = FPGA::Instance()->git_hash(fpga_version);
+        printf("\tFPGA:\t\t0x");
+        for(auto const& i : fpga_version)
+            printf("%X", i);
+        if (dirty_check)
+            printf(" (dirty)");
+        printf("\r\n");
+
         // ** NOTE: The `mbed_interface_mac()` function does not work! It hangs
         // the mbed... **
 
@@ -963,6 +974,7 @@ int cmd_radio(cmd_args_t& args) {
 }
 
 int cmd_imu(cmd_args_t& args) { return 0; }
+
 
 /**
  * Command executor.
