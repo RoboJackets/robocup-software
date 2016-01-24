@@ -250,22 +250,20 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
     return status;
 }
 
-uint32_t FPGA::git_hash() {
-    return 0xFF;
+bool FPGA::git_hash(std::vector<uint8_t>& v) {
+    mutex.lock();
+    *cs = !(*cs);
+    spi->write(CMD_READ_HASH);
 
-    // uint32_t hash = 0;
+    for (int i = 0; i < 7; i++)
+        v.push_back(spi->write(0x00) << (8 * i));
 
-    // mutex.lock();
-    // *cs = !(*cs);
-    // spi->write(CMD_READ_HASH);
+    v.push_back(spi->write(0x00));
 
-    // for (int i = 0; i < 4; i++)
-    //     hash |= (spi->write(0x00) << (8 * i));
+    *cs = !(*cs);
+    mutex.unlock();
 
-    // *cs = !(*cs);
-    // mutex.unlock();
-
-    // return hash;
+    return v.back() & 0x01;
 }
 
 uint8_t FPGA::motors_en(bool state) {
@@ -278,4 +276,9 @@ uint8_t FPGA::motors_en(bool state) {
     mutex.unlock();
 
     return status;
+}
+
+uint8_t FPGA::watchdog_reset() {
+    motors_en(false);
+    return motors_en(true);
 }
