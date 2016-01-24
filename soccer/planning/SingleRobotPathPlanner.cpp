@@ -52,14 +52,14 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    const RJ::Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
+    const RJ::Time kPathExpirationInterval = RJ::SecsToTimestamp(replanTimeout());
     if ((RJ::timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
         return true;
     }
 
     // Evaluate where the path says the robot should be right now
     float timeIntoPath =
-        ((float)(RJ::timestamp() - prevPath->startTime())) * TimestampToSecs +
+        RJ::TimestampToSecs((float)(RJ::timestamp() - prevPath->startTime())) +
         1.0f / 60.0f;
     boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.

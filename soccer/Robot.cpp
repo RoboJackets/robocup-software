@@ -233,8 +233,7 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged()) ? 0.0 : (float)(RJ::timestamp() - _lastChargedTime) *
-                                   TimestampToSecs;
+    return (charged()) ? 0.0 : RJ::TimestampToSecs((RJ::timestamp() - _lastChargedTime));
 }
 
 void OurRobot::dribble(uint8_t speed) {
@@ -514,7 +513,7 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const {
 }
 
 boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
-    if (_radioRx.has_quaternion() && rxIsFresh(0.05 * SecsToTimestamp)) {
+    if (_radioRx.has_quaternion() && rxIsFresh(RJ::SecsToTimestamp(0.05))) {
         return Eigen::Quaternionf(_radioRx.quaternion().q0() / 16384.0,
                                   _radioRx.quaternion().q1() / 16384.0,
                                   _radioRx.quaternion().q2() / 16384.0,
