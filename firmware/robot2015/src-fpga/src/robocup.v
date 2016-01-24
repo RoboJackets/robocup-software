@@ -4,7 +4,6 @@
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
 `include "ClkDivide.v"
-`include "git_version.vh"
 
 module robocup #(
     parameter       NUM_MOTORS              =   ( 5 ),
@@ -58,7 +57,7 @@ integer j, k;
 
 // Derived parameters 
 localparam ENCODER_COUNT_WIDTH          =   ( 16 );
-localparam HALL_COUNT_WIDTH             =   ( (3 * SPI_SLAVE_DATA_WIDTH) - ENCODER_COUNT_WIDTH );
+localparam HALL_COUNT_WIDTH             =   (  8 );
 localparam DUTY_CYCLE_WIDTH             =   ( 10 );
 localparam NUM_ENCODER_GEN              =   ( NUM_ENCODERS );
 localparam NUM_MOTORS_GEN               =   ( NUM_MOTORS );
@@ -125,7 +124,7 @@ begin : SYNC_OUTPUTS
         // Phase outputs (LOW)
         { phase_aL[j], phase_bL[j], phase_cL[j] }   <=  phaseL_o[j];
     end
-
+    // SPI Master outputs
     drv_ncs             <=  drv_ncs_o;
     adc_ncs             <=  adc_ncs_o;
     spi_master_sck      <=  spi_master_sck_o;
@@ -144,7 +143,6 @@ assign spi_slave_miso = ( spi_slave_ncs_s == 1 ? 1'bZ : spi_slave_miso_o );
 wire [ ENCODER_COUNT_WIDTH  - 1:0 ] enc_count        [ NUM_ENCODERS  - 1:0 ];
 wire [ HALL_COUNT_WIDTH     - 1:0 ] hall_count       [ NUM_HALL_SENS - 1:0 ];
 wire [ NUM_HALL_SENS        - 1:0 ] hall_conns;
-wire [ NUM_HALL_SENS        - 1:0 ] hall_faults;
 reg  [ DUTY_CYCLE_WIDTH     - 1:0 ] duty_cycle       [ NUM_MOTORS    - 1:0 ];
 reg  [ WATCHDOG_TIMER_WIDTH - 1:0 ] watchdog_timer   [1:0];
 
@@ -174,12 +172,13 @@ localparam CMD_RW_TYPE_BASE     = 'h10;
 localparam CMD_ENCODER_COUNT    = CMD_RW_TYPE_BASE + 1;
 localparam CMD_HALL_COUNT       = CMD_RW_TYPE_BASE + 2;
 localparam CMD_DUTY_CYCLE       = CMD_RW_TYPE_BASE + 3;
-localparam CMD_VERSION          = CMD_RW_TYPE_BASE + 4;
+localparam CMD_VERSION1         = CMD_RW_TYPE_BASE + 4;
+localparam CMD_VERSION2         = CMD_RW_TYPE_BASE + 5;
 // The command strobes start after the read/write command types
 localparam CMD_STROBE_START         = CMD_RW_TYPE_BASE + 'h10;
 localparam CMD_TOGGLE_MOTOR_EN      = CMD_RW_TYPE_BASE + CMD_STROBE_START;
 // Response & request buffer sizes
-localparam SPI_SLAVE_RES_BUF_LEN = 15;
+localparam SPI_SLAVE_RES_BUF_LEN = 12;
 localparam SPI_SLAVE_REQ_BUF_LEN = SPI_SLAVE_RES_BUF_LEN;
 localparam SPI_SLAVE_COUNTER_WIDTH = `LOG2(SPI_SLAVE_RES_BUF_LEN);
 
@@ -383,13 +382,22 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                 end
 
 `ifdef GIT_VERSION_HASH
-                CMD_VERSION :
+                CMD_VERSION1 :
                 begin
-                    for (j = 0; j < 7; j = j + 1)
-                    begin : LATCH_GIT_HASH
-                        spi_slave_res_buf[j+1]    <=  (`GIT_VERSION_HASH >> j) & 'hF;
+                    for (j = 0; j < 10; j = j + 1)
+                    begin : LATCH_GIT_HASH1
+                        spi_slave_res_buf[j+1]    <=  (`GIT_VERSION_HASH >> (8 * j)) & 'hFF;
                     end
-                    spi_slave_res_buf[9] <= `GIT_VERSION_DIRTY;
+                    spi_slave_res_buf[11] <= `GIT_VERSION_DIRTY;
+                end
+
+                CMD_VERSION2 :
+                begin
+                    for (j = 0; j < 10; j = j + 1)
+                    begin : LATCH_GIT_HASH2
+                        spi_slave_res_buf[j+1]    <=  (`GIT_VERSION_HASH >> (8 * (10 + j))) & 'hFF;
+                    end
+                    spi_slave_res_buf[11] <= `GIT_VERSION_DIRTY;
                 end
 `endif
                     
@@ -516,8 +524,7 @@ generate
             .phaseL                 ( phaseL_o[i]   ), 
             .enc_count              ( enc_count[i]  ),
             .hall_count             ( hall_count[i] ),
-            .connected              ( hall_conns[i] ),
-            .hall_fault             ( hall_faults[i])
+            .connected              ( hall_conns[i] )
         );
     end
 endgenerate

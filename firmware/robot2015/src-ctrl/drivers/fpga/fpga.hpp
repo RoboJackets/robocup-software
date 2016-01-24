@@ -14,6 +14,7 @@ public:
     static FPGA* Instance();
 
     bool Init(const std::string& filepath);
+    bool isReady();
     uint8_t set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
                              uint16_t* enc_deltas, size_t size_enc);
     uint8_t set_duty_cycles(uint16_t* duty_cycles, size_t size);

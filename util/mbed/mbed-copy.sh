@@ -110,15 +110,12 @@ for i in $MBED_DEVICES_PATH; do
     echo "installing to $mnt_point"
 
     mkdir -p "$mnt_point"
-    chown :plugdev "$mnt_point"
-    chmod g+rw "$mnt_point"
-
     sudo mount "$i" "$mnt_point"
 
     # redirect this critical section to a different callback on errors
     trap err_exit_on_copy SIGINT SIGTERM EXIT
 
-    cp -f "$COPY_FILE" "$mnt_point"
+    sudo cp -f "$COPY_FILE" "$mnt_point"
 
     # Call the golden command
     sync

@@ -481,11 +481,27 @@ int cmd_info(cmd_args_t& args) {
         // kernel information
         printf("\tKernel Ver:\t%s\r\n", osKernelSystemId);
         printf("\tAPI Ver:\t%u\r\n", osCMSIS);
+        printf("\tCommit Hash:\t%s%s\r\n", git_version_hash, git_version_dirty ? " (dirty)" : "");
+
+        // show the fpga build hash
+        printf("\tFPGA Hash:\t");
+        if (FPGA::Instance()->isReady() == true) {
+            std::vector<uint8_t> fpga_version;
+            bool dirty_check = FPGA::Instance()->git_hash(fpga_version);
+
+            for (auto const& i : fpga_version)
+                printf("%x", i);
+            if (dirty_check)
+                printf(" (dirty)");
+        }
+        else {
+            printf("N/A");
+        }
+        printf("\r\n");
 
         printf(
-            "\tCommit Hash:\t%s%s\r\n\tCommit Date:\t%s\r\n\tCommit "
-            "Author:\t%s\r\n",
-            git_version_hash, git_version_dirty ? " (dirty)" : "",
+            "\tCommit Date:\t%s\r\n"
+            "\tCommit Author:\t%s\r\n",
             git_head_date, git_head_author);
 
         printf("\tBuild Date:\t%s %s\r\n", __DATE__, __TIME__);
@@ -525,16 +541,6 @@ int cmd_info(cmd_args_t& args) {
 
         // show info about the core processor. ARM cortex-m3 in our case
         printf("\tCPUID:\t\t0x%08lX\r\n", SCB->CPUID);
-
-        // show the fpga version info
-        std::vector<uint8_t> fpga_version;
-        bool dirty_check = FPGA::Instance()->git_hash(fpga_version);
-        printf("\tFPGA:\t\t0x");
-        for(auto const& i : fpga_version)
-            printf("%X", i);
-        if (dirty_check)
-            printf(" (dirty)");
-        printf("\r\n");
 
         // ** NOTE: The `mbed_interface_mac()` function does not work! It hangs
         // the mbed... **
@@ -948,7 +954,7 @@ int cmd_radio(cmd_args_t& args) {
             pck.port(rtp::port::LINK);
             pck.subclass(3);
             pck.address(LOOPBACK_ADDR);
-            
+
             if (args.size() > 4) pck.ack(true);
             printf(
                 "Beginning radio stress test with %u %sACK, %u byte "

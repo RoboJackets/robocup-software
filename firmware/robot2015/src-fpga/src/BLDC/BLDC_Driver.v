@@ -49,14 +49,13 @@ output reg fault = 0;
 // ===============================================
 localparam NUM_PHASES =                 3;  // This will always be constant
 localparam STARTUP_COUNTER_WIDTH =      5;  // Counter for startup time period. Time expires when register overflows to 0 and is incremented according to HALL_CHECK_COUNTER_WIDTH
-localparam HALL_STATE_STEADY_COUNT =    31; // Threshold value in determining when the hall effect sensor is locked into an error state
+localparam HALL_STATE_STEADY_COUNT =    15; // Threshold value in determining when the hall effect sensor is locked into an error state
 
 // Derived local parameters
 // ===============================================
-localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 2 );                        // Divide by 4 to get 25% of the max speed for startup state
+localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 3 );                        // Divide by 8 to get 25% of the max speed for startup state for a single direction
 localparam STARTUP_DUTY_CYCLE_STEPS =       ( END_STARTUP_DUTY_CYCLE - MIN_DUTY_CYCLE );    // Get the number of steps between the min. and max. duty cycles for startup state
 localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << STARTUP_COUNTER_WIDTH );                 // The number of input clock cycles in one period of the startup counter's clock
-localparam HALL_CHECK_CLOCK_WIDTH =         ( STARTUP_COUNTER_WIDTH );                      // Width of counter for checking the hall effect sensor inputs at a reduced frequency.
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
 
@@ -253,7 +252,7 @@ begin : MOTOR_STATES
                 hardware_fault_latched <= 1;
                 fault_s <= 1'b1;
             end else if ( hall_disconnected_cnt == HALL_STATE_STEADY_COUNT ) begin
-                // Most likely disconnected where the state would be 3'b111
+                // Most likely disconnected - the state would be 3'b111
                 disconnect_fault_latched <= 1;
                 fault_s <= 1'b1;
             end else if ( ( hall_reconnect_cnt == HALL_STATE_STEADY_COUNT ) & ( hardware_fault_latched != 1 ) ) begin
@@ -271,7 +270,7 @@ begin : MOTOR_STATES
 end  // MOTOR_STATES
 
 
-// The Hall_Effect_Sensor module does not use synced inputs.
+// The Hall_Effect_Sensor module does not use synced inputs - no need to as long as we sync things at the top module.
 Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .u( u ), .z( z ) );
 
 

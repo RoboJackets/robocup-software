@@ -71,7 +71,7 @@ bits [1..0]:    OCTW_SET
 
 
 // BLDC_Motor module
-module BLDC_Motor ( clk, en, reset_enc_count, reset_hall_count, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, connected, hall_fault );
+module BLDC_Motor ( clk, en, reset_enc_count, reset_hall_count, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, connected );
 
 // Module parameters - passed parameters will overwrite the values here
 parameter MIN_DUTY_CYCLE =          ( 0 );
@@ -93,8 +93,9 @@ output [2:0] phaseH, phaseL;
 output [ENCODER_COUNT_WIDTH-1:0] enc_count;
 output [HALL_COUNT_WIDTH-1:0] hall_count;
 output connected;
-output hall_fault;
 // ===============================================
+
+wire hall_connected, hall_fault;
 
 // Show the expected startup length during synthesis. Assumes an 18.432MHz input clock.
 initial begin
@@ -134,9 +135,11 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .duty_cycle                 ( duty_cycle ) ,
     .phaseH                     ( phaseH ) ,
     .phaseL                     ( phaseL ) ,
-    .connected                  ( connected ) ,
+    .connected                  ( hall_connected ) ,
     .fault                      ( hall_fault )
 );
+
+assign connected = hall_connected & ~(hall_fault);
 
 endmodule
 
