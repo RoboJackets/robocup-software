@@ -38,18 +38,19 @@ boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
 
 bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                           float initialTime) const {
-    for (RJ::Time t = RJ::TimestampToSecs(initialTime) + startTime();
-         t < startTime() + RJ::SecsToTimestamp(_duration);
-         t += RJ::SecsToTimestamp(0.25)) {
-        auto instant = evaluate(RJ::TimestampToSecs(t - startTime()));
+    for (float t = initialTime;
+         t < _duration;
+         t += 0.25) {
+        auto instant = evaluate(t);
         if (instant) {
             for (auto& shape : obstacles.shapes()) {
-                hitTime = RJ::TimestampToSecs(t);
-                if (shape->hit(instant->pos)) return true;
+                if (shape->hit(instant->pos)) {
+                    hitTime = t;
+                    return true;
+                }
             }
         }
     }
-
     return false;
 }
 
