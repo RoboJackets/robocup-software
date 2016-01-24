@@ -12,8 +12,8 @@ Physical units for 2011 robots:
 Forward (base station to robot):
 
 Byte 0: Sequence number
-	Bits 7-5: Reserved
-	Bits 0-2: Sequence number
+	Bits 7-3: Reserved
+	Bits 2-0: Sequence number
 Bytes 1+: Robot command slots, 6 bytes each
 	Body velocities are given as 10-bit 2's-complement numbers.
 	Not all combinations of velocities that can be transmitted can be achieved.

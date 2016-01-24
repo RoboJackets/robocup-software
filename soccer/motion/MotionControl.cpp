@@ -114,7 +114,7 @@ void MotionControl::run() {
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         float r = Robot_Radius;
         const float FudgeFactor = *_robot->config->pivotVelMultiplier;
-        float speed = r * targetW * RadiansToDegrees * FudgeFactor;
+        float speed = RadiansToDegrees(r * targetW * FudgeFactor);
         Point vel(speed, 0);
 
         // the robot body coordinate system is wierd...
@@ -196,7 +196,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     angleVel *= *_robot->config->angleVelMultiplier;
 
     // convert units
-    angleVel *= RadiansToDegrees;
+    angleVel = RadiansToDegrees(angleVel);
 
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
