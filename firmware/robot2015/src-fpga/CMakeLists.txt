@@ -101,6 +101,7 @@ foreach(srcFile ${verilog_SRC})
         TARGET copy_src PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${srcFile} ${srcBuildFile}
         COMMENT "Checking for newer versions of ${SRC_BASENAME}"
+        depends ${CMAKE_CURRENT_BINARY_DIR}/git_version.vh
     )
 
     # check if there is a new version for each of the source files - set a flag if anything has changed
@@ -191,6 +192,6 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git_version.vh
     " *  Device:\t${DEV_PARTNUM}\n"
     " *  Timestamp:\t${_TIMESTAMP}"
     " */  \n\n"
-    "`define GIT_VERSION_HASH\t32'h${GIT_HASH_8}\n"
+    "`define GIT_VERSION_HASH\t64'h${GIT_HASH_8}\n"
     "`define GIT_VERSION_DIRTY\t1'b${GIT_DIRTY}\n"
 )
