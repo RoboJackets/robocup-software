@@ -50,9 +50,6 @@ void Console::Init() {
     instance->rxIndex = 0;
     instance->txIndex = 0;
 
-    // Default for a host response escaped input terminating character
-    // instance->SetEscEnd('R');
-
     LOG(INF3, "Hello from the 'common2015' library!");
 }
 
@@ -215,7 +212,12 @@ void Console::RXCallback() {
 
 void Console::TXCallback() {
     // NVIC_DisableIRQ(UART0_IRQn);
-    // handle transmission interrupts if necessary here
+
+    /*
+     * Handle transmission interrupts
+     * here if necessary here.
+    */
+
     // NVIC_EnableIRQ(UART0_IRQn);
 }
 

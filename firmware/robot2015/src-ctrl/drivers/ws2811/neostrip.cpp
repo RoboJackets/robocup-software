@@ -73,12 +73,16 @@ void NeoStrip::setPixel(size_t p, int color) {
     setPixel(p, red, green, blue);
 }
 
-void NeoStrip::setPixel(size_t p, unsigned int red, unsigned int green, unsigned int blue) {
+void NeoStrip::setPixel(size_t p, unsigned int red, unsigned int green,
+                        unsigned int blue) {
     // set the given pixel's RGB values
     // the array is indexed modulo _N to avoid overflow
-    _strip[p % _n].red = static_cast<uint8_t>(static_cast<float>(red) * _bright);
-    _strip[p % _n].green = static_cast<uint8_t>(static_cast<float>(green) * _bright);
-    _strip[p % _n].blue = static_cast<uint8_t>(static_cast<float>(blue) * _bright);
+    _strip[p % _n].red =
+        static_cast<uint8_t>(static_cast<float>(red) * _bright);
+    _strip[p % _n].green =
+        static_cast<uint8_t>(static_cast<float>(green) * _bright);
+    _strip[p % _n].blue =
+        static_cast<uint8_t>(static_cast<float>(blue) * _bright);
 }
 
 void NeoStrip::setPixels(size_t p, size_t n, const int* colors) {
@@ -93,8 +97,7 @@ void NeoStrip::setPixels(size_t p, size_t n, const int* colors) {
 }
 
 void NeoStrip::clear() {
-    for (size_t i = 0; i < _n; i++)
-        setPixel(i, 0);
+    for (size_t i = 0; i < _n; i++) setPixel(i, 0);
 
     write();
 }

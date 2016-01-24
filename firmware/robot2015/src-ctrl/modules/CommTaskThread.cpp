@@ -17,57 +17,26 @@
  * https://www.overleaf.com/2187548nsfdps
  */
 
-/*
-* Example of sending a packet.
-
-rtp::packet pck;                // Declare a new packet structure
-
-pck.port = 8;                   // What port should the packet be routed to?
-pck.subclass = 1;               // What subclass of the port is this for?
-pck.ack = false;                // Do we need an acknowledgment or is this an
-acknowledgment response?
-pck.sfs = false;                // Is the size field Significant? (Almost always
-'No')
-
-// The lines above can be set with the 'RTP_HEADER' macro as an alternative.
-// RTP_HEADER(port, subclass, ack, sfs)
-//
-// pck.header_link = RTP_HEADER(rtp::packet::port::DISCOVER, 1, false, false);
-
-pck.address = 255;              // Who are we sending the packet to? (255 is
-broadcast address)
-pck.payload_size = 25;          // How many bytes are in the payload of the
-packet?
-
-memset(pck.payload, 0xFF, pck.payload_size);    // fill with 25 arbitrary bytes
-
-CommModule.send(pck);           // Send it!
-
-// Note: A packet with a requested ACK must be accounted for within the RX
-callback function.
-*/
-
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
-    ack_pck.ack = false;
-    ack_pck.sfs = true;
-    ack_pck.payload_size = 0;
+    ack_pck.ack(false);
+    ack_pck.sfs(true);
     CommModule::send(ack_pck);
 }
 
 void legacy_rx_cb(rtp::packet* p) {
-    if (p->payload_size) {
+    if (p->payload.size()) {
         LOG(OK,
             "Legacy rx successful!\r\n"
             "    Received:\t'%s' (%u bytes)\r\n",
-            p->payload, p->payload_size);
-    } else if (p->sfs) {
+            p->payload.data(), p->payload.size());
+    } else if (p->sfs()) {
         LOG(OK, "Legacy rx ACK successful!\r\n");
     } else {
         LOG(WARN, "Received empty packet on Legacy interface");
     }
 
-    if (p->ack) loopback_ack_pck(p);
+    if (p->ack()) loopback_ack_pck(p);
 }
 
 /**
@@ -75,29 +44,29 @@ void legacy_rx_cb(rtp::packet* p) {
  * @param p [none]
  */
 void loopback_rx_cb(rtp::packet* p) {
-    if (p->payload_size) {
+    if (p->payload.size()) {
         LOG(OK,
             "Loopback rx successful!\r\n"
             "    Received:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
-            p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
-    } else if (p->sfs) {
+            p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
+    } else if (p->sfs()) {
         LOG(OK, "Loopback rx ACK successful!\r\n");
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
 
-    if (p->ack) loopback_ack_pck(p);
+    if (p->ack()) loopback_ack_pck(p);
 }
 
 void loopback_tx_cb(rtp::packet* p) {
-    if (p->payload_size) {
+    if (p->payload.size()) {
         LOG(OK,
             "Loopback tx successful!\r\n"
             "    Sent:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
-            p->payload, p->payload_size, (p->ack ? "SET" : "UNSET"));
-    } else if (p->sfs) {
+            p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
+    } else if (p->sfs()) {
         LOG(OK, "Loopback tx ACK successful!\r\n");
     } else {
         LOG(WARN, "Sent empty packet on loopback interface");
@@ -126,10 +95,16 @@ void Task_CommCtrl(void const* args) {
     // Setup some lights that will blink whenever we send/receive packets
     static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
     static const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
+
+    /* Uncomment the below DigitalOut lines and comment out the
+     * ones above to use the mbed's on-board LEDs.
+     */
     // static DigitalOut tx_led(LED3, 0);
     // static DigitalOut rx_led(LED2, 0);
+
     RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
     RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
+
     rx_led_ticker.start(150);
     tx_led_ticker.start(150);
 

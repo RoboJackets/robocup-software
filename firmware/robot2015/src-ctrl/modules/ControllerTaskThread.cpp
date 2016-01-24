@@ -9,11 +9,12 @@
 #include "task-signals.hpp"
 #include "task-globals.hpp"
 #include "motors.hpp"
+#include "fpga.hpp"
 #include "mpu-6050.hpp"
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
-static const int CONTROL_LOOP_WAIT_MS = 10;
+static const int CONTROL_LOOP_WAIT_MS = 5;
 
 // Declaration for an alternative control loop thread for when the accel/gyro
 // can't be used for whatever reason
@@ -49,7 +50,6 @@ void Task_Controller(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-#if RJ_MPU_EN
     MPU6050 imu(RJ_I2C_BUS);
 
     imu.setBW(MPU6050_BW_256);
@@ -83,38 +83,31 @@ void Task_Controller(void const* args) {
 
         // Set the error flag - bit positions are pretty arbitruary as of now
         imu_err |= 1 << 1;
-
         // Set the error code's valid bit
         imu_err |= 1 << 0;
 
-#else
-    LOG(INIT,
-        "IMU disabled in config file\r\n    Falling back to sensorless control "
-        "loop.");
-
-    // Set the error flag - bit positions are pretty arbitruary as of now
-    imu_err |= 1 << 2;
-
-    // Set the error code's valid bit
-    imu_err |= 1 << 0;
-#endif
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
         Task_Controller_Sensorless(mainID);
+
         // should never reach this point
         osThreadTerminate(threadID);
+
         return;
-
-#if RJ_MPU_EN
     }
-
-#endif
 
     // osThreadSetPriority(threadID, osPriorityNormal);
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
+
+    std::vector<uint16_t> duty_cycles;
+    duty_cycles.assign(5, 100);
+    for (int i = 0; i < duty_cycles.size(); ++i)
+        duty_cycles.at(i) = 100 + 206 * i;
+
+    
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -129,8 +122,21 @@ void Task_Controller(void const* args) {
         //     accelVals[2]);
         // Console::Flush();
 
+        // write all duty cycles
+        for (size_t i = 0; i < 500; ++i) {
+            duty_cycles.at(1) = 2*i;
+            FPGA::Instance()->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+            Thread::wait(5);
+        }
+
+        Thread::wait(10);
+        duty_cycles.at(1) = 0;
+        FPGA::Instance()->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+
+        Thread::wait(1500);
+
         Thread::wait(CONTROL_LOOP_WAIT_MS);
-        Thread::yield();
+        // Thread::yield();
     }
 
     osThreadTerminate(threadID);
@@ -140,7 +146,7 @@ void Task_Controller(void const* args) {
  * [Task_Controller_Sensorless]
  * @param args [description]
  */
-void Task_Controller_Sensorless(const osThreadId* mainID) {
+void Task_Controller_Sensorless(const osThreadId * mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);

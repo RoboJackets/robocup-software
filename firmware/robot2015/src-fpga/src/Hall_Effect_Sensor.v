@@ -20,72 +20,72 @@ impedance phase for each hall state is specified in the document linked below.
 
 module Hall_Effect_Sensor ( hall, u, z );
 
-input    [2:0]  hall; 	// Hall Effect sensor input
-output   [2:0]	 u;		// High phase output
-output   [2:0]	 z;		// High Impedance output
+input    [2:0]  hall;   // Hall Effect sensor input
+output   [2:0]   u;     // High phase output
+output   [2:0]   z;     // High Impedance output
 
 reg [2:0] u, z;
 reg [2:0] u_d, z_d;
 
-localparam 	A 		= 	3'b100;
-localparam 	B 		=	3'b010;
-localparam 	C 		= 	3'b001; 
-localparam 	ALL_ON 	= 	3'b111;
-localparam 	ALL_OFF = 	3'b000;
+localparam  A       =   3'b100;
+localparam  B       =   3'b010;
+localparam  C       =   3'b001; 
+localparam  ALL_ON  =   3'b111;
+localparam  ALL_OFF =   3'b000;
 
 always @(*) begin
 
-		case( hall )
+        case( hall )
 
-		3'b000	: 	begin
-					u_d <= ALL_OFF;
-					z_d <= ALL_ON;
-					end
+        3'b000  :   begin
+                    u_d <= ALL_OFF;
+                    z_d <= ALL_ON;
+                    end
 
-		3'b111	: 	begin
-					u_d <= ALL_OFF;
-					z_d <= ALL_ON;
-					end
+        3'b111  :   begin
+                    u_d <= ALL_OFF;
+                    z_d <= ALL_ON;
+                    end
 
-		3'b101	:	begin
-					u_d <= A;
-					z_d <= C;
-					end
+        3'b101  :   begin
+                    u_d <= A;
+                    z_d <= C;
+                    end
 
-		3'b100	:	begin
-					u_d <= A;
-					z_d <= B;
-					end
+        3'b100  :   begin
+                    u_d <= A;
+                    z_d <= B;
+                    end
 
-		3'b110	:	begin
-					u_d <= B;
-					z_d <= A;
-					end
+        3'b110  :   begin
+                    u_d <= B;
+                    z_d <= A;
+                    end
 
-		3'b010	:	begin
-					u_d <= B;
-					z_d <= C;
-					end
+        3'b010  :   begin
+                    u_d <= B;
+                    z_d <= C;
+                    end
 
-		3'b011	:	begin
-					u_d <= C;
-					z_d <= B;
-					end
+        3'b011  :   begin
+                    u_d <= C;
+                    z_d <= B;
+                    end
 
-		3'b001	:	begin
-					u_d <= C;
-					z_d <= A;
-					end
+        3'b001  :   begin
+                    u_d <= C;
+                    z_d <= A;
+                    end
 
-		default	:	begin
-					u_d <= ALL_OFF;
-					z_d <= ALL_ON;
-					end
+        default :   begin
+                    u_d <= ALL_OFF;
+                    z_d <= ALL_ON;
+                    end
 
-		endcase
+        endcase
 
-		u <= u_d;
-		z <= z_d;
+        u <= u_d;
+        z <= z_d;
 end
 
 endmodule

@@ -33,10 +33,9 @@ void Task_Controller(void const* args);
  */
 void statusLights(bool state) {
     DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-        {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-        {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-        {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}
-    };
+                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
+                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
+                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
 
     for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
 }
@@ -62,7 +61,7 @@ int main() {
     ASSERT(mainID != nullptr);
 
     // clear any extraneous rx serial bytes
-    if (1) {
+    if (true) {
         Serial s(RJ_SERIAL_RXTX);
         // flush rx queue
         while (s.readable()) s.getc();
@@ -71,7 +70,6 @@ int main() {
         // to let the user know they may or may not see it
         // depending on many factors.
         s.baud(57600);
-        fflush(stdout);
     }
 
     // Turn on some startup LEDs to show they're working, they are turned off
@@ -87,7 +85,7 @@ int main() {
      */
     if (isLogging) {
         // reset the console's default settings and enable the cursor
-        printf("\033[0m\033[?25h");
+        printf("\033[0m");
         fflush(stdout);
     }
 
@@ -95,7 +93,8 @@ int main() {
     // thread.
     setISRPriorities();
 
-    // Force off since the neopixel's hardware is stateless from previous settings
+    // Force off since the neopixel's hardware is stateless from previous
+    // settings
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
     rgbLED.clear();
 
@@ -110,19 +109,15 @@ int main() {
 
     // This is where the FPGA is actually configured with the bitfile's name
     // passed in
-    bool fpga_ready;
-    fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
-    // fpga_ready = false;
+    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
 
     /* We MUST wait for the FPGA to COMPLETELY configure before moving on
-     * because of
-     * threading with the shared the SPI. If we don't explicitly halt main (it's
-     * just
-     * considered another thread), then the chip select lines will not be in the
-     * correct
-     * states for communicating between devices exclusively. Many bus faults
-     * occured on the
-     * road to finding this problem and then determining how to fix it.
+     * because of threading with the shared the SPI. If we don't
+     * explicitly halt main (it's just considered another thread), then
+     * the chip select lines will not be in the correct states for
+     * communicating between devices exclusively. Many bus faults occured
+     * on the road to finding this problem and then determining how to
+     * fix it.
      */
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
@@ -134,18 +129,12 @@ int main() {
 
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
-    // The console can sometimes be thrown off by a failure to open
-    // the FPGA's bitfile if it doesn't exist. So we send out control
-    // characters to fix that - whether or not that was actually the error.
-    printf("\033[0m\033[?25h");
-    fflush(stdout);
-
     fpga_err |= 1 << !fpga_ready;
     // the error code is valid now
     fpga_err |= 1 << 0;
 
     // Set the RGB LEDs to a medium blue while the threads are started up
-    float defaultBrightness = 0.01f;
+    float defaultBrightness = 0.02f;
     rgbLED.brightness(3 * defaultBrightness);
     rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
     rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
@@ -164,7 +153,6 @@ int main() {
 
     // Make sure all of the motors are enabled
     motors_Init();
-    FPGA::Instance()->motors_en(true);
 
     // Wait for all threads to get to their ready state
     for (size_t i = 0; i < 3; ++i)
@@ -183,17 +171,17 @@ int main() {
 
     if (comm_err > 1) {
         // orange - error
-        rgbLED.brightness(4 * defaultBrightness);
+        rgbLED.brightness(6 * defaultBrightness);
         rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
     } else {
         // green - no error...yet
-        rgbLED.brightness(defaultBrightness);
+        rgbLED.brightness(6 * defaultBrightness);
         rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
     }
 
     if (comm_err > 1 && fpga_err > 1) {
         // bright as hell to make sure they know
-        rgbLED.brightness(8 * defaultBrightness);
+        rgbLED.brightness(10 * defaultBrightness);
         // well, damn. everything is broke as hell
         rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
         rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
@@ -215,15 +203,19 @@ int main() {
 
     rdy_led = fpga_ready;
 
+    unsigned int ll = 0;
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
         rdy_led = !rdy_led;
         Watchdog::Renew();
 
-        // continually reset the console text
-        // printf("\033[0m\033[?25h");
-        // fflush(stdout);
+        // periodically reset the console text's format
+        ll++;
+        if ((ll % 4) == 0) {
+            printf("\033[0m");
+            fflush(stdout);
+        }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 750);
     }

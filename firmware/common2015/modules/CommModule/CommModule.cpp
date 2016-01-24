@@ -28,10 +28,7 @@ std::shared_ptr<CommModule> CommModule::instance;
 CommPort_t _tmpPort;
 
 // Default constructor
-CommModule::CommModule()
-    :
-    _txQueueHelper(),
-    _rxQueueHelper() {}
+CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
@@ -50,7 +47,6 @@ void CommModule::Init(void) {
     auto instance = Instance();
 
     // Create the data queues.
-    // =================
     instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
     instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), nullptr);
 
@@ -61,7 +57,6 @@ void CommModule::Init(void) {
 
     // Create the TX & RX threads - pass them a pointer to the
     // created object.
-    // =================
     _txID = osThreadCreate(&(instance->_txDef), nullptr);
     _rxID = osThreadCreate(&(instance->_rxDef), nullptr);
 }
@@ -111,14 +106,14 @@ void CommModule::txThread(void const* arg) {
             ASSERT(tState == osOK);
 
             // Call the user callback function
-            if (_ports[p->port].isOpen()) {
-                _ports[p->port].TXCallback()(p);
+            if (_ports[p->port()].isOpen()) {
+                _ports[p->port()].TXCallback()(p);
 
                 // Increment the packet counter by 1
-                _ports[p->port].TXPackets()++;
+                _ports[p->port()].TXPackets()++;
 
                 LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
-                    p->port, p->subclass);
+                    p->port(), p->subclass());
             }
 
             // Release the allocated memory once data is sent
@@ -176,14 +171,14 @@ void CommModule::rxThread(void const* arg) {
             ASSERT(tState == osOK);
 
             // Call the user callback function (if set)
-            if (_ports[p->port].isOpen()) {
-                _ports[p->port].RXCallback()(p);
+            if (_ports[p->port()].isOpen()) {
+                _ports[p->port()].RXCallback()(p);
 
                 // Increment the packet counter by 1
-                _ports[p->port].RXPackets()++;
+                _ports[p->port()].RXPackets()++;
 
                 LOG(INF2, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
-                    p->port, p->subclass);
+                    p->port(), p->subclass());
             }
 
             // free memory allocated for mail
@@ -251,7 +246,9 @@ bool CommModule::openSocket(uint8_t portNbr) {
         // makes it this far if trying to open port 0 without any setup.
         // TX callback function was never set
         LOG(WARN,
-            "Must set at least the RX callback function before opening socket on port %u.", portNbr);
+            "Must set at least the RX callback function before opening socket "
+            "on port %u.",
+            portNbr);
 
         return false;
     }
@@ -267,7 +264,7 @@ void CommModule::ready(void) {
 
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port].isOpen() && _ports[packet.port].hasTXCallback()) {
+    if (_ports[packet.port()].isOpen() && _ports[packet.port()].hasTXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
@@ -282,13 +279,13 @@ void CommModule::send(const rtp::packet& packet) {
         LOG(WARN,
             "Failed to send %u byte packet: There is no open transmitting "
             "socket for port %u",
-            packet.payload_size, packet.port);
+            packet.payload.size(), packet.port());
     }
 }
 
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port].isOpen() && _ports[packet.port].hasRXCallback()) {
+    if (_ports[packet.port()].isOpen() && _ports[packet.port()].hasRXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
@@ -303,7 +300,7 @@ void CommModule::receive(const rtp::packet& packet) {
         LOG(WARN,
             "Failed to receive %u byte packet: There is no open receiving "
             "socket for port %u",
-            packet.payload_size, packet.port);
+            packet.payload.size(), packet.port());
     }
 }
 

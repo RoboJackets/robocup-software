@@ -1,4 +1,4 @@
-`timescale 1ns/10ps
+`timescale 10ns/1ns
 
 module RoboCup_Top_tb;
 
@@ -6,7 +6,7 @@ module RoboCup_Top_tb;
 initial begin
     $dumpfile("RoboCup_Top_tb-results.vcd");
     $dumpvars(0,RoboCup_Top_tb);
- end
+end
 
 localparam NUM_MOTORS = 5;
 localparam SPI_SLAVE_DATA_WIDTH = 8;
@@ -19,7 +19,6 @@ reg [NUM_MOTORS-1:0] halls_b;
 reg [NUM_MOTORS-1:0] halls_c;
 reg [NUM_MOTORS-1:0] encoders_a = 0;
 reg [NUM_MOTORS-1:0] encoders_b = 0;
-reg spi_master_mosi = 1;
 reg spi_slave_sck = 1;
 reg spi_slave_mosi = 1;
 reg spi_slave_ncs = 1;
@@ -34,7 +33,9 @@ wire [NUM_MOTORS-1:0] drv_ncs;
 wire [1:0] adc_ncs;
 wire spi_master_sck;
 wire spi_master_miso;
+wire spi_master_mosi;
 wire spi_slave_miso;
+
 
 robocup #(
     .NUM_MOTORS             ( NUM_MOTORS ),
@@ -130,59 +131,68 @@ initial begin
     #200 start_spinning_motors = 1;
 end
 
+task motors_on;
+    begin
+        spi_on();
+        spi(8'hb0);
+        spi(8'h00);
+        spi_off();
+    end
+endtask
+
+task motors_off;
+    begin
+        spi_on();
+        spi(8'h30);
+        spi(8'h00);
+        spi_off();
+    end
+endtask
+
 reg [10:0] duty_cycle_level;
 integer i;
 // Send an SPI transfer on the slave bus once the motors are up and running
 initial wait ( start_spinning_motors ) begin
     duty_cycle_level = 0;
-    #200 spi_on();
-    // Read encoder counts & update motors - dual transfer type
-    spi(8'h80);
 
+    // Read encoder counts & update motors - dual transfer type
+    #100 spi_on();
+    spi(8'h80);
     spi(8'hec);     // Duty cycle 0 low bits
     spi(8'h03);     // Duty cycle 0 top bits
-
     spi(8'hbd);
     spi(8'h01);
-
     spi(8'he3);
     spi(8'h01);
-
     spi(8'h4b);
     spi(8'h01);
-
     spi(8'hf6);
     spi(8'h02);
-
     spi_off();
-    spi_on();
-
+    
     // Read hall counts
-    #30000 spi(8'h92);
-
+    #100 spi_on();
+    spi(8'h92);
     spi(8'h00);     // Anything can be sent for all of these
     spi(8'h00);
     spi(8'h00);
     spi(8'h00);
     spi(8'h00);
-
     spi_off();
-    spi_on();
 
     // Set hall counts
+    #100 spi_on();
     spi(8'h12);
-
     spi(8'h08);
     spi(8'h0a);
     spi(8'h02);
     spi(8'h05);
     spi(8'h03);
-
     spi_off();
-    spi_on();
-    // Now read them back
-    spi(8'h92);
 
+    // Now read them back
+    #100 spi_on();
+    spi(8'h92);
     spi(8'h00);     // Anything can be sent for all of these
     spi(8'h00);
     spi(8'h00);
@@ -191,9 +201,8 @@ initial wait ( start_spinning_motors ) begin
     spi_off();
 
     // Read duty cycles
-    spi_on();
+    #100 spi_on();
     spi(8'h93);
-
     spi(8'h00);
     spi(8'h00);
     spi(8'h00);
@@ -204,38 +213,33 @@ initial wait ( start_spinning_motors ) begin
     spi(8'h00);
     spi(8'h00);
     spi(8'h00);
-
     spi_off();
 
-    #10000
-
-    spi_on();
+    // Read duty cycles, but send data & end it early (shouldn't affect anything)
+    #100 spi_on();
     spi(8'h93);
-
     spi(8'h08);
     spi(8'h0a);
     spi(8'h02);
     spi(8'h05);
     spi(8'h03);
-
     spi_off();
 
-    repeat(5) begin
-        #20000 spi_on();
+    // Span all SPI command byte values
+    // for ( i = 0; i < (1 << 8); i = i + 1 ) begin
+    //     #1000 spi_on();
+    //     spi(i);
+    //     spi_off();
+    // end
 
-        spi(8'h30);     // disable all motors
+    // repeat(5) begin
+    //     #100000 motors_off();
+    //     #100000 motors_on();
+    // end
 
-        spi_off();
-        #20000 spi_on();
-
-        spi(8'hb0);     // enable all motors
-
-        spi_off();
-    end
-
-    // Every 300 ticks, increase the duty cycles for every motor
+    // Increment duty cycles
     forever begin
-        #8000 spi_on();
+        #5000 spi_on();
         spi(8'h80);
         for ( i = 0; i < NUM_MOTORS; i = i + 1 ) begin
             spi(duty_cycle_level[7:0]);

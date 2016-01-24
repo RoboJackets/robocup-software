@@ -174,7 +174,9 @@ public:
         blackhole_port = CommPort<T>();
     }
 
-    CommPorts<T> operator+=(const CommPort<T>& p) { return this->add(CommPort<T>(p)); }
+    CommPorts<T> operator+=(const CommPort<T>& p) {
+        return this->add(CommPort<T>(p));
+    }
 
     CommPort<T>& operator[](const int portNbr) {
         pIt = find(ports.begin(), ports.end(), (unsigned int)portNbr);
@@ -239,7 +241,7 @@ public:
     void PrintFooter(void) {
         printf(
             "==========================\r\n"
-            "Total:\t\t%u\t%u\r\n\r\n",
+            "Total:\t\t%u\t%u\r\n",
             allRXPackets(), allTXPackets());
         Console::Flush();
     }

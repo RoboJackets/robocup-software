@@ -3,8 +3,8 @@
 #include "logger.hpp"
 #include "assert.hpp"
 
-#define COMM_LINK_SIGNAL_START_THREAD   (1 << 0)
-#define COMM_LINK_SIGNAL_RX_TRIGGER     (1 << 1)
+#define COMM_LINK_SIGNAL_START_THREAD (1 << 0)
+#define COMM_LINK_SIGNAL_RX_TRIGGER (1 << 1)
 
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
@@ -98,6 +98,8 @@ void CommLink::rxThread(void const* arg) {
     inst->_int_in->rise(inst, &CommLink::ISR);
 
     rtp::packet p;
+    std::vector<uint8_t> buf;
+    buf.reserve(120);
 
     while (true) {
         // Wait until new data has arrived
@@ -106,13 +108,15 @@ void CommLink::rxThread(void const* arg) {
 
         // Get the received data from the external chip
         uint8_t rec_bytes = rtp::MAX_DATA_SZ;
-        int32_t response = inst->getData(p.raw, &rec_bytes);
+        int32_t response = inst->getData(buf.data(), &rec_bytes);
 
         LOG(INF3, "RX interrupt triggered");
 
         if (response == COMM_SUCCESS) {
             // Write the data to the CommModule object's rxQueue
+            p.recv(buf);
             CommModule::receive(p);
+            buf.clear();
         }
     }
 
@@ -124,7 +128,7 @@ void CommLink::ready(void) {
     osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD);
 }
 
-void CommLink::sendPacket(rtp::packet* p) { sendData(p->raw, p->total_size); }
+void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
 
 // Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN
 // ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD

@@ -22,7 +22,7 @@
 
 
 // BLDC_Driver module
-module BLDC_Driver ( clk, en, hall, duty_cycle, phaseH, phaseL, fault );
+module BLDC_Driver ( clk, en, hall, duty_cycle, phaseH, phaseL, connected, fault );
 
 // Module parameters - passed parameters will overwrite the values here
 parameter PHASE_DRIVER_MAX_COUNTER =            ( 'h3FF );
@@ -40,6 +40,7 @@ input clk, en;
 input [2:0] hall;
 input [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
 output reg [2:0] phaseH, phaseL;
+output reg connected = 0;
 output reg fault = 0;
 // ===============================================
 
@@ -47,7 +48,7 @@ output reg fault = 0;
 // Local parameters that can not be altered outside of this file
 // ===============================================
 localparam NUM_PHASES =                 3;  // This will always be constant
-localparam STARTUP_COUNTER_WIDTH =      5; // Counter for startup time period. Time expires when register overflows to 0 and is incremented according to HALL_CHECK_COUNTER_WIDTH
+localparam STARTUP_COUNTER_WIDTH =      5;  // Counter for startup time period. Time expires when register overflows to 0 and is incremented according to HALL_CHECK_COUNTER_WIDTH
 localparam HALL_STATE_STEADY_COUNT =    31; // Threshold value in determining when the hall effect sensor is locked into an error state
 
 // Derived local parameters
@@ -56,7 +57,7 @@ localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 2 );            
 localparam STARTUP_DUTY_CYCLE_STEPS =       ( END_STARTUP_DUTY_CYCLE - MIN_DUTY_CYCLE );    // Get the number of steps between the min. and max. duty cycles for startup state
 localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << STARTUP_COUNTER_WIDTH );                 // The number of input clock cycles in one period of the startup counter's clock
 localparam HALL_CHECK_CLOCK_WIDTH =         ( STARTUP_COUNTER_WIDTH );                      // Width of counter for checking the hall effect sensor inputs at a reduced frequency.
-localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );             // Counter used for reduced sampling of the hall effect sensor
+localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
 
 // State machine declarations for readability
@@ -113,6 +114,8 @@ end
 // Begin main logic
 always @(posedge clk)
 begin : MOTOR_STATES
+
+    connected <= ~disconnect_fault_latched;
 
     if ( en == 0 ) begin
         fault <= 0;

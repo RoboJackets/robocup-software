@@ -95,7 +95,7 @@ NET "enc_*" PULLUP;
 #################################################
 #                   SPI Slave                   #
 #################################################
-NET "spi_slave_miso" LOC="P63";
+NET "spi_slave_miso" LOC="P63" | PULLDOWN;
 NET "spi_slave_mosi" LOC="P44";
 NET "spi_slave_sck" LOC="P71";
 NET "spi_slave_ncs" LOC="P69" | PULLUP;
@@ -118,6 +118,9 @@ NET "drv_ncs<4>" LOC="P35";
 # These are the ADC chip select pins for the SPI master
 NET "adc_ncs<0>" LOC="P132";
 NET "adc_ncs<1>" LOC="P134";
+
+NET "drv_*" PULLUP;
+NET "adc_*" PULLUP;
 
 
 #################################################

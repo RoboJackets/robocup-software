@@ -5,6 +5,7 @@
 
 #include <string>
 #include <array>
+#include <vector>
 
 #include "pins-ctrl-2015.hpp"
 
@@ -20,7 +21,8 @@ public:
     uint8_t read_encs(uint16_t* enc_counts, size_t size);
     uint8_t read_halls(uint8_t* halls, size_t size);
     uint8_t motors_en(bool state);
-    uint32_t git_hash();
+    uint8_t watchdog_reset();
+    bool git_hash(std::vector<uint8_t>&);
     bool send_config(const std::string& filepath);
 
 private:
