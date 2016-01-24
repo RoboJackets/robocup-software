@@ -264,7 +264,8 @@ void CommModule::ready(void) {
 
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port()].isOpen() && _ports[packet.port()].hasTXCallback()) {
+    if (_ports[packet.port()].isOpen() &&
+        _ports[packet.port()].hasTXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
@@ -285,7 +286,8 @@ void CommModule::send(const rtp::packet& packet) {
 
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port()].isOpen() && _ports[packet.port()].hasRXCallback()) {
+    if (_ports[packet.port()].isOpen() &&
+        _ports[packet.port()].hasRXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);

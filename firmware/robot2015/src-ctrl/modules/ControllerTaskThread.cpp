@@ -107,8 +107,6 @@ void Task_Controller(void const* args) {
     for (int i = 0; i < duty_cycles.size(); ++i)
         duty_cycles.at(i) = 100 + 206 * i;
 
-    
-
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
@@ -124,14 +122,16 @@ void Task_Controller(void const* args) {
 
         // write all duty cycles
         for (size_t i = 0; i < 500; ++i) {
-            duty_cycles.at(1) = 2*i;
-            FPGA::Instance()->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+            duty_cycles.at(1) = 2 * i;
+            FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                              duty_cycles.size());
             Thread::wait(5);
         }
 
         Thread::wait(10);
         duty_cycles.at(1) = 0;
-        FPGA::Instance()->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+        FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                          duty_cycles.size());
 
         Thread::wait(1500);
 
@@ -146,7 +146,7 @@ void Task_Controller(void const* args) {
  * [Task_Controller_Sensorless]
  * @param args [description]
  */
-void Task_Controller_Sensorless(const osThreadId * mainID) {
+void Task_Controller_Sensorless(const osThreadId* mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);

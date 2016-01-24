@@ -258,16 +258,14 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     *cs = !(*cs);
     spi->write(CMD_READ_HASH1);
 
-    for (int i = 0; i < 10; i++)
-        v.push_back(spi->write(0x00));
+    for (int i = 0; i < 10; i++) v.push_back(spi->write(0x00));
 
     *cs = !(*cs);
     *cs = !(*cs);
 
     spi->write(CMD_READ_HASH2);
 
-    for (int i = 0; i < 11; i++)
-        v.push_back(spi->write(0x00));
+    for (int i = 0; i < 11; i++) v.push_back(spi->write(0x00));
 
     *cs = !(*cs);
     mutex.unlock();
@@ -278,7 +276,7 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     v.pop_back();
 
     // reverse the bytes
-    std::reverse(v.begin(),v.end());
+    std::reverse(v.begin(), v.end());
 
     return dirty_bit;
 }
@@ -300,6 +298,4 @@ uint8_t FPGA::watchdog_reset() {
     return motors_en(true);
 }
 
-bool FPGA::isReady() {
-    return isInit;
-}
+bool FPGA::isReady() { return isInit; }

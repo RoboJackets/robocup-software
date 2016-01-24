@@ -16,8 +16,7 @@ motor_t mtrEx = {
     .hall = 0x0A,
     .enc = {0x23, 0x18},
     .status = {.encOK = false, .hallOK = true, .drvStatus = {0x26, 0x0F}},
-    .desc = "Motor"
-};
+    .desc = "Motor"};
 }
 
 std::vector<motor_t> motors(NUM_MOTORS, mtrEx);
@@ -46,17 +45,24 @@ void motors_show() {
     //   { sys_rdy, watchdog_trigger, motors_en, is_connected[4:0] }
     uint8_t status_byte = FPGA::Instance()->watchdog_reset();
 
-    printf("\033[?25l\033[25mStatus:\033[K\t\t%s\033E", status_byte & 0x20 ? "ENABLED" : "DISABLED");
-    printf("Last Update:\033[K\t%.2fms\t%s\033E", (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 63) / 1000, status_byte & 0x40 ? "[EXPIRED]" : "[OK]");
+    printf("\033[?25l\033[25mStatus:\033[K\t\t%s\033E",
+           status_byte & 0x20 ? "ENABLED" : "DISABLED");
+    printf("Last Update:\033[K\t%.2fms\t%s\033E",
+           (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 63) / 1000,
+           status_byte & 0x40 ? "[EXPIRED]" : "[OK]");
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
         printf("\033[K    %s\t%-u\t%-3u\t%-5u\t%s\t%s\033E",
-               motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF, halls.at(i),
-               enc_deltas.at(i), duty_cycles.at(i) & (1 << 9) ? "CW" : "CCW", (status_byte & (1 << i)) ? "[OK]" : "[UNCONN]");
+               motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF,
+               halls.at(i), enc_deltas.at(i),
+               duty_cycles.at(i) & (1 << 9) ? "CW" : "CCW",
+               (status_byte & (1 << i)) ? "[OK]" : "[UNCONN]");
     }
-    printf("\033[K    %s\t%-u\t%-3u\tN/A\t%s\t%s\033E",
-           motors.back().desc.c_str(), duty_cycles.back() & 0x1FF, halls.back(),
-           duty_cycles.back() & (1 << 9) ? "CW" : "CCW", (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]" : "[UNCONN]");
+    printf(
+        "\033[K    %s\t%-u\t%-3u\tN/A\t%s\t%s\033E", motors.back().desc.c_str(),
+        duty_cycles.back() & 0x1FF, halls.back(),
+        duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
+        (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]" : "[UNCONN]");
 }
 
 int cmd_motors_scroll(const std::vector<std::string>& args) {
@@ -99,7 +105,7 @@ int cmd_motors(const std::vector<std::string>& args) {
             if (motor_id > 4) return 2;
             // get the current duty cycles for all motors
             uint8_t status_byte = FPGA::Instance()->read_duty_cycles(
-                                      duty_cycles.data(), duty_cycles.size());
+                duty_cycles.data(), duty_cycles.size());
             // change our specific motor's duty cycle and write all duty cycles
             // back to the FPGA
             if (status_byte != 0x7F) {
@@ -107,7 +113,8 @@ int cmd_motors(const std::vector<std::string>& args) {
                 FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
                                                   duty_cycles.size());
                 printf("%s velocity set to %u (%s)\r\n",
-                       motors.at(motor_id).desc.c_str(), new_vel & 0x1FF, new_vel & (1 << 9) ? "CW" : "CCW");
+                       motors.at(motor_id).desc.c_str(), new_vel & 0x1FF,
+                       new_vel & (1 << 9) ? "CW" : "CCW");
             } else {
                 // return an error if an invalid duty cycle was given
                 printf("Motor %u does not exist", motor_id);
