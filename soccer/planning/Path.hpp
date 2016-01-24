@@ -16,7 +16,7 @@ namespace Planning {
  */
 class Path {
 public:
-    Path(RJ::Time startTime = 0) : _startTime(startTime) {}
+    Path(RJ::Time startTime = RJ::timestamp()) : _startTime(startTime) {}
     virtual ~Path() {}
 
     /*
