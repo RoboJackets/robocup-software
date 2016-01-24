@@ -55,15 +55,11 @@ public:
                           uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
             CommPort_t _tmpPort(portNbr);
-
-            _tmpPort.TXCallback() = std::bind(mptr, obj, std::placeholders::_1);
-
             _ports += _tmpPort;
-
-        } else {
-            _ports[portNbr].TXCallback() =
-                std::bind(mptr, obj, std::placeholders::_1);
         }
+
+        _ports[portNbr].TXCallback() =
+            std::bind(mptr, obj, std::placeholders::_1);
 
         ready();
     }
@@ -74,15 +70,11 @@ public:
                           uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
             CommPort_t _tmpPort(portNbr);
-
-            _tmpPort.RXCallback() = std::bind(mptr, obj, std::placeholders::_1);
-
             _ports += _tmpPort;
-
-        } else {
-            _ports[portNbr].RXCallback() =
-                std::bind(mptr, obj, std::placeholders::_1);
         }
+
+        _ports[portNbr].RXCallback() =
+            std::bind(mptr, obj, std::placeholders::_1);
 
         ready();
     }

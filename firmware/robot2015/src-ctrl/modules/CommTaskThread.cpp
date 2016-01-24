@@ -3,7 +3,6 @@
 #include <CommModule.hpp>
 #include <CommPort.hpp>
 #include <CC1201Radio.hpp>
-#include <CC1201Config.hpp>
 #include <helper-funcs.hpp>
 #include <logger.hpp>
 #include <assert.hpp>
@@ -109,7 +108,8 @@ void Task_CommCtrl(void const* args) {
     tx_led_ticker.start(150);
 
     // Create a new physical hardware communication link
-    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT);
+    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+                 sizeof(preferredSettings) / sizeof(registerSetting_t));
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
@@ -119,12 +119,6 @@ void Task_CommCtrl(void const* args) {
      * the CommModule methods can be used from almost anywhere.
      */
     if (radio.isConnected() == true) {
-        // Load the configuration onto the radio transceiver
-        CC1201Config* radioConfig = new CC1201Config();
-        radioConfig = CC1201Config::resetConfiguration(radioConfig);
-        CC1201Config::loadConfiguration(radioConfig, &radio);
-        // CC1201Config::verifyConfiguration(radioConfig, &radio);
-
         LOG(INIT,
             "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    "
             "Priority:\t%d",
