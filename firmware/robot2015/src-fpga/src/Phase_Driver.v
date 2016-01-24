@@ -81,15 +81,15 @@ assign h = ( ( counter + DEAD_TIME ) < ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) ? 
 assign l = ( ( counter >= ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) && ( ( counter + DEAD_TIME ) < MAX_COUNTER ) ) ? 1 : 0;
 
 
-assign  pwm_high = 	(high_z == 1) ? 0 : h;
+assign  pwm_high =  (high_z == 1) ? 0 : h;
 
-assign	pwm_low = 	(high_z == 1) ? 0 :
-					(duty_cycle == 0) ? 1 :
+assign  pwm_low =   (high_z == 1) ? 0 :
+                    (duty_cycle == 0) ? 1 :
                     l;
 
 always @(posedge clk) begin : PHASE_DRIVER
-	counter = counter + 1;
-	if (counter >= MAX_COUNTER) counter = 0;
+    counter = counter + 1;
+    if (counter >= MAX_COUNTER) counter = 0;
 end
 
 endmodule

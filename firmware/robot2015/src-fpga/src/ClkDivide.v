@@ -14,13 +14,13 @@ reg [WIDTH-1:0] edge_cnt = 0;
 // Posedge counter
 always @(posedge CLK_IN)
 begin
-  if ( EN != 1 ) begin
-    edge_cnt <= 0;
-  end else if ( edge_cnt == (1 << WIDTH) - 1) begin
-    edge_cnt <= 0;
-  end else begin
-    edge_cnt <= edge_cnt + 1;
-  end
+    if ( EN != 1 ) begin
+        edge_cnt <= 0;
+    end else if ( edge_cnt == (1 << WIDTH) - 1) begin
+        edge_cnt <= 0;
+    end else begin
+        edge_cnt <= edge_cnt + 1;
+    end
 end
 
 assign CLK_OUT = edge_cnt[WIDTH-1];
