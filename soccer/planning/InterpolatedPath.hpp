@@ -21,7 +21,7 @@ public:
     /// Each entry in InterpolatedPath is a MotionInstant and the time that the
     /// robot should be at that position and velocity.
     struct Entry {
-        Entry(MotionInstant inst, float t) : instant(inst), time(t) {}
+        explicit Entry(MotionInstant inst, float t) : instant(inst), time(t) {}
 
         MotionInstant instant;
         float time;

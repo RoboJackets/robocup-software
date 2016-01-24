@@ -60,11 +60,19 @@ void MotionControl::run() {
             TimestampToSecs +
         1.0 / 60.0;
 
+    cout<<"timeIntoPath:"<<timeIntoPath<<endl;
+
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
         _robot->path().evaluate(timeIntoPath);
+
     if (!optTarget) {
         optTarget = _robot->path().end();
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red);
+    } else {
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green);
+        Point start = _robot->pos;
+        _robot->state()->drawLine(start, optTarget->motion.vel+start, Qt::blue);
     }
 
     // Angle control //////////////////////////////////////////////////
@@ -135,16 +143,8 @@ void MotionControl::run() {
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-    MotionInstant target;
+    MotionInstant target = optTarget->motion;
 
-    // convert from microseconds to seconds
-    if (!optTarget) {
-        // use the path end if our timeIntoPath is greater than the duration
-        target.vel = Point();
-        target.pos = _robot->path().end().motion.pos;
-    } else {
-        target = optTarget->motion;
-    }
     // tracking error
     Point posError = target.pos - _robot->pos;
 
