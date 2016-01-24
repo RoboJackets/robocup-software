@@ -4,12 +4,18 @@ BASE=$(readlink -f $(dirname $0)/..)
 
 echo "-- Installing udev rules"
 sudo cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
+sudo udevadm control --reload || true # reload rules
 
 echo "-- Installing required packages"
 sudo pacman -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages.txt)
 
 echo "-- Installing required AUR packages"
-yaourt -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-aur.txt)
+for pkgname in $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-aur.txt); do
+    echo "Checking for AUR package: $pkgname"
+    if !(pacman -Q $pkgname > /dev/null); then
+        yaourt -S --noconfirm $pkgname
+    fi
+done
 
 sudo pip install -r $BASE/util/requirements3.txt
 

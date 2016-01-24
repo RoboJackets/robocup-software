@@ -15,13 +15,12 @@ machine:
 checkout:
   post:
     # This is a hack, but it's the only thing that works at the moment :/
-    - git submodule sync
-    - git submodule update --init || true
-    - git submodule sync
-    - git submodule update --init
+    - git submodule sync && git submodule update --init || true && git submodule sync && git submodule update --init
 
 dependencies:
   pre:
+      # Fix config file containing direct refrences in ~/.ssh
+    - sed -i 's:/home/ubuntu:~:' ~/.ssh/config
       # set build status to pending on start
     - ./external/DoCIF/util/maketest.sh --pending
     - ./external/DoCIF/commands/buildbaseimage.sh

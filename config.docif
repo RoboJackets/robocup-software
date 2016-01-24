@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 # A sample config file for DoCIF
-#
 # This is just a shell file that is sourced by DoCIF scripts.
 
 # @REQUIRED
@@ -65,13 +64,14 @@ GH_EMAIL_VAR="GIT_EMAIL"
 # This directory MUST BE ADDED TO circle.yml AS WELL IN ORDER FOR ACTUAL CACHING TO TAKE PLACE
 CACHE_DIRECTORIES=()
 CACHE_DIRECTORIES+=('~/.ccache')
+CACHE_DIRECTORIES+=('~/.ssh')
 
 
 ################################# COMMANDS #####################################
 
 # The script to set up the environment, by default ubuntu.
 # YOU WILL NEED TO USE SUDO TO GET ROOT PRIVLEGES HERE
-SETUP_COMMAND="sudo ./util/ubuntu-setup --yes --firmware"
+SETUP_COMMAND="sudo ./util/ubuntu-setup --yes --firmware && git fetch -f origin master:master"
 # SETUP_COMMAND="./ubuntu-setup-script"
 
 # DOCIF can cache baseimages, if you give it files that will force a rebuild if changed.
@@ -85,6 +85,7 @@ SETUP_SHA_FILES+=("./util/ubuntu-setup")
 SETUP_SHA_FILES+=("./util/requirements2.txt")
 SETUP_SHA_FILES+=("./util/requirements3.txt")
 SETUP_SHA_FILES+=("./util/ubuntu-packages.txt")
+SETUP_SHA_FILES+=("./util/docker/baseimage/Dockerfile")
 
 # @REQUIRED
 # Commands to run when testing. Each index will have it's own status token
@@ -97,7 +98,7 @@ TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
 TEST_COMMANDS+=( 'make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
-
+TEST_COMMANDS+=('make coverage;coverage;A coverage build task.')
 # @RECCOMENDED
 # Clean command. Cleans the build files so there is no way the previous build can interfere. Add if you run
 # into issues
@@ -107,6 +108,10 @@ CLEAN_COMMAND="make clean || true"
 # Environmental variables to make available to the build environment
 ENV_VARS=()
 ENV_VARS+=("GH_TOKEN")  # To be used by autoupdating script
+ENV_VARS+=("COVERALLS_REPO_TOKEN")
+ENV_VARS+=("CIRCLE_BUILD_NUM")
+ENV_VARS+=("CIRCLE_BRANCH")
+ENV_VARS+=("CIRCLE_SHA1")
 
 # Command to run when deploying. Leave blank for no deploy.
 # Make sure any secrets these commands need are added to ENV_VARS
