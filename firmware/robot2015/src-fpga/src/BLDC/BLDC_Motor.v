@@ -71,7 +71,7 @@ bits [1..0]:    OCTW_SET
 
 
 // BLDC_Motor module
-module BLDC_Motor ( clk, en, reset_enc_count, reset_hall_count, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, hall_fault );
+module BLDC_Motor ( clk, en, reset_enc_count, reset_hall_count, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, connected, hall_fault );
 
 // Module parameters - passed parameters will overwrite the values here
 parameter MIN_DUTY_CYCLE =          ( 0 );
@@ -92,6 +92,7 @@ input [2:0] hall;
 output [2:0] phaseH, phaseL;
 output [ENCODER_COUNT_WIDTH-1:0] enc_count;
 output [HALL_COUNT_WIDTH-1:0] hall_count;
+output connected;
 output hall_fault;
 // ===============================================
 
@@ -101,7 +102,7 @@ initial begin
 end
 
 // Instantiation of all the modules required for complete functioning with all sensors
-// ===============================================
+// =============================================connected==
 BLDC_Encoder_Counter #(         // Instantiation of the encoder for counting the ticks
     .COUNT_WIDTH                ( ENCODER_COUNT_WIDTH )
     ) encoder_counter (
@@ -133,6 +134,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .duty_cycle                 ( duty_cycle ) ,
     .phaseH                     ( phaseH ) ,
     .phaseL                     ( phaseL ) ,
+    .connected                  ( connected ) ,
     .fault                      ( hall_fault )
 );
 
