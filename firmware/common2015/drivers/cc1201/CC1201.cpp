@@ -5,14 +5,11 @@
 
 // check that the address byte doesn't have any non-address bits set
 // see "3.2 Access Types" in User Guide
-#define ASSERT_IS_ADDR(addr)                         \
-    ASSERT(((addr) >= 0x0000 && (addr) <= 0x002E) || \
-           ((addr) >= 0x2F00 && (addr) <= 0x2FFF) || \
-           ((addr) >= 0x3E00 && (addr) <= 0x3EFF) || \
-           ((addr) == 0x003F) ||                     \
-           ((addr) == 0x007F) ||                     \
-           ((addr) == 0x00BF) ||                     \
-           ((addr) == 0x00FF))
+#define ASSERT_IS_ADDR(addr)                                               \
+    ASSERT(((addr) >= 0x0000 && (addr) <= 0x002E) ||                       \
+           ((addr) >= 0x2F00 && (addr) <= 0x2FFF) ||                       \
+           ((addr) >= 0x3E00 && (addr) <= 0x3EFF) || ((addr) == 0x003F) || \
+           ((addr) == 0x007F) || ((addr) == 0x00BF) || ((addr) == 0x00FF))
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len,

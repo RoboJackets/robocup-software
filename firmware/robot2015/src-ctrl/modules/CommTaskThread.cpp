@@ -216,8 +216,7 @@ void Task_CommCtrl(void const* args) {
     pck1.ack(false);
 
     std::vector<uint8_t> data;
-    for (size_t i = 0; i < 8; ++i)
-        data.push_back(i);
+    for (size_t i = 0; i < 8; ++i) data.push_back(i);
 
     // the size of the payload as the first byte
     data.insert(data.begin(), data.size());

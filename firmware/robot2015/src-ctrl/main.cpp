@@ -33,10 +33,9 @@ void Task_Controller(void const* args);
  */
 void statusLights(bool state) {
     DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-        {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-        {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-        {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}
-    };
+                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
+                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
+                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
 
     for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
 }

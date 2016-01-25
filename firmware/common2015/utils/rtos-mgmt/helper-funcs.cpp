@@ -85,8 +85,8 @@ void setISRPriorities() {
  * a fault.
  */
 void imAlive(void const* arg) {
-    std::vector<DigitalOut>* leds =
-        const_cast<std::vector<DigitalOut>*>(reinterpret_cast<const std::vector<DigitalOut>*>(arg));
+    std::vector<DigitalOut>* leds = const_cast<std::vector<DigitalOut>*>(
+        reinterpret_cast<const std::vector<DigitalOut>*>(arg));
 
     if (dir) {
         for (size_t i = 0; i < leds->size(); ++i) {

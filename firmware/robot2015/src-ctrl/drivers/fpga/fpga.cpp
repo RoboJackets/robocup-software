@@ -69,7 +69,7 @@ bool FPGA::Init(const std::string& filepath) {
     // show INIT_B error if it never went low
     if (!(j < 100)) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
-        
+
         return false;
     }
 
