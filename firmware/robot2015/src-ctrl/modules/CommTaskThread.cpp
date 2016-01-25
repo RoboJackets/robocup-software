@@ -1,5 +1,7 @@
 #include <rtos.h>
 
+#include <vector>
+
 #include <CommModule.hpp>
 #include <CommPort.hpp>
 #include <CC1201Radio.hpp>
@@ -10,6 +12,7 @@
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
 #include "task-globals.hpp"
+#include "fpga.hpp"
 
 /*
  * Information about the radio protocol can be found at:
@@ -43,12 +46,22 @@ void legacy_rx_cb(rtp::packet* p) {
  * @param p [none]
  */
 void loopback_rx_cb(rtp::packet* p) {
+    std::vector<uint16_t> duty_cycles;
+    duty_cycles.assign(5, 100);
+    for (int i = 0; i < duty_cycles.size(); ++i)
+        duty_cycles.at(i) = 100 + 206 * i;
+
     if (p->payload.size()) {
         LOG(OK,
             "Loopback rx successful!\r\n"
             "    Received:\t'%s' (%u bytes)\r\n"
             "    ACK:\t%s\r\n",
             p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
+
+        if (p->subclass() == 1) {
+            FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                              duty_cycles.size());
+        }
     } else if (p->sfs()) {
         LOG(OK, "Loopback rx ACK successful!\r\n");
     } else {
@@ -104,8 +117,8 @@ void Task_CommCtrl(void const* args) {
     RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
     RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
 
-    rx_led_ticker.start(150);
-    tx_led_ticker.start(150);
+    rx_led_ticker.start(80);
+    tx_led_ticker.start(80);
 
     // Create a new physical hardware communication link
     CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
@@ -137,10 +150,10 @@ void Task_CommCtrl(void const* args) {
 
         // This port won't open since there's no RX callback to invoke. The
         // packets are simply dropped.
-        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LOG);
+        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LOGGER);
         CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::LOG);
-        CommModule::openSocket(rtp::port::LOG);
+                              rtp::port::LOGGER);
+        CommModule::openSocket(rtp::port::LOGGER);
 
         // Legacy port
         CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
@@ -196,20 +209,38 @@ void Task_CommCtrl(void const* args) {
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    rtp::packet pck("Hey!");
-    pck.port(rtp::port::LINK);
-    pck.subclass(1);
-    pck.address(BASE_STATION_ADDR);
-    pck.ack(true);
+    rtp::packet pck1("motor trigger");
+    pck1.port(rtp::port::LINK);
+    pck1.subclass(1);
+    pck1.address(LOOPBACK_ADDR);
+    pck1.ack(false);
+
+    std::vector<uint8_t> data;
+    for (size_t i = 0; i < 8; ++i)
+        data.push_back(i);
+
+    // the size of the payload as the first byte
+    data.insert(data.begin(), data.size());
+
+    rtp::packet pck2(data);
+    pck2.port(rtp::port::DISCOVER);
+    pck2.subclass(1);
+    pck2.address(BASE_STATION_ADDR);
+    pck2.ack(false);
 
     while (true) {
-        Thread::wait(2500);
-        CommModule::send(pck);
-        Thread::yield();
-
-        // CC1201 *should* fall into IDLE after it sends the packet. It will
-        // then calibrate right before entering the RX state strobed below.
-        // radio_900.strobe(CC1201_STROBE_SRX);
+        for (size_t i = 0; i < 60; ++i) {
+            Thread::wait(5);
+            CommModule::send(pck2);
+            CommModule::send(pck1);
+            Thread::wait(3);
+            CommModule::send(pck1);
+            Thread::wait(3);
+            CommModule::send(pck1);
+            Thread::wait(3);
+            CommModule::send(pck1);
+        }
+        Thread::wait(1000);
     }
 
     osThreadTerminate(threadID);
