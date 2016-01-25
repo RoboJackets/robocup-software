@@ -33,9 +33,10 @@ void Task_Controller(void const* args);
  */
 void statusLights(bool state) {
     DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
+        {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
+        {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
+        {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}
+    };
 
     for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
 }
@@ -98,6 +99,13 @@ int main() {
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
     rgbLED.clear();
 
+    // Set the RGB LEDs to a medium blue while the threads are started up
+    float defaultBrightness = 0.02f;
+    rgbLED.brightness(3 * defaultBrightness);
+    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
+    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
+    rgbLED.write();
+
     // Start a periodic blinking LED to show system activity
     DigitalOut ledOne(LED1, 0);
     RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
@@ -132,13 +140,6 @@ int main() {
     fpga_err |= 1 << !fpga_ready;
     // the error code is valid now
     fpga_err |= 1 << 0;
-
-    // Set the RGB LEDs to a medium blue while the threads are started up
-    float defaultBrightness = 0.02f;
-    rgbLED.brightness(3 * defaultBrightness);
-    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
-    rgbLED.write();
 
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
@@ -204,6 +205,8 @@ int main() {
     rdy_led = fpga_ready;
 
     unsigned int ll = 0;
+    MCP23017::Init();
+
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
@@ -215,9 +218,10 @@ int main() {
         if ((ll % 4) == 0) {
             printf("\033[0m");
             fflush(stdout);
+            ll = 0;
         }
 
-        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 750);
+        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
     }
 }
 

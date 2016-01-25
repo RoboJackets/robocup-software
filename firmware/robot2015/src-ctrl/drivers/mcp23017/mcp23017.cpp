@@ -6,14 +6,6 @@
 // Declaration for the pointer to the global object
 shared_ptr<MCP23017> MCP23017::instance;
 
-void MCP23017::set_config(PinName sda, PinName scl, int i2cAddress) {
-    instance->_sda = sda;
-    instance->_scl = scl;
-    instance->_i2cAddress = i2cAddress;
-
-    LOG(OK, "IO Expander I2C Address:\t0x%02X", instance->_i2cAddress);
-}
-
 shared_ptr<MCP23017>& MCP23017::Instance() {
     if (instance.get() == nullptr) instance.reset(new MCP23017);
 
@@ -23,15 +15,9 @@ shared_ptr<MCP23017>& MCP23017::Instance() {
 bool MCP23017::Init() {
     auto instance = Instance();
 
-    set_config(RJ_I2C_BUS);
+    instance->_i2c.frequency(400000);
     reset();
-    config(0x00FF, 0x0000, 0xFF00);
-
-    DigitalInOut scl(instance->_scl);
-    DigitalInOut sda(instance->_sda);
-
-    scl.mode(PullUp);
-    sda.mode(PullUp);
+    config(0xFFFF, 0xFF00, 0x0000);
 
     LOG(OK, "MCP23017 initialized");
 
@@ -44,7 +30,7 @@ bool MCP23017::Init() {
  */
 void MCP23017::reset() {
     // First make sure that the device is in BANK=0 mode
-    writeRegister(0x05, (unsigned char)0x04);
+    writeRegister(0x05, (unsigned char)0x00);
 
     // Set the shadow registers to power-on state
     inputOutputMask(0xFFFF);
@@ -67,11 +53,7 @@ void MCP23017::writeRegister(int regAddress, unsigned char data) {
     buffer[0] = regAddress;
     buffer[1] = data;
 
-    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 2);
-
-    if (!ret)
-        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X",
-            instance->_i2cAddress);
+    instance->_i2c.write(instance->_i2cAddress, buffer, 2);
 }
 
 /*----------------------------------------------------------------------------
@@ -84,11 +66,7 @@ void MCP23017::writeRegister(int regAddress, unsigned short data) {
     buffer[1] = data & 0xFF;
     buffer[2] = (data >> 8) & 0xFF;
 
-    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 3);
-
-    if (!ret)
-        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X",
-            instance->_i2cAddress);
+    instance->_i2c.write(instance->_i2cAddress, buffer, 3);
 }
 
 /*-----------------------------------------------------------------------------

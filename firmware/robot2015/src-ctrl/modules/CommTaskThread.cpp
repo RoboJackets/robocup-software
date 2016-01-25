@@ -196,8 +196,15 @@ void Task_CommCtrl(void const* args) {
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
+    rtp::packet pck("Hey!");
+    pck.port(rtp::port::LINK);
+    pck.subclass(1);
+    pck.address(BASE_STATION_ADDR);
+    pck.ack(true);
+
     while (true) {
-        Thread::wait(1500);
+        Thread::wait(2500);
+        CommModule::send(pck);
         Thread::yield();
 
         // CC1201 *should* fall into IDLE after it sends the packet. It will
