@@ -115,7 +115,7 @@ void Console::RXCallback() {
             }
 
             // if a backspace is requested, handle it.
-            else if (c == BACKSPACE_FLAG_CHAR)
+            else if (c == BACKSPACE_FLAG_CHAR) {
                 if (rxIndex > 0) {  // instance->CONSOLE_HEADER.length()) {
                     // re-terminate the string
                     rxBuffer[--rxIndex] = '\0';
@@ -130,9 +130,14 @@ void Console::RXCallback() {
                 } else {
                     /* do nothing if we can't back space any more */
                 }
+            }
 
-            // set that a command break was requested flag if we received a
-            // break character
+            else if (c == BACKSPACE_FLAG_CHAR) {
+                // set that a command break was requested flag if we received a
+                // break character
+
+            }
+
             else if (c == BREAK_CHAR) {
                 iter_break_req = true;
             }
@@ -161,7 +166,7 @@ void Console::RXCallback() {
                             history.size() - (history.empty() ? 0 : 1);
 
                     if (history.size() > 0 &&
-                        !(rxIndex == 0 && c == ARROW_DOWN_KEY)) {
+                            !(rxIndex == 0 && c == ARROW_DOWN_KEY)) {
                         std::string cmd =
                             history.at(history.size() - 1 - history_index);
                         PRINTF("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
@@ -170,14 +175,14 @@ void Console::RXCallback() {
                     }
 
                     switch (c) {
-                        case ARROW_UP_KEY:
-                            history_index++;
-                            break;
-                        case ARROW_DOWN_KEY:
-                            history_index--;
-                            break;
-                        default:
-                            break;
+                    case ARROW_UP_KEY:
+                        history_index++;
+                        break;
+                    case ARROW_DOWN_KEY:
+                        history_index--;
+                        break;
+                    default:
+                        break;
                     }
                 }
                 esc_flag_one = false;

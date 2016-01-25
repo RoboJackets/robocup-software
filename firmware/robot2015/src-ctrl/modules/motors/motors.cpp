@@ -16,7 +16,8 @@ motor_t mtrEx = {
     .hall = 0x0A,
     .enc = {0x23, 0x18},
     .status = {.encOK = false, .hallOK = true, .drvStatus = {0x26, 0x0F}},
-    .desc = "Motor"};
+    .desc = "Motor"
+};
 }
 
 std::vector<motor_t> motors(NUM_MOTORS, mtrEx);
@@ -45,32 +46,36 @@ void motors_show() {
     //   { sys_rdy, watchdog_trigger, motors_en, is_connected[4:0] }
     uint8_t status_byte = FPGA::Instance()->watchdog_reset();
 
-    printf("\033[?25l\033[25mStatus:\033[K\t\t%s\033E",
-           status_byte & 0x20 ? "ENABLED" : "DISABLED");
-    printf("Last Update:\033[K\t%.2fms\t%s\033E",
+    printf("%s", (ansi::reset_font + ansi::cursor_hide).c_str());
+    printf("Status:%s\t\t%s%s", ansi::clear_to_end.c_str(),
+           status_byte & 0x20 ? "ENABLED" : "DISABLED", ansi::row_next_start.c_str());
+    printf("Last Update:%s\t%.2fms\t%s%s", ansi::clear_to_end.c_str(),
            (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 63) / 1000,
-           status_byte & 0x40 ? "[EXPIRED]" : "[OK]");
-    printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\033E");
+           status_byte & 0x40 ? "[EXPIRED]" : "[OK]", ansi::row_next_start.c_str());
+    printf("%s    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS%s", ansi::clear_to_end.c_str(), ansi::row_next_start.c_str());
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
-        printf("\033[K    %s\t%-u\t%-3u\t%-5u\t%s\t%s\033E",
+        printf("%s    %s\t%-u\t%-3u\t%-5u\t%s\t%s%s",
+               ansi::clear_to_end.c_str(),
                motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF,
                halls.at(i), enc_deltas.at(i),
                duty_cycles.at(i) & (1 << 9) ? "CW" : "CCW",
-               (status_byte & (1 << i)) ? "[OK]" : "[UNCONN]");
+               (status_byte & (1 << i)) ? "[OK]" : "[UNCONN]",
+               ansi::row_next_start.c_str());
     }
     printf(
-        "\033[K    %s\t%-u\t%-3u\tN/A\t%s\t%s\033E", motors.back().desc.c_str(),
+        "%s    %s\t%-u\t%-3u\tN/A\t%s\t%s%s", motors.back().desc.c_str(),
+        ansi::clear_to_end.c_str(),
         duty_cycles.back() & 0x1FF, halls.back(),
         duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
-        (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]" : "[UNCONN]");
+        (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]" : "[UNCONN]",
+        ansi::row_next_start.c_str());
 }
 
 int cmd_motors_scroll(const std::vector<std::string>& args) {
     motors_show();
     // move cursor back 8 rows
-    printf("\033[%uA\033[?25h", 8);
+    printf("\033[%uA%s", 8, ansi::cursor_show.c_str());
     Console::Flush();
-
     Thread::wait(350);
     return 0;
 }
@@ -105,7 +110,7 @@ int cmd_motors(const std::vector<std::string>& args) {
             if (motor_id > 4) return 2;
             // get the current duty cycles for all motors
             uint8_t status_byte = FPGA::Instance()->read_duty_cycles(
-                duty_cycles.data(), duty_cycles.size());
+                                      duty_cycles.data(), duty_cycles.size());
             // change our specific motor's duty cycle and write all duty cycles
             // back to the FPGA
             if (status_byte != 0x7F) {

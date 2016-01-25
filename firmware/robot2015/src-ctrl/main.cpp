@@ -5,6 +5,7 @@
 
 #include <rtos.h>
 
+#include <Console.hpp>
 #include <helper-funcs.hpp>
 #include <watchdog.hpp>
 #include <logger.hpp>
@@ -17,6 +18,11 @@
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "neostrip.hpp"
+
+#define CONTROLLER_TASK_EN      (1)
+#define COMM_TASK_EN            (1)
+#define CONSOLE_TASK_EN         (1)
+#define NUM_TASKS_EN            (CONTROLLER_TASK_EN + COMM_TASK_EN + CONSOLE_TASK_EN)
 
 // task globals
 uint16_t comm_err = 0;
@@ -86,7 +92,7 @@ int main() {
      */
     if (isLogging) {
         // reset the console's default settings and enable the cursor
-        printf("\033[0m");
+        printf("%s", ansi::reset_font.c_str());
         fflush(stdout);
     }
 
@@ -141,14 +147,20 @@ int main() {
     // the error code is valid now
     fpga_err |= 1 << 0;
 
+#if CONTROLLER_TASK_EN == 1
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+#endif
 
+#if COMM_TASK_EN == 1
     // Start the thread task for handling radio communications
     Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
+#endif
 
+#if CONSOLE_TASK_EN == 1
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+#endif
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
@@ -156,7 +168,7 @@ int main() {
     motors_Init();
 
     // Wait for all threads to get to their ready state
-    for (size_t i = 0; i < 3; ++i)
+    for (size_t i = 0; i < NUM_TASKS_EN; ++i)
         Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Set error indicators
@@ -195,9 +207,17 @@ int main() {
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
     // Release each thread into its operations in a structured manner
+#if CONTROLLER_TASK_EN == 1
     controller_task.signal_set(SUB_TASK_CONTINUE);
+#endif
+
+#if COMM_TASK_EN == 1
     comm_task.signal_set(SUB_TASK_CONTINUE);
+#endif
+
+#if CONSOLE_TASK_EN == 1
     console_task.signal_set(SUB_TASK_CONTINUE);
+#endif
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
@@ -216,9 +236,8 @@ int main() {
         // periodically reset the console text's format
         ll++;
         if ((ll % 4) == 0) {
-            printf("\033[0m");
+            printf("%s", ansi::reset_font.c_str());
             fflush(stdout);
-            ll = 0;
         }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
