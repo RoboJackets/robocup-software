@@ -153,11 +153,9 @@ set +e
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 for i in $MBED_SERIAL_PATH; do
     echo "attempting reboot on $i"
-    # if ! python3 -c "import serial; serial.Serial(\"$i\").sendBreak()" &> /dev/null; then
-    #     sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
-    # fi
     sudo python3 "$SCRIPT_DIR/mbed-reset.py" "$i" 
     sleep 2
+    sudo python3 "$SCRIPT_DIR/mbed-reset.py" "$i" 
 done
 
 MEM_SPACE=$(($(stat --printf="%s" "$COPY_FILE")/512))

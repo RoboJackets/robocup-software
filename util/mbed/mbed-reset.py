@@ -5,5 +5,5 @@ import serial
 
 print(sys.argv[1])
 ss = serial.Serial(sys.argv[1], baudrate=57600)
-ss.sendBreak(duration=0.05)
+ss.sendBreak()
 ss.flush()
