@@ -250,8 +250,8 @@ int cmd_console_clear(cmd_args_t& args) {
         return 1;
     } else {
         Console::Flush();
-        printf(ansi::scroll_en.c_str());
-        printf(ansi::clear_all.c_str());
+        printf(ENABLE_SCROLL_SEQ.c_str());
+        printf(CLEAR_SCREEN_SEQ.c_str());
     }
 
     return 0;

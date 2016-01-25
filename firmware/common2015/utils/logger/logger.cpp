@@ -2,7 +2,6 @@
 
 #include <cstdarg>
 #include <algorithm>
-#include <string>
 
 #include <mbed.h>
 #include <rtos.h>
@@ -16,17 +15,7 @@ volatile bool isLogging;  // = RJ_LOGGING_EN;
 
 volatile uint8_t rjLogLevel;
 
-
-namespace {
 Mutex log_mutex;
-
-std::string& basename(std::string& str)
-{
-    std::size_t found = str.find_last_of("/\\");
-    str = str.substr(found + 1);
-    return str;
-}
-}
 
 /**
  * [log The system-wide logging interface function. All log messages go through
@@ -39,13 +28,17 @@ void log(uint8_t logLevel, const char* source, const char* func,
          const char* format, ...) {
     if (isLogging && logLevel <= rjLogLevel) {
         log_mutex.lock();
-        std::string src(source);
 
         va_list args;
+        char time_buf[25];
+        time_t sys_time = time(NULL);
+        strftime(time_buf, 25, "%c", localtime(&sys_time));
+
         va_start(args, format);
 
         fflush(stdout);
-        printf("\033[K[%s] [%s] <%s>\033E  ", LOG_LEVEL_STRING[logLevel], basename(src).c_str(), func);
+        printf("%s [%s] [%s] <%s>\r\n  ", time_buf, LOG_LEVEL_STRING[logLevel],
+               source, func);
         fflush(stdout);
         vprintf(format, args);
         printf("\r\n\r\n");

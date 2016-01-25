@@ -8,61 +8,19 @@
 // #include "MODDMA.h"
 #include "MODSERIAL.h"
 
-namespace ansi {
 /**
- * ANSI enable scrolling
+ * enable scrolling vi sequence
  */
-const std::string scroll_en = "\033[r";
+const std::string ENABLE_SCROLL_SEQ = "\033[r";
 
 /**
- * ANSI reset graphics rendition
+ * clear screen vi sequence
  */
-const std::string reset_font = "\033[m";
+const std::string CLEAR_SCREEN_SEQ = "\033[2J";
 
-/**
- * ANSI erase full display.
- */
-const std::string clear_all = "\033[2J";
+const std::string ANSI_SD = "\033[1T";
 
-/**
-* ANSI erase from cursor to end of line.
-*/
-const std::string clear_to_end = "\033[K";
-
-/**
- * ANSI scroll down by n lines. 1 line here.
- * "\033[nT"
- */
-const std::string row_next = "\033[T";
-
-/**
- * ANSI scroll up by n lines. 1 line here.
- * "\033[nS"
- */
-const std::string row_prev = "\033[S";
-
-/**
-* ANSI scroll down by n lines to the beginning. 1 line here.
-* "\033[nE"
-*/
-const std::string row_next_start = "\033[E";
-
-/**
- * ANSI scroll up by n lines to the beginning. 1 line here.
- * "\033[nF"
- */
-const std::string row_prev_start = "\033[F";
-
-/**
- * ANSI hide the cursor.
- */
-const std::string cursor_hide = "\033[?25l";
-
-/**
-* ANSI show the cursor.
-*/
-const std::string cursor_show = "\033[?25h";
-}
+const std::string ANSI_SU = "\033[1S";
 
 /**
  * Manages serial-over-USB communication with the PC
