@@ -86,7 +86,7 @@ int main() {
      */
     if (isLogging) {
         // reset the console's default settings and enable the cursor
-        printf("\033[0m");
+        printf("\033[m");
         fflush(stdout);
     }
 
@@ -107,8 +107,12 @@ int main() {
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
-    DigitalOut ledOne(LED1, 0);
-    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
+    std::vector<DigitalOut> mbed_lights;
+    mbed_lights.push_back(DigitalOut(LED1, 0));
+    mbed_lights.push_back(DigitalOut(LED2, 0));
+    mbed_lights.push_back(DigitalOut(LED3, 0));
+    mbed_lights.push_back(DigitalOut(LED4, 0));
+    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
     live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
 
     // Flip off the startup LEDs after a timeout period
@@ -216,9 +220,8 @@ int main() {
         // periodically reset the console text's format
         ll++;
         if ((ll % 4) == 0) {
-            printf("\033[0m");
+            printf("\033[m");
             fflush(stdout);
-            ll = 0;
         }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);

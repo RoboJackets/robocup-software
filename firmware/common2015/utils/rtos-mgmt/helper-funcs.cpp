@@ -1,5 +1,7 @@
 #include "helper-funcs.hpp"
 
+#include <vector>
+
 #include "rtos.h"
 
 #include "logger.hpp"
@@ -11,6 +13,7 @@ extern struct OS_XCB os_rdy;
 namespace {
 bool comm_led_rx_en = false;
 bool comm_led_tx_en = false;
+bool dir = false;
 }
 
 /**
@@ -82,12 +85,24 @@ void setISRPriorities() {
  * a fault.
  */
 void imAlive(void const* arg) {
-    DigitalOut* led =
-        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
+    std::vector<DigitalOut>* leds =
+        const_cast<std::vector<DigitalOut>*>(reinterpret_cast<const std::vector<DigitalOut>*>(arg));
 
-    *led = !(*led);
-    Thread::wait(40);
-    *led = !(*led);
+    if (dir) {
+        for (size_t i = 0; i < leds->size(); ++i) {
+            leds->at(i) = !(leds->at(i));
+            Thread::wait(17);
+            leds->at(i) = !(leds->at(i));
+        }
+    } else {
+        for (size_t i = leds->size(); i > 0; --i) {
+            leds->at(i - 1) = !(leds->at(i - 1));
+            Thread::wait(17);
+            leds->at(i - 1) = !(leds->at(i - 1));
+        }
+    }
+
+    dir = !dir;
 }
 
 /**
@@ -95,12 +110,12 @@ void imAlive(void const* arg) {
  */
 void strobeStatusLED(DigitalInOut& led) {
     led = !led;
-    Thread::wait(25);
+    Thread::wait(15);
     led = !led;
 }
 void strobeStatusLED(DigitalOut& led) {
     led = !led;
-    Thread::wait(25);
+    Thread::wait(15);
     led = !led;
 }
 

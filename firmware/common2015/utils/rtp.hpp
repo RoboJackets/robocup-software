@@ -32,7 +32,7 @@ enum port {
     SETPOINT = 0x03,
     GSTROBE = 0x04,
     DISCOVER = 0x05,
-    LOG = 0x06,
+    LOGGER = 0x06,
     TCP = 0x07,
     LEGACY = 0x0E
 };
@@ -87,7 +87,7 @@ class header_data : public layer_map {
 public:
     enum type { control, tuning, ota, misc };
 
-    header_data() : layer_map(3), t(control), address(0), port_fields(0){};
+    header_data() : layer_map(3), t(control), address(0), port_fields(0) {};
 
     datav_it_t pack(size_t payload_size) {
         if (d.size()) return d.begin();
@@ -131,7 +131,7 @@ public:
  */
 class payload_data : public layer_map {
 public:
-    payload_data() : layer_map(MAX_DATA_SZ){};
+    payload_data() : layer_map(MAX_DATA_SZ) {};
 
     datav_it_t pack() { return d.begin(); }
 
@@ -159,8 +159,11 @@ public:
     rtp::payload_data payload;
     bool _packed;
 
-    packet(){};
+    packet() {};
     packet(const std::string& s) { payload.fill(s); }
+
+    template <class T>
+    packet(const std::vector<T>& v) { payload.fill(v); }
 
     packet_data_t* packed() { return payload.data(); }
 
