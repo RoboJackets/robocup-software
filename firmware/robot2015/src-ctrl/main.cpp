@@ -148,8 +148,12 @@ int main() {
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
 
+    Thread::wait(10);
+
     // Start the thread task for handling radio communications
     Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
+
+    Thread::wait(10);
 
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
