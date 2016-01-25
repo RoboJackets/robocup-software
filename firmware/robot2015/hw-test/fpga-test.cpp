@@ -46,6 +46,7 @@ bool fpgaInit() {
     char buf[10];
     trigger = !trigger;
 
+    pc.baud(57600);
     pc.printf("--  setting up SPI interface\r\n");
     // MISO & MOSI are intentionally switched here
     // defaults to 8 bit field size with CPOL = 0 & CPHA = 0

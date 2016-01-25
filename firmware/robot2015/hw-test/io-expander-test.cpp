@@ -43,6 +43,7 @@ int main()
     Serial pc(RJ_SERIAL_RXTX);
     I2C i2c(RJ_I2C_BUS);
 
+    pc.baud(57600);
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
     pwr = 0;

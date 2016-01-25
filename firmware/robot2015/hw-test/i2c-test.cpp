@@ -22,6 +22,7 @@ std::vector<unsigned int> freq2;
 
 int main() {
     char buf[2] = {0x00};
+    pc.baud(57600);
 
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
