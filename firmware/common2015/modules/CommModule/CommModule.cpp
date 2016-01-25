@@ -116,13 +116,15 @@ void CommModule::txThread(void const* arg) {
                     p->port(), p->subclass());
             }
 
-            // Release the allocated memory once data is sent
-            osMailFree(instance->_txQueue, p);
-
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            led_ticker_timeout.start(300);
-            commLightsRenew_TX();
+            if (p->address() != 127) {
+                led_ticker_timeout.start(275);
+                commLightsRenew_TX();
+            }
+
+            // Release the allocated memory once data is sent
+            osMailFree(instance->_txQueue, p);
 
             tState = osThreadSetPriority(_txID, threadPriority);
             ASSERT(tState == osOK);
@@ -181,13 +183,15 @@ void CommModule::rxThread(void const* arg) {
                     p->port(), p->subclass());
             }
 
-            // free memory allocated for mail
-            osMailFree(instance->_rxQueue, p);
-
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            led_ticker_timeout.start(300);
-            commLightsRenew_RX();
+            if (p->address() != 127) {
+                led_ticker_timeout.start(275);
+                commLightsRenew_RX();
+            }
+
+            // free memory allocated for mail
+            osMailFree(instance->_rxQueue, p);
 
             tState = osThreadSetPriority(_rxID, threadPriority);
             ASSERT(tState == osOK);
@@ -265,7 +269,7 @@ void CommModule::ready(void) {
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
     if (_ports[packet.port()].isOpen() &&
-        _ports[packet.port()].hasTXCallback()) {
+            _ports[packet.port()].hasTXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
@@ -287,7 +291,7 @@ void CommModule::send(const rtp::packet& packet) {
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
     if (_ports[packet.port()].isOpen() &&
-        _ports[packet.port()].hasRXCallback()) {
+            _ports[packet.port()].hasRXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
