@@ -11,7 +11,7 @@
 //  @brief  header file that defines a minimum set of neccessary functions
 //          to communicate with CC120X over SPI as well as the regsister 
 //          mapping. 
-//				 
+//               
 //  Copyright (C) 2013 Texas Instruments Incorporated - http://www.ti.com/
 //
 //  Redistribution and use in source and binary forms, with or without
@@ -196,8 +196,8 @@
 #define CC1201_AGC_GAIN2                0x2F7A
 #define CC1201_AGC_GAIN1                0x2F7B
 #define CC1201_AGC_GAIN0                0x2F7C
-#define CC1201_CFM_RX_DATA_OUT         0x2F7D
-#define CC1201_CFM_TX_DATA_IN          0x2F7E
+#define CC1201_CFM_RX_DATA_OUT          0x2F7D
+#define CC1201_CFM_TX_DATA_IN           0x2F7E
 #define CC1201_ASK_SOFT_RX_DATA         0x2F7F
 #define CC1201_RNDGEN                   0x2F80
 #define CC1201_MAGN2                    0x2F81
@@ -254,60 +254,60 @@
 /* AES Workspace */
 /* AES Key */
 #define CC1201_AES_KEY                  0x2FE0     /*  AES_KEY    - Address for AES key input  */
-#define CC1201_AES_KEY15	        0x2FE0
-#define CC1201_AES_KEY14	        0x2FE1
-#define CC1201_AES_KEY13	        0x2FE2
-#define CC1201_AES_KEY12	        0x2FE3
-#define CC1201_AES_KEY11	        0x2FE4
-#define CC1201_AES_KEY10	        0x2FE5
-#define CC1201_AES_KEY9	                0x2FE6
-#define CC1201_AES_KEY8	                0x2FE7
-#define CC1201_AES_KEY7	                0x2FE8
-#define CC1201_AES_KEY6	                0x2FE9
-#define CC1201_AES_KEY5	                0x2FE10
-#define CC1201_AES_KEY4	                0x2FE11
-#define CC1201_AES_KEY3	                0x2FE12
-#define CC1201_AES_KEY2	                0x2FE13
-#define CC1201_AES_KEY1	                0x2FE14
-#define CC1201_AES_KEY0	                0x2FE15
+#define CC1201_AES_KEY15                0x2FE0
+#define CC1201_AES_KEY14                0x2FE1
+#define CC1201_AES_KEY13                0x2FE2
+#define CC1201_AES_KEY12                0x2FE3
+#define CC1201_AES_KEY11                0x2FE4
+#define CC1201_AES_KEY10                0x2FE5
+#define CC1201_AES_KEY9                 0x2FE6
+#define CC1201_AES_KEY8                 0x2FE7
+#define CC1201_AES_KEY7                 0x2FE8
+#define CC1201_AES_KEY6                 0x2FE9
+#define CC1201_AES_KEY5                 0x2FE10
+#define CC1201_AES_KEY4                 0x2FE11
+#define CC1201_AES_KEY3                 0x2FE12
+#define CC1201_AES_KEY2                 0x2FE13
+#define CC1201_AES_KEY1                 0x2FE14
+#define CC1201_AES_KEY0                 0x2FE15
 
 /* AES Buffer */
 #define CC1201_AES_BUFFER               0x2FF0     /*  AES_BUFFER - Address for AES Buffer     */ 
-#define CC1201_AES_BUFFER15		0x2FF0
-#define CC1201_AES_BUFFER14		0x2FF1
-#define CC1201_AES_BUFFER13		0x2FF2
-#define CC1201_AES_BUFFER12		0x2FF3
-#define CC1201_AES_BUFFER11		0x2FF4
-#define CC1201_AES_BUFFER10		0x2FF5
-#define CC1201_AES_BUFFER9		0x2FF6
-#define CC1201_AES_BUFFER8		0x2FF7
-#define CC1201_AES_BUFFER7		0x2FF8
-#define CC1201_AES_BUFFER6		0x2FF9
-#define CC1201_AES_BUFFER5		0x2FF10
-#define CC1201_AES_BUFFER4		0x2FF11
-#define CC1201_AES_BUFFER3		0x2FF12
-#define CC1201_AES_BUFFER2		0x2FF13
-#define CC1201_AES_BUFFER1		0x2FF14
-#define CC1201_AES_BUFFER0		0x2FF15
+#define CC1201_AES_BUFFER15             0x2FF0
+#define CC1201_AES_BUFFER14             0x2FF1
+#define CC1201_AES_BUFFER13             0x2FF2
+#define CC1201_AES_BUFFER12             0x2FF3
+#define CC1201_AES_BUFFER11             0x2FF4
+#define CC1201_AES_BUFFER10             0x2FF5
+#define CC1201_AES_BUFFER9              0x2FF6
+#define CC1201_AES_BUFFER8              0x2FF7
+#define CC1201_AES_BUFFER7              0x2FF8
+#define CC1201_AES_BUFFER6              0x2FF9
+#define CC1201_AES_BUFFER5              0x2FF10
+#define CC1201_AES_BUFFER4              0x2FF11
+#define CC1201_AES_BUFFER3              0x2FF12
+#define CC1201_AES_BUFFER2              0x2FF13
+#define CC1201_AES_BUFFER1              0x2FF14
+#define CC1201_AES_BUFFER0              0x2FF15
 
 #define CC1201_LQI_CRC_OK_BM            0x80
 #define CC1201_LQI_EST_BM               0x7F
 
 /* Command strobe registers */
-#define CC1201_STROBE_SRES                     0x30      /*  SRES    - Reset chip. */
-#define CC1201_STROBE_SFSTXON                  0x31      /*  SFSTXON - Enable and calibrate frequency synthesizer. */
-#define CC1201_STROBE_SXOFF                    0x32      /*  SXOFF   - Turn off crystal oscillator. */
-#define CC1201_STROBE_SCAL                     0x33      /*  SCAL    - Calibrate frequency synthesizer and turn it off. */
-#define CC1201_STROBE_SRX                      0x34      /*  SRX     - Enable RX. Perform calibration if enabled. */
-#define CC1201_STROBE_STX                      0x35      /*  STX     - Enable TX. If in RX state, only enable TX if CCA passes. */
-#define CC1201_STROBE_SIDLE                    0x36      /*  SIDLE   - Exit RX / TX, turn off frequency synthesizer. */
-#define CC1201_STROBE_SAFC                     0x37      /*  AFC     - Automatic Frequency Correction */    
-#define CC1201_STROBE_SWOR                     0x38      /*  SWOR    - Start automatic RX polling sequence (Wake-on-Radio) */
-#define CC1201_STROBE_SPWD                     0x39      /*  SPWD    - Enter power down mode when CSn goes high. */
-#define CC1201_STROBE_SFRX                     0x3A      /*  SFRX    - Flush the RX FIFO buffer. */
-#define CC1201_STROBE_SFTX                     0x3B      /*  SFTX    - Flush the TX FIFO buffer. */
-#define CC1201_STROBE_SWORRST                  0x3C      /*  SWORRST - Reset real time clock. */
-#define CC1201_STROBE_SNOP                     0x3D      /*  SNOP    - No operation. Returns status byte. */
+#define CC1201_STROBE_SRES              0x30      /*  SRES    - Reset chip. */
+#define CC1201_STROBE_SFSTXON           0x31      /*  SFSTXON - Enable and calibrate frequency synthesizer. */
+#define CC1201_STROBE_SXOFF             0x32      /*  SXOFF   - Turn off crystal oscillator. */
+#define CC1201_STROBE_SCAL              0x33      /*  SCAL    - Calibrate frequency synthesizer and turn it off. */
+#define CC1201_STROBE_SRX               0x34      /*  SRX     - Enable RX. Perform calibration if enabled. */
+#define CC1201_STROBE_STX               0x35      /*  STX     - Enable TX. If in RX state, only enable TX if CCA passes. */
+#define CC1201_STROBE_SIDLE             0x36      /*  SIDLE   - Exit RX / TX, turn off frequency synthesizer. */
+#define CC1201_STROBE_SAFC              0x37      /*  AFC     - Automatic Frequency Correction */    
+#define CC1201_STROBE_SWOR              0x38      /*  SWOR    - Start automatic RX polling sequence (Wake-on-Radio) */
+#define CC1201_STROBE_SPWD              0x39      /*  SPWD    - Enter power down mode when CSn goes high. */
+#define CC1201_STROBE_SFRX              0x3A      /*  SFRX    - Flush the RX FIFO buffer. */
+#define CC1201_STROBE_SFTX              0x3B      /*  SFTX    - Flush the TX FIFO buffer. */
+#define CC1201_STROBE_SWORRST           0x3C      /*  SWORRST - Reset real time clock. */
+#define CC1201_STROBE_SNOP              0x3D      /*  SNOP    - No operation. Returns status byte. */
 
 /* Chip states returned in status byte */
 #define CC1201_STATE_IDLE               0x00
