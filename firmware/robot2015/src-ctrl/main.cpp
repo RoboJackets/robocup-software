@@ -123,49 +123,38 @@ int main() {
     // passed in
     bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
 
-    /* We MUST wait for the FPGA to COMPLETELY configure before moving on
-     * because of threading with the shared the SPI. If we don't
-     * explicitly halt main (it's just considered another thread), then
-     * the chip select lines will not be in the correct states for
-     * communicating between devices exclusively. Many bus faults occured
-     * on the road to finding this problem and then determining how to
-     * fix it.
-     */
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
-        osSignalSet(mainID, MAIN_TASK_CONTINUE);
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
-        osSignalSet(mainID, MAIN_TASK_CONTINUE);
     }
-
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     fpga_err |= 1 << !fpga_ready;
     // the error code is valid now
     fpga_err |= 1 << 0;
 
+    // Startup the 3 separate threads, being sure that we wait for it
+    // to signal back to us that we can startup the next thread. Not doing
+    // so results in weird wierd things that are really hard to debug. Even
+    // though this is multi-threaded code, that dosen't mean it's
+    // a multi-core system.
+
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
-
-    Thread::wait(10);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for handling radio communications
     Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
-
-    Thread::wait(10);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
     // Make sure all of the motors are enabled
     motors_Init();
-
-    // Wait for all threads to get to their ready state
-    for (size_t i = 0; i < 3; ++i)
-        Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Set error indicators
     if (fpga_err > 1) {
