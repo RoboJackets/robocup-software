@@ -62,7 +62,7 @@ localparam HALL_COUNT_WIDTH             =   (  8 );
 localparam DUTY_CYCLE_WIDTH             =   ( 10 );
 localparam NUM_ENCODER_GEN              =   ( NUM_ENCODERS );
 localparam NUM_MOTORS_GEN               =   ( NUM_MOTORS );
-localparam STARTUP_DELAY_WIDTH          =   (  3 );
+localparam STARTUP_DELAY_WIDTH          =   (  5 );
 
 // To calculate the watchdog timer's expire time, use the following equation:
 // (1/<freq-of-sysclk>) * (2^WATCHDOG_TIMER_CLK_WIDTH) * (2^WATCHDOG_TIMER_WIDTH)
@@ -197,18 +197,21 @@ wire spi_slave_start_flag = ( (spi_slave_ncs_s == 0) && (spi_slave_ncs_d == 1) )
 wire spi_slave_byte_done;
 
 reg                                     spi_master_start = 0;
-reg [ NUM_MOTORS - 1:0 ]                spi_master_sel_num;
-reg [ NUM_MOTORS - 1:0 ]                spi_master_sel;
+reg [ NUM_MOTORS - 1:0 ]                spi_master_sel_num = 0;
+reg [ NUM_MOTORS - 1:0 ]                spi_master_sel = 0;
+reg [1:0]                               spi_master_recv_index = 0;
 wire                                    spi_master_sel_now;
 wire                                    spi_master_busy,
                                         spi_master_valid;
 wire [ SPI_MASTER_DATA_WIDTH - 1:0 ]    spi_master_d0,
                                         spi_master_di;
 
+// shift register for detecting falling edge of spi_master_busy signal
 reg [1:0] spi_master_busy_sr = 0;  always @(posedge sysclk) spi_master_busy_sr <= {spi_master_busy_sr[0], spi_master_busy};
 wire spi_master_trxfr_done_flag   =   ( spi_master_busy_sr == 2'b10 );
 
-always@(posedge sysclk) spi_master_sel[spi_master_sel_num] <= ~spi_master_sel_now;
+// select an SPI slave device according to the spi_master_sel_num index of the signal array
+always@(posedge sysclk) spi_master_sel[spi_master_sel_num] <= spi_master_sel_now;
 assign drv_ncs_o = ~spi_master_sel;
 
 SPI_Master spi_master_module (
@@ -225,47 +228,48 @@ SPI_Master spi_master_module (
     .DATA_IN        ( spi_master_di         )
 );
 
+// The DRV8303 config values we write to each driver
 reg [SPI_MASTER_DATA_WIDTH-1:0] motor_config_regs [2:0];
-reg [1:0] data_received_index = 0;
 
-assign spi_master_di = motor_config_regs[data_received_index];
-
-always @(posedge sysclk)
-begin : INIT_SYSTEM
-    // Init at startup
-    if ( start_delay_done == 1 ) begin
-        if ( sys_rdy == 0 ) begin
-            sys_rdy <= 1;
-        end
-    end
-end
+// This is where we assign the data we want to send to the selected SPI slave
+assign spi_master_di = motor_config_regs[spi_master_recv_index];
 
 always @(posedge sysclk)
 begin : SPI_MASTER_COMM
     // if spi master transfer complete
-    if ( sys_rdy == 0 ) begin
-        spi_master_start <= 0;
-        spi_master_sel_num <= 2;
-        motor_config_regs[0] <= (2'h2 << 11) | 'h0380;
-        motor_config_regs[1] <= (3<<11) & 'h7800;
-
+    if (( start_delay_done == 1 ) && ( sys_rdy == 0 )) begin
+        // flag the system as ready for all of the other areas of the Verilog
+        sys_rdy <= 1;
+        // start the first SPI master transfer out
+        spi_master_start <= 1;
+        // set the config values for each driver here
+        motor_config_regs[0] <= (2 << 11) | 'h0380;
+        motor_config_regs[1] <= (3 << 11);
+        motor_config_regs[2] <= 0;
     end else if ( spi_master_trxfr_done_flag == 1 ) begin
         if ( spi_master_valid == 1 ) begin
-
+            // start the next transfer out
             spi_master_start <= 1;
 
-            if (data_received_index == 2) begin
-                data_received_index <= 0;
+            if (( spi_master_sel_num >= (NUM_MOTORS - 1) ) && ( spi_master_recv_index == 2 )) begin
+                // reset the selected SPI slave to the first one
+                spi_master_sel_num <= 0;
+                spi_master_recv_index <= 0;
+
+            end else if ( spi_master_recv_index == 2 ) begin
+                // increment what device we select this round
                 spi_master_sel_num <= spi_master_sel_num + 1;
+                // reset the rx buffer to the beginning
+                spi_master_recv_index <= 0;
 
             end else begin
-                data_received_index <= data_received_index + 1;
-            end
-
-            if ( spi_master_sel_num >= (NUM_MOTORS - 1) ) begin
-                spi_master_sel_num <= 0;
+                // increment the rx buffer index on each received byte
+                // of the same device
+                spi_master_recv_index <= spi_master_recv_index + 1;
             end
         end
+    end else begin
+        spi_master_start <= 0;
     end
 end
 
