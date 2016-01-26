@@ -89,14 +89,16 @@ public:
 
     header_data() : layer_map(3), t(control), address(0), port_fields(0){};
 
-    datav_it_t pack(size_t payload_size) {
+    datav_it_t pack(size_t payload_size, bool headless = false) {
         if (d.size()) return d.begin();
         // payload size + number of bytes in header is top byte
         // since that's required for the cc1101/cc1201 with
         // variable packet sizes
-        d.push_back(payload_size + 2);
-        d.push_back(address);
-        d.push_back(port_fields);
+        d.push_back(payload_size + (headless ? 0 : 2));
+        if (headless == false) {
+            d.push_back(address);
+            d.push_back(port_fields);
+        }
         return d.begin();
     }
 
@@ -167,7 +169,12 @@ public:
         payload.fill(v);
     }
 
-    packet_data_t* packed() { return payload.data(); }
+    packet_data_t* packed() {
+        if (_packed == false)
+            pack();
+
+        return payload.data(); 
+    }
 
     size_t size() {
         if (_packed == true)
@@ -206,7 +213,8 @@ public:
 private:
     void pack() {
         payload.pack();
-        header.pack(payload.size());
+        // pack the header, but do a "headless" pack
+        header.pack(payload.size(), true);
         payload.add_header(header);
         _packed = true;
     }
