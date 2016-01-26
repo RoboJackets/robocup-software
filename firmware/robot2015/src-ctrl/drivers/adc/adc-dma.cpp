@@ -7,10 +7,15 @@
 
 // ADC pin mapping for the LPC1768 microcontroller based mbed
 
-static const PinMap RJ_PinMap_ADC[] = {
-    {P0_23, ADC0_0, 1}, {P0_24, ADC0_1, 1}, {P0_25, ADC0_2, 1},
-    {P0_26, ADC0_3, 1}, {P1_30, ADC0_4, 3}, {P1_31, ADC0_5, 3},
-    {P0_2, ADC0_7, 2},  {P0_3, ADC0_6, 2},  {NC, NC, 0}};
+static const PinMap RJ_PinMap_ADC[] = {{P0_23, ADC0_0, 1},
+                                       {P0_24, ADC0_1, 1},
+                                       {P0_25, ADC0_2, 1},
+                                       {P0_26, ADC0_3, 1},
+                                       {P1_30, ADC0_4, 3},
+                                       {P1_31, ADC0_5, 3},
+                                       {P0_2, ADC0_7, 2},
+                                       {P0_3, ADC0_6, 2},
+                                       {NC, NC, 0}};
 
 uint8_t ADCDMA::dmaChannelNum = 0;
 bool ADCDMA::burstEn = false;
@@ -313,7 +318,8 @@ bool ADCDMA::init_channels() {
         (0 << 0)  // SEL: 0 = no channels selected initially
         | (clkdiv
            << 8)  // CLKDIV: PCLK max ~= 25MHz, /25 to give safe 1MHz at fastest
-        | (0 << 17);  // CLKS: not applicable
+        |
+        (0 << 17);  // CLKS: not applicable
     //    | (0 << 24)     // START: 0 = no start
     //   | (0 << 27);    // EDGE: not applicable
 

@@ -16,8 +16,7 @@ motor_t mtrEx = {
     .hall = 0x0A,
     .enc = {0x23, 0x18},
     .status = {.encOK = false, .hallOK = true, .drvStatus = {0x26, 0x0F}},
-    .desc = "Motor"
-};
+    .desc = "Motor"};
 }
 
 std::vector<motor_t> motors(NUM_MOTORS, mtrEx);
@@ -64,12 +63,12 @@ void motors_show() {
                (status_byte & (1 << i)) ? "[OK]    " : "[UNCONN]",
                driver_regs.at(i));
     }
-    printf(
-        "\033[K    %s\t%-3u\t%-3u\tN/A\t%s\t%s\t0x%03X\033E", motors.back().desc.c_str(),
-        duty_cycles.back() & 0x1FF, halls.back(),
-        duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
-        (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]    " : "[UNCONN]",
-        driver_regs.back());
+    printf("\033[K    %s\t%-3u\t%-3u\tN/A\t%s\t%s\t0x%03X\033E",
+           motors.back().desc.c_str(), duty_cycles.back() & 0x1FF, halls.back(),
+           duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
+           (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]    "
+                                                          : "[UNCONN]",
+           driver_regs.back());
 }
 
 int cmd_motors_scroll(const std::vector<std::string>& args) {
@@ -113,7 +112,7 @@ int cmd_motors(const std::vector<std::string>& args) {
             if (motor_id > 4) return 2;
             // get the current duty cycles for all motors
             uint8_t status_byte = FPGA::Instance()->read_duty_cycles(
-                                      duty_cycles.data(), duty_cycles.size());
+                duty_cycles.data(), duty_cycles.size());
             // change our specific motor's duty cycle and write all duty cycles
             // back to the FPGA
             if (status_byte != 0x7F) {

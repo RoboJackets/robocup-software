@@ -5,7 +5,6 @@
 #include "pins-ctrl-2015.hpp"
 #include "mcp23017.hpp"
 
-
 /*
  * A digitalInOut class meant to replicate basic functionality of the
  * mBed digitalOut and digitalIn
@@ -16,14 +15,13 @@ private:
 
 public:
     // Default constructor will setup the hardware
-    IOExpanderDigitalInOut() {};
+    IOExpanderDigitalInOut(){};
 
     // Other constructors for creating objects for pinouts
     IOExpanderDigitalInOut(IOExpanderPin pin, bool state = false) {
         m_pin = pin;
 
-        if (state != read())
-            write(state);
+        if (state != read()) write(state);
     }
 
     /*

@@ -60,13 +60,16 @@ void loopback_rx_cb(rtp::packet* p) {
             p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
 
         if (p->subclass() == 1) {
-            uint16_t status_byte = FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                   duty_cycles.size());
+            uint16_t status_byte = FPGA::Instance()->set_duty_cycles(
+                duty_cycles.data(), duty_cycles.size());
 
             // grab the bottom 4 bits
             status_byte &= 0x000F;
             // flip bits 1 & 2
-            status_byte = (status_byte & 0x000C) | ((status_byte >> 1) & 0x0001) | ((status_byte << 1) & 0x0002);;
+            status_byte = (status_byte & 0x000C) |
+                          ((status_byte >> 1) & 0x0001) |
+                          ((status_byte << 1) & 0x0002);
+            ;
             // bit 3 goes to the 6th position
             status_byte |= ((status_byte >> 2) << 5) & 0x0023;
             // bit 4 goes to the 8th position

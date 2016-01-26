@@ -137,7 +137,7 @@ void Task_Controller(void const* args) {
  * [Task_Controller_Sensorless]
  * @param args [description]
  */
-void Task_Controller_Sensorless(const osThreadId * mainID) {
+void Task_Controller_Sensorless(const osThreadId* mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);

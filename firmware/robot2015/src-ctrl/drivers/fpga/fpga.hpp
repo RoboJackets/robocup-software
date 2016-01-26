@@ -28,7 +28,7 @@ public:
     bool send_config(const std::string& filepath);
 
 private:
-    FPGA() {};
+    FPGA(){};
 
     static bool isInit;
     static FPGA* instance;

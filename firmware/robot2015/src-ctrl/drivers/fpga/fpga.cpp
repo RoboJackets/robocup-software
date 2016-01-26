@@ -288,7 +288,8 @@ void FPGA::gate_drivers(std::vector<uint16_t>& v) {
     spi->write(CMD_CHECK_DRV);
 
     // each halfword is structured as follows:
-    // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC | FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
+    // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC |
+    // FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
     for (size_t i = 0; i < 10; i++) {
         uint16_t tmp = spi->write(0x00);
         tmp |= (spi->write(0x00) << 8);

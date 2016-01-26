@@ -170,10 +170,9 @@ public:
     }
 
     packet_data_t* packed() {
-        if (_packed == false)
-            pack();
+        if (_packed == false) pack();
 
-        return payload.data(); 
+        return payload.data();
     }
 
     size_t size() {
