@@ -133,6 +133,9 @@ int main() {
     // the error code is valid now
     fpga_err |= 1 << 0;
 
+    // Init IO Expander and turn  all LEDs
+    MCP23017::Init();
+
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
     // so results in weird wierd things that are really hard to debug. Even
@@ -202,7 +205,8 @@ int main() {
     rdy_led = fpga_ready;
 
     unsigned int ll = 0;
-    MCP23017::Init();
+
+    MCP23017::write_mask(0xFF00, 0xFF00);
 
     while (true) {
         // make sure we can always reach back to main by
@@ -218,6 +222,30 @@ int main() {
         }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
+
+        // M1
+        // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
+
+        // // M2
+        // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
+
+        // // M3
+        // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
+
+        // // M4
+        // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
+
+        // IMU
+        // MCP23017::write_mask(~(1 << (8 + 6)), 0xFF00);
+
+        // Det
+        // MCP23017::write_mask(~(1 << (8 + 3)), 0xFF00);
+
+        // Sense
+        // MCP23017::write_mask(~(1 << (8 + 4)), 0xFF00);
+
+        // Radio
+        // MCP23017::write_mask(~(1 << (8 + 2)), 0xFF00);
     }
 }
 

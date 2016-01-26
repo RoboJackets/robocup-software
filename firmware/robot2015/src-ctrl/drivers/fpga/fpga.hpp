@@ -24,10 +24,11 @@ public:
     uint8_t motors_en(bool state);
     uint8_t watchdog_reset();
     bool git_hash(std::vector<uint8_t>&);
+    void gate_drivers(std::vector<uint16_t>&);
     bool send_config(const std::string& filepath);
 
 private:
-    FPGA(){};
+    FPGA() {};
 
     static bool isInit;
     static FPGA* instance;

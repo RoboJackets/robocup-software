@@ -17,7 +17,7 @@ bool MCP23017::Init() {
 
     instance->_i2c.frequency(400000);
     reset();
-    config(0xFFFF, 0xFF00, 0x0000);
+    config(0x00FF, 0x0000, 0x0000);
 
     LOG(OK, "MCP23017 initialized");
 
@@ -29,9 +29,6 @@ bool MCP23017::Init() {
  * Set configuration (IOCON) and direction(IODIR) registers to initial state
  */
 void MCP23017::reset() {
-    // First make sure that the device is in BANK=0 mode
-    writeRegister(0x05, (unsigned char)0x00);
-
     // Set the shadow registers to power-on state
     inputOutputMask(0xFFFF);
 
@@ -136,7 +133,7 @@ void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,
     internalPullupMask(pullup_config);
     inputPolarityMask(polarity_config);
 
-    LOG(INF2,
+    LOG(INIT,
         "IO Expander Configuration:\r\n"
         "    IODIR:\t0x%04X\r\n"
         "    GPPU:\t0x%04X\r\n"
@@ -161,7 +158,8 @@ void MCP23017::pinMode(int pin, int mode) {
  * digitalRead
  */
 int MCP23017::digitalRead(int pin) {
-    return ((readRegister(GPIO) & (1 << pin)) ? 1 : 0);
+    instance->shadow_GPIO = readRegister(GPIO);
+    return ((instance->shadow_GPIO & (1 << pin)) ? 1 : 0);
 }
 
 /*-----------------------------------------------------------------------------
@@ -197,12 +195,18 @@ void MCP23017::digitalWrite(int pin, int val) {
 /*-----------------------------------------------------------------------------
  * digitalWordRead
  */
-unsigned short MCP23017::digitalWordRead() { return readRegister(GPIO); }
+unsigned short MCP23017::digitalWordRead() {
+    instance->shadow_GPIO = readRegister(GPIO);
+    return instance->shadow_GPIO;
+}
 
 /*-----------------------------------------------------------------------------
  * digitalWordWrite
  */
-void MCP23017::digitalWordWrite(unsigned short w) { writeRegister(GPIO, w); }
+void MCP23017::digitalWordWrite(unsigned short w) {
+    instance->shadow_GPIO = w;
+    writeRegister(GPIO, w);
+}
 
 /*-----------------------------------------------------------------------------
  * inputPolarityMask

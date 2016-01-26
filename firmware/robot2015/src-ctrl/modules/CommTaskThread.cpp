@@ -12,6 +12,7 @@
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
 #include "task-globals.hpp"
+#include "io-expander.hpp"
 #include "fpga.hpp"
 
 /*
@@ -59,8 +60,34 @@ void loopback_rx_cb(rtp::packet* p) {
             p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
 
         if (p->subclass() == 1) {
-            FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
+            uint16_t status_byte = FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                   duty_cycles.size());
+
+            // grab the bottom 4 bits
+            status_byte &= 0x000F;
+            // flip bits 1 & 2
+            status_byte = (status_byte & 0x000C) | ((status_byte >> 1) & 0x0001) | ((status_byte << 1) & 0x0002);;
+            // bit 3 goes to the 6th position
+            status_byte |= ((status_byte >> 2) << 5) & 0x0023;
+            // bit 4 goes to the 8th position
+            status_byte |= ((status_byte >> 3) << 7);
+            // shift it all up a byte
+            status_byte <<= 8;
+
+            // All motors error LEDs
+            MCP23017::write_mask(status_byte, 0xA300);
+
+            // M1 error LED
+            // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
+
+            // M2 error LED
+            // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
+
+            // M3 error LED
+            // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
+
+            // M4 error LED
+            // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
         }
     } else if (p->sfs()) {
         LOG(OK, "Loopback rx ACK successful!\r\n");
@@ -183,6 +210,9 @@ void Task_CommCtrl(void const* args) {
             Thread::wait(50);
         }
 
+        // Radio error LED
+        MCP23017::write_mask(~(1 << (8 + 2)), 1 << (8 + 2));
+
         // signal back to main and wait until we're signaled to continue
         osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
         Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
@@ -201,6 +231,8 @@ void Task_CommCtrl(void const* args) {
     while (CommModule::isReady() == false) {
         Thread::wait(50);
     }
+
+    MCP23017::write_mask(1 << (8 + 2), 1 << (8 + 2));
 
     // Set the error code's valid bit
     comm_err |= 1 << 0;
@@ -230,15 +262,15 @@ void Task_CommCtrl(void const* args) {
 
     while (true) {
         for (size_t i = 0; i < 60; ++i) {
-            Thread::wait(5);
-            CommModule::send(pck2);
-            CommModule::send(pck1);
-            Thread::wait(3);
-            CommModule::send(pck1);
-            Thread::wait(3);
-            CommModule::send(pck1);
-            Thread::wait(3);
-            CommModule::send(pck1);
+            Thread::wait(2000);
+            // CommModule::send(pck2);
+            // CommModule::send(pck1);
+            // Thread::wait(3);
+            // CommModule::send(pck1);
+            // Thread::wait(3);
+            // CommModule::send(pck1);
+            // Thread::wait(3);
+            // CommModule::send(pck1);
         }
         Thread::wait(1000);
     }

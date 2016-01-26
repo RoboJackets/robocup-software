@@ -11,6 +11,7 @@
 #include "motors.hpp"
 #include "fpga.hpp"
 #include "mpu-6050.hpp"
+#include "io-expander.hpp"
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
@@ -75,6 +76,8 @@ void Task_Controller(void const* args) {
         // Set the error code's valid bit
         imu_err |= 1 << 0;
 
+        MCP23017::write_mask(1 << (8 + 6), 1 << (8 + 6));
+
     } else {
         LOG(SEVERE,
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
@@ -100,10 +103,12 @@ void Task_Controller(void const* args) {
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    // std::vector<uint16_t> duty_cycles;
-    // duty_cycles.assign(5, 100);
-    // for (int i = 0; i < duty_cycles.size(); ++i)
-    //     duty_cycles.at(i) = 100 + 206 * i;
+    std::vector<uint16_t> duty_cycles;
+    duty_cycles.assign(5, 100);
+    for (int i = 0; i < duty_cycles.size(); ++i)
+        duty_cycles.at(i) = 100 + 206 * i;
+
+    duty_cycles.at(1) = 350;
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -111,7 +116,7 @@ void Task_Controller(void const* args) {
 
         // printf(
         //     "\r\n\033[K"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\r\n"
+        //     "\t(% 1.2f, % 1.2f, % 1.2f)\ r\n"
         //     "\t(% 1.2f, % 1.2f, % 1.2f)\033[F\033[F",
         //     gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0],
         //     accelVals[1],
@@ -119,19 +124,8 @@ void Task_Controller(void const* args) {
         // Console::Flush();
 
         // write all duty cycles
-        // for (size_t i = 0; i < 500; ++i) {
-        //     duty_cycles.at(1) = 2 * i;
-        //     FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-        //                                       duty_cycles.size());
-        //     Thread::wait(5);
-        // }
-
-        // Thread::wait(10);
-        // duty_cycles.at(1) = 0;
-        // FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-        //                                   duty_cycles.size());
-
-        // Thread::wait(1500);
+        FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                          duty_cycles.size());
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
@@ -143,7 +137,7 @@ void Task_Controller(void const* args) {
  * [Task_Controller_Sensorless]
  * @param args [description]
  */
-void Task_Controller_Sensorless(const osThreadId* mainID) {
+void Task_Controller_Sensorless(const osThreadId * mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -155,6 +149,9 @@ void Task_Controller_Sensorless(const osThreadId* mainID) {
         "Sensorless control loop ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
         threadID, threadPriority);
+
+    // IMU error LED
+    MCP23017::write_mask(~(1 << (8 + 6)), 1 << (8 + 6));
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);

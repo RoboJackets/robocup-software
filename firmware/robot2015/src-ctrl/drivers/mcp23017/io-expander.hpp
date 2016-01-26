@@ -5,28 +5,6 @@
 #include "pins-ctrl-2015.hpp"
 #include "mcp23017.hpp"
 
-/*
- * Pin numbers that correspond to the MCP23017 datasheet:
- * http://ww1.microchip.com/downloads/en/DeviceDoc/21952b.pdf
- */
-enum IOExpanderPin {
-    IOExpanderPinA0 = 0,
-    IOExpanderPinA1,
-    IOExpanderPinA2,
-    IOExpanderPinA3,
-    IOExpanderPinA4,
-    IOExpanderPinA5,
-    IOExpanderPinA6,
-    IOExpanderPinA7,
-    IOExpanderPinB0,
-    IOExpanderPinB1,
-    IOExpanderPinB2,
-    IOExpanderPinB3,
-    IOExpanderPinB4,
-    IOExpanderPinB5,
-    IOExpanderPinB6,
-    IOExpanderPinB7
-};
 
 /*
  * A digitalInOut class meant to replicate basic functionality of the
@@ -35,26 +13,17 @@ enum IOExpanderPin {
 class IOExpanderDigitalInOut {
 private:
     IOExpanderPin m_pin;
-    static bool isInit;
 
 public:
     // Default constructor will setup the hardware
-    IOExpanderDigitalInOut() {
-        if (isInit == true) {
-            return;
-        }
-
-        isInit = true;
-    }
+    IOExpanderDigitalInOut() {};
 
     // Other constructors for creating objects for pinouts
-    IOExpanderDigitalInOut(IOExpanderPin pin) {
-        if (isInit == true) {
-            return;
-        }
-
-        isInit = true;
+    IOExpanderDigitalInOut(IOExpanderPin pin, bool state = false) {
         m_pin = pin;
+
+        if (state != read())
+            write(state);
     }
 
     /*
@@ -96,5 +65,3 @@ public:
      */
     operator int() { return read(); }
 };
-
-bool IOExpanderDigitalInOut::isInit = false;

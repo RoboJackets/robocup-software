@@ -17,7 +17,8 @@ enum {
     CMD_READ_HALLS = 0x92,
     CMD_READ_DUTY = 0x93,
     CMD_READ_HASH1 = 0x94,
-    CMD_READ_HASH2 = 0x95
+    CMD_READ_HASH2 = 0x95,
+    CMD_CHECK_DRV = 0x96
 };
 }
 
@@ -69,7 +70,7 @@ bool FPGA::Init(const std::string& filepath) {
     // show INIT_B error if it never went low
     if (!(j < 100)) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
-        
+
         return false;
     }
 
@@ -257,14 +258,14 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     *cs = !(*cs);
     spi->write(CMD_READ_HASH1);
 
-    for (int i = 0; i < 10; i++) v.push_back(spi->write(0x00));
+    for (size_t i = 0; i < 10; i++) v.push_back(spi->write(0x00));
 
     *cs = !(*cs);
     *cs = !(*cs);
 
     spi->write(CMD_READ_HASH2);
 
-    for (int i = 0; i < 11; i++) v.push_back(spi->write(0x00));
+    for (size_t i = 0; i < 11; i++) v.push_back(spi->write(0x00));
 
     *cs = !(*cs);
     mutex.unlock();
@@ -278,6 +279,24 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     std::reverse(v.begin(), v.end());
 
     return dirty_bit;
+}
+
+void FPGA::gate_drivers(std::vector<uint16_t>& v) {
+    mutex.lock();
+    *cs = !(*cs);
+
+    spi->write(CMD_CHECK_DRV);
+
+    // each halfword is structured as follows:
+    // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC | FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
+    for (size_t i = 0; i < 10; i++) {
+        uint16_t tmp = spi->write(0x00);
+        tmp |= (spi->write(0x00) << 8);
+        v.push_back(tmp);
+    }
+
+    *cs = !(*cs);
+    mutex.unlock();
 }
 
 uint8_t FPGA::motors_en(bool state) {
