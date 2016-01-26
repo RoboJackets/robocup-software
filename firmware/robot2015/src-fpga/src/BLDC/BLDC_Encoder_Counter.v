@@ -32,27 +32,25 @@ localparam STEP_3 = 'b11;
 
 // Register and Wire declarations
 // ===============================================
-reg [1:0] enc_s;    // The synced encoder tick
 reg [1:0] enc_d;    // The delayed encoder tick by one clock cycle
 
 wire count_up =
-    ( ( enc_d == STEP_0 ) && ( enc_s == STEP_1 ) ) ||
-    ( ( enc_d == STEP_1 ) && ( enc_s == STEP_3 ) ) ||
-    ( ( enc_d == STEP_3 ) && ( enc_s == STEP_2 ) ) ||
-    ( ( enc_d == STEP_2 ) && ( enc_s == STEP_0 ) );
+    ( ( enc_d == STEP_0 ) && ( enc == STEP_1 ) ) ||
+    ( ( enc_d == STEP_1 ) && ( enc == STEP_3 ) ) ||
+    ( ( enc_d == STEP_3 ) && ( enc == STEP_2 ) ) ||
+    ( ( enc_d == STEP_2 ) && ( enc == STEP_0 ) );
 
 wire count_down =
-    ( ( enc_d == STEP_2 ) && ( enc_s == STEP_3 ) ) ||
-    ( ( enc_d == STEP_3 ) && ( enc_s == STEP_1 ) ) ||
-    ( ( enc_d == STEP_1 ) && ( enc_s == STEP_0 ) ) ||
-    ( ( enc_d == STEP_0 ) && ( enc_s == STEP_2 ) );
+    ( ( enc_d == STEP_2 ) && ( enc == STEP_3 ) ) ||
+    ( ( enc_d == STEP_3 ) && ( enc == STEP_1 ) ) ||
+    ( ( enc_d == STEP_1 ) && ( enc == STEP_0 ) ) ||
+    ( ( enc_d == STEP_0 ) && ( enc == STEP_2 ) );
 
 
 // Begin main logic
 always @(posedge clk) begin
 
-    enc_s <= enc;
-    enc_d <= enc_s;
+    enc_d <= enc;
 
     if ( reset == 1 ) begin
         count <= 0;
@@ -65,6 +63,7 @@ always @(posedge clk) begin
     end
 
 end
+
 endmodule
 
 `endif

@@ -18,15 +18,14 @@ input [DATA_BIT_WIDTH-1:0]  DATA_IN;
 output MOSI, SEL, VALID, BUSY, SCK;
 output [DATA_BIT_WIDTH-1:0]  DATA_OUT;
 
-reg transfer_active;
-reg select;
+reg transfer_active, select;
 wire clksub;
 
 ClkDivide #(
     .WIDTH    ( 4                 )
     ) sck_gen (
-    .CLK_IN   ( clk               ),
-    .EN       ( transfer_active   ),
+    .CLK_IN   ( clk               ) ,
+    .EN       ( transfer_active   ) ,
     .CLK_OUT  ( clksub            )
 );
 
@@ -44,9 +43,7 @@ reg [DATA_BIT_WIDTH-1:0] data_sending_l;
 reg [DATA_BIT_WIDTH-1:0] data_recv;
 
 wire end_transfer = ( transfer_active && ( bitcnt == DATA_BIT_WIDTH ) );
-
-reg valid_q;
-reg miso_q;
+reg valid_q, miso_q;
 
 assign VALID = valid_q;
 assign BUSY = transfer_active;

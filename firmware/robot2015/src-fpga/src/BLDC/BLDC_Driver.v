@@ -22,11 +22,11 @@
 
 
 // BLDC_Driver module
-module BLDC_Driver ( clk, en, hall, duty_cycle, phaseH, phaseL, connected, fault );
+module BLDC_Driver ( clk, en, hall, duty_cycle, direction, phaseH, phaseL, connected, fault );
 
 // Module parameters - passed parameters will overwrite the values here
-parameter PHASE_DRIVER_MAX_COUNTER =            ( 'h3FF );
-parameter MAX_DUTY_CYCLE =                      ( 'h3FF );
+parameter PHASE_DRIVER_MAX_COUNTER =            ( 'h1FF );
+parameter MAX_DUTY_CYCLE =                      ( 'h1FF );
 parameter MIN_DUTY_CYCLE =                      ( 0 );
 parameter DUTY_CYCLE_STEP_RES =                 ( 1 );
 parameter DEAD_TIME =                           ( 2 );
@@ -39,6 +39,7 @@ localparam DUTY_CYCLE_WIDTH =   `LOG2( MAX_DUTY_CYCLE );
 input clk, en;
 input [2:0] hall;
 input [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
+input direction;
 output reg [2:0] phaseH, phaseL;
 output reg connected = 0;
 output reg fault = 0;
@@ -49,11 +50,11 @@ output reg fault = 0;
 // ===============================================
 localparam NUM_PHASES =                 3;  // This will always be constant
 localparam STARTUP_COUNTER_WIDTH =      5;  // Counter for startup time period. Time expires when register overflows to 0 and is incremented according to HALL_CHECK_COUNTER_WIDTH
-localparam HALL_STATE_STEADY_COUNT =    15; // Threshold value in determining when the hall effect sensor is locked into an error state
+localparam HALL_STATE_STEADY_COUNT =    31; // Threshold value in determining when the hall effect sensor is locked into an error state
 
 // Derived local parameters
 // ===============================================
-localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 3 );                        // Divide by 8 to get 25% of the max speed for startup state for a single direction
+localparam END_STARTUP_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 2 );                        // Divide by 4 to get 25% of the max speed for startup state
 localparam STARTUP_DUTY_CYCLE_STEPS =       ( END_STARTUP_DUTY_CYCLE - MIN_DUTY_CYCLE );    // Get the number of steps between the min. and max. duty cycles for startup state
 localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << STARTUP_COUNTER_WIDTH );                 // The number of input clock cycles in one period of the startup counter's clock
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor

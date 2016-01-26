@@ -24,69 +24,40 @@ input    [2:0]  hall;   // Hall Effect sensor input
 output   [2:0]   u;     // High phase output
 output   [2:0]   z;     // High Impedance output
 
-reg [2:0] u, z;
-reg [2:0] u_d, z_d;
+localparam  A       =       3'b100;
+localparam  B       =       3'b010;
+localparam  C       =       3'b001; 
+localparam  ALL_ON  =       3'b111;
+localparam  ALL_OFF =       3'b000;
+// going from 1 -> 6 is CCW
+localparam STATE1 =         3'b101;
+localparam STATE2 =         3'b100;
+localparam STATE3 =         3'b110;
+localparam STATE4 =         3'b010;
+localparam STATE5 =         3'b011;
+localparam STATE6 =         3'b001;
+// error or no connection states
+localparam STATE_FAULT   =  3'b000;
+localparam STATE_NO_CONN =  3'b111;
 
-localparam  A       =   3'b100;
-localparam  B       =   3'b010;
-localparam  C       =   3'b001; 
-localparam  ALL_ON  =   3'b111;
-localparam  ALL_OFF =   3'b000;
 
-always @(*) begin
-
-        case( hall )
-
-        3'b000  :   begin
-                    u_d <= ALL_OFF;
-                    z_d <= ALL_ON;
-                    end
-
-        3'b111  :   begin
-                    u_d <= ALL_OFF;
-                    z_d <= ALL_ON;
-                    end
-
-        3'b101  :   begin
-                    u_d <= A;
-                    z_d <= C;
-                    end
-
-        3'b100  :   begin
-                    u_d <= A;
-                    z_d <= B;
-                    end
-
-        3'b110  :   begin
-                    u_d <= B;
-                    z_d <= A;
-                    end
-
-        3'b010  :   begin
-                    u_d <= B;
-                    z_d <= C;
-                    end
-
-        3'b011  :   begin
-                    u_d <= C;
-                    z_d <= B;
-                    end
-
-        3'b001  :   begin
-                    u_d <= C;
-                    z_d <= A;
-                    end
-
-        default :   begin
-                    u_d <= ALL_OFF;
-                    z_d <= ALL_ON;
-                    end
-
-        endcase
-
-        u <= u_d;
-        z <= z_d;
-end
+wire [2:0] u =
+    (hall == STATE1) ? A:
+    (hall == STATE2) ? A:
+    (hall == STATE3) ? B:
+    (hall == STATE4) ? B:
+    (hall == STATE5) ? C:
+    (hall == STATE6) ? C:
+                       ALL_OFF;
+                       
+wire [2:0] z =
+    (hall == STATE1) ? C:
+    (hall == STATE2) ? B:
+    (hall == STATE3) ? A:
+    (hall == STATE4) ? C:
+    (hall == STATE5) ? B:
+    (hall == STATE6) ? A:
+                       ALL_ON;
 
 endmodule
 
