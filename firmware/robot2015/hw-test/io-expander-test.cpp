@@ -17,7 +17,8 @@ std::vector<unsigned int> freq2;
 void run_test(I2C& i2c) {
     char buf[2];
 
-    // For both frequencies, we check 1 additional address that should always fail for the
+    // For both frequencies, we check 1 additional address that should always
+    // fail for the
     // case where there's a response on every valid address of the IO expander.
     for (unsigned int addrOffset = 0; addrOffset < 0x09; addrOffset++) {
         bool nack, ack = false;
@@ -33,8 +34,7 @@ void run_test(I2C& i2c) {
     }
 }
 
-int main()
-{
+int main() {
     // GPIO0_BASE
     DigitalOut good(LED1, 0);
     DigitalOut bad1(LED2, 0);
@@ -61,22 +61,26 @@ int main()
     run_test(i2c);
 
     // Test results
-    pc.printf("\r\n100kHz Test:\t%s\t(%u ACKS)\r\n", freq1.empty() ? "FAIL" : "PASS", freq1.size());
-    pc.printf("400kHz Test:\t%s\t(%u ACKS)\r\n", freq2.empty() ? "FAIL" : "PASS", freq2.size());
+    pc.printf("\r\n100kHz Test:\t%s\t(%u ACKS)\r\n",
+              freq1.empty() ? "FAIL" : "PASS", freq1.size());
+    pc.printf("400kHz Test:\t%s\t(%u ACKS)\r\n",
+              freq2.empty() ? "FAIL" : "PASS", freq2.size());
 
-    // Store the number of ACKs from the low frequency so we can just modify its vector instead of making a new one
+    // Store the number of ACKs from the low frequency so we can just modify its
+    // vector instead of making a new one
     size_t freq1_acks = freq1.size();
 
     // Merge the 2 vectors together & remove duplicate values
     freq1.insert(freq1.end(), freq2.begin(), freq2.end());
-    sort( freq1.begin(), freq1.end() );
-    freq1.erase( std::unique( freq1.begin(), freq1.end() ), freq1.end() );
+    sort(freq1.begin(), freq1.end());
+    freq1.erase(std::unique(freq1.begin(), freq1.end()), freq1.end());
 
     // Final results of the test
     testPass = (freq2.size() == freq1_acks) && freq1.size() == 9;
 
     pc.printf("\r\n=================================\r\n");
-    pc.printf("========== TEST %s ==========\r\n", testPass ? "PASSED" : "FAILED");
+    pc.printf("========== TEST %s ==========\r\n",
+              testPass ? "PASSED" : "FAILED");
     pc.printf("=================================DONE");
 
     // Turn on the corresponding LED(s)
