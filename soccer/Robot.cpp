@@ -233,7 +233,9 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged()) ? 0.0 : RJ::TimestampToSecs((RJ::timestamp() - _lastChargedTime));
+    return (charged())
+               ? 0.0
+               : RJ::TimestampToSecs((RJ::timestamp() - _lastChargedTime));
 }
 
 void OurRobot::dribble(uint8_t speed) {
