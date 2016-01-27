@@ -15,12 +15,11 @@ public:
 
     void sendSimCommand(const Packet::SimCommand& cmd);
 
-    Q_SIGNALS :
-        // Emitted when the user selects a robot.
-        // The robot is identified by shell number.
-        // shell may be -1 to select no robot.
-        void
-        robotSelected(int shell);
+Q_SIGNALS:
+    // Emitted when the user selects a robot.
+    // The robot is identified by shell number.
+    // shell may be -1 to select no robot.
+    void robotSelected(int shell);
 
 protected:
     virtual void mouseReleaseEvent(QMouseEvent*) override;
