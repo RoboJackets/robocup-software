@@ -141,12 +141,6 @@ base2015:
 base2015-prog:
 	$(call cmake_build_target_fw, base2015-prog)
 
-# kicker 2015 firmware
-kicker2015:
-	mkdir -p build && cd build && cmake --target kicker2015 .. && make $(MAKE_FLAGS) kicker2015
-kicker2015-prog:
-	mkdir -p build && cd build && cmake --target kicker2015-prog .. && make $(MAKE_FLAGS) kicker2015-prog
-
 # Robot FPGA
 fpga2011:
 	cd firmware; scons fpga2011
