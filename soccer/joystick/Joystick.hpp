@@ -72,7 +72,4 @@ protected:
 
 private:
     QMutex _mutex;
-
-    
-    
 };
