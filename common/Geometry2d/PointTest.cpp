@@ -82,7 +82,7 @@ TEST(Point, basic) {
     EXPECT_FLOAT_EQ(3.5*5.5 + 4.5*6.5, Point(3.5,4.5).dot(Point(5.5,6.5)));
 
 
-    EXPECT_PRED_FORMAT2(pointEqual, direction())
+    //EXPECT_PRED_FORMAT2(pointEqual, direction())
 
 }
 
