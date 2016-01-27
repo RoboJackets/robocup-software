@@ -42,7 +42,7 @@ public:
     bool valid;
 
     /// Time at which this estimate is valid
-    Time time;
+    RJ::Time time;
 };
 
 /**
@@ -107,7 +107,7 @@ public:
     void drawShapeSet(const Geometry2d::ShapeSet& shapes,
                       const QColor& color = Qt::black,
                       const QString& layer = QString());
-    Time timestamp;
+    RJ::Time timestamp;
     GameState gameState;
 
     /// All possible robots.

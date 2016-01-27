@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
     LogFrame logFrame;
     bool first = true;
     while (true) {
-        Time startTime = timestamp();
+        RJ::Time startTime = RJ::timestamp();
 
         logFrame.Clear();
         logFrame.set_command_time(startTime);
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
             break;
         }
 
-        Time endTime = timestamp();
+        RJ::Time endTime = RJ::timestamp();
         int lastFrameTime = endTime - startTime;
         if (lastFrameTime < framePeriod) {
             usleep(framePeriod - lastFrameTime);

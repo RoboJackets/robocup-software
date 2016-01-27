@@ -139,7 +139,7 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
                                 endpoint, 0, moddedConstraints));
-        path->setStartTime(timestamp());
+        path->setStartTime(RJ::timestamp());
         return std::move(path);
     } else {
         return std::move(prevPath);

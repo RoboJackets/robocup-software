@@ -1,5 +1,5 @@
 
-# %Robot Firmware 2015
+# Robot Firmware 2015
 
 %Robot firmware is anything that runs on the robot itself, rather than on the field computer.  It is composed of two main parts: VeriLog HDL code for the FPGA and C code that runs on the microprocessor.  The microprocessor handles most of the logic that drives the robots and the FPGA is the bridge that the microprocessor uses to communicate with the hardware.
 
