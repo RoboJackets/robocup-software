@@ -47,15 +47,7 @@ bool Rect::containsPoint(Point point) const {
 }
 
 bool Rect::hit(const Segment& seg) const {
-    return containsPoint(seg.pt[0]) || containsPoint(seg.pt[1]) ||
-           seg.intersects(
-               Segment(Point(minx(), miny()), Point(minx(), maxy()))) ||
-           seg.intersects(
-               Segment(Point(minx(), miny()), Point(maxx(), miny()))) ||
-           seg.intersects(
-               Segment(Point(minx(), maxy()), Point(maxx(), maxy()))) ||
-           seg.intersects(
-               Segment(Point(maxx(), maxy()), Point(maxx(), miny())));
+    return nearSegment(seg, Robot_Radius);
 }
 
 bool Rect::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
@@ -99,8 +91,8 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
     // If either endpoint of the segment is near an edge of the rect, then the
     // segment is near this rect.
     for (int i = 0; i < 4; i++) {
-        if (edge[i].nearPoint(pt[0], threshold) ||
-            edge[i].nearPoint(pt[1], threshold))
+        if (edge[i].nearPoint(p1, threshold) ||
+            edge[i].nearPoint(p2, threshold))
             return true;
     }
 
