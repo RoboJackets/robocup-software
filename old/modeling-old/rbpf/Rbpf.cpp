@@ -281,7 +281,8 @@ inline double Rbpf::gaussianPDF2D(const rbpf::VectorSd& X,
 // displays the modelGraph and each particle in the filter
 std::ostream& operator<<(std::ostream& out, const Rbpf& r) {
     // display model graph
-    out << "model graph:" << std::endl << r.modelGraph << std::endl;
+    out << "model graph:" << std::endl
+        << r.modelGraph << std::endl;
     // display k particles
     for (int x = 0; x < r.k; x++)
         out << "particle(" << x << "):" << std::endl

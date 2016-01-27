@@ -72,8 +72,7 @@ void MotionControl::run() {
     switch (rotationCommand->getCommandType()) {
         case RotationCommand::FacePoint:
             targetPt = static_cast<const Planning::FacePointCommand*>(
-                           rotationCommand.get())
-                           ->targetPos;
+                           rotationCommand.get())->targetPos;
             break;
         case RotationCommand::None:
             // do nothing
@@ -140,8 +139,9 @@ void MotionControl::run() {
 
         // convert from microseconds to seconds
         float timeIntoPath =
-            RJ::TimestampToSecs((float)(RJ::timestamp() - _robot->path()->startTime())) 
-            + 1.0 / 60.0;
+            RJ::TimestampToSecs(
+                (RJ::timestamp() - _robot->path()->startTime())) +
+            1.0 / 60.0;
 
         // evaluate path - where should we be right now?
         boost::optional<MotionInstant> optTarget =
