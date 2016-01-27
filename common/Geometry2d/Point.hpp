@@ -189,12 +189,13 @@ public:
      * @brief Restricts the point to a given magnitude
      * @param max The magnitude to restrict the vector
      */
-    void clamp(float max) {
+    Point& clamp(float max) {
         float ratio = mag() / max;
         if (ratio > 1) {
             x /= ratio;
             y /= ratio;
         }
+        return *this;
     }
 
     /**
@@ -203,20 +204,22 @@ public:
     @param origin the point to rotate around
     @param angle the angle in radians
     */
-    void rotate(const Point& origin, float angle) {
+    Point& rotate(const Point& origin, float angle) {
         *this -= origin;
         rotate(angle);
         *this += origin;
+        return *this;
     }
 
     /**
     * rotates the point around the origin
     */
-    void rotate(float angle) {
+    Point& rotate(float angle) {
         float newX = x * cos(angle) - y * sin(angle);
         float newY = y * cos(angle) + x * sin(angle);
         x = newX;
         y = newY;
+        return *this;
     }
 
     /**
@@ -229,9 +232,16 @@ public:
     }
 
     /**
+     * Returns a new Point rotated around the origin
+     */
+    Point rotated(const Point& origin, float angle) const {
+        return rotated(*this, origin, angle);
+    }
+
+    /**
     * static function to use rotate
     */
-    static Point rotate(const Point& pt, const Point& origin, float angle) {
+    static Point rotated(const Point& pt, const Point& origin, float angle) {
         Point newPt = pt;
         newPt.rotate(origin, angle);
         return newPt;
@@ -249,8 +259,8 @@ public:
 
     /**
     * Returns a vector with the same direction as this vector but with magnitude
-    * one,
-    * unless this vector is zero.
+    * one.
+    * If the vector is (0,0), Point(0,0) is returned
     */
     Point normalized() const {
         float m = mag();
@@ -287,21 +297,12 @@ public:
     /** returns the perpendicular to the point, Counter Clockwise */
     Point perpCCW() const { return Point(-y, x); }
 
-    /** saturates the magnitude of a vector */
-    static Geometry2d::Point saturate(Geometry2d::Point value, float max) {
-        float mag = value.mag();
-        if (mag > fabs(max)) {
-            return value.normalized() * fabs(max);
-        }
-        return value;
-    }
-
     /** returns the angle between the two points (radians) */
     float angleTo(const Point& other) const {
         return acos(normalized().dot(other.normalized()));
     }
 
-    float cross(const Point& other) const { return x * other.y - y * other.x; }
+    //float cross(const Point& other) const { return x * other.y - y * other.x; }
 
     std::string toString() const {
         std::stringstream str;
