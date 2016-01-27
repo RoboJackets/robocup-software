@@ -1,4 +1,4 @@
-#include "KickerBoard.hpp"
+#include "kicker-board.hpp"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mbed.h"
-#include "AVR910.h"
+#include <mbed.h>
+#include "avr910.hpp"
 #include <string>
 
 #define ATTINY13A_PAGE_SIZE   16
