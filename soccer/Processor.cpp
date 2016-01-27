@@ -40,7 +40,6 @@ RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
-
 // Joystick speed limits (for damped and non-damped mode)
 
 void Processor::createConfiguration(Configuration* cfg) {
@@ -679,7 +678,8 @@ JoystickControlValues Processor::getJoystickControlValues() {
 
     // scale up speeds, respecting the damping modes
     if (_dampedTranslation) {
-        vals.translation *= Joystick::JoystickTranslationMaxDampedSpeed->value();
+        vals.translation *=
+            Joystick::JoystickTranslationMaxDampedSpeed->value();
     } else {
         vals.translation *= Joystick::JoystickRotationMaxSpeed->value();
     }
