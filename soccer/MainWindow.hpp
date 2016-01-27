@@ -189,7 +189,7 @@ private:
     // rates. To keep rounding consistent, only access this with frameNumber().
     double _doubleFrameNumber;
 
-    Time _lastUpdateTime;
+    RJ::Time _lastUpdateTime;
 
     QLabel* _currentPlay;
     QLabel* _logFile;
@@ -203,5 +203,5 @@ private:
     /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons;
 
-    Time _firstLogTimestamp = -1;
+    RJ::Time _firstLogTimestamp = -1;
 };

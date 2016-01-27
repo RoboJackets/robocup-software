@@ -1,9 +1,9 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 
-const float DegreesToRadians = M_PI / 180.0;
-const float RadiansToDegrees = 180.0 / M_PI;
+#define DegreesToRadians(x) (float)((x)*M_PI / 180.f)
+#define RadiansToDegrees(x) (float)((x)*180.f / M_PI)
 
 template <typename T>
 static inline T sign(T f) {

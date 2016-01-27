@@ -2,6 +2,8 @@
 
 #include <sys/time.h>
 
+namespace RJ {
+
 /// type for storing time in microseconds
 typedef uint64_t Time;
 
@@ -12,3 +14,5 @@ static inline Time timestamp() {
 
     return (Time)time.tv_sec * 1000000 + (Time)time.tv_usec;
 }
+
+}  // namespace RJ

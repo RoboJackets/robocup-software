@@ -141,7 +141,7 @@ void OurRobot::resetForNextIteration() {
     radioTx.set_decel(10);
 
     if (charged()) {
-        _lastChargedTime = timestamp();
+        _lastChargedTime = RJ::timestamp();
     }
 
     _local_obstacles.clear();
@@ -154,8 +154,8 @@ void OurRobot::resetForNextIteration() {
 void OurRobot::resetMotionConstraints() {
     _rotationConstraints = RotationConstraints();
     _motionConstraints = MotionConstraints();
-    _motionCommand = make_unique<Planning::EmptyCommand>();
-    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
+    _motionCommand = std::make_unique<Planning::EmptyCommand>();
+    _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
 }
 
 void OurRobot::stop() {
@@ -172,7 +172,7 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
         cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
              << ", " << goal.y << ")" << endl;
 
-    _motionCommand = make_unique<Planning::DirectPathTargetCommand>(
+    _motionCommand = std::make_unique<Planning::DirectPathTargetCommand>(
         MotionInstant(goal, (goal - pos).normalized() * endSpeed));
 
     *_cmdText << "moveDirect(" << goal << ")" << endl;
@@ -187,7 +187,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
         cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", "
              << goal.y << ")" << std::endl;
 
-    _motionCommand = make_unique<Planning::PathTargetCommand>(
+    _motionCommand = std::make_unique<Planning::PathTargetCommand>(
         MotionInstant(goal, endVelocity));
 
     *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
@@ -196,16 +196,16 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
-    _motionCommand = make_unique<Planning::WorldVelTargetCommand>(v);
+    _motionCommand = std::make_unique<Planning::WorldVelTargetCommand>(v);
     setPath(nullptr);
     *_cmdText << "worldVel(" << v.x << ", " << v.y << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
+    _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
 
     // reset other conflicting motion commands
-    _motionCommand = make_unique<Planning::PivotCommand>(pivotTarget);
+    _motionCommand = std::make_unique<Planning::PivotCommand>(pivotTarget);
     setPath(nullptr);
 
     *_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")"
@@ -233,7 +233,7 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged()) ? 0.0 : (float)(timestamp() - _lastChargedTime) *
+    return (charged()) ? 0.0 : (float)(RJ::timestamp() - _lastChargedTime) *
                                    TimestampToSecs;
 }
 
@@ -245,13 +245,13 @@ void OurRobot::dribble(uint8_t speed) {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-    _rotationCommand = make_unique<Planning::FacePointCommand>(pt);
+    _rotationCommand = std::make_unique<Planning::FacePointCommand>(pt);
 
     *_cmdText << "face(" << pt.x << ", " << pt.y << ")" << endl;
 }
 
 void OurRobot::faceNone() {
-    _rotationCommand = make_unique<Planning::EmptyAngleCommand>();
+    _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
 
     *_cmdText << "faceNone()" << endl;
 }
@@ -524,15 +524,15 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
     }
 }
 
-bool OurRobot::rxIsFresh(Time age) const {
-    return (timestamp() - _radioRx.timestamp()) < age;
+bool OurRobot::rxIsFresh(RJ::Time age) const {
+    return (RJ::timestamp() - _radioRx.timestamp()) < age;
 }
 
-Time OurRobot::lastKickTime() const { return _lastKickTime; }
+RJ::Time OurRobot::lastKickTime() const { return _lastKickTime; }
 
 void OurRobot::radioRxUpdated() {
     if (_radioRx.kicker_status() < _lastKickerStatus) {
-        _lastKickTime = timestamp();
+        _lastKickTime = RJ::timestamp();
     }
     _lastKickerStatus = _radioRx.kicker_status();
 }

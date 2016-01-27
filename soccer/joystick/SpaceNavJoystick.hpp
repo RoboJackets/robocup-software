@@ -48,5 +48,5 @@ protected:
     //  store normalized values
     JoystickControlValues _controlValues;
 
-    Time _lastDribbleTime;
+    RJ::Time _lastDribbleTime;
 };

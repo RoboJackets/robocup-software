@@ -107,7 +107,7 @@ std::string stringFromCommand(Command c);
 class NewRefereePacket {
 public:
     /// Local time when the packet was received
-    Time receivedTime;
+    RJ::Time receivedTime;
 
     /// protobuf message from the vision system
     SSL_Referee wrapper;
@@ -147,8 +147,8 @@ public:
 
     // The UNIX timestamp when the packet was sent, in microseconds.
     // Divide by 1,000,000 to get a time_t.
-    Time sent_time;
-    Time received_time;
+    RJ::Time sent_time;
+    RJ::Time received_time;
 
     // The number of microseconds left in the stage.
     // The following stages have this value; the rest do not:
@@ -163,14 +163,14 @@ public:
     //
     // If the stage runs over its specified time, this value
     // becomes negative.
-    int stage_time_left;
+    int stage_time_left = 0;
 
     // The number of commands issued since startup (mod 2^32).
     uint command_counter;
 
     // The UNIX timestamp when the command was issued, in microseconds.
     // This value changes only when a new command is issued, not on each packet.
-    Time command_timestamp;
+    RJ::Time command_timestamp;
 
     TeamInfo yellow_info;
     TeamInfo blue_info;
