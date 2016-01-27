@@ -1,6 +1,5 @@
 #include <mbed.h>
-#include <Console.hpp>
-#include "KickerBoard.hpp"
+#include "kicker-board.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
@@ -22,7 +21,6 @@ void imAlive()
 int main() 
 {
     lifeLight.attach(&imAlive, 0.25);
-    initConsole();
 
     //  initialize kicker board and flash it with new firmware if necessary
     KickerBoard kickerBoard(p11, p12, p13, p27, string("/local/kickerFW"));
@@ -30,15 +28,8 @@ int main()
     
     while (true)
     {
-        //execute any active iterative command
-        executeIterativeCommand();
-
-        // check if a system stop is requested
-        if (isSysStopReq() == true)
-            break;
-
         //main loop heartbeat
-        wait(0.1);
+        wait(0.3);
         ledTwo = !ledTwo;
     }
 
