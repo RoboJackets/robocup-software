@@ -140,8 +140,9 @@ void MotionControl::run() {
 
         // convert from microseconds to seconds
         float timeIntoPath =
-            RJ::TimestampToSecs((float)(RJ::timestamp() - _robot->path()->startTime())) 
-            + 1.0 / 60.0;
+            RJ::TimestampToSecs(
+                (float)(RJ::timestamp() - _robot->path()->startTime())) +
+            1.0 / 60.0;
 
         // evaluate path - where should we be right now?
         boost::optional<MotionInstant> optTarget =
