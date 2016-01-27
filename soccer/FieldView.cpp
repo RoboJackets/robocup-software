@@ -309,8 +309,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                     2;
                 float pcntMaxSpd =
                     avgVel.mag() / MotionConstraints::defaultMaxSpeed();
-                QColor mixedColor(std::min((int)(255 * pcntMaxSpd), 255), 0,
-                                  std::min((int)(255 * (1 - pcntMaxSpd)), 255));
+                QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
+                                  std::max(0, std::min((int)(255 * (1 - pcntMaxSpd)), 255)));
                 QPen pen(mixedColor);
                 pen.setCapStyle(Qt::RoundCap);
                 pen.setWidthF(0.03);
