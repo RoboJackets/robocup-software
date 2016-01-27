@@ -173,7 +173,7 @@ set(SOCCER_TEST_SRC
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)
 qt5_use_modules(test-soccer Core Widgets Xml)
-target_link_libraries(test-soccer ${GTEST_BOTH_LIBRARIES})
+target_link_libraries(test-soccer ${GTEST_LIBRARIES})
 add_dependencies(test-soccer googletest)
 
 # Don't build the tests by default

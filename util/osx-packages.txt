@@ -12,6 +12,7 @@ boost-build
 boost-python --with-python3
 ccache
 cmake
+ninja
 homebrew/x11/freeglut
 libusb
 freeglut
@@ -19,3 +20,4 @@ eigen
 bullet --with-shared
 protobuf
 clang-format
+graphviz

@@ -23,6 +23,6 @@ private:
 
     JoystickControlValues _controls;
 
-    Time _lastDribblerTime;
-    Time _lastKickerTime;
+    RJ::Time _lastDribblerTime;
+    RJ::Time _lastKickerTime;
 };

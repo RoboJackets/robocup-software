@@ -52,6 +52,30 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     p.setColor(QPalette::Window, QColor(0, 85.0, 0));
     setPalette(p);
     setAutoFillBackground(true);
+
+    // Initialize the label and cursor for hovering display
+    _posLabel = new QLabel(this);
+    QRect rect =
+        QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
+    _posLabel->setMinimumWidth(rect.width());
+    _posLabel->setStyleSheet("QLabel { color : red; }");
+
+    // enable mouse tracking so we can update position label
+    setMouseTracking(true);
+}
+
+void FieldView::leaveEvent(QEvent* event) { _posLabel->setVisible(false); }
+
+void FieldView::enterEvent(QEvent* event) { _posLabel->setVisible(true); }
+
+void FieldView::mouseMoveEvent(QMouseEvent* me) {
+    _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
+    Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    QString s = "X: ";
+    s += QString::number(roundf(pos.x * 100) / 100);
+    s += " Y: ";
+    s += QString::number(roundf(pos.y * 100) / 100);
+    _posLabel->setText(s);
 }
 
 std::shared_ptr<LogFrame> FieldView::currentFrame() {
@@ -285,8 +309,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                     2;
                 float pcntMaxSpd =
                     avgVel.mag() / MotionConstraints::defaultMaxSpeed();
-                QColor mixedColor(std::min((int)(255 * pcntMaxSpd), 255), 0,
-                                  std::min((int)(255 * (1 - pcntMaxSpd)), 255));
+                QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
+                                  std::max(0, std::min((int)(255 * (1 - pcntMaxSpd)), 255)));
                 QPen pen(mixedColor);
                 pen.setCapStyle(Qt::RoundCap);
                 pen.setWidthF(0.03);
@@ -657,7 +681,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID,
         painter.setBrush(Qt::yellow);
     }
 
-    painter.rotate(theta * RadiansToDegrees + 90);
+    painter.rotate(RadiansToDegrees(theta) + 90);
 
     int span = 40;
 
