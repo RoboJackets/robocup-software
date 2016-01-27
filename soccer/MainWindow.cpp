@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _autoExternalReferee = true;
     _doubleFrameNumber = -1;
 
-    _lastUpdateTime = timestamp();
+    _lastUpdateTime = RJ::timestamp();
     _history.resize(2 * 60);
 
     _ui.setupUi(this);
@@ -227,7 +227,7 @@ void MainWindow::updateViews() {
     }
 
     // Time since last update
-    Time time = timestamp();
+    RJ::Time time = RJ::timestamp();
     int delta_us = time - _lastUpdateTime;
     _lastUpdateTime = time;
     double framerate = 1000000.0 / delta_us;
@@ -304,10 +304,9 @@ void MainWindow::updateViews() {
              i < liveFrame->debug_layers_size(); ++i) {
             const QString name =
                 QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled =
-                !std::any_of(defaultHiddenLayers.begin(),
-                             defaultHiddenLayers.end(),
-                             [&](QString string) { return string == name; });
+            bool enabled = !std::any_of(
+                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                [&](QString string) { return string == name; });
             addLayer(i, name, enabled);
         }
 
@@ -393,9 +392,11 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage).c_str());
+                              _processor->refereeModule()->stage)
+                              .c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command).c_str());
+                                _processor->refereeModule()->command)
+                                .c_str());
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
@@ -676,7 +677,7 @@ void MainWindow::updateStatus() {
 
     // Get processing thread status
     Processor::Status ps = _processor->status();
-    Time curTime = timestamp();
+    RJ::Time curTime = RJ::timestamp();
 
     // Determine if we are receiving packets from an external referee
     bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
@@ -1052,7 +1053,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction* single = nullptr, * notSingle = nullptr;
+    QAction *single = nullptr, *notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");

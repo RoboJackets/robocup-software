@@ -47,7 +47,7 @@
 #include <assert.h>
 #include "kalman.h"
 #include "difference_kalman.hpp"
-#include <math.h>
+#include <cmath>
 
 double dt = 0.001;
 double t_0 = 0;

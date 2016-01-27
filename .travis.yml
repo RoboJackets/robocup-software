@@ -1,5 +1,6 @@
 
 language: objective-c
+osx_image: xcode7
 
 # only run travis-ci on master
 branches:
@@ -7,8 +8,8 @@ branches:
     - master
 
 before_install:
-  - brew update
-  - brew upgrade
+  - travis_wait brew update > brew-update.log
+  - travis_wait brew upgrade > brew-upgrade.log
   - util/osx-setup
 
 cache:

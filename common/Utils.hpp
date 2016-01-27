@@ -13,17 +13,18 @@
 #include <vector>
 #include <QtWidgets>
 #include <memory>
-namespace std {
-template <typename T, typename... Args>
-unique_ptr<T> make_unique(Args&&... args) {
-    return unique_ptr<T>(new T(forward<Args>(args)...));
-}
-}
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
-template <class exception>
-inline void debugThrow(const exception& e) {
+inline void debugLog(const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+}
+
+template <class T,
+          typename std::enable_if<std::is_base_of<std::exception, T>::value,
+                                  int>::type = 0>
+inline void debugThrow(const T& e) {
+    debugLog(e);
     if (THROW_DEBUG_EXCEPTIONS) {
         throw e;
     }
@@ -32,7 +33,6 @@ inline void debugThrow(const exception& e) {
 inline void debugThrow(const std::string& string) {
     debugThrow(std::runtime_error(string));
 }
-
 /**
  * @brief Restricts the given angle to be between pi and -pi
  *
