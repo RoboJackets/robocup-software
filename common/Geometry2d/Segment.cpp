@@ -1,6 +1,7 @@
 
 #include "Segment.hpp"
 #include <sstream>
+#include "Util.hpp"
 
 using namespace std;
 
@@ -18,6 +19,13 @@ Rect Segment::bbox() const {
 }
 
 float Segment::distTo(const Point& other) const {
+    float dist = nearestPoint(other).distTo(other);
+    if (nearlyEqual(dist, 0)) {
+        return 0;
+    }
+    return dist;
+    /*
+
     // Calculate the distance in the delta direction of other with respect to
     // the segment's first endpoint.
     Point dp = pt[1] - pt[0];
@@ -36,6 +44,7 @@ float Segment::distTo(const Point& other) const {
         // line
         return Line::distTo(other);
     }
+    */
 }
 
 bool Segment::intersects(const Segment& other, Point* intr) const {
@@ -112,14 +121,12 @@ bool Segment::intersects(const Circle& circle) const {
 
 bool Segment::intersects(const Line& line, Point* intr) const {
     Point intersection_point;
-    auto res = Line::intersects(line, &intersection_point);
+    bool res = Line::intersects(Line(*this), line, &intersection_point);
     if (res && distTo(intersection_point) == 0) {
         if (intr != nullptr) {
             *intr = intersection_point;
-            return true;
-        } else {
-            return false;
         }
+        return true;
     } else {
         return false;
     }
@@ -155,6 +162,7 @@ bool Segment::nearPoint(const Point& point, float threshold) const {
     return d >= 0 && d <= 1;
 }
 
+/*
 bool Segment::nearPointPerp(const Point& point, float threshold) const {
     const Point& p1 = pt[0];
     const Point& p2 = pt[1];
@@ -177,10 +185,10 @@ bool Segment::nearPointPerp(const Point& point, float threshold) const {
 
     return d >= 0 && d <= 1;
 }
+*/
 
 Point Segment::nearestPoint(const Point& p) const {
     const float magsq = delta().magsq();
-
     if (magsq == 0) return pt[0];
 
     Point v_hat = delta() / sqrt(magsq);
@@ -197,7 +205,7 @@ Point Segment::nearestPoint(const Point& p) const {
 
 Point Segment::nearestPoint(const Line& l) const {
     Point intersection;
-    if (l.intersects(*this, &intersection)) {
+    if (intersects(l, &intersection)) {
         return intersection;
     } else if (l.distTo(pt[0]) < l.distTo(pt[1])) {
         return pt[0];

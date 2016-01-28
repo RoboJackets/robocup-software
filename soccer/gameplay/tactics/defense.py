@@ -422,7 +422,7 @@ class Defense(composite_behavior.CompositeBehavior):
                     pts = [threat.pos, threat.best_shot_window.segment.get_pt(0), threat.best_shot_window.segment.get_pt(1)]
                     shot_color = (255, 0, 0, 150)   # translucent red
                     main.system_state().draw_polygon(pts, shot_color, "Defense")
-                    main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
+                    main.system_state().draw_segment(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
 
                     self.win_eval.excluded_robots.clear()
                     _, best_window = self.win_eval.eval_pt_to_our_goal(threat.pos)

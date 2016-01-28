@@ -108,7 +108,7 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
 
         if move.pos != None:
             main.system_state().draw_circle(move.pos, 0.02, constants.Colors.Green, "Mark")
-            main.system_state().draw_segment(seg.get_pt(0), seg.get_pt(1), constants.Colors.Green, "Mark")
+            main.system_state().draw_segment(seg, constants.Colors.Green, "Mark")
             main.system_state().draw_arc(arc_left, constants.Colors.Green, "Mark")
             main.system_state().draw_arc(arc_right, constants.Colors.Green, "Mark")
 

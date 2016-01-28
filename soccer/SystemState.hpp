@@ -70,8 +70,13 @@ public:
      */
 
     /** @ingroup drawing_functions */
-    void drawLine(const Geometry2d::Line& line, const QColor& color = Qt::black,
+    void drawLine(const Geometry2d::Segment& line,
+                  const QColor& color = Qt::black,
                   const QString& layer = QString());
+    /** @ingroup drawing_functions */
+    void drawSegment(const Geometry2d::Segment& line,
+                     const QColor& color = Qt::black,
+                     const QString& layer = QString());
     /** @ingroup drawing_functions */
     void drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
                   const QColor& color = Qt::black,

@@ -15,8 +15,8 @@ def is_moving_towards_our_goal():
             WiderGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0 + fudge_factor, 0),
                                         robocup.Point(-constants.Field.GoalWidth / 2.0 - fudge_factor, 0))
 
-            pt = ball_path.line_intersection(WiderGoalSegment)
-            return pt != None and abs(pt.x) < WiderGoalSegment.delta().mag() / 2.0
+            pt = ball_path.segment_intersection(WiderGoalSegment)
+            return pt != None
 
     return False
 
