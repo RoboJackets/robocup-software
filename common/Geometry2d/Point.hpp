@@ -302,7 +302,8 @@ public:
         return acos(normalized().dot(other.normalized()));
     }
 
-    //float cross(const Point& other) const { return x * other.y - y * other.x; }
+    // float cross(const Point& other) const { return x * other.y - y * other.x;
+    // }
 
     std::string toString() const {
         std::stringstream str;

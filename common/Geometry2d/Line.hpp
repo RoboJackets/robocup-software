@@ -5,20 +5,23 @@
 
 namespace Geometry2d {
 class Circle;
+class Segment;
 
 class Line {
 public:
     Line() {}
 
-    Line(const Line& other) {
+    explicit Line(const Line& other) {
         pt[0] = other.pt[0];
         pt[1] = other.pt[1];
     }
 
-    Line(Point p1, Point p2) {
+    explicit Line(Point p1, Point p2) {
         pt[0] = p1;
         pt[1] = p2;
     }
+
+    explicit Line(const Segment&);
 
     Point delta() const { return pt[1] - pt[0]; }
 
@@ -47,6 +50,11 @@ public:
     @return true if the lines intersect, false otherwise
     */
     bool intersects(const Line& other, Point* intersection = nullptr) const;
+
+    bool intersects(const Segment& other, Point* intersection = nullptr) const;
+
+    static bool intersects(const Line& line1, const Line& line2,
+                           Point* intersection = nullptr);
 
     /** returns the points of intersection b/t circle and line */
     bool intersects(const Circle& circle, Point* p1 = nullptr,

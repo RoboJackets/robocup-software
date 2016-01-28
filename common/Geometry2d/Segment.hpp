@@ -9,12 +9,19 @@
 #include <memory>
 
 namespace Geometry2d {
-class Segment : public Line {
+class Segment {
 public:
+    /** the line consists of two points */
+    Point pt[2];
+
     Segment() {}
 
-    Segment(const Segment& other) : Line(other) {}
-    Segment(Point p1, Point p2) : Line(p1, p2) {}
+    Segment(Point p1, Point p2) {
+        pt[0] = p1;
+        pt[1] = p2;
+    }
+
+    explicit Segment(const Line& other) : Segment(other.pt[0], other.pt[1]) {}
 
     Segment& operator+=(const Point& delta) {
         pt[0] += delta;
@@ -31,11 +38,14 @@ public:
     /* returns the distance to point other */
     float distTo(const Point& other) const;
 
+    /* Returns the relative vector */
+    Point delta() const { return pt[1] - pt[0]; }
+
     /* returns the length of the segment */
     float length() const { return (pt[1] - pt[0]).mag(); }
 
     bool nearPoint(const Point& point, float threshold) const;
-    bool nearPointPerp(const Point& point, float threshold) const;
+    // bool nearPointPerp(const Point& point, float threshold) const;
     bool nearSegment(const Segment& other, float threshold) const;
 
     /** find the nearest point on the segment given @a p */

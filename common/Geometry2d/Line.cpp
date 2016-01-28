@@ -2,33 +2,39 @@
 #include "Point.hpp"
 #include "Circle.hpp"
 #include "Util.hpp"
-
+#include "Segment.hpp"
 namespace Geometry2d {
 
+Line::Line(const Segment& segment) : Line(segment.pt[0], segment.pt[1]) {}
+
 bool Line::intersects(const Line& other, Point* intr) const {
+    return intersects(*this, other, intr);
+}
+
+bool Line::intersects(const Line& line1, const Line& line2,
+                      Point* intersection) {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line-LineIntersection.html
 
-    float x1 = pt[0].x;
-    float y1 = pt[0].y;
-    float x2 = pt[1].x;
-    float y2 = pt[1].y;
-    float x3 = other.pt[0].x;
-    float y3 = other.pt[0].y;
-    float x4 = other.pt[1].x;
-    float y4 = other.pt[1].y;
+    float x1 = line1.pt[0].x;
+    float y1 = line1.pt[0].y;
+    float x2 = line1.pt[1].x;
+    float y2 = line1.pt[1].y;
+    float x3 = line2.pt[0].x;
+    float y3 = line2.pt[0].y;
+    float x4 = line2.pt[1].x;
+    float y4 = line2.pt[1].y;
 
     float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     if (denom == 0) return false;
 
-    if (intr) {
+    if (intersection) {
         float deta = x1 * y2 - y1 * x2;
         float detb = x3 * y4 - y3 * x4;
 
-        intr->x = (deta * (x3 - x4) - (x1 - x2) * detb) / denom;
-        intr->y = (deta * (y3 - y4) - (y1 - y2) * detb) / denom;
+        intersection->x = (deta * (x3 - x4) - (x1 - x2) * detb) / denom;
+        intersection->y = (deta * (y3 - y4) - (y1 - y2) * detb) / denom;
     }
-
     return true;
 }
 
@@ -43,7 +49,6 @@ Point Line::nearestPoint(Point p) const {
     Point v_hat = delta().normalized();
     return pt[0] + v_hat * v_hat.dot(p - pt[0]);
 }
-
 bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
 
@@ -85,4 +90,7 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     return true;
 }
 
+bool Line::intersects(const Segment& other, Point* intersection) const {
+    return other.intersects(*this, intersection);
+}
 }  // namespace Geometry2d
