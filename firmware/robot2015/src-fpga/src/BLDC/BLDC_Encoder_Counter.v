@@ -48,7 +48,7 @@ wire count_down =
 
 
 // Begin main logic
-always @(posedge clk) begin
+always @( posedge clk ) begin : ENCODER_COUNTER
 
     enc_d <= enc;
 
