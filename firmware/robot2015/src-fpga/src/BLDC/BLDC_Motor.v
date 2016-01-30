@@ -9,6 +9,9 @@
 `ifndef _BLDC_MOTOR_
 `define _BLDC_MOTOR_
 
+`define DRIBBLER_MOTOR_EN
+`undef DRIBBLER_MOTOR_EN
+
 `include "BLDC_Driver.v"
 `include "BLDC_Hall_Counter.v"
 `include "BLDC_Encoder_Counter.v"
@@ -18,11 +21,10 @@
 module BLDC_Motor ( clk, en, reset_enc_count, reset_hall_count, duty_cycle, enc, hall, phaseH, phaseL, enc_count, hall_count, connected );
 
 // Module parameters - passed parameters will overwrite the values here
-parameter MIN_DUTY_CYCLE =          ( 0 );
-parameter MAX_DUTY_CYCLE =          ( 'h1FF );
-parameter MAX_DUTY_CYCLE_COUNTER =  ( MAX_DUTY_CYCLE );
-parameter ENCODER_COUNT_WIDTH =     ( 15 );
-parameter HALL_COUNT_WIDTH =        ( 7 );
+parameter MAX_DUTY_CYCLE =          ( 'h1FF             );
+parameter MAX_DUTY_CYCLE_COUNTER =  ( MAX_DUTY_CYCLE    );
+parameter ENCODER_COUNT_WIDTH =     ( 15                );
+parameter HALL_COUNT_WIDTH =        ( 7                 );
 
 // Local parameters - can not be altered outside this module
 `include "log2-macro.v"     // This must be included here
@@ -30,7 +32,7 @@ localparam DUTY_CYCLE_WIDTH =   `LOG2( MAX_DUTY_CYCLE );
 
 // Module inputs/outputs
 input clk, en, reset_enc_count, reset_hall_count;
-input [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
+input [DUTY_CYCLE_WIDTH:0] duty_cycle;  // 1 more than requested
 input [1:0] enc;
 input [2:0] hall;
 output [2:0] phaseH, phaseL;
@@ -47,7 +49,7 @@ initial begin
 end
 
 // Instantiation of all the modules required for complete functioning with all sensors
-// =============================================connected==
+// ===============================================
 BLDC_Encoder_Counter #(         // Instantiation of the encoder for counting the ticks
     .COUNT_WIDTH                ( ENCODER_COUNT_WIDTH       )
     ) encoder_counter (
@@ -67,16 +69,15 @@ BLDC_Hall_Counter #(            // Instantiation of the hall effect sensor's cou
 );
 
 BLDC_Driver #(                  // Instantiation of the motor driving module
-    .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER    ) ,
-    .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE            ) ,
-    .MIN_DUTY_CYCLE             ( MIN_DUTY_CYCLE            ) ,
+    .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER <<1) ,
+    .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE << 1       ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 3                         )
+    .DEAD_TIME                  ( 1                         )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,
     .hall                       ( hall                      ) ,
-    .duty_cycle                 ( duty_cycle                ) ,
+    .duty_cycle                 ( duty_cycle << 1           ) ,
     .phaseH                     ( phaseH                    ) ,
     .phaseL                     ( phaseL                    ) ,
     .connected                  ( hall_connected            ) ,
@@ -88,22 +89,23 @@ assign connected = hall_connected & ~(hall_fault);
 endmodule
 
 
+`ifdef DRIBBLER_MOTOR_EN
+
 // BLDC_Motor module - no encoder
 module BLDC_Motor_No_Encoder ( clk, en, reset_hall_count, duty_cycle, hall, phaseH, phaseL, hall_count, connected );
 
 // Module parameters - passed parameters will overwrite the values here
-parameter MIN_DUTY_CYCLE =          ( 0 );
-parameter MAX_DUTY_CYCLE =          ( 'h1FF );
-parameter MAX_DUTY_CYCLE_COUNTER =  ( MAX_DUTY_CYCLE );
-parameter HALL_COUNT_WIDTH =        ( 7 );
+parameter MAX_DUTY_CYCLE =          ( 'h1FF             );
+parameter MAX_DUTY_CYCLE_COUNTER =  ( MAX_DUTY_CYCLE    );
+parameter HALL_COUNT_WIDTH =        ( 7                 );
 
 // Local parameters - can not be altered outside this module
 `include "log2-macro.v"     // This must be included here
 localparam DUTY_CYCLE_WIDTH =   `LOG2( MAX_DUTY_CYCLE );
 
-// Module inputs/outputs
+// Module inputs/outputsrecirculation
 input clk, en, reset_hall_count;
-input [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
+input [DUTY_CYCLE_WIDTH:0] duty_cycle;  // 1 more than requested
 input [2:0] hall;
 output [2:0] phaseH, phaseL;
 output [HALL_COUNT_WIDTH-1:0] hall_count;
@@ -127,16 +129,15 @@ BLDC_Hall_Counter #(            // Instantiation of the hall effect sensor's cou
 );
 
 BLDC_Driver #(                  // Instantiation of the motor driving module
-    .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER    ) ,
-    .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE            ) ,
-    .MIN_DUTY_CYCLE             ( MIN_DUTY_CYCLE            ) ,
+    .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER <<1) ,
+    .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE << 1       ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 3                         )
+    .DEAD_TIME                  ( 2                         )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,
     .hall                       ( hall                      ) ,
-    .duty_cycle                 ( duty_cycle                ) ,
+    .duty_cycle                 ( duty_cycle << 1           ) ,
     .phaseH                     ( phaseH                    ) ,
     .phaseL                     ( phaseL                    ) ,
     .connected                  ( hall_connected            ) ,
@@ -146,5 +147,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
 assign connected = hall_connected & ~(hall_fault);
 
 endmodule
+
+`endif  // DRIBBLER_MOTOR_EN
 
 `endif
