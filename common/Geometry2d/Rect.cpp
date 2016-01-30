@@ -47,7 +47,8 @@ bool Rect::containsPoint(Point point) const {
 }
 
 bool Rect::hit(const Segment& seg) const {
-    return containsPoint(seg.pt[0]) || containsPoint(seg.pt[1]) ||
+    return containsPoint(seg.pt[0]) ||
+           containsPoint(seg.pt[1]) ||
            seg.intersects(
                Segment(Point(minx(), miny()), Point(minx(), maxy()))) ||
            seg.intersects(
@@ -58,7 +59,9 @@ bool Rect::hit(const Segment& seg) const {
                Segment(Point(maxx(), maxy()), Point(maxx(), miny())));
 }
 
-bool Rect::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
+bool Rect::hit(Point pt) const {
+    return nearPoint(pt, Robot_Radius);
+}
 
 void Rect::expand(Point p) {
     pt[0].x = min(pt[0].x, p.x);
@@ -115,10 +118,12 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
 
 bool Rect::nearPoint(Point other, float threshold) const {
     // Simpler case if this rect is degenerate
-    if (pt[0] == pt[1]) return pt[0].distTo(other) < threshold;
+    if (pt[0] == pt[1])
+        return pt[0].distTo(other) <= threshold;
 
     // If the point is inside this rect then it is near it.
-    if (this->containsPoint(other)) return true;
+    if (this->containsPoint(other))
+        return true;
 
     Point ur = Point(pt[1].x, pt[0].y);
     Point ll = Point(pt[0].x, pt[1].y);
@@ -128,7 +133,8 @@ bool Rect::nearPoint(Point other, float threshold) const {
     // If any edge of this rect is near the point, then the point is near the
     // rect.
     for (int i = 0; i < 4; i++) {
-        if (edge[i].nearPoint(other, threshold)) return true;
+        if (edge[i].nearPoint(other, threshold))
+            return true;
     }
 
     return false;
