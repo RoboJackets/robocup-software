@@ -1,5 +1,6 @@
 #include "robocup-py.hpp"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/register_ptr_to_python.hpp>
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -641,6 +642,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
+
+    register_ptr_to_python< SystemState* >();
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("Length", &Field_Dimensions::Length)

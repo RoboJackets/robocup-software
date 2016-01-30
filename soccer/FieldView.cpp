@@ -309,8 +309,9 @@ void FieldView::drawTeamSpace(QPainter& p) {
                     2;
                 float pcntMaxSpd =
                     avgVel.mag() / MotionConstraints::defaultMaxSpeed();
-                QColor mixedColor(std::min((int)(255 * pcntMaxSpd), 255), 0,
-                                  std::min((int)(255 * (1 - pcntMaxSpd)), 255));
+                QColor mixedColor(
+                    std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
+                    std::max(0, std::min((int)(255 * (1 - pcntMaxSpd)), 255)));
                 QPen pen(mixedColor);
                 pen.setCapStyle(Qt::RoundCap);
                 pen.setWidthF(0.03);
@@ -390,8 +391,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // maps robots to their comet trails, so we can draw a path of where each
     // robot has been over the past X frames the pair used as a key is of the
-    // form (team, robot_id).  Blue team = 1, yellow = 2. we only draw trails
-    // for robots that exist in the current frame
+    // form (team, robot_id).  Our team team = 1, opponent team = 2. we only
+    // draw trails for robots that exist in the current frame
     map<pair<int, int>, QPainterPath> cometTrails;
 
     /// populate @cometTrails with the past locations of each robot
@@ -410,7 +411,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 }
             }
 
-            for (const LogFrame::Robot& r : oldFrame->self()) {
+            for (const LogFrame::Robot& r : oldFrame->opp()) {
                 pair<int, int> key(2, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == 0) {
                     QPointF pt = qpointf(r.pos());
@@ -426,7 +427,12 @@ void FieldView::drawTeamSpace(QPainter& p) {
     // draw robot comet trails
     const float cometTrailPenSize = 0.07;
     for (auto& kv : cometTrails) {
-        QColor color = kv.first.first == 1 ? Qt::blue : Qt::yellow;
+        // note: kv.first.first is 1 for our team and 2 for their team
+        bool ourTeam = kv.first.first == 1;
+        bool blue = frame->blue_team();
+        const QColor color = (ourTeam && blue) ? Qt::blue : (ourTeam && !blue)
+                                                                ? Qt::blue
+                                                                : Qt::yellow;
         QPen pen(color, cometTrailPenSize);
         pen.setCapStyle(Qt::RoundCap);
         p.setPen(pen);
