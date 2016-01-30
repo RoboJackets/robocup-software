@@ -133,7 +133,7 @@ void MCP23017::config(unsigned short dir_config, unsigned short pullup_config,
     internalPullupMask(pullup_config);
     inputPolarityMask(polarity_config);
 
-    LOG(INIT,
+    LOG(INF2,
         "IO Expander Configuration:\r\n"
         "    IODIR:\t0x%04X\r\n"
         "    GPPU:\t0x%04X\r\n"
