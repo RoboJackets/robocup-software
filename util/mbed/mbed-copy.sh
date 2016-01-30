@@ -56,7 +56,7 @@ function err_exit {
 
 function err_exit_on_copy {
     # unmount the mbed
-    sudo umount "$mnt_point"
+    sudo umount -l "$mnt_point"
     err_exit "failed to move files to external device(s)"
 }
 
