@@ -10,7 +10,6 @@
 #include <multicast.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
-#include <joystick/Joystick.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
@@ -41,6 +40,11 @@ std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
 // Joystick speed limits (for damped and non-damped mode)
+// Translation in m/s, Rotation in rad/s
+static const float JoystickRotationMaxSpeed = 4 * M_PI;
+static const float JoystickRotationMaxDampedSpeed = 1 * M_PI;
+static const float JoystickTranslationMaxSpeed = 3.0;
+static const float JoystickTranslationMaxDampedSpeed = 1.0;
 
 void Processor::createConfiguration(Configuration* cfg) {
     robotConfig2008 = new RobotConfig(cfg, "Rev2008");
@@ -678,15 +682,14 @@ JoystickControlValues Processor::getJoystickControlValues() {
 
     // scale up speeds, respecting the damping modes
     if (_dampedTranslation) {
-        vals.translation *=
-            Joystick::JoystickTranslationMaxDampedSpeed->value();
+        vals.translation *= JoystickTranslationMaxDampedSpeed;
     } else {
-        vals.translation *= Joystick::JoystickRotationMaxSpeed->value();
+        vals.translation *= JoystickRotationMaxSpeed;
     }
     if (_dampedRotation) {
-        vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+        vals.rotation *= JoystickRotationMaxDampedSpeed;
     } else {
-        vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+        vals.rotation *= JoystickRotationMaxSpeed;
     }
 
     // scale up kicker and dribbler speeds
