@@ -54,7 +54,7 @@ localparam NUM_PHASES =                  3;  // This will always be constant
 localparam HALL_STATE_STEADY_COUNT =    31;  // Threshold value in determining when the hall effect sensor is locked into an error state
 
 localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
-localparam STARTUP_STEP_COUNTER_WIDTH =  11;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
+localparam STARTUP_STEP_COUNTER_WIDTH =  7;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
 // The startup time is equal to (1/18.432) * 2^(STARTUP_COUNTER_WIDTH + STARTUP_STEP_COUNTER_WIDTH)
 // For now, we're shooting for somewhere in the range of 25ms to 30ms.
 

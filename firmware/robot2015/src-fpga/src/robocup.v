@@ -251,7 +251,8 @@ localparam DRV8303_OCP_MODE = 0;
 localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
-localparam DRV8303_OC_ADJ_VAL = 20;
+// DON'T SET THIS PAST 14! Ever!
+localparam DRV8303_OC_ADJ_VAL = 12;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature

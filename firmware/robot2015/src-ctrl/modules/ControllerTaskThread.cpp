@@ -153,7 +153,7 @@ void Task_Controller(void const* args) {
             ii = 0;
         }
 
-        duty_cycles.assign(5, 50);
+        duty_cycles.assign(5, 85);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
