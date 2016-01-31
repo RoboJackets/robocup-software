@@ -304,8 +304,7 @@ public:
 
     bool nearlyEquals(Point other) const;
 
-    // float cross(const Point& other) const { return x * other.y - y * other.x;
-    // }
+    float cross(const Point& other) const { return x * other.y - y * other.x; }
 
     std::string toString() const {
         std::stringstream str;
