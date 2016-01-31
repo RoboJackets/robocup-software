@@ -49,7 +49,7 @@ void legacy_rx_cb(rtp::packet* p) {
 void loopback_rx_cb(rtp::packet* p) {
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 100);
-    for (int i = 0; i < duty_cycles.size(); ++i)
+    for (size_t i = 0; i < duty_cycles.size(); ++i)
         duty_cycles.at(i) = 100 + 206 * i;
 
     if (p->payload.size()) {
