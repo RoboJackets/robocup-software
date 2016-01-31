@@ -1,5 +1,2 @@
 <map id="Joystick" name="Joystick">
-<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="176,251,283,277"/>
-<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="184,173,275,200"/>
-<area shape="rect" id="node5" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="176,83,283,109"/>
 </map>
