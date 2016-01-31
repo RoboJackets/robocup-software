@@ -141,4 +141,5 @@ pretty:
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file='$(CIRCLE_ARTIFACTS:.)/clean.patch'
+	@echo "Run this command to reformat code if needed: git apply <(wget $${LINK_PREFIX:-.}/clean.patch)"
+	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
