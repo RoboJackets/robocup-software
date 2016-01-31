@@ -302,6 +302,8 @@ public:
         return acos(normalized().dot(other.normalized()));
     }
 
+    bool nearlyEquals(Point other) const;
+
     // float cross(const Point& other) const { return x * other.y - y * other.x;
     // }
 
