@@ -12,7 +12,6 @@ set(ROBOCUP_LIB_SRC
     "FieldView.cpp"
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
-    "joystick/Joystick.cpp"
     "joystick/GamepadJoystick.cpp"
     "joystick/SpaceNavJoystick.cpp"
     "Logger.cpp"
