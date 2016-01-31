@@ -6,5 +6,4 @@ munkres	# provides the 'hungarian algorithm', which we use for robot role assign
 pylint #static checker for python
 pyserial
 
-# stylize>=0.2.2 # code reformatting and checkstyling
-git+https://github.com/justbuchanan/stylize@output-patch # 0.2.0 dev branch
+stylize>=0.2.0 # code reformatting and checkstyling
