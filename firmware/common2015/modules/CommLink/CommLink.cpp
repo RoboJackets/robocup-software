@@ -80,14 +80,12 @@ void CommLink::rxThread(void const* arg) {
     CommLink* inst =
         const_cast<CommLink*>(reinterpret_cast<const CommLink*>(arg));
 
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
-
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
     ASSERT(inst->_rxID != nullptr);
-    threadPriority = osThreadGetPriority(inst->_rxID);
+    // Store our priority so we know what to reset it to if ever needed
+    osPriority threadPriority = osThreadGetPriority(inst->_rxID);
 
     LOG(INIT,
         "RX communication link ready!\r\n    Thread ID:\t%u\r\n"
@@ -128,8 +126,6 @@ void CommLink::ready() { osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD); }
 
 void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
 
-// Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN
-// ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
 void CommLink::ISR() { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 
 void CommLink::radio_select() { *_cs = 0; }

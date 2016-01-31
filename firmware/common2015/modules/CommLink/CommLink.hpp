@@ -68,6 +68,9 @@ protected:
     /// Kill any threads and free the allocated stack.
     /// Always call in any derived class's deconstructors!
     void cleanup();
+
+    /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
+    /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
     void radio_select();
     void radio_deselect();

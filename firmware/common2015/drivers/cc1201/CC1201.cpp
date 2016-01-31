@@ -66,11 +66,9 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     // Wait until radio's TX buffer is emptied
     uint8_t bts = 1;
-
     do {
         bts = readReg(CC1201_NUM_TXBYTES);
         Thread::wait(2);
-
     } while (bts != 0);
 
     return COMM_SUCCESS;
