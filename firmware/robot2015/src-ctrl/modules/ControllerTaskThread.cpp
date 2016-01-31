@@ -108,7 +108,11 @@ void Task_Controller(void const* args) {
     for (int i = 0; i < duty_cycles.size(); ++i)
         duty_cycles.at(i) = 100 + 206 * i;
 
-    duty_cycles.at(1) = 350;
+    duty_cycles.at(1) = 10;
+
+    int ii = 0;
+    uint16_t duty_cycle_val = 10;
+    bool stepping_up = true;
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -126,6 +130,30 @@ void Task_Controller(void const* args) {
         // write all duty cycles
         FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
                                           duty_cycles.size());
+
+        ii++;
+        // 0.5 sec with 5ms loop
+        if(ii % 100 == 0) {
+            // set bounds
+            if (duty_cycle_val >= 501)  // probably shouldn't go past 400 in reality
+                stepping_up = false;
+            else if (duty_cycle_val <= 10)  // minimum that a motor will turn is ~40
+                stepping_up = true;
+
+            // increment or decrement current duty cycles
+            if (stepping_up == true)
+                duty_cycle_val += 10;
+            else
+                duty_cycle_val -= 10;
+
+            // assign all motors this value
+            duty_cycles.assign(5, duty_cycle_val);
+
+            // reset the counter
+            ii = 0;
+        }
+
+        duty_cycles.assign(5, 50);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
