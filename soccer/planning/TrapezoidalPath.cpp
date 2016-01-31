@@ -1,5 +1,6 @@
 #include "TrapezoidalPath.hpp"
 
+using namespace Geometry2d;
 namespace Planning {
 
 TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
@@ -38,18 +39,23 @@ boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
 
 bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                           float initialTime) const {
-    for (RJ::Time t = initialTime * TimestampToSecs + startTime();
-         t < startTime() + _duration * SecsToTimestamp;
-         t += 0.25 * SecsToTimestamp) {
-        auto instant = evaluate((t - startTime()) * TimestampToSecs);
+    std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(_startPos);
+    for (float t = initialTime; t < _duration; t += 0.1) {
+        auto instant = evaluate(t);
         if (instant) {
             for (auto& shape : obstacles.shapes()) {
-                hitTime = t * TimestampToSecs;
-                if (shape->hit(instant->pos)) return true;
+                // If the shape is in the original hitSet, it is ignored
+                if (startHitSet.find(shape) != startHitSet.end()) {
+                    continue;
+                }
+
+                if (shape->hit(instant->pos)) {
+                    hitTime = t;
+                    return true;
+                }
             }
         }
     }
-
     return false;
 }
 
