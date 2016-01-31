@@ -15,10 +15,12 @@ static inline Time timestamp() {
     return (Time)time.tv_sec * 1000000 + (Time)time.tv_usec;
 }
 
+/// Converts a decimal number of seconds to an integer timestamp in milliseconds
 static inline RJ::Time SecsToTimestamp(double secs) {
     return secs * 1000000.0f;
 }
 
+/// Converts an integer timestamp in milliseconds to a decimal number of seconds
 static inline float TimestampToSecs(RJ::Time timestamp) {
     return (float)(timestamp / 1000000.0f);
 }
