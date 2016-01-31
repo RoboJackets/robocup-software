@@ -3,12 +3,6 @@
 
 #include <stdio.h>
 #include <string.h>
-
-
-
-
-
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -18,18 +12,18 @@
 #include <QFile>
 #include <QDir>
 #include <QDateTime>
- #include <QString>
+#include <QString>
 #include <QMessageBox>
 
 #include "MainWindow.hpp"
 #include "Configuration.hpp"
 
-using namespace   std;
+using namespace std;
 
 //  we use this to catch Ctrl+C and kill the program
-void signal_handler(  int signum) { exit(signum); }
+void signal_handler(int signum) { exit(signum); }
 
-void usage(  const char   * prog) {
+void usage(const char* prog) {
     fprintf(stderr, "usage: %s [options...]\n", prog);
     fprintf(stderr, "\t-y:          run as the yellow team\n");
     fprintf(stderr, "\t-b:          run as the blue team\n");
