@@ -68,6 +68,7 @@ GIT_CLONE_ROOT="${DOCKER_PROJECT_ROOT}"
 CACHE_DIRECTORIES=()
 CACHE_DIRECTORIES+=('~/.ccache')
 CACHE_DIRECTORIES+=('~/.ssh')
+CACHE_DIRECTORIES+=("${CIRCLE_ARTIFACTS}")
 
 
 ################################# COMMANDS #####################################
