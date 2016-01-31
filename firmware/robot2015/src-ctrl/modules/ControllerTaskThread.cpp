@@ -133,11 +133,13 @@ void Task_Controller(void const* args) {
 
         ii++;
         // 0.5 sec with 5ms loop
-        if(ii % 100 == 0) {
+        if (ii % 100 == 0) {
             // set bounds
-            if (duty_cycle_val >= 501)  // probably shouldn't go past 400 in reality
+            if (duty_cycle_val >=
+                501)  // probably shouldn't go past 400 in reality
                 stepping_up = false;
-            else if (duty_cycle_val <= 10)  // minimum that a motor will turn is ~40
+            else if (duty_cycle_val <=
+                     10)  // minimum that a motor will turn is ~40
                 stepping_up = true;
 
             // increment or decrement current duty cycles
