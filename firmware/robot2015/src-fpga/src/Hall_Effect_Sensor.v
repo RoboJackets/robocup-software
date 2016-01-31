@@ -29,6 +29,7 @@ localparam  B       =       3'b010;
 localparam  C       =       3'b001; 
 localparam  ALL_ON  =       3'b111;
 localparam  ALL_OFF =       3'b000;
+
 // going from 1 -> 6 is CCW
 localparam STATE1 =         3'b101;
 localparam STATE2 =         3'b100;
@@ -42,22 +43,26 @@ localparam STATE_NO_CONN =  3'b111;
 
 
 wire [2:0] u =
-    (hall == STATE1) ? A:
-    (hall == STATE2) ? A:
-    (hall == STATE3) ? B:
-    (hall == STATE4) ? B:
-    (hall == STATE5) ? C:
-    (hall == STATE6) ? C:
-                       ALL_OFF;
+    ( hall == STATE1        ) ? A:
+    ( hall == STATE2        ) ? A:
+    ( hall == STATE3        ) ? B:
+    ( hall == STATE4        ) ? B:
+    ( hall == STATE5        ) ? C:
+    ( hall == STATE6        ) ? C:
+    ( hall == STATE_NO_CONN )   ? ALL_OFF:
+    ( hall == STATE_FAULT   )   ? ALL_OFF:
+                                  ALL_OFF;
                        
 wire [2:0] z =
-    (hall == STATE1) ? C:
-    (hall == STATE2) ? B:
-    (hall == STATE3) ? A:
-    (hall == STATE4) ? C:
-    (hall == STATE5) ? B:
-    (hall == STATE6) ? A:
-                       ALL_ON;
+    ( hall == STATE1        )   ? C:
+    ( hall == STATE2        )   ? B:
+    ( hall == STATE3        )   ? A:
+    ( hall == STATE4        )   ? C:
+    ( hall == STATE5        )   ? B:
+    ( hall == STATE6        )   ? A:
+    ( hall == STATE_NO_CONN )   ? ALL_OFF:
+    ( hall == STATE_FAULT   )   ? ALL_OFF:
+                                  ALL_ON;
 
 endmodule
 
