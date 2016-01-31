@@ -17,7 +17,7 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
 
 CommLink::~CommLink() { cleanup(); }
 
-void CommLink::cleanup(void) {
+void CommLink::cleanup() {
     // release created pin objects if they exist
     if (_spi) delete _spi;
     if (_cs) delete _cs;
@@ -30,7 +30,7 @@ void CommLink::cleanup(void) {
     delete[](_rxDef.stack_pointer);
 }
 
-void CommLink::setup(void) {
+void CommLink::setup() {
     // Initialize the hardware for communication
     setup_spi();
     setup_cs();
@@ -60,14 +60,14 @@ void CommLink::setup_spi(int baudrate) {
     }
 }
 
-void CommLink::setup_cs(void) {
+void CommLink::setup_cs() {
     if (_cs_pin != NC) {
         _cs = new DigitalOut(_cs_pin);
         *_cs = 1;  // default to active low signal
     }
 }
 
-void CommLink::setup_interrupt(void) {
+void CommLink::setup_interrupt() {
     if (_int_pin != NC) {
         _int_in = new InterruptIn(_int_pin);
         _int_in->mode(PullUp);
@@ -124,18 +124,16 @@ void CommLink::rxThread(void const* arg) {
 }
 
 // Called by the derived class to begin thread operations
-void CommLink::ready(void) {
-    osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD);
-}
+void CommLink::ready() { osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD); }
 
 void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
 
 // Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN
 // ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
-void CommLink::ISR(void) { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
+void CommLink::ISR() { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 
-void CommLink::radio_select(void) { *_cs = 1; }
+void CommLink::radio_select() { *_cs = 1; }
 
-void CommLink::radio_deselect(void) { *_cs = 0; }
+void CommLink::radio_deselect() { *_cs = 0; }
 
 uint8_t CommLink::twos_compliment(uint8_t val) { return -(unsigned int)val; }

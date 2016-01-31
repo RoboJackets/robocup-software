@@ -6,7 +6,7 @@
 #include "mbed.h"
 #include "cmsis_os.h"
 
-void setISRPriorities(void);
+void setISRPriorities();
 void imAlive(void const*);
 void strobeStatusLED(DigitalInOut&);
 void strobeStatusLED(DigitalOut&);

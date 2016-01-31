@@ -41,7 +41,7 @@ public:
         return (this->Nbr() < p.Nbr() ? true : false);
     }
 
-    uint8_t Nbr(void) const { return this->nbr; }
+    uint8_t Nbr() const { return this->nbr; }
 
     void Nbr(uint8_t _nbr) {
         if (_nbr == 0)
@@ -53,7 +53,7 @@ public:
     }
 
     // Open a port or check if a port is capable of providing communication.
-    bool Open(void) {
+    bool Open() {
         if (isReady()) {
             this->is_open = true;
 
@@ -63,7 +63,7 @@ public:
         }
     }
 
-    void Close(void) { is_open = false; }
+    void Close() { is_open = false; }
 
     // Check if the port has already been opened.
     bool isOpen() const { return this->is_open; }
@@ -80,24 +80,24 @@ public:
     }
 
     // Methods that return a reference to the TX/RX callback function pointers
-    std::function<T>& RXCallback(void) { return rx_callback; }
-    std::function<T>& TXCallback(void) { return tx_callback; }
+    std::function<T>& RXCallback() { return rx_callback; }
+    std::function<T>& TXCallback() { return tx_callback; }
 
     // Check if an RX/TX callback function has been set for the port.
-    bool hasTXCallback(void) const { return tx_callback != nullptr; }
-    bool hasRXCallback(void) const { return rx_callback != nullptr; }
+    bool hasTXCallback() const { return tx_callback != nullptr; }
+    bool hasRXCallback() const { return rx_callback != nullptr; }
 
     // Check if the port object is a valid port
     // this will be false when indexing a non-existent port number
-    bool Exists(void) const {
+    bool Exists() const {
         return (hasRXCallback() || hasTXCallback()) ? true : this->is_valid;
     }
 
     // Get a value or reference to the TX/RX packet count for modifying
-    unsigned int TXPackets(void) const { return tx_packets; }
-    unsigned int RXPackets(void) const { return rx_packets; }
-    unsigned int& TXPackets(void) { return tx_packets; }
-    unsigned int& RXPackets(void) { return rx_packets; }
+    unsigned int TXPackets() const { return tx_packets; }
+    unsigned int RXPackets() const { return rx_packets; }
+    unsigned int& TXPackets() { return tx_packets; }
+    unsigned int& RXPackets() { return rx_packets; }
 
     // Standard display function for a CommPort
     void PrintPort() const {
@@ -110,13 +110,13 @@ public:
 
 protected:
     // Returns the current packet counts to zero
-    void resetPacketCount(void) {
+    void resetPacketCount() {
         RXPackets() = 0;
         TXPackets() = 0;
     }
 
     // Returns true if the port can provide an RX callback routine
-    bool isReady(void) const { return (is_open ? true : hasRXCallback()); }
+    bool isReady() const { return (is_open ? true : hasRXCallback()); }
 
 private:
     // The number assigned to the port
@@ -151,7 +151,7 @@ private:
     typename std::vector<CommPort<T>>::iterator pIt;
     CommPort<T> blackhole_port;
 
-    const CommPorts<T>& sort(void) {
+    const CommPorts<T>& sort() {
         std::sort(ports.begin(), ports.end(), PortCompare<T>);
         return *this;
     }
@@ -189,9 +189,9 @@ public:
         // throw std::runtime_error("No port for the given number");
     }
 
-    int count(void) const { return ports.size(); }
+    int count() const { return ports.size(); }
 
-    int count_open(void) const {
+    int count_open() const {
         int count = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
@@ -201,10 +201,10 @@ public:
         return count;
     }
 
-    bool empty(void) const { return ports.empty(); }
+    bool empty() const { return ports.empty(); }
 
     // Get the total count (across all ports) of each RX/TX packet count
-    unsigned int allRXPackets(void) const {
+    unsigned int allRXPackets() const {
         unsigned int pcks = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
@@ -213,7 +213,7 @@ public:
 
         return pcks;
     }
-    unsigned int allTXPackets(void) const {
+    unsigned int allTXPackets() const {
         unsigned int pcks = 0;
 
         for (auto it = ports.begin(); it != ports.end(); ++it) {
@@ -223,7 +223,7 @@ public:
         return pcks;
     }
 
-    void PrintPorts(void) {
+    void PrintPorts() {
         if (empty() == false) {
             PrintHeader();
 
@@ -233,12 +233,12 @@ public:
         }
     }
 
-    void PrintHeader(void) {
+    void PrintHeader() {
         printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
         Console::Flush();
     }
 
-    void PrintFooter(void) {
+    void PrintFooter() {
         printf(
             "==========================\r\n"
             "Total:\t\t%u\t%u\r\n",
