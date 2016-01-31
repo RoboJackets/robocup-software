@@ -643,7 +643,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
 
-    register_ptr_to_python< SystemState* >();
+    register_ptr_to_python<SystemState*>();
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("Length", &Field_Dimensions::Length)
