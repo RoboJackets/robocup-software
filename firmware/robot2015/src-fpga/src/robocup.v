@@ -248,16 +248,16 @@ localparam DRV8303_GATE_RESET = 1;
 localparam DRV8303_OCP_MODE = 0;
 
 // When this is set, only the 3 high side PWM signals should be sent!
-localparam DRV8303_3_INPUTS = 1;
+localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
-localparam DRV8303_OC_ADJ_VAL = 24;
+localparam DRV8303_OC_ADJ_VAL = 20;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature
 //   1 = over-temperature only
 //   2 = over-current only
-localparam DRV8303_OC_REPORT = 2;
+localparam DRV8303_OC_REPORT = 0;
 
 // This sets the ADC gain for the sense resistors
 // Note: over-current protection controlled by the DRV8303 itself does not take
@@ -515,6 +515,11 @@ begin : SPI_SORT_REQUEST_BUFFER
         // enable the motors once the system is ready
         motors_en <= 1;
 
+        for (j = 0; j < NUM_MOTORS; j = j + 1) 
+        begin : INIT_DUTY_CYCLES
+            duty_cycle[j] <= 0;
+        end
+        
     end else if ( watchdog_trigger == 1 ) begin
         motors_en <= 0;
 

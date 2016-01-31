@@ -51,29 +51,32 @@ output reg fault = 0;
 // Local parameters that can not be altered outside of this file
 // ===============================================
 localparam NUM_PHASES =                  3;  // This will always be constant
-localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
-localparam STARTUP_STEP_COUNTER_WIDTH = 11;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
 localparam HALL_STATE_STEADY_COUNT =    31;  // Threshold value in determining when the hall effect sensor is locked into an error state
+
+localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
+localparam STARTUP_STEP_COUNTER_WIDTH =  11;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
+// The startup time is equal to (1/18.432) * 2^(STARTUP_COUNTER_WIDTH + STARTUP_STEP_COUNTER_WIDTH)
+// For now, we're shooting for somewhere in the range of 25ms to 30ms.
 
 // Derived local parameters
 // ===============================================
 localparam STARTUP_END_DUTY_CYCLE =         ( MAX_DUTY_CYCLE >> 2 );                        // Divide by 4 to get 25% of the max speed for startup state
-localparam STARTUP_END_STEP_COUNT =         ( (1 << STARTUP_STEP_COUNTER_WIDTH) - 1 );            // Startup state exiting computing using this value and the MIN_DUTY_CYCLE for fixed time ramping
+localparam STARTUP_END_STEP_COUNT =         ( (1 << STARTUP_STEP_COUNTER_WIDTH) - 1 );      // Startup state exiting computed using this value and the MIN_DUTY_CYCLE for fixed time ramping
 localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << (DUTY_CYCLE_WIDTH + 3) );                // The number of input clock cycles in one period of the startup counter's clock - this is best
                                                                                             // set to a value that evenly divides into the PWM period from 'Phase_Driver.v'
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
-localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 5 / 100 );                   // 5% of the max
+localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 2 / 100 );                   // 5% of the max
 
 
 // State machine declarations for readability
 // ===============================================
-localparam STATE_STOP =         0;
-localparam STATE_STARTUP =      1;
-localparam STATE_STARTUP_WAIT = 2;
-localparam STATE_RUN =          3;
-localparam STATE_POLL_HALL =    4;
-localparam STATE_ERR =          5;
+localparam STATE_STOP           = 0;
+localparam STATE_STARTUP        = 1;
+localparam STATE_STARTUP_CHECK  = 2;
+localparam STATE_RUN            = 3;
+localparam STATE_POLL_HALL      = 4;
+localparam STATE_ERR            = 5;
 
 
 // Register and Wire declarations
@@ -113,7 +116,6 @@ wire hall_recheck = ( hall_hardware_err_cnt == HALL_STATE_STEADY_COUNT ) ||
                     ( hall_reconnect_cnt    == HALL_STATE_STEADY_COUNT );
 
 reg startup_wait_delay = 0;
-reg [DUTY_CYCLE_WIDTH-1:0] duty_cycle_save = 0;
 
 // Variable used for instantiation of the number of phases
 genvar j;
@@ -147,6 +149,15 @@ initial begin
     $display ("  --  duty cycle ranges from %d to %d over the fully range of possible values\n", MIN_DUTY_CYCLE, MAX_DUTY_CYCLE);
 end
 
+wire commutation_switch = hall_s != hall;
+reg [2:0] commutation_startup_count = 0;
+always @(posedge clk) begin
+    if ( commutation_switch == 1 ) begin
+        if ( commutation_startup_count < 5 ) begin
+            commutation_startup_count <= commutation_startup_count + 1;
+        end
+    end
+end
 
 // Begin main logic
 always @(posedge clk)
@@ -159,8 +170,9 @@ begin : MOTOR_STATES
         fault_s <= 0;
         en_s <= 0;
         duty_cycle_s <= 0;
-        duty_cycle_save <= 0;
+        // duty_cycle_save <= 0;
         state <= STATE_STOP;
+
     end else begin
         // Sync. all the inputs and outputs to the clock who's source may not be internal logic
         hall_s <= hall;
@@ -168,7 +180,6 @@ begin : MOTOR_STATES
         phaseL <= phaseL_s;
 
         // Increment everytime
-        // startup_counter <= startup_counter + 1;
         hall_check_time <= hall_check_time + 1;
         
         if ( fault_s == 1 ) begin
@@ -195,7 +206,8 @@ begin : MOTOR_STATES
 
                         // set the amount that we increment the duty cycle on every startup update period
                         `ifdef STARTUP_FIXED_TIME_RAMPING
-                        startup_duty_cycle_step <= (duty_cycle - MIN_DUTY_CYCLE) >> STARTUP_STEP_COUNTER_WIDTH;
+                        // startup_duty_cycle_step <= ((duty_cycle - MIN_DUTY_CYCLE) >> (`LOG2(STARTUP_END_STEP_COUNT + 1) + 1));
+                        startup_duty_cycle_step <= 1;
                         `else 
                         startup_duty_cycle_step <= 1;
                         `endif
@@ -220,14 +232,7 @@ begin : MOTOR_STATES
                             startup_duty_cycle_step <= 1;
                         end
 
-                        if ( duty_cycle_s > duty_cycle ) begin
-                            // If this were to occur, the input duty cycle was changed to a lower value than what it was when entering STATE_STARTUP.
-                            // Enter the running state since the MIN_DUTY_CYCLE parameter and [slightly] higher level motion control is assumed to take care of the lowest possible motor speed.
-
-                            duty_cycle_s <= duty_cycle;
-                            state <= STATE_RUN;
-
-                        end else begin
+                        // end else begin
                             `ifdef STARTUP_FIXED_TIME_RAMPING
                             // Exit the startup phase based on a fixed time startup period
                             if ( startup_step_count < STARTUP_END_STEP_COUNT ) begin
@@ -244,9 +249,6 @@ begin : MOTOR_STATES
                                     startup_counter <= 1;
                                     startup_step_count <= startup_step_count + 1;
                                     duty_cycle_s <= duty_cycle_s + startup_duty_cycle_step;
-                                    // duty_cycle_s <= 0;
-                                    // state <= STATE_STARTUP_WAIT;
-                                    // duty_cycle_save <= duty_cycle_s + startup_step_count;
                                 end else begin
                                     startup_counter <= startup_counter + 1;
                                 end
@@ -255,19 +257,19 @@ begin : MOTOR_STATES
                                 duty_cycle_s <= duty_cycle;
                                 state <= STATE_RUN;
                             end
-                        end
+                        // end
 
                     end
                 end    // STATE_STARTUP
 
-                STATE_STARTUP_WAIT: begin
+                STATE_STARTUP_CHECK: begin
+                    // Currently unused - still a bit more testing before deciding the fate of this state
                     if ( startup_counter == 0 ) begin
                         state <= STATE_STARTUP;
                         startup_counter <= 1;
-                        duty_cycle_s <= duty_cycle_save;
                         startup_wait_delay <= 0;
                     end
-                end    // STATE_STARTUP_WAIT
+                end    // STATE_STARTUP_CHECK
 
                 STATE_RUN: begin
                     // Stay in the running state as long as the given duty cycle can be used to spin the motor
@@ -337,7 +339,6 @@ begin : MOTOR_STATES
             end else if ( (hall_reconnect_cnt == HALL_STATE_STEADY_COUNT) && (hardware_fault_latched != 1) ) begin
                 // A hall sensor was connected again after being turned on initially.
                 disconnect_fault_latched <= 0;
-                // state <= STATE_STOP;
             end
 
             hall_hardware_err_cnt <= 0;
