@@ -1,6 +1,5 @@
 
 #include "Segment.hpp"
-#include <sstream>
 #include "Util.hpp"
 
 using namespace std;
@@ -47,6 +46,7 @@ float Segment::distTo(const Point& other) const {
     */
 }
 
+//Basic Tests
 bool Segment::intersects(const Segment& other, Point* intr) const {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line2d-Line2dIntersection.html
@@ -91,17 +91,8 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     return true;
 }
 
-std::shared_ptr<Point> Segment::intersection(const Segment& other) {
-    Point pointOut;
-    bool doesIt = intersects(other, &pointOut);
-    if (doesIt) {
-        return std::make_shared<Point>(pointOut);
-    } else {
-        return nullptr;
-    }
-}
-
 bool Segment::intersects(const Circle& circle) const {
+    return nearPoint(circle.center, circle.radius());
     Point pCir(circle.center.x, circle.center.y);
     Point delta = pt[1] - pt[0];
 
@@ -133,6 +124,7 @@ bool Segment::intersects(const Line& line, Point* intr) const {
 }
 
 bool Segment::nearPoint(const Point& point, float threshold) const {
+    return distTo(point) <= threshold;
     const Point& p1 = pt[0];
     const Point& p2 = pt[1];
 
@@ -187,20 +179,22 @@ bool Segment::nearPointPerp(const Point& point, float threshold) const {
 }
 */
 
+//Fixed/Audited by Albert.
+//Some simple Tests
 Point Segment::nearestPoint(const Point& p) const {
+    //http://stackoverflow.com/a/1501725
+
     const float magsq = delta().magsq();
     if (magsq == 0) return pt[0];
 
-    Point v_hat = delta() / sqrt(magsq);
-    float t = v_hat.dot(p - pt[0]);
+    float t = delta().dot(p - pt[0])/magsq;
 
-    if (t < 0) {
-        t = 0;
-    } else if (t > magsq) {
-        t = magsq;
+    if (t <= 0) {
+        return pt[0];
+    } else if (t >= 1) {
+        return pt[1];
     }
-
-    return pt[0] + v_hat * t;
+    return pt[0] + delta() * t;
 }
 
 Point Segment::nearestPoint(const Line& l) const {
@@ -215,11 +209,10 @@ Point Segment::nearestPoint(const Line& l) const {
 }
 
 bool Segment::nearSegment(const Segment& other, float threshold) const {
-    bool ret = other.nearPoint(pt[0], threshold) ||
+    return intersects(other) ||
+               other.nearPoint(pt[0], threshold) ||
                other.nearPoint(pt[1], threshold) ||
                nearPoint(other.pt[0], threshold) ||
-               nearPoint(other.pt[1], threshold) || intersects(other);
-    return ret;
+               nearPoint(other.pt[1], threshold);
 }
-
 }  // namespace Geometry2d
