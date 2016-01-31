@@ -204,12 +204,16 @@ TEST(Point, normalized) {
 }
 
 TEST(Point, nearlyEquals) {
-    EXPECT_TRUE(Point(0,5).nearlyEquals(Point(0,5)));
-    EXPECT_TRUE(Point(0,5).nearlyEquals(Point(0 - FLOAT_EPSILON/2, 5 + FLOAT_EPSILON/2)));
-    EXPECT_TRUE(Point(0,5).nearlyEquals(Point(0 + FLOAT_EPSILON/2, 5 - FLOAT_EPSILON/2)));
+    EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0, 5)));
+    EXPECT_TRUE(Point(0, 5).nearlyEquals(
+        Point(0 - FLOAT_EPSILON / 2, 5 + FLOAT_EPSILON / 2)));
+    EXPECT_TRUE(Point(0, 5).nearlyEquals(
+        Point(0 + FLOAT_EPSILON / 2, 5 - FLOAT_EPSILON / 2)));
 
-    EXPECT_FALSE(Point(0,5).nearlyEquals(Point(0 - FLOAT_EPSILON*1.1, 5 + FLOAT_EPSILON*1.1)));
-    EXPECT_FALSE(Point(0,5).nearlyEquals(Point(0 + FLOAT_EPSILON*1.1, 5 - FLOAT_EPSILON*1.1)));
+    EXPECT_FALSE(Point(0, 5).nearlyEquals(
+        Point(0 - FLOAT_EPSILON * 1.1, 5 + FLOAT_EPSILON * 1.1)));
+    EXPECT_FALSE(Point(0, 5).nearlyEquals(
+        Point(0 + FLOAT_EPSILON * 1.1, 5 - FLOAT_EPSILON * 1.1)));
 }
 // TODO(ashaw596) Add tests for angleTo and angleBetween once those changes are
 // merged

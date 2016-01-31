@@ -7,12 +7,12 @@ namespace Geometry2d {
 
 Line::Line(const Segment& segment) : Line(segment.pt[0], segment.pt[1]) {}
 
-//Uses Tested Function
+// Uses Tested Function
 bool Line::intersects(const Line& other, Point* intr) const {
     return intersects(*this, other, intr);
 }
 
-//Has Simple Test
+// Has Simple Test
 bool Line::intersects(const Line& line1, const Line& line2,
                       Point* intersection) {
     // From Mathworld:
@@ -40,7 +40,7 @@ bool Line::intersects(const Line& line1, const Line& line2,
     return true;
 }
 
-//Has Simple Test
+// Has Simple Test
 float Line::distTo(Point other) const {
     Point delta = pt[1] - pt[0];
     float top = delta.x * (pt[0].y - other.y) - (pt[0].x - other.x) * delta.y;
@@ -48,15 +48,14 @@ float Line::distTo(Point other) const {
     return fabs(top) / delta.mag();
 }
 
-//Very Simple Test
+// Very Simple Test
 Point Line::nearestPoint(Point p) const {
     Point v_hat = delta().normalized();
     return pt[0] + v_hat * v_hat.dot(p - pt[0]);
 }
 
-
-//Fixed/Audited By Albert
-//Has Simple Test
+// Fixed/Audited By Albert
+// Has Simple Test
 bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
     float x1 = pt[0].x - circle.center.x;
@@ -83,7 +82,7 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     float common = sqrt(descr);
 
     float xPart1 = det * dy;
-    float signDy = dy<0?-1:1;
+    float signDy = dy < 0 ? -1 : 1;
 
     float xPart2 = signDy * dx * common;
 

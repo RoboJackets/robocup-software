@@ -72,7 +72,8 @@ void MotionControl::run() {
     switch (rotationCommand->getCommandType()) {
         case RotationCommand::FacePoint:
             targetPt = static_cast<const Planning::FacePointCommand*>(
-                           rotationCommand.get())->targetPos;
+                           rotationCommand.get())
+                           ->targetPos;
             break;
         case RotationCommand::None:
             // do nothing

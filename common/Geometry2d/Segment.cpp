@@ -46,7 +46,7 @@ float Segment::distTo(const Point& other) const {
     */
 }
 
-//Basic Tests
+// Basic Tests
 bool Segment::intersects(const Segment& other, Point* intr) const {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line2d-Line2dIntersection.html
@@ -179,15 +179,15 @@ bool Segment::nearPointPerp(const Point& point, float threshold) const {
 }
 */
 
-//Fixed/Audited by Albert.
-//Some simple Tests
+// Fixed/Audited by Albert.
+// Some simple Tests
 Point Segment::nearestPoint(const Point& p) const {
-    //http://stackoverflow.com/a/1501725
+    // http://stackoverflow.com/a/1501725
 
     const float magsq = delta().magsq();
     if (magsq == 0) return pt[0];
 
-    float t = delta().dot(p - pt[0])/magsq;
+    float t = delta().dot(p - pt[0]) / magsq;
 
     if (t <= 0) {
         return pt[0];
@@ -209,10 +209,9 @@ Point Segment::nearestPoint(const Line& l) const {
 }
 
 bool Segment::nearSegment(const Segment& other, float threshold) const {
-    return intersects(other) ||
-               other.nearPoint(pt[0], threshold) ||
-               other.nearPoint(pt[1], threshold) ||
-               nearPoint(other.pt[0], threshold) ||
-               nearPoint(other.pt[1], threshold);
+    return intersects(other) || other.nearPoint(pt[0], threshold) ||
+           other.nearPoint(pt[1], threshold) ||
+           nearPoint(other.pt[0], threshold) ||
+           nearPoint(other.pt[1], threshold);
 }
 }  // namespace Geometry2d

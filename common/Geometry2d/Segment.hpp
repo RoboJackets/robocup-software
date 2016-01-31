@@ -16,8 +16,8 @@ public:
 
     Segment() {}
 
-    Segment(Point p1, Point p2) : pt{p1, p2}{
-        //assert(p1 != p2);
+    Segment(Point p1, Point p2) : pt{p1, p2} {
+        // assert(p1 != p2);
     }
 
     explicit Segment(const Line& other) : Segment(other.pt[0], other.pt[1]) {}
