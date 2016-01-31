@@ -63,6 +63,7 @@ public:
 
     Point center() const { return (pt[0] + pt[1]) / 2; }
 
+    /* Assumes that pt[0] <= pt[1] for both x and y */
     void expand(Point pt);
     void expand(const Rect& rect);
 
