@@ -12,7 +12,7 @@ public:
     Line() {}
 
     explicit Line(Point p1, Point p2) : pt{p1, p2} {
-        //assert(p1 != p2);
+        // assert(p1 != p2);
     }
 
     explicit Line(const Line& other) : Line(other.pt[0], other.pt[1]) {}
@@ -62,7 +62,7 @@ public:
      * tells you which side of the line you are on
      * @return the sine of the non-zero portion of the cross product
      */
-    //TODO check this
+    // TODO check this
     float pointSide(const Point& p) const {
         Point d = delta();
         Point v = p - pt[0];
