@@ -617,7 +617,7 @@ int cmd_baudrate(cmd_args_t& args) {
             for (unsigned int i = 0; i < valid_rates.size(); i++)
                 printf("%u\r\n", valid_rates[i]);
 
-        } else if (isInt(str_baud)) {
+        } else if (isPosInt(str_baud)) {
             int new_rate = atoi(str_baud.c_str());
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
@@ -899,7 +899,7 @@ int cmd_radio(cmd_args_t& args) {
         }
     } else if (args.size() == 3) {
         if (args.front().compare("set") == 0) {
-            if (isInt(args.at(2).c_str())) {
+            if (isPosInt(args.at(2).c_str())) {
                 unsigned int portNbr = atoi(args.at(2).c_str());
 
                 if (args.at(1).compare("up") == 0) {

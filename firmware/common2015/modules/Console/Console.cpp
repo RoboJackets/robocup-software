@@ -156,7 +156,7 @@ void Console::RXCallback() {
                     Flush();
                 } else {
                     if (history_index < 0) history_index = 0;
-                    if (history_index >= history.size())
+                    if ((size_t)history_index >= history.size())
                         history_index =
                             history.size() - (history.empty() ? 0 : 1);
 

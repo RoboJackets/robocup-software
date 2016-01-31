@@ -105,7 +105,7 @@ void Task_Controller(void const* args) {
 
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 100);
-    for (int i = 0; i < duty_cycles.size(); ++i)
+    for (size_t i = 0; i < duty_cycles.size(); ++i)
         duty_cycles.at(i) = 100 + 206 * i;
 
     duty_cycles.at(1) = 10;
@@ -133,11 +133,13 @@ void Task_Controller(void const* args) {
 
         ii++;
         // 0.5 sec with 5ms loop
-        if(ii % 100 == 0) {
+        if (ii % 100 == 0) {
             // set bounds
-            if (duty_cycle_val >= 501)  // probably shouldn't go past 400 in reality
+            if (duty_cycle_val >=
+                501)  // probably shouldn't go past 400 in reality
                 stepping_up = false;
-            else if (duty_cycle_val <= 10)  // minimum that a motor will turn is ~40
+            else if (duty_cycle_val <=
+                     10)  // minimum that a motor will turn is ~40
                 stepping_up = true;
 
             // increment or decrement current duty cycles

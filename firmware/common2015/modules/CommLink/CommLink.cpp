@@ -17,7 +17,7 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
 
 CommLink::~CommLink() { cleanup(); }
 
-void CommLink::cleanup(void) {
+void CommLink::cleanup() {
     // release created pin objects if they exist
     if (_spi) delete _spi;
     if (_cs) delete _cs;
@@ -30,7 +30,7 @@ void CommLink::cleanup(void) {
     delete[](_rxDef.stack_pointer);
 }
 
-void CommLink::setup(void) {
+void CommLink::setup() {
     // Initialize the hardware for communication
     setup_spi();
     setup_cs();
@@ -60,14 +60,14 @@ void CommLink::setup_spi(int baudrate) {
     }
 }
 
-void CommLink::setup_cs(void) {
+void CommLink::setup_cs() {
     if (_cs_pin != NC) {
         _cs = new DigitalOut(_cs_pin);
         *_cs = 1;  // default to active low signal
     }
 }
 
-void CommLink::setup_interrupt(void) {
+void CommLink::setup_interrupt() {
     if (_int_pin != NC) {
         _int_in = new InterruptIn(_int_pin);
         _int_in->mode(PullUp);
@@ -80,14 +80,12 @@ void CommLink::rxThread(void const* arg) {
     CommLink* inst =
         const_cast<CommLink*>(reinterpret_cast<const CommLink*>(arg));
 
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
-
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
     ASSERT(inst->_rxID != nullptr);
-    threadPriority = osThreadGetPriority(inst->_rxID);
+    // Store our priority so we know what to reset it to if ever needed
+    osPriority threadPriority = osThreadGetPriority(inst->_rxID);
 
     LOG(INIT,
         "RX communication link ready!\r\n    Thread ID:\t%u\r\n"
@@ -124,16 +122,14 @@ void CommLink::rxThread(void const* arg) {
 }
 
 // Called by the derived class to begin thread operations
-void CommLink::ready(void) {
-    osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD);
-}
+void CommLink::ready() { osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD); }
 
 void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
 
-// Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN
-// ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
-void CommLink::ISR(void) { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
+void CommLink::ISR() { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 
-void CommLink::toggle_cs(void) { *_cs = !*_cs; }
+void CommLink::radio_select() { *_cs = 0; }
+
+void CommLink::radio_deselect() { *_cs = 1; }
 
 uint8_t CommLink::twos_compliment(uint8_t val) { return -(unsigned int)val; }

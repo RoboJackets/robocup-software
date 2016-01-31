@@ -5,11 +5,11 @@
 
 // check that the address byte doesn't have any non-address bits set
 // see "3.2 Access Types" in User Guide
-#define ASSERT_IS_ADDR(addr)                                               \
-    ASSERT(((addr) >= 0x0000 && (addr) <= 0x002E) ||                       \
-           ((addr) >= 0x2F00 && (addr) <= 0x2FFF) ||                       \
-           ((addr) >= 0x3E00 && (addr) <= 0x3EFF) || ((addr) == 0x003F) || \
-           ((addr) == 0x007F) || ((addr) == 0x00BF) || ((addr) == 0x00FF))
+void ASSERT_IS_ADDR(uint16_t addr) {
+    ASSERT(addr <= 0x002E || (addr >= 0x2F00 && addr <= 0x2FFF) ||
+           (addr >= 0x3E00 && addr <= 0x3EFF) || (addr == 0x003F) ||
+           (addr == 0x007F) || (addr == 0x00BF) || (addr == 0x00FF));
+}
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len,
@@ -66,11 +66,9 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     // Wait until radio's TX buffer is emptied
     uint8_t bts = 1;
-
     do {
         bts = readReg(CC1201_NUM_TXBYTES);
         Thread::wait(2);
-
     } while (bts != 0);
 
     return COMM_SUCCESS;
@@ -121,7 +119,7 @@ uint8_t CC1201::readReg(uint16_t addr) {
 
     uint8_t returnVal;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
         _spi->write(addr & 0xFF);
@@ -129,7 +127,7 @@ uint8_t CC1201::readReg(uint16_t addr) {
         _spi->write(addr | CC1201_READ);
     }
     returnVal = _spi->write(0x00);
-    toggle_cs();
+    radio_deselect();
 
     return returnVal;
 }
@@ -138,7 +136,7 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
             _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
@@ -147,7 +145,7 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
         status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
     }
     for (uint8_t i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
-    toggle_cs();
+    radio_deselect();
 
     return status_byte;
 }
@@ -157,7 +155,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
 
     uint8_t status_byte;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE);
         _spi->write(addr & 0xFF);
@@ -165,7 +163,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
         status_byte = _spi->write(addr);
     }
     _spi->write(value);
-    toggle_cs();
+    radio_deselect();
 
     return status_byte;
 }
@@ -175,7 +173,7 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
             _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
@@ -185,7 +183,7 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
                                   CC1201_BURST);  // write lower byte of address
     }
     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
-    toggle_cs();
+    radio_deselect();
 
     return status_byte;
 }
@@ -196,9 +194,9 @@ uint8_t CC1201::strobe(uint8_t addr) {
         return -1;
     }
 
-    toggle_cs();
+    radio_select();
     uint8_t ret = _spi->write(addr);
-    toggle_cs();
+    radio_deselect();
 
     return ret;
 }
@@ -209,9 +207,9 @@ uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
 
 void CC1201::reset() {
     idle();
-    toggle_cs();
+    radio_select();
     _spi->write(CC1201_STROBE_SRES);
-    toggle_cs();
+    radio_deselect();
 
     // Wait up to 300ms for the radio to do anything. Don't block everything
     // else if it doesn't startup correctly

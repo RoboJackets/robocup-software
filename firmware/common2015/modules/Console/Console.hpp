@@ -216,7 +216,7 @@ private:
      */
     uint16_t txIndex = 0;
 
-    int MAX_HISTORY = 10;
+    size_t MAX_HISTORY = 10;
     int history_index = 0;
     std::deque<std::string> history;
 };

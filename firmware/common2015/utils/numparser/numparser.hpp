@@ -2,4 +2,5 @@
 
 #include <string>
 
-bool isInt(const std::string& s);
+/// check if the string represents a positive integer
+bool isPosInt(const std::string& s);

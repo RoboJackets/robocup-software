@@ -73,7 +73,7 @@ public:
         for (auto const& i : d) printf("%02X ", i);
     }
 
-    const size_t size() const { return static_cast<const int>(d.size()); }
+    size_t size() const { return static_cast<size_t>(d.size()); }
 };
 
 /**
@@ -182,7 +182,7 @@ public:
             return payload.size() + header.size();
     }
 
-    const int port() const { return static_cast<const int>(header.port); }
+    int port() const { return static_cast<int>(header.port); }
     template <class T>
     void port(T p) {
         header.port = static_cast<unsigned int>(p);

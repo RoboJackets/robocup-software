@@ -32,7 +32,7 @@ CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
-void CommModule::cleanup(void) {
+void CommModule::cleanup() {
     // terminate the threads
     osThreadTerminate(_txID);
     osThreadTerminate(_rxID);
@@ -42,7 +42,7 @@ void CommModule::cleanup(void) {
     delete[](_rxDef.stack_pointer);
 }
 
-void CommModule::Init(void) {
+void CommModule::Init() {
     // Make sure we have an instance to work with
     auto instance = Instance();
 
@@ -258,7 +258,7 @@ bool CommModule::openSocket(uint8_t portNbr) {
     }
 }
 
-void CommModule::ready(void) {
+void CommModule::ready() {
     if (_isReady == true) return;
 
     // Start running the TX thread - it will trigger with to startup the RX
@@ -326,7 +326,7 @@ void CommModule::PrintInfo(bool forceHeader) {
     Console::Flush();
 }
 
-void CommModule::PrintHeader(void) { _ports.PrintHeader(); }
+void CommModule::PrintHeader() { _ports.PrintHeader(); }
 
 void CommModule::ResetCount(unsigned int portNbr) {
     _ports[portNbr].RXPackets() = 0;
@@ -335,6 +335,6 @@ void CommModule::ResetCount(unsigned int portNbr) {
 
 void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
 
-bool CommModule::isReady(void) { return _isReady; }
+bool CommModule::isReady() { return _isReady; }
 
-int CommModule::NumOpenSockets(void) { return _ports.count_open(); }
+int CommModule::NumOpenSockets() { return _ports.count_open(); }
