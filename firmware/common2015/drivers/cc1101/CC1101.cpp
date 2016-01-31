@@ -224,8 +224,8 @@ void CC1101::power_on_reset() {
     *SCK = 1;
 
     // toggle chip select and remain in high state afterwards
-    toggle_cs();
-    toggle_cs();
+    radio_select();
+    radio_deselect();
 
     // wait at least 40us
     wait_us(45);
@@ -412,10 +412,10 @@ int32_t CC1101::getData(uint8_t* buf, uint8_t* length) {
 // Read Register
 uint8_t CC1101::read_reg(uint8_t addr) {
     _spi->frequency(8000000);
-    toggle_cs();
+    radio_select();
     _spi->write(addr | CCXXX1_READ_SINGLE);
     uint8_t x = _spi->write(0);
-    toggle_cs();
+    radio_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF2,
@@ -427,14 +427,14 @@ uint8_t CC1101::read_reg(uint8_t addr) {
 }  // read_reg
 void CC1101::read_reg(uint8_t addr, uint8_t* buffer, uint8_t count) {
     _spi->frequency(5000000);
-    toggle_cs();
+    radio_select();
     _spi->write(addr | CCXXX1_READ_BURST);
 
     for (uint8_t i = 0; i < count; i++) {
         buffer[i] = _spi->write(0);
     }
 
-    toggle_cs();
+    radio_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF1,
@@ -446,10 +446,10 @@ void CC1101::read_reg(uint8_t addr, uint8_t* buffer, uint8_t count) {
 // Write Register
 void CC1101::write_reg(uint8_t addr, uint8_t value) {
     _spi->frequency(8000000);
-    toggle_cs();
+    radio_select();
     _spi->write(addr);
     _spi->write(value);
-    toggle_cs();
+    radio_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF2,
@@ -460,14 +460,14 @@ void CC1101::write_reg(uint8_t addr, uint8_t value) {
 }  // write_reg
 void CC1101::write_reg(uint8_t addr, uint8_t* buffer, uint8_t count) {
     _spi->frequency(5000000);
-    toggle_cs();
+    radio_select();
     _spi->write(addr | CCXXX1_WRITE_BURST);
 
     for (uint8_t i = 0; i < count; i++) {
         _spi->write(buffer[i]);
     }
 
-    toggle_cs();
+    radio_deselect();
 
 #if CCXXX1_DEBUG_MODE > 1
     LOG(INF2,
@@ -479,9 +479,9 @@ void CC1101::write_reg(uint8_t addr, uint8_t* buffer, uint8_t count) {
 // Strobe
 uint8_t CC1101::strobe(uint8_t addr) {
     _spi->frequency(8000000);
-    toggle_cs();
+    radio_select();
     uint8_t x = _spi->write(addr);
-    toggle_cs();
+    radio_deselect();
     return x;
 }  // strobe
 
@@ -626,10 +626,10 @@ uint8_t CC1101::status() { return strobe(CCXXX1_SNOP); }
 
 uint8_t CC1101::status(uint8_t addr) {
     _spi->frequency(8000000);
-    toggle_cs();
+    radio_select();
     _spi->write(addr | CCXXX1_READ_BURST);
     uint8_t x = _spi->write(0);
-    toggle_cs();
+    radio_deselect();
     return x;
 }  // status
 

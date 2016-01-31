@@ -134,6 +134,8 @@ void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
 // ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
 void CommLink::ISR(void) { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 
-void CommLink::toggle_cs(void) { *_cs = !*_cs; }
+void CommLink::radio_select(void) { *_cs = 1; }
+
+void CommLink::radio_deselect(void) { *_cs = 0; }
 
 uint8_t CommLink::twos_compliment(uint8_t val) { return -(unsigned int)val; }

@@ -69,7 +69,8 @@ protected:
     /// Always call in any derived class's deconstructors!
     void cleanup();
     void ISR();
-    void toggle_cs();
+    void radio_select();
+    void radio_deselect();
 
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads

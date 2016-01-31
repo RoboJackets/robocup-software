@@ -121,7 +121,7 @@ uint8_t CC1201::readReg(uint16_t addr) {
 
     uint8_t returnVal;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
         _spi->write(addr & 0xFF);
@@ -129,7 +129,7 @@ uint8_t CC1201::readReg(uint16_t addr) {
         _spi->write(addr | CC1201_READ);
     }
     returnVal = _spi->write(0x00);
-    toggle_cs();
+    radio_deselect();
 
     return returnVal;
 }
@@ -138,7 +138,7 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
             _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
@@ -147,7 +147,7 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
         status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
     }
     for (uint8_t i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
-    toggle_cs();
+    radio_deselect();
 
     return status_byte;
 }
@@ -157,7 +157,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
 
     uint8_t status_byte;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE);
         _spi->write(addr & 0xFF);
@@ -165,7 +165,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
         status_byte = _spi->write(addr);
     }
     _spi->write(value);
-    toggle_cs();
+    radio_deselect();
 
     return status_byte;
 }
@@ -175,7 +175,7 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    toggle_cs();
+    radio_select();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
             _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
@@ -185,7 +185,7 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
                                   CC1201_BURST);  // write lower byte of address
     }
     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
-    toggle_cs();
+    radio_deselect();
 
     return status_byte;
 }
@@ -196,9 +196,9 @@ uint8_t CC1201::strobe(uint8_t addr) {
         return -1;
     }
 
-    toggle_cs();
+    radio_select();
     uint8_t ret = _spi->write(addr);
-    toggle_cs();
+    radio_deselect();
 
     return ret;
 }
@@ -209,9 +209,9 @@ uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
 
 void CC1201::reset() {
     idle();
-    toggle_cs();
+    radio_select();
     _spi->write(CC1201_STROBE_SRES);
-    toggle_cs();
+    radio_deselect();
 
     // Wait up to 300ms for the radio to do anything. Don't block everything
     // else if it doesn't startup correctly
