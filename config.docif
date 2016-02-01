@@ -50,10 +50,13 @@ GH_EMAIL_VAR="GIT_EMAIL"
 # Reccomended to leave as default (not set)
 # This will act as the 'current directory' within the project
 # This will need to be changed in the dockerfile as well to take effect. (use a custom one!)
-# DOCKER_PROJECT_ROOT="/home/developer/project"
+DOCKER_PROJECT_ROOT="/home/developer/project"
+
+# The home dir of the user running the docker commands (used for caching when using ~)
+DOCKER_PROJECT_HOME="/home/developer"
 
 # The git clone root INSIDE THE DOCKER CONTAINER
-# GIT_CLONE_ROOT="${DOCKER_PROJECT_ROOT}"
+GIT_CLONE_ROOT="${DOCKER_PROJECT_ROOT}"
 
 ################################################################################
 
@@ -65,6 +68,7 @@ GH_EMAIL_VAR="GIT_EMAIL"
 CACHE_DIRECTORIES=()
 CACHE_DIRECTORIES+=('~/.ccache')
 CACHE_DIRECTORIES+=('~/.ssh')
+CACHE_DIRECTORIES+=("${CIRCLE_ARTIFACTS}")
 
 
 ################################# COMMANDS #####################################
