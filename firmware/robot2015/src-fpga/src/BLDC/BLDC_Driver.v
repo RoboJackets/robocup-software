@@ -288,13 +288,24 @@ begin : MOTOR_STATES
                     if ( disconnect_fault_latched == 0 ) begin
                         state <= STATE_STOP;
                     end
-                end    // STATE_POLL_HOLL
+                end    // STATE_POLL_HALL
 
                 STATE_ERR: begin
                     // Die if a motor error occurs at this level. Set the `fault` output HIGH.
-                    // This is reset by toggling the `en` input for one clock cycle.
-                    fault <= 1;
-                    state <= STATE_ERR;
+                    // This is reset by toggling the `en` input for one clock cycle - or by
+                    // disconnecting and reconnecting the motor.
+                    
+                    // reset once the motor is disconnected
+                    if ( hall_s == 3'b111 ) begin
+                        disconnect_fault_latched <= 1;
+                        hardware_fault_latched <= 0;
+                        fault <= 0;
+                        state <= STATE_POLL_HALL;
+                    end else begin
+                        // otherwise, stay in this state and assert the fault signal
+                        fault <= 1;
+                        state <= STATE_ERR;
+                    end
                 end    // STATE_ERR
 
                 default: begin
@@ -331,13 +342,13 @@ begin : MOTOR_STATES
             if ( hall_hardware_err_cnt == HALL_STATE_STEADY_COUNT ) begin
                 // There's probably some really bad things going on. The inputs have pull-up resistors on all 3 lines, and this would be a state of 3b'000.
                 hardware_fault_latched <= 1;
-                fault_s <= 1'b1;
+                fault_s <= 1;
             end else if ( hall_disconnected_cnt == HALL_STATE_STEADY_COUNT ) begin
                 // Most likely disconnected - the state would be 3'b111
                 disconnect_fault_latched <= 1;
-                fault_s <= 1'b1;
+                fault_s <= 1;
             end else if ( (hall_reconnect_cnt == HALL_STATE_STEADY_COUNT) && (hardware_fault_latched != 1) ) begin
-                // A hall sensor was connected again after being turned on initially.
+                // A hall sensor was connected again after being powered up
                 disconnect_fault_latched <= 0;
             end
 
