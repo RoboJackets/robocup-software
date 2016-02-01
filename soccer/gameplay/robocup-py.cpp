@@ -569,6 +569,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
+    register_ptr_to_python< Robot* >();
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
         "OurRobot", init<int, SystemState*>())
@@ -606,14 +607,17 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker);
+    register_ptr_to_python< OurRobot* >();
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
+    register_ptr_to_python< OpponentRobot* >();
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
+    register_ptr_to_python< Ball* >();
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -642,8 +646,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
-
-    register_ptr_to_python<SystemState*>();
+    register_ptr_to_python< SystemState* >();
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("Length", &Field_Dimensions::Length)
