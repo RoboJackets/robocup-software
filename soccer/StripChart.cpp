@@ -8,6 +8,7 @@
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>
 #include <Constants.hpp>
+#include <time.hpp>
 
 #include <google/protobuf/descriptor.h>
 
@@ -113,10 +114,10 @@ void StripChart::paintEvent(QPaintEvent* e) {
 
                         double t1 = 0.0;
                         t1 += _history->at(i - 1)->timestamp();
-                        t1 *= TimestampToSecs;
+                        t1 = RJ::TimestampToSecs(t1);
                         double t2 = 0.0;
                         t2 += _history->at(i + 1)->timestamp();
-                        t2 *= TimestampToSecs;
+                        t2 = RJ::TimestampToSecs(t2);
 
                         auto derivative = (v2 - v1) / (t2 - t1);
 
