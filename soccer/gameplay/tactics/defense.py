@@ -188,9 +188,10 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
-            total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1
-                                                        ) * spacing
+            spacing = 0.01 if len(
+                threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
+            total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
+                                                        1) * spacing
             start_vec = center_line.delta().normalized()
             start_vec.rotate(robocup.Point(0, 0), -total_angle_coverage / 2.0)
             for i in range(len(angle_widths)):
@@ -231,7 +232,8 @@ class Defense(composite_behavior.CompositeBehavior):
         # secondary threats are those that are somewhat close to our goal and open for a pass
         # if they're farther than this down the field, we don't consider them threats
         threat_max_y = constants.Field.Length / 2.0
-        potential_threats = [opp for opp in main.their_robots()
+        potential_threats = [opp
+                             for opp in main.their_robots()
                              if opp.pos.y < threat_max_y]
 
         # find the primary threat
@@ -256,8 +258,8 @@ class Defense(composite_behavior.CompositeBehavior):
                 potential_receivers = []
                 for opp in potential_threats:
                     # see if the bot is in the direction the ball is moving
-                    if (opp.pos - ball_travel_line.get_pt(0)
-                        ).dot(ball_travel_line.delta()) > 0:
+                    if (opp.pos - ball_travel_line.get_pt(0)).dot(
+                            ball_travel_line.delta()) > 0:
                         # calculate the angle and add it to the list if it's within reason
                         nearest_pt = ball_travel_line.nearest_point(opp.pos)
                         dx = (nearest_pt - main.ball().pos).mag()
@@ -451,7 +453,7 @@ class Defense(composite_behavior.CompositeBehavior):
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
-                    subbehavior_req_tree):
+                        subbehavior_req_tree):
                     r.previous_shell_id = None
 
         return reqs
