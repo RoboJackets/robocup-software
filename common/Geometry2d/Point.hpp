@@ -35,17 +35,17 @@ public:
     Point(float x, float y) : x(x), y(y) {}
 
     /**
-     * Implicity constructor for creating a Point from a Packet::Point
+     * Implicit constructor for creating a Point from a Packet::Point
      */
     Point(const Packet::Point& other) : x(other.x()), y(other.y()) {}
 
     /**
-     * Implicity constructor for creating a Point from a QPointF
+     * Implicit constructor for creating a Point from a QPointF
      */
     Point(const QPointF& other) : x(other.x()), y(other.y()) {}
 
     /**
-     * Implicity constructor for creating a Point from a QPoint
+     * Implicit constructor for creating a Point from a QPoint
      */
     Point(const QPoint& other) : x(other.x()), y(other.y()) {}
 
@@ -77,8 +77,7 @@ public:
     }
 
     /**
-     * see operator+
-     * does vector multiplication, note the operator
+     * @returns (x*x,y*y)
      */
     Point operator*(Point other) const {
         return Point(x * other.x, y * other.y);

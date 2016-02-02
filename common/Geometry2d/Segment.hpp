@@ -43,7 +43,6 @@ public:
     float length() const { return (pt[1] - pt[0]).mag(); }
 
     bool nearPoint(const Point& point, float threshold) const;
-    // bool nearPointPerp(const Point& point, float threshold) const;
     bool nearSegment(const Segment& other, float threshold) const;
 
     /** find the nearest point on the segment given @a p */

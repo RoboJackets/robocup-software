@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-// #include <../../common/Point.hpp>
-#include <Geometry2d/Point.hpp>
+#include "Geometry2d/Point.hpp"
 #include "Geometry2d/Util.hpp"
 using namespace std;
 using namespace Geometry2d;
