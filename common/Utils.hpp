@@ -36,10 +36,6 @@ inline void debugThrow(const std::string& string) {
     debugThrow(std::runtime_error(string));
 }
 
-inline void debugAssert(bool b) {
-    // TODO(ashaw596) better logging for debug errors
-    debugThrow("Debug Assert Thrown");
-}
 /**
  * @brief Restricts the given angle to be between pi and -pi
  *

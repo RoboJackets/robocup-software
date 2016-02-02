@@ -15,9 +15,7 @@ public:
         // assert(p1 != p2);
     }
 
-    explicit Line(const Line& other) : Line(other.pt[0], other.pt[1]) {}
-
-    explicit Line(const Segment&);
+    explicit Line(const Segment& other);
 
     Point delta() const { return pt[1] - pt[0]; }
 
@@ -32,12 +30,10 @@ public:
     Applies a transformation matrix to the line.
     @param t the transformation matrix to perform on the line
     */
-    /*
     void transform(const TransformMatrix& t) {
         pt[0] = t * pt[0];
         pt[1] = t * pt[1];
     }
-     */
 
     /**
     Test for line intersections.
@@ -62,7 +58,6 @@ public:
      * tells you which side of the line you are on
      * @return the sine of the non-zero portion of the cross product
      */
-    // TODO check this
     float pointSide(const Point& p) const {
         Point d = delta();
         Point v = p - pt[0];
