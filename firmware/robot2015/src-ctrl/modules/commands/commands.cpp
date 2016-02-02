@@ -849,7 +849,7 @@ int cmd_radio(cmd_args_t& args) {
 
     if (args.size() == 1 || args.size() == 2) {
         rtp::packet pck("LINK TEST PAYLOAD");
-        unsigned int portNbr = rtp::port::LINK;
+        unsigned int portNbr = rtp::port::DISCOVER;
 
         if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
 
@@ -871,6 +871,8 @@ int cmd_radio(cmd_args_t& args) {
             CommModule::receive(pck);
 
         } else if (args.front().compare("loopback") == 0) {
+            pck.port(rtp::port::LINK);
+
             unsigned int i = 1;
             if (args.size() > 1) {
                 i = atoi(args.at(1).c_str());
