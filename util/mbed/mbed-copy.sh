@@ -56,7 +56,7 @@ function err_exit {
 
 function err_exit_on_copy {
     # unmount the mbed
-    sudo umount "$mnt_point"
+    sudo umount -l "$mnt_point"
     err_exit "failed to move files to external device(s)"
 }
 
@@ -110,15 +110,12 @@ for i in $MBED_DEVICES_PATH; do
     echo "installing to $mnt_point"
 
     mkdir -p "$mnt_point"
-    chown :plugdev "$mnt_point"
-    chmod g+rw "$mnt_point"
-
     sudo mount "$i" "$mnt_point"
 
     # redirect this critical section to a different callback on errors
     trap err_exit_on_copy SIGINT SIGTERM EXIT
 
-    cp -f "$COPY_FILE" "$mnt_point"
+    sudo cp -f "$COPY_FILE" "$mnt_point"
 
     # Call the golden command
     sync
@@ -156,11 +153,9 @@ set +e
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 for i in $MBED_SERIAL_PATH; do
     echo "attempting reboot on $i"
-    # if ! python3 -c "import serial; serial.Serial(\"$i\").sendBreak()" &> /dev/null; then
-    #     sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
-    # fi
     sudo python3 "$SCRIPT_DIR/mbed-reset.py" "$i" 
     sleep 2
+    sudo python3 "$SCRIPT_DIR/mbed-reset.py" "$i" 
 done
 
 MEM_SPACE=$(($(stat --printf="%s" "$COPY_FILE")/512))
