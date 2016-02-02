@@ -32,7 +32,7 @@ enum port {
     SETPOINT = 0x03,
     GSTROBE = 0x04,
     DISCOVER = 0x05,
-    LOG = 0x06,
+    LOGGER = 0x06,
     TCP = 0x07,
     LEGACY = 0x0E
 };
@@ -73,9 +73,7 @@ public:
         for (auto const& i : d) printf("%02X ", i);
     }
 
-    const size_t size() const {
-        return static_cast<const int>(d.size());
-    }
+    size_t size() const { return static_cast<size_t>(d.size()); }
 };
 
 /**
@@ -89,21 +87,18 @@ class header_data : public layer_map {
 public:
     enum type { control, tuning, ota, misc };
 
-    header_data()
-        : layer_map(3),
-          t(control),
-          address(0),
-          port_fields(0)
-    { };
+    header_data() : layer_map(3), t(control), address(0), port_fields(0){};
 
-    datav_it_t pack(size_t payload_size) {
+    datav_it_t pack(size_t payload_size, bool headless = false) {
         if (d.size()) return d.begin();
         // payload size + number of bytes in header is top byte
         // since that's required for the cc1101/cc1201 with
         // variable packet sizes
-        d.push_back(payload_size + 2);
-        d.push_back(address);
-        d.push_back(port_fields);
+        d.push_back(payload_size + (headless ? 0 : 2));
+        if (headless == false) {
+            d.push_back(address);
+            d.push_back(port_fields);
+        }
         return d.begin();
     }
 
@@ -138,11 +133,9 @@ public:
  */
 class payload_data : public layer_map {
 public:
-    payload_data() : layer_map(MAX_DATA_SZ) {};
+    payload_data() : layer_map(MAX_DATA_SZ){};
 
-    datav_it_t pack() {
-        return d.begin();
-    }
+    datav_it_t pack() { return d.begin(); }
 
     datav_it_t add_header(const header_data& h) {
         d.insert(d.begin(), h.d.begin(), h.d.end());
@@ -154,8 +147,7 @@ public:
         d = v;
     }
     void fill(const std::string& str) {
-        for (const char& c : str)
-            d.push_back(c);
+        for (const char& c : str) d.push_back(c);
         d.push_back('\0');
     }
 };
@@ -169,12 +161,17 @@ public:
     rtp::payload_data payload;
     bool _packed;
 
-    packet() {};
-    packet(const std::string& s) {
-        payload.fill(s);
+    packet(){};
+    packet(const std::string& s) { payload.fill(s); }
+
+    template <class T>
+    packet(const std::vector<T>& v) {
+        payload.fill(v);
     }
 
     packet_data_t* packed() {
+        if (_packed == false) pack();
+
         return payload.data();
     }
 
@@ -185,42 +182,26 @@ public:
             return payload.size() + header.size();
     }
 
-    const int port() const {
-        return static_cast<const int>(header.port);
-    }
+    int port() const { return static_cast<int>(header.port); }
     template <class T>
     void port(T p) {
         header.port = static_cast<unsigned int>(p);
     }
 
-    int subclass() {
-        return header.subclass;
-    }
+    int subclass() { return header.subclass; }
     template <class T>
     void subclass(T c) {
         header.subclass = static_cast<unsigned int>(c);
     }
 
-    bool ack() {
-        return header.ack;
-    }
-    void ack(bool b) {
-        header.ack = b;
-    }
+    bool ack() { return header.ack; }
+    void ack(bool b) { header.ack = b; }
 
-    bool sfs() {
-        return header.sfs;
-    }
-    void sfs(bool b) {
-        header.sfs = b;
-    }
+    bool sfs() { return header.sfs; }
+    void sfs(bool b) { header.sfs = b; }
 
-    int address() {
-        return header.address;
-    }
-    void address(int a) {
-        header.address = static_cast<unsigned int>(a);
-    }
+    int address() { return header.address; }
+    void address(int a) { header.address = static_cast<unsigned int>(a); }
 
     template <class T>
     void recv(const std::vector<T>& v) {
@@ -231,7 +212,8 @@ public:
 private:
     void pack() {
         payload.pack();
-        header.pack(payload.size());
+        // pack the header, but do a "headless" pack
+        header.pack(payload.size(), true);
         payload.add_header(header);
         _packed = true;
     }

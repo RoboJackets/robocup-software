@@ -47,7 +47,7 @@ public:
     static const size_t TX_QUEUE_SIZE = 3;
     static const size_t RX_QUEUE_SIZE = 3;
 
-    static void Init(void);
+    static void Init();
 
     // Set a TX callback function on an object
     template <typename B>
@@ -55,15 +55,11 @@ public:
                           uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
             CommPort_t _tmpPort(portNbr);
-
-            _tmpPort.TXCallback() = std::bind(mptr, obj, std::placeholders::_1);
-
             _ports += _tmpPort;
-
-        } else {
-            _ports[portNbr].TXCallback() =
-                std::bind(mptr, obj, std::placeholders::_1);
         }
+
+        _ports[portNbr].TXCallback() =
+            std::bind(mptr, obj, std::placeholders::_1);
 
         ready();
     }
@@ -74,15 +70,11 @@ public:
                           uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
             CommPort_t _tmpPort(portNbr);
-
-            _tmpPort.RXCallback() = std::bind(mptr, obj, std::placeholders::_1);
-
             _ports += _tmpPort;
-
-        } else {
-            _ports[portNbr].RXCallback() =
-                std::bind(mptr, obj, std::placeholders::_1);
         }
+
+        _ports[portNbr].RXCallback() =
+            std::bind(mptr, obj, std::placeholders::_1);
 
         ready();
     }
@@ -106,16 +98,16 @@ public:
 
     static void ResetCount(unsigned int portNbr);
     static void Close(unsigned int portNbr);
-    static bool isReady(void);
-    static int NumOpenSockets(void);
+    static bool isReady();
+    static int NumOpenSockets();
 
 protected:
     // NOP function for keeping a communication link active
-    void nopFunc(void);
+    void nopFunc();
 
     /// Kill any threads and free the allocated stack.
     /// Always call in any derived class's deconstructors!
-    void cleanup(void);
+    void cleanup();
 
     // Memory Queue IDs
     osMailQId _txQueue;
@@ -139,9 +131,9 @@ private:
     static void txThread(void const*);
     static void rxThread(void const*);
 
-    static void ready(void);
+    static void ready();
 
-    static void PrintHeader(void);
+    static void PrintHeader();
 
     static std::shared_ptr<CommModule> instance;
 

@@ -94,6 +94,7 @@
 #define RJ_SERIAL_RXTX MBED_UARTUSB
 
 // ** IO-EXPANDER PINS ** ============================= **
+#define RJ_IO_EXPANDER_I2C_ADDRESS (0x42)
 
 // Port A bit masks
 #define RJ_IOEXP_A0 (0)
@@ -104,7 +105,6 @@
 #define RJ_IOEXP_A5 (5)
 #define RJ_IOEXP_A6 (6)
 #define RJ_IOEXP_A7 (7)
-
 // Port B bit masks
 #define RJ_IOEXP_B0 (8)
 #define RJ_IOEXP_B1 (9)
@@ -115,33 +115,22 @@
 #define RJ_IOEXP_B6 (14)
 #define RJ_IOEXP_B7 (15)
 
-// These relate the PCB's connection with the IO Expander's bit masks defined
-// above
-// //
-// =============================================================================
+enum IOExpanderPin {
+    RJ_HEX_SWITCH_BIT0 = RJ_IOEXP_A0,
+    RJ_HEX_SWITCH_BIT1 = RJ_IOEXP_A1,
+    RJ_HEX_SWITCH_BIT2 = RJ_IOEXP_A2,
+    RJ_HEX_SWITCH_BIT3 = RJ_IOEXP_A3,
+    RJ_DIP_SWITCH_1 = RJ_IOEXP_A4,
+    RJ_DIP_SWITCH_2 = RJ_IOEXP_A5,
+    RJ_DIP_SWITCH_3 = RJ_IOEXP_A6,
+    RJ_PUSHBUTTON = RJ_IOEXP_A7,
 
-// The robot's rotary ID selector
-#define RJ_HEX_SWITCH_B0 RJ_IOEXP_A0
-#define RJ_HEX_SWITCH_B1 RJ_IOEXP_A1
-#define RJ_HEX_SWITCH_B2 RJ_IOEXP_A2
-#define RJ_HEX_SWITCH_B3 RJ_IOEXP_A3
-
-// Configuration DIP switches
-#define RJ_DIP_SWITCH_1 RJ_IOEXP_A4
-#define RJ_DIP_SWITCH_2 RJ_IOEXP_A5
-#define RJ_DIP_SWITCH_3 RJ_IOEXP_A6
-
-// A pushbutton
-#define RJ_PUSHBUTTON RJ_IOEXP_A7
-
-// Red error LEDs
-#define RJ_ERR_LED_M1 RJ_IOEXP_B0
-#define RJ_ERR_LED_M2 RJ_IOEXP_B1
-#define RJ_ERR_LED_M3 RJ_IOEXP_B2
-#define RJ_ERR_LED_M4 RJ_IOEXP_B3
-#define RJ_ERR_LED_MPU RJ_IOEXP_B4
-#define RJ_ERR_LED_BSENSE RJ_IOEXP_B5
-#define RJ_ERR_LED_DRIB RJ_IOEXP_B6
-#define RJ_ERR_LED_RADIO RJ_IOEXP_B7
-
-#define RJ_IO_EXPANDER_I2C_ADDRESS (0x42)
+    RJ_ERR_LED_M1 = RJ_IOEXP_B0,
+    RJ_ERR_LED_M2 = RJ_IOEXP_B1,
+    RJ_ERR_LED_M3 = RJ_IOEXP_B2,
+    RJ_ERR_LED_M4 = RJ_IOEXP_B3,
+    RJ_ERR_LED_MPU = RJ_IOEXP_B4,
+    RJ_ERR_LED_BSENSE = RJ_IOEXP_B5,
+    RJ_ERR_LED_DRIB = RJ_IOEXP_B6,
+    RJ_ERR_LED_RADIO = RJ_IOEXP_B7
+};

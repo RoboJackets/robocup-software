@@ -16,7 +16,9 @@ enum {
     CMD_READ_ENC = 0x91,
     CMD_READ_HALLS = 0x92,
     CMD_READ_DUTY = 0x93,
-    CMD_READ_HASH = 0x94
+    CMD_READ_HASH1 = 0x94,
+    CMD_READ_HASH2 = 0x95,
+    CMD_CHECK_DRV = 0x96
 };
 }
 
@@ -68,6 +70,7 @@ bool FPGA::Init(const std::string& filepath) {
     // show INIT_B error if it never went low
     if (!(j < 100)) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
+
         return false;
     }
 
@@ -147,8 +150,6 @@ bool FPGA::send_config(const std::string& filepath) {
     } else {
         LOG(INIT, "FPGA configuration failed\r\n    Unable to open %s",
             filepath.c_str());
-
-        fclose(fp);
 
         return true;
     }
@@ -251,19 +252,52 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
 }
 
 bool FPGA::git_hash(std::vector<uint8_t>& v) {
+    bool dirty_bit;
+
     mutex.lock();
     *cs = !(*cs);
-    spi->write(CMD_READ_HASH);
+    spi->write(CMD_READ_HASH1);
 
-    for (int i = 0; i < 7; i++)
-        v.push_back(spi->write(0x00) << (8 * i));
+    for (size_t i = 0; i < 10; i++) v.push_back(spi->write(0x00));
 
-    v.push_back(spi->write(0x00));
+    *cs = !(*cs);
+    *cs = !(*cs);
+
+    spi->write(CMD_READ_HASH2);
+
+    for (size_t i = 0; i < 11; i++) v.push_back(spi->write(0x00));
 
     *cs = !(*cs);
     mutex.unlock();
 
-    return v.back() & 0x01;
+    // store the dirty bit for returning
+    dirty_bit = (v.back() & 0x01);
+    // remove the last byte
+    v.pop_back();
+
+    // reverse the bytes
+    std::reverse(v.begin(), v.end());
+
+    return dirty_bit;
+}
+
+void FPGA::gate_drivers(std::vector<uint16_t>& v) {
+    mutex.lock();
+    *cs = !(*cs);
+
+    spi->write(CMD_CHECK_DRV);
+
+    // each halfword is structured as follows:
+    // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC |
+    // FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
+    for (size_t i = 0; i < 10; i++) {
+        uint16_t tmp = spi->write(0x00);
+        tmp |= (spi->write(0x00) << 8);
+        v.push_back(tmp);
+    }
+
+    *cs = !(*cs);
+    mutex.unlock();
 }
 
 uint8_t FPGA::motors_en(bool state) {
@@ -282,3 +316,5 @@ uint8_t FPGA::watchdog_reset() {
     motors_en(false);
     return motors_en(true);
 }
+
+bool FPGA::isReady() { return isInit; }

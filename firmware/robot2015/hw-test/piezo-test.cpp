@@ -108,6 +108,7 @@ void play_note(float freq, int dur, float vol = 1.0) {
 }
 
 int main() {
+    pc.baud(57600);
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
     pwr = 0;

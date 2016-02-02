@@ -14,6 +14,7 @@ public:
     static FPGA* Instance();
 
     bool Init(const std::string& filepath);
+    bool isReady();
     uint8_t set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
                              uint16_t* enc_deltas, size_t size_enc);
     uint8_t set_duty_cycles(uint16_t* duty_cycles, size_t size);
@@ -23,6 +24,7 @@ public:
     uint8_t motors_en(bool state);
     uint8_t watchdog_reset();
     bool git_hash(std::vector<uint8_t>&);
+    void gate_drivers(std::vector<uint16_t>&);
     bool send_config(const std::string& filepath);
 
 private:

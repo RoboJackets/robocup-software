@@ -22,12 +22,6 @@ void Task_SerialConsole(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-    // Setup some of the RPC objects so we can create new ones in the console
-    // RPC::add_rpc_class<RpcDigitalIn>();
-    // RPC::add_rpc_class<RpcDigitalOut>();
-    // RPC::add_rpc_class<RpcDigitalInOut>();
-    // RPC::add_rpc_class<RpcSPI>();
-
     // Initalize the console buffer and save the char buffer's starting address
     Console::Init();
 

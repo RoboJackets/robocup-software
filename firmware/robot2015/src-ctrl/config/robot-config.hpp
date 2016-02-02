@@ -18,18 +18,11 @@
 */
 #define RJ_BOOT_LOG false
 
-#define RJ_FPGA_ENABLE true
-
 // ** ENABLE / DISABLE INTERFACES ** ============================= **
 
 // Enable/Disable the Radio Transceiver (915MHz band)
 #define RJ_CC1201
 //#define RJ_CC1101
-
-// Enable/Disable the Accel/Gyro (MPU-6050)
-#define RJ_MPU_EN true
-
-#define RJ_WATCHDOG_TIMER_EN false
 
 // The `Watchdog Timer` timeout value. The mbed will reset if the timer is not
 // reset after the number of seconds defined here

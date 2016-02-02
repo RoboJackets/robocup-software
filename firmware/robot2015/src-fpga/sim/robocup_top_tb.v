@@ -2,6 +2,8 @@
 
 module RoboCup_Top_tb;
 
+integer ii, jj;
+
 /*Output values to file */ 
 initial begin
     $dumpfile("RoboCup_Top_tb-results.vcd");
@@ -71,6 +73,7 @@ robocup #(
 
 // This is set when the inputs should begin to simulation motors spinning
 reg start_spinning_motors = 0;
+reg start_running_motor_state = 0;
 
 task spi_on;
     begin
@@ -128,7 +131,55 @@ initial begin
     hall_states[4] = 3'b011;
     hall_states[5] = 3'b001;
 
-    #200 start_spinning_motors = 1;
+    // simulate "no motor connected"
+    #500;
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = 3'b111;
+    end
+
+    // simulate "fault halt (all pins being LOW)"
+    #16000
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = 3'b000;
+    end
+
+    // this should latch the motor's fault, so we "unconnected"
+    // the motor & "reconnect" it to make it work again
+    #16000;
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = 3'b111;
+    end
+
+    // simulate "motor startup"
+    #50000 start_spinning_motors = 1;
+
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[0];
+    end
+    #160000;
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[1];
+    end
+    #130000
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[2];
+    end
+    #100000;
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[3];
+    end
+    #75000;
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[4];
+    end
+    #40000;
+    for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+        { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[5];
+    end
+    // we end this at index 5 since the next steps will start the motor at index 0
+
+    start_running_motor_state = 1;
+    // start simulating "motor running"
 end
 
 task motors_on;
@@ -150,24 +201,23 @@ task motors_off;
 endtask
 
 reg [10:0] duty_cycle_level;
+reg [10:0] duty_cycle_level_step;
 integer i;
 // Send an SPI transfer on the slave bus once the motors are up and running
-initial wait ( start_spinning_motors ) begin
-    duty_cycle_level = 0;
-
+initial begin
     // Read encoder counts & update motors - dual transfer type
     #100 spi_on();
     spi(8'h80);
-    spi(8'hec);     // Duty cycle 0 low bits
-    spi(8'h03);     // Duty cycle 0 top bits
-    spi(8'hbd);
-    spi(8'h01);
-    spi(8'he3);
-    spi(8'h01);
-    spi(8'h4b);
-    spi(8'h01);
-    spi(8'hf6);
-    spi(8'h02);
+    spi(8'h00);     // Duty cycle 0 low bits
+    spi(8'h00);     // Duty cycle 0 top bits
+    spi(8'h00);
+    spi(8'h00);
+    spi(8'h00);
+    spi(8'h00);
+    spi(8'h00);
+    spi(8'h00);
+    spi(8'h00);
+    spi(8'h00);
     spi_off();
     
     // Read hall counts
@@ -237,37 +287,50 @@ initial wait ( start_spinning_motors ) begin
     //     #100000 motors_on();
     // end
 
-    // Increment duty cycles
+    duty_cycle_level = 85;
+    duty_cycle_level_step = 0;
+
+    wait ( start_spinning_motors );
+
+    // SPI transactions to update duty cycles
     forever begin
-        #5000 spi_on();
+        // SPI transfer every 5ms in relation to how the relative timing would look
+        // in real hardware on an 18.432MHz system clock.
+        #9216 spi_on();
         spi(8'h80);
         for ( i = 0; i < NUM_MOTORS; i = i + 1 ) begin
             spi(duty_cycle_level[7:0]);
             spi(duty_cycle_level[10:8]>>8);
         end
         spi_off();
-        duty_cycle_level = duty_cycle_level + 10;
+        duty_cycle_level = duty_cycle_level + duty_cycle_level_step;
     end
 end
 
-
 // Encoder input simulation
 initial begin	
+    // trying to match timings that would translate to ~1500 rpm on a motor
+    //
+    // with 2048 pulses/rev, that's 51200 pulses/sec. or ~20MHz, a 50ns delay
+    // between transitions - so 1 simulation cycle for each pulse
+
     encoders_a = 5'b11111;
-	#20 encoders_b = 5'b00000;
+	#1 encoders_b = 5'b00000;
+
 	forever wait ( start_spinning_motors ) begin
-        #40 encoders_a = ~encoders_a;
-        #40 encoders_b = ~encoders_b;
+        #1 encoders_a = ~encoders_a;
+        #1 encoders_b = ~encoders_b;
     end
 end
 
 
 // Simulation of hall sensors transistions. Each motor's phase is slightly delayed
-integer ii, jj;
-always wait ( start_spinning_motors ) begin
+always wait ( start_running_motor_state ) begin
 	for ( jj = 0; jj < 6; jj = jj + 1 ) begin
-		#10000 for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
-			#100 { halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[jj];
+        // trying to match relative real-world times on a hall change
+        // roughly every 85ms here
+		#15300 for ( ii = 0; ii < NUM_MOTORS; ii = ii + 1 ) begin
+			{ halls_a[ii], halls_b[ii], halls_c[ii] } = hall_states[jj];
 		end
 	end
 end

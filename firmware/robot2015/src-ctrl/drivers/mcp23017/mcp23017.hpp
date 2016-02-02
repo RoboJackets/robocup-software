@@ -126,7 +126,6 @@ private:
     static std::shared_ptr<MCP23017> instance;
 
     I2CMasterRtos _i2c;
-    PinName _sda, _scl;
     int _i2cAddress;  // physical I2C address
     unsigned short shadow_GPIO, shadow_IODIR, shadow_GPPU,
         shadow_IPOL;  // Cached copies of the register values

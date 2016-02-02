@@ -55,14 +55,13 @@ do not alternate going on and off so there is no danger of shoot through.
 `ifndef _PHASE_DRIVER_
 `define _PHASE_DRIVER_
 
-
 module Phase_Driver ( clk, duty_cycle, high_z, pwm_high, pwm_low );
 
 parameter DEAD_TIME = 2;            // dead time in units of clock ticks
 parameter COUNTER_WIDTH = 10;        // bits available to counter
-parameter MAX_COUNTER = 10'h3ff;          // PWM period = MAX_COUNTER * clockPeriod
+parameter MAX_COUNTER = 'h3ff;     // PWM period = MAX_COUNTER * clockPeriod
 parameter DUTY_CYCLE_WIDTH = 10;     // bits available to duty_cycle
-parameter MAX_DUTY_CYCLE = 10'h3ff;       // Value represeting a duty cycle of 100%
+parameter MAX_DUTY_CYCLE = 'h3ff;  // Value represeting a duty cycle of 100%
 parameter DUTY_CYCLE_STEP_RES = 1;  // ceil( MAX_COUNTER / MAX_DUTY_CYCLE ) 
 
 input   clk;
@@ -71,14 +70,9 @@ input   high_z;
 output  pwm_high, pwm_low;
 // ===============================================  
 
-wire h, l;
-
 reg [COUNTER_WIDTH-1:0] counter = 0;
-
-//assign deadtime  = (duty_cycle == MAX_DUTY_CYCLE || duty_cycle == 0) ? 0 : DEAD_TIME;
-
-assign h = ( ( counter + DEAD_TIME ) < ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) ? 1 : 0;
-assign l = ( ( counter >= ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) && ( ( counter + DEAD_TIME ) < MAX_COUNTER ) ) ? 1 : 0;
+wire h = ( ( counter + DEAD_TIME ) < ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) ? 1 : 0;
+wire l = ( ( counter >= ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) && ( ( counter + DEAD_TIME ) < MAX_COUNTER ) ) ? 1 : 0;
 
 
 assign  pwm_high =  (high_z == 1) ? 0 : h;
@@ -88,8 +82,8 @@ assign  pwm_low =   (high_z == 1) ? 0 :
                     l;
 
 always @(posedge clk) begin : PHASE_DRIVER
-    counter = counter + 1;
-    if (counter >= MAX_COUNTER) counter = 0;
+    counter <= counter + 1;
+    if (counter >= MAX_COUNTER) counter <= 0;
 end
 
 endmodule

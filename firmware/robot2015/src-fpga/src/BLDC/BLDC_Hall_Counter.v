@@ -57,11 +57,11 @@ wire count_down =
 
 
 // Begin main logic
-always @(posedge clk) begin : HALL_COUNTER
+always @( posedge clk ) begin : HALL_COUNTER
 
     hall_d <= hall;
 
-    if ( reset == 1'b1 ) begin
+    if ( reset == 1 ) begin
         count <= 0;
     end else begin
         if ( count_up == 1 ) begin

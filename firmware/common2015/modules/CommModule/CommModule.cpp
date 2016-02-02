@@ -32,7 +32,7 @@ CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
 
 CommModule::~CommModule() { cleanup(); }
 
-void CommModule::cleanup(void) {
+void CommModule::cleanup() {
     // terminate the threads
     osThreadTerminate(_txID);
     osThreadTerminate(_rxID);
@@ -42,7 +42,7 @@ void CommModule::cleanup(void) {
     delete[](_rxDef.stack_pointer);
 }
 
-void CommModule::Init(void) {
+void CommModule::Init() {
     // Make sure we have an instance to work with
     auto instance = Instance();
 
@@ -116,13 +116,15 @@ void CommModule::txThread(void const* arg) {
                     p->port(), p->subclass());
             }
 
-            // Release the allocated memory once data is sent
-            osMailFree(instance->_txQueue, p);
-
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            led_ticker_timeout.start(300);
-            commLightsRenew_TX();
+            if (p->address() != 127) {
+                led_ticker_timeout.start(275);
+                commLightsRenew_TX();
+            }
+
+            // Release the allocated memory once data is sent
+            osMailFree(instance->_txQueue, p);
 
             tState = osThreadSetPriority(_txID, threadPriority);
             ASSERT(tState == osOK);
@@ -181,13 +183,15 @@ void CommModule::rxThread(void const* arg) {
                     p->port(), p->subclass());
             }
 
-            // free memory allocated for mail
-            osMailFree(instance->_rxQueue, p);
-
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            led_ticker_timeout.start(300);
-            commLightsRenew_RX();
+            if (p->address() != 127) {
+                led_ticker_timeout.start(275);
+                commLightsRenew_RX();
+            }
+
+            // free memory allocated for mail
+            osMailFree(instance->_rxQueue, p);
 
             tState = osThreadSetPriority(_rxID, threadPriority);
             ASSERT(tState == osOK);
@@ -254,7 +258,7 @@ bool CommModule::openSocket(uint8_t portNbr) {
     }
 }
 
-void CommModule::ready(void) {
+void CommModule::ready() {
     if (_isReady == true) return;
 
     // Start running the TX thread - it will trigger with to startup the RX
@@ -264,7 +268,8 @@ void CommModule::ready(void) {
 
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port()].isOpen() && _ports[packet.port()].hasTXCallback()) {
+    if (_ports[packet.port()].isOpen() &&
+        _ports[packet.port()].hasTXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
@@ -285,7 +290,8 @@ void CommModule::send(const rtp::packet& packet) {
 
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port()].isOpen() && _ports[packet.port()].hasRXCallback()) {
+    if (_ports[packet.port()].isOpen() &&
+        _ports[packet.port()].hasRXCallback()) {
         // Allocate a block of memory for the data.
         rtp::packet* p =
             (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
@@ -320,7 +326,7 @@ void CommModule::PrintInfo(bool forceHeader) {
     Console::Flush();
 }
 
-void CommModule::PrintHeader(void) { _ports.PrintHeader(); }
+void CommModule::PrintHeader() { _ports.PrintHeader(); }
 
 void CommModule::ResetCount(unsigned int portNbr) {
     _ports[portNbr].RXPackets() = 0;
@@ -329,6 +335,6 @@ void CommModule::ResetCount(unsigned int portNbr) {
 
 void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
 
-bool CommModule::isReady(void) { return _isReady; }
+bool CommModule::isReady() { return _isReady; }
 
-int CommModule::NumOpenSockets(void) { return _ports.count_open(); }
+int CommModule::NumOpenSockets() { return _ports.count_open(); }

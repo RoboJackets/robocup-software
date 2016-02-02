@@ -6,14 +6,6 @@
 // Declaration for the pointer to the global object
 shared_ptr<MCP23017> MCP23017::instance;
 
-void MCP23017::set_config(PinName sda, PinName scl, int i2cAddress) {
-    instance->_sda = sda;
-    instance->_scl = scl;
-    instance->_i2cAddress = i2cAddress;
-
-    LOG(OK, "IO Expander I2C Address:\t0x%02X", instance->_i2cAddress);
-}
-
 shared_ptr<MCP23017>& MCP23017::Instance() {
     if (instance.get() == nullptr) instance.reset(new MCP23017);
 
@@ -23,15 +15,9 @@ shared_ptr<MCP23017>& MCP23017::Instance() {
 bool MCP23017::Init() {
     auto instance = Instance();
 
-    set_config(RJ_I2C_BUS);
+    instance->_i2c.frequency(400000);
     reset();
-    config(0x00FF, 0x0000, 0xFF00);
-
-    DigitalInOut scl(instance->_scl);
-    DigitalInOut sda(instance->_sda);
-
-    scl.mode(PullUp);
-    sda.mode(PullUp);
+    config(0x00FF, 0x0000, 0x0000);
 
     LOG(OK, "MCP23017 initialized");
 
@@ -43,9 +29,6 @@ bool MCP23017::Init() {
  * Set configuration (IOCON) and direction(IODIR) registers to initial state
  */
 void MCP23017::reset() {
-    // First make sure that the device is in BANK=0 mode
-    writeRegister(0x05, (unsigned char)0x04);
-
     // Set the shadow registers to power-on state
     inputOutputMask(0xFFFF);
 
@@ -67,11 +50,7 @@ void MCP23017::writeRegister(int regAddress, unsigned char data) {
     buffer[0] = regAddress;
     buffer[1] = data;
 
-    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 2);
-
-    if (!ret)
-        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X",
-            instance->_i2cAddress);
+    instance->_i2c.write(instance->_i2cAddress, buffer, 2);
 }
 
 /*----------------------------------------------------------------------------
@@ -84,11 +63,7 @@ void MCP23017::writeRegister(int regAddress, unsigned short data) {
     buffer[1] = data & 0xFF;
     buffer[2] = (data >> 8) & 0xFF;
 
-    int ret = instance->_i2c.write(instance->_i2cAddress, buffer, 3);
-
-    if (!ret)
-        LOG(SEVERE, "No ACK received on I2C bus.\r\n    Slave Address:\t0x%02X",
-            instance->_i2cAddress);
+    instance->_i2c.write(instance->_i2cAddress, buffer, 3);
 }
 
 /*-----------------------------------------------------------------------------
@@ -183,7 +158,8 @@ void MCP23017::pinMode(int pin, int mode) {
  * digitalRead
  */
 int MCP23017::digitalRead(int pin) {
-    return ((readRegister(GPIO) & (1 << pin)) ? 1 : 0);
+    instance->shadow_GPIO = readRegister(GPIO);
+    return ((instance->shadow_GPIO & (1 << pin)) ? 1 : 0);
 }
 
 /*-----------------------------------------------------------------------------
@@ -219,12 +195,18 @@ void MCP23017::digitalWrite(int pin, int val) {
 /*-----------------------------------------------------------------------------
  * digitalWordRead
  */
-unsigned short MCP23017::digitalWordRead() { return readRegister(GPIO); }
+unsigned short MCP23017::digitalWordRead() {
+    instance->shadow_GPIO = readRegister(GPIO);
+    return instance->shadow_GPIO;
+}
 
 /*-----------------------------------------------------------------------------
  * digitalWordWrite
  */
-void MCP23017::digitalWordWrite(unsigned short w) { writeRegister(GPIO, w); }
+void MCP23017::digitalWordWrite(unsigned short w) {
+    instance->shadow_GPIO = w;
+    writeRegister(GPIO, w);
+}
 
 /*-----------------------------------------------------------------------------
  * inputPolarityMask

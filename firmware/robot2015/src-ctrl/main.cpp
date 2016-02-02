@@ -85,7 +85,7 @@ int main() {
      */
     if (isLogging) {
         // reset the console's default settings and enable the cursor
-        printf("\033[0m");
+        printf("\033[m");
         fflush(stdout);
     }
 
@@ -98,9 +98,20 @@ int main() {
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
     rgbLED.clear();
 
+    // Set the RGB LEDs to a medium blue while the threads are started up
+    float defaultBrightness = 0.02f;
+    rgbLED.brightness(3 * defaultBrightness);
+    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
+    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
+    rgbLED.write();
+
     // Start a periodic blinking LED to show system activity
-    DigitalOut ledOne(LED1, 0);
-    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&ledOne);
+    std::vector<DigitalOut> mbed_lights;
+    mbed_lights.push_back(DigitalOut(LED1, 0));
+    mbed_lights.push_back(DigitalOut(LED2, 0));
+    mbed_lights.push_back(DigitalOut(LED3, 0));
+    mbed_lights.push_back(DigitalOut(LED4, 0));
+    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
     live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
 
     // Flip off the startup LEDs after a timeout period
@@ -111,52 +122,41 @@ int main() {
     // passed in
     bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
 
-    /* We MUST wait for the FPGA to COMPLETELY configure before moving on
-     * because of threading with the shared the SPI. If we don't
-     * explicitly halt main (it's just considered another thread), then
-     * the chip select lines will not be in the correct states for
-     * communicating between devices exclusively. Many bus faults occured
-     * on the road to finding this problem and then determining how to
-     * fix it.
-     */
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
-        osSignalSet(mainID, MAIN_TASK_CONTINUE);
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
-        osSignalSet(mainID, MAIN_TASK_CONTINUE);
     }
-
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     fpga_err |= 1 << !fpga_ready;
     // the error code is valid now
     fpga_err |= 1 << 0;
 
-    // Set the RGB LEDs to a medium blue while the threads are started up
-    float defaultBrightness = 0.02f;
-    rgbLED.brightness(3 * defaultBrightness);
-    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
-    rgbLED.write();
+    // Init IO Expander and turn  all LEDs
+    MCP23017::Init();
+
+    // Startup the 3 separate threads, being sure that we wait for it
+    // to signal back to us that we can startup the next thread. Not doing
+    // so results in weird wierd things that are really hard to debug. Even
+    // though this is multi-threaded code, that dosen't mean it's
+    // a multi-core system.
 
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for handling radio communications
     Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
     // Make sure all of the motors are enabled
     motors_Init();
-
-    // Wait for all threads to get to their ready state
-    for (size_t i = 0; i < 3; ++i)
-        Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Set error indicators
     if (fpga_err > 1) {
@@ -204,6 +204,9 @@ int main() {
     rdy_led = fpga_ready;
 
     unsigned int ll = 0;
+
+    MCP23017::write_mask(0xFF00, 0xFF00);
+
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
@@ -213,11 +216,35 @@ int main() {
         // periodically reset the console text's format
         ll++;
         if ((ll % 4) == 0) {
-            printf("\033[0m");
+            printf("\033[m");
             fflush(stdout);
         }
 
-        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 750);
+        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
+
+        // M1
+        // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
+
+        // // M2
+        // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
+
+        // // M3
+        // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
+
+        // // M4
+        // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
+
+        // IMU
+        // MCP23017::write_mask(~(1 << (8 + 6)), 0xFF00);
+
+        // Det
+        // MCP23017::write_mask(~(1 << (8 + 3)), 0xFF00);
+
+        // Sense
+        // MCP23017::write_mask(~(1 << (8 + 4)), 0xFF00);
+
+        // Radio
+        // MCP23017::write_mask(~(1 << (8 + 2)), 0xFF00);
     }
 }
 

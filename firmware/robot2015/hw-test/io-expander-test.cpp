@@ -7,7 +7,6 @@
 #include <helper-funcs.hpp>
 
 #include "robot-devices.hpp"
-#include "SoftwareI2C.h"
 
 #define MCP23017_I2C_READ (0x01)
 
@@ -15,76 +14,57 @@ bool testPass = false;
 std::vector<unsigned int> freq1;
 std::vector<unsigned int> freq2;
 
+void run_test(I2C& i2c) {
+    char buf[2];
+
+    // For both frequencies, we check 1 additional address that should always
+    // fail for the
+    // case where there's a response on every valid address of the IO expander.
+    for (unsigned int addrOffset = 0; addrOffset < 0x09; addrOffset++) {
+        bool nack, ack = false;
+        char addr = (0x40 | addrOffset);
+
+        // The MCP23017's sequence for reading a register
+        // ACKS should be received both times, but we OR them
+        // together for the test.
+        ack = i2c.write(addr);
+        nack = i2c.read(addr, buf, 2);
+
+        if (ack && !nack) freq1.push_back(addr);
+    }
+}
+
 int main() {
+    // GPIO0_BASE
     DigitalOut good(LED1, 0);
     DigitalOut bad1(LED2, 0);
     DigitalOut bad2(LED3, 0);
     DigitalOut pwr(LED4, 1);
-    Serial pc(MBED_UARTUSB);
+    Serial pc(RJ_SERIAL_RXTX);
+    I2C i2c(RJ_I2C_BUS);
 
-    SoftwareI2C i2c(RJ_I2C_SDA, RJ_I2C_SCL);
-
-    uint8_t buf[2] = {0x01, 0x02};
-
+    pc.baud(57600);
     pc.printf("START========= STARTING TEST =========\r\n\r\n");
 
     pwr = 0;
     RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&pwr);
     live_light.start(250);
 
-    pc.printf("--  Testing address space using 100kHz\r\n");
+    pc.printf("--  Testing IO Expander at 100kHz\r\n");
     // Test on low bus frequency
-    // i2c.frequency(100000);
+    i2c.frequency(100000);
+    run_test(i2c);
 
-    // For both frequencies, we check 1 additional address that should always
-    // fail for the
-    // case where there's a response on every valid address of the IO expander.
-    for (unsigned int addrOffset = 0; addrOffset < 0xFF; addrOffset++) {
-        bool nack, ack = false;
-        // char addr = (0x40 | addrOffset);
-        char addr = addrOffset;
+    pc.printf("--  Testing IO Expander at 400kHz\r\n");
+    // Test on high bus frequency
+    i2c.frequency(400000);
+    run_test(i2c);
 
-        // The MCP23017's sequence for reading a register
-        // ACKS should be received both times, but we OR them
-        // together for the test.
-        // ack =
-        i2c.write(addr, 0x01);
-        // pc.printf("ACK:\t%u\r\n", ack);
-
-        // nack =
-        i2c.read(addr, buf, 2);
-        //         pc.printf("NACK:\t%u\r\n    0x%02X\t0x%02X\r\n", nack);
-        pc.printf("Addr:\t0x%02X\r\n  Rec. 1:\t0x%02X\r\n  Rec. 2:\t0x%02X\r\n",
-                  addr, buf[0], buf[1]);
-
-        // pc.printf("REG:\t%0x%04X\r\n\r\n", reg);
-
-        // if (ack && !nack) {
-        //     freq1.push_back(addr);
-        // }
-    }
-
-    // pc.printf("--  Testing address space using 400kHz\r\n");
-    // // Test on high bus frequency
-    // //i2c.frequency(400000);
-
-    // for (unsigned int addrOffset = 0; addrOffset < 0x09; addrOffset++) {
-    //     bool ack = false;
-    //     char addr = (0x40 | addrOffset);
-
-    //     //ack  =  !i2c.write(addr);
-    //     //ack |=  !i2c.read(addr, buf, 2);
-
-    //     // if (ack == true) {
-    //     //     freq2.push_back(addr);
-    //     // }
-    // }
-
-    // // Test results
-    // pc.printf("\r\n100kHz Test:\t%s\t(%u ACKS)\r\n", freq1.empty() ? "FAIL" :
-    // "PASS", freq1.size());
-    // pc.printf("400kHz Test:\t%s\t(%u ACKS)\r\n", freq2.empty() ? "FAIL" :
-    // "PASS", freq2.size());
+    // Test results
+    pc.printf("\r\n100kHz Test:\t%s\t(%u ACKS)\r\n",
+              freq1.empty() ? "FAIL" : "PASS", freq1.size());
+    pc.printf("400kHz Test:\t%s\t(%u ACKS)\r\n",
+              freq2.empty() ? "FAIL" : "PASS", freq2.size());
 
     // Store the number of ACKs from the low frequency so we can just modify its
     // vector instead of making a new one

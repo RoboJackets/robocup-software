@@ -45,13 +45,13 @@ public:
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
-    virtual void reset(void) = 0;
+    virtual void reset() = 0;
 
     /// Perform tests to determine if the hardware is able to properly function
-    virtual int32_t selfTest(void) = 0;
+    virtual int32_t selfTest() = 0;
 
     /// Determine if communication can occur with another device
-    virtual bool isConnected(void) = 0;
+    virtual bool isConnected() = 0;
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
@@ -68,8 +68,12 @@ protected:
     /// Kill any threads and free the allocated stack.
     /// Always call in any derived class's deconstructors!
     void cleanup();
+
+    /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
+    /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
-    void toggle_cs();
+    void radio_select();
+    void radio_deselect();
 
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads
@@ -113,9 +117,9 @@ private:
     static void rxThread(void const*);
 
     // Methods for initializing a transceiver's pins for communication
-    void setup(void);
+    void setup();
     void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
                     PinName = NC);
-    void setup_cs(void);
-    void setup_interrupt(void);
+    void setup_cs();
+    void setup_interrupt();
 };
