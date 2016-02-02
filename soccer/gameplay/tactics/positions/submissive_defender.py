@@ -12,7 +12,7 @@ import math
 # The regular defender does a lot of calculations and figures out where it should be
 # This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
 class SubmissiveDefender(
-    single_robot_composite_behavior.SingleRobotCompositeBehavior):
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         marking = 1
@@ -45,16 +45,19 @@ class SubmissiveDefender(
         self._block_line = value
 
         # we move somewhere along this arc to mark our 'block_line'
-        arc_left = robocup.Arc(robocup.Point(
-            -constants.Field.GoalFlat / 2,
-            0), constants.Field.ArcRadius + constants.Robot.Radius * 2, math.pi
-                               / 2, math.pi)
-        arc_right = robocup.Arc(robocup.Point(constants.Field.GoalFlat / 2,
-                                              0), constants.Field.ArcRadius +
-                                constants.Robot.Radius * 2, 0, math.pi / 2)
-        seg = robocup.Segment(robocup.Point(
-            -constants.Field.GoalFlat / 2, constants.Field.ArcRadius +
-            constants.Robot.Radius * 2), robocup.Point(
+        arc_left = robocup.Arc(
+            robocup.Point(-constants.Field.GoalFlat / 2, 0),
+            constants.Field.ArcRadius + constants.Robot.Radius * 2,
+            math.pi / 2, math.pi)
+        arc_right = robocup.Arc(
+            robocup.Point(constants.Field.GoalFlat / 2, 0),
+            constants.Field.ArcRadius + constants.Robot.Radius * 2, 0,
+            math.pi / 2)
+        seg = robocup.Segment(
+            robocup.Point(
+                -constants.Field.GoalFlat / 2,
+                constants.Field.ArcRadius + constants.Robot.Radius * 2),
+            robocup.Point(
                 constants.Field.GoalFlat / 2,
                 constants.Field.ArcRadius + constants.Robot.Radius * 2))
 
@@ -62,9 +65,9 @@ class SubmissiveDefender(
 
         if self._block_line != None:
             # main.system_state().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
-            main.system_state().draw_circle(self._block_line.get_pt(0), 0.1,
-                                            constants.Colors.White,
-                                            "SubmissiveDefender")
+            main.system_state().draw_circle(
+                self._block_line.get_pt(0), 0.1, constants.Colors.White,
+                "SubmissiveDefender")
 
             threat_point = self._block_line.get_pt(0)
 
@@ -110,16 +113,19 @@ class SubmissiveDefender(
         move = self.subbehavior_with_name('move')
         move.pos = self.move_target
 
-        arc_left = robocup.Arc(robocup.Point(
-            -constants.Field.GoalFlat / 2,
-            0), constants.Field.ArcRadius + constants.Robot.Radius * 2, math.pi
-                               / 2, math.pi)
-        arc_right = robocup.Arc(robocup.Point(constants.Field.GoalFlat / 2,
-                                              0), constants.Field.ArcRadius +
-                                constants.Robot.Radius * 2, 0, math.pi / 2)
-        seg = robocup.Segment(robocup.Point(
-            -constants.Field.GoalFlat / 2, constants.Field.ArcRadius +
-            constants.Robot.Radius * 2), robocup.Point(
+        arc_left = robocup.Arc(
+            robocup.Point(-constants.Field.GoalFlat / 2, 0),
+            constants.Field.ArcRadius + constants.Robot.Radius * 2,
+            math.pi / 2, math.pi)
+        arc_right = robocup.Arc(
+            robocup.Point(constants.Field.GoalFlat / 2, 0),
+            constants.Field.ArcRadius + constants.Robot.Radius * 2, 0,
+            math.pi / 2)
+        seg = robocup.Segment(
+            robocup.Point(
+                -constants.Field.GoalFlat / 2,
+                constants.Field.ArcRadius + constants.Robot.Radius * 2),
+            robocup.Point(
                 constants.Field.GoalFlat / 2,
                 constants.Field.ArcRadius + constants.Robot.Radius * 2))
 
