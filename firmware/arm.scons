@@ -10,7 +10,7 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 # to build it).
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
-mirror_gnu = 'http://www.gtlib.gatech.edu/pub/gnu/gnu'
+mirror_gnu = 'https://ftp.gnu.org/gnu'
 mirror_newlib = 'ftp://sources.redhat.com/pub/newlib'
 
 # Package versions and size of complete file
@@ -54,21 +54,21 @@ def BuildPackage(dir, filename, size, url, config_options):
 	# These files will be created after complicated steps are completed successfully
 	config_stamp = build_dir.File('.configured')
 	build_stamp = build_dir.File('.built')
-	
+
 	# Unpack the source
 	unpack = host_env.Command(source_dir.File('.unpacked'), dl_file,
 		'tar -C %s -xf ${SOURCE} && touch ${TARGET}' % Dir('source').abspath)
 	Depends(unpack, dl_file)
 	Clean(unpack, source_dir)
-	
+
 	# Configure in a build directory
 	configure = host_env.Command(config_stamp, source_dir,
 		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && echo "MAKEINFO = :" >> Makefile && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
-	
+
 	# Build the package
 	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
 	Clean(build, build_dir)
-	
+
 	return (unpack, configure, build)
 
 (unpack_binutils, config_binutils, build_binutils) = BuildPackage(binutils_package, binutils_file, binutils_size, binutils_url,
