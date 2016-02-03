@@ -31,8 +31,8 @@ void legacy_rx_cb(rtp::packet* p) {
     if (p->payload.size()) {
         LOG(OK,
             "Legacy rx successful!\r\n"
-            "    Received:\t'%s' (%u bytes)\r\n",
-            p->payload.data(), p->payload.size());
+            "    Received: %u bytes\r\n",
+            p->payload.size());
     } else if (p->sfs()) {
         LOG(OK, "Legacy rx ACK successful!\r\n");
     } else {
@@ -55,9 +55,9 @@ void loopback_rx_cb(rtp::packet* p) {
     if (p->payload.size()) {
         LOG(OK,
             "Loopback rx successful!\r\n"
-            "    Received:\t'%s' (%u bytes)\r\n"
+            "    Received: %u bytes\r\n"
             "    ACK:\t%s\r\n",
-            p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
+            p->payload.size(), (p->ack() ? "SET" : "UNSET"));
 
         if (p->subclass() == 1) {
             uint16_t status_byte = FPGA::Instance()->set_duty_cycles(
@@ -105,9 +105,9 @@ void loopback_tx_cb(rtp::packet* p) {
     if (p->payload.size()) {
         LOG(OK,
             "Loopback tx successful!\r\n"
-            "    Sent:\t'%s' (%u bytes)\r\n"
+            "    Sent: %u bytes\r\n"
             "    ACK:\t%s\r\n",
-            p->payload.data(), p->payload.size(), (p->ack() ? "SET" : "UNSET"));
+            p->payload.size(), (p->ack() ? "SET" : "UNSET"));
     } else if (p->sfs()) {
         LOG(OK, "Loopback tx ACK successful!\r\n");
     } else {

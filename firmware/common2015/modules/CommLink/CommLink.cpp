@@ -124,7 +124,11 @@ void CommLink::rxThread(void const* arg) {
 // Called by the derived class to begin thread operations
 void CommLink::ready() { osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD); }
 
-void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
+void CommLink::sendPacket(rtp::packet* p) {
+    std::vector<uint8_t> buffer;
+    p->pack(&buffer);
+    sendData(buffer.data(), buffer.size());
+}
 
 void CommLink::ISR() { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 

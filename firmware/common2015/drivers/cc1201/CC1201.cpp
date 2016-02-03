@@ -71,6 +71,8 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
         Thread::wait(2);
     } while (bts != 0);
 
+    LOG(INF2, "packet sent successfully! (I think?)");
+
     return COMM_SUCCESS;
 }
 
