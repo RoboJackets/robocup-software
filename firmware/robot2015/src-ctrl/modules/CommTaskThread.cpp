@@ -154,6 +154,9 @@ void Task_CommCtrl(void const* args) {
     CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
                  sizeof(preferredSettings) / sizeof(registerSetting_t));
 
+    // TODO(justin): remove this
+    global_radio = &radio;
+
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
      * according
