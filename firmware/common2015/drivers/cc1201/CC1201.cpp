@@ -367,23 +367,28 @@ uint8_t CC1201::rand() {
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
 
 float CC1201::freq() {
-    uint8_t buf[5];
-    uint16_t freq_offset;
-    uint32_t freq_base;
-    float freq;
-
     freqUpdate();
 
-    // read the 5 frequency related bytes in order:
+    // read the 5 frequency-related bytes in order:
     // FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0
+    uint8_t buf[5];
     readReg(CC1201_FREQOFF1, buf, 5);
 
-    freq_offset = (buf[0] << 8) | (buf[1]);
-    freq_offset = (~freq_offset) + 1;
-    freq_base = (buf[2] << 16) | (buf[3] << 8) | (buf[4]);
+    // concatenate the two FREQOFF bytes and convert from 2's complement
+    const uint16_t freq_offset = ~((buf[0] << 8) | buf[1]) + 1;
 
-    freq = 40 * static_cast<float>((freq_base >> 16) + (freq_offset >> 18));
-    freq /= 4;
+    uint32_t freq_base = (buf[2] << 16) | (buf[3] << 8) | buf[4];
+
+    // crystal oscillator is 40MHz
+    constexpr float f_xosc = 40000000;
+
+    float f_vco = (((float)freq_base) * f_xosc / powf(2, 16)) +
+                  (((float)freq_offset) * f_xosc / powf(2, 18));
+
+    // LO divider is 4 for our selected band, which is 820MHz - 960MHz
+    float lo_divider = 4;
+
+    float freq = f_vco / lo_divider / 1000000;
 
     LOG(INF2, "Operating Frequency: %3.2f MHz", freq);
 
