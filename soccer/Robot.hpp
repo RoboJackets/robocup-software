@@ -273,7 +273,7 @@ public:
 
     /// checks if the bot has kicked/chipped very recently.
     bool justKicked() {
-        return RJ::timestamp() - lastKickTime() < 0.25 * SecsToTimestamp;
+        return RJ::timestamp() - lastKickTime() < RJ::SecsToTimestamp(0.25);
     }
 
     /**
