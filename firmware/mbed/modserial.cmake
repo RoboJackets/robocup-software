@@ -3,7 +3,7 @@
 
 ExternalProject_Add(modserial_library
     HG_REPOSITORY       https://developer.mbed.org/users/Sissors/code/MODSERIAL
-    HG_TAG              39:8ef4f91813fd
+    HG_TAG              41:d8422efe4761
     CONFIGURE_COMMAND   ""
     BUILD_COMMAND       ""
     INSTALL_COMMAND     ""

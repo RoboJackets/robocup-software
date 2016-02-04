@@ -87,9 +87,7 @@ void CommLink::rxThread(void const* arg) {
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority = osThreadGetPriority(inst->_rxID);
 
-    LOG(INIT,
-        "RX communication link ready!\r\n    Thread ID:\t%u\r\n"
-        "    Priority:\t%d",
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
         inst->_rxID, threadPriority);
 
     // Set the function to call on an interrupt trigger
@@ -124,7 +122,11 @@ void CommLink::rxThread(void const* arg) {
 // Called by the derived class to begin thread operations
 void CommLink::ready() { osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD); }
 
-void CommLink::sendPacket(rtp::packet* p) { sendData(p->packed(), p->size()); }
+void CommLink::sendPacket(rtp::packet* p) {
+    std::vector<uint8_t> buffer;
+    p->pack(&buffer);
+    sendData(buffer.data(), buffer.size());
+}
 
 void CommLink::ISR() { osSignalSet(_rxID, COMM_LINK_SIGNAL_RX_TRIGGER); }
 

@@ -41,66 +41,16 @@ namespace {
 // type of data field used in all packet classes
 // - must be 8 bits, (typedef used for eaiser compiler
 // type error debugging)
-typedef uint8_t packet_data_t;
+typedef uint8_t data_t;
 }
 
-/**
- * @brief [brief description]
- * @details [long description]
- * @return [description]
- */
-class layer_map {
-public:
-    typedef packet_data_t data_t;
-
-protected:
-    typedef std::vector<data_t> datav_t;
-    typedef datav_t::iterator datav_it_t;
-    std::vector<data_t> d;
-
-public:
-    layer_map(size_t resv) { d.reserve(resv); }
-
-    datav_it_t pack() {
-        // make sure all files are in contiguous memory,
-        // then return iterator to beginning
-        return d.begin();
-    }
-
-    data_t* data() { return d.data(); }
-
-    void show_data() {
-        for (auto const& i : d) printf("%02X ", i);
-    }
-
-    size_t size() const { return static_cast<size_t>(d.size()); }
-};
-
-/**
- * @brief [brief description]
- * @details [long description]
- *
- * @param p [description]
- * @return [description]
- */
-class header_data : public layer_map {
+class header_data {
 public:
     enum type { control, tuning, ota, misc };
 
-    header_data() : layer_map(3), t(control), address(0), port_fields(0){};
+    header_data() : t(control), address(0), port_fields(0){};
 
-    datav_it_t pack(size_t payload_size, bool headless = false) {
-        if (d.size()) return d.begin();
-        // payload size + number of bytes in header is top byte
-        // since that's required for the cc1101/cc1201 with
-        // variable packet sizes
-        d.push_back(payload_size + (headless ? 0 : 2));
-        if (headless == false) {
-            d.push_back(address);
-            d.push_back(port_fields);
-        }
-        return d.begin();
-    }
+    size_t size() const { return 2; }
 
     type t;
     data_t address;
@@ -108,39 +58,23 @@ public:
     friend class payload_data;
 
     // common header byte - union so it's easier to put into vector
+    data_t port_fields;
     struct {
-        union {
-            struct {
-                data_t port_fields;
-            } __attribute__((packed));
-            struct {
 #if __BIG_ENDIAN
-                data_t sfs : 1, ack : 1, subclass : 2, port : 4;
+        data_t sfs : 1, ack : 1, subclass : 2, port : 4;
 #else
-                data_t port : 4, subclass : 2, ack : 1, sfs : 1;
+        data_t port : 4, subclass : 2, ack : 1, sfs : 1;
 #endif
-            } __attribute__((packed));
-        };
-    };
+    } __attribute__((packed));
 };
 
-/**
- * @brief [brief description]
- * @details [long description]
- *
- * @param p [description]
- * @return [description]
- */
-class payload_data : public layer_map {
+class payload_data {
 public:
-    payload_data() : layer_map(MAX_DATA_SZ){};
+    payload_data(){};
 
-    datav_it_t pack() { return d.begin(); }
+    std::vector<data_t> d;
 
-    datav_it_t add_header(const header_data& h) {
-        d.insert(d.begin(), h.d.begin(), h.d.end());
-        return d.begin();
-    }
+    size_t size() const { return d.size(); }
 
     template <class T>
     void fill(const std::vector<T>& v) {
@@ -159,7 +93,6 @@ class packet {
 public:
     rtp::header_data header;
     rtp::payload_data payload;
-    bool _packed;
 
     packet(){};
     packet(const std::string& s) { payload.fill(s); }
@@ -169,17 +102,11 @@ public:
         payload.fill(v);
     }
 
-    packet_data_t* packed() {
-        if (_packed == false) pack();
-
-        return payload.data();
-    }
-
-    size_t size() {
-        if (_packed == true)
-            return payload.size();
-        else
+    size_t size(bool includeHeader = true) {
+        if (includeHeader)
             return payload.size() + header.size();
+        else
+            return payload.size();
     }
 
     int port() const { return static_cast<int>(header.port); }
@@ -209,13 +136,21 @@ public:
         // sort out header
     }
 
-private:
-    void pack() {
-        payload.pack();
-        // pack the header, but do a "headless" pack
-        header.pack(payload.size(), true);
-        payload.add_header(header);
-        _packed = true;
+    void pack(std::vector<data_t>* buffer, bool includeHeader = false) const {
+        // first byte is total size (excluding the size byte)
+        const uint8_t total_size =
+            payload.size() + (includeHeader ? header.size() : 0);
+        buffer->reserve(total_size + 1);
+        buffer->push_back(total_size);
+
+        // header data
+        if (includeHeader) {
+            buffer->push_back(header.address);
+            buffer->push_back(header.port_fields);
+        }
+
+        // payload
+        buffer->insert(buffer->end(), payload.d.begin(), payload.d.end());
     }
 };
 }

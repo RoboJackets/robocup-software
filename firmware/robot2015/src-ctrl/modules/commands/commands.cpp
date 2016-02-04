@@ -6,6 +6,7 @@
 #include <rtos.h>
 #include <mbed_rpc.h>
 #include <CommModule.hpp>
+#include <CC1201.hpp>
 #include <numparser.hpp>
 #include <logger.hpp>
 
@@ -33,7 +34,7 @@ const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 /**
  * indicates if the command held in "iterativeCommand"
  */
-volatile bool iterative_command_state = false;
+bool iterative_command_state = false;
 
 /**
  * current iterative command args
@@ -143,8 +144,10 @@ static const vector<command_t> commands = {
      cmd_radio,
      "test radio connectivity.",
      "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
-     "loopback "
-     "[<count>], stress-test <count> <delay> <pck-size>}]"},
+     "loopback [<count>], "
+     "debug, "
+     "strobe <num>, "
+     "stress-test <count> <delay> <pck-size>}]"},
 
     {{"reboot", "reset", "restart"},
      false,
@@ -849,7 +852,7 @@ int cmd_radio(cmd_args_t& args) {
 
     if (args.size() == 1 || args.size() == 2) {
         rtp::packet pck("LINK TEST PAYLOAD");
-        unsigned int portNbr = rtp::port::LINK;
+        unsigned int portNbr = rtp::port::DISCOVER;
 
         if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
 
@@ -871,6 +874,8 @@ int cmd_radio(cmd_args_t& args) {
             CommModule::receive(pck);
 
         } else if (args.front().compare("loopback") == 0) {
+            pck.port(rtp::port::LINK);
+
             unsigned int i = 1;
             if (args.size() > 1) {
                 i = atoi(args.at(1).c_str());
@@ -893,6 +898,15 @@ int cmd_radio(cmd_args_t& args) {
                 Thread::wait(50);
             }
 
+        } else if (args.front() == "strobe") {
+            global_radio->strobe(0x30 + atoi(args.at(1).c_str()));
+        } else if (args.front() == "debug") {
+            bool wasEnabled = global_radio->isDebugEnabled();
+            global_radio->setDebugEnabled(!wasEnabled);
+            printf("Radio debugging now %s\r\n",
+                   wasEnabled ? "DISABLED" : "ENABLED");
+            if (!wasEnabled)
+                printf("All strobes will appear in the INF2 logs\r\n");
         } else {
             show_invalid_args(args.front());
             return 1;

@@ -152,8 +152,7 @@ void CommModule::rxThread(void const* arg) {
     RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
 
     LOG(INIT,
-        "RX communication module ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
+        "RX communication module ready!\r\n    Thread ID: %u, Priority: %d",
         instance->_rxID, threadPriority);
 
     rtp::packet* p;
