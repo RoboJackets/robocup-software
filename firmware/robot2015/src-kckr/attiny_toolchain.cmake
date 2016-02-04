@@ -1,13 +1,19 @@
+set(CMAKE_SYSTEM_NAME       Generic)
+set(CMAKE_SYSTEM_PROCESSOR  avr)
+set(AVR_TARGET_ARCH         attiny48a)
 
-set(CMAKE_SYSTEM_NAME "Atmel AVR ATtiny")
+set(CMAKE_C_COMPILER_TARGET     ${AVR_TARGET_ARCH})
+set(CMAKE_CXX_COMPILER_TARGET   ${AVR_TARGET_ARCH})
 
-find_program(AVR_CC avr-gcc)
-set(CMAKE_C_COMPILER ${AVR_CC})
+# narrow down the search scope of where cmake looks for programs/libraries
+# for cross compilation
+set(CMAKE_FIND_ROOT_PATH        ${PROJECT_SOURCE_DIR})
+# search for programs in the build host directories
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+# for libraries and headers in the target directories
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-# The arduino's toolchain has pretty stable patches for 
-# the ATtiny441. It takes forever to build from source...but 
-# it's a lot less coding on the cmake end of things.
-# https://github.com/arduino/toolchain-avr
-
-# suppress "-rdynamic".  See http://www.cmake.org/pipermail/cmake/2007-October/016784.html
-set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+set(AVR_PREFIX                  avr)
+find_program(AVR_CC_COMPILER    ${AVR_PREFIX}-gcc)
+find_program(AVR_CXX_COMPILER   ${AVR_PREFIX}-g++)

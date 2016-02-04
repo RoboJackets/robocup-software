@@ -16,9 +16,14 @@ set(MBED_USE_RPC true)
 set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
 # set the path to a bash script for moving files to the mbed's USB memory
-set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
+if(CMAKE_HOST_APPLE)
+    set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh)
+else()
+    set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
+endif()
 
 # sets many variables and paths related to building for the MBED
+include(${CMAKE_CURRENT_LIST_DIR}/mbed_util.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
@@ -42,21 +47,34 @@ set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
-# header files
-include_directories("common2015/drivers" )
-include_directories("common2015/drivers/CC1101")
-include_directories("common2015/modules" )
-include_directories("common2015/modules/CommLink")
-include_directories("common2015/modules/CommModule")
-include_directories("common2015/utils/logger")
-
 # Add a test runner target "test-firmware"
 set(FIRMWARE_TEST_SRC
     "common2015/ExampleTest.cpp"
 )
+
+# test firmware target
 add_executable(test-firmware ${FIRMWARE_TEST_SRC})
-target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 add_dependencies(test-firmware googletest)
+target_link_libraries(test-firmware ${GTEST_LIBRARIES})
+
+# header files
+target_include_directories(test-firmware PUBLIC
+    "common2015/drivers"
+    "common2015/drivers/cc1101"
+    "common2015/drivers/cc1201"
+    "common2015/drivers/cc1201/ti"
+    "common2015/drivers/cc1201/cfg/default"
+    "common2015/drivers/rtos-i2c"
+    "common2015/drivers/software-spi"
+    "common2015/modules"
+    "common2015/modules/CommLink"
+    "common2015/modules/CommModule"
+    "common2015/modules/Console"
+    "common2015/utils/logger"
+    "common2015/utils/assert"
+    "common2015/utils/numparser"
+    "common2015/utils/rtos-mgmt"
+)
 
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)

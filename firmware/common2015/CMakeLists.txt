@@ -2,6 +2,12 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
+set(CMAKE_C_COMPILER    ${ARM_CC_COMPILER})
+set(CMAKE_CXX_COMPILER  ${ARM_CXX_COMPILER})
+
+message(STATUS "ARM CC_COMPILER: "  ${ARM_CC_COMPILER})
+message(STATUS "ARM_CXX_COMPILER: " ${ARM_CXX_COMPILER})
+
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
@@ -59,8 +65,7 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 
-target_link_libraries(common2015 ${MBED_OBJECTS})
-target_link_libraries(common2015 ${MBED_LIBS})
+target_link_libraries(common2015 ${MBED_OBJECTS} ${MBED_LIBS})
 
 target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS})
 
