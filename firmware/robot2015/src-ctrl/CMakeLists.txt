@@ -4,6 +4,18 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
+# Include the arm toolchain for gcc
+set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
+include(${ARM_TOOLCHAIN_FILE})
+
+set(CMAKE_C_COMPILER    ${ARM_CC_COMPILER})
+set(CMAKE_CXX_COMPILER  ${ARM_CXX_COMPILER})
+
+# # Find the assembly source files and make sure they're compiled using the C compiler
+file(GLOB_RECURSE asm_SRC "*.S")
+set_property(SOURCE ${asm_SRC} PROPERTY LANGUAGE C)
+set_property(SOURCE ${asm_SRC} PROPERTY COMPILE_FLAGS "-x assembler-with-cpp")
+
 # set the names of each directory and then set the names of the subdirectories within each one
 set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
@@ -20,10 +32,6 @@ endforeach()
 foreach(module_subdir ${MODULES})
     list(APPEND ROBOT2015_ELF_INCLUDES ${MODULES_ROOT_NAME}/${module_subdir})
 endforeach()
-
-# Include the arm toolchain for gcc
-set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
-include(${ARM_TOOLCHAIN_FILE})
 
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
@@ -54,7 +62,7 @@ add_custom_target(robot2015
     arm-none-eabi-objcopy -O binary robot2015_elf rj-robot.bin
     COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/rj-robot.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS robot2015_elf
-    COMMENT "objcopying to make mbed-compatible executable"
+    COMMENT "objcopying to make mbed-compatible executable ${CMAKE_CXX_COMPILER} ${CMAKE_C_COMPILER} ${CMAKE_ASM_COMPILER}"
 )
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
 

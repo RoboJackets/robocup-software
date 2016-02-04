@@ -42,21 +42,32 @@ set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
-# header files
-include_directories("common2015/drivers" )
-include_directories("common2015/drivers/CC1101")
-include_directories("common2015/modules" )
-include_directories("common2015/modules/CommLink")
-include_directories("common2015/modules/CommModule")
-include_directories("common2015/utils/logger")
-
 # Add a test runner target "test-firmware"
 set(FIRMWARE_TEST_SRC
     "common2015/ExampleTest.cpp"
 )
+
+# test firmware target
 add_executable(test-firmware ${FIRMWARE_TEST_SRC})
-target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 add_dependencies(test-firmware googletest)
+target_link_libraries(test-firmware ${GTEST_LIBRARIES})
+
+# header files
+target_include_directories(test-firmware PUBLIC "common2015/drivers")
+target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1101")
+target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1201")
+target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1201/ti")
+target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1201/cfg/default")
+target_include_directories(test-firmware PUBLIC "common2015/drivers/rtos-i2c")
+target_include_directories(test-firmware PUBLIC "common2015/drivers/software-spi")
+target_include_directories(test-firmware PUBLIC "common2015/modules")
+target_include_directories(test-firmware PUBLIC "common2015/modules/CommLink")
+target_include_directories(test-firmware PUBLIC "common2015/modules/CommModule")
+target_include_directories(test-firmware PUBLIC "common2015/modules/Console")
+target_include_directories(test-firmware PUBLIC "common2015/utils/logger")
+target_include_directories(test-firmware PUBLIC "common2015/utils/assert")
+target_include_directories(test-firmware PUBLIC "common2015/utils/numparser")
+target_include_directories(test-firmware PUBLIC "common2015/utils/rtos-mgmt")
 
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)

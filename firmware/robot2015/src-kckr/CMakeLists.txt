@@ -3,6 +3,9 @@
 set(CMAKE_TOOLCHAIN_FILE attiny_toolchain.cmake)
 include(attiny_toolchain.cmake)
 
+set(CMAKE_C_COMPILER    ${AVR_CC_COMPILER})
+set(CMAKE_CXX_COMPILER  ${AVR_CXX_COMPILER})
+
 # F_CPU specifies the frequency (in Hz) of the cpu clock so that the delay functions work appropriately
 # the ATTiny13 has an internal 9.6MHz clock with the prescaler, don't scale back
 # to keep timing for neopixel
@@ -27,7 +30,7 @@ add_custom_target(kicker2015
     # the -O ihex specifies what output format to use, which is the hex format needed for flashing the AVR
     COMMAND avr-objcopy -j .text -j .data -O binary ${CMAKE_CURRENT_BINARY_DIR}/kicker2015_elf ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib
     DEPENDS kicker2015_elf
-    COMMENT "objcopying to convert kicker.elf to rj-kickr.nib"
+    COMMENT "objcopying to convert kicker.elf to rj-kickr.nib ${CMAKE_CXX_COMPILER} ${CMAKE_C_COMPILER} ${CMAKE_ASM_COMPILER}"
 )
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib)
 

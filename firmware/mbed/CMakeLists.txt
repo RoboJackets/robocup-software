@@ -2,6 +2,9 @@
 set(ARM_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/arm_toolchain.cmake)
 set(ARM_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE} PARENT_SCOPE)
 
+set(CMAKE_C_COMPILER    ${ARM_CC_COMPILER})
+set(CMAKE_CXX_COMPILER  ${ARM_CXX_COMPILER})
+
 # create a list of which accessory libraries we want to download and add to the common2015 library
 set(MBED_ASSEC_LIBS
     ${CMAKE_CURRENT_LIST_DIR}/burst-spi.cmake
