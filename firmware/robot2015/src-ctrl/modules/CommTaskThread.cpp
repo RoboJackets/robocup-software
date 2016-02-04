@@ -166,8 +166,8 @@ void Task_CommCtrl(void const* args) {
      */
     if (radio.isConnected() == true) {
         LOG(INIT,
-            "Radio interface ready on %3.2fMHz!\r\n    Thread ID:\t%u\r\n    "
-            "Priority:\t%d",
+            "Radio interface ready on %3.2fMHz!\r\n    Thread ID: %u, "
+            "Priority: %d",
             radio.freq(), threadID, threadPriority);
 
         // Open a socket for running tests across the link layer

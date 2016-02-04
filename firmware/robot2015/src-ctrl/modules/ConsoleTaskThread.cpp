@@ -31,8 +31,7 @@ void Task_SerialConsole(void const* args) {
     // Let everyone know we're ok
     LOG(INIT,
         "Serial console ready!\r\n"
-        "    Thread ID:\t%u\r\n"
-        "    Priority:\t%d",
+        "    Thread ID: %u, Priority: %d",
         threadID, threadPriority);
 
     // Signal back to main and wait until we're signaled to continue

@@ -87,9 +87,7 @@ void CommLink::rxThread(void const* arg) {
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority = osThreadGetPriority(inst->_rxID);
 
-    LOG(INIT,
-        "RX communication link ready!\r\n    Thread ID:\t%u\r\n"
-        "    Priority:\t%d",
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
         inst->_rxID, threadPriority);
 
     // Set the function to call on an interrupt trigger
