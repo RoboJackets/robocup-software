@@ -15,8 +15,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(AVR_PREFIX                  avr)
-find_program(ARM_CC_COMPILER    ${AVR_PREFIX}-gcc)
-find_program(ARM_CXX_COMPILER   ${AVR_PREFIX}-g++)
+find_program(AVR_CC_COMPILER    ${AVR_PREFIX}-gcc)
+find_program(AVR_CXX_COMPILER   ${AVR_PREFIX}-g++)
 
 # set(AR                          ${AVR_PREFIX}-ar)
 # set(NM                          ${AVR_PREFIX}-nm)

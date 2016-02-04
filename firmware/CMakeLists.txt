@@ -53,21 +53,23 @@ add_dependencies(test-firmware googletest)
 target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 
 # header files
-target_include_directories(test-firmware PUBLIC "common2015/drivers")
-target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1101")
-target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1201")
-target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1201/ti")
-target_include_directories(test-firmware PUBLIC "common2015/drivers/cc1201/cfg/default")
-target_include_directories(test-firmware PUBLIC "common2015/drivers/rtos-i2c")
-target_include_directories(test-firmware PUBLIC "common2015/drivers/software-spi")
-target_include_directories(test-firmware PUBLIC "common2015/modules")
-target_include_directories(test-firmware PUBLIC "common2015/modules/CommLink")
-target_include_directories(test-firmware PUBLIC "common2015/modules/CommModule")
-target_include_directories(test-firmware PUBLIC "common2015/modules/Console")
-target_include_directories(test-firmware PUBLIC "common2015/utils/logger")
-target_include_directories(test-firmware PUBLIC "common2015/utils/assert")
-target_include_directories(test-firmware PUBLIC "common2015/utils/numparser")
-target_include_directories(test-firmware PUBLIC "common2015/utils/rtos-mgmt")
+target_include_directories(test-firmware PUBLIC
+    "common2015/drivers"
+    "common2015/drivers/cc1101"
+    "common2015/drivers/cc1201"
+    "common2015/drivers/cc1201/ti"
+    "common2015/drivers/cc1201/cfg/default"
+    "common2015/drivers/rtos-i2c"
+    "common2015/drivers/software-spi"
+    "common2015/modules"
+    "common2015/modules/CommLink"
+    "common2015/modules/CommModule"
+    "common2015/modules/Console"
+    "common2015/utils/logger"
+    "common2015/utils/assert"
+    "common2015/utils/numparser"
+    "common2015/utils/rtos-mgmt"
+)
 
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)

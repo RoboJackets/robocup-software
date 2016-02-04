@@ -6,6 +6,9 @@ include(attiny_toolchain.cmake)
 set(CMAKE_C_COMPILER    ${AVR_CC_COMPILER})
 set(CMAKE_CXX_COMPILER  ${AVR_CXX_COMPILER})
 
+message(STATUS "AVR CC_COMPILER: "  ${AVR_CC_COMPILER})
+message(STATUS "AVR_CXX_COMPILER: " ${AVR_CXX_COMPILER})
+
 # F_CPU specifies the frequency (in Hz) of the cpu clock so that the delay functions work appropriately
 # the ATTiny13 has an internal 9.6MHz clock with the prescaler, don't scale back
 # to keep timing for neopixel
