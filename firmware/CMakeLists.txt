@@ -16,9 +16,14 @@ set(MBED_USE_RPC true)
 set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
 # set the path to a bash script for moving files to the mbed's USB memory
-set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
+if(CMAKE_HOST_APPLE)
+    set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh)
+else()
+    set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
+endif()
 
 # sets many variables and paths related to building for the MBED
+include(${CMAKE_CURRENT_LIST_DIR}/mbed_util.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake

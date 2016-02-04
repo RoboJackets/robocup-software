@@ -1,5 +1,6 @@
 set(CMAKE_SYSTEM_NAME       Generic)
 set(CMAKE_SYSTEM_PROCESSOR  arm)
+set(CMAKE_SYSTEM_VERSION    1)
 set(ARM_TARGET_ARCH         cortex-m3)
 
 set(CMAKE_C_COMPILER     ${ARM_TARGET_ARCH})

@@ -33,7 +33,7 @@ add_custom_target(kicker2015
     # the -O ihex specifies what output format to use, which is the hex format needed for flashing the AVR
     COMMAND avr-objcopy -j .text -j .data -O binary ${CMAKE_CURRENT_BINARY_DIR}/kicker2015_elf ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib
     DEPENDS kicker2015_elf
-    COMMENT "objcopying to convert kicker.elf to rj-kickr.nib ${CMAKE_CXX_COMPILER} ${CMAKE_C_COMPILER} ${CMAKE_ASM_COMPILER}"
+    COMMENT "objcopying to convert kicker.elf to rj-kickr.nib"
 )
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib)
 

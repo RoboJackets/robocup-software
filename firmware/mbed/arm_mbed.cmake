@@ -26,7 +26,6 @@ if(MBED_TARGET MATCHES "LPC1768")
     set(MBED_FAMILY "LPC176X")
     set(MBED_CPU "MBED_LPC1768")
     set(MBED_CORE "cortex-m3")
-    set(MBED_CORE_GENERIC "CORTEX_M")
     set(MBED_INSTRUCTIONSET "M3")
     set(MBED_STARTUP "startup_LPC17xx.o")
     set(MBED_SYSTEM "system_LPC17xx.o")
@@ -36,7 +35,6 @@ elseif(MBED_TARGET MATCHES "LPC11U24")
     set(MBED_VENDOR "NXP")
     set(MBED_FAMILY "LPC11UXX")
     set(MBED_CPU "LPC11U24_401")
-    set(MBED_CORE_GENERIC "CORTEX_M")
     set(MBED_CORE "cortex-m0")
     set(MBED_INSTRUCTIONSET "M0")
     set(MBED_STARTUP "startup_LPC11xx.o")
@@ -47,7 +45,6 @@ elseif(MBED_TARGET MATCHES "RBLAB_NRF51822")
     set(MBED_VENDOR "NORDIC")
     set(MBED_FAMILY "MCU_NRF51822")
     set(MBED_CPU "RBLAB_NRF51822")
-    set(MBED_CORE_GENERIC "CORTEX_M")
     set(MBED_CORE "cortex-m0")
     set(MBED_INSTRUCTIONSET "M0")
     set(MBED_STARTUP "startup_NRF51822.o")
@@ -96,99 +93,48 @@ include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/TARGET_${MBED_CPU}")
 
+set(MBED_INC_DIRS "")
 
 # add networking
 if(${MBED_USE_ETH})
-    set(MBED_ETH_PATH ${MBED_LIBS_REPO_DIR}/build/net/eth)
-
-    include_directories("${MBED_ETH_PATH}")
-    include_directories("${MBED_ETH_PATH}/EthernetInterface")
-    include_directories("${MBED_ETH_PATH}/Socket")
-    include_directories("${MBED_ETH_PATH}/lwip")
-    include_directories("${MBED_ETH_PATH}/lwip/include")
-    include_directories("${MBED_ETH_PATH}/lwip/include/ipv4")
-    include_directories("${MBED_ETH_PATH}/lwip/include/lwip")
-    include_directories("${MBED_ETH_PATH}/lwip/include/netif")
-    include_directories("${MBED_ETH_PATH}/lwip-sys")
-    include_directories("${MBED_ETH_PATH}/lwip-sys/arch")
-    include_directories("${MBED_ETH_PATH}/lwip-eth/arch/TARGET_${MBED_VENDOR}")
-
-    # library
-    set(MBED_NET_LIB_DIR ${MBED_ETH_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    mbed_add_incs_eth(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR} ${MBED_VENDOR})
+    set(MBED_NET_LIB_DIR ${MBED_LIBS_REPO_DIR}/build/net/eth/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
     set(MBED_LIBS ${MBED_LIBS} ${MBED_NET_LIB_DIR}/libeth.a)
-
-    # add build arg to py script command
     set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --eth)
-
-    # supress lwip warnings with 0x11
     set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-literal-suffix")
-
-    # force rtos
     set(MBED_USE_RTOS true)
 endif()
 
 # add rtos
 if(${MBED_USE_RTOS})
-    set(MBED_RTOS_PATH ${MBED_LIBS_REPO_DIR}/build/rtos)
-    include_directories("${MBED_RTOS_PATH}")
-    include_directories("${MBED_RTOS_PATH}/TARGET_${MBED_CORE_GENERIC}")
-
-    set(MBED_RTOS_LIB_DIR ${MBED_RTOS_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    MESSAGE(STATUS ${MBED_INC_DIRS})
+    mbed_add_incs_rtos(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
+    set(MBED_RTOS_LIB_DIR ${MBED_LIBS_REPO_DIR}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
     set(MBED_LIBS ${MBED_LIBS} ${MBED_RTOS_LIB_DIR}/librtos.a ${MBED_RTOS_LIB_DIR}/librtx.a)
     set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --rtos)
 endif()
 
 # add usb
 if(${MBED_USE_USB})
-    set(MBED_USB_PATH      ${MBED_LIBS_REPO_DIR}/build/usb)
-    set(MBED_USB_HOST_PATH ${MBED_LIBS_REPO_DIR}/build/usb_host)
-
-    # usb
-    include_directories("${MBED_USB_PATH}/USBAudio")
-    include_directories("${MBED_USB_PATH}/USBDevice")
-    include_directories("${MBED_USB_PATH}/USBHID")
-    include_directories("${MBED_USB_PATH}/USBMIDI")
-    include_directories("${MBED_USB_PATH}/USBMSD")
-    include_directories("${MBED_USB_PATH}/USBSerial")
-
-    # usb host
-    include_directories("${MBED_USB_HOST_PATH}/USBHost")
-    include_directories("${MBED_USB_HOST_PATH}/USBHost3GModule")
-    include_directories("${MBED_USB_HOST_PATH}/USBHostHID")
-    include_directories("${MBED_USB_HOST_PATH}/USBHostHub")
-    include_directories("${MBED_USB_HOST_PATH}/USBHostMIDI")
-    include_directories("${MBED_USB_HOST_PATH}/USBHostMSD")
-    include_directories("${MBED_USB_HOST_PATH}/USBHostSerial")
-
-    # libraries
-    set(MBED_USB_LIB_DIR      ${MBED_USB_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
-    set(MBED_USB_HOST_LIB_DIR ${MBED_USB_HOST_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    mbed_add_incs_usb(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
+    set(MBED_USB_LIB_DIR      ${MBED_LIBS_REPO_DIR}/build/usb/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    set(MBED_USB_HOST_LIB_DIR ${MBED_LIBS_REPO_DIR}/build/usb_host/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
     set(MBED_LIBS ${MBED_LIBS} ${MBED_USB_LIB_DIR}/libUSBDevice.a ${MBED_USB_HOST_LIB_DIR}/libUSBHost.a)
-
-    #add build arg to py script command
     set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --usb --usb_host)
 endif()
 
 # add dsp
 if(${MBED_USE_DSP})
-    set(MBED_DSP_PATH ${MBED_LIBS_REPO_DIR}/build/dsp)
-
-    include_directories("${MBED_DSP_PATH}")
-
-    # library
-    set(MBED_DSP_LIB_DIR ${MBED_DSP_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
+    mbed_add_incs_dsp(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
+    set(MBED_DSP_LIB_DIR ${MBED_LIBS_REPO_DIR}/build/dsp/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
     set(MBED_LIBS ${MBED_LIBS} ${MBED_DSP_LIB_DIR}/libcmsis_dsp.a ${MBED_DSP_LIB_DIR}/libdsp.a)
-
-    # add build arg to py script command
     set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --dsp)
 endif()
 
 # rpc
 if(${MBED_USE_RPC})
-    include_directories(${MBED_LIBS_REPO_DIR}/build/rpc)
-
+    mbed_add_incs_rpc(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
     set(MBED_LIBS ${MBED_LIBS} ${MBED_LIBS_REPO_DIR}/build/rpc/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT}/librpc.a)
-
     set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --rpc)
 endif()
 
@@ -196,6 +142,8 @@ endif()
 set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 link_directories(${MBED_LINK_DIRS})
 include_directories(${MBED_PATH})
+include_directories(${MBED_INC_DIRS})
+message(STATUS ${MBED_INC_DIRS})
 
 
 # official MBED libraries
