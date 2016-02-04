@@ -34,7 +34,7 @@ const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 /**
  * indicates if the command held in "iterativeCommand"
  */
-volatile bool iterative_command_state = false;
+bool iterative_command_state = false;
 
 /**
  * current iterative command args

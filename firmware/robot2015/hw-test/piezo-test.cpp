@@ -64,7 +64,7 @@ constexpr float my_generator(std::size_t curr, std::size_t total) {
             2.0);
 }
 
-volatile int j = 0;
+int j = 0;
 
 // compile time lookup table of sine wave elements - ranges from 0.0 to 1.0
 const auto analog_data = generate_array<numPts>(my_generator);
