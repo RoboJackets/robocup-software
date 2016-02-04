@@ -53,19 +53,6 @@ public:
 
     size_t size() const { return 2; }
 
-    // datav_it_t pack(size_t payload_size, bool headless = false) {
-    //     if (d.size()) return d.begin();
-    //     // payload size + number of bytes in header is top byte
-    //     // since that's required for the cc1101/cc1201 with
-    //     // variable packet sizes
-    //     d.push_back(payload_size + (headless ? 0 : 2));
-    //     if (headless == false) {
-    //         d.push_back(address);
-    //         d.push_back(port_fields);
-    //     }
-    //     return d.begin();
-    // }
-
     type t;
     data_t address;
 
@@ -155,10 +142,9 @@ public:
     }
 
     void pack(std::vector<data_t> *buffer, bool includeHeader = false) const {
-        buffer->reserve(MAX_DATA_SZ);
-
         // first byte is total size (excluding the size byte)
-        const uint8_t total_size = payload.size() + (includeHeader ? 2 : 0);
+        const uint8_t total_size = payload.size() + (includeHeader ? header.size() : 0);
+        buffer->reserve(total_size + 1);
         buffer->push_back(total_size);
 
         // header data
