@@ -44,7 +44,6 @@ namespace {
 typedef uint8_t data_t;
 }
 
-
 class header_data {
 public:
     enum type { control, tuning, ota, misc };
@@ -69,17 +68,13 @@ public:
     } __attribute__((packed));
 };
 
-
-
 class payload_data {
 public:
-    payload_data() {};
+    payload_data(){};
 
     std::vector<data_t> d;
 
-    size_t size() const {
-        return d.size();
-    }
+    size_t size() const { return d.size(); }
 
     template <class T>
     void fill(const std::vector<T>& v) {
@@ -141,9 +136,10 @@ public:
         // sort out header
     }
 
-    void pack(std::vector<data_t> *buffer, bool includeHeader = false) const {
+    void pack(std::vector<data_t>* buffer, bool includeHeader = false) const {
         // first byte is total size (excluding the size byte)
-        const uint8_t total_size = payload.size() + (includeHeader ? header.size() : 0);
+        const uint8_t total_size =
+            payload.size() + (includeHeader ? header.size() : 0);
         buffer->reserve(total_size + 1);
         buffer->push_back(total_size);
 

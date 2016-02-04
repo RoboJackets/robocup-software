@@ -899,12 +899,14 @@ int cmd_radio(cmd_args_t& args) {
             }
 
         } else if (args.front() == "strobe") {
-            global_radio->strobe(0x30+atoi(args.at(1).c_str()));
+            global_radio->strobe(0x30 + atoi(args.at(1).c_str()));
         } else if (args.front() == "debug") {
             bool wasEnabled = global_radio->isDebugEnabled();
             global_radio->setDebugEnabled(!wasEnabled);
-            printf("Radio debugging now %s\r\n", wasEnabled ? "DISABLED" : "ENABLED");
-            if (!wasEnabled) printf("All strobes will appear in the INF2 logs\r\n");
+            printf("Radio debugging now %s\r\n",
+                   wasEnabled ? "DISABLED" : "ENABLED");
+            if (!wasEnabled)
+                printf("All strobes will appear in the INF2 logs\r\n");
         } else {
             show_invalid_args(args.front());
             return 1;

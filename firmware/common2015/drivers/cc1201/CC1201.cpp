@@ -11,10 +11,8 @@ void ASSERT_IS_ADDR(uint16_t addr) {
            (addr == 0x007F) || (addr == 0x00BF) || (addr == 0x00FF));
 }
 
-
 // TODO(justin): remove this
-CC1201 *global_radio = nullptr;
-
+CC1201* global_radio = nullptr;
 
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len,
@@ -66,7 +64,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
         return COMM_DEV_BUF_ERR;
     }
-    
+
     // Enter TX mode
     strobe(CC1201_STROBE_STX);
 
@@ -218,50 +216,41 @@ uint8_t CC1201::strobe(uint8_t addr) {
         radio_select();
         uint8_t ret2 = _spi->write(CC1201_STROBE_SNOP);
         radio_deselect();
-    
 
         const char* strobe_names[] = {
-            "RES",      // 0x30
-            "FSTXON",   // 0x31
-            "XOFF",     // 0x32
-            "CAL",      // 0x33
-            "RX",       // 0x34
-            "TX",       // 0x35
-            "IDLE",     // 0x36
-            "AFC",      // 0x37
-            "WOR",      // 0x38
-            "PWD",      // 0x39
-            "FRX",      // 0x3a
-            "FTX",      // 0x3b
-            "WORRST",   // 0x3c
-            "NOP"       // 0x3d
+            "RES",     // 0x30
+            "FSTXON",  // 0x31
+            "XOFF",    // 0x32
+            "CAL",     // 0x33
+            "RX",      // 0x34
+            "TX",      // 0x35
+            "IDLE",    // 0x36
+            "AFC",     // 0x37
+            "WOR",     // 0x38
+            "PWD",     // 0x39
+            "FRX",     // 0x3a
+            "FTX",     // 0x3b
+            "WORRST",  // 0x3c
+            "NOP"      // 0x3d
         };
 
-        const char* state_names[] = {
-            "IDLE",
-            "RX",
-            "TX",
-            "FSTXON",
-            "CALIB",
-            "SETTLE",
-            "RX_FIFO_ERR",
-            "TX_FIFO_ERR"
-        };
+        const char* state_names[] = {"IDLE",        "RX",         "TX",
+                                     "FSTXON",      "CALIB",      "SETTLE",
+                                     "RX_FIFO_ERR", "TX_FIFO_ERR"};
 
         // The status byte returned from strobe() contains from (msb to lsb):
         // * 1 bit - chip ready (0 indicates xosc is stable)
         // * 3 bits - state
         // * 4 bits - unused
-        int rdy_n = ret & (1<<7);
+        int rdy_n = ret & (1 << 7);
         int state = (ret >> 4) & 7;
-        int rdy2_n = ret2 & (1<<7);
+        int rdy2_n = ret2 & (1 << 7);
         int state2 = (ret2 >> 4) & 7;
-        LOG(INF2, "strobe '%s' sent, status = {rdy_n: %d, state: %s}, "
+        LOG(INF2,
+            "strobe '%s' sent, status = {rdy_n: %d, state: %s}, "
             "after %dms = {rdy_n: %d, state: %s}",
-            strobe_names[addr - 0x30],
-            rdy_n, state_names[state],
-            delay,
-            rdy2_n, state_names[state2]);
+            strobe_names[addr - 0x30], rdy_n, state_names[state], delay, rdy2_n,
+            state_names[state2]);
     }
 
     return ret;
