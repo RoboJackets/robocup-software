@@ -249,19 +249,19 @@ uint8_t CC1201::strobe(uint8_t addr) {
         };
 
         // The status byte returned from strobe() contains from (msb to lsb):
-        // * 1 bit - chip ready
+        // * 1 bit - chip ready (0 indicates xosc is stable)
         // * 3 bits - state
         // * 4 bits - unused
-        int rdy = ret & (1<<7);
+        int rdy_n = ret & (1<<7);
         int state = (ret >> 4) & 7;
-        int rdy2 = ret2 & (1<<7);
+        int rdy2_n = ret2 & (1<<7);
         int state2 = (ret2 >> 4) & 7;
-        LOG(INF2, "strobe '%s' sent, status = {rdy: %d, state: %s}, "
-            "after %dms = {rdy: %d, state: %s}",
+        LOG(INF2, "strobe '%s' sent, status = {rdy_n: %d, state: %s}, "
+            "after %dms = {rdy_n: %d, state: %s}",
             strobe_names[addr - 0x30],
-            rdy, state_names[state],
+            rdy_n, state_names[state],
             delay,
-            rdy2, state_names[state2]);
+            rdy2_n, state_names[state2]);
     }
 
     return ret;
