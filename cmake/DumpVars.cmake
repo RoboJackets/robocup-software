@@ -1,8 +1,3 @@
-# ------------------------- Begin Generic CMake Variable Logging ------------------
-
-# /*    C++ comment style not allowed   */
-
-
 # if you are building in-source, this is the same as CMAKE_SOURCE_DIR, otherwise 
 # this is the top level directory of your build tree 
 MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
@@ -93,7 +88,6 @@ MESSAGE( STATUS "MSVC71: " ${MSVC71} )
 MESSAGE( STATUS "MSVC80: " ${MSVC80} )
 MESSAGE( STATUS "CMAKE_COMPILER_2005: " ${CMAKE_COMPILER_2005} )
 
-
 # set this to true if you don't want to rebuild the object files if the rules have changed, 
 # but not the actual source files or headers (e.g. if you changed the some compiler switches) 
 MESSAGE( STATUS "CMAKE_SKIP_RULE_DEPENDENCY: " ${CMAKE_SKIP_RULE_DEPENDENCY} )
@@ -112,7 +106,6 @@ MESSAGE( STATUS "CMAKE_VERBOSE_MAKEFILE: " ${CMAKE_VERBOSE_MAKEFILE} )
 # this will cause CMake to not put in the rules that re-run CMake. This might be useful if 
 # you want to use the generated build files on another machine. 
 MESSAGE( STATUS "CMAKE_SUPPRESS_REGENERATION: " ${CMAKE_SUPPRESS_REGENERATION} )
-
 
 # A simple way to get switches to the compiler is to use ADD_DEFINITIONS(). 
 # But there are also two variables exactly for this purpose: 
@@ -146,7 +139,7 @@ MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX} )
 MESSAGE( STATUS "CMAKE_AR: " ${CMAKE_AR} )
 MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )
 
-#
-#MESSAGE( STATUS ": " ${} )
-
-# ------------------------- End of Generic CMake Variable Logging ------------------
+# output directories
+MESSAGE( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY: " ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
+MESSAGE( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
+MESSAGE( STATUS "CMAKE_OUTPUT_OUTPUT_DIRECTORY:  " ${CMAKE_OUTPUT_OUTPUT_DIRECTORY} )

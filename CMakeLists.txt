@@ -22,11 +22,6 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 endif()
 
-# Because we use ninja, we have to explicitly turn on color output for the compiler
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
-endif()
-
 # Build in debug mode
 # TODO: make this easier to specify when running `make` on the command-line
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
