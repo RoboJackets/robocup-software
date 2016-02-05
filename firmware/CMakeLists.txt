@@ -2,7 +2,8 @@
 # firmware, which depend on the MBED libs
 
 # Set the mbed target processor and settings for cmake
-set(MBED_TARGET LPC1768)
+# set(MBED_TARGET lpc1768)
+
 set(MBED_USE_RTOS true)
 set(MBED_USE_ETH false)
 set(MBED_USE_USB false)
@@ -15,15 +16,15 @@ set(MBED_USE_RPC true)
 # tests and other things to be compiled for the host computer.
 set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
-# set the path to a bash script for moving files to the mbed's USB memory
-if(CMAKE_HOST_APPLE)
+# set the path to a bash script for moving files to the mbed's USB storage
+if( CMAKE_HOST_APPLE )
     set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh)
 else()
     set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
 endif()
 
 # sets many variables and paths related to building for the MBED
-include(${CMAKE_CURRENT_LIST_DIR}/mbed_util.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/mbed/mbed_util.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
@@ -41,7 +42,7 @@ set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
 # ignore formatting flags for printf
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
 # generate debugging information for gdb
-# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")

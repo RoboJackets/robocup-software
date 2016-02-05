@@ -18,13 +18,13 @@ function(MBED_ADD_INCS_ETH dir_list lib_src_root dev_vendor)
 endfunction()
 
 
-macro(MBED_ADD_INCS_RTOS dir_list lib_src_root)
+function(MBED_ADD_INCS_RTOS dir_list lib_src_root)
     set(dir_list
         ${dir_list}
         ${lib_src_root}/build/rtos
         ${lib_src_root}/build/rtos/TARGET_CORTEX_M
     )
-endmacro()
+endfunction()
 
 
 function(MBED_ADD_INCS_USB dir_list lib_src_root)
@@ -61,4 +61,8 @@ function(MBED_ADD_INCS_RPC dir_list lib_src_root)
         ${dir_list}
         ${lib_src_root}/build/rpc
     )
+endfunction()
+
+function(MBED_SET_PLATFORM platform)
+
 endfunction()
