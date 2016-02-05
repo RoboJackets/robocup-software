@@ -2,11 +2,7 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
-set(CMAKE_C_COMPILER    ${ARM_CC_COMPILER})
-set(CMAKE_CXX_COMPILER  ${ARM_CXX_COMPILER})
-
-message(STATUS "ARM CC_COMPILER: "  ${ARM_CC_COMPILER})
-message(STATUS "ARM_CXX_COMPILER: " ${ARM_CXX_COMPILER})
+include(ShowVars)
 
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
@@ -14,7 +10,7 @@ set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
 set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 
 file(GLOB_RECURSE   common2015_SRC  "*.cpp")
-list(REMOVE_ITEM    common2015_SRC  ${CMAKE_CURRENT_LIST_DIR}/ExampleTest.cpp)
+list(REMOVE_ITEM    common2015_SRC  "${CMAKE_CURRENT_LIST_DIR}/ExampleTest.cpp")
 
 # append all of the accessory library sources
 list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
@@ -46,17 +42,16 @@ foreach(util_subdir ${UTILS})
     list(APPEND common2015_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/${UTILS_ROOT_NAME}/${util_subdir})
 endforeach()
 
-# append all of the accessory library include directories
-list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
-
 # do the same thing for the accessory libraries 
-foreach(assec_lib_file ${MBED_ASSEC_LIBS_SRCS})
+foreach(lib_src ${MBED_ASSEC_LIBS_SRCS})
     add_custom_command(
-        OUTPUT      ${assec_lib_file}
+        OUTPUT      ${lib_src}
         DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}
         COMMAND     ""
     )
 endforeach()
+
+show_vars()
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
@@ -65,9 +60,10 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 
-target_link_libraries(common2015 ${MBED_OBJECTS} ${MBED_LIBS})
+target_link_libraries(common2015 ${MBED_LIBS})
+target_link_libraries(common2015 ${MBED_LIBRARY})
 
-target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS})
+target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS} ${MBED_ASSEC_LIBS_INCLUDES} ${MBED_INCLUDE_DIR})
 
 # only build firmware library if required
 set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)

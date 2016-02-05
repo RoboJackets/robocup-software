@@ -2,10 +2,12 @@
 add_subdirectory(src-ctrl)
 add_subdirectory(src-kckr)
 
-if( CMAKE_HOST_UNIX )
+# only include the FPGA things if we're running something
+# unix related, but not something apple related
+if( UNIX AND NOT APPLE )
     add_subdirectory(src-fpga)
 else()
-    message(STATUS "Skipping Xilinx configurations")
+    message(WARNING "Skipping Xilinx configurations")
 endif()
 
 add_subdirectory(hw-test)

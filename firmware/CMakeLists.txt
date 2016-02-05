@@ -1,30 +1,27 @@
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
+include(RemoveFlags)
+include(ShowVars)
 
-# Set the mbed target processor and settings for cmake
-set(MBED_TARGET LPC1768)
-set(MBED_USE_RTOS true)
-set(MBED_USE_ETH false)
-set(MBED_USE_USB false)
-set(MBED_USE_DSP false)
-set(MBED_USE_RPC true)
-
-# The name of the toolchain we're using.  Note: we don't actually set the CMake
-# toolchain here because it would require that all files compiled under this
-# CMakeLists file to be compiled for the MBED, which we don't want.  We want out
-# tests and other things to be compiled for the host computer.
-set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
-
-# set the path to a bash script for moving files to the mbed's USB memory
-if(CMAKE_HOST_APPLE)
-    set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh)
-else()
-    set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
-endif()
+# remove the color flag since it will get set on anything with clang assert
+# the default compiler (mostly apple computers). The arm compilers know
+# nothing about this flag however.
+show_vars()
+remove_cxx_flag("-fcolor-diagnostics")
+show_vars()
 
 # sets many variables and paths related to building for the MBED
-include(${CMAKE_CURRENT_LIST_DIR}/mbed_util.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
+
+# set the path to a script for moving files to the mbed's USB storage
+if( UNIX AND NOT APPLE )
+    set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh")
+elseif( APPLE )
+    set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh")
+else()
+    message(WARNING "unsupported host system for mbed-copy usage")
+    set(MBED_COPY_SCRIPT "")
+endif()
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:
@@ -35,13 +32,13 @@ include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
 # enable C++11
-set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
+# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
 # ignore formatting flags for printf
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
 # generate debugging information for gdb
-# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")

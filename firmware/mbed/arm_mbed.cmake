@@ -1,80 +1,82 @@
-# ------------------------------------------------------------------------------
-# Copyright by Uwe Arzt mailto:mail@uwe-arzt.de, https://uwe-arzt.de
-# under BSD License, see https://uwe-arzt.de/bsd-license/
-# ------------------------------------------------------------------------------
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
-set(MBED_TOOLCHAIN_OPT "GCC_ARM")
-set(MBED_OPT_LIBS)
+# =============================================================================
+# Mbed setup for interfacing into the official mbed SDK's build system.
+# =============================================================================
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+include(MbedUtil)
 
 # ------------------------------------------------------------------------------
-# git checkout and build location of mbed libraries
-set(MBED_LIBS_REPO_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_libraries-prefix/src/mbed_libraries)
+# turn build options on/off with there cmake options
+rj_add_op( MBED_WITH_RTOS      "Include mbed RTOS support"                 ON    )
+rj_add_op( MBED_WITH_RPC       "Include mbed RPC support"                  OFF   )
+rj_add_op( MBED_WITH_USB       "Include mbed USB support"                  OFF   )
+rj_add_op( MBED_WITH_USB_HOST  "Include mbed USB Host support"             OFF   )
+rj_add_op( MBED_WITH_ETH       "Include mbed ethernet/networking support"  OFF   )
+rj_add_op( MBED_WITH_DSP       "Include mbed DSP support"                  OFF   )
+rj_add_op( MBED_WITH_FATFS     "Include mbed FAT filesystem support"       OFF   )
+rj_add_op( MBED_WITH_UBLOX     "Include mbed UBLOX support"                OFF   )
 
-
-# ------------------------------------------------------------------------------
-# setup processor settings add aditional boards here
-#  LPC1768, LPC11U24, NRF51822, K64F
-
-# TARGET -> has to be set in CMakeLists.txt
-# 
-# MBED_VENDOR -> CPU Manufacturer
-# 
-# the settings for mbed is really messed up ;)
-if(MBED_TARGET MATCHES "LPC1768")
-    set(MBED_VENDOR "NXP")
-    set(MBED_FAMILY "LPC176X")
-    set(MBED_CPU "MBED_LPC1768")
-    set(MBED_CORE "cortex-m3")
-    set(MBED_INSTRUCTIONSET "M3")
-    set(MBED_STARTUP "startup_LPC17xx.o")
-    set(MBED_SYSTEM "system_LPC17xx.o")
-    set(MBED_LINK_TARGET ${MBED_TARGET})
-
-elseif(MBED_TARGET MATCHES "LPC11U24")
-    set(MBED_VENDOR "NXP")
-    set(MBED_FAMILY "LPC11UXX")
-    set(MBED_CPU "LPC11U24_401")
-    set(MBED_CORE "cortex-m0")
-    set(MBED_INSTRUCTIONSET "M0")
-    set(MBED_STARTUP "startup_LPC11xx.o")
-    set(MBED_SYSTEM "system_LPC11Uxx.o")
-    set(MBED_LINK_TARGET ${MBED_TARGET})
-
-elseif(MBED_TARGET MATCHES "RBLAB_NRF51822")
-    set(MBED_VENDOR "NORDIC")
-    set(MBED_FAMILY "MCU_NRF51822")
-    set(MBED_CPU "RBLAB_NRF51822")
-    set(MBED_CORE "cortex-m0")
-    set(MBED_INSTRUCTIONSET "M0")
-    set(MBED_STARTUP "startup_NRF51822.o")
-    set(MBED_SYSTEM "system_nrf51822.o")
-    set(MBED_LINK_TARGET "NRF51822")
-
-else()
-   message(FATAL_ERROR "No MBED_TARGET specified or available. Full stop :(")
-
+# turn on building the rtos library if ethernet/networking is set to be built
+if(${MBED_WITH_ETH})
+    set(MBED_WITH_RTOS ON)
 endif()
 
 # ------------------------------------------------------------------------------
+# set the toolchain that the mbed SDK build system will use for compiling the
+# official mbed libraries
+set(MBED_TOOLCHAIN "GCC_ARM")
+
+# ------------------------------------------------------------------------------
+# set the platform that we are compiling for
+set(MBED_PLATFORM "LPC1768")
+
+# ------------------------------------------------------------------------------
+# The following function will set the following variables to the selected
+# target's parameters
+# <variable_name>_CORE        
+# <variable_name>_ISA         
+# <variable_name>_ARCH        
+# <variable_name>_VENDOR      
+# <variable_name>_SERIES      
+# <variable_name>_LABELS_EXTRA
+# <variable_name>_RTOS_ARCHS  
+# <variable_name>_TOOLCHAINS  
+# <variable_name>_CODE        
+# <variable_name>_PROGEN      
+# <variable_name>_MACROS      
+mbed_set_platform(MBED_TARGET TARGET ${MBED_PLATFORM})
+
+# ------------------------------------------------------------------------------
+# check to make sure the toolchain is supported for the target
+list (FIND MBED_TARGET_TOOLCHAINS ${MBED_TOOLCHAIN} _index)
+if (NOT ${_index} GREATER -1)
+    message(FATAL_ERROR "unsupported toolchain: ${MBED_TOOLCHAIN}")
+endif()
+
+# ------------------------------------------------------------------------------
+# git checkout and build location of mbed libraries
+set(MBED_REPO_DIR "${CMAKE_CURRENT_BINARY_DIR}/mbed_libraries-prefix/src/mbed_libraries")
+
+# ------------------------------------------------------------------------------
+# generate upppercase/lowercase versions of the platform name
+string(TOUPPER ${MBED_PLATFORM} MBED_PLATFORM_UPPERC)
+string(TOLOWER ${MBED_PLATFORM} MBED_PLATFORM_LOWERC)
+
+# ------------------------------------------------------------------------------
 # compiler settings
-SET(COMMON_FLAGS "${COMMON_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -fno-exceptions -fno-builtin -MMD -fno-delete-null-pointer-checks")
-SET(COMMON_FLAGS "${COMMON_FLAGS} -mcpu=${MBED_CORE} -O2 -mthumb -fno-exceptions -msoft-float -ffunction-sections -fdata-sections -g -fno-common -fmessage-length=0")
+set(COMMON_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -fno-exceptions -fno-builtin -MMD -fno-delete-null-pointer-checks")
+set(COMMON_FLAGS "${COMMON_FLAGS} -mcpu=${MBED_TARGET_CORE_LOWERC} -O2 -mthumb -fno-exceptions -msoft-float -ffunction-sections -fdata-sections -g -fno-common -fmessage-length=0")
 set(COMMON_FLAGS "${COMMON_FLAGS} ${CMAKE_CXX_FLAGS}")
 
-SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_TARGET}")
-SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_INSTRUCTIONSET}")
-SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_VENDOR}")
-SET(MBED_DEFINES "${MBED_DEFINES} -DTOOLCHAIN_GCC_ARM")
-SET(MBED_DEFINES "${MBED_DEFINES} -DTOOLCHAIN_GCC")
+# pass these defines to the preprocessor
+add_definitions(-DTARGET_${MBED_PLATFORM_UPPERC} -DTARGET_${MBED_TARGET_ISA} -DTARGET_${MBED_TARGET_VENDOR} -DTOOLCHAIN_${MBED_TOOLCHAIN})
 
-SET(MBED_CMAKE_CXX_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES}")
-SET(MBED_CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
+# add definitions for each macro from the official mbed SDK parameters
+foreach(def ${MBED_TARGET_MACROS})
+    add_definitions(-D${def})
+endforeach()
 
-
-# Main mbed library
-set(MBED_PATH ${MBED_LIBS_REPO_DIR}/build/mbed)
-
+SET(MBED_CMAKE_CXX_FLAGS    "${COMMON_FLAGS}")
+SET(MBED_CMAKE_C_FLAGS      "${COMMON_FLAGS} -std=gnu99")
 
 # ------------------------------------------------------------------------------
 # libraries for mbed
@@ -83,100 +85,139 @@ set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 # ------------------------------------------------------------------------------
 # linker settings
 set(MBED_CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
-set(MBED_CMAKE_EXE_LINKER_FLAGS "${MBED_CMAKE_EXE_LINKER_FLAGS} -T '${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_LINK_TARGET}.ld' -static")
+list(APPEND MBED_CMAKE_EXE_LINKER_FLAGS "-T '${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${MBED_PLATFORM}.ld' -static")
 
 # ------------------------------------------------------------------------------
-# mbed
-include_directories("${MBED_PATH}/")
-include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/")
-include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
-include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/")
-include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/TARGET_${MBED_CPU}")
+# mbed include directories for all targets
+set(MBED_INC_DIRS           "${MBED_REPO_DIR}/build/mbed")
+list(APPEND MBED_INC_DIRS   "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}")
+list(APPEND MBED_INC_DIRS   "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}")
+list(APPEND MBED_INC_DIRS   "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_SERIES}")
+list(APPEND MBED_INC_DIRS   "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_SERIES}/TARGET_${MBED_TARGET_PROGEN_UPPERC}")
 
-set(MBED_INC_DIRS "")
-
-# add networking
-if(${MBED_USE_ETH})
-    mbed_add_incs_eth(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR} ${MBED_VENDOR})
-    set(MBED_NET_LIB_DIR ${MBED_LIBS_REPO_DIR}/build/net/eth/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
-    set(MBED_LIBS ${MBED_LIBS} ${MBED_NET_LIB_DIR}/libeth.a)
-    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --eth)
-    set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-literal-suffix")
-    set(MBED_USE_RTOS true)
+# ------------------------------------------------------------------------------
+# compile with support for the networking library
+if(${MBED_WITH_ETH})
+    mbed_add_incs_eth(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR} VENDOR ${MBED_TARGET_VENDOR})
+    list(APPEND MBED_OPT_LIBS       "--eth")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/eth/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libeth.a")
+    list(APPEND MBED_CMAKE_CXX_FLAGS "-Wno-literal-suffix")
 endif()
 
-# add rtos
-if(${MBED_USE_RTOS})
-    MESSAGE(STATUS ${MBED_INC_DIRS})
-    mbed_add_incs_rtos(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
-    set(MBED_RTOS_LIB_DIR ${MBED_LIBS_REPO_DIR}/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
-    set(MBED_LIBS ${MBED_LIBS} ${MBED_RTOS_LIB_DIR}/librtos.a ${MBED_RTOS_LIB_DIR}/librtx.a)
-    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --rtos)
+# ------------------------------------------------------------------------------
+# compile with support for the RTOS library
+if(${MBED_WITH_RTOS})
+    mbed_add_incs_rtos(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR} ARCH ${MBED_TARGET_ARCH})
+    list(APPEND MBED_OPT_LIBS       "--rtos")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/rtos/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librtos.a")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/rtos/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librtx.a")
 endif()
 
-# add usb
-if(${MBED_USE_USB})
-    mbed_add_incs_usb(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
-    set(MBED_USB_LIB_DIR      ${MBED_LIBS_REPO_DIR}/build/usb/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
-    set(MBED_USB_HOST_LIB_DIR ${MBED_LIBS_REPO_DIR}/build/usb_host/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
-    set(MBED_LIBS ${MBED_LIBS} ${MBED_USB_LIB_DIR}/libUSBDevice.a ${MBED_USB_HOST_LIB_DIR}/libUSBHost.a)
-    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --usb --usb_host)
+# ------------------------------------------------------------------------------
+# compile with support for the USB library
+if(${MBED_WITH_USB})
+    mbed_add_incs_usb(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR})
+    list(APPEND MBED_OPT_LIBS       "--usb")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/usb/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libUSBDevice.a")
 endif()
 
-# add dsp
-if(${MBED_USE_DSP})
-    mbed_add_incs_dsp(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
-    set(MBED_DSP_LIB_DIR ${MBED_LIBS_REPO_DIR}/build/dsp/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT})
-    set(MBED_LIBS ${MBED_LIBS} ${MBED_DSP_LIB_DIR}/libcmsis_dsp.a ${MBED_DSP_LIB_DIR}/libdsp.a)
-    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --dsp)
+# ------------------------------------------------------------------------------
+# compile with support for the USB Host library
+if(${MBED_WITH_USB_HOST})
+    mbed_add_incs_usb_host(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR})
+    list(APPEND MBED_OPT_LIBS       "--usb_host")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/usb_host/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libUSBHost.a")
 endif()
 
-# rpc
-if(${MBED_USE_RPC})
-    mbed_add_incs_rpc(MBED_INC_DIRS ${MBED_LIBS_REPO_DIR})
-    set(MBED_LIBS ${MBED_LIBS} ${MBED_LIBS_REPO_DIR}/build/rpc/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN_OPT}/librpc.a)
-    set(MBED_OPT_LIBS ${MBED_OPT_LIBS} --rpc)
+# ------------------------------------------------------------------------------
+# compile with support for the DSP library
+if(${MBED_WITH_DSP})
+    mbed_add_incs_dsp(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR})
+    list(APPEND MBED_OPT_LIBS         "--dsp")
+    list(APPEND MBED_TARGET_OBJS      "${MBED_REPO_DIR}/build/dsp/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libcmsis_dsp.a")
+    list(APPEND MBED_TARGET_OBJS      "${MBED_REPO_DIR}/build/dsp/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libdsp.a")
 endif()
 
-# include the mbed paths and link the toolchain where this file is included in another file
-set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
-link_directories(${MBED_LINK_DIRS})
-include_directories(${MBED_PATH})
-include_directories(${MBED_INC_DIRS})
-message(STATUS ${MBED_INC_DIRS})
+# ------------------------------------------------------------------------------
+# compile with support for the RPC library
+if(${MBED_WITH_RPC})
+    mbed_add_incs_rpc(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR})
+    list(APPEND MBED_OPT_LIBS       "--rpc")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/rpc/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librpc.a")
+endif()
 
+# ------------------------------------------------------------------------------
+# compile with support for the FAT filesystem library
+if(${MBED_WITH_FATFS})
+    mbed_add_incs_fatfs(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR})
+    list(APPEND MBED_OPT_LIBS       "--fat")
+    list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/fat/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libfat.a")
+endif()
 
+# ------------------------------------------------------------------------------
+# compile with support for the UBLOX library
+if(${MBED_WITH_UBLOX})
+    mbed_add_incs_ublox(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR})
+    list(APPEND MBED_OPT_LIBS       "--ublox")
+endif()
+
+# ------------------------------------------------------------------------------
 # official MBED libraries
 include(ExternalProject)
 ExternalProject_Add(mbed_libraries
     URL                 ${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools
     CONFIGURE_COMMAND   ""
-    BUILD_COMMAND       python2 ${MBED_LIBS_REPO_DIR}/workspace_tools/build.py
-                                --mcu=${MBED_TARGET}
-                                --tool=${MBED_TOOLCHAIN_OPT}
+    BUILD_COMMAND       ${MBED_REPO_DIR}/workspace_tools/build.py
+                                --mcu=${MBED_PLATFORM_UPPERC}
+                                --tool=${MBED_TOOLCHAIN}
                                 ${MBED_OPT_LIBS}
     INSTALL_COMMAND     ""
     UPDATE_COMMAND      ""
 )
 set_target_properties(mbed_libraries PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
+# find the names of all system objects to include
+file(GLOB MBED_TARGET_SYSTEM_OBJS  LIST_DIRECTORIES false "${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools/libraries/mbed/targets/cmsis/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_SERIES}/*.c")
+foreach(target_sys_obj ${MBED_TARGET_SYSTEM_OBJS})
+    # extract just the filename - excluding the extension so we can set it as an object file to include for later
+    get_filename_component(basename ${target_sys_obj} NAME_WE)
+    # append it to the list of objects to track dependencies for
+    list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${basename}.o")
+endforeach()
 
-# ------------------------------------------------------------------------------
-# setup precompiled mbed files which will be needed for all projects
-set(MBED_OBJECTS
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_STARTUP}
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_SYSTEM}
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/cmsis_nvic.o
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/retarget.o
-    ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/board.o
-)
+# find the name of the startup object to include
+file(GLOB MBED_TARGET_STARTUP_OBJS LIST_DIRECTORIES false "${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools/libraries/mbed/targets/cmsis/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_SERIES}/TOOLCHAIN_${MBED_TOOLCHAIN}/*.S")
+foreach(target_sys_obj ${MBED_TARGET_STARTUP_OBJS})
+    # do the same thing that we did above, except this time with the target's main startup file
+    get_filename_component(basename ${target_sys_obj} NAME_WE)
+    # append it to the list of objects to track dependencies for
+    list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${basename}.o")
+endforeach()
+
+# append them to the list along with the other common target objects
+list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/board.o")
+list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/retarget.o")
+list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libmbed.a")
 
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
-foreach(mbed_obj ${MBED_OBJECTS})
+# ------------------------------------------------------------------------------
+foreach(obj ${MBED_TARGET_OBJS})
     add_custom_command(
-        OUTPUT      ${mbed_obj}
+        OUTPUT      ${obj}
         DEPENDS     mbed_libraries
         COMMAND     ""
     )
 endforeach()
+
+# ------------------------------------------------------------------------------
+# set some standaradized variables for the file that included this one to use if needed
+set( MBED_INCLUDE_DIR  "${MBED_INC_DIRS}"      )
+set( MBED_LIBRARY      "${MBED_TARGET_OBJS}"   )
+
+# ------------------------------------------------------------------------------
+# include the mbed paths and link the toolchain where this file is included in another file
+link_directories("${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}")
+link_directories(${MBED_INCLUDE_DIR})
+link_directories(${MBED_LIBRARY})
+include_directories(${MBED_INCLUDE_DIR})
