@@ -1,145 +1,126 @@
+# Include this module to dump a snapshot of the most common build variables where
+# the file is included from
+
 # if you are building in-source, this is the same as CMAKE_SOURCE_DIR, otherwise 
 # this is the top level directory of your build tree 
-MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
-
+message( STATUS "CMAKE_BINARY_DIR:\t\t"                 ${CMAKE_BINARY_DIR}                 )
 # if you are building in-source, this is the same as CMAKE_CURRENT_SOURCE_DIR, otherwise this 
 # is the directory where the compiled or generated files from the current CMakeLists.txt will go to 
-MESSAGE( STATUS "CMAKE_CURRENT_BINARY_DIR: " ${CMAKE_CURRENT_BINARY_DIR} )
-
+message( STATUS "CMAKE_CURRENT_BINARY_DIR:\t"           ${CMAKE_CURRENT_BINARY_DIR}         )
 # this is the directory, from which cmake was started, i.e. the top level source directory 
-MESSAGE( STATUS "CMAKE_SOURCE_DIR:         " ${CMAKE_SOURCE_DIR} )
-
+message( STATUS "CMAKE_SOURCE_DIR:\t\t"                 ${CMAKE_SOURCE_DIR}                 )
 # this is the directory where the currently processed CMakeLists.txt is located in 
-MESSAGE( STATUS "CMAKE_CURRENT_SOURCE_DIR: " ${CMAKE_CURRENT_SOURCE_DIR} )
-
+message( STATUS "CMAKE_CURRENT_SOURCE_DIR:\t"           ${CMAKE_CURRENT_SOURCE_DIR}         )
 # contains the full path to the top level directory of your build tree 
-MESSAGE( STATUS "PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR} )
-
+message( STATUS "PROJECT_BINARY_DIR:\t"                 ${PROJECT_BINARY_DIR}               )
 # contains the full path to the root of your project source directory,
 # i.e. to the nearest directory where CMakeLists.txt contains the PROJECT() command 
-MESSAGE( STATUS "PROJECT_SOURCE_DIR: " ${PROJECT_SOURCE_DIR} )
-
+message( STATUS "PROJECT_SOURCE_DIR:\t"                 ${PROJECT_SOURCE_DIR}               )
 # set this variable to specify a common place where CMake should put all executable files
 # (instead of CMAKE_CURRENT_BINARY_DIR)
-MESSAGE( STATUS "EXECUTABLE_OUTPUT_PATH: " ${EXECUTABLE_OUTPUT_PATH} )
-
+message( STATUS "EXECUTABLE_OUTPUT_PATH:\t"             ${EXECUTABLE_OUTPUT_PATH}           )
 # set this variable to specify a common place where CMake should put all libraries 
 # (instead of CMAKE_CURRENT_BINARY_DIR)
-MESSAGE( STATUS "LIBRARY_OUTPUT_PATH:     " ${LIBRARY_OUTPUT_PATH} )
-
+message( STATUS "LIBRARY_OUTPUT_PATH:\t"                ${LIBRARY_OUTPUT_PATH}              )
 # tell CMake to search first in directories listed in CMAKE_MODULE_PATH
 # when you use FIND_PACKAGE() or INCLUDE()
-MESSAGE( STATUS "CMAKE_MODULE_PATH: " ${CMAKE_MODULE_PATH} )
-
+message( STATUS "CMAKE_MODULE_PATH:\t"                  ${CMAKE_MODULE_PATH}                )
 # this is the complete path of the cmake which runs currently (e.g. /usr/local/bin/cmake) 
-MESSAGE( STATUS "CMAKE_COMMAND: " ${CMAKE_COMMAND} )
-
+message( STATUS "CMAKE_COMMAND:\t\t"                    ${CMAKE_COMMAND}                    )
 # this is the CMake installation directory 
-MESSAGE( STATUS "CMAKE_ROOT: " ${CMAKE_ROOT} )
-
+message( STATUS "CMAKE_ROOT:\t\t"                       ${CMAKE_ROOT}                       )
 # this is the filename including the complete path of the file where this variable is used. 
-MESSAGE( STATUS "CMAKE_CURRENT_LIST_FILE: " ${CMAKE_CURRENT_LIST_FILE} )
-
+message( STATUS "CMAKE_CURRENT_LIST_FILE:\t"            ${CMAKE_CURRENT_LIST_FILE}          )
 # this is linenumber where the variable is used
-MESSAGE( STATUS "CMAKE_CURRENT_LIST_LINE: " ${CMAKE_CURRENT_LIST_LINE} )
-
+message( STATUS "CMAKE_CURRENT_LIST_LINE:\t"            ${CMAKE_CURRENT_LIST_LINE}          )
 # this is used when searching for include files e.g. using the FIND_PATH() command.
-MESSAGE( STATUS "CMAKE_INCLUDE_PATH: " ${CMAKE_INCLUDE_PATH} )
-
+message( STATUS "CMAKE_INCLUDE_PATH:\t"                 ${CMAKE_INCLUDE_PATH}               )
 # this is used when searching for libraries e.g. using the FIND_LIBRARY() command.
-MESSAGE( STATUS "CMAKE_LIBRARY_PATH: " ${CMAKE_LIBRARY_PATH} )
-
+message( STATUS "CMAKE_LIBRARY_PATH:\t"                 ${CMAKE_LIBRARY_PATH}               )
 # the complete system name, e.g. "Linux-2.4.22", "FreeBSD-5.4-RELEASE" or "Windows 5.1" 
-MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
-
+message( STATUS "CMAKE_SYSTEM:\t\t"                     ${CMAKE_SYSTEM}                     )
 # the short system name, e.g. "Linux", "FreeBSD" or "Windows"
-MESSAGE( STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME} )
-
+message( STATUS "CMAKE_SYSTEM_NAME:\t"                  ${CMAKE_SYSTEM_NAME}                )
 # only the version part of CMAKE_SYSTEM 
-MESSAGE( STATUS "CMAKE_SYSTEM_VERSION: " ${CMAKE_SYSTEM_VERSION} )
-
+message( STATUS "CMAKE_SYSTEM_VERSION:\t"               ${CMAKE_SYSTEM_VERSION}             )
 # the processor name (e.g. "Intel(R) Pentium(R) M processor 2.00GHz") 
-MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
-
+message( STATUS "CMAKE_SYSTEM_PROCESSOR:\t"             ${CMAKE_SYSTEM_PROCESSOR}           )
 # is TRUE on all UNIX-like OS's, including Apple OS X and CygWin
-MESSAGE( STATUS "UNIX: " ${UNIX} )
-
+message( STATUS "UNIX:\t\t"                             ${UNIX}                             )
 # is TRUE on Windows, including CygWin 
-MESSAGE( STATUS "WIN32: " ${WIN32} )
-
+message( STATUS "WIN32:\t\t"                            ${WIN32}                            )
 # is TRUE on Apple OS X
-MESSAGE( STATUS "APPLE: " ${APPLE} )
-
+message( STATUS "APPLE:\t\t"                            ${APPLE}                            )
 # is TRUE when using the MinGW compiler in Windows
-MESSAGE( STATUS "MINGW: " ${MINGW} )
-
+message( STATUS "MINGW:\t\t"                            ${MINGW}                            )
 # is TRUE on Windows when using the CygWin version of cmake
-MESSAGE( STATUS "CYGWIN: " ${CYGWIN} )
-
+message( STATUS "CYGWIN:\t\t"                           ${CYGWIN}                           )
 # is TRUE on Windows when using a Borland compiler 
-MESSAGE( STATUS "BORLAND: " ${BORLAND} )
-
-# Microsoft compiler 
-MESSAGE( STATUS "MSVC: " ${MSVC} )
-MESSAGE( STATUS "MSVC_IDE: " ${MSVC_IDE} )
-MESSAGE( STATUS "MSVC60: " ${MSVC60} )
-MESSAGE( STATUS "MSVC70: " ${MSVC70} )
-MESSAGE( STATUS "MSVC71: " ${MSVC71} )
-MESSAGE( STATUS "MSVC80: " ${MSVC80} )
-MESSAGE( STATUS "CMAKE_COMPILER_2005: " ${CMAKE_COMPILER_2005} )
-
+message( STATUS "BORLAND:\t\t"                          ${BORLAND}                          )
+# Microsoft compiler s
+message( STATUS "MSVC:\t\t"                             ${MSVC}                             )
+message( STATUS "MSVC_IDE:\t\t"                         ${MSVC_IDE}                         )
+message( STATUS "MSVC60:\t\t"                           ${MSVC60}                           )
+message( STATUS "MSVC70:\t\t"                           ${MSVC70}                           )
+message( STATUS "MSVC71:\t\t"                           ${MSVC71}                           )
+message( STATUS "MSVC80:\t\t"                           ${MSVC80}                           )
+message( STATUS "CMAKE_COMPILER_2005:\t"                ${CMAKE_COMPILER_2005}              )
 # set this to true if you don't want to rebuild the object files if the rules have changed, 
 # but not the actual source files or headers (e.g. if you changed the some compiler switches) 
-MESSAGE( STATUS "CMAKE_SKIP_RULE_DEPENDENCY: " ${CMAKE_SKIP_RULE_DEPENDENCY} )
-
+message( STATUS "CMAKE_SKIP_RULE_DEPENDENCY:\t"         ${CMAKE_SKIP_RULE_DEPENDENCY}       )
 # since CMake 2.1 the install rule depends on all, i.e. everything will be built before installing. 
 # If you don't like this, set this one to true.
-MESSAGE( STATUS "CMAKE_SKIP_INSTALL_ALL_DEPENDENCY: " ${CMAKE_SKIP_INSTALL_ALL_DEPENDENCY} )
-
+message( STATUS "CMAKE_SKIP_INSTALL_ALL_DEPENDENCY:\t"  ${CMAKE_SKIP_INSTALL_ALL_DEPENDENCY})
 # If set, runtime paths are not added when using shared libraries. Default it is set to OFF
-MESSAGE( STATUS "CMAKE_SKIP_RPATH: " ${CMAKE_SKIP_RPATH} )
-
+message( STATUS "CMAKE_SKIP_RPATH:\t"                   ${CMAKE_SKIP_RPATH}                 )
 # set this to true if you are using makefiles and want to see the full compile and link 
 # commands instead of only the shortened ones 
-MESSAGE( STATUS "CMAKE_VERBOSE_MAKEFILE: " ${CMAKE_VERBOSE_MAKEFILE} )
-
+message( STATUS "CMAKE_VERBOSE_MAKEFILE:\t"             ${CMAKE_VERBOSE_MAKEFILE}           )
 # this will cause CMake to not put in the rules that re-run CMake. This might be useful if 
 # you want to use the generated build files on another machine. 
-MESSAGE( STATUS "CMAKE_SUPPRESS_REGENERATION: " ${CMAKE_SUPPRESS_REGENERATION} )
-
-# A simple way to get switches to the compiler is to use ADD_DEFINITIONS(). 
-# But there are also two variables exactly for this purpose: 
-
+message( STATUS "CMAKE_SUPPRESS_REGENERATION:\t"        ${CMAKE_SUPPRESS_REGENERATION}      )
 # the compiler flags for compiling C sources 
-MESSAGE( STATUS "CMAKE_C_FLAGS: " ${CMAKE_C_FLAGS} )
-
+message( STATUS "CMAKE_C_FLAGS:\t\t"                    ${CMAKE_C_FLAGS}                    )
 # the compiler flags for compiling C++ sources 
-MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
-
-
+message( STATUS "CMAKE_CXX_FLAGS:\t"                    ${CMAKE_CXX_FLAGS}                  )
 # Choose the type of build.  Example: SET(CMAKE_BUILD_TYPE Debug) 
-MESSAGE( STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
-
+message( STATUS "CMAKE_BUILD_TYPE:\t"                   ${CMAKE_BUILD_TYPE}                 )
 # if this is set to ON, then all libraries are built as shared libraries by default.
-MESSAGE( STATUS "BUILD_SHARED_LIBS: " ${BUILD_SHARED_LIBS} )
-
+message( STATUS "BUILD_SHARED_LIBS:\t"                  ${BUILD_SHARED_LIBS}                )
 # the compiler used for C files 
-MESSAGE( STATUS "CMAKE_C_COMPILER: " ${CMAKE_C_COMPILER} )
-
+message( STATUS "CMAKE_C_COMPILER:\t"                   ${CMAKE_C_COMPILER}                 )
 # the compiler used for C++ files 
-MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
-
-# if the compiler is a variant of gcc, this should be set to 1 
-MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCC: " ${CMAKE_COMPILER_IS_GNUCC} )
-
-# if the compiler is a variant of g++, this should be set to 1 
-MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX} )
-
+message( STATUS "CMAKE_CXX_COMPILER:\t"                 ${CMAKE_CXX_COMPILER}               )
+# if the compiler is a variant of gcc
+message( STATUS "CMAKE_COMPILER_IS_GNUCC:\t"            ${CMAKE_COMPILER_IS_GNUCC}          )
+# if the compiler is a variant of g++
+message( STATUS "CMAKE_COMPILER_IS_GNUCXX:\t"           ${CMAKE_COMPILER_IS_GNUCXX}         )
 # the tools for creating libraries 
-MESSAGE( STATUS "CMAKE_AR: " ${CMAKE_AR} )
-MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )
-
+message( STATUS "CMAKE_AR:\t\t"                         ${CMAKE_AR}                         )
+message( STATUS "CMAKE_RANLIB:\t\t"                     ${CMAKE_RANLIB}                     )
 # output directories
-MESSAGE( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY: " ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY} )
-MESSAGE( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY: " ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
-MESSAGE( STATUS "CMAKE_OUTPUT_OUTPUT_DIRECTORY:  " ${CMAKE_OUTPUT_OUTPUT_DIRECTORY} )
+message( STATUS "CMAKE_ARCHIVE_OUTPUT_DIRECTORY:\t"     ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}   )
+message( STATUS "CMAKE_LIBRARY_OUTPUT_DIRECTORY:\t"     ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}   )
+message( STATUS "CMAKE_OUTPUT_OUTPUT_DIRECTORY:\t"      ${CMAKE_OUTPUT_OUTPUT_DIRECTORY}    )
+# mbed library options
+message( STATUS "WITH_MBED_RTOS:\t\t"                   ${WITH_MBED_RTOS}                   )
+message( STATUS "WITH_MBED_RPC:\t\t"                    ${WITH_MBED_RPC}                    )
+message( STATUS "WITH_MBED_USB:\t\t"                    ${WITH_MBED_USB}                    )
+message( STATUS "WITH_MBED_USB_HOST:\t\t"               ${WITH_MBED_USB_HOST}               )
+message( STATUS "WITH_MBED_DSP:\t\t"                    ${WITH_MBED_DSP}                    )
+message( STATUS "WITH_MBED_ETH:\t\t"                    ${WITH_MBED_ETH}                    )
+message( STATUS "WITH_MBED_FATFS:\t\t"                  ${WITH_MBED_FATFS}                  )
+message( STATUS "WITH_MBED_UBLOX:\t\t"                  ${WITH_MBED_UBLOX}                  )
+message( STATUS "WITH_MBED_CPPTEST:\t\t"                ${WITH_MBED_CPPTEST}                )
+# mbed target options
+message(STATUS "MBED_TARGET_CORE:\t\t"                  ${MBED_TARGET_CORE}                 )
+message(STATUS "MBED_TARGET_CORE_LOWERC:\t"             ${MBED_TARGET_CORE_LOWERC}          )
+message(STATUS "MBED_TARGET_CORE_UPPERC:\t"             ${MBED_TARGET_CORE_UPPERC}          )
+message(STATUS "MBED_TARGET_TOOLCHAINS:\t"              ${MBED_TARGET_TOOLCHAINS}           )
+message(STATUS "MBED_TARGET_CODE:\t\t"                  ${MBED_TARGET_CODE}                 )
+message(STATUS "MBED_TARGET_PROGEN:\t\t"                ${MBED_TARGET_PROGEN}               )
+message(STATUS "MBED_TARGET_PROGEN_LOWERC:\t"           ${MBED_TARGET_PROGEN_LOWERC}        )
+message(STATUS "MBED_TARGET_PROGEN_UPPERC:\t"           ${MBED_TARGET_PROGEN_UPPERC}        )
+message(STATUS "MBED_TARGET_MACROS:\t\t"                ${MBED_TARGET_MACROS}               )
+message(STATUS "MBED_TARGET_VENDOR:\t\t"                ${MBED_TARGET_VENDOR}               )
+message(STATUS "MBED_TARGET_FAMILY:\t"                  ${MBED_TARGET_FAMILY}               )
