@@ -2,8 +2,6 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
-include(ShowVars)
-
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
@@ -42,6 +40,9 @@ foreach(util_subdir ${UTILS})
     list(APPEND common2015_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/${UTILS_ROOT_NAME}/${util_subdir})
 endforeach()
 
+# append all of the accessory library include directories
+list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
+
 # do the same thing for the accessory libraries 
 foreach(lib_src ${MBED_ASSEC_LIBS_SRCS})
     add_custom_command(
@@ -51,8 +52,6 @@ foreach(lib_src ${MBED_ASSEC_LIBS_SRCS})
     )
 endforeach()
 
-show_vars()
-
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
 add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
@@ -60,10 +59,10 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 
-target_link_libraries(common2015 ${MBED_LIBS})
+# target_link_libraries(common2015 ${MBED_LINK_LIBRARY})
 target_link_libraries(common2015 ${MBED_LIBRARY})
 
-target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS} ${MBED_ASSEC_LIBS_INCLUDES} ${MBED_INCLUDE_DIR})
+target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS})
 
 # only build firmware library if required
 set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)

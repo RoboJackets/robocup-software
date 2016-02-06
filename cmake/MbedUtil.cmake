@@ -104,17 +104,20 @@ endfunction()
 #   mbed_add_incs_rtos(<directory-list> LIB_ROOT <mbed-build-tree> ARCH <mbed-mcu-arch>)
 function(MBED_ADD_INCS_RTOS dir_list)
     set(__options "")
-    set(__singleValueArgs LIB_ROOT ARCH)
+    set(__singleValueArgs LIB_ROOT TARGET ARCH TOOLCHAIN)
     set(__multiValueArgs "")
     cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
-    # make sure we are passed the arch type to use
-    assert(MBED_ARCH "ARCH is not set")
+    # make sure we are passed the target, arch type, and toolchain
+    assert( MBED_TARGET      "TARGET is not set"     )
+    assert( MBED_ARCH        "ARCH is not set"       )
+    assert( MBED_TOOLCHAIN   "TOOLCHAIN is not set"  )
 
     set( ${dir_list}
         "${${dir_list}}"
         "${MBED_LIB_ROOT}/build/rtos"
-        "${MBED_LIB_ROOT}/build/rtos/TARGET_${MBED_RTOS_ARCH}"
+        "${MBED_LIB_ROOT}/build/rtos/TARGET_${MBED_ARCH}"
+        "${MBED_LIB_ROOT}/build/rtos/TARGET_${MBED_TARGET}/TOOLCHAIN_${MBED_TOOLCHAIN}"
         PARENT_SCOPE
     )
 endfunction()

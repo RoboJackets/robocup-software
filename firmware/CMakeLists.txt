@@ -6,9 +6,7 @@ include(ShowVars)
 # remove the color flag since it will get set on anything with clang assert
 # the default compiler (mostly apple computers). The arm compilers know
 # nothing about this flag however.
-show_vars()
 remove_cxx_flag("-fcolor-diagnostics")
-show_vars()
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
