@@ -57,7 +57,7 @@ add_custom_target(robot2015
     ${ARM_OBJCOPY} -O binary robot2015_elf rj-robot.bin
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/rj-robot.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS robot2015_elf
-    COMMENT "objcopying to make mbed-compatible executable ${CMAKE_CXX_COMPILER} ${CMAKE_C_COMPILER} ${CMAKE_ASM_COMPILER}"
+    COMMENT "objcopying to make mbed-compatible executable"
 )
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
 

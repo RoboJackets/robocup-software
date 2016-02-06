@@ -47,11 +47,10 @@ foreach(lib_src ${MBED_ASSEC_LIBS_SRCS})
     add_custom_command(
         OUTPUT      ${lib_src}
         DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}
+        DEPENDS     ${MBED_LIBRARY}
         COMMAND     ""
     )
 endforeach()
-
-show_vars()
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
@@ -63,7 +62,7 @@ add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 target_link_libraries(common2015 ${MBED_LIBS})
 target_link_libraries(common2015 ${MBED_LIBRARY})
 
-target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS} ${MBED_ASSEC_LIBS_INCLUDES} ${MBED_INCLUDE_DIR})
+target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS} ${MBED_ASSEC_LIBS_INCLUDES})# ${MBED_INCLUDE_DIR})
 
 # only build firmware library if required
 set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)

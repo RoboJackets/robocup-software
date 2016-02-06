@@ -7,7 +7,7 @@ include(MbedUtil)
 # ------------------------------------------------------------------------------
 # turn build options on/off with there cmake options
 rj_add_op( MBED_WITH_RTOS      "Include mbed RTOS support"                 ON    )
-rj_add_op( MBED_WITH_RPC       "Include mbed RPC support"                  OFF   )
+rj_add_op( MBED_WITH_RPC       "Include mbed RPC support"                  ON    )
 rj_add_op( MBED_WITH_USB       "Include mbed USB support"                  OFF   )
 rj_add_op( MBED_WITH_USB_HOST  "Include mbed USB Host support"             OFF   )
 rj_add_op( MBED_WITH_ETH       "Include mbed ethernet/networking support"  OFF   )
@@ -85,7 +85,7 @@ set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 # ------------------------------------------------------------------------------
 # linker settings
 set(MBED_CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
-list(APPEND MBED_CMAKE_EXE_LINKER_FLAGS "-T '${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${MBED_PLATFORM}.ld' -static")
+set(MBED_CMAKE_EXE_LINKER_FLAGS "${MBED_CMAKE_EXE_LINKER_FLAGS} -T '${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${MBED_PLATFORM}.ld' -static")
 
 # ------------------------------------------------------------------------------
 # mbed include directories for all targets
@@ -107,7 +107,7 @@ endif()
 # ------------------------------------------------------------------------------
 # compile with support for the RTOS library
 if(${MBED_WITH_RTOS})
-    mbed_add_incs_rtos(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR} ARCH ${MBED_TARGET_ARCH})
+    mbed_add_incs_rtos(MBED_INC_DIRS LIB_ROOT ${MBED_REPO_DIR} TARGET ${MBED_PLATFORM} ARCH ${MBED_TARGET_ARCH} TOOLCHAIN ${MBED_TOOLCHAIN})
     list(APPEND MBED_OPT_LIBS       "--rtos")
     list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/rtos/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librtos.a")
     list(APPEND MBED_TARGET_OBJS    "${MBED_REPO_DIR}/build/rtos/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librtx.a")
@@ -202,22 +202,27 @@ list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
 # ------------------------------------------------------------------------------
+set(MBED_LINKER_DIR "")
 foreach(obj ${MBED_TARGET_OBJS})
-    add_custom_command(
-        OUTPUT      ${obj}
-        DEPENDS     mbed_libraries
-        COMMAND     ""
-    )
+    get_filename_component(obj_path ${obj} DIRECTORY)
+    list(APPEND MBED_LINKER_DIR ${obj_path})
+    # add_custom_command(
+    #     OUTPUT      ${obj}
+    #     DEPENDS     mbed_libraries
+    #     COMMAND     ""
+    # )
 endforeach()
+
+# remove the duplicate entries
+list(REMOVE_DUPLICATES MBED_LINKER_DIR)
+
+# pass the directories to the linker where the mbed's build object files are located
+link_directories(${MBED_LINKER_DIR})
+
+# include the paths to the headers
+include_directories(${MBED_INC_DIRS})
 
 # ------------------------------------------------------------------------------
 # set some standaradized variables for the file that included this one to use if needed
 set( MBED_INCLUDE_DIR  "${MBED_INC_DIRS}"      )
 set( MBED_LIBRARY      "${MBED_TARGET_OBJS}"   )
-
-# ------------------------------------------------------------------------------
-# include the mbed paths and link the toolchain where this file is included in another file
-link_directories("${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}")
-link_directories(${MBED_INCLUDE_DIR})
-link_directories(${MBED_LIBRARY})
-include_directories(${MBED_INCLUDE_DIR})

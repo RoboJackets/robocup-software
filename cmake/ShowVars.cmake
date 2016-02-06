@@ -134,10 +134,11 @@ macro(SHOW_VARS)
     message( STATUS "AVR_CXX_COMPILER:\t\t\t"               "${AVR_CXX_COMPILER}"                   )
     message( STATUS "MBED_CMAKE_C_FLAGS:\t\t"               "${MBED_CMAKE_C_FLAGS}"                 )
     message( STATUS "MBED_CMAKE_CXX_FLAGS:\t\t"             "${MBED_CMAKE_CXX_FLAGS}"               )
+    message( STATUS "MBED_CMAKE_EXE_LINKER_FLAGS:\t\t"      "${MBED_CMAKE_EXE_LINKER_FLAGS}"        )
     # show all mbed target object files
     message( STATUS "MBED_LIBRARY:"                                                                 )
     foreach(i ${MBED_LIBRARY})
-        get_filename_component( fn ${i} NAME )
+        get_filename_component( fn ${i} ABSOLUTE )
         message( STATUS "\t\t\t\t\t${fn}" )
     endforeach()
     # show all mbed include directories for the linker
