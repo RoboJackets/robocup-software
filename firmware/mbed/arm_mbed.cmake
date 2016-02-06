@@ -35,9 +35,6 @@ if (NOT ${_index} GREATER -1)
     message(FATAL_ERROR "unsupported toolchain: ${MBED_TOOLCHAIN}")
 endif()
 
-
-show_vars()
-
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
 set(MBED_REPO_DIR "${CMAKE_CURRENT_BINARY_DIR}/mbed_libraries-prefix/src/mbed_libraries")
@@ -69,22 +66,22 @@ endif()
 # set the target platform's family
 set(MBED_TARGET_FAMILY "")
 
-set(MBED_TARGET_FAMILY "LPC176X")
-set(MBED_TARGET_FAMILY "LPC11UXX")
-set(MBED_TARGET_FAMILY "MCU_NRF51822")
 
 # ------------------------------------------------------------------------------
-set(MBED_INSTRUCTIONSET "M3")
+set(MBED_TARGET_ISA "M3")
 set(MBED_TARGET_STARTUP "startup_LPC17xx.o")
 set(MBED_TARGET_SYSTEM "system_LPC17xx.o")
+set(MBED_TARGET_FAMILY "LPC176X")
 
-# set(MBED_INSTRUCTIONSET "M0")
+# set(MBED_TARGET_ISA "M0")
 # set(MBED_TARGET_STARTUP "startup_LPC11xx.o")
 # set(MBED_TARGET_SYSTEM "system_LPC11Uxx.o")
+# set(MBED_TARGET_FAMILY "LPC11UXX")
 
-# set(MBED_INSTRUCTIONSET "M0")
+# set(MBED_TARGET_ISA "M0")
 # set(MBED_TARGET_STARTUP "startup_NRF51822.o")
 # set(MBED_TARGET_SYSTEM "system_nrf51822.o")
+# set(MBED_TARGET_FAMILY "MCU_NRF51822")
 
 # ------------------------------------------------------------------------------
 # compiler settings
@@ -93,7 +90,7 @@ SET(COMMON_FLAGS ${COMMON_FLAGS} "-mcpu=${MBED_TARGET_CORE} -O2 -mthumb -fno-exc
 set(COMMON_FLAGS ${COMMON_FLAGS} "${CMAKE_CXX_FLAGS}")
 
 SET(MBED_DEFINES ${MBED_DEFINES} "-DTARGET_${MBED_PLATFORM_UPPERC}")
-SET(MBED_DEFINES ${MBED_DEFINES} "-DTARGET_${MBED_INSTRUCTIONSET}")
+SET(MBED_DEFINES ${MBED_DEFINES} "-DTARGET_${MBED_TARGET_ISA}")
 SET(MBED_DEFINES ${MBED_DEFINES} "-DTARGET_${MBED_TARGET_VENDOR}")
 SET(MBED_DEFINES ${MBED_DEFINES} "-DTOOLCHAIN_${MBED_TOOLCHAIN}")
 # SET(MBED_DEFINES ${MBED_DEFINES} "-DTOOLCHAIN_GCC")
@@ -115,8 +112,8 @@ set(MBED_CMAKE_EXE_LINKER_FLAGS "${MBED_CMAKE_EXE_LINKER_FLAGS} -T '${MBED_PATH}
 set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/")
 set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/TARGET_${MBED_PLATFORM_UPPERC}/")
 set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/TARGET_${MBED_PLATFORM_UPPERC}/${MBED_TOOLCHAIN}")
-set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/TARGET_${MBED_PLATFORM_UPPERC}/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_FAMILY}/")
-set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/TARGET_${MBED_PLATFORM_UPPERC}/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_FAMILY}/TARGET_${MBED_TARGET_PROGEN_UPPERC}")
+set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/TARGET_${MBED_PLATFORM_UPPERC}/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_FAMILY}/")
+set(MBED_INC_DIRS ${MBED_INC_DIRS} "${MBED_PATH}/TARGET_${MBED_PLATFORM_UPPERC}/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_FAMILY}/TARGET_${MBED_TARGET_PROGEN_UPPERC}")
 
 # ------------------------------------------------------------------------------
 # compile with support for the networking library
@@ -226,3 +223,5 @@ foreach(mbed_obj ${MBED_TARGET_OBJS})
         COMMAND     ""
     )
 endforeach()
+
+show_vars()

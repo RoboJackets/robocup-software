@@ -90,7 +90,8 @@ function(MBED_ADD_INCS_ETH dir_list)
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/netif"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-sys"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-sys/arch"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-eth/arch/TARGET_${MBED_ETH_VENDOR}""
+        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-eth/arch/TARGET_${MBED_ETH_VENDOR}"
+        PARENT_SCOPE
     )
 endfunction()
 
@@ -110,7 +111,8 @@ function(MBED_ADD_INCS_RTOS dir_list)
     set( dir_list
         "${dir_list}"
         "${MBED_RTOS_LIB_ROOT}/build/rtos"
-        "${MBED_RTOS_LIB_ROOT}/build/rtos/TARGET_${MBED_RTOS_ARCH}""
+        "${MBED_RTOS_LIB_ROOT}/build/rtos/TARGET_${MBED_RTOS_ARCH}"
+        PARENT_SCOPE
     )
 endfunction()
 
@@ -138,6 +140,7 @@ function(MBED_ADD_INCS_USB dir_list)
         "${MBED_USB_LIB_ROOT}/build/usb/USBMIDI"
         "${MBED_USB_LIB_ROOT}/build/usb/USBMSD"
         "${MBED_USB_LIB_ROOT}/build/usb/USBSerial"
+        PARENT_SCOPE
     )
 
     if(${MBED_USB_BUILD_HOST})
@@ -150,6 +153,7 @@ function(MBED_ADD_INCS_USB dir_list)
             "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMIDI"
             "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMSD"
             "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostSerial"
+            PARENT_SCOPE
         )
     else()
         message(WARNING "mbed usb host library paths will not be included")
@@ -169,6 +173,7 @@ function(MBED_ADD_INCS_DSP dir_list)
     set( dir_list
         "${dir_list}"
         "${MBED_DSP_LIB_ROOT}/build/dsp"
+        PARENT_SCOPE
     )
 endfunction()
 
@@ -185,6 +190,7 @@ function(MBED_ADD_INCS_RPC dir_list)
     set( dir_list
         "${dir_list}"
         "${MBED_RPC_LIB_ROOT}/build/rpc"
+        PARENT_SCOPE
     )
 endfunction()
 
@@ -201,6 +207,7 @@ function(MBED_ADD_INCS_UBLOX dir_list)
     set( dir_list
         "${dir_list}"
         "${MBED_UBLOX_LIB_ROOT}/build/ublox"
+        PARENT_SCOPE
     )
 endfunction()
 
@@ -217,6 +224,7 @@ function(MBED_ADD_INCS_FATFS dir_list)
     set( dir_list
         "${dir_list}"
         "${MBED_FATFS_LIB_ROOT}/build/fat"
+        PARENT_SCOPE
     )
 endfunction()
 
@@ -232,6 +240,7 @@ function(MBED_ADD_INCS_CPPCHECK dir_list)
     set( dir_list
         "${dir_list}"
         "${MBED_CPPCHECK_LIB_ROOT}/build/cppcheck"
+        PARENT_SCOPE
     )
 endfunction()
 
