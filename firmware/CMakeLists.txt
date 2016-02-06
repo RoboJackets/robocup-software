@@ -1,23 +1,15 @@
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
 
-# Set the mbed target processor and settings for cmake
-# set(MBED_TARGET lpc1768)
-
-set(MBED_USE_RTOS true)
-set(MBED_USE_ETH false)
-set(MBED_USE_USB false)
-set(MBED_USE_DSP false)
-set(MBED_USE_RPC true)
-
 # The name of the toolchain we're using.  Note: we don't actually set the CMake
 # toolchain here because it would require that all files compiled under this
 # CMakeLists file to be compiled for the MBED, which we don't want.  We want out
 # tests and other things to be compiled for the host computer.
 set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
+set(CMAKE_CROSSCOMPILING true)
 
 # set the path to a bash script for moving files to the mbed's USB storage
-if( CMAKE_HOST_APPLE )
+if(${APPLE})
     set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh)
 else()
     set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
