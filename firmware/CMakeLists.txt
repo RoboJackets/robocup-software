@@ -1,5 +1,14 @@
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
+include(RemoveFlags)
+include(ShowVars)
+
+# remove the color flag since it will get set on anything with clang assert
+# the default compiler (mostly apple computers). The arm compilers know
+# nothing about this flag however.
+show_vars()
+remove_cxx_flag("-fcolor-diagnostics")
+show_vars()
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
@@ -69,9 +78,6 @@ set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # build robot and base station firmware and the library that they depend on
 add_subdirectory(mbed)
-
-show_vars()
-
 add_subdirectory(common2015)
 add_subdirectory(base2015)
 add_subdirectory(robot2015)

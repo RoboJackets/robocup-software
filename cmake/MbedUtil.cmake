@@ -5,15 +5,9 @@
 include(MbedTargets)
 
 
-# Shows a listing of the major build configuration variables.
-# Usage:
-#   show_vars()
-macro(SHOW_VARS)
-    include(DumpVars)
-endmacro()
-
-
 # Assertion checks for build configuration debugging.
+# Usage
+#   assert(<test> "message on fail")
 macro(ASSERT test comment)
     if(NOT ${test})
         message(FATAL_ERROR "Assertion failed: ${comment}")
@@ -28,23 +22,23 @@ function(MBED_SET_PLATFORM target_var_base)
     set(__options "")
     set(__singleValueArgs TARGET)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_SET "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     # make sure we are passed the vendor to use
-    assert(MBED_SET_TARGET "TARGET is not set")
+    assert(MBED_TARGET "TARGET is not set")
 
     # set the variable names for what target we are selecting
-    set( MBED_TARGET_CORE_NAME           "MBED_TARGET_CORE_${MBED_SET_TARGET}"           )
-    set( MBED_TARGET_ISA_NAME            "MBED_TARGET_ISA_${MBED_SET_TARGET}"            )
-    set( MBED_TARGET_ARCH_NAME           "MBED_TARGET_ARCH_${MBED_SET_TARGET}"           )
-    set( MBED_TARGET_VENDOR_NAME         "MBED_TARGET_VENDOR_${MBED_SET_TARGET}"         )
-    set( MBED_TARGET_SERIES_NAME         "MBED_TARGET_SERIES_${MBED_SET_TARGET}"         )
-    set( MBED_TARGET_LABELS_EXTRA_NAME   "MBED_TARGET_LABELS_EXTRA_${MBED_SET_TARGET}"   )
-    set( MBED_TARGET_RTOS_ARCHS_NAME     "MBED_TARGET_RTOS_ARCHS_${MBED_SET_TARGET}"     )
-    set( MBED_TARGET_TOOLCHAINS_NAME     "MBED_TARGET_TOOLCHAINS_${MBED_SET_TARGET}"     )
-    set( MBED_TARGET_CODE_NAME           "MBED_TARGET_CODE_${MBED_SET_TARGET}"           )
-    set( MBED_TARGET_PROGEN_NAME         "MBED_TARGET_PROGEN_${MBED_SET_TARGET}"         )
-    set( MBED_TARGET_MACROS_NAME         "MBED_TARGET_MACROS_${MBED_SET_TARGET}"         )
+    set( MBED_TARGET_CORE_NAME           "MBED_TARGET_CORE_${MBED_TARGET}"           )
+    set( MBED_TARGET_ISA_NAME            "MBED_TARGET_ISA_${MBED_TARGET}"            )
+    set( MBED_TARGET_ARCH_NAME           "MBED_TARGET_ARCH_${MBED_TARGET}"           )
+    set( MBED_TARGET_VENDOR_NAME         "MBED_TARGET_VENDOR_${MBED_TARGET}"         )
+    set( MBED_TARGET_SERIES_NAME         "MBED_TARGET_SERIES_${MBED_TARGET}"         )
+    set( MBED_TARGET_LABELS_EXTRA_NAME   "MBED_TARGET_LABELS_EXTRA_${MBED_TARGET}"   )
+    set( MBED_TARGET_RTOS_ARCHS_NAME     "MBED_TARGET_RTOS_ARCHS_${MBED_TARGET}"     )
+    set( MBED_TARGET_TOOLCHAINS_NAME     "MBED_TARGET_TOOLCHAINS_${MBED_TARGET}"     )
+    set( MBED_TARGET_CODE_NAME           "MBED_TARGET_CODE_${MBED_TARGET}"           )
+    set( MBED_TARGET_PROGEN_NAME         "MBED_TARGET_PROGEN_${MBED_TARGET}"         )
+    set( MBED_TARGET_MACROS_NAME         "MBED_TARGET_MACROS_${MBED_TARGET}"         )
 
     # set varibles for the target with a variable prefix name that was given to us
     set( ${target_var_base}_CORE          ${${MBED_TARGET_CORE_NAME}}          PARENT_SCOPE )
@@ -84,22 +78,22 @@ function(MBED_ADD_INCS_ETH dir_list)
     set(__options "")
     set(__singleValueArgs LIB_ROOT VENDOR)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_ETH "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     # make sure we are passed the vendor to use
-    assert(MBED_ETH_VENDOR "VENDOR is not set")
+    assert(MBED_VENDOR "VENDOR is not set")
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/EthernetInterface"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/Socket"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/netif/ppp"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/ipv4/lwip"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/lwip"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/netif"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-sys/arch"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-eth/arch/TARGET_${MBED_ETH_VENDOR}"
+        "${MBED_LIB_ROOT}/build/net/eth/EthernetInterface"
+        "${MBED_LIB_ROOT}/build/net/eth/Socket"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip/netif/ppp"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip/include/ipv4/lwip"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip/include/lwip"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip/include/netif"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip-sys/arch"
+        "${MBED_LIB_ROOT}/build/net/eth/lwip-eth/arch/TARGET_${MBED_VENDOR}"
         PARENT_SCOPE
     )
 endfunction()
@@ -112,15 +106,15 @@ function(MBED_ADD_INCS_RTOS dir_list)
     set(__options "")
     set(__singleValueArgs LIB_ROOT ARCH)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_RTOS "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     # make sure we are passed the arch type to use
-    assert(MBED_RTOS_ARCH "ARCH is not set")
+    assert(MBED_ARCH "ARCH is not set")
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_RTOS_LIB_ROOT}/build/rtos"
-        "${MBED_RTOS_LIB_ROOT}/build/rtos/TARGET_${MBED_RTOS_ARCH}"
+        "${MBED_LIB_ROOT}/build/rtos"
+        "${MBED_LIB_ROOT}/build/rtos/TARGET_${MBED_RTOS_ARCH}"
         PARENT_SCOPE
     )
 endfunction()
@@ -133,16 +127,16 @@ function(MBED_ADD_INCS_USB dir_list)
     set(__options)
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_USB "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_USB_LIB_ROOT}/build/usb/USBAudio"
-        "${MBED_USB_LIB_ROOT}/build/usb/USBDevice"
-        "${MBED_USB_LIB_ROOT}/build/usb/USBHID"
-        "${MBED_USB_LIB_ROOT}/build/usb/USBMIDI"
-        "${MBED_USB_LIB_ROOT}/build/usb/USBMSD"
-        "${MBED_USB_LIB_ROOT}/build/usb/USBSerial"
+        "${MBED_LIB_ROOT}/build/usb/USBAudio"
+        "${MBED_LIB_ROOT}/build/usb/USBDevice"
+        "${MBED_LIB_ROOT}/build/usb/USBHID"
+        "${MBED_LIB_ROOT}/build/usb/USBMIDI"
+        "${MBED_LIB_ROOT}/build/usb/USBMSD"
+        "${MBED_LIB_ROOT}/build/usb/USBSerial"
         PARENT_SCOPE
     )
 endfunction()
@@ -155,17 +149,17 @@ function(MBED_ADD_INCS_USB_HOST dir_list)
     set(__options)
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_USB "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHost"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHost3GModule"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostHID"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostHub"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMIDI"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMSD"
-        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostSerial"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHost"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHost3GModule"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHostHID"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHostHub"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHostMIDI"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHostMSD"
+        "${MBED_LIB_ROOT}/build/usb_host/USBHostSerial"
         PARENT_SCOPE
     )
 endfunction()
@@ -178,11 +172,11 @@ function(MBED_ADD_INCS_DSP dir_list)
     set(__options "")
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_DSP "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_DSP_LIB_ROOT}/build/dsp"
+        "${MBED_LIB_ROOT}/build/dsp"
         PARENT_SCOPE
     )
 endfunction()
@@ -195,11 +189,11 @@ function(MBED_ADD_INCS_RPC dir_list)
     set(__options "")
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_RPC "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_RPC_LIB_ROOT}/build/rpc"
+        "${MBED_LIB_ROOT}/build/rpc"
         PARENT_SCOPE
     )
 endfunction()
@@ -212,11 +206,11 @@ function(MBED_ADD_INCS_UBLOX dir_list)
     set(__options "")
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_UBLOX "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_UBLOX_LIB_ROOT}/build/ublox"
+        "${MBED_LIB_ROOT}/build/ublox"
         PARENT_SCOPE
     )
 endfunction()
@@ -229,12 +223,12 @@ function(MBED_ADD_INCS_FATFS dir_list)
     set(__options "")
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_FATFS "${__options}" "${__oneValueArgs}" "${__multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(MBED "${__options}" "${__oneValueArgs}" "${__multiValueArgs}" ${ARGN})
 
     set( ${dir_list}
         "${${dir_list}}"
-        "${MBED_FATFS_LIB_ROOT}/build/fat"
-        "${MBED_FATFS_LIB_ROOT}/build/fat/ChaN"
+        "${MBED_LIB_ROOT}/build/fat"
+        "${MBED_LIB_ROOT}/build/fat/ChaN"
         PARENT_SCOPE
     )
 endfunction()
