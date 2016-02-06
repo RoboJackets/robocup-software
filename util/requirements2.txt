@@ -4,4 +4,16 @@ jinja2   # A dependency for the mbed build library
 colorama # A dependency for the mbed build library
 cpp-coveralls # A dependency for coverage testing
 
+<<<<<<< HEAD
 pyOCD # for debugging code on MBED
+=======
+<<<<<<< HEAD
+pyocd # for debugging code on MBED
+=======
+# firmware required
+mbed-ls
+
+# firmware optional
+pyocd
+>>>>>>> fc3131f... everything playing nicely with the cmake firmware cleanup. linker errors now coming when linking an executable with the common2015 library sense cmake is pulling stuff from stdlib for the arch's startup & exit routines
+>>>>>>> 16d7382... everything playing nicely with the cmake firmware cleanup. linker errors now coming when linking an executable with the common2015 library sense cmake is pulling stuff from stdlib for the arch's startup & exit routines
