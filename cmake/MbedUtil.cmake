@@ -220,6 +220,21 @@ function(MBED_ADD_INCS_FATFS dir_list)
     )
 endfunction()
 
+# Set the given variable to the paths to include for the fat filesystem library.
+# Usage:
+#   mbed_add_incs_fatfs(<directory-list> LIB_ROOT <mbed-build-tree>)
+function(MBED_ADD_INCS_CPPCHECK dir_list)
+    set(__options "")
+    set(__singleValueArgs LIB_ROOT)
+    set(__multiValueArgs "")
+    cmake_parse_arguments(MBED_CPPCHECK "${__options}" "${__oneValueArgs}" "${__multiValueArgs}" ${ARGN})
+
+    set( dir_list
+        "${dir_list}"
+        "${MBED_CPPCHECK_LIB_ROOT}/build/cppcheck"
+    )
+endfunction()
+
 
 # The following macro was taken from OpenCV's cmake utilies
 # https://github.com/Itseez/opencv/blob/master/cmake/OpenCVUtils.cmake

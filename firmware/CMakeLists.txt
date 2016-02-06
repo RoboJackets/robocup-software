@@ -1,11 +1,7 @@
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
 
-# The name of the toolchain we're using.  Note: we don't actually set the CMake
-# toolchain here because it would require that all files compiled under this
-# CMakeLists file to be compiled for the MBED, which we don't want.  We want out
-# tests and other things to be compiled for the host computer.
-set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
+# Let cmake know we intend to cross compile
 set(CMAKE_CROSSCOMPILING true)
 
 # set the path to a bash script for moving files to the mbed's USB storage
@@ -16,7 +12,6 @@ else()
 endif()
 
 # sets many variables and paths related to building for the MBED
-include(${CMAKE_CURRENT_LIST_DIR}/mbed/mbed_util.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake

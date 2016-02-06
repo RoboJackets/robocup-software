@@ -3,9 +3,6 @@ set(CMAKE_SYSTEM_PROCESSOR  arm)
 set(CMAKE_SYSTEM_VERSION    1)
 set(ARM_TARGET_ARCH         cortex-m3)
 
-set(CMAKE_C_COMPILER     ${ARM_TARGET_ARCH})
-set(CMAKE_CXX_COMPILER   ${ARM_TARGET_ARCH})
-
 # narrow down the search scope of where cmake looks for programs/libraries
 # for cross compilation
 set(CMAKE_FIND_ROOT_PATH        ${PROJECT_SOURCE_DIR})
