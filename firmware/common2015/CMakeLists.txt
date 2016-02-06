@@ -2,8 +2,6 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
-include(ShowVars)
-
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
@@ -14,6 +12,7 @@ list(REMOVE_ITEM    common2015_SRC  "${CMAKE_CURRENT_LIST_DIR}/ExampleTest.cpp")
 
 # append all of the accessory library sources
 list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
+# list(APPEND common2015_SRC ${MBED_INCLUDE_DIR})
 
 # set the names of each directory and then set the names of the subdirectories within each one
 set(DRIVERS_ROOT_NAME   drivers)
@@ -59,10 +58,10 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 
-target_link_libraries(common2015 ${MBED_LIBS})
+# target_link_libraries(common2015 ${MBED_LIBS})
 target_link_libraries(common2015 ${MBED_LIBRARY})
 
-target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS} ${MBED_ASSEC_LIBS_INCLUDES})# ${MBED_INCLUDE_DIR})
+target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS} ${MBED_ASSEC_LIBS_INCLUDES} ${MBED_INCLUDE_DIR})
 
 # only build firmware library if required
 set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)

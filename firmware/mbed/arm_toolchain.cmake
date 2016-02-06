@@ -1,11 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
 set( CMAKE_SYSTEM_NAME       Generic     )
-# set( CMAKE_SYSTEM_PROCESSOR  arm         )
+set( CMAKE_SYSTEM_PROCESSOR  arm         )
 set( CMAKE_SYSTEM_VERSION    1           )
 
 # narrow down the search scope of where cmake looks for programs/libraries
-# for cross compilation
+# # for cross compilation
 set( CMAKE_FIND_ROOT_PATH                    ${PROJECT_SOURCE_DIR}   )
 # search for programs in the build host directories
 set( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM       NEVER                   )
@@ -26,7 +26,7 @@ find_program( ARM_OBJDUMP       ${ARM_PREFIX}-objdump   )
 
 # let cmake know we plan to use an external toolchain outside
 # the scope of the system's default
-# set( CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN true )
+set( CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN true )
 
 # make sure we defien this since we'll be using GCC
 add_definitions(-DTOOLCHAIN_GCC)
@@ -42,6 +42,6 @@ set( CMAKE_AR               ${ARM_AR}                   )
 set( CMAKE_RANLIB           ${ARM_RANLIB}               )
 
 # Find the assembly source files and make sure they're compiled using the C compiler
-# set( CMAKE_ASM_FLAGS "${MCPU_FLAGS} -x assembler-with-cpp" CACHE INTERNAL "asm compiler flags" )
+set( CMAKE_ASM_FLAGS "${MCPU_FLAGS} -x assembler-with-cpp" CACHE INTERNAL "asm compiler flags" )
 set( CMAKE_ASM_FLAGS_DEBUG "-g -ggdb3" CACHE INTERNAL "asm debug compiler flags" )
 set( CMAKE_ASM_FLAGS_RELEASE "" CACHE INTERNAL "asm release compiler flags" )

@@ -80,11 +80,12 @@ SET(MBED_CMAKE_C_FLAGS      "${COMMON_FLAGS} -std=gnu99")
 
 # ------------------------------------------------------------------------------
 # libraries for mbed
+# set(MBED_LIBS mbed stdc++ m gcc g c nosys rdimon)
 set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 
 # ------------------------------------------------------------------------------
 # linker settings
-set(MBED_CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
+set(MBED_CMAKE_EXE_LINKER_FLAGS "--specs=rdimon.specs -Wl,--start-group -lgcc -lc -lm -lrdimon -Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
 set(MBED_CMAKE_EXE_LINKER_FLAGS "${MBED_CMAKE_EXE_LINKER_FLAGS} -T '${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${MBED_PLATFORM}.ld' -static")
 
 # ------------------------------------------------------------------------------
@@ -202,7 +203,7 @@ list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
 # ------------------------------------------------------------------------------
-set(MBED_LINKER_DIR "")
+set(MBED_LINKER_DIR "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}")
 foreach(obj ${MBED_TARGET_OBJS})
     get_filename_component(obj_path ${obj} DIRECTORY)
     list(APPEND MBED_LINKER_DIR ${obj_path})

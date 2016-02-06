@@ -6,6 +6,8 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
+include(ShowVars)
+
 # # Find the assembly source files and make sure they're compiled using the C compiler
 file(GLOB_RECURSE asm_SRC "*.S")
 set_property(SOURCE ${asm_SRC} PROPERTY LANGUAGE C)
@@ -27,6 +29,8 @@ endforeach()
 foreach(module_subdir ${MODULES})
     list(APPEND ROBOT2015_ELF_INCLUDES ${MODULES_ROOT_NAME}/${module_subdir})
 endforeach()
+
+show_vars()
 
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
