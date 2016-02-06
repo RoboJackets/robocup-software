@@ -19,19 +19,6 @@ set(ARM_PREFIX                  arm-none-eabi)
 find_program(ARM_CC_COMPILER    ${ARM_PREFIX}-gcc)
 find_program(ARM_CXX_COMPILER   ${ARM_PREFIX}-g++)
 
-# set(AS                        ${ARM_PREFIX}-as)
-# set(AR                        ${ARM_PREFIX}-ar)
-# set(OBJCOPY                   ${ARM_PREFIX}-objcopy)
-# set(OBJDUMP                   ${ARM_PREFIX}-objdump)
-# set(SIZE                      ${ARM_PREFIX}-size)
-# set(RANLIB                    ${ARM_PREFIX}-ranlib)
-
-# find_program(LINKER             ${ARM_PREFIX}-ld)
-# find_program(OBJCOPY            ${ARM_PREFIX}-objcopy)
-# find_program(OBJDUMP            ${ARM_PREFIX}-objdump)
-# find_program(GDB                ${ARM_PREFIX}-gdb)
-# find_program(SIZE               ${ARM_PREFIX}-size)
-
 # Find the assembly source files and make sure they're compiled using the C compiler
 set(CMAKE_ASM_FLAGS "${MCPU_FLAGS} -x assembler-with-cpp" CACHE INTERNAL "asm compiler flags")
 set(CMAKE_ASM_FLAGS_DEBUG "-g -ggdb3" CACHE INTERNAL "asm debug compiler flags")
