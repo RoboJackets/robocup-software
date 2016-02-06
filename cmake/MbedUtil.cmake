@@ -2,7 +2,6 @@
 # 
 # Utility functions and constants for setting up the configuartion with the
 # officially supported mbed SDK build system.
-
 include(MbedTargets)
 
 
@@ -34,35 +33,47 @@ function(MBED_SET_PLATFORM target_var_base)
     # make sure we are passed the vendor to use
     assert(MBED_SET_TARGET "TARGET is not set")
 
-    # set the names for what target we are selecting
-    set(MBED_TARGET_CORE_NAME       "MBED_TARGET_CORE_${MBED_SET_TARGET}")
-    set(MBED_TARGET_TOOLCHAINS_NAME "MBED_TARGET_TOOLCHAINS_${MBED_SET_TARGET}")
-    set(MBED_TARGET_CODE_NAME       "MBED_TARGET_CODE_${MBED_SET_TARGET}")
-    set(MBED_TARGET_PROGEN_NAME     "MBED_TARGET_PROGEN_${MBED_SET_TARGET}")
-    set(MBED_TARGET_MACROS_NAME     "MBED_TARGET_MACROS_${MBED_SET_TARGET}")
+    # set the variable names for what target we are selecting
+    set( MBED_TARGET_CORE_NAME           "MBED_TARGET_CORE_${MBED_SET_TARGET}"           )
+    set( MBED_TARGET_ISA_NAME            "MBED_TARGET_ISA_${MBED_SET_TARGET}"            )
+    set( MBED_TARGET_ARCH_NAME           "MBED_TARGET_ARCH_${MBED_SET_TARGET}"           )
+    set( MBED_TARGET_VENDOR_NAME         "MBED_TARGET_VENDOR_${MBED_SET_TARGET}"         )
+    set( MBED_TARGET_SERIES_NAME         "MBED_TARGET_SERIES_${MBED_SET_TARGET}"         )
+    set( MBED_TARGET_LABELS_EXTRA_NAME   "MBED_TARGET_LABELS_EXTRA_${MBED_SET_TARGET}"   )
+    set( MBED_TARGET_RTOS_ARCHS_NAME     "MBED_TARGET_RTOS_ARCHS_${MBED_SET_TARGET}"     )
+    set( MBED_TARGET_TOOLCHAINS_NAME     "MBED_TARGET_TOOLCHAINS_${MBED_SET_TARGET}"     )
+    set( MBED_TARGET_CODE_NAME           "MBED_TARGET_CODE_${MBED_SET_TARGET}"           )
+    set( MBED_TARGET_PROGEN_NAME         "MBED_TARGET_PROGEN_${MBED_SET_TARGET}"         )
+    set( MBED_TARGET_MACROS_NAME         "MBED_TARGET_MACROS_${MBED_SET_TARGET}"         )
 
     # set varibles for the target with a variable prefix name that was given to us
-    set(${target_var_base}_CORE         ${${MBED_TARGET_CORE_NAME}}         PARENT_SCOPE)
-    set(${target_var_base}_TOOLCHAINS   ${${MBED_TARGET_TOOLCHAINS_NAME}}   PARENT_SCOPE)
-    set(${target_var_base}_CODE         ${${MBED_TARGET_CODE_NAME}}         PARENT_SCOPE)
-    set(${target_var_base}_PROGEN       ${${MBED_TARGET_PROGEN_NAME}}       PARENT_SCOPE)
-    set(${target_var_base}_MACROS       ${${MBED_TARGET_MACROS_NAME}}       PARENT_SCOPE)
+    set( ${target_var_base}_CORE          ${${MBED_TARGET_CORE_NAME}}          PARENT_SCOPE )
+    set( ${target_var_base}_ISA           ${${MBED_TARGET_ISA_NAME}}           PARENT_SCOPE )
+    set( ${target_var_base}_ARCH          ${${MBED_TARGET_ARCH_NAME}}          PARENT_SCOPE )
+    set( ${target_var_base}_VENDOR        ${${MBED_TARGET_VENDOR_NAME}}        PARENT_SCOPE )
+    set( ${target_var_base}_SERIES        ${${MBED_TARGET_SERIES_NAME}}        PARENT_SCOPE )
+    set( ${target_var_base}_LABELS_EXTRA  ${${MBED_TARGET_LABELS_EXTRA_NAME}}  PARENT_SCOPE )
+    set( ${target_var_base}_RTOS_ARCHS    ${${MBED_TARGET_RTOS_ARCHS_NAME}}    PARENT_SCOPE )
+    set( ${target_var_base}_TOOLCHAINS    ${${MBED_TARGET_TOOLCHAINS_NAME}}    PARENT_SCOPE )
+    set( ${target_var_base}_CODE          ${${MBED_TARGET_CODE_NAME}}          PARENT_SCOPE )
+    set( ${target_var_base}_PROGEN        ${${MBED_TARGET_PROGEN_NAME}}        PARENT_SCOPE )
+    set( ${target_var_base}_MACROS        ${${MBED_TARGET_MACROS_NAME}}        PARENT_SCOPE )
 
     # generate uppercase & lowercase versions of the target's core name
     # also replacing dashes in the uppercase name with underscores
     string(TOLOWER ${${MBED_TARGET_CORE_NAME}} lowerc)
     string(TOUPPER ${${MBED_TARGET_CORE_NAME}} upperc)
     string(REGEX REPLACE "-" "_" upperc     ${upperc})
-    set(${target_var_base}_CORE_LOWERC      ${lowerc}                       PARENT_SCOPE)
-    set(${target_var_base}_CORE_UPPERC      ${upperc}                       PARENT_SCOPE)
+    set( ${target_var_base}_CORE_LOWERC      ${lowerc}                       PARENT_SCOPE )
+    set( ${target_var_base}_CORE_UPPERC      ${upperc}                       PARENT_SCOPE )
 
     # generate uppercase & lowercase versions of the target's core progen
     # also replacing dashes in the uppercase progen with underscores
     string(TOLOWER ${${MBED_TARGET_PROGEN_NAME}} lowerc)
     string(TOUPPER ${${MBED_TARGET_PROGEN_NAME}} upperc)
     string(REGEX REPLACE "-" "_" upperc         ${upperc})
-    set(${target_var_base}_PROGEN_LOWERC        ${lowerc}                   PARENT_SCOPE)
-    set(${target_var_base}_PROGEN_UPPERC        ${upperc}                   PARENT_SCOPE)
+    set( ${target_var_base}_PROGEN_LOWERC        ${lowerc}                   PARENT_SCOPE )
+    set( ${target_var_base}_PROGEN_UPPERC        ${upperc}                   PARENT_SCOPE )
 endfunction()
 
 
@@ -78,17 +89,15 @@ function(MBED_ADD_INCS_ETH dir_list)
     # make sure we are passed the vendor to use
     assert(MBED_ETH_VENDOR "VENDOR is not set")
 
-    set( dir_list
-        "${dir_list}"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/EthernetInterface"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/Socket"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/ipv4"
+        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/netif/ppp"
+        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/ipv4/lwip"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/lwip"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip/include/netif"
-        "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-sys"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-sys/arch"
         "${MBED_ETH_LIB_ROOT}/build/net/eth/lwip-eth/arch/TARGET_${MBED_ETH_VENDOR}"
         PARENT_SCOPE
@@ -108,8 +117,8 @@ function(MBED_ADD_INCS_RTOS dir_list)
     # make sure we are passed the arch type to use
     assert(MBED_RTOS_ARCH "ARCH is not set")
 
-    set( dir_list
-        "${dir_list}"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_RTOS_LIB_ROOT}/build/rtos"
         "${MBED_RTOS_LIB_ROOT}/build/rtos/TARGET_${MBED_RTOS_ARCH}"
         PARENT_SCOPE
@@ -119,21 +128,15 @@ endfunction()
 
 # Set the given variable to the paths to include for the usb libraries.
 # Usage:
-#   mbed_add_incs_usb(<directory-list> LIB_ROOT <mbed-build-tree> [BUILD_HOST=true])
+#   mbed_add_incs_usb(<directory-list> LIB_ROOT <mbed-build-tree>)
 function(MBED_ADD_INCS_USB dir_list)
-    set(__options BUILD_HOST)
+    set(__options)
     set(__singleValueArgs LIB_ROOT)
     set(__multiValueArgs "")
     cmake_parse_arguments(MBED_USB "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
-    # default include the usb host paths
-    if(${MBED_USB_BUILD_HOST} STREQUAL "")
-        set(MBED_USB_BUILD_HOST true)
-    endif()
-
-    set( dir_list
-        "${dir_list}"
-        "${MBED_USB_LIB_ROOT}/build/usb"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_USB_LIB_ROOT}/build/usb/USBAudio"
         "${MBED_USB_LIB_ROOT}/build/usb/USBDevice"
         "${MBED_USB_LIB_ROOT}/build/usb/USBHID"
@@ -142,22 +145,29 @@ function(MBED_ADD_INCS_USB dir_list)
         "${MBED_USB_LIB_ROOT}/build/usb/USBSerial"
         PARENT_SCOPE
     )
+endfunction()
 
-    if(${MBED_USB_BUILD_HOST})
-        set( dir_list
-            "${dir_list}"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHost"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHost3GModule"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostHID"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostHub"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMIDI"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMSD"
-            "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostSerial"
-            PARENT_SCOPE
-        )
-    else()
-        message(WARNING "mbed usb host library paths will not be included")
-    endif()
+
+# Set the given variable to the paths to include for the usb libraries.
+# Usage:
+#   mbed_add_incs_usb_host(<directory-list> LIB_ROOT <mbed-build-tree>)
+function(MBED_ADD_INCS_USB_HOST dir_list)
+    set(__options)
+    set(__singleValueArgs LIB_ROOT)
+    set(__multiValueArgs "")
+    cmake_parse_arguments(MBED_USB "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
+
+    set( ${dir_list}
+        "${${dir_list}}"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHost"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHost3GModule"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostHID"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostHub"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMIDI"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostMSD"
+        "${MBED_USB_LIB_ROOT}/build/usb_host/USBHostSerial"
+        PARENT_SCOPE
+    )
 endfunction()
 
 
@@ -170,8 +180,8 @@ function(MBED_ADD_INCS_DSP dir_list)
     set(__multiValueArgs "")
     cmake_parse_arguments(MBED_DSP "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
-    set( dir_list
-        "${dir_list}"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_DSP_LIB_ROOT}/build/dsp"
         PARENT_SCOPE
     )
@@ -187,8 +197,8 @@ function(MBED_ADD_INCS_RPC dir_list)
     set(__multiValueArgs "")
     cmake_parse_arguments(MBED_RPC "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
-    set( dir_list
-        "${dir_list}"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_RPC_LIB_ROOT}/build/rpc"
         PARENT_SCOPE
     )
@@ -204,8 +214,8 @@ function(MBED_ADD_INCS_UBLOX dir_list)
     set(__multiValueArgs "")
     cmake_parse_arguments(MBED_UBLOX "${__options}" "${__singleValueArgs}" "${__multiValueArgs}" ${ARGN})
 
-    set( dir_list
-        "${dir_list}"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_UBLOX_LIB_ROOT}/build/ublox"
         PARENT_SCOPE
     )
@@ -221,25 +231,10 @@ function(MBED_ADD_INCS_FATFS dir_list)
     set(__multiValueArgs "")
     cmake_parse_arguments(MBED_FATFS "${__options}" "${__oneValueArgs}" "${__multiValueArgs}" ${ARGN})
 
-    set( dir_list
-        "${dir_list}"
+    set( ${dir_list}
+        "${${dir_list}}"
         "${MBED_FATFS_LIB_ROOT}/build/fat"
-        PARENT_SCOPE
-    )
-endfunction()
-
-# Set the given variable to the paths to include for the fat filesystem library.
-# Usage:
-#   mbed_add_incs_fatfs(<directory-list> LIB_ROOT <mbed-build-tree>)
-function(MBED_ADD_INCS_CPPCHECK dir_list)
-    set(__options "")
-    set(__singleValueArgs LIB_ROOT)
-    set(__multiValueArgs "")
-    cmake_parse_arguments(MBED_CPPCHECK "${__options}" "${__oneValueArgs}" "${__multiValueArgs}" ${ARGN})
-
-    set( dir_list
-        "${dir_list}"
-        "${MBED_CPPCHECK_LIB_ROOT}/build/cppcheck"
+        "${MBED_FATFS_LIB_ROOT}/build/fat/ChaN"
         PARENT_SCOPE
     )
 endfunction()
