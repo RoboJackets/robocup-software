@@ -56,18 +56,17 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             Geometry2d::Point targetPt =
                 static_cast<const Planning::FacePointCommand&>(command)
                     .targetPos;
-            std::function<AngleInstant(MotionInstant)> function = [targetPt](
-                MotionInstant instant) {
-                return AngleInstant(instant.pos.angleTo(targetPt));
-            };
+            std::function<AngleInstant(MotionInstant)> function =
+                [targetPt](MotionInstant instant) {
+                    return AngleInstant(instant.pos.angleTo(targetPt));
+                };
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle =
-                static_cast<const Planning::FaceAngleCommand&>(command)
-                    .targetAngle;
-            std::function<AngleInstant(MotionInstant)> function = [angle](
-                MotionInstant instant) { return AngleInstant(angle); };
+            float angle = static_cast<const Planning::FaceAngleCommand&>(
+                              command).targetAngle;
+            std::function<AngleInstant(MotionInstant)> function =
+                [angle](MotionInstant instant) { return AngleInstant(angle); };
             return function;
         }
         case RotationCommand::None:
@@ -85,14 +84,15 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    const RJ::Time kPathExpirationInterval = replanTimeout() * SecsToTimestamp;
+    const RJ::Time kPathExpirationInterval =
+        RJ::SecsToTimestamp(replanTimeout());
     if ((RJ::timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
         return true;
     }
 
     // Evaluate where the path says the robot should be right now
     float timeIntoPath =
-        ((float)(RJ::timestamp() - prevPath->startTime())) * TimestampToSecs +
+        RJ::TimestampToSecs((RJ::timestamp() - prevPath->startTime())) +
         1.0f / 60.0f;
     boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
