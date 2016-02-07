@@ -32,7 +32,9 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 
         // TODO Undo this hack to use TargetVelPlanner to do Pivot
         case MotionCommand::Pivot:
-            planner = new PivotPathPlanner();
+            // TODO(ashaw37) Use PivotPlanner
+            // planner = new PivotPathPlanner();
+            planner = new TargetVelPathPlanner();
             break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
@@ -56,17 +58,18 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             Geometry2d::Point targetPt =
                 static_cast<const Planning::FacePointCommand&>(command)
                     .targetPos;
-            std::function<AngleInstant(MotionInstant)> function =
-                [targetPt](MotionInstant instant) {
-                    return AngleInstant(instant.pos.angleTo(targetPt));
-                };
+            std::function<AngleInstant(MotionInstant)> function = [targetPt](
+                MotionInstant instant) {
+                return AngleInstant(instant.pos.angleTo(targetPt));
+            };
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle = static_cast<const Planning::FaceAngleCommand&>(
-                              command).targetAngle;
-            std::function<AngleInstant(MotionInstant)> function =
-                [angle](MotionInstant instant) { return AngleInstant(angle); };
+            float angle =
+                static_cast<const Planning::FaceAngleCommand&>(command)
+                    .targetAngle;
+            std::function<AngleInstant(MotionInstant)> function = [angle](
+                MotionInstant instant) { return AngleInstant(angle); };
             return function;
         }
         case RotationCommand::None:
