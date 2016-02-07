@@ -12,7 +12,7 @@ import math
 # The regular defender does a lot of calculations and figures out where it should be
 # This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
 class SubmissiveDefender(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
+    single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         marking = 1
