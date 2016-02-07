@@ -1,6 +1,10 @@
 set(CMAKE_SYSTEM_NAME       Generic)
 set(CMAKE_SYSTEM_PROCESSOR  avr)
 set(CMAKE_SYSTEM_VERSION    1)
+set(AVR_TARGET_ARCH         attiny84a)
+
+set(CMAKE_C_COMPILER_TARGET     ${AVR_TARGET_ARCH})
+set(CMAKE_CXX_COMPILER_TARGET   ${AVR_TARGET_ARCH})
 
 # narrow down the search scope of where cmake looks for programs/libraries
 # for cross compilation
