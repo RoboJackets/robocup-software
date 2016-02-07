@@ -55,10 +55,7 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
-    float timeIntoPath =
-        ((float)(RJ::timestamp() - _robot->path().startTime())) *
-            TimestampToSecs +
-        1.0 / 60.0;
+    float timeIntoPath = RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) + 1.0 / 60.0;
 
     cout<<"timeIntoPath:"<<timeIntoPath<<endl;
 
@@ -98,6 +95,7 @@ void MotionControl::run() {
             }
         }
     }
+
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle

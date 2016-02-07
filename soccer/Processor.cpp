@@ -168,7 +168,7 @@ void Processor::runModels(
     vector<BallObservation> ballObservations;
 
     for (const SSL_DetectionFrame* frame : detectionFrames) {
-        RJ::Time time = frame->t_capture() * SecsToTimestamp;
+        RJ::Time time = RJ::SecsToTimestamp(frame->t_capture());
 
         // Add ball observations
         ballObservations.reserve(ballObservations.size() +

@@ -108,8 +108,8 @@ TEST(InterpolatedPath, subpath2) {
                 << "i+j=" << i + j;
             EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i+j="
-                                                                       << i + j;
+            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001)
+                << "i+j=" << i + j;
         }
     }
 }
@@ -138,12 +138,12 @@ TEST(CompositePath, CompositeSubPath) {
 
         ASSERT_TRUE(org);
         ASSERT_TRUE(sub);
-        EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001) << "i="
-                                                                    << i;
-        EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001) << "i="
-                                                                    << i;
-        EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001) << "i="
-                                                                    << i;
+        EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
+            << "i=" << i;
+        EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
+            << "i=" << i;
+        EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
+            << "i=" << i;
         EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i=" << i;
     }
 
@@ -169,8 +169,8 @@ TEST(CompositePath, CompositeSubPath) {
                 << "i+j=" << i + j;
             EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i+j="
-                                                                       << i + j;
+            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001)
+                << "i+j=" << i + j;
         }
     }
 }
