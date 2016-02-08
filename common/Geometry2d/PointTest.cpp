@@ -4,13 +4,8 @@
 using namespace std;
 using namespace Geometry2d;
 
-bool floatEqual(float a, float b) {
-    const float EPSILON = 0.00001;
-    return fabs(a - b) < EPSILON;
-}
-
 bool pointEqual(Point p1, Point p2) {
-    return floatEqual(p1.x, p2.x) && floatEqual(p1.y, p2.y);
+    return nearlyEqual(p1.x, p2.x) && nearlyEqual(p1.y, p2.y);
 }
 /*
  * Tests the constructor and basic operators of the Point class
@@ -164,7 +159,7 @@ TEST(Point, clampBig) {
 }
 
 //  if you clamp a vector to a value that's bigger
-//  than it's magnitued, it shouldn't change
+//  than it's magnitude, it shouldn't change
 TEST(Point, clampSmall) {
     Point p0(10, -6);
     p0.clamp(15);
@@ -186,7 +181,7 @@ TEST(Point, nearPoint) {
         for (float x = -5; x <= 5; x += 0.01) {
             Point point(x, y);
             float close = (pow(x - 1.1, 2) + pow(y - 1.3, 2)) - 2.5 * 2.5;
-            if (!floatEqual(close, 0)) {
+            if (!nearlyEqual(close, 0)) {
                 EXPECT_EQ(close <= 0, point.nearPoint(Point(1.1, 1.3), 2.5))
                     << "x:" << x << " y:" << y;
             }
