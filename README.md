@@ -87,6 +87,9 @@ Note: The doxygen documentation site above is updated automacally using circle-c
 ## Testing
 We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `make tests`.  To add a test to be run with the rest of the bunch, add a new file in soccer/tests.
 
+The soccer tests can be run using `make test-soccer` or firmware tests with `make test-firmware`.
+The TESTS name filter to run only certain tests. For example `make test-soccer TESTS=Point*` runs only the tests for the Point class.
+
 ## License
 
 This project is licensed under the Apache License v2.0.  See the [LICENSE](LICENSE) file for more information.
