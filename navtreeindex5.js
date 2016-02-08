@@ -1,5 +1,10 @@
 var NAVTREEINDEX5 =
 {
+"class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4":[12,0,70,1],
+"class_vision_receiver.html#aa1074ec8908d3c57d377e7ba27e489cd":[12,0,70,2],
+"class_vision_receiver.html#ac0201768f137574ef2a9332606b2966f":[12,0,70,7],
+"class_vision_receiver.html#afbbed557f1f62ee95cf3530516275f3c":[12,0,70,3],
+"class_window.html":[12,0,71],
 "class_window.html#a1980b8e6cb4473297d8ca496be3fd97f":[12,0,71,1],
 "class_window.html#a737970f2ab5f71c4241d070ef47f9b35":[12,0,71,5],
 "class_window.html#a74e6087da23d3c24e9fac0245e5ec92c":[12,0,71,0],
@@ -244,10 +249,5 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a66dad4467d4ece3a6426ae85fd679e48":[12,0,4,8,1,8,0,3],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a72d3c551c4f8cb056ea27625cca88b64":[12,0,4,8,1,8,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a81716bdfcf2c6b6a5c284a06b58e6a49":[12,0,4,8,1,8,0,4],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a87af26f77a791e5ff0041eaf75adbf12":[12,0,4,8,1,8,0,6],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9b9612178e3862c02a2431232ad933af":[12,0,4,8,1,8,0,15],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9c8f1421bb1eeed354762011a043ca1e":[12,0,4,8,1,8,0,13],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#abc81a94245d293599e6095c06c2ecc2d":[12,0,4,8,1,8,0,11],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#acca6dffaa79553bdb524b6036e6839ab":[12,0,4,8,1,8,0,12],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#ae54dc16b908496c01ac8e65130c0f259":[12,0,4,8,1,8,0,10]
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a87af26f77a791e5ff0041eaf75adbf12":[12,0,4,8,1,8,0,6]
 };

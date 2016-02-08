@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_planning_1_1_plan_request.html" title="The PlanRequest encapsulates all information that the planner needs to know about an individual robot..." alt="" coords="5,5,168,32"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="5,56,117,83"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="169,5,351,32"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="165,56,355,83"/>
+<area shape="rect" id="node4" href="$class_planning_1_1_trapezoidal_path.html" title="Represents a straight&#45;line path with a trapezoidal velocity profile. " alt="" coords="169,107,351,133"/>
 </map>

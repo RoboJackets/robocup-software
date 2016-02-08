@@ -11,6 +11,5 @@ var searchData=
   ['is_5fcontinuous',['is_continuous',['../classgameplay_1_1behavior_1_1_behavior.html#a57d1b66fe856ced64e0f085d054ab105',1,'gameplay::behavior::Behavior']]],
   ['is_5fdone_5frunning',['is_done_running',['../classgameplay_1_1behavior_1_1_behavior.html#ac4bfe1f192ae1fa4df97709a3669eb79',1,'gameplay::behavior::Behavior']]],
   ['isiterative',['isIterative',['../structcommand__t.html#aecafd32aee69a7a18c5a0ca6068b3a72',1,'command_t']]],
-  ['issystemstoprequested',['IsSystemStopRequested',['../class_console.html#ab2d46ee79c4bf7e852abc7c8d3071b66',1,'Console']]],
-  ['iszero',['isZero',['../class_geometry2d_1_1_point.html#a079c10c4c7929a99b7b794386f91301c',1,'Geometry2d::Point']]]
+  ['issystemstoprequested',['IsSystemStopRequested',['../class_console.html#ab2d46ee79c4bf7e852abc7c8d3071b66',1,'Console']]]
 ];

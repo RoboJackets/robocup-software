@@ -15,7 +15,7 @@ var searchData=
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],
   ['distto',['distTo',['../class_geometry2d_1_1_line.html#a673915dcabfebfe18e045b1913e4dfe1',1,'Geometry2d::Line::distTo()'],['../class_geometry2d_1_1_point.html#a2c3908ca392de0f0416dc8a5b739374e',1,'Geometry2d::Point::distTo()']]],
-  ['dot',['dot',['../class_geometry2d_1_1_point.html#a56c90e311e65ab8927a29f3230ac27fc',1,'Geometry2d::Point']]],
+  ['dot',['dot',['../class_geometry2d_1_1_point.html#a1efb0c6ab5dea03efef9f8e599a2cbf2',1,'Geometry2d::Point']]],
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],
   ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b',1,'Planning::Path::draw()']]],
   ['drawing_20functions',['Drawing Functions',['../group__drawing__functions.html',1,'']]],

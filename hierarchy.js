@@ -68,9 +68,7 @@ var hierarchy =
     ] ],
     [ "JoystickControlValues", "struct_joystick_control_values.html", null ],
     [ "RobotConfig::Kicker", "struct_robot_config_1_1_kicker.html", null ],
-    [ "Geometry2d::Line", "class_geometry2d_1_1_line.html", [
-      [ "Geometry2d::Segment", "class_geometry2d_1_1_segment.html", null ]
-    ] ],
+    [ "Geometry2d::Line", "class_geometry2d_1_1_line.html", null ],
     [ "Logger", "class_logger.html", null ],
     [ "Planning::MotionCommand", "class_planning_1_1_motion_command.html", [
       [ "Planning::DirectPathTargetCommand", "struct_planning_1_1_direct_path_target_command.html", null ],
@@ -166,6 +164,7 @@ var hierarchy =
     [ "RuntimeError", null, [
       [ "gameplay.role_assignment.ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ]
     ] ],
+    [ "Geometry2d::Segment", "class_geometry2d_1_1_segment.html", null ],
     [ "Geometry2d::Shape", "class_geometry2d_1_1_shape.html", [
       [ "Geometry2d::Circle", "class_geometry2d_1_1_circle.html", null ],
       [ "Geometry2d::CompositeShape", "class_geometry2d_1_1_composite_shape.html", null ],
