@@ -11,6 +11,9 @@ void ASSERT_IS_ADDR(uint16_t addr) {
            (addr == 0x007F) || (addr == 0x00BF) || (addr == 0x00FF));
 }
 
+// TODO(justin): remove this
+CC1201* global_radio = nullptr;
+
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len,
                int rssiOffset)
@@ -60,9 +63,10 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
         strobe(CC1201_STROBE_SRX);
 
         return COMM_DEV_BUF_ERR;
-    } else {
-        strobe(CC1201_STROBE_STX);  // Enter TX mode
     }
+
+    // Enter TX mode
+    strobe(CC1201_STROBE_STX);
 
     // Wait until radio's TX buffer is emptied
     uint8_t bts = 1;
@@ -70,6 +74,9 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
         bts = readReg(CC1201_NUM_TXBYTES);
         Thread::wait(2);
     } while (bts != 0);
+
+    // send a NOP to read and log the radio's state
+    if (_debugEnabled) strobe(CC1201_STROBE_SNOP);
 
     return COMM_SUCCESS;
 }
@@ -198,6 +205,54 @@ uint8_t CC1201::strobe(uint8_t addr) {
     uint8_t ret = _spi->write(addr);
     radio_deselect();
 
+    // If debug is enabled, we wait for a brief interval, then send a NOP to get
+    // the radio's status, then log it to the console
+    if (_debugEnabled) {
+        // wait a bit to allow the previous strobe to take effect
+        // TODO: how long should this delay actually be?
+        int delay = 2;
+        Thread::wait(delay);
+
+        radio_select();
+        uint8_t ret2 = _spi->write(CC1201_STROBE_SNOP);
+        radio_deselect();
+
+        const char* strobe_names[] = {
+            "RES",     // 0x30
+            "FSTXON",  // 0x31
+            "XOFF",    // 0x32
+            "CAL",     // 0x33
+            "RX",      // 0x34
+            "TX",      // 0x35
+            "IDLE",    // 0x36
+            "AFC",     // 0x37
+            "WOR",     // 0x38
+            "PWD",     // 0x39
+            "FRX",     // 0x3a
+            "FTX",     // 0x3b
+            "WORRST",  // 0x3c
+            "NOP"      // 0x3d
+        };
+
+        const char* state_names[] = {"IDLE",        "RX",         "TX",
+                                     "FSTXON",      "CALIB",      "SETTLE",
+                                     "RX_FIFO_ERR", "TX_FIFO_ERR"};
+
+        // The status byte returned from strobe() contains from (msb to lsb):
+        // * 1 bit - chip ready (0 indicates xosc is stable)
+        // * 3 bits - state
+        // * 4 bits - unused
+        int rdy_n = ret & (1 << 7);
+        int state = (ret >> 4) & 7;
+        int rdy2_n = ret2 & (1 << 7);
+        int state2 = (ret2 >> 4) & 7;
+        LOG(INF2,
+            "strobe '%s' sent, status = {rdy_n: %d, state: %s}, "
+            "after %dms = {rdy_n: %d, state: %s}",
+            strobe_names[addr - 0x30], rdy_n, state_names[state], delay, rdy2_n,
+            state_names[state2]);
+    }
+
     return ret;
 }
 
@@ -301,23 +356,28 @@ uint8_t CC1201::rand() {
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
 
 float CC1201::freq() {
-    uint8_t buf[5];
-    uint16_t freq_offset;
-    uint32_t freq_base;
-    float freq;
-
     freqUpdate();
 
-    // read the 5 frequency related bytes in order:
+    // read the 5 frequency-related bytes in order:
     // FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0
+    uint8_t buf[5];
     readReg(CC1201_FREQOFF1, buf, 5);
 
-    freq_offset = (buf[0] << 8) | (buf[1]);
-    freq_offset = (~freq_offset) + 1;
-    freq_base = (buf[2] << 16) | (buf[3] << 8) | (buf[4]);
+    // concatenate the two FREQOFF bytes and convert from 2's complement
+    const uint16_t freq_offset = ~((buf[0] << 8) | buf[1]) + 1;
 
-    freq = 40 * static_cast<float>((freq_base >> 16) + (freq_offset >> 18));
-    freq /= 4;
+    uint32_t freq_base = (buf[2] << 16) | (buf[3] << 8) | buf[4];
+
+    // crystal oscillator is 40MHz
+    constexpr float f_xosc = 40000000;
+
+    float f_vco = (((float)freq_base) * f_xosc / powf(2, 16)) +
+                  (((float)freq_offset) * f_xosc / powf(2, 18));
+
+    // LO divider is 4 for our selected band, which is 820MHz - 960MHz
+    float lo_divider = 4;
+
+    float freq = f_vco / lo_divider / 1000000;
 
     LOG(INF2, "Operating Frequency: %3.2f MHz", freq);
 

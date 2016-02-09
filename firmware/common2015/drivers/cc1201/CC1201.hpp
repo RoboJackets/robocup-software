@@ -49,6 +49,10 @@ public:
 
     bool isLocked();
 
+    /// Enable or disable logging of all strobe() commands
+    void setDebugEnabled(bool enabled = true) { _debugEnabled = enabled; }
+    bool isDebugEnabled() const { return _debugEnabled; }
+
 protected:
     void set_rssi_offset(int8_t offset);
 
@@ -82,4 +86,11 @@ private:
     bool _isInit;
     bool _offset_reg_written;
     float _rssi;
+
+    // In debug mode, all strobe commands are logged at INF2
+    // note that this decreases performance, so shouldn't be used normally
+    bool _debugEnabled = false;
 };
+
+// TODO(justin): remove this
+extern CC1201* global_radio;

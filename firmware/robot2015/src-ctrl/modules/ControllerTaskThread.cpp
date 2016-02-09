@@ -69,8 +69,7 @@ void Task_Controller(void const* args) {
             resultRatio[0], resultRatio[1], resultRatio[2], resultRatio[3],
             resultRatio[4], resultRatio[5]);
 
-        LOG(INIT,
-            "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d",
+        LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
             threadID, threadPriority);
 
         // Set the error code's valid bit
@@ -176,8 +175,7 @@ void Task_Controller_Sensorless(const osThreadId* mainID) {
     osPriority threadPriority = osThreadGetPriority(threadID);
 
     LOG(INIT,
-        "Sensorless control loop ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
+        "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
         threadID, threadPriority);
 
     // IMU error LED
