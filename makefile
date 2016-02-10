@@ -1,4 +1,5 @@
 MAKE_FLAGS=--no-print-directory
+TESTS = *
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -33,11 +34,12 @@ run-sim2play: all
 tests: test-cpp test-python
 test-cpp: test-soccer test-firmware
 test-soccer:
+
 	$(call cmake_build_target, test-soccer)
-	run/test-soccer
+	run/test-soccer --gtest_filter=$(TESTS)
 test-firmware:
 	$(call cmake_build_target, test-firmware)
-	run/test-firmware
+	run/test-firmware --gtest_filter=$(TESTS)
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
