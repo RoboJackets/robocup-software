@@ -674,7 +674,8 @@ JoystickControlValues Processor::getJoystickControlValues() {
     if (vals.rotation > 1) vals.rotation = 1;
     if (vals.rotation < -1) vals.rotation = -1;
 
-    // scale up speeds, respecting the damping modes
+    // Gets values from the configured joystick control values,respecting damped
+    // state
     if (_dampedTranslation) {
         vals.translation *=
             Joystick::JoystickTranslationMaxDampedSpeed->value();
