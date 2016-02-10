@@ -76,14 +76,14 @@ class Field:
 
     FieldBorders = [
         robocup.Line(
-            robocup.Point(-Width / 2.0, 0), robocup.Point(
-                -Width / 2.0, Length)), robocup.Line(
-                    robocup.Point(-Width / 2.0, Length), robocup.Point(
-                        Width / 2.0, Length)), robocup.Line(
-                            robocup.Point(Width / 2.0, Length),
-                            robocup.Point(Width / 2.0, 0)), robocup.Line(
-                                robocup.Point(Width / 2.0, 0),
-                                robocup.Point(-Width / 2.0, 0))
+            robocup.Point(-Width / 2.0, 0),
+            robocup.Point(-Width / 2.0, Length)), robocup.Line(
+                robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0,
+                                                                   Length)),
+        robocup.Line(
+            robocup.Point(Width / 2.0, Length),
+            robocup.Point(Width / 2.0, 0)), robocup.Line(
+                robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0))
     ]
 
     FieldRect = robocup.Rect(
