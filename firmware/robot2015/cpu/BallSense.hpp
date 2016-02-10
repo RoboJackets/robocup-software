@@ -2,9 +2,9 @@
 //  while accounting for ambiant light
 #include "mbed.h"
 
-class ball_sense {
+class BallSense {
 public:
-    ball_sense();
+    BallSense();
 
     // Call once per cycle
     void update_ball_sensor();
@@ -13,8 +13,8 @@ public:
     bool have_ball();
 
 private:
-    DigitalOut* emitter_pin;
-    AnalogIn* detector_pin;
+    DigitalOut emitter_pin;
+    AnalogIn detector_pin;
 
     // Holds the light sensed when
     //  emitter is lit (sense_light) and
@@ -34,5 +34,5 @@ private:
     const unsigned int consec_num = 2;
 
     // Consecative "broken" senses counter
-    unsigned int consec_ctr;
+    unsigned int consec_ctr = 0;
 };

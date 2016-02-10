@@ -1,14 +1,14 @@
-#include "ball_sense.hpp"
+#include "BallSense.hpp"
 #include "robot.hpp"
 
-ball_sense::ball_sense() {
-    emitter_pin = new DigitalOut(RJ_BALL_EMITTER);
-    detector_pin = new AnalogIn(RJ_BALL_DETECTOR);
+BallSense::ball_sense() {
+    emitter_pin = DigitalOut(RJ_BALL_EMITTER);
+    detector_pin = AnalogIn(RJ_BALL_DETECTOR);
 
     emitter_pin->write(0);
 }
 
-void ball_sense::update_ball_sensor() {
+void BallSense::update_ball_sensor() {
     if (emitter_on) {
         // Update value
         sense_light = detector_pin->read_u16();
@@ -34,4 +34,4 @@ void ball_sense::update_ball_sensor() {
     }
 }
 
-bool ball_sense::have_ball() { return consec_ctr >= consec_num; }
+bool BallSense::have_ball() { return consec_ctr >= consec_num; }
