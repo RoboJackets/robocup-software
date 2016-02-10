@@ -39,17 +39,19 @@ void SpaceNavJoystick::update() {
         if (sev.type == SPNAV_EVENT_MOTION) {
             //  note: spacenav axes range from -350 to 350
 
-            //  we don't want to increment it at each iteration, otherwise it
-            //  would change dribbler
-            //  speed unusably quickly.  Instead we have a delay between each
-            //  increment
-
             RJ::Time now = RJ::timestamp();
             const RJ::Time DribbleStepTime = 300000;
             if ((sev.motion.y >
                  SpaceNavJoystick::DribblerPositiveDeadzone->value()) ||
                 (sev.motion.y <
                  SpaceNavJoystick::DribblerNegativeDeadzone->value())) {
+                //  we don't want to increment it at each iteration, otherwise
+                //  it
+                //  would change dribbler
+                //  speed unusably quickly.  Instead we have a delay between
+                //  each
+                //  increment
+
                 if ((now - _lastDribbleTime) > DribbleStepTime) {
                     _lastDribbleTime = now;
 
