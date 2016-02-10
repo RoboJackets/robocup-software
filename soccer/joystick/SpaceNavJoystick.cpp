@@ -46,12 +46,8 @@ void SpaceNavJoystick::update() {
                 (sev.motion.y <
                  SpaceNavJoystick::DribblerNegativeDeadzone->value())) {
                 //  we don't want to increment it at each iteration, otherwise
-                //  it
-                //  would change dribbler
-                //  speed unusably quickly.  Instead we have a delay between
-                //  each
-                //  increment
-
+                //  it would change dribbler speed unusably quickly.  Instead we
+                //  have a delay between each increment
                 if ((now - _lastDribbleTime) > DribbleStepTime) {
                     _lastDribbleTime = now;
 
@@ -65,9 +61,7 @@ void SpaceNavJoystick::update() {
 
                 _controlValues.translation = Geometry2d::Point(0, 0);
                 _controlValues.rotation = 0;
-            }
-
-            else {
+            } else {
                 //  spacenav x is side-to-side and z is forward-to-backward
                 //  strafe/translate
                 //  translation starts out as a normalized value from (-1,-1) to
@@ -76,8 +70,7 @@ void SpaceNavJoystick::update() {
                     sev.motion.x / 350.0, sev.motion.z / 350.0);
 
                 //  create a mouse deadzone - this keeps the robot from moving
-                //  if
-                //  the joystick is shifted just ever so slightly
+                //  if the joystick is shifted just ever so slightly
                 if (_controlValues.translation.mag() < 0.05) {
                     _controlValues.translation = Geometry2d::Point(0, 0);
                 }
@@ -138,9 +131,11 @@ void SpaceNavJoystick::open() {
     _daemonTried = true;
     if (!_daemonConnected) {
         cerr << "Unable to connect to spacenav daemon.  Make sure spacenavd is "
-                "running if you want to use a 3d mouse to drive" << endl;
+                "running if you want to use a 3d mouse to drive"
+             << endl;
     } else {
         cout << "Connected to spacenav daemon!  If a 3d mouse is connected, "
-                "you can use it to drive" << endl;
+                "you can use it to drive"
+             << endl;
     }
 }
