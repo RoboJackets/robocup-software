@@ -8,8 +8,11 @@
 struct Field_Dimensions {
     inline float Length() const { return _Length; }
     inline float Width() const { return _Width; }
+
+    /** the distance from the edge of the field to the border line */
     inline float Border() const { return _Border; }
 
+    /** The width of the border lines */
     inline float LineWidth() const { return _LineWidth; }
 
     inline float GoalWidth() const { return _GoalWidth; }
@@ -37,7 +40,10 @@ struct Field_Dimensions {
 
     static const Field_Dimensions Double_Field_Dimensions;
 
+    static const Field_Dimensions Default_Dimensions;
+
     static Field_Dimensions Current_Dimensions;
+
 
     Field_Dimensions()
         : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
