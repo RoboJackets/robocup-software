@@ -16,8 +16,17 @@
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
-template <class exception>
-inline void debugThrow(const exception& e) {
+inline void debugLog(const std::string& e) { std::cerr << e << std::endl; }
+
+inline void debugLog(const std::exception& e) {
+    std::cerr << e.what() << std::endl;
+}
+
+template <class T,
+          typename std::enable_if<std::is_base_of<std::exception, T>::value,
+                                  int>::type = 0>
+inline void debugThrow(const T& e) {
+    debugLog(e);
     if (THROW_DEBUG_EXCEPTIONS) {
         throw e;
     }
