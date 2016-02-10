@@ -111,7 +111,7 @@ void SystemState::drawShapeSet(const Geometry2d::ShapeSet& shapes,
     }
 }
 
-void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc,
+void SystemState::drawLine(const Geometry2d::Segment& line, const QColor& qc,
                            const QString& layer) {
     DebugPath* dbg = logFrame->add_debug_paths();
     dbg->set_layer(findDebugLayer(layer));
@@ -122,7 +122,7 @@ void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc,
 
 void SystemState::drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
                            const QColor& color, const QString& layer) {
-    drawLine(Geometry2d::Line(p0, p1), color, layer);
+    drawLine(Geometry2d::Segment(p0, p1), color, layer);
 }
 
 void SystemState::drawText(const QString& text, Geometry2d::Point pos,
@@ -131,5 +131,14 @@ void SystemState::drawText(const QString& text, Geometry2d::Point pos,
     dbg->set_layer(findDebugLayer(layer));
     dbg->set_text(text.toStdString());
     *dbg->mutable_pos() = pos;
+    dbg->set_color(color(qc));
+}
+
+void SystemState::drawSegment(const Geometry2d::Segment& line, const QColor& qc,
+                              const QString& layer) {
+    DebugPath* dbg = logFrame->add_debug_paths();
+    dbg->set_layer(findDebugLayer(layer));
+    *dbg->add_points() = line.pt[0];
+    *dbg->add_points() = line.pt[1];
     dbg->set_color(color(qc));
 }
