@@ -62,6 +62,7 @@ void SpaceNavJoystick::update() {
                 }
 
                 _controlValues.translation = Geometry2d::Point(0, 0);
+                _controlValues.rotation = 0;
             }
 
             else {
