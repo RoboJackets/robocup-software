@@ -17,6 +17,18 @@ uint8_t rjLogLevel;
 
 Mutex log_mutex;
 
+class DummyStream : public std::ostream
+{
+public:
+	template <class T>
+	std::ostream& operator<<(const T&)
+	{
+		return *this;
+	}
+};
+
+DummyStream dummy;
+
 /**
  * [log The system-wide logging interface function. All log messages go through
  * this.]
@@ -46,6 +58,22 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
 
         va_end(args);
         log_mutex.unlock();
+    }
+}
+
+std::ostream& log(uint8_t logLevel, const char* source, int line, const char* func) {
+    if (isLogging && logLevel <= rjLogLevel) {
+	char time_buf[25];
+	time_t sys_time = time(NULL);
+	strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
+
+	std::ostream& res = std::cout << time_buf << " [" << LOG_LEVEL_STRING[logLevel] << "] [" << source << ":" << line << "] ";
+
+	return res;
+    }
+    else
+    {
+	return dummy;
     }
 }
 

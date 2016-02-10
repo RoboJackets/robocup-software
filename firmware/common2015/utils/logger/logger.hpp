@@ -2,6 +2,7 @@
 
 #include <cstdarg>
 #include <string>
+#include <iostream>
 
 #include "rj-macros.hpp"
 
@@ -69,5 +70,7 @@ extern uint8_t rjLogLevel;
  */
 void log(uint8_t logLevel, const char* source, int line, const char* func,
          const char* format, ...);
+
+std::ostream& log(uint8_t logLevel, const char *source, int line, const char* func);
 
 int logLvlChange(const std::string& s);
