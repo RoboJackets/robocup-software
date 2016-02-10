@@ -79,11 +79,11 @@ class Field:
             robocup.Point(-Width / 2.0, 0), robocup.Point(
                 -Width / 2.0, Length)), robocup.Line(
                     robocup.Point(-Width / 2.0, Length), robocup.Point(
-                        Width / 2.0, Length)),
-        robocup.Line(
-            robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),
-        robocup.Line(
-            robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0))
+                        Width / 2.0, Length)), robocup.Line(
+                            robocup.Point(Width / 2.0, Length),
+                            robocup.Point(Width / 2.0, 0)), robocup.Line(
+                                robocup.Point(Width / 2.0, 0),
+                                robocup.Point(-Width / 2.0, 0))
     ]
 
     FieldRect = robocup.Rect(
@@ -96,8 +96,8 @@ class Field:
         robocup.Point(GoalWidth / 2.0, 0), robocup.Point(-GoalWidth / 2.0, 0))
 
     TheirHalf = robocup.Rect(
-        robocup.Point(-Width / 2, Length), robocup.Point(Width / 2, Length /
-                                                         2))
+        robocup.Point(-Width / 2, Length), robocup.Point(Width / 2,
+                                                         Length / 2))
     OurHalf = robocup.Rect(
         robocup.Point(-Width / 2, 0), robocup.Point(Width / 2, Length / 2))
 
