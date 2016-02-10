@@ -173,18 +173,15 @@ tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TheirGoalShape</b> =
 <tr class="separator:a815c3b8bf5d261dfa7e098dba9832fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a461e55f500eadc45343ebbaad087abd0"><td class="memItemLeft" align="right" valign="top">list&#160;</td><td class="memItemRight" valign="bottom"><b>FieldBorders</b></td></tr>
 <tr class="separator:a461e55f500eadc45343ebbaad087abd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15d20dcb0c497dcfcb6930265382f5f4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15d20dcb0c497dcfcb6930265382f5f4"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>FieldRect</b> = robocup.Rect(robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))</td></tr>
+<tr class="memitem:a15d20dcb0c497dcfcb6930265382f5f4"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><b>FieldRect</b></td></tr>
 <tr class="separator:a15d20dcb0c497dcfcb6930265382f5f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e005fa366bfa53107f381b7b6d0f176"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TheirGoalSegment</b></td></tr>
 <tr class="separator:a3e005fa366bfa53107f381b7b6d0f176"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2953beae0ae6597b185fa85088ea556"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurGoalSegment</b></td></tr>
 <tr class="separator:aa2953beae0ae6597b185fa85088ea556"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab64fa9a291b997a79ff74553af1bacf0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab64fa9a291b997a79ff74553af1bacf0"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TheirHalf</b> = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))</td></tr>
+<tr class="memitem:ab64fa9a291b997a79ff74553af1bacf0"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><b>TheirHalf</b></td></tr>
 <tr class="separator:ab64fa9a291b997a79ff74553af1bacf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c202db7c6718a95367dd0256bf71c97"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c202db7c6718a95367dd0256bf71c97"></a>
-tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurHalf</b> = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))</td></tr>
+<tr class="memitem:a2c202db7c6718a95367dd0256bf71c97"><td class="memItemLeft" align="right" valign="top">tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurHalf</b></td></tr>
 <tr class="separator:a2c202db7c6718a95367dd0256bf71c97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -206,10 +203,38 @@ tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurHalf</b> = robocu
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= [</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;            robocup.Line(robocup.Point(-Width / 2.0, 0), robocup.Point(-Width / 2.0, Length)),</div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;            robocup.Line(robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0, Length)),</div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;            robocup.Line(robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;            robocup.Line(robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0)) ]</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Line(</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;            robocup.Point(-Width / 2.0, 0),</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;            robocup.Point(-Width / 2.0, Length)), robocup.Line(</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;                robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0,</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;                                                                   Length)),</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;        robocup.Line(</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;            robocup.Point(Width / 2.0, Length),</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;            robocup.Point(Width / 2.0, 0)), robocup.Line(</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;                robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0))</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    ]</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a15d20dcb0c497dcfcb6930265382f5f4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">tuple gameplay.constants.Field.FieldRect</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Rect(</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -230,8 +255,30 @@ tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurHalf</b> = robocu
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Segment(robocup.Point(GoalWidth / 2.0, 0),</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;                                        robocup.Point(-GoalWidth / 2.0, 0))</div>
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Segment(</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(GoalWidth / 2.0, 0), robocup.Point(-GoalWidth / 2.0, 0))</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a2c202db7c6718a95367dd0256bf71c97"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">tuple gameplay.constants.Field.OurHalf</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Rect(</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(-Width / 2, 0), robocup.Point(Width / 2, Length / 2))</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -252,8 +299,32 @@ tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurHalf</b> = robocu
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),</div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;                                        robocup.Point(-GoalWidth / 2.0, Length))</div>
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Segment(</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(GoalWidth / 2.0, Length),</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        robocup.Point(-GoalWidth / 2.0, Length))</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="ab64fa9a291b997a79ff74553af1bacf0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">tuple gameplay.constants.Field.TheirHalf</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Rect(</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(-Width / 2, Length), robocup.Point(Width / 2,</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;                                                         Length / 2))</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -266,7 +337,7 @@ tuple&#160;</td><td class="memItemRight" valign="bottom"><b>OurHalf</b> = robocu
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>constants</b></li><li class="navelem"><a class="el" href="classgameplay_1_1constants_1_1_field.html">Field</a></li>
-    <li class="footer">Generated on Wed Feb 10 2016 02:10:51 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Feb 10 2016 04:15:23 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

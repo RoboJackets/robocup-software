@@ -124,32 +124,38 @@ $(document).ready(function(){initNavTree('_space_nav_joystick_8hpp_source.html',
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> <a class="code" href="class_space_nav_joystick.html#acec51bd365a69a149e5c502e563a154e">getJoystickControlValues</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">void</span> open();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">void</span> close();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> createConfiguration(<a class="code" href="class_configuration.html">Configuration</a>* cfg);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* DribblerPositiveDeadzone;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* DribblerNegativeDeadzone;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">bool</span> _daemonConnected;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">bool</span> _daemonTried;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">//  store normalized values</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> _controlValues;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    RJ::Time _lastDribbleTime;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> open();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">void</span> close();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">bool</span> _daemonConnected;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> _daemonTried;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">//  store normalized values</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> _controlValues;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    RJ::Time _lastDribbleTime;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
 <div class="ttc" id="class_space_nav_joystick_html"><div class="ttname"><a href="class_space_nav_joystick.html">SpaceNavJoystick</a></div><div class="ttdoc">Joystick class for using a SpaceNavigator 3d mouse for controlling the robots. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.hpp:20</div></div>
-<div class="ttc" id="class_space_nav_joystick_html_a3ddda84db807a3e03ba70266d78171d3"><div class="ttname"><a href="class_space_nav_joystick.html#a3ddda84db807a3e03ba70266d78171d3">SpaceNavJoystick::update</a></div><div class="ttdeci">void update() override</div><div class="ttdoc">Instructs the joystick to updates its values. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:17</div></div>
+<div class="ttc" id="class_space_nav_joystick_html_a3ddda84db807a3e03ba70266d78171d3"><div class="ttname"><a href="class_space_nav_joystick.html#a3ddda84db807a3e03ba70266d78171d3">SpaceNavJoystick::update</a></div><div class="ttdeci">void update() override</div><div class="ttdoc">Instructs the joystick to updates its values. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:22</div></div>
 <div class="ttc" id="struct_joystick_control_values_html"><div class="ttname"><a href="struct_joystick_control_values.html">JoystickControlValues</a></div><div class="ttdef"><b>Definition:</b> Joystick.hpp:12</div></div>
-<div class="ttc" id="class_space_nav_joystick_html_acec51bd365a69a149e5c502e563a154e"><div class="ttname"><a href="class_space_nav_joystick.html#acec51bd365a69a149e5c502e563a154e">SpaceNavJoystick::getJoystickControlValues</a></div><div class="ttdeci">JoystickControlValues getJoystickControlValues() override</div><div class="ttdoc">Returns the control values from this joystick. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:100</div></div>
-<div class="ttc" id="class_space_nav_joystick_html_ac855a0204a9e0e6073b1754b6f7d2de2"><div class="ttname"><a href="class_space_nav_joystick.html#ac855a0204a9e0e6073b1754b6f7d2de2">SpaceNavJoystick::reset</a></div><div class="ttdeci">void reset() override</div><div class="ttdoc">Resets any stored values. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:104</div></div>
-<div class="ttc" id="class_space_nav_joystick_html_acd39b0dedfcd5c6864b02af1360ad229"><div class="ttname"><a href="class_space_nav_joystick.html#acd39b0dedfcd5c6864b02af1360ad229">SpaceNavJoystick::valid</a></div><div class="ttdeci">bool valid() const override</div><div class="ttdoc">Returns whether or not we can connect to the spacenav driver. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:15</div></div>
+<div class="ttc" id="class_space_nav_joystick_html_acec51bd365a69a149e5c502e563a154e"><div class="ttname"><a href="class_space_nav_joystick.html#acec51bd365a69a149e5c502e563a154e">SpaceNavJoystick::getJoystickControlValues</a></div><div class="ttdeci">JoystickControlValues getJoystickControlValues() override</div><div class="ttdoc">Returns the control values from this joystick. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:113</div></div>
+<div class="ttc" id="class_space_nav_joystick_html_ac855a0204a9e0e6073b1754b6f7d2de2"><div class="ttname"><a href="class_space_nav_joystick.html#ac855a0204a9e0e6073b1754b6f7d2de2">SpaceNavJoystick::reset</a></div><div class="ttdeci">void reset() override</div><div class="ttdoc">Resets any stored values. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:117</div></div>
+<div class="ttc" id="class_space_nav_joystick_html_acd39b0dedfcd5c6864b02af1360ad229"><div class="ttname"><a href="class_space_nav_joystick.html#acd39b0dedfcd5c6864b02af1360ad229">SpaceNavJoystick::valid</a></div><div class="ttdeci">bool valid() const override</div><div class="ttdoc">Returns whether or not we can connect to the spacenav driver. </div><div class="ttdef"><b>Definition:</b> SpaceNavJoystick.cpp:20</div></div>
+<div class="ttc" id="class_configuration_html"><div class="ttname"><a href="class_configuration.html">Configuration</a></div><div class="ttdoc">static variable for the program, extremely general </div><div class="ttdef"><b>Definition:</b> Configuration.hpp:17</div></div>
 <div class="ttc" id="class_joystick_html"><div class="ttname"><a href="class_joystick.html">Joystick</a></div><div class="ttdoc">Used for manually controlling robots. </div><div class="ttdef"><b>Definition:</b> Joystick.hpp:34</div></div>
+<div class="ttc" id="class_config_double_html"><div class="ttname"><a href="class_config_double.html">ConfigDouble</a></div><div class="ttdef"><b>Definition:</b> Configuration.hpp:143</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><a class="el" href="dir_208153af841b395fab320b840c8e7752.html">joystick</a></li><li class="navelem"><b>SpaceNavJoystick.hpp</b></li>
-    <li class="footer">Generated on Wed Feb 10 2016 02:10:51 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Feb 10 2016 04:15:23 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
