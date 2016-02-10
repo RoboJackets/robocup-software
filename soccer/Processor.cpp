@@ -39,6 +39,8 @@ RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
+Field_Dimensions currentDimensions = Field_Dimensions::Default_Dimensions;
+
 // Joystick speed limits (for damped and non-damped mode)
 // Translation in m/s, Rotation in rad/s
 static const float JoystickRotationMaxSpeed = 4 * M_PI;
@@ -309,6 +311,16 @@ void Processor::run() {
                 SSL_GeometryFieldSize* fieldSize =
                     geom->mutable_field();
                 cout << "Len: " << fieldSize->field_length() << " Width: " << fieldSize->field_width() << endl;
+                if (fieldSize->field_length() != 0 && (currentDimensions.Length() != fieldSize->field_length())) {
+                    // Force a resize
+                    // TODO fix hardcoded values here
+                    currentDimensions = Field_Dimensions(fieldSize->field_width(), fieldSize->field_length(), fieldSize->boundary_width(),
+                                                         0.010f, fieldSize->goal_width(), fieldSize->goal_depth(), 0.160f, 1.000f, 0.010f,
+                                                         1.000f, 0.500f, 1.000f, 0.500f, fieldSize->field_width() + fieldSize->boundary_width() * 2,
+                                                         fieldSize->field_length() + fieldSize->boundary_width() * 2);
+                    // Set the changed field dimensions to the current ones
+                    setFieldDimensions(currentDimensions);
+                }
 
                 // FIXME - Account for network latency
                 double rt = packet->receivedTime / 1000000.0;

@@ -10,3 +10,6 @@ const Field_Dimensions Field_Dimensions::Double_Field_Dimensions(
 
 Field_Dimensions Field_Dimensions::Current_Dimensions =
     Field_Dimensions::Double_Field_Dimensions;
+
+const Field_Dimensions Field_Dimensions::Default_Dimensions =
+    Field_Dimensions::Current_Dimensions;
