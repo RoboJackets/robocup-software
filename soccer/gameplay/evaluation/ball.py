@@ -39,7 +39,7 @@ GravitationalCoefficient = 9.81  # in m/s^2
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
 def predict(X_i, V_i, t):
     return X_i + (V_i * t) - (V_i.normalized() * 0.5 * FrictionCoefficient *
-                              GravitationalCoefficient * t ** 2)
+                              GravitationalCoefficient * t**2)
 
 
 def predict_stop_time(start_speed):
@@ -59,7 +59,7 @@ def rev_predict(V_i, dist):
     c = -dist
 
     # we ignore the second solution because it doesn't make sense in this context
-    b4ac = b ** 2 - 4 * a * c
+    b4ac = b**2 - 4 * a * c
     if b4ac > 0:
         return (-b + math.sqrt(b4ac)) / 2 * a
     else:
@@ -87,9 +87,9 @@ def opponent_with_ball():
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
     def angle_btw_three_pts(a, b, vertex):
-        VA = math.sqrt((vertex.x - a.x) ** 2 + (vertex.y - a.y) ** 2)
-        VB = math.sqrt((vertex.x - b.x) ** 2 + (vertex.y - b.y) ** 2)
-        AB = math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2)
+        VA = math.sqrt((vertex.x - a.x)**2 + (vertex.y - a.y)**2)
+        VB = math.sqrt((vertex.x - b.x)**2 + (vertex.y - b.y)**2)
+        AB = math.sqrt((a.x - b.x)**2 + (a.y - b.y)**2)
         return math.acos((VA * VA + VB * VB - AB * AB) / (2 * VA * VB))
 
     angle = robot.angle
