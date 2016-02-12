@@ -109,6 +109,8 @@ $(document).ready(function(){initNavTree('class_joystick.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="class_joystick-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -136,6 +138,27 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memdesc:a8e9bf845ab30bc6f661ce91db1dd75be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the control values from this joystick.  <a href="#a8e9bf845ab30bc6f661ce91db1dd75be">More...</a><br/></td></tr>
 <tr class="separator:a8e9bf845ab30bc6f661ce91db1dd75be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a18b236b2c74ca8dab248d9199974608f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a18b236b2c74ca8dab248d9199974608f"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
+<tr class="separator:a18b236b2c74ca8dab248d9199974608f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ae87380a40e80f27d8bd689bf16e2961f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae87380a40e80f27d8bd689bf16e2961f"></a>
+static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>JoystickRotationMaxSpeed</b></td></tr>
+<tr class="separator:ae87380a40e80f27d8bd689bf16e2961f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56954d127775541dc90164b0776f3fff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a56954d127775541dc90164b0776f3fff"></a>
+static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>JoystickRotationMaxDampedSpeed</b></td></tr>
+<tr class="separator:a56954d127775541dc90164b0776f3fff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a892eea09871e57e5d866551c554537bc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a892eea09871e57e5d866551c554537bc"></a>
+static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>JoystickTranslationMaxSpeed</b></td></tr>
+<tr class="separator:a892eea09871e57e5d866551c554537bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42160bb341a38aa77d5d31c604e1bcc8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42160bb341a38aa77d5d31c604e1bcc8"></a>
+static <a class="el" href="class_config_double.html">ConfigDouble</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>JoystickTranslationMaxDampedSpeed</b></td></tr>
+<tr class="separator:a42160bb341a38aa77d5d31c604e1bcc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a159904c815f766ba68a7281d5738e6a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a159904c815f766ba68a7281d5738e6a2"></a>
@@ -160,6 +183,8 @@ QMutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mutex</b> ()<
 </div>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_joystick__coll__graph.png" border="0" usemap="#_joystick_coll__map" alt="Collaboration graph"/></div>
+<map name="_joystick_coll__map" id="_joystick_coll__map">
+<area shape="rect" id="node3" href="class_config_double.html" title="ConfigDouble" alt="" coords="176,251,283,277"/><area shape="rect" id="node4" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="184,173,275,200"/><area shape="rect" id="node5" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="176,83,283,109"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a8e9bf845ab30bc6f661ce91db1dd75be"></a>
@@ -219,8 +244,9 @@ QMutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mutex</b> ()<
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/joystick/<a class="el" href="_joystick_8hpp_source.html">Joystick.hpp</a></li>
+<li>soccer/joystick/Joystick.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -228,7 +254,7 @@ QMutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mutex</b> ()<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_joystick.html">Joystick</a></li>
-    <li class="footer">Generated on Wed Feb 10 2016 04:15:23 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Feb 12 2016 15:57:27 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

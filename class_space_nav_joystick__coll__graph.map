@@ -1,8 +1,8 @@
 <map id="SpaceNavJoystick" name="SpaceNavJoystick">
-<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="57,264,127,291"/>
-<area shape="rect" id="node4" href="$class_config_double.html" title="ConfigDouble" alt="" coords="159,264,265,291"/>
-<area shape="rect" id="node5" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="176,173,267,200"/>
-<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="168,83,275,109"/>
-<area shape="rect" id="node8" href="$struct_joystick_control_values.html" title="JoystickControlValues" alt="" coords="293,264,451,291"/>
-<area shape="rect" id="node9" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="301,173,443,200"/>
+<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="88,385,157,412"/>
+<area shape="rect" id="node4" href="$class_config_double.html" title="ConfigDouble" alt="" coords="251,251,357,277"/>
+<area shape="rect" id="node5" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="259,173,349,200"/>
+<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="251,83,357,109"/>
+<area shape="rect" id="node8" href="$struct_joystick_control_values.html" title="JoystickControlValues" alt="" coords="581,385,739,412"/>
+<area shape="rect" id="node9" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="589,251,731,277"/>
 </map>
