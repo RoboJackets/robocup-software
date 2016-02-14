@@ -55,7 +55,9 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
-    float timeIntoPath = RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) + 1.0 / 60.0;
+    float timeIntoPath =
+        RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) +
+        1.0 / 60.0;
 
     cout<<"timeIntoPath:"<<timeIntoPath<<endl;
 
@@ -122,7 +124,6 @@ void MotionControl::run() {
     _robot->addText(QString("angle: %1").arg(_robot->angle));
     */
     _targetAngleVel(targetW);
-    //_targetAngleVel(targetW);
 
     // handle body velocity for pivot command
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
@@ -171,7 +172,6 @@ void MotionControl::run() {
 
     // convert from world to body coordinates
     target.vel = target.vel.rotated(-_robot->angle);
-    //    }
 
     this->_targetBodyVel(target.vel);
 }

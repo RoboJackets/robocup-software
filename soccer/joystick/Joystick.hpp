@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <Robot.hpp>
@@ -60,6 +61,12 @@ public:
      * @return The control values for this joystick
      */
     virtual JoystickControlValues getJoystickControlValues() = 0;
+    static void createConfiguration(Configuration* cfg);
+
+    static ConfigDouble* JoystickRotationMaxSpeed;
+    static ConfigDouble* JoystickRotationMaxDampedSpeed;
+    static ConfigDouble* JoystickTranslationMaxSpeed;
+    static ConfigDouble* JoystickTranslationMaxDampedSpeed;
 
 protected:
     QMutex& mutex() { return _mutex; }

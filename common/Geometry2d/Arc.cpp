@@ -66,7 +66,7 @@ vector<Point> Arc::intersects(const Line& line) const {
 
 vector<Point> Arc::intersects(const Segment& segment) const {
     // get candidate intersections, pretending the segment extends infinitely
-    vector<Point> candidates = intersects(static_cast<const Line&>(segment));
+    vector<Point> candidates = intersects(Line(segment.pt[0], segment.pt[1]));
     // filter out candidates not on segment
     auto iter = candidates.begin();
     while (iter != candidates.end()) {
