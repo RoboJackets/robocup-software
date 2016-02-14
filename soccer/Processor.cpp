@@ -310,7 +310,7 @@ void Processor::run() {
                 // DEMO: Test out field sizes
                 SSL_GeometryFieldSize* fieldSize =
                     geom->mutable_field();
-                cout << "Len: " << fieldSize->field_length() << " Width: " << fieldSize->field_width() << endl;
+                // cout << "Len: " << fieldSize->field_length() << " Width: " << fieldSize->field_width() << endl;
                 if (fieldSize->field_length() != 0 && (currentDimensions.Length() != fieldSize->field_length())) {
                     // Force a resize
                     // TODO fix hardcoded values here
