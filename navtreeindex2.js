@@ -1,6 +1,8 @@
 var NAVTREEINDEX2 =
 {
-"class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049":[12,0,5,4,30],
+"class_geometry2d_1_1_point.html#af29d0268f0ae9f5e36757e6fa2e1262f":[12,0,5,4,14],
+"class_geometry2d_1_1_point.html#af4c63a30226a9290e0e318f64274fff1":[12,0,5,4,9],
+"class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049":[12,0,5,4,31],
 "class_geometry2d_1_1_polygon.html":[12,0,5,5],
 "class_geometry2d_1_1_polygon.html#a24eece2270e9b41b5da735623e266757":[12,0,5,5,0],
 "class_geometry2d_1_1_polygon.html#a317651b53b75a7eca0ff200febc9be6e":[12,0,5,5,18],
@@ -216,7 +218,7 @@ var NAVTREEINDEX2 =
 "class_opponent_robot.html":[12,0,44],
 "class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1":[12,0,44,0],
 "class_our_robot.html":[12,0,45],
-"class_our_robot.html#a019e094bf9347690e54572334f9c0a0b":[12,0,45,94],
+"class_our_robot.html#a019e094bf9347690e54572334f9c0a0b":[12,0,45,93],
 "class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27":[12,0,45,36],
 "class_our_robot.html#a01c72bd8809afb005fdf53564f6dbf31":[12,0,45,11],
 "class_our_robot.html#a027f238b9edf1f342398730652b4ecd3":[12,0,45,10],
@@ -233,9 +235,9 @@ var NAVTREEINDEX2 =
 "class_our_robot.html#a0f4a7efaf00dbd3d1f308553f69382e8":[12,0,45,88],
 "class_our_robot.html#a141c819500dd3fad0054ddc8a9aff964":[12,0,45,25],
 "class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9":[12,0,45,80],
-"class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d":[12,0,45,96],
+"class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d":[12,0,45,95],
 "class_our_robot.html#a19e24abfe6033684e391ea99795702ce":[12,0,45,90],
-"class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff":[12,0,45,97],
+"class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff":[12,0,45,96],
 "class_our_robot.html#a1ae0e2de02a6c6834281a8a6868056f0":[12,0,45,84],
 "class_our_robot.html#a1b0dc40e35e1aaca2e6d8ece9219b81e":[12,0,45,77],
 "class_our_robot.html#a1b366ab867c9976e5915872d059e991f":[12,0,45,51],
@@ -245,9 +247,7 @@ var NAVTREEINDEX2 =
 "class_our_robot.html#a2390d341b0b1b87fc432e6123048560c":[12,0,45,22],
 "class_our_robot.html#a2677e7d0dd80a11974f74af69116e74e":[12,0,45,24],
 "class_our_robot.html#a2b854b5bc7a008d8fff97ca26ea6d3a4":[12,0,45,43],
-"class_our_robot.html#a32b11fa721bc2738dd49242f5a93fd6b":[12,0,45,74],
 "class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2":[12,0,45,7],
 "class_our_robot.html#a36743658764f5b2aaf91c8cdf18224a5":[12,0,45,60],
-"class_our_robot.html#a395f7cf56030a3e767275461c9769956":[12,0,45,93],
 "class_our_robot.html#a3c4be933a623940fe86c44c3a3a3f5d4":[12,0,45,87]
 };

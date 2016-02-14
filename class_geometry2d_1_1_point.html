@@ -248,15 +248,18 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memdesc:af7a65853916e74cbe125a0abc2b6d049"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the perpendicular to the point, Counter Clockwise <br/></td></tr>
 <tr class="separator:af7a65853916e74cbe125a0abc2b6d049"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace62e1a76e038d501c48e0435b737bbb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace62e1a76e038d501c48e0435b737bbb"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb">angleTo</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other) const </td></tr>
-<tr class="memdesc:ace62e1a76e038d501c48e0435b737bbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the angle between the two points (radians) <br/></td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>angleTo</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other) const </td></tr>
 <tr class="separator:ace62e1a76e038d501c48e0435b737bbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af29d0268f0ae9f5e36757e6fa2e1262f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af29d0268f0ae9f5e36757e6fa2e1262f"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>nearlyEquals</b> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> other) const </td></tr>
-<tr class="separator:af29d0268f0ae9f5e36757e6fa2e1262f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4c63a30226a9290e0e318f64274fff1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4c63a30226a9290e0e318f64274fff1"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>cross</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other) const </td></tr>
 <tr class="separator:af4c63a30226a9290e0e318f64274fff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a953fb146cb2a0c43246221ae04a5d638"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a953fb146cb2a0c43246221ae04a5d638"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a953fb146cb2a0c43246221ae04a5d638">angleBetween</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other) const </td></tr>
+<tr class="memdesc:a953fb146cb2a0c43246221ae04a5d638"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the angle between the two normalized points (radians) <br/></td></tr>
+<tr class="separator:a953fb146cb2a0c43246221ae04a5d638"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af29d0268f0ae9f5e36757e6fa2e1262f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af29d0268f0ae9f5e36757e6fa2e1262f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>nearlyEquals</b> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> other) const </td></tr>
+<tr class="separator:af29d0268f0ae9f5e36757e6fa2e1262f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac06a322bbe2369b33770278af4944f1f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac06a322bbe2369b33770278af4944f1f"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> () const </td></tr>
 <tr class="separator:ac06a322bbe2369b33770278af4944f1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -271,6 +274,10 @@ static <a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td>
 static <a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a7ddcff0925ffe9f7405e8db84710d3a3">direction</a> (float theta)</td></tr>
 <tr class="memdesc:a7ddcff0925ffe9f7405e8db84710d3a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a unit vector in the given direction (in radians) <br/></td></tr>
 <tr class="separator:a7ddcff0925ffe9f7405e8db84710d3a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c7c74276015f8a8efc19a3b2937ae7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c7c74276015f8a8efc19a3b2937ae7f"></a>
+static <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a7c7c74276015f8a8efc19a3b2937ae7f">saturate</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> value, float max)</td></tr>
+<tr class="memdesc:a7c7c74276015f8a8efc19a3b2937ae7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">saturates the magnitude of a vector <br/></td></tr>
+<tr class="separator:a7c7c74276015f8a8efc19a3b2937ae7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -619,7 +626,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_point.html">Point</a></li>
-    <li class="footer">Generated on Fri Feb 12 2016 15:57:28 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Feb 14 2016 18:49:48 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

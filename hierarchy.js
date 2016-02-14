@@ -1,5 +1,6 @@
 var hierarchy =
 [
+    [ "Planning::AngleInstant", "struct_planning_1_1_angle_instant.html", null ],
     [ "Geometry2d::Arc", "class_geometry2d_1_1_arc.html", null ],
     [ "AutoName", "class_auto_name.html", null ],
     [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
@@ -95,6 +96,7 @@ var hierarchy =
       [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
     ] ],
     [ "Planning::Path", "class_planning_1_1_path.html", [
+      [ "Planning::AngleFunctionPath", "class_planning_1_1_angle_function_path.html", null ],
       [ "Planning::CompositePath", "class_planning_1_1_composite_path.html", null ],
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
@@ -102,8 +104,8 @@ var hierarchy =
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
-    [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
+    [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
     ] ],
@@ -146,6 +148,7 @@ var hierarchy =
     [ "gameplay.constants.Robot", "classgameplay_1_1constants_1_1_robot.html", null ],
     [ "RobotConfig", "class_robot_config.html", null ],
     [ "RobotFilter", "class_robot_filter.html", null ],
+    [ "Planning::RobotInstant", "struct_planning_1_1_robot_instant.html", null ],
     [ "RobotObservation", "class_robot_observation.html", null ],
     [ "RobotPose", "class_robot_pose.html", [
       [ "Robot", "class_robot.html", [
@@ -175,6 +178,7 @@ var hierarchy =
     [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
       [ "Planning::DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", null ],
       [ "Planning::EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", null ],
+      [ "Planning::PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],

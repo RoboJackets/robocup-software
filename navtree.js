@@ -35,15 +35,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_configuration.html#ad54e26ead2b671ab0733db7cf75ec272",
-"class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049",
+"class_configuration.html#ad3b87065e84fc752017ed2a16b99271d",
+"class_geometry2d_1_1_point.html#af29d0268f0ae9f5e36757e6fa2e1262f",
 "class_our_robot.html#a3c97bd2f555880c5e63197072180356b",
-"class_protobuf_tree.html#a67b368e5e7c42899cbdeb6330836675f",
-"class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4",
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9b9612178e3862c02a2431232ad933af",
-"classgameplay_1_1skills_1_1aim_1_1_aim.html#aad74c665b25ebb4373dc9f3eb1034d8d",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a7614b585d740427e55f9634f3eed1491",
-"struct_planning_1_1_face_angle_command.html#a70309f8dd3295e12673e77608ffe8abf"
+"class_processor.html#ac70adfd2e901cf43c8fbed4c884094d2",
+"class_u_s_b_radio.html#a8dd0b6c164c0c960112f71a6af5977df",
+"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#afd9492ee6bde6b21715d112d407b8cf0",
+"classgameplay_1_1skills_1_1aim_1_1_aim.html#a224a97b2ab27e4f2d0235bf2ee0df850",
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a73f4c6d8836edd2efb0c3e79db354f9b",
+"struct_joystick_control_values.html#a7c35dd37dfb7dec36607b33205c90f6f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

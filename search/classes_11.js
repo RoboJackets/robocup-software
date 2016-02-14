@@ -8,6 +8,7 @@ var searchData=
   ['robot',['Robot',['../class_robot.html',1,'']]],
   ['robotconfig',['RobotConfig',['../class_robot_config.html',1,'']]],
   ['robotfilter',['RobotFilter',['../class_robot_filter.html',1,'']]],
+  ['robotinstant',['RobotInstant',['../struct_planning_1_1_robot_instant.html',1,'Planning']]],
   ['robotobservation',['RobotObservation',['../class_robot_observation.html',1,'']]],
   ['robotpose',['RobotPose',['../class_robot_pose.html',1,'']]],
   ['robotstatus',['RobotStatus',['../class_robot_status.html',1,'']]],

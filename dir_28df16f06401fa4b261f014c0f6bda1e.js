@@ -10,6 +10,7 @@ var dir_28df16f06401fa4b261f014c0f6bda1e =
     [ "MotionInstant.hpp", "_motion_instant_8hpp_source.html", null ],
     [ "MultiRobotPathPlanner.hpp", "_multi_robot_path_planner_8hpp_source.html", null ],
     [ "Path.hpp", "_path_8hpp_source.html", null ],
+    [ "PivotPathPlanner.hpp", "_pivot_path_planner_8hpp_source.html", null ],
     [ "RotationCommand.hpp", "_rotation_command_8hpp_source.html", null ],
     [ "RotationConstraints.hpp", "_rotation_constraints_8hpp_source.html", null ],
     [ "RRTPlanner.hpp", "_r_r_t_planner_8hpp_source.html", null ],

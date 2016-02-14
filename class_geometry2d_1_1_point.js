@@ -6,6 +6,7 @@ var class_geometry2d_1_1_point =
     [ "Point", "class_geometry2d_1_1_point.html#a4b8aa1c6f25b270aafc4af11942d6a0e", null ],
     [ "Point", "class_geometry2d_1_1_point.html#a54c43beabe2548e7d0c57c66d1849a26", null ],
     [ "angle", "class_geometry2d_1_1_point.html#a67ea60681c7172fa1ef5ad7b2e04174d", null ],
+    [ "angleBetween", "class_geometry2d_1_1_point.html#a953fb146cb2a0c43246221ae04a5d638", null ],
     [ "angleTo", "class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb", null ],
     [ "clamp", "class_geometry2d_1_1_point.html#a78e72ad69d5facc315e7cd9e6f47d05a", null ],
     [ "cross", "class_geometry2d_1_1_point.html#af4c63a30226a9290e0e318f64274fff1", null ],
