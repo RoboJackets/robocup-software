@@ -40,8 +40,8 @@ bool DirectTargetPathPlanner::shouldReplan(
         // have changed beyond a certain threshold
         Geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
-        float targetPosChange = (prevPath->end().pos - endTarget).mag();
-        float targetVelChange = prevPath->end().vel.mag() - endSpeed;
+        float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
+        float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;
 
         if (targetPosChange > SingleRobotPathPlanner::goalChangeThreshold() ||
             targetVelChange > SingleRobotPathPlanner::goalChangeThreshold()) {

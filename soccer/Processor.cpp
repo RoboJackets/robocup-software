@@ -432,7 +432,7 @@ void Processor::run() {
                 requests[r->shell()] = Planning::PlanRequest(
                     Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->motionConstraints(),
-                    std::move(r->path()),
+                    std::move(r->angleFunctionPath.path),
                     std::make_shared<ShapeSet>(std::move(fullObstacles)));
             }
         }
@@ -444,6 +444,9 @@ void Processor::run() {
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");
             r->setPath(std::move(path));
+
+            r->angleFunctionPath.angleFunction =
+                angleFunctionForCommandType(r->rotationCommand());
         }
 
         // Visualize obstacles

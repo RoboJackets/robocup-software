@@ -32,7 +32,7 @@ TEST(EscapeObstaclesPathPlanner, run) {
     // shouldn't be further than two steps outside of the closest possible
     // point.
     const float stepSize = EscapeObstaclesPathPlanner::stepSize();
-    const float pathLength = (path->end().pos - startInstant.pos).mag();
+    const float pathLength = (path->end().motion.pos - startInstant.pos).mag();
     EXPECT_LE(pathLength, circleRadius + Robot_Radius + stepSize * 2)
         << "Path is longer than it should be";
 }

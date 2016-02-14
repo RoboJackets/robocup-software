@@ -4,6 +4,7 @@
 #include "TargetVelPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
+#include "PivotPathPlanner.hpp"
 
 namespace Planning {
 
@@ -31,6 +32,10 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 
         // TODO Undo this hack to use TargetVelPlanner to do Pivot
         case MotionCommand::Pivot:
+            // TODO(ashaw37) Use PivotPlanner
+            // planner = new PivotPathPlanner();
+            planner = new TargetVelPathPlanner();
+            break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
             break;
@@ -39,10 +44,39 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             break;
         default:
             debugThrow("Command not implemented");
+            planner = new EscapeObstaclesPathPlanner();
             break;
     }
 
     return std::unique_ptr<SingleRobotPathPlanner>(planner);
+}
+
+boost::optional<std::function<AngleInstant(MotionInstant)>>
+angleFunctionForCommandType(const Planning::RotationCommand& command) {
+    switch (command.getCommandType()) {
+        case RotationCommand::FacePoint: {
+            Geometry2d::Point targetPt =
+                static_cast<const Planning::FacePointCommand&>(command)
+                    .targetPos;
+            std::function<AngleInstant(MotionInstant)> function =
+                [targetPt](MotionInstant instant) {
+                    return AngleInstant(instant.pos.angleTo(targetPt));
+                };
+            return function;
+        }
+        case RotationCommand::FaceAngle: {
+            float angle = static_cast<const Planning::FaceAngleCommand&>(
+                              command).targetAngle;
+            std::function<AngleInstant(MotionInstant)> function =
+                [angle](MotionInstant instant) { return AngleInstant(angle); };
+            return function;
+        }
+        case RotationCommand::None:
+            return boost::none;
+        default:
+            debugThrow("RotationCommand Not implemented");
+            return boost::none;
+    }
 }
 
 bool SingleRobotPathPlanner::shouldReplan(
@@ -62,9 +96,10 @@ bool SingleRobotPathPlanner::shouldReplan(
     float timeIntoPath =
         RJ::TimestampToSecs((RJ::timestamp() - prevPath->startTime())) +
         1.0f / 60.0f;
-    boost::optional<MotionInstant> optTarget = prevPath->evaluate(timeIntoPath);
+    boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
-    MotionInstant target = optTarget ? *optTarget : prevPath->end();
+    MotionInstant target =
+        optTarget ? optTarget->motion : prevPath->end().motion;
 
     // invalidate path if current position is more than the replanThreshold away
     // from where it's supposed to be right now

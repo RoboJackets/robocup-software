@@ -32,6 +32,7 @@ set(ROBOCUP_LIB_SRC
     "planning/RotationConstraints.cpp"
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
+    "planning/PivotPathPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
     "planning/TrapezoidalPath.cpp"
