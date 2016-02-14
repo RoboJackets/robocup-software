@@ -19,7 +19,7 @@ public:
     Path(RJ::Time startTime = RJ::timestamp()) : _startTime(startTime) {}
     virtual ~Path() {}
 
-    /*
+    /**
      * This method evaluates the path at a given time and returns the target
      * angle,
      * position, and velocity of the robot.
@@ -96,6 +96,9 @@ protected:
     RJ::Time _startTime;
 };
 
+/**
+ * Class which represents a Path with an angle Function attached.
+ */
 class AngleFunctionPath : public Path {
 public:
     AngleFunctionPath(
@@ -106,7 +109,7 @@ public:
 
     std::unique_ptr<Path> path;
     boost::optional<std::function<AngleInstant(MotionInstant)>> angleFunction;
-    /*
+    /**
      * This method evaluates the path at a given time and returns the target
      * position and velocity of the robot.
      *

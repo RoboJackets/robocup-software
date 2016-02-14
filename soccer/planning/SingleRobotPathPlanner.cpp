@@ -32,7 +32,9 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 
         // TODO Undo this hack to use TargetVelPlanner to do Pivot
         case MotionCommand::Pivot:
-            planner = new PivotPathPlanner();
+            // TODO(ashaw37) Use PivotPlanner
+            // planner = new PivotPathPlanner();
+            planner = new TargetVelPathPlanner();
             break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
