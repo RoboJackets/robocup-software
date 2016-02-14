@@ -44,7 +44,6 @@ struct Field_Dimensions {
 
     static Field_Dimensions Current_Dimensions;
 
-
     Field_Dimensions()
         : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 
