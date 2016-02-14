@@ -93,6 +93,8 @@ std::unique_ptr<Path> RRTPlanner::run(
 unique_ptr<InterpolatedPath> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                      const MotionConstraints& motionConstraints,
                                      const Geometry2d::ShapeSet* obstacles) {
+
+
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
     //path->setStartTime(RJ::timestamp());
 
@@ -186,7 +188,7 @@ unique_ptr<InterpolatedPath> RRTPlanner::optimize(
         if (!changed) span++;
     }
     // Done with the path
-    return unique_ptr<InterpolatedPath>(cubicBezier(move(path), obstacles, motionConstraints, vi, vf));
+    //return unique_ptr<InterpolatedPath>(cubicBezier(move(path), obstacles, motionConstraints, vi, vf));
 
     vector<Point> points;
     for (InterpolatedPath::Entry &entry: pts) {
@@ -200,11 +202,11 @@ float getTime(vector<Point> path, int index,
               float endSpeed) {
     float length = 0;
     float startLength = 0;
-    for (int i=0; i<path.size() - 1; i++) {
+    for (int i=1; i<path.size(); i++) {
+        length += path[i-1].distTo(path[i]);
         if (index == i) {
             startLength = length;
         }
-        length += path[i].distTo(path[i+1]);
     }
     return Trapezoidal::getTime(
             startLength, length, motionConstraints.maxSpeed,
@@ -241,6 +243,8 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         Geometry2d::Point vf) {
 
 
+
+    cout<<"start"<<endl;
     size_t length = points.size();
     size_t curvesNum = length - 1;
     if (curvesNum <= 0) {
@@ -318,22 +322,25 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
             //t = ((float)j / (float)(interpolations)) / k;
 
 
+
             float tk = t * k;
             // 3(k (-a (k^2 t^2 - 2 k t + 1)+b (3 k^2 t^2-4 k t+1)+k t (-3 c k t+2 c+1 d k t)))
 
+
             /*
-              Geometry2d::Point d1 =
+            Geometry2d::Point d1 =
                     3 * k * (-(p0 * (k*k * t*t - 2*k*t + 1)) +
                              k * tk * (2 * p2 - 3 * p2 * k * tk + p3 * k * tk) +
                              p1 * (1 - 4 * k * tk + 3 * pow(k, 2) * pow(t, 2)));
-             */
+            */
+
 
             //Derivitive 1
             // 3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k
             // t + 3 k^2 t^2))
             Geometry2d::Point d1 = 3 * pow(1-t,2) * (p1 - p0) +
                     6*(1-t)*t*(p2-p1) + 3 * pow(t,2) * (p3-p2);
-
+            printf("x:%f, y:%f\n", d1.x, d1.y);
 
 
             //Derivitive 2
@@ -357,6 +364,8 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
             newPoints.push_back(pos);
             newPoints1stDerivative.push_back(d1);
             newPoints2ndDerivative.push_back(d2);
+
+
             newPointsCurvature.push_back(curvature);
 
             //Isolated maxSpeed based on Curvature
@@ -402,6 +411,9 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     assert(size == newPointsSpeed.size());
     assert(size == newPointsCurvature.size());
 
+
+
+    cout<<"meh"<<endl;
     //Forward Constraints
     for (int i = 1; i<size; i++) {
 
@@ -424,7 +436,12 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         //newPointsSpeed.push_back(constantMaxSpeed);
 
         float c = max(newPointsCurvature[i], newPointsCurvature[i-1]);
+        std::cout<<c<<endl;
         float a = maxAceleration;
+
+
+        //newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
+        //continue;
         //acceleration = (v2-v1)/t;
         //t = distance/((v1+v2)/2)
         //acceleration = (v2-v1)/(distance/((v1+v2)/2))
@@ -438,7 +455,8 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         float vPossible2 = sqrt((2*sqrt(d*d * (4*a*a * c*c * d*d + a*a -c*c * pow(v1,4))) + v1*v1)/(4 * c*c * d*d +1));
 
         if (isnan(vPossible1) && isnan(vPossible2)) {
-            debugThrow("Velocity smoothing failed");
+            //debugThrow("Velocity smoothing failed");
+            cout<<"Velocity SMoothing messed up" << endl;
             newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
         } else {
             if (isnan(vPossible1)) {
@@ -470,13 +488,17 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         float c = max(newPointsCurvature[i], newPointsCurvature[i+1]);
         float a = maxAceleration;
 
+        //newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
+        //continue;
+
         float vPossible1 = sqrt((v1*v1-2*sqrt(d*d*(4*a*a * c*c * d*d +a*a-c*c* pow(v1,4))))/(4*c*c * d*d+1));
 
         //b = ±sqrt((2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4))+v^2)/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0
         float vPossible2 = sqrt((2*sqrt(d*d * (4*a*a * c*c * d*d + a*a -c*c * pow(v1,4))) + v1*v1)/(4 * c*c * d*d +1));
 
         if (isnan(vPossible1) && isnan(vPossible2)) {
-            debugThrow("Velocity smoothing failed");
+            cout<<"Velocity SMoothing messed up" << endl;
+            //debugThrow("Velocity smoothing failed");
             newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
         } else {
             if (isnan(vPossible1)) {
