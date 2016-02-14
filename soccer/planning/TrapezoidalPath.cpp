@@ -20,7 +20,7 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                                      _maxSpeed, _maxAcc, _startSpeed,
                                      _endSpeed)) {}
 
-boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
+boost::optional<RobotInstant> TrapezoidalPath::evaluate(float time) const {
     float distance;
     float speedOut;
     bool valid = TrapezoidalMotion(_pathLength,  // PathLength
@@ -33,8 +33,8 @@ boost::optional<MotionInstant> TrapezoidalPath::evaluate(float time) const {
                                    speedOut);    // speedOut
     if (!valid) return boost::none;
 
-    return MotionInstant(_pathDirection * distance + _startPos,
-                         _pathDirection * speedOut);
+    return RobotInstant(MotionInstant(_pathDirection * distance + _startPos,
+                                      _pathDirection * speedOut));
 }
 
 bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
@@ -49,7 +49,7 @@ bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                     continue;
                 }
 
-                if (shape->hit(instant->pos)) {
+                if (shape->hit(instant->motion.pos)) {
                     hitTime = t;
                     return true;
                 }
