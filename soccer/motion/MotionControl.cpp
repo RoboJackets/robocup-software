@@ -59,7 +59,7 @@ void MotionControl::run() {
         RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) +
         1.0 / 60.0;
 
-    cout<<"timeIntoPath:"<<timeIntoPath<<endl;
+//    cout<<"timeIntoPath:"<<timeIntoPath<<endl;
 
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
