@@ -296,14 +296,25 @@ public:
     /** returns the perpendicular to the point, Counter Clockwise */
     Point perpCCW() const { return Point(-y, x); }
 
-    /** returns the angle between the two points (radians) */
-    float angleTo(const Point& other) const {
+    /** saturates the magnitude of a vector */
+    static Geometry2d::Point saturate(Geometry2d::Point value, float max) {
+        float mag = value.mag();
+        if (mag > fabs(max)) {
+            return value.normalized() * fabs(max);
+        }
+        return value;
+    }
+
+    float angleTo(const Point& other) const { return (other - *this).angle(); }
+
+    float cross(const Point& other) const { return x * other.y - y * other.x; }
+
+    /** returns the angle between the two normalized points (radians) */
+    float angleBetween(const Point& other) const {
         return acos(normalized().dot(other.normalized()));
     }
 
     bool nearlyEquals(Point other) const;
-
-    float cross(const Point& other) const { return x * other.y - y * other.x; }
 
     std::string toString() const {
         std::stringstream str;

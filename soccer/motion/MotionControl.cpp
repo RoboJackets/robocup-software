@@ -55,6 +55,17 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
+    float timeIntoPath =
+        RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) +
+        1.0 / 60.0;
+
+    // evaluate path - where should we be right now?
+    boost::optional<RobotInstant> optTarget =
+        _robot->path().evaluate(timeIntoPath);
+    if (!optTarget) {
+        optTarget = _robot->path().end();
+    }
+
     // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
@@ -64,49 +75,46 @@ void MotionControl::run() {
 
     boost::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
+
+    float targetAngleFinal = 0;
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
         targetPt = command.pivotTarget;
-    }
-
-    switch (rotationCommand->getCommandType()) {
-        case RotationCommand::FacePoint:
-            targetPt = static_cast<const Planning::FacePointCommand*>(
-                           rotationCommand.get())->targetPos;
-            break;
-        case RotationCommand::None:
-            // do nothing
-            break;
-        default:
-            debugThrow("RotationCommand Not implemented");
-            break;
+    } else {
+        if (optTarget) {
+            if (optTarget->angle) {
+                if (optTarget->angle->angle) {
+                    targetAngleFinal = *optTarget->angle->angle;
+                }
+            }
+        }
     }
 
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        float targetAngleFinal = (*targetPt - _robot->pos).angle();
-        float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
-
-        targetW = _angleController.run(angleError);
-
-        // limit W
-        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
-            if (targetW > 0) {
-                targetW = (rotationConstraints.maxSpeed);
-            } else {
-                targetW = -(rotationConstraints.maxSpeed);
-            }
-        }
-
-        /*
-        _robot->addText(QString("targetW: %1").arg(targetW));
-        _robot->addText(QString("angleError: %1").arg(angleError));
-        _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-        _robot->addText(QString("angle: %1").arg(_robot->angle));
-        */
+        targetAngleFinal = (*targetPt - _robot->pos).angle();
     }
 
+    float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
+
+    targetW = _angleController.run(angleError);
+
+    // limit W
+    if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+        if (targetW > 0) {
+            targetW = (rotationConstraints.maxSpeed);
+        } else {
+            targetW = -(rotationConstraints.maxSpeed);
+        }
+    }
+
+    /*
+    _robot->addText(QString("targetW: %1").arg(targetW));
+    _robot->addText(QString("angleError: %1").arg(angleError));
+    _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
+    _robot->addText(QString("angle: %1").arg(_robot->angle));
+    */
     _targetAngleVel(targetW);
 
     // handle body velocity for pivot command
@@ -126,62 +134,44 @@ void MotionControl::run() {
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-
     MotionInstant target;
-    // if no target position is given, we don't have a path to follow
-    if (!_robot->path()) {
-        _targetBodyVel(Point(0, 0));
-        return;
+
+    // convert from microseconds to seconds
+    if (!optTarget) {
+        // use the path end if our timeIntoPath is greater than the duration
+        target.vel = Point();
+        target.pos = _robot->path().end().motion.pos;
     } else {
-        //
-        // Path following
-        //
-
-        // convert from microseconds to seconds
-        float timeIntoPath =
-            RJ::TimestampToSecs(
-                (RJ::timestamp() - _robot->path()->startTime())) +
-            1.0 / 60.0;
-
-        // evaluate path - where should we be right now?
-        boost::optional<MotionInstant> optTarget =
-            _robot->path()->evaluate(timeIntoPath);
-        if (!optTarget) {
-            // use the path end if our timeIntoPath is greater than the duration
-            target.vel = Point();
-            target.pos = _robot->path()->end().pos;
-        } else {
-            target = *optTarget;
-        }
-        // tracking error
-        Point posError = target.pos - _robot->pos;
-
-        // acceleration factor
-        Point acceleration;
-        boost::optional<MotionInstant> nextTarget =
-            _robot->path()->evaluate(timeIntoPath + 1.0 / 60.0);
-        if (nextTarget) {
-            acceleration = (nextTarget->vel - target.vel) / 60.0f;
-        } else {
-            acceleration = {0, 0};
-        }
-        Point accelFactor =
-            acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
-
-        target.vel += accelFactor;
-
-        // PID on position
-        target.vel.x += _positionXController.run(posError.x);
-        target.vel.y += _positionYController.run(posError.y);
-
-        // draw target pt
-        _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
-        _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
-                                  "MotionControl");
-
-        // convert from world to body coordinates
-        target.vel = target.vel.rotated(-_robot->angle);
+        target = optTarget->motion;
     }
+    // tracking error
+    Point posError = target.pos - _robot->pos;
+
+    // acceleration factor
+    Point acceleration;
+    boost::optional<RobotInstant> nextTarget =
+        _robot->path().evaluate(timeIntoPath + 1.0 / 60.0);
+    if (nextTarget) {
+        acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;
+    } else {
+        acceleration = {0, 0};
+    }
+    Point accelFactor =
+        acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
+
+    target.vel += accelFactor;
+
+    // PID on position
+    target.vel.x += _positionXController.run(posError.x);
+    target.vel.y += _positionYController.run(posError.y);
+
+    // draw target pt
+    _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
+    _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
+                              "MotionControl");
+
+    // convert from world to body coordinates
+    target.vel = target.vel.rotated(-_robot->angle);
 
     this->_targetBodyVel(target.vel);
 }

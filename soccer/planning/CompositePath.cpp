@@ -22,7 +22,7 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-boost::optional<MotionInstant> CompositePath::evaluate(float t) const {
+boost::optional<RobotInstant> CompositePath::evaluate(float t) const {
     if (t < 0) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
@@ -93,9 +93,9 @@ void CompositePath::draw(SystemState* const state, const QColor& color,
 
 float CompositePath::getDuration() const { return duration; }
 
-MotionInstant CompositePath::start() const { return paths.front()->start(); }
+RobotInstant CompositePath::start() const { return paths.front()->start(); }
 
-MotionInstant CompositePath::end() const { return paths.back()->end(); }
+RobotInstant CompositePath::end() const { return paths.back()->end(); }
 
 unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const {
     // Check for valid arguments
