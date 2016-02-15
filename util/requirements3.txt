@@ -8,3 +8,4 @@ pyserial
 
 stylize>=0.2.1 # code reformatting and checkstyling
 
+pyOCD # for debugging code on MBED
