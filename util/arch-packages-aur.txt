@@ -1,9 +1,6 @@
 # This is a list of packages that we need for Arch Linux that
 # we'll install from the AUR using yaourt
 
-# compiler to build firmware for MBED
-gcc-arm-none-eabi-bin
-
 # tools to compile for ATTiny kicker board chip
 avr-dev-tools
 
