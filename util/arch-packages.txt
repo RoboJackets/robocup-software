@@ -54,3 +54,5 @@ sdl
 arm-none-eabi-gcc
 arm-none-eabi-gdb
 
+# GNU debugger
+gdb
