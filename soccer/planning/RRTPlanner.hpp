@@ -48,6 +48,16 @@ public:
         const Geometry2d::ShapeSet* obstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
 
+    /**
+     * Takes in a point path and returns a InterpolatedPath with a generated
+     * Velocity Profile.
+     */
+    static std::unique_ptr<Planning::InterpolatedPath> generateVelocityPath(
+        std::vector<Geometry2d::Point>& points,
+        const Geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf);
+
 protected:
     /// maximum number of rrt iterations to run
     /// this does not include connect attempts
@@ -78,7 +88,7 @@ protected:
      * Uses a cubicBezier to interpolate between the points on the path and add
      * velocity planning
      */
-    Planning::InterpolatedPath* cubicBezier(
+    static Planning::InterpolatedPath* cubicBezier(
         Planning::InterpolatedPath& path, const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
@@ -88,10 +98,10 @@ protected:
      * the
      * cubic bezier equations.
      */
-    Eigen::VectorXd cubicBezierCalc(double vi, double vf,
-                                    std::vector<double>& points,
-                                    std::vector<double>& ks,
-                                    std::vector<double>& ks2);
+    static Eigen::VectorXd cubicBezierCalc(double vi, double vf,
+                                           std::vector<double>& points,
+                                           std::vector<double>& ks,
+                                           std::vector<double>& ks2);
 };
 
 }  // namespace Planning

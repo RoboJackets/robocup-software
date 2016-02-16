@@ -32,15 +32,8 @@ const float Ball_Avoid_Small = 2.0 * Ball_Radius;
  */
 const bool verbose = false;
 
-Robot::Robot(unsigned int shell, bool self) {
-    visible = false;
-    _shell = shell;
-    _self = self;
-    angle = 0;
-    angleVel = 0;
-
-    _filter = new RobotFilter();
-}
+Robot::Robot(unsigned int shell, bool self)
+    : RobotPose(), _shell(shell), _self(self), _filter(new RobotFilter()) {}
 
 Robot::~Robot() {
     delete _filter;
@@ -65,7 +58,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 }
 
 OurRobot::OurRobot(int shell, SystemState* state)
-    : Robot(shell, true), _path(), _state(state) {
+    : Robot(shell, true), _state(state) {
     _cmdText = new std::stringstream();
 
     resetAvoidBall();
@@ -426,7 +419,7 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    _path = std::move(path);
+    angleFunctionPath.path = std::move(path);
 }
 
 Geometry2d::ShapeSet OurRobot::collectAllObstacles(

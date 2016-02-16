@@ -9,17 +9,20 @@
 #include <memory>
 
 namespace Geometry2d {
-class Segment : public Line {
+class Segment {
 public:
+    /** the Segement consists of two points */
+    Point pt[2];
+
     Segment() {}
 
-    Segment(const Segment& other) : Line(other) {}
-    Segment(Point p1, Point p2) : Line(p1, p2) {}
+    Segment(Point p1, Point p2) : pt{p1, p2} {}
+
+    explicit Segment(const Line& other) : Segment(other.pt[0], other.pt[1]) {}
 
     Segment& operator+=(const Point& delta) {
         pt[0] += delta;
         pt[1] += delta;
-
         return *this;
     }
 
@@ -31,11 +34,13 @@ public:
     /* returns the distance to point other */
     float distTo(const Point& other) const;
 
+    /* Returns the relative vector */
+    Point delta() const { return pt[1] - pt[0]; }
+
     /* returns the length of the segment */
     float length() const { return (pt[1] - pt[0]).mag(); }
 
     bool nearPoint(const Point& point, float threshold) const;
-    bool nearPointPerp(const Point& point, float threshold) const;
     bool nearSegment(const Segment& other, float threshold) const;
 
     /** find the nearest point on the segment given @a p */
@@ -47,15 +52,9 @@ public:
     bool intersects(const Circle& circle) const;
     bool intersects(const Line& line, Point* intr = 0) const;
 
-    //  Same as the segment intersection above, but returns the intersection
-    //  point or nullptr rather than returning a bool and setting an out
-    //  variable This was added to be used with python code, but is useful in
-    //  c++ as well
-    std::shared_ptr<Point> intersection(const Segment& other);
-
     std::string toString() const {
         std::stringstream str;
-        str << "Line<" << pt[0] << ", " << pt[1] << ">";
+        str << "Segment<" << pt[0] << ", " << pt[1] << ">";
         return str.str();
     }
 
