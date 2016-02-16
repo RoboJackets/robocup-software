@@ -50,8 +50,7 @@ libspnav
 # joystick library
 sdl
 
-# compiler to build firmware for MBED
-arm-none-eabi-gcc
+# debugger for MBED code
 arm-none-eabi-gdb
 
 # GNU debugger
