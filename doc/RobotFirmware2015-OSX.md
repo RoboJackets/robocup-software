@@ -2,6 +2,8 @@
 
 ## Install [Homebrew](http://brew.sh)
 
+This is included in util/osx-setup already
+
 ~~~
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ~~~
@@ -12,10 +14,12 @@
 
 ### Install the [GCC ARM](https://launchpad.net/gcc-arm-embedded) Compiler
 
+The following has been moved to util/osx-packages.txt
+
 Install the compiler we will use for compiling the firmware with the following commands.
 
 ~~~
-brew tap brew tap PX4/homebrew-px4
+brew tap PX4/homebrew-px4
 brew update
 brew install gcc-arm-none-eabi-49
 ~~~
@@ -28,6 +32,8 @@ brew link --overwrite gcc-arm-none-eabi-49
 
 
 ### Install the [GCC AVR](https://gcc.gnu.org/wiki/avr-gcc) Compiler
+
+The following has been moved to util/osx-packages.txt
 
 Use the following commands to install the AVR toolchain for compiling the kicker board's firmware. 
 
@@ -46,11 +52,7 @@ brew install avrdude --with-usb
 
 ### Install Additional Required Dependencies
 
-~~~
-brew install git
-brew install hg
-brew install ecache
-~~~
+Moved to `util/osx-packages.txt`
 
 
 ### Clone the Repository
@@ -81,6 +83,13 @@ git checkout robot2015-firmware
 
 ### Install Python Packages
 
+moved to `util/requirements2.txt`
+
+
+### Force OpenSSL
+
+Sometimes openssl causes issues with brew. Especially with a fresh install of brew. So the following command will make sure we're using the brew version of openssl
+
 ~~~
-pip install colorama jinja1
+brew link --force openssl
 ~~~

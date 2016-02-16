@@ -207,11 +207,11 @@ set(MBED_LINKER_DIR "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/
 foreach(obj ${MBED_TARGET_OBJS})
     get_filename_component(obj_path ${obj} DIRECTORY)
     list(APPEND MBED_LINKER_DIR ${obj_path})
-    # add_custom_command(
-    #     OUTPUT      ${obj}
-    #     DEPENDS     mbed_libraries
-    #     COMMAND     ""
-    # )
+    add_custom_command(
+        OUTPUT      ${obj}
+        DEPENDS     mbed_libraries
+        COMMAND     ""
+    )
 endforeach()
 
 # remove the duplicate entries
