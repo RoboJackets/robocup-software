@@ -1,8 +1,6 @@
 #include "Path.hpp"
 #include <protobuf/LogFrame.pb.h>
-
 namespace Planning {
-
 // This method is a default implementation of draw() that works by evaluating
 // the path at fixed time intervals form t = 0 to t = duration.
 void Path::draw(SystemState* const state, const QColor& color,
@@ -27,11 +25,11 @@ void Path::draw(SystemState* const state, const QColor& color,
     // Draw points along the path except the last one
     for (int i = 0; i < segmentCount; ++i) {
         float t = i * step;
-        addPoint(*evaluate(t));
+        addPoint(evaluate(t)->motion);
     }
 
     // Draw the last point of the path
-    addPoint(end());
+    addPoint(end().motion);
 }
 
 }  // namespace Planning
