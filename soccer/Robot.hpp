@@ -51,10 +51,11 @@ public:
     RobotPose()
         : visible(false), angle(0), angleVel(0), time(0), visionFrame(0) {
         // normalize angle so it's always positive
-        while (angle < 0) angle += 2.0 * M_PI;
+        // while (angle < 0) angle += 2.0 * M_PI;
     }
 
     bool visible;
+
     Geometry2d::Point pos;
     Geometry2d::Point vel;
     /// angle in radians.  0 radians means the robot is aimed along the x-axis
@@ -167,17 +168,17 @@ public:
 
     MotionConstraints& motionConstraints() { return _motionConstraints; }
 
-    const std::unique_ptr<Planning::RotationCommand>& rotationCommand() const {
-        return _rotationCommand;
+    const Planning::RotationCommand& rotationCommand() const {
+        return *_rotationCommand;
     }
 
     /**
-     * Returns a temporary observing pointer to the path of the robot.
-     * This is only currently supported for legacy reasons.
-     * Saving the pointer may lead to seg faults as it may be deleted by the
-     * Robot who owns it.
+     * Returns a const reference to the path of the robot.
      */
-    std::unique_ptr<Planning::Path>& path() { return _path; }
+    const Planning::Path& path() {
+        // return *angleFunctionPath.path;
+        return angleFunctionPath;
+    }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -438,7 +439,7 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RotationConstraints _rotationConstraints;
 
-    std::unique_ptr<Planning::Path> _path;  /// latest path
+    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 
     /**
      * Creates a set of obstacles from a given robot team mask,

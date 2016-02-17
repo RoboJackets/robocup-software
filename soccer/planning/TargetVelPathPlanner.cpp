@@ -78,8 +78,8 @@ bool TargetVelPathPlanner::shouldReplan(
     // See if obstacles have changed such that the end point is significantly
     // different
     const Point newEndpoint = calculateNonblockedPathEndpoint(
-        prevPath->start().pos, command.worldVel, obstacles);
-    const float endChange = (newEndpoint - prevPath->end().pos).mag();
+        prevPath->start().motion.pos, command.worldVel, obstacles);
+    const float endChange = (newEndpoint - prevPath->end().motion.pos).mag();
     if (endChange > SingleRobotPathPlanner::goalChangeThreshold()) {
         return true;
     }
