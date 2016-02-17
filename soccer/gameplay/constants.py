@@ -1,12 +1,8 @@
 import robocup
 import math
 
-
-
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
-
-
 
 
 class Colors:
@@ -17,10 +13,9 @@ class Colors:
     Blue = (0, 0, 255)
 
 
-
 class Robot:
     Radius = 0.09
-    MaxKickSpeed = 8 # m/s
+    MaxKickSpeed = 8  # m/s
 
     class Dribbler:
         MaxPower = 127
@@ -28,7 +23,7 @@ class Robot:
 
 class Ball:
     Radius = 0.0215
-    Mass = 0.04593 # mass of golf ball (kg)
+    Mass = 0.04593  # mass of golf ball (kg)
 
 
 class Field:
@@ -56,36 +51,55 @@ class Field:
     # flat area for defense markings
     GoalFlat = 0.5
 
-    FloorLength = Length + 2.0 * Border;
-    FloorWidth = Width + 2.0 * Border;
+    FloorLength = Length + 2.0 * Border
+    FloorWidth = Width + 2.0 * Border
 
     CenterPoint = robocup.Point(0.0, Length / 2.0)
 
     OurGoalZoneShape = robocup.CompositeShape()
-    OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, 0), ArcRadius))
-    OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, 0), ArcRadius))
-    OurGoalZoneShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, ArcRadius), robocup.Point(GoalFlat / 2.0, 0)))
+    OurGoalZoneShape.add_shape(robocup.Circle(
+        robocup.Point(-GoalFlat / 2.0, 0), ArcRadius))
+    OurGoalZoneShape.add_shape(robocup.Circle(
+        robocup.Point(GoalFlat / 2.0, 0), ArcRadius))
+    OurGoalZoneShape.add_shape(robocup.Rect(
+        robocup.Point(-GoalFlat / 2.0, ArcRadius), robocup.Point(GoalFlat /
+                                                                 2.0, 0)))
 
     TheirGoalShape = robocup.CompositeShape()
-    TheirGoalShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, Length), ArcRadius))
-    TheirGoalShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, Length), ArcRadius))
-    TheirGoalShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, Length), robocup.Point(GoalFlat / 2.0, Length - ArcRadius)))
+    TheirGoalShape.add_shape(robocup.Circle(
+        robocup.Point(-GoalFlat / 2.0, Length), ArcRadius))
+    TheirGoalShape.add_shape(robocup.Circle(
+        robocup.Point(GoalFlat / 2.0, Length), ArcRadius))
+    TheirGoalShape.add_shape(robocup.Rect(
+        robocup.Point(-GoalFlat / 2.0, Length), robocup.Point(
+            GoalFlat / 2.0, Length - ArcRadius)))
 
     FieldBorders = [
-            robocup.Line(robocup.Point(-Width / 2.0, 0), robocup.Point(-Width / 2.0, Length)),
-            robocup.Line(robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0, Length)),
-            robocup.Line(robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),
-            robocup.Line(robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0)) ]
+        robocup.Line(
+            robocup.Point(-Width / 2.0, 0),
+            robocup.Point(-Width / 2.0, Length)), robocup.Line(
+                robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0,
+                                                                   Length)),
+        robocup.Line(
+            robocup.Point(Width / 2.0, Length),
+            robocup.Point(Width / 2.0, 0)), robocup.Line(
+                robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0))
+    ]
 
-    FieldRect = robocup.Rect(robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))
+    FieldRect = robocup.Rect(
+        robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))
 
-    TheirGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),
-                                        robocup.Point(-GoalWidth / 2.0, Length))
-    OurGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, 0),
-                                        robocup.Point(-GoalWidth / 2.0, 0))
+    TheirGoalSegment = robocup.Segment(
+        robocup.Point(GoalWidth / 2.0, Length),
+        robocup.Point(-GoalWidth / 2.0, Length))
+    OurGoalSegment = robocup.Segment(
+        robocup.Point(GoalWidth / 2.0, 0), robocup.Point(-GoalWidth / 2.0, 0))
 
-    TheirHalf = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))
-    OurHalf = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))
+    TheirHalf = robocup.Rect(
+        robocup.Point(-Width / 2, Length), robocup.Point(Width / 2,
+                                                         Length / 2))
+    OurHalf = robocup.Rect(
+        robocup.Point(-Width / 2, 0), robocup.Point(Width / 2, Length / 2))
 
 
 def setFieldConstantsFromField_Dimensions(value):
@@ -108,29 +122,49 @@ def setFieldConstantsFromField_Dimensions(value):
     Field.CenterPoint = robocup.Point(0.0, Field.Length / 2.0)
 
     Field.OurGoalZoneShape = robocup.CompositeShape()
-    Field.OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-Field.GoalFlat / 2.0, 0), Field.ArcRadius))
-    Field.OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(Field.GoalFlat / 2.0, 0), Field.ArcRadius))
-    Field.OurGoalZoneShape.add_shape(robocup.Rect(robocup.Point(-Field.GoalFlat / 2.0, Field.ArcRadius), robocup.Point(Field.GoalFlat / 2.0, 0)))
+    Field.OurGoalZoneShape.add_shape(robocup.Circle(
+        robocup.Point(-Field.GoalFlat / 2.0, 0), Field.ArcRadius))
+    Field.OurGoalZoneShape.add_shape(robocup.Circle(
+        robocup.Point(Field.GoalFlat / 2.0, 0), Field.ArcRadius))
+    Field.OurGoalZoneShape.add_shape(robocup.Rect(
+        robocup.Point(-Field.GoalFlat / 2.0, Field.ArcRadius), robocup.Point(
+            Field.GoalFlat / 2.0, 0)))
 
     Field.TheirGoalShape = robocup.CompositeShape()
-    Field.TheirGoalShape.add_shape(robocup.Circle(robocup.Point(-Field.GoalFlat / 2.0, Field.Length), Field.ArcRadius))
-    Field.TheirGoalShape.add_shape(robocup.Circle(robocup.Point(Field.GoalFlat / 2.0, Field.Length), Field.ArcRadius))
-    Field.TheirGoalShape.add_shape(robocup.Rect(robocup.Point(-Field.GoalFlat / 2.0, Field.Length), robocup.Point(Field.GoalFlat / 2.0, Field.Length - Field.ArcRadius)))
+    Field.TheirGoalShape.add_shape(robocup.Circle(
+        robocup.Point(-Field.GoalFlat / 2.0, Field.Length), Field.ArcRadius))
+    Field.TheirGoalShape.add_shape(robocup.Circle(
+        robocup.Point(Field.GoalFlat / 2.0, Field.Length), Field.ArcRadius))
+    Field.TheirGoalShape.add_shape(robocup.Rect(
+        robocup.Point(-Field.GoalFlat / 2.0, Field.Length), robocup.Point(
+            Field.GoalFlat / 2.0, Field.Length - Field.ArcRadius)))
 
+    Field.TheirGoalSegment = robocup.Segment(
+        robocup.Point(Field.GoalWidth / 2.0, Field.Length),
+        robocup.Point(-Field.GoalWidth / 2.0, Field.Length))
+    Field.OurGoalSegment = robocup.Segment(
+        robocup.Point(Field.GoalWidth / 2.0, 0),
+        robocup.Point(-Field.GoalWidth / 2.0, 0))
 
-    Field.TheirGoalSegment = robocup.Segment(robocup.Point(Field.GoalWidth / 2.0, Field.Length),
-                                        robocup.Point(-Field.GoalWidth / 2.0, Field.Length))
-    Field.OurGoalSegment = robocup.Segment(robocup.Point(Field.GoalWidth / 2.0, 0),
-                                        robocup.Point(-Field.GoalWidth / 2.0, 0))
-
-    Field.TheirHalf = robocup.Rect(robocup.Point(-Field.Width/2, Field.Length), robocup.Point(Field.Width/2, Field.Length/2))
-    Field.OurHalf = robocup.Rect(robocup.Point(-Field.Width/2, 0), robocup.Point(Field.Width/2, Field.Length/2))
+    Field.TheirHalf = robocup.Rect(
+        robocup.Point(-Field.Width / 2, Field.Length), robocup.Point(
+            Field.Width / 2, Field.Length / 2))
+    Field.OurHalf = robocup.Rect(
+        robocup.Point(-Field.Width / 2, 0), robocup.Point(Field.Width / 2,
+                                                          Field.Length / 2))
 
     Field.FieldBorders = [
-            robocup.Line(robocup.Point(-Field.Width / 2.0, 0), robocup.Point(-Field.Width / 2.0, Field.Length)),
-            robocup.Line(robocup.Point(-Field.Width / 2.0, Field.Length), robocup.Point(Field.Width / 2.0, Field.Length)),
-            robocup.Line(robocup.Point(Field.Width / 2.0, Field.Length), robocup.Point(Field.Width / 2.0, 0)),
-            robocup.Line(robocup.Point(Field.Width / 2.0, 0), robocup.Point(-Field.Width / 2.0, 0)) ]
+        robocup.Line(
+            robocup.Point(-Field.Width / 2.0, 0),
+            robocup.Point(-Field.Width / 2.0, Field.Length)), robocup.Line(
+                robocup.Point(-Field.Width / 2.0, Field.Length), robocup.Point(
+                    Field.Width / 2.0, Field.Length)), robocup.Line(
+                        robocup.Point(Field.Width / 2.0, Field.Length),
+                        robocup.Point(Field.Width / 2.0, 0)), robocup.Line(
+                            robocup.Point(Field.Width / 2.0, 0), robocup.Point(
+                                -Field.Width / 2.0, 0))
+    ]
 
-    Field.FieldRect = robocup.Rect(robocup.Point(-Field.Width / 2.0, 0), robocup.Point(Field.Width / 2.0, Field.Length))
-
+    Field.FieldRect = robocup.Rect(
+        robocup.Point(-Field.Width / 2.0, 0), robocup.Point(Field.Width / 2.0,
+                                                            Field.Length))

@@ -430,9 +430,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
         // note: kv.first.first is 1 for our team and 2 for their team
         bool ourTeam = kv.first.first == 1;
         bool blue = frame->blue_team();
-        const QColor color = (ourTeam && blue) ? Qt::blue : (ourTeam && !blue)
-                                                                ? Qt::blue
-                                                                : Qt::yellow;
+        const QColor color = (ourTeam ^ blue) ? Qt::yellow : Qt::blue;
         QPen pen(color, cometTrailPenSize);
         pen.setCapStyle(Qt::RoundCap);
         p.setPen(pen);
