@@ -1,8 +1,6 @@
 #include "BallSense.hpp"
 
-BallSense::BallSense() {
-    emitter_pin.write(0);
-}
+BallSense::BallSense() { emitter_pin.write(0); }
 
 void BallSense::update_ball_sensor() {
     if (emitter_on) {
