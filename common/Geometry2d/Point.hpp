@@ -12,12 +12,18 @@ Simple class to represent a point in 2d space. Uses floating point coordinates
 */
 class Point {
 public:
+    /** the x coordinate */
+    float x;
+
+    /** the y coordinate */
+    float y;
+
     /**
     default constrctor.
     initializes point to (0,0)
     usage as Point p = Point();
     */
-    Point() { x = y = 0; }
+    Point() : x(0), y(0) {}
 
     /**
     overloaded constructor.
@@ -26,16 +32,23 @@ public:
     @param x the x coordinate
     @param y the y coordinate
     */
-    Point(float x, float y) {
-        this->x = x;
-        this->y = y;
-    }
+    Point(float x, float y) : x(x), y(y) {}
 
-    template <class T>
-    Point(const T& other) {
-        x = other.x();
-        y = other.y();
-    }
+    /**
+     * Implicit constructor for creating a Point from a Packet::Point
+     */
+    Point(const Packet::Point& other) : x(other.x()), y(other.y()) {}
+
+    /**
+     * Implicit constructor for creating a Point from a QPointF
+     */
+    Point(const QPointF& other) : x(other.x()), y(other.y()) {}
+
+    /**
+     * Implicit constructor for creating a Point from a QPoint
+     */
+    Point(const QPoint& other) : x(other.x()), y(other.y()) {}
+
     /**
      * to draw stuff and interface with QT
      */
@@ -51,17 +64,23 @@ public:
      * does vector addition
      * adds the + operator, shorthand
      */
-    Point operator+(const Point& other) const {
+    Point operator+(Point other) const {
         return Point(x + other.x, y + other.y);
     }
 
     /**
      * see operator+
      * does vector division, note the operator
-     * without parameter, it is the negative
      */
-    Point operator/(const Point& other) const {
+    Point operator/(Point other) const {
         return Point(x / other.x, y / other.y);
+    }
+
+    /**
+     * @returns (x*x,y*y)
+     */
+    Point operator*(Point other) const {
+        return Point(x * other.x, y * other.y);
     }
 
     /**
@@ -69,7 +88,7 @@ public:
      * does vector subtraction, note the operator
      * without parameter, it is the negative
      */
-    Point operator-(const Point& other) const {
+    Point operator-(Point other) const {
         return Point(x - other.x, y - other.y);
     }
 
@@ -82,7 +101,7 @@ public:
      * see operator+
      * this modifies the value instead of returning a new value
      */
-    Point& operator+=(const Point& other) {
+    Point& operator+=(Point other) {
         x += other.x;
         y += other.y;
 
@@ -93,7 +112,7 @@ public:
      * see operator-
      * this modifies the value instead of returning a new value
      */
-    Point& operator-=(const Point& other) {
+    Point& operator-=(Point other) {
         x -= other.x;
         y -= other.y;
 
@@ -137,16 +156,12 @@ public:
      * compares two points to see if both x and y are the same
      * adds the == operator
      */
-    bool operator==(const Point& other) const {
-        return x == other.x && y == other.y;
-    }
+    bool operator==(Point other) const { return x == other.x && y == other.y; }
 
     /**
      * this is the negation of operator operator !=
      */
-    bool operator!=(const Point& other) const {
-        return x != other.x || y != other.y;
-    }
+    bool operator!=(Point other) const { return x != other.x || y != other.y; }
 
     /**
     computes the dot product of this point and another.
@@ -154,13 +169,7 @@ public:
     @param p the second point
     @return the dot product of the two
     */
-    float dot(const Point& p) const { return x * p.x + y * p.y; }
-
-    /**
-    find out of the point is 0,0
-    @return true if the point is (0,0)
-    */
-    bool isZero() const { return x == 0 && y == 0; }
+    float dot(Point p) const { return x * p.x + y * p.y; }
 
     /**
     computes the magnitude of the point, as if it were a vector
@@ -179,12 +188,13 @@ public:
      * @brief Restricts the point to a given magnitude
      * @param max The magnitude to restrict the vector
      */
-    void clamp(float max) {
-        if (mag() > max) {
-            float ratio = mag() / max;
-            x = x / ratio;
-            y = y / ratio;
+    Point& clamp(float max) {
+        float ratio = mag() / max;
+        if (ratio > 1) {
+            x /= ratio;
+            y /= ratio;
         }
+        return *this;
     }
 
     /**
@@ -193,20 +203,22 @@ public:
     @param origin the point to rotate around
     @param angle the angle in radians
     */
-    void rotate(const Point& origin, float angle) {
+    Point& rotate(const Point& origin, float angle) {
         *this -= origin;
         rotate(angle);
         *this += origin;
+        return *this;
     }
 
     /**
     * rotates the point around the origin
     */
-    void rotate(float angle) {
+    Point& rotate(float angle) {
         float newX = x * cos(angle) - y * sin(angle);
         float newY = y * cos(angle) + x * sin(angle);
         x = newX;
         y = newY;
+        return *this;
     }
 
     /**
@@ -219,9 +231,16 @@ public:
     }
 
     /**
+     * Returns a new Point rotated around the origin
+     */
+    Point rotated(const Point& origin, float angle) const {
+        return rotated(*this, origin, angle);
+    }
+
+    /**
     * static function to use rotate
     */
-    static Point rotate(const Point& pt, const Point& origin, float angle) {
+    static Point rotated(const Point& pt, const Point& origin, float angle) {
         Point newPt = pt;
         newPt.rotate(origin, angle);
         return newPt;
@@ -239,8 +258,8 @@ public:
 
     /**
     * Returns a vector with the same direction as this vector but with magnitude
-    * one,
-    * unless this vector is zero.
+    * one.
+    * If the vector is (0,0), Point(0,0) is returned
     */
     Point normalized() const {
         float m = mag();
@@ -286,28 +305,27 @@ public:
         return value;
     }
 
-    /** returns the angle between the two points (radians) */
-    float angleTo(const Point& other) const {
-        return acos(normalized().dot(other.normalized()));
-    }
+    float angleTo(const Point& other) const { return (other - *this).angle(); }
 
     float cross(const Point& other) const { return x * other.y - y * other.x; }
 
-    friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
-        return stream << "Point(" << point.x << ", " << point.y << ")";
+    /** returns the angle between the two normalized points (radians) */
+    float angleBetween(const Point& other) const {
+        return acos(normalized().dot(other.normalized()));
     }
+
+    bool nearlyEquals(Point other) const;
 
     std::string toString() const {
         std::stringstream str;
-        str << *this;
+        str << "Point(" << x << ", " << y << ")";
         return str.str();
     }
 
-    /** the x coordinate */
-    float x;
-
-    /** the y coordinate */
-    float y;
+    friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
+        stream << point.toString();
+        return stream;
+    }
 };  // \class Point
 
 // global operations

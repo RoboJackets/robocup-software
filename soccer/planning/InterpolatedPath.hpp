@@ -55,8 +55,8 @@ public:
     }
 
     // Overridden Path Methods
-    virtual MotionInstant start() const override;
-    virtual MotionInstant end() const override;
+    virtual RobotInstant start() const override;
+    virtual RobotInstant end() const override;
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                      float startTime) const override;
     virtual std::unique_ptr<Path> subPath(
@@ -64,7 +64,7 @@ public:
         float endTime = std::numeric_limits<float>::infinity()) const override;
     virtual void draw(SystemState* const state, const QColor& color,
                       const QString& layer) const override;
-    virtual boost::optional<MotionInstant> evaluate(float t) const override;
+    virtual boost::optional<RobotInstant> evaluate(float t) const override;
     virtual float getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 

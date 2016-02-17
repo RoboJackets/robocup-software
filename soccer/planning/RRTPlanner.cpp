@@ -31,8 +31,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
     // if the destination of the current path is greater than X m away
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
-    float goalPosDiff = (prevPath->end().pos - goal.pos).mag();
-    float goalVelDiff = (prevPath->end().vel - goal.vel).mag();
+    float goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
+    float goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
     if (goalPosDiff > goalChangeThreshold() ||
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
@@ -65,7 +65,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 
     // Locate a goal point that is obstacle-free
     boost::optional<Geometry2d::Point> prevGoal;
-    if (prevPath) prevGoal = prevPath->end().pos;
+    if (prevPath) prevGoal = prevPath->end().motion.pos;
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, *obstacles);
 
@@ -193,6 +193,28 @@ float getTime(InterpolatedPath& path, int index,
     return Trapezoidal::getTime(
         path.length(0, index), path.length(), motionConstraints.maxSpeed,
         motionConstraints.maxAcceleration, startSpeed, endSpeed);
+}
+
+std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateVelocityPath(
+    std::vector<Geometry2d::Point>& points,
+    const Geometry2d::ShapeSet& obstacles,
+    const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+    Geometry2d::Point vf) {
+    // TODO redo this. This is a terrible hack implementation
+    InterpolatedPath* path = new InterpolatedPath();
+    for (Geometry2d::Point& pt : points) {
+        // Each point in the path is given a time of zero - the actual time will
+        // be calculated later by the planner
+        path->waypoints.emplace_back(MotionInstant(pt, Geometry2d::Point()), 0);
+    }
+
+    path = cubicBezier(*path, &obstacles, motionConstraints, vi, vf);
+
+    if (path) {
+        return unique_ptr<Planning::InterpolatedPath>(path);
+    } else {
+        return nullptr;
+    }
 }
 
 // TODO: Use targeted end velocity
