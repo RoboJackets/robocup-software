@@ -1,6 +1,9 @@
 // Determines if the emitter to reciever beam is broken
 //  while accounting for ambiant light
-#include "mbed.h"
+#include <mbed.h>
+#include <rtos.h>
+
+#include "pins-ctrl-2015.hpp"
 
 class BallSense {
 public:
@@ -13,8 +16,8 @@ public:
     bool have_ball();
 
 private:
-    DigitalOut emitter_pin;
-    AnalogIn detector_pin;
+    DigitalOut emitter_pin = DigitalOut(RJ_BALL_EMIT);
+    AnalogIn detector_pin = AnalogIn(RJ_BALL_DETECTOR);
 
     // Holds the light sensed when
     //  emitter is lit (sense_light) and
