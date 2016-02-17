@@ -10,6 +10,7 @@ set(COMMON_SRC
     "Geometry2d/Rect.cpp"
     "Geometry2d/TransformMatrix.cpp"
     "Geometry2d/CompositeShape.cpp"
+    "Geometry2d/Point.cpp"
     "Geometry2d/Polygon.cpp"
     "Geometry2d/Segment.cpp"
     "multicast.cpp"
