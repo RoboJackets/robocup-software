@@ -314,13 +314,42 @@ void Processor::run() {
                 // fieldSize->field_width() << endl;
                 if (fieldSize->field_length() != 0 &&
                     (currentDimensions.Length() != fieldSize->field_length())) {
+
+                    SSL_FieldCicularArc* penalty = nullptr;
+                    SSL_FieldCicularArc* center = nullptr;
+                    float displacement = 0.500f; // default displacment
+
+                    for (int i = 0; fieldSize->field_arcs().size(); i++) {
+                        if (fieldSize->field_arcs().Get(i).center().x() == 0) {
+                            // Assume center circle
+                            *center = fieldSize->field_arcs().Get(i);
+                        } else if (fieldSize->field_arcs().Get(i).center().y() == 0) {
+                            // Assume one of the goal arcs on our side
+                            if (penalty != nullptr) {
+                                // If we find two we can get the displacement between them!
+                                displacement = abs(penalty->center().x() - fieldSize->field_arcs().Get(i).center().x());
+                            } else {
+                                *penalty = fieldSize->field_arcs().Get(i);
+                            }
+                        }
+                    }
+
                     // Force a resize
                     // TODO fix hardcoded values here
                     currentDimensions = Field_Dimensions(
-                        fieldSize->field_width(), fieldSize->field_length(),
-                        fieldSize->boundary_width(), 0.010f,
-                        fieldSize->goal_width(), fieldSize->goal_depth(),
-                        0.160f, 1.000f, 0.010f, 1.000f, 0.500f, 1.000f, 0.500f,
+                        fieldSize->field_width(),
+                        fieldSize->field_length(),
+                        fieldSize->boundary_width(),
+                        fieldSize->field_lines().Get(0).thickness(),
+                        fieldSize->goal_width(),
+                        fieldSize->goal_depth(),
+                        0.160f,                                  // Goal Height
+                        penalty->radius(),                       // PenaltyDist
+                        0.010f,                                  // PenaltyDiam
+                        fieldSize->field_arcs().Get(0).radius(), // ArcRadius
+                        center->radius(),                        // CenterRadius
+                        center->radius() * 2,                    // CenterDiameter
+                        displacement,                            // GoalFlat
                         fieldSize->field_width() +
                             fieldSize->boundary_width() * 2,
                         fieldSize->field_length() +
