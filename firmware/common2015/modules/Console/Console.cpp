@@ -43,7 +43,7 @@ void Console::PrintHeader() {
 
 void Console::ClearRXBuffer() { memset(rxBuffer, '\0', BUFFER_LENGTH); }
 
-void Console::Flush() { fflush(stdout); } // TODO: pc.fflush()?
+void Console::Flush() { fflush(stdout); }  // TODO: pc.fflush()?
 
 void Console::RXCallback() {
     // If for some reason more than one character is in the buffer when the
@@ -143,7 +143,8 @@ void Console::RXCallback() {
                         !(rxIndex == 0 && c == ARROW_DOWN_KEY)) {
                         std::string cmd =
                             history.at(history.size() - 1 - history_index);
-                        pc.printf("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
+                        pc.printf("\r%s%s", CONSOLE_HEADER.c_str(),
+                                  cmd.c_str());
                         rxIndex = cmd.size();
                         memcpy(rxBuffer, cmd.c_str(), rxIndex + 1);
                     }
@@ -238,9 +239,8 @@ void Console::changeUser(const std::string& user) {
 }
 
 void Console::setHeader() {
-    CONSOLE_HEADER =
-        "\033[1;36m" + CONSOLE_USER + "\033[1;32m@\033[1;33m" +
-        CONSOLE_HOSTNAME + " \033[36m$\033[m \033[J\033[m";
+    CONSOLE_HEADER = "\033[1;36m" + CONSOLE_USER + "\033[1;32m@\033[1;33m" +
+                     CONSOLE_HOSTNAME + " \033[36m$\033[m \033[J\033[m";
 }
 
 void Console::Baudrate(uint16_t baud) {

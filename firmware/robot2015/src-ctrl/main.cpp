@@ -120,7 +120,7 @@ int main() {
 
     // This is where the FPGA is actually configured with the bitfile's name
     // passed in
-    bool fpga_ready = false;//FPGA::Instance()->Init("/local/rj-fpga.nib");
+    bool fpga_ready = false;  // FPGA::Instance()->Init("/local/rj-fpga.nib");
 
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
@@ -263,7 +263,8 @@ int main() {
 // }
 
 // _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
-//     /* These are volatile to try and prevent the compiler/linker optimising them
+//     /* These are volatile to try and prevent the compiler/linker optimising
+//     them
 //      * away as the variables never actually get used.  If the debugger won't
 //      * show the values of the variables, make them global my moving their
 //      * declaration outside of this function. */

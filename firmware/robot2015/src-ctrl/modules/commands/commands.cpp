@@ -1065,7 +1065,8 @@ void execute_line(char* rawCommand) {
         }
 
         cmds = strtok_r(nullptr, ";", &endCmd);
-        Console::Instance()->Flush();  // make sure we force everything out of stdout
+        Console::Instance()
+            ->Flush();  // make sure we force everything out of stdout
     }
 }
 
