@@ -18,7 +18,6 @@ Console::Console() : pc(USBTX, USBRX) {
 
     // clear buffers
     ClearRXBuffer();
-    ClearTXBuffer();
 
     // attach interrupt handlers
     pc.attach(this, &Console::RXCallback, Serial::RxIrq);
@@ -26,7 +25,6 @@ Console::Console() : pc(USBTX, USBRX) {
 
     // reset indices
     rxIndex = 0;
-    txIndex = 0;
 }
 
 Console::~Console() {}
@@ -45,8 +43,6 @@ void Console::PrintHeader() {
 }
 
 void Console::ClearRXBuffer() { memset(rxBuffer, '\0', BUFFER_LENGTH); }
-
-void Console::ClearTXBuffer() { memset(txBuffer, '\0', BUFFER_LENGTH); }
 
 void Console::Flush() { fflush(stdout); } // TODO: pc.fflush()?
 

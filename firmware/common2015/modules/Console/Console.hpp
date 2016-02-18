@@ -172,11 +172,6 @@ private:
     char rxBuffer[BUFFER_LENGTH];
 
     /**
-     * Transmission buffer
-     */
-    char txBuffer[BUFFER_LENGTH];
-
-    /**
      * Is a system stop requested
      */
     bool sysStopReq = false;
@@ -198,11 +193,6 @@ private:
      * receive buffer index
      */
     uint16_t rxIndex = 0;
-
-    /**
-     * transmission buffer index
-     */
-    uint16_t txIndex = 0;
 
     size_t MAX_HISTORY = 10;
     int history_index = 0;
