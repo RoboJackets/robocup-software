@@ -116,7 +116,6 @@ public:
     void PrintHeader();
     void ShowLogo();
     void SetTitle(const std::string&);
-    void SetEscEnd(char c);
     std::string GetHostResponse();
 
 private:

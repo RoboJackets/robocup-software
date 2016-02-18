@@ -51,16 +51,12 @@ void Console::RXCallback() {
         // read the char that caused the interrupt
         char c = pc.getc();
 
-        if (esc_flag_one && esc_flag_two) {
-            esc_en = true;
-        } else {
-            esc_en = false;
-        }
+        esc_en = esc_flag_one && esc_flag_two;
 
-        // if a new line character is sent, process the current buffer
+        // if a newline character is sent, process the current buffer
         if (c == NEW_LINE_CHAR) {
             // print new line prior to executing
-            pc.printf("%c\n", NEW_LINE_CHAR);
+            pc.printf("\r\n");
             Flush();
 
             if (history.size() >= MAX_HISTORY) history.pop_front();
@@ -72,6 +68,7 @@ void Console::RXCallback() {
 
         // if a backspace is requested, handle it.
         else if (c == BACKSPACE_FLAG_CHAR) {
+            // handle backspace if text has been entered, otherwise ignore
             if (_rxBuffer.size() > 0) {
                 // remove last character
                 _rxBuffer.pop_back();
@@ -83,8 +80,6 @@ void Console::RXCallback() {
                 pc.putc(BACKSPACE_REPLACE_CHAR);
                 pc.putc(BACKSPACE_REPLY_CHAR);
                 Flush();
-            } else {
-                /* do nothing if we can't back space any more */
             }
         } else if (c == BREAK_CHAR) {
             // set that a command break was requested flag if we received a
@@ -207,8 +202,6 @@ void Console::Baudrate(uint16_t baud) {
 }
 
 uint16_t Console::Baudrate() const { return _baudRate; }
-
-void Console::SetEscEnd(char c) { esc_host_end_char = c; }
 
 std::string Console::GetHostResponse() {
     if (esc_host_res_rdy) {
