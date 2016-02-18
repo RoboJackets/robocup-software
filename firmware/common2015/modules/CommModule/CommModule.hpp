@@ -17,19 +17,17 @@
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */
-typedef void(FunctionPtr_t)(rtp::packet*);
-typedef CommPort<FunctionPtr_t> CommPort_t;
-typedef CommPorts<FunctionPtr_t> CommPorts_t;
+typedef void(CommCallback)(rtp::packet*);
+typedef CommPort<CommCallback> CommPort_t;
+typedef CommPorts<CommCallback> CommPorts_t;
 
 /**
+ * @brief A high-level firmware class for packet handling & routing
+ *
  * The CommModule class provides the packet management routing
  * by distributing incoming packets to the correct area of the
  * firmware and distributing outgoing packets to the correct
  * hardware interface.
- */
-
-/**
- * @brief      { A high-level firmware class for packet handling & routing }
  */
 class CommModule {
 private:
@@ -37,6 +35,9 @@ private:
 
 public:
     ~CommModule();
+
+    /// Access the singleton CommModule instance
+    static shared_ptr<CommModule>& Instance();
 
     // Class constants
     // Be careful of the queue sizes. The errors that result from
@@ -50,9 +51,8 @@ public:
     template <typename B>
     static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*),
                           uint8_t portNbr) {
-        if (!_ports[portNbr].Exists()) {
-            CommPort_t port(portNbr);
-            _ports += port;
+        if (!_ports.hasPort(portNbr)) {
+            _ports += CommPort_t(portNbr);
         }
 
         _ports[portNbr].TXCallback() =
@@ -65,9 +65,8 @@ public:
     template <typename B>
     static void RxHandler(B* obj, void (B::*mptr)(rtp::packet*),
                           uint8_t portNbr) {
-        if (!_ports[portNbr].Exists()) {
-            CommPort_t port(portNbr);
-            _ports += port;
+        if (!_ports.hasPort(portNbr)) {
+            _ports += CommPort_t(portNbr);
         }
 
         _ports[portNbr].RXCallback() =
@@ -81,7 +80,7 @@ public:
     static void TxHandler(void (*ptr)(rtp::packet*), uint8_t);
 
     // Open a socket connection for communicating.
-    static bool openSocket(uint8_t);
+    static void openSocket(uint8_t portNbr);
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values
@@ -118,9 +117,8 @@ private:
     // Private constructor
     CommModule();
 
-    static shared_ptr<CommModule>& Instance();
-
     // Used to help define the class's threads in the constructor
+    // TODO(justin): needed?
     friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
                               osPriority, uint32_t, unsigned char*);
 

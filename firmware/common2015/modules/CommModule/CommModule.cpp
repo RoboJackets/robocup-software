@@ -192,62 +192,41 @@ void CommModule::rxThread(void const* arg) {
 }
 
 void CommModule::RxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
-    if (!_ports[portNbr].Exists()) {
-        CommPort_t port(portNbr);
-        port.RXCallback() = std::bind(ptr, std::placeholders::_1);
-        _ports += port;
-
-    } else {
-        _ports[portNbr].RXCallback() = std::bind(ptr, std::placeholders::_1);
+    if (!_ports.hasPort(portNbr)) {
+        _ports += CommPort_t(portNbr);
     }
+
+    _ports[portNbr].RXCallback() = std::bind(ptr, std::placeholders::_1);
 
     ready();
 }
 
 void CommModule::TxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
-    if (!_ports[portNbr].Exists()) {
-        CommPort_t port(portNbr);
-
-        port.TXCallback() = std::bind(ptr, std::placeholders::_1);
-
-        _ports += port;
-
-    } else {
-        _ports[portNbr].TXCallback() = std::bind(ptr, std::placeholders::_1);
+    if (!_ports.hasPort(portNbr)) {
+        _ports += CommPort_t(portNbr);
     }
+
+    _ports[portNbr].TXCallback() = std::bind(ptr, std::placeholders::_1);
 
     ready();
 }
 
-bool CommModule::openSocket(uint8_t portNbr) {
-    if (!_ports[portNbr].Exists()) {
-        CommPort_t port(portNbr);
-
-        _ports += port;
-
-        return _ports[portNbr].Open();
+void CommModule::openSocket(uint8_t portNbr) {
+    // create the port if it doesn't exist
+    if (!_ports.hasPort(portNbr)) {
+        _ports += CommPort_t(portNbr);
     }
 
-    if (_ports[portNbr].Open()) {
-        // Everything looks to be setup, go ahead and enable it
+    CommPort_t& port = _ports[portNbr];
+
+    if (!port.isOpen()) {
+        port.open();
         LOG(INF1, "Port %u opened", portNbr);
-
-        return true;
-    } else {
-        // this almost never gets called. Probably going to remove it soon. Only
-        // makes it this far if trying to open port 0 without any setup.
-        // TX callback function was never set
-        LOG(WARN,
-            "Must set at least the RX callback function before opening socket "
-            "on port %u.",
-            portNbr);
-
-        return false;
     }
 }
 
 void CommModule::ready() {
-    if (_isReady == true) return;
+    if (_isReady) return;
 
     // Start running the TX thread - it will trigger with to startup the RX
     // thread
@@ -305,23 +284,23 @@ unsigned int CommModule::NumTXPackets() { return _ports.allTXPackets(); }
 void CommModule::PrintInfo(bool forceHeader) {
     if (forceHeader == true && _ports.empty()) {
         PrintHeader();
-        _ports.PrintFooter();
+        _ports.printFooter();
     } else {
-        _ports.PrintPorts();
-        _ports.PrintFooter();
+        _ports.printPorts();
+        _ports.printFooter();
     }
 
     Console::Instance()->Flush();
 }
 
-void CommModule::PrintHeader() { _ports.PrintHeader(); }
+void CommModule::PrintHeader() { _ports.printHeader(); }
 
 void CommModule::ResetCount(unsigned int portNbr) {
     _ports[portNbr].resetPacketCount();
 }
 
-void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
+void CommModule::Close(unsigned int portNbr) { _ports[portNbr].close(); }
 
 bool CommModule::isReady() { return _isReady; }
 
-int CommModule::NumOpenSockets() { return _ports.count_open(); }
+int CommModule::NumOpenSockets() { return _ports.countOpen(); }
