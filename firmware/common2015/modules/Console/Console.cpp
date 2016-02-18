@@ -2,10 +2,6 @@
 
 #include "logger.hpp"
 
-#define PUTC(c) pc.putc(c)
-#define GETC pc.getc
-#define PRINTF(...) pc.printf(__VA_ARGS__)
-
 const std::string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
 const std::string Console::COMMAND_BREAK_MSG = "*BREAK*\033[K";
 
@@ -54,7 +50,7 @@ void Console::Init() {
 void Console::PrintHeader() {
     // prints out a bash-like header
     Flush();
-    instance->PRINTF("\r\n%s", instance->CONSOLE_HEADER.c_str());
+    instance->pc.printf("\r\n%s", instance->CONSOLE_HEADER.c_str());
     Flush();
 }
 
@@ -76,7 +72,7 @@ void Console::RXCallback() {
         } else {
             // Otherwise, continue as normal
             // read the char that caused the interrupt
-            char c = GETC();
+            char c = pc.getc();
 
             if (esc_flag_one == true && esc_flag_two == true) {
                 esc_en = true;
@@ -88,7 +84,7 @@ void Console::RXCallback() {
             // warning to the console
             if (rxIndex >= (BUFFER_LENGTH - 5) && c != BACKSPACE_FLAG_CHAR) {
                 rxIndex = 0;
-                PRINTF("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
+                pc.printf("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
                 Flush();
 
                 // Execute the function that sets up the console after a
@@ -100,7 +96,7 @@ void Console::RXCallback() {
             // if a new line character is sent, process the current buffer
             else if (c == NEW_LINE_CHAR) {
                 // print new line prior to executing
-                PRINTF("%c\n", NEW_LINE_CHAR);
+                pc.printf("%c\n", NEW_LINE_CHAR);
                 Flush();
                 rxBuffer[rxIndex] = '\0';
 
@@ -121,9 +117,9 @@ void Console::RXCallback() {
                     // 1) Move cursor back
                     // 2) Write a space to clear the character
                     // 3) Move back cursor again
-                    PUTC(BACKSPACE_REPLY_CHAR);
-                    PUTC(BACKSPACE_REPLACE_CHAR);
-                    PUTC(BACKSPACE_REPLY_CHAR);
+                    pc.putc(BACKSPACE_REPLY_CHAR);
+                    pc.putc(BACKSPACE_REPLACE_CHAR);
+                    pc.putc(BACKSPACE_REPLY_CHAR);
                     Flush();
                 } else {
                     /* do nothing if we can't back space any more */
@@ -150,7 +146,7 @@ void Console::RXCallback() {
             else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
                 if (esc_en == false) {
                     rxBuffer[rxIndex++] = c;
-                    PUTC(c);
+                    pc.putc(c);
                     Flush();
                 } else {
                     if (history_index < 0) history_index = 0;
@@ -162,7 +158,7 @@ void Console::RXCallback() {
                         !(rxIndex == 0 && c == ARROW_DOWN_KEY)) {
                         std::string cmd =
                             history.at(history.size() - 1 - history_index);
-                        PRINTF("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
+                        pc.printf("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
                         rxIndex = cmd.size();
                         memcpy(rxBuffer, cmd.c_str(), rxIndex + 1);
                     }
@@ -186,10 +182,10 @@ void Console::RXCallback() {
                 if (esc_en == false) {
                     rxBuffer[rxIndex++] = c;
                 } else {
-                    PUTC(ESCAPE_SEQ_ONE);
-                    PUTC(ESCAPE_SEQ_TWO);
+                    pc.putc(ESCAPE_SEQ_ONE);
+                    pc.putc(ESCAPE_SEQ_TWO);
                 }
-                PUTC(c);
+                pc.putc(c);
                 Flush();
                 esc_flag_one = false;
                 esc_flag_two = false;
@@ -199,7 +195,7 @@ void Console::RXCallback() {
             // the terminal to be visible.
             else {
                 rxBuffer[rxIndex++] = c;
-                PUTC(c);
+                pc.putc(c);
                 Flush();
                 esc_flag_one = false;
                 esc_flag_two = false;
@@ -230,7 +226,7 @@ void Console::IterCmdBreakReq(bool newState) {
 
     // Print out the header if an iterating command is stopped
     if (newState == false) {
-        instance->PRINTF("%s", COMMAND_BREAK_MSG.c_str());
+        instance->pc.printf("%s", COMMAND_BREAK_MSG.c_str());
         PrintHeader();
     }
 }
@@ -252,7 +248,7 @@ void Console::CommandHandled(bool cmdDoneState) {
 
     // print out the header without a newline first
     if (iter_break_req == false) {
-        instance->PRINTF("%s", instance->CONSOLE_HEADER.c_str());
+        instance->pc.printf("%s", instance->CONSOLE_HEADER.c_str());
         Flush();
     }
 }
@@ -297,7 +293,7 @@ std::string Console::GetHostResponse() {
 void Console::ShowLogo() {
     Flush();
 
-    instance->PRINTF(
+    instance->pc.printf(
         "\033[01;33m"
         "   _____       _                _            _        _\r\n"
         "  |  __ \\     | |              | |          | |      | |      \r\n"
@@ -311,6 +307,6 @@ void Console::ShowLogo() {
 }
 
 void Console::SetTitle(const std::string& title) {
-    instance->PRINTF("\033]0;%s\007", title.c_str());
+    instance->pc.printf("\033]0;%s\007", title.c_str());
     Flush();
 }

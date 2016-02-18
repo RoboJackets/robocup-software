@@ -16,11 +16,11 @@ void Task_SerialConsole(void const* args) {
     const osThreadId mainID = (const osThreadId)args;
 
     // Store the thread's ID
-    osThreadId threadID = Thread::gettid();
+    const osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
 
     // Store our priority so we know what to reset it to after running a command
-    osPriority threadPriority = osThreadGetPriority(threadID);
+    const osPriority threadPriority = osThreadGetPriority(threadID);
 
     // Initalize the console buffer and save the char buffer's starting address
     Console::Init();
