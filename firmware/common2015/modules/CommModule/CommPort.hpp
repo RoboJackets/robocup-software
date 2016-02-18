@@ -11,18 +11,14 @@ template <class T>
 class CommPort {
 public:
     // Constructor
-    CommPort()
-        : is_open(false),
-          rx_packets(0),
-          tx_packets(0),
-          rx_callback(nullptr),
-          tx_callback(nullptr) {
+    CommPort() : _isOpen(false), _rxCallback(nullptr), _txCallback(nullptr) {
         Nbr(0);
         resetPacketCount();
     };
+
     CommPort(uint8_t number, std::function<T> rxC = nullptr,
              std::function<T> txC = nullptr)
-        : is_open(false), rx_callback(rxC), tx_callback(txC) {
+        : _isOpen(false), _rxCallback(rxC), _txCallback(txC) {
         Nbr(number);
         resetPacketCount();
     };
@@ -41,46 +37,44 @@ public:
         return (this->Nbr() < p.Nbr() ? true : false);
     }
 
-    uint8_t Nbr() const { return this->nbr; }
+    uint8_t Nbr() const { return _nbr; }
 
-    bool valid() const { return nbr != 0; }
+    bool valid() const { return _nbr != 0; }
 
-    void Nbr(uint8_t _nbr) { nbr = _nbr; }
+    void Nbr(uint8_t nbr) { _nbr = nbr; }
 
     // Open a port or check if a port is capable of providing communication.
     bool Open() {
         if (isReady()) {
-            this->is_open = true;
-
-            return isOpen();
+            _isOpen = true;
+            return true;
         } else {
             return false;
         }
     }
 
-    void Close() { is_open = false; }
+    void Close() { _isOpen = false; }
 
     // Check if the port has already been opened.
-    bool isOpen() const { return this->is_open; }
-    bool isClosed() const { return !isOpen(); }
+    bool isOpen() const { return _isOpen; }
 
     // Set functions for each RX/TX callback.
-    const CommPort<T>& RXCallback(const std::function<T>& func) {
-        rx_callback = func;
+    void setRxCallback(const std::function<T>& func) {
+        _rxCallback = func;
         return *this;
     }
-    const CommPort<T>& TXCallback(const std::function<T>& func) {
-        tx_callback = func;
+    void setTxCallback(const std::function<T>& func) {
+        _txCallback = func;
         return *this;
     }
 
     // Methods that return a reference to the TX/RX callback function pointers
-    std::function<T>& RXCallback() { return rx_callback; }
-    std::function<T>& TXCallback() { return tx_callback; }
+    std::function<T>& RXCallback() { return _rxCallback; }
+    std::function<T>& TXCallback() { return _txCallback; }
 
     // Check if an RX/TX callback function has been set for the port.
-    bool hasTXCallback() const { return tx_callback != nullptr; }
-    bool hasRXCallback() const { return rx_callback != nullptr; }
+    bool hasTXCallback() const { return _txCallback != nullptr; }
+    bool hasRXCallback() const { return _rxCallback != nullptr; }
 
     // Check if the port object is a valid port
     // this will be false when indexing a non-existent port number
@@ -89,47 +83,44 @@ public:
     }
 
     // Get a value or reference to the TX/RX packet count for modifying
-    unsigned int TXPackets() const { return tx_packets; }
-    unsigned int RXPackets() const { return rx_packets; }
-    // unsigned int& TXPackets() { return tx_packets; }
-    // unsigned int& RXPackets() { return rx_packets; }
+    unsigned int txCount() const { return _txCount; }
+    unsigned int rxCount() const { return _rxCount; }
 
-    void incTxCount() { tx_packets++; }
-    void incRxCount() { rx_packets++; }
+    void incTxCount() { _txCount++; }
+    void incRxCount() { _rxCount++; }
 
     // Standard display function for a CommPort
     void PrintPort() const {
-        printf("%2u\t\t%u\t%u\t%s\t\t%s\t\t%s\r\n", Nbr(), RXPackets(),
-               TXPackets(), hasRXCallback() ? "YES" : "NO",
-               hasTXCallback() ? "YES" : "NO", isOpen() ? "OPEN" : "CLOSED");
+        printf("%2u\t\t%u\t%u\t%s\t\t%s\t\t%s\r\n", Nbr(), rxCount(), txCount(),
+               hasRXCallback() ? "YES" : "NO", hasTXCallback() ? "YES" : "NO",
+               isOpen() ? "OPEN" : "CLOSED");
 
         Console::Instance()->Flush();
     }
 
     // Returns the current packet counts to zero
     void resetPacketCount() {
-        rx_packets = 0;
-        tx_packets = 0;
+        _rxCount = 0;
+        _txCount = 0;
     }
 
 protected:
     // Returns true if the port can provide an RX callback routine
-    bool isReady() const { return (is_open ? true : hasRXCallback()); }
+    bool isReady() const { return (_isOpen ? true : hasRXCallback()); }
 
 private:
     // The number assigned to the port
-    uint8_t nbr;
+    uint8_t _nbr;
 
     // If the port is open, it will also be valid
-    bool is_open;
+    bool _isOpen;
 
     // Where each upstream & downstream packet count is stored
-    unsigned int rx_packets;
-    unsigned int tx_packets;
+    unsigned int _rxCount, _txCount;
 
     // the class members that hold the function pointers
-    std::function<T> rx_callback;
-    std::function<T> tx_callback;
+    std::function<T> _rxCallback;
+    std::function<T> _txCallback;
 };
 
 // Function for defining how to sort a std::vector of CommPort objects
@@ -202,8 +193,8 @@ public:
     unsigned int allRXPackets() const {
         unsigned int pcks = 0;
 
-        for (auto it = ports.begin(); it != ports.end(); ++it) {
-            pcks += static_cast<unsigned int>(it->RXPackets());
+        for (auto& port : ports) {
+            pcks += port.rxCount();
         }
 
         return pcks;
@@ -211,8 +202,8 @@ public:
     unsigned int allTXPackets() const {
         unsigned int pcks = 0;
 
-        for (auto it = ports.begin(); it != ports.end(); ++it) {
-            pcks += static_cast<unsigned int>(it->TXPackets());
+        for (auto& port : ports) {
+            pcks += port.txCount();
         }
 
         return pcks;
@@ -222,8 +213,8 @@ public:
         if (empty() == false) {
             PrintHeader();
 
-            for (auto it = ports.begin(); it != ports.end(); ++it) {
-                it->PrintPort();
+            for (auto& port : ports) {
+                port.PrintPort();
             }
         }
     }
