@@ -76,7 +76,7 @@ int cmd_motors_scroll(const std::vector<std::string>& args) {
 
     // move cursor back 8 rows
     printf("\033[%uA", 8);
-    Console::Flush();
+    Console::Instance()->Flush();
 
     Thread::wait(350);
     return 0;

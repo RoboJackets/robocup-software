@@ -311,7 +311,7 @@ void CommModule::PrintInfo(bool forceHeader) {
         _ports.PrintFooter();
     }
 
-    Console::Flush();
+    Console::Instance()->Flush();
 }
 
 void CommModule::PrintHeader() { _ports.PrintHeader(); }

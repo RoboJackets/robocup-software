@@ -252,7 +252,7 @@ int cmd_console_clear(cmd_args_t& args) {
         show_invalid_args(args);
         return 1;
     } else {
-        Console::Flush();
+        Console::Instance()->Flush();
         printf(ENABLE_SCROLL_SEQ.c_str());
         printf(CLEAR_SCREEN_SEQ.c_str());
     }
@@ -282,7 +282,7 @@ int cmd_console_exit(cmd_args_t& args) {
         return 1;
     } else {
         printf("Shutting down serial console. Goodbye!\r\n");
-        Console::RequestSystemStop();
+        Console::Instance()->RequestSystemStop();
     }
 
     return 0;
@@ -377,9 +377,9 @@ int cmd_ping(cmd_args_t& args) {
         return 1;
     } else {
         time_t sys_time = time(nullptr);
-        Console::Flush();
+        Console::Instance()->Flush();
         printf("reply: %lu\r\n", sys_time);
-        Console::Flush();
+        Console::Instance()->Flush();
 
         Thread::wait(600);
     }
@@ -396,7 +396,7 @@ int cmd_interface_reset(cmd_args_t& args) {
         return 1;
     } else {
         printf("The system is going down for reboot NOW!\033[0J\r\n");
-        Console::Flush();
+        Console::Instance()->Flush();
 
         // give some time for the feedback to get back to the console
         Thread::wait(800);
@@ -432,7 +432,7 @@ int cmd_ls(cmd_args_t& args) {
         // don't use printf until we close the directory
         for (auto& i : filenames) {
             printf(" - %s\r\n", i.c_str());
-            Console::Flush();
+            Console::Instance()->Flush();
         }
 
     } else {
@@ -607,7 +607,7 @@ int cmd_baudrate(cmd_args_t& args) {
                                     57600, 115200, 230400, 460800, 921600};
 
     if (args.empty() == true || args.size() > 1) {
-        printf("Baudrate: %u\r\n", Console::Baudrate());
+        printf("Baudrate: %u\r\n", Console::Instance()->Baudrate());
     }
 
     else if (args.size() == 1) {
@@ -625,7 +625,7 @@ int cmd_baudrate(cmd_args_t& args) {
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
                 valid_rates.end()) {
-                Console::Baudrate(new_rate);
+                Console::Instance()->Baudrate(new_rate);
                 printf("New baudrate: %u\r\n", new_rate);
             } else {
                 printf(
@@ -649,7 +649,7 @@ int cmd_console_user(cmd_args_t& args) {
     }
 
     else {
-        Console::changeUser(args.front());
+        Console::Instance()->changeUser(args.front());
     }
 
     return 0;
@@ -662,7 +662,7 @@ int cmd_console_hostname(cmd_args_t& args) {
     }
 
     else {
-        Console::changeHostname(args.front());
+        Console::Instance()->changeHostname(args.front());
     }
 
     return 0;
@@ -1065,7 +1065,7 @@ void execute_line(char* rawCommand) {
         }
 
         cmds = strtok_r(nullptr, ";", &endCmd);
-        Console::Flush();  // make sure we force everything out of stdout
+        Console::Instance()->Flush();  // make sure we force everything out of stdout
     }
 }
 
@@ -1075,12 +1075,12 @@ void execute_line(char* rawCommand) {
  */
 void execute_iterative_command() {
     if (iterative_command_state == true) {
-        if (Console::IterCmdBreakReq() == true) {
+        if (Console::Instance()->IterCmdBreakReq() == true) {
             iterative_command_state = false;
 
             // reset the flag for receiving a break character in the Console
             // class
-            Console::IterCmdBreakReq(false);
+            Console::Instance()->IterCmdBreakReq(false);
             // make sure the cursor is enabled
             printf("\033[?25h");
         } else {

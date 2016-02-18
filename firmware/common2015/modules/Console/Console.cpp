@@ -7,50 +7,40 @@ const std::string Console::COMMAND_BREAK_MSG = "*BREAK*\033[K";
 
 shared_ptr<Console> Console::instance;
 
-bool Console::iter_break_req = false;
-bool Console::command_handled = true;
-bool Console::command_ready = false;
-
-Console::Console() : pc(USBTX, USBRX) {}
-
-Console::~Console() { instance.reset(); }
-
-shared_ptr<Console>& Console::Instance() {
-    if (instance.get() == nullptr) instance.reset(new Console);
-
-    return instance;
-}
-
-void Console::Init() {
-    auto instance = Instance();
-
+Console::Console() : pc(USBTX, USBRX) {
     // Set default values for the header parameters
-    instance->CONSOLE_USER = "anon";
-    instance->CONSOLE_HOSTNAME = "robot";
-    instance->setHeader();
+    CONSOLE_USER = "anon";
+    CONSOLE_HOSTNAME = "robot";
+    setHeader();
 
-    // set baud rate, store the value before
+    // Use a higher baudrate than the default for a faster console
     Baudrate(57600);
 
     // clear buffers
-    instance->ClearRXBuffer();
-    instance->ClearTXBuffer();
+    ClearRXBuffer();
+    ClearTXBuffer();
 
     // attach interrupt handlers
-    instance->pc.attach(instance.get(), &Console::RXCallback, Serial::RxIrq);
-    instance->pc.attach(instance.get(), &Console::TXCallback, Serial::TxIrq);
+    pc.attach(this, &Console::RXCallback, Serial::RxIrq);
+    pc.attach(this, &Console::TXCallback, Serial::TxIrq);
 
-    // reset indicces
-    instance->rxIndex = 0;
-    instance->txIndex = 0;
+    // reset indices
+    rxIndex = 0;
+    txIndex = 0;
+}
 
-    LOG(INF3, "Hello from the 'common2015' library!");
+Console::~Console() {}
+
+shared_ptr<Console>& Console::Instance() {
+    if (!instance) instance.reset(new Console);
+
+    return instance;
 }
 
 void Console::PrintHeader() {
     // prints out a bash-like header
     Flush();
-    instance->pc.printf("\r\n%s", instance->CONSOLE_HEADER.c_str());
+    pc.printf("\r\n%s", CONSOLE_HEADER.c_str());
     Flush();
 }
 
@@ -58,7 +48,7 @@ void Console::ClearRXBuffer() { memset(rxBuffer, '\0', BUFFER_LENGTH); }
 
 void Console::ClearTXBuffer() { memset(txBuffer, '\0', BUFFER_LENGTH); }
 
-void Console::Flush() { fflush(stdout); }
+void Console::Flush() { fflush(stdout); } // TODO: pc.fflush()?
 
 void Console::RXCallback() {
     // If for some reason more than one character is in the buffer when the
@@ -215,9 +205,9 @@ void Console::TXCallback() {
     // NVIC_EnableIRQ(UART0_IRQn);
 }
 
-void Console::RequestSystemStop() { Instance()->sysStopReq = true; }
+void Console::RequestSystemStop() { sysStopReq = true; }
 
-bool Console::IsSystemStopRequested() { return Instance()->sysStopReq; }
+bool Console::IsSystemStopRequested() { return sysStopReq; }
 
 bool Console::IterCmdBreakReq() { return iter_break_req; }
 
@@ -226,12 +216,12 @@ void Console::IterCmdBreakReq(bool newState) {
 
     // Print out the header if an iterating command is stopped
     if (newState == false) {
-        instance->pc.printf("%s", COMMAND_BREAK_MSG.c_str());
+        pc.printf("%s", COMMAND_BREAK_MSG.c_str());
         PrintHeader();
     }
 }
 
-char* Console::rxBufferPtr() { return instance->rxBuffer; }
+char* Console::rxBufferPtr() { return rxBuffer; }
 
 bool Console::CommandReady() { return command_ready; }
 
@@ -240,7 +230,7 @@ void Console::CommandHandled(bool cmdDoneState) {
     command_handled = cmdDoneState;
 
     // Clean up after command execution
-    instance->rxIndex = 0;
+    rxIndex = 0;
 
     // reset our outgoing flag saying if there's a valid command sequence in the
     // RX buffer or now
@@ -248,43 +238,41 @@ void Console::CommandHandled(bool cmdDoneState) {
 
     // print out the header without a newline first
     if (iter_break_req == false) {
-        instance->pc.printf("%s", instance->CONSOLE_HEADER.c_str());
+        pc.printf("%s", CONSOLE_HEADER.c_str());
         Flush();
     }
 }
 
 void Console::changeHostname(const std::string& hostname) {
-    instance->CONSOLE_HOSTNAME = hostname;
-    instance->setHeader();
+    CONSOLE_HOSTNAME = hostname;
+    setHeader();
 }
 
 void Console::changeUser(const std::string& user) {
-    instance->CONSOLE_USER = user;
-    instance->setHeader();
+    CONSOLE_USER = user;
+    setHeader();
 }
 
 void Console::setHeader() {
-    instance->CONSOLE_HEADER =
-        "\033[1;36m" + instance->CONSOLE_USER + "\033[1;32m@\033[1;33m" +
-        instance->CONSOLE_HOSTNAME + " \033[36m$\033[m \033[J\033[m";
-    // instance->CONSOLE_HEADER = instance->CONSOLE_USER + "@" +
-    // instance->CONSOLE_HOSTNAME + " $ ";
+    CONSOLE_HEADER =
+        "\033[1;36m" + CONSOLE_USER + "\033[1;32m@\033[1;33m" +
+        CONSOLE_HOSTNAME + " \033[36m$\033[m \033[J\033[m";
 }
 
 void Console::Baudrate(uint16_t baud) {
-    instance->baudrate = baud;
-    instance->pc.baud(instance->baudrate);
+    _baudRate = baud;
+    pc.baud(_baudRate);
 }
 
-uint16_t Console::Baudrate() { return instance->baudrate; }
+uint16_t Console::Baudrate() { return _baudRate; }
 
-void Console::SetEscEnd(char c) { instance->esc_host_end_char = c; }
+void Console::SetEscEnd(char c) { esc_host_end_char = c; }
 
 std::string Console::GetHostResponse() {
-    if (instance->esc_host_res_rdy == true) {
-        instance->esc_host_res_rdy = false;
+    if (esc_host_res_rdy == true) {
+        esc_host_res_rdy = false;
 
-        return instance->esc_host_res;
+        return esc_host_res;
     } else {
         return "";
     }
@@ -293,7 +281,7 @@ std::string Console::GetHostResponse() {
 void Console::ShowLogo() {
     Flush();
 
-    instance->pc.printf(
+    pc.printf(
         "\033[01;33m"
         "   _____       _                _            _        _\r\n"
         "  |  __ \\     | |              | |          | |      | |      \r\n"
@@ -307,6 +295,6 @@ void Console::ShowLogo() {
 }
 
 void Console::SetTitle(const std::string& title) {
-    instance->pc.printf("\033]0;%s\007", title.c_str());
+    pc.printf("\033]0;%s\007", title.c_str());
     Flush();
 }

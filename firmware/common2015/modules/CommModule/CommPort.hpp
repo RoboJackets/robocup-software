@@ -105,7 +105,7 @@ public:
                TXPackets(), hasRXCallback() ? "YES" : "NO",
                hasTXCallback() ? "YES" : "NO", isOpen() ? "OPEN" : "CLOSED");
 
-        Console::Flush();
+        Console::Instance()->Flush();
     }
 
 protected:
@@ -235,7 +235,7 @@ public:
 
     void PrintHeader() {
         printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
-        Console::Flush();
+        Console::Instance()->Flush();
     }
 
     void PrintFooter() {
@@ -243,6 +243,6 @@ public:
             "==========================\r\n"
             "Total:\t\t%u\t%u\r\n",
             allRXPackets(), allTXPackets());
-        Console::Flush();
+        Console::Instance()->Flush();
     }
 };

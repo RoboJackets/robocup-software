@@ -24,6 +24,9 @@ const std::string ANSI_SU = "\033[1S";
  */
 class Console {
 public:
+    /// Get a pointer to the global Console instance
+    static std::shared_ptr<Console>& Instance();
+
     /**
      * max buffer length. Default 400 (five lines)
      */
@@ -75,7 +78,7 @@ public:
     static const char CMD_END_CHAR = ';';
 
     /**
-     * receice buffer full error message
+     * receive buffer full error message
      */
     static const std::string RX_BUFFER_FULL_MSG;
 
@@ -90,52 +93,46 @@ public:
     ~Console();
 
     /**
-     * Console initialization routine. Attaches interrupt handlers and clears
-     * the
-     * buffers.
-     */
-    static void Init();
-
-    /**
      * flushes stdout. Should be called after every putc or printf block.
      */
-    static void Flush();
+    void Flush();
 
     /**
      * requests the main loop break
      */
-    static void RequestSystemStop();
+    void RequestSystemStop();
 
     /**
      * returns if the main loop should break
      */
-    static bool IsSystemStopRequested();
+    bool IsSystemStopRequested();
 
-    static bool IterCmdBreakReq();
-    static void IterCmdBreakReq(bool newState);
+    bool IterCmdBreakReq();
+    void IterCmdBreakReq(bool newState);
 
-    static char* rxBufferPtr();
+    char* rxBufferPtr();
 
-    static bool CommandReady();
-    static void CommandHandled(bool);
+    bool CommandReady();
+    void CommandHandled(bool);
 
-    static void changeHostname(const std::string&);
-    static void changeUser(const std::string&);
+    void changeHostname(const std::string&);
+    void changeUser(const std::string&);
 
-    static void Baudrate(uint16_t);
-    static uint16_t Baudrate();
+    void Baudrate(uint16_t);
+    uint16_t Baudrate();
 
-    static void PrintHeader();
-    static void ShowLogo();
-    static void SetTitle(const std::string&);
-    static void SetEscEnd(char c);
-    static std::string GetHostResponse();
+    void PrintHeader();
+    void ShowLogo();
+    void SetTitle(const std::string&);
+    void SetEscEnd(char c);
+    std::string GetHostResponse();
 
 private:
-    // Constructor is only used in init branch of Instance()
+    /**
+     * Console initialization routine. Attaches interrupt handlers and clears
+     * the buffers.
+     */
     Console();
-
-    static std::shared_ptr<Console>& Instance();
 
     void ClearRXBuffer();
 
@@ -150,9 +147,9 @@ private:
     static std::shared_ptr<Console> instance;
 
     // Flags for command execution states
-    static bool iter_break_req;
-    static bool command_handled;
-    static bool command_ready;
+    bool iter_break_req = false;
+    bool command_handled = false;
+    bool command_ready = false;
 
     /**
     * Console header string.
@@ -162,14 +159,12 @@ private:
     std::string CONSOLE_HOSTNAME;
 
     /**
-    * Serial (over USB) baud rate.
-    */
-    uint16_t baudrate;
-
-    /**
     * Serial connection
     */
     Serial pc;
+
+    /// baud rate of serial connection
+    uint16_t _baudRate;
 
     /**
      * Receive buffer
