@@ -105,9 +105,9 @@ public:
     /**
      * returns if the main loop should break
      */
-    bool IsSystemStopRequested();
+    bool IsSystemStopRequested() const;
 
-    bool IterCmdBreakReq();
+    bool IterCmdBreakReq() const;
     void IterCmdBreakReq(bool newState);
 
     char* rxBufferPtr();
@@ -121,7 +121,7 @@ public:
     void changeUser(const std::string&);
 
     void Baudrate(uint16_t);
-    uint16_t Baudrate();
+    uint16_t Baudrate() const;
 
     void PrintHeader();
     void ShowLogo();
@@ -194,7 +194,7 @@ private:
      */
     uint16_t rxIndex = 0;
 
-    size_t MAX_HISTORY = 10;
+    const size_t MAX_HISTORY = 10;
     int history_index = 0;
     std::deque<std::string> history;
 };

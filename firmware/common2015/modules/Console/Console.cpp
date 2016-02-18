@@ -191,9 +191,9 @@ void Console::RXCallback() {
 
 void Console::RequestSystemStop() { sysStopReq = true; }
 
-bool Console::IsSystemStopRequested() { return sysStopReq; }
+bool Console::IsSystemStopRequested() const { return sysStopReq; }
 
-bool Console::IterCmdBreakReq() { return iter_break_req; }
+bool Console::IterCmdBreakReq() const { return iter_break_req; }
 
 void Console::IterCmdBreakReq(bool newState) {
     iter_break_req = newState;
@@ -248,7 +248,7 @@ void Console::Baudrate(uint16_t baud) {
     pc.baud(_baudRate);
 }
 
-uint16_t Console::Baudrate() { return _baudRate; }
+uint16_t Console::Baudrate() const { return _baudRate; }
 
 void Console::SetEscEnd(char c) { esc_host_end_char = c; }
 
