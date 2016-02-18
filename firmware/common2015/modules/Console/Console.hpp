@@ -148,7 +148,6 @@ private:
 
     // Flags for command execution states
     bool iter_break_req = false;
-    bool command_handled = false;
     bool command_ready = false;
 
     /**

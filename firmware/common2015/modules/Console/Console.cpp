@@ -49,9 +49,9 @@ void Console::RXCallback() {
     // If for some reason more than one character is in the buffer when the
     // interrupt is called, handle them all.
     while (pc.readable()) {
-        // If there is an command that hasn't finished yet, ignore the character
+        // If there is a command that hasn't finished yet, ignore the character
         // for now
-        if (command_handled == false && command_ready == true) {
+        if (command_ready == true) {
             return;
 
         } else {
@@ -90,7 +90,6 @@ void Console::RXCallback() {
 
                 history_index = 0;
                 command_ready = true;
-                command_handled = false;
             }
 
             // if a backspace is requested, handle it.
@@ -211,9 +210,6 @@ char* Console::rxBufferPtr() { return rxBuffer; }
 bool Console::CommandReady() const { return command_ready; }
 
 void Console::CommandHandled() {
-    // update the class's flag for if a command was handled or not
-    command_handled = true;
-
     // Clean up after command execution
     rxIndex = 0;
 
