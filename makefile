@@ -91,6 +91,16 @@ $(FIRMWR_TESTS:-%=robot2015-test-%):
 $(FIRMWR_TESTS:-%=robot2015-test-%-prog):
 	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(@F:robot2015-test-%-prog=%))
 
+# run gdb server on port 3333 and connect to it with gdb
+robot2015-gdb: robot2015
+	sudo pyocd-gdbserver > build/robot2015-gdb.log 2>&1 &
+	echo "=> started pyocd-gdbserver, logging to build/robot2015-gdb.log"
+
+	arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+	  -ex "target remote localhost:3333" \
+	  -ex "load" \
+	  -ex "continue"
+
 # kicker 2015 firmware
 kicker2015:
 	$(call cmake_build_target_fw, kicker2015)
