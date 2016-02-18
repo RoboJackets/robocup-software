@@ -51,7 +51,7 @@ void Console::RXCallback() {
     while (pc.readable()) {
         // If there is a command that hasn't finished yet, ignore the character
         // for now
-        if (command_ready == true) {
+        if (command_ready) {
             return;
 
         } else {
@@ -59,7 +59,7 @@ void Console::RXCallback() {
             // read the char that caused the interrupt
             char c = pc.getc();
 
-            if (esc_flag_one == true && esc_flag_two == true) {
+            if (esc_flag_one && esc_flag_two) {
                 esc_en = true;
             } else {
                 esc_en = false;
@@ -93,7 +93,7 @@ void Console::RXCallback() {
             }
 
             // if a backspace is requested, handle it.
-            else if (c == BACKSPACE_FLAG_CHAR)
+            else if (c == BACKSPACE_FLAG_CHAR) {
                 if (rxIndex > 0) {  // instance->CONSOLE_HEADER.length()) {
                     // re-terminate the string
                     rxBuffer[--rxIndex] = '\0';
@@ -108,27 +108,20 @@ void Console::RXCallback() {
                 } else {
                     /* do nothing if we can't back space any more */
                 }
-
-            // set that a command break was requested flag if we received a
-            // break character
-            else if (c == BREAK_CHAR) {
+            } else if (c == BREAK_CHAR) {
+                // set that a command break was requested flag if we received a
+                // break character
                 iter_break_req = true;
-            }
-
-            else if (c == ESCAPE_SEQ_ONE) {
+            } else if (c == ESCAPE_SEQ_ONE) {
                 esc_flag_one = true;
-            }
-
-            else if (c == ESCAPE_SEQ_TWO) {
-                if (esc_flag_one == true) {
+            } else if (c == ESCAPE_SEQ_TWO) {
+                if (esc_flag_one) {
                     esc_flag_two = true;
                 } else {
                     esc_flag_two = false;
                 }
-            }
-
-            else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
-                if (esc_en == false) {
+            } else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
+                if (!esc_en) {
                     rxBuffer[rxIndex++] = c;
                     pc.putc(c);
                     Flush();
@@ -161,10 +154,8 @@ void Console::RXCallback() {
                 }
                 esc_flag_one = false;
                 esc_flag_two = false;
-            }
-
-            else if (c == ARROW_LEFT_KEY || c == ARROW_RIGHT_KEY) {
-                if (esc_en == false) {
+            } else if (c == ARROW_LEFT_KEY || c == ARROW_RIGHT_KEY) {
+                if (!esc_en) {
                     rxBuffer[rxIndex++] = c;
                 } else {
                     pc.putc(ESCAPE_SEQ_ONE);
@@ -174,11 +165,9 @@ void Console::RXCallback() {
                 Flush();
                 esc_flag_one = false;
                 esc_flag_two = false;
-            }
-
-            // No special character, add it to the buffer and return it to
-            // the terminal to be visible.
-            else {
+            } else {
+                // No special character, add it to the buffer and return it to
+                // the terminal to be visible.
                 rxBuffer[rxIndex++] = c;
                 pc.putc(c);
                 Flush();
@@ -199,7 +188,7 @@ void Console::IterCmdBreakReq(bool newState) {
     iter_break_req = newState;
 
     // Print out the header if an iterating command is stopped
-    if (newState == false) {
+    if (!newState) {
         pc.printf("%s", COMMAND_BREAK_MSG.c_str());
         PrintHeader();
     }
@@ -218,7 +207,7 @@ void Console::CommandHandled() {
     command_ready = false;
 
     // print out the header without a newline first
-    if (iter_break_req == false) {
+    if (!iter_break_req) {
         pc.printf("%s", CONSOLE_HEADER.c_str());
         Flush();
     }
@@ -249,7 +238,7 @@ uint16_t Console::Baudrate() const { return _baudRate; }
 void Console::SetEscEnd(char c) { esc_host_end_char = c; }
 
 std::string Console::GetHostResponse() {
-    if (esc_host_res_rdy == true) {
+    if (esc_host_res_rdy) {
         esc_host_res_rdy = false;
 
         return esc_host_res;
