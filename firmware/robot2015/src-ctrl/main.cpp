@@ -120,7 +120,7 @@ int main() {
 
     // This is where the FPGA is actually configured with the bitfile's name
     // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    bool fpga_ready = false;//FPGA::Instance()->Init("/local/rj-fpga.nib");
 
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
@@ -250,67 +250,67 @@ int main() {
 
 #define _EXTERN extern "C"
 
-_EXTERN void HardFault_Handler() {
-    __asm volatile(
-        " tst lr, #4                                                \n"
-        " ite eq                                                    \n"
-        " mrseq r0, msp                                             \n"
-        " mrsne r0, psp                                             \n"
-        " ldr r1, [r0, #24]                                         \n"
-        " ldr r2, hard_fault_handler_2_const                        \n"
-        " bx r2                                                     \n"
-        " hard_fault_handler_2_const: .word HARD_FAULT_HANDLER    	\n");
-}
+// _EXTERN void HardFault_Handler() {
+//     __asm volatile(
+//         " tst lr, #4                                                \n"
+//         " ite eq                                                    \n"
+//         " mrseq r0, msp                                             \n"
+//         " mrsne r0, psp                                             \n"
+//         " ldr r1, [r0, #24]                                         \n"
+//         " ldr r2, hard_fault_handler_2_const                        \n"
+//         " bx r2                                                     \n"
+//         " hard_fault_handler_2_const: .word HARD_FAULT_HANDLER    	\n");
+// }
 
-_EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
-    /* These are volatile to try and prevent the compiler/linker optimising them
-     * away as the variables never actually get used.  If the debugger won't
-     * show the values of the variables, make them global my moving their
-     * declaration outside of this function. */
-    volatile uint32_t r0;
-    volatile uint32_t r1;
-    volatile uint32_t r2;
-    volatile uint32_t r3;
-    volatile uint32_t r12;
-    volatile uint32_t lr;  /* Link register. */
-    volatile uint32_t pc;  /* Program counter. */
-    volatile uint32_t psr; /* Program status register. */
+// _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
+//     /* These are volatile to try and prevent the compiler/linker optimising them
+//      * away as the variables never actually get used.  If the debugger won't
+//      * show the values of the variables, make them global my moving their
+//      * declaration outside of this function. */
+//     volatile uint32_t r0;
+//     volatile uint32_t r1;
+//     volatile uint32_t r2;
+//     volatile uint32_t r3;
+//     volatile uint32_t r12;
+//     volatile uint32_t lr;  /* Link register. */
+//     volatile uint32_t pc;  /* Program counter. */
+//     volatile uint32_t psr; /* Program status register. */
 
-    r0 = stackAddr[0];
-    r1 = stackAddr[1];
-    r2 = stackAddr[2];
-    r3 = stackAddr[3];
-    r12 = stackAddr[4];
-    lr = stackAddr[5];
-    pc = stackAddr[6];
-    psr = stackAddr[7];
+//     r0 = stackAddr[0];
+//     r1 = stackAddr[1];
+//     r2 = stackAddr[2];
+//     r3 = stackAddr[3];
+//     r12 = stackAddr[4];
+//     lr = stackAddr[5];
+//     pc = stackAddr[6];
+//     psr = stackAddr[7];
 
-    LOG(FATAL,
-        "\r\n"
-        "================================\r\n"
-        "========== HARD FAULT ==========\r\n"
-        "\r\n"
-        "  MSP:\t0x%08X\r\n"
-        "  HFSR:\t0x%08X\r\n"
-        "  CFSR:\t0x%08X\r\n"
-        "\r\n"
-        "  r0:\t0x%08X\r\n"
-        "  r1:\t0x%08X\r\n"
-        "  r2:\t0x%08X\r\n"
-        "  r3:\t0x%08X\r\n"
-        "  r12:\t0x%08X\r\n"
-        "  lr:\t0x%08X\r\n"
-        "  pc:\t0x%08X\r\n"
-        "  psr:\t0x%08X\r\n"
-        "\r\n"
-        "========== HARD FAULT ==========\r\n"
-        "================================",
-        __get_MSP, SCB->HFSR, SCB->CFSR, r0, r1, r2, r3, r12, lr, pc, psr);
+//     LOG(FATAL,
+//         "\r\n"
+//         "================================\r\n"
+//         "========== HARD FAULT ==========\r\n"
+//         "\r\n"
+//         "  MSP:\t0x%08X\r\n"
+//         "  HFSR:\t0x%08X\r\n"
+//         "  CFSR:\t0x%08X\r\n"
+//         "\r\n"
+//         "  r0:\t0x%08X\r\n"
+//         "  r1:\t0x%08X\r\n"
+//         "  r2:\t0x%08X\r\n"
+//         "  r3:\t0x%08X\r\n"
+//         "  r12:\t0x%08X\r\n"
+//         "  lr:\t0x%08X\r\n"
+//         "  pc:\t0x%08X\r\n"
+//         "  psr:\t0x%08X\r\n"
+//         "\r\n"
+//         "========== HARD FAULT ==========\r\n"
+//         "================================",
+//         __get_MSP, SCB->HFSR, SCB->CFSR, r0, r1, r2, r3, r12, lr, pc, psr);
 
-    // do nothing so everything remains unchanged for debugging
-    while (true)
-        ;
-}
+//     // do nothing so everything remains unchanged for debugging
+//     while (true)
+//         ;
+// }
 
 _EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }
 
