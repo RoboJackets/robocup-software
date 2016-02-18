@@ -61,7 +61,12 @@ void Task_SerialConsole(void const* args) {
 
             // Execute the command
             NVIC_DisableIRQ(UART0_IRQn);
-            execute_line(console->rxBufferPtr());
+            // TODO(justin): avoid string copying
+            size_t rxLen = console->rxBuffer().size() + 1;
+            char rx[rxLen];
+            memcpy(rx, console->rxBuffer().c_str(), rxLen - 1);
+            rx[rxLen - 1] = '\0';
+            execute_line(rx);
             NVIC_EnableIRQ(UART0_IRQn);
 
             // Now, reset the priority of the thread to its idle state

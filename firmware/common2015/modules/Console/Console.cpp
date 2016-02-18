@@ -2,7 +2,6 @@
 
 #include "logger.hpp"
 
-const std::string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
 const std::string Console::COMMAND_BREAK_MSG = "*BREAK*\033[K";
 
 shared_ptr<Console> Console::instance;
@@ -16,14 +15,11 @@ Console::Console() : pc(USBTX, USBRX) {
     // Use a higher baudrate than the default for a faster console
     Baudrate(57600);
 
-    // clear buffers
-    ClearRXBuffer();
-
     // attach interrupt handlers
     pc.attach(this, &Console::RXCallback, Serial::RxIrq);
 
-    // reset indices
-    rxIndex = 0;
+    // reserve space for 5 lines in rx buffer
+    _rxBuffer.reserve(400);
 }
 
 Console::~Console() {}
@@ -40,8 +36,6 @@ void Console::PrintHeader() {
     pc.printf("\r\n%s", CONSOLE_HEADER.c_str());
     Flush();
 }
-
-void Console::ClearRXBuffer() { memset(rxBuffer, '\0', BUFFER_LENGTH); }
 
 void Console::Flush() { fflush(stdout); }  // TODO: pc.fflush()?
 
@@ -65,28 +59,14 @@ void Console::RXCallback() {
                 esc_en = false;
             }
 
-            // if the buffer is full, ignore the chracter and print a
-            // warning to the console
-            if (rxIndex >= (BUFFER_LENGTH - 5) && c != BACKSPACE_FLAG_CHAR) {
-                rxIndex = 0;
-                pc.printf("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
-                Flush();
-
-                // Execute the function that sets up the console after a
-                // command's execution.
-                // This will ensure everything flushes corectly on a full buffer
-                CommandHandled();
-            }
-
             // if a new line character is sent, process the current buffer
-            else if (c == NEW_LINE_CHAR) {
+            if (c == NEW_LINE_CHAR) {
                 // print new line prior to executing
                 pc.printf("%c\n", NEW_LINE_CHAR);
                 Flush();
-                rxBuffer[rxIndex] = '\0';
 
                 if (history.size() >= MAX_HISTORY) history.pop_front();
-                if (rxIndex != 0) history.push_back(rxBuffer);
+                if (_rxBuffer.size() > 0) history.push_back(_rxBuffer);
 
                 history_index = 0;
                 command_ready = true;
@@ -94,9 +74,9 @@ void Console::RXCallback() {
 
             // if a backspace is requested, handle it.
             else if (c == BACKSPACE_FLAG_CHAR) {
-                if (rxIndex > 0) {  // instance->CONSOLE_HEADER.length()) {
-                    // re-terminate the string
-                    rxBuffer[--rxIndex] = '\0';
+                if (_rxBuffer.size() > 0) {
+                    // remove last character
+                    _rxBuffer.pop_back();
 
                     // 1) Move cursor back
                     // 2) Write a space to clear the character
@@ -122,7 +102,7 @@ void Console::RXCallback() {
                 }
             } else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
                 if (!esc_en) {
-                    rxBuffer[rxIndex++] = c;
+                    _rxBuffer.push_back(c);
                     pc.putc(c);
                     Flush();
                 } else {
@@ -132,13 +112,12 @@ void Console::RXCallback() {
                             history.size() - (history.empty() ? 0 : 1);
 
                     if (history.size() > 0 &&
-                        !(rxIndex == 0 && c == ARROW_DOWN_KEY)) {
+                        !(_rxBuffer.size() == 0 && c == ARROW_DOWN_KEY)) {
                         std::string cmd =
                             history.at(history.size() - 1 - history_index);
                         pc.printf("\r%s%s", CONSOLE_HEADER.c_str(),
                                   cmd.c_str());
-                        rxIndex = cmd.size();
-                        memcpy(rxBuffer, cmd.c_str(), rxIndex + 1);
+                        _rxBuffer = cmd;
                     }
 
                     switch (c) {
@@ -156,7 +135,7 @@ void Console::RXCallback() {
                 esc_flag_two = false;
             } else if (c == ARROW_LEFT_KEY || c == ARROW_RIGHT_KEY) {
                 if (!esc_en) {
-                    rxBuffer[rxIndex++] = c;
+                    _rxBuffer.push_back(c);
                 } else {
                     pc.putc(ESCAPE_SEQ_ONE);
                     pc.putc(ESCAPE_SEQ_TWO);
@@ -168,7 +147,7 @@ void Console::RXCallback() {
             } else {
                 // No special character, add it to the buffer and return it to
                 // the terminal to be visible.
-                rxBuffer[rxIndex++] = c;
+                _rxBuffer.push_back(c);
                 pc.putc(c);
                 Flush();
                 esc_flag_one = false;
@@ -194,13 +173,12 @@ void Console::IterCmdBreakReq(bool newState) {
     }
 }
 
-char* Console::rxBufferPtr() { return rxBuffer; }
+std::string& Console::rxBuffer() { return _rxBuffer; }
 
 bool Console::CommandReady() const { return command_ready; }
 
 void Console::CommandHandled() {
-    // Clean up after command execution
-    rxIndex = 0;
+    _rxBuffer.clear();
 
     // reset our outgoing flag saying if there's a valid command sequence in the
     // RX buffer or now

@@ -28,11 +28,6 @@ public:
     static std::shared_ptr<Console>& Instance();
 
     /**
-     * max buffer length. Default 400 (five lines)
-     */
-    static const uint16_t BUFFER_LENGTH = 400;
-
-    /**
      * new line character. Default '\r'
      */
     static const char NEW_LINE_CHAR = '\r';  // ASCII CR (\r) (0x0D)
@@ -78,11 +73,6 @@ public:
     static const char CMD_END_CHAR = ';';
 
     /**
-     * receive buffer full error message
-     */
-    static const std::string RX_BUFFER_FULL_MSG;
-
-    /**
      * break message
      */
     static const std::string COMMAND_BREAK_MSG;
@@ -110,7 +100,7 @@ public:
     bool IterCmdBreakReq() const;
     void IterCmdBreakReq(bool newState);
 
-    char* rxBufferPtr();
+    std::string& rxBuffer();
 
     bool CommandReady() const;
 
@@ -135,10 +125,6 @@ private:
      * the buffers.
      */
     Console();
-
-    void ClearRXBuffer();
-
-    void ClearTXBuffer();
 
     void RXCallback();
 
@@ -168,7 +154,7 @@ private:
     /**
      * Receive buffer
      */
-    char rxBuffer[BUFFER_LENGTH];
+    std::string _rxBuffer;
 
     /**
      * Is a system stop requested
@@ -187,11 +173,6 @@ private:
     std::string esc_host_res;
 
     char esc_host_end_char = 'R';
-
-    /**
-     * receive buffer index
-     */
-    uint16_t rxIndex = 0;
 
     const size_t MAX_HISTORY = 10;
     int history_index = 0;
