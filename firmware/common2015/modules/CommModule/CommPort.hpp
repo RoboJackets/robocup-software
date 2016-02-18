@@ -43,14 +43,9 @@ public:
 
     uint8_t Nbr() const { return this->nbr; }
 
-    void Nbr(uint8_t _nbr) {
-        if (_nbr == 0)
-            is_valid = false;
-        else
-            is_valid = true;
+    bool valid() const { return nbr != 0; }
 
-        nbr = _nbr;
-    }
+    void Nbr(uint8_t _nbr) { nbr = _nbr; }
 
     // Open a port or check if a port is capable of providing communication.
     bool Open() {
@@ -90,14 +85,17 @@ public:
     // Check if the port object is a valid port
     // this will be false when indexing a non-existent port number
     bool Exists() const {
-        return (hasRXCallback() || hasTXCallback()) ? true : this->is_valid;
+        return (hasRXCallback() || hasTXCallback()) && valid();
     }
 
     // Get a value or reference to the TX/RX packet count for modifying
     unsigned int TXPackets() const { return tx_packets; }
     unsigned int RXPackets() const { return rx_packets; }
-    unsigned int& TXPackets() { return tx_packets; }
-    unsigned int& RXPackets() { return rx_packets; }
+    // unsigned int& TXPackets() { return tx_packets; }
+    // unsigned int& RXPackets() { return rx_packets; }
+
+    void incTxCount() { tx_packets++; }
+    void incRxCount() { rx_packets++; }
 
     // Standard display function for a CommPort
     void PrintPort() const {
@@ -108,22 +106,19 @@ public:
         Console::Instance()->Flush();
     }
 
-protected:
     // Returns the current packet counts to zero
     void resetPacketCount() {
-        RXPackets() = 0;
-        TXPackets() = 0;
+        rx_packets = 0;
+        tx_packets = 0;
     }
 
+protected:
     // Returns true if the port can provide an RX callback routine
     bool isReady() const { return (is_open ? true : hasRXCallback()); }
 
 private:
     // The number assigned to the port
     uint8_t nbr;
-
-    // Is it a valid port object
-    bool is_valid;
 
     // If the port is open, it will also be valid
     bool is_open;

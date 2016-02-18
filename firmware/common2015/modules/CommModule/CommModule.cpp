@@ -101,7 +101,7 @@ void CommModule::txThread(void const* arg) {
                 _ports[p->port()].TXCallback()(p);
 
                 // Increment the packet counter by 1
-                _ports[p->port()].TXPackets()++;
+                _ports[p->port()].incTxCount();
 
                 LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port(), p->subclass());
@@ -167,7 +167,7 @@ void CommModule::rxThread(void const* arg) {
                 _ports[p->port()].RXCallback()(p);
 
                 // Increment the packet counter by 1
-                _ports[p->port()].RXPackets()++;
+                _ports[p->port()].incRxCount();
 
                 LOG(INF2, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port(), p->subclass());
@@ -317,8 +317,7 @@ void CommModule::PrintInfo(bool forceHeader) {
 void CommModule::PrintHeader() { _ports.PrintHeader(); }
 
 void CommModule::ResetCount(unsigned int portNbr) {
-    _ports[portNbr].RXPackets() = 0;
-    _ports[portNbr].TXPackets() = 0;
+    _ports[portNbr].resetPacketCount();
 }
 
 void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
