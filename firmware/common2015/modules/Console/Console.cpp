@@ -75,7 +75,7 @@ void Console::RXCallback() {
                 // Execute the function that sets up the console after a
                 // command's execution.
                 // This will ensure everything flushes corectly on a full buffer
-                CommandHandled(true);
+                CommandHandled();
             }
 
             // if a new line character is sent, process the current buffer
@@ -207,11 +207,11 @@ void Console::IterCmdBreakReq(bool newState) {
 
 char* Console::rxBufferPtr() { return rxBuffer; }
 
-bool Console::CommandReady() { return command_ready; }
+bool Console::CommandReady() const { return command_ready; }
 
-void Console::CommandHandled(bool cmdDoneState) {
+void Console::CommandHandled() {
     // update the class's flag for if a command was handled or not
-    command_handled = cmdDoneState;
+    command_handled = true;
 
     // Clean up after command execution
     rxIndex = 0;

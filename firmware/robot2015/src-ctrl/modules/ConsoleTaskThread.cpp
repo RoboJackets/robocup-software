@@ -68,7 +68,7 @@ void Task_SerialConsole(void const* args) {
             tState = osThreadSetPriority(threadID, threadPriority);
             ASSERT(tState == osOK);
 
-            console->CommandHandled(true);
+            console->CommandHandled();
         }
 
         // Check if a system stop is requested

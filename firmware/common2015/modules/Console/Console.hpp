@@ -112,8 +112,10 @@ public:
 
     char* rxBufferPtr();
 
-    bool CommandReady();
-    void CommandHandled(bool);
+    bool CommandReady() const;
+
+    /// mark the current command as being handled and cleanup
+    void CommandHandled();
 
     void changeHostname(const std::string&);
     void changeUser(const std::string&);
