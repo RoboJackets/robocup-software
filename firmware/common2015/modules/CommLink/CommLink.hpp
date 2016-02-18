@@ -100,10 +100,6 @@ protected:
     static const int DEFAULT_BAUD = 5000000;
 
 private:
-    // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t);
-
     /**
      * Data queue helper for RX queue.
      */

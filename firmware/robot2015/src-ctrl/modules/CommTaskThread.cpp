@@ -24,7 +24,7 @@ void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
     ack_pck.ack(false);
     ack_pck.sfs(true);
-    CommModule::send(ack_pck);
+    CommModule::Instance()->send(ack_pck);
 }
 
 void legacy_rx_cb(rtp::packet* p) {
@@ -114,7 +114,7 @@ void loopback_tx_cb(rtp::packet* p) {
         LOG(WARN, "Sent empty packet on loopback interface");
     }
 
-    CommModule::receive(*p);
+    CommModule::Instance()->receive(*p);
 }
 
 /**
@@ -132,7 +132,8 @@ void Task_CommCtrl(void const* args) {
     osPriority threadPriority = osThreadGetPriority(threadID);
 
     // Startup the CommModule interface
-    CommModule::Init();
+    shared_ptr<CommModule> commModule = CommModule::Instance();
+    commModule->init();
 
     // Setup some lights that will blink whenever we send/receive packets
     static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
@@ -171,30 +172,30 @@ void Task_CommCtrl(void const* args) {
             radio.freq(), threadID, threadPriority);
 
         // Open a socket for running tests across the link layer
-        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
-        CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
-        CommModule::openSocket(rtp::port::LINK);
+        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
+        commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
+        commModule->openSocket(rtp::port::LINK);
 
         // The usual way of opening a port.
-        CommModule::RxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
-        CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::DISCOVER);
-        CommModule::openSocket(rtp::port::DISCOVER);
+        commModule->setRxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
+        commModule->setTxHandler((CommLink*)&radio, &CommLink::sendPacket,
+                                 rtp::port::DISCOVER);
+        commModule->openSocket(rtp::port::DISCOVER);
 
         // This port won't open since there's no RX callback to invoke. The
         // packets are simply dropped.
-        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LOGGER);
-        CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::LOGGER);
-        CommModule::openSocket(rtp::port::LOGGER);
+        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LOGGER);
+        commModule->setTxHandler((CommLink*)&radio, &CommLink::sendPacket,
+                                 rtp::port::LOGGER);
+        commModule->openSocket(rtp::port::LOGGER);
 
         // Legacy port
-        CommModule::TxHandler((CommLink*)&radio, &CommLink::sendPacket,
-                              rtp::port::LEGACY);
-        CommModule::RxHandler(&legacy_rx_cb, rtp::port::LEGACY);
-        CommModule::openSocket(rtp::port::LEGACY);
+        commModule->setTxHandler((CommLink*)&radio, &CommLink::sendPacket,
+                                 rtp::port::LEGACY);
+        commModule->setRxHandler(&legacy_rx_cb, rtp::port::LEGACY);
+        commModule->openSocket(rtp::port::LEGACY);
 
-        LOG(INIT, "%u sockets opened", CommModule::NumOpenSockets());
+        LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 
     } else {
         LOG(FATAL,
@@ -202,9 +203,9 @@ void Task_CommCtrl(void const* args) {
             "    Terminating main radio thread.");
 
         // Always keep the link test port open regardless
-        CommModule::RxHandler(&loopback_rx_cb, rtp::port::LINK);
-        CommModule::TxHandler(&loopback_tx_cb, rtp::port::LINK);
-        CommModule::openSocket(rtp::port::LINK);
+        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
+        commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
+        commModule->openSocket(rtp::port::LINK);
 
         // Set the error flag - bit positions are pretty arbitruary as of now
         comm_err |= 1 << 1;
@@ -212,7 +213,7 @@ void Task_CommCtrl(void const* args) {
         // Set the error code's valid bit
         comm_err |= 1 << 0;
 
-        while (CommModule::isReady() == false) {
+        while (commModule->isReady() == false) {
             Thread::wait(50);
         }
 
@@ -232,9 +233,9 @@ void Task_CommCtrl(void const* args) {
         return;
     }
 
-    // Wait until the threads with the CommModule class are all started up
+    // Wait until the threads with the commModule->lass are all started up
     // and ready
-    while (CommModule::isReady() == false) {
+    while (commModule->isReady() == false) {
         Thread::wait(50);
     }
 
@@ -247,37 +248,9 @@ void Task_CommCtrl(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    rtp::packet pck1("motor trigger");
-    pck1.port(rtp::port::LINK);
-    pck1.subclass(1);
-    pck1.address(LOOPBACK_ADDR);
-    pck1.ack(false);
-
-    std::vector<uint8_t> data;
-    for (size_t i = 0; i < 8; ++i) data.push_back(i);
-
-    // the size of the payload as the first byte
-    data.insert(data.begin(), data.size());
-
-    rtp::packet pck2(data);
-    pck2.port(rtp::port::DISCOVER);
-    pck2.subclass(1);
-    pck2.address(BASE_STATION_ADDR);
-    pck2.ack(false);
-
     while (true) {
-        for (size_t i = 0; i < 60; ++i) {
-            Thread::wait(2000);
-            // CommModule::send(pck2);
-            // CommModule::send(pck1);
-            // Thread::wait(3);
-            // CommModule::send(pck1);
-            // Thread::wait(3);
-            // CommModule::send(pck1);
-            // Thread::wait(3);
-            // CommModule::send(pck1);
-        }
         Thread::wait(1000);
+        Thread::yield();
     }
 
     osThreadTerminate(threadID);

@@ -31,13 +31,17 @@ typedef CommPorts<CommCallback> CommPorts_t;
  */
 class CommModule {
 private:
-    static CommPorts_t _ports;
+    CommPorts_t _ports;
 
 public:
+    /// The destructor frees up allocated memory and stops threads
     ~CommModule();
 
     /// Access the singleton CommModule instance
     static shared_ptr<CommModule>& Instance();
+
+    /// initializes and starts rx/tx threads and mail queues
+    void init();
 
     // Class constants
     // Be careful of the queue sizes. The errors that result from
@@ -45,17 +49,14 @@ public:
     static const size_t TX_QUEUE_SIZE = 3;
     static const size_t RX_QUEUE_SIZE = 3;
 
-    static void Init();
-
     // Set a TX callback function on an object
     template <typename B>
-    static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*),
-                          uint8_t portNbr) {
+    void setTxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
         if (!_ports.hasPort(portNbr)) {
             _ports += CommPort_t(portNbr);
         }
 
-        _ports[portNbr].TXCallback() =
+        _ports[portNbr].txCallback() =
             std::bind(mptr, obj, std::placeholders::_1);
 
         ready();
@@ -63,76 +64,58 @@ public:
 
     // Set an RX callback function on an object
     template <typename B>
-    static void RxHandler(B* obj, void (B::*mptr)(rtp::packet*),
-                          uint8_t portNbr) {
+    void setRxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
         if (!_ports.hasPort(portNbr)) {
             _ports += CommPort_t(portNbr);
         }
 
-        _ports[portNbr].RXCallback() =
+        _ports[portNbr].rxCallback() =
             std::bind(mptr, obj, std::placeholders::_1);
 
         ready();
     }
 
     // Set a normal RX callback function without an object
-    static void RxHandler(void (*ptr)(rtp::packet*), uint8_t);
-    static void TxHandler(void (*ptr)(rtp::packet*), uint8_t);
+    void setRxHandler(CommCallback callback, uint8_t);
+    void setTxHandler(CommCallback callback, uint8_t);
 
     // Open a socket connection for communicating.
-    static void openSocket(uint8_t portNbr);
+    void openSocket(uint8_t portNbr);
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values
-    static void send(const rtp::packet&);
-    static void receive(const rtp::packet&);
+    void send(const rtp::packet&);
+    void receive(const rtp::packet&);
 
-    static unsigned int NumRXPackets();
-    static unsigned int NumTXPackets();
+    unsigned int numRxPackets() const;
+    unsigned int numTxPackets() const;
+    void resetCount(unsigned int portNbr);
 
-    static void PrintInfo(bool forceHeader = false);
+    void printInfo() const;
 
-    static void ResetCount(unsigned int portNbr);
-    static void Close(unsigned int portNbr);
-    static bool isReady();
-    static int NumOpenSockets();
+    void close(unsigned int portNbr);
+    bool isReady() const;
+    int numOpenSockets() const;
 
 protected:
-    // NOP function for keeping a communication link active
-    void nopFunc();
-
-    /// Kill any threads and free the allocated stack.
-    /// Always call in any derived class's deconstructors!
-    void cleanup();
-
     // Memory Queue IDs
     osMailQId _txQueue;
     osMailQId _rxQueue;
 
     // Thread IDs
-    static osThreadId _txID;
-    static osThreadId _rxID;
+    osThreadId _txID;
+    osThreadId _rxID;
 
 private:
-    // Private constructor
-    CommModule();
-
-    // Used to help define the class's threads in the constructor
-    // TODO(justin): needed?
-    friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t, unsigned char*);
-
     // The working threads for handeling rx and tx data queues
     static void txThread(void const*);
     static void rxThread(void const*);
 
-    static void ready();
-
-    static void PrintHeader();
+    void ready();
 
     static std::shared_ptr<CommModule> instance;
 
-    static bool _isReady;
+    bool _isReady = false;
 
     // Thread and Mail defintion data structures
     osThreadDef_t _txDef;

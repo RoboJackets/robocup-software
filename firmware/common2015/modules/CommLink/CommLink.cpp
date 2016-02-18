@@ -111,7 +111,7 @@ void CommLink::rxThread(void const* arg) {
         if (response == COMM_SUCCESS) {
             // Write the data to the CommModule object's rxQueue
             p.recv(buf);
-            CommModule::receive(p);
+            CommModule::Instance()->receive(p);
             buf.clear();
         }
     }

@@ -840,13 +840,15 @@ int cmd_ps(cmd_args_t& args) {
  * @param args [description]
  */
 int cmd_radio(cmd_args_t& args) {
+    shared_ptr<CommModule> commModule = CommModule::Instance();
+
     if (args.empty() == true) {
         // Default to showing the list of ports
-        CommModule::PrintInfo(true);
+        commModule->printInfo();
         return 0;
     }
 
-    if (CommModule::isReady() == false) {
+    if (commModule->isReady() == false) {
         printf("The radio interface is not ready! Unseen bugs may occur!\r\n");
     }
 
@@ -861,17 +863,17 @@ int cmd_radio(cmd_args_t& args) {
         pck.address(BASE_STATION_ADDR);
 
         if (args.front().compare("show") == 0) {
-            CommModule::PrintInfo(true);
+            commModule->printInfo();
 
         } else if (args.front().compare("test-tx") == 0) {
             printf("Placing %u byte packet in TX buffer.\r\n",
                    pck.payload.size());
-            CommModule::send(pck);
+            commModule->send(pck);
 
         } else if (args.front().compare("test-rx") == 0) {
             printf("Placing %u byte packet in RX buffer.\r\n",
                    pck.payload.size());
-            CommModule::receive(pck);
+            commModule->receive(pck);
 
         } else if (args.front().compare("loopback") == 0) {
             pck.port(rtp::port::LINK);
@@ -894,7 +896,7 @@ int cmd_radio(cmd_args_t& args) {
             for (size_t j = 0; j < i; ++j) {
                 rtp::packet pck2;
                 pck2 = pck;
-                CommModule::send(pck2);
+                commModule->send(pck2);
                 Thread::wait(50);
             }
 
@@ -917,14 +919,14 @@ int cmd_radio(cmd_args_t& args) {
                 unsigned int portNbr = atoi(args.at(2).c_str());
 
                 if (args.at(1).compare("up") == 0) {
-                    CommModule::openSocket(portNbr);
+                    commModule->openSocket(portNbr);
 
                 } else if (args.at(1).compare("down") == 0) {
-                    CommModule::Close(portNbr);
+                    commModule->close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
                 } else if (args.at(1).compare("reset") == 0) {
-                    CommModule::ResetCount(portNbr);
+                    commModule->resetCount(portNbr);
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
                 } else {
@@ -960,7 +962,7 @@ int cmd_radio(cmd_args_t& args) {
             int start_tick = clock();
             for (size_t i = 0; i < packet_cnt; ++i) {
                 Thread::wait(ms_delay);
-                CommModule::send(pck);
+                commModule->send(pck);
             }
             printf("Stress test finished in %.1fms.\r\n",
                    (clock() - start_tick) /
