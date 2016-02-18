@@ -21,7 +21,6 @@ Console::Console() : pc(USBTX, USBRX) {
 
     // attach interrupt handlers
     pc.attach(this, &Console::RXCallback, Serial::RxIrq);
-    pc.attach(this, &Console::TXCallback, Serial::TxIrq);
 
     // reset indices
     rxIndex = 0;
@@ -188,17 +187,6 @@ void Console::RXCallback() {
             }
         }
     }
-}
-
-void Console::TXCallback() {
-    // NVIC_DisableIRQ(UART0_IRQn);
-
-    /*
-     * Handle transmission interrupts
-     * here if necessary here.
-    */
-
-    // NVIC_EnableIRQ(UART0_IRQn);
 }
 
 void Console::RequestSystemStop() { sysStopReq = true; }

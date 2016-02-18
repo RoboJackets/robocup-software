@@ -140,8 +140,6 @@ private:
 
     void RXCallback();
 
-    void TXCallback();
-
     void setHeader();
 
     static std::shared_ptr<Console> instance;
