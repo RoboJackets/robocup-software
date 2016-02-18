@@ -45,114 +45,109 @@ void Console::RXCallback() {
     while (pc.readable()) {
         // If there is a command that hasn't finished yet, ignore the character
         // for now
-        if (command_ready) {
-            return;
+        if (command_ready) return;
 
+        // Otherwise, continue as normal
+        // read the char that caused the interrupt
+        char c = pc.getc();
+
+        if (esc_flag_one && esc_flag_two) {
+            esc_en = true;
         } else {
-            // Otherwise, continue as normal
-            // read the char that caused the interrupt
-            char c = pc.getc();
+            esc_en = false;
+        }
 
-            if (esc_flag_one && esc_flag_two) {
-                esc_en = true;
-            } else {
-                esc_en = false;
-            }
+        // if a new line character is sent, process the current buffer
+        if (c == NEW_LINE_CHAR) {
+            // print new line prior to executing
+            pc.printf("%c\n", NEW_LINE_CHAR);
+            Flush();
 
-            // if a new line character is sent, process the current buffer
-            if (c == NEW_LINE_CHAR) {
-                // print new line prior to executing
-                pc.printf("%c\n", NEW_LINE_CHAR);
+            if (history.size() >= MAX_HISTORY) history.pop_front();
+            if (_rxBuffer.size() > 0) history.push_back(_rxBuffer);
+
+            history_index = 0;
+            command_ready = true;
+        }
+
+        // if a backspace is requested, handle it.
+        else if (c == BACKSPACE_FLAG_CHAR) {
+            if (_rxBuffer.size() > 0) {
+                // remove last character
+                _rxBuffer.pop_back();
+
+                // 1) Move cursor back
+                // 2) Write a space to clear the character
+                // 3) Move back cursor again
+                pc.putc(BACKSPACE_REPLY_CHAR);
+                pc.putc(BACKSPACE_REPLACE_CHAR);
+                pc.putc(BACKSPACE_REPLY_CHAR);
                 Flush();
-
-                if (history.size() >= MAX_HISTORY) history.pop_front();
-                if (_rxBuffer.size() > 0) history.push_back(_rxBuffer);
-
-                history_index = 0;
-                command_ready = true;
-            }
-
-            // if a backspace is requested, handle it.
-            else if (c == BACKSPACE_FLAG_CHAR) {
-                if (_rxBuffer.size() > 0) {
-                    // remove last character
-                    _rxBuffer.pop_back();
-
-                    // 1) Move cursor back
-                    // 2) Write a space to clear the character
-                    // 3) Move back cursor again
-                    pc.putc(BACKSPACE_REPLY_CHAR);
-                    pc.putc(BACKSPACE_REPLACE_CHAR);
-                    pc.putc(BACKSPACE_REPLY_CHAR);
-                    Flush();
-                } else {
-                    /* do nothing if we can't back space any more */
-                }
-            } else if (c == BREAK_CHAR) {
-                // set that a command break was requested flag if we received a
-                // break character
-                iter_break_req = true;
-            } else if (c == ESCAPE_SEQ_ONE) {
-                esc_flag_one = true;
-            } else if (c == ESCAPE_SEQ_TWO) {
-                if (esc_flag_one) {
-                    esc_flag_two = true;
-                } else {
-                    esc_flag_two = false;
-                }
-            } else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
-                if (!esc_en) {
-                    _rxBuffer.push_back(c);
-                    pc.putc(c);
-                    Flush();
-                } else {
-                    if (history_index < 0) history_index = 0;
-                    if ((size_t)history_index >= history.size())
-                        history_index =
-                            history.size() - (history.empty() ? 0 : 1);
-
-                    if (history.size() > 0 &&
-                        !(_rxBuffer.size() == 0 && c == ARROW_DOWN_KEY)) {
-                        std::string cmd =
-                            history.at(history.size() - 1 - history_index);
-                        pc.printf("\r%s%s", CONSOLE_HEADER.c_str(),
-                                  cmd.c_str());
-                        _rxBuffer = cmd;
-                    }
-
-                    switch (c) {
-                        case ARROW_UP_KEY:
-                            history_index++;
-                            break;
-                        case ARROW_DOWN_KEY:
-                            history_index--;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                esc_flag_one = false;
-                esc_flag_two = false;
-            } else if (c == ARROW_LEFT_KEY || c == ARROW_RIGHT_KEY) {
-                if (!esc_en) {
-                    _rxBuffer.push_back(c);
-                } else {
-                    pc.putc(ESCAPE_SEQ_ONE);
-                    pc.putc(ESCAPE_SEQ_TWO);
-                }
-                pc.putc(c);
-                Flush();
-                esc_flag_one = false;
-                esc_flag_two = false;
             } else {
-                // No special character, add it to the buffer and return it to
-                // the terminal to be visible.
+                /* do nothing if we can't back space any more */
+            }
+        } else if (c == BREAK_CHAR) {
+            // set that a command break was requested flag if we received a
+            // break character
+            iter_break_req = true;
+        } else if (c == ESCAPE_SEQ_ONE) {
+            esc_flag_one = true;
+        } else if (c == ESCAPE_SEQ_TWO) {
+            if (esc_flag_one) {
+                esc_flag_two = true;
+            } else {
+                esc_flag_two = false;
+            }
+        } else if (c == ARROW_UP_KEY || c == ARROW_DOWN_KEY) {
+            if (!esc_en) {
                 _rxBuffer.push_back(c);
                 pc.putc(c);
                 Flush();
-                esc_flag_one = false;
-                esc_flag_two = false;
+            } else {
+                if (history_index < 0) history_index = 0;
+                if ((size_t)history_index >= history.size())
+                    history_index = history.size() - (history.empty() ? 0 : 1);
+
+                if (history.size() > 0 &&
+                    !(_rxBuffer.size() == 0 && c == ARROW_DOWN_KEY)) {
+                    std::string cmd =
+                        history.at(history.size() - 1 - history_index);
+                    pc.printf("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
+                    _rxBuffer = cmd;
+                }
+
+                switch (c) {
+                    case ARROW_UP_KEY:
+                        history_index++;
+                        break;
+                    case ARROW_DOWN_KEY:
+                        history_index--;
+                        break;
+                    default:
+                        break;
+                }
             }
+            esc_flag_one = false;
+            esc_flag_two = false;
+        } else if (c == ARROW_LEFT_KEY || c == ARROW_RIGHT_KEY) {
+            if (!esc_en) {
+                _rxBuffer.push_back(c);
+            } else {
+                pc.putc(ESCAPE_SEQ_ONE);
+                pc.putc(ESCAPE_SEQ_TWO);
+            }
+            pc.putc(c);
+            Flush();
+            esc_flag_one = false;
+            esc_flag_two = false;
+        } else {
+            // No special character, add it to the buffer and return it to
+            // the terminal to be visible.
+            _rxBuffer.push_back(c);
+            pc.putc(c);
+            Flush();
+            esc_flag_one = false;
+            esc_flag_two = false;
         }
     }
 }
