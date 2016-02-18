@@ -18,24 +18,15 @@ public:
     };
 
     // Compare between 2 CommPort objects
-    bool operator==(const CommPort& p) const {
-        return (this->Nbr() == p.Nbr());
-    }
-    // Compare between a CommPort object and a port number
-    bool operator==(unsigned int portNbr) const {
-        return (this->Nbr() == portNbr ? true : false);
-    }
+    bool operator==(const CommPort& p) const { return Nbr() == p.Nbr(); }
 
     // Overload the less than operator for sorting/finding ports using iterators
-    bool operator<(const CommPort& p) const {
-        return (this->Nbr() < p.Nbr() ? true : false);
-    }
+    bool operator<(const CommPort& p) const { return Nbr() < p.Nbr(); }
 
     uint8_t Nbr() const { return _nbr; }
+    void Nbr(uint8_t nbr) { _nbr = nbr; }
 
     bool valid() const { return _nbr != 0; }
-
-    void Nbr(uint8_t nbr) { _nbr = nbr; }
 
     // Open a port or check if a port is capable of providing communication.
     bool Open() {
@@ -46,21 +37,14 @@ public:
             return false;
         }
     }
+    bool isReady() const { return (_isOpen ? true : hasRXCallback()); }
+    bool isOpen() const { return _isOpen; }
 
     void Close() { _isOpen = false; }
 
-    // Check if the port has already been opened.
-    bool isOpen() const { return _isOpen; }
-
     // Set functions for each RX/TX callback.
-    void setRxCallback(const std::function<T>& func) {
-        _rxCallback = func;
-        return *this;
-    }
-    void setTxCallback(const std::function<T>& func) {
-        _txCallback = func;
-        return *this;
-    }
+    void setRxCallback(const std::function<T>& func) { _rxCallback = func; }
+    void setTxCallback(const std::function<T>& func) { _txCallback = func; }
 
     // Methods that return a reference to the TX/RX callback function pointers
     std::function<T>& RXCallback() { return _rxCallback; }
@@ -98,10 +82,6 @@ public:
         _txCount = 0;
     }
 
-protected:
-    // Returns true if the port can provide an RX callback routine
-    bool isReady() const { return (_isOpen ? true : hasRXCallback()); }
-
 private:
     // The number assigned to the port
     uint8_t _nbr;
@@ -113,8 +93,7 @@ private:
     unsigned int _rxCount, _txCount;
 
     // the class members that hold the function pointers
-    std::function<T> _rxCallback;
-    std::function<T> _txCallback;
+    std::function<T> _rxCallback, _txCallback;
 };
 
 // Function for defining how to sort a std::vector of CommPort objects
