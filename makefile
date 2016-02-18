@@ -84,6 +84,16 @@ robot2015:
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
+# run gdb server on port 3333 and connect to it with gdb
+robot2015-gdb: robot2015
+	sudo pyocd-gdbserver > build/robot2015-gdb.log 2>&1 &
+	echo "=> started pyocd-gdbserver, logging to build/robot2015-gdb.log"
+
+	arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+	  -ex "target remote localhost:3333" \
+	  -ex "load" \
+	  -ex "continue"
+
 # I2C bus hardware test
 robot2015-i2c: HW_UNIT=i2c 
 robot2015-i2c: robot2015-test
