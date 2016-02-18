@@ -10,13 +10,7 @@
 template <class T>
 class CommPort {
 public:
-    // Constructor
-    CommPort() : _isOpen(false), _rxCallback(nullptr), _txCallback(nullptr) {
-        Nbr(0);
-        resetPacketCount();
-    };
-
-    CommPort(uint8_t number, std::function<T> rxC = nullptr,
+    CommPort(uint8_t number = 0, std::function<T> rxC = nullptr,
              std::function<T> txC = nullptr)
         : _isOpen(false), _rxCallback(rxC), _txCallback(txC) {
         Nbr(number);
