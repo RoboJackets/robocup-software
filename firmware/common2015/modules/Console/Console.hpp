@@ -5,9 +5,6 @@
 
 #include <mbed.h>
 
-// #include "MODDMA.h"
-#include "MODSERIAL.h"
-
 /**
  * enable scrolling vi sequence
  */
@@ -150,9 +147,6 @@ private:
 
     void setHeader();
 
-    void RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
-    void TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
-
     static std::shared_ptr<Console> instance;
 
     // Flags for command execution states
@@ -176,7 +170,6 @@ private:
     * Serial connection
     */
     Serial pc;
-    // MODSERIAL pc;
 
     /**
      * Receive buffer

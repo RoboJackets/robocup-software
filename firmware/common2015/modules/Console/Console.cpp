@@ -41,8 +41,6 @@ void Console::Init() {
     instance->ClearTXBuffer();
 
     // attach interrupt handlers
-    // instance->pc.attach(&Console::RXCallback_MODSERIAL, MODSERIAL::RxIrq);
-    // instance->pc.attach(&Console::TXCallback_MODSERIAL, MODSERIAL::TxIrq);
     instance->pc.attach(instance.get(), &Console::RXCallback, Serial::RxIrq);
     instance->pc.attach(instance.get(), &Console::TXCallback, Serial::TxIrq);
 
@@ -283,14 +281,6 @@ void Console::Baudrate(uint16_t baud) {
 }
 
 uint16_t Console::Baudrate() { return instance->baudrate; }
-
-void Console::RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info) {
-    Console::RXCallback();
-}
-
-void Console::TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info) {
-    Console::TXCallback();
-}
 
 void Console::SetEscEnd(char c) { instance->esc_host_end_char = c; }
 
