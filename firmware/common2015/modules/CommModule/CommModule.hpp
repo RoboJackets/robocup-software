@@ -120,8 +120,6 @@ private:
     // Thread and Mail defintion data structures
     osThreadDef_t _txDef;
     osThreadDef_t _rxDef;
-    osMailQDef_t _txQDef;
-    osMailQDef_t _rxQDef;
 
     // Mail helper objects
     MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;

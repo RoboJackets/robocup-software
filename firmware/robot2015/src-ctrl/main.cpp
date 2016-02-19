@@ -57,7 +57,7 @@ void statusLightsOFF(void const* args) { statusLights(0); }
  */
 int main() {
     // Store the thread's ID
-    static const osThreadId mainID = Thread::gettid();
+    const osThreadId mainID = Thread::gettid();
     ASSERT(mainID != nullptr);
 
     // clear any extraneous rx serial bytes
