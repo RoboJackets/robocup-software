@@ -493,8 +493,8 @@ int cmd_info(cmd_args_t& args) {
 
         printf("\tBase ID:\t");
 
-        if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
-            printf("N/A\r\n");
+        if (ds2411_read_id(RJ_BASE_ID, &id) == ID_HANDSHAKE_FAIL)
+            printf("[id chip not connected]\r\n");
         else
             for (int i = 0; i < 6; i++) printf("%02X\r\n", id.serial[i]);
 
