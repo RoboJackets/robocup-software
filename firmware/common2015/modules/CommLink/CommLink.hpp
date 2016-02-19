@@ -56,14 +56,11 @@ public:
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
 
-    void receivePacket(rtp::packet*);
-
 protected:
-    virtual int32_t sendData(
-        uint8_t*, uint8_t) = 0;  // write data out to the radio device using SPI
-    virtual int32_t getData(
-        uint8_t*,
-        uint8_t*) = 0;  // read data in from the radio device using SPI
+    // write data out to the radio device using SPI
+    virtual int32_t sendData(uint8_t*, uint8_t) = 0;
+    // read data in from the radio device using SPI
+    virtual int32_t getData(uint8_t*, uint8_t*) = 0;
 
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
@@ -93,12 +90,15 @@ protected:
     static const int DEFAULT_BAUD = 5000000;
 
 private:
-    // Thread definitions and IDs
-    osThreadDef_t _rxDef;
-    osThreadId _rxID;
+    Thread* _rxThread = nullptr;
 
-    // The working threads for handeling RX data queue operations
-    static void rxThread(void const*);
+    // The working threads for handling RX data queue operations
+    void rxThread();
+
+    static void rxThreadHelper(const void* linkInst) {
+        CommLink* link = (CommLink*)linkInst;
+        link->rxThread();
+    }
 
     // Methods for initializing a transceiver's pins for communication
     void setup();

@@ -44,6 +44,3 @@ void commLightsTimeout_TX(void const*);
 void commLightsRenew_RX();
 void commLightsRenew_TX();
 unsigned int get_num_threads();
-void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                   osPriority = osPriorityNormal,
-                   uint32_t = DEFAULT_STACK_SIZE);
