@@ -93,13 +93,22 @@ $(FIRMWR_TESTS:-%=robot2015-test-%-prog):
 
 # run gdb server on port 3333 and connect to it with gdb
 robot2015-gdb: robot2015
-	sudo pyocd-gdbserver > build/robot2015-gdb.log 2>&1 &
-	echo "=> started pyocd-gdbserver, logging to build/robot2015-gdb.log"
-
+	# this will cache sudo use without a password in the environment
+	# so we won't enter the gdb server and skip past the password prompt.
+	# so there's a valid to use sudo on a pointless echo command here
+	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
+	sudo -u root sh -c "pyocd-gdbserver -p 3333 -t lpc1768 > build/robot2015-gdb.log" &
+	# we must wait before the above command to finish. doesn't upload right sometimes if
+	# we write it as the usual blocking command..?
+	wait
 	arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
 	  -ex "target remote localhost:3333" \
 	  -ex "load" \
+	  -ex "tbreak main" \
 	  -ex "continue"
+	# only for keeping the console clean and letting the child process print its exit
+	# output before refreshing the prompt
+	sleep 1
 
 # kicker 2015 firmware
 kicker2015:
