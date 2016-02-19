@@ -133,7 +133,6 @@ void Task_CommCtrl(void const* args) {
 
     // Startup the CommModule interface
     shared_ptr<CommModule> commModule = CommModule::Instance();
-    commModule->init();
 
     // Setup some lights that will blink whenever we send/receive packets
     static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
@@ -222,7 +221,7 @@ void Task_CommCtrl(void const* args) {
 
         // signal back to main and wait until we're signaled to continue
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
-        Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
+        Thread::signal_wait(SUB_TASK_CONTINUE);
 
         while (true) {
             Thread::wait(5000);

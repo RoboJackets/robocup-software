@@ -34,6 +34,9 @@ private:
     CommPorts_t _ports;
 
 public:
+    /// The constructor initializes and starts threads and mail queues
+    CommModule();
+
     /// The destructor frees up allocated memory and stops threads
     ~CommModule();
 
@@ -102,24 +105,28 @@ protected:
     osMailQId _txQueue;
     osMailQId _rxQueue;
 
-    // Thread IDs
-    osThreadId _txID;
-    osThreadId _rxID;
-
 private:
-    // The working threads for handeling rx and tx data queues
-    static void txThread(void const*);
-    static void rxThread(void const*);
+    // The working threads for handling rx and tx data queues
+    void txThread();
+    void rxThread();
+
+    // // TODO(justin): explain
+    // template <typename METHOD>
+    // static void threadHelper(void const* moduleInst) {
+    //     CommModule* module = (CommModule*)moduleInst;
+    //     (*module.*METHOD)();
+    // }
+    static void rxThreadHelper(void const* moduleInst);
+    static void txThreadHelper(void const* moduleInst);
 
     void ready();
 
+    /// global singleton instance of CommModule
     static std::shared_ptr<CommModule> instance;
 
     bool _isReady = false;
 
-    // Thread and Mail defintion data structures
-    osThreadDef_t _txDef;
-    osThreadDef_t _rxDef;
+    Thread _rxThread, _txThread;
 
     // Mail helper objects
     MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;
