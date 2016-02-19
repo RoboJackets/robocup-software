@@ -9,8 +9,7 @@
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
-                   PinName int_pin)
-    : _rxQueueHelper() {
+                   PinName int_pin) {
     setup_pins(mosi, miso, sck, cs, int_pin);
     setup();
 }

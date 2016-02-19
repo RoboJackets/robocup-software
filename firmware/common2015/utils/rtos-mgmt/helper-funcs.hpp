@@ -30,7 +30,8 @@ void imAlive(void const*);
 template <class IO_CLASS>
 void flashLED(IO_CLASS& led, uint32_t durationMsec = 15) {
     static_assert(std::is_same<DigitalOut, IO_CLASS>::value ||
-                  std::is_same<DigitalInOut, IO_CLASS>::value, "Invalid IO class for flashLED()");
+                      std::is_same<DigitalInOut, IO_CLASS>::value,
+                  "Invalid IO class for flashLED()");
     led = !led;
     Thread::wait(durationMsec);
     led = !led;

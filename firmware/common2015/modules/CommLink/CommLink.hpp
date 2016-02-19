@@ -100,11 +100,6 @@ protected:
     static const int DEFAULT_BAUD = 5000000;
 
 private:
-    /**
-     * Data queue helper for RX queue.
-     */
-    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
-
     // Thread definitions and IDs
     osThreadDef_t _rxDef;
     osThreadId _rxID;
