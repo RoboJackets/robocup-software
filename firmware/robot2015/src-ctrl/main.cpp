@@ -133,7 +133,7 @@ int main() {
     fpga_err |= 1 << 0;
 
     // Init IO Expander and turn  all LEDs
-    MCP23017::Init();
+    MCP23017::Instance();
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -205,7 +205,7 @@ int main() {
 
     unsigned int ll = 0;
 
-    MCP23017::write_mask(0xFF00, 0xFF00);
+    MCP23017::Instance()->writeMask(0xFF00, 0xFF00);
 
     while (true) {
         // make sure we can always reach back to main by

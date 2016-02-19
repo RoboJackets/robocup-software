@@ -78,19 +78,19 @@ void loopback_rx_cb(rtp::packet* p) {
             status_byte <<= 8;
 
             // All motors error LEDs
-            MCP23017::write_mask(status_byte, 0xA300);
+            MCP23017::Instance()->writeMask(status_byte, 0xA300);
 
             // M1 error LED
-            // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
+            // MCP23017::Instance()->writeMask(~(1 << (8 + 1)), 0xFF00);
 
             // M2 error LED
-            // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
+            // MCP23017::Instance()->writeMask(~(1 << (8 + 0)), 0xFF00);
 
             // M3 error LED
-            // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
+            // MCP23017::Instance()->writeMask(~(1 << (8 + 5)), 0xFF00);
 
             // M4 error LED
-            // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
+            // MCP23017::Instance()->writeMask(~(1 << (8 + 7)), 0xFF00);
         }
     } else if (p->sfs()) {
         LOG(OK, "Loopback rx ACK successful!\r\n");
@@ -217,7 +217,7 @@ void Task_CommCtrl(void const* args) {
         }
 
         // Radio error LED
-        MCP23017::write_mask(~(1 << (8 + 2)), 1 << (8 + 2));
+        MCP23017::Instance()->writeMask(~(1 << (8 + 2)), 1 << (8 + 2));
 
         // signal back to main and wait until we're signaled to continue
         osSignalSet(mainID, MAIN_TASK_CONTINUE);
@@ -237,7 +237,7 @@ void Task_CommCtrl(void const* args) {
         Thread::wait(50);
     }
 
-    MCP23017::write_mask(1 << (8 + 2), 1 << (8 + 2));
+    MCP23017::Instance()->writeMask(1 << (8 + 2), 1 << (8 + 2));
 
     // Set the error code's valid bit
     comm_err |= 1 << 0;
