@@ -92,9 +92,6 @@ void Task_Controller(void const* args) {
         // ever returns
         Task_Controller_Sensorless(mainID);
 
-        // should never reach this point
-        osThreadTerminate(threadID);
-
         return;
     }
 
@@ -158,8 +155,6 @@ void Task_Controller(void const* args) {
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
-
-    osThreadTerminate(threadID);
 }
 
 /**
@@ -189,6 +184,4 @@ void Task_Controller_Sensorless(const osThreadId mainID) {
         Thread::wait(CONTROL_LOOP_WAIT_MS);
         Thread::yield();
     }
-
-    osThreadTerminate(threadID);
 }

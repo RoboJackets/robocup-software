@@ -228,7 +228,6 @@ void Task_CommCtrl(void const* args) {
             Thread::yield();
         }
 
-        osThreadTerminate(threadID);
         return;
     }
 
@@ -251,6 +250,4 @@ void Task_CommCtrl(void const* args) {
         Thread::wait(1000);
         Thread::yield();
     }
-
-    osThreadTerminate(threadID);
 }

@@ -82,7 +82,4 @@ void Task_SerialConsole(void const* args) {
         // Yield to other threads when not needing to execute anything
         Thread::yield();
     }
-
-    // Terminate the thread if the while loop is ever broken out of
-    osThreadTerminate(threadID);
 }
