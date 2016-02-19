@@ -98,8 +98,6 @@ void CommModule::txThread() {
             ASSERT(tState == osOK);
         }
     }
-
-    _txThread.terminate();
 }
 
 void CommModule::rxThread() {
@@ -159,8 +157,6 @@ void CommModule::rxThread() {
             ASSERT(tState == osOK);
         }
     }
-
-    _rxThread.terminate();
 }
 
 void CommModule::setRxHandler(CommCallback callback, uint8_t portNbr) {
