@@ -51,7 +51,7 @@ public:
     virtual int32_t selfTest() = 0;
 
     /// Determine if communication can occur with another device
-    virtual bool isConnected() = 0;
+    virtual bool isConnected() const = 0;
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
@@ -102,8 +102,8 @@ private:
 
     // Methods for initializing a transceiver's pins for communication
     void setup();
-    void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
-                    PinName = NC);
+    void setup_pins(PinName mosi = NC, PinName miso = NC, PinName sck = NC,
+                    PinName cs = NC, PinName int_pin = NC);
     void setup_cs();
     void setup_interrupt();
 };

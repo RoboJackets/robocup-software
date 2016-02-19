@@ -18,15 +18,15 @@ public:
            const registerSetting_t* regs, size_t len,
            int rssiOffset = DEFAULT_RSSI_OFFSET);
 
-    virtual int32_t sendData(uint8_t*, uint8_t);
+    int32_t sendData(uint8_t*, uint8_t);
 
-    virtual int32_t getData(uint8_t*, uint8_t*);
+    int32_t getData(uint8_t*, uint8_t*);
 
-    virtual void reset();
+    void reset();
 
-    virtual int32_t selfTest();
+    int32_t selfTest();
 
-    virtual bool isConnected();
+    bool isConnected() const;
 
     uint8_t mode();
 

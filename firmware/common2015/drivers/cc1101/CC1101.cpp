@@ -38,7 +38,7 @@ int32_t CC1101::powerUp() {
     return selfTest();
 }
 
-bool CC1101::isConnected() {
+bool CC1101::isConnected() const {
     // [] - 1 - Perform a check to ensure the CC1101 can provide communication
     // with a secondary base station link
     // =================
