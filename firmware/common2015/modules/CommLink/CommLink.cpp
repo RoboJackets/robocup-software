@@ -14,9 +14,7 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
     setup();
 }
 
-CommLink::~CommLink() { cleanup(); }
-
-void CommLink::cleanup() {
+CommLink::~CommLink() {
     // release created pin objects if they exist
     if (_spi) delete _spi;
     if (_cs) delete _cs;
@@ -76,15 +74,15 @@ void CommLink::setup_interrupt() {
 // =================== RX THREAD ===================
 // Task operations for placing received data into the received data queue
 void CommLink::rxThread(void const* arg) {
-    CommLink* inst =
-        const_cast<CommLink*>(reinterpret_cast<const CommLink*>(arg));
+    CommLink* inst = (CommLink*)arg;
 
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
     ASSERT(inst->_rxID != nullptr);
+
     // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority = osThreadGetPriority(inst->_rxID);
+    const osPriority threadPriority = osThreadGetPriority(inst->_rxID);
 
     LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
         inst->_rxID, threadPriority);

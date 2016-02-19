@@ -28,15 +28,15 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  */
 class CommLink {
 public:
-    /// Defautl Constructor
+    /// Default Constructor
     CommLink(){};
 
     /// Constructor
-    CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
+    CommLink(PinName mosi, PinName miso, PinName sck, PinName cs = NC,
+             PinName int_pin = NC);
 
     /// Virtual deconstructor
-    /// Always define and call CommLink::cleanup() in a derived class's
-    /// deconstructor!
+    /// Kills any threads and frees the allocated stack.
     virtual ~CommLink();
 
     // Class constants for data queues
@@ -65,10 +65,6 @@ protected:
         uint8_t*,
         uint8_t*) = 0;  // read data in from the radio device using SPI
 
-    /// Kill any threads and free the allocated stack.
-    /// Always call in any derived class's deconstructors!
-    void cleanup();
-
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
@@ -82,9 +78,6 @@ protected:
     void ready();
     void setup_spi(int baudrate = DEFAULT_BAUD);
     uint8_t twos_compliment(uint8_t val);
-
-    // The data queues for temporarily holding received packets
-    osMailQId _rxQueue;
 
     // SPI bus pins
     PinName _miso_pin;
