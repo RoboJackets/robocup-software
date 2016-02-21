@@ -91,24 +91,30 @@ $(FIRMWR_TESTS:-%=robot2015-test-%):
 $(FIRMWR_TESTS:-%=robot2015-test-%-prog):
 	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(@F:robot2015-test-%-prog=%))
 
-# run gdb server on port 3333 and connect to it with gdb
-robot2015-gdb: robot2015
-	# this will cache sudo use without a password in the environment
-	# so we won't enter the gdb server and skip past the password prompt.
-	# so there's a valid to use sudo on a pointless echo command here
+GDB_PORT ?= 3333
+.INTERMEDIATE: build/robot2015-gdb.pid
+build/robot2015-gdb.pid:
+# this will cache sudo use without a password in the environment
+# so we won't enter the gdb server and skip past the password prompt.
 	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
-	sudo -u root sh -c "pyocd-gdbserver -p 3333 -t lpc1768 > build/robot2015-gdb.log" &
-	# we must wait before the above command to finish. doesn't upload right sometimes if
-	# we write it as the usual blocking command..?
-	wait
-	arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
-	  -ex "target remote localhost:3333" \
-	  -ex "load" \
-	  -ex "tbreak main" \
-	  -ex "continue"
-	# only for keeping the console clean and letting the child process print its exit
-	# output before refreshing the prompt
-	sleep 1
+# now we can refresh the sudo timeout and start up the gdb server
+	sudo -v && { sudo pyocd-gdbserver --allow-remote --port $(GDB_PORT) --reset-break \
+	--target lpc1768 -S -G -B 0 > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
+
+GDB_NO_CONN ?= 0
+robot2015-gdb: robot2015 build/robot2015-gdb.pid
+# use pyocd-gdbserver, and explicitly pass it the type of target we want to connect with,
+# making sure that we enable semihosting and use gdb syscalls for the file io
+	@trap 'sudo pkill -9 -P `cat build/robot2015-gdb.pid`; exit' TERM INT EXIT && \
+	if [ $(GDB_NO_CONN) -eq 0 ]; then \
+		arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+		  -ex "target remote localhost:$(GDB_PORT)" \
+		  -ex "load" \
+		  -ex "tbreak main" \
+		  -ex "continue"; \
+	else \
+		while true; do sleep 10; done; \
+	fi
 
 # kicker 2015 firmware
 kicker2015:
