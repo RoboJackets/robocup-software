@@ -8,6 +8,7 @@ import evaluation
 import constants
 import math
 
+
 class Basic122(play.Play):
 
     # how far the 2 support robots should stay away from the striker
@@ -22,8 +23,6 @@ class Basic122(play.Play):
     # multiplier used to decide when it's worth it to reassign the bot a support is marking
     MarkHysteresisCoeff = 0.9
 
-
-
     def __init__(self):
         super().__init__(continuous=False)  # FIXME: continuous?
 
@@ -34,14 +33,12 @@ class Basic122(play.Play):
         striker.aim_params['desperate_timeout'] = 2.5
 
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running,
-            lambda: True,
-            "immediately")
+                            behavior.Behavior.State.running, lambda: True,
+                            "immediately")
 
         striker.add_transition(behavior.Behavior.State.completed,
-            behavior.Behavior.State.start,
-            lambda: True,
-            "immediately")
+                               behavior.Behavior.State.start, lambda: True,
+                               "immediately")
         self.add_subbehavior(striker, 'striker', required=False, priority=3)
 
         support1 = skills.mark.Mark()
@@ -52,7 +49,9 @@ class Basic122(play.Play):
         support2.mark_line_thresh = 1.0
         self.add_subbehavior(support2, 'support2', required=False, priority=1)
 
-        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False)
 
     @classmethod
     def score(cls):
@@ -68,10 +67,10 @@ class Basic122(play.Play):
         support2 = self.subbehavior_with_name('support2')
         supports = [support1, support2]
 
-
         # project ball location a bit into the future
-        ball_proj = evaluation.ball.predict(main.ball().pos, main.ball().vel, t=0.75)
-
+        ball_proj = evaluation.ball.predict(main.ball().pos,
+                                            main.ball().vel,
+                                            t=0.75)
 
         # find closest opponent to striker
         closest_dist_to_striker, closest_opp_to_striker = float("inf"), None
@@ -82,7 +81,6 @@ class Basic122(play.Play):
                     closest_dist_to_striker, closest_opp_to_striker = d, opp
 
         striker_engaged = striker.robot != None and closest_dist_to_striker < Basic122.SupportBackoffThresh
-
 
         # pick out which opponents our defenders should 'mark'
         # TODO: explain
@@ -102,22 +100,25 @@ class Basic122(play.Play):
                 if oppDistSq < constants.Field.Length**2 / 4.0:
                     nrOppClose += 1
 
-
         # handle the case of having no good robots to mark
         if bestOpp1 == None and support1.robot != None:
             support1.mark_robot = None
-            support1.robot.add_text("No mark target", (255,255,255), "RobotText")
+            support1.robot.add_text("No mark target", (255, 255, 255),
+                                    "RobotText")
             if striker.robot != None:
-                support1.robot.add_text("Static Support", (255,255,255), "RobotText")
+                support1.robot.add_text("Static Support", (255, 255, 255),
+                                        "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
                 if abs(support_goal.x) < 0.2:
                     support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
                 if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-                    support_goal.y = max(support_goal.y * Basic122.OffenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y *
+                                         Basic122.OffenseSupportRatio, 0.3)
                 else:
-                    support_goal.y = max(support_goal.y * Basic122.DefenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y *
+                                         Basic122.DefenseSupportRatio, 0.3)
 
                 support1.robot.move_to(support_goal)
                 support1.robot.face(ball_proj)
@@ -126,18 +127,22 @@ class Basic122(play.Play):
         # TODO: make it do something useful
         if bestOpp2 == None and support2.robot != None:
             support2.mark_robot = None
-            support2.robot.add_text("No mark target", (255,255,255), "RobotText")
+            support2.robot.add_text("No mark target", (255, 255, 255),
+                                    "RobotText")
             if striker.robot != None:
-                support2.robot.add_text("Static Support", (255,255,255), "RobotText")
+                support2.robot.add_text("Static Support", (255, 255, 255),
+                                        "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
                 if abs(support_goal.x) < 0.2:
                     support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
                 if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-                    support_goal.y = max(support_goal.y * Basic122.OffenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y *
+                                         Basic122.OffenseSupportRatio, 0.3)
                 else:
-                    support_goal.y = max(support_goal.y * Basic122.DefenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y *
+                                         Basic122.DefenseSupportRatio, 0.3)
 
                 support2.robot.move_to(support_goal)
                 support2.robot.face(ball_proj)
@@ -148,23 +153,27 @@ class Basic122(play.Play):
         for i in range(2):
             support = supports[i]
             if new_bots[i] != None:
-                cur_dist_sq = (support.mark_robot.pos - ball_proj).magsq() if support.mark_robot else float("inf")
+                cur_dist_sq = (
+                    support.mark_robot.pos -
+                    ball_proj).magsq() if support.mark_robot else float("inf")
                 if new_dists[i] < cur_dist_sq * Basic122.MarkHysteresisCoeff:
                     support.mark_robot = new_bots[i]
 
-
         # if the supports are farther from the ball, they can mark further away
         if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-            for support in supports: support.ratio = Basic122.OffenseSupportRatio
+            for support in supports:
+                support.ratio = Basic122.OffenseSupportRatio
         else:
-            for support in supports: support.ratio = Basic122.DefenseSupportRatio
-
+            for support in supports:
+                support.ratio = Basic122.DefenseSupportRatio
 
         # keep support robots away from the striker
         if striker.robot != None:
             for supp in [support1, support2]:
                 if supp.robot != None:
-                    supp.robot.set_avoid_teammate_radius(striker.robot.shell_id(), Basic122.SupportAvoidTeammateRadius)
+                    supp.robot.set_avoid_teammate_radius(
+                        striker.robot.shell_id(),
+                        Basic122.SupportAvoidTeammateRadius)
 
             # raise NotImplementedError("Make support robots avoid the shot channel")
             # FROM C++:
@@ -173,8 +182,7 @@ class Basic122(play.Play):
             # shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));
             # shot_obs.vertices.push_back(ballProj);
 
-
-        # TODO: this would be a good place for a "keep-trying container behavior"
-        # make the kicker try again if it already kicked
+            # TODO: this would be a good place for a "keep-trying container behavior"
+            # make the kicker try again if it already kicked
         if not striker.is_in_state(behavior.Behavior.State.running):
             striker.restart()
