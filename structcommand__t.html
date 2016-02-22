@@ -125,13 +125,13 @@ const std::array&lt; std::string, <br class="typebreak"/>
 MAX_ALIASES &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommand__t.html#a8723f9a317f9daa788cf65064574764b">aliases</a></td></tr>
 <tr class="memdesc:a8723f9a317f9daa788cf65064574764b"><td class="mdescLeft">&#160;</td><td class="mdescRight">aliases <br/></td></tr>
 <tr class="separator:a8723f9a317f9daa788cf65064574764b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecafd32aee69a7a18c5a0ca6068b3a72"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommand__t.html#aecafd32aee69a7a18c5a0ca6068b3a72">isIterative</a></td></tr>
-<tr class="memdesc:aecafd32aee69a7a18c5a0ca6068b3a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">iterative flag.  <a href="#aecafd32aee69a7a18c5a0ca6068b3a72">More...</a><br/></td></tr>
-<tr class="separator:aecafd32aee69a7a18c5a0ca6068b3a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82ca6de68af857fec7959f310e981c5d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82ca6de68af857fec7959f310e981c5d"></a>
-void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommand__t.html#a82ca6de68af857fec7959f310e981c5d">handler</a> )(const std::vector&lt; std::string &gt; &amp;args)</td></tr>
-<tr class="memdesc:a82ca6de68af857fec7959f310e981c5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">command handler function pointer <br/></td></tr>
-<tr class="separator:a82ca6de68af857fec7959f310e981c5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a816cc17fd5afbb6e347a1e45ff898fa7"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommand__t.html#a816cc17fd5afbb6e347a1e45ff898fa7">is_iterative</a></td></tr>
+<tr class="memdesc:a816cc17fd5afbb6e347a1e45ff898fa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">iterative flag.  <a href="#a816cc17fd5afbb6e347a1e45ff898fa7">More...</a><br/></td></tr>
+<tr class="separator:a816cc17fd5afbb6e347a1e45ff898fa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6556a176b3057ab399c02f14dafbc2cc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6556a176b3057ab399c02f14dafbc2cc"></a>
+int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommand__t.html#a6556a176b3057ab399c02f14dafbc2cc">handler</a> )(cmd_args_t &amp;args)</td></tr>
+<tr class="memdesc:a6556a176b3057ab399c02f14dafbc2cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">command handler function pointer <br/></td></tr>
+<tr class="separator:a6556a176b3057ab399c02f14dafbc2cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94ed95e8cfafc8f0003c9068648adeb9"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommand__t.html#a94ed95e8cfafc8f0003c9068648adeb9">description</a></td></tr>
 <tr class="memdesc:a94ed95e8cfafc8f0003c9068648adeb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">command description.  <a href="#a94ed95e8cfafc8f0003c9068648adeb9">More...</a><br/></td></tr>
 <tr class="separator:a94ed95e8cfafc8f0003c9068648adeb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,12 +166,12 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 
 </div>
 </div>
-<a class="anchor" id="aecafd32aee69a7a18c5a0ca6068b3a72"></a>
+<a class="anchor" id="a816cc17fd5afbb6e347a1e45ff898fa7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const bool command_t::isIterative</td>
+          <td class="memname">const bool command_t::is_iterative</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -197,7 +197,7 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>firmware/robot2015/cpu/<a class="el" href="commands_8hpp_source.html">commands.hpp</a></li>
+<li>firmware/robot2015/src-ctrl/modules/commands/<a class="el" href="commands_8hpp_source.html">commands.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -205,7 +205,7 @@ void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structcommand__t.html">command_t</a></li>
-    <li class="footer">Generated on Wed Feb 17 2016 03:47:18 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Feb 22 2016 22:32:00 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

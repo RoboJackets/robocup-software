@@ -9,5 +9,6 @@ var searchData=
   ['behindball',['behindBall',['../class_our_robot.html#a2677e7d0dd80a11974f74af69116e74e',1,'OurRobot']]],
   ['block_5fline',['block_line',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
   ['blueteam',['blueTeam',['../class_processor.html#a1a61818c88b94200bba7f56a5cc7de76',1,'Processor']]],
-  ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]]
+  ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]],
+  ['brightness',['brightness',['../class_neo_strip.html#a59bb97cced13cdf49e6ef4b5db0ca480',1,'NeoStrip']]]
 ];

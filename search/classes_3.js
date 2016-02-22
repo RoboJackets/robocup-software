@@ -18,6 +18,5 @@ var searchData=
   ['configurable',['Configurable',['../class_configurable.html',1,'']]],
   ['configurableimpl',['ConfigurableImpl',['../class_configurable_impl.html',1,'']]],
   ['configuration',['Configuration',['../class_configuration.html',1,'']]],
-  ['console',['Console',['../class_console.html',1,'']]],
   ['coordinatedpass',['CoordinatedPass',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html',1,'gameplay::tactics::coordinated_pass']]]
 ];

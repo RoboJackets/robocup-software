@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$class_debug_q_mutex.html" title="DebugQMutex" alt="" coords="126,5,239,32"/>
+<area shape="rect" id="node1" href="$class_configurable.html" title="Configurable" alt="" coords="6,5,109,32"/>
+<area shape="rect" id="node2" href="$class_configurable_impl.html" title="a template for making configurables the implementing object is responsible for handling configuration..." alt="" coords="158,5,325,32"/>
 </map>

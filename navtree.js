@@ -35,15 +35,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_configuration.html#ad3b87065e84fc752017ed2a16b99271d",
-"class_geometry2d_1_1_point.html#af29d0268f0ae9f5e36757e6fa2e1262f",
-"class_our_robot.html#a3c97bd2f555880c5e63197072180356b",
-"class_processor.html#ac70adfd2e901cf43c8fbed4c884094d2",
-"class_u_s_b_radio.html#a8dd0b6c164c0c960112f71a6af5977df",
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#afd9492ee6bde6b21715d112d407b8cf0",
-"classgameplay_1_1skills_1_1aim_1_1_aim.html#a224a97b2ab27e4f2d0235bf2ee0df850",
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a73f4c6d8836edd2efb0c3e79db354f9b",
-"struct_joystick_control_values.html#a7c35dd37dfb7dec36607b33205c90f6f"
+"class_configurable_impl.html#a7f25b9bc5725426551ca372ceca21e12",
+"class_geometry2d_1_1_point.html#a4eba8c40e062c4932fbdec61fd75d978",
+"class_neo_strip.html#ac927c663accec8a30d2244a05368abfb",
+"class_planning_1_1_pivot_path_planner.html",
+"class_sim_radio.html",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a6d0055427abab28f117f506b0fc66eec",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#ab6d35c4090e1290bbef8fbda5db20a40",
+"classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ad44b78f3b9afc3688abd6a4ab8869aaf",
+"functions_o.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

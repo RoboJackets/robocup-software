@@ -1,9 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$classgameplay_1_1behavior_1_1_behavior_1_1_state.html" title="These are the core states of the Behavior class Subclasses may extend this by adding substates of the..." alt="" coords="143,5,347,46"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html" title="gameplay.skills.capture.\lCapture.State" alt="" coords="158,70,333,111"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick_1_1_state.html" title="gameplay.skills.pivot\l_kick.PivotKick.State" alt="" coords="169,135,321,177"/>
-<area shape="rect" id="node5" href="$classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_side.html" title="The area of the field this robot should block. " alt="" coords="118,201,373,242"/>
-<area shape="rect" id="node6" href="$classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html" title="gameplay.tactics.positions.defender.\lDefender.State" alt="" coords="118,266,373,307"/>
-<area shape="rect" id="node7" href="$classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html" title="gameplay.tactics.positions.submissive\l_defender.SubmissiveDefender.State" alt="" coords="113,331,378,373"/>
-<area shape="rect" id="node8" href="$classgameplay_1_1timed__behavior_1_1_timed_behavior_1_1_state.html" title="gameplay.timed_behavior.\lTimedBehavior.State" alt="" coords="151,397,340,438"/>
+<area shape="rect" id="node1" href="$class_f_i_r_filter.html" title="A basic FIR filter of variable type with float coeffs. " alt="" coords="5,5,112,32"/>
 </map>

@@ -10,5 +10,5 @@ var searchData=
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],
   ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
   ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
-  ['ds2411_5fid',['DS2411_ID',['../struct_d_s2411___i_d.html',1,'']]]
+  ['ds2411_5ft',['DS2411_t',['../struct_d_s2411__t.html',1,'']]]
 ];

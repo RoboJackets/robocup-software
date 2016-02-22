@@ -1,10 +1,12 @@
 var searchData=
 [
   ['radiorxupdated',['radioRxUpdated',['../class_our_robot.html#a78613ea6958affaf11afaf152aceaf60',1,'OurRobot']]],
+  ['read',['read',['../class_i_o_expander_digital_in_out.html#aadb911534925464a879aa7532185d26a',1,'IOExpanderDigitalInOut::read()'],['../class_m_p_u6050.html#a15c32474ee5351cd57c25621feb90b2b',1,'MPU6050::read(uint8_t adress)'],['../class_m_p_u6050.html#a73f859eb7aca4c8660cd87bf236d0360',1,'MPU6050::read(uint8_t adress, uint8_t *data, int length)']]],
+  ['read_5fbit',['read_bit',['../class_m_c_p23017.html#ad21ab206fd796aaa3626bc407a608751',1,'MCP23017']]],
+  ['read_5fmask',['read_mask',['../class_m_c_p23017.html#ad684a699454f730f7098e7a625210f51',1,'MCP23017']]],
   ['recalculate_5faim_5ftarget_5fpoint',['recalculate_aim_target_point',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a75bd883862175e5633582c1bbdfc510a',1,'gameplay::skills::_kick::_Kick']]],
   ['receive_5fpoint',['receive_point',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#afc0527fde8258483ab9d3800e988f352',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['requestsystemstop',['RequestSystemStop',['../class_console.html#a7d6415b627a760650db294cd6ce16df0',1,'Console']]],
-  ['reset',['reset',['../class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#ac855a0204a9e0e6073b1754b6f7d2de2',1,'SpaceNavJoystick::reset()']]],
+  ['reset',['reset',['../class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#ac855a0204a9e0e6073b1754b6f7d2de2',1,'SpaceNavJoystick::reset()'],['../class_m_c_p23017.html#a8e108f5da7099d11e6916e0badc133c0',1,'MCP23017::reset()']]],
   ['resetfornextiteration',['resetForNextIteration',['../class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0',1,'OurRobot']]],
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a9fa9ccfbd33bb16648924d560e2b49c8',1,'gameplay::fsm::StateMachine']]],
