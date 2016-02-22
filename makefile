@@ -99,7 +99,7 @@ build/robot2015-gdb.pid:
 	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
 # now we can refresh the sudo timeout and start up the gdb server
 	sudo -v && { sudo pyocd-gdbserver --allow-remote --port $(GDB_PORT) --reset-break \
-	--target lpc1768 -S -G -B 0 > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
+	--target lpc1768 -S -G > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
 
 GDB_NO_CONN ?= 0
 robot2015-gdb: robot2015 build/robot2015-gdb.pid
