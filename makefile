@@ -1,4 +1,5 @@
 MAKE_FLAGS=--no-print-directory
+HW_UNIT=default
 TESTS = *
 
 # build a specified target with CMake and Ninja
@@ -83,10 +84,61 @@ robot2015:
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
+# I2C bus hardware test
+robot2015-i2c: HW_UNIT=i2c 
+robot2015-i2c: robot2015-test
+robot2015-i2c-prog: HW_UNIT=i2c
+robot2015-i2c-prog: robot2015-test-prog
+
+# IO expander hardware test
+robot2015-io-expander: HW_UNIT=io-expander
+robot2015-io-expander: robot2015-test
+robot2015-io-expander-prog: HW_UNIT=io-expander
+robot2015-io-expander-prog: robot2015-test-prog
+
+# fpga hardware test
+robot2015-fpga: HW_UNIT=fpga
+robot2015-fpga: robot2015-test
+robot2015-fpga-prog: HW_UNIT=fpga
+robot2015-fpga-prog: robot2015-test-prog
+
+# piezo buzzer hardware test
+robot2015-piezo: HW_UNIT=piezo 
+robot2015-piezo: robot2015-test
+robot2015-piezo-prog: HW_UNIT=piezo
+robot2015-piezo-prog: robot2015-test-prog
+
+# neopixel hardware test
+robot2015-neopixel: HW_UNIT=neopixel
+robot2015-neopixel: robot2015-test
+robot2015-neopixel-prog: HW_UNIT=neopixel
+robot2015-neopixel-prog: robot2015-test-prog
+
+# general target for calling the hardware tests
+robot2015-test:
+	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
+robot2015-test-prog:
+	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
+
+# kicker 2015 firmware
+kicker2015:
+	$(call cmake_build_target_fw, kicker2015)
+kicker2015-prog:
+	$(call cmake_build_target_fw, kicker2015-prog)
+
+# fpga 2015 synthesis
+fpga2015:
+	$(call cmake_build_target_fw, fpga2015)
+fpga2015-prog:
+	$(call cmake_build_target_fw, fpga2015-prog)
+
+# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
+firmware2015: robot2015 kicker2015 fpga2015 
+firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
+	
 # Base station 2015 firmware
 base2015:
 	$(call cmake_build_target_fw, base2015)
-
 base2015-prog:
 	$(call cmake_build_target_fw, base2015-prog)
 
@@ -134,9 +186,7 @@ STYLE_EXCLUDE_DIRS=build \
 	firmware/robot/cpu/at91sam7s321 \
 	firmware/robot/cpu/at91sam7s64 \
 	firmware/robot/cpu/usb \
-	firmware/robot/cpu/invensense \
-	firmware/robot2015 \
-	firmware/common2015
+	firmware/robot/cpu/invensense
 # automatically format code according to our style config defined in .clang-format
 pretty:
 	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)

@@ -140,7 +140,7 @@ BASE=$(readlink -f $(dirname $0)/..)
 
 echo "-- Installing udev rules"
 cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
-sudo udevadm control --reload || true # reload rules
+udevadm control --reload || true # reload rules
 
 echo "-- Installing required packages"
 
