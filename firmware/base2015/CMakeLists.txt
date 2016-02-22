@@ -32,7 +32,6 @@ add_custom_target(base2015
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-base.bin)
 
 add_custom_target(base2015-prog
-    ${ARM_OBJCOPY} -O binary base2015_elf rj-base.bin
     COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-base.bin
     DEPENDS base2015
     COMMENT "Copying base station's binary over to the mbed"
