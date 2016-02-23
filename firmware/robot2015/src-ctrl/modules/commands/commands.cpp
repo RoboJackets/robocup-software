@@ -48,7 +48,7 @@ int (*iterative_command_handler)(cmd_args_t& args);
 }  // end of anonymous namespace
 
 // Create an object to help find files
-LocalFileSystem local("local");
+//LocalFileSystem local("local");
 
 /**
  * Commands list. Add command handlers to commands.hpp.

@@ -1,321 +1,81 @@
-// ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
-#include <ctime>
-#include <string>
-#include <array>
-
-#include <rtos.h>
-
-#include <helper-funcs.hpp>
-#include <watchdog.hpp>
-#include <logger.hpp>
-#include <assert.hpp>
-
-#include "robot-devices.hpp"
-#include "task-signals.hpp"
-#include "task-globals.hpp"
-#include "commands.hpp"
-#include "fpga.hpp"
-#include "io-expander.hpp"
-#include "neostrip.hpp"
-
-// task globals
-uint16_t comm_err = 0;
-uint16_t fpga_err = 0;
-uint16_t imu_err = 0;
-
-void Task_Controller(void const* args);
-
 /**
- * @brief      { Sets the hardware configurations for the status LEDs & places
- * into the given state }
- *
- * @param[in]  state  { the next state of the LEDs }
+ * Program an AVR with an mbed.
  */
-void statusLights(bool state) {
-    DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
 
-    for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
-}
+#include "AVR910.h"
+#define PATH_TO_BINARY "/local/lastest.nib"
+LocalFileSystem local("local");
+Serial pc(USBTX, USBRX);
+AVR910 mAVRISP(p5, p6, p7, p8); //mosi, miso, sclk, nreset.
 
-/**
- * @brief      { Turn all status LEDs on }
- */
-void statusLightsON(void const* args) { statusLights(1); }
-
-/**
- * @brief      { Turn all status LEDs off }
- */
-void statusLightsOFF(void const* args) { statusLights(0); }
-
-/**
- * [main Main The entry point of the system where each submodule's thread is
- * started.]
- * @return  [none]
- */
 int main() {
-    // Store the thread's ID
-    static const osThreadId mainID = Thread::gettid();
-    ASSERT(mainID != nullptr);
+    pc.baud(57600);
+    int success  = -1;
+    int response =  0;
 
-    // clear any extraneous rx serial bytes
-    if (true) {
-        Serial s(RJ_SERIAL_RXTX);
-        // flush rx queue
-        while (s.readable()) s.getc();
+    //Read the vendor code [0x1E == Atmel].
+    response = mAVRISP.readVendorCode();
 
-        // print out the baudrate we're using as a last resort
-        // to let the user know they may or may not see it
-        // depending on many factors.
-        s.baud(57600);
-    }
-
-    // Turn on some startup LEDs to show they're working, they are turned off
-    // before we hit the while loop
-    statusLightsON(nullptr);
-
-    // Set the default logging configurations
-    isLogging = RJ_LOGGING_EN;
-    rjLogLevel = INIT;
-
-    /* Always send out an empty line at startup for keeping the console
-     * clean on after a 'reboot' command is called;
-     */
-    if (isLogging) {
-        // reset the console's default settings and enable the cursor
-        printf("\033[m");
-        fflush(stdout);
-    }
-
-    // Setup the interrupt priorities before launching each subsystem's task
-    // thread.
-    setISRPriorities();
-
-    // Force off since the neopixel's hardware is stateless from previous
-    // settings
-    NeoStrip rgbLED(RJ_NEOPIXEL, 2);
-    rgbLED.clear();
-
-    // Set the RGB LEDs to a medium blue while the threads are started up
-    float defaultBrightness = 0.02f;
-    rgbLED.brightness(3 * defaultBrightness);
-    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
-    rgbLED.write();
-
-    // Start a periodic blinking LED to show system activity
-    std::vector<DigitalOut> mbed_lights;
-    mbed_lights.push_back(DigitalOut(LED1, 0));
-    mbed_lights.push_back(DigitalOut(LED2, 0));
-    mbed_lights.push_back(DigitalOut(LED3, 0));
-    mbed_lights.push_back(DigitalOut(LED4, 0));
-    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
-    live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
-
-    // Flip off the startup LEDs after a timeout period
-    RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
-    init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
-
-    // This is where the FPGA is actually configured with the bitfile's name
-    // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
-
-    if (fpga_ready == true) {
-        LOG(INIT, "FPGA Configuration Successful!");
+    if (response == ATMEL_VENDOR_CODE) {
+        pc.printf("Microcontroller is an Atmel [0x%02x]\r\n", response);
+    } else if (response == DEVICE_LOCKED) {
+        pc.printf("Device is locked\r\n");
+        return -1;
     } else {
-        LOG(FATAL, "FPGA Configuration Failed!");
+        pc.printf("Microcontroller is not an Atmel\r\n");
+        return -1;
     }
 
-    fpga_err |= 1 << !fpga_ready;
-    // the error code is valid now
-    fpga_err |= 1 << 0;
+    //Read part family and flash size - see datasheet for code meaning.
+    response = mAVRISP.readPartFamilyAndFlashSize();
 
-    // Init IO Expander and turn  all LEDs
-    MCP23017::Init();
-
-    // Startup the 3 separate threads, being sure that we wait for it
-    // to signal back to us that we can startup the next thread. Not doing
-    // so results in weird wierd things that are really hard to debug. Even
-    // though this is multi-threaded code, that dosen't mean it's
-    // a multi-core system.
-
-    // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-
-    // Start the thread task for handling radio communications
-    Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-
-    // Start the thread task for the serial console
-    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-
-    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
-
-    // Make sure all of the motors are enabled
-    motors_Init();
-
-    // Set error indicators
-    if (fpga_err > 1) {
-        // orange - error
-        rgbLED.brightness(4 * defaultBrightness);
-        rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
+    if (response == 0xFF) {
+        pc.printf("Device code erased or target missing\r\n");
+    } else if (response == 0x01) {
+        pc.printf("Device locked\r\n");
+        return -1;
     } else {
-        // green - no error...yet
-        rgbLED.brightness(defaultBrightness);
-        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+        pc.printf("Part family and flash size code is: 0x%02x\r\n", response);
     }
 
-    if (comm_err > 1) {
-        // orange - error
-        rgbLED.brightness(6 * defaultBrightness);
-        rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
+    //Read part number.
+    response = mAVRISP.readPartNumber();
+
+    if (response == 0xFF) {
+        pc.printf("Device code erased or target missing\r\n");
+    } else if (response == 0x02) {
+        pc.printf("Device locked\r\n");
+        return -1;
     } else {
-        // green - no error...yet
-        rgbLED.brightness(6 * defaultBrightness);
-        rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+        pc.printf("Part number code is: 0x%02x\r\n", response);
     }
 
-    if (comm_err > 1 && fpga_err > 1) {
-        // bright as hell to make sure they know
-        rgbLED.brightness(10 * defaultBrightness);
-        // well, damn. everything is broke as hell
-        rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
-        rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
+    //Open binary file to write to AVR.
+    FILE *fp = fopen(PATH_TO_BINARY, "r");
+
+    if (fp == NULL) {
+        pc.printf("Failed to open binary. Please check the file path\r\n");
+        return -1;
+    } else {
+        //Program it!
+        pc.printf("Binary file opened successfully\r\n");
+        success = mAVRISP.program(fp,
+                                  PAGE_SIZE,
+                                  NUM_PAGES);
+        fclose(fp);
     }
 
-    // push out the LED changes to the hardware
-    rgbLED.write();
-
-    // Set the watdog timer's initial config
-    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
-
-    // Release each thread into its operations in a structured manner
-    controller_task.signal_set(SUB_TASK_CONTINUE);
-    comm_task.signal_set(SUB_TASK_CONTINUE);
-    console_task.signal_set(SUB_TASK_CONTINUE);
-
-    osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
-    ASSERT(tState == osOK);
-
-    rdy_led = fpga_ready;
-
-    unsigned int ll = 0;
-
-    MCP23017::write_mask(0xFF00, 0xFF00);
-
-    while (true) {
-        // make sure we can always reach back to main by
-        // renewing the watchdog timer periodicly
-        rdy_led = !rdy_led;
-        Watchdog::Renew();
-
-        // periodically reset the console text's format
-        ll++;
-        if ((ll % 4) == 0) {
-            printf("\033[m");
-            fflush(stdout);
-        }
-
-        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
-
-        // M1
-        // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
-
-        // // M2
-        // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
-
-        // // M3
-        // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
-
-        // // M4
-        // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
-
-        // IMU
-        // MCP23017::write_mask(~(1 << (8 + 6)), 0xFF00);
-
-        // Det
-        // MCP23017::write_mask(~(1 << (8 + 3)), 0xFF00);
-
-        // Sense
-        // MCP23017::write_mask(~(1 << (8 + 4)), 0xFF00);
-
-        // Radio
-        // MCP23017::write_mask(~(1 << (8 + 2)), 0xFF00);
+    if (success != 0) {
+        printf("Programming failed.\r\n");
+    } else {
+        printf("Programming was successful!\r\n");
     }
+
+    // To add another reset, should be handled by AVR910 already
+    
+    //DigitalOut reset(p8);
+    //reset = 0;
+    //wait(.02);
+    //reset = 1;
+    
 }
-
-#define _EXTERN extern "C"
-
-_EXTERN void HardFault_Handler() {
-    __asm volatile(
-        " tst lr, #4                                                \n"
-        " ite eq                                                    \n"
-        " mrseq r0, msp                                             \n"
-        " mrsne r0, psp                                             \n"
-        " ldr r1, [r0, #24]                                         \n"
-        " ldr r2, hard_fault_handler_2_const                        \n"
-        " bx r2                                                     \n"
-        " hard_fault_handler_2_const: .word HARD_FAULT_HANDLER    	\n");
-}
-
-_EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
-    /* These are volatile to try and prevent the compiler/linker optimising them
-     * away as the variables never actually get used.  If the debugger won't
-     * show the values of the variables, make them global my moving their
-     * declaration outside of this function. */
-    volatile uint32_t r0;
-    volatile uint32_t r1;
-    volatile uint32_t r2;
-    volatile uint32_t r3;
-    volatile uint32_t r12;
-    volatile uint32_t lr;  /* Link register. */
-    volatile uint32_t pc;  /* Program counter. */
-    volatile uint32_t psr; /* Program status register. */
-
-    r0 = stackAddr[0];
-    r1 = stackAddr[1];
-    r2 = stackAddr[2];
-    r3 = stackAddr[3];
-    r12 = stackAddr[4];
-    lr = stackAddr[5];
-    pc = stackAddr[6];
-    psr = stackAddr[7];
-
-    LOG(FATAL,
-        "\r\n"
-        "================================\r\n"
-        "========== HARD FAULT ==========\r\n"
-        "\r\n"
-        "  MSP:\t0x%08X\r\n"
-        "  HFSR:\t0x%08X\r\n"
-        "  CFSR:\t0x%08X\r\n"
-        "\r\n"
-        "  r0:\t0x%08X\r\n"
-        "  r1:\t0x%08X\r\n"
-        "  r2:\t0x%08X\r\n"
-        "  r3:\t0x%08X\r\n"
-        "  r12:\t0x%08X\r\n"
-        "  lr:\t0x%08X\r\n"
-        "  pc:\t0x%08X\r\n"
-        "  psr:\t0x%08X\r\n"
-        "\r\n"
-        "========== HARD FAULT ==========\r\n"
-        "================================",
-        __get_MSP, SCB->HFSR, SCB->CFSR, r0, r1, r2, r3, r12, lr, pc, psr);
-
-    // do nothing so everything remains unchanged for debugging
-    while (true)
-        ;
-}
-
-_EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }
-
-_EXTERN void MemManage_Handler() { std::printf("MemManage Fault!\n"); }
-
-_EXTERN void BusFault_Handler() { std::printf("BusFault Fault!\n"); }
-
-_EXTERN void UsageFault_Handler() { std::printf("UsageFault Fault!\n"); }

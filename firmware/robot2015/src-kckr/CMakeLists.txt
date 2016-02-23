@@ -5,9 +5,10 @@ include(attiny_toolchain.cmake)
 
 # F_CPU specifies the frequency (in Hz) of the cpu clock so that the delay functions work appropriately
 # the ATTiny13 has an internal 9.6MHz clock with the prescaler, don't scale back
+# change above to match ATTINY84A =====================================================================
 # to keep timing for neopixel
 # The -O2 turns on optimizations, which are required to use the delay_*() functions
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=attiny44a -DF_CPU=9600000")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -mmcu=attiny84a -DF_CPU=1000000")
 
 # Select the C source files
 file(GLOB kicker_SRC "*.c")
