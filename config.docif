@@ -74,7 +74,7 @@ CACHE_DIRECTORIES+=("${CIRCLE_ARTIFACTS}")
 
 # The script to set up the environment, by default ubuntu.
 # YOU WILL NEED TO USE SUDO TO GET ROOT PRIVLEGES HERE
-SETUP_COMMAND="sudo ./util/ubuntu-setup --yes --firmware && git fetch -f origin master:master"
+SETUP_COMMAND="sudo ./util/ubuntu-setup --yes --firmware"
 # SETUP_COMMAND="./ubuntu-setup-script"
 
 # DOCIF can cache baseimages, if you give it files that will force a rebuild if changed.
@@ -100,7 +100,7 @@ TEST_COMMANDS+=( 'make test-soccer;test-soccer;A check to see if soccer tests pa
 TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
 TEST_COMMANDS+=( 'make radio2015;radio2015;A check to see if the base station radio firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
-TEST_COMMANDS+=( 'make checkstyle;style;A check to see if style passes' )
+TEST_COMMANDS+=( 'git fetch -f origin master:master && make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
 TEST_COMMANDS+=('make coverage;coverage;A coverage build task.')
 # @RECCOMENDED
