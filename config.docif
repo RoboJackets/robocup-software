@@ -100,7 +100,7 @@ TEST_COMMANDS+=( 'make test-soccer;test-soccer;A check to see if soccer tests pa
 TEST_COMMANDS+=( 'make robot2015;firmware;A check to see if firmware compiles' )
 TEST_COMMANDS+=( 'make base2015;base2015;A check to see if base station firmware compiles' )
 TEST_COMMANDS+=( 'make test-firmware;test-firmware;A check to see if firmware tests pass' )
-TEST_COMMANDS+=( 'git fetch -f origin master:master && make checkstyle;style;A check to see if style passes' )
+TEST_COMMANDS+=( 'STYLIZE_DIFFBASE=origin/master make checkstyle;style;A check to see if style passes' )
 TEST_COMMANDS+=( 'make test-python;test-python;A check to see if python unit tests pass' )
 TEST_COMMANDS+=('make coverage;coverage;A coverage build task.')
 # @RECCOMENDED
