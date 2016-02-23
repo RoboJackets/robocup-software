@@ -387,7 +387,7 @@ void ProtobufTree::collapseSubtree(QTreeWidgetItem* item) {
 void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
     QMenu menu;
 
-    QAction *expandItemAction = nullptr, *collapseItemAction = nullptr;
+    QAction* expandItemAction = nullptr, * collapseItemAction = nullptr;
     QTreeWidgetItem* item = itemAt(e->pos());
     if (item) {
         expandItemAction = menu.addAction("Expand");
