@@ -52,6 +52,7 @@ imax = max(i_rlc)
 # Index of maximum current
 imax_pos = list(i_rlc).index(imax)
 
+
 # Find the parameters of the damped oscillation with least squares estimation.
 # This depends only on the measured current, so it will not be affected by the unknown
 # resistances in the capacitor and inductor.
@@ -60,7 +61,9 @@ def residual_i(X):
     fit_i = exp(-a * tt) * sin(wd * tt) * s
     return i_rlc - fit_i
 
-((wd, a, iscale), success) = scipy.optimize.leastsq(residual_i, [100, 100, 1000])
+
+((wd, a, iscale), success) = scipy.optimize.leastsq(residual_i, [100, 100,
+                                                                 1000])
 print wd, a, iscale, success
 print residual_i
 assert success
@@ -75,6 +78,7 @@ fit_imax = max(fit_i)
 fit_imax_pos = list(fit_i).index(fit_imax)
 
 fit_imax_time = fit_imax_pos / sample_rate
+
 
 # Best-fit current evaluated at an arbitrary time.
 # Use this for integration.
@@ -95,7 +99,9 @@ c = scipy.integrate.quad(eval_fit_i, 0, 1)[0] / vmax
 # Find the total charge that has left the capacitor at each time.
 # Use the best-fit current for more accurate integration.
 charge = array([scipy.integrate.quad(eval_fit_i, 0, t)[0] for t in tt])
+
 #charge = array([scipy.integrate.trapz(fit_i[:n], dx=1/sample_rate) for n in range(num_samples)])
+
 
 def residual_c(X):
     #(vmax, c, rc) = X
@@ -152,7 +158,7 @@ fit_pl = fit_pc - fit_pr
 fit_vl = fit_vc - fit_i * r
 
 ec_max = c * vmax**2 / 2
-el_max = scipy.integrate.trapz(fit_pl[:fit_imax_pos], dx=1/sample_rate)
+el_max = scipy.integrate.trapz(fit_pl[:fit_imax_pos], dx=1 / sample_rate)
 
 # Energy left in the capacitor if we cut off current at Imax
 cutoff_final_energy = c * fit_vc[fit_imax_pos]**2 / 2
@@ -169,23 +175,30 @@ print 'Damped frequency:       %5.1f Hz' % wd
 print 'Alpha (zeta*w0):        %7.3f' % a
 print 'Damping ratio (zeta):   %7.3f' % z
 print 'Current curve scale:   %8.3f' % iscale
-print 'Capacitance (each):    %6.1f uF' % (c * 1e6/2)
+print 'Capacitance (each):    %6.1f uF' % (c * 1e6 / 2)
 print 'Inductance:             %5.1f uH' % (L * 1e6)
 print 'Sense resistor:          %2.0f milliohms' % (rsense * 1e3)
 print 'Capacitor resistance:    %5.2f milliohms' % (rc * 1e3)
 print 'Inductor resistance:    %6.2f milliohms' % (rl * 1e3)
 print 'Total Resistance:       %6.2f milliohms' % (r * 1e3)
 print 'Initial energy:         %6.2f J' % (0.5 * c * vmax**2)
-print 'Total energy delivered: %6.2f J' % scipy.integrate.trapz(pc, dx=1/sample_rate)
-print 'Total loss:             %6.2f J' % scipy.integrate.trapz(fit_pr, dx=1/sample_rate)
-print 'Final inductor energy:  %6.2f J' % scipy.integrate.trapz(fit_pl, dx=1/sample_rate)
+print 'Total energy delivered: %6.2f J' % scipy.integrate.trapz(
+    pc,
+    dx=1 / sample_rate)
+print 'Total loss:             %6.2f J' % scipy.integrate.trapz(
+    fit_pr,
+    dx=1 / sample_rate)
+print 'Final inductor energy:  %6.2f J' % scipy.integrate.trapz(
+    fit_pl,
+    dx=1 / sample_rate)
 print 'Max inductor energy:    %6.2f J' % el_max
 
 # Efficiency if we use all energy in the inductor
 print 'Max efficiency:          %4.1f%%' % (el_max / ec_max * 100)
 
 # Efficiency if we cut off current at Imax, so the capacitor does not fully discharge
-print 'Cutoff efficiency:       %4.1f%%' % (el_max / (ec_max - cutoff_final_energy) * 100)
+print 'Cutoff efficiency:       %4.1f%%' % (el_max / (
+    ec_max - cutoff_final_energy) * 100)
 
 fig = figure()
 fig.canvas.set_window_title(sys.argv[1])
@@ -202,8 +215,8 @@ grid(True)
 ylabel('Voltage (V)')
 legend(['Measured', 'Best fit'])
 subplot(313)
-plot(tt, fit_pc/1e3, 'g', tt, fit_pl/1e3, 'r', tt, fit_pr/1e3, 'b')
-vlines(fit_imax_time, 0, fit_pr[fit_imax_pos]/1e3)
+plot(tt, fit_pc / 1e3, 'g', tt, fit_pl / 1e3, 'r', tt, fit_pr / 1e3, 'b')
+vlines(fit_imax_time, 0, fit_pr[fit_imax_pos] / 1e3)
 grid(True)
 legend(['Out of capacitor', 'Into inductor', 'Lost in resistance'])
 ylabel('Power (kW)')
