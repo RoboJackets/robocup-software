@@ -84,6 +84,31 @@ robot2015:
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
+GDB_PORT ?= 3333
+.INTERMEDIATE: build/robot2015-gdb.pid
+build/robot2015-gdb.pid:
+# this will cache sudo use without a password in the environment
+# so we won't enter the gdb server and skip past the password prompt.
+	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
+# now we can refresh the sudo timeout and start up the gdb server
+	sudo -v && { sudo pyocd-gdbserver --allow-remote --port $(GDB_PORT) --reset-break \
+	--target lpc1768 -S -G > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
+
+GDB_NO_CONN ?= 0
+robot2015-gdb: robot2015 build/robot2015-gdb.pid
+# use pyocd-gdbserver, and explicitly pass it the type of target we want to connect with,
+# making sure that we enable semihosting and use gdb syscalls for the file io
+	@trap 'sudo pkill -9 -P `cat build/robot2015-gdb.pid`; exit' TERM INT EXIT && \
+	if [ $(GDB_NO_CONN) -eq 0 ]; then \
+		arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+		  -ex "target remote localhost:$(GDB_PORT)" \
+		  -ex "load" \
+		  -ex "tbreak main" \
+		  -ex "continue"; \
+	else \
+		while true; do sleep 10; done; \
+	fi
+
 # I2C bus hardware test
 robot2015-i2c: HW_UNIT=i2c 
 robot2015-i2c: robot2015-test
