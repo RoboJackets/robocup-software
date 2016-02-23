@@ -46,7 +46,7 @@ void WorldModel::run(bool blueTeam,
         uint64_t timestamp = curTime;
 
         // determine team
-        const RepeatedPtrField<SSL_DetectionRobot> *self, *opp;
+        const RepeatedPtrField<SSL_DetectionRobot>* self, *opp;
         if (blueTeam) {
             self = &vision->robots_blue();
             opp = &vision->robots_yellow();

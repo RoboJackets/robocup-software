@@ -333,9 +333,8 @@ GL_ShapeDrawer::ShapeCache* GL_ShapeDrawer::cache(btConvexShape* shape) {
         edges.resize(nv * nv, nullptr);
         for (int i = 0; i < ni; i += 3) {
             const unsigned int* ti = pi + i;
-            const btVector3 nrm =
-                btCross(pv[ti[1]] - pv[ti[0]], pv[ti[2]] - pv[ti[0]])
-                    .normalized();
+            const btVector3 nrm = btCross(pv[ti[1]] - pv[ti[0]],
+                                          pv[ti[2]] - pv[ti[0]]).normalized();
             for (int j = 2, k = 0; k < 3; j = k++) {
                 const unsigned int a = ti[j];
                 const unsigned int b = ti[k];
@@ -694,8 +693,8 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape,
                                         poly->m_vertices[poly->m_faces[i]
                                                              .m_indices[0]];
                                     for (int v = 0;
-                                         v <
-                                         poly->m_faces[i].m_indices.size() - 2;
+                                         v < poly->m_faces[i].m_indices.size() -
+                                                 2;
                                          v++) {
                                         btVector3 v2 =
                                             poly->m_vertices[poly->m_faces[i]
