@@ -32,5 +32,4 @@ __pycache__/
 # output binaries
 run/*.bin
 run/*.nib
-run/*-test.bin
 
