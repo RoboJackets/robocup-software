@@ -120,7 +120,7 @@ int main() {
 
     // This is where the FPGA is actually configured with the bitfile's name
     // passed in
-    bool fpga_ready = false;  // FPGA::Instance()->Init("/local/rj-fpga.nib");
+    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
 
     if (fpga_ready == true) {
         LOG(INIT, "FPGA Configuration Successful!");
