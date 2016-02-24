@@ -41,6 +41,9 @@ public:
 
     void rotate(int value);
 
+    const Geometry2d::TransformMatrix& getTeamToWorld(){
+        return _teamToWorld;
+    }
     // True if this control is showing live (vs. historical) data.
     // If false, it will draw a red border.
     bool live;
@@ -50,6 +53,7 @@ public:
     bool showCoords;
     bool showDotPatterns;
     bool showTeamNames;
+
 
 protected:
     virtual void paintEvent(QPaintEvent* e) override;

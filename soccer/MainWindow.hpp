@@ -10,6 +10,8 @@
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 
+#include <protobuf/SimCommand.pb.h>
+
 class TestResultTab;
 class StripChart;
 class ConfigBool;
@@ -100,6 +102,8 @@ private Q_SLOTS:
     void on_actionStopBall_triggered();
     void on_actionResetField_triggered();
     void on_actionStopRobots_triggered();
+    void on_actionQuicksaveRobotLocations_triggered();
+    void on_actionQuickloadRobotLocations_triggered();
 
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);
@@ -204,4 +208,6 @@ private:
     std::vector<QPushButton*> _logPlaybackButtons;
 
     RJ::Time _firstLogTimestamp = -1;
+
+    Packet::SimCommand quickLoadCmd;
 };
