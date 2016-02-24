@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
+    // Set the width of logTime to prevent it from vibrating
+    calcMinimumWidth(_ui.logTime, "888:88.8");
+
     _ui.logTree->history(&_history);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
@@ -304,9 +307,10 @@ void MainWindow::updateViews() {
              i < liveFrame->debug_layers_size(); ++i) {
             const QString name =
                 QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled = !std::any_of(
-                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
-                [&](QString string) { return string == name; });
+            bool enabled =
+                !std::any_of(defaultHiddenLayers.begin(),
+                             defaultHiddenLayers.end(),
+                             [&](QString string) { return string == name; });
             addLayer(i, name, enabled);
         }
 
@@ -392,11 +396,9 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage)
-                              .c_str());
+                              _processor->refereeModule()->stage).c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command)
-                                .c_str());
+                                _processor->refereeModule()->command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
@@ -1053,7 +1055,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction *single = nullptr, *notSingle = nullptr;
+    QAction* single = nullptr, * notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");
