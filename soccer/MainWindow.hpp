@@ -209,5 +209,5 @@ private:
 
     RJ::Time _firstLogTimestamp = -1;
 
-    Packet::SimCommand quickLoadCmd;
+    Packet::SimCommand _quickLoadCmd;
 };

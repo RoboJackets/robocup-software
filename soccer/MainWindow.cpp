@@ -909,11 +909,10 @@ void MainWindow::on_actionStopRobots_triggered() {
 
 void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
     _ui.actionQuickloadRobotLocations->setEnabled(true);
-    quickLoadCmd.reset();
-    int i = 0;
+    _quickLoadCmd.reset();
     for (OurRobot* robot : state()->self) {
         if (robot->visible) {
-            SimCommand::Robot* r = quickLoadCmd.add_robots();
+            SimCommand::Robot* r = _quickLoadCmd.add_robots();
             r->set_shell(robot->shell());
             r->set_blue_team(processor()->blueTeam());
             Geometry2d::Point newPos =
@@ -927,7 +926,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
     }
     for (OpponentRobot* robot : state()->opp) {
         if (robot->visible) {
-            SimCommand::Robot* r = quickLoadCmd.add_robots();
+            SimCommand::Robot* r = _quickLoadCmd.add_robots();
             r->set_shell(robot->shell());
             r->set_blue_team(!processor()->blueTeam());
             Geometry2d::Point newPos =
@@ -942,14 +941,14 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
 
     Geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x);
-    quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y);
-    quickLoadCmd.mutable_ball_vel()->set_x(0);
-    quickLoadCmd.mutable_ball_vel()->set_y(0);
+    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x);
+    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y);
+    _quickLoadCmd.mutable_ball_vel()->set_x(0);
+    _quickLoadCmd.mutable_ball_vel()->set_y(0);
 }
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
-    _ui.fieldView->sendSimCommand(quickLoadCmd);
+    _ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
 // Manual control commands
