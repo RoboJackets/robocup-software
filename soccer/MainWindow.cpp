@@ -878,22 +878,76 @@ void MainWindow::on_actionStopRobots_triggered() {
     SimCommand cmd;
     // TODO: check that this handles threads properly
     for (OurRobot* robot : state()->self) {
-        SimCommand::Robot* r = cmd.add_robots();
-        r->set_shell(robot->shell());
-        r->set_blue_team(processor()->blueTeam());
-        r->mutable_vel()->set_x(0);
-        r->mutable_vel()->set_y(0);
-        r->set_w(0);
+        if(robot->visible){
+            SimCommand::Robot* r = cmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(processor()->blueTeam());
+            Geometry2d::Point newPos = _ui.fieldView->getTeamToWorld()*robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
     }
     for (OpponentRobot* robot : state()->opp) {
-        SimCommand::Robot* r = cmd.add_robots();
-        r->set_shell(robot->shell());
-        r->set_blue_team(processor()->blueTeam());
-        r->mutable_vel()->set_x(0);
-        r->mutable_vel()->set_y(0);
-        r->set_w(0);
+        if(robot->visible){
+            SimCommand::Robot* r = cmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(!processor()->blueTeam());
+            Geometry2d::Point newPos = _ui.fieldView->getTeamToWorld()*robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
     }
     _ui.fieldView->sendSimCommand(cmd);
+}
+
+void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
+    quickLoadCmd.reset();
+    int i = 0;
+    for (OurRobot* robot : state()->self) {
+        if(robot->visible){
+            SimCommand::Robot* r = quickLoadCmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(processor()->blueTeam());
+            Geometry2d::Point newPos = _ui.fieldView->getTeamToWorld()*robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
+    }
+    for (OpponentRobot* robot : state()->opp) {
+        if(robot->visible){
+            SimCommand::Robot* r = quickLoadCmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(!processor()->blueTeam());
+             std::cout<<robot->pos.x<<std::endl;
+             std::cout<<robot->pos.y<<std::endl;
+
+            Geometry2d::Point newPos = _ui.fieldView->getTeamToWorld()*robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
+    }
+
+    Geometry2d::Point ballPos = _ui.fieldView->getTeamToWorld()*state()->ball.pos;
+    quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x);
+    quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y);
+    quickLoadCmd.mutable_ball_vel()->set_x(0);
+    quickLoadCmd.mutable_ball_vel()->set_y(0);
+}
+
+void MainWindow::on_actionQuickloadRobotLocations_triggered() {
+    _ui.fieldView->sendSimCommand(quickLoadCmd);
 }
 
 // Manual control commands
