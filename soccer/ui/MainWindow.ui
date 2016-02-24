@@ -2217,6 +2217,9 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionQuickloadRobotLocations">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Quickload Robot Locations</string>
    </property>
