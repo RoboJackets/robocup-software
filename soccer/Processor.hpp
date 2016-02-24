@@ -201,6 +201,8 @@ private:
     /** send out the radio data for the radio program */
     void sendRadioData();
 
+    Field_Dimensions decodeGeometryPacket(SSL_GeometryFieldSize* fieldSize);
+
     void runModels(
         const std::vector<const SSL_DetectionFrame*>& detectionFrames);
 
