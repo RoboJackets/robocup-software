@@ -1816,7 +1816,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1874,6 +1874,9 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionStopBall"/>
     <addaction name="actionResetField"/>
     <addaction name="actionStopRobots"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuicksaveRobotLocations"/>
+    <addaction name="actionQuickloadRobotLocations"/>
    </widget>
    <widget class="QMenu" name="menu_Debug">
     <property name="title">
@@ -2085,7 +2088,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionStopRobots">
    <property name="text">
-    <string>S&amp;top Robots</string>
+    <string>&amp;Stop Robots</string>
    </property>
   </action>
   <action name="action904MHz">
@@ -2206,6 +2209,16 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Use Field-Oriented Controls</string>
+   </property>
+  </action>
+  <action name="actionQuicksaveRobotLocations">
+   <property name="text">
+    <string>Quicksave Robot Locations</string>
+   </property>
+  </action>
+  <action name="actionQuickloadRobotLocations">
+   <property name="text">
+    <string>Quickload Robot Locations</string>
    </property>
   </action>
  </widget>
