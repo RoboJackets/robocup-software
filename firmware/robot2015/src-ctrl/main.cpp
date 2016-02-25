@@ -2,15 +2,20 @@
  * Program an AVR with an mbed.
  */
 
-#include "AVR910.h"
-#define PATH_TO_BINARY "/local/lastest.nib"
+#include "AVR910.hpp"
+#include "errno.h"
+
+//ATTtiny
+#define ATTINY84A_PAGESIZE  32 //Size in words.
+#define ATTINY84A_NUM_PAGES 128
+
 LocalFileSystem local("local");
 Serial pc(USBTX, USBRX);
 AVR910 mAVRISP(p5, p6, p7, p8); //mosi, miso, sclk, nreset.
 
 int main() {
     pc.baud(57600);
-    int success  = -1;
+    bool success  = false;
     int response =  0;
 
     //Read the vendor code [0x1E == Atmel].
@@ -64,7 +69,7 @@ int main() {
         fclose(fp);
     }
 
-    if (success != 0) {
+    if (!success) {
         printf("Programming failed.\r\n");
     } else {
         printf("Programming was successful!\r\n");

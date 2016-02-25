@@ -32,22 +32,16 @@
  *
  * http://www.atmel.com/dyn/resources/prod_documents/doc0943.pdf
  */
-
-#ifndef MBED_AVR910_H
-#define MBED_AVR910_H
-
 /**
- * Includes
+ * Modified by the Georgia Tech RoboJackets
  */
+
+#pragma once
+
 #include "mbed.h"
 
-/**
- * Defines
- */
 
-
-
-//Commands
+// AVR SPI Commands
 #define ATMEL_VENDOR_CODE     0x1E
 #define DEVICE_LOCKED         0x00
 #define WRITE_HIGH_BYTE       0x48
@@ -57,15 +51,13 @@
 #define WRITE_HIGH_FLASH_BYTE 0x68
 #define WRITE_LOW_FLASH_BYTE  0x60
 
-//ATTtiny
-#define ATTINY84A_PAGESIZE  32 //Size in words.
-#define ATTINY84A_NUM_PAGES 128
 
 /**
- * AVR910 ISP
+ * @brief AVR910 ISP
+ * 
+ * This class facilitates loading a program onto an AVR chip's flash memory.
  */
 class AVR910 {
-
 public:
 
     /**
@@ -96,10 +88,9 @@ public:
      * @param numPages The number of pages on the device. If the device does
      *                 not use paged memory, set this to 1 (default).
      *
-     * @return  0 => AVR microcontroller programmed successfully.
-     *         -1 => Problem during programming.
+     * @return  boolean value indicating success
      */
-    int program(FILE* binary, int pageSize, int numPages = 1);
+    bool program(FILE* binary, int pageSize, int numPages = 1);
 
     /**
      * Set the frequency of the SPI communication.
@@ -116,7 +107,7 @@ public:
      * @return The vendor code - should be 0x1E for Atmel.
      *         0x00 -> Device is locked.
      */
-    int readVendorCode(void);
+    int readVendorCode();
 
     /**
      * Read the part family and flash size of the device.
@@ -126,7 +117,7 @@ public:
      *         0xFF -> Device code erased or target missing.
      *         0x01 -> Device is locked.
      */
-    int readPartFamilyAndFlashSize(void);
+    int readPartFamilyAndFlashSize();
 
     /**
      * Read the part number.
@@ -135,27 +126,26 @@ public:
      *         0xFF -> Device code erased or target missing.
      *         0x02 -> Device is locked.
      */
-    int readPartNumber(void);
+    int readPartNumber();
 
 private:
 
     /**
      * Issue an enable programming command to the AVR microcontroller.
      *
-     * @param  0 to indicate programming was enabled successfully.
-     *        -1 to indicate programming was not enabled.
+     * @param boolean indicating success
      */
-    int enableProgramming(void);
+    bool enableProgramming();
 
     /**
      * Poll the device until it has finished its current operation.
      */
-    void poll(void);
+    void poll();
 
     /**
      * Issue a chip erase command to the AVR microcontroller.
      */
-    void chipErase(void);
+    void chipErase();
 
     /**
      * Load a byte into the memory page buffer.
@@ -198,16 +188,13 @@ private:
      * Check the binary has been written correctly.
      *
      * @param numPages The number of pages written to the AVR microcontroller.
+     * @param pageSize The size of a page in words
      * @param binary File pointer to the binary used.
      *
-     * @return  0 -> No inconsistencies between binary file and AVR flash memory.
-     *         -1 -> Binary file was not written correctly.
+     * @return boolean indicating success
      */
-    int checkMemory(int numPages, int pageSize, FILE* binary);
+    bool checkMemory(int numPages, int pageSize, FILE* binary);
 
     SPI        spi_;
     DigitalOut nReset_;
-
 };
-
-#endif /* AVR910_H */
