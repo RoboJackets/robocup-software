@@ -128,6 +128,30 @@ public:
      */
     int readPartNumber();
 
+
+protected:
+
+    /**
+     * Check the binary has been written correctly.
+     *
+     * @param numPages The number of pages written to the AVR microcontroller.
+     * @param pageSize The size of a page in words
+     * @param binary File pointer to the binary used.
+     *
+     * @return boolean indicating success
+     */
+    bool checkMemory(int numPages, int pageSize, FILE* binary, bool verbose = true);
+
+    /**
+     * Brings the reset line high to exit programming mode.  The program()
+     * method does this automatically, but this can be called instead of
+     * program() to return the AVR to its normal state.
+     */
+    void exitProgramming() {
+        nReset_ = 1;
+    }
+
+
 private:
 
     /**
@@ -183,17 +207,6 @@ private:
      * @return The byte at the specified memory location.
      */
     char readProgramMemory(int highLow, char pageNumber, char pageOffset);
-
-    /**
-     * Check the binary has been written correctly.
-     *
-     * @param numPages The number of pages written to the AVR microcontroller.
-     * @param pageSize The size of a page in words
-     * @param binary File pointer to the binary used.
-     *
-     * @return boolean indicating success
-     */
-    bool checkMemory(int numPages, int pageSize, FILE* binary);
 
     SPI        spi_;
     DigitalOut nReset_;

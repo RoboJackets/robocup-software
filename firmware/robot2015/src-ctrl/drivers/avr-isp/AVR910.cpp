@@ -67,7 +67,7 @@ AVR910::AVR910(PinName mosi,
     }
 
     if (!enabled) {
-        printf("ERROR: AVR910 unable to enable programming mode for chip.  Further commands will fail");
+        printf("ERROR: AVR910 unable to enable programming mode for chip.  Further commands will fail\r\n");
     }
 }
 
@@ -256,7 +256,7 @@ char AVR910::readProgramMemory(int highLow, char pageNumber, char pageOffset) {
     return response;
 }
 
-bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary) {
+bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary, bool verbose) {
     bool success  = true;
 
     // Go back to the beginning of the binary file.
@@ -269,16 +269,24 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary) {
             // Read program memory low byte.
             response = readProgramMemory(READ_LOW_BYTE, page, offset);
             if (c != response) {
-                printf("Page %i low byte %i: 0x%02x\r\n", page, offset, response);
-                printf("Correct byte is 0x%02x\r\n", c);
+                if (verbose) {
+                    printf("Page %i low byte %i: 0x%02x\r\n", page, offset, response);
+                    printf("Correct byte is 0x%02x\r\n", c);
+                } else {
+                    return false;
+                }
                 success = false;
             }
             c = getc(binary);
             // Read program memory high byte.
             response = readProgramMemory(READ_HIGH_BYTE, page, offset);
             if (c != response) {
-                printf("Page %i high byte %i: 0x%02x\r\n", page, offset, response);
-                printf("Correct byte is 0x%02x\r\n", c);
+                if (verbose) {
+                    printf("Page %i high byte %i: 0x%02x\r\n", page, offset, response);
+                    printf("Correct byte is 0x%02x\r\n", c);
+                } else {
+                    return false;
+                }
                 success = false;
             }
         }
