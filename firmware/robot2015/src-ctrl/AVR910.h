@@ -57,9 +57,6 @@
 #define WRITE_HIGH_FLASH_BYTE 0x68
 #define WRITE_LOW_FLASH_BYTE  0x60
 
-#define PAGE_SIZE         ATTINY84A_PAGESIZE
-#define NUM_PAGES         ATTINY84A_NUM_PAGES
-
 //ATTtiny
 #define ATTINY84A_PAGESIZE  32 //Size in words.
 #define ATTINY84A_NUM_PAGES 128
@@ -206,7 +203,7 @@ private:
      * @return  0 -> No inconsistencies between binary file and AVR flash memory.
      *         -1 -> Binary file was not written correctly.
      */
-    int checkMemory(int numPages, FILE* binary);
+    int checkMemory(int numPages, int pageSize, FILE* binary);
 
     SPI        spi_;
     DigitalOut nReset_;

@@ -178,9 +178,8 @@ int AVR910::program(FILE* binary, int pageSize, int numPages) {
     writeFlashMemoryPage(pageNumber);
 
     int success = -1;
-    //int success = 0;
-    success = checkMemory(pageNumber, binary);
-    
+    success = checkMemory(pageNumber, pageSize, binary);
+
     nReset_ = 0;
     wait_ms(20);
     //Leave serial programming mode by pulling reset line high.
@@ -319,8 +318,8 @@ void AVR910::writeFlashMemoryByte(int highLow, int address, char data) {
 void AVR910::writeFlashMemoryPage(char pageNumber) {
 
     spi_.write(0x4C);
-    spi_.write((pageNumber >> 2) & 0x3F);
-    spi_.write((pageNumber & 0x03) << 6);
+    spi_.write(pageNumber >> 3); // top 5 bits of pageNumber stored in bottom of byte
+    spi_.write(pageNumber << 5); // bottom 3 bits of pageNumber stored in top of byte
     spi_.write(0x00);
 
     poll();
@@ -332,8 +331,8 @@ char AVR910::readProgramMemory(int highLow, char pageNumber, char pageOffset) {
     int response = 0;
 
     spi_.write(highLow);
-    spi_.write((pageNumber >> 2) & 0x3F);
-    spi_.write(((pageNumber & 0x03) << 6) | (pageOffset & 0x3F));
+    spi_.write(pageNumber >> 3);
+    spi_.write((pageNumber << 5) | (pageOffset & 0x3F));
     response = spi_.write(0x00);
 
     poll();
@@ -342,7 +341,7 @@ char AVR910::readProgramMemory(int highLow, char pageNumber, char pageOffset) {
 
 }
 
-int AVR910::checkMemory(int numPages, FILE* binary) {
+int AVR910::checkMemory(int numPages, int pageSize, FILE* binary) {
 
     int success  = 0;
     int response = 0;
@@ -350,34 +349,25 @@ int AVR910::checkMemory(int numPages, FILE* binary) {
 
     // Go back to the beginning of the binary file.
     fseek(binary, 0, SEEK_SET);
-    int colnum = 0;
+
     for (int i = 0; i < numPages; i++) {
-        for (int j = 0; j < PAGE_SIZE; j++) {
+        for (int j = 0; j < pageSize; j++) {
             c = getc(binary);
             //Read program memory low byte.
             response = readProgramMemory(READ_LOW_BYTE, i, j);
-            //printf("Low byte: 0x%02x\r\n", response);
-            //printf("%d %d\r\n", response, c);
-            //printf("%02x\r\n", response);
             if ( c != response ) {
-                //printf("Page %i low byte %i: 0x%02x\r\n", i, j, response);
-                //printf("Correct byte is 0x%02x\r\n", c);
+                printf("Page %i low byte %i: 0x%02x\r\n", i, j, response);
+                printf("Correct byte is 0x%02x\r\n", c);
                 success = -1;
             }
             c = getc(binary);
             //Read program memory high byte.
             response = readProgramMemory(READ_HIGH_BYTE, i, j);
-            //printf("%02x\r\n ", response);
-            
-            //printf("High byte: 0x%02x\r\n", response);
-            //printf("%d %d\r\n", response, c);
-
             if ( c != response ) {
-                //printf("Page %i high byte %i: 0x%02x\r\n", i, j, response);
-                //printf("Correct byte is 0x%02x\r\n", c);
+                printf("Page %i high byte %i: 0x%02x\r\n", i, j, response);
+                printf("Correct byte is 0x%02x\r\n", c);
                 success = -1;
             }
-            //for (int i = 0; i < 0; i++) {}
         }
     }
     return success;

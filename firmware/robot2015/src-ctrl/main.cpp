@@ -51,8 +51,7 @@ int main() {
     }
 
     //Open binary file to write to AVR.
-    FILE *fp = fopen(PATH_TO_BINARY, "r");
-
+    FILE *fp = fopen("/local/rj-kickr.nib", "r");
     if (fp == NULL) {
         pc.printf("Failed to open binary. Please check the file path\r\n");
         return -1;
@@ -60,8 +59,8 @@ int main() {
         //Program it!
         pc.printf("Binary file opened successfully\r\n");
         success = mAVRISP.program(fp,
-                                  PAGE_SIZE,
-                                  NUM_PAGES);
+                                  ATTINY84A_PAGESIZE,
+                                  ATTINY84A_NUM_PAGES);
         fclose(fp);
     }
 
