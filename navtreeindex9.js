@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"functions_n.html":[12,3,0,14],
 "functions_o.html":[12,3,0,15],
 "functions_p.html":[12,3,0,16],
 "functions_r.html":[12,3,0,17],
@@ -54,8 +55,8 @@ var NAVTREEINDEX9 =
 "mpu-6050-defines_8hpp_source.html":[13,0,1,0,0,1,5,0],
 "mpu-6050_8hpp_source.html":[13,0,1,0,0,1,5,1],
 "multicast_8hpp_source.html":[13,0,0,5],
-"namespace_gameplay.html":[11,0,0],
 "namespace_gameplay.html":[12,0,3],
+"namespace_gameplay.html":[11,0,0],
 "namespaces.html":[11,0],
 "neopixel_8h_source.html":[13,0,1,0,1,2],
 "neostrip_8hpp_source.html":[13,0,1,0,0,1,6,0],
