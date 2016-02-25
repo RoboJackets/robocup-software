@@ -35,12 +35,8 @@
 
 #include "AVR910.hpp"
 
-
-AVR910::AVR910(PinName mosi,
-        PinName miso,
-        PinName sclk,
-        PinName nReset) : spi_(mosi, miso, sclk), nReset_(nReset) {
-
+AVR910::AVR910(PinName mosi, PinName miso, PinName sclk, PinName nReset)
+    : spi_(mosi, miso, sclk), nReset_(nReset) {
     // Slow frequency as default to ensure no errors from
     // trying to run it too fast. Increase as appropriate.
     spi_.frequency(32000);
@@ -67,7 +63,9 @@ AVR910::AVR910(PinName mosi,
     }
 
     if (!enabled) {
-        printf("ERROR: AVR910 unable to enable programming mode for chip.  Further commands will fail\r\n");
+        printf(
+            "ERROR: AVR910 unable to enable programming mode for chip.  "
+            "Further commands will fail\r\n");
     }
 }
 
@@ -76,10 +74,10 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
     chipErase();
 
     char pageOffset = 0;
-    int  pageNumber = 0;
-    int  address    = 0;
-    int  c          = 0;
-    int  highLow    = 0;
+    int pageNumber = 0;
+    int address = 0;
+    int c = 0;
+    int highLow = 0;
 
     // We're dealing with paged memory.
     if (numPages > 1) {
@@ -90,7 +88,9 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
 
                 pageNumber++;
                 if (pageNumber > numPages) {
-                    printf("ERROR: AVR910 binary exceeds chip memory capacity\r\n");
+                    printf(
+                        "ERROR: AVR910 binary exceeds chip memory "
+                        "capacity\r\n");
                     return -1;
                 }
                 pageOffset = 0;
@@ -107,14 +107,12 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
                 highLow = 0;
                 pageOffset++;
             }
-
         }
 
     } else {
         // We're dealing with non-paged memory.
 
         while ((c = getc(binary)) != EOF) {
-
             // Write low byte.
             if (highLow == 0) {
                 writeFlashMemoryByte(WRITE_LOW_FLASH_BYTE, address, c);
@@ -129,7 +127,9 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
                 // Therefore if we've gone beyond our size break because we
                 // don't have any more room.
                 if (address > pageSize) {
-                    printf("ERROR: AVR910 binary exceeds chip memory capacity\r\n");
+                    printf(
+                        "ERROR: AVR910 binary exceeds chip memory "
+                        "capacity\r\n");
                     return -1;
                 }
             }
@@ -149,9 +149,7 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
     return success;
 }
 
-void AVR910::setFrequency(int frequency) {
-    spi_.frequency(frequency);
-}
+void AVR910::setFrequency(int frequency) { spi_.frequency(frequency); }
 
 bool AVR910::enableProgramming() {
     // Programming Enable Command: 0xAC, 0x53, 0x00, 0x00
@@ -238,8 +236,8 @@ void AVR910::writeFlashMemoryByte(int highLow, int address, char data) {
 
 void AVR910::writeFlashMemoryPage(char pageNumber) {
     spi_.write(0x4C);
-    spi_.write(pageNumber >> 3); // top 5 bits stored in bottom of byte
-    spi_.write(pageNumber << 5); // bottom 3 bits stored in top of byte
+    spi_.write(pageNumber >> 3);  // top 5 bits stored in bottom of byte
+    spi_.write(pageNumber << 5);  // bottom 3 bits stored in top of byte
     spi_.write(0x00);
 
     poll();
@@ -256,8 +254,9 @@ char AVR910::readProgramMemory(int highLow, char pageNumber, char pageOffset) {
     return response;
 }
 
-bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary, bool verbose) {
-    bool success  = true;
+bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
+                         bool verbose) {
+    bool success = true;
 
     // Go back to the beginning of the binary file.
     fseek(binary, 0, SEEK_SET);
@@ -270,7 +269,8 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary, bool verbose)
             response = readProgramMemory(READ_LOW_BYTE, page, offset);
             if (c != response) {
                 if (verbose) {
-                    printf("Page %i low byte %i: 0x%02x\r\n", page, offset, response);
+                    printf("Page %i low byte %i: 0x%02x\r\n", page, offset,
+                           response);
                     printf("Correct byte is 0x%02x\r\n", c);
                 } else {
                     return false;
@@ -282,7 +282,8 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary, bool verbose)
             response = readProgramMemory(READ_HIGH_BYTE, page, offset);
             if (c != response) {
                 if (verbose) {
-                    printf("Page %i high byte %i: 0x%02x\r\n", page, offset, response);
+                    printf("Page %i high byte %i: 0x%02x\r\n", page, offset,
+                           response);
                     printf("Correct byte is 0x%02x\r\n", c);
                 } else {
                     return false;

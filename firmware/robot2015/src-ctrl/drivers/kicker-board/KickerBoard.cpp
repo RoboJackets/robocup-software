@@ -5,12 +5,11 @@ using namespace std;
 
 KickerBoard::KickerBoard(PinName mosi, PinName miso, PinName sck,
                          PinName nReset, const string& progFilename)
-    : AVR910(mosi, miso, sck, nReset),
-      _filename(progFilename) {}
+    : AVR910(mosi, miso, sck, nReset), _filename(progFilename) {}
 
 bool KickerBoard::verify_param(const char* name, char expected,
-                               int (AVR910::*paramMethod)(),
-                               char mask, bool verbose) {
+                               int (AVR910::*paramMethod)(), char mask,
+                               bool verbose) {
     if (verbose) printf("Checking %s...", name);
     int val = (*this.*paramMethod)();
     bool success = ((val & mask) == expected);
@@ -28,12 +27,16 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
     // Check a few parameters before attempting to flash to ensure that we have
     // the right chip and it's connected correctly.
     auto checks = {
-        make_tuple("Vendor ID", ATMEL_VENDOR_CODE, &AVR910::readVendorCode, 0xFF),
-        make_tuple("Part Family", AVR_FAMILY_ID, &AVR910::readPartFamilyAndFlashSize, AVR_FAMILY_MASK),
-        make_tuple("Device ID", ATTINY84A_DEVICE_ID, &AVR910::readPartNumber, 0xFF),
+        make_tuple("Vendor ID", ATMEL_VENDOR_CODE, &AVR910::readVendorCode,
+                   0xFF),
+        make_tuple("Part Family", AVR_FAMILY_ID,
+                   &AVR910::readPartFamilyAndFlashSize, AVR_FAMILY_MASK),
+        make_tuple("Device ID", ATTINY84A_DEVICE_ID, &AVR910::readPartNumber,
+                   0xFF),
     };
     for (auto& check : checks) {
-        if (!verify_param(get<0>(check), get<1>(check), get<2>(check), get<3>(check), verbose)) {
+        if (!verify_param(get<0>(check), get<1>(check), get<2>(check),
+                          get<3>(check), verbose)) {
             return false;
         }
     }
@@ -56,7 +59,8 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
 
         bool shouldProgram = true;
         if (onlyIfDifferent &&
-            (checkMemory(ATTINY84A_PAGESIZE, ATTINY84A_NUM_PAGES, fp, false) == 0))
+            (checkMemory(ATTINY84A_PAGESIZE, ATTINY84A_NUM_PAGES, fp, false) ==
+             0))
             shouldProgram = false;
 
         if (!shouldProgram) {

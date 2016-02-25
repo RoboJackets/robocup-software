@@ -4,12 +4,11 @@
 #include <string>
 #include "AVR910.hpp"
 
-
 // ATtiny84a
 #define AVR_FAMILY_MASK 0xF0
 #define AVR_FAMILY_ID 0x90
 #define ATTINY84A_DEVICE_ID 0x0C
-#define ATTINY84A_PAGESIZE  32 // Size in words (word = 2 bytes)
+#define ATTINY84A_PAGESIZE 32  // Size in words (word = 2 bytes)
 #define ATTINY84A_NUM_PAGES 128
 
 /**
@@ -51,8 +50,8 @@ protected:
      * @return True if the return value was the expected value, false otherwise
      */
     bool verify_param(const char* name, char expected,
-                      int (AVR910::*paramMethod)(),
-                      char mask = 0xFF, bool verbose = false);
+                      int (AVR910::*paramMethod)(), char mask = 0xFF,
+                      bool verbose = false);
 
 private:
     std::string _filename;

@@ -40,26 +40,23 @@
 
 #include "mbed.h"
 
-
 // AVR SPI Commands
-#define ATMEL_VENDOR_CODE     0x1E
-#define DEVICE_LOCKED         0x00
-#define WRITE_HIGH_BYTE       0x48
-#define WRITE_LOW_BYTE        0x40
-#define READ_HIGH_BYTE        0x28
-#define READ_LOW_BYTE         0x20
+#define ATMEL_VENDOR_CODE 0x1E
+#define DEVICE_LOCKED 0x00
+#define WRITE_HIGH_BYTE 0x48
+#define WRITE_LOW_BYTE 0x40
+#define READ_HIGH_BYTE 0x28
+#define READ_LOW_BYTE 0x20
 #define WRITE_HIGH_FLASH_BYTE 0x68
-#define WRITE_LOW_FLASH_BYTE  0x60
-
+#define WRITE_LOW_FLASH_BYTE 0x60
 
 /**
  * @brief AVR910 ISP
- * 
+ *
  * This class facilitates loading a program onto an AVR chip's flash memory.
  */
 class AVR910 {
 public:
-
     /**
      * Constructor.
      *
@@ -112,10 +109,9 @@ public:
     /**
      * Read the part family and flash size of the device.
      *
-     * @return Code indicating the family of AVR microcontrollers the device comes
-     *         from and how much flash memory it contains.
-     *         0xFF -> Device code erased or target missing.
-     *         0x01 -> Device is locked.
+     * @return Code indicating the family of AVR microcontrollers the device
+     *     comes from and how much flash memory it contains. 0xFF -> Device code
+     *     erased or target missing. 0x01 -> Device is locked.
      */
     int readPartFamilyAndFlashSize();
 
@@ -128,9 +124,7 @@ public:
      */
     int readPartNumber();
 
-
 protected:
-
     /**
      * Check the binary has been written correctly.
      *
@@ -140,20 +134,17 @@ protected:
      *
      * @return boolean indicating success
      */
-    bool checkMemory(int numPages, int pageSize, FILE* binary, bool verbose = true);
+    bool checkMemory(int numPages, int pageSize, FILE* binary,
+                     bool verbose = true);
 
     /**
      * Brings the reset line high to exit programming mode.  The program()
      * method does this automatically, but this can be called instead of
      * program() to return the AVR to its normal state.
      */
-    void exitProgramming() {
-        nReset_ = 1;
-    }
-
+    void exitProgramming() { nReset_ = 1; }
 
 private:
-
     /**
      * Issue an enable programming command to the AVR microcontroller.
      *
@@ -200,7 +191,8 @@ private:
     /**
      * Read a byte from program memory.
      *
-     * @param highLow Indicate whether the byte being read is a low or high byte.
+     * @param highLow Indicate whether the byte being read is a low or high
+     * byte.
      * @param pageNumber The page number to read from.
      * @param pageOffset Address of byte in the page.
      *
@@ -208,6 +200,6 @@ private:
      */
     char readProgramMemory(int highLow, char pageNumber, char pageOffset);
 
-    SPI        spi_;
+    SPI spi_;
     DigitalOut nReset_;
 };
