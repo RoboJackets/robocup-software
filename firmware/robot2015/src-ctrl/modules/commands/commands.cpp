@@ -991,7 +991,6 @@ void execute_line(char* rawCommand) {
         uint8_t argc = 0;
         string cmdName = "\0";
         vector<string> args;
-        args.reserve(MAX_COMMAND_ARGS);
 
         char* endArg;
         char* pch = strtok_r(cmds, " ", &endArg);
