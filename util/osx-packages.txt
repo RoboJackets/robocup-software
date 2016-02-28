@@ -21,3 +21,5 @@ bullet --with-shared
 protobuf
 clang-format
 graphviz
+px4/px4/gcc-arm-none-eabi
+hg
