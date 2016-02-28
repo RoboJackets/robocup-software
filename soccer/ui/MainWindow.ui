@@ -2215,6 +2215,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Quicksave Robot Locations</string>
    </property>
+   <property name="shortcut">
+    <string/>
+   </property>
   </action>
   <action name="actionQuickloadRobotLocations">
    <property name="enabled">
@@ -2222,6 +2225,9 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Quickload Robot Locations</string>
+   </property>
+   <property name="shortcut">
+    <string/>
    </property>
   </action>
  </widget>
