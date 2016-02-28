@@ -1,21 +1,26 @@
 *.kdev4
+
+# scons build system
 .sconsign.dblite
 .scons_variables
+
+# build directories
 /build
-/build-scons
-.pydevproject
 /gmon.out
 *.swp
 /.settings
 /api_docs
 *~
+
+# sublime-text
 *.sublime-workspace
 
 # Python
 __pycache__/
 *.pyc
+.pydevproject
 
-# OS X desktop garbage files
+# OS X Finder prefs
 .DS_Store
 
 # Qt Creator
@@ -23,4 +28,8 @@ __pycache__/
 
 # IntelliJ
 .idea
-clean.patch
+
+# output binaries
+run/*.bin
+run/*.nib
+
