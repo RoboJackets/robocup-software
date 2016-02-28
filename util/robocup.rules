@@ -1,25 +1,22 @@
 # Put this file in /etc/udev/rules.d and
 #     /etc/init.d/udev restart
 
-SUBSYSTEM!="usb_device", ACTION!="add", GOTO="robocup_rules_end"
-
+# Rules for the 2011 hardware
+SUBSYSTEM!="usb_device", ACTION!="add", GOTO="robot2011_end"
 # Base station (AT90USB1287 bootloader)
 ATTR{idVendor}=="03eb", ATTR{idProduct}=="2ffb", MODE="0660", GROUP="plugdev"
-
 # Base station (normal operation)
 ATTR{idVendor}=="3141", ATTR{idProduct}=="0004", MODE="0660", GROUP="plugdev" SYMLINK+="rj_base_station_2011"
-
 # JTAG adapter
 ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE="0660", GROUP="plugdev"
-
 # Robot
 ATTR{idVendor}=="03eb", ATTR{idProduct}=="6119", MODE="0660", GROUP="plugdev", SYMLINK+="robot"
+LABEL="robot2011_end"
 
-LABEL="robocup_rules_end"
-
-KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6119", SYMLINK+="robot"
-
-# MBED
+KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6119", SYMLINK+="robot", MODE="0660", GROUP="plugdev"
 # Note: the '%n' in SYMLINK is replaced with the device number so if there are multiple
-#       mbeds connected, they get unique names
-KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", SYMLINK+="mbed%n"
+
+# mbeds connected, they get unique names
+KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", SYMLINK+="mbed%n", MODE="0660", GROUP="plugdev"
+
+KERNEL=="sd[a-z]*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", MODE="0660", GROUP="plugdev"

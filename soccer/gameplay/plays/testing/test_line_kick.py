@@ -7,14 +7,12 @@ import robocup
 
 
 class TestLineKick(play.Play):
-
     def __init__(self):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running,
-            lambda: True,
-            'immediately')
+                            behavior.Behavior.State.running, lambda: True,
+                            'immediately')
 
         kick = skills.line_kick.LineKick()
         kick.target = constants.Field.OurGoalSegment
@@ -24,4 +22,3 @@ class TestLineKick(play.Play):
         kick = self.subbehavior_with_name('kick')
         if kick.is_done_running():
             kick.restart()
-
