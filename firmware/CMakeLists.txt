@@ -4,9 +4,10 @@
 # Set the mbed target processor and settings for cmake
 set(MBED_TARGET LPC1768)
 set(MBED_USE_RTOS true)
-set(MBED_USE_NET false)
+set(MBED_USE_ETH false)
 set(MBED_USE_USB false)
 set(MBED_USE_DSP false)
+set(MBED_USE_RPC true)
 
 # The name of the toolchain we're using.  Note: we don't actually set the CMake
 # toolchain here because it would require that all files compiled under this
@@ -14,8 +15,12 @@ set(MBED_USE_DSP false)
 # tests and other things to be compiled for the host computer.
 set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
+# set the path to a bash script for moving files to the mbed's USB memory
+set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
+
 # sets many variables and paths related to building for the MBED
-include(mbed/arm_mbed.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
+
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:
 # set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
@@ -24,9 +29,14 @@ include(mbed/arm_mbed.cmake)
 
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
-
 # enable C++11
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
+# Enable logging for the common2015 library
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
+# ignore formatting flags for printf
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
+# generate debugging information for gdb
+# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -g")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
@@ -38,11 +48,7 @@ include_directories("common2015/drivers/CC1101")
 include_directories("common2015/modules" )
 include_directories("common2015/modules/CommLink")
 include_directories("common2015/modules/CommModule")
-include_directories("common2015/utils")
-include_directories("common2015/utils/FirmwareCheck")
-include_directories("common2015/utils/Logger")
-include_directories("common2015/utils/RTOS_Management")
-include_directories("common2015/utils/Watchdog")
+include_directories("common2015/utils/logger")
 
 # Add a test runner target "test-firmware"
 set(FIRMWARE_TEST_SRC
@@ -51,9 +57,9 @@ set(FIRMWARE_TEST_SRC
 add_executable(test-firmware ${FIRMWARE_TEST_SRC})
 target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 add_dependencies(test-firmware googletest)
+
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)
-
 
 # build robot and base station firmware and the library that they depend on
 add_subdirectory(mbed)

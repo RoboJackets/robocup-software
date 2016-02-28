@@ -20,15 +20,12 @@ class OurGoalKick(play.Play):
     KickerPower = 1.0
     ChipperPower = 1.0
 
-
     def __init__(self):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running,
-            lambda: True,
-            'immediately')
-
+                            behavior.Behavior.State.running, lambda: True,
+                            'immediately')
 
         kicker = skills.line_kick.LineKick()
         # kicker.use_chipper = True
@@ -36,22 +33,21 @@ class OurGoalKick(play.Play):
         kicker.chip_power = OurGoalKick.ChipperPower
         self.add_subbehavior(kicker, 'kicker', required=True, priority=6)
 
-
         center1 = skills.move.Move()
         self.add_subbehavior(center1, 'center1', required=False, priority=5)
-        
+
         center2 = skills.move.Move()
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
-
-        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
-
-
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False)
 
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if (gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
+        return 0 if (gs.is_ready_state() and gs.is_our_direct() and
+                     main.ball().pos.y < 1.0) else float("inf")
 
     @classmethod
     def is_restart(cls):
@@ -61,7 +57,6 @@ class OurGoalKick(play.Play):
     def handles_goalie(cls):
         return True
 
-
     def execute_running(self):
         kicker = self.subbehavior_with_name('kicker')
         center1 = self.subbehavior_with_name('center1')
@@ -69,10 +64,12 @@ class OurGoalKick(play.Play):
 
         # see if we have a direct shot on their goal
         win_eval = robocup.WindowEvaluator(main.system_state())
-        win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper()
+        win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper(
+        )
         win_eval.min_chip_range = OurGoalKick.MinChipRange
         win_eval.max_chip_range = OurGoalKick.MaxChipRange
-        windows, best = win_eval.eval_pt_to_seg(main.ball().pos, constants.Field.TheirGoalSegment)
+        windows, best = win_eval.eval_pt_to_seg(
+            main.ball().pos, constants.Field.TheirGoalSegment)
 
         # note: the min length value is tunable
         if best != None and best.segment.length() > 0.3:

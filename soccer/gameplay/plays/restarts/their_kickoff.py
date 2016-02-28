@@ -7,26 +7,25 @@ import main
 
 
 class TheirKickoff(play.Play):
-
     def __init__(self):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running,
-            lambda: True,
-            'immediately')
+                            behavior.Behavior.State.running, lambda: True,
+                            'immediately')
 
-
-        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False)
 
         circle_up = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(circle_up, 'circle_up')
 
-
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if gs.is_setup_state() and gs.is_their_kickoff() else float("inf")
+        return 0 if gs.is_setup_state() and gs.is_their_kickoff() else float(
+            "inf")
 
     @classmethod
     def is_restart(cls):
