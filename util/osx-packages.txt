@@ -2,10 +2,8 @@
 # be installed through homebrew on OS X in order to build this project.
 # In addition to these, you'll also need to install libspnav - see below.
 
-<<<<<<< HEAD
 =======
 # core
->>>>>>> fc3131f... everything playing nicely with the cmake firmware cleanup. linker errors now coming when linking an executable with the common2015 library sense cmake is pulling stuff from stdlib for the arch's startup & exit routines
 qt5
 pyqt5
 python3
@@ -25,8 +23,6 @@ bullet --with-shared
 protobuf
 clang-format
 graphviz
-<<<<<<< HEAD
-=======
 
 # firmware - required
 hg
@@ -46,4 +42,3 @@ avr-libc                # requires `brew tap osx-cross/avr`
 # gawk
 # gnu-tar
 # gnu-sed
->>>>>>> fc3131f... everything playing nicely with the cmake firmware cleanup. linker errors now coming when linking an executable with the common2015 library sense cmake is pulling stuff from stdlib for the arch's startup & exit routines
