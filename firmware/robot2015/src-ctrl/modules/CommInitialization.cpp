@@ -68,7 +68,7 @@ void loopback_rx_cb(rtp::packet* p) {
             status_byte = (status_byte & 0x000C) |
                           ((status_byte >> 1) & 0x0001) |
                           ((status_byte << 1) & 0x0002);
-            
+
             // bit 3 goes to the 6th position
             status_byte |= ((status_byte >> 2) << 5) & 0x0023;
             // bit 4 goes to the 8th position
@@ -116,7 +116,6 @@ void loopback_tx_cb(rtp::packet* p) {
     CommModule::Instance()->receive(*p);
 }
 
-
 /* Uncomment the below DigitalOut lines and comment out the
  * ones above to use the mbed's on-board LEDs.
  */
@@ -134,15 +133,18 @@ void InitializeCommModule() {
     shared_ptr<CommModule> commModule = CommModule::Instance();
 
     // initialize and start LED ticker timers
-    rx_led_ticker = make_shared<RtosTimer>(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
-    tx_led_ticker = make_shared<RtosTimer>(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
+    rx_led_ticker = make_shared<RtosTimer>(commLightsTask_RX, osTimerPeriodic,
+                                           (void*)&rx_led);
+    tx_led_ticker = make_shared<RtosTimer>(commLightsTask_TX, osTimerPeriodic,
+                                           (void*)&tx_led);
     rx_led_ticker->start(80);
     tx_led_ticker->start(80);
 
     // TODO(justin): remove this
     // Create a new physical hardware communication link
-    global_radio = new CC1201(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
-                 sizeof(preferredSettings) / sizeof(registerSetting_t));
+    global_radio =
+        new CC1201(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+                   sizeof(preferredSettings) / sizeof(registerSetting_t));
 
     // Open a socket for running tests across the link layer
     // The LINK port handlers are always active, regardless of whether or not a
@@ -159,8 +161,7 @@ void InitializeCommModule() {
      * the CommModule methods can be used from almost anywhere.
      */
     if (global_radio->isConnected() == true) {
-        LOG(INIT,
-            "Radio interface ready on %3.2fMHz!\r\n",
+        LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n",
             global_radio->freq());
 
         // The usual way of opening a port.
