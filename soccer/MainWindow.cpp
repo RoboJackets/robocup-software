@@ -136,6 +136,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
+
+    new QShortcut(QKeySequence(Qt::Key_Q), this, SLOT(on_actionQuicksaveRobotLocations_triggered()));
+    new QShortcut(QKeySequence(Qt::Key_E), this, SLOT(on_actionQuickloadRobotLocations_triggered()));
 }
 
 void MainWindow::configuration(Configuration* config) {
