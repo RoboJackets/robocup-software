@@ -142,7 +142,7 @@ protected:
      * method does this automatically, but this can be called instead of
      * program() to return the AVR to its normal state.
      */
-    void exitProgramming() { nReset_ = 1; }
+    void exitProgramming();
 
 private:
     /**

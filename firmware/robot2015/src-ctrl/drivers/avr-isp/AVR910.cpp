@@ -142,10 +142,8 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
     bool success = checkMemory(pageNumber, pageSize, binary);
 
     // Leave serial programming mode by toggling reset
-    nReset_ = 0;
-    wait_ms(20);
-    nReset_ = 1;
-
+    exitProgramming();
+    
     return success;
 }
 
@@ -294,4 +292,10 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
     }
 
     return success;
+}
+
+void AVR910::exitProgramming() {
+    nReset_ = 0;
+    wait_ms(20);
+    nReset_ = 1;
 }
