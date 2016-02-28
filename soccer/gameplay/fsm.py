@@ -15,7 +15,6 @@ import graphviz as gv
 #
 # Subclasses of StateMachine can optionally implement them and they will automatically be called at the appropriate times.
 class StateMachine:
-
     def __init__(self, start_state):
         # stores all states in the form _state_hierarchy[state] = parent_state
         self._state_hierarchy = {}
@@ -23,23 +22,19 @@ class StateMachine:
         self._start_state = start_state
         self._state = None
 
-
     @property
     def start_state(self):
         return self._start_state
 
-
     ## Resets the FSM back into the start state
     def restart(self):
         self.transition(self.start_state)
-
 
     ## Registers a new state (which can optionally be a substate of an existing state)
     def add_state(self, state, parent_state=None):
         if not isinstance(state, Enum):
             raise TypeError("State should be an Enum type")
         self._state_hierarchy[state] = parent_state
-
 
     ## Runs the FSM
     # checks transition conditions for all edges leading away from the current state
@@ -66,12 +61,17 @@ class StateMachine:
             # transition if an 'event' fires
             next_states = []
             if self.state in self._transitions:
-                for next_state, transition in self._transitions[self.state].items():
+                for next_state, transition in self._transitions[
+                        self.state].items():
                     if transition['condition']():
                         next_states += [next_state]
 
             if len(next_states) > 1:
-                logging.warn("Ambiguous fsm transitions from state'" + str(self.state) + "'.  The following states are reachable now: " + str(next_states) + ";  Proceeding by taking the first option.")
+                logging.warn(
+                    "Ambiguous fsm transitions from state'" + str(self.state) +
+                    "'.  The following states are reachable now: " + str(
+                        next_states) +
+                    ";  Proceeding by taking the first option.")
             if len(next_states) > 0:
                 self.transition(next_states[0])
 
@@ -80,16 +80,13 @@ class StateMachine:
         if s1 != self.state:
             StateMachine.spin(self)
 
-
-
-
     # if you add a transition that already exists, the old one will be overwritten
     def add_transition(self, from_state, to_state, condition, event_name):
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
 
-        self._transitions[from_state][to_state] = {'condition': condition, 'name': event_name}
-
+        self._transitions[from_state][to_state] = {'condition': condition,
+                                                   'name': event_name}
 
     # sets @state to the new_state given
     # calls 'on_exit_STATENAME()' if it exists
@@ -102,7 +99,9 @@ class StateMachine:
                     method_name = "on_exit_" + state.name
                     state_method = None
                     try:
-                        state_method = getattr(self, method_name)    # call the transition FROM method if it exists
+                        state_method = getattr(
+                            self, method_name
+                        )  # call the transition FROM method if it exists
                     except AttributeError:
                         pass
                     if state_method is not None:
@@ -113,7 +112,9 @@ class StateMachine:
                 method_name = "on_enter_" + state.name
                 state_method = None
                 try:
-                    state_method = getattr(self, method_name)    # call the transition TO method if it exists
+                    state_method = getattr(
+                        self, method_name
+                    )  # call the transition TO method if it exists
                 except AttributeError:
                     pass
                 if state_method is not None:
@@ -121,11 +122,9 @@ class StateMachine:
 
         self._state = new_state
 
-
     # traverses the state hierarchy to see if it's in @state or one of @state's descendent states
     def is_in_state(self, state):
         return self.state_is_substate(self.state, state)
-
 
     def state_is_substate(self, state, possible_parent):
         ancestor = state
@@ -134,7 +133,6 @@ class StateMachine:
             ancestor = self._state_hierarchy[ancestor]
 
         return False
-
 
     # looks at the list @ancestors and returns the one that the current state is a descendant of
     # returns None if the current state doesn't descend from one in the list
@@ -147,7 +145,6 @@ class StateMachine:
 
         return None
 
-
     # returns a list of the ancestors of the given state
     # if B is a child state of A and C is a child state of B, ancestors_of_state(C) == [A, B]
     # if @state has no ancestors, returns an empty list
@@ -159,7 +156,6 @@ class StateMachine:
             state = self._state_hierarchy[state]
         return ancestors
 
-
     # returns a graphviz.Digraph object
     def as_graphviz(self):
         g = gv.Digraph(self.__class__.__name__, format='png')
@@ -168,8 +164,12 @@ class StateMachine:
         subgraphs = {}
         subgraphs[None] = g
         for state in self._state_hierarchy:
-            if state not in subgraphs and state in self._state_hierarchy.values():
-                sg = gv.Digraph('cluster_' + str(cluster_index), graph_attr={'label': state.__module__ + "::" + state.name, 'style': 'dotted'})
+            if state not in subgraphs and state in self._state_hierarchy.values(
+            ):
+                sg = gv.Digraph(
+                    'cluster_' + str(cluster_index),
+                    graph_attr={'label': state.__module__ + "::" + state.name,
+                                'style': 'dotted'})
                 cluster_index += 1
 
                 subgraphs[state] = sg
@@ -180,7 +180,10 @@ class StateMachine:
             if not has_children:
                 enclosing_graph = subgraphs[self._state_hierarchy[state]]
                 shape = 'diamond' if state == self.start_state else 'ellipse'
-                enclosing_graph.node(state.name, label=state.__module__ + "::" + state.name, shape=shape)
+                enclosing_graph.node(
+                    state.name,
+                    label=state.__module__ + "::" + state.name,
+                    shape=shape)
 
         for state, subgraph in subgraphs.items():
             if state != None:
@@ -188,16 +191,17 @@ class StateMachine:
 
         for start in self._transitions:
             for end, event in self._transitions[start].items():
-                g.edge(start.name, end.name, label=event['name'], decorate='True')
+                g.edge(start.name,
+                       end.name,
+                       label=event['name'],
+                       decorate='True')
 
         return g
-
 
     # writes a png file of the graphviz output to the specified location
     def write_diagram_png(self, filename):
         g = self.as_graphviz()
         g.render(filename=filename, cleanup=True)
-
 
     @property
     def state(self):

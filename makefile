@@ -1,4 +1,5 @@
 MAKE_FLAGS=--no-print-directory
+HW_UNIT=default
 TESTS = *
 
 # build a specified target with CMake and Ninja
@@ -83,10 +84,86 @@ robot2015:
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
+GDB_PORT ?= 3333
+.INTERMEDIATE: build/robot2015-gdb.pid
+build/robot2015-gdb.pid:
+# this will cache sudo use without a password in the environment
+# so we won't enter the gdb server and skip past the password prompt.
+	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
+# now we can refresh the sudo timeout and start up the gdb server
+	sudo -v && { sudo pyocd-gdbserver --allow-remote --port $(GDB_PORT) --reset-break \
+	--target lpc1768 -S -G > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
+
+GDB_NO_CONN ?= 0
+robot2015-gdb: robot2015 build/robot2015-gdb.pid
+# use pyocd-gdbserver, and explicitly pass it the type of target we want to connect with,
+# making sure that we enable semihosting and use gdb syscalls for the file io
+	@trap 'sudo pkill -9 -P `cat build/robot2015-gdb.pid`; exit' TERM INT EXIT && \
+	if [ $(GDB_NO_CONN) -eq 0 ]; then \
+		arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+		  -ex "target remote localhost:$(GDB_PORT)" \
+		  -ex "load" \
+		  -ex "tbreak main" \
+		  -ex "continue"; \
+	else \
+		while true; do sleep 10; done; \
+	fi
+
+# I2C bus hardware test
+robot2015-i2c: HW_UNIT=i2c 
+robot2015-i2c: robot2015-test
+robot2015-i2c-prog: HW_UNIT=i2c
+robot2015-i2c-prog: robot2015-test-prog
+
+# IO expander hardware test
+robot2015-io-expander: HW_UNIT=io-expander
+robot2015-io-expander: robot2015-test
+robot2015-io-expander-prog: HW_UNIT=io-expander
+robot2015-io-expander-prog: robot2015-test-prog
+
+# fpga hardware test
+robot2015-fpga: HW_UNIT=fpga
+robot2015-fpga: robot2015-test
+robot2015-fpga-prog: HW_UNIT=fpga
+robot2015-fpga-prog: robot2015-test-prog
+
+# piezo buzzer hardware test
+robot2015-piezo: HW_UNIT=piezo 
+robot2015-piezo: robot2015-test
+robot2015-piezo-prog: HW_UNIT=piezo
+robot2015-piezo-prog: robot2015-test-prog
+
+# neopixel hardware test
+robot2015-neopixel: HW_UNIT=neopixel
+robot2015-neopixel: robot2015-test
+robot2015-neopixel-prog: HW_UNIT=neopixel
+robot2015-neopixel-prog: robot2015-test-prog
+
+# general target for calling the hardware tests
+robot2015-test:
+	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
+robot2015-test-prog:
+	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
+
+# kicker 2015 firmware
+kicker2015:
+	$(call cmake_build_target_fw, kicker2015)
+kicker2015-prog:
+	$(call cmake_build_target_fw, kicker2015-prog)
+
+# fpga 2015 synthesis
+fpga2015:
+	$(call cmake_build_target_fw, fpga2015)
+fpga2015-prog:
+	$(call cmake_build_target_fw, fpga2015-prog)
+
+# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
+firmware2015: robot2015 kicker2015 fpga2015 
+firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
+	
 # Base station 2015 firmware
 base2015:
 	$(call cmake_build_target_fw, base2015)
-
 base2015-prog:
 	$(call cmake_build_target_fw, base2015-prog)
 
@@ -127,21 +204,19 @@ apidocs:
 	cp doc/doxygen.css api_docs/html/
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
-
+STYLIZE_DIFFBASE ?= master
 STYLE_EXCLUDE_DIRS=build \
 	external \
 	firmware/robot/cpu/at91sam7s256 \
 	firmware/robot/cpu/at91sam7s321 \
 	firmware/robot/cpu/at91sam7s64 \
 	firmware/robot/cpu/usb \
-	firmware/robot/cpu/invensense \
-	firmware/robot2015 \
-	firmware/common2015
+	firmware/robot/cpu/invensense
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl $${LINK_PREFIX:-file://}clean.patch)\n\n"
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"

@@ -304,9 +304,10 @@ void MainWindow::updateViews() {
              i < liveFrame->debug_layers_size(); ++i) {
             const QString name =
                 QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled = !std::any_of(
-                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
-                [&](QString string) { return string == name; });
+            bool enabled =
+                !std::any_of(defaultHiddenLayers.begin(),
+                             defaultHiddenLayers.end(),
+                             [&](QString string) { return string == name; });
             addLayer(i, name, enabled);
         }
 
@@ -392,11 +393,9 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage)
-                              .c_str());
+                              _processor->refereeModule()->stage).c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command)
-                                .c_str());
+                                _processor->refereeModule()->command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
@@ -878,22 +877,78 @@ void MainWindow::on_actionStopRobots_triggered() {
     SimCommand cmd;
     // TODO: check that this handles threads properly
     for (OurRobot* robot : state()->self) {
-        SimCommand::Robot* r = cmd.add_robots();
-        r->set_shell(robot->shell());
-        r->set_blue_team(processor()->blueTeam());
-        r->mutable_vel()->set_x(0);
-        r->mutable_vel()->set_y(0);
-        r->set_w(0);
+        if (robot->visible) {
+            SimCommand::Robot* r = cmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
     }
     for (OpponentRobot* robot : state()->opp) {
-        SimCommand::Robot* r = cmd.add_robots();
-        r->set_shell(robot->shell());
-        r->set_blue_team(processor()->blueTeam());
-        r->mutable_vel()->set_x(0);
-        r->mutable_vel()->set_y(0);
-        r->set_w(0);
+        if (robot->visible) {
+            SimCommand::Robot* r = cmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(!processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
     }
     _ui.fieldView->sendSimCommand(cmd);
+}
+
+void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
+    _ui.actionQuickloadRobotLocations->setEnabled(true);
+    _quickLoadCmd.reset();
+    for (OurRobot* robot : state()->self) {
+        if (robot->visible) {
+            SimCommand::Robot* r = _quickLoadCmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
+    }
+    for (OpponentRobot* robot : state()->opp) {
+        if (robot->visible) {
+            SimCommand::Robot* r = _quickLoadCmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(!processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
+    }
+
+    Geometry2d::Point ballPos =
+        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
+    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x);
+    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y);
+    _quickLoadCmd.mutable_ball_vel()->set_x(0);
+    _quickLoadCmd.mutable_ball_vel()->set_y(0);
+}
+
+void MainWindow::on_actionQuickloadRobotLocations_triggered() {
+    _ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
 // Manual control commands
@@ -1053,7 +1108,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction *single = nullptr, *notSingle = nullptr;
+    QAction* single = nullptr, * notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");
