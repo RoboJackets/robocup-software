@@ -236,23 +236,46 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateVelocityPath(
     return cubicBezier(std::move(path), &obstacles, motionConstraints, vi, vf);
 }
 
-std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
-        std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf) {
+vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(const vector<Geometry2d::Point>& points,
+                                                                const MotionConstraints& motionConstraints,
+                                                                Geometry2d::Point vi, Geometry2d::Point vf) {
 
-
-
-    cout<<"start"<<endl;
     size_t length = points.size();
     size_t curvesNum = length - 1;
-    if (curvesNum <= 0) {
-        debugThrow("The path doesn't have enough points");
-        return nullptr;
-    }
 
-    // TODO: Get the actual values
+    const float directionDistance = 0.3;
+    vector<Point> startDirections;
+    vector<Point> endDirections;
+
+    const float pathWeight = 1.0;
+    Point pathDirection = (points[1]-points[0]).normalized(pathWeight);
+    startDirections.push_back((vi + pathDirection).normalized((points[1]-points[0]).mag()*directionDistance));
+    for (int i = 1; i < curvesNum-1; i++) {
+        const Point difference = points[i+1] - points[i-1];
+        endDirections.push_back(difference.normalized((points[i]-points[i-1]).mag()*directionDistance));
+        startDirections.push_back(difference.normalized((points[i]-points[i+1]).mag()*directionDistance));
+    }
+    Point endPathDirection = (points[points.size()-1]-points[points.size()-2]).normalized(pathWeight);
+    endDirections.push_back((vf + endPathDirection).normalized((points[points.size()-1]-points[points.size()-2]).mag()*directionDistance));
+
+
+    vector<CubicBezierControlPoints> path;
+
+    for (int i = 0; i < curvesNum; i++) {
+        Point p0 = points[i];
+        Point p3 = points[i + 1];
+        Point p1 = p0 + startDirections[i];
+        Point p2 = p3 - endDirections[i];
+        path.emplace_back(p0, p1, p2, p3);
+    }
+    return path;
+}
+
+vector<CubicBezierControlPoints> RRTPlanner::generateBezierPath(const vector<Geometry2d::Point>& points,
+                                                         const MotionConstraints& motionConstraints,
+                                                         Geometry2d::Point vi, Geometry2d::Point vf) {
+    size_t length = points.size();
+    size_t curvesNum = length - 1;
     vector<double> pointsX(length);
     vector<double> pointsY(length);
     vector<double> ks(length - 1);
@@ -272,26 +295,49 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
                  getTime(points, i, motionConstraints, startSpeed, endSpeed));
         ks2[i] = ks[i] * ks[i];
         if (std::isnan(ks[i])) {
-            return nullptr;
+            debugThrow("Meh");
+            return vector<CubicBezierControlPoints>();
         }
     }
 
-    /*
-    const float directionDistance = 0.5;
-    vector<Point> startDirections;
-    vector<Point> endDirections;
-    startDirections.push_back(vi);
-    for (int i = 1; i < curvesNum-1; i++) {
-        const Point difference = points[i+1] - points[i-1];
-        endDirections.push_back(difference.normalized((points[i]-points[i-1]).mag()*directionDistance));
-        startDirections.push_back(difference.normalized((points[i]-points[i+1]).mag()*directionDistance));
+    VectorXd solutionX = RRTPlanner::cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
+    VectorXd solutionY = RRTPlanner::cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
+
+    vector<CubicBezierControlPoints> path;
+
+    for (int i = 0; i < curvesNum; i++) {
+        Point p0 = points[i];
+        Point p1 = Geometry2d::Point(solutionX(i * 2), solutionY(i * 2));
+        Point p2 = Geometry2d::Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
+        Point p3 = points[i + 1];
+        path.emplace_back(p0, p1, p2, p3);
     }
-    endDirections.push_back(vf);
-*/
+    return path;
+}
 
-    VectorXd solutionX = cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
-    VectorXd solutionY = cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
+std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
+        std::vector<Geometry2d::Point>& points,
+        const Geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf) {
 
+
+
+    cout<<"start"<<endl;
+    size_t length = points.size();
+    size_t curvesNum = length - 1;
+    if (curvesNum <= 0) {
+        debugThrow("The path doesn't have enough points");
+        return nullptr;
+    }
+
+    // TODO: Get the actual values
+
+    vector<CubicBezierControlPoints> controlPoints = generateBezierPath(points, motionConstraints, vi, vf);
+
+    if (controlPoints.size() < 1) {
+        return nullptr;
+    }
     vector<Point> newPoints, newPoints1stDerivative, newPoints2ndDerivative;
     vector<float> newPointsCurvature, newPointsDistance, newPointsSpeed;
     const int interpolations = 40;
@@ -299,47 +345,23 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     float totalDistance = 0;
     const float maxAceleration = motionConstraints.maxAcceleration;
 
-    for (int i = 0; i < curvesNum; i++) {
-        Point p0 = points[i];
-        Point p3 = points[i + 1];
-
-        Point p1 = Geometry2d::Point(solutionX(i * 2), solutionY(i * 2));
-        Point p2 = Geometry2d::Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
-        //Point p1 = p0 + startDirections[i];
-        //Point p2 = p3 - endDirections[i];
-
-
-
-        //Point p1 = Geometry2d::Point(solutionX(i * 2), solutionY(i * 2));
-        //Point p2 = Geometry2d::Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
-
+    for (const CubicBezierControlPoints &controlPoint: controlPoints) {
+        Point p0 = controlPoint.p0;
+        Point p1 = controlPoint.p1;
+        Point p2 = controlPoint.p2;
+        Point p3 = controlPoint.p3;
         for (int j = 0; j < interpolations; j++) {
-            double k = ks[i];
+            //double k = ks[i];
             float t = (((float)j / (float)(interpolations)));
             Geometry2d::Point pos =
                     pow(1.0 - t, 3) * p0 + 3.0 * pow(1.0 - t, 2) * t * p1 +
                     3 * (1.0 - t) * pow(t, 2) * p2 + pow(t, 3) * p3;
-            //t = ((float)j / (float)(interpolations)) / k;
-
-
-
-            float tk = t * k;
-            // 3(k (-a (k^2 t^2 - 2 k t + 1)+b (3 k^2 t^2-4 k t+1)+k t (-3 c k t+2 c+1 d k t)))
-
-
-            /*
-            Geometry2d::Point d1 =
-                    3 * k * (-(p0 * (k*k * t*t - 2*k*t + 1)) +
-                             k * tk * (2 * p2 - 3 * p2 * k * tk + p3 * k * tk) +
-                             p1 * (1 - 4 * k * tk + 3 * pow(k, 2) * pow(t, 2)));
-            */
-
 
             //Derivitive 1
             // 3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k
             // t + 3 k^2 t^2))
             Geometry2d::Point d1 = 3 * pow(1-t,2) * (p1 - p0) +
-                    6*(1-t)*t*(p2-p1) + 3 * pow(t,2) * (p3-p2);
+                                   6*(1-t)*t*(p2-p1) + 3 * pow(t,2) * (p3-p2);
             printf("x:%f, y:%f\n", d1.x, d1.y);
 
 
@@ -348,13 +370,15 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
             //B''(t) = 6(1-t)(P2 - 2*P1 + P0) + 6*t(P3 - 2 * P2 + P1)
             Geometry2d::Point d2 = 6*(1-t)*(p2 - 2*p1 + p0) + 6*t*(p3 - 2*p2 + p1);
 
-            //-6 k^2 (-c+3 c k t-d k t+b (2-3 k t)+a (-1+k t))
-            //Geometry2d::Point d2 = -6*k*k*(-p2+3*p2*k*tk-p3*k*tk+p1*(2-3*k*tk)+p0*(-1+k*tk));
-
             //https://en.wikipedia.org/wiki/Curvature#Local_expressions
             //K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2)
             float curvature = std::abs(d1.x* d2.y - d1.y* d2.x) / std::pow(std::pow(d1.x,2) + std::pow(d1.y,2), 1.5);
 
+            if (isnan(curvature)) {
+                curvature = 0;
+            }
+
+            assert(curvature >= 0);
             if (!newPoints.empty()) {
                 float distance = pos.distTo(newPoints.back());
                 totalDistance += distance;
@@ -373,22 +397,23 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
             //vmax = sqrt(acceleartion/abs(Curvature))
             float constantMaxSpeed = std::sqrt(maxAceleration/curvature);
             newPointsSpeed.push_back(constantMaxSpeed);
-
         }
     }
-    size_t i = points.size() - 2;
-    Point p0 = points[i];
-    Point p3 = points[i + 1];
-    Point p1 = Geometry2d::Point(solutionX(i * 2), solutionY(i * 2));
-    Point p2 = Geometry2d::Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
-    //Point p1 = p0 + startDirections[i];
-    //Point p2 = p3 - endDirections[i];
+
+    CubicBezierControlPoints lastControlPoint = controlPoints.back();
+
+    Point p0 = lastControlPoint.p0;
+    Point p1 = lastControlPoint.p1;
+    Point p2 = lastControlPoint.p2;
+    Point p3 = lastControlPoint.p3;
 
     Point pos = points.back();
     Point d1 = vf;
     Geometry2d::Point d2 = 6*(1)*(p3 - 2*p2 + p1);
     float curvature = std::abs(d1.x* d2.y - d1.y* d2.x) / std::pow(std::pow(d1.x,2) + std::pow(d1.y,2), 1.5);
-
+    if (isnan(curvature)) {
+        curvature = 0;
+    }
 
     totalDistance += pos.distTo(newPoints.back());
     newPoints.push_back(pos);
@@ -429,6 +454,12 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
 
         //Isolated maxSpeed based on Curvature
         //Curvature = 1/Radius of Curvature
+        //accel = v^2/Radius of Curvature
+        //accel = Curviture * v^2
+        //v^2 = accel/curviture
+        // v = sqrt(accel / abs(curviture))
+
+
         //vmax = sqrt(acceleartion/abs(Curvature))
         //v^2 * curvature = acceleration
 
@@ -445,6 +476,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         //acceleration = (v2-v1)/t;
         //t = distance/((v1+v2)/2)
         //acceleration = (v2-v1)/(distance/((v1+v2)/2))
+        //acceleration = (v2-v1)(v1+v2)/2)/distance
         //acceleration^2 = ((v2-v1)((v1+v2)/2)/(distance))^2 + (v^2*curvature)^2
         //a^2 = ((b-v)((v+b)/2)/(d))^2 + (b^2*c)^2
         //b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0

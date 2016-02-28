@@ -15,6 +15,13 @@
 
 namespace Planning {
 
+struct CubicBezierControlPoints {
+    Geometry2d::Point p0, p1, p2, p3;
+
+    CubicBezierControlPoints(Geometry2d::Point p0, Geometry2d::Point p1, Geometry2d::Point p2, Geometry2d::Point p3)
+            :p0(p0), p1(p1), p2(p2), p3(p3) {}
+};
+
 /**
  * @brief Given a start point and an end point and some conditions, plans a path
  * for a robot to get there.
@@ -91,7 +98,7 @@ protected:
      *  Calls the cubicBezier optimization function.
      */
     std::unique_ptr<Planning::InterpolatedPath> optimize(
-        std::unique_ptr<InterpolatedPath>  path, const Geometry2d::ShapeSet* obstacles,
+        std::unique_ptr<InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
 
@@ -104,6 +111,14 @@ protected:
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
 
+    static std::vector<CubicBezierControlPoints> generateBezierPath(const std::vector<Geometry2d::Point>& points,
+                                                        const MotionConstraints& motionConstraints,
+                                                        Geometry2d::Point vi, Geometry2d::Point vf);
+
+    static std::vector<CubicBezierControlPoints> generateNormalCubicBezierPath(const std::vector<Geometry2d::Point>& points,
+                                                                    const MotionConstraints& motionConstraints,
+                                                                    Geometry2d::Point vi, Geometry2d::Point vf);
+
     /**
      * Helper function for cubicBezier() which uses Eigen matrices to solve for
      * the
@@ -114,5 +129,4 @@ protected:
                                            std::vector<double>& ks,
                                            std::vector<double>& ks2);
 };
-
 }  // namespace Planning
