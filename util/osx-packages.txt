@@ -2,7 +2,6 @@
 # be installed through homebrew on OS X in order to build this project.
 # In addition to these, you'll also need to install libspnav - see below.
 
-=======
 # core
 qt5
 pyqt5
