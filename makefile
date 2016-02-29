@@ -72,8 +72,8 @@ robot: robot2015
 robot-prog: robot2015-prog
 fpga: fpga2015
 fpga-prog: fpga2015-prog
-radio: radio2015
-radio-prog: radio2015-prog
+base: base2015
+base-prog: base2015-prog
 kicker: kicker2015
 kicker-prog: kicker2015-prog
 firmware: firmware2015
@@ -129,13 +129,13 @@ fpga2015-prog:
 	$(call cmake_build_target_fw, fpga2015-prog)
 	
 # Base station 2015 firmware
-radio2015:
+base2015:
 	$(call cmake_build_target_fw, base2015)
-radio2015-prog:
+base2015-prog:
 	$(call cmake_build_target_fw, base2015-prog)
 
 # Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
-firmware2015: robot2015 kicker2015 fpga2015 radio2015
+firmware2015: robot2015 kicker2015 fpga2015 base2015
 firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
 
 # Robot firmware (both 2008/2011)
@@ -158,9 +158,9 @@ fpga2011-prog-spi: fpga2011
 fpga2011-prog-jtag: fpga2011
 	cd firmware && sudo scons fpga2011-jtag
 # USB Radio Base Station
-radio2011:
+base2011:
 	cd firmware && scons base2011
-radio2011-prog: base2011
+base2011-prog: base2011
 	cd firmware && sudo scons base2011-prog
 
 
