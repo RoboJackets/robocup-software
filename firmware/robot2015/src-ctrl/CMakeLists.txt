@@ -9,7 +9,6 @@ include(${ARM_TOOLCHAIN_FILE})
 # # Find the assembly source files and make sure they're compiled using the C compiler
 file(GLOB_RECURSE asm_SRC "*.S")
 set_property(SOURCE ${asm_SRC} PROPERTY LANGUAGE C)
-set_property(SOURCE ${asm_SRC} PROPERTY COMPILE_FLAGS "-x assembler-with-cpp")
 
 # set the names of each directory and then set the names of the subdirectories within each one
 set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)

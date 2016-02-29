@@ -64,8 +64,13 @@ string(TOLOWER ${MBED_PLATFORM} MBED_PLATFORM_LOWERC)
 
 # ------------------------------------------------------------------------------
 # compiler settings
-set(COMMON_FLAGS " -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -fno-exceptions -fno-builtin -MMD -fno-delete-null-pointer-checks")
+set(COMMON_FLAGS " -Wall -Wextra -Wno-switch -Wno-unused-parameter -Wno-missing-field-initializers -fno-exceptions -fno-builtin -MMD -fno-delete-null-pointer-checks")
 set(COMMON_FLAGS "${COMMON_FLAGS} -mcpu=${MBED_TARGET_CORE_LOWERC} -O2 -mthumb -fno-exceptions -msoft-float -ffunction-sections -fdata-sections -g -fno-common -fmessage-length=0")
+
+if(APPLE)
+    # different warning supressions here once know what flag to put
+    set(COMMON_FLAGS "${COMMON_FLAGS}")
+endif()
 
 # ------------------------------------------------------------------------------
 # pass these defines to the preprocessor

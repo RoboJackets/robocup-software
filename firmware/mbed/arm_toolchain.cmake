@@ -28,11 +28,7 @@ find_program( ARM_LD            ${ARM_PREFIX}-ld        )
 find_program( ARM_OBJCOPY       ${ARM_PREFIX}-objcopy   )
 find_program( ARM_OBJDUMP       ${ARM_PREFIX}-objdump   )
 
-# let cmake know we plan to use an external toolchain outside
-# the scope of the system's default
-set( CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN true )
-
-# make sure we defien this since we'll be using GCC
+# make sure we define this since we'll be using GCC
 add_definitions(-DTOOLCHAIN_GCC)
 
 # Let cmake know we intend to cross compile from the point where
