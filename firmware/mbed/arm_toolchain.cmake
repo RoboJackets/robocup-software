@@ -3,10 +3,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 set( CMAKE_SYSTEM_NAME       Generic     )
 set( CMAKE_SYSTEM_PROCESSOR  arm         )
 set( CMAKE_SYSTEM_VERSION    1           )
-set( ARM_TARGET_ARCH         cortex-m3   )
-
-set( CMAKE_C_COMPILER_TARGET     ${ARM_TARGET_ARCH} )
-set( CMAKE_CXX_COMPILER_TARGET   ${ARM_TARGET_ARCH} )
 
 # narrow down the search scope of where cmake looks for programs/libraries
 # # for cross compilation

@@ -15,7 +15,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 if( UNIX AND NOT APPLE )
     set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh")
 elseif( APPLE )
-    set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.sh")
+    set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.py")
 else()
     message(WARNING "unsupported host system for mbed-copy usage")
     set(MBED_COPY_SCRIPT "")
@@ -29,12 +29,12 @@ endif()
 
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
-# enable C++11
-# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
+# enable C++14
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++14")
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
 # ignore formatting flags for printf
-set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format -Wno-switch -Wno-unused-parameter -Wno-missing-field-initializers")
 # generate debugging information for gdb
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
