@@ -8,9 +8,14 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <cmath>
 
 // for python stuff
 #include "robocup-py.hpp"
+
+using namespace Gameplay;
+
+REGISTER_CONFIGURABLE(GameplayModule);
 
 using namespace std;
 using namespace boost;
@@ -18,12 +23,27 @@ using namespace boost::python;
 
 using namespace Geometry2d;
 
+ConfigDouble* GameplayModule::inset;
+
+void GameplayModule::createConfiguration(Configuration* cfg) {
+    inset = new ConfigDouble(cfg, "Field Edge Obstacle", .3);
+}
+
+bool GameplayModule::hasInsetChanged() {
+    if (abs(inset->value() - oldInset) > numeric_limits<double>::epsilon()) {
+        oldInset = inset->value();
+        return true;
+    }
+    return false;
+}
+
 Gameplay::GameplayModule::GameplayModule(SystemState* state)
     : _mutex(QMutex::Recursive) {
     _state = state;
 
     calculateFieldObstacles();
 
+    oldInset = .3;
     _goalieID = -1;
 
     //
@@ -82,26 +102,25 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
                  TransformMatrix::rotate(M_PI);
 
     // TODO(barulicm): describe what @inset is
-    constexpr float inset = 0.3;
 
     //// Make an obstacle to cover the opponent's half of the field except for
     /// one robot diameter across the center line.
     // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
-    float x = dimensions.Width() / 2 + inset;
+    float x = dimensions.Width() / 2 + (float)inset->value();
     const float y1 = dimensions.Length() / 2;
-    const float y2 = dimensions.Length() + inset;
+    const float y2 = dimensions.Length() + (float)inset->value();
     const float r = dimensions.CenterRadius();
     _sideObstacle = make_shared<Polygon>(
         vector<Point>{Point(-x, y1), Point(-r, y1), Point(0, y1 + r),
                       Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
 
-    float y = -inset;
-    float deadspace = inset;
-    x = dimensions.Width() / 2.0f + inset;
+    float y = -(float)inset->value();
+    float deadspace = (float)inset->value();
+    x = dimensions.Width() / 2.0f + (float)inset->value();
     _nonFloor[0] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y - 1), Point(x, y - 1), Point(x, y)});
 
-    y = dimensions.Length() + inset;
+    y = dimensions.Length() + (float)inset->value();
     _nonFloor[1] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y + 1), Point(x, y + 1), Point(x, y)});
 
@@ -285,6 +304,8 @@ void Gameplay::GameplayModule::run() {
 
     bool verbose = false;
     if (verbose) cout << "Starting GameplayModule::run()" << endl;
+
+    /// check to see if field constants have been changed, recalculate if
 
     _ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
