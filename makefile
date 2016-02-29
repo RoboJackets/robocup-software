@@ -14,7 +14,7 @@ endef
 # targeted code separately.
 define cmake_build_target_fw
 	mkdir -p build/firmware
-	cd build && cmake -DCMAKE_VERBOSE_MAKEFILE=ON -Wno-dev --target $1 $2 .. && make $1 $(MAKE_FLAGS)
+	cd build && cmake -Wno-dev --target $1 $2 .. && make $1 $(MAKE_FLAGS)
 endef
 
 all:

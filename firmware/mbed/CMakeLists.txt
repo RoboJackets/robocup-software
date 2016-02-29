@@ -14,6 +14,7 @@ set(MBED_ASSEC_LIBS
 
 # set which additional mbed libraries to grab at the bottom of arm_mbed.cmake
 foreach(assec_lib ${MBED_ASSEC_LIBS})
+    # include the cmake setup file for the accessory library
     include(${assec_lib})
 endforeach()
 

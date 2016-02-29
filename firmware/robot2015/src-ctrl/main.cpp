@@ -142,12 +142,12 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    // Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for handling radio communications
-    Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    // Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
+    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
@@ -194,8 +194,8 @@ int main() {
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
     // Release each thread into its operations in a structured manner
-    controller_task.signal_set(SUB_TASK_CONTINUE);
-    comm_task.signal_set(SUB_TASK_CONTINUE);
+    // controller_task.signal_set(SUB_TASK_CONTINUE);
+    // comm_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);

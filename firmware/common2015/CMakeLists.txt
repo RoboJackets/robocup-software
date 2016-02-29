@@ -43,14 +43,12 @@ endforeach()
 # append all of the accessory library include directories
 list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
 
-# do the same thing for the accessory libraries 
-foreach(lib_src ${MBED_ASSEC_LIBS_SRCS})
-    add_custom_command(
-        OUTPUT      ${lib_src}
-        DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}
-        COMMAND     ""
-    )
-endforeach()
+# tell cmake that all of the source files aren't here yet
+set_source_files_properties(
+    ${MBED_ASSEC_LIBS_SRCS} PROPERTIES
+    GENERATED               TRUE
+    DEPENDS                 ${MBED_ASSEC_LIBS_DEPENDS}
+)
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
@@ -59,7 +57,6 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 
-# target_link_libraries(common2015 ${MBED_LINK_LIBRARY})
 target_link_libraries(common2015 ${MBED_LIBRARY})
 
 target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS})

@@ -3,7 +3,7 @@
 # =============================================================================
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 include(MbedUtil)
-include(ShowVars)
+
 # ------------------------------------------------------------------------------
 # turn build options on/off with there cmake options
 rj_add_op( MBED_WITH_RTOS      "Include mbed RTOS support"                 ON    )
@@ -15,6 +15,7 @@ rj_add_op( MBED_WITH_DSP       "Include mbed DSP support"                  OFF  
 rj_add_op( MBED_WITH_FATFS     "Include mbed FAT filesystem support"       OFF   )
 rj_add_op( MBED_WITH_UBLOX     "Include mbed UBLOX support"                OFF   )
 
+# ------------------------------------------------------------------------------
 # turn on building the rtos library if ethernet/networking is set to be built
 if(${MBED_WITH_ETH})
     set(MBED_WITH_RTOS ON)
@@ -66,9 +67,11 @@ string(TOLOWER ${MBED_PLATFORM} MBED_PLATFORM_LOWERC)
 set(COMMON_FLAGS " -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -fno-exceptions -fno-builtin -MMD -fno-delete-null-pointer-checks")
 set(COMMON_FLAGS "${COMMON_FLAGS} -mcpu=${MBED_TARGET_CORE_LOWERC} -O2 -mthumb -fno-exceptions -msoft-float -ffunction-sections -fdata-sections -g -fno-common -fmessage-length=0")
 
+# ------------------------------------------------------------------------------
 # pass these defines to the preprocessor
 set(COMMON_DEFINES "-DTARGET_${MBED_PLATFORM_UPPERC} -DTARGET_${MBED_TARGET_ISA} -DTARGET_${MBED_TARGET_VENDOR} -DTOOLCHAIN_${MBED_TOOLCHAIN}")
 
+# ------------------------------------------------------------------------------
 # add definitions for each macro from the official mbed SDK parameters
 foreach(def ${MBED_TARGET_MACROS})
     add_definitions(-D${def})
@@ -175,6 +178,7 @@ ExternalProject_Add(mbed_libraries
 )
 set_target_properties(mbed_libraries PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
+# ------------------------------------------------------------------------------
 # find the names of all system objects to include
 set(MBED_TARGET_SYS_OBJS "")
 file(GLOB MBED_TARGET_SYSTEM_OBJS  LIST_DIRECTORIES false "${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools/libraries/mbed/targets/cmsis/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_SERIES}/*.c")
@@ -185,6 +189,7 @@ foreach(target_sys_obj ${MBED_TARGET_SYSTEM_OBJS})
     list(APPEND MBED_TARGET_SYS_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${basename}.o")
 endforeach()
 
+# ------------------------------------------------------------------------------
 # find the name of the startup object to include
 file(GLOB MBED_TARGET_STARTUP_OBJS LIST_DIRECTORIES false "${PROJECT_SOURCE_DIR}/external/mbed_lib_build_tools/libraries/mbed/targets/cmsis/TARGET_${MBED_TARGET_VENDOR}/TARGET_${MBED_TARGET_SERIES}/TOOLCHAIN_${MBED_TOOLCHAIN}/*.S")
 foreach(target_sys_obj ${MBED_TARGET_STARTUP_OBJS})
@@ -194,35 +199,39 @@ foreach(target_sys_obj ${MBED_TARGET_STARTUP_OBJS})
     list(APPEND MBED_TARGET_SYS_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${basename}.o")
 endforeach()
 
+# ------------------------------------------------------------------------------
 # append them to the list along with the other common target objects
 list(APPEND MBED_TARGET_SYS_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/board.o")
 list(APPEND MBED_TARGET_SYS_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/retarget.o")
+
+# ------------------------------------------------------------------------------
+# tell cmake that all object files for the target will be generated and don't exist yet
 set_source_files_properties(
     ${MBED_TARGET_SYS_OBJS} PROPERTIES
     EXTERNAL_OBJECT TRUE # Identifies this as an object file
     GENERATED TRUE # Avoids need for file to exist at configure-time
 )
 
-list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libmbed.a")
-
-# tell CMake that the obj files all come from the ExternalProject
-# otherwise it'll complain that the files can't be found
 # ------------------------------------------------------------------------------
-foreach(obj ${MBED_TARGET_OBJS})
-    set_source_files_properties(
-        ${obj} PROPERTIES
-        EXTERNAL_OBJECT TRUE # Identifies this as an object file
-        GENERATED TRUE # Avoids need for file to exist at configure-time
-        DEPENDS mbed_libraries
-    )
-endforeach()
-
+# tell cmake that the linker script doesn't exist yet
 set_source_files_properties(
     "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/${MBED_PLATFORM}.ld" PROPERTIES
     EXTERNAL_OBJECT TRUE # Identifies this as an object file
     GENERATED TRUE # Avoids need for file to exist at configure-time
 )
 
+# ------------------------------------------------------------------------------
+# tell CMake that the obj files for other mbed libraries all come
+# from the ExternalProject, otherwise it'll complain that the files can't be found
+list(APPEND MBED_TARGET_OBJS "${MBED_REPO_DIR}/build/mbed/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/libmbed.a")
+set_source_files_properties(
+    ${MBED_TARGET_OBJS} PROPERTIES
+    EXTERNAL_OBJECT TRUE # Identifies this as an object file
+    GENERATED TRUE # Avoids need for file to exist at configure-time
+    DEPENDS mbed_libraries
+)
+
+# ------------------------------------------------------------------------------
 # include the paths to the headers
 include_directories(${MBED_INC_DIRS})
 
