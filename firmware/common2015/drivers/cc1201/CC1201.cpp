@@ -48,7 +48,13 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     strobe(CC1201_STROBE_SFTX);
 
     // Send the data to the CC1201.
-    uint8_t device_state = writeReg(CC1201_SINGLE_TXFIFO, buf, size);
+    uint8_t device_state;//= writeReg(CC1201_BURST_TXFIFO, buf, size);
+    radio_select();
+    // write lower byte of address
+    device_state = _spi->write(CC1201_BURST_TXFIFO | CC1201_WRITE);
+    for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
+    radio_deselect();
+
 
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==

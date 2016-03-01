@@ -119,4 +119,4 @@ void CommLink::radio_select() { *_cs = 0; }
 
 void CommLink::radio_deselect() { *_cs = 1; }
 
-uint8_t CommLink::twos_compliment(uint8_t val) { return -(unsigned int)val; }
+uint8_t CommLink::twos_compliment(uint8_t val) { return 1 -(unsigned int)val; }
