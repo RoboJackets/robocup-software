@@ -13,8 +13,8 @@ endef
 # because CMake can only handle one toolchain at a time, so we build the MBED-
 # targeted code separately.
 define cmake_build_target_fw
-	mkdir -p build
-	cd build && cmake -Wno-dev --target $1 $2 .. && make $1 $(MAKE_FLAGS) -j
+	mkdir -p firmware/build
+	cd firmware/build && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS) -j
 endef
 
 all:
@@ -107,7 +107,7 @@ robot2015-gdb: robot2015 build/robot2015-gdb.pid
 # making sure that we enable semihosting and use gdb syscalls for the file io
 	@trap 'sudo pkill -9 -P `cat build/robot2015-gdb.pid`; exit' TERM INT EXIT && \
 	if [ $(GDB_NO_CONN) -eq 0 ]; then \
-		arm-none-eabi-gdb build/firmware/robot2015/src-ctrl/robot2015_elf \
+		arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
 		  -ex "target remote localhost:$(GDB_PORT)" \
 		  -ex "load" \
 		  -ex "tbreak main" \
