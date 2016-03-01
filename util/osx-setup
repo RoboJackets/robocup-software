@@ -28,7 +28,7 @@ brew tap px4/homebrew-px4
 echo "-- Add tap for osx-cross/avr/arv-libc"
 brew tap osx-cross/avr
 
-echo "-- Installing required homebrew packages"
+echo "-- Installing required homebrew packages, this may take a while"
 brew install $(sed 's/#.*//;/^$/d' $BASE/util/osx-packages.txt)
 
 echo "-- Linking Qt 5 apps into /Applications"
