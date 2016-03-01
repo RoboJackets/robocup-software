@@ -51,7 +51,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     uint8_t device_state;//= writeReg(CC1201_BURST_TXFIFO, buf, size);
     radio_select();
     // write lower byte of address
-    device_state = _spi->write(CC1201_BURST_TXFIFO | CC1201_WRITE);
+    device_state = _spi->write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
     for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
     radio_deselect();
 
@@ -108,7 +108,7 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     if (num_rx_bytes > 0) {
-        device_state = readReg(CC1201_SINGLE_RXFIFO, buf, num_rx_bytes);
+        device_state = readReg(CC1201_RXFIFO, buf, num_rx_bytes);
         *len = num_rx_bytes;
 
         LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
