@@ -9,38 +9,27 @@
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs,
-                   PinName int_pin) {
-    setup_pins(mosi, miso, sck, cs, int_pin);
-    setup();
-}
-
-CommLink::~CommLink() {
-    // release created pin objects if they exist
-    if (_spi) delete _spi;
-    if (_cs) delete _cs;
-    if (_int_in) delete _int_in;
-
-    // terminate the thread we created
-    delete _rxThread;
-}
-
-void CommLink::setup() {
+                   PinName int_pin) : _cs(cs, 1) {
+    _mosi_pin = mosi;
+    _miso_pin = miso;
+    _sck_pin = sck;
+    _cs_pin = cs;
+    _int_pin = int_pin;
     // Initialize the hardware for communication
     setup_spi();
-    setup_cs();
     setup_interrupt();
 
     // initialize and start thread
     _rxThread = new Thread(&CommLink::rxThreadHelper, this);
 }
 
-void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs,
-                          PinName int_pin) {
-    _mosi_pin = mosi;
-    _miso_pin = miso;
-    _sck_pin = sck;
-    _cs_pin = cs;
-    _int_pin = int_pin;
+CommLink::~CommLink() {
+    // release created pin objects if they exist
+    if (_spi) delete _spi;
+    if (_int_in) delete _int_in;
+
+    // terminate the thread we created
+    delete _rxThread;
 }
 
 void CommLink::setup_spi(int baudrate) {
@@ -48,13 +37,6 @@ void CommLink::setup_spi(int baudrate) {
         _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);
         _spi->format(8, 0);
         _spi->frequency(baudrate);
-    }
-}
-
-void CommLink::setup_cs() {
-    if (_cs_pin != NC) {
-        _cs = new DigitalOut(_cs_pin);
-        *_cs = 1;  // default to active low signal
     }
 }
 
@@ -115,8 +97,8 @@ void CommLink::sendPacket(rtp::packet* p) {
 
 void CommLink::ISR() { _rxThread->signal_set(COMM_LINK_SIGNAL_RX_TRIGGER); }
 
-void CommLink::radio_select() { *_cs = 0; }
+void CommLink::radio_select() { _cs = 0; }
 
-void CommLink::radio_deselect() { *_cs = 1; }
+void CommLink::radio_deselect() { _cs = 1; }
 
 uint8_t CommLink::twos_compliment(uint8_t val) { return 1 -(unsigned int)val; }

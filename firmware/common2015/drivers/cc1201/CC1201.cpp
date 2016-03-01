@@ -307,16 +307,17 @@ bool CC1201::isConnected() const { return _isInit; }
 
 void CC1201::flush_tx() {
     idle();
+    size_t bytes = readReg(CC1201_NUM_TXBYTES);
     strobe(CC1201_STROBE_SFTX);
-    LOG(WARN, "%u bytes flushed from TX FIFO buffer.",
-        readReg(CC1201_NUM_TXBYTES));
+    LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
 }
+        
 
 void CC1201::flush_rx() {
     idle();
+    size_t bytes = readReg(CC1201_NUM_RXBYTES);
     strobe(CC1201_STROBE_SFRX);
-    LOG(WARN, "%u bytes flushed from RX FIFO buffer.",
-        readReg(CC1201_NUM_RXBYTES));
+    LOG(WARN, "%u bytes flushed from RX FIFO buffer.", bytes);
 }
 
 void CC1201::calibrate() {
@@ -352,10 +353,10 @@ uint8_t CC1201::idle() {
     return status_byte;
 }
 
-uint8_t CC1201::rand() {
-    writeReg(CC1201_RNDGEN, 0x80);
-    return readReg(CC1201_RNDGEN);
-}
+// uint8_t CC1201::rand() {
+//     writeReg(CC1201_RNDGEN, 0x80);
+//     return readReg(CC1201_RNDGEN);
+// }
 
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
 

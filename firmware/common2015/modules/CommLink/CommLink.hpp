@@ -29,7 +29,7 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
 class CommLink {
 public:
     /// Default Constructor
-    CommLink(){};
+    CommLink();
 
     /// Constructor
     CommLink(PinName mosi, PinName miso, PinName sck, PinName cs = NC,
@@ -84,7 +84,7 @@ protected:
     PinName _int_pin;  // Interrupt pin
 
     SPI* _spi;             // SPI pointer
-    DigitalOut* _cs;       // Chip Select pointer
+    DigitalOut _cs;       // Chip Select pointer
     InterruptIn* _int_in;  // Interrupt pin
 
     static const int DEFAULT_BAUD = 5000000;
@@ -101,9 +101,5 @@ private:
     }
 
     // Methods for initializing a transceiver's pins for communication
-    void setup();
-    void setup_pins(PinName mosi = NC, PinName miso = NC, PinName sck = NC,
-                    PinName cs = NC, PinName int_pin = NC);
-    void setup_cs();
     void setup_interrupt();
 };
