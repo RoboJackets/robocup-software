@@ -4,7 +4,9 @@ from __future__ import print_function
 
 import sys
 import os
-from os.path import join, abspath, dirname, isdir
+import time
+import datetime
+from os.path import join, abspath, dirname, isdir, basename
 
 '''
 A simple python script that uses the official mbed SDK to generate a complete
@@ -38,6 +40,14 @@ def echoCmakeVars(mbed_path):
 
     # restore stdout
     sys.stdout = save_stdout
+
+    ts = time.time()
+    dt = datetime.datetime.fromtimestamp(ts).strftime("%A %d, %B %Y")
+    print('#')
+    print('# ***** DO NOT MANUALLY EDIT THIS FILE *****')
+    print('#')
+    print('# This file was generated using \'{}\' on {}.'.format(basename(abspath(__file__)), dt))
+    print('# ')
 
     # print a listing of available targets
     print('set(MBED_AVAILABLE_TARGETS', end='')
