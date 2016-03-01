@@ -44,7 +44,6 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/${TEST_UNIT_BIN_FILE})
 
     add_custom_target(robot2015-test-prog
-        ${ARM_OBJCOPY} -O binary robot2015_test_ELF ${TEST_UNIT_BIN_FILE}
         COMMAND ${MBED_COPY_SCRIPT} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_UNIT_BIN_FILE}
         DEPENDS robot2015-test
         COMMENT "Copying ${HW_TEST_UNIT}'s test binary over to the mbed"
