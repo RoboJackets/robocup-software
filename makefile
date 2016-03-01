@@ -13,8 +13,8 @@ endef
 # because CMake can only handle one toolchain at a time, so we build the MBED-
 # targeted code separately.
 define cmake_build_target_fw
-	mkdir -p firmware/build
-	cd firmware/build && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS) -j
+	mkdir -p build/build
+	cd build/firmware && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS) -j
 endef
 
 all:
