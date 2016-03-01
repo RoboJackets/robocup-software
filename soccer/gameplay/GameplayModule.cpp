@@ -26,13 +26,15 @@ using namespace Geometry2d;
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
 void GameplayModule::createConfiguration(Configuration* cfg) {
-    //this sets the disance from the field boundries to the edge of the global obstacles, which the
-    //robots will not move through or into
+    // this sets the disance from the field boundries to the edge of the global
+    // obstacles, which the
+    // robots will not move through or into
     _fieldEdgeInset = new ConfigDouble(cfg, "Field Edge Obstacle", .3);
 }
 
 const bool GameplayModule::hasFieldEdgeInsetChanged() {
-    if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) > numeric_limits<double>::epsilon()) {
+    if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
+        numeric_limits<double>::epsilon()) {
         _oldFieldEdgeInset = _fieldEdgeInset->value();
         return true;
     }
@@ -45,7 +47,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
 
     calculateFieldObstacles();
 
-    _oldFieldEdgeInset = _fieldEdgeInset -> value();
+    _oldFieldEdgeInset = _fieldEdgeInset->value();
 
     _goalieID = -1;
 
@@ -103,7 +105,6 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
         TransformMatrix::translate(Point(0, dimensions.Length() / 2));
     _oppMatrix = TransformMatrix::translate(Point(0, dimensions.Length())) *
                  TransformMatrix::rotate(M_PI);
-
 
     //// Make an obstacle to cover the opponent's half of the field except for
     /// one robot diameter across the center line.
