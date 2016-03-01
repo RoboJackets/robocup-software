@@ -101,6 +101,10 @@ public:
 
     void calculateFieldObstacles();
 
+    bool hasInsetChanged();
+
+    static void createConfiguration(Configuration* cfg);
+
     /**
      * Returns the current set of global obstacles, including the field
      */
@@ -119,6 +123,9 @@ private:
     /// This protects all of Gameplay.
     /// This is held while plays are running.
     QMutex _mutex;
+
+    static ConfigDouble* inset;
+    double oldInset;
 
     SystemState* _state;
 
