@@ -2,6 +2,7 @@
 
 #include <mbed.h>
 #include <rtos.h>
+#include "logger.hpp"
 
 #include <algorithm>
 #include <map>
@@ -96,7 +97,7 @@ public:
     CommPorts<T> operator+=(const CommPort<T>& p) {
         if (_ports.find(p.portNbr()) != _ports.end()) {
             // the port already exists
-            LOG(WARNING, "Overwriting existing port '%d'", p.portNbr());
+            LOG(WARN, "Overwriting existing port '%d'", p.portNbr());
         }
 
         _ports[p.portNbr()] = p;
