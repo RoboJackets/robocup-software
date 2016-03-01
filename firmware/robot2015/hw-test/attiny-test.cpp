@@ -29,5 +29,5 @@ int main() {
     }
 
     // clear light for main loop (shows its complete)
-    ledTwo = false; // <- yo!, it'll never get here.
+    ledTwo = false;  // <- yo!, it'll never get here.
 }

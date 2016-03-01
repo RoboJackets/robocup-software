@@ -7,11 +7,11 @@ import os
 import time
 import datetime
 from os.path import join, abspath, dirname, isdir, basename
-
 '''
 A simple python script that uses the official mbed SDK to generate a complete
 set of variables for cmake.
 '''
+
 
 def printList(a):
     if isinstance(a, list):
@@ -19,6 +19,7 @@ def printList(a):
             print(' "' + str(i), end='"')
     else:
         print(' "' + str(a), end='"')
+
 
 def echoCmakeVars(mbed_path):
     # Be sure that the workspace_tools directory is in the search path
@@ -46,7 +47,8 @@ def echoCmakeVars(mbed_path):
     print('#')
     print('# ***** DO NOT MANUALLY EDIT THIS FILE *****')
     print('#')
-    print('# This file was generated using \'{}\' on {}.'.format(basename(abspath(__file__)), dt))
+    print('# This file was generated using \'{}\' on {}.'.format(basename(
+        abspath(__file__)), dt))
     print('# ')
 
     # print a listing of available targets
@@ -131,11 +133,17 @@ def echoCmakeVars(mbed_path):
                 printList(t.macros)
                 print(')')
 
+
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description='Returns a list of officially supported target for the mbed SDK build system')
-    parser.add_argument('-p', '--path', help='The path to the mbed repository root', required=True)
+    parser = argparse.ArgumentParser(
+        description=
+        'Returns a list of officially supported target for the mbed SDK build system')
+    parser.add_argument('-p',
+                        '--path',
+                        help='The path to the mbed repository root',
+                        required=True)
     args = parser.parse_args()
 
     echoCmakeVars(args.path)
