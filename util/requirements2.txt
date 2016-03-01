@@ -5,7 +5,7 @@ colorama # A dependency for the mbed build library
 cpp-coveralls # A dependency for coverage testing
 
 # firmware - required
-mbed-ls
+git+https://github.com/jjones646/mbed-ls@issue_38
 pyserial
 
 # firmware - optional
