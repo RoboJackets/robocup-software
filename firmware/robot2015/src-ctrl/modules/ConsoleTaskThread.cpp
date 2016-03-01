@@ -61,7 +61,6 @@ void Task_SerialConsole(void const* args) {
 
             // Execute the command
             NVIC_DisableIRQ(UART0_IRQn);
-            // TODO(justin): avoid string copying
             size_t rxLen = console->rxBuffer().size() + 1;
             char rx[rxLen];
             memcpy(rx, console->rxBuffer().c_str(), rxLen - 1);

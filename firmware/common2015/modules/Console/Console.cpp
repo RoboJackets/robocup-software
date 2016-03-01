@@ -37,7 +37,7 @@ void Console::PrintHeader() {
     Flush();
 }
 
-void Console::Flush() { fflush(stdout); }  // TODO: pc.fflush()?
+void Console::Flush() { fflush(stdout); }
 
 void Console::RXCallback() {
     // If for some reason more than one character is in the buffer when the

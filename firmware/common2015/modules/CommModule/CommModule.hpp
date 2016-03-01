@@ -110,12 +110,8 @@ private:
     void txThread();
     void rxThread();
 
-    // // TODO(justin): explain
-    // template <typename METHOD>
-    // static void threadHelper(void const* moduleInst) {
-    //     CommModule* module = (CommModule*)moduleInst;
-    //     (*module.*METHOD)();
-    // }
+    /// The threadHelper methods accept a CommModule pointer as a parameter
+    /// and call the corresponding instance methods on the module.
     static void rxThreadHelper(void const* moduleInst);
     static void txThreadHelper(void const* moduleInst);
 

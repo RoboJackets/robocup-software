@@ -94,10 +94,10 @@ template <class T>
 class CommPorts {
 public:
     CommPorts<T> operator+=(const CommPort<T>& p) {
-        // if (_ports.find(p.portNbr()) != _ports.end()) {
-        //     // the port already exists
-        //     // TODO(justin): how do we want to handle this?
-        // }
+        if (_ports.find(p.portNbr()) != _ports.end()) {
+            // the port already exists
+            LOG(WARNING, "Overwriting existing port '%d'", p.portNbr());
+        }
 
         _ports[p.portNbr()] = p;
 

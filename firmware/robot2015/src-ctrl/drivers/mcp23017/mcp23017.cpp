@@ -7,7 +7,6 @@
 shared_ptr<MCP23017> MCP23017::instance;
 
 shared_ptr<MCP23017>& MCP23017::Instance() {
-    // TODO(justin): i2c address?
     if (!instance) instance.reset(new MCP23017(RJ_I2C_BUS, 0));
 
     return instance;
