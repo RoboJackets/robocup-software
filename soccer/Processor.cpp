@@ -399,7 +399,7 @@ void Processor::run() {
 
         // recalculates Field obstacles on every run through to account for
         // changing inset
-        if (_gameplayModule->hasInsetChanged()) {
+        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
             _gameplayModule->calculateFieldObstacles();
         }
         /// Collect global obstacles

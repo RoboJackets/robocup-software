@@ -16,6 +16,7 @@
 #include <QString>
 
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <Configuration.hpp>
 
 class OurRobot;
 class SystemState;
@@ -101,7 +102,7 @@ public:
 
     void calculateFieldObstacles();
 
-    bool hasInsetChanged();
+    const bool hasFieldEdgeInsetChanged();
 
     static void createConfiguration(Configuration* cfg);
 
@@ -124,8 +125,8 @@ private:
     /// This is held while plays are running.
     QMutex _mutex;
 
-    static ConfigDouble* inset;
-    double oldInset;
+    static ConfigDouble* _fieldEdgeInset;
+    double _oldFieldEdgeInset;
 
     SystemState* _state;
 
