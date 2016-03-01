@@ -1,5 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "")
+
 set( CMAKE_SYSTEM_NAME       Generic     )
 set( CMAKE_SYSTEM_PROCESSOR  arm         )
 set( CMAKE_SYSTEM_VERSION    1           )
@@ -34,7 +37,10 @@ set( CMAKE_CROSSCOMPILING true )
 # set compiler things that were found above
 set( CMAKE_C_COMPILER       ${ARM_C_COMPILER}           )
 set( CMAKE_CXX_COMPILER     ${ARM_CXX_COMPILER}         )
+set( CMAKE_OBJCOPY          ${ARM_OBJCOPY}              )
+set( CMAKE_OBJDUMP          ${ARM_OBJDUMP}              )
 set( CMAKE_RANLIB           ${ARM_RANLIB}               )
+set( CMAKE_LINKER           ${ARM_LD}                   )
 set( CMAKE_AR               ${ARM_AR}                   )
 set( CMAKE_AS               ${ARM_AS}                   )
 set( ASM                    ${ARM_AS}                   )
