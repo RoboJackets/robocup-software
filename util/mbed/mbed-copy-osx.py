@@ -9,8 +9,12 @@ import mbed_lstools as mbedls
 from os.path import abspath, isfile
 
 # parse in the given file(s)
-parser = argparse.ArgumentParser(description='copies one or more given files to all connected mbed devices.')
-parser.add_argument('files', nargs='+', help='files to move to all connected mbeds')
+parser = argparse.ArgumentParser(
+    description=
+    'copies one or more given files to all connected mbed devices.')
+parser.add_argument('files',
+                    nargs='+',
+                    help='files to move to all connected mbeds')
 args = parser.parse_args()
 
 
