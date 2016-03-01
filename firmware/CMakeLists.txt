@@ -1,7 +1,6 @@
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
 include(RemoveFlags)
-include(ShowVars)
 
 # remove the color flag since it will get set on anything with clang assert
 # the default compiler (mostly apple computers). The arm compilers know
