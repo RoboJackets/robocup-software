@@ -29,6 +29,9 @@ set(common2015_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/${UTILS_ROOT_NAME}
 )
 
+include(ShowVars)
+show_vars()
+
 # append all of the common2015 subdirectories listed in the variables above
 foreach(driver_subdir ${DRIVERS})
     list(APPEND common2015_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/${DRIVERS_ROOT_NAME}/${driver_subdir})

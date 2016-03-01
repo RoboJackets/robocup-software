@@ -32,6 +32,9 @@ set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
 set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 
+include(ShowVars)
+show_vars()
+
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC "*.cpp")
 
