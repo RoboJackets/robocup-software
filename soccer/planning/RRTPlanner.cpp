@@ -271,9 +271,10 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(const
     return path;
 }
 
-vector<CubicBezierControlPoints> RRTPlanner::generateBezierPath(const vector<Geometry2d::Point>& points,
-                                                         const MotionConstraints& motionConstraints,
-                                                         Geometry2d::Point vi, Geometry2d::Point vf) {
+vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(const vector<Geometry2d::Point> &points,
+                                                                    const MotionConstraints &motionConstraints,
+                                                                    Geometry2d::Point vi, Geometry2d::Point vf,
+                                                                    const boost::optional<vector<float>> &times) {
     size_t length = points.size();
     size_t curvesNum = length - 1;
     vector<double> pointsX(length);
@@ -289,14 +290,27 @@ vector<CubicBezierControlPoints> RRTPlanner::generateBezierPath(const vector<Geo
 
     const float endSpeed = vf.mag();
 
-    for (int i = 0; i < curvesNum; i++) {
-        ks[i] = 1.0 /
-                (getTime(points, i + 1, motionConstraints, startSpeed, endSpeed) -
-                 getTime(points, i, motionConstraints, startSpeed, endSpeed));
-        ks2[i] = ks[i] * ks[i];
-        if (std::isnan(ks[i])) {
-            debugThrow("Meh");
-            return vector<CubicBezierControlPoints>();
+
+    if (times) {
+        assert(times->size() == points.size());
+        for (int i = 0; i < curvesNum; i++) {
+            ks[i] = 1.0 / (times->at(i+1) - times->at(i));
+            ks2[i] = ks[i] * ks[i];
+            if (std::isnan(ks[i])) {
+                debugThrow("Meh");
+                return vector<CubicBezierControlPoints>();
+            }
+        }
+    } else {
+        for (int i = 0; i < curvesNum; i++) {
+            ks[i] = 1.0 /
+                    (getTime(points, i + 1, motionConstraints, startSpeed, endSpeed) -
+                     getTime(points, i, motionConstraints, startSpeed, endSpeed));
+            ks2[i] = ks[i] * ks[i];
+            if (std::isnan(ks[i])) {
+                debugThrow("Meh");
+                return vector<CubicBezierControlPoints>();
+            }
         }
     }
 
@@ -333,7 +347,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
 
     // TODO: Get the actual values
 
-    vector<CubicBezierControlPoints> controlPoints = generateBezierPath(points, motionConstraints, vi, vf);
+    vector<CubicBezierControlPoints> controlPoints = generateCubicBezierPath(points, motionConstraints, vi, vf);
 
     if (controlPoints.size() < 1) {
         return nullptr;
