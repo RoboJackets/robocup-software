@@ -111,10 +111,16 @@ protected:
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
 
-    static std::vector<CubicBezierControlPoints> generateBezierPath(const std::vector<Geometry2d::Point>& points,
-                                                        const MotionConstraints& motionConstraints,
-                                                        Geometry2d::Point vi, Geometry2d::Point vf);
-
+    /**
+     * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity Path Algorithm
+     */
+    static std::vector<CubicBezierControlPoints> generateCubicBezierPath(const std::vector<Geometry2d::Point> &points,
+                                                                    const MotionConstraints &motionConstraints,
+                                                                    Geometry2d::Point vi, Geometry2d::Point vf,
+                                                                    const boost::optional<std::vector<float>> &times = boost::none);
+    /**
+     * Generates a Cubic Bezier Path based on some attempted heuristical Control Point Placement
+     */
     static std::vector<CubicBezierControlPoints> generateNormalCubicBezierPath(const std::vector<Geometry2d::Point>& points,
                                                                     const MotionConstraints& motionConstraints,
                                                                     Geometry2d::Point vi, Geometry2d::Point vf);
