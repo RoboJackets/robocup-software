@@ -38,7 +38,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
 int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
-    if (_isInit == false) return -1;
+    if (!_isInit) return -1;
 
     if (size != (buf[0] + 1)) {
         LOG(SEVERE,
@@ -293,7 +293,7 @@ void CC1201::reset() {
 }
 
 int32_t CC1201::selfTest() {
-    if (_isInit == true) return 0;
+    if (_isInit) return 0;
 
     _chip_version = readReg(CC1201_PARTNUMBER);
 
@@ -347,7 +347,7 @@ float CC1201::rssi() { return _rssi; }
 uint8_t CC1201::idle() {
     uint8_t status_byte = strobe(CC1201_STROBE_SIDLE);
 
-    if (_isInit == false) return status_byte;
+    if (!_isInit) return status_byte;
 
     // block until we've reached idle
     while (mode() != 0x01)
