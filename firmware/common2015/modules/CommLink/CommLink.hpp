@@ -61,14 +61,14 @@ protected:
 
     /**
      * @brief Read data from the radio's RX buffer
-     * 
+     *
      * Copies the contents of the RX buffer into the given @buf parameter.
-     * 
+     *
      * @param buf The buffer to write data into
      * @param len The caller sets @len to the size of the buffer and the
      * function sets it to the number of bytes of data written to the buffer
      * before returning.
-     * 
+     *
      * @return An error/success code.  See the comm error enum above.
      */
     virtual int32_t getData(uint8_t* buf, uint8_t* len) = 0;
@@ -84,7 +84,11 @@ protected:
     //
     // Always call CommLink::ready() after derived class is ready
     void ready();
-    uint8_t twos_compliment(uint8_t val);
+
+    template <typename T>
+    T twos_compliment(T val) {
+        return ~val + 1;
+    }
 
     SPI _spi;             // SPI pointer
     DigitalOut _cs;       // Chip Select pointer

@@ -146,6 +146,8 @@ static const vector<command_t> commands = {
      "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
      "loopback [<count>], "
      "debug, "
+     "ping, "
+     "pong, "
      "strobe <num>, "
      "stress-test <count> <delay> <pck-size>}]"},
 
@@ -419,7 +421,7 @@ int cmd_ls(cmd_args_t& args) {
     if (args.empty() == true) {
         d = opendir("/local");
     } else {
-        d = opendir(args.front().c_str());
+        d = opendir(args[0].c_str());
     }
 
     if (d != nullptr) {
@@ -437,7 +439,7 @@ int cmd_ls(cmd_args_t& args) {
 
     } else {
         if (args.empty() == false) {
-            printf("Could not find %s\r\n", args.front().c_str());
+            printf("Could not find %s\r\n", args[0].c_str());
         }
 
         return 1;
@@ -579,7 +581,7 @@ int cmd_interface_disconnect(cmd_args_t& args) {
 
     }
 
-    else if (args.front().compare("-P") == 0) {
+    else if (args[0] == "-P") {
         printf("Powering down mbed interface.\r\n");
         mbed_interface_powerdown();
     }
@@ -611,7 +613,7 @@ int cmd_baudrate(cmd_args_t& args) {
     }
 
     else if (args.size() == 1) {
-        std::string str_baud = args.front();
+        std::string str_baud = args[0];
 
         if (strcmp(str_baud.c_str(), "--list") == 0 ||
             strcmp(str_baud.c_str(), "-l") == 0) {
@@ -649,7 +651,7 @@ int cmd_console_user(cmd_args_t& args) {
     }
 
     else {
-        Console::Instance()->changeUser(args.front());
+        Console::Instance()->changeUser(args[0]);
     }
 
     return 0;
@@ -662,7 +664,7 @@ int cmd_console_hostname(cmd_args_t& args) {
     }
 
     else {
-        Console::Instance()->changeHostname(args.front());
+        Console::Instance()->changeHostname(args[0]);
     }
 
     return 0;
@@ -681,12 +683,12 @@ int cmd_log_level(cmd_args_t& args) {
     else {
         // bool storeVals = true;
 
-        if (strcmp(args.front().c_str(), "on") == 0 ||
-            args.front().compare("enable") == 0) {
+        if (strcmp(args[0].c_str(), "on") == 0 ||
+            args[0] == "enable") {
             isLogging = true;
             printf("Logging enabled.\r\n");
-        } else if (strcmp(args.front().c_str(), "off") == 0 ||
-                   args.front().compare("disable") == 0) {
+        } else if (strcmp(args[0].c_str(), "off") == 0 ||
+                   args[0] == "disable") {
             isLogging = false;
             printf("Logging disabled.\r\n");
         } else {
@@ -694,7 +696,7 @@ int cmd_log_level(cmd_args_t& args) {
             // could increase or decrease...or stay the same.
             int newLvl = (int)rjLogLevel;  // rjLogLevel is unsigned, so we'll
             // need to change that first
-            newLvl += logLvlChange(args.front());
+            newLvl += logLvlChange(args[0]);
 
             if (newLvl >= LOG_LEVEL_END) {
                 printf("Unable to set log level above maximum value.\r\n");
@@ -746,7 +748,7 @@ int cmd_led(cmd_args_t& args) {
         led.setFromDefaultBrightness();
         led.setFromDefaultColor();
 
-        if (args.front().compare("bright") == 0) {
+        if (args[0] == "bright") {
             if (args.size() > 1) {
                 float bri = atof(args.at(1).c_str());
                 printf("Setting LED brightness to %.2f.\r\n", bri);
@@ -764,7 +766,7 @@ int cmd_led(cmd_args_t& args) {
             } else {
                 printf("Current brightness:\t%.2f\r\n", led.brightness());
             }
-        } else if (args.front().compare("color") == 0) {
+        } else if (args[0] == "color") {
             if (args.size() > 1) {
                 std::map<std::string, NeoColor> colors;
                 // order for struct is green, red, blue
@@ -788,11 +790,11 @@ int cmd_led(cmd_args_t& args) {
             }
             // push out the changes to the led
             led.write();
-        } else if (args.front().compare("state") == 0) {
+        } else if (args[0] == "state") {
             if (args.size() > 1) {
-                if (args.at(1).compare("on") == 0) {
+                if (args.at(1) == "on") {
                     printf("Turning LED on.\r\n");
-                } else if (args.at(1).compare("off") == 0) {
+                } else if (args.at(1) == "off") {
                     printf("Turning LED off.\r\n");
                     led.brightness(0.0);
                 } else {
@@ -862,20 +864,20 @@ int cmd_radio(cmd_args_t& args) {
         pck.subclass(1);
         pck.address(BASE_STATION_ADDR);
 
-        if (args.front().compare("show") == 0) {
+        if (args[0] == "show") {
             commModule->printInfo();
 
-        } else if (args.front().compare("test-tx") == 0) {
+        } else if (args[0] == "test-tx") {
             printf("Placing %u byte packet in TX buffer.\r\n",
                    pck.payload.size());
             commModule->send(pck);
 
-        } else if (args.front().compare("test-rx") == 0) {
+        } else if (args[0] == "test-rx") {
             printf("Placing %u byte packet in RX buffer.\r\n",
                    pck.payload.size());
             commModule->receive(pck);
 
-        } else if (args.front().compare("loopback") == 0) {
+        } else if (args[0] == "loopback") {
             pck.port(rtp::port::LINK);
 
             unsigned int i = 1;
@@ -900,9 +902,9 @@ int cmd_radio(cmd_args_t& args) {
                 Thread::wait(50);
             }
 
-        } else if (args.front() == "strobe") {
+        } else if (args[0] == "strobe") {
             global_radio->strobe(0x30 + atoi(args.at(1).c_str()));
-        } else if (args.front() == "debug") {
+        } else if (args[0] == "debug") {
             bool wasEnabled = global_radio->isDebugEnabled();
             global_radio->setDebugEnabled(!wasEnabled);
             printf("Radio debugging now %s\r\n",
@@ -910,22 +912,22 @@ int cmd_radio(cmd_args_t& args) {
             if (!wasEnabled)
                 printf("All strobes will appear in the INF2 logs\r\n");
         } else {
-            show_invalid_args(args.front());
+            show_invalid_args(args[0]);
             return 1;
         }
     } else if (args.size() == 3) {
-        if (args.front().compare("set") == 0) {
+        if (args[0] == "set") {
             if (isPosInt(args.at(2).c_str())) {
                 unsigned int portNbr = atoi(args.at(2).c_str());
 
-                if (args.at(1).compare("up") == 0) {
+                if (args.at(1) == "up") {
                     commModule->openSocket(portNbr);
 
-                } else if (args.at(1).compare("down") == 0) {
+                } else if (args.at(1) == "down") {
                     commModule->close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
-                } else if (args.at(1).compare("reset") == 0) {
+                } else if (args.at(1) == "reset") {
                     commModule->resetCount(portNbr);
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
@@ -942,7 +944,7 @@ int cmd_radio(cmd_args_t& args) {
             return 1;
         }
     } else if (args.size() >= 4) {
-        if (args.front().compare("stress-test") == 0) {
+        if (args[0] == "stress-test") {
             unsigned int packet_cnt = atoi(args.at(1).c_str());
             unsigned int ms_delay = atoi(args.at(2).c_str());
             unsigned int pck_size = atoi(args.at(3).c_str());

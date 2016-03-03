@@ -57,7 +57,8 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     // Send the data to the CC1201.
     radio_select();
-    uint8_t device_state = _spi.write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
+    uint8_t device_state =
+        _spi.write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
     for (uint8_t i = 0; i < size; i++) _spi.write(buf[i]);
     radio_deselect();
 
@@ -113,7 +114,6 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     if (num_rx_bytes > 0) {
-
         radio_select();
         _spi.write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
         for (int i = 0; i < num_rx_bytes; i++)
@@ -322,7 +322,6 @@ void CC1201::flush_tx() {
     strobe(CC1201_STROBE_SFTX);
     LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
 }
-        
 
 void CC1201::flush_rx() {
     idle();
@@ -375,7 +374,7 @@ float CC1201::freq() {
     freqUpdate();
 
     // read the 5 frequency-related bytes in order:
-    // FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0
+    // [FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0]
     uint8_t buf[5];
     readReg(CC1201_FREQOFF1, buf, 5);
 
