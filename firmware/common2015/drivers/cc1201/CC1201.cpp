@@ -26,6 +26,9 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
     // set initial configuration
     setConfig(regs, len);
 
+    // start out in RX mode
+    strobe(CC1201_STROBE_SRX);
+
     if (_isInit == true) {
         LOG(INIT, "CC1201 ready!");
         CommLink::ready();
@@ -48,6 +51,10 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     strobe(CC1201_STROBE_SFTX);
 
     Thread::wait(10);
+
+
+    strobe(CC1201_STROBE_SIDLE);
+    Thread::wait(5);
 
     // Send the data to the CC1201.
     uint8_t device_state;//= writeReg(CC1201_BURST_TXFIFO, buf, size);
