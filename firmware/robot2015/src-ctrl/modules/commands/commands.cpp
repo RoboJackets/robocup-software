@@ -234,7 +234,7 @@ int cmd_alias(cmd_args_t& args) {
                 }
             }
 
-            if (aliasFound == false) {
+            if (!aliasFound) {
                 printf("Error listing aliases: command '%s' not found",
                        args[argInd].c_str());
             }
@@ -250,7 +250,7 @@ int cmd_alias(cmd_args_t& args) {
 * Clears the console.
 */
 int cmd_console_clear(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -279,7 +279,7 @@ int cmd_console_echo(cmd_args_t& args) {
  * links to).
  */
 int cmd_console_exit(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -372,7 +372,7 @@ int cmd_help_detail(cmd_args_t& args) {
  * Console responsiveness test.
  */
 int cmd_ping(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -391,7 +391,7 @@ int cmd_ping(cmd_args_t& args) {
  * Resets the mbed (should be the equivalent of pressing the reset button).
  */
 int cmd_interface_reset(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -436,7 +436,7 @@ int cmd_ls(cmd_args_t& args) {
         }
 
     } else {
-        if (args.empty() == false) {
+        if (!args.empty()) {
             printf("Could not find %s\r\n", args[0].c_str());
         }
 
@@ -450,7 +450,7 @@ int cmd_ls(cmd_args_t& args) {
  * Prints system info.
  */
 int cmd_info(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -588,7 +588,7 @@ int cmd_interface_disconnect(cmd_args_t& args) {
 }
 
 int cmd_interface_check_conn(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     }
@@ -845,7 +845,7 @@ int cmd_radio(cmd_args_t& args) {
         return 0;
     }
 
-    if (commModule->isReady() == false) {
+    if (!commModule->isReady()) {
         printf("The radio interface is not ready! Unseen bugs may occur!\r\n");
     }
 
@@ -1009,7 +1009,7 @@ void execute_line(char* rawCommand) {
             pch = strtok_r(nullptr, " ", &endArg);
         }
 
-        if (cmdName.empty() == false) {
+        if (!cmdName.empty()) {
             bool commandFound = false;
 
             for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++) {
@@ -1091,7 +1091,7 @@ void execute_iterative_command() {
 void show_invalid_args(cmd_args_t& args) {
     printf("Invalid arguments");
 
-    if (args.empty() == false) {
+    if (!args.empty()) {
         printf(" ");
 
         for (unsigned int i = 0; i < args.size() - 1; i++)
