@@ -18,7 +18,7 @@ public:
            const registerSetting_t* regs, size_t len,
            int rssiOffset = DEFAULT_RSSI_OFFSET);
 
-    int32_t sendData(uint8_t*, uint8_t);
+    int32_t sendData(uint8_t* buf, uint8_t size);
 
     int32_t getData(uint8_t* buf, uint8_t* len);
 

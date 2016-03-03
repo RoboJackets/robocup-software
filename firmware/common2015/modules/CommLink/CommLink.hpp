@@ -41,7 +41,6 @@ public:
 
     // Class constants for data queues
     static const size_t RX_QUEUE_SIZE = 2;
-    // static const size_t BUFFER_SIZE = 64;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
