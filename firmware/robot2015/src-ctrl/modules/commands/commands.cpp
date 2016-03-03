@@ -181,7 +181,7 @@ static const vector<command_t> commands = {
 */
 int cmd_alias(cmd_args_t& args) {
     // If no args given, list all aliases
-    if (args.empty() == true) {
+    if (args.empty()) {
         for (uint8_t i = 0; i < commands.size(); i++) {
             printf("\t%s:\t", commands[i].aliases[0].c_str());
 
@@ -295,7 +295,7 @@ int cmd_console_exit(cmd_args_t& args) {
  */
 int cmd_help(cmd_args_t& args) {
     // Prints all commands, with details
-    if (args.empty() == true) {
+    if (args.empty()) {
         // Default to a short listing of all the commands
         for (size_t i = 0; i < commands.size(); i++)
             printf("\t%s:\t%s\r\n", commands[i].aliases[0].c_str(),
@@ -416,7 +416,7 @@ int cmd_ls(cmd_args_t& args) {
 
     std::vector<std::string> filenames;
 
-    if (args.empty() == true) {
+    if (args.empty()) {
         d = opendir("/local");
     } else {
         d = opendir(args[0].c_str());
@@ -473,7 +473,7 @@ int cmd_info(cmd_args_t& args) {
 
         // show the fpga build hash
         printf("\tFPGA Hash:\t");
-        if (FPGA::Instance()->isReady() == true) {
+        if (FPGA::Instance()->isReady()) {
             std::vector<uint8_t> fpga_version;
             bool dirty_check = FPGA::Instance()->git_hash(fpga_version);
 
@@ -573,7 +573,7 @@ int cmd_interface_disconnect(cmd_args_t& args) {
         return 1;
     }
 
-    else if (args.empty() == true) {
+    else if (args.empty()) {
         mbed_interface_disconnect();
         printf("Disconnected mbed interface.\r\n");
 
@@ -606,7 +606,7 @@ int cmd_baudrate(cmd_args_t& args) {
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600};
 
-    if (args.empty() == true || args.size() > 1) {
+    if (args.empty() || args.size() > 1) {
         printf("Baudrate: %u\r\n", Console::Instance()->Baudrate());
     }
 
@@ -642,7 +642,7 @@ int cmd_baudrate(cmd_args_t& args) {
 }
 
 int cmd_console_user(cmd_args_t& args) {
-    if (args.empty() == true || args.size() > 1) {
+    if (args.empty() || args.size() > 1) {
         show_invalid_args(args);
         return 1;
     }
@@ -655,7 +655,7 @@ int cmd_console_user(cmd_args_t& args) {
 }
 
 int cmd_console_hostname(cmd_args_t& args) {
-    if (args.empty() == true || args.size() > 1) {
+    if (args.empty() || args.size() > 1) {
         show_invalid_args(args);
         return 1;
     }
@@ -673,7 +673,7 @@ int cmd_log_level(cmd_args_t& args) {
         return 1;
     }
 
-    else if (args.empty() == true) {
+    else if (args.empty()) {
         printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
     }
 
@@ -716,7 +716,7 @@ int cmd_log_level(cmd_args_t& args) {
 }
 
 int cmd_rpc(cmd_args_t& args) {
-    if (args.empty() == true) {
+    if (args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -735,7 +735,7 @@ int cmd_rpc(cmd_args_t& args) {
 }
 
 int cmd_led(cmd_args_t& args) {
-    if (args.empty() == true) {
+    if (args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -839,7 +839,7 @@ int cmd_ps(cmd_args_t& args) {
 int cmd_radio(cmd_args_t& args) {
     shared_ptr<CommModule> commModule = CommModule::Instance();
 
-    if (args.empty() == true) {
+    if (args.empty()) {
         // Default to showing the list of ports
         commModule->printInfo();
         return 0;
@@ -1073,8 +1073,8 @@ void execute_line(char* rawCommand) {
  * of if an iterative command is not running or not.
  */
 void execute_iterative_command() {
-    if (iterative_command_state == true) {
-        if (Console::Instance()->IterCmdBreakReq() == true) {
+    if (iterative_command_state) {
+        if (Console::Instance()->IterCmdBreakReq()) {
             iterative_command_state = false;
 
             // reset the flag for receiving a break character in the Console
