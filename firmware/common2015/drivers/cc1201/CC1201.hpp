@@ -20,7 +20,7 @@ public:
 
     int32_t sendData(uint8_t*, uint8_t);
 
-    int32_t getData(uint8_t*, uint8_t*);
+    int32_t getData(uint8_t* buf, uint8_t* len);
 
     void reset();
 
@@ -37,11 +37,10 @@ public:
     uint8_t strobe(uint8_t cmd);
 
     uint8_t readReg(uint16_t addr);
-    uint8_t readReg(uint16_t addr, uint8_t* dataOut,
-                    uint8_t);  // TODO: var names?
+    uint8_t readReg(uint16_t addr, uint8_t* dataOut, uint8_t);
 
     uint8_t writeReg(uint16_t addr, uint8_t value);
-    uint8_t writeReg(uint16_t addr, const uint8_t* data, uint8_t len);
+    // uint8_t writeReg(uint16_t addr, const uint8_t* data, uint8_t len);
 
     float freq();
 

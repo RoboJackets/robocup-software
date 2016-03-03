@@ -58,9 +58,21 @@ public:
 
 protected:
     // write data out to the radio device using SPI
-    virtual int32_t sendData(uint8_t*, uint8_t) = 0;
-    // read data in from the radio device using SPI
-    virtual int32_t getData(uint8_t*, uint8_t*) = 0;
+    virtual int32_t sendData(uint8_t* buf, uint8_t len) = 0;
+
+    /**
+     * @brief Read data from the radio's RX buffer
+     * 
+     * Copies the contents of the RX buffer into the given @buf parameter.
+     * 
+     * @param buf The buffer to write data into
+     * @param len The caller sets @len to the size of the buffer and the
+     * function sets it to the number of bytes of data written to the buffer
+     * before returning.
+     * 
+     * @return An error/success code.  See the comm error enum above.
+     */
+    virtual int32_t getData(uint8_t* buf, uint8_t* len) = 0;
 
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD

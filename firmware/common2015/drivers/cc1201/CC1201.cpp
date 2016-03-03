@@ -48,22 +48,18 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
         return COMM_FUNC_BUF_ERR;
     }
 
-    strobe(CC1201_STROBE_SFTX);
+    flush_tx();
 
     Thread::wait(10);
-
 
     strobe(CC1201_STROBE_SIDLE);
     Thread::wait(5);
 
     // Send the data to the CC1201.
-    uint8_t device_state;//= writeReg(CC1201_BURST_TXFIFO, buf, size);
     radio_select();
-    // write lower byte of address
-    device_state = _spi.write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
+    uint8_t device_state = _spi.write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
     for (uint8_t i = 0; i < size; i++) _spi.write(buf[i]);
     radio_deselect();
-
 
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
@@ -97,11 +93,11 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
-    uint8_t device_state = freqUpdate();  // update frequency offset estimate &
-    // get the current state while at it
+    // update frequency offset estimate and get the current state while at it
+    uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
 
-    if (((*len) + 2) < num_rx_bytes) {
+    if (*len < num_rx_bytes) {
         LOG(SEVERE, "%u bytes in RX FIFO with given buffer size of %u bytes.",
             num_rx_bytes, *len);
 
@@ -117,7 +113,12 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     if (num_rx_bytes > 0) {
-        device_state = readReg(CC1201_RXFIFO, buf, num_rx_bytes);
+
+        radio_select();
+        _spi.write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
+        for (int i = 0; i < num_rx_bytes; i++)
+            buf[i] = _spi.write(CC1201_STROBE_SNOP);
+        radio_deselect();
         *len = num_rx_bytes;
 
         LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
@@ -127,15 +128,13 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     update_rssi();
-    // return back to RX mode
-    strobe(CC1201_STROBE_SRX);
+
+    // Note: we configured the radio to return to RX mode after a successful RX,
+    // so there's no need to explicitly strobe it into RX here.
 
     return COMM_SUCCESS;
 }
 
-/**
- * reads a standard register
- */
 uint8_t CC1201::readReg(uint16_t addr) {
     ASSERT_IS_ADDR(addr);
 
@@ -153,6 +152,7 @@ uint8_t CC1201::readReg(uint16_t addr) {
 
     return returnVal;
 }
+
 uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
     ASSERT_IS_ADDR(addr);
 
@@ -190,6 +190,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
     return status_byte;
 }
 
+/*
 uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
     ASSERT_IS_ADDR(addr);
 
@@ -209,6 +210,7 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
 
     return status_byte;
 }
+*/
 
 uint8_t CC1201::strobe(uint8_t addr) {
     if (addr > 0x3d || addr < 0x30) {
