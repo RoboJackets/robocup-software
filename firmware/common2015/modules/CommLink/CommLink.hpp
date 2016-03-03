@@ -37,7 +37,7 @@ public:
 
     /// Virtual deconstructor
     /// Kills any threads and frees the allocated stack.
-    virtual ~CommLink();
+    virtual ~CommLink() {}
 
     // Class constants for data queues
     static const size_t RX_QUEUE_SIZE = 2;
@@ -73,33 +73,22 @@ protected:
     //
     // Always call CommLink::ready() after derived class is ready
     void ready();
-    void setup_spi(int baudrate = DEFAULT_BAUD);
     uint8_t twos_compliment(uint8_t val);
 
-    // SPI bus pins
-    PinName _miso_pin;
-    PinName _mosi_pin;
-    PinName _sck_pin;
-    PinName _cs_pin;   // CS pin
-    PinName _int_pin;  // Interrupt pin
-
-    SPI* _spi;             // SPI pointer
+    SPI _spi;             // SPI pointer
     DigitalOut _cs;       // Chip Select pointer
-    InterruptIn* _int_in;  // Interrupt pin
+    InterruptIn _int_in;  // Interrupt pin
 
     static const int DEFAULT_BAUD = 5000000;
 
 private:
-    Thread* _rxThread = nullptr;
+    Thread _rxThread;
 
-    // The working threads for handling RX data queue operations
+    // The working thread for handling RX data queue operations
     void rxThread();
 
     static void rxThreadHelper(const void* linkInst) {
         CommLink* link = (CommLink*)linkInst;
         link->rxThread();
     }
-
-    // Methods for initializing a transceiver's pins for communication
-    void setup_interrupt();
 };
