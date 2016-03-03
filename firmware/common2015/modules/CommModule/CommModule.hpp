@@ -88,6 +88,8 @@ public:
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values
     void send(const rtp::packet&);
+
+    /// Called by CommLink instances whenever a packet is received via radio
     void receive(const rtp::packet&);
 
     unsigned int numRxPackets() const;

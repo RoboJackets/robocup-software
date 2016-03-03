@@ -23,13 +23,13 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
     set_rssi_offset(rssiOffset);
     selfTest();
 
-    // set initial configuration
-    setConfig(regs, len);
-
-    // start out in RX mode
-    strobe(CC1201_STROBE_SRX);
-
     if (_isInit == true) {
+        // set initial configuration
+        setConfig(regs, len);
+
+        // start out in RX mode
+        strobe(CC1201_STROBE_SRX);
+
         LOG(INIT, "CC1201 ready!");
         CommLink::ready();
     }
@@ -50,10 +50,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     flush_tx();
 
-    Thread::wait(10);
-
     strobe(CC1201_STROBE_SIDLE);
-    Thread::wait(5);
 
     // Send the data to the CC1201.
     radio_select();
