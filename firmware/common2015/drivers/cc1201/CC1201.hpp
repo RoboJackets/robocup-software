@@ -51,8 +51,6 @@ public:
     bool isDebugEnabled() const { return _debugEnabled; }
 
 protected:
-    void set_rssi_offset(int8_t offset);
-
     void flush_tx();
 
     void flush_rx();
@@ -81,7 +79,6 @@ private:
     uint8_t _lqi;
     uint8_t _chip_version;
     bool _isInit;
-    bool _offset_reg_written;
     float _rssi;
 
     // In debug mode, all strobe commands are logged at INF2

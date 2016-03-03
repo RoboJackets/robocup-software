@@ -18,14 +18,14 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
                PinName intPin, const registerSetting_t* regs, size_t len,
                int rssiOffset)
     : CommLink(mosi, miso, sck, cs, intPin) {
-    _offset_reg_written = false;
     reset();
-    set_rssi_offset(rssiOffset);
     selfTest();
 
-    if (_isInit == true) {
+    if (_isInit) {
         // set initial configuration
         setConfig(regs, len);
+
+        writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(rssiOffset));
 
         // start out in RX mode
         strobe(CC1201_STROBE_SRX);
@@ -334,14 +334,10 @@ void CC1201::calibrate() {
 
 void CC1201::update_rssi() {
     // Only use the top MSB for simplicity. 1 dBm resolution.
-    if (_offset_reg_written) {
-        uint8_t offset = readReg(CC1201_RSSI1);
-        _rssi = static_cast<float>((int8_t)twos_compliment(offset));
+    uint8_t offset = readReg(CC1201_RSSI1);
+    _rssi = static_cast<float>((int8_t)twos_compliment(offset));
 
-        LOG(INF3, "RSSI is from device.");
-    } else {
-        _rssi = 0.0;
-    }
+    LOG(INF3, "RSSI is from device.");
 
     LOG(INF3, "RSSI Register Val: 0x%02X", _rssi);
 }
@@ -399,14 +395,6 @@ float CC1201::freq() {
 bool CC1201::isLocked() {
     // This is only valid in RX, TX, & FSTXON
     return readReg(CC1201_FSCAL_CTRL) & 0x01;
-}
-
-void CC1201::set_rssi_offset(int8_t offset) {
-    // HAVING THIS MEANS OFFSET MUST ONLY BE SET ONCE FOR THE CLASS
-    if (_offset_reg_written) return;
-
-    _offset_reg_written = true;
-    writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(offset));
 }
 
 void CC1201::setConfig(const registerSetting_t* regs, size_t len) {
