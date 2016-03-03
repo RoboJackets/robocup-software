@@ -306,8 +306,7 @@ int cmd_help(cmd_args_t& args) {
     // command
     // Prints all commands - either as a list block or all detailed
     else {
-        if (strcmp(args[0].c_str(), "--list") == 0 ||
-            strcmp(args[0].c_str(), "-l") == 0) {
+        if (args[0] == "--list" || args[0] == "-l") {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 if (i % 5 == 4) {
                     printf("%s\r\n", commands[i].aliases[0].c_str());
@@ -317,8 +316,7 @@ int cmd_help(cmd_args_t& args) {
                     printf("%s,\t\t", commands[i].aliases[0].c_str());
                 }
             }
-        } else if (strcmp(args[0].c_str(), "--all") == 0 ||
-                   strcmp(args[0].c_str(), "-a") == 0) {
+        } else if (args[0] == "--all" || args[0] == "-a") {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 // print info about ALL commands
                 printf(
@@ -615,8 +613,7 @@ int cmd_baudrate(cmd_args_t& args) {
     else if (args.size() == 1) {
         std::string str_baud = args[0];
 
-        if (strcmp(str_baud.c_str(), "--list") == 0 ||
-            strcmp(str_baud.c_str(), "-l") == 0) {
+        if (str_baud == "--list" || str_baud == "-l") {
             printf("Valid baudrates:\r\n");
 
             for (unsigned int i = 0; i < valid_rates.size(); i++)
@@ -683,12 +680,10 @@ int cmd_log_level(cmd_args_t& args) {
     else {
         // bool storeVals = true;
 
-        if (strcmp(args[0].c_str(), "on") == 0 ||
-            args[0] == "enable") {
+        if (args[0] == "on" || args[0] == "enable") {
             isLogging = true;
             printf("Logging enabled.\r\n");
-        } else if (strcmp(args[0].c_str(), "off") == 0 ||
-                   args[0] == "disable") {
+        } else if (args[0] == "off" || args[0] == "disable") {
             isLogging = false;
             printf("Logging disabled.\r\n");
         } else {
