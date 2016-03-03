@@ -323,7 +323,7 @@ int cmd_help(cmd_args_t& args) {
                     "%s%s:\r\n"
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
-                    commands[i].aliases.front().c_str(),
+                    commands[i].aliases[0].c_str(),
                     (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
@@ -354,14 +354,14 @@ int cmd_help_detail(cmd_args_t& args) {
                     "%s%s:\r\n"
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
-                    commands[i].aliases.front().c_str(),
+                    commands[i].aliases[0].c_str(),
                     (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
         }
         // if the command wasn't found, notify
         if (!commandFound) {
-            printf("Command \"%s\" not found.\r\n", args.at(argInd).c_str());
+            printf("Command \"%s\" not found.\r\n", args[argInd].c_str());
         }
     }
 
@@ -745,7 +745,7 @@ int cmd_led(cmd_args_t& args) {
 
         if (args[0] == "bright") {
             if (args.size() > 1) {
-                float bri = atof(args.at(1).c_str());
+                float bri = atof(args[1].c_str());
                 printf("Setting LED brightness to %.2f.\r\n", bri);
                 if (bri > 0 && bri <= 1.0) {
                     NeoStrip::defaultBrightness(bri);
@@ -771,7 +771,7 @@ int cmd_led(cmd_args_t& args) {
                 colors["yellow"] = {0xFF, 0xFF, 0x00};
                 colors["purple"] = {0x00, 0xFF, 0xFF};
                 colors["white"] = {0xFF, 0xFF, 0xFF};
-                auto it = colors.find(args.at(1));
+                auto it = colors.find(args[1]);
                 if (it != colors.end()) {
                     printf("Changing color to %s.\r\n", it->first.c_str());
                     led.setPixel(1, it->second.red, it->second.green,
@@ -787,13 +787,13 @@ int cmd_led(cmd_args_t& args) {
             led.write();
         } else if (args[0] == "state") {
             if (args.size() > 1) {
-                if (args.at(1) == "on") {
+                if (args[1] == "on") {
                     printf("Turning LED on.\r\n");
-                } else if (args.at(1) == "off") {
+                } else if (args[1] == "off") {
                     printf("Turning LED off.\r\n");
                     led.brightness(0.0);
                 } else {
-                    show_invalid_args(args.at(1));
+                    show_invalid_args(args[1]);
                     return 1;
                 }
                 led.setFromDefaultColor();
@@ -853,7 +853,7 @@ int cmd_radio(cmd_args_t& args) {
         rtp::packet pck("LINK TEST PAYLOAD");
         unsigned int portNbr = rtp::port::DISCOVER;
 
-        if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
+        if (args.size() > 1) portNbr = atoi(args[1].c_str());
 
         pck.port(portNbr);
         pck.subclass(1);
@@ -877,7 +877,7 @@ int cmd_radio(cmd_args_t& args) {
 
             unsigned int i = 1;
             if (args.size() > 1) {
-                i = atoi(args.at(1).c_str());
+                i = atoi(args[1].c_str());
                 portNbr = rtp::port::LINK;
             }
 
@@ -898,7 +898,7 @@ int cmd_radio(cmd_args_t& args) {
             }
 
         } else if (args[0] == "strobe") {
-            global_radio->strobe(0x30 + atoi(args.at(1).c_str()));
+            global_radio->strobe(0x30 + atoi(args[1].c_str()));
         } else if (args[0] == "debug") {
             bool wasEnabled = global_radio->isDebugEnabled();
             global_radio->setDebugEnabled(!wasEnabled);
@@ -912,17 +912,17 @@ int cmd_radio(cmd_args_t& args) {
         }
     } else if (args.size() == 3) {
         if (args[0] == "set") {
-            if (isPosInt(args.at(2).c_str())) {
-                unsigned int portNbr = atoi(args.at(2).c_str());
+            if (isPosInt(args[2].c_str())) {
+                unsigned int portNbr = atoi(args[2].c_str());
 
-                if (args.at(1) == "up") {
+                if (args[1] == "up") {
                     commModule->openSocket(portNbr);
 
-                } else if (args.at(1) == "down") {
+                } else if (args[1] == "down") {
                     commModule->close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
-                } else if (args.at(1) == "reset") {
+                } else if (args[1] == "reset") {
                     commModule->resetCount(portNbr);
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
@@ -931,18 +931,18 @@ int cmd_radio(cmd_args_t& args) {
                     return 1;
                 }
             } else {
-                show_invalid_args(args.at(2));
+                show_invalid_args(args[2]);
                 return 1;
             }
         } else {
-            show_invalid_args(args.at(2));
+            show_invalid_args(args[2]);
             return 1;
         }
     } else if (args.size() >= 4) {
         if (args[0] == "stress-test") {
-            unsigned int packet_cnt = atoi(args.at(1).c_str());
-            unsigned int ms_delay = atoi(args.at(2).c_str());
-            unsigned int pck_size = atoi(args.at(3).c_str());
+            unsigned int packet_cnt = atoi(args[1].c_str());
+            unsigned int ms_delay = atoi(args[2].c_str());
+            unsigned int pck_size = atoi(args[3].c_str());
             rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
             pck.port(rtp::port::LINK);
@@ -1095,7 +1095,7 @@ void show_invalid_args(cmd_args_t& args) {
         printf(" ");
 
         for (unsigned int i = 0; i < args.size() - 1; i++)
-            printf("'%s', ", args.at(i).c_str());
+            printf("'%s', ", args[i].c_str());
 
         printf("'%s'.", args.back().c_str());
     } else {
