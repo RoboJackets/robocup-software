@@ -908,7 +908,7 @@ int cmd_radio(cmd_args_t& args) {
                 unsigned int portNbr = atoi(args[2].c_str());
 
                 if (args[1] == "up") {
-                    commModule->openSocket(portNbr);
+                    // commModule->openSocket(portNbr);
 
                 } else if (args[1] == "down") {
                     commModule->close(portNbr);

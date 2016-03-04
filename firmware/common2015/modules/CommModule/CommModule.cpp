@@ -1,12 +1,12 @@
 #include "CommModule.hpp"
-
-#include <ctime>
-
 #include "CommPort.hpp"
-
 #include "helper-funcs.hpp"
 #include "logger.hpp"
 #include "assert.hpp"
+
+#include <ctime>
+
+using namespace std;
 
 #define COMM_MODULE_SIGNAL_START_THREAD (1 << 0)
 
@@ -74,11 +74,9 @@ void CommModule::txThread() {
             ASSERT(tState == osOK);
 
             // Call the user callback function
-            if (_ports[p->port()].isOpen()) {
+            if (_ports[p->port()].txCallback()) {
                 _ports[p->port()].txCallback()(p);
-
-                // Increment the packet counter by 1
-                _ports[p->port()].incTxCount();
+                _ports[p->port()].txCount++;
 
                 LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->port());
             }
@@ -132,11 +130,10 @@ void CommModule::rxThread() {
             ASSERT(tState == osOK);
 
             // Call the user callback function (if set)
-            if (_ports[p->port()].isOpen()) {
+            if (_ports.find(p->port()) != _ports.end() &&
+                _ports[p->port()].rxCallback() != nullptr) {
                 _ports[p->port()].rxCallback()(p);
-
-                // Increment the packet counter by 1
-                _ports[p->port()].incRxCount();
+                _ports[p->port()].rxCount++;
 
                 LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->port());
             }
@@ -157,38 +154,18 @@ void CommModule::rxThread() {
     }
 }
 
-void CommModule::setRxHandler(CommCallback callback, uint8_t portNbr) {
-    if (!_ports.hasPort(portNbr)) {
-        _ports += CommPort_t(portNbr);
-    }
-
+void CommModule::setRxHandler(std::function<CommCallback> callback,
+                              uint8_t portNbr) {
     _ports[portNbr].rxCallback() = std::bind(callback, std::placeholders::_1);
 
     ready();
 }
 
-void CommModule::setTxHandler(CommCallback callback, uint8_t portNbr) {
-    if (!_ports.hasPort(portNbr)) {
-        _ports += CommPort_t(portNbr);
-    }
-
+void CommModule::setTxHandler(std::function<CommCallback> callback,
+                              uint8_t portNbr) {
     _ports[portNbr].txCallback() = std::bind(callback, std::placeholders::_1);
 
     ready();
-}
-
-void CommModule::openSocket(uint8_t portNbr) {
-    // create the port if it doesn't exist
-    if (!_ports.hasPort(portNbr)) {
-        _ports += CommPort_t(portNbr);
-    }
-
-    CommPort_t& port = _ports[portNbr];
-
-    if (!port.isOpen()) {
-        port.open();
-        LOG(INF1, "Port %u opened", portNbr);
-    }
 }
 
 void CommModule::ready() {
@@ -201,12 +178,13 @@ void CommModule::ready() {
 
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port()].isOpen() &&
-        _ports[packet.port()].hasTxCallback()) {
+    if (_ports.find(packet.port()) != _ports.end() &&
+        _ports[packet.port()].txCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_txQueue, osWaitForever);
 
         // Copy the contents into the allocated memory block
+        // TODO: use move semantics
         *p = packet;
 
         // Place the passed packet into the txQueue.
@@ -222,17 +200,17 @@ void CommModule::send(const rtp::packet& packet) {
 
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports[packet.port()].isOpen() &&
-        _ports[packet.port()].hasRxCallback()) {
+    if (_ports.find(packet.port()) != _ports.end() &&
+        _ports[packet.port()].rxCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_rxQueue, osWaitForever);
 
         // Copy the contents into the allocated memory block
+        // TODO: move semantics
         *p = packet;
 
         // Place the passed packet into the rxQueue.
         osMailPut(_rxQueue, p);
-
     } else {
         LOG(WARN,
             "Failed to receive %u byte packet: There is no open receiving "
@@ -241,14 +219,34 @@ void CommModule::receive(const rtp::packet& packet) {
     }
 }
 
-unsigned int CommModule::numRxPackets() const { return _ports.totalRxCount(); }
+unsigned int CommModule::numRxPackets() const {
+    unsigned int count = 0;
+    for (auto& kvpair : _ports) {
+        count += kvpair.second.rxCount;
+    }
+    return count;
+}
 
-unsigned int CommModule::numTxPackets() const { return _ports.totalTxCount(); }
+unsigned int CommModule::numTxPackets() const {
+    unsigned int count = 0;
+    for (auto& kvpair : _ports) {
+        count += kvpair.second.txCount;
+    }
+    return count;
+}
 
 void CommModule::printInfo() const {
-    _ports.printHeader();
-    _ports.printPorts();
-    _ports.printFooter();
+    printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
+
+    for (auto& kvpair : _ports) {
+        printf("\t\t%d", kvpair.first);
+        kvpair.second.printPort();
+    }
+
+    printf(
+        "==========================\r\n"
+        "Total:\t\t%u\t%u\r\n",
+        numRxPackets(), numTxPackets());
 
     Console::Instance()->Flush();
 }
@@ -257,8 +255,8 @@ void CommModule::resetCount(unsigned int portNbr) {
     _ports[portNbr].resetPacketCount();
 }
 
-void CommModule::close(unsigned int portNbr) { _ports[portNbr].close(); }
+void CommModule::close(unsigned int portNbr) { _ports.erase(portNbr); }
 
 bool CommModule::isReady() const { return _isReady; }
 
-int CommModule::numOpenSockets() const { return _ports.countOpen(); }
+int CommModule::numOpenSockets() const { return _ports.size(); }

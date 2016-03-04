@@ -22,7 +22,6 @@ using namespace std;
  * Information about the radio protocol can be found at:
  * https://www.overleaf.com/2187548nsfdps
  */
-
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
     // ack_pck.ack(false);
@@ -151,7 +150,6 @@ void InitializeCommModule() {
     // working radio is connected.
     commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
     commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
-    commModule->openSocket(rtp::port::LINK);
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
@@ -165,20 +163,17 @@ void InitializeCommModule() {
         commModule->setRxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
         commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::DISCOVER);
-        commModule->openSocket(rtp::port::DISCOVER);
 
         // This port won't open since there's no RX callback to invoke. The
         // packets are simply dropped.
         commModule->setRxHandler(&loopback_rx_cb, rtp::port::LOGGER);
         commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::LOGGER);
-        commModule->openSocket(rtp::port::LOGGER);
 
         // Legacy port
         commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::LEGACY);
         commModule->setRxHandler(&legacy_rx_cb, rtp::port::LEGACY);
-        commModule->openSocket(rtp::port::LEGACY);
 
         LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 
