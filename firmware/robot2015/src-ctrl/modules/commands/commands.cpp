@@ -563,10 +563,6 @@ int cmd_info(cmd_args_t& args) {
     return 0;
 }
 
-/**
- * [cmd_disconnectMbed description]
- * @param args [description]
- */
 int cmd_interface_disconnect(cmd_args_t& args) {
     if (args.size() > 1) {
         show_invalid_args(args);
@@ -832,10 +828,6 @@ int cmd_ps(cmd_args_t& args) {
     return 0;
 }
 
-/**
- * [cmd_radio description]
- * @param args [description]
- */
 int cmd_radio(cmd_args_t& args) {
     shared_ptr<CommModule> commModule = CommModule::Instance();
 
