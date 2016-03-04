@@ -971,13 +971,10 @@ int cmd_pong(cmd_args_t& args) {
     if (maybePing.status == 16) {
         rtp::packet* ping = (rtp::packet*)maybePing.value.p;
 
-        int pingNbr = ping->payload.d[0];
+        int pingNbr = ping->payload[0];
 
         // reply with ack
-        rtp::packet ack;
-        ack.payload.d.push_back(pingNbr);
-        ack.port(rtp::port::PING);
-        CommModule::Instance()->send(ack);
+        CommModule::Instance()->send(rtp::packet({pingNbr}, rtp::port::PING));
 
         printf("Got ping %d\r\n", pingNbr);
 
@@ -1003,10 +1000,7 @@ int cmd_ping(cmd_args_t& args) {
     if ((clock() - last_ping) / CLOCKS_PER_SEC > Interval) {
         last_ping = clock();
 
-        rtp::packet pck;
-        pck.payload.d.push_back(ping_count);
-        pck.port(rtp::port::PING);
-        CommModule::Instance()->send(pck);
+        CommModule::Instance()->send(rtp::packet({ping_count}, rtp::port::PING));
 
         printf("Sent ping %d\r\n", ping_count);
 
@@ -1017,7 +1011,7 @@ int cmd_ping(cmd_args_t& args) {
     osEvent maybeAck = acks.get(timeout_ms);
     if (maybeAck.status == 16) {
         rtp::packet* ack = (rtp::packet*)maybeAck.value.p;
-        printf("  got ack %d\r\n", ack->payload.d[0]);
+        printf("  got ack %d\r\n", ack->payload[0]);
         delete ack;
     }
 
