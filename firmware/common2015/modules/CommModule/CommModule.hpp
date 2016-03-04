@@ -79,18 +79,18 @@ public:
     }
 
     // Set a normal RX callback function without an object
-    void setRxHandler(CommCallback callback, uint8_t);
-    void setTxHandler(CommCallback callback, uint8_t);
+    void setRxHandler(CommCallback callback, uint8_t portNbr);
+    void setTxHandler(CommCallback callback, uint8_t portNbr);
 
     // Open a socket connection for communicating.
     void openSocket(uint8_t portNbr);
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values
-    void send(const rtp::packet&);
+    void send(const rtp::packet& pkt);
 
     /// Called by CommLink instances whenever a packet is received via radio
-    void receive(const rtp::packet&);
+    void receive(const rtp::packet& pkt);
 
     unsigned int numRxPackets() const;
     unsigned int numTxPackets() const;
