@@ -310,14 +310,14 @@ void CC1201::flush_tx() {
     idle();
     size_t bytes = readReg(CC1201_NUM_TXBYTES);
     strobe(CC1201_STROBE_SFTX);
-    LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
+    // LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
 }
 
 void CC1201::flush_rx() {
     idle();
     size_t bytes = readReg(CC1201_NUM_RXBYTES);
     strobe(CC1201_STROBE_SFRX);
-    LOG(WARN, "%u bytes flushed from RX FIFO buffer.", bytes);
+    // LOG(WARN, "%u bytes flushed from RX FIFO buffer.", bytes);
 }
 
 void CC1201::calibrate() {

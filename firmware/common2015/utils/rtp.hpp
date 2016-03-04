@@ -24,7 +24,8 @@ enum port {
     DISCOVER,
     LOGGER,
     TCP,
-    LEGACY
+    LEGACY,
+    PING
 };
 
 struct header_data {

@@ -91,5 +91,7 @@ int cmd_ls(cmd_args_t&);
 int cmd_ping(cmd_args_t&);
 int cmd_ps(cmd_args_t&);
 int cmd_radio(cmd_args_t&);
+int cmd_ping(cmd_args_t&);
+int cmd_pong(cmd_args_t&);
 int cmd_rpc(cmd_args_t&);
 int cmd_imu(cmd_args_t&);
