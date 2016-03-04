@@ -20,7 +20,7 @@ public:
 
     int32_t sendData(uint8_t* buf, uint8_t size);
 
-    int32_t getData(uint8_t* buf, uint8_t* len);
+    int32_t getData(std::vector<uint8_t>* buf);
 
     void reset();
 

@@ -90,17 +90,10 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     return COMM_SUCCESS;
 }
 
-int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
+int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     // update frequency offset estimate and get the current state while at it
     uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
-
-    if (*len < num_rx_bytes) {
-        LOG(SEVERE, "%u bytes in RX FIFO with given buffer size of %u bytes.",
-            num_rx_bytes, *len);
-
-        return COMM_FUNC_BUF_ERR;
-    }
 
     if ((device_state & CC1201_STATE_RXFIFO_ERROR) ==
         CC1201_STATE_RXFIFO_ERROR) {
@@ -113,13 +106,13 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     if (num_rx_bytes > 0) {
         radio_select();
         _spi.write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        for (int i = 0; i < num_rx_bytes; i++)
-            buf[i] = _spi.write(CC1201_STROBE_SNOP);
+        for (int i = 0; i < num_rx_bytes; i++) {
+            buf->push_back(_spi.write(CC1201_STROBE_SNOP));
+        }
         radio_deselect();
-        *len = num_rx_bytes;
 
         LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
-            buf[0]);
+            (*buf)[0]);
     } else {
         return COMM_NO_DATA;
     }

@@ -25,8 +25,8 @@ using namespace std;
 
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
-    ack_pck.ack(false);
-    ack_pck.sfs(true);
+    // ack_pck.ack(false);
+    // ack_pck.sfs(true);
     CommModule::Instance()->send(ack_pck);
 }
 
@@ -36,8 +36,8 @@ void legacy_rx_cb(rtp::packet* p) {
             "Legacy rx successful!\r\n"
             "    Received: %u bytes\r\n",
             p->payload.size());
-    } else if (p->sfs()) {
-        LOG(OK, "Legacy rx ACK successful!\r\n");
+        // } else if (p->sfs()) {
+        //     LOG(OK, "Legacy rx ACK successful!\r\n");
     } else {
         LOG(WARN, "Received empty packet on Legacy interface");
     }
@@ -91,8 +91,8 @@ void loopback_rx_cb(rtp::packet* p) {
             // M4 error LED
             // MCP23017::Instance()->writeMask(~(1 << (8 + 7)), 0xFF00);
         }
-    } else if (p->sfs()) {
-        LOG(OK, "Loopback rx ACK successful!\r\n");
+        // } else if (p->sfs()) {
+        //     LOG(OK, "Loopback rx ACK successful!\r\n");
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
@@ -107,8 +107,8 @@ void loopback_tx_cb(rtp::packet* p) {
             "    Sent: %u bytes\r\n"
             "    ACK:\t%s\r\n",
             p->payload.size(), (p->ack() ? "SET" : "UNSET"));
-    } else if (p->sfs()) {
-        LOG(OK, "Loopback tx ACK successful!\r\n");
+        // } else if (p->sfs()) {
+        //     LOG(OK, "Loopback tx ACK successful!\r\n");
     } else {
         LOG(WARN, "Sent empty packet on loopback interface");
     }
@@ -155,10 +155,7 @@ void InitializeCommModule() {
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
-     * according
-     * to its port number when using the console. Since most of everything is
-     * static,
-     * the CommModule methods can be used from almost anywhere.
+     * according to its port number when using the console.
      */
     if (global_radio->isConnected() == true) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n",

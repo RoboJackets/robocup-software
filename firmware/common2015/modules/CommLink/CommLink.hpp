@@ -65,13 +65,10 @@ protected:
      * Copies the contents of the RX buffer into the given @buf parameter.
      *
      * @param buf The buffer to write data into
-     * @param len The caller sets @len to the size of the buffer and the
-     * function sets it to the number of bytes of data written to the buffer
-     * before returning.
      *
      * @return An error/success code.  See the comm error enum above.
      */
-    virtual int32_t getData(uint8_t* buf, uint8_t* len) = 0;
+    virtual int32_t getData(std::vector<uint8_t>* buffer) = 0;
 
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD

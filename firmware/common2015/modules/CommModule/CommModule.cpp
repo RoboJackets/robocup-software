@@ -80,8 +80,7 @@ void CommModule::txThread() {
                 // Increment the packet counter by 1
                 _ports[p->port()].incTxCount();
 
-                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
-                    p->port(), p->subclass());
+                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->port());
             }
 
             // this renews a countdown for turning off the
@@ -139,12 +138,11 @@ void CommModule::rxThread() {
                 // Increment the packet counter by 1
                 _ports[p->port()].incRxCount();
 
-                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
-                    p->port(), p->subclass());
+                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->port());
             }
 
-            // this renews a countdown for turning off the
-            // strobing thread once it expires
+            // this renews a countdown for turning off the strobing thread once
+            // it expires
             if (p->address() != 127) {
                 led_ticker_timeout.start(275);
                 commLightsRenew_RX();

@@ -37,18 +37,17 @@ void CommLink::rxThread() {
 
     rtp::packet p;
     std::vector<uint8_t> buf;
-    buf.reserve(120);
+    buf.reserve(rtp::MAX_DATA_SZ);
 
     while (true) {
         // Wait until new data has arrived
         // this is triggered by CommLink::ISR()
         Thread::signal_wait(COMM_LINK_SIGNAL_RX_TRIGGER);
 
-        // Get the received data from the external chip
-        uint8_t rec_bytes = rtp::MAX_DATA_SZ;
-        int32_t response = getData(buf.data(), &rec_bytes);
-
         LOG(INF3, "RX interrupt triggered");
+
+        // Get the received data from the external chip
+        int32_t response = getData(&buf);
 
         if (response == COMM_SUCCESS) {
             // Write the data to the CommModule object's rxQueue
