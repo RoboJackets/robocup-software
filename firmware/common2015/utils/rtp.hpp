@@ -26,15 +26,15 @@ static const unsigned int MAX_DATA_SZ = 120;
  * @brief      { port enumerations for different communication protocols }
  */
 enum port {
-    SINK = 0x00,
-    LINK = 0x01,
-    CONTROL = 0x02,
-    SETPOINT = 0x03,
-    GSTROBE = 0x04,
-    DISCOVER = 0x05,
-    LOGGER = 0x06,
-    TCP = 0x07,
-    LEGACY = 0x0E
+    SINK = 0,
+    LINK,
+    CONTROL,
+    SETPOINT,
+    GSTROBE,
+    DISCOVER,
+    LOGGER,
+    TCP,
+    LEGACY
 };
 
 namespace {
