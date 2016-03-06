@@ -73,10 +73,10 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
                      prevPath.get())) {
-        int debug = target.debug;
+        int smoothingIterations = 2; // int smoothingIterations = target.debug;
         // Run bi-directional RRT to generate a path.
         auto path =
-            runRRT(start, goal, motionConstraints, obstacles, debug);
+            runRRT(start, goal, motionConstraints, obstacles, smoothingIterations);
 
         // If RRT failed, the path will be empty, so we need to add a single
         // point to make it valid.
