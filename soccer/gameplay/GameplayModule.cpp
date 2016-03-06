@@ -35,7 +35,6 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 const bool GameplayModule::hasFieldEdgeInsetChanged() {
     if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
         numeric_limits<double>::epsilon()) {
-        _oldFieldEdgeInset = _fieldEdgeInset->value();
         return true;
     }
     return false;
@@ -196,6 +195,8 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
               dimensions.Length() + dimensions.GoalDepth()),
         Point(-dimensions.GoalWidth() / 2,
               dimensions.Length() + dimensions.GoalDepth())});
+
+    _oldFieldEdgeInset = _fieldEdgeInset->value();
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
