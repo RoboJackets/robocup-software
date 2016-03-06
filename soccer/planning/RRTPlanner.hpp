@@ -73,7 +73,7 @@ public:
             std::vector<Geometry2d::Point>& points,
             const Geometry2d::ShapeSet& obstacles,
             const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-            Geometry2d::Point vf);
+            Geometry2d::Point vf, const int iterations = 0);
 
 
 protected:
@@ -92,7 +92,7 @@ protected:
     std::unique_ptr<Planning::InterpolatedPath> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles);
+        const Geometry2d::ShapeSet* obstacles, int smoothingIterations = 0);
 
     /** optimize the path
      *  Calls the cubicBezier optimization function.
@@ -100,7 +100,7 @@ protected:
     std::unique_ptr<Planning::InterpolatedPath> optimize(
         std::unique_ptr<InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+        Geometry2d::Point vf, int smoothingIterations = 0);
 
     /**
      * Uses a cubicBezier to interpolate between the points on the path and add
@@ -118,6 +118,16 @@ protected:
                                                                     const MotionConstraints &motionConstraints,
                                                                     Geometry2d::Point vi, Geometry2d::Point vf,
                                                                     const boost::optional<std::vector<float>> &times = boost::none);
+
+    /**
+     * Generates a velocity profile for a Cubic Bezier Path
+     */
+    static std::vector<InterpolatedPath::Entry> generateVelocityPath(const std::vector<CubicBezierControlPoints> &controlPoints,
+                                                                         const MotionConstraints &motionConstraints,
+                                                                         Geometry2d::Point vi, Geometry2d::Point vf, int interpolations);
+
+
+
     /**
      * Generates a Cubic Bezier Path based on some attempted heuristical Control Point Placement
      */

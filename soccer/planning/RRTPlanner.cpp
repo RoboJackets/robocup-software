@@ -73,9 +73,10 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
                      prevPath.get())) {
+        int debug = target.debug;
         // Run bi-directional RRT to generate a path.
         auto path =
-            runRRT(start, goal, motionConstraints, obstacles);
+            runRRT(start, goal, motionConstraints, obstacles, debug);
 
         // If RRT failed, the path will be empty, so we need to add a single
         // point to make it valid.
@@ -92,7 +93,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 
 unique_ptr<InterpolatedPath> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                      const MotionConstraints& motionConstraints,
-                                     const Geometry2d::ShapeSet* obstacles) {
+                                     const Geometry2d::ShapeSet* obstacles, int smoothingIterations) {
 
 
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
@@ -141,7 +142,7 @@ unique_ptr<InterpolatedPath> RRTPlanner::runRRT(MotionInstant start, MotionInsta
     // add the goal tree in reverse (aka p1 to root)
     goalTree.addPath(*path, p1, true);
 
-    path = optimize(move(path), obstacles, motionConstraints, start.vel, goal.vel);
+    path = optimize(move(path), obstacles, motionConstraints, start.vel, goal.vel, smoothingIterations);
     cout<<path->waypoints[0].pos()<< " "<<path->waypoints[1].pos()<<endl;
     return path;
 }
@@ -149,7 +150,7 @@ unique_ptr<InterpolatedPath> RRTPlanner::runRRT(MotionInstant start, MotionInsta
 unique_ptr<InterpolatedPath> RRTPlanner::optimize(
     unique_ptr<InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-    Geometry2d::Point vf) {
+    Geometry2d::Point vf, int smoothingIterations) {
     unsigned int start = 0;
 
     if (path->empty()) {
@@ -194,7 +195,7 @@ unique_ptr<InterpolatedPath> RRTPlanner::optimize(
     for (InterpolatedPath::Entry &entry: pts) {
         points.push_back(entry.pos());
     }
-    return generateCubicBezier(points, *obstacles, motionConstraints, vi, vf);
+    return generateCubicBezier(points, *obstacles, motionConstraints, vi, vf, smoothingIterations);
 
 }
 float getTime(vector<Point> path, int index,
@@ -286,7 +287,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(const vecto
         pointsX[i] = points[i].x;
         pointsY[i] = points[i].y;
     }
-    float startSpeed = vi.mag();
+    const float startSpeed = vi.mag();
 
     const float endSpeed = vf.mag();
 
@@ -329,32 +330,16 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(const vecto
     return path;
 }
 
-std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
-        std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf) {
+/**
+ * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity Path Algorithm
+ */
+std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(const std::vector<CubicBezierControlPoints> &controlPoints,
+                                                                  const MotionConstraints &motionConstraints,
+                                                                  Geometry2d::Point vi, Geometry2d::Point vf, int interpolations) {
 
-
-
-    cout<<"start"<<endl;
-    size_t length = points.size();
-    size_t curvesNum = length - 1;
-    if (curvesNum <= 0) {
-        debugThrow("The path doesn't have enough points");
-        return nullptr;
-    }
-
-    // TODO: Get the actual values
-
-    vector<CubicBezierControlPoints> controlPoints = generateCubicBezierPath(points, motionConstraints, vi, vf);
-
-    if (controlPoints.size() < 1) {
-        return nullptr;
-    }
+    //Interpolate Through Bezier Path
     vector<Point> newPoints, newPoints1stDerivative, newPoints2ndDerivative;
     vector<float> newPointsCurvature, newPointsDistance, newPointsSpeed;
-    const int interpolations = 40;
 
     float totalDistance = 0;
     const float maxAceleration = motionConstraints.maxAcceleration;
@@ -376,7 +361,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
             // t + 3 k^2 t^2))
             Geometry2d::Point d1 = 3 * pow(1-t,2) * (p1 - p0) +
                                    6*(1-t)*t*(p2-p1) + 3 * pow(t,2) * (p3-p2);
-            printf("x:%f, y:%f\n", d1.x, d1.y);
+            //printf("x:%f, y:%f\n", d1.x, d1.y);
 
 
             //Derivitive 2
@@ -413,7 +398,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
             newPointsSpeed.push_back(constantMaxSpeed);
         }
     }
-
+    //Get last point in Path
     CubicBezierControlPoints lastControlPoint = controlPoints.back();
 
     Point p0 = lastControlPoint.p0;
@@ -421,7 +406,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     Point p2 = lastControlPoint.p2;
     Point p3 = lastControlPoint.p3;
 
-    Point pos = points.back();
+    Point pos = p3;
     Point d1 = vf;
     Geometry2d::Point d2 = 6*(1)*(p3 - 2*p2 + p1);
     float curvature = std::abs(d1.x* d2.y - d1.y* d2.x) / std::pow(std::pow(d1.x,2) + std::pow(d1.y,2), 1.5);
@@ -451,8 +436,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     assert(size == newPointsCurvature.size());
 
 
-
-    cout<<"meh"<<endl;
+    //Generate Velocity Profile from Interpolation of Bezier Path
     //Forward Constraints
     for (int i = 1; i<size; i++) {
 
@@ -481,7 +465,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         //newPointsSpeed.push_back(constantMaxSpeed);
 
         float c = max(newPointsCurvature[i], newPointsCurvature[i-1]);
-        std::cout<<c<<endl;
+        //std::cout<<c<<endl;
         float a = maxAceleration;
 
 
@@ -517,7 +501,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         //acceleration * distance * 2 = v2^2 - v1^2
         //acceleration * distance * 2 + v1^2 = v2^2
         //v2 = sqrt(acceleration * distance * 2 + v1^2)
-       //
+        //
     }
 
     //Backwards Constraints
@@ -558,7 +542,8 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     }
 
     float totalTime = 0;
-    std::unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
+    vector<InterpolatedPath::Entry> entries;
+
     for (int i = 0; i<size; i++) {
         float currentSpeed = newPointsSpeed[i];
         float distance = newPointsDistance[i];
@@ -571,10 +556,51 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
 
         Point point = newPoints[i];
         Point vel = newPoints1stDerivative[i].normalized();
-        //cout<<totalTime<<endl;
-        path->waypoints.emplace_back(MotionInstant(point, vel * currentSpeed), totalTime);
+        entries.emplace_back(MotionInstant(point, vel * currentSpeed), totalTime);
     }
-    cout<<"end"<<endl<<endl;
+    return entries;
+
+}
+
+std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
+        std::vector<Geometry2d::Point>& points,
+        const Geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf, const int iterations) {
+
+    const int interpolations = 40;
+
+
+    //cout<<"start"<<endl;
+    size_t length = points.size();
+    size_t curvesNum = length - 1;
+    if (curvesNum <= 0) {
+        debugThrow("The path doesn't have enough points");
+        return nullptr;
+    }
+
+    vector<CubicBezierControlPoints> controlPoints = generateCubicBezierPath(points, motionConstraints, vi, vf);
+
+    vector<InterpolatedPath::Entry> entries = generateVelocityPath(controlPoints, motionConstraints, vi, vf, interpolations);
+
+    //const int iterations = 10;
+    cout<<"iterations "<<iterations<<endl;
+    for (int x=0; x<iterations; x++) {
+        vector<float> times;
+        //int i = 0;
+        for (auto it = begin(entries); distance(begin(entries), it) < entries.size(); advance(it, interpolations)) {
+            InterpolatedPath::Entry &entry = *it;
+            //assert(points[i].nearlyEquals(entry.pos()));
+            times.push_back(entry.time);
+            //i++;
+        }
+        controlPoints = generateCubicBezierPath(points, motionConstraints, vi, vf, times);
+
+        entries = generateVelocityPath(controlPoints, motionConstraints, vi, vf, interpolations);
+    }
+
+    std::unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
+    path->waypoints = entries;
     return path;
 }
 
