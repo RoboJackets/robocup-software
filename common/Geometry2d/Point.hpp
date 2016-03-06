@@ -257,7 +257,8 @@ public:
     }
 
     /**
-    * Returns a vector with the same direction as this vector but with magnitude given,
+    * Returns a vector with the same direction as this vector but with magnitude
+    * given,
     * unless this vector is zero.
     * If the vector is (0,0), Point(0,0) is returned
     */

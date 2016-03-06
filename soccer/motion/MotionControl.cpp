@@ -65,10 +65,12 @@ void MotionControl::run() {
 
     if (!optTarget) {
         optTarget = _robot->path().end();
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red, "Planning");
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red,
+                                    "Planning");
     } else {
         Point start = _robot->pos;
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green, "Planning");
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green,
+                                    "Planning");
     }
 
     // Angle control //////////////////////////////////////////////////
