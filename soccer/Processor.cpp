@@ -304,20 +304,23 @@ void Processor::run() {
             log->CopyFrom(packet->wrapper);
 
             curStatus.lastVisionTime = packet->receivedTime;
-            if (packet->wrapper.has_detection()) {
-                SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
-                SSL_GeometryData* geom = packet->wrapper.mutable_geometry();
 
+            if (packet->wrapper.has_geometry()) {
                 // DEMO: Test out field sizes
-                SSL_GeometryFieldSize* fieldSize = geom->mutable_field();
-                // cout << "Len: " << fieldSize->field_length() << " Width: " <<
-                // fieldSize->field_width() << endl;
+                const SSL_GeometryFieldSize fieldSize = packet->wrapper.geometry().field();
+                cout << "Len: " << fieldSize.field_length() << " Width: " <<
+                    fieldSize.field_width() << endl;
                 // FIXME - Account for network latency
 
-                if (fieldSize->field_length() != 0 &&
-                    (currentDimensions.Length() != fieldSize->field_length())) {
-                    decodeGeometryPacket(fieldSize);
+                if (fieldSize.field_length() != 0 &&
+                    (currentDimensions.Length() != fieldSize.field_length())) {
+                    // Set the changed field dimensions to the current ones
+                    decodeGeometryPacket(&fieldSize);
                 }
+            }
+
+            if (packet->wrapper.has_detection()) {
+                SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
                 double rt = packet->receivedTime / 1000000.0;
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
@@ -602,15 +605,21 @@ void Processor::run() {
     vision.stop();
 }
 
-Field_Dimensions Processor::decodeGeometryPacket(SSL_GeometryFieldSize* fieldSize) {
-    SSL_FieldCicularArc* penalty = nullptr;
-    SSL_FieldCicularArc* center = nullptr;
+void Processor::decodeGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
+    if (fieldSize->field_lines_size() == 0) {
+        return;
+    }
+
+    cout << "Detected data!!!" <<endl;
+
+    const SSL_FieldCicularArc* penalty = nullptr;
+    const SSL_FieldCicularArc* center = nullptr;
     float displacement = 0.500f;  // default displacment
 
-    for (int i = 0; fieldSize->field_arcs().size(); i++) {
+    for (int i = 0; i < fieldSize->field_arcs().size(); i++) {
         if (fieldSize->field_arcs().Get(i).center().x() == 0) {
             // Assume center circle
-            *center = fieldSize->field_arcs().Get(i);
+            center = &fieldSize->field_arcs().Get(i);
         } else if (fieldSize->field_arcs()
                    .Get(i)
                    .center()
@@ -625,31 +634,30 @@ Field_Dimensions Processor::decodeGeometryPacket(SSL_GeometryFieldSize* fieldSiz
                                    .center()
                                    .x());
             } else {
-                *penalty = fieldSize->field_arcs().Get(i);
+                penalty = &fieldSize->field_arcs().Get(i);
             }
         }
     }
 
+
     // Force a resize
     // TODO fix hardcoded values here
-    return Field_Dimensions(
-        fieldSize->field_width(), fieldSize->field_length(),
-        fieldSize->boundary_width(),
-        fieldSize->field_lines().Get(0).thickness(),
-        fieldSize->goal_width(), fieldSize->goal_depth(),
-        0.160f,                // Goal Height
-        penalty->radius(),     // PenaltyDist
-        0.010f,                // PenaltyDiam
-        penalty->radius(),     // ArcRadius
-        center->radius(),      // CenterRadius
-        center->radius() * 2,  // CenterDiameter
-        displacement,          // GoalFlat
-        fieldSize->field_width() +
-        fieldSize->boundary_width() * 2,
-        fieldSize->field_length() +
-        fieldSize->boundary_width() * 2);
-    // Set the changed field dimensions to the current ones
-    setFieldDimensions(currentDimensions);
+    setFieldDimensions(Field_Dimensions (
+                           fieldSize->field_width(), fieldSize->field_length(),
+                           fieldSize->boundary_width(),
+                           fieldSize->field_lines().Get(0).thickness(),
+                           fieldSize->goal_width(), fieldSize->goal_depth(),
+                           0.160f,                // Goal Height
+                           penalty->radius(),     // PenaltyDist
+                           0.010f,                // PenaltyDiam
+                           penalty->radius(),     // ArcRadius
+                           center->radius(),      // CenterRadius
+                           (center->radius()) * 2,// CenterDiameter
+                           displacement,          // GoalFlat
+                           fieldSize->field_width() +
+                           (fieldSize->boundary_width()) * 2,
+                           fieldSize->field_length() +
+                           (fieldSize->boundary_width()) * 2));
 }
 
 void Processor::sendRadioData() {
