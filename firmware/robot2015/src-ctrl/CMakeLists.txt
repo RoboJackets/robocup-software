@@ -61,7 +61,7 @@ add_custom_target(robot2015
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
 
 add_custom_target(robot2015-prog
-    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin
+    COMMAND sudo ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"
 )

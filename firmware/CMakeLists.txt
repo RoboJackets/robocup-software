@@ -11,14 +11,7 @@ remove_cxx_flag("-fcolor-diagnostics")
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # set the path to a script for moving files to the mbed's USB storage
-if( UNIX AND NOT APPLE )
-    set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh")
-elseif( APPLE )
-    set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy-osx.py")
-else()
-    message(WARNING "unsupported host system for mbed-copy usage")
-    set(MBED_COPY_SCRIPT "")
-endif()
+set(MBED_COPY_SCRIPT "${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py")
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:
