@@ -966,7 +966,7 @@ int cmd_pong(cmd_args_t& args) {
         pings.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
-    uint32_t timeout_ms = 200;
+    uint32_t timeout_ms = 10;
     osEvent maybePing = pings.get(timeout_ms);
     if (maybePing.status == 16) {
         rtp::packet* ping = (rtp::packet*)maybePing.value.p;
