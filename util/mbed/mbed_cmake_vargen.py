@@ -47,8 +47,8 @@ def echoCmakeVars(mbed_path):
     print('#')
     print('# ***** DO NOT MANUALLY EDIT THIS FILE *****')
     print('#')
-    print('# This file was generated using \'{}\' on {}.'.format(basename(
-        abspath(__file__)), dt))
+    print('# This file was generated using \'{}\' on {}.'.format(
+        basename(abspath(__file__)), dt))
     print('# ')
 
     # print a listing of available targets
