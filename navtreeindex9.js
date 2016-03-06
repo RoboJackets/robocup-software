@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"functions_m.html":[12,3,0,13],
 "functions_n.html":[12,3,0,14],
 "functions_o.html":[12,3,0,15],
 "functions_p.html":[12,3,0,16],
@@ -28,12 +29,12 @@ var NAVTREEINDEX9 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[12,0,75,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[12,0,75,8],
 "group__matrices.html":[10,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,3,0,2],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,3,0,4],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,3,0,13],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,3,0,12],
 "hierarchy.html":[12,2],
 "index.html":[],
 "io-expander_8hpp_source.html":[13,0,1,0,0,1,4,0],

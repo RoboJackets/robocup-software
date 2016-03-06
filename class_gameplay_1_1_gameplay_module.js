@@ -11,6 +11,7 @@ var class_gameplay_1_1_gameplay_module =
     [ "goalieID", "class_gameplay_1_1_gameplay_module.html#aa5ecc72f993292d20715a4e401865c0c", null ],
     [ "goalieID", "class_gameplay_1_1_gameplay_module.html#a18e319fda79838b561d98588cd9eca80", null ],
     [ "goalZoneObstacles", "class_gameplay_1_1_gameplay_module.html#a6373b2da0b7d86f6a524f0d2bdb936fa", null ],
+    [ "hasFieldEdgeInsetChanged", "class_gameplay_1_1_gameplay_module.html#ac5f8717424a407186ce267160bf850fb", null ],
     [ "loadPlaybook", "class_gameplay_1_1_gameplay_module.html#aceed4fb50804b681031f6fbc25221c1c", null ],
     [ "oppMatrix", "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93", null ],
     [ "playRobots", "class_gameplay_1_1_gameplay_module.html#a8e9e7aaca1329a5f986a34a582b151f6", null ],

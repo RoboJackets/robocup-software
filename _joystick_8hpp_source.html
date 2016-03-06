@@ -149,19 +149,21 @@ $(document).ready(function(){initNavTree('_joystick_8hpp_source.html','');});
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_joystick.html#a4a959114e8af00ec67d07b8276f420ca">update</a>() = 0;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> <a class="code" href="class_joystick.html#a8e9bf845ab30bc6f661ce91db1dd75be">getJoystickControlValues</a>() = 0;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> createConfiguration(<a class="code" href="class_configuration.html">Configuration</a>* cfg);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickRotationMaxSpeed;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickRotationMaxDampedSpeed;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickTranslationMaxSpeed;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickTranslationMaxDampedSpeed;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    QMutex&amp; mutex() { <span class="keywordflow">return</span> _mutex; }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    QMutex _mutex;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;};</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> createConfiguration(<a class="code" href="class_configuration.html">Configuration</a>* cfg);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// declaration of Config values</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickRotationMaxSpeed;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickRotationMaxDampedSpeed;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickTranslationMaxSpeed;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_config_double.html">ConfigDouble</a>* JoystickTranslationMaxDampedSpeed;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    QMutex&amp; mutex() { <span class="keywordflow">return</span> _mutex; }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    QMutex _mutex;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;};</div>
 <div class="ttc" id="class_joystick_html_a501ff19bf226c6edb17a80e8fd7218f8"><div class="ttname"><a href="class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8">Joystick::reset</a></div><div class="ttdeci">virtual void reset()=0</div><div class="ttdoc">Resets any stored values. </div></div>
 <div class="ttc" id="class_joystick_html_a8e9bf845ab30bc6f661ce91db1dd75be"><div class="ttname"><a href="class_joystick.html#a8e9bf845ab30bc6f661ce91db1dd75be">Joystick::getJoystickControlValues</a></div><div class="ttdeci">virtual JoystickControlValues getJoystickControlValues()=0</div><div class="ttdoc">Returns the control values from this joystick. </div></div>
 <div class="ttc" id="struct_joystick_control_values_html"><div class="ttname"><a href="struct_joystick_control_values.html">JoystickControlValues</a></div><div class="ttdef"><b>Definition:</b> Joystick.hpp:13</div></div>
@@ -177,7 +179,7 @@ $(document).ready(function(){initNavTree('_joystick_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_6dcaa6b3bea652c49be1ba2ab1470e1d.html">soccer</a></li><li class="navelem"><a class="el" href="dir_c28928897c8bacc41b705102df336d76.html">joystick</a></li><li class="navelem"><b>Joystick.hpp</b></li>
-    <li class="footer">Generated on Sun Feb 28 2016 20:32:35 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Mar 6 2016 19:27:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
