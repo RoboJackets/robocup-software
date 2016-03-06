@@ -1,6 +1,9 @@
 #!/usr/bin/env python2
 
+from __future__ import print_function
+
 import os
+import sys
 import time
 import shutil
 import serial
@@ -41,6 +44,10 @@ for file in args.files:
 
 # get the array of mbeds that are connected
 mbeds = mbedls.create().list_mbeds()
+
+if len(mbeds) == 0:
+    print("No mbeds found", file=sys.stderr)
+    sys.exit(1)
 
 # iterate copying all files to all mbeds
 for mbed in mbeds:
