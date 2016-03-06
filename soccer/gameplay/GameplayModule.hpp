@@ -102,7 +102,7 @@ public:
 
     void calculateFieldObstacles();
 
-    const bool hasFieldEdgeInsetChanged();
+    bool hasFieldEdgeInsetChanged() const;
 
     static void createConfiguration(Configuration* cfg);
 

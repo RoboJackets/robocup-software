@@ -32,7 +32,7 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
     _fieldEdgeInset = new ConfigDouble(cfg, "Field Edge Obstacle", .3);
 }
 
-const bool GameplayModule::hasFieldEdgeInsetChanged() {
+bool GameplayModule::hasFieldEdgeInsetChanged() const {
     if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
         numeric_limits<double>::epsilon()) {
         return true;
