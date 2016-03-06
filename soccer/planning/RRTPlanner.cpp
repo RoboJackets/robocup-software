@@ -74,9 +74,9 @@ std::unique_ptr<Path> RRTPlanner::run(
     if (shouldReplan(start, goal, motionConstraints, obstacles,
                      prevPath.get())) {
         int smoothingIterations = 2; // int smoothingIterations = target.debug;
+
         // Run bi-directional RRT to generate a path.
-        auto path =
-            runRRT(start, goal, motionConstraints, obstacles, smoothingIterations);
+        auto path = runRRT(start, goal, motionConstraints, obstacles, smoothingIterations);
 
         // If RRT failed, the path will be empty, so we need to add a single
         // point to make it valid.
@@ -97,7 +97,6 @@ unique_ptr<InterpolatedPath> RRTPlanner::runRRT(MotionInstant start, MotionInsta
 
 
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
-    //path->setStartTime(RJ::timestamp());
 
     // Initialize two RRT trees
     FixedStepTree startTree;
@@ -143,7 +142,6 @@ unique_ptr<InterpolatedPath> RRTPlanner::runRRT(MotionInstant start, MotionInsta
     goalTree.addPath(*path, p1, true);
 
     path = optimize(move(path), obstacles, motionConstraints, start.vel, goal.vel, smoothingIterations);
-    cout<<path->waypoints[0].pos()<< " "<<path->waypoints[1].pos()<<endl;
     return path;
 }
 
@@ -154,7 +152,6 @@ unique_ptr<InterpolatedPath> RRTPlanner::optimize(
     unsigned int start = 0;
 
     if (path->empty()) {
-        //delete &path;
         return nullptr;
     }
 
@@ -188,9 +185,8 @@ unique_ptr<InterpolatedPath> RRTPlanner::optimize(
 
         if (!changed) span++;
     }
-    // Done with the path
-    //return unique_ptr<InterpolatedPath>(cubicBezier(move(path), obstacles, motionConstraints, vi, vf));
 
+    //Generate Cubic Bezier with Velocity Profile
     vector<Point> points;
     for (InterpolatedPath::Entry &entry: pts) {
         points.push_back(entry.pos());
@@ -330,6 +326,49 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(const vecto
     return path;
 }
 
+float oneStepLimitAcceleration(float maxAceleration,float d1, float v1, float c1, float d2, float v2, float c2) {
+    float d = d2 - d1;
+    float deltaSpeed = v2 - v1;
+    if (deltaSpeed < 0) {
+        return v2;
+    }
+
+    //Isolated maxSpeed based on Curvature should already be taken care of
+    float c = max(c1, c2);
+    float a = maxAceleration;
+
+
+    //newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
+    //continue;
+    //acceleration = (v2-v1)/t;
+    //t = distance/((v1+v2)/2)
+    //acceleration = (v2-v1)/(distance/((v1+v2)/2))
+    //acceleration = (v2-v1)(v1+v2)/2)/distance
+    //acceleration^2 = ((v2-v1)((v1+v2)/2)/(distance))^2 + (v^2*curvature)^2
+    //a^2 = ((b-v)((v+b)/2)/(d))^2 + (b^2*c)^2
+    //b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0
+    //http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+%28%28b-v%29%28%28v%2Bb%29%2F2%29%2F%28d%29%29%5E2+%2B+%28b%5E2*c%29%5E2
+    float vPossible1 = sqrt((v1*v1-2*sqrt(d*d*(4*a*a * c*c * d*d +a*a-c*c* pow(v1,4))))/(4*c*c * d*d+1));
+
+    //b = ±sqrt((2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4))+v^2)/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0
+    float vPossible2 = sqrt((2*sqrt(d*d * (4*a*a * c*c * d*d + a*a -c*c * pow(v1,4))) + v1*v1)/(4 * c*c * d*d +1));
+
+    float maxSpeed;
+    if (isnan(vPossible1) && isnan(vPossible2)) {
+        cout<<"Velocity SMoothing messed up" << endl;
+        maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
+    } else {
+        if (isnan(vPossible1)) {
+            maxSpeed = vPossible2;
+        } else if (isnan(vPossible2)) {
+            maxSpeed = vPossible1;
+        } else {
+            maxSpeed = max(vPossible1, vPossible2);
+        }
+    }
+    return std::min(v2, maxSpeed);
+}
+
 /**
  * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity Path Algorithm
  */
@@ -394,6 +433,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(const std:
             //Isolated maxSpeed based on Curvature
             //Curvature = 1/Radius of Curvature
             //vmax = sqrt(acceleartion/abs(Curvature))
+
             float constantMaxSpeed = std::sqrt(maxAceleration/curvature);
             newPointsSpeed.push_back(constantMaxSpeed);
         }
@@ -425,6 +465,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(const std:
     newPointsSpeed[0] = vi.mag();
     newPointsSpeed.push_back(vf.mag());
 
+
     //Velocity Profile Generation
     //Forward Smoothing
     const float size = newPoints.size();
@@ -438,107 +479,20 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(const std:
 
     //Generate Velocity Profile from Interpolation of Bezier Path
     //Forward Constraints
+
     for (int i = 1; i<size; i++) {
-
-        float d = newPointsDistance[i] - newPointsDistance[i-1];
-        float v1 = newPointsSpeed[i - 1];
-        float v2 = newPointsSpeed[i];
-        float deltaSpeed = v2 - v1;
-        if (deltaSpeed < 0) {
-            continue;
-        }
-
-
-
-        //Isolated maxSpeed based on Curvature
-        //Curvature = 1/Radius of Curvature
-        //accel = v^2/Radius of Curvature
-        //accel = Curviture * v^2
-        //v^2 = accel/curviture
-        // v = sqrt(accel / abs(curviture))
-
-
-        //vmax = sqrt(acceleartion/abs(Curvature))
-        //v^2 * curvature = acceleration
-
-        //float constantMaxSpeed = std::sqrt(maxAceleration/curvature);
-        //newPointsSpeed.push_back(constantMaxSpeed);
-
-        float c = max(newPointsCurvature[i], newPointsCurvature[i-1]);
-        //std::cout<<c<<endl;
-        float a = maxAceleration;
-
-
-        //newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
-        //continue;
-        //acceleration = (v2-v1)/t;
-        //t = distance/((v1+v2)/2)
-        //acceleration = (v2-v1)/(distance/((v1+v2)/2))
-        //acceleration = (v2-v1)(v1+v2)/2)/distance
-        //acceleration^2 = ((v2-v1)((v1+v2)/2)/(distance))^2 + (v^2*curvature)^2
-        //a^2 = ((b-v)((v+b)/2)/(d))^2 + (b^2*c)^2
-        //b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0
-        //http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+%28%28b-v%29%28%28v%2Bb%29%2F2%29%2F%28d%29%29%5E2+%2B+%28b%5E2*c%29%5E2
-        float vPossible1 = sqrt((v1*v1-2*sqrt(d*d*(4*a*a * c*c * d*d +a*a-c*c* pow(v1,4))))/(4*c*c * d*d+1));
-
-        //b = ±sqrt((2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4))+v^2)/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0
-        float vPossible2 = sqrt((2*sqrt(d*d * (4*a*a * c*c * d*d + a*a -c*c * pow(v1,4))) + v1*v1)/(4 * c*c * d*d +1));
-
-        if (isnan(vPossible1) && isnan(vPossible2)) {
-            //debugThrow("Velocity smoothing failed");
-            cout<<"Velocity SMoothing messed up" << endl;
-            newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
-        } else {
-            if (isnan(vPossible1)) {
-                newPointsSpeed[i] = std::min(v2, vPossible2);
-            } else if (isnan(vPossible2)) {
-                newPointsSpeed[i] = std::min(v2, vPossible1);
-            } else {
-                newPointsSpeed[i] = std::min(v2, max(vPossible1, vPossible2));
-            }
-        }
-        //acceleration * distance * 2 = (v2-v1)(v1+v2)
-        //acceleration * distance * 2 = v2^2 - v1^2
-        //acceleration * distance * 2 + v1^2 = v2^2
-        //v2 = sqrt(acceleration * distance * 2 + v1^2)
-        //
+        int i1 = i-1;
+        int i2 = i;
+        newPointsSpeed[i2] = oneStepLimitAcceleration(maxAceleration, newPointsDistance[i1], newPointsSpeed[i1], newPointsCurvature[i1],
+                                                     newPointsDistance[i2], newPointsSpeed[i2], newPointsCurvature[i2]);
     }
 
     //Backwards Constraints
     for (int i = size-2; i>=0; i--) {
-
-        float d = newPointsDistance[i+1] - newPointsDistance[i];
-        float v1 = newPointsSpeed[i+1];
-        float v2 = newPointsSpeed[i];
-        float deltaSpeed = v2 - v1;
-        if (deltaSpeed < 0) {
-            continue;
-        }
-
-        float c = max(newPointsCurvature[i], newPointsCurvature[i+1]);
-        float a = maxAceleration;
-
-        //newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
-        //continue;
-
-        float vPossible1 = sqrt((v1*v1-2*sqrt(d*d*(4*a*a * c*c * d*d +a*a-c*c* pow(v1,4))))/(4*c*c * d*d+1));
-
-        //b = ±sqrt((2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4))+v^2)/(4 c^2 d^2+1)) and 4 c^2 d^2+1!=0 and d!=0
-        float vPossible2 = sqrt((2*sqrt(d*d * (4*a*a * c*c * d*d + a*a -c*c * pow(v1,4))) + v1*v1)/(4 * c*c * d*d +1));
-
-        if (isnan(vPossible1) && isnan(vPossible2)) {
-            cout<<"Velocity SMoothing messed up" << endl;
-            //debugThrow("Velocity smoothing failed");
-            newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
-        } else {
-            if (isnan(vPossible1)) {
-                newPointsSpeed[i] = std::min(v2, vPossible2);
-            } else if (isnan(vPossible2)) {
-                newPointsSpeed[i] = std::min(v2, vPossible1);
-            } else {
-                newPointsSpeed[i] = std::min(v2, max(vPossible1, vPossible2));
-            }
-        }
+        int i1 = i+1;
+        int i2 = i;
+        newPointsSpeed[i2] = oneStepLimitAcceleration(maxAceleration, newPointsDistance[i1], newPointsSpeed[i1], newPointsCurvature[i1],
+                                                     newPointsDistance[i2], newPointsSpeed[i2], newPointsCurvature[i2]);
     }
 
     float totalTime = 0;
@@ -570,8 +524,6 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
 
     const int interpolations = 40;
 
-
-    //cout<<"start"<<endl;
     size_t length = points.size();
     size_t curvesNum = length - 1;
     if (curvesNum <= 0) {
@@ -583,8 +535,6 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
 
     vector<InterpolatedPath::Entry> entries = generateVelocityPath(controlPoints, motionConstraints, vi, vf, interpolations);
 
-    //const int iterations = 10;
-    cout<<"iterations "<<iterations<<endl;
     for (int x=0; x<iterations; x++) {
         vector<float> times;
         //int i = 0;
