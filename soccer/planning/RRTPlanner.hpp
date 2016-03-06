@@ -18,8 +18,9 @@ namespace Planning {
 struct CubicBezierControlPoints {
     Geometry2d::Point p0, p1, p2, p3;
 
-    CubicBezierControlPoints(Geometry2d::Point p0, Geometry2d::Point p1, Geometry2d::Point p2, Geometry2d::Point p3)
-            :p0(p0), p1(p1), p2(p2), p3(p3) {}
+    CubicBezierControlPoints(Geometry2d::Point p0, Geometry2d::Point p1,
+                             Geometry2d::Point p2, Geometry2d::Point p3)
+        : p0(p0), p1(p1), p2(p2), p3(p3) {}
 };
 
 /**
@@ -70,11 +71,10 @@ public:
      * Velocity Profile.
      */
     static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
-            std::vector<Geometry2d::Point>& points,
-            const Geometry2d::ShapeSet& obstacles,
-            const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-            Geometry2d::Point vf, const int iterations = 0);
-
+        std::vector<Geometry2d::Point>& points,
+        const Geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf, const int iterations = 0);
 
 protected:
     /// maximum number of rrt iterations to run
@@ -98,7 +98,8 @@ protected:
      *  Calls the cubicBezier optimization function.
      */
     std::unique_ptr<Planning::InterpolatedPath> optimize(
-        std::unique_ptr<InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
+        std::unique_ptr<InterpolatedPath> path,
+        const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf, int smoothingIterations = 0);
 
@@ -107,33 +108,37 @@ protected:
      * velocity planning
      */
     static std::unique_ptr<Planning::InterpolatedPath> cubicBezier(
-        std::unique_ptr<Planning::InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
+        std::unique_ptr<Planning::InterpolatedPath> path,
+        const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
 
     /**
-     * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity Path Algorithm
+     * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity
+     * Path Algorithm
      */
-    static std::vector<CubicBezierControlPoints> generateCubicBezierPath(const std::vector<Geometry2d::Point> &points,
-                                                                    const MotionConstraints &motionConstraints,
-                                                                    Geometry2d::Point vi, Geometry2d::Point vf,
-                                                                    const boost::optional<std::vector<float>> &times = boost::none);
+    static std::vector<CubicBezierControlPoints> generateCubicBezierPath(
+        const std::vector<Geometry2d::Point>& points,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf,
+        const boost::optional<std::vector<float>>& times = boost::none);
 
     /**
      * Generates a velocity profile for a Cubic Bezier Path
      */
-    static std::vector<InterpolatedPath::Entry> generateVelocityPath(const std::vector<CubicBezierControlPoints> &controlPoints,
-                                                                         const MotionConstraints &motionConstraints,
-                                                                         Geometry2d::Point vi, Geometry2d::Point vf, int interpolations);
-
-
+    static std::vector<InterpolatedPath::Entry> generateVelocityPath(
+        const std::vector<CubicBezierControlPoints>& controlPoints,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf, int interpolations);
 
     /**
-     * Generates a Cubic Bezier Path based on some attempted heuristical Control Point Placement
+     * Generates a Cubic Bezier Path based on some attempted heuristical Control
+     * Point Placement
      */
-    static std::vector<CubicBezierControlPoints> generateNormalCubicBezierPath(const std::vector<Geometry2d::Point>& points,
-                                                                    const MotionConstraints& motionConstraints,
-                                                                    Geometry2d::Point vi, Geometry2d::Point vf);
+    static std::vector<CubicBezierControlPoints> generateNormalCubicBezierPath(
+        const std::vector<Geometry2d::Point>& points,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf);
 
     /**
      * Helper function for cubicBezier() which uses Eigen matrices to solve for
