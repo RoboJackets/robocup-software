@@ -554,7 +554,6 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     return path;
 }
 
-// TODO: Use targeted end velocity
 unique_ptr<InterpolatedPath> RRTPlanner::cubicBezier(
     std::unique_ptr<InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
@@ -562,7 +561,6 @@ unique_ptr<InterpolatedPath> RRTPlanner::cubicBezier(
     int length = path->waypoints.size();
     int curvesNum = length - 1;
     if (curvesNum <= 0) {
-        //delete &path;
         return nullptr;
     }
 
@@ -596,7 +594,6 @@ unique_ptr<InterpolatedPath> RRTPlanner::cubicBezier(
                  getTime(*path, i, motionConstraints, startSpeed, endSpeed));
         ks2[i] = ks[i] * ks[i];
         if (std::isnan(ks[i])) {
-            //delete &path;
             return nullptr;
         }
     }

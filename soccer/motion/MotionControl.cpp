@@ -59,19 +59,16 @@ void MotionControl::run() {
         RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) +
         1.0 / 60.0;
 
-//    cout<<"timeIntoPath:"<<timeIntoPath<<endl;
-
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
         _robot->path().evaluate(timeIntoPath);
 
     if (!optTarget) {
         optTarget = _robot->path().end();
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red);
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red, "Planning");
     } else {
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green);
         Point start = _robot->pos;
-        _robot->state()->drawLine(start, optTarget->motion.vel+start, Qt::blue);
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green, "Planning");
     }
 
     // Angle control //////////////////////////////////////////////////
