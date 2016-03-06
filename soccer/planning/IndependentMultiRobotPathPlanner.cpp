@@ -10,6 +10,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
         int shell = entry.first;
         PlanRequest& request = entry.second;
         auto& prevPlanner = _planners[shell];
+        entry.second.motionCommand->debug = shell;
 
         // Make sure we have the right planner.  If it changes from last time,
         // delete the old path.
