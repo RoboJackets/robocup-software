@@ -10,6 +10,7 @@ import serial
 import argparse
 import mbed_lstools as mbedls
 from os.path import abspath, isfile
+from subprocess import check_call
 
 # parse in the given file(s)
 parser = argparse.ArgumentParser(
@@ -30,8 +31,7 @@ def sync_os():
             libc = ctypes.CDLL("libc.so.6")
             libc.sync()
     except:
-        import subprocess
-        subprocess.check_call(['sync'], shell=True)
+        check_call(['sync'], shell=True)
 
 # only select the files that exist from what was given
 files = []
@@ -49,20 +49,40 @@ if len(mbeds) == 0:
     print("No mbeds found", file=sys.stderr)
     sys.exit(1)
 
+def find_mbed_disk(mbed):
+    dirpath = '/dev/disk/by-id'
+    for path in os.listdir(dirpath):
+        if mbed['target_id'] in path:
+            return os.path.join(dirpath, path)
+    return None
+
+
 # iterate copying all files to all mbeds
-for mbed in mbeds:
-    # move the files over
-    dst = mbed['mount_point']
+for i in range(len(mbeds)):
+    mbed = mbeds[i]
+    mount_point = mbed['mount_point']
+
+    already_mounted = mount_point != None
+
+    if not already_mounted:
+        mount_point = '/mnt/mbed%d' % i
+        print("Mounting mbed to '%s'..." % mount_point)
+        check_call(['mkdir', '-p', mount_point])
+        check_call(['mount', find_mbed_disk(mbed), mount_point])
+
     for f in files:
-        shutil.copy2(f, dst)
-        print('copying {} to {}'.format(f, dst))
+        print("Copying '{}' to '{}'...".format(os.path.basename(f), mount_point))
+        shutil.copy2(f, mount_point)
         sync_os()
+
+    # unmount if needed
+    if not already_mounted:
+        print("Unmounting mbed...")
+        check_call(['umount', mount_point])
+
     # reset the mbed
-    for x in range(2):
-        try:
-            ss = serial.Serial(mbed['serial_port'], baudrate=57600)
-            ss.sendBreak()
-            ss.flush()
-        except:
-            pass
-        time.sleep(2)
+    print("Rebooting mbed...")
+    ss = serial.Serial(mbed['serial_port'], baudrate=57600)
+    ss.sendBreak()
+    time.sleep(1)
+    ss.sendBreak()
