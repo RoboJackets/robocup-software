@@ -25,6 +25,8 @@
 #define LOG(lvl, ...) \
     log(lvl, __BASE_FILE_NAME__, __LINE__, __func__, __VA_ARGS__)
 
+// Example usage:
+//   S_LOG(INIT) << "Example" << std::endl;
 #define S_LOG(lvl) LogHelper(lvl, __BASE_FILE_NAME__, __LINE__, __func__)
 
 #else             // RJ_LOGGING_EN
