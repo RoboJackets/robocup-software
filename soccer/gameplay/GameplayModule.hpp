@@ -115,6 +115,8 @@ protected:
     /// gets the instance of the main.py module that's loaded at GameplayModule
     boost::python::object getMainModule();
 
+    boost::python::object getConstantsModule();
+
 private:
     /// This protects all of Gameplay.
     /// This is held while plays are running.

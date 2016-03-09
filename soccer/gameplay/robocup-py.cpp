@@ -681,13 +681,36 @@ BOOST_PYTHON_MODULE(robocup) {
     register_ptr_to_python<SystemState*>();
 
     class_<Field_Dimensions>("Field_Dimensions")
+        .add_property("Length", &Field_Dimensions::Length)
+        .add_property("Width", &Field_Dimensions::Width)
+        .add_property("Border", &Field_Dimensions::Border)
+        .add_property("LineWidth", &Field_Dimensions::LineWidth)
+        .add_property("GoalWidth", &Field_Dimensions::GoalWidth)
+        .add_property("GoalDepth", &Field_Dimensions::GoalDepth)
+        .add_property("GoalHeight", &Field_Dimensions::GoalHeight)
+        .add_property("PenaltyDist", &Field_Dimensions::PenaltyDist)
+        .add_property("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
+        .add_property("ArcRadius", &Field_Dimensions::ArcRadius)
+        .add_property("CenterRadius", &Field_Dimensions::CenterRadius)
+        .add_property("CenterDiameter", &Field_Dimensions::CenterDiameter)
+        .add_property("GoalFlat", &Field_Dimensions::GoalFlat)
+        .add_property("FloorLength", &Field_Dimensions::FloorLength)
+        .add_property("FloorWidth", &Field_Dimensions::FloorWidth)
+        .add_property("CenterPoint", &Field_Dimensions::CenterPoint)
+        .add_property("OurGoalZoneShape", &Field_Dimensions::OurGoalZoneShape)
+        .add_property("TheirGoalShape", &Field_Dimensions::TheirGoalShape)
+        .add_property("OurGoalSegment", &Field_Dimensions::OurGoalSegment)
+        .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
+        .add_property("OurHalf", &Field_Dimensions::OurHalf)
+        .add_property("TheirHalf", &Field_Dimensions::TheirHalf);
+
+    /*class_<Field_Dimensions>("Field_Dimensions",init<float, float, float,
+       float, float, float, float, float, float, float, float, float, float,
+       float, float>())
         .def("Length", &Field_Dimensions::Length)
         .def("Width", &Field_Dimensions::Width)
         .def("Border", &Field_Dimensions::Border)
         .def("LineWidth", &Field_Dimensions::LineWidth)
-        .def("GoalWidth", &Field_Dimensions::GoalWidth)
-        .def("GoalDepth", &Field_Dimensions::GoalDepth)
-        .def("GoalHeight", &Field_Dimensions::GoalHeight)
         .def("PenaltyDist", &Field_Dimensions::PenaltyDist)
         .def("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
         .def("ArcRadius", &Field_Dimensions::ArcRadius)
@@ -695,7 +718,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("CenterDiameter", &Field_Dimensions::CenterDiameter)
         .def("GoalFlat", &Field_Dimensions::GoalFlat)
         .def("FloorLength", &Field_Dimensions::FloorLength)
-        .def("FloorWidth", &Field_Dimensions::FloorWidth);
+        .def("FloorWidth", &Field_Dimensions::FloorWidth)
+        */
 
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)

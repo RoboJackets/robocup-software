@@ -48,6 +48,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
             object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
             _mainPyNamespace["robocup"] = robocup_module;
 
+            
+
             QDir gameplayDir = ApplicationRunDirectory();
             gameplayDir.cd("../soccer/gameplay");
 
@@ -59,6 +61,10 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
             handle<> ignored2(
                 (PyRun_String(importStmt.data(), Py_file_input,
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+            _mainPyNamespace["constants"] = handle<>(PyImport_ImportModule("constants"));
+            getConstantsModule().attr("Field")=&Field_Dimensions::Current_Dimensions;
+
 
             // instantiate the root play
             handle<> ignored3(
@@ -337,6 +343,7 @@ void Gameplay::GameplayModule::run() {
             getMainModule().attr("set_system_state")(&_state);
 
             getMainModule().attr("set_ball")(_state->ball);
+
         } catch (error_already_set) {
             PyErr_Print();
             throw new runtime_error(
@@ -404,18 +411,6 @@ boost::python::object Gameplay::GameplayModule::getRootPlay() {
 boost::python::object Gameplay::GameplayModule::getMainModule() {
     return _mainPyNamespace["main"];
 }
-
-void Gameplay::GameplayModule::sendFieldDimensionsToPython() {
-    PyGILState_STATE state = PyGILState_Ensure();
-    {
-        try {
-            getMainModule().attr("set_field_constants")(
-                Field_Dimensions::Current_Dimensions);
-        } catch (error_already_set) {
-            PyErr_Print();
-            throw new runtime_error(
-                "Error trying to pass field dimensions to python");
-        }
-    }
-    PyGILState_Release(state);
+boost::python::object Gameplay::GameplayModule::getConstantsModule() {
+    return _mainPyNamespace["constants"];
 }
