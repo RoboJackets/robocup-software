@@ -26,4 +26,4 @@ class Ball:
     Mass = 0.04593  # mass of golf ball (kg)
 
 
-Field = None
+Field = FieldDimensions.SingleFieldDimensions

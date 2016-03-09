@@ -702,7 +702,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("OurGoalSegment", &Field_Dimensions::OurGoalSegment)
         .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
         .add_property("OurHalf", &Field_Dimensions::OurHalf)
-        .add_property("TheirHalf", &Field_Dimensions::TheirHalf);
+        .add_property("TheirHalf", &Field_Dimensions::TheirHalf)
+        .def_readonly("SingleFieldDimensions", &Field_Dimensions::Single_Field_Dimensions)
+        .def_readonly("DoubleFieldDimensions", &Field_Dimensions::Double_Field_Dimensions);
 
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)
