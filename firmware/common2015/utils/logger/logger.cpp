@@ -19,14 +19,14 @@ Mutex log_mutex;
 
 LogHelper::LogHelper(uint8_t logLevel, const char* source, int line,
                      const char* func) {
-    m_logLevel = logLevel;
-    m_source = source;
-    m_line = line;
-    m_func = func;
+    _logLevel = logLevel;
+    _source = source;
+    _line = line;
+    _func = func;
 }
 
 LogHelper::~LogHelper() {
-    log(m_logLevel, m_source, m_line, m_func, "%s", str().c_str());
+    log(_logLevel, _source, _line, _func, "%s", str().c_str());
 }
 
 /**
