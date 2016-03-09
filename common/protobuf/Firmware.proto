@@ -1,0 +1,7 @@
+package Packet;
+
+message Firmware
+{
+    required uint32 len = 1;
+    required bytes data = 2;
+}

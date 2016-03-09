@@ -1,0 +1,21 @@
+package Packet;
+
+import "Control.proto";
+import "Tuning.proto";
+
+message Robot
+{
+    enum TxType
+    {
+        CONTROL  = 1;
+        TUNING   = 2;
+    }
+
+    required TxType txType = 1;
+    required uint32 uid = 2;
+    oneof RobotBody
+    {
+        Control control = 3;
+        Tuning tuning = 4;
+    }
+}

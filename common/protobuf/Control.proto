@@ -1,0 +1,33 @@
+package Packet;
+
+message Control
+{
+    enum ShootMode
+    {
+        KICK = 1;
+        CHIP = 2;
+    }
+
+    enum TriggerMode
+    {
+        IMMEDIATE = 1;
+        ON_BREAK_BEAM = 2;
+        ARM = 3;
+    }
+
+    enum Song
+    {
+        STOP = 1;
+        FIGHT_SONG = 2;
+    }
+
+    required uint32 xVelocity = 1;
+    required uint32 yVelocity = 2;
+    required uint32 aVelocity = 3;
+    required uint32 dVelocity = 4;
+    required uint32 kcStrength = 5;
+    required ShootMode shootMode = 6;
+    required TriggerMode triggerMode = 7;
+    required bool firmwareEnable = 8;
+    required Song song = 9;
+}

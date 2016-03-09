@@ -1,37 +1,27 @@
 package Packet;
 
-import "Point.proto";
+import "Robot.proto";
+import "Firmware.proto";
 
-// Packet going out from control program to radio program
 message RadioTx
 {
-	message Robot
+	enum TxMode
 	{
-		required uint32 robot_id = 1;
-		optional int32 dribbler = 2;
-		optional uint32 kick = 3;
-		optional bool use_chipper = 4;
-		
-		// Translational velocity in body coordinates, m/s
-		required float body_x = 6;
-		required float body_y = 7;
-		
-		// Angular velocity, rad/s
-		required float body_w = 8;
-		
-		optional float accel = 9;
-		optional float decel = 10;
-
-		// measurement from the camera
-		optional Point position = 14;
-		optional float latency = 15;
-		
-		optional bool kick_immediate = 11;
-		
-		optional bool sing = 12;
-		optional bool anthem = 13;
+		UNICAST   = 1;
+		MULTICAST = 2;
 	}
-	
-	repeated Robot robots = 2;
-	optional uint32 sequence = 3;
+
+	enum TxType
+	{
+		ROBOT = 1;
+		FIRMWARE = 2;
+	}
+
+	required TxMode txMode = 1;
+	required TxType txType = 2;
+	oneof TxBody 
+	{
+		Firmware firmware = 3;
+		Robot robot = 4;
+	}
 }
