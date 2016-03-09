@@ -1,6 +1,6 @@
 MAKE_FLAGS=--no-print-directory
 HW_UNIT=default
-all:
+TESTS = *
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -35,11 +35,12 @@ run-sim2play: all
 tests: test-cpp test-python
 test-cpp: test-soccer test-firmware
 test-soccer:
+
 	$(call cmake_build_target, test-soccer)
-	run/test-soccer
+	run/test-soccer --gtest_filter=$(TESTS)
 test-firmware:
 	$(call cmake_build_target, test-firmware)
-	run/test-firmware
+	run/test-firmware --gtest_filter=$(TESTS)
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
@@ -82,6 +83,31 @@ robot2015:
 
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
+
+GDB_PORT ?= 3333
+.INTERMEDIATE: build/robot2015-gdb.pid
+build/robot2015-gdb.pid:
+# this will cache sudo use without a password in the environment
+# so we won't enter the gdb server and skip past the password prompt.
+	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
+# now we can refresh the sudo timeout and start up the gdb server
+	sudo -v && { sudo pyocd-gdbserver --allow-remote --port $(GDB_PORT) --reset-break \
+	--target lpc1768 -S -G > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
+
+GDB_NO_CONN ?= 0
+robot2015-gdb: robot2015 build/robot2015-gdb.pid
+# use pyocd-gdbserver, and explicitly pass it the type of target we want to connect with,
+# making sure that we enable semihosting and use gdb syscalls for the file io
+	@trap 'sudo pkill -9 -P `cat build/robot2015-gdb.pid`; exit' TERM INT EXIT && \
+	if [ $(GDB_NO_CONN) -eq 0 ]; then \
+		arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+		  -ex "target remote localhost:$(GDB_PORT)" \
+		  -ex "load" \
+		  -ex "tbreak main" \
+		  -ex "continue"; \
+	else \
+		while true; do sleep 10; done; \
+	fi
 
 # I2C bus hardware test
 robot2015-i2c: HW_UNIT=i2c 
@@ -178,7 +204,7 @@ apidocs:
 	cp doc/doxygen.css api_docs/html/
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
-
+STYLIZE_DIFFBASE ?= master
 STYLE_EXCLUDE_DIRS=build \
 	external \
 	firmware/robot/cpu/at91sam7s256 \
@@ -188,9 +214,9 @@ STYLE_EXCLUDE_DIRS=build \
 	firmware/robot/cpu/invensense
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl $${LINK_PREFIX:-./}clean.patch)\n\n"
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl $${LINK_PREFIX:-file://}clean.patch)\n\n"
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
