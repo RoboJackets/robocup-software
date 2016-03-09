@@ -704,23 +704,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("OurHalf", &Field_Dimensions::OurHalf)
         .add_property("TheirHalf", &Field_Dimensions::TheirHalf);
 
-    /*class_<Field_Dimensions>("Field_Dimensions",init<float, float, float,
-       float, float, float, float, float, float, float, float, float, float,
-       float, float>())
-        .def("Length", &Field_Dimensions::Length)
-        .def("Width", &Field_Dimensions::Width)
-        .def("Border", &Field_Dimensions::Border)
-        .def("LineWidth", &Field_Dimensions::LineWidth)
-        .def("PenaltyDist", &Field_Dimensions::PenaltyDist)
-        .def("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
-        .def("ArcRadius", &Field_Dimensions::ArcRadius)
-        .def("CenterRadius", &Field_Dimensions::CenterRadius)
-        .def("CenterDiameter", &Field_Dimensions::CenterDiameter)
-        .def("GoalFlat", &Field_Dimensions::GoalFlat)
-        .def("FloorLength", &Field_Dimensions::FloorLength)
-        .def("FloorWidth", &Field_Dimensions::FloorWidth)
-        */
-
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)
         .def_readwrite("a1", &Window::a1)
