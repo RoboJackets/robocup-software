@@ -17,6 +17,8 @@ define cmake_build_target_fw
 	cd build/firmware && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS)
 endef
 
+
+
 all:
 	$(call cmake_build_target, all)
 
