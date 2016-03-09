@@ -408,8 +408,23 @@ public:
      * @brief Starts the robot playing the fight song
      */
     void sing() {
+        sing(::Packet::RadioTx_Robot_Control_Song::RadioTx_Robot_Control_Song_FIGHT_SONG); 
+    }
+
+    /**
+     * @brief start the robot playing a song
+     * @param song
+     */
+    void sing(::Packet::RadioTx_Robot_Control_Song song)
+    {
+        // std::string songName = "";
+        // switch (song)
+        // {
+        //     case 
+        // }
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        radioTx.set_sing(true);
+        //radioTx.set_sing(true);
+        radioTx.set_song(song)
     }
 
     bool isPenaltyKicker = false;

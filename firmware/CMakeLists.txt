@@ -5,7 +5,7 @@
 set(MBED_TARGET LPC1768)
 set(MBED_USE_RTOS true)
 set(MBED_USE_ETH false)
-set(MBED_USE_USB false)
+set(MBED_USE_USB true)
 set(MBED_USE_DSP false)
 set(MBED_USE_RPC true)
 

@@ -76,6 +76,12 @@ libboost-python-dev
 # for joystick
 libsdl1.2-dev
 
+# for usbhid api
+libudev1
+libudev-dev
+libusb-dev
+libusb-1.0.0-dev
+
 # everything else...
 build-essential
 libusb-1.0-0-dev

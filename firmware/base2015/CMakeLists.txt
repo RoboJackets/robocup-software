@@ -8,7 +8,7 @@ set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
 set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # firmware source files
-set(base2015_SRC "main.cpp")
+set(base2015_SRC "main.cpp" "PCLink.hpp" "PCLink.cpp")
 
 add_executable(base2015_elf ${base2015_SRC})
 target_link_libraries(base2015_elf common2015)
