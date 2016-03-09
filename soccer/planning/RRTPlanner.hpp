@@ -74,7 +74,7 @@ public:
         std::vector<Geometry2d::Point>& points,
         const Geometry2d::ShapeSet& obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf, const int iterations = 0);
+        Geometry2d::Point vf);
 
 protected:
     /// maximum number of rrt iterations to run
@@ -92,7 +92,7 @@ protected:
     std::unique_ptr<Planning::InterpolatedPath> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles, int smoothingIterations = 0);
+        const Geometry2d::ShapeSet* obstacles);
 
     /** optimize the path
      *  Calls the cubicBezier optimization function.
@@ -101,7 +101,7 @@ protected:
         std::unique_ptr<InterpolatedPath> path,
         const Geometry2d::ShapeSet* obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf, int smoothingIterations = 0);
+        Geometry2d::Point vf);
 
     /**
      * Uses a cubicBezier to interpolate between the points on the path and add
@@ -129,7 +129,7 @@ protected:
     static std::vector<InterpolatedPath::Entry> generateVelocityPath(
         const std::vector<CubicBezierControlPoints>& controlPoints,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf, int interpolations);
+        Geometry2d::Point vf, int interpolations = 40);
 
     /**
      * Generates a Cubic Bezier Path based on some attempted heuristical Control
