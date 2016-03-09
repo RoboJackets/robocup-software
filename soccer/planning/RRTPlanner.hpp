@@ -34,47 +34,43 @@ struct CubicBezierControlPoints {
  */
 class RRTPlanner : public SingleRobotPathPlanner {
 public:
+    /**
+     * Constructor taking in the max iterations the RRT planner should run
+     */
     RRTPlanner(int maxIterations);
+
     /**
      * gets the maximum number of iterations for the RRT algorithm
      */
     int maxIterations() const { return _maxIterations; }
+
     /**
      * sets the maximum number of iterations for th RRT algorithm
      */
     void maxIterations(int value) { _maxIterations = value; }
 
+    /**
+     * Takes in a waypoints and returns a full InterpolatedPath with a generated
+     * Velocity Profile.
+     */
+    static std::unique_ptr<Planning::InterpolatedPath> generatePath(
+        std::vector<Geometry2d::Point>& points,
+        const Geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf);
+
+
+    //Overridden methods
+
     MotionCommand::CommandType commandType() const override {
         return MotionCommand::PathTarget;
     }
 
-    /// run the path RRTplanner
-    /// this will always populate path to be the path we need to travel
     std::unique_ptr<Path> run(
-        MotionInstant start, const MotionCommand* cmd,
-        const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles,
-        std::unique_ptr<Path> prevPath = nullptr) override;
-
-    /**
-     * Takes in a point path and returns a InterpolatedPath with a generated
-     * Velocity Profile.
-     */
-    static std::unique_ptr<Planning::InterpolatedPath> generateVelocityPath(
-        std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
-
-    /**
-     * Takes in a point path and returns a InterpolatedPath with a generated
-     * Velocity Profile.
-     */
-    static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
-        std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+            MotionInstant start, const MotionCommand* cmd,
+            const MotionConstraints& motionConstraints,
+            const Geometry2d::ShapeSet* obstacles,
+            std::unique_ptr<Path> prevPath = nullptr) override;
 
 protected:
     /// maximum number of rrt iterations to run
@@ -89,23 +85,38 @@ protected:
                       const Path* prevPath) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
-    std::unique_ptr<Planning::InterpolatedPath> runRRT(
-        MotionInstant start, MotionInstant goal,
-        const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles);
-
-    /** optimize the path
-     *  Calls the cubicBezier optimization function.
-     */
-    std::unique_ptr<Planning::InterpolatedPath> optimize(
-        std::unique_ptr<InterpolatedPath> path,
-        const Geometry2d::ShapeSet* obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+    std::vector<Geometry2d::Point> runRRT(
+            MotionInstant start, MotionInstant goal,
+            const MotionConstraints &motionConstraints,
+            const Geometry2d::ShapeSet *obstacles);
 
     /**
-     * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity
-     * Path Algorithm
+     * Takes in waypoints and returns a InterpolatedPath with a generated
+     * Velocity Profile.
+     *
+     * 1. It generates a bezier path from the waypoints given
+     * 2. It generates a velocity profile to fit the constraints given
+     * 3. It returns a interpolated path combining the bezier path and the velocity profile
+     */
+    static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
+            std::vector<Geometry2d::Point>& points,
+            const Geometry2d::ShapeSet& obstacles,
+            const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+            Geometry2d::Point vf);
+
+    /**
+     *  Removes unnecesary waypoints in the path
+     */
+    static void optimize(
+            std::vector<Geometry2d::Point> &path,
+            const Geometry2d::ShapeSet *obstacles,
+            const MotionConstraints &motionConstraints, Geometry2d::Point vi,
+            Geometry2d::Point vf);
+
+    /**
+     * Generates a Cubic Bezier Path based on Albert's Bezier Velocity
+     * Path Algorithm using waypoints. It creates a path with continuous velocity and acceleration
+     * that estimates speed using the trapezoidal motion heuristic
      */
     static std::vector<CubicBezierControlPoints> generateCubicBezierPath(
         const std::vector<Geometry2d::Point>& points,
@@ -114,7 +125,7 @@ protected:
         const boost::optional<std::vector<float>>& times = boost::none);
 
     /**
-     * Generates a velocity profile for a Cubic Bezier Path
+     * Generates a velocity profile from a Cubic Bezier Path under the given motion constratins
      */
     static std::vector<InterpolatedPath::Entry> generateVelocityPath(
         const std::vector<CubicBezierControlPoints>& controlPoints,

@@ -75,25 +75,33 @@ std::unique_ptr<Path> RRTPlanner::run(
                      prevPath.get())) {
 
         // Run bi-directional RRT to generate a path.
-        auto path = runRRT(start, goal, motionConstraints, obstacles);
+        auto points = runRRT(start, goal, motionConstraints, obstacles);
 
-        // If RRT failed, the path will be empty, so we need to add a single
-        // point to make it valid.
-        if (path && path->waypoints.empty()) {
-            path->waypoints.emplace_back(
-                MotionInstant(start.pos, Geometry2d::Point()), 0);
+
+        //Optimize out uneccesary waypoints
+        optimize(points, obstacles, motionConstraints, start.vel,
+                        goal.vel);
+
+        //Check if Planning or optimization failed
+        if (points.size()<2) {
+            debugLog("PathPlanning Failed");
+            auto path = make_unique<InterpolatedPath>();
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+            return std::move(path);
         }
-        path->setStartTime(RJ::timestamp());
-        return unique_ptr<Path>(std::move(path));
+
+        //Generate and return a cubic bezier path using the waypoints
+        return generateCubicBezier(points, *obstacles, motionConstraints, start.vel, goal.vel);
     } else {
         return prevPath;
     }
 }
 
-unique_ptr<InterpolatedPath> RRTPlanner::runRRT(
-    MotionInstant start, MotionInstant goal,
-    const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles) {
+vector<Point> RRTPlanner::runRRT(
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints &motionConstraints,
+        const Geometry2d::ShapeSet *obstacles) {
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
@@ -128,43 +136,40 @@ unique_ptr<InterpolatedPath> RRTPlanner::runRRT(
     Tree::Point* p0 = startTree.last();
     Tree::Point* p1 = goalTree.last();
 
+    vector<Point> points;
     // sanity check
     if (!p0 || !p1 || p0->pos != p1->pos) {
-        return path;
+        return points;
     }
 
     // extract path from RRTs
     // add the start tree first...normal order (aka from root to p0)
-    startTree.addPath(*path, p0);
+    startTree.addPath(points, p0);
     // add the goal tree in reverse (aka p1 to root)
-    goalTree.addPath(*path, p1, true);
+    goalTree.addPath(points, p1, true);
 
-    path = optimize(move(path), obstacles, motionConstraints, start.vel,
-                    goal.vel);
-    return path;
+    return points;
 }
 
-unique_ptr<InterpolatedPath> RRTPlanner::optimize(
-    unique_ptr<InterpolatedPath> path, const Geometry2d::ShapeSet* obstacles,
-    const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-    Geometry2d::Point vf) {
+void RRTPlanner::optimize(
+        vector<Geometry2d::Point> &pts, const Geometry2d::ShapeSet *obstacles,
+        const MotionConstraints &motionConstraints, Geometry2d::Point vi,
+        Geometry2d::Point vf) {
     unsigned int start = 0;
 
-    if (path->empty()) {
-        return nullptr;
+    if (pts.size() < 2) {
+        return;
     }
 
-    vector<InterpolatedPath::Entry>& pts = path->waypoints;
-
     // The set of obstacles the starting point was inside of
-    const auto startHitSet = obstacles->hitSet(pts[start].pos());
+    const auto startHitSet = obstacles->hitSet(pts[start]);
     int span = 2;
     while (span < pts.size()) {
         bool changed = false;
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
             const auto newHitSet = obstacles->hitSet(
-                Geometry2d::Segment(pts[i].pos(), pts[i + span].pos()));
+                Geometry2d::Segment(pts[i], pts[i + span]));
             if (!newHitSet.empty()) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
@@ -185,12 +190,7 @@ unique_ptr<InterpolatedPath> RRTPlanner::optimize(
         if (!changed) span++;
     }
 
-    // Generate Cubic Bezier with Velocity Profile
-    vector<Point> points;
-    for (InterpolatedPath::Entry& entry : pts) {
-        points.push_back(entry.pos());
-    }
-    return generateCubicBezier(points, *obstacles, motionConstraints, vi, vf);
+    return;
 }
 float getTime(vector<Point> path, int index,
               const MotionConstraints& motionConstraints, float startSpeed,
@@ -215,7 +215,7 @@ float getTime(InterpolatedPath& path, int index,
         motionConstraints.maxAcceleration, startSpeed, endSpeed);
 }
 
-std::unique_ptr<InterpolatedPath> RRTPlanner::generateVelocityPath(
+std::unique_ptr<InterpolatedPath> RRTPlanner::generatePath(
     std::vector<Geometry2d::Point>& points,
     const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
@@ -555,15 +555,14 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         return nullptr;
     }
 
-    vector<CubicBezierControlPoints> controlPoints =
-        generateCubicBezierPath(points, motionConstraints, vi, vf);
+    vector<CubicBezierControlPoints> controlPoints = generateCubicBezierPath(points, motionConstraints, vi, vf);
 
 
-    vector<InterpolatedPath::Entry> entries = generateVelocityPath(
-        controlPoints, motionConstraints, vi, vf, interpolations);
+    vector<InterpolatedPath::Entry> entries = generateVelocityPath(controlPoints, motionConstraints, vi, vf, interpolations);
 
     std::unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
     path->waypoints = entries;
+    path->setStartTime(RJ::timestamp());
     return path;
 }
 
