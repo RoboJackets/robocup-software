@@ -48,8 +48,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
             object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
             _mainPyNamespace["robocup"] = robocup_module;
 
-            
-
             QDir gameplayDir = ApplicationRunDirectory();
             gameplayDir.cd("../soccer/gameplay");
 
@@ -62,9 +60,10 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
                 (PyRun_String(importStmt.data(), Py_file_input,
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-            _mainPyNamespace["constants"] = handle<>(PyImport_ImportModule("constants"));
-            getConstantsModule().attr("Field")=&Field_Dimensions::Current_Dimensions;
-
+            _mainPyNamespace["constants"] =
+                handle<>(PyImport_ImportModule("constants"));
+            getConstantsModule().attr("Field") =
+                &Field_Dimensions::Current_Dimensions;
 
             // instantiate the root play
             handle<> ignored3(
