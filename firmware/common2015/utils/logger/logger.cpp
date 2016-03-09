@@ -17,17 +17,22 @@ uint8_t rjLogLevel;
 
 Mutex log_mutex;
 
-class DummyStream : public std::ostream
-{
-public:
-	template <class T>
-	std::ostream& operator<<(const T&)
-	{
-		return *this;
-	}
-};
+/**
+ * [Collects the stream log message into a single string to print]
+ * @param logLevel [The "importance level" of the called log message.]
+ * @param source   [The source of the message.]
+ * @param format   [The string format for displaying the log message.]
+ */
+LogHelper::LogHelper(uint8_t logLevel, const char* source, int line, const char* func) {
+    m_logLevel = logLevel;
+    m_source = source;
+    m_line = line;
+    m_func = func;
+}
 
-DummyStream dummy;
+LogHelper::~LogHelper() {
+    log(m_logLevel, m_source, m_line, m_func, "%s", str().c_str());
+}
 
 /**
  * [log The system-wide logging interface function. All log messages go through
@@ -42,6 +47,7 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         log_mutex.lock();
 
         va_list args;
+	char newFormat[1024];
         char time_buf[25];
         time_t sys_time = time(NULL);
         strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
@@ -49,31 +55,16 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         va_start(args, format);
 
         fflush(stdout);
-        printf("%s [%s] [%s:%d] <%s>\r\n  ", time_buf,
-               LOG_LEVEL_STRING[logLevel], source, line, func);
+        snprintf(newFormat, sizeof(newFormat),
+               "%s [%s] [%s:%d] <%s>\r\n  %s\r\n\r\n", 
+	       time_buf, LOG_LEVEL_STRING[logLevel], 
+	       source, line, func, format);
         fflush(stdout);
-        vprintf(format, args);
-        printf("\r\n\r\n");
+        vprintf(newFormat, args);
         fflush(stdout);
 
         va_end(args);
         log_mutex.unlock();
-    }
-}
-
-std::ostream& log(uint8_t logLevel, const char* source, int line, const char* func) {
-    if (isLogging && logLevel <= rjLogLevel) {
-	char time_buf[25];
-	time_t sys_time = time(NULL);
-	strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
-
-	std::ostream& res = std::cout << time_buf << " [" << LOG_LEVEL_STRING[logLevel] << "] [" << source << ":" << line << "] ";
-
-	return res;
-    }
-    else
-    {
-	return dummy;
     }
 }
 

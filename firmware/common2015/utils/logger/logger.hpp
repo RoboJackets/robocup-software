@@ -3,13 +3,14 @@
 #include <cstdarg>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include "rj-macros.hpp"
 
 // Do weird macro things for logging the filename and line for every call.
 // Also allows for disabling all logging through macros so all log calls can be
 // removed from production builds.
-#ifdef RJ_LOGGING_EN
+//#ifdef RJ_LOGGING_EN
 
 // Gets curent file name without path
 // see http://stackoverflow.com/questions/8487986/file-macro-shows-full-path
@@ -24,6 +25,9 @@
 
 #define LOG(lvl, ...) \
     log(lvl, __BASE_FILE_NAME__, __LINE__, __func__, __VA_ARGS__)
+
+#define S_LOG(lvl) \
+    LogHelper(lvl, __BASE_FILE_NAME__, __LINE__, __func__)
 
 #else             // RJ_LOGGING_EN
 #define LOG(...)  // Nothing
@@ -62,6 +66,24 @@ extern bool isLogging;
 extern uint8_t rjLogLevel;
 
 /**
+ * [Collects the stream log message into a single string to print]
+ * @param logLevel [The "importance level" of the called log message.]
+ * @param source   [The source of the message.]
+ * @param format   [The string format for displaying the log message.]
+ */
+class LogHelper : public std::stringstream {
+public:
+    LogHelper(uint8_t logLevel, const char* source, int line, const char* func);
+    ~LogHelper();
+
+private:
+    uint8_t m_logLevel;
+    const char* m_source;
+    int m_line;
+    const char* m_func;
+}; 
+
+/**
  * [log The system-wide logging interface function. All log messages go through
  * this.]
  * @param logLevel [The "importance level" of the called log message.]
@@ -70,7 +92,5 @@ extern uint8_t rjLogLevel;
  */
 void log(uint8_t logLevel, const char* source, int line, const char* func,
          const char* format, ...);
-
-std::ostream& log(uint8_t logLevel, const char *source, int line, const char* func);
 
 int logLvlChange(const std::string& s);
