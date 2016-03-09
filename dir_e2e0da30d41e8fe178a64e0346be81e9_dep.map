@@ -1,5 +1,7 @@
 <map id="firmware/robot2015" name="firmware/robot2015">
-<area shape="rect" id="node4" href="dir_c26f59b61934b5bd6a1acc616c9abc91.html" title="cpu" alt="" coords="37,65,109,113"/>
-<area shape="rect" id="graph3" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html" alt="" coords="27,55,221,124"/>
-<area shape="rect" id="graph2" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html" title="firmware" alt="" coords="16,16,232,135"/>
+<area shape="rect" id="node2" href="dir_94813a34354871e6c37d572eb0913547.html" title="hw&#45;test" alt="" coords="229,63,301,111"/>
+<area shape="rect" id="node3" href="dir_081079849da51869e7ffd8e108d45510.html" title="src&#45;ctrl" alt="" coords="133,63,205,111"/>
+<area shape="rect" id="node4" href="dir_e22294893f77a849ce6d2d6cb97f2feb.html" title="src&#45;kckr" alt="" coords="37,63,109,111"/>
+<area shape="rect" id="clust2" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html" alt="" coords="27,52,424,121"/>
+<area shape="rect" id="clust1" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html" title="firmware" alt="" coords="16,16,435,132"/>
 </map>

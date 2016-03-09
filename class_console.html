@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('class_console.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -108,6 +108,7 @@ $(document).ready(function(){initNavTree('class_console.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_console-members.html">List of all members</a>  </div>
@@ -119,77 +120,129 @@ $(document).ready(function(){initNavTree('class_console.html','');});
 <p>Manages serial-over-USB communication with the PC.  
  <a href="class_console.html#details">More...</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a32e8c79c8579b1b076e53848c540d4e7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a32e8c79c8579b1b076e53848c540d4e7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a32e8c79c8579b1b076e53848c540d4e7">~Console</a> ()</td></tr>
+<tr class="memdesc:a32e8c79c8579b1b076e53848c540d4e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deconstructor. <br/></td></tr>
+<tr class="separator:a32e8c79c8579b1b076e53848c540d4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aaf56023eb347d2c95eda4b9a878d0699"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#aaf56023eb347d2c95eda4b9a878d0699">Init</a> ()</td></tr>
 <tr class="memdesc:aaf56023eb347d2c95eda4b9a878d0699"><td class="mdescLeft">&#160;</td><td class="mdescRight">Console initialization routine.  <a href="#aaf56023eb347d2c95eda4b9a878d0699">More...</a><br/></td></tr>
 <tr class="separator:aaf56023eb347d2c95eda4b9a878d0699"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a650e706007b150c274ee5cef199b3988"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a650e706007b150c274ee5cef199b3988">ConComCheck</a> ()</td></tr>
-<tr class="memdesc:a650e706007b150c274ee5cef199b3988"><td class="mdescLeft">&#160;</td><td class="mdescRight">console communications check.  <a href="#a650e706007b150c274ee5cef199b3988">More...</a><br/></td></tr>
-<tr class="separator:a650e706007b150c274ee5cef199b3988"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c948f8da92c34c8d02125783ce01020"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a8c948f8da92c34c8d02125783ce01020">Flush</a> ()</td></tr>
 <tr class="memdesc:a8c948f8da92c34c8d02125783ce01020"><td class="mdescLeft">&#160;</td><td class="mdescRight">flushes stdout.  <a href="#a8c948f8da92c34c8d02125783ce01020">More...</a><br/></td></tr>
 <tr class="separator:a8c948f8da92c34c8d02125783ce01020"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d6415b627a760650db294cd6ce16df0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d6415b627a760650db294cd6ce16df0"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a7d6415b627a760650db294cd6ce16df0">RequestSystemStop</a> (void)</td></tr>
-<tr class="memdesc:a7d6415b627a760650db294cd6ce16df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">requests the main loop break <br/></td></tr>
-<tr class="separator:a7d6415b627a760650db294cd6ce16df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2d46ee79c4bf7e852abc7c8d3071b66"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2d46ee79c4bf7e852abc7c8d3071b66"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#ab2d46ee79c4bf7e852abc7c8d3071b66">IsSystemStopRequested</a> (void)</td></tr>
-<tr class="memdesc:ab2d46ee79c4bf7e852abc7c8d3071b66"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns if the main loop should break <br/></td></tr>
-<tr class="separator:ab2d46ee79c4bf7e852abc7c8d3071b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f9c22fa2e525c4c0300d9f63cf216a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f9c22fa2e525c4c0300d9f63cf216a9"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a1f9c22fa2e525c4c0300d9f63cf216a9">RequestSystemStop</a> ()</td></tr>
+<tr class="memdesc:a1f9c22fa2e525c4c0300d9f63cf216a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">requests the main loop break <br/></td></tr>
+<tr class="separator:a1f9c22fa2e525c4c0300d9f63cf216a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5a8f185994281a7963290ae9417cc9c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad5a8f185994281a7963290ae9417cc9c"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#ad5a8f185994281a7963290ae9417cc9c">IsSystemStopRequested</a> ()</td></tr>
+<tr class="memdesc:ad5a8f185994281a7963290ae9417cc9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns if the main loop should break <br/></td></tr>
+<tr class="separator:ad5a8f185994281a7963290ae9417cc9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeccbf382b2b80da5a6e2bfce91c56d04"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeccbf382b2b80da5a6e2bfce91c56d04"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>IterCmdBreakReq</b> ()</td></tr>
+<tr class="separator:aeccbf382b2b80da5a6e2bfce91c56d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cb5a7aee3c499b5f948400851221c61"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6cb5a7aee3c499b5f948400851221c61"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>IterCmdBreakReq</b> (bool newState)</td></tr>
+<tr class="separator:a6cb5a7aee3c499b5f948400851221c61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a27abc4a18240c518082fb2fda070d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a27abc4a18240c518082fb2fda070d5"></a>
+static char *&#160;</td><td class="memItemRight" valign="bottom"><b>rxBufferPtr</b> ()</td></tr>
+<tr class="separator:a9a27abc4a18240c518082fb2fda070d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7dc397e38d2af9dfa058b444ae574bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae7dc397e38d2af9dfa058b444ae574bb"></a>
+static bool&#160;</td><td class="memItemRight" valign="bottom"><b>CommandReady</b> ()</td></tr>
+<tr class="separator:ae7dc397e38d2af9dfa058b444ae574bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a237b1a43bc6a37011d6d3d3081534094"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a237b1a43bc6a37011d6d3d3081534094"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>CommandHandled</b> (bool)</td></tr>
+<tr class="separator:a237b1a43bc6a37011d6d3d3081534094"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5800e85080ed9c95afd92492913955ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5800e85080ed9c95afd92492913955ef"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>changeHostname</b> (const std::string &amp;)</td></tr>
+<tr class="separator:a5800e85080ed9c95afd92492913955ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64e9ea9c7485e7dadaa790ec4b011e8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64e9ea9c7485e7dadaa790ec4b011e8b"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>changeUser</b> (const std::string &amp;)</td></tr>
+<tr class="separator:a64e9ea9c7485e7dadaa790ec4b011e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa85001d0603c9a670fd2f04bbb050553"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa85001d0603c9a670fd2f04bbb050553"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>Baudrate</b> (uint16_t)</td></tr>
+<tr class="separator:aa85001d0603c9a670fd2f04bbb050553"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab49f4cdbc18d5a7c6fb4cb095a630972"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab49f4cdbc18d5a7c6fb4cb095a630972"></a>
+static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>Baudrate</b> ()</td></tr>
+<tr class="separator:ab49f4cdbc18d5a7c6fb4cb095a630972"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65b67a78c293149519eeece3a20d351b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65b67a78c293149519eeece3a20d351b"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintHeader</b> ()</td></tr>
+<tr class="separator:a65b67a78c293149519eeece3a20d351b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33d3ade78ec47f7f230b13ac50005815"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33d3ade78ec47f7f230b13ac50005815"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>ShowLogo</b> ()</td></tr>
+<tr class="separator:a33d3ade78ec47f7f230b13ac50005815"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f0517604b8e43b833462f113fabde6e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f0517604b8e43b833462f113fabde6e"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTitle</b> (const std::string &amp;)</td></tr>
+<tr class="separator:a5f0517604b8e43b833462f113fabde6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac696abd888ac70fff5dff847fb2d2a7b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac696abd888ac70fff5dff847fb2d2a7b"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetEscEnd</b> (char c)</td></tr>
+<tr class="separator:ac696abd888ac70fff5dff847fb2d2a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a319615d03e5f958620b297918a2466fa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a319615d03e5f958620b297918a2466fa"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetHostResponse</b> ()</td></tr>
+<tr class="separator:a319615d03e5f958620b297918a2466fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a54cc0be3c6584e17e67df74da4ec6a5d"><td class="memItemLeft" align="right" valign="top">static constexpr uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a54cc0be3c6584e17e67df74da4ec6a5d">BUFFER_LENGTH</a> = 252</td></tr>
-<tr class="memdesc:a54cc0be3c6584e17e67df74da4ec6a5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">max buffer length.  <a href="#a54cc0be3c6584e17e67df74da4ec6a5d">More...</a><br/></td></tr>
-<tr class="separator:a54cc0be3c6584e17e67df74da4ec6a5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af86c26d282ed7e62ee953ce821b0d968"><td class="memItemLeft" align="right" valign="top">static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#af86c26d282ed7e62ee953ce821b0d968">NEW_LINE_CHAR</a> = 13</td></tr>
-<tr class="memdesc:af86c26d282ed7e62ee953ce821b0d968"><td class="mdescLeft">&#160;</td><td class="mdescRight">new line character.  <a href="#af86c26d282ed7e62ee953ce821b0d968">More...</a><br/></td></tr>
-<tr class="separator:af86c26d282ed7e62ee953ce821b0d968"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0444d4cca0065f3b3509b28fc12026c"><td class="memItemLeft" align="right" valign="top">static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#ab0444d4cca0065f3b3509b28fc12026c">BACKSPACE_FLAG_CHAR</a> = 127</td></tr>
-<tr class="memdesc:ab0444d4cca0065f3b3509b28fc12026c"><td class="mdescLeft">&#160;</td><td class="mdescRight">backspace flag char.  <a href="#ab0444d4cca0065f3b3509b28fc12026c">More...</a><br/></td></tr>
-<tr class="separator:ab0444d4cca0065f3b3509b28fc12026c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c4a8170508da234b30eea81a5217c99"><td class="memItemLeft" align="right" valign="top">static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a2c4a8170508da234b30eea81a5217c99">BACKSPACE_REPLY_CHAR</a> = 8</td></tr>
-<tr class="memdesc:a2c4a8170508da234b30eea81a5217c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">backspace reply char.  <a href="#a2c4a8170508da234b30eea81a5217c99">More...</a><br/></td></tr>
-<tr class="separator:a2c4a8170508da234b30eea81a5217c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43249dac74dabd5736dc0b5328e42751"><td class="memItemLeft" align="right" valign="top">static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a43249dac74dabd5736dc0b5328e42751">BACKSPACE_REPLACE_CHAR</a> = 32</td></tr>
-<tr class="memdesc:a43249dac74dabd5736dc0b5328e42751"><td class="mdescLeft">&#160;</td><td class="mdescRight">when the console backspaces, what does the last character become.  <a href="#a43249dac74dabd5736dc0b5328e42751">More...</a><br/></td></tr>
-<tr class="separator:a43249dac74dabd5736dc0b5328e42751"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c54d96a6e07c64fa8cb518216c16aee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c54d96a6e07c64fa8cb518216c16aee"></a>
-static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a7c54d96a6e07c64fa8cb518216c16aee">BREAK_CHAR</a> = 3</td></tr>
-<tr class="memdesc:a7c54d96a6e07c64fa8cb518216c16aee"><td class="mdescLeft">&#160;</td><td class="mdescRight">default ETX (0x3) <br/></td></tr>
-<tr class="separator:a7c54d96a6e07c64fa8cb518216c16aee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1591953e808f7a257b672a8254130e04"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1591953e808f7a257b672a8254130e04"></a>
-static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a1591953e808f7a257b672a8254130e04">ARROW_KEY_SEQUENCE_ONE</a> = 27</td></tr>
-<tr class="memdesc:a1591953e808f7a257b672a8254130e04"><td class="mdescLeft">&#160;</td><td class="mdescRight">define the sequence for arrow key flags <br/></td></tr>
-<tr class="separator:a1591953e808f7a257b672a8254130e04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabccd3490e90671d4efd2ec9f2dff9df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabccd3490e90671d4efd2ec9f2dff9df"></a>
-static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><b>ARROW_KEY_SEQUENCE_TWO</b> = 91</td></tr>
-<tr class="separator:aabccd3490e90671d4efd2ec9f2dff9df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae62850691823513699bb51b20fa553e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae62850691823513699bb51b20fa553e4"></a>
-static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#ae62850691823513699bb51b20fa553e4">ARROW_UP_KEY</a> = 65</td></tr>
-<tr class="memdesc:ae62850691823513699bb51b20fa553e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">arrow up value, following arrow key flag <br/></td></tr>
-<tr class="separator:ae62850691823513699bb51b20fa553e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c0a5e21fa4a168fc2f7f56029202a73"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c0a5e21fa4a168fc2f7f56029202a73"></a>
-static constexpr char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a7c0a5e21fa4a168fc2f7f56029202a73">ARROW_DOWN_KEY</a> = 66</td></tr>
-<tr class="memdesc:a7c0a5e21fa4a168fc2f7f56029202a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">arrow down value, following arrow key flag <br/></td></tr>
-<tr class="separator:a7c0a5e21fa4a168fc2f7f56029202a73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac03135af6935d26620edf616f5d1fbd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aac03135af6935d26620edf616f5d1fbd"></a>
-static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#aac03135af6935d26620edf616f5d1fbd">CONSOLE_HEADER</a> = &quot;&gt; &quot;</td></tr>
-<tr class="memdesc:aac03135af6935d26620edf616f5d1fbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">console header string. <br/></td></tr>
-<tr class="separator:aac03135af6935d26620edf616f5d1fbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a7c9ddeec8abe6288f82f0b06bb3e92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a7c9ddeec8abe6288f82f0b06bb3e92"></a>
-static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92">RX_BUFFER_FULL_MSG</a> = &quot;RX BUFFER FULL&quot;</td></tr>
-<tr class="memdesc:a3a7c9ddeec8abe6288f82f0b06bb3e92"><td class="mdescLeft">&#160;</td><td class="mdescRight">receice buffer full error message <br/></td></tr>
-<tr class="separator:a3a7c9ddeec8abe6288f82f0b06bb3e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c4c8b0bd444869286b12594dd92da3e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c4c8b0bd444869286b12594dd92da3e"></a>
-static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a7c4c8b0bd444869286b12594dd92da3e">COMMAND_BREAK_MSG</a> = &quot;*BREAK*&quot;</td></tr>
-<tr class="memdesc:a7c4c8b0bd444869286b12594dd92da3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">break message <br/></td></tr>
-<tr class="separator:a7c4c8b0bd444869286b12594dd92da3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af66997051b8b2bc90f2e3e5d84c78c0f"><td class="memItemLeft" align="right" valign="top">static constexpr uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#af66997051b8b2bc90f2e3e5d84c78c0f">BAUD_RATE</a> = 9600</td></tr>
-<tr class="memdesc:af66997051b8b2bc90f2e3e5d84c78c0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serial (over USB) baud rate.  <a href="#af66997051b8b2bc90f2e3e5d84c78c0f">More...</a><br/></td></tr>
-<tr class="separator:af66997051b8b2bc90f2e3e5d84c78c0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a2ea3b94781370ae93507472e9a22aa"><td class="memItemLeft" align="right" valign="top">static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a4a2ea3b94781370ae93507472e9a22aa">BUFFER_LENGTH</a> = 400</td></tr>
+<tr class="memdesc:a4a2ea3b94781370ae93507472e9a22aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">max buffer length.  <a href="#a4a2ea3b94781370ae93507472e9a22aa">More...</a><br/></td></tr>
+<tr class="separator:a4a2ea3b94781370ae93507472e9a22aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9ed59a4814138e95444e62d917e0511"><td class="memItemLeft" align="right" valign="top">static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#aa9ed59a4814138e95444e62d917e0511">NEW_LINE_CHAR</a> = '\r'</td></tr>
+<tr class="memdesc:aa9ed59a4814138e95444e62d917e0511"><td class="mdescLeft">&#160;</td><td class="mdescRight">new line character.  <a href="#aa9ed59a4814138e95444e62d917e0511">More...</a><br/></td></tr>
+<tr class="separator:aa9ed59a4814138e95444e62d917e0511"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17e94dc8b72067d36e3db56cccf724d3"><td class="memItemLeft" align="right" valign="top">static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a17e94dc8b72067d36e3db56cccf724d3">BACKSPACE_FLAG_CHAR</a> = 0x7F</td></tr>
+<tr class="memdesc:a17e94dc8b72067d36e3db56cccf724d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">backspace flag char.  <a href="#a17e94dc8b72067d36e3db56cccf724d3">More...</a><br/></td></tr>
+<tr class="separator:a17e94dc8b72067d36e3db56cccf724d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac16c7721fed16085a036317ac2f7e77e"><td class="memItemLeft" align="right" valign="top">static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#ac16c7721fed16085a036317ac2f7e77e">BACKSPACE_REPLY_CHAR</a> = '\b'</td></tr>
+<tr class="memdesc:ac16c7721fed16085a036317ac2f7e77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">backspace reply char.  <a href="#ac16c7721fed16085a036317ac2f7e77e">More...</a><br/></td></tr>
+<tr class="separator:ac16c7721fed16085a036317ac2f7e77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a996a01817579715fc012468bc42af228"><td class="memItemLeft" align="right" valign="top">static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a996a01817579715fc012468bc42af228">BACKSPACE_REPLACE_CHAR</a> = ' '</td></tr>
+<tr class="memdesc:a996a01817579715fc012468bc42af228"><td class="mdescLeft">&#160;</td><td class="mdescRight">when the console backspaces, what does the last character become.  <a href="#a996a01817579715fc012468bc42af228">More...</a><br/></td></tr>
+<tr class="separator:a996a01817579715fc012468bc42af228"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a41cb91e38aa1b537867cec5c303672"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a41cb91e38aa1b537867cec5c303672"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a3a41cb91e38aa1b537867cec5c303672">BREAK_CHAR</a> = 3</td></tr>
+<tr class="memdesc:a3a41cb91e38aa1b537867cec5c303672"><td class="mdescLeft">&#160;</td><td class="mdescRight">default ETX (0x3) <br/></td></tr>
+<tr class="separator:a3a41cb91e38aa1b537867cec5c303672"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72ba95518e7c0a25d09a2dabb14981ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72ba95518e7c0a25d09a2dabb14981ef"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ESC_START</b> = 0x1B</td></tr>
+<tr class="separator:a72ba95518e7c0a25d09a2dabb14981ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae792fe5ee826ba4b35c6340622827449"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae792fe5ee826ba4b35c6340622827449"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ESC_SEQ_START</b> = '['</td></tr>
+<tr class="separator:ae792fe5ee826ba4b35c6340622827449"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88ac566a85fe725564744034b909a778"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88ac566a85fe725564744034b909a778"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a88ac566a85fe725564744034b909a778">ESCAPE_SEQ_ONE</a> = 27</td></tr>
+<tr class="memdesc:a88ac566a85fe725564744034b909a778"><td class="mdescLeft">&#160;</td><td class="mdescRight">define the sequence for arrow key flags <br/></td></tr>
+<tr class="separator:a88ac566a85fe725564744034b909a778"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fc1bfb4f1ea91eca996ae9a9c0f2dc2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9fc1bfb4f1ea91eca996ae9a9c0f2dc2"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ESCAPE_SEQ_TWO</b> = '['</td></tr>
+<tr class="separator:a9fc1bfb4f1ea91eca996ae9a9c0f2dc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7074be77806818e8e0099408c3e45b34"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7074be77806818e8e0099408c3e45b34"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ARROW_UP_KEY</b> = 'A'</td></tr>
+<tr class="separator:a7074be77806818e8e0099408c3e45b34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a784515720d90a250e007d7ae3bfd86a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a784515720d90a250e007d7ae3bfd86a8"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ARROW_DOWN_KEY</b> = 'B'</td></tr>
+<tr class="separator:a784515720d90a250e007d7ae3bfd86a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a853be7ae6d4bcac13e1384695f40a5ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a853be7ae6d4bcac13e1384695f40a5ad"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ARROW_LEFT_KEY</b> = 'C'</td></tr>
+<tr class="separator:a853be7ae6d4bcac13e1384695f40a5ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a424091f7661b9c2f34b40427db3b20e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a424091f7661b9c2f34b40427db3b20e0"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>ARROW_RIGHT_KEY</b> = 'D'</td></tr>
+<tr class="separator:a424091f7661b9c2f34b40427db3b20e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c4e1f5575bb183bccba0dafa21d5f05"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c4e1f5575bb183bccba0dafa21d5f05"></a>
+static const char&#160;</td><td class="memItemRight" valign="bottom"><b>CMD_END_CHAR</b> = ';'</td></tr>
+<tr class="separator:a9c4e1f5575bb183bccba0dafa21d5f05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96a9c94af44db0e2430971df40ee9afe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96a9c94af44db0e2430971df40ee9afe"></a>
+static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a96a9c94af44db0e2430971df40ee9afe">RX_BUFFER_FULL_MSG</a> = &quot;RX BUFFER FULL&quot;</td></tr>
+<tr class="memdesc:a96a9c94af44db0e2430971df40ee9afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">receice buffer full error message <br/></td></tr>
+<tr class="separator:a96a9c94af44db0e2430971df40ee9afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cb18c172823884348832b52817fa9c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4cb18c172823884348832b52817fa9c2"></a>
+static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_console.html#a4cb18c172823884348832b52817fa9c2">COMMAND_BREAK_MSG</a> = &quot;*BREAK*\033[K&quot;</td></tr>
+<tr class="memdesc:a4cb18c172823884348832b52817fa9c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">break message <br/></td></tr>
+<tr class="separator:a4cb18c172823884348832b52817fa9c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages serial-over-USB communication with the PC. </p>
@@ -203,33 +256,6 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 <area shape="rect" id="node2" title="STL class. " alt="" coords="30,99,116,125"/><area shape="rect" id="node3" title="STL class. " alt="" coords="5,6,141,47"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a650e706007b150c274ee5cef199b3988"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Console::ConComCheck </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>console communications check. </p>
-<p>should be called in the main loop. </p>
-
-</div>
-</div>
 <a class="anchor" id="a8c948f8da92c34c8d02125783ce01020"></a>
 <div class="memitem">
 <div class="memproto">
@@ -283,7 +309,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="ab0444d4cca0065f3b3509b28fc12026c"></a>
+<a class="anchor" id="a17e94dc8b72067d36e3db56cccf724d3"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -291,7 +317,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr char Console::BACKSPACE_FLAG_CHAR = 127</td>
+          <td class="memname">const char Console::BACKSPACE_FLAG_CHAR = 0x7F</td>
         </tr>
       </table>
   </td>
@@ -306,7 +332,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 
 </div>
 </div>
-<a class="anchor" id="a43249dac74dabd5736dc0b5328e42751"></a>
+<a class="anchor" id="a996a01817579715fc012468bc42af228"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -314,7 +340,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr char Console::BACKSPACE_REPLACE_CHAR = 32</td>
+          <td class="memname">const char Console::BACKSPACE_REPLACE_CHAR = ' '</td>
         </tr>
       </table>
   </td>
@@ -329,7 +355,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 
 </div>
 </div>
-<a class="anchor" id="a2c4a8170508da234b30eea81a5217c99"></a>
+<a class="anchor" id="ac16c7721fed16085a036317ac2f7e77e"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -337,7 +363,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr char Console::BACKSPACE_REPLY_CHAR = 8</td>
+          <td class="memname">const char Console::BACKSPACE_REPLY_CHAR = '\b'</td>
         </tr>
       </table>
   </td>
@@ -352,7 +378,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 
 </div>
 </div>
-<a class="anchor" id="af66997051b8b2bc90f2e3e5d84c78c0f"></a>
+<a class="anchor" id="a4a2ea3b94781370ae93507472e9a22aa"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -360,30 +386,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr uint16_t Console::BAUD_RATE = 9600</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Serial (over USB) baud rate. </p>
-<p>Default 9600. Screen default 9600 </p>
-
-</div>
-</div>
-<a class="anchor" id="a54cc0be3c6584e17e67df74da4ec6a5d"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr uint8_t Console::BUFFER_LENGTH = 252</td>
+          <td class="memname">const uint16_t Console::BUFFER_LENGTH = 400</td>
         </tr>
       </table>
   </td>
@@ -394,11 +397,11 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 </div><div class="memdoc">
 
 <p>max buffer length. </p>
-<p>Default 252 (three lines) </p>
+<p>Default 400 (five lines) </p>
 
 </div>
 </div>
-<a class="anchor" id="af86c26d282ed7e62ee953ce821b0d968"></a>
+<a class="anchor" id="aa9ed59a4814138e95444e62d917e0511"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -406,7 +409,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr char Console::NEW_LINE_CHAR = 13</td>
+          <td class="memname">const char Console::NEW_LINE_CHAR = '\r'</td>
         </tr>
       </table>
   </td>
@@ -422,8 +425,8 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>firmware/robot2015/cpu/<a class="el" href="console_8hpp_source.html">console.hpp</a></li>
-<li>firmware/robot2015/cpu/console.cpp</li>
+<li>firmware/common2015/modules/Console/<a class="el" href="_console_8hpp_source.html">Console.hpp</a></li>
+<li>firmware/common2015/modules/Console/Console.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -431,7 +434,7 @@ static const std::string&#160;</td><td class="memItemRight" valign="bottom"><a c
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_console.html">Console</a></li>
-    <li class="footer">Generated on Wed Feb 17 2016 03:47:18 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 9 2016 02:50:35 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

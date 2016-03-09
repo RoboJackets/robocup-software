@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
+  ['backspace_5fflag_5fchar',['BACKSPACE_FLAG_CHAR',['../class_console.html#a17e94dc8b72067d36e3db56cccf724d3',1,'Console']]],
+  ['backspace_5freplace_5fchar',['BACKSPACE_REPLACE_CHAR',['../class_console.html#a996a01817579715fc012468bc42af228',1,'Console']]],
+  ['backspace_5freply_5fchar',['BACKSPACE_REPLY_CHAR',['../class_console.html#ac16c7721fed16085a036317ac2f7e77e',1,'Console']]],
   ['ball',['Ball',['../class_ball.html',1,'']]],
+  ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
   ['ball_5fkicked',['ball_kicked',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ab134fec61f3cf70d14df09c0b8b9cf17',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
   ['ballmatrix',['ballMatrix',['../group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a',1,'Gameplay::GameplayModule']]],
@@ -21,7 +24,9 @@ var searchData=
   ['block_5fline',['block_line',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
   ['blueteam',['blueTeam',['../class_processor.html#a1a61818c88b94200bba7f56a5cc7de76',1,'Processor']]],
   ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]],
+  ['break_5fchar',['BREAK_CHAR',['../class_console.html#a3a41cb91e38aa1b537867cec5c303672',1,'Console']]],
   ['brightness',['brightness',['../class_neo_strip.html#a59bb97cced13cdf49e6ef4b5db0ca480',1,'NeoStrip']]],
+  ['buffer_5flength',['BUFFER_LENGTH',['../class_console.html#a4a2ea3b94781370ae93507472e9a22aa',1,'Console']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]],
   ['buzzer',['Buzzer',['../class_buzzer.html',1,'']]],
   ['build_20systems',['Build Systems',['../md_doc__build_systems.html',1,'']]]

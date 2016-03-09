@@ -256,6 +256,11 @@ var annotated =
       [ "ShapeSet", "class_geometry2d_1_1_shape_set.html", "class_geometry2d_1_1_shape_set" ],
       [ "TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", "class_geometry2d_1_1_transform_matrix" ]
     ] ],
+    [ "mbed", null, [
+      [ "I2CDriver", "classmbed_1_1_i2_c_driver.html", "classmbed_1_1_i2_c_driver" ],
+      [ "I2CMasterRtos", "classmbed_1_1_i2_c_master_rtos.html", "classmbed_1_1_i2_c_master_rtos" ],
+      [ "I2CSlaveRtos", "classmbed_1_1_i2_c_slave_rtos.html", "classmbed_1_1_i2_c_slave_rtos" ]
+    ] ],
     [ "Planning", null, [
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
       [ "DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", "class_planning_1_1_direct_target_path_planner" ],
@@ -287,6 +292,11 @@ var annotated =
       [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ],
       [ "FixedStepTree", "class_planning_1_1_fixed_step_tree.html", "class_planning_1_1_fixed_step_tree" ]
     ] ],
+    [ "rtp", null, [
+      [ "header_data", "classrtp_1_1header__data.html", "classrtp_1_1header__data" ],
+      [ "payload_data", "classrtp_1_1payload__data.html", "classrtp_1_1payload__data" ],
+      [ "packet", "classrtp_1_1packet.html", "classrtp_1_1packet" ]
+    ] ],
     [ "test_constants", null, [
       [ "TestConstants", "classtest__constants_1_1_test_constants.html", "classtest__constants_1_1_test_constants" ]
     ] ],
@@ -309,7 +319,13 @@ var annotated =
     [ "BatteryProfile", "class_battery_profile.html", "class_battery_profile" ],
     [ "BatteryWidget", "class_battery_widget.html", "class_battery_widget" ],
     [ "Buzzer", "class_buzzer.html", "class_buzzer" ],
+    [ "CC1101", "class_c_c1101.html", "class_c_c1101" ],
+    [ "CC1201", "class_c_c1201.html", "class_c_c1201" ],
     [ "command_t", "structcommand__t.html", "structcommand__t" ],
+    [ "CommLink", "class_comm_link.html", "class_comm_link" ],
+    [ "CommModule", "class_comm_module.html", "class_comm_module" ],
+    [ "CommPort", "class_comm_port.html", "class_comm_port" ],
+    [ "CommPorts", "class_comm_ports.html", "class_comm_ports" ],
     [ "ConfigBool", "class_config_bool.html", "class_config_bool" ],
     [ "ConfigDouble", "class_config_double.html", "class_config_double" ],
     [ "ConfigInt", "class_config_int.html", "class_config_int" ],
@@ -317,6 +333,7 @@ var annotated =
     [ "Configurable", "class_configurable.html", "class_configurable" ],
     [ "ConfigurableImpl", "class_configurable_impl.html", "class_configurable_impl" ],
     [ "Configuration", "class_configuration.html", "class_configuration" ],
+    [ "Console", "class_console.html", "class_console" ],
     [ "DebugQMutex", "class_debug_q_mutex.html", "class_debug_q_mutex" ],
     [ "DS2411_t", "struct_d_s2411__t.html", "struct_d_s2411__t" ],
     [ "ExceptionIterator", "class_exception_iterator.html", "class_exception_iterator" ],
@@ -332,8 +349,10 @@ var annotated =
     [ "KickerBoard", "class_kicker_board.html", "class_kicker_board" ],
     [ "Logger", "class_logger.html", "class_logger" ],
     [ "LogViewer", "class_log_viewer.html", "class_log_viewer" ],
+    [ "MailHelper", "class_mail_helper.html", "class_mail_helper" ],
     [ "MainWindow", "class_main_window.html", "class_main_window" ],
     [ "MCP23017", "class_m_c_p23017.html", null ],
+    [ "modem_t", "structmodem__t.html", "structmodem__t" ],
     [ "MotionConstraints", "struct_motion_constraints.html", "struct_motion_constraints" ],
     [ "MotionControl", "class_motion_control.html", "class_motion_control" ],
     [ "motor_t", "structmotor__t.html", "structmotor__t" ],
@@ -345,12 +364,15 @@ var annotated =
     [ "NewRefereePacket", "class_new_referee_packet.html", "class_new_referee_packet" ],
     [ "OpponentRobot", "class_opponent_robot.html", "class_opponent_robot" ],
     [ "OurRobot", "class_our_robot.html", "class_our_robot" ],
+    [ "pck_ctrl_t", "structpck__ctrl__t.html", "structpck__ctrl__t" ],
     [ "Pid", "class_pid.html", "class_pid" ],
     [ "Processor", "class_processor.html", "class_processor" ],
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
     [ "QuaternionDemo", "class_quaternion_demo.html", "class_quaternion_demo" ],
     [ "Radio", "class_radio.html", "class_radio" ],
     [ "RefereeTab", "class_referee_tab.html", "class_referee_tab" ],
+    [ "registerSetting_t", "structregister_setting__t.html", "structregister_setting__t" ],
+    [ "rf_settings_t", "structrf__settings__t.html", "structrf__settings__t" ],
     [ "Robot", "class_robot.html", "class_robot" ],
     [ "RobotConfig", "class_robot_config.html", "class_robot_config" ],
     [ "RobotFilter", "class_robot_filter.html", "class_robot_filter" ],
@@ -362,6 +384,7 @@ var annotated =
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],
     [ "SimRadio", "class_sim_radio.html", "class_sim_radio" ],
+    [ "SoftwareSPI", "class_software_s_p_i.html", "class_software_s_p_i" ],
     [ "SpaceNavJoystick", "class_space_nav_joystick.html", "class_space_nav_joystick" ],
     [ "StripChart", "class_strip_chart.html", "class_strip_chart" ],
     [ "SystemState", "class_system_state.html", "class_system_state" ],
@@ -370,6 +393,7 @@ var annotated =
     [ "USBRadio", "class_u_s_b_radio.html", "class_u_s_b_radio" ],
     [ "VisionPacket", "class_vision_packet.html", "class_vision_packet" ],
     [ "VisionReceiver", "class_vision_receiver.html", "class_vision_receiver" ],
+    [ "Watchdog", "class_watchdog.html", null ],
     [ "Window", "class_window.html", "class_window" ],
     [ "WindowEvaluator", "class_window_evaluator.html", "class_window_evaluator" ]
 ];

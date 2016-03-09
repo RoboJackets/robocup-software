@@ -7,6 +7,7 @@ var searchData=
   ['nearpoint',['nearPoint',['../class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb',1,'Geometry2d::Point']]],
   ['neocolor',['NeoColor',['../struct_neo_color.html',1,'']]],
   ['neostrip',['NeoStrip',['../class_neo_strip.html',1,'NeoStrip'],['../class_neo_strip.html#a6e3142ef98589c57c55e7019e83d8076',1,'NeoStrip::NeoStrip()']]],
+  ['new_5fline_5fchar',['NEW_LINE_CHAR',['../class_console.html#aa9ed59a4814138e95444e62d917e0511',1,'Console']]],
   ['newrefereemodule',['NewRefereeModule',['../class_new_referee_module.html',1,'']]],
   ['newrefereepacket',['NewRefereePacket',['../class_new_referee_packet.html',1,'']]],
   ['node',['Node',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html',1,'gameplay::play_registry::PlayRegistry']]],

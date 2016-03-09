@@ -83,6 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
+      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -135,7 +136,7 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -156,6 +157,8 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
 </li>
 <li>read()
 : <a class="el" href="class_i_o_expander_digital_in_out.html#aadb911534925464a879aa7532185d26a">IOExpanderDigitalInOut</a>
+, <a class="el" href="classmbed_1_1_i2_c_master_rtos.html#a4065d091effdaa015d21ea9e969f64f5">mbed::I2CMasterRtos</a>
+, <a class="el" href="classmbed_1_1_i2_c_slave_rtos.html#abd6b7c901406a88af85527151693b39d">mbed::I2CSlaveRtos</a>
 , <a class="el" href="class_m_p_u6050.html#a15c32474ee5351cd57c25621feb90b2b">MPU6050</a>
 </li>
 <li>read_bit()
@@ -164,8 +167,23 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
 <li>read_mask()
 : <a class="el" href="class_m_c_p23017.html#ad684a699454f730f7098e7a625210f51">MCP23017</a>
 </li>
+<li>readMaster()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a03d9f785555bb3909510290ca73cb74a">mbed::I2CDriver</a>
+</li>
+<li>readReg()
+: <a class="el" href="class_c_c1201.html#a121b93c498849f41b659e87638443808">CC1201</a>
+</li>
+<li>readSlave()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a3950f5d02a4a27c48d215cdc218e958e">mbed::I2CDriver</a>
+</li>
+<li>ready()
+: <a class="el" href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">CommLink</a>
+</li>
 <li>recalculate_aim_target_point()
 : <a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html#a75bd883862175e5633582c1bbdfc510a">gameplay.skills._kick._Kick</a>
+</li>
+<li>receive()
+: <a class="el" href="classmbed_1_1_i2_c_slave_rtos.html#ad70ee9f8fa39ef8f5b4e46c681b75d64">mbed::I2CSlaveRtos</a>
 </li>
 <li>receive_point()
 : <a class="el" href="classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#afc0527fde8258483ab9d3800e988f352">gameplay.skills.pass_receive.PassReceive</a>
@@ -174,11 +192,23 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
 : <a class="el" href="class_new_referee_packet.html#acf78573f58b10fd8d08e1f896acbcb75">NewRefereePacket</a>
 , <a class="el" href="class_vision_packet.html#aee11124c0a33ca42fe549397fe29ca20">VisionPacket</a>
 </li>
+<li>receiveSlave()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a3de96755baaf4fd0ca1115ded49d5279">mbed::I2CDriver</a>
+</li>
 <li>receiving
 : <a class="el" href="classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html#aa1b8b40765471a49cd54f5d7da8793e5">gameplay.skills.pass_receive.PassReceive.State</a>
 </li>
+<li>Renew()
+: <a class="el" href="class_watchdog.html#a00940bf899728fd1649c0914fc3ffbdc">Watchdog</a>
+</li>
+<li>RequestSystemStop()
+: <a class="el" href="class_console.html#a1f9c22fa2e525c4c0300d9f63cf216a9">Console</a>
+</li>
 <li>reset()
-: <a class="el" href="class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25">GamepadJoystick</a>
+: <a class="el" href="class_c_c1101.html#a1fc87275c6f5d7f6927ca51a175eba21">CC1101</a>
+, <a class="el" href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">CC1201</a>
+, <a class="el" href="class_comm_link.html#a9b3157ab0bbfd8fc2103f4a3c1f37e8b">CommLink</a>
+, <a class="el" href="class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25">GamepadJoystick</a>
 , <a class="el" href="class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8">Joystick</a>
 , <a class="el" href="class_m_c_p23017.html#a8e108f5da7099d11e6916e0badc133c0">MCP23017</a>
 , <a class="el" href="class_space_nav_joystick.html#ac855a0204a9e0e6073b1754b6f7d2de2">SpaceNavJoystick</a>
@@ -205,7 +235,7 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
 : <a class="el" href="classgameplay_1_1fs__watcher_1_1_fs_watcher.html#abbb36f0d7368f6d11ea650b15c89b852">gameplay.fs_watcher.FsWatcher</a>
 </li>
 <li>rotate()
-: <a class="el" href="class_geometry2d_1_1_point.html#a4a89479b6394a4d0867664a4f7599625">Geometry2d::Point</a>
+: <a class="el" href="class_geometry2d_1_1_point.html#a699f0e416909f6efd61b94d2761132b3">Geometry2d::Point</a>
 </li>
 <li>rotated()
 : <a class="el" href="class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048">Geometry2d::Point</a>
@@ -225,8 +255,14 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
 <li>runRRT()
 : <a class="el" href="class_planning_1_1_r_r_t_planner.html#a3e7b74bc4b00f995b74f6e7f91306520">Planning::RRTPlanner</a>
 </li>
+<li>RX_BUFFER_FULL_MSG
+: <a class="el" href="class_console.html#a96a9c94af44db0e2430971df40ee9afe">Console</a>
+</li>
 <li>rxIsFresh()
 : <a class="el" href="class_our_robot.html#a1b0dc40e35e1aaca2e6d8ece9219b81e">OurRobot</a>
+</li>
+<li>RxStatus
+: <a class="el" href="classmbed_1_1_i2_c_slave_rtos.html#a1349b73a76afd090ae1a306df3ff0bd4">mbed::I2CSlaveRtos</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -234,7 +270,7 @@ $(document).ready(function(){initNavTree('functions_r.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 6 2016 19:27:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 9 2016 02:50:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

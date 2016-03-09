@@ -83,6 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
+      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -135,7 +136,7 @@ $(document).ready(function(){initNavTree('functions_w.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -163,8 +164,11 @@ $(document).ready(function(){initNavTree('functions_w.html','');});
 </li>
 <li>write()
 : <a class="el" href="class_i_o_expander_digital_in_out.html#a8e38c7ba9752a8c53e28b5950b4f4641">IOExpanderDigitalInOut</a>
+, <a class="el" href="classmbed_1_1_i2_c_master_rtos.html#ae79c43b6463b02750da1f850bced1a2c">mbed::I2CMasterRtos</a>
+, <a class="el" href="classmbed_1_1_i2_c_slave_rtos.html#ab99a93145171220d66b3fa103d689603">mbed::I2CSlaveRtos</a>
 , <a class="el" href="class_m_p_u6050.html#af7e608116e7b50aa3ffc0420d4c6587c">MPU6050</a>
 , <a class="el" href="class_neo_strip.html#aa063df5bd820582d4a41bdfb385a83aa">NeoStrip</a>
+, <a class="el" href="class_software_s_p_i.html#a7345be80973951847fcceb45be4032ec">SoftwareSPI</a>
 </li>
 <li>write_bit()
 : <a class="el" href="class_m_c_p23017.html#aa34c0f671c781acba2928bdfd04ede36">MCP23017</a>
@@ -172,13 +176,19 @@ $(document).ready(function(){initNavTree('functions_w.html','');});
 <li>write_mask()
 : <a class="el" href="class_m_c_p23017.html#ab6425c4329437377569e727398a84357">MCP23017</a>
 </li>
+<li>writeMaster()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#acdd51e043b788fa3352b86595b346d71">mbed::I2CDriver</a>
+</li>
+<li>writeSlave()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a9b69b9bef095f7d99c2a1987c0c16998">mbed::I2CDriver</a>
+</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 6 2016 19:27:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 9 2016 02:50:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

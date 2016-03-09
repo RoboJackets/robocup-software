@@ -1,22 +1,10 @@
 var searchData=
 [
-  ['passreceive',['PassReceive',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html',1,'gameplay::skills::pass_receive']]],
-  ['path',['Path',['../class_planning_1_1_path.html',1,'Planning']]],
-  ['pathtargetcommand',['PathTargetCommand',['../struct_planning_1_1_path_target_command.html',1,'Planning']]],
-  ['penalty',['Penalty',['../classgameplay_1_1tactics_1_1penalty_1_1_penalty.html',1,'gameplay::tactics::penalty']]],
-  ['pid',['PID',['../struct_robot_config_1_1_p_i_d.html',1,'RobotConfig']]],
-  ['pid',['Pid',['../class_pid.html',1,'']]],
-  ['pivotcommand',['PivotCommand',['../struct_planning_1_1_pivot_command.html',1,'Planning']]],
-  ['pivoter',['Pivoter',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html',1,'gameplay::plays::tuning::tune_pivot']]],
-  ['pivotkick',['PivotKick',['../classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html',1,'gameplay::skills::pivot_kick']]],
-  ['pivotpathplanner',['PivotPathPlanner',['../class_planning_1_1_pivot_path_planner.html',1,'Planning']]],
-  ['planrequest',['PlanRequest',['../struct_planning_1_1_plan_request.html',1,'Planning']]],
-  ['play',['Play',['../classgameplay_1_1play_1_1_play.html',1,'gameplay::play']]],
-  ['playregistry',['PlayRegistry',['../classgameplay_1_1play__registry_1_1_play_registry.html',1,'gameplay::play_registry']]],
-  ['point',['Point',['../class_planning_1_1_tree_1_1_point.html',1,'Planning::Tree']]],
-  ['point',['Point',['../class_geometry2d_1_1_point.html',1,'Geometry2d']]],
-  ['pointmagnitude',['PointMagnitude',['../struct_chart_1_1_point_magnitude.html',1,'Chart']]],
-  ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html',1,'Geometry2d']]],
-  ['processor',['Processor',['../class_processor.html',1,'']]],
-  ['protobuftree',['ProtobufTree',['../class_protobuf_tree.html',1,'']]]
+  ['onetouchpass',['OneTouchPass',['../classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html',1,'gameplay::tactics::one_touch_pass']]],
+  ['opponentrobot',['OpponentRobot',['../class_opponent_robot.html',1,'']]],
+  ['ourcornerkick',['OurCornerKick',['../classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html',1,'gameplay::plays::restarts::our_corner_kick']]],
+  ['ourfreekick',['OurFreeKick',['../classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html',1,'gameplay::plays::restarts::our_free_kick']]],
+  ['ourgoalkick',['OurGoalKick',['../classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html',1,'gameplay::plays::restarts::our_goal_kick']]],
+  ['ourkickoff',['OurKickoff',['../classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html',1,'gameplay::plays::restarts::our_kickoff']]],
+  ['ourrobot',['OurRobot',['../class_our_robot.html',1,'']]]
 ];

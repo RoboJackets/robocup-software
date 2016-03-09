@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['m_5fchannel',['m_channel',['../classmbed_1_1_i2_c_driver.html#a6edb3a7172d31210d3a71e2b00b1299e',1,'mbed::I2CDriver']]],
   ['marking',['marking',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html#af2a35d11f5559f142fbcbde709d15f85',1,'gameplay.tactics.positions.defender.Defender.State.marking()'],['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html#a52acc28e0de41bdfd50f7449da4278f3',1,'gameplay.tactics.positions.submissive_defender.SubmissiveDefender.State.marking()']]],
   ['max_5fchip_5frange',['max_chip_range',['../class_window_evaluator.html#a6641bdc834df39a40c1eb2fc8e377378',1,'WindowEvaluator']]],
   ['maxkick',['maxKick',['../struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b',1,'RobotConfig::Kicker']]],

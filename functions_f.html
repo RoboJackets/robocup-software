@@ -83,6 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
+      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -135,7 +136,7 @@ $(document).ready(function(){initNavTree('functions_f.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -169,8 +170,19 @@ $(document).ready(function(){initNavTree('functions_f.html','');});
 <li>flash()
 : <a class="el" href="class_kicker_board.html#aa0e0d131b68af8a220f4d4fb13061d8a">KickerBoard</a>
 </li>
+<li>Flush()
+: <a class="el" href="class_console.html#a8c948f8da92c34c8d02125783ce01020">Console</a>
+</li>
 <li>forbidden_ball_toucher()
 : <a class="el" href="classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html#a258dc70d4e9f2199dacc5a0ecfaf7826">gameplay.evaluation.double_touch.DoubleTouchTracker</a>
+</li>
+<li>format()
+: <a class="el" href="class_software_s_p_i.html#aaa68c93e72553b8faf060d3c57d47759">SoftwareSPI</a>
+</li>
+<li>frequency()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#aa6ac64e32fb10ce302e44b8bd4a588e9">mbed::I2CDriver</a>
+, <a class="el" href="classmbed_1_1_i2_c_master_rtos.html#ab224356fe4ded4c32286514760d39b72">mbed::I2CMasterRtos</a>
+, <a class="el" href="classmbed_1_1_i2_c_slave_rtos.html#aa71074276ad54c6ed82dfd12287b946b">mbed::I2CSlaveRtos</a>
 </li>
 <li>FromRegisteredConfigurables()
 : <a class="el" href="class_configuration.html#aca77602fde525eceef3be66fa02061a4">Configuration</a>
@@ -181,7 +193,7 @@ $(document).ready(function(){initNavTree('functions_f.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 6 2016 19:27:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 9 2016 02:50:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -23,7 +23,8 @@ var NAVTREE =
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ],
-        [ "Typedefs", "functions_type.html", null ]
+        [ "Typedefs", "functions_type.html", null ],
+        [ "Enumerations", "functions_enum.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -35,15 +36,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_configurable_impl.html#a7f25b9bc5725426551ca372ceca21e12",
-"class_geometry2d_1_1_point.html#a4a89479b6394a4d0867664a4f7599625",
-"class_neo_strip.html#aabfa67bbc4f42769d7913fb3323b67ad",
-"class_planning_1_1_path.html#aed4a59aa878ef5e55fd0e870eb625054",
-"class_sim_field_view.html#a9d1d1ca4fe1b044d31697a7364f33c94",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4e31aa650e2de651f8ece2c4ad0c5597",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a97f1dcb127fbf90a9a89871a2ffb3882",
-"classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab0e7917fca286f5617781450ca11d962",
-"functions_m.html"
+"class_c_c1101.html#afa7f7ecd35d338d219033d56a9428809",
+"class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa97fbd6196b35a3c30dc4626a54acd282",
+"class_geometry2d_1_1_segment.html#aff0156971f29d02ee141a89c1546099f",
+"class_our_robot.html#a74b5d6dd58891d208dbdd25c7e873e1d",
+"class_protobuf_tree.html#a1e537a7fdbab9801c0ffe37ce688771d",
+"class_vision_packet.html",
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#aa4dc347ba2e7fe90463dae17e9207477",
+"classgameplay_1_1skills_1_1aim_1_1_aim.html#a3644a64ec8e6fc66cd7ea4e130d47da4",
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html",
+"functions_b.html",
+"struct_robot_config_1_1_p_i_d.html#ae102a6d6644ed471d0fef7fefdae772c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

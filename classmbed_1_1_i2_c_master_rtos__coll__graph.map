@@ -1,0 +1,4 @@
+<map id="mbed::I2CMasterRtos" name="mbed::I2CMasterRtos">
+<area shape="rect" id="node2" href="$classmbed_1_1_i2_c_driver.html" title="I2C driver based on mbed RTOS and I2C&#45;C&#45;API. " alt="" coords="35,109,160,136"/>
+<area shape="rect" id="node3" href="$structmbed_1_1_i2_c_driver_1_1_channel.html" title="mbed::I2CDriver::Channel" alt="" coords="5,5,189,32"/>
+</map>

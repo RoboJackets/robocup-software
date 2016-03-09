@@ -83,6 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li class="current"><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
+      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -133,7 +134,7 @@ $(document).ready(function(){initNavTree('functions_func_c.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -149,11 +150,17 @@ $(document).ready(function(){initNavTree('functions_func_c.html','');});
 <li>calculateFieldObstacles()
 : <a class="el" href="class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d">Gameplay::GameplayModule</a>
 </li>
+<li>CC1101()
+: <a class="el" href="class_c_c1101.html#a6ccc6ed9f17c36d59e38a9c57e441a8f">CC1101</a>
+</li>
 <li>centerMatrix()
 : <a class="el" href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">Gameplay::GameplayModule</a>
 </li>
 <li>CenterRadius()
 : <a class="el" href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">Field_Dimensions</a>
+</li>
+<li>channel()
+: <a class="el" href="class_c_c1101.html#aef053a0ffa61bab00aee00fcc2a69e5e">CC1101</a>
 </li>
 <li>charged()
 : <a class="el" href="class_our_robot.html#a141c819500dd3fad0054ddc8a9aff964">OurRobot</a>
@@ -172,6 +179,10 @@ $(document).ready(function(){initNavTree('functions_func_c.html','');});
 </li>
 <li>clamp()
 : <a class="el" href="class_geometry2d_1_1_point.html#a78e72ad69d5facc315e7cd9e6f47d05a">Geometry2d::Point</a>
+</li>
+<li>cleanup()
+: <a class="el" href="class_comm_link.html#a1dc346c4eecfc4cabf588eaf651f26e8">CommLink</a>
+, <a class="el" href="class_comm_module.html#a219975e2be4266a0ab55a000ab3423f6">CommModule</a>
 </li>
 <li>clear()
 : <a class="el" href="class_geometry2d_1_1_composite_shape.html#ae8a9e41ef5fe8929ca8a058236032c4a">Geometry2d::CompositeShape</a>
@@ -198,6 +209,9 @@ $(document).ready(function(){initNavTree('functions_func_c.html','');});
 , <a class="el" href="class_planning_1_1_single_robot_path_planner.html#a4639ec1ebd831d32d15a878419f33f3f">Planning::SingleRobotPathPlanner</a>
 , <a class="el" href="class_planning_1_1_target_vel_path_planner.html#aae1185aba167a50e37043c87e3c740bc">Planning::TargetVelPathPlanner</a>
 </li>
+<li>CommLink()
+: <a class="el" href="class_comm_link.html#aab23cf5e0eba03d1aad2423d08c3361f">CommLink</a>
+</li>
 <li>CompositePath()
 : <a class="el" href="class_planning_1_1_composite_path.html#abc6160d85809ed87b08458aa2dafd58c">Planning::CompositePath</a>
 </li>
@@ -218,7 +232,7 @@ $(document).ready(function(){initNavTree('functions_func_c.html','');});
 : <a class="el" href="class_window_evaluator.html#a7ab9155d6a95badbfad544fba7472217">WindowEvaluator</a>
 </li>
 <li>createRobotObstacles()
-: <a class="el" href="class_our_robot.html#a1c8096f39bcbd67ab9cac81263687b87">OurRobot</a>
+: <a class="el" href="class_our_robot.html#a096bfe0d36b529058f75fafa84aba04e">OurRobot</a>
 </li>
 <li>cubicBezier()
 : <a class="el" href="class_planning_1_1_r_r_t_planner.html#a6e916aecd22a090ee7d92efea985bffc">Planning::RRTPlanner</a>
@@ -232,7 +246,7 @@ $(document).ready(function(){initNavTree('functions_func_c.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 6 2016 19:27:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 9 2016 02:50:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -83,6 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
+      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -135,7 +136,7 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -161,6 +162,17 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
 : <a class="el" href="class_robot.html#a54366c96e4367b00216f42ae0405c552">Robot</a>
 , <a class="el" href="class_system_state.html#a34cadeb82436b321dea1144d12191759">SystemState</a>
 </li>
+<li>selfTest()
+: <a class="el" href="class_c_c1101.html#a518838e8066054c63fbe7801becedf2c">CC1101</a>
+, <a class="el" href="class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c">CC1201</a>
+, <a class="el" href="class_comm_link.html#a43c1119c09f26dba0e816f57bf1d70e0">CommLink</a>
+</li>
+<li>sendPacket()
+: <a class="el" href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">CommLink</a>
+</li>
+<li>Set()
+: <a class="el" href="class_watchdog.html#a35b747177c2780f8247fd89adc08afe2">Watchdog</a>
+</li>
 <li>setAcceleroRange()
 : <a class="el" href="class_m_p_u6050.html#a3811859c76080d0faea7ed0d43c34525">MPU6050</a>
 </li>
@@ -169,6 +181,12 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
 </li>
 <li>setCoeffs()
 : <a class="el" href="class_f_i_r_filter.html#ac3ce994b4706cbe70027320275e5f4dc">FIRFilter&lt; T &gt;</a>
+</li>
+<li>setConfig()
+: <a class="el" href="class_c_c1201.html#a758e241be6292a2e28837fa11f20754d">CC1201</a>
+</li>
+<li>setDebugEnabled()
+: <a class="el" href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">CC1201</a>
 </li>
 <li>setErrorText()
 : <a class="el" href="class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b">RobotStatusWidget</a>
@@ -224,6 +242,12 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
 <li>size()
 : <a class="el" href="class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542">Planning::InterpolatedPath</a>
 </li>
+<li>SlaveRxStatus
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a2005bc05c57dde5248a2a494f8b4e00f">mbed::I2CDriver</a>
+</li>
+<li>SoftwareSPI()
+: <a class="el" href="class_software_s_p_i.html#a0fcfd3817236c348ed837a2d62b30aa7">SoftwareSPI</a>
+</li>
 <li>spin()
 : <a class="el" href="classgameplay_1_1composite__behavior_1_1_composite_behavior.html#a100de7075392515c4dff56d48543db60">gameplay.composite_behavior.CompositeBehavior</a>
 , <a class="el" href="classgameplay_1_1fsm_1_1_state_machine.html#aa33ace9c403176134bf81d2930ff2a1d">gameplay.fsm.StateMachine</a>
@@ -232,12 +256,16 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
 : <a class="el" href="class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45">NewRefereeModule</a>
 </li>
 <li>start()
-: <a class="el" href="class_planning_1_1_angle_function_path.html#ac979786816d7b6d892d8e3588cdf9b1d">Planning::AngleFunctionPath</a>
+: <a class="el" href="classmbed_1_1_i2_c_master_rtos.html#a37d7f0abd46b29924ae64834db037bb8">mbed::I2CMasterRtos</a>
+, <a class="el" href="class_planning_1_1_angle_function_path.html#ac979786816d7b6d892d8e3588cdf9b1d">Planning::AngleFunctionPath</a>
 , <a class="el" href="class_planning_1_1_composite_path.html#aea01a9d87ba8b2dbb2133a8c9d023f2a">Planning::CompositePath</a>
 , <a class="el" href="class_planning_1_1_interpolated_path.html#a0b9c697fbaca4114e1b3947c15c56a3a">Planning::InterpolatedPath</a>
 , <a class="el" href="class_planning_1_1_path.html#a7bc15fa7dd8d22afb2a2a375d120bd6f">Planning::Path</a>
 , <a class="el" href="class_planning_1_1_trapezoidal_path.html#a7acfc7210aa23cf5ec1a185975c8f8bd">Planning::TrapezoidalPath</a>
 , <a class="el" href="class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027">Planning::Tree</a>
+</li>
+<li>startMaster()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a6ebb2df84e62811bc0d297813d66ea91">mbed::I2CDriver</a>
 </li>
 <li>startTime()
 : <a class="el" href="class_planning_1_1_angle_function_path.html#a23f1a22d7864fc43d29d61d32fde5ab2">Planning::AngleFunctionPath</a>
@@ -250,10 +278,21 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
 : <a class="el" href="class_planning_1_1_tree.html#a673cc24682fd5e8342b740599c393d85">Planning::Tree</a>
 </li>
 <li>stop()
-: <a class="el" href="class_our_robot.html#ad06cbfbea4234c95cbe813e1c8910363">OurRobot</a>
+: <a class="el" href="classmbed_1_1_i2_c_master_rtos.html#aa278b115d3baae28e0f38d6e05fb13cd">mbed::I2CMasterRtos</a>
+, <a class="el" href="classmbed_1_1_i2_c_slave_rtos.html#a531a28b366d14fb02e7bc54f3d07b6c4">mbed::I2CSlaveRtos</a>
+, <a class="el" href="class_our_robot.html#ad06cbfbea4234c95cbe813e1c8910363">OurRobot</a>
+</li>
+<li>stopMaster()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a057006a54ef33be39e4a638f2cfeba76">mbed::I2CDriver</a>
 </li>
 <li>stopped()
 : <a class="el" href="class_motion_control.html#a0d8a00158b08f848c7bd03f65f2bb2b8">MotionControl</a>
+</li>
+<li>stopSlave()
+: <a class="el" href="classmbed_1_1_i2_c_driver.html#a605b4c6d27a2339b5ff055f89958c018">mbed::I2CDriver</a>
+</li>
+<li>strobe()
+: <a class="el" href="class_c_c1101.html#a1f4b65d0800cc0979470491bf78b5f3a">CC1101</a>
 </li>
 <li>subPath()
 : <a class="el" href="class_planning_1_1_angle_function_path.html#a71eb310d432e76f072f7a27cdf9f566a">Planning::AngleFunctionPath</a>
@@ -271,7 +310,7 @@ $(document).ready(function(){initNavTree('functions_s.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Mar 6 2016 19:27:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 9 2016 02:50:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

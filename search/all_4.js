@@ -1,6 +1,7 @@
 var searchData=
 [
   ['d',['d',['../struct_robot_config_1_1_p_i_d.html#a491a7263592924e116223e8becd22a70',1,'RobotConfig::PID']]],
+  ['datarate',['datarate',['../class_c_c1101.html#afa7f7ecd35d338d219033d56a9428809',1,'CC1101']]],
   ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a17465304b544fbc51bbde5276d862635',1,'gameplay.tactics.defense.Defense.debug()']]],
   ['debugqmutex',['DebugQMutex',['../class_debug_q_mutex.html',1,'']]],
   ['debugwindowevaluator',['DebugWindowEvaluator',['../classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html',1,'gameplay::plays::testing::debug_window_evaluator']]],
@@ -20,8 +21,8 @@ var searchData=
   ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b',1,'Planning::Path::draw()'],['../class_planning_1_1_angle_function_path.html#a3e64c9408fc3041afe9df4a377c1f3bf',1,'Planning::AngleFunctionPath::draw()']]],
   ['drawing_20functions',['Drawing Functions',['../group__drawing__functions.html',1,'']]],
   ['drawteamspace',['drawTeamSpace',['../class_field_view.html#aaabad424c361d3c3e090c0967f785a41',1,'FieldView']]],
-  ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
   ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
+  ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
   ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a1247845051783e5eda54f7da8c8cfd1f',1,'gameplay::skills::line_kick::LineKick']]],
   ['ds2411_5ft',['DS2411_t',['../struct_d_s2411__t.html',1,'']]],
   ['documentation',['Documentation',['../md_doc__documentation.html',1,'']]]

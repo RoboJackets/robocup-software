@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="5,5,160,32"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_multi_robot_path_planner.html" title="Interface for Path Planners that plan paths for a set of robots. " alt="" coords="5,5,184,46"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_independent_multi_robot_path_planner.html" title="Plans paths for a collection of robots using a SingleRobotPathPlanner for each. " alt="" coords="232,5,427,46"/>
 </map>
