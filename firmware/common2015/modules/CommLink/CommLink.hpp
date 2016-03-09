@@ -57,7 +57,7 @@ public:
 
 protected:
     // write data out to the radio device using SPI
-    virtual int32_t sendData(uint8_t* buf, uint8_t len) = 0;
+    virtual int32_t sendData(const uint8_t* buf, uint8_t len) = 0;
 
     /**
      * @brief Read data from the radio's RX buffer
