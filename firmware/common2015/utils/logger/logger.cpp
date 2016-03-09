@@ -52,13 +52,13 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         time_t sys_time = time(NULL);
         strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
 
-        va_start(args, format);
-
-        fflush(stdout);
         snprintf(newFormat, sizeof(newFormat),
                "%s [%s] [%s:%d] <%s>\r\n  %s\r\n\r\n", 
 	       time_buf, LOG_LEVEL_STRING[logLevel], 
 	       source, line, func, format);
+
+        va_start(args, format);
+
         fflush(stdout);
         vprintf(newFormat, args);
         fflush(stdout);

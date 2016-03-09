@@ -2,7 +2,6 @@
 
 #include <cstdarg>
 #include <string>
-#include <iostream>
 #include <sstream>
 
 #include "rj-macros.hpp"
@@ -10,7 +9,7 @@
 // Do weird macro things for logging the filename and line for every call.
 // Also allows for disabling all logging through macros so all log calls can be
 // removed from production builds.
-//#ifdef RJ_LOGGING_EN
+#ifdef RJ_LOGGING_EN
 
 // Gets curent file name without path
 // see http://stackoverflow.com/questions/8487986/file-macro-shows-full-path
