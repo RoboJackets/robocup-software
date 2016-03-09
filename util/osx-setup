@@ -22,6 +22,9 @@ fi
 echo "-- Installing xquartz through homebrew cask"
 brew cask install xquartz
 
+echo "-- Add Tap for px4/px4/gcc-arm-none-eabi"
+brew tap PX4/homebrew-px4
+
 echo "-- Installing required homebrew packages"
 brew install $(sed 's/#.*//;/^$/d' $BASE/util/osx-packages.txt)
 

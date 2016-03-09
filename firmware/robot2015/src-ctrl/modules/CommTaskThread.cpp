@@ -122,7 +122,7 @@ void loopback_tx_cb(rtp::packet* p) {
  * @param args [description]
  */
 void Task_CommCtrl(void const* args) {
-    const osThreadId* mainID = (const osThreadId*)args;
+    const osThreadId mainID = (const osThreadId)args;
 
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
@@ -220,7 +220,7 @@ void Task_CommCtrl(void const* args) {
         MCP23017::write_mask(~(1 << (8 + 2)), 1 << (8 + 2));
 
         // signal back to main and wait until we're signaled to continue
-        osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+        osSignalSet(mainID, MAIN_TASK_CONTINUE);
         Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
         while (true) {
@@ -244,7 +244,7 @@ void Task_CommCtrl(void const* args) {
     comm_err |= 1 << 0;
 
     // signal back to main and wait until we're signaled to continue
-    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     rtp::packet pck1("motor trigger");
