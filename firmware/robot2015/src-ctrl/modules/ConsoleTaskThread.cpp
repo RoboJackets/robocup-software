@@ -13,7 +13,7 @@
  * Initializes the console
  */
 void Task_SerialConsole(void const* args) {
-    const osThreadId* mainID = (const osThreadId*)args;
+    const osThreadId mainID = (const osThreadId)args;
 
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
@@ -31,12 +31,11 @@ void Task_SerialConsole(void const* args) {
     // Let everyone know we're ok
     LOG(INIT,
         "Serial console ready!\r\n"
-        "    Thread ID:\t%u\r\n"
-        "    Priority:\t%d",
+        "    Thread ID: %u, Priority: %d",
         threadID, threadPriority);
 
     // Signal back to main and wait until we're signaled to continue
-    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     // Display RoboJackets if we're up and running at this point during startup

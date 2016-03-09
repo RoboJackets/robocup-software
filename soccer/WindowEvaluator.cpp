@@ -199,7 +199,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
                                        })};
     if (debug) {
         if (best) {
-            system->drawLine(Line{origin, best->segment.center()},
+            system->drawLine(Segment{origin, best->segment.center()},
                              QColor{"Green"}, "Debug");
         }
         for (Window& window : windows) {

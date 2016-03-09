@@ -9,7 +9,7 @@ set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(CONFIG_ROOT_NAME    ${CMAKE_CURRENT_SOURCE_DIR}/config)
 set(CONFIG_ROOT_NAME    ${CONFIG_ROOT_NAME} PARENT_SCOPE)
-set(DRIVERS             adc attiny buzzer dma ds2411 fpga mcp23017 mpu-6050 ws2811)
+set(DRIVERS             attiny buzzer ds2411 fpga mcp23017 mpu-6050 ws2811)
 set(MODULES             commands motors)
 
 # generate a list of directories that we need to include from the values set above
@@ -59,7 +59,6 @@ add_custom_target(robot2015
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
 
 add_custom_target(robot2015-prog
-    arm-none-eabi-objcopy -O binary robot2015_elf rj-robot.bin
     COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"

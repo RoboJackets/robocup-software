@@ -38,6 +38,10 @@ public:
 
     JoystickControlValues getJoystickControlValues() override;
 
+    static void createConfiguration(Configuration* cfg);
+    static ConfigDouble* DribblerPositiveDeadzone;
+    static ConfigDouble* DribblerNegativeDeadzone;
+
 protected:
     void open();
     void close();

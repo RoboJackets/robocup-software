@@ -1,9 +1,3 @@
-/*! \file autolink.cpp
-
-  A link to CommModule::Init
-
-*/
-
 #include "CommModule.hpp"
 
 #include <ctime>
@@ -24,9 +18,6 @@ CommPorts_t CommModule::_ports;
 
 std::shared_ptr<CommModule> CommModule::instance;
 
-// This one isn't apart of any class, but it's an extern in CommModule.hpp
-CommPort_t _tmpPort;
-
 // Default constructor
 CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
 
@@ -44,7 +35,7 @@ void CommModule::cleanup() {
 
 void CommModule::Init() {
     // Make sure we have an instance to work with
-    auto instance = Instance();
+    instance = Instance();
 
     // Create the data queues.
     instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
@@ -71,7 +62,7 @@ void CommModule::txThread(void const* arg) {
     // Store our priority so we know what to reset it to if ever needed
     osPriority threadPriority;
 
-    // Only continue past this point once at least one (1) hardware link is
+    // Only continue past this point once at least one hardware link is
     // initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
@@ -152,8 +143,7 @@ void CommModule::rxThread(void const* arg) {
     RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
 
     LOG(INIT,
-        "RX communication module ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
+        "RX communication module ready!\r\n    Thread ID: %u, Priority: %d",
         instance->_rxID, threadPriority);
 
     rtp::packet* p;
@@ -203,11 +193,9 @@ void CommModule::rxThread(void const* arg) {
 
 void CommModule::RxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
     if (!_ports[portNbr].Exists()) {
-        CommPort_t _tmpPort(portNbr);
-
-        _tmpPort.RXCallback() = std::bind(ptr, std::placeholders::_1);
-
-        _ports += _tmpPort;
+        CommPort_t port(portNbr);
+        port.RXCallback() = std::bind(ptr, std::placeholders::_1);
+        _ports += port;
 
     } else {
         _ports[portNbr].RXCallback() = std::bind(ptr, std::placeholders::_1);
@@ -218,11 +206,11 @@ void CommModule::RxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
 
 void CommModule::TxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
     if (!_ports[portNbr].Exists()) {
-        CommPort_t _tmpPort(portNbr);
+        CommPort_t port(portNbr);
 
-        _tmpPort.TXCallback() = std::bind(ptr, std::placeholders::_1);
+        port.TXCallback() = std::bind(ptr, std::placeholders::_1);
 
-        _ports += _tmpPort;
+        _ports += port;
 
     } else {
         _ports[portNbr].TXCallback() = std::bind(ptr, std::placeholders::_1);
@@ -233,9 +221,9 @@ void CommModule::TxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
 
 bool CommModule::openSocket(uint8_t portNbr) {
     if (!_ports[portNbr].Exists()) {
-        CommPort_t _tmpPort(portNbr);
+        CommPort_t port(portNbr);
 
-        _ports += _tmpPort;
+        _ports += port;
 
         return _ports[portNbr].Open();
     }

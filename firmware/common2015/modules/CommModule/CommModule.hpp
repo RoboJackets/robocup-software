@@ -21,9 +21,6 @@ typedef void(FunctionPtr_t)(rtp::packet*);
 typedef CommPort<FunctionPtr_t> CommPort_t;
 typedef CommPorts<FunctionPtr_t> CommPorts_t;
 
-// forward declaration of the template is needed for the class
-extern CommPort_t _tmpPort;
-
 /**
  * The CommModule class provides the packet management routing
  * by distributing incoming packets to the correct area of the
@@ -54,8 +51,8 @@ public:
     static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*),
                           uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
-            CommPort_t _tmpPort(portNbr);
-            _ports += _tmpPort;
+            CommPort_t port(portNbr);
+            _ports += port;
         }
 
         _ports[portNbr].TXCallback() =
@@ -69,8 +66,8 @@ public:
     static void RxHandler(B* obj, void (B::*mptr)(rtp::packet*),
                           uint8_t portNbr) {
         if (!_ports[portNbr].Exists()) {
-            CommPort_t _tmpPort(portNbr);
-            _ports += _tmpPort;
+            CommPort_t port(portNbr);
+            _ports += port;
         }
 
         _ports[portNbr].RXCallback() =
