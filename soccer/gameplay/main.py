@@ -260,7 +260,3 @@ def system_state():
 def set_system_state(value):
     global _system_state
     _system_state = value
-
-
-def set_field_constants(value):
-    constants.setFieldConstantsFromField_Dimensions(value)
