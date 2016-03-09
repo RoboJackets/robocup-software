@@ -64,10 +64,10 @@ extern bool isLogging;
 extern uint8_t rjLogLevel;
 
 /**
- * [Collects the stream log message into a single string to print]
- * @param logLevel [The "importance level" of the called log message.]
- * @param source   [The source of the message.]
- * @param format   [The string format for displaying the log message.]
+ * Collects the stream log message into a single string to print
+ * @param logLevel The "importance level" of the called log message.
+ * @param source   The source of the message.
+ * @param format   The string format for displaying the log message.
  */
 class LogHelper : public std::stringstream {
 public:
@@ -75,10 +75,10 @@ public:
     ~LogHelper();
 
 private:
-    uint8_t m_logLevel;
-    const char* m_source;
-    int m_line;
-    const char* m_func;
+    uint8_t _logLevel;
+    const char* _source;
+    int _line;
+    const char* _func;
 };
 
 /**

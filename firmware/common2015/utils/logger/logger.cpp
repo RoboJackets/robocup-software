@@ -17,12 +17,6 @@ uint8_t rjLogLevel;
 
 Mutex log_mutex;
 
-/**
- * [Collects the stream log message into a single string to print]
- * @param logLevel [The "importance level" of the called log message.]
- * @param source   [The source of the message.]
- * @param format   [The string format for displaying the log message.]
- */
 LogHelper::LogHelper(uint8_t logLevel, const char* source, int line,
                      const char* func) {
     m_logLevel = logLevel;
