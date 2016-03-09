@@ -104,16 +104,6 @@ protected:
         Geometry2d::Point vf);
 
     /**
-     * Uses a cubicBezier to interpolate between the points on the path and add
-     * velocity planning
-     */
-    static std::unique_ptr<Planning::InterpolatedPath> cubicBezier(
-        std::unique_ptr<Planning::InterpolatedPath> path,
-        const Geometry2d::ShapeSet* obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
-
-    /**
      * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity
      * Path Algorithm
      */
