@@ -23,7 +23,8 @@ Mutex log_mutex;
  * @param source   [The source of the message.]
  * @param format   [The string format for displaying the log message.]
  */
-LogHelper::LogHelper(uint8_t logLevel, const char* source, int line, const char* func) {
+LogHelper::LogHelper(uint8_t logLevel, const char* source, int line,
+                     const char* func) {
     m_logLevel = logLevel;
     m_source = source;
     m_line = line;
@@ -47,15 +48,14 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         log_mutex.lock();
 
         va_list args;
-	char newFormat[1024];
+        char newFormat[1024];
         char time_buf[25];
         time_t sys_time = time(NULL);
         strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
 
         snprintf(newFormat, sizeof(newFormat),
-               "%s [%s] [%s:%d] <%s>\r\n  %s\r\n\r\n", 
-	       time_buf, LOG_LEVEL_STRING[logLevel], 
-	       source, line, func, format);
+                 "%s [%s] [%s:%d] <%s>\r\n  %s\r\n\r\n", time_buf,
+                 LOG_LEVEL_STRING[logLevel], source, line, func, format);
 
         va_start(args, format);
 

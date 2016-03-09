@@ -25,8 +25,7 @@
 #define LOG(lvl, ...) \
     log(lvl, __BASE_FILE_NAME__, __LINE__, __func__, __VA_ARGS__)
 
-#define S_LOG(lvl) \
-    LogHelper(lvl, __BASE_FILE_NAME__, __LINE__, __func__)
+#define S_LOG(lvl) LogHelper(lvl, __BASE_FILE_NAME__, __LINE__, __func__)
 
 #else             // RJ_LOGGING_EN
 #define LOG(...)  // Nothing
@@ -80,7 +79,7 @@ private:
     const char* m_source;
     int m_line;
     const char* m_func;
-}; 
+};
 
 /**
  * [log The system-wide logging interface function. All log messages go through
