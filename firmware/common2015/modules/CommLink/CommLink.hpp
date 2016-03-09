@@ -32,7 +32,7 @@ public:
     CommLink();
 
     /// Constructor
-    CommLink(PinName mosi, PinName miso, PinName sck, PinName cs = NC,
+    CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs = NC,
              PinName int_pin = NC);
 
     /// Virtual deconstructor
@@ -87,9 +87,9 @@ protected:
         return ~val + 1;
     }
 
-    SPI _spi;             // SPI pointer
-    DigitalOut _cs;       // Chip Select pointer
-    InterruptIn _int_in;  // Interrupt pin
+    SPI _spi;
+    DigitalOut _nCs;
+    InterruptIn _int_in;
 
     static const int DEFAULT_BAUD = 5000000;
 
