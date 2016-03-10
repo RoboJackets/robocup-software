@@ -217,7 +217,6 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generatePath(
     const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
     Geometry2d::Point vf) {
-
     return generateCubicBezier(points, obstacles, motionConstraints, vi, vf);
 }
 

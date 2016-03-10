@@ -5,7 +5,6 @@ import robocup
 import constants
 
 
-
 class LineUp(composite_behavior.CompositeBehavior):
 
     y_start = 1.0  # sometimes we have issues if we're right in the corner, so we move it up a bit
