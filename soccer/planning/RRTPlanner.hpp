@@ -54,7 +54,7 @@ public:
      * Velocity Profile.
      */
     static std::unique_ptr<Planning::InterpolatedPath> generatePath(
-        std::vector<Geometry2d::Point>& points,
+        const std::vector<Geometry2d::Point>& points,
         const Geometry2d::ShapeSet& obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
@@ -99,7 +99,7 @@ protected:
      *velocity profile
      */
     static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
-        std::vector<Geometry2d::Point>& points,
+        const std::vector<Geometry2d::Point>& points,
         const Geometry2d::ShapeSet& obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
