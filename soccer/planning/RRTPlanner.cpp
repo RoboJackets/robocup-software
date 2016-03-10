@@ -213,18 +213,12 @@ float getTime(InterpolatedPath& path, int index,
 }
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generatePath(
-    std::vector<Geometry2d::Point>& points,
+    const std::vector<Geometry2d::Point>& points,
     const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
     Geometry2d::Point vf) {
-    return nullptr;
-    // TODO redo this. This is a terrible hack implementation
-    unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
-    for (Geometry2d::Point& pt : points) {
-        // Each point in the path is given a time of zero - the actual time will
-        // be calculated later by the planner
-        path->waypoints.emplace_back(MotionInstant(pt, Geometry2d::Point()), 0);
-    }
+
+    return generateCubicBezier(points, obstacles, motionConstraints, vi, vf);
 }
 
 vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
@@ -539,7 +533,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 }
 
 std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
-    std::vector<Geometry2d::Point>& points,
+    const std::vector<Geometry2d::Point>& points,
     const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
     Geometry2d::Point vf) {
