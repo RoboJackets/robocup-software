@@ -3,7 +3,6 @@ import behavior
 import skills.move
 import robocup
 import constants
-import main
 
 
 class LineUp(composite_behavior.CompositeBehavior):
@@ -33,9 +32,7 @@ class LineUp(composite_behavior.CompositeBehavior):
                             'robots arent lined up')
 
     def execute_running(self):
-        robots = [robot for robot in main.our_robots() if robot is not None]
-        number = len(robots)
-        for i in range(number):
+        for i in range(6):
             pt = self._line.get_pt(0) + (self.diff * float(i))
             self.subbehavior_with_name("robot" + str(i)).pos = pt
 
@@ -52,9 +49,7 @@ class LineUp(composite_behavior.CompositeBehavior):
 
         # add subbehaviors for all robots, instructing them to line up
         self.remove_all_subbehaviors()
-        robots = [robot for robot in main.our_robots() if robot is not None]
-        number = len(robots)
-        for i in range(number):
+        for i in range(6):
             pt = self._line.get_pt(0) + (self.diff * float(i))
             self.add_subbehavior(
                 skills.move.Move(pt),
