@@ -13,6 +13,6 @@ var searchData=
   ['operator_3d',['operator=',['../class_i_o_expander_digital_in_out.html#ab8c880ab0e779b23b0502ad55781d7ba',1,'IOExpanderDigitalInOut::operator=(int pin)'],['../class_i_o_expander_digital_in_out.html#a4e28af4159566ae9ff44357a60669d27',1,'IOExpanderDigitalInOut::operator=(IOExpanderDigitalInOut &amp;rhs)'],['../class_i_o_expander_digital_in_out.html#af3c71b9c9940b5fcdd4b35bd471cee07',1,'IOExpanderDigitalInOut::operator=(DigitalInOut &amp;rhs)']]],
   ['operator_3d_3d',['operator==',['../class_geometry2d_1_1_point.html#a446c6e7344a32e17db98fcab3f14b2cc',1,'Geometry2d::Point']]],
   ['oppmatrix',['oppMatrix',['../group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93',1,'Gameplay::GameplayModule']]],
-  ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a2e4c9ceabc09d3f223fa720e7092d947',1,'Planning::RRTPlanner']]],
+  ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a36ba119982b029394571197616c68469',1,'Planning::RRTPlanner']]],
   ['ourrobot',['OurRobot',['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot']]]
 ];

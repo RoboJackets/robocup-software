@@ -1,6 +1,5 @@
 var NAVTREEINDEX10 =
 {
-"functions.html":[12,3,0],
 "functions.html":[12,3,0,0],
 "functions_a.html":[12,3,0,1],
 "functions_b.html":[12,3,0,2],
@@ -69,8 +68,8 @@ var NAVTREEINDEX10 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[12,0,91,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[12,0,91,8],
 "group__matrices.html":[10,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,3,0,2],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,3,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,3,0,13],
@@ -100,8 +99,8 @@ var NAVTREEINDEX10 =
 "mpu-6050-defines_8hpp_source.html":[13,0,1,1,0,1,5,0],
 "mpu-6050_8hpp_source.html":[13,0,1,1,0,1,5,1],
 "multicast_8hpp_source.html":[13,0,0,5],
-"namespace_gameplay.html":[12,0,3],
 "namespace_gameplay.html":[11,0,0],
+"namespace_gameplay.html":[12,0,3],
 "namespaces.html":[11,0],
 "neopixel_8h_source.html":[13,0,1,1,1,2],
 "neostrip_8hpp_source.html":[13,0,1,1,0,1,6,0],
@@ -171,6 +170,12 @@ var NAVTREEINDEX10 =
 "struct_planning_1_1_angle_instant.html#a1b97e79900b7ac54236e6e9333adaf99":[12,0,7,12,0],
 "struct_planning_1_1_angle_instant.html#a4e5eb6397e493cf2a8a94c6d18eab9ef":[12,0,7,12,2],
 "struct_planning_1_1_angle_instant.html#a5154ab5912634ab64c2dda450a8e2dc2":[12,0,7,12,1],
+"struct_planning_1_1_cubic_bezier_control_points.html":[12,0,7,23],
+"struct_planning_1_1_cubic_bezier_control_points.html#a19877ba3315442cfef843efeaecaf4b8":[12,0,7,23,4],
+"struct_planning_1_1_cubic_bezier_control_points.html#a365ec77f7e2b506b2e623751da82c283":[12,0,7,23,3],
+"struct_planning_1_1_cubic_bezier_control_points.html#aa0ebb54b8d16a078ed8ac581e76eeb66":[12,0,7,23,2],
+"struct_planning_1_1_cubic_bezier_control_points.html#acfc2af8f58471cbc9336074a0623246a":[12,0,7,23,1],
+"struct_planning_1_1_cubic_bezier_control_points.html#ad86cca705dbbbbcf049862a4d103555c":[12,0,7,23,0],
 "struct_planning_1_1_direct_path_target_command.html":[12,0,7,10],
 "struct_planning_1_1_direct_path_target_command.html#a65c3b139ae8b314c0ba66f26ae954fdd":[12,0,7,10,0],
 "struct_planning_1_1_direct_path_target_command.html#ac1bb4a85932db7c2ac6ccd776553673c":[12,0,7,10,2],
@@ -244,10 +249,5 @@ var NAVTREEINDEX10 =
 "struct_robot_config_1_1_dribbler.html":[12,0,78,1],
 "struct_robot_config_1_1_dribbler.html#a65e1488817d5ba4f41685865bf30e0b3":[12,0,78,1,0],
 "struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[12,0,78,1,1],
-"struct_robot_config_1_1_kicker.html":[12,0,78,2],
-"struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b":[12,0,78,2,2],
-"struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e":[12,0,78,2,0],
-"struct_robot_config_1_1_kicker.html#aa3df412fdc69b4d48b16832f472cdcdd":[12,0,78,2,1],
-"struct_robot_config_1_1_p_i_d.html":[12,0,78,3],
-"struct_robot_config_1_1_p_i_d.html#a2c5edd003385d53bb70bb14da228e627":[12,0,78,3,2]
+"struct_robot_config_1_1_kicker.html":[12,0,78,2]
 };

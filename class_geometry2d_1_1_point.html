@@ -228,9 +228,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a2c3908ca392de0f0416dc8a5b739374e"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a2c3908ca392de0f0416dc8a5b739374e">distTo</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other) const </td></tr>
 <tr class="memdesc:a2c3908ca392de0f0416dc8a5b739374e"><td class="mdescLeft">&#160;</td><td class="mdescRight">computes the distance from the current point to another  <a href="#a2c3908ca392de0f0416dc8a5b739374e">More...</a><br/></td></tr>
 <tr class="separator:a2c3908ca392de0f0416dc8a5b739374e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a551abe4264e33b2de66890982ef508e6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a551abe4264e33b2de66890982ef508e6">normalized</a> () const </td></tr>
-<tr class="memdesc:a551abe4264e33b2de66890982ef508e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector with the same direction as this vector but with magnitude one.  <a href="#a551abe4264e33b2de66890982ef508e6">More...</a><br/></td></tr>
-<tr class="separator:a551abe4264e33b2de66890982ef508e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c7521b1a73de5503582e1856c704853"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a7c7521b1a73de5503582e1856c704853">normalized</a> (float magnitude=1.0) const </td></tr>
+<tr class="memdesc:a7c7521b1a73de5503582e1856c704853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a vector with the same direction as this vector but with magnitude given, unless this vector is zero.  <a href="#a7c7521b1a73de5503582e1856c704853">More...</a><br/></td></tr>
+<tr class="separator:a7c7521b1a73de5503582e1856c704853"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b491a02fd98e0124ab5c33572345ebb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b491a02fd98e0124ab5c33572345ebb"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb">nearPoint</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &amp;other, float threshold) const </td></tr>
 <tr class="memdesc:a5b491a02fd98e0124ab5c33572345ebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this point is within the given distance (threshold) of (pt) <br/></td></tr>
@@ -522,7 +522,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 
 </div>
 </div>
-<a class="anchor" id="a551abe4264e33b2de66890982ef508e6"></a>
+<a class="anchor" id="a7c7521b1a73de5503582e1856c704853"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -532,7 +532,8 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
         <tr>
           <td class="memname"><a class="el" href="class_geometry2d_1_1_point.html">Point</a> Geometry2d::Point::normalized </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>magnitude</em> = <code>1.0</code></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -543,7 +544,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 </table>
 </div><div class="memdoc">
 
-<p>Returns a vector with the same direction as this vector but with magnitude one. </p>
+<p>Returns a vector with the same direction as this vector but with magnitude given, unless this vector is zero. </p>
 <p>If the vector is (0,0), Point(0,0) is returned </p>
 
 </div>
@@ -626,7 +627,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_point.html">Point</a></li>
-    <li class="footer">Generated on Thu Mar 10 2016 17:44:56 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Mar 10 2016 21:41:51 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -16,7 +16,7 @@ var class_geometry2d_1_1_point =
     [ "magsq", "class_geometry2d_1_1_point.html#aaafa7c842d0f79280fbf1b03bcae411f", null ],
     [ "nearlyEquals", "class_geometry2d_1_1_point.html#af29d0268f0ae9f5e36757e6fa2e1262f", null ],
     [ "nearPoint", "class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb", null ],
-    [ "normalized", "class_geometry2d_1_1_point.html#a551abe4264e33b2de66890982ef508e6", null ],
+    [ "normalized", "class_geometry2d_1_1_point.html#a7c7521b1a73de5503582e1856c704853", null ],
     [ "operator Packet::Point", "class_geometry2d_1_1_point.html#a0b8208fc1be4d663db4886148b3946c1", null ],
     [ "operator!=", "class_geometry2d_1_1_point.html#a4eba8c40e062c4932fbdec61fd75d978", null ],
     [ "operator*", "class_geometry2d_1_1_point.html#a84005a6d48413542b223a55a6709da2a", null ],

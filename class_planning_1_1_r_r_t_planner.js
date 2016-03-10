@@ -4,9 +4,8 @@ var class_planning_1_1_r_r_t_planner =
     [ "commandType", "class_planning_1_1_r_r_t_planner.html#af3b4fb2c8d3af6d34fbb0173ae0b621c", null ],
     [ "maxIterations", "class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c", null ],
     [ "maxIterations", "class_planning_1_1_r_r_t_planner.html#ab45eeb7da9dbe6cb822e01748cad5867", null ],
-    [ "optimize", "class_planning_1_1_r_r_t_planner.html#a2e4c9ceabc09d3f223fa720e7092d947", null ],
     [ "run", "class_planning_1_1_r_r_t_planner.html#ae9983bc90ca6c38030916581c4352cf3", null ],
-    [ "runRRT", "class_planning_1_1_r_r_t_planner.html#a3e7b74bc4b00f995b74f6e7f91306520", null ],
+    [ "runRRT", "class_planning_1_1_r_r_t_planner.html#ada99d6168fc1ff5b4d5476c2af8737b4", null ],
     [ "shouldReplan", "class_planning_1_1_r_r_t_planner.html#a43c789cf73ba8b48789c874c73d10816", null ],
     [ "_maxIterations", "class_planning_1_1_r_r_t_planner.html#a3e333063b05159149291fd2defff89ac", null ]
 ];

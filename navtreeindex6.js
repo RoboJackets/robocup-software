@@ -1,6 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"class_u_s_b_radio.html#abb6b86dfe3ea49b38387521ccbc36e15":[12,0,94,0],
 "class_u_s_b_radio.html#abf792eec95ee2ba6766172d2f6850f29":[12,0,94,12],
 "class_u_s_b_radio.html#ace98721c14f9e72b9f56a456b8680ff4":[12,0,94,14],
 "class_vision_packet.html":[12,0,95],
@@ -168,8 +167,8 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4e31aa650e2de651f8ece2c4ad0c5597":[12,0,4,7,0,1,6],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a6d0055427abab28f117f506b0fc66eec":[12,0,4,7,0,1,2],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a6d0055427abab28f117f506b0fc66eec":[12,0,4,7,0,1,3],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae223de49d3ecd99839ae7cd2b700f6c":[12,0,4,7,0,1,8],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae223de49d3ecd99839ae7cd2b700f6c":[12,0,4,7,0,1,7],
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae223de49d3ecd99839ae7cd2b700f6c":[12,0,4,7,0,1,8],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aafec1b75db7c1f893df3a70f3d42eb67":[12,0,4,7,0,1,1],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#acf7777490893a64f471fca2132a04517":[12,0,4,7,0,1,4],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ad6098c7b2a5c5289eeaa56f77489c6d3":[12,0,4,7,0,1,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#afd9492ee6bde6b21715d112d407b8cf0":[12,0,4,8,1,6,0,3],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html":[12,0,4,8,1,7,0],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a366db10bcd9da45ba18d8e95956864da":[12,0,4,8,1,7,0,5],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a5bf8b6cadd4cf4b191574a66129020aa":[12,0,4,8,1,7,0,2]
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a5bf8b6cadd4cf4b191574a66129020aa":[12,0,4,8,1,7,0,2],
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a5dc797ca4bf89ef2c4cab6db2c645e93":[12,0,4,8,1,7,0,4]
 };

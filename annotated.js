@@ -285,6 +285,7 @@ var annotated =
       [ "FacePointCommand", "struct_planning_1_1_face_point_command.html", "struct_planning_1_1_face_point_command" ],
       [ "FaceAngleCommand", "struct_planning_1_1_face_angle_command.html", "struct_planning_1_1_face_angle_command" ],
       [ "EmptyAngleCommand", "struct_planning_1_1_empty_angle_command.html", "struct_planning_1_1_empty_angle_command" ],
+      [ "CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", "struct_planning_1_1_cubic_bezier_control_points" ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
       [ "SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", "class_planning_1_1_single_robot_path_planner" ],
       [ "TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", "class_planning_1_1_target_vel_path_planner" ],

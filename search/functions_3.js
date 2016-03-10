@@ -24,6 +24,5 @@ var searchData=
   ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5',1,'OurRobot']]],
   ['createconfiguration',['createConfiguration',['../class_window_evaluator.html#a7ab9155d6a95badbfad544fba7472217',1,'WindowEvaluator']]],
   ['createrobotobstacles',['createRobotObstacles',['../class_our_robot.html#a1c8096f39bcbd67ab9cac81263687b87',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask) const '],['../class_our_robot.html#a096bfe0d36b529058f75fafa84aba04e',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, Geometry2d::Point currentPosition, float checkRadius) const ']]],
-  ['cubicbezier',['cubicBezier',['../class_planning_1_1_r_r_t_planner.html#a6e916aecd22a090ee7d92efea985bffc',1,'Planning::RRTPlanner']]],
   ['cubicbeziercalc',['cubicBezierCalc',['../class_planning_1_1_r_r_t_planner.html#af2b5d8adb23e36218c390fa7e51603a9',1,'Planning::RRTPlanner']]]
 ];

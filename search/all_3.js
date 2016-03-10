@@ -7,8 +7,8 @@ var searchData=
   ['cc1201',['CC1201',['../class_c_c1201.html',1,'']]],
   ['centermatrix',['centerMatrix',['../group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02',1,'Gameplay::GameplayModule']]],
   ['centerradius',['CenterRadius',['../struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238',1,'Field_Dimensions']]],
-  ['channel',['Channel',['../structmbed_1_1_i2_c_driver_1_1_channel.html',1,'mbed::I2CDriver']]],
   ['channel',['channel',['../class_c_c1101.html#aef053a0ffa61bab00aee00fcc2a69e5e',1,'CC1101::channel(uint16_t)'],['../class_c_c1101.html#aeb49b2606340a835c7931ea50580a283',1,'CC1101::channel()']]],
+  ['channel',['Channel',['../structmbed_1_1_i2_c_driver_1_1_channel.html',1,'mbed::I2CDriver']]],
   ['charged',['charged',['../class_our_robot.html#a141c819500dd3fad0054ddc8a9aff964',1,'OurRobot']]],
   ['check_5ffailure',['check_failure',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a6056f4d008f2b7ade420124dbc716127',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['chill',['chill',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#aee00ec00f07e8671c4f88ef22802cb0f',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
@@ -52,8 +52,8 @@ var searchData=
   ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5',1,'OurRobot']]],
   ['createconfiguration',['createConfiguration',['../class_window_evaluator.html#a7ab9155d6a95badbfad544fba7472217',1,'WindowEvaluator']]],
   ['createrobotobstacles',['createRobotObstacles',['../class_our_robot.html#a1c8096f39bcbd67ab9cac81263687b87',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask) const '],['../class_our_robot.html#a096bfe0d36b529058f75fafa84aba04e',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, Geometry2d::Point currentPosition, float checkRadius) const ']]],
-  ['cubicbezier',['cubicBezier',['../class_planning_1_1_r_r_t_planner.html#a6e916aecd22a090ee7d92efea985bffc',1,'Planning::RRTPlanner']]],
   ['cubicbeziercalc',['cubicBezierCalc',['../class_planning_1_1_r_r_t_planner.html#af2b5d8adb23e36218c390fa7e51603a9',1,'Planning::RRTPlanner']]],
+  ['cubicbeziercontrolpoints',['CubicBezierControlPoints',['../struct_planning_1_1_cubic_bezier_control_points.html',1,'Planning']]],
   ['coordinate_20conversion_20matrices',['Coordinate Conversion Matrices',['../group__matrices.html',1,'']]],
   ['contributing_20guide',['Contributing Guide',['../md_doc_contributing.html',1,'']]]
 ];
