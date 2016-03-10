@@ -136,6 +136,8 @@ static const vector<command_t> commands = {
      "show motor info (until receiving Ctrl-C).",
      "motorscroll"},
 
+    {{"serialping"}, true, cmd_serial_ping, "check the console's responsiveness.", "serialping"},
+
     {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
 
     {{"radio"},
@@ -372,6 +374,25 @@ int cmd_help_detail(cmd_args_t& args) {
         if (!commandFound) {
             printf("Command \"%s\" not found.\r\n", args[argInd].c_str());
         }
+    }
+
+    return 0;
+}
+
+/**
+ * Console responsiveness test.
+ */
+int cmd_serial_ping(cmd_args_t& args) {
+    if (!args.empty()) {
+        show_invalid_args(args);
+        return 1;
+    } else {
+        time_t sys_time = time(nullptr);
+        Console::Instance()->Flush();
+        printf("reply: %lu\r\n", sys_time);
+        Console::Instance()->Flush();
+
+        Thread::wait(600);
     }
 
     return 0;
