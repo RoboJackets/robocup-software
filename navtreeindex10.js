@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"functions.html":[12,3,0],
 "functions.html":[12,3,0,0],
 "functions_a.html":[12,3,0,1],
 "functions_b.html":[12,3,0,2],
@@ -8,8 +9,8 @@ var NAVTREEINDEX10 =
 "functions_e.html":[12,3,0,5],
 "functions_enum.html":[12,3,4],
 "functions_f.html":[12,3,0,6],
-"functions_func.html":[12,3,1,0],
 "functions_func.html":[12,3,1],
+"functions_func.html":[12,3,1,0],
 "functions_func_a.html":[12,3,1,1],
 "functions_func_b.html":[12,3,1,2],
 "functions_func_c.html":[12,3,1,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "struct_robot_config_1_1_chipper.html#adfea0d80e221e0889c97e31089886306":[12,0,78,0,2],
 "struct_robot_config_1_1_dribbler.html":[12,0,78,1],
 "struct_robot_config_1_1_dribbler.html#a65e1488817d5ba4f41685865bf30e0b3":[12,0,78,1,0],
-"struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[12,0,78,1,1],
-"struct_robot_config_1_1_kicker.html":[12,0,78,2]
+"struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[12,0,78,1,1]
 };

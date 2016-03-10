@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aa065da8f7ee87c5a84ec9e8fb2a3b05f":[12,0,4,14,6,0,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aeec4c2eb05b89bc6776484ff122aef83":[12,0,4,14,6,0,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_side.html":[12,0,4,14,6,0,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html":[12,0,4,14,6,0,0,1],
@@ -21,8 +22,8 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed0360fc34a1d8f004d2349362bdb72":[12,0,4,14,6,1,0,9],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html":[12,0,4,14,6,1,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html":[12,0,4,14,6,2,0],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528":[12,0,4,14,6,2,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528":[12,0,4,14,6,2,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528":[12,0,4,14,6,2,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a29ca49df546b34a008bebe2fafc80d62":[12,0,4,14,6,2,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a2abc08092424267623aec06f465cd4b1":[12,0,4,14,6,2,0,1],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a4994ec94ffe187229f25d47eba85fe1a":[12,0,4,14,6,2,0,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "dir_fdb663fff377665b271840ed6e6b7e92.html":[13,0,1,0,1,2],
 "ds2411_8hpp_source.html":[13,0,1,1,0,1,2,0],
 "files.html":[13,0],
-"fpga_8hpp_source.html":[13,0,1,1,0,1,3,0],
-"functions.html":[12,3,0]
+"fpga_8hpp_source.html":[13,0,1,1,0,1,3,0]
 };
