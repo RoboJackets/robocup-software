@@ -371,7 +371,6 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
 
     float maxSpeed;
     if (isnan(vPossible1) && isnan(vPossible2)) {
-        cout << "Velocity SMoothing messed up" << endl;
         maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
     } else {
         if (isnan(vPossible1)) {
