@@ -48,7 +48,7 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
         return COMM_FUNC_BUF_ERR;
     }
 
-    flush_tx();
+    strobe(CC1201_STROBE_SFTX);
 
     strobe(CC1201_STROBE_SIDLE);
 
@@ -63,8 +63,8 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
         CC1201_STATE_TXFIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
-        flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
-        // state
+        // flush the TX buffer & return if the FIFO is in a corrupt state
+        flush_tx();
 
         // set in IDLE mode and strobe back into RX to ensure the states will
         // fall through calibration then return
@@ -310,14 +310,14 @@ void CC1201::flush_tx() {
     idle();
     size_t bytes = readReg(CC1201_NUM_TXBYTES);
     strobe(CC1201_STROBE_SFTX);
-    // LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
+    LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
 }
 
 void CC1201::flush_rx() {
     idle();
     size_t bytes = readReg(CC1201_NUM_RXBYTES);
     strobe(CC1201_STROBE_SFRX);
-    // LOG(WARN, "%u bytes flushed from RX FIFO buffer.", bytes);
+    LOG(WARN, "%u bytes flushed from RX FIFO buffer.", bytes);
 }
 
 void CC1201::calibrate() {
