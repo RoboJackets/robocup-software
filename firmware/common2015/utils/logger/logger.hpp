@@ -2,6 +2,7 @@
 
 #include <cstdarg>
 #include <string>
+#include <sstream>
 
 #include "rj-macros.hpp"
 
@@ -23,6 +24,12 @@
 
 #define LOG(lvl, ...) \
     log(lvl, __BASE_FILE_NAME__, __LINE__, __func__, __VA_ARGS__)
+
+/**
+ * Example usage:
+ *   S_LOG(INIT) << "Example";
+ */
+#define S_LOG(lvl) LogHelper(lvl, __BASE_FILE_NAME__, __LINE__, __func__)
 
 #else             // RJ_LOGGING_EN
 #define LOG(...)  // Nothing
@@ -59,6 +66,24 @@ extern bool isLogging;
  * Current log level.
  */
 extern uint8_t rjLogLevel;
+
+/**
+ * Collects the stream log message into a single string to print
+ * @param logLevel The "importance level" of the called log message.
+ * @param source   The source of the message.
+ * @param format   The string format for displaying the log message.
+ */
+class LogHelper : public std::stringstream {
+public:
+    LogHelper(uint8_t logLevel, const char* source, int line, const char* func);
+    ~LogHelper();
+
+private:
+    uint8_t _logLevel;
+    const char* _source;
+    int _line;
+    const char* _func;
+};
 
 /**
  * [log The system-wide logging interface function. All log messages go through
