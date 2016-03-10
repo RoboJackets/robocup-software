@@ -73,17 +73,14 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
                      prevPath.get())) {
-
         // Run bi-directional RRT to generate a path.
         auto points = runRRT(start, goal, motionConstraints, obstacles);
 
+        // Optimize out uneccesary waypoints
+        optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
 
-        //Optimize out uneccesary waypoints
-        optimize(points, obstacles, motionConstraints, start.vel,
-                        goal.vel);
-
-        //Check if Planning or optimization failed
-        if (points.size()<2) {
+        // Check if Planning or optimization failed
+        if (points.size() < 2) {
             debugLog("PathPlanning Failed");
             auto path = make_unique<InterpolatedPath>();
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
@@ -91,17 +88,17 @@ std::unique_ptr<Path> RRTPlanner::run(
             return std::move(path);
         }
 
-        //Generate and return a cubic bezier path using the waypoints
-        return generateCubicBezier(points, *obstacles, motionConstraints, start.vel, goal.vel);
+        // Generate and return a cubic bezier path using the waypoints
+        return generateCubicBezier(points, *obstacles, motionConstraints,
+                                   start.vel, goal.vel);
     } else {
         return prevPath;
     }
 }
 
-vector<Point> RRTPlanner::runRRT(
-        MotionInstant start, MotionInstant goal,
-        const MotionConstraints &motionConstraints,
-        const Geometry2d::ShapeSet *obstacles) {
+vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
+                                 const MotionConstraints& motionConstraints,
+                                 const Geometry2d::ShapeSet* obstacles) {
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
@@ -151,10 +148,10 @@ vector<Point> RRTPlanner::runRRT(
     return points;
 }
 
-void RRTPlanner::optimize(
-        vector<Geometry2d::Point> &pts, const Geometry2d::ShapeSet *obstacles,
-        const MotionConstraints &motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf) {
+void RRTPlanner::optimize(vector<Geometry2d::Point>& pts,
+                          const Geometry2d::ShapeSet* obstacles,
+                          const MotionConstraints& motionConstraints,
+                          Geometry2d::Point vi, Geometry2d::Point vf) {
     unsigned int start = 0;
 
     if (pts.size() < 2) {
@@ -168,8 +165,8 @@ void RRTPlanner::optimize(
         bool changed = false;
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
-            const auto newHitSet = obstacles->hitSet(
-                Geometry2d::Segment(pts[i], pts[i + span]));
+            const auto newHitSet =
+                obstacles->hitSet(Geometry2d::Segment(pts[i], pts[i + span]));
             if (!newHitSet.empty()) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
@@ -220,7 +217,6 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generatePath(
     const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
     Geometry2d::Point vf) {
-
     return nullptr;
     // TODO redo this. This is a terrible hack implementation
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
@@ -298,7 +294,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
             ks[i] = 1.0 / (times->at(i + 1) - times->at(i));
             ks2[i] = ks[i] * ks[i];
             if (std::isnan(ks[i])) {
-                debugThrow("Something went wrong. Points are too close to each other probably");
+                debugThrow(
+                    "Something went wrong. Points are too close to each other "
+                    "probably");
                 return vector<CubicBezierControlPoints>();
             }
         }
@@ -310,7 +308,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
                                    endSpeed));
             ks2[i] = ks[i] * ks[i];
             if (std::isnan(ks[i])) {
-                debugThrow("Something went wrong. Points are too close to each other probably");
+                debugThrow(
+                    "Something went wrong. Points are too close to each other "
+                    "probably");
                 return vector<CubicBezierControlPoints>();
             }
         }
@@ -432,7 +432,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
                 std::abs(d1.x * d2.y - d1.y * d2.x) /
                 std::pow(std::pow(d1.x, 2) + std::pow(d1.y, 2), 1.5);
 
-            //Handle 0 velocity case
+            // Handle 0 velocity case
             if (isnan(curvature)) {
                 curvature = 0;
             }
@@ -472,7 +472,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     float curvature = std::abs(d1.x * d2.y - d1.y * d2.x) /
                       std::pow(std::pow(d1.x, 2) + std::pow(d1.y, 2), 1.5);
 
-    //handle 0 velcoity case
+    // handle 0 velcoity case
     if (isnan(curvature)) {
         curvature = 0;
     }
@@ -555,10 +555,11 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         return nullptr;
     }
 
-    vector<CubicBezierControlPoints> controlPoints = generateCubicBezierPath(points, motionConstraints, vi, vf);
+    vector<CubicBezierControlPoints> controlPoints =
+        generateCubicBezierPath(points, motionConstraints, vi, vf);
 
-
-    vector<InterpolatedPath::Entry> entries = generateVelocityPath(controlPoints, motionConstraints, vi, vf, interpolations);
+    vector<InterpolatedPath::Entry> entries = generateVelocityPath(
+        controlPoints, motionConstraints, vi, vf, interpolations);
 
     std::unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
     path->waypoints = entries;
