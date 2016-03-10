@@ -966,17 +966,17 @@ int cmd_pong(cmd_args_t& args) {
         pings.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
-    uint32_t timeout_ms = 10;
+    uint32_t timeout_ms = 1;
     osEvent maybePing = pings.get(timeout_ms);
-    if (maybePing.status == 16) {
+    if (maybePing.status == osEventMessage) {
         rtp::packet* ping = (rtp::packet*)maybePing.value.p;
 
         int pingNbr = ping->payload[0];
 
         // reply with ack
-        CommModule::Instance()->send(rtp::packet({pingNbr}, rtp::port::PING));
+        CommModule::Instance()->send(rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
 
-        printf("Got ping %d\r\n", pingNbr);
+        LOG(WARN, "Got ping %d\r\n", pingNbr);
 
         delete ping;
     }
@@ -995,21 +995,21 @@ int cmd_ping(cmd_args_t& args) {
 
     static int ping_count = 0;
     static int last_ping = 0;
-    static const int Interval = 2;
+    static const int Interval = 3;
 
     if ((clock() - last_ping) / CLOCKS_PER_SEC > Interval) {
         last_ping = clock();
 
-        CommModule::Instance()->send(rtp::packet({ping_count}, rtp::port::PING));
+        CommModule::Instance()->send(rtp::packet({(uint8_t)ping_count}, rtp::port::PING));
 
         printf("Sent ping %d\r\n", ping_count);
 
         ping_count++;
     }
 
-    uint32_t timeout_ms = 10;
+    uint32_t timeout_ms = 1;
     osEvent maybeAck = acks.get(timeout_ms);
-    if (maybeAck.status == 16) {
+    if (maybeAck.status == osEventMessage) {
         rtp::packet* ack = (rtp::packet*)maybeAck.value.p;
         printf("  got ack %d\r\n", ack->payload[0]);
         delete ack;
