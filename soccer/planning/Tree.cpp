@@ -56,7 +56,7 @@ void Tree::init(Geometry2d::Point start,
     points.push_back(p);
 }
 
-void Tree::addPath(vector<Geometry2d::Point> &path, Point *dest,
+void Tree::addPath(vector<Geometry2d::Point>& path, Point* dest,
                    const bool rev) const {
     list<Point*> points;
 
