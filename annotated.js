@@ -348,6 +348,7 @@ var annotated =
     [ "JoystickControlValues", "struct_joystick_control_values.html", "struct_joystick_control_values" ],
     [ "KickerBoard", "class_kicker_board.html", "class_kicker_board" ],
     [ "Logger", "class_logger.html", "class_logger" ],
+    [ "LogHelper", "class_log_helper.html", "class_log_helper" ],
     [ "LogViewer", "class_log_viewer.html", "class_log_viewer" ],
     [ "MailHelper", "class_mail_helper.html", "class_mail_helper" ],
     [ "MainWindow", "class_main_window.html", "class_main_window" ],

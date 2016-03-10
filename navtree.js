@@ -39,14 +39,14 @@ var NAVTREEINDEX =
 "class_c_c1101.html#afa7f7ecd35d338d219033d56a9428809",
 "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa97fbd6196b35a3c30dc4626a54acd282",
 "class_geometry2d_1_1_segment.html#aff0156971f29d02ee141a89c1546099f",
-"class_our_robot.html#a74b5d6dd58891d208dbdd25c7e873e1d",
-"class_protobuf_tree.html#a1e537a7fdbab9801c0ffe37ce688771d",
-"class_vision_packet.html",
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#aa4dc347ba2e7fe90463dae17e9207477",
-"classgameplay_1_1skills_1_1aim_1_1_aim.html#a3644a64ec8e6fc66cd7ea4e130d47da4",
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html",
-"functions_b.html",
-"struct_robot_config_1_1_p_i_d.html#ae102a6d6644ed471d0fef7fefdae772c"
+"class_our_robot.html#a639eecf0232af72c5845feca21ee9d70",
+"class_processor.html#afbefacf8023e7c804d0451ff1d5fde39",
+"class_u_s_b_radio.html#abb6b86dfe3ea49b38387521ccbc36e15",
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a5dc797ca4bf89ef2c4cab6db2c645e93",
+"classgameplay_1_1skills_1_1aim_1_1_aim.html#a2cba75e14b193cef6c16231f29b7991b",
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aa065da8f7ee87c5a84ec9e8fb2a3b05f",
+"functions.html",
+"struct_robot_config_1_1_p_i_d.html#a491a7263592924e116223e8becd22a70"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

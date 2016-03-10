@@ -86,6 +86,22 @@ var hierarchy =
     [ "mbed::I2CMasterRtos", "classmbed_1_1_i2_c_master_rtos.html", null ],
     [ "mbed::I2CSlaveRtos", "classmbed_1_1_i2_c_slave_rtos.html", null ],
     [ "IOExpanderDigitalInOut", "class_i_o_expander_digital_in_out.html", null ],
+    [ "std::ios_base", null, [
+      [ "std::basic_ios< Char >", null, [
+        [ "std::basic_istream< Char >", null, [
+          [ "std::basic_iostream< Char >", null, [
+            [ "std::basic_stringstream< Char >", null, [
+              [ "std::stringstream", null, [
+                [ "LogHelper", "class_log_helper.html", null ]
+              ] ]
+            ] ]
+          ] ]
+        ] ],
+        [ "std::basic_ostream< Char >", null, [
+          [ "std::basic_iostream< Char >", null, null ]
+        ] ]
+      ] ]
+    ] ],
     [ "iterator", null, [
       [ "ExceptionIterator< T >", "class_exception_iterator.html", null ]
     ] ],
