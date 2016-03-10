@@ -36,8 +36,9 @@ class LineUp(composite_behavior.CompositeBehavior):
     # count unassigned subbehaviors as "done running"
     def all_subbehaviors_completed(self):
         for bhvr in self.all_subbehaviors():
-            if not bhvr.is_done_running() and (not isinstance(
-                    bhvr, SingleRobotBehavior) or bhvr.robot != None):
+            if not bhvr.is_done_running() and (
+                    not isinstance(bhvr, SingleRobotBehavior) or
+                    bhvr.robot != None):
                 return False
         return True
 
