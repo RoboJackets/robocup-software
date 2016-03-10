@@ -405,7 +405,6 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         Point p2 = controlPoint.p2;
         Point p3 = controlPoint.p3;
         for (int j = 0; j < interpolations; j++) {
-            // double k = ks[i];
             float t = (((float)j / (float)(interpolations)));
             Geometry2d::Point pos =
                 pow(1.0 - t, 3) * p0 + 3.0 * pow(1.0 - t, 2) * t * p1 +
@@ -417,7 +416,6 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             Geometry2d::Point d1 = 3 * pow(1 - t, 2) * (p1 - p0) +
                                    6 * (1 - t) * t * (p2 - p1) +
                                    3 * pow(t, 2) * (p3 - p2);
-            // printf("x:%f, y:%f\n", d1.x, d1.y);
 
             // Derivitive 2
             // https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves
