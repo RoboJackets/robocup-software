@@ -2,6 +2,7 @@
 
 #include <map>
 #include <ctime>
+#include <sstream>
 
 #include <rtos.h>
 #include <mbed_rpc.h>
@@ -150,12 +151,12 @@ static const vector<command_t> commands = {
      "stress-test <count> <delay> <pck-size>}]"},
 
      {{"ping"},
-     true,
+     false,
      cmd_ping,
      "periodically send ping packets out over radio broadcast"},
 
      {{"pong"},
-     true,
+     false,
      cmd_pong,
      "reply to ping"},
 
@@ -954,32 +955,37 @@ int cmd_radio(cmd_args_t& args) {
     return 0;
 }
 
-#include <time.h>
-#include <sstream>
-
 int cmd_pong(cmd_args_t& args) {
     CommModule::Instance()->setTxHandler((CommLink*)global_radio,
         &CommLink::sendPacket,
         rtp::port::PING);
-    static Queue<rtp::packet, 2> pings;
-    CommModule::Instance()->setRxHandler( [](rtp::packet* pkt) {
+    Queue<rtp::packet, 2> pings;
+    CommModule::Instance()->setRxHandler( [&pings](rtp::packet* pkt) {
         pings.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
-    uint32_t timeout_ms = 1;
-    osEvent maybePing = pings.get(timeout_ms);
-    if (maybePing.status == osEventMessage) {
-        rtp::packet* ping = (rtp::packet*)maybePing.value.p;
+    while (true) {
+        uint32_t timeout_ms = 1;
+        osEvent maybePing = pings.get(timeout_ms);
+        if (maybePing.status == osEventMessage) {
+            rtp::packet* ping = (rtp::packet*)maybePing.value.p;
+            int pingNbr = ping->payload[0];
+            delete ping;
 
-        int pingNbr = ping->payload[0];
+            printf("Got ping %d\r\n", pingNbr);
 
-        // reply with ack
-        CommModule::Instance()->send(rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
+            // reply with ack
+            CommModule::Instance()->send(rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
+        }
 
-        LOG(WARN, "Got ping %d\r\n", pingNbr);
-
-        delete ping;
+        if (Console::Instance()->IterCmdBreakReq()) break;
     }
+
+    // remove handlers, close port
+    CommModule::Instance()->close(rtp::port::PING);
+
+    // reset break command
+    Console::Instance()->IterCmdBreakReq(false);
 
     return 0;
 }
@@ -988,32 +994,42 @@ int cmd_ping(cmd_args_t& args) {
     CommModule::Instance()->setTxHandler((CommLink*)global_radio,
         &CommLink::sendPacket,
         rtp::port::PING);
-    static Queue<rtp::packet, 2> acks;
-    CommModule::Instance()->setRxHandler( [](rtp::packet* pkt) {
+    Queue<rtp::packet, 2> acks;
+    CommModule::Instance()->setRxHandler( [&acks](rtp::packet* pkt) {
         acks.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
-    static int ping_count = 0;
-    static int last_ping = 0;
-    static const int Interval = 3;
+    int pingCount = 0;
+    int lastPingTime = 0;
+    const int PingInterval = 3;
 
-    if ((clock() - last_ping) / CLOCKS_PER_SEC > Interval) {
-        last_ping = clock();
+    while (true) {
+        if ((clock() - lastPingTime) / CLOCKS_PER_SEC > PingInterval) {
+            lastPingTime = clock();
 
-        CommModule::Instance()->send(rtp::packet({(uint8_t)ping_count}, rtp::port::PING));
+            CommModule::Instance()->send(rtp::packet({(uint8_t)pingCount}, rtp::port::PING));
 
-        printf("Sent ping %d\r\n", ping_count);
+            printf("Sent ping %d\r\n", pingCount);
 
-        ping_count++;
+            pingCount++;
+        }
+
+        uint32_t timeout_ms = 1;
+        osEvent maybeAck = acks.get(timeout_ms);
+        if (maybeAck.status == osEventMessage) {
+            rtp::packet* ack = (rtp::packet*)maybeAck.value.p;
+            printf("  got ack %d\r\n", ack->payload[0]);
+            delete ack;
+        }
+
+        if (Console::Instance()->IterCmdBreakReq()) break;
     }
 
-    uint32_t timeout_ms = 1;
-    osEvent maybeAck = acks.get(timeout_ms);
-    if (maybeAck.status == osEventMessage) {
-        rtp::packet* ack = (rtp::packet*)maybeAck.value.p;
-        printf("  got ack %d\r\n", ack->payload[0]);
-        delete ack;
-    }
+    // remove handlers, close port
+    CommModule::Instance()->close(rtp::port::PING);
+
+    // reset break command
+    Console::Instance()->IterCmdBreakReq(false);
 
     return 0;
 }
