@@ -32,7 +32,7 @@ public:
     CommLink();
 
     /// Constructor
-    CommLink(PinName mosi, PinName miso, PinName sck, PinName cs = NC,
+    CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs = NC,
              PinName int_pin = NC);
 
     /// Virtual deconstructor
@@ -57,7 +57,7 @@ public:
 
 protected:
     // write data out to the radio device using SPI
-    virtual int32_t sendData(uint8_t* buf, uint8_t len) = 0;
+    virtual int32_t sendData(const uint8_t* buf, uint8_t len) = 0;
 
     /**
      * @brief Read data from the radio's RX buffer
@@ -87,9 +87,9 @@ protected:
         return ~val + 1;
     }
 
-    SPI _spi;             // SPI pointer
-    DigitalOut _cs;       // Chip Select pointer
-    InterruptIn _int_in;  // Interrupt pin
+    SPI _spi;
+    DigitalOut _nCs;
+    InterruptIn _int_in;
 
     static const int DEFAULT_BAUD = 5000000;
 

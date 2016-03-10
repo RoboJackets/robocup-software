@@ -14,10 +14,10 @@ void ASSERT_IS_ADDR(uint16_t addr) {
 // TODO(justin): remove this
 CC1201* global_radio = nullptr;
 
-CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
+CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName nCs,
                PinName intPin, const registerSetting_t* regs, size_t len,
                int rssiOffset)
-    : CommLink(mosi, miso, sck, cs, intPin) {
+    : CommLink(mosi, miso, sck, nCs, intPin) {
     reset();
     selfTest();
 
@@ -35,7 +35,7 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
     }
 }
 
-int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
+int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
     if (!_isInit) return -1;
@@ -180,7 +180,6 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
     return status_byte;
 }
 
-/*
 uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
     ASSERT_IS_ADDR(addr);
 
@@ -192,15 +191,14 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
             _spi.write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
         _spi.write(addr & 0xFF);  // write lower byte of address
     } else {
-        status_byte = _spi.write(addr | CC1201_WRITE |
-                                  CC1201_BURST);  // write lower byte of address
+        // write lower byte of address
+        status_byte = _spi.write(addr | CC1201_WRITE | CC1201_BURST);
     }
     for (uint8_t i = 0; i < len; i++) _spi.write(buffer[i]);
     radio_deselect();
 
     return status_byte;
 }
-*/
 
 uint8_t CC1201::strobe(uint8_t addr) {
     if (addr > 0x3d || addr < 0x30) {
@@ -264,8 +262,6 @@ uint8_t CC1201::strobe(uint8_t addr) {
 }
 
 uint8_t CC1201::mode() { return 0x1F & readReg(CC1201_MARCSTATE); }
-
-uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
 
 void CC1201::reset() {
     idle();
@@ -348,11 +344,6 @@ uint8_t CC1201::idle() {
 
     return status_byte;
 }
-
-// uint8_t CC1201::rand() {
-//     writeReg(CC1201_RNDGEN, 0x80);
-//     return readReg(CC1201_RNDGEN);
-// }
 
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
 
