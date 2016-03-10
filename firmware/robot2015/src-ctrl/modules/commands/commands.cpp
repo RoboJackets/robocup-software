@@ -136,7 +136,11 @@ static const vector<command_t> commands = {
      "show motor info (until receiving Ctrl-C).",
      "motorscroll"},
 
-    {{"serialping"}, true, cmd_serial_ping, "check the console's responsiveness.", "serialping"},
+    {{"serialping"},
+     true,
+     cmd_serial_ping,
+     "check the console's responsiveness.",
+     "serialping"},
 
     {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
 
@@ -152,15 +156,12 @@ static const vector<command_t> commands = {
      "strobe <num>, "
      "stress-test <count> <delay> <pck-size>}]"},
 
-     {{"ping"},
+    {{"ping"},
      false,
      cmd_ping,
      "periodically send ping packets out over radio broadcast"},
 
-     {{"pong"},
-     false,
-     cmd_pong,
-     "reply to ping"},
+    {{"pong"}, false, cmd_pong, "reply to ping"},
 
     {{"reboot", "reset", "restart"},
      false,
@@ -977,11 +978,10 @@ int cmd_radio(cmd_args_t& args) {
 }
 
 int cmd_pong(cmd_args_t& args) {
-    CommModule::Instance()->setTxHandler((CommLink*)global_radio,
-        &CommLink::sendPacket,
-        rtp::port::PING);
+    CommModule::Instance()->setTxHandler(
+        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
     Queue<rtp::packet, 2> pings;
-    CommModule::Instance()->setRxHandler( [&pings](rtp::packet* pkt) {
+    CommModule::Instance()->setRxHandler([&pings](rtp::packet* pkt) {
         pings.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
@@ -996,7 +996,8 @@ int cmd_pong(cmd_args_t& args) {
             printf("Got ping %d\r\n", pingNbr);
 
             // reply with ack
-            CommModule::Instance()->send(rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
+            CommModule::Instance()->send(
+                rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
         }
 
         if (Console::Instance()->IterCmdBreakReq()) break;
@@ -1012,11 +1013,10 @@ int cmd_pong(cmd_args_t& args) {
 }
 
 int cmd_ping(cmd_args_t& args) {
-    CommModule::Instance()->setTxHandler((CommLink*)global_radio,
-        &CommLink::sendPacket,
-        rtp::port::PING);
+    CommModule::Instance()->setTxHandler(
+        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
     Queue<rtp::packet, 2> acks;
-    CommModule::Instance()->setRxHandler( [&acks](rtp::packet* pkt) {
+    CommModule::Instance()->setRxHandler([&acks](rtp::packet* pkt) {
         acks.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
@@ -1028,7 +1028,8 @@ int cmd_ping(cmd_args_t& args) {
         if ((clock() - lastPingTime) / CLOCKS_PER_SEC > PingInterval) {
             lastPingTime = clock();
 
-            CommModule::Instance()->send(rtp::packet({(uint8_t)pingCount}, rtp::port::PING));
+            CommModule::Instance()->send(
+                rtp::packet({(uint8_t)pingCount}, rtp::port::PING));
 
             printf("Sent ping %d\r\n", pingCount);
 

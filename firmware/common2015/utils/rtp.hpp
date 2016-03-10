@@ -67,7 +67,8 @@ public:
     }
 
     template <class T>
-    packet(const std::vector<T>& v, uint8_t p = SINK) : header(p) {
+    packet(const std::vector<T>& v, uint8_t p = SINK)
+        : header(p) {
         for (T val : v) payload.push_back(val);
     }
 
