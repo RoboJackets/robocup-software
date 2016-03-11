@@ -179,3 +179,4 @@ pip2 install -r $BASE/util/requirements2.txt
 echo "-- Updating submodules"
 git submodule sync
 git submodule update --init
+
