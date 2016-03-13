@@ -397,6 +397,11 @@ void Processor::run() {
         // Run high-level soccer logic
         _gameplayModule->run();
 
+        // recalculates Field obstacles on every run through to account for
+        // changing inset
+        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
+            _gameplayModule->calculateFieldObstacles();
+        }
         /// Collect global obstacles
         Geometry2d::ShapeSet globalObstacles =
             _gameplayModule->globalObstacles();
@@ -578,7 +583,6 @@ void Processor::run() {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
-
     vision.stop();
 }
 

@@ -56,8 +56,8 @@ public:
 
     /** make a path from the dest point's root to the dest point
      *  If rev is true, the path will be from the dest point to its root */
-    void addPath(Planning::InterpolatedPath& path, Point* dest,
-                 const bool rev = false);
+    void addPath(std::vector<Geometry2d::Point>& points, Point* dest,
+                 const bool rev = false) const;
 
     /** returns the first point or 0 if none */
     Point* start() const;
