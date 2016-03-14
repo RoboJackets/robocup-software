@@ -56,8 +56,8 @@ void Tree::init(Geometry2d::Point start,
     points.push_back(p);
 }
 
-void Tree::addPath(Planning::InterpolatedPath& path, Point* dest,
-                   const bool rev) {
+void Tree::addPath(vector<Geometry2d::Point>& path, Point* dest,
+                   const bool rev) const {
     list<Point*> points;
 
     int n = 0;
@@ -71,12 +71,12 @@ void Tree::addPath(Planning::InterpolatedPath& path, Point* dest,
         ++n;
     }
 
-    path.waypoints.reserve(path.waypoints.size() + n);
+    path.reserve(points.size() + n);
+
     for (Point* pt : points) {
         // Each point in the path is given a time of zero - the actual time will
         // be calculated later by the planner
-        path.waypoints.emplace_back(MotionInstant(pt->pos, Geometry2d::Point()),
-                                    0);
+        path.push_back(pt->pos);
     }
 }
 
