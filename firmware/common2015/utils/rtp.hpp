@@ -19,8 +19,8 @@ enum port {
     SINK = 0,
     LINK,
     CONTROL,
-    SETPOINT,
-    GSTROBE,
+    // SETPOINT,
+    // GSTROBE,
     DISCOVER,
     LOGGER,
     TCP,
@@ -85,26 +85,13 @@ public:
         payload.fill(v);
     }
 
-    size_t size(bool includeHeader = true) {
-        if (includeHeader)
-            return payload.size() + header.size();
-        else
-            return payload.size();
-    }
+    size_t size() const { return payload.size() + header.size(); }
 
     int port() const { return static_cast<int>(header.port); }
     template <class T>
     void port(T p) {
         header.port = static_cast<unsigned int>(p);
     }
-
-    // TODO(justin): fix these so they actually do something
-    bool ack() { return false; }
-    void ack(bool b) {}
-
-    // TODO(justin): fix
-    uint8_t subclass() { return 0; }
-    void subclass(uint8_t s) {}
 
     int address() { return header.address; }
     void address(int a) { header.address = static_cast<unsigned int>(a); }
@@ -121,18 +108,14 @@ public:
         }
     }
 
-    void pack(std::vector<uint8_t>* buffer, bool includeHeader = true) const {
+    void pack(std::vector<uint8_t>* buffer) const {
         // first byte is total size (excluding the size byte)
-        const uint8_t total_size =
-            payload.size() + (includeHeader ? header.size() : 0);
+        const uint8_t total_size = payload.size() + header.size();
         buffer->reserve(total_size + 1);
 
         buffer->push_back(total_size);
 
-        // header data
-        if (includeHeader) {
-            header.pack(buffer);
-        }
+        header.pack(buffer);
 
         // payload
         buffer->insert(buffer->end(), payload.d.begin(), payload.d.end());

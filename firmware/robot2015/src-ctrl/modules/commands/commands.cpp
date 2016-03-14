@@ -848,7 +848,6 @@ int cmd_radio(cmd_args_t& args) {
         if (args.size() > 1) portNbr = atoi(args[1].c_str());
 
         pck.port(portNbr);
-        pck.subclass(1);
         pck.address(BASE_STATION_ADDR);
 
         if (args[0] == "show") {
@@ -874,8 +873,6 @@ int cmd_radio(cmd_args_t& args) {
             }
 
             pck.port(portNbr);
-            pck.subclass(2);
-            pck.ack(true);
             pck.address(LOOPBACK_ADDR);
 
             printf(
@@ -938,15 +935,12 @@ int cmd_radio(cmd_args_t& args) {
             rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
             pck.port(rtp::port::LINK);
-            pck.subclass(3);
             pck.address(LOOPBACK_ADDR);
 
-            if (args.size() > 4) pck.ack(true);
             printf(
-                "Beginning radio stress test with %u %sACK, %u byte "
+                "Beginning radio stress test with %u %u byte "
                 "packets. %ums delay between packets.\r\n",
-                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload.size(),
-                ms_delay);
+                packet_cnt, pck.payload.size(), ms_delay);
 
             int start_tick = clock();
             for (size_t i = 0; i < packet_cnt; ++i) {

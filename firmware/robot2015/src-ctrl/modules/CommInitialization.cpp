@@ -25,8 +25,6 @@ using namespace std;
 
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
-    // ack_pck.ack(false);
-    // ack_pck.sfs(true);
     CommModule::Instance()->send(ack_pck);
 }
 
@@ -36,13 +34,9 @@ void legacy_rx_cb(rtp::packet* p) {
             "Legacy rx successful!\r\n"
             "    Received: %u bytes\r\n",
             p->payload.size());
-        // } else if (p->sfs()) {
-        //     LOG(OK, "Legacy rx ACK successful!\r\n");
     } else {
         LOG(WARN, "Received empty packet on Legacy interface");
     }
-
-    if (p->ack()) loopback_ack_pck(p);
 }
 
 void loopback_rx_cb(rtp::packet* p) {
@@ -54,10 +48,10 @@ void loopback_rx_cb(rtp::packet* p) {
     if (p->payload.size()) {
         LOG(OK,
             "Loopback rx successful!\r\n"
-            "    Received: %u bytes\r\n"
-            "    ACK:\t%s\r\n",
-            p->payload.size(), (p->ack() ? "SET" : "UNSET"));
+            "    Received: %u bytes",
+            p->payload.size());
 
+        /*
         if (p->subclass() == 1) {
             uint16_t status_byte = FPGA::Instance()->set_duty_cycles(
                 duty_cycles.data(), duty_cycles.size());
@@ -91,24 +85,18 @@ void loopback_rx_cb(rtp::packet* p) {
             // M4 error LED
             // MCP23017::Instance()->writeMask(~(1 << (8 + 7)), 0xFF00);
         }
-        // } else if (p->sfs()) {
-        //     LOG(OK, "Loopback rx ACK successful!\r\n");
+        */
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
-
-    if (p->ack()) loopback_ack_pck(p);
 }
 
 void loopback_tx_cb(rtp::packet* p) {
     if (p->payload.size()) {
         LOG(OK,
             "Loopback tx successful!\r\n"
-            "    Sent: %u bytes\r\n"
-            "    ACK:\t%s\r\n",
-            p->payload.size(), (p->ack() ? "SET" : "UNSET"));
-        // } else if (p->sfs()) {
-        //     LOG(OK, "Loopback tx ACK successful!\r\n");
+            "    Sent: %u bytes\r\n",
+            p->payload.size());
     } else {
         LOG(WARN, "Sent empty packet on loopback interface");
     }
