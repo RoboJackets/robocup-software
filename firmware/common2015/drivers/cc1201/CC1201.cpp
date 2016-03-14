@@ -50,6 +50,12 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 
     flush_tx();
 
+    // In order for radio transmission to work, the cc1201 must be first strobed
+    // into IDLE, then into TX.  We're not sure why this is the case, but it
+    // works.  Many hours were spent reading the data sheet to figure out why
+    // the transition through IDLE is necessary, but it remains a mystery.  See
+    // the GitHub pull request for more info:
+    // https://github.com/RoboJackets/robocup-software/pull/562
     strobe(CC1201_STROBE_SIDLE);
 
     // Send the data to the CC1201.
