@@ -148,7 +148,7 @@ static const vector<command_t> commands = {
      false,
      cmd_radio,
      "test radio connectivity.",
-     "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
+     "radio [show, {set {close,reset} <port>, {test-tx,test-rx} [<port>], "
      "loopback [<count>], "
      "debug, "
      "ping, "
@@ -916,10 +916,7 @@ int cmd_radio(cmd_args_t& args) {
             if (isPosInt(args[2].c_str())) {
                 unsigned int portNbr = atoi(args[2].c_str());
 
-                if (args[1] == "up") {
-                    // commModule->openSocket(portNbr);
-
-                } else if (args[1] == "down") {
+                if (args[1] == "close") {
                     commModule->close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
