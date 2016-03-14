@@ -38,7 +38,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 # names are limited to 8.3 filename types since we need on-board access to this during runtime
 # lookup the limitations of an 8.3 filename before changing the output binary name if that's ever needed
 add_custom_target(kicker2015-prog
-    COMMAND sudo ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-kickr.nib
     DEPENDS kicker2015
     COMMENT "Copying the kicker board's binary over to the mbed"
 )
