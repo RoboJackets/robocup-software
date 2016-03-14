@@ -145,13 +145,12 @@ int main() {
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
-    // Start the thread task for handling radio communications
-    Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+
+    // Initialize the CommModule and CC1201 radio
+    InitializeCommModule();
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
@@ -195,7 +194,6 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
-    comm_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);

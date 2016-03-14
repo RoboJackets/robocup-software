@@ -10,7 +10,7 @@
 
 // forward declaration of tasks
 void Task_SerialConsole(void const* args);
-void Task_CommCtrl(void const*);
+void InitializeCommModule();
 
 /**
  * Max number of command aliases.

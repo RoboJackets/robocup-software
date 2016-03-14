@@ -1,6 +1,7 @@
 #include <rtos.h>
 
 #include <vector>
+#include <memory>
 
 #include <CommModule.hpp>
 #include <CommPort.hpp>
@@ -14,6 +15,8 @@
 #include "task-globals.hpp"
 #include "io-expander.hpp"
 #include "fpga.hpp"
+
+using namespace std;
 
 /*
  * Information about the radio protocol can be found at:
@@ -42,12 +45,8 @@ void legacy_rx_cb(rtp::packet* p) {
     if (p->ack()) loopback_ack_pck(p);
 }
 
-/**
- * [rx_callback This is executed for a successfully received radio packet.]
- * @param p [none]
- */
 void loopback_rx_cb(rtp::packet* p) {
-    std::vector<uint16_t> duty_cycles;
+    vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 100);
     for (size_t i = 0; i < duty_cycles.size(); ++i)
         duty_cycles.at(i) = 100 + 206 * i;
@@ -69,7 +68,7 @@ void loopback_rx_cb(rtp::packet* p) {
             status_byte = (status_byte & 0x000C) |
                           ((status_byte >> 1) & 0x0001) |
                           ((status_byte << 1) & 0x0002);
-            ;
+
             // bit 3 goes to the 6th position
             status_byte |= ((status_byte >> 2) << 5) & 0x0023;
             // bit 4 goes to the 8th position
@@ -117,45 +116,42 @@ void loopback_tx_cb(rtp::packet* p) {
     CommModule::Instance()->receive(*p);
 }
 
-/**
- * [Task_CommCtrl description]
- * @param args [description]
+/* Uncomment the below DigitalOut lines and comment out the
+ * ones above to use the mbed's on-board LEDs.
  */
-void Task_CommCtrl(void const* args) {
-    const osThreadId mainID = (const osThreadId)args;
+// static DigitalOut tx_led(LED3, 0);
+// static DigitalOut rx_led(LED2, 0);
+// Setup some lights that will blink whenever we send/receive packets
+const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
+const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
 
-    // Store the thread's ID
-    osThreadId threadID = Thread::gettid();
-    ASSERT(threadID != nullptr);
+shared_ptr<RtosTimer> rx_led_ticker;
+shared_ptr<RtosTimer> tx_led_ticker;
 
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority = osThreadGetPriority(threadID);
-
+void InitializeCommModule() {
     // Startup the CommModule interface
     shared_ptr<CommModule> commModule = CommModule::Instance();
 
-    // Setup some lights that will blink whenever we send/receive packets
-    static const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
-    static const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
-
-    /* Uncomment the below DigitalOut lines and comment out the
-     * ones above to use the mbed's on-board LEDs.
-     */
-    // static DigitalOut tx_led(LED3, 0);
-    // static DigitalOut rx_led(LED2, 0);
-
-    RtosTimer rx_led_ticker(commLightsTask_RX, osTimerPeriodic, (void*)&rx_led);
-    RtosTimer tx_led_ticker(commLightsTask_TX, osTimerPeriodic, (void*)&tx_led);
-
-    rx_led_ticker.start(80);
-    tx_led_ticker.start(80);
-
-    // Create a new physical hardware communication link
-    CC1201 radio(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
-                 sizeof(preferredSettings) / sizeof(registerSetting_t));
+    // initialize and start LED ticker timers
+    rx_led_ticker = make_shared<RtosTimer>(commLightsTask_RX, osTimerPeriodic,
+                                           (void*)&rx_led);
+    tx_led_ticker = make_shared<RtosTimer>(commLightsTask_TX, osTimerPeriodic,
+                                           (void*)&tx_led);
+    rx_led_ticker->start(80);
+    tx_led_ticker->start(80);
 
     // TODO(justin): remove this
-    global_radio = &radio;
+    // Create a new physical hardware communication link
+    global_radio =
+        new CC1201(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+                   sizeof(preferredSettings) / sizeof(registerSetting_t));
+
+    // Open a socket for running tests across the link layer
+    // The LINK port handlers are always active, regardless of whether or not a
+    // working radio is connected.
+    commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
+    commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
+    commModule->openSocket(rtp::port::LINK);
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
@@ -164,47 +160,44 @@ void Task_CommCtrl(void const* args) {
      * static,
      * the CommModule methods can be used from almost anywhere.
      */
-    if (radio.isConnected() == true) {
-        LOG(INIT,
-            "Radio interface ready on %3.2fMHz!\r\n    Thread ID: %u, "
-            "Priority: %d",
-            radio.freq(), threadID, threadPriority);
-
-        // Open a socket for running tests across the link layer
-        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
-        commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
-        commModule->openSocket(rtp::port::LINK);
+    if (global_radio->isConnected() == true) {
+        LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n",
+            global_radio->freq());
 
         // The usual way of opening a port.
         commModule->setRxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
-        commModule->setTxHandler((CommLink*)&radio, &CommLink::sendPacket,
+        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::DISCOVER);
         commModule->openSocket(rtp::port::DISCOVER);
 
         // This port won't open since there's no RX callback to invoke. The
         // packets are simply dropped.
         commModule->setRxHandler(&loopback_rx_cb, rtp::port::LOGGER);
-        commModule->setTxHandler((CommLink*)&radio, &CommLink::sendPacket,
+        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::LOGGER);
         commModule->openSocket(rtp::port::LOGGER);
 
         // Legacy port
-        commModule->setTxHandler((CommLink*)&radio, &CommLink::sendPacket,
+        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::LEGACY);
         commModule->setRxHandler(&legacy_rx_cb, rtp::port::LEGACY);
         commModule->openSocket(rtp::port::LEGACY);
 
         LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 
-    } else {
-        LOG(FATAL,
-            "No radio interface found!\r\n"
-            "    Terminating main radio thread.");
+        // Wait until the threads with the commModule->lass are all started up
+        // and ready
+        while (!commModule->isReady()) {
+            Thread::wait(50);
+        }
 
-        // Always keep the link test port open regardless
-        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
-        commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
-        commModule->openSocket(rtp::port::LINK);
+        MCP23017::Instance()->writeMask(1 << (8 + 2), 1 << (8 + 2));
+
+        // Set the error code's valid bit
+        comm_err |= 1 << 0;
+
+    } else {
+        LOG(FATAL, "No radio interface found!\r\n");
 
         // Set the error flag - bit positions are pretty arbitruary as of now
         comm_err |= 1 << 1;
@@ -212,42 +205,11 @@ void Task_CommCtrl(void const* args) {
         // Set the error code's valid bit
         comm_err |= 1 << 0;
 
-        while (commModule->isReady() == false) {
+        while (!commModule->isReady()) {
             Thread::wait(50);
         }
 
         // Radio error LED
         MCP23017::Instance()->writeMask(~(1 << (8 + 2)), 1 << (8 + 2));
-
-        // signal back to main and wait until we're signaled to continue
-        osSignalSet(mainID, MAIN_TASK_CONTINUE);
-        Thread::signal_wait(SUB_TASK_CONTINUE);
-
-        while (true) {
-            Thread::wait(5000);
-            Thread::yield();
-        }
-
-        return;
-    }
-
-    // Wait until the threads with the commModule->lass are all started up
-    // and ready
-    while (commModule->isReady() == false) {
-        Thread::wait(50);
-    }
-
-    MCP23017::Instance()->writeMask(1 << (8 + 2), 1 << (8 + 2));
-
-    // Set the error code's valid bit
-    comm_err |= 1 << 0;
-
-    // signal back to main and wait until we're signaled to continue
-    osSignalSet(mainID, MAIN_TASK_CONTINUE);
-    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
-
-    while (true) {
-        Thread::wait(1000);
-        Thread::yield();
     }
 }
