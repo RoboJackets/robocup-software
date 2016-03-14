@@ -24,13 +24,14 @@ enum port {
     DISCOVER,
     LOGGER,
     TCP,
-    LEGACY
+    LEGACY,
+    PING
 };
 
 struct header_data {
     enum Type { Control, Tuning, FirmwareUpdate, Misc };
 
-    header_data() : address(0), port(0), type(Control){};
+    header_data(uint8_t p = SINK) : address(0), port(p), type(Control){};
 
     uint8_t address;
     unsigned int port : 4;
@@ -51,38 +52,24 @@ struct header_data {
     }
 };
 
-class payload_data {
-public:
-    payload_data(){};
-
-    std::vector<uint8_t> d;
-
-    size_t size() const { return d.size(); }
-
-    template <class T>
-    void fill(const std::vector<T>& v) {
-        d = v;
-    }
-    void fill(const std::string& str) {
-        for (const char& c : str) d.push_back(c);
-        d.push_back('\0');
-    }
-};
-
 /**
  * @brief Real-Time packet definition
  */
 class packet {
 public:
     rtp::header_data header;
-    rtp::payload_data payload;
+    std::vector<uint8_t> payload;
 
     packet(){};
-    packet(const std::string& s) { payload.fill(s); }
+    packet(const std::string& s, uint8_t p = SINK) : header(p) {
+        for (char c : s) payload.push_back(c);
+        payload.push_back('\0');
+    }
 
     template <class T>
-    packet(const std::vector<T>& v) {
-        payload.fill(v);
+    packet(const std::vector<T>& v, uint8_t p = SINK)
+        : header(p) {
+        for (T val : v) payload.push_back(val);
     }
 
     size_t size() const { return payload.size() + header.size(); }
@@ -102,9 +89,9 @@ public:
         header.unpack(v);
 
         // Everything after the header is payload data
-        payload.d.clear();
+        payload.clear();
         for (size_t i = header.size() + 1; i < v.size(); i++) {
-            payload.d.push_back(v[i]);
+            payload.push_back(v[i]);
         }
     }
 
@@ -118,7 +105,7 @@ public:
         header.pack(buffer);
 
         // payload
-        buffer->insert(buffer->end(), payload.d.begin(), payload.d.end());
+        buffer->insert(buffer->end(), payload.begin(), payload.end());
     }
 };
 }

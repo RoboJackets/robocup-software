@@ -19,7 +19,6 @@
  */
 typedef void(CommCallback)(rtp::packet*);
 typedef CommPort<CommCallback> CommPort_t;
-typedef CommPorts<CommCallback> CommPorts_t;
 
 /**
  * @brief A high-level firmware class for packet handling & routing
@@ -31,7 +30,7 @@ typedef CommPorts<CommCallback> CommPorts_t;
  */
 class CommModule {
 private:
-    CommPorts_t _ports;
+    std::map<uint8_t, CommPort_t> _ports;
 
 public:
     /// The constructor initializes and starts threads and mail queues
@@ -55,35 +54,18 @@ public:
     // Set a TX callback function on an object
     template <typename B>
     void setTxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
-        if (!_ports.hasPort(portNbr)) {
-            _ports += CommPort_t(portNbr);
-        }
-
-        _ports[portNbr].txCallback() =
-            std::bind(mptr, obj, std::placeholders::_1);
-
-        ready();
+        setTxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);
     }
 
     // Set an RX callback function on an object
     template <typename B>
     void setRxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
-        if (!_ports.hasPort(portNbr)) {
-            _ports += CommPort_t(portNbr);
-        }
-
-        _ports[portNbr].rxCallback() =
-            std::bind(mptr, obj, std::placeholders::_1);
-
-        ready();
+        setRxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);
     }
 
     // Set a normal RX callback function without an object
-    void setRxHandler(CommCallback callback, uint8_t portNbr);
-    void setTxHandler(CommCallback callback, uint8_t portNbr);
-
-    // Open a socket connection for communicating.
-    void openSocket(uint8_t portNbr);
+    void setRxHandler(std::function<CommCallback> callback, uint8_t portNbr);
+    void setTxHandler(std::function<CommCallback> callback, uint8_t portNbr);
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values

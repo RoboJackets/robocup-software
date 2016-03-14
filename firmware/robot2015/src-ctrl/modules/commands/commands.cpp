@@ -2,6 +2,7 @@
 
 #include <map>
 #include <ctime>
+#include <sstream>
 
 #include <rtos.h>
 #include <mbed_rpc.h>
@@ -135,7 +136,11 @@ static const vector<command_t> commands = {
      "show motor info (until receiving Ctrl-C).",
      "motorscroll"},
 
-    {{"ping"}, true, cmd_ping, "check the console's responsiveness.", "ping"},
+    {{"serialping"},
+     true,
+     cmd_serial_ping,
+     "check the console's responsiveness.",
+     "serialping"},
 
     {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
 
@@ -150,6 +155,13 @@ static const vector<command_t> commands = {
      "pong, "
      "strobe <num>, "
      "stress-test <count> <delay> <pck-size>}]"},
+
+    {{"ping"},
+     false,
+     cmd_ping,
+     "periodically send ping packets out over radio broadcast"},
+
+    {{"pong"}, false, cmd_pong, "reply to ping"},
 
     {{"reboot", "reset", "restart"},
      false,
@@ -371,7 +383,7 @@ int cmd_help_detail(cmd_args_t& args) {
 /**
  * Console responsiveness test.
  */
-int cmd_ping(cmd_args_t& args) {
+int cmd_serial_ping(cmd_args_t& args) {
     if (!args.empty()) {
         show_invalid_args(args);
         return 1;
@@ -905,7 +917,7 @@ int cmd_radio(cmd_args_t& args) {
                 unsigned int portNbr = atoi(args[2].c_str());
 
                 if (args[1] == "up") {
-                    commModule->openSocket(portNbr);
+                    // commModule->openSocket(portNbr);
 
                 } else if (args[1] == "down") {
                     commModule->close(portNbr);
@@ -955,6 +967,85 @@ int cmd_radio(cmd_args_t& args) {
         show_invalid_args(args);
         return 1;
     }
+
+    return 0;
+}
+
+int cmd_pong(cmd_args_t& args) {
+    CommModule::Instance()->setTxHandler(
+        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
+    Queue<rtp::packet, 2> pings;
+    CommModule::Instance()->setRxHandler([&pings](rtp::packet* pkt) {
+        pings.put(new rtp::packet(*pkt));
+    }, rtp::port::PING);
+
+    while (true) {
+        uint32_t timeout_ms = 1;
+        osEvent maybePing = pings.get(timeout_ms);
+        if (maybePing.status == osEventMessage) {
+            rtp::packet* ping = (rtp::packet*)maybePing.value.p;
+            int pingNbr = ping->payload[0];
+            delete ping;
+
+            printf("Got ping %d\r\n", pingNbr);
+
+            // reply with ack
+            CommModule::Instance()->send(
+                rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
+        }
+
+        if (Console::Instance()->IterCmdBreakReq()) break;
+    }
+
+    // remove handlers, close port
+    CommModule::Instance()->close(rtp::port::PING);
+
+    // reset break command
+    Console::Instance()->IterCmdBreakReq(false);
+
+    return 0;
+}
+
+int cmd_ping(cmd_args_t& args) {
+    CommModule::Instance()->setTxHandler(
+        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
+    Queue<rtp::packet, 2> acks;
+    CommModule::Instance()->setRxHandler([&acks](rtp::packet* pkt) {
+        acks.put(new rtp::packet(*pkt));
+    }, rtp::port::PING);
+
+    int pingCount = 0;
+    int lastPingTime = 0;
+    const int PingInterval = 3;
+
+    while (true) {
+        if ((clock() - lastPingTime) / CLOCKS_PER_SEC > PingInterval) {
+            lastPingTime = clock();
+
+            CommModule::Instance()->send(
+                rtp::packet({(uint8_t)pingCount}, rtp::port::PING));
+
+            printf("Sent ping %d\r\n", pingCount);
+
+            pingCount++;
+        }
+
+        uint32_t timeout_ms = 1;
+        osEvent maybeAck = acks.get(timeout_ms);
+        if (maybeAck.status == osEventMessage) {
+            rtp::packet* ack = (rtp::packet*)maybeAck.value.p;
+            printf("  got ack %d\r\n", ack->payload[0]);
+            delete ack;
+        }
+
+        if (Console::Instance()->IterCmdBreakReq()) break;
+    }
+
+    // remove handlers, close port
+    CommModule::Instance()->close(rtp::port::PING);
+
+    // reset break command
+    Console::Instance()->IterCmdBreakReq(false);
 
     return 0;
 }

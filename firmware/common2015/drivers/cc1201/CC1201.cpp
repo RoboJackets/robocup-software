@@ -48,7 +48,7 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
         return COMM_FUNC_BUF_ERR;
     }
 
-    flush_tx();
+    strobe(CC1201_STROBE_SFTX);
 
     // In order for radio transmission to work, the cc1201 must be first strobed
     // into IDLE, then into TX.  We're not sure why this is the case, but it
@@ -69,8 +69,8 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
         CC1201_STATE_TXFIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
-        flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
-        // state
+        // flush the TX buffer & return if the FIFO is in a corrupt state
+        flush_tx();
 
         // set in IDLE mode and strobe back into RX to ensure the states will
         // fall through calibration then return
