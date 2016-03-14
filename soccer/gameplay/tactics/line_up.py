@@ -1,4 +1,5 @@
 import composite_behavior
+from single_robot_behavior import SingleRobotBehavior
 import behavior
 import skills.move
 import robocup
@@ -30,6 +31,16 @@ class LineUp(composite_behavior.CompositeBehavior):
                             behavior.Behavior.State.running,
                             lambda: not self.all_subbehaviors_completed(),
                             'robots arent lined up')
+
+    # override superclass implementation of all_subbehaviors_completed() to
+    # count unassigned subbehaviors as "done running"
+    def all_subbehaviors_completed(self):
+        for bhvr in self.all_subbehaviors():
+            if not bhvr.is_done_running() and (
+                    not isinstance(bhvr, SingleRobotBehavior) or
+                    bhvr.robot != None):
+                return False
+        return True
 
     def execute_running(self):
         for i in range(6):
