@@ -19,4 +19,3 @@ set(SWI2C_SRC ${SOURCE_DIR}/SoftwareI2C.cpp)
 # add the external project's path/src info into the accessory library lists
 set(MBED_ASSEC_LIBS_INCLUDES    ${MBED_ASSEC_LIBS_INCLUDES} ${SOURCE_DIR}   )
 set(MBED_ASSEC_LIBS_SRCS        ${MBED_ASSEC_LIBS_SRCS}     ${SWI2C_SRC}    )
-set(MBED_ASSEC_LIBS_DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}  swi2c_library   )

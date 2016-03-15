@@ -19,4 +19,3 @@ set(SWSPI_SRC ${SOURCE_DIR}/SWSPI.cpp)
 # add the external project's path/src info into the accessory library lists
 set(MBED_ASSEC_LIBS_INCLUDES    ${MBED_ASSEC_LIBS_INCLUDES} ${SOURCE_DIR}   )
 set(MBED_ASSEC_LIBS_SRCS        ${MBED_ASSEC_LIBS_SRCS}     ${SWSPI_SRC}    )
-set(MBED_ASSEC_LIBS_DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}  swspi_library   )

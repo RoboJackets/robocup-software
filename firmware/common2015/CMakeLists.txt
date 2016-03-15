@@ -5,9 +5,6 @@ include(../mbed/mbed_executable.cmake)
 file(GLOB_RECURSE   common2015_SRC  "*.cpp")
 list(REMOVE_ITEM    common2015_SRC  "${CMAKE_CURRENT_LIST_DIR}/ExampleTest.cpp")
 
-# append all of the accessory library sources
-list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
-
 # set the names of each directory and then set the names of the subdirectories within each one
 set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
@@ -38,26 +35,16 @@ endforeach()
 # append all of the accessory library include directories
 list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
 
-# tell cmake that all of the source files aren't here yet
-set_source_files_properties(
-    ${MBED_ASSEC_LIBS_SRCS} PROPERTIES
-    GENERATED               TRUE
-    DEPENDS                 ${MBED_ASSEC_LIBS_DEPENDS}
-)
-
-# build the 'common2015' library that contains all the MBED stuff needed for
-# both the base station and robot firmware
-
 # Include the arm toolchain for gcc
 include(${ARM_TOOLCHAIN_FILE})
 rj_mbed_env()
 
+# build the 'common2015' library that contains all the MBED stuff needed for
+# both the base station and robot firmware
 rj_add_mbed_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
 target_link_libraries(common2015 modserial)
 target_link_libraries(common2015 burstspi)
-
-# depends on the mbed libraries and all of the accessory libraries
-add_dependencies(common2015 ${MBED_ASSEC_LIBS_DEPENDS})
+# target_link_libraries(common2015 moddma)
 
 target_link_libraries(common2015 ${MBED_LIBRARY})
 

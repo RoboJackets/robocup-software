@@ -27,4 +27,3 @@ set(PIXARRY_ARC ${SOURCE_DIR}/neopixel.cpp)
 # add the external project's path/src info into the accessory library lists
 set(MBED_ASSEC_LIBS_INCLUDES    ${MBED_ASSEC_LIBS_INCLUDES} ${SOURCE_DIR}       )
 set(MBED_ASSEC_LIBS_SRCS        ${MBED_ASSEC_LIBS_SRCS}     ${PIXARRY_ARC}      )
-set(MBED_ASSEC_LIBS_DEPENDS     ${MBED_ASSEC_LIBS_DEPENDS}  pixelarray_library  )
