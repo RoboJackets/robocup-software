@@ -72,9 +72,7 @@ function(rj_add_external_mbed_library)
     endforeach()
 
     rj_add_mbed_library(${arg_NAME} ${lib_srcs})
-    target_include_directories(${arg_NAME} PUBLIC ${MBED_INCLUDE_DIR})
     target_include_directories(${arg_NAME} PUBLIC ${${arg_LIBNAME}_INCLUDES})
-    add_dependencies(${arg_NAME} mbed_libraries)
 endfunction(rj_add_external_mbed_library)
 
 function(rj_mbed_env)
@@ -91,4 +89,8 @@ endfunction(mbed_env)
 function(_rj_configure_mbed_binary name)
     # only build this if specifically instructed
     set_target_properties(${name} PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+    # link and include official mbed libs
+    target_include_directories(${name} PUBLIC ${MBED_INCLUDE_DIR})
+    add_dependencies(${name} mbed_libraries)
 endfunction()
