@@ -42,7 +42,7 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         log_mutex.lock();
 
         va_list args;
-        char newFormat[1024];
+        static char newFormat[300];
         char time_buf[25];
         time_t sys_time = time(NULL);
         strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
