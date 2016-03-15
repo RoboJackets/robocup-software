@@ -1,5 +1,10 @@
 var NAVTREEINDEX11 =
 {
+"struct_robot_config_1_1_chipper.html#aca30a62e64cbf50c4bae0bed62e6cc4a":[12,0,78,0,0],
+"struct_robot_config_1_1_chipper.html#adfea0d80e221e0889c97e31089886306":[12,0,78,0,2],
+"struct_robot_config_1_1_dribbler.html":[12,0,78,1],
+"struct_robot_config_1_1_dribbler.html#a65e1488817d5ba4f41685865bf30e0b3":[12,0,78,1,0],
+"struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[12,0,78,1,1],
 "struct_robot_config_1_1_kicker.html":[12,0,78,2],
 "struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b":[12,0,78,2,2],
 "struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e":[12,0,78,2,0],

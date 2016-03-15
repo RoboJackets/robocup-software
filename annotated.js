@@ -22,8 +22,7 @@ var annotated =
       [ "constants", null, [
         [ "Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
         [ "Robot", "classgameplay_1_1constants_1_1_robot.html", "classgameplay_1_1constants_1_1_robot" ],
-        [ "Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
-        [ "Field", "classgameplay_1_1constants_1_1_field.html", null ]
+        [ "Ball", "classgameplay_1_1constants_1_1_ball.html", null ]
       ] ],
       [ "evaluation", null, [
         [ "double_touch", null, [

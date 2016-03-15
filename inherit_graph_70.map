@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_neo_strip.html" title="NeoStrip objects manage the buffering and assigning of addressable NeoPixels. " alt="" coords="6,5,85,32"/>
+<area shape="rect" id="node2" href="$class_new_referee_module.html" title="The ref module listens to a port for referee packets over the network. " alt="" coords="131,5,274,32"/>
+<area shape="rect" id="node3" href="$class_processor.html" title="Brings all the pieces together. " alt="" coords="160,56,245,83"/>
+<area shape="rect" id="node4" href="$class_vision_receiver.html" title="Receives vision packets over UDP and places them in a buffer until they are read. ..." alt="" coords="146,107,259,133"/>
 </map>

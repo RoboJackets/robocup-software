@@ -42,11 +42,11 @@ var NAVTREEINDEX =
 "class_our_robot.html#a639eecf0232af72c5845feca21ee9d70",
 "class_protobuf_tree.html",
 "class_u_s_b_radio.html#abf792eec95ee2ba6766172d2f6850f29",
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a832272c65ae1d8659f5f1a82cb39fd34",
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#aa2f1b26601481920258951a0f557b0c4",
 "classgameplay_1_1skills_1_1aim_1_1_aim.html#a2ea3c21be2b0ae8ee4ab966f6316625a",
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aa065da8f7ee87c5a84ec9e8fb2a3b05f",
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aeec4c2eb05b89bc6776484ff122aef83",
 "functions.html",
-"struct_robot_config_1_1_kicker.html"
+"struct_robot_config_1_1_chipper.html#aca30a62e64cbf50c4bae0bed62e6cc4a"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -69,7 +69,6 @@ var hierarchy =
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
       [ "test_fsm.MyFsm.SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ]
     ] ],
-    [ "gameplay.constants.Field", "classgameplay_1_1constants_1_1_field.html", null ],
     [ "Field_Dimensions", "struct_field___dimensions.html", null ],
     [ "FileSystemEventHandler", null, [
       [ "gameplay.fs_watcher.FsWatcher.FsEventHandler", "classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html", null ]
@@ -237,6 +236,9 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
     [ "SoftwareSPI", "class_software_s_p_i.html", null ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -313,9 +315,6 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],
