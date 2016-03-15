@@ -58,6 +58,7 @@ set_source_files_properties(
 # both the base station and robot firmware
 rj_add_mbed_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
 target_link_libraries(common2015 modserial)
+target_link_libraries(common2015 burstspi)
 
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 ${MBED_ASSEC_LIBS_DEPENDS})

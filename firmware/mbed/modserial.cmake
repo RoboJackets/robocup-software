@@ -32,7 +32,7 @@ rj_add_external_mbed_library(
     SRCS ${modserial_SRC}
     INCLUDE_DIRS ${modserial_HDRS}
 )
-set(MBED_ASSEC_LIBS_DEPENDS ${MBED_ASSEC_LIBS_DEPENDS} modserial)
+# set(MBED_ASSEC_LIBS_DEPENDS ${MBED_ASSEC_LIBS_DEPENDS} modserial)
 
 # add the external project's path/src info into the accessory library lists
 set(MBED_ASSEC_LIBS_INCLUDES ${MBED_ASSEC_LIBS_INCLUDES} ${modserial_INCLUDES})
