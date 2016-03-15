@@ -11,7 +11,10 @@ bool btnState = 0;
 bool btnRead;
 
 int transferAndWait(const char what, SPI& spi);
-
+int kick( int time );
+int chip( int time );
+int vRead();
+int map(int x, int in_min, int in_max, int out_min, int out_max);
 
 int main() {
     pc.baud(57600); //set up the serial
@@ -48,3 +51,50 @@ int transferAndWait (const char what, SPI& spi)
     wait(.020);
     return a;
 } // end transferAndWait
+
+/*
+
+Each of these commands generates a byte that is sent over and unpacked by the ATTiny
+| Command | Value |
+|<---2--->|<--6-->|
+
+Commands:
+
+11 kick
+10 chip
+01 read
+00 null
+
+swedish fish theory
+
+*/
+
+// map time into 0-63 range
+
+int kick( int time )
+{
+  //set kick command
+  int cmd = 0xC0;
+  time = map(time, 0, 255, 0, 63);
+  return cmd | time;
+}
+
+int chip( int time )
+{
+  //set chip command
+  int cmd = 0xB0;
+  time = map(time, 0, 255, 0, 63);
+  return cmd | time;
+}
+int vRead()
+{
+  //set voltage read command
+  int cmd = 0xA0;
+  return cmd;
+}
+
+int map(int x, int in_min, int in_max, int out_min, int out_max)
+// originally an Arduino function
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
