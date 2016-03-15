@@ -35,8 +35,13 @@ set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC "*.cpp")
 
+# wrapper around add_executable for adding mbed executables
+function(rj_add_mbed_executable name)
+    add_executable(${name}_elf ${ARGN})
+endfunction(rj_add_mbed_executable)
+
 # add the target for making the elf file
-add_executable(robot2015_elf ${robot2015_SRC} ${asm_SRC})
+rj_add_mbed_executable(robot2015 ${robot2015_SRC} ${asm_SRC})
 
 # specify that we depend on the common2015 library and link to it
 add_dependencies(robot2015_elf common2015)
