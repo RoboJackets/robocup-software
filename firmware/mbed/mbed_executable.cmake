@@ -30,6 +30,46 @@ function(rj_add_mbed_library name)
     _rj_configure_mbed_binary(${name})
 endfunction(rj_add_mbed_library)
 
+function(rj_add_external_mbed_library NAME HG_REPO HG_TAG SRCS INCLUDE_DIRS)
+    set(extproj ${NAME}_ext_proj)
+    ExternalProject_Add(${extproj}
+        HG_REPOSITORY ${HG_REPO}
+        HG_TAG ${HG_TAG}
+        CONFIGURE_COMMAND   ""
+        BUILD_COMMAND       ""
+        INSTALL_COMMAND     ""
+        UPDATE_COMMAND      ""
+    )
+    set_target_properties(${extproj} PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+    # the directory to include for linking in with the common2015 library
+    ExternalProject_Get_Property(${extproj} SOURCE_DIR)
+
+    # convert source files to absolute paths
+    set(lib_srcs "")
+    foreach(src ${SRCS})
+        list(APPEND lib_srcs ${SOURCE_DIR}/${src})
+    endforeach()
+
+    # convert include dirs to absolute paths
+    set(lib_hdrs "")
+    foreach(include ${INCLUDE_DIRS})
+        list(APPEND lib_hdrs ${SOURCE_DIR}/${include})
+    endforeach()
+
+    # Specify that each source file depends on the external project
+    foreach(src ${lib_srcs})
+        add_custom_command(
+            OUTPUT ${src}
+            DEPENDS ${extproj}
+        )
+    endforeach()
+
+    rj_add_mbed_library(${NAME} ${lib_srcs})
+    target_include_directories(${NAME} PUBLIC ${MBED_INCLUDE_DIR})
+    target_include_directories(${NAME} PUBLIC ${lib_hdrs})
+endfunction(rj_add_external_mbed_library)
+
 
 function(_rj_configure_mbed_binary name)
     # Set compiler and linker flags
