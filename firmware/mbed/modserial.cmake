@@ -25,6 +25,10 @@ set(modserial_HDRS
     Device
 )
 
+# Include the arm toolchain for gcc
+include(${ARM_TOOLCHAIN_FILE})
+rj_mbed_env()
+
 rj_add_external_mbed_library(
     NAME modserial
     HG_REPO https://developer.mbed.org/users/Sissors/code/MODSERIAL
@@ -32,13 +36,6 @@ rj_add_external_mbed_library(
     SRCS ${modserial_SRC}
     INCLUDE_DIRS ${modserial_HDRS}
 )
-# set(MBED_ASSEC_LIBS_DEPENDS ${MBED_ASSEC_LIBS_DEPENDS} modserial)
 
 # add the external project's path/src info into the accessory library lists
 set(MBED_ASSEC_LIBS_INCLUDES ${MBED_ASSEC_LIBS_INCLUDES} ${modserial_INCLUDES})
-
-# TDOO(justin): remove
-include(${ARM_TOOLCHAIN_FILE})
-set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
-set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
-set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )

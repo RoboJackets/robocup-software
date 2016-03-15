@@ -29,18 +29,13 @@ foreach(module_subdir ${MODULES})
     list(APPEND ROBOT2015_ELF_INCLUDES ${MODULES_ROOT_NAME}/${module_subdir})
 endforeach()
 
-# Include the arm toolchain for gcc
-include(${ARM_TOOLCHAIN_FILE})
-
-# TODO: remove in favor of setting properties on a per-target basis
-set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
-set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
-set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
-
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC "*.cpp")
 
-# add the target for making the elf file
+# Include the arm toolchain for gcc
+include(${ARM_TOOLCHAIN_FILE})
+rj_mbed_env()
+
 rj_add_mbed_executable(robot2015 ${robot2015_SRC} ${asm_SRC})
 target_link_libraries(robot2015 common2015)
 target_include_directories(robot2015 PUBLIC ${ROBOT2015_ELF_INCLUDES})

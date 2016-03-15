@@ -77,20 +77,18 @@ function(rj_add_external_mbed_library)
     add_dependencies(${arg_NAME} mbed_libraries)
 endfunction(rj_add_external_mbed_library)
 
+function(rj_mbed_env)
+    set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS} PARENT_SCOPE)
+    set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS} PARENT_SCOPE)
+    set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS} PARENT_SCOPE)
+    set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS} PARENT_SCOPE)
+
+    # Include the arm toolchain for gcc
+    set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE} PARENT_SCOPE)
+    include(${ARM_TOOLCHAIN_FILE})
+endfunction(mbed_env)
 
 function(_rj_configure_mbed_binary name)
-    # Set compiler and linker flags
-    set_target_properties(${name} PROPERTIES
-        CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
-    set_target_properties(${name} PROPERTIES
-        CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
-    set_target_properties(${name} PROPERTIES
-        CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
-    # Include the arm toolchain for gcc
-    set_target_properties(${name} PROPERTIES
-        CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
-    include(${ARM_TOOLCHAIN_FILE})
-
     # only build this if specifically instructed
     set_target_properties(${name} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 endfunction()

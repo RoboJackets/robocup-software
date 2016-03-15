@@ -1,15 +1,6 @@
 
 include(../mbed/mbed_executable.cmake)
 
-# TODO(justin): remove
-# set the arm toolchain and include it so we can use it
-include(${ARM_TOOLCHAIN_FILE})
-
-# TDOO(justin): remove
-# Set compiler and linker flags
-set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
-set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
-set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 
 file(GLOB_RECURSE   common2015_SRC  "*.cpp")
 list(REMOVE_ITEM    common2015_SRC  "${CMAKE_CURRENT_LIST_DIR}/ExampleTest.cpp")
@@ -56,6 +47,11 @@ set_source_files_properties(
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
+
+# Include the arm toolchain for gcc
+include(${ARM_TOOLCHAIN_FILE})
+rj_mbed_env()
+
 rj_add_mbed_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
 target_link_libraries(common2015 modserial)
 target_link_libraries(common2015 burstspi)
