@@ -25,5 +25,5 @@ class Ball:
     Radius = 0.0215
     Mass = 0.04593  # mass of golf ball (kg)
 
-
+# Set to the global Field_Dimensions object by the GameplayModule
 Field = robocup.Field_Dimensions.SingleFieldDimensions

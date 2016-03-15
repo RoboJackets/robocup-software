@@ -44,8 +44,8 @@ struct Field_Dimensions {
     inline Geometry2d::CompositeShape OurGoalZoneShape() const {
         return _OurGoalZoneShape;
     }
-    inline Geometry2d::CompositeShape TheirGoalShape() const {
-        return _TheirGoalShape;
+    inline Geometry2d::CompositeShape TheirGoalZoneShape() const {
+        return _TheirGoalZoneShape;
     }
     inline Geometry2d::Segment OurGoalSegment() const {
         return _OurGoalSegment;
@@ -63,9 +63,7 @@ struct Field_Dimensions {
     static Field_Dimensions Current_Dimensions;
 
     Field_Dimensions()
-        : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {
-        updateGeometry();
-    }
+        : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 
     Field_Dimensions(float fl, float fw, float fb, float flw, float gw,
                      float gd, float gh, float pd, float pdiam, float ar,
@@ -110,12 +108,12 @@ struct Field_Dimensions {
             Geometry2d::Point(-_GoalFlat / 2.0, _ArcRadius),
             Geometry2d::Point(_GoalFlat / 2.0, 0)));
 
-        _TheirGoalShape = Geometry2d::CompositeShape();
-        _TheirGoalShape.add(std::make_shared<Geometry2d::Circle>(
+        _TheirGoalZoneShape = Geometry2d::CompositeShape();
+        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Circle>(
             Geometry2d::Point(-_GoalFlat / 2.0, _Length), _ArcRadius));
-        _TheirGoalShape.add(std::make_shared<Geometry2d::Circle>(
+        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Circle>(
             Geometry2d::Point(_GoalFlat / 2.0, _Length), _ArcRadius));
-        _TheirGoalShape.add(std::make_shared<Geometry2d::Rect>(
+        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Rect>(
             Geometry2d::Point(-_GoalFlat / 2.0, _Length),
             Geometry2d::Point(_GoalFlat / 2.0, _Length - _ArcRadius)));
 
@@ -152,7 +150,7 @@ private:
 
     Geometry2d::Point _CenterPoint;
     Geometry2d::CompositeShape _OurGoalZoneShape;
-    Geometry2d::CompositeShape _TheirGoalShape;
+    Geometry2d::CompositeShape _TheirGoalZoneShape;
     Geometry2d::Segment _OurGoalSegment;
     Geometry2d::Segment _TheirGoalSegment;
     Geometry2d::Rect _OurHalf;

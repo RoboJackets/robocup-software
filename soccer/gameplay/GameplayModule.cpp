@@ -62,7 +62,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState* state)
 
             _mainPyNamespace["constants"] =
                 handle<>(PyImport_ImportModule("constants"));
-            getConstantsModule().attr("Field") =
+
+            _mainPyNamespace["constants"].attr("Field") =
                 &Field_Dimensions::Current_Dimensions;
 
             // instantiate the root play
@@ -409,7 +410,4 @@ boost::python::object Gameplay::GameplayModule::getRootPlay() {
 
 boost::python::object Gameplay::GameplayModule::getMainModule() {
     return _mainPyNamespace["main"];
-}
-boost::python::object Gameplay::GameplayModule::getConstantsModule() {
-    return _mainPyNamespace["constants"];
 }
