@@ -49,13 +49,13 @@ if len(mbeds) == 0:
     print("No mbeds found", file=sys.stderr)
     sys.exit(1)
 
+
 def find_mbed_disk(mbed):
     dirpath = '/dev/disk/by-id'
     for path in os.listdir(dirpath):
         if mbed['target_id'] in path:
             return os.path.join(dirpath, path)
     return None
-
 
 # iterate copying all files to all mbeds
 for i in range(len(mbeds)):
@@ -71,7 +71,8 @@ for i in range(len(mbeds)):
         check_call(['mount', find_mbed_disk(mbed), mount_point])
 
     for f in files:
-        print("Copying '{}' to '{}'...".format(os.path.basename(f), mount_point))
+        print("Copying '{}' to '{}'...".format(
+            os.path.basename(f), mount_point))
         shutil.copy2(f, mount_point)
         sync_os()
 
@@ -82,7 +83,12 @@ for i in range(len(mbeds)):
 
     # reset the mbed
     print("Rebooting mbed...")
-    ss = serial.Serial(mbed['serial_port'], baudrate=57600)
-    ss.sendBreak()
-    time.sleep(1)
-    ss.sendBreak()
+    try:
+        ss = serial.Serial(mbed['serial_port'], baudrate=57600)
+        ss.sendBreak()
+        time.sleep(1)
+        ss.sendBreak()
+    except serial.serialutil.SerialException as exc:
+        print(
+            "Unable to open MBED serial port.  Are you already connected to it via the 'screen' program?")
+        sys.exit(1)
