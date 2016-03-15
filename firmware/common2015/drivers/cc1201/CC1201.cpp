@@ -23,10 +23,10 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
     set_rssi_offset(rssiOffset);
     selfTest();
 
-    // set initial configuration
-    setConfig(regs, len);
-
     if (_isInit == true) {
+        // set initial configuration
+        setConfig(regs, len);
+
         LOG(INIT, "CC1201 ready!");
         CommLink::ready();
     }
