@@ -1,6 +1,6 @@
 # wrapper around add_executable for adding mbed executables
 function(rj_add_mbed_executable name)
-    set(binfile ${name.bin})
+    set(binfile ${name}.bin)
 
     add_executable(${name} ${ARGN})
 
