@@ -20,22 +20,21 @@ set(modserial_SRC
     Device/MODSERIAL_KSDK.cpp
 )
 
-set(modserial_HEADERS
+set(modserial_HDRS
     ./
-    Drivers
+    Device
 )
 
 rj_add_external_mbed_library(
     NAME modserial
     HG_REPO https://developer.mbed.org/users/Sissors/code/MODSERIAL
-    HG_TAG              41:d8422efe4761
+    HG_TAG 41:d8422efe4761
     SRCS ${modserial_SRC}
-    INCLUDE_DIRS ${modserial_HEADERS}
+    INCLUDE_DIRS ${modserial_HDRS}
 )
 set(MBED_ASSEC_LIBS_DEPENDS ${MBED_ASSEC_LIBS_DEPENDS} modserial)
 
 # add the external project's path/src info into the accessory library lists
-set(modserial_INCLUDES ${lib_hdrs})
 set(MBED_ASSEC_LIBS_INCLUDES ${MBED_ASSEC_LIBS_INCLUDES} ${modserial_INCLUDES})
 
 # TDOO(justin): remove

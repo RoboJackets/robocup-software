@@ -30,11 +30,17 @@ function(rj_add_mbed_library name)
     _rj_configure_mbed_binary(${name})
 endfunction(rj_add_mbed_library)
 
-function(rj_add_external_mbed_library NAME HG_REPO HG_TAG SRCS INCLUDE_DIRS)
-    set(extproj ${NAME}_ext_proj)
+
+function(rj_add_external_mbed_library)
+    set(oneValueArgs NAME HG_REPO HG_TAG)
+    set(multiValueArgs SRCS INCLUDE_DIRS)
+    cmake_parse_arguments(arg "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    # Specify source repository
+    set(extproj ${arg_NAME}_ext_proj)
     ExternalProject_Add(${extproj}
-        HG_REPOSITORY ${HG_REPO}
-        HG_TAG ${HG_TAG}
+        HG_REPOSITORY ${arg_HG_REPO}
+        HG_TAG ${arg_HG_TAG}
         CONFIGURE_COMMAND   ""
         BUILD_COMMAND       ""
         INSTALL_COMMAND     ""
@@ -42,19 +48,19 @@ function(rj_add_external_mbed_library NAME HG_REPO HG_TAG SRCS INCLUDE_DIRS)
     )
     set_target_properties(${extproj} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-    # the directory to include for linking in with the common2015 library
+    # Get the download directory
     ExternalProject_Get_Property(${extproj} SOURCE_DIR)
 
     # convert source files to absolute paths
     set(lib_srcs "")
-    foreach(src ${SRCS})
+    foreach(src ${arg_SRCS})
         list(APPEND lib_srcs ${SOURCE_DIR}/${src})
     endforeach()
 
     # convert include dirs to absolute paths
-    set(lib_hdrs "")
-    foreach(include ${INCLUDE_DIRS})
-        list(APPEND lib_hdrs ${SOURCE_DIR}/${include})
+    set(${arg_LIBNAME}_INCLUDES "")
+    foreach(include ${arg_INCLUDE_DIRS})
+        list(APPEND ${arg_LIBNAME}_INCLUDES ${SOURCE_DIR}/${include})
     endforeach()
 
     # Specify that each source file depends on the external project
@@ -65,9 +71,10 @@ function(rj_add_external_mbed_library NAME HG_REPO HG_TAG SRCS INCLUDE_DIRS)
         )
     endforeach()
 
-    rj_add_mbed_library(${NAME} ${lib_srcs})
-    target_include_directories(${NAME} PUBLIC ${MBED_INCLUDE_DIR})
-    target_include_directories(${NAME} PUBLIC ${lib_hdrs})
+    rj_add_mbed_library(${arg_NAME} ${lib_srcs})
+    target_include_directories(${arg_NAME} PUBLIC ${MBED_INCLUDE_DIR})
+    target_include_directories(${arg_NAME} PUBLIC ${${arg_LIBNAME}_INCLUDES})
+    add_dependencies(${arg_NAME} mbed_libraries)
 endfunction(rj_add_external_mbed_library)
 
 
