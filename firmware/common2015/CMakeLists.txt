@@ -60,7 +60,7 @@ rj_add_mbed_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_
 target_link_libraries(common2015 modserial)
 
 # depends on the mbed libraries and all of the accessory libraries
-add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
+add_dependencies(common2015 ${MBED_ASSEC_LIBS_DEPENDS})
 
 target_link_libraries(common2015 ${MBED_LIBRARY})
 
