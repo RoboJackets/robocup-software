@@ -8,10 +8,7 @@ set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR} ../
 # TODO: remove, these are set in rj_add_mbed_executable
 # Set compiler and linker flags
 include(${ARM_TOOLCHAIN_FILE})
-set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
-set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
-set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
-
+rj_mbed_env()
 
 function(rj_add_mbed_test_executable name)
     set(target ${name}-test)
