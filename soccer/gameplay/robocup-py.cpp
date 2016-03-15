@@ -698,7 +698,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("FloorWidth", &Field_Dimensions::FloorWidth)
         .add_property("CenterPoint", &Field_Dimensions::CenterPoint)
         .add_property("OurGoalZoneShape", &Field_Dimensions::OurGoalZoneShape)
-        .add_property("TheirGoalShape", &Field_Dimensions::TheirGoalShape)
+        .add_property("TheirGoalZoneShape",
+                      &Field_Dimensions::TheirGoalZoneShape)
         .add_property("OurGoalSegment", &Field_Dimensions::OurGoalSegment)
         .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
         .add_property("OurHalf", &Field_Dimensions::OurHalf)
