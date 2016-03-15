@@ -3,7 +3,6 @@ include(../mbed/mbed_executable.cmake)
 
 # TODO(justin): remove
 # set the arm toolchain and include it so we can use it
-set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
 # TDOO(justin): remove
