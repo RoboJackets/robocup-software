@@ -8,6 +8,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 /* Bit manip. defines for clarity */
 // BV = bit value
@@ -33,9 +34,11 @@ uint8_t spi_enabled = 0;
 
 uint8_t get_voltage();
 void init();
+void trigger(uint8_t time, bool useKicker);
+
 
 void main()
-{    
+{
     init();
 
     while (1) {
@@ -47,6 +50,16 @@ void main()
             }
 
             if (had_interrupt_) {
+                char cmd = data_>>6;
+                switch cmd {
+                  case 0x1 // read voltage
+                  case 0x2 // chip
+                    uint8_t time  = data_ & 0x3F;
+                    trigger(time, 0);
+                  case 0x3 // kick
+                    uint8_t time  = data_ & 0x3F;
+                    trigger(time, 1);
+                }
                 // Simulate kick by toggling LED
                 if (data_ == (uint8_t) 255) {
                     TOGGLE_BIT(PORTB, LED);
@@ -55,7 +68,7 @@ void main()
                 had_interrupt_ = 0;
 
                 USIDR = get_voltage();
-                //USIDR = data_; 
+                //USIDR = data_;
             }
 
         } else if (spi_enabled) {
@@ -78,7 +91,7 @@ ISR(USI_OVF_vect)
     had_interrupt_ = 1;
 }
 
-void init() 
+void init()
 {
     /* Port direction settings */
     SET_BIT(DDRA, KICK);
@@ -92,7 +105,7 @@ void init()
     /* SPI init - Pg. 120 */
     // 3 Wire Mode DO, DI, USCK - Pg. 124
     SET_BIT(USICR, USIWM0);
-    // External, negative edge clock - Pg. 125 
+    // External, negative edge clock - Pg. 125
     SET_BIT(USICR, USICS1);
     // SET_BIT(USICR, USICS0);
     // Enable Global Interrupts - Required for below
@@ -107,6 +120,14 @@ void init()
 
     // because we left adjusted and only need
     // 8 bit precision, we can now read ADCH directly
+}
+
+void trigger(uint8_t time, bool useKicker)
+{
+  uint8_t bit = useKicker ? KICK : CHIP;
+  TOGGLE_BIT(PORTA, bit);
+  delay_us(time*125);
+  TOGGLE_BIT(PORTA, bit);
 }
 
 /* Voltage Function */
