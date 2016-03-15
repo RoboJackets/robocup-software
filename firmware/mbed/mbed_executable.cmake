@@ -44,12 +44,6 @@ function(_rj_configure_mbed_binary name)
         CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
     include(${ARM_TOOLCHAIN_FILE})
 
-    # set compilers
-    set_target_properties(${name} PROPERTIES
-        CMAKE_C_COMPILER ${ARM_C_COMPILER})
-    set_target_properties(${name} PROPERTIES
-        CMAKE_CXX_COMPILER ${ARM_CXX_COMPILER})
-
     # only build this if specifically instructed
     set_target_properties(${name} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 endfunction()

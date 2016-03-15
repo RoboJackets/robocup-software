@@ -30,7 +30,6 @@ foreach(module_subdir ${MODULES})
 endforeach()
 
 # Include the arm toolchain for gcc
-set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
 # TODO: remove in favor of setting properties on a per-target basis
