@@ -1,7 +1,12 @@
+
+include(../mbed/mbed_executable.cmake)
+
+# TODO(justin): remove
 # set the arm toolchain and include it so we can use it
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
+# TDOO(justin): remove
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
@@ -52,7 +57,7 @@ set_source_files_properties(
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
-add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
+rj_add_mbed_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
 
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
@@ -60,9 +65,6 @@ add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 target_link_libraries(common2015 ${MBED_LIBRARY})
 
 target_include_directories(common2015 PUBLIC ${common2015_INCLUDE_DIRS})
-
-# only build firmware library if required
-set_target_properties(common2015 PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # See common/CMakeLists for more info on how this works
 add_custom_command(
