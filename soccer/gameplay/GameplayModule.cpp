@@ -8,9 +8,14 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <cmath>
 
 // for python stuff
 #include "robocup-py.hpp"
+
+using namespace Gameplay;
+
+REGISTER_CONFIGURABLE(GameplayModule);
 
 using namespace std;
 using namespace boost;
@@ -18,11 +23,30 @@ using namespace boost::python;
 
 using namespace Geometry2d;
 
+ConfigDouble* GameplayModule::_fieldEdgeInset;
+
+void GameplayModule::createConfiguration(Configuration* cfg) {
+    // this sets the disance from the field boundries to the edge of the global
+    // obstacles, which the
+    // robots will not move through or into
+    _fieldEdgeInset = new ConfigDouble(cfg, "Field Edge Obstacle", .3);
+}
+
+bool GameplayModule::hasFieldEdgeInsetChanged() const {
+    if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
+        numeric_limits<double>::epsilon()) {
+        return true;
+    }
+    return false;
+}
+
 Gameplay::GameplayModule::GameplayModule(SystemState* state)
     : _mutex(QMutex::Recursive) {
     _state = state;
 
     calculateFieldObstacles();
+
+    _oldFieldEdgeInset = _fieldEdgeInset->value();
 
     _goalieID = -1;
 
@@ -81,27 +105,24 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     _oppMatrix = TransformMatrix::translate(Point(0, dimensions.Length())) *
                  TransformMatrix::rotate(M_PI);
 
-    // TODO(barulicm): describe what @inset is
-    constexpr float inset = 0.3;
-
     //// Make an obstacle to cover the opponent's half of the field except for
     /// one robot diameter across the center line.
     // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
-    float x = dimensions.Width() / 2 + inset;
+    float x = dimensions.Width() / 2 + (float)_fieldEdgeInset->value();
     const float y1 = dimensions.Length() / 2;
-    const float y2 = dimensions.Length() + inset;
+    const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
     const float r = dimensions.CenterRadius();
     _sideObstacle = make_shared<Polygon>(
         vector<Point>{Point(-x, y1), Point(-r, y1), Point(0, y1 + r),
                       Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
 
-    float y = -inset;
-    float deadspace = inset;
-    x = dimensions.Width() / 2.0f + inset;
+    float y = -(float)_fieldEdgeInset->value();
+    float deadspace = (float)_fieldEdgeInset->value();
+    x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
     _nonFloor[0] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y - 1), Point(x, y - 1), Point(x, y)});
 
-    y = dimensions.Length() + inset;
+    y = dimensions.Length() + (float)_fieldEdgeInset->value();
     _nonFloor[1] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y + 1), Point(x, y + 1), Point(x, y)});
 
@@ -174,6 +195,8 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
               dimensions.Length() + dimensions.GoalDepth()),
         Point(-dimensions.GoalWidth() / 2,
               dimensions.Length() + dimensions.GoalDepth())});
+
+    _oldFieldEdgeInset = _fieldEdgeInset->value();
 }
 
 Gameplay::GameplayModule::~GameplayModule() {

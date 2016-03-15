@@ -17,6 +17,18 @@ uint8_t rjLogLevel;
 
 Mutex log_mutex;
 
+LogHelper::LogHelper(uint8_t logLevel, const char* source, int line,
+                     const char* func) {
+    _logLevel = logLevel;
+    _source = source;
+    _line = line;
+    _func = func;
+}
+
+LogHelper::~LogHelper() {
+    log(_logLevel, _source, _line, _func, "%s", str().c_str());
+}
+
 /**
  * [log The system-wide logging interface function. All log messages go through
  * this.]
@@ -30,18 +42,19 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         log_mutex.lock();
 
         va_list args;
+        static char newFormat[300];
         char time_buf[25];
         time_t sys_time = time(NULL);
         strftime(time_buf, 25, "%H:%M:%S", localtime(&sys_time));
 
+        snprintf(newFormat, sizeof(newFormat),
+                 "%s [%s] [%s:%d] <%s>\r\n  %s\r\n\r\n", time_buf,
+                 LOG_LEVEL_STRING[logLevel], source, line, func, format);
+
         va_start(args, format);
 
         fflush(stdout);
-        printf("%s [%s] [%s:%d] <%s>\r\n  ", time_buf,
-               LOG_LEVEL_STRING[logLevel], source, line, func);
-        fflush(stdout);
-        vprintf(format, args);
-        printf("\r\n\r\n");
+        vprintf(newFormat, args);
         fflush(stdout);
 
         va_end(args);
