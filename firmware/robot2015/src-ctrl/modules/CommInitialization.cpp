@@ -205,6 +205,8 @@ void InitializeCommModule() {
         // Set the error code's valid bit
         comm_err |= 1 << 0;
 
+        // Wait until the threads with the commModule->lass are all started up
+        // and ready
         while (!commModule->isReady()) {
             Thread::wait(50);
         }
