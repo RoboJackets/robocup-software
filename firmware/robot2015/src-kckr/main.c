@@ -60,10 +60,10 @@ void main()
                     uint8_t time  = data_ & 0x3F;
                     trigger(time, 1);
                 }
-                // Simulate kick by toggling LED
-                if (data_ == (uint8_t) 255) {
-                    TOGGLE_BIT(PORTB, LED);
-                }
+                // // Simulate kick by toggling LED
+                // if (data_ == (uint8_t) 255) {
+                //     TOGGLE_BIT(PORTB, LED);
+                // }
                 // Reset interrupt flag
                 had_interrupt_ = 0;
 
@@ -124,10 +124,10 @@ void init()
 
 void trigger(uint8_t time, bool useKicker)
 {
-  uint8_t bit = useKicker ? KICK : CHIP;
-  TOGGLE_BIT(PORTA, bit);
+  uint8_t action = useKicker ? KICK : CHIP;
+  TOGGLE_BIT(PORTA, action);
   delay_us(time*125);
-  TOGGLE_BIT(PORTA, bit);
+  TOGGLE_BIT(PORTA, action);
 }
 
 /* Voltage Function */
