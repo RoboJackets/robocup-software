@@ -233,7 +233,7 @@ assign spi_master_di = spi_master_data_array_out[spi_master_recv_index];
 //   0 = 1.7A
 //   1 = 0.7A
 //   2 = 0.25A
-localparam DRV8303_GATE_CURRENT = 1;
+localparam DRV8303_GATE_CURRENT = 0;
 
 // This is a strobe bit that resets the gate outputs
 //   0 = Normal mode

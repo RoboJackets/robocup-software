@@ -103,11 +103,16 @@ void Task_Controller(void const* args) {
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     std::vector<uint16_t> duty_cycles;
-    duty_cycles.assign(5,100);
+    duty_cycles.assign(5,150);
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
+	FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                          duty_cycles.size());
 
+        Thread::wait(CONTROL_LOOP_WAIT_MS);
+	
+	/**
 	for (int i=50; i<200; i+=2) {
 		duty_cycles.at(0) = i;
 		duty_cycles.at(1) = i;
@@ -136,7 +141,7 @@ void Task_Controller(void const* args) {
                                           duty_cycles.size());
 
         	Thread::wait(CONTROL_LOOP_WAIT_MS);
-	}
+	}*/
     }
 
     osThreadTerminate(threadID);
