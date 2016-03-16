@@ -109,7 +109,6 @@ $(document).ready(function(){initNavTree('class_comm_port.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="class_comm_port-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">CommPort&lt; T &gt; Class Template Reference</div>  </div>
@@ -118,91 +117,73 @@ $(document).ready(function(){initNavTree('class_comm_port.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5e9e9593a95cbf89755438e46db71fa1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e9e9593a95cbf89755438e46db71fa1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>CommPort</b> (uint8_t number, std::function&lt; T &gt; rxC=nullptr, std::function&lt; T &gt; txC=nullptr)</td></tr>
-<tr class="separator:a5e9e9593a95cbf89755438e46db71fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a773362b47a42aeae7a4e95be93ad2acc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a773362b47a42aeae7a4e95be93ad2acc"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>CommPort</b> (uint8_t number=0, std::function&lt; T &gt; rxC=nullptr, std::function&lt; T &gt; txC=nullptr)</td></tr>
+<tr class="separator:a773362b47a42aeae7a4e95be93ad2acc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8781164720b9134bb47058ba36e42500"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8781164720b9134bb47058ba36e42500"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="class_comm_port.html">CommPort</a> &amp;p) const </td></tr>
 <tr class="separator:a8781164720b9134bb47058ba36e42500"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77bc95364283545e4645121e3680a0b5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77bc95364283545e4645121e3680a0b5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (unsigned int portNbr) const </td></tr>
-<tr class="separator:a77bc95364283545e4645121e3680a0b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1a266e085b58c5804e4a6987463b2ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1a266e085b58c5804e4a6987463b2ce"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;</b> (const <a class="el" href="class_comm_port.html">CommPort</a> &amp;p) const </td></tr>
 <tr class="separator:aa1a266e085b58c5804e4a6987463b2ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98b1107760b562cc973214fae579c780"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98b1107760b562cc973214fae579c780"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>Nbr</b> () const </td></tr>
-<tr class="separator:a98b1107760b562cc973214fae579c780"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58c332cde7680e0511210277b1b89665"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58c332cde7680e0511210277b1b89665"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Nbr</b> (uint8_t _nbr)</td></tr>
-<tr class="separator:a58c332cde7680e0511210277b1b89665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac30708d031cf7f0488ebf9bbebc88f52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac30708d031cf7f0488ebf9bbebc88f52"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>Open</b> ()</td></tr>
-<tr class="separator:ac30708d031cf7f0488ebf9bbebc88f52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43a56f67db143eb3a6414a522b448304"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43a56f67db143eb3a6414a522b448304"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Close</b> ()</td></tr>
-<tr class="separator:a43a56f67db143eb3a6414a522b448304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb2a07fabc27cd97b3f3f0a7c82d44ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb2a07fabc27cd97b3f3f0a7c82d44ec"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>portNbr</b> () const </td></tr>
+<tr class="separator:acb2a07fabc27cd97b3f3f0a7c82d44ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3d87dedf0c50c13b3a79dd5c8fe4b83"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3d87dedf0c50c13b3a79dd5c8fe4b83"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>portNbr</b> (uint8_t nbr)</td></tr>
+<tr class="separator:ad3d87dedf0c50c13b3a79dd5c8fe4b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4423d867e3d819ac3d12e9322ff12f61"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4423d867e3d819ac3d12e9322ff12f61"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>valid</b> () const </td></tr>
+<tr class="separator:a4423d867e3d819ac3d12e9322ff12f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14f542f6333bc93735b7a5856dffc60b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a14f542f6333bc93735b7a5856dffc60b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>open</b> ()</td></tr>
+<tr class="separator:a14f542f6333bc93735b7a5856dffc60b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92735ebf18b07cddfbcf9dd680124eaf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92735ebf18b07cddfbcf9dd680124eaf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
+<tr class="separator:a92735ebf18b07cddfbcf9dd680124eaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77123f512a8336e093b4ec3a2b11bbdf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77123f512a8336e093b4ec3a2b11bbdf"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isOpen</b> () const </td></tr>
 <tr class="separator:a77123f512a8336e093b4ec3a2b11bbdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae731adb38d213492afa8fd71035a8c24"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae731adb38d213492afa8fd71035a8c24"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isClosed</b> () const </td></tr>
-<tr class="separator:ae731adb38d213492afa8fd71035a8c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d114ef5efeb81b0b230931fe590f9b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d114ef5efeb81b0b230931fe590f9b0"></a>
-const <a class="el" href="class_comm_port.html">CommPort</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>RXCallback</b> (const std::function&lt; T &gt; &amp;func)</td></tr>
-<tr class="separator:a1d114ef5efeb81b0b230931fe590f9b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a146128d210eed5bd794b7f85dbeb29b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a146128d210eed5bd794b7f85dbeb29b1"></a>
-const <a class="el" href="class_comm_port.html">CommPort</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>TXCallback</b> (const std::function&lt; T &gt; &amp;func)</td></tr>
-<tr class="separator:a146128d210eed5bd794b7f85dbeb29b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac58e71b32d2bd1b2bf89f77258b6959b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac58e71b32d2bd1b2bf89f77258b6959b"></a>
-std::function&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>RXCallback</b> ()</td></tr>
-<tr class="separator:ac58e71b32d2bd1b2bf89f77258b6959b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d0adbbedff01e49a180632c8dbf6f83"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d0adbbedff01e49a180632c8dbf6f83"></a>
-std::function&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>TXCallback</b> ()</td></tr>
-<tr class="separator:a8d0adbbedff01e49a180632c8dbf6f83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99a186586d938a0d099476645059e3d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99a186586d938a0d099476645059e3d8"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasTXCallback</b> () const </td></tr>
-<tr class="separator:a99a186586d938a0d099476645059e3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca70a3d7ca469d68344c0ae3d3350f03"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca70a3d7ca469d68344c0ae3d3350f03"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasRXCallback</b> () const </td></tr>
-<tr class="separator:aca70a3d7ca469d68344c0ae3d3350f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0f6584a082aa9815fc2ff4939acddfa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0f6584a082aa9815fc2ff4939acddfa"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>Exists</b> () const </td></tr>
-<tr class="separator:af0f6584a082aa9815fc2ff4939acddfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a724be4dc97259618aa43aa7840a57842"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a724be4dc97259618aa43aa7840a57842"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>TXPackets</b> () const </td></tr>
-<tr class="separator:a724be4dc97259618aa43aa7840a57842"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa51982dddb61d4e8a89cc100da1bc6a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa51982dddb61d4e8a89cc100da1bc6a0"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>RXPackets</b> () const </td></tr>
-<tr class="separator:aa51982dddb61d4e8a89cc100da1bc6a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f01e636c8df6e1fc25aba6677cb20ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f01e636c8df6e1fc25aba6677cb20ce"></a>
-unsigned int &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>TXPackets</b> ()</td></tr>
-<tr class="separator:a8f01e636c8df6e1fc25aba6677cb20ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9ef4a6b664bbe822af08b17552d2e32"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa9ef4a6b664bbe822af08b17552d2e32"></a>
-unsigned int &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>RXPackets</b> ()</td></tr>
-<tr class="separator:aa9ef4a6b664bbe822af08b17552d2e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a265ad1dd85e49ee6f929773bc7cfb9d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a265ad1dd85e49ee6f929773bc7cfb9d8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintPort</b> () const </td></tr>
-<tr class="separator:a265ad1dd85e49ee6f929773bc7cfb9d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:ab67b70f5807ab61b956883834f30d7c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab67b70f5807ab61b956883834f30d7c7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resetPacketCount</b> ()</td></tr>
-<tr class="separator:ab67b70f5807ab61b956883834f30d7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a683f2fb14f665f26ea017d8c06581e93"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a683f2fb14f665f26ea017d8c06581e93"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReady</b> () const </td></tr>
 <tr class="separator:a683f2fb14f665f26ea017d8c06581e93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6d2bdbb58a56f563e90e41b97e61648"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa6d2bdbb58a56f563e90e41b97e61648"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setRxCallback</b> (const std::function&lt; T &gt; &amp;func)</td></tr>
+<tr class="separator:aa6d2bdbb58a56f563e90e41b97e61648"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a789c28b46090deb50a5f8b5dca593459"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a789c28b46090deb50a5f8b5dca593459"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setTxCallback</b> (const std::function&lt; T &gt; &amp;func)</td></tr>
+<tr class="separator:a789c28b46090deb50a5f8b5dca593459"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa9f1d2410d56d256a4413c6f5fb40a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa9f1d2410d56d256a4413c6f5fb40a4"></a>
+std::function&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>rxCallback</b> ()</td></tr>
+<tr class="separator:aaa9f1d2410d56d256a4413c6f5fb40a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc0fa0f39e0907e1f4a17e64267cc247"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc0fa0f39e0907e1f4a17e64267cc247"></a>
+std::function&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>txCallback</b> ()</td></tr>
+<tr class="separator:adc0fa0f39e0907e1f4a17e64267cc247"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47dd521b9d1db5a8092189c955da191b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47dd521b9d1db5a8092189c955da191b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasTxCallback</b> () const </td></tr>
+<tr class="separator:a47dd521b9d1db5a8092189c955da191b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0e41adf6f88d624eade8e4043642d63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0e41adf6f88d624eade8e4043642d63"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasRxCallback</b> () const </td></tr>
+<tr class="separator:ac0e41adf6f88d624eade8e4043642d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a766ae4f6abe1b4f75c31f1628156835e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a766ae4f6abe1b4f75c31f1628156835e"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>txCount</b> () const </td></tr>
+<tr class="separator:a766ae4f6abe1b4f75c31f1628156835e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabb10f614bd635aa642c4815c57b7d4f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabb10f614bd635aa642c4815c57b7d4f"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>rxCount</b> () const </td></tr>
+<tr class="separator:aabb10f614bd635aa642c4815c57b7d4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55eaa7c737b034d4dae8809d5f68ae2b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55eaa7c737b034d4dae8809d5f68ae2b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>incTxCount</b> ()</td></tr>
+<tr class="separator:a55eaa7c737b034d4dae8809d5f68ae2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a9ea6649e9fab0916d51ec2ce133537"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a9ea6649e9fab0916d51ec2ce133537"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>incRxCount</b> ()</td></tr>
+<tr class="separator:a9a9ea6649e9fab0916d51ec2ce133537"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a403a8dd108510e098f79ecd26924b48c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a403a8dd108510e098f79ecd26924b48c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printPort</b> () const </td></tr>
+<tr class="separator:a403a8dd108510e098f79ecd26924b48c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab67b70f5807ab61b956883834f30d7c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab67b70f5807ab61b956883834f30d7c7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>resetPacketCount</b> ()</td></tr>
+<tr class="separator:ab67b70f5807ab61b956883834f30d7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for CommPort&lt; T &gt;:</div>
-<div id="dynsection-0-summary" class="dynsummary" style="display:block;">
-</div>
-<div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="class_comm_port__inherit__graph.png" border="0" usemap="#_comm_port_3_01_t_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="_comm_port_3_01_t_01_4_inherit__map" id="_comm_port_3_01_t_01_4_inherit__map">
-<area shape="rect" id="node2" href="class_comm_ports.html" title="CommPorts\&lt; T \&gt;" alt="" coords="5,80,139,107"/></map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>firmware/common2015/modules/CommModule/<a class="el" href="_comm_port_8hpp_source.html">CommPort.hpp</a></li>
 </ul>
@@ -212,7 +193,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReady</b> () const 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_port.html">CommPort</a></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:15 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

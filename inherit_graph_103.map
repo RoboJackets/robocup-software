@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classrtp_1_1header__data.html" title="rtp::header_data" alt="" coords="6,5,135,32"/>
+<area shape="rect" id="node1" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="6,31,95,57"/>
+<area shape="rect" id="node2" href="$class_robot.html" title="Robot" alt="" coords="144,31,203,57"/>
+<area shape="rect" id="node3" href="$class_opponent_robot.html" title="A robot that is not on our team. " alt="" coords="251,5,373,32"/>
+<area shape="rect" id="node4" href="$class_our_robot.html" title="A robot on our team. " alt="" coords="271,56,353,83"/>
 </map>

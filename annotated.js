@@ -352,7 +352,7 @@ var annotated =
     [ "LogViewer", "class_log_viewer.html", "class_log_viewer" ],
     [ "MailHelper", "class_mail_helper.html", "class_mail_helper" ],
     [ "MainWindow", "class_main_window.html", "class_main_window" ],
-    [ "MCP23017", "class_m_c_p23017.html", null ],
+    [ "MCP23017", "class_m_c_p23017.html", "class_m_c_p23017" ],
     [ "modem_t", "structmodem__t.html", "structmodem__t" ],
     [ "MotionConstraints", "struct_motion_constraints.html", "struct_motion_constraints" ],
     [ "MotionControl", "class_motion_control.html", "class_motion_control" ],

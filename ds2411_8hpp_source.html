@@ -110,28 +110,28 @@ $(document).ready(function(){initNavTree('ds2411_8hpp_source.html','');});
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;mbed.h&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;robot-devices.hpp&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#define ID_DS2411_PIN RJ_BASE_ID</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="struct_d_s2411__t.html">   17</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_d_s2411__t.html">DS2411_t</a> {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">char</span> family;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">char</span> serial[6];  <span class="comment">// 0 = LSB, 5 = MSB</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">char</span> crc;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;};</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> { ID_CRC_MATCH, ID_CRC_FAIL, ID_HANDSHAKE_FAIL } DS2411Result_t;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;DS2411Result_t ds2411_read_id(PinName, <a class="code" href="struct_d_s2411__t.html">DS2411_t</a>*, <span class="keywordtype">bool</span> = <span class="keyword">false</span>);</div>
-<div class="ttc" id="struct_d_s2411__t_html"><div class="ttname"><a href="struct_d_s2411__t.html">DS2411_t</a></div><div class="ttdef"><b>Definition:</b> ds2411.hpp:17</div></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;mbed.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;robot-devices.hpp&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define ID_DS2411_PIN RJ_BASE_ID</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="struct_d_s2411__t.html">   16</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_d_s2411__t.html">DS2411_t</a> {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">char</span> family;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">char</span> serial[6];  <span class="comment">// 0 = LSB, 5 = MSB</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">char</span> crc;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;};</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> { ID_CRC_MATCH, ID_CRC_FAIL, ID_HANDSHAKE_FAIL } DS2411Result_t;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;DS2411Result_t ds2411_read_id(PinName pin, <a class="code" href="struct_d_s2411__t.html">DS2411_t</a>* resultOut);</div>
+<div class="ttc" id="struct_d_s2411__t_html"><div class="ttname"><a href="struct_d_s2411__t.html">DS2411_t</a></div><div class="ttdef"><b>Definition:</b> ds2411.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_081079849da51869e7ffd8e108d45510.html">src-ctrl</a></li><li class="navelem"><a class="el" href="dir_a378caac559486f927469cd0e7a2b165.html">drivers</a></li><li class="navelem"><a class="el" href="dir_534ab2bbefcb1b06135a4d93a4d090a3.html">ds2411</a></li><li class="navelem"><b>ds2411.hpp</b></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:15 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

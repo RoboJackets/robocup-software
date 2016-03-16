@@ -1,7 +1,6 @@
 var class_c_c1201 =
 [
     [ "CC1201", "class_c_c1201.html#a9f922faf7e7b2242048c557f316f1c22", null ],
-    [ "~CC1201", "class_c_c1201.html#a47ab2ab3f2a79aaaa2410924474bf143", null ],
     [ "calibrate", "class_c_c1201.html#a8684563559992c9586f9da6ca5268509", null ],
     [ "flush_rx", "class_c_c1201.html#a707cc7b74d83cd215fbc6b81ca7f3e0a", null ],
     [ "flush_tx", "class_c_c1201.html#a64668f41e835da9ea1f9cd7f82635a6c", null ],
@@ -9,7 +8,7 @@ var class_c_c1201 =
     [ "freqUpdate", "class_c_c1201.html#aaf5b57ac979c61fe3ca540c4579d5662", null ],
     [ "getData", "class_c_c1201.html#aeac8c1f298d648f5aa7cae00c6079e26", null ],
     [ "idle", "class_c_c1201.html#a960cde5ec86b2ca0a213b073aa5b216f", null ],
-    [ "isConnected", "class_c_c1201.html#a496acec1477f335223f0378eb9003767", null ],
+    [ "isConnected", "class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213", null ],
     [ "isDebugEnabled", "class_c_c1201.html#ac674a3cbf7fdb135ed25dd3677650d20", null ],
     [ "isLocked", "class_c_c1201.html#a7a5eb80344511d8acafe4b6a2e441e2e", null ],
     [ "mode", "class_c_c1201.html#af9e29663bc3437b4abd6a75da23b6c9e", null ],

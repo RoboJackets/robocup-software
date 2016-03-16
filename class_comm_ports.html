@@ -114,59 +114,52 @@ $(document).ready(function(){initNavTree('class_comm_ports.html','');});
 <div class="title">CommPorts&lt; T &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Class to manage the available/unavailable ports.  
+ <a href="class_comm_ports.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af9362d4930c7a8a2bb02bfe7aa445fa9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9362d4930c7a8a2bb02bfe7aa445fa9"></a>
 <a class="el" href="class_comm_ports.html">CommPorts</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>operator+=</b> (const <a class="el" href="class_comm_port.html">CommPort</a>&lt; T &gt; &amp;p)</td></tr>
 <tr class="separator:af9362d4930c7a8a2bb02bfe7aa445fa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb3b36eee50935df7e1f83637415a94d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb3b36eee50935df7e1f83637415a94d"></a>
-<a class="el" href="class_comm_port.html">CommPort</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (const int portNbr)</td></tr>
-<tr class="separator:afb3b36eee50935df7e1f83637415a94d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa449c0597a3a73fd05812556629a503a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa449c0597a3a73fd05812556629a503a"></a>
+<a class="el" href="class_comm_port.html">CommPort</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator[]</b> (uint8_t portportNbr)</td></tr>
+<tr class="separator:aa449c0597a3a73fd05812556629a503a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30d3b4d63fc475bbf12e5a0d8878a7c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30d3b4d63fc475bbf12e5a0d8878a7c7"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasPort</b> (uint8_t portportNbr) const </td></tr>
+<tr class="separator:a30d3b4d63fc475bbf12e5a0d8878a7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71190e3fca16ba90e8c55e4830683a2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a71190e3fca16ba90e8c55e4830683a2f"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>count</b> () const </td></tr>
 <tr class="separator:a71190e3fca16ba90e8c55e4830683a2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68771a8d17dfd8859a4f111a3b3f3630"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68771a8d17dfd8859a4f111a3b3f3630"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>count_open</b> () const </td></tr>
-<tr class="separator:a68771a8d17dfd8859a4f111a3b3f3630"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31dc34fafef622be32da8f9f47e89ca0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31dc34fafef622be32da8f9f47e89ca0"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>countOpen</b> () const </td></tr>
+<tr class="separator:a31dc34fafef622be32da8f9f47e89ca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a451fc19556ed8a21c2383f069f418584"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a451fc19556ed8a21c2383f069f418584"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const </td></tr>
 <tr class="separator:a451fc19556ed8a21c2383f069f418584"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64a79d253bbcbc9046fe8722c4cf49d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64a79d253bbcbc9046fe8722c4cf49d9"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>allRXPackets</b> () const </td></tr>
-<tr class="separator:a64a79d253bbcbc9046fe8722c4cf49d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afea1bcd2a7ef022e3128256dc13f68b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afea1bcd2a7ef022e3128256dc13f68b4"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>allTXPackets</b> () const </td></tr>
-<tr class="separator:afea1bcd2a7ef022e3128256dc13f68b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66c296d54fb4609f479712fd0f000079"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66c296d54fb4609f479712fd0f000079"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintPorts</b> ()</td></tr>
-<tr class="separator:a66c296d54fb4609f479712fd0f000079"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf7e41cea65191a46f8c488d9bf4347d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf7e41cea65191a46f8c488d9bf4347d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintHeader</b> ()</td></tr>
-<tr class="separator:acf7e41cea65191a46f8c488d9bf4347d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5580b9e4db1b6b63802bde56fac61102"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5580b9e4db1b6b63802bde56fac61102"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintFooter</b> ()</td></tr>
-<tr class="separator:a5580b9e4db1b6b63802bde56fac61102"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a696ebe6cef213704cc2a89ce3086dfbd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a696ebe6cef213704cc2a89ce3086dfbd"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>totalRxCount</b> () const </td></tr>
+<tr class="separator:a696ebe6cef213704cc2a89ce3086dfbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb0ee389d79fdd17485604237dd5eefd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb0ee389d79fdd17485604237dd5eefd"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>totalTxCount</b> () const </td></tr>
+<tr class="separator:adb0ee389d79fdd17485604237dd5eefd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef5fa2f798bf41d0a8b3236c168c7f8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef5fa2f798bf41d0a8b3236c168c7f8c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printPorts</b> () const </td></tr>
+<tr class="separator:aef5fa2f798bf41d0a8b3236c168c7f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dbeb9393225cefa15d07e0899dc7c31"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8dbeb9393225cefa15d07e0899dc7c31"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printHeader</b> () const </td></tr>
+<tr class="separator:a8dbeb9393225cefa15d07e0899dc7c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aced7bfcc36915486ce54d69df60c5b1f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aced7bfcc36915486ce54d69df60c5b1f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printFooter</b> () const </td></tr>
+<tr class="separator:aced7bfcc36915486ce54d69df60c5b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for CommPorts&lt; T &gt;:</div>
-<div id="dynsection-0-summary" class="dynsummary" style="display:block;">
-</div>
-<div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="class_comm_ports__inherit__graph.png" border="0" usemap="#_comm_ports_3_01_t_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="_comm_ports_3_01_t_01_4_inherit__map" id="_comm_ports_3_01_t_01_4_inherit__map">
-<area shape="rect" id="node2" href="class_comm_port.html" title="CommPort\&lt; T \&gt;" alt="" coords="8,5,136,32"/></map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
-<div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for CommPorts&lt; T &gt;:</div>
-<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
-</div>
-<div id="dynsection-1-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="class_comm_ports__coll__graph.png" border="0" usemap="#_comm_ports_3_01_t_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="_comm_ports_3_01_t_01_4_coll__map" id="_comm_ports_3_01_t_01_4_coll__map">
-<area shape="rect" id="node2" href="class_comm_port.html" title="CommPort\&lt; T \&gt;" alt="" coords="8,5,136,32"/></map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class T&gt;<br/>
+class CommPorts&lt; T &gt;</h3>
+
+<p>Class to manage the available/unavailable ports. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>firmware/common2015/modules/CommModule/<a class="el" href="_comm_port_8hpp_source.html">CommPort.hpp</a></li>
 </ul>
 </div><!-- contents -->
@@ -175,7 +168,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintFooter</b> ()</t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_ports.html">CommPorts</a></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:15 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

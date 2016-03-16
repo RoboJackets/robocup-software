@@ -120,26 +120,22 @@ $(document).ready(function(){initNavTree('class_i_o_expander_digital_in_out.html
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af207404d4ffa3dfd900aa97119274c4c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af207404d4ffa3dfd900aa97119274c4c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#af207404d4ffa3dfd900aa97119274c4c">IOExpanderDigitalInOut</a> ()</td></tr>
-<tr class="memdesc:af207404d4ffa3dfd900aa97119274c4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor will setup the hardware. <br/></td></tr>
-<tr class="separator:af207404d4ffa3dfd900aa97119274c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcb4e9d955fb7333f97d03ba7b54c778"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcb4e9d955fb7333f97d03ba7b54c778"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#adcb4e9d955fb7333f97d03ba7b54c778">IOExpanderDigitalInOut</a> (IOExpanderPin pin, bool state=false)</td></tr>
-<tr class="memdesc:adcb4e9d955fb7333f97d03ba7b54c778"><td class="mdescLeft">&#160;</td><td class="mdescRight">Other constructors for creating objects for pinouts. <br/></td></tr>
-<tr class="separator:adcb4e9d955fb7333f97d03ba7b54c778"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e38c7ba9752a8c53e28b5950b4f4641"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e38c7ba9752a8c53e28b5950b4f4641"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#a8e38c7ba9752a8c53e28b5950b4f4641">write</a> (int const val)</td></tr>
-<tr class="memdesc:a8e38c7ba9752a8c53e28b5950b4f4641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pulls pin low if val = 0 and pulls pin high if val &gt;= 1. <br/></td></tr>
-<tr class="separator:a8e38c7ba9752a8c53e28b5950b4f4641"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec04d19a69b76e1d086724ae69d276c6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec04d19a69b76e1d086724ae69d276c6"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#aec04d19a69b76e1d086724ae69d276c6">IOExpanderDigitalInOut</a> (<a class="el" href="class_m_c_p23017.html">MCP23017</a> *mcp, IOExpanderPin pin, bool state=false)</td></tr>
+<tr class="memdesc:aec04d19a69b76e1d086724ae69d276c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Other constructors for creating objects for pinouts. <br/></td></tr>
+<tr class="separator:aec04d19a69b76e1d086724ae69d276c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7f37890760ec610beebfdf6a7cd17a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7f37890760ec610beebfdf6a7cd17a0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#aa7f37890760ec610beebfdf6a7cd17a0">write</a> (int val)</td></tr>
+<tr class="memdesc:aa7f37890760ec610beebfdf6a7cd17a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pulls pin low if val = 0 and pulls pin high if val &gt;= 1. <br/></td></tr>
+<tr class="separator:aa7f37890760ec610beebfdf6a7cd17a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadb911534925464a879aa7532185d26a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aadb911534925464a879aa7532185d26a"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#aadb911534925464a879aa7532185d26a">read</a> ()</td></tr>
 <tr class="memdesc:aadb911534925464a879aa7532185d26a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns 0 if pin is low, 1 if pin is high. <br/></td></tr>
 <tr class="separator:aadb911534925464a879aa7532185d26a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8c880ab0e779b23b0502ad55781d7ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8c880ab0e779b23b0502ad55781d7ba"></a>
-<a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#ab8c880ab0e779b23b0502ad55781d7ba">operator=</a> (int pin)</td></tr>
-<tr class="memdesc:ab8c880ab0e779b23b0502ad55781d7ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the equals operator to write to a pin. <br/></td></tr>
-<tr class="separator:ab8c880ab0e779b23b0502ad55781d7ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adff6364f15113e8bd1b153c2a9d62888"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adff6364f15113e8bd1b153c2a9d62888"></a>
+<a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#adff6364f15113e8bd1b153c2a9d62888">operator=</a> (int value)</td></tr>
+<tr class="memdesc:adff6364f15113e8bd1b153c2a9d62888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the equals operator to write to a pin. <br/></td></tr>
+<tr class="separator:adff6364f15113e8bd1b153c2a9d62888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e28af4159566ae9ff44357a60669d27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e28af4159566ae9ff44357a60669d27"></a>
 <a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#a4e28af4159566ae9ff44357a60669d27">operator=</a> (<a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a4e28af4159566ae9ff44357a60669d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the equals operator to read the state of another IOExpander pin. <br/></td></tr>
@@ -164,7 +160,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:15 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

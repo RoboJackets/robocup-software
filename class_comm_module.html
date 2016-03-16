@@ -108,70 +108,84 @@ $(document).ready(function(){initNavTree('class_comm_module.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pro-static-attribs">Static Protected Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
 <a href="class_comm_module-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">CommModule Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>The CommModule class provides the packet management routing by distributing incoming packets to the correct area of the firmware and distributing outgoing packets to the correct hardware interface.  
+<p>A high-level firmware class for packet handling &amp; routing.  
  <a href="class_comm_module.html#details">More...</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aab882866a6451eda379d2a492cadf1ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab882866a6451eda379d2a492cadf1ec"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
-<tr class="separator:aab882866a6451eda379d2a492cadf1ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa00533c63e25a3380622fe78892bb4ca"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa00533c63e25a3380622fe78892bb4ca"></a>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a0ff8d8d5998430766d111072edaaf5b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ff8d8d5998430766d111072edaaf5b1"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a0ff8d8d5998430766d111072edaaf5b1">CommModule</a> ()</td></tr>
+<tr class="memdesc:a0ff8d8d5998430766d111072edaaf5b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor initializes and starts threads and mail queues. <br/></td></tr>
+<tr class="separator:a0ff8d8d5998430766d111072edaaf5b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fc34ff99f70c3b3b8dcfe52119ca595"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fc34ff99f70c3b3b8dcfe52119ca595"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595">~CommModule</a> ()</td></tr>
+<tr class="memdesc:a8fc34ff99f70c3b3b8dcfe52119ca595"><td class="mdescLeft">&#160;</td><td class="mdescRight">The destructor frees up allocated memory and stops threads. <br/></td></tr>
+<tr class="separator:a8fc34ff99f70c3b3b8dcfe52119ca595"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb2d4e3625fcad87ca1ae1ae9569adca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb2d4e3625fcad87ca1ae1ae9569adca"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#adb2d4e3625fcad87ca1ae1ae9569adca">init</a> ()</td></tr>
+<tr class="memdesc:adb2d4e3625fcad87ca1ae1ae9569adca"><td class="mdescLeft">&#160;</td><td class="mdescRight">initializes and starts rx/tx threads and mail queues <br/></td></tr>
+<tr class="separator:adb2d4e3625fcad87ca1ae1ae9569adca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf4005d8645847943074a56545568507"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaf4005d8645847943074a56545568507"></a>
 template&lt;typename B &gt; </td></tr>
-<tr class="memitem:aa00533c63e25a3380622fe78892bb4ca"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>TxHandler</b> (B *obj, void(B::*mptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t portNbr)</td></tr>
-<tr class="separator:aa00533c63e25a3380622fe78892bb4ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bbc9291a9b2d777cf756ed06f4574cd"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0bbc9291a9b2d777cf756ed06f4574cd"></a>
+<tr class="memitem:aaf4005d8645847943074a56545568507"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setTxHandler</b> (B *obj, void(B::*mptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t portNbr)</td></tr>
+<tr class="separator:aaf4005d8645847943074a56545568507"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac67fc6605463d58dc2c3bdb24a040e5d"><td class="memTemplParams" colspan="2"><a class="anchor" id="ac67fc6605463d58dc2c3bdb24a040e5d"></a>
 template&lt;typename B &gt; </td></tr>
-<tr class="memitem:a0bbc9291a9b2d777cf756ed06f4574cd"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>RxHandler</b> (B *obj, void(B::*mptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t portNbr)</td></tr>
-<tr class="separator:a0bbc9291a9b2d777cf756ed06f4574cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86ec28221c12ad7a520cfdc11c33b52e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86ec28221c12ad7a520cfdc11c33b52e"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>RxHandler</b> (void(*ptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t)</td></tr>
-<tr class="separator:a86ec28221c12ad7a520cfdc11c33b52e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8eb79046e6ba3e3e7a555200a76db96"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8eb79046e6ba3e3e7a555200a76db96"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>TxHandler</b> (void(*ptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t)</td></tr>
-<tr class="separator:ab8eb79046e6ba3e3e7a555200a76db96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5fc57968e91bfbe04c39b74a1726f19"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad5fc57968e91bfbe04c39b74a1726f19"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><b>openSocket</b> (uint8_t)</td></tr>
-<tr class="separator:ad5fc57968e91bfbe04c39b74a1726f19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac67fc6605463d58dc2c3bdb24a040e5d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setRxHandler</b> (B *obj, void(B::*mptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t portNbr)</td></tr>
+<tr class="separator:ac67fc6605463d58dc2c3bdb24a040e5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a047fd01b31200aced100d662de8c7069"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a047fd01b31200aced100d662de8c7069"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setRxHandler</b> (CommCallback callback, uint8_t)</td></tr>
+<tr class="separator:a047fd01b31200aced100d662de8c7069"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eb365fd6ab3e8aeeef02e895c9d7923"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7eb365fd6ab3e8aeeef02e895c9d7923"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setTxHandler</b> (CommCallback callback, uint8_t)</td></tr>
+<tr class="separator:a7eb365fd6ab3e8aeeef02e895c9d7923"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33eb15c167308888998e85a7881853eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33eb15c167308888998e85a7881853eb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>openSocket</b> (uint8_t portNbr)</td></tr>
+<tr class="separator:a33eb15c167308888998e85a7881853eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89b8585eddf876a8126b66978608f305"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89b8585eddf876a8126b66978608f305"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;)</td></tr>
 <tr class="separator:a89b8585eddf876a8126b66978608f305"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf4e8ac71c8130575497c7d791592f13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf4e8ac71c8130575497c7d791592f13"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>receive</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>receive</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;)</td></tr>
 <tr class="separator:aaf4e8ac71c8130575497c7d791592f13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb2b4c07d5008de27dc5d868e8bf73ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb2b4c07d5008de27dc5d868e8bf73ed"></a>
-static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>NumRXPackets</b> ()</td></tr>
-<tr class="separator:abb2b4c07d5008de27dc5d868e8bf73ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb33f65cc4fd6ca801d2715601433b6a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb33f65cc4fd6ca801d2715601433b6a"></a>
-static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>NumTXPackets</b> ()</td></tr>
-<tr class="separator:abb33f65cc4fd6ca801d2715601433b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade97beb1c7c4a895248e61842a7e81a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade97beb1c7c4a895248e61842a7e81a4"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintInfo</b> (bool forceHeader=false)</td></tr>
-<tr class="separator:ade97beb1c7c4a895248e61842a7e81a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a137f12f6e366b437d52f9135802c4926"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a137f12f6e366b437d52f9135802c4926"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>ResetCount</b> (unsigned int portNbr)</td></tr>
-<tr class="separator:a137f12f6e366b437d52f9135802c4926"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a0c853df71d579dd57329e78d510c3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a0c853df71d579dd57329e78d510c3d"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>Close</b> (unsigned int portNbr)</td></tr>
-<tr class="separator:a5a0c853df71d579dd57329e78d510c3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26295021c903269c0f06f9ad8e20c6c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26295021c903269c0f06f9ad8e20c6c1"></a>
-static bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReady</b> ()</td></tr>
-<tr class="separator:a26295021c903269c0f06f9ad8e20c6c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac56bedacd5bf4efdf8f1345962e13799"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac56bedacd5bf4efdf8f1345962e13799"></a>
-static int&#160;</td><td class="memItemRight" valign="bottom"><b>NumOpenSockets</b> ()</td></tr>
-<tr class="separator:ac56bedacd5bf4efdf8f1345962e13799"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbde7a8dc03cc44750ee5bf504907286"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbde7a8dc03cc44750ee5bf504907286"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>numRxPackets</b> () const </td></tr>
+<tr class="separator:adbde7a8dc03cc44750ee5bf504907286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27ce2217c37a3fa7dfed055aab5882ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27ce2217c37a3fa7dfed055aab5882ed"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>numTxPackets</b> () const </td></tr>
+<tr class="separator:a27ce2217c37a3fa7dfed055aab5882ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa69a16531c9ce7580a5f8676dc186552"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa69a16531c9ce7580a5f8676dc186552"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>resetCount</b> (unsigned int portNbr)</td></tr>
+<tr class="separator:aa69a16531c9ce7580a5f8676dc186552"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0d8e570b78712b2dd30543ffec747f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0d8e570b78712b2dd30543ffec747f5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>printInfo</b> () const </td></tr>
+<tr class="separator:af0d8e570b78712b2dd30543ffec747f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37a040e808593687c5a1cda222e28708"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37a040e808593687c5a1cda222e28708"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> (unsigned int portNbr)</td></tr>
+<tr class="separator:a37a040e808593687c5a1cda222e28708"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42aefc8822669dcd48a7d7260e6401bd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42aefc8822669dcd48a7d7260e6401bd"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReady</b> () const </td></tr>
+<tr class="separator:a42aefc8822669dcd48a7d7260e6401bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48b8582e2120cd488f95dcd269d2aec5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48b8582e2120cd488f95dcd269d2aec5"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>numOpenSockets</b> () const </td></tr>
+<tr class="separator:a48b8582e2120cd488f95dcd269d2aec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a38c59837a72f9b9f74cb5d1318d56290"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38c59837a72f9b9f74cb5d1318d56290"></a>
+static shared_ptr&lt; <a class="el" href="class_comm_module.html">CommModule</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a38c59837a72f9b9f74cb5d1318d56290">Instance</a> ()</td></tr>
+<tr class="memdesc:a38c59837a72f9b9f74cb5d1318d56290"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the singleton CommModule instance. <br/></td></tr>
+<tr class="separator:a38c59837a72f9b9f74cb5d1318d56290"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -182,15 +196,6 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>TX_QUE
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>RX_QUEUE_SIZE</b> = 3</td></tr>
 <tr class="separator:ab90422b1a45e08dca3267f1ed21150a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:ae2601b81143740b2e678ce2a3a1217ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2601b81143740b2e678ce2a3a1217ef"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>nopFunc</b> ()</td></tr>
-<tr class="separator:ae2601b81143740b2e678ce2a3a1217ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a219975e2be4266a0ab55a000ab3423f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a219975e2be4266a0ab55a000ab3423f6">cleanup</a> ()</td></tr>
-<tr class="memdesc:a219975e2be4266a0ab55a000ab3423f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kill any threads and free the allocated stack.  <a href="#a219975e2be4266a0ab55a000ab3423f6">More...</a><br/></td></tr>
-<tr class="separator:a219975e2be4266a0ab55a000ab3423f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a5ae9342a62ae2e73b91493def6ce0a14"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ae9342a62ae2e73b91493def6ce0a14"></a>
@@ -199,53 +204,11 @@ osMailQId&#160;</td><td class="memItemRight" valign="bottom"><b>_txQueue</b></td
 <tr class="memitem:a9f94d1f2bbc9234433ad423f6221326f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f94d1f2bbc9234433ad423f6221326f"></a>
 osMailQId&#160;</td><td class="memItemRight" valign="bottom"><b>_rxQueue</b></td></tr>
 <tr class="separator:a9f94d1f2bbc9234433ad423f6221326f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
-Static Protected Attributes</h2></td></tr>
-<tr class="memitem:a744ed6f2b50122c8c52edc77183d3c96"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a744ed6f2b50122c8c52edc77183d3c96"></a>
-static osThreadId&#160;</td><td class="memItemRight" valign="bottom"><b>_txID</b></td></tr>
-<tr class="separator:a744ed6f2b50122c8c52edc77183d3c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5beb2d273248e236d7d2feae90450bd4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5beb2d273248e236d7d2feae90450bd4"></a>
-static osThreadId&#160;</td><td class="memItemRight" valign="bottom"><b>_rxID</b></td></tr>
-<tr class="separator:a5beb2d273248e236d7d2feae90450bd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a2196c3bb9adc050433ff501a634ae5c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2196c3bb9adc050433ff501a634ae5c2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>define_thread</b> (osThreadDef_t &amp;, void(*task)(void const *arg), osPriority, uint32_t, unsigned char *)</td></tr>
-<tr class="separator:a2196c3bb9adc050433ff501a634ae5c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The CommModule class provides the packet management routing by distributing incoming packets to the correct area of the firmware and distributing outgoing packets to the correct hardware interface. </p>
-<p>{ A high-level firmware class for packet handling &amp; routing } </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a219975e2be4266a0ab55a000ab3423f6"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CommModule::cleanup </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Kill any threads and free the allocated stack. </p>
-<p>Always call in any derived class's deconstructors! </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<div class="textblock"><p>A high-level firmware class for packet handling &amp; routing. </p>
+<p>The CommModule class provides the packet management routing by distributing incoming packets to the correct area of the firmware and distributing outgoing packets to the correct hardware interface. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>firmware/common2015/modules/CommModule/<a class="el" href="_comm_module_8hpp_source.html">CommModule.hpp</a></li>
 <li>firmware/common2015/modules/CommModule/CommModule.cpp</li>
 </ul>
@@ -255,7 +218,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>define_thread</b> (os
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_module.html">CommModule</a></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:15 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

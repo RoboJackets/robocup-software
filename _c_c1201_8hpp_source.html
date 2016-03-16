@@ -128,95 +128,92 @@ $(document).ready(function(){initNavTree('_c_c1201_8hpp_source.html','');});
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;           <span class="keyword">const</span> <a class="code" href="structregister_setting__t.html">registerSetting_t</a>* regs, <span class="keywordtype">size_t</span> len,</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;           <span class="keywordtype">int</span> rssiOffset = DEFAULT_RSSI_OFFSET);</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="class_c_c1201.html">CC1201</a>() { <a class="code" href="class_comm_link.html#a1dc346c4eecfc4cabf588eaf651f26e8">CommLink::cleanup</a>(); }</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    int32_t sendData(uint8_t*, uint8_t);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">virtual</span> int32_t sendData(uint8_t*, uint8_t);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    int32_t getData(uint8_t*, uint8_t*);</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">virtual</span> int32_t getData(uint8_t*, uint8_t*);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">reset</a>();</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">reset</a>();</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    int32_t <a class="code" href="class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c">selfTest</a>();</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">virtual</span> int32_t <a class="code" href="class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c">selfTest</a>();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213">isConnected</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_c_c1201.html#a496acec1477f335223f0378eb9003767">isConnected</a>();</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    uint8_t mode();</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    uint8_t mode();</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    uint8_t status(uint8_t strobe = CC1201_STROBE_SNOP);</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    uint8_t status(uint8_t strobe = CC1201_STROBE_SNOP);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// TODO: Move any direct register reads/writes &amp; strobes to protected when</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="comment">// done testing</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    uint8_t strobe(uint8_t cmd);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    uint8_t <a class="code" href="class_c_c1201.html#a121b93c498849f41b659e87638443808">readReg</a>(uint16_t addr);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    uint8_t <a class="code" href="class_c_c1201.html#a121b93c498849f41b659e87638443808">readReg</a>(uint16_t addr, uint8_t* dataOut,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                    uint8_t);  <span class="comment">// TODO: var names?</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    uint8_t writeReg(uint16_t addr, uint8_t value);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    uint8_t writeReg(uint16_t addr, <span class="keyword">const</span> uint8_t* data, uint8_t len);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">// TODO: Move any direct register reads/writes &amp; strobes to protected when</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// done testing</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    uint8_t strobe(uint8_t cmd);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    uint8_t <a class="code" href="class_c_c1201.html#a121b93c498849f41b659e87638443808">readReg</a>(uint16_t addr);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    uint8_t <a class="code" href="class_c_c1201.html#a121b93c498849f41b659e87638443808">readReg</a>(uint16_t addr, uint8_t* dataOut,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                    uint8_t);  <span class="comment">// TODO: var names?</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    uint8_t writeReg(uint16_t addr, uint8_t value);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    uint8_t writeReg(uint16_t addr, <span class="keyword">const</span> uint8_t* data, uint8_t len);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">float</span> freq();</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">float</span> freq();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">bool</span> isLocked();</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> isLocked();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">   53</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">setDebugEnabled</a>(<span class="keywordtype">bool</span> enabled = <span class="keyword">true</span>) { _debugEnabled = enabled; }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">bool</span> isDebugEnabled()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _debugEnabled; }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> set_rssi_offset(int8_t offset);</div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">   51</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">setDebugEnabled</a>(<span class="keywordtype">bool</span> enabled = <span class="keyword">true</span>) { _debugEnabled = enabled; }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">bool</span> isDebugEnabled()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _debugEnabled; }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> set_rssi_offset(int8_t offset);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> flush_tx();</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> flush_tx();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> flush_rx();</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> flush_rx();</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> calibrate();</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> calibrate();</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> update_rssi();</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> update_rssi();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">float</span> rssi();</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">float</span> rssi();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    uint8_t idle();</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    uint8_t idle();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    uint8_t rand();</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    uint8_t rand();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    uint8_t freqUpdate();</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    uint8_t freqUpdate();</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> DEFAULT_RSSI_OFFSET = -81;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> DEFAULT_RSSI_OFFSET = -81;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">// TODO: return value to indicate success</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_c_c1201.html#a758e241be6292a2e28837fa11f20754d">setConfig</a>(<span class="keyword">const</span> <a class="code" href="structregister_setting__t.html">registerSetting_t</a>* regs, <span class="keywordtype">size_t</span> len);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    uint8_t _lqi;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    uint8_t _chip_version;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">bool</span> _isInit;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> _offset_reg_written;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">float</span> _rssi;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="comment">// In debug mode, all strobe commands are logged at INF2</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// note that this decreases performance, so shouldn&#39;t be used normally</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">bool</span> _debugEnabled = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;};</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">// TODO(justin): remove this</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">extern</span> <a class="code" href="class_c_c1201.html">CC1201</a>* global_radio;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="comment">// TODO: return value to indicate success</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_c_c1201.html#a758e241be6292a2e28837fa11f20754d">setConfig</a>(<span class="keyword">const</span> <a class="code" href="structregister_setting__t.html">registerSetting_t</a>* regs, <span class="keywordtype">size_t</span> len);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    uint8_t _lqi;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    uint8_t _chip_version;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">bool</span> _isInit;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">bool</span> _offset_reg_written;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">float</span> _rssi;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="comment">// In debug mode, all strobe commands are logged at INF2</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">// note that this decreases performance, so shouldn&#39;t be used normally</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">bool</span> _debugEnabled = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">// TODO(justin): remove this</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keyword">extern</span> <a class="code" href="class_c_c1201.html">CC1201</a>* global_radio;</div>
 <div class="ttc" id="class_comm_link_html"><div class="ttname"><a href="class_comm_link.html">CommLink</a></div><div class="ttdoc">CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link...</div><div class="ttdef"><b>Definition:</b> CommLink.hpp:29</div></div>
-<div class="ttc" id="class_c_c1201_html_a5035f4001c6424cc5a283e75a3d8ce52"><div class="ttname"><a href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">CC1201::reset</a></div><div class="ttdeci">virtual void reset()</div><div class="ttdoc">Perform a soft reset for a communication link&#39;s hardware device. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:263</div></div>
-<div class="ttc" id="class_comm_link_html_a1dc346c4eecfc4cabf588eaf651f26e8"><div class="ttname"><a href="class_comm_link.html#a1dc346c4eecfc4cabf588eaf651f26e8">CommLink::cleanup</a></div><div class="ttdeci">void cleanup()</div><div class="ttdoc">Kill any threads and free the allocated stack. </div><div class="ttdef"><b>Definition:</b> CommLink.cpp:20</div></div>
+<div class="ttc" id="class_c_c1201_html_a5035f4001c6424cc5a283e75a3d8ce52"><div class="ttname"><a href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">CC1201::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Perform a soft reset for a communication link&#39;s hardware device. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:263</div></div>
 <div class="ttc" id="class_c_c1201_html"><div class="ttname"><a href="class_c_c1201.html">CC1201</a></div><div class="ttdef"><b>Definition:</b> CC1201.hpp:15</div></div>
 <div class="ttc" id="class_c_c1201_html_a121b93c498849f41b659e87638443808"><div class="ttname"><a href="class_c_c1201.html#a121b93c498849f41b659e87638443808">CC1201::readReg</a></div><div class="ttdeci">uint8_t readReg(uint16_t addr)</div><div class="ttdoc">reads a standard register </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:124</div></div>
-<div class="ttc" id="class_c_c1201_html_a758e241be6292a2e28837fa11f20754d"><div class="ttname"><a href="class_c_c1201.html#a758e241be6292a2e28837fa11f20754d">CC1201::setConfig</a></div><div class="ttdeci">void setConfig(const registerSetting_t *regs, size_t len)</div><div class="ttdoc">Sets the radio&#39;s register configuration to the values in the given  array. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:400</div></div>
+<div class="ttc" id="class_c_c1201_html_a758e241be6292a2e28837fa11f20754d"><div class="ttname"><a href="class_c_c1201.html#a758e241be6292a2e28837fa11f20754d">CC1201::setConfig</a></div><div class="ttdeci">void setConfig(const registerSetting_t *regs, size_t len)</div><div class="ttdoc">Sets the radio&#39;s register configuration to the values in the given  array. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:398</div></div>
 <div class="ttc" id="structregister_setting__t_html"><div class="ttname"><a href="structregister_setting__t.html">registerSetting_t</a></div><div class="ttdef"><b>Definition:</b> CC1201.hpp:10</div></div>
-<div class="ttc" id="class_c_c1201_html_a496acec1477f335223f0378eb9003767"><div class="ttname"><a href="class_c_c1201.html#a496acec1477f335223f0378eb9003767">CC1201::isConnected</a></div><div class="ttdeci">virtual bool isConnected()</div><div class="ttdoc">Determine if communication can occur with another device. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:300</div></div>
-<div class="ttc" id="class_c_c1201_html_a6463819e64582f1f6e74e26bcc0e440c"><div class="ttname"><a href="class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c">CC1201::selfTest</a></div><div class="ttdeci">virtual int32_t selfTest()</div><div class="ttdoc">Perform tests to determine if the hardware is able to properly function. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:281</div></div>
-<div class="ttc" id="class_c_c1201_html_a0c856be77f27c823533eb8d7adef04df"><div class="ttname"><a href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">CC1201::setDebugEnabled</a></div><div class="ttdeci">void setDebugEnabled(bool enabled=true)</div><div class="ttdoc">Enable or disable logging of all strobe() commands. </div><div class="ttdef"><b>Definition:</b> CC1201.hpp:53</div></div>
+<div class="ttc" id="class_c_c1201_html_a6463819e64582f1f6e74e26bcc0e440c"><div class="ttname"><a href="class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c">CC1201::selfTest</a></div><div class="ttdeci">int32_t selfTest()</div><div class="ttdoc">Perform tests to determine if the hardware is able to properly function. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:281</div></div>
+<div class="ttc" id="class_c_c1201_html_a0c856be77f27c823533eb8d7adef04df"><div class="ttname"><a href="class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df">CC1201::setDebugEnabled</a></div><div class="ttdeci">void setDebugEnabled(bool enabled=true)</div><div class="ttdoc">Enable or disable logging of all strobe() commands. </div><div class="ttdef"><b>Definition:</b> CC1201.hpp:51</div></div>
+<div class="ttc" id="class_c_c1201_html_a6e38428d0ef057b215bb89c5b327a213"><div class="ttname"><a href="class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213">CC1201::isConnected</a></div><div class="ttdeci">bool isConnected() const </div><div class="ttdoc">Determine if communication can occur with another device. </div><div class="ttdef"><b>Definition:</b> CC1201.cpp:300</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html">common2015</a></li><li class="navelem"><a class="el" href="dir_ba3baf91937e859098e5bc198cb747fd.html">drivers</a></li><li class="navelem"><a class="el" href="dir_a397f754f743d7cde165bd68db099d59.html">cc1201</a></li><li class="navelem"><b>CC1201.hpp</b></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:14 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

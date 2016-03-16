@@ -133,8 +133,9 @@ $(document).ready(function(){initNavTree('_comm_link_8hpp_source.html','');});
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">   32</a></span>&#160;    <a class="code" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink</a>(){};</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink</a>(PinName, PinName, PinName, PinName = NC, PinName = NC);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink</a>(PinName mosi, PinName miso, PinName sck, PinName cs = NC,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;             PinName int_pin = NC);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="class_comm_link.html#a1a5e501d6060fa6bb7e7a1392f70942d">~CommLink</a>();</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="comment">// Class constants for data queues</span></div>
@@ -146,87 +147,74 @@ $(document).ready(function(){initNavTree('_comm_link_8hpp_source.html','');});
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">virtual</span> int32_t <a class="code" href="class_comm_link.html#a43c1119c09f26dba0e816f57bf1d70e0">selfTest</a>() = 0;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_comm_link.html#a55c7ccc103afeb1875823e587115ad02">isConnected</a>() = 0;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f">isConnected</a>() <span class="keyword">const</span> = 0;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">sendPacket</a>(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*);</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> receivePacket(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">virtual</span> int32_t sendData(</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        uint8_t*, uint8_t) = 0;  <span class="comment">// write data out to the radio device using SPI</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">virtual</span> int32_t getData(</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        uint8_t*,</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        uint8_t*) = 0;  <span class="comment">// read data in from the radio device using SPI</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_link.html#a1dc346c4eecfc4cabf588eaf651f26e8">cleanup</a>();</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_link.html#a288c3410e4911738eb088e23817f9356">ISR</a>();</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> radio_select();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> radio_deselect();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">//</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">// Always call CommLink::ready() after derived class is ready</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">ready</a>();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> setup_spi(<span class="keywordtype">int</span> baudrate = DEFAULT_BAUD);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    uint8_t twos_compliment(uint8_t val);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// write data out to the radio device using SPI</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">virtual</span> int32_t sendData(uint8_t*, uint8_t) = 0;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">// read data in from the radio device using SPI</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">virtual</span> int32_t getData(uint8_t*, uint8_t*) = 0;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_link.html#a288c3410e4911738eb088e23817f9356">ISR</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> radio_select();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> radio_deselect();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">//</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="comment">// Always call CommLink::ready() after derived class is ready</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">ready</a>();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> setup_spi(<span class="keywordtype">int</span> baudrate = DEFAULT_BAUD);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    uint8_t twos_compliment(uint8_t val);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="comment">// SPI bus pins</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    PinName _miso_pin;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    PinName _mosi_pin;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    PinName _sck_pin;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    PinName _cs_pin;   <span class="comment">// CS pin</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    PinName _int_pin;  <span class="comment">// Interrupt pin</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="comment">// The data queues for temporarily holding received packets</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    osMailQId _rxQueue;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">// SPI bus pins</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    PinName _miso_pin;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    PinName _mosi_pin;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    PinName _sck_pin;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    PinName _cs_pin;   <span class="comment">// CS pin</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    PinName _int_pin;  <span class="comment">// Interrupt pin</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    SPI* _spi;             <span class="comment">// SPI pointer</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    DigitalOut* _cs;       <span class="comment">// Chip Select pointer</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    InterruptIn* _int_in;  <span class="comment">// Interrupt pin</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> DEFAULT_BAUD = 5000000;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="comment">// Used to help define the class&#39;s threads in the constructor</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keyword">friend</span> <span class="keywordtype">void</span> define_thread(osThreadDef_t&amp;, <span class="keywordtype">void</span> (*task)(<span class="keywordtype">void</span> <span class="keyword">const</span>* arg),</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                              osPriority, uint32_t);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <a class="code" href="class_mail_helper.html">MailHelper&lt;rtp::packet, RX_QUEUE_SIZE&gt;</a> _rxQueueHelper;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="comment">// Thread definitions and IDs</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    osThreadDef_t _rxDef;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    osThreadId _rxID;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="comment">// The working threads for handeling RX data queue operations</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> rxThread(<span class="keywordtype">void</span> <span class="keyword">const</span>*);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="comment">// Methods for initializing a transceiver&#39;s pins for communication</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">void</span> setup();</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">void</span> setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                    PinName = NC);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">void</span> setup_cs();</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordtype">void</span> setup_interrupt();</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;};</div>
-<div class="ttc" id="class_comm_link_html_a7dc25b226a3808312eb7d891816b86a5"><div class="ttname"><a href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">CommLink::ready</a></div><div class="ttdeci">void ready()</div><div class="ttdoc">Used for giving derived classes a standaradized way to inform the base class that it is ready for com...</div><div class="ttdef"><b>Definition:</b> CommLink.cpp:123</div></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    SPI* _spi;             <span class="comment">// SPI pointer</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    DigitalOut* _cs;       <span class="comment">// Chip Select pointer</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    InterruptIn* _int_in;  <span class="comment">// Interrupt pin</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> DEFAULT_BAUD = 5000000;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    Thread* _rxThread = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="comment">// The working threads for handling RX data queue operations</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> rxThread();</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> rxThreadHelper(<span class="keyword">const</span> <span class="keywordtype">void</span>* linkInst) {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <a class="code" href="class_comm_link.html">CommLink</a>* link = (<a class="code" href="class_comm_link.html">CommLink</a>*)linkInst;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        link-&gt;rxThread();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="comment">// Methods for initializing a transceiver&#39;s pins for communication</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">void</span> setup();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keywordtype">void</span> setup_pins(PinName mosi = NC, PinName miso = NC, PinName sck = NC,</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                    PinName cs = NC, PinName int_pin = NC);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">void</span> setup_cs();</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">void</span> setup_interrupt();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;};</div>
+<div class="ttc" id="class_comm_link_html_a7dc25b226a3808312eb7d891816b86a5"><div class="ttname"><a href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">CommLink::ready</a></div><div class="ttdeci">void ready()</div><div class="ttdoc">Used for giving derived classes a standaradized way to inform the base class that it is ready for com...</div><div class="ttdef"><b>Definition:</b> CommLink.cpp:108</div></div>
 <div class="ttc" id="class_comm_link_html"><div class="ttname"><a href="class_comm_link.html">CommLink</a></div><div class="ttdoc">CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link...</div><div class="ttdef"><b>Definition:</b> CommLink.hpp:29</div></div>
-<div class="ttc" id="class_comm_link_html_a288c3410e4911738eb088e23817f9356"><div class="ttname"><a href="class_comm_link.html#a288c3410e4911738eb088e23817f9356">CommLink::ISR</a></div><div class="ttdeci">void ISR()</div><div class="ttdoc">Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND IN ANY OVERRIDDEN BASE CLASS...</div><div class="ttdef"><b>Definition:</b> CommLink.cpp:131</div></div>
-<div class="ttc" id="class_comm_link_html_aa051240d07d3e320ca5ab45f9213082b"><div class="ttname"><a href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">CommLink::sendPacket</a></div><div class="ttdeci">void sendPacket(rtp::packet *)</div><div class="ttdoc">Send &amp; Receive through the rtp structure. </div><div class="ttdef"><b>Definition:</b> CommLink.cpp:125</div></div>
-<div class="ttc" id="class_comm_link_html_a1dc346c4eecfc4cabf588eaf651f26e8"><div class="ttname"><a href="class_comm_link.html#a1dc346c4eecfc4cabf588eaf651f26e8">CommLink::cleanup</a></div><div class="ttdeci">void cleanup()</div><div class="ttdoc">Kill any threads and free the allocated stack. </div><div class="ttdef"><b>Definition:</b> CommLink.cpp:20</div></div>
-<div class="ttc" id="class_comm_link_html_ae4d9c67d870744e4f37315788597509a"><div class="ttname"><a href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink::CommLink</a></div><div class="ttdeci">CommLink()</div><div class="ttdoc">Defautl Constructor. </div><div class="ttdef"><b>Definition:</b> CommLink.hpp:32</div></div>
-<div class="ttc" id="class_comm_link_html_a1a5e501d6060fa6bb7e7a1392f70942d"><div class="ttname"><a href="class_comm_link.html#a1a5e501d6060fa6bb7e7a1392f70942d">CommLink::~CommLink</a></div><div class="ttdeci">virtual ~CommLink()</div><div class="ttdoc">Virtual deconstructor Always define and call CommLink::cleanup() in a derived class&#39;s deconstructor! ...</div><div class="ttdef"><b>Definition:</b> CommLink.cpp:18</div></div>
+<div class="ttc" id="class_comm_link_html_a288c3410e4911738eb088e23817f9356"><div class="ttname"><a href="class_comm_link.html#a288c3410e4911738eb088e23817f9356">CommLink::ISR</a></div><div class="ttdeci">void ISR()</div><div class="ttdoc">Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND IN ANY OVERRIDDEN BASE CLASS...</div><div class="ttdef"><b>Definition:</b> CommLink.cpp:116</div></div>
+<div class="ttc" id="class_comm_link_html_aa051240d07d3e320ca5ab45f9213082b"><div class="ttname"><a href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">CommLink::sendPacket</a></div><div class="ttdeci">void sendPacket(rtp::packet *)</div><div class="ttdoc">Send &amp; Receive through the rtp structure. </div><div class="ttdef"><b>Definition:</b> CommLink.cpp:110</div></div>
+<div class="ttc" id="class_comm_link_html_ae4d9c67d870744e4f37315788597509a"><div class="ttname"><a href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink::CommLink</a></div><div class="ttdeci">CommLink()</div><div class="ttdoc">Default Constructor. </div><div class="ttdef"><b>Definition:</b> CommLink.hpp:32</div></div>
+<div class="ttc" id="class_comm_link_html_a1a5e501d6060fa6bb7e7a1392f70942d"><div class="ttname"><a href="class_comm_link.html#a1a5e501d6060fa6bb7e7a1392f70942d">CommLink::~CommLink</a></div><div class="ttdeci">virtual ~CommLink()</div><div class="ttdoc">Virtual deconstructor Kills any threads and frees the allocated stack. </div><div class="ttdef"><b>Definition:</b> CommLink.cpp:17</div></div>
 <div class="ttc" id="classrtp_1_1packet_html"><div class="ttname"><a href="classrtp_1_1packet.html">rtp::packet</a></div><div class="ttdoc">{ Real-Time packet definition } </div><div class="ttdef"><b>Definition:</b> rtp.hpp:92</div></div>
 <div class="ttc" id="class_comm_link_html_a9b3157ab0bbfd8fc2103f4a3c1f37e8b"><div class="ttname"><a href="class_comm_link.html#a9b3157ab0bbfd8fc2103f4a3c1f37e8b">CommLink::reset</a></div><div class="ttdeci">virtual void reset()=0</div><div class="ttdoc">Perform a soft reset for a communication link&#39;s hardware device. </div></div>
-<div class="ttc" id="class_comm_link_html_a55c7ccc103afeb1875823e587115ad02"><div class="ttname"><a href="class_comm_link.html#a55c7ccc103afeb1875823e587115ad02">CommLink::isConnected</a></div><div class="ttdeci">virtual bool isConnected()=0</div><div class="ttdoc">Determine if communication can occur with another device. </div></div>
 <div class="ttc" id="class_comm_link_html_a43c1119c09f26dba0e816f57bf1d70e0"><div class="ttname"><a href="class_comm_link.html#a43c1119c09f26dba0e816f57bf1d70e0">CommLink::selfTest</a></div><div class="ttdeci">virtual int32_t selfTest()=0</div><div class="ttdoc">Perform tests to determine if the hardware is able to properly function. </div></div>
-<div class="ttc" id="class_mail_helper_html"><div class="ttname"><a href="class_mail_helper.html">MailHelper&lt; rtp::packet, RX_QUEUE_SIZE &gt;</a></div></div>
+<div class="ttc" id="class_comm_link_html_a518b5e89a19177696fd1f037ac37e99f"><div class="ttname"><a href="class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f">CommLink::isConnected</a></div><div class="ttdeci">virtual bool isConnected() const =0</div><div class="ttdoc">Determine if communication can occur with another device. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html">common2015</a></li><li class="navelem"><a class="el" href="dir_97a522e108a6deae26cc0258e2b12092.html">modules</a></li><li class="navelem"><a class="el" href="dir_f99c915238e4e45932d65882ece40e78.html">CommLink</a></li><li class="navelem"><b>CommLink.hpp</b></li>
-    <li class="footer">Generated on Tue Mar 15 2016 23:56:15 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 16 2016 00:36:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

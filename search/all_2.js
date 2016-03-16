@@ -26,7 +26,6 @@ var searchData=
   ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]],
   ['break_5fchar',['BREAK_CHAR',['../class_console.html#a3a41cb91e38aa1b537867cec5c303672',1,'Console']]],
   ['brightness',['brightness',['../class_neo_strip.html#a59bb97cced13cdf49e6ef4b5db0ca480',1,'NeoStrip']]],
-  ['buffer_5flength',['BUFFER_LENGTH',['../class_console.html#a4a2ea3b94781370ae93507472e9a22aa',1,'Console']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]],
   ['buzzer',['Buzzer',['../class_buzzer.html',1,'']]],
   ['build_20systems',['Build Systems',['../md_doc__build_systems.html',1,'']]]
