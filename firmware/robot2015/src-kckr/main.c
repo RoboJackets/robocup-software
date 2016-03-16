@@ -36,6 +36,7 @@ uint8_t get_voltage();
 void init();
 void trigger(uint8_t time, uint8_t useKicker);
 
+uint8_t time;
 
 void main()
 {
@@ -55,11 +56,11 @@ void main()
                   case 0x1: // read voltage
                     break;
                   case 0x2: // chip
-                    uint8_t time  = data_ & 0x3F;
+                    time  = data_ & 0x3F;
                     trigger(time, 0);
                     break;
                   case 0x3: // kick
-                    uint8_t time  = data_ & 0x3F;
+                    time  = data_ & 0x3F;
                     trigger(time, 1);
                     break;
                 }
@@ -125,11 +126,11 @@ void init()
     // 8 bit precision, we can now read ADCH directly
 }
 
-void trigger(uint8_t time, uint8_t useKicker)
+void trigger(uint8_t timeKick, uint8_t useKicker)
 {
   uint8_t action = useKicker ? KICK : CHIP;
   TOGGLE_BIT(PORTA, action);
-  delay_us(time*125);
+  delay_us(timeKick*125);
   TOGGLE_BIT(PORTA, action);
 }
 
