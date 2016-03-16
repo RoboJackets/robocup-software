@@ -57,7 +57,7 @@ do not alternate going on and off so there is no danger of shoot through.
 
 module Phase_Driver ( clk, duty_cycle, high_z, pwm_high, pwm_low );
 
-parameter DEAD_TIME = 2;            // dead time in units of clock ticks
+parameter DEAD_TIME = 0;            // dead time in units of clock ticks
 parameter COUNTER_WIDTH = 10;        // bits available to counter
 parameter MAX_COUNTER = 'h3ff;     // PWM period = MAX_COUNTER * clockPeriod
 parameter DUTY_CYCLE_WIDTH = 10;     // bits available to duty_cycle

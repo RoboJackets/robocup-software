@@ -72,7 +72,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER <<1) ,
     .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE << 1       ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 36                        )
+    .DEAD_TIME                  ( 200                         )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,
@@ -89,7 +89,7 @@ assign connected = hall_connected & ~(hall_fault);
 endmodule
 
 
-`ifdef DRIBBLER_MOTOR_EN
+`ifdef DRIBBLER_MOTOR_EN1
 
 // BLDC_Motor module - no encoder
 module BLDC_Motor_No_Encoder ( clk, en, reset_hall_count, duty_cycle, hall, phaseH, phaseL, hall_count, connected );
@@ -132,7 +132,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER <<1) ,
     .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE << 1       ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 36                         )
+    .DEAD_TIME                  ( 200                         )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,

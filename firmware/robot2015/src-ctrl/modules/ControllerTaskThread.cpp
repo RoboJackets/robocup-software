@@ -103,60 +103,40 @@ void Task_Controller(void const* args) {
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     std::vector<uint16_t> duty_cycles;
-    duty_cycles.assign(5, 100);
-    for (size_t i = 0; i < duty_cycles.size(); ++i)
-        duty_cycles.at(i) = 100 + 206 * i;
-
-    duty_cycles.at(1) = 10;
-
-    int ii = 0;
-    uint16_t duty_cycle_val = 10;
-    bool stepping_up = true;
-
+    duty_cycles.assign(5,100);
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        // printf(
-        //     "\r\n\033[K"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\ r\n"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\033[F\033[F",
-        //     gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0],
-        //     accelVals[1],
-        //     accelVals[2]);
-        // Console::Flush();
-
+	for (int i=50; i<200; i+=2) {
+		duty_cycles.at(0) = i;
+		duty_cycles.at(1) = i;
         // write all duty cycles
-        FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+        	FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
                                           duty_cycles.size());
 
-        ii++;
-        // 0.5 sec with 5ms loop
-        if (ii % 100 == 0) {
-            // set bounds
-            if (duty_cycle_val >=
-                501)  // probably shouldn't go past 400 in reality
-                stepping_up = false;
-            else if (duty_cycle_val <=
-                     10)  // minimum that a motor will turn is ~40
-                stepping_up = true;
+        	Thread::wait(CONTROL_LOOP_WAIT_MS);
+	}
+	for (int i=0; i<200; i++) {
+		duty_cycles.at(0) = 200;
+		duty_cycles.at(1) = 200;
 
-            // increment or decrement current duty cycles
-            if (stepping_up == true)
-                duty_cycle_val += 10;
-            else
-                duty_cycle_val -= 10;
+        // write all duty cycles
+        	FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                          duty_cycles.size());
 
-            // assign all motors this value
-            duty_cycles.assign(5, duty_cycle_val);
+        	Thread::wait(CONTROL_LOOP_WAIT_MS);
+	}	
+	for (int i=0; i<200; i++) {
+		duty_cycles.at(0) = 0;
+		duty_cycles.at(1) = 0;
 
-            // reset the counter
-            ii = 0;
-        }
+        // write all duty cycles
+        	FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
+                                          duty_cycles.size());
 
-        duty_cycles.assign(5, 30);
-
-        Thread::wait(CONTROL_LOOP_WAIT_MS);
+        	Thread::wait(CONTROL_LOOP_WAIT_MS);
+	}
     }
 
     osThreadTerminate(threadID);
