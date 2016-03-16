@@ -49,42 +49,6 @@ void loopback_rx_cb(rtp::packet* p) {
             "Loopback rx successful!\r\n"
             "    Received: %u bytes",
             p->payload.size());
-
-        /*
-        if (p->subclass() == 1) {
-            uint16_t status_byte = FPGA::Instance()->set_duty_cycles(
-                duty_cycles.data(), duty_cycles.size());
-
-            // grab the bottom 4 bits
-            status_byte &= 0x000F;
-            // flip bits 1 & 2
-            status_byte = (status_byte & 0x000C) |
-                          ((status_byte >> 1) & 0x0001) |
-                          ((status_byte << 1) & 0x0002);
-
-            // bit 3 goes to the 6th position
-            status_byte |= ((status_byte >> 2) << 5) & 0x0023;
-            // bit 4 goes to the 8th position
-            status_byte |= ((status_byte >> 3) << 7);
-            // shift it all up a byte
-            status_byte <<= 8;
-
-            // All motors error LEDs
-            MCP23017::Instance()->writeMask(status_byte, 0xA300);
-
-            // M1 error LED
-            // MCP23017::Instance()->writeMask(~(1 << (8 + 1)), 0xFF00);
-
-            // M2 error LED
-            // MCP23017::Instance()->writeMask(~(1 << (8 + 0)), 0xFF00);
-
-            // M3 error LED
-            // MCP23017::Instance()->writeMask(~(1 << (8 + 5)), 0xFF00);
-
-            // M4 error LED
-            // MCP23017::Instance()->writeMask(~(1 << (8 + 7)), 0xFF00);
-        }
-        */
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
@@ -103,11 +67,6 @@ void loopback_tx_cb(rtp::packet* p) {
     CommModule::Instance()->receive(*p);
 }
 
-/* Uncomment the below DigitalOut lines and comment out the
- * ones above to use the mbed's on-board LEDs.
- */
-// static DigitalOut tx_led(LED3, 0);
-// static DigitalOut rx_led(LED2, 0);
 // Setup some lights that will blink whenever we send/receive packets
 const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
 const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
@@ -127,7 +86,7 @@ void InitializeCommModule() {
     rx_led_ticker->start(80);
     tx_led_ticker->start(80);
 
-    // TODO(justin): remove this
+    // TODO(justin): make this non-global
     // Create a new physical hardware communication link
     global_radio =
         new CC1201(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
@@ -144,8 +103,7 @@ void InitializeCommModule() {
      * according to its port number when using the console.
      */
     if (global_radio->isConnected() == true) {
-        LOG(INIT, "Radio interface ready on %3.2fMHz!",
-            global_radio->freq());
+        LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
         // The usual way of opening a port.
         commModule->setRxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
@@ -165,7 +123,7 @@ void InitializeCommModule() {
 
         LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 
-        // Wait until the threads with the commModule->lass are all started up
+        // Wait until the threads with the commModule are all started up
         // and ready
         while (!commModule->isReady()) {
             Thread::wait(50);
@@ -185,7 +143,7 @@ void InitializeCommModule() {
         // Set the error code's valid bit
         comm_err |= 1 << 0;
 
-        // Wait until the threads with the commModule->lass are all started up
+        // Wait until the threads with the commModule are all started up
         // and ready
         while (!commModule->isReady()) {
             Thread::wait(50);
