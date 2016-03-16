@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include <iostream>
+
 std::list<Configurable*>* Configurable::_configurables;
 
 // Role for tree column zero for storing ConfigItem pointers.
@@ -13,10 +15,12 @@ static const int ConfigItemRole = Qt::UserRole;
 
 Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this
 
-ConfigItem::ConfigItem(Configuration* config, const QString& name) {
+ConfigItem::ConfigItem(Configuration* config, const QString& name,
+                       std::string description) {
     _config = config;
     _treeItem = nullptr;
     _path = name.split('/');
+    _description = description;
 }
 
 ConfigItem::~ConfigItem() {
@@ -37,9 +41,11 @@ void ConfigItem::setupItem() { _treeItem->setText(1, toString()); }
 
 ////////
 
-ConfigBool::ConfigBool(Configuration* tree, QString name, bool value)
+ConfigBool::ConfigBool(Configuration* tree, QString name, bool value,
+                       std::string description)
     : ConfigItem(tree, name) {
     _value = value;
+    _description = description;
     addItem();
 }
 
@@ -75,9 +81,11 @@ void ConfigBool::setupItem() {
 
 ////////
 
-ConfigInt::ConfigInt(Configuration* config, QString name, int value)
+ConfigInt::ConfigInt(Configuration* config, QString name, int value,
+                     std::string description)
     : ConfigItem(config, name) {
     _value = value;
+    _description = description;
     addItem();
 }
 
@@ -87,9 +95,11 @@ void ConfigInt::setValue(const QString& str) { _value = str.toInt(); }
 
 ////////
 
-ConfigDouble::ConfigDouble(Configuration* config, QString name, double value)
+ConfigDouble::ConfigDouble(Configuration* config, QString name, double value,
+                           std::string description)
     : ConfigItem(config, name) {
     _value = value;
+    _description = description;
     addItem();
 }
 
@@ -151,6 +161,12 @@ void Configuration::addToTree(ConfigItem* item) {
     item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
     item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
     item->_treeItem->setText(0, path.back());
+
+    if (item->_description != "") {
+        std::cout << item->_description << std::endl;
+        item->_treeItem->setToolTip(0, QString(item->_description.c_str()));
+    }
+
     item->setupItem();
 }
 
