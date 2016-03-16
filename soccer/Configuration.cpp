@@ -43,9 +43,8 @@ void ConfigItem::setupItem() { _treeItem->setText(1, toString()); }
 
 ConfigBool::ConfigBool(Configuration* tree, QString name, bool value,
                        std::string description)
-    : ConfigItem(tree, name) {
+    : ConfigItem(tree, name, std::string description) {
     _value = value;
-    _description = description;
     addItem();
 }
 
@@ -83,9 +82,8 @@ void ConfigBool::setupItem() {
 
 ConfigInt::ConfigInt(Configuration* config, QString name, int value,
                      std::string description)
-    : ConfigItem(config, name) {
+    : ConfigItem(config, name, std::string description) {
     _value = value;
-    _description = description;
     addItem();
 }
 
@@ -97,9 +95,8 @@ void ConfigInt::setValue(const QString& str) { _value = str.toInt(); }
 
 ConfigDouble::ConfigDouble(Configuration* config, QString name, double value,
                            std::string description)
-    : ConfigItem(config, name) {
+    : ConfigItem(config, name, std::string description) {
     _value = value;
-    _description = description;
     addItem();
 }
 
