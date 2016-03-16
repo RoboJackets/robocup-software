@@ -236,11 +236,12 @@ unsigned int CommModule::numTxPackets() const {
 }
 
 void CommModule::printInfo() const {
-    printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
+    printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\r\n");
 
-    for (auto& kvpair : _ports) {
-        printf("\t\t%d", kvpair.first);
-        kvpair.second.printPort();
+    for (const auto& kvpair : _ports) {
+        const CommPort_t& p = kvpair.second;
+        printf("%d\t\t%u\t%u\t%s\t\t%s\r\n", kvpair.first, p.rxCount, p.txCount,
+               p.rxCallback() ? "YES" : "NO", p.txCallback() ? "YES" : "NO");
     }
 
     printf(

@@ -22,23 +22,16 @@ public:
     void setRxCallback(const std::function<T>& func) { _rxCallback = func; }
     void setTxCallback(const std::function<T>& func) { _txCallback = func; }
 
-    // Methods that return a reference to the TX/RX callback function pointers
+    /// Methods that return a reference to the TX/RX callback function pointers
     std::function<T>& rxCallback() { return _rxCallback; }
+    const std::function<T>& rxCallback() const { return _rxCallback; }
     std::function<T>& txCallback() { return _txCallback; }
+    const std::function<T>& txCallback() const { return _txCallback; }
 
     // Returns the current packet counts to zero
     void resetPacketCount() {
         rxCount = 0;
         txCount = 0;
-    }
-
-    // Standard display function for a CommPort
-    void printPort() const {
-        printf("%u\t%u\t%s\t\t%s\r\n", rxCount, txCount,
-               _rxCallback != nullptr ? "YES" : "NO",
-               _txCallback != nullptr ? "YES" : "NO");
-
-        Console::Instance()->Flush();
     }
 
 private:
