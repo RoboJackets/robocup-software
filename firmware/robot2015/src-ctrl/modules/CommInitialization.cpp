@@ -144,7 +144,7 @@ void InitializeCommModule() {
      * according to its port number when using the console.
      */
     if (global_radio->isConnected() == true) {
-        LOG(INIT, "Radio interface ready on %3.2fMHz!\r\n",
+        LOG(INIT, "Radio interface ready on %3.2fMHz!",
             global_radio->freq());
 
         // The usual way of opening a port.
