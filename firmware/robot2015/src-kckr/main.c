@@ -34,7 +34,7 @@ uint8_t spi_enabled = 0;
 
 uint8_t get_voltage();
 void init();
-void trigger(uint8_t time, bool useKicker);
+void trigger(uint8_t time, uint8_t useKicker);
 
 
 void main()
@@ -51,19 +51,22 @@ void main()
 
             if (had_interrupt_) {
                 char cmd = data_>>6;
-                switch cmd {
-                  case 0x1 // read voltage
-                  case 0x2 // chip
+                switch(cmd) {
+                  case 0x1: // read voltage
+                    break;
+                  case 0x2: // chip
                     uint8_t time  = data_ & 0x3F;
                     trigger(time, 0);
-                  case 0x3 // kick
+                    break;
+                  case 0x3: // kick
                     uint8_t time  = data_ & 0x3F;
                     trigger(time, 1);
+                    break;
                 }
-                // Simulate kick by toggling LED
-                if (data_ == (uint8_t) 255) {
-                    TOGGLE_BIT(PORTB, LED);
-                }
+                // // Simulate kick by toggling LED
+                // if (data_ == (uint8_t) 255) {
+                //     TOGGLE_BIT(PORTB, LED);
+                // }
                 // Reset interrupt flag
                 had_interrupt_ = 0;
 
@@ -122,12 +125,12 @@ void init()
     // 8 bit precision, we can now read ADCH directly
 }
 
-void trigger(uint8_t time, bool useKicker)
+void trigger(uint8_t time, uint8_t useKicker)
 {
-  uint8_t bit = useKicker ? KICK : CHIP;
-  TOGGLE_BIT(PORTA, bit);
+  uint8_t action = useKicker ? KICK : CHIP;
+  TOGGLE_BIT(PORTA, action);
   delay_us(time*125);
-  TOGGLE_BIT(PORTA, bit);
+  TOGGLE_BIT(PORTA, action);
 }
 
 /* Voltage Function */
