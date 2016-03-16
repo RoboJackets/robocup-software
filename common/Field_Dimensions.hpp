@@ -2,6 +2,13 @@
 
 #include <iostream>
 
+#include <Geometry2d/Arc.hpp>
+#include <Geometry2d/Circle.hpp>
+#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Polygon.hpp>
+#include <Geometry2d/Rect.hpp>
+
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
@@ -33,6 +40,22 @@ struct Field_Dimensions {
     inline float FloorLength() const { return _FloorLength; }
     inline float FloorWidth() const { return _FloorWidth; }
 
+    inline Geometry2d::Point CenterPoint() const { return _CenterPoint; }
+    inline Geometry2d::CompositeShape OurGoalZoneShape() const {
+        return _OurGoalZoneShape;
+    }
+    inline Geometry2d::CompositeShape TheirGoalZoneShape() const {
+        return _TheirGoalZoneShape;
+    }
+    inline Geometry2d::Segment OurGoalSegment() const {
+        return _OurGoalSegment;
+    }
+    inline Geometry2d::Segment TheirGoalSegment() const {
+        return _TheirGoalSegment;
+    }
+    inline Geometry2d::Rect OurHalf() const { return _OurHalf; }
+    inline Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
+
     static const Field_Dimensions Single_Field_Dimensions;
 
     static const Field_Dimensions Double_Field_Dimensions;
@@ -59,33 +82,8 @@ struct Field_Dimensions {
           _CenterDiameter(cd),
           _GoalFlat(gf),
           _FloorLength(ffl),
-          _FloorWidth(ffw) {}
-
-    Field_Dimensions(const Field_Dimensions& other)
-        : Field_Dimensions(
-              other._Length, other._Width, other._Border, other._LineWidth,
-              other._GoalWidth, other._GoalDepth, other._GoalHeight,
-              other._PenaltyDist, other._PenaltyDiam, other._ArcRadius,
-              other._CenterRadius, other._CenterDiameter, other._GoalFlat,
-              other._FloorLength, other._FloorWidth) {}
-
-    Field_Dimensions& operator=(const Field_Dimensions& other) {
-        _Length = other._Length;
-        _Width = other._Width;
-        _Border = other._Border;
-        _LineWidth = other._LineWidth;
-        _GoalWidth = other._GoalWidth;
-        _GoalDepth = other._GoalDepth;
-        _GoalHeight = other._GoalHeight;
-        _PenaltyDist = other._PenaltyDist;
-        _PenaltyDiam = other._PenaltyDiam;
-        _ArcRadius = other._ArcRadius;
-        _CenterRadius = other._CenterRadius;
-        _CenterDiameter = other._CenterDiameter;
-        _GoalFlat = other._GoalFlat;
-        _FloorLength = other._FloorLength;
-        _FloorWidth = other._FloorWidth;
-        return *this;
+          _FloorWidth(ffw) {
+        updateGeometry();
     }
 
     Field_Dimensions operator*(float scalar) const {
@@ -96,6 +94,41 @@ struct Field_Dimensions {
             _ArcRadius * scalar, _CenterRadius * scalar,
             _CenterDiameter * scalar, _GoalFlat * scalar, _FloorLength * scalar,
             _FloorWidth * scalar);
+    }
+
+    void updateGeometry() {
+        _CenterPoint = Geometry2d::Point(0.0, _Length / 2.0);
+
+        _OurGoalZoneShape = Geometry2d::CompositeShape();
+        _OurGoalZoneShape.add(std::make_shared<Geometry2d::Circle>(
+            Geometry2d::Point(-_GoalFlat / 2.0, 0), _ArcRadius));
+        _OurGoalZoneShape.add(std::make_shared<Geometry2d::Circle>(
+            Geometry2d::Point(_GoalFlat / 2.0, 0), _ArcRadius));
+        _OurGoalZoneShape.add(std::make_shared<Geometry2d::Rect>(
+            Geometry2d::Point(-_GoalFlat / 2.0, _ArcRadius),
+            Geometry2d::Point(_GoalFlat / 2.0, 0)));
+
+        _TheirGoalZoneShape = Geometry2d::CompositeShape();
+        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Circle>(
+            Geometry2d::Point(-_GoalFlat / 2.0, _Length), _ArcRadius));
+        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Circle>(
+            Geometry2d::Point(_GoalFlat / 2.0, _Length), _ArcRadius));
+        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Rect>(
+            Geometry2d::Point(-_GoalFlat / 2.0, _Length),
+            Geometry2d::Point(_GoalFlat / 2.0, _Length - _ArcRadius)));
+
+        _TheirGoalSegment =
+            Geometry2d::Segment(Geometry2d::Point(_GoalWidth / 2.0, _Length),
+                                Geometry2d::Point(-_GoalWidth / 2.0, _Length));
+        _OurGoalSegment =
+            Geometry2d::Segment(Geometry2d::Point(_GoalWidth / 2.0, 0),
+                                Geometry2d::Point(-_GoalWidth / 2.0, 0));
+
+        _TheirHalf =
+            Geometry2d::Rect(Geometry2d::Point(-_Width / 2, _Length),
+                             Geometry2d::Point(_Width / 2, _Length / 2));
+        _OurHalf = Geometry2d::Rect(Geometry2d::Point(-_Width / 2, 0),
+                                    Geometry2d::Point(_Width / 2, _Length / 2));
     }
 
 private:
@@ -114,4 +147,12 @@ private:
     float _GoalFlat;
     float _FloorLength;
     float _FloorWidth;
+
+    Geometry2d::Point _CenterPoint;
+    Geometry2d::CompositeShape _OurGoalZoneShape;
+    Geometry2d::CompositeShape _TheirGoalZoneShape;
+    Geometry2d::Segment _OurGoalSegment;
+    Geometry2d::Segment _TheirGoalSegment;
+    Geometry2d::Rect _OurHalf;
+    Geometry2d::Rect _TheirHalf;
 };
