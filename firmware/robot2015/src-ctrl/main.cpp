@@ -6,9 +6,7 @@
 // DigitalOut cs(p8);
 Serial pc(USBTX, USBRX); // tx and rx
 LocalFileSystem local("local");
-int t = 0;
-bool btnState = 0;
-bool btnRead;
+
 
 int transferAndWait(const char what, SPI& spi);
 int kick( int time );
@@ -24,7 +22,9 @@ int main() {
     printf("Flashed kicker, success = %s\r\n", success ? "TRUE" : "FALSE");
 
     DigitalOut n_kick_select(p9);
-    n_kick_select = 0;
+    n_kick_select = 1;
+    uint8_t transByte;
+    char getCmd;
     // Setup the spi for 8 bit data, high steady state clock,
     SPI spi(p5, p6, p7); // mosi, miso, sclk
     // mode 0 doesn't seem to work right, TODO investigate if necessary
@@ -34,11 +34,18 @@ int main() {
 
     while(1) {
         if (pc.readable()) {
-            pc.getc();
-            n_kick_select = !n_kick_select;
+            getCmd = pc.getc();
+            switch(getCmd){
+              case 'k':
+                transByte = kick(255);
+              case 'c':
+                transByte = chip(255);
+              case 'r':
+                transByte = vRead();
+            }
         }
         int a;
-        a = transferAndWait(255, spi);
+        a = transferAndWait(transByte, spi);
         pc.printf("Received:");
         pc.printf("%d\r\n", a);
         wait(.1); // tested down to .025 seconds between
@@ -47,9 +54,11 @@ int main() {
 
 int transferAndWait (const char what, SPI& spi)
 {
+    n_kick_select = !n_kick_select;
     int a = spi.write(what);
     wait(.020);
     return a;
+    n_kick_select = !n_kick_select;
 } // end transferAndWait
 
 /*
