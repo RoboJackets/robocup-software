@@ -74,7 +74,8 @@ void CommModule::txThread() {
             ASSERT(tState == osOK);
 
             // Call the user callback function
-            if (_ports[p->port()].txCallback()) {
+            if (_ports.find(p->port()) != _ports.end() &&
+                _ports[p->port()].txCallback() != nullptr) {
                 _ports[p->port()].txCallback()(p);
                 _ports[p->port()].txCount++;
 
@@ -260,4 +261,13 @@ void CommModule::close(unsigned int portNbr) { _ports.erase(portNbr); }
 
 bool CommModule::isReady() const { return _isReady; }
 
-int CommModule::numOpenSockets() const { return _ports.size(); }
+int CommModule::numOpenSockets() const {
+    size_t count = 0;
+    for (const auto& kvpair : _ports) {
+        if (kvpair.second.rxCallback() != nullptr ||
+            kvpair.second.txCallback() != nullptr)
+            count++;
+    }
+
+    return count;
+}
