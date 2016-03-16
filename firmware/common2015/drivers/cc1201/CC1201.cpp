@@ -344,9 +344,13 @@ uint8_t CC1201::idle() {
 
     if (!_isInit) return status_byte;
 
-    // block until we've reached idle
-    while (mode() != 0x01)
-        ;
+    // Wait up to 300ms for the radio to do become ready
+    for (size_t i = 0; i < 300; i++) {
+        if (mode() == 0x01)  // chip is in idle state
+            break;
+        else
+            Thread::wait(1);
+    }
 
     return status_byte;
 }
