@@ -10,64 +10,43 @@
 
 #define COMM_MODULE_SIGNAL_START_THREAD (1 << 0)
 
-// Class declarations since everything in CommModule is static
-bool CommModule::_isReady = false;
-osThreadId CommModule::_txID;
-osThreadId CommModule::_rxID;
-CommPorts_t CommModule::_ports;
-
 std::shared_ptr<CommModule> CommModule::instance;
 
-// Default constructor
-CommModule::CommModule() : _txQueueHelper(), _rxQueueHelper() {}
-
-CommModule::~CommModule() { cleanup(); }
-
-void CommModule::cleanup() {
-    // terminate the threads
-    osThreadTerminate(_txID);
-    osThreadTerminate(_rxID);
-
-    // release the allocated memory
-    delete[](_txDef.stack_pointer);
-    delete[](_rxDef.stack_pointer);
+CommModule::~CommModule() {
+    // note: the destructor for the Thread class automatically calls
+    // terminate(), so we don't have to do it here.
 }
 
-void CommModule::Init() {
-    // Make sure we have an instance to work with
-    instance = Instance();
-
+CommModule::CommModule()
+    : _rxThread(&CommModule::rxThreadHelper, this, osPriorityAboveNormal),
+      _txThread(&CommModule::txThreadHelper, this, osPriorityHigh) {
     // Create the data queues.
-    instance->_txQueue = osMailCreate(instance->_txQueueHelper.def(), nullptr);
-    instance->_rxQueue = osMailCreate(instance->_rxQueueHelper.def(), nullptr);
-
-    // Define the TX & RX task threads.
-    define_thread(instance->_txDef, &CommModule::txThread, osPriorityHigh);
-    define_thread(instance->_rxDef, &CommModule::rxThread,
-                  osPriorityAboveNormal);
-
-    // Create the TX & RX threads - pass them a pointer to the
-    // created object.
-    _txID = osThreadCreate(&(instance->_txDef), nullptr);
-    _rxID = osThreadCreate(&(instance->_rxDef), nullptr);
+    _txQueue = osMailCreate(_txQueueHelper.def(), nullptr);
+    _rxQueue = osMailCreate(_rxQueueHelper.def(), nullptr);
 }
 
 shared_ptr<CommModule>& CommModule::Instance() {
-    if (instance.get() == nullptr) instance.reset(new CommModule);
+    if (!instance) instance.reset(new CommModule);
 
     return instance;
 }
 
-void CommModule::txThread(void const* arg) {
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
+void CommModule::rxThreadHelper(void const* moduleInst) {
+    CommModule* module = (CommModule*)moduleInst;
+    module->rxThread();
+}
+void CommModule::txThreadHelper(void const* moduleInst) {
+    CommModule* module = (CommModule*)moduleInst;
+    module->txThread();
+}
 
+void CommModule::txThread() {
     // Only continue past this point once at least one hardware link is
     // initialized
-    osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
+    Thread::signal_wait(COMM_MODULE_SIGNAL_START_THREAD);
 
-    threadPriority = osThreadGetPriority(instance->_txID);
-    ASSERT(instance->_txID != nullptr);
+    // Store our priority so we know what to reset it to if ever needed
+    const osPriority threadPriority = _txThread.get_priority();
 
     // Start up a ticker that disables the strobing TX LED. This is essentially
     // a watchdog timer for the TX LED's activity light
@@ -76,32 +55,30 @@ void CommModule::txThread(void const* arg) {
     LOG(INIT,
         "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
-        instance->_txID, threadPriority);
+        _txThread.gettid(), threadPriority);
 
     // Signal to the RX thread that it can begin
-    osSignalSet(_rxID, COMM_MODULE_SIGNAL_START_THREAD);
-
-    osEvent evt;
+    _rxThread.signal_set(COMM_MODULE_SIGNAL_START_THREAD);
 
     while (true) {
         // When a new rtp::packet is put in the TX queue, begin operations (does
         // nothing if no new data in queue)
-        evt = osMailGet(instance->_txQueue, osWaitForever);
+        osEvent evt = osMailGet(_txQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
             // Get a pointer to the packet's memory location
             rtp::packet* p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            osStatus tState = osThreadSetPriority(_txID, osPriorityRealtime);
+            osStatus tState = _txThread.set_priority(osPriorityRealtime);
             ASSERT(tState == osOK);
 
             // Call the user callback function
             if (_ports[p->port()].isOpen()) {
-                _ports[p->port()].TXCallback()(p);
+                _ports[p->port()].txCallback()(p);
 
                 // Increment the packet counter by 1
-                _ports[p->port()].TXPackets()++;
+                _ports[p->port()].incTxCount();
 
                 LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port(), p->subclass());
@@ -115,28 +92,24 @@ void CommModule::txThread(void const* arg) {
             }
 
             // Release the allocated memory once data is sent
-            osMailFree(instance->_txQueue, p);
+            osMailFree(_txQueue, p);
 
-            tState = osThreadSetPriority(_txID, threadPriority);
+            tState = _txThread.set_priority(threadPriority);
             ASSERT(tState == osOK);
         }
     }
-
-    osThreadTerminate(_txID);
 }
 
-void CommModule::rxThread(void const* arg) {
-    // Store our priority so we know what to reset it to if ever needed
-    osPriority threadPriority;
-
+void CommModule::rxThread() {
     // Only continue past this point once at least one (1) hardware link is
     // initialized
-    osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
+    Thread::signal_wait(COMM_MODULE_SIGNAL_START_THREAD);
+
     // set this true immediately after we are released execution
     _isReady = true;
 
-    threadPriority = osThreadGetPriority(instance->_rxID);
-    ASSERT(instance->_rxID != nullptr);
+    // Store our priority so we know what to reset it to if ever needed
+    const osPriority threadPriority = _rxThread.get_priority();
 
     // Start up a ticker that disables the strobing RX LED. This is essentially
     // a watchdog timer for the RX LED's activity light
@@ -144,30 +117,27 @@ void CommModule::rxThread(void const* arg) {
 
     LOG(INIT,
         "RX communication module ready!\r\n    Thread ID: %u, Priority: %d",
-        instance->_rxID, threadPriority);
-
-    rtp::packet* p;
-    osEvent evt;
+        _rxThread.gettid(), threadPriority);
 
     while (true) {
         // Wait until new data is placed in the class's RX queue from a CommLink
         // class
-        evt = osMailGet(instance->_rxQueue, osWaitForever);
+        osEvent evt = osMailGet(_rxQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
             // get a pointer to where the data is stored
-            p = (rtp::packet*)evt.value.p;
+            rtp::packet* p = (rtp::packet*)evt.value.p;
 
             // Bump up the thread's priority
-            osStatus tState = osThreadSetPriority(_rxID, osPriorityRealtime);
+            osStatus tState = _rxThread.set_priority(osPriorityRealtime);
             ASSERT(tState == osOK);
 
             // Call the user callback function (if set)
             if (_ports[p->port()].isOpen()) {
-                _ports[p->port()].RXCallback()(p);
+                _ports[p->port()].rxCallback()(p);
 
                 // Increment the packet counter by 1
-                _ports[p->port()].RXPackets()++;
+                _ports[p->port()].incRxCount();
 
                 LOG(INF2, "Reception:\r\n    Port:\t%u\r\n    Subclass:\t%u",
                     p->port(), p->subclass());
@@ -181,92 +151,68 @@ void CommModule::rxThread(void const* arg) {
             }
 
             // free memory allocated for mail
-            osMailFree(instance->_rxQueue, p);
+            osMailFree(_rxQueue, p);
 
-            tState = osThreadSetPriority(_rxID, threadPriority);
+            tState = _rxThread.set_priority(threadPriority);
             ASSERT(tState == osOK);
         }
     }
-
-    osThreadTerminate(_rxID);
 }
 
-void CommModule::RxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
-    if (!_ports[portNbr].Exists()) {
-        CommPort_t port(portNbr);
-        port.RXCallback() = std::bind(ptr, std::placeholders::_1);
-        _ports += port;
-
-    } else {
-        _ports[portNbr].RXCallback() = std::bind(ptr, std::placeholders::_1);
+void CommModule::setRxHandler(CommCallback callback, uint8_t portNbr) {
+    if (!_ports.hasPort(portNbr)) {
+        _ports += CommPort_t(portNbr);
     }
+
+    _ports[portNbr].rxCallback() = std::bind(callback, std::placeholders::_1);
 
     ready();
 }
 
-void CommModule::TxHandler(void (*ptr)(rtp::packet*), uint8_t portNbr) {
-    if (!_ports[portNbr].Exists()) {
-        CommPort_t port(portNbr);
-
-        port.TXCallback() = std::bind(ptr, std::placeholders::_1);
-
-        _ports += port;
-
-    } else {
-        _ports[portNbr].TXCallback() = std::bind(ptr, std::placeholders::_1);
+void CommModule::setTxHandler(CommCallback callback, uint8_t portNbr) {
+    if (!_ports.hasPort(portNbr)) {
+        _ports += CommPort_t(portNbr);
     }
+
+    _ports[portNbr].txCallback() = std::bind(callback, std::placeholders::_1);
 
     ready();
 }
 
-bool CommModule::openSocket(uint8_t portNbr) {
-    if (!_ports[portNbr].Exists()) {
-        CommPort_t port(portNbr);
-
-        _ports += port;
-
-        return _ports[portNbr].Open();
+void CommModule::openSocket(uint8_t portNbr) {
+    // create the port if it doesn't exist
+    if (!_ports.hasPort(portNbr)) {
+        _ports += CommPort_t(portNbr);
     }
 
-    if (_ports[portNbr].Open()) {
-        // Everything looks to be setup, go ahead and enable it
+    CommPort_t& port = _ports[portNbr];
+
+    if (!port.isOpen()) {
+        port.open();
         LOG(INF1, "Port %u opened", portNbr);
-
-        return true;
-    } else {
-        // this almost never gets called. Probably going to remove it soon. Only
-        // makes it this far if trying to open port 0 without any setup.
-        // TX callback function was never set
-        LOG(WARN,
-            "Must set at least the RX callback function before opening socket "
-            "on port %u.",
-            portNbr);
-
-        return false;
     }
 }
 
 void CommModule::ready() {
-    if (_isReady == true) return;
+    if (_isReady) return;
 
     // Start running the TX thread - it will trigger with to startup the RX
     // thread
-    osSignalSet(_txID, COMM_MODULE_SIGNAL_START_THREAD);
+    _txThread.signal_set(COMM_MODULE_SIGNAL_START_THREAD);
 }
 
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
     if (_ports[packet.port()].isOpen() &&
-        _ports[packet.port()].hasTXCallback()) {
+        _ports[packet.port()].hasTxCallback()) {
         // Allocate a block of memory for the data.
-        rtp::packet* p =
-            (rtp::packet*)osMailAlloc(instance->_txQueue, osWaitForever);
+        rtp::packet* p = (rtp::packet*)osMailAlloc(_txQueue, osWaitForever);
 
         // Copy the contents into the allocated memory block
         *p = packet;
 
         // Place the passed packet into the txQueue.
-        osMailPut(instance->_txQueue, p);
+        osMailPut(_txQueue, p);
 
     } else {
         LOG(WARN,
@@ -279,16 +225,15 @@ void CommModule::send(const rtp::packet& packet) {
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
     if (_ports[packet.port()].isOpen() &&
-        _ports[packet.port()].hasRXCallback()) {
+        _ports[packet.port()].hasRxCallback()) {
         // Allocate a block of memory for the data.
-        rtp::packet* p =
-            (rtp::packet*)osMailAlloc(instance->_rxQueue, osWaitForever);
+        rtp::packet* p = (rtp::packet*)osMailAlloc(_rxQueue, osWaitForever);
 
         // Copy the contents into the allocated memory block
         *p = packet;
 
         // Place the passed packet into the rxQueue.
-        osMailPut(instance->_rxQueue, p);
+        osMailPut(_rxQueue, p);
 
     } else {
         LOG(WARN,
@@ -298,31 +243,24 @@ void CommModule::receive(const rtp::packet& packet) {
     }
 }
 
-unsigned int CommModule::NumRXPackets() { return _ports.allRXPackets(); }
+unsigned int CommModule::numRxPackets() const { return _ports.totalRxCount(); }
 
-unsigned int CommModule::NumTXPackets() { return _ports.allTXPackets(); }
+unsigned int CommModule::numTxPackets() const { return _ports.totalTxCount(); }
 
-void CommModule::PrintInfo(bool forceHeader) {
-    if (forceHeader == true && _ports.empty()) {
-        PrintHeader();
-        _ports.PrintFooter();
-    } else {
-        _ports.PrintPorts();
-        _ports.PrintFooter();
-    }
+void CommModule::printInfo() const {
+    _ports.printHeader();
+    _ports.printPorts();
+    _ports.printFooter();
 
-    Console::Flush();
+    Console::Instance()->Flush();
 }
 
-void CommModule::PrintHeader() { _ports.PrintHeader(); }
-
-void CommModule::ResetCount(unsigned int portNbr) {
-    _ports[portNbr].RXPackets() = 0;
-    _ports[portNbr].TXPackets() = 0;
+void CommModule::resetCount(unsigned int portNbr) {
+    _ports[portNbr].resetPacketCount();
 }
 
-void CommModule::Close(unsigned int portNbr) { _ports[portNbr].Close(); }
+void CommModule::close(unsigned int portNbr) { _ports[portNbr].close(); }
 
-bool CommModule::isReady() { return _isReady; }
+bool CommModule::isReady() const { return _isReady; }
 
-int CommModule::NumOpenSockets() { return _ports.count_open(); }
+int CommModule::numOpenSockets() const { return _ports.countOpen(); }

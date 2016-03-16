@@ -28,15 +28,15 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  */
 class CommLink {
 public:
-    /// Defautl Constructor
+    /// Default Constructor
     CommLink(){};
 
     /// Constructor
-    CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
+    CommLink(PinName mosi, PinName miso, PinName sck, PinName cs = NC,
+             PinName int_pin = NC);
 
     /// Virtual deconstructor
-    /// Always define and call CommLink::cleanup() in a derived class's
-    /// deconstructor!
+    /// Kills any threads and frees the allocated stack.
     virtual ~CommLink();
 
     // Class constants for data queues
@@ -51,23 +51,16 @@ public:
     virtual int32_t selfTest() = 0;
 
     /// Determine if communication can occur with another device
-    virtual bool isConnected() = 0;
+    virtual bool isConnected() const = 0;
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
 
-    void receivePacket(rtp::packet*);
-
 protected:
-    virtual int32_t sendData(
-        uint8_t*, uint8_t) = 0;  // write data out to the radio device using SPI
-    virtual int32_t getData(
-        uint8_t*,
-        uint8_t*) = 0;  // read data in from the radio device using SPI
-
-    /// Kill any threads and free the allocated stack.
-    /// Always call in any derived class's deconstructors!
-    void cleanup();
+    // write data out to the radio device using SPI
+    virtual int32_t sendData(uint8_t*, uint8_t) = 0;
+    // read data in from the radio device using SPI
+    virtual int32_t getData(uint8_t*, uint8_t*) = 0;
 
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
@@ -83,9 +76,6 @@ protected:
     void setup_spi(int baudrate = DEFAULT_BAUD);
     uint8_t twos_compliment(uint8_t val);
 
-    // The data queues for temporarily holding received packets
-    osMailQId _rxQueue;
-
     // SPI bus pins
     PinName _miso_pin;
     PinName _mosi_pin;
@@ -100,26 +90,20 @@ protected:
     static const int DEFAULT_BAUD = 5000000;
 
 private:
-    // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t);
+    Thread* _rxThread = nullptr;
 
-    /**
-     * Data queue helper for RX queue.
-     */
-    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
+    // The working threads for handling RX data queue operations
+    void rxThread();
 
-    // Thread definitions and IDs
-    osThreadDef_t _rxDef;
-    osThreadId _rxID;
-
-    // The working threads for handeling RX data queue operations
-    static void rxThread(void const*);
+    static void rxThreadHelper(const void* linkInst) {
+        CommLink* link = (CommLink*)linkInst;
+        link->rxThread();
+    }
 
     // Methods for initializing a transceiver's pins for communication
     void setup();
-    void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
-                    PinName = NC);
+    void setup_pins(PinName mosi = NC, PinName miso = NC, PinName sck = NC,
+                    PinName cs = NC, PinName int_pin = NC);
     void setup_cs();
     void setup_interrupt();
 };

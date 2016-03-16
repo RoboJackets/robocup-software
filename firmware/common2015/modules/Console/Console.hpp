@@ -5,9 +5,6 @@
 
 #include <mbed.h>
 
-// #include "MODDMA.h"
-#include "MODSERIAL.h"
-
 /**
  * enable scrolling vi sequence
  */
@@ -27,10 +24,8 @@ const std::string ANSI_SU = "\033[1S";
  */
 class Console {
 public:
-    /**
-     * max buffer length. Default 400 (five lines)
-     */
-    static const uint16_t BUFFER_LENGTH = 400;
+    /// Get a pointer to the global Console instance
+    static std::shared_ptr<Console>& Instance();
 
     /**
      * new line character. Default '\r'
@@ -78,11 +73,6 @@ public:
     static const char CMD_END_CHAR = ';';
 
     /**
-     * receice buffer full error message
-     */
-    static const std::string RX_BUFFER_FULL_MSG;
-
-    /**
      * break message
      */
     static const std::string COMMAND_BREAK_MSG;
@@ -93,72 +83,57 @@ public:
     ~Console();
 
     /**
-     * Console initialization routine. Attaches interrupt handlers and clears
-     * the
-     * buffers.
-     */
-    static void Init();
-
-    /**
      * flushes stdout. Should be called after every putc or printf block.
      */
-    static void Flush();
+    void Flush();
 
     /**
      * requests the main loop break
      */
-    static void RequestSystemStop();
+    void RequestSystemStop();
 
     /**
      * returns if the main loop should break
      */
-    static bool IsSystemStopRequested();
+    bool IsSystemStopRequested() const;
 
-    static bool IterCmdBreakReq();
-    static void IterCmdBreakReq(bool newState);
+    bool IterCmdBreakReq() const;
+    void IterCmdBreakReq(bool newState);
 
-    static char* rxBufferPtr();
+    std::string& rxBuffer();
 
-    static bool CommandReady();
-    static void CommandHandled(bool);
+    bool CommandReady() const;
 
-    static void changeHostname(const std::string&);
-    static void changeUser(const std::string&);
+    /// mark the current command as being handled and cleanup
+    void CommandHandled();
 
-    static void Baudrate(uint16_t);
-    static uint16_t Baudrate();
+    void changeHostname(const std::string&);
+    void changeUser(const std::string&);
 
-    static void PrintHeader();
-    static void ShowLogo();
-    static void SetTitle(const std::string&);
-    static void SetEscEnd(char c);
-    static std::string GetHostResponse();
+    void Baudrate(uint16_t);
+    uint16_t Baudrate() const;
+
+    void PrintHeader();
+    void ShowLogo();
+    void SetTitle(const std::string&);
+    std::string GetHostResponse();
 
 private:
-    // Constructor is only used in init branch of Instance()
+    /**
+     * Console initialization routine. Attaches interrupt handlers and clears
+     * the buffers.
+     */
     Console();
-
-    static std::shared_ptr<Console>& Instance();
-
-    void ClearRXBuffer();
-
-    void ClearTXBuffer();
 
     void RXCallback();
 
-    void TXCallback();
-
     void setHeader();
-
-    void RXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
-    void TXCallback_MODSERIAL(MODSERIAL_IRQ_INFO* info);
 
     static std::shared_ptr<Console> instance;
 
     // Flags for command execution states
-    static bool iter_break_req;
-    static bool command_handled;
-    static bool command_ready;
+    bool iter_break_req = false;
+    bool command_ready = false;
 
     /**
     * Console header string.
@@ -168,25 +143,17 @@ private:
     std::string CONSOLE_HOSTNAME;
 
     /**
-    * Serial (over USB) baud rate.
-    */
-    uint16_t baudrate;
-
-    /**
     * Serial connection
     */
     Serial pc;
-    // MODSERIAL pc;
+
+    /// baud rate of serial connection
+    uint16_t _baudRate;
 
     /**
      * Receive buffer
      */
-    char rxBuffer[BUFFER_LENGTH];
-
-    /**
-     * Transmission buffer
-     */
-    char txBuffer[BUFFER_LENGTH];
+    std::string _rxBuffer;
 
     /**
      * Is a system stop requested
@@ -206,17 +173,7 @@ private:
 
     char esc_host_end_char = 'R';
 
-    /**
-     * receive buffer index
-     */
-    uint16_t rxIndex = 0;
-
-    /**
-     * transmission buffer index
-     */
-    uint16_t txIndex = 0;
-
-    size_t MAX_HISTORY = 10;
+    const size_t MAX_HISTORY = 10;
     int history_index = 0;
     std::deque<std::string> history;
 };

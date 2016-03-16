@@ -25,24 +25,17 @@ public:
     CC1101(PinName mosi, PinName miso, PinName sck, PinName cs,
            PinName int_pin = NC);
 
-    /// Deconstructor
-    virtual ~CC1101() { CommLink::cleanup(); }
-
     // These must have implementations in the CC1101 class since it is a derived
     // class of the base class CommLink
     /// Perform a soft reset for the transceiver
-    virtual void reset();
+    void reset();
 
-    /// Test the
-    virtual int32_t selfTest();
+    int32_t selfTest();
 
-    virtual bool isConnected();
+    bool isConnected() const;
 
     /// Set the channel number
     void channel(uint16_t);
-
-    /// Get the channel number
-    uint16_t channel();
 
     /// Set an address for the transceiver used for packet filtering
     void address(uint8_t);

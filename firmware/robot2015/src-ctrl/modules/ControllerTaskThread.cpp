@@ -75,7 +75,7 @@ void Task_Controller(void const* args) {
         // Set the error code's valid bit
         imu_err |= 1 << 0;
 
-        MCP23017::write_mask(1 << (8 + 6), 1 << (8 + 6));
+        MCP23017::Instance()->writeMask(1 << (8 + 6), 1 << (8 + 6));
 
     } else {
         LOG(SEVERE,
@@ -91,9 +91,6 @@ void Task_Controller(void const* args) {
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
         Task_Controller_Sensorless(mainID);
-
-        // should never reach this point
-        osThreadTerminate(threadID);
 
         return;
     }
@@ -158,14 +155,8 @@ void Task_Controller(void const* args) {
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
-
-    osThreadTerminate(threadID);
 }
 
-/**
- * [Task_Controller_Sensorless]
- * @param args [description]
- */
 void Task_Controller_Sensorless(const osThreadId mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
@@ -179,7 +170,7 @@ void Task_Controller_Sensorless(const osThreadId mainID) {
         threadID, threadPriority);
 
     // IMU error LED
-    MCP23017::write_mask(~(1 << (8 + 6)), 1 << (8 + 6));
+    MCP23017::Instance()->writeMask(~(1 << (8 + 6)), 1 << (8 + 6));
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
@@ -189,6 +180,4 @@ void Task_Controller_Sensorless(const osThreadId mainID) {
         Thread::wait(CONTROL_LOOP_WAIT_MS);
         Thread::yield();
     }
-
-    osThreadTerminate(threadID);
 }

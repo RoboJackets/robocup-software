@@ -252,7 +252,7 @@ int cmd_console_clear(cmd_args_t& args) {
         show_invalid_args(args);
         return 1;
     } else {
-        Console::Flush();
+        Console::Instance()->Flush();
         printf(ENABLE_SCROLL_SEQ.c_str());
         printf(CLEAR_SCREEN_SEQ.c_str());
     }
@@ -282,7 +282,7 @@ int cmd_console_exit(cmd_args_t& args) {
         return 1;
     } else {
         printf("Shutting down serial console. Goodbye!\r\n");
-        Console::RequestSystemStop();
+        Console::Instance()->RequestSystemStop();
     }
 
     return 0;
@@ -377,9 +377,9 @@ int cmd_ping(cmd_args_t& args) {
         return 1;
     } else {
         time_t sys_time = time(nullptr);
-        Console::Flush();
+        Console::Instance()->Flush();
         printf("reply: %lu\r\n", sys_time);
-        Console::Flush();
+        Console::Instance()->Flush();
 
         Thread::wait(600);
     }
@@ -396,7 +396,7 @@ int cmd_interface_reset(cmd_args_t& args) {
         return 1;
     } else {
         printf("The system is going down for reboot NOW!\033[0J\r\n");
-        Console::Flush();
+        Console::Instance()->Flush();
 
         // give some time for the feedback to get back to the console
         Thread::wait(800);
@@ -432,7 +432,7 @@ int cmd_ls(cmd_args_t& args) {
         // don't use printf until we close the directory
         for (auto& i : filenames) {
             printf(" - %s\r\n", i.c_str());
-            Console::Flush();
+            Console::Instance()->Flush();
         }
 
     } else {
@@ -493,8 +493,8 @@ int cmd_info(cmd_args_t& args) {
 
         printf("\tBase ID:\t");
 
-        if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
-            printf("N/A\r\n");
+        if (ds2411_read_id(RJ_BASE_ID, &id) == ID_HANDSHAKE_FAIL)
+            printf("[id chip not connected]\r\n");
         else
             for (int i = 0; i < 6; i++) printf("%02X\r\n", id.serial[i]);
 
@@ -607,7 +607,7 @@ int cmd_baudrate(cmd_args_t& args) {
                                     57600, 115200, 230400, 460800, 921600};
 
     if (args.empty() == true || args.size() > 1) {
-        printf("Baudrate: %u\r\n", Console::Baudrate());
+        printf("Baudrate: %u\r\n", Console::Instance()->Baudrate());
     }
 
     else if (args.size() == 1) {
@@ -625,7 +625,7 @@ int cmd_baudrate(cmd_args_t& args) {
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
                 valid_rates.end()) {
-                Console::Baudrate(new_rate);
+                Console::Instance()->Baudrate(new_rate);
                 printf("New baudrate: %u\r\n", new_rate);
             } else {
                 printf(
@@ -649,7 +649,7 @@ int cmd_console_user(cmd_args_t& args) {
     }
 
     else {
-        Console::changeUser(args.front());
+        Console::Instance()->changeUser(args.front());
     }
 
     return 0;
@@ -662,7 +662,7 @@ int cmd_console_hostname(cmd_args_t& args) {
     }
 
     else {
-        Console::changeHostname(args.front());
+        Console::Instance()->changeHostname(args.front());
     }
 
     return 0;
@@ -840,13 +840,15 @@ int cmd_ps(cmd_args_t& args) {
  * @param args [description]
  */
 int cmd_radio(cmd_args_t& args) {
+    shared_ptr<CommModule> commModule = CommModule::Instance();
+
     if (args.empty() == true) {
         // Default to showing the list of ports
-        CommModule::PrintInfo(true);
+        commModule->printInfo();
         return 0;
     }
 
-    if (CommModule::isReady() == false) {
+    if (commModule->isReady() == false) {
         printf("The radio interface is not ready! Unseen bugs may occur!\r\n");
     }
 
@@ -861,17 +863,17 @@ int cmd_radio(cmd_args_t& args) {
         pck.address(BASE_STATION_ADDR);
 
         if (args.front().compare("show") == 0) {
-            CommModule::PrintInfo(true);
+            commModule->printInfo();
 
         } else if (args.front().compare("test-tx") == 0) {
             printf("Placing %u byte packet in TX buffer.\r\n",
                    pck.payload.size());
-            CommModule::send(pck);
+            commModule->send(pck);
 
         } else if (args.front().compare("test-rx") == 0) {
             printf("Placing %u byte packet in RX buffer.\r\n",
                    pck.payload.size());
-            CommModule::receive(pck);
+            commModule->receive(pck);
 
         } else if (args.front().compare("loopback") == 0) {
             pck.port(rtp::port::LINK);
@@ -894,7 +896,7 @@ int cmd_radio(cmd_args_t& args) {
             for (size_t j = 0; j < i; ++j) {
                 rtp::packet pck2;
                 pck2 = pck;
-                CommModule::send(pck2);
+                commModule->send(pck2);
                 Thread::wait(50);
             }
 
@@ -917,14 +919,14 @@ int cmd_radio(cmd_args_t& args) {
                 unsigned int portNbr = atoi(args.at(2).c_str());
 
                 if (args.at(1).compare("up") == 0) {
-                    CommModule::openSocket(portNbr);
+                    commModule->openSocket(portNbr);
 
                 } else if (args.at(1).compare("down") == 0) {
-                    CommModule::Close(portNbr);
+                    commModule->close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
                 } else if (args.at(1).compare("reset") == 0) {
-                    CommModule::ResetCount(portNbr);
+                    commModule->resetCount(portNbr);
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
                 } else {
@@ -960,7 +962,7 @@ int cmd_radio(cmd_args_t& args) {
             int start_tick = clock();
             for (size_t i = 0; i < packet_cnt; ++i) {
                 Thread::wait(ms_delay);
-                CommModule::send(pck);
+                commModule->send(pck);
             }
             printf("Stress test finished in %.1fms.\r\n",
                    (clock() - start_tick) /
@@ -989,7 +991,6 @@ void execute_line(char* rawCommand) {
         uint8_t argc = 0;
         string cmdName = "\0";
         vector<string> args;
-        args.reserve(MAX_COMMAND_ARGS);
 
         char* endArg;
         char* pch = strtok_r(cmds, " ", &endArg);
@@ -1065,7 +1066,8 @@ void execute_line(char* rawCommand) {
         }
 
         cmds = strtok_r(nullptr, ";", &endCmd);
-        Console::Flush();  // make sure we force everything out of stdout
+        Console::Instance()
+            ->Flush();  // make sure we force everything out of stdout
     }
 }
 
@@ -1075,12 +1077,12 @@ void execute_line(char* rawCommand) {
  */
 void execute_iterative_command() {
     if (iterative_command_state == true) {
-        if (Console::IterCmdBreakReq() == true) {
+        if (Console::Instance()->IterCmdBreakReq() == true) {
             iterative_command_state = false;
 
             // reset the flag for receiving a break character in the Console
             // class
-            Console::IterCmdBreakReq(false);
+            Console::Instance()->IterCmdBreakReq(false);
             // make sure the cursor is enabled
             printf("\033[?25h");
         } else {

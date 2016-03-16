@@ -2,247 +2,168 @@
 
 #include <mbed.h>
 #include <rtos.h>
+#include "logger.hpp"
 
 #include <algorithm>
-#include <vector>
+#include <map>
+#include <stdexcept>
 #include <functional>
 
 template <class T>
 class CommPort {
 public:
-    // Constructor
-    CommPort()
-        : is_open(false),
-          rx_packets(0),
-          tx_packets(0),
-          rx_callback(nullptr),
-          tx_callback(nullptr) {
-        Nbr(0);
-        resetPacketCount();
-    };
-    CommPort(uint8_t number, std::function<T> rxC = nullptr,
+    CommPort(uint8_t number = 0, std::function<T> rxC = nullptr,
              std::function<T> txC = nullptr)
-        : is_open(false), rx_callback(rxC), tx_callback(txC) {
-        Nbr(number);
+        : _isOpen(false), _rxCallback(rxC), _txCallback(txC) {
+        portNbr(number);
         resetPacketCount();
     };
 
     // Compare between 2 CommPort objects
     bool operator==(const CommPort& p) const {
-        return (this->Nbr() == p.Nbr());
-    }
-    // Compare between a CommPort object and a port number
-    bool operator==(unsigned int portNbr) const {
-        return (this->Nbr() == portNbr ? true : false);
+        return portNbr() == p.portNbr();
     }
 
     // Overload the less than operator for sorting/finding ports using iterators
-    bool operator<(const CommPort& p) const {
-        return (this->Nbr() < p.Nbr() ? true : false);
-    }
+    bool operator<(const CommPort& p) const { return portNbr() < p.portNbr(); }
 
-    uint8_t Nbr() const { return this->nbr; }
+    uint8_t portNbr() const { return _nbr; }
+    void portNbr(uint8_t nbr) { _nbr = nbr; }
 
-    void Nbr(uint8_t _nbr) {
-        if (_nbr == 0)
-            is_valid = false;
-        else
-            is_valid = true;
-
-        nbr = _nbr;
-    }
+    bool valid() const { return _nbr != 0; }
 
     // Open a port or check if a port is capable of providing communication.
-    bool Open() {
-        if (isReady()) {
-            this->is_open = true;
+    void open() { _isOpen = true; }
+    void close() { _isOpen = false; }
 
-            return isOpen();
-        } else {
-            return false;
-        }
+    bool isOpen() const { return _isOpen; }
+
+    bool isReady() const {
+        return isOpen() && hasTxCallback() && hasRxCallback();
     }
-
-    void Close() { is_open = false; }
-
-    // Check if the port has already been opened.
-    bool isOpen() const { return this->is_open; }
-    bool isClosed() const { return !isOpen(); }
 
     // Set functions for each RX/TX callback.
-    const CommPort<T>& RXCallback(const std::function<T>& func) {
-        rx_callback = func;
-        return *this;
-    }
-    const CommPort<T>& TXCallback(const std::function<T>& func) {
-        tx_callback = func;
-        return *this;
-    }
+    void setRxCallback(const std::function<T>& func) { _rxCallback = func; }
+    void setTxCallback(const std::function<T>& func) { _txCallback = func; }
 
     // Methods that return a reference to the TX/RX callback function pointers
-    std::function<T>& RXCallback() { return rx_callback; }
-    std::function<T>& TXCallback() { return tx_callback; }
+    std::function<T>& rxCallback() { return _rxCallback; }
+    std::function<T>& txCallback() { return _txCallback; }
 
     // Check if an RX/TX callback function has been set for the port.
-    bool hasTXCallback() const { return tx_callback != nullptr; }
-    bool hasRXCallback() const { return rx_callback != nullptr; }
-
-    // Check if the port object is a valid port
-    // this will be false when indexing a non-existent port number
-    bool Exists() const {
-        return (hasRXCallback() || hasTXCallback()) ? true : this->is_valid;
-    }
+    bool hasTxCallback() const { return _txCallback != nullptr; }
+    bool hasRxCallback() const { return _rxCallback != nullptr; }
 
     // Get a value or reference to the TX/RX packet count for modifying
-    unsigned int TXPackets() const { return tx_packets; }
-    unsigned int RXPackets() const { return rx_packets; }
-    unsigned int& TXPackets() { return tx_packets; }
-    unsigned int& RXPackets() { return rx_packets; }
+    unsigned int txCount() const { return _txCount; }
+    unsigned int rxCount() const { return _rxCount; }
+
+    void incTxCount() { _txCount++; }
+    void incRxCount() { _rxCount++; }
 
     // Standard display function for a CommPort
-    void PrintPort() const {
-        printf("%2u\t\t%u\t%u\t%s\t\t%s\t\t%s\r\n", Nbr(), RXPackets(),
-               TXPackets(), hasRXCallback() ? "YES" : "NO",
-               hasTXCallback() ? "YES" : "NO", isOpen() ? "OPEN" : "CLOSED");
+    void printPort() const {
+        printf("%2u\t\t%u\t%u\t%s\t\t%s\t\t%s\r\n", portNbr(), rxCount(),
+               txCount(), hasRxCallback() ? "YES" : "NO",
+               hasTxCallback() ? "YES" : "NO", isOpen() ? "OPEN" : "CLOSED");
 
-        Console::Flush();
+        Console::Instance()->Flush();
     }
 
-protected:
     // Returns the current packet counts to zero
     void resetPacketCount() {
-        RXPackets() = 0;
-        TXPackets() = 0;
+        _rxCount = 0;
+        _txCount = 0;
     }
-
-    // Returns true if the port can provide an RX callback routine
-    bool isReady() const { return (is_open ? true : hasRXCallback()); }
 
 private:
     // The number assigned to the port
-    uint8_t nbr;
-
-    // Is it a valid port object
-    bool is_valid;
+    uint8_t _nbr;
 
     // If the port is open, it will also be valid
-    bool is_open;
+    bool _isOpen;
 
     // Where each upstream & downstream packet count is stored
-    unsigned int rx_packets;
-    unsigned int tx_packets;
+    unsigned int _rxCount, _txCount;
 
     // the class members that hold the function pointers
-    std::function<T> rx_callback;
-    std::function<T> tx_callback;
+    std::function<T> _rxCallback, _txCallback;
 };
 
-// Function for defining how to sort a std::vector of CommPort objects
+/// Class to manage the available/unavailable ports
 template <class T>
-bool PortCompare(const CommPort<T>& a, const CommPort<T>& b) {
-    return a < b;
-}
+class CommPorts {
+public:
+    CommPorts<T> operator+=(const CommPort<T>& p) {
+        if (_ports.find(p.portNbr()) != _ports.end()) {
+            // the port already exists
+            LOG(WARN, "Overwriting existing port '%d'", p.portNbr());
+        }
 
-// Class to manage the available/unavailable ports
-template <class T>
-class CommPorts : CommPort<T> {
-private:
-    typename std::vector<CommPort<T>> ports;
-    typename std::vector<CommPort<T>>::iterator pIt;
-    CommPort<T> blackhole_port;
+        _ports[p.portNbr()] = p;
 
-    const CommPorts<T>& sort() {
-        std::sort(ports.begin(), ports.end(), PortCompare<T>);
         return *this;
     }
 
-    const CommPorts<T>& add(const CommPort<T>& p) {
-        pIt = find(ports.begin(), ports.end(), p);
+    CommPort<T>& operator[](uint8_t portportNbr) { return _ports[portportNbr]; }
 
-        if (pIt == ports.end()) {
-            ports.push_back(p);
-        }
-
-        return this->sort();
+    bool hasPort(uint8_t portportNbr) const {
+        return _ports.find(portportNbr) != _ports.end();
     }
 
-public:
-    // constructor
-    CommPorts<T>() {
-        // create a null port that we can return for invalid indexing for the []
-        // operator
-        blackhole_port = CommPort<T>();
-    }
+    int count() const { return _ports.size(); }
 
-    CommPorts<T> operator+=(const CommPort<T>& p) {
-        return this->add(CommPort<T>(p));
-    }
-
-    CommPort<T>& operator[](const int portNbr) {
-        pIt = find(ports.begin(), ports.end(), (unsigned int)portNbr);
-
-        if (pIt != ports.end()) {
-            return *&(*pIt);
-        }
-
-        return blackhole_port;
-        // throw std::runtime_error("No port for the given number");
-    }
-
-    int count() const { return ports.size(); }
-
-    int count_open() const {
+    int countOpen() const {
         int count = 0;
 
-        for (auto it = ports.begin(); it != ports.end(); ++it) {
-            if (it->isOpen()) count++;
+        for (auto& kvpair : _ports) {
+            if (kvpair.second.isOpen()) count++;
         }
 
         return count;
     }
 
-    bool empty() const { return ports.empty(); }
+    bool empty() const { return _ports.empty(); }
 
     // Get the total count (across all ports) of each RX/TX packet count
-    unsigned int allRXPackets() const {
-        unsigned int pcks = 0;
+    unsigned int totalRxCount() const {
+        unsigned int count = 0;
 
-        for (auto it = ports.begin(); it != ports.end(); ++it) {
-            pcks += static_cast<unsigned int>(it->RXPackets());
+        for (auto& kvpair : _ports) {
+            count += kvpair.second.rxCount();
         }
 
-        return pcks;
+        return count;
     }
-    unsigned int allTXPackets() const {
-        unsigned int pcks = 0;
+    unsigned int totalTxCount() const {
+        unsigned int count = 0;
 
-        for (auto it = ports.begin(); it != ports.end(); ++it) {
-            pcks += static_cast<unsigned int>(it->TXPackets());
+        for (auto& kvpair : _ports) {
+            count += kvpair.second.txCount();
         }
 
-        return pcks;
+        return count;
     }
 
-    void PrintPorts() {
-        if (empty() == false) {
-            PrintHeader();
-
-            for (auto it = ports.begin(); it != ports.end(); ++it) {
-                it->PrintPort();
-            }
+    void printPorts() const {
+        for (auto& kvpair : _ports) {
+            kvpair.second.printPort();
         }
     }
 
-    void PrintHeader() {
+    void printHeader() const {
         printf("PORT\t\tIN\tOUT\tRX CBCK\t\tTX CBCK\t\tSTATE\r\n");
-        Console::Flush();
+        Console::Instance()->Flush();
     }
 
-    void PrintFooter() {
+    void printFooter() const {
         printf(
             "==========================\r\n"
             "Total:\t\t%u\t%u\r\n",
-            allRXPackets(), allTXPackets());
-        Console::Flush();
+            totalRxCount(), totalTxCount());
+        Console::Instance()->Flush();
     }
+
+private:
+    std::map<uint8_t, CommPort<T>> _ports;
 };

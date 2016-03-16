@@ -57,7 +57,7 @@ void statusLightsOFF(void const* args) { statusLights(0); }
  */
 int main() {
     // Store the thread's ID
-    static const osThreadId mainID = Thread::gettid();
+    const osThreadId mainID = Thread::gettid();
     ASSERT(mainID != nullptr);
 
     // clear any extraneous rx serial bytes
@@ -133,7 +133,7 @@ int main() {
     fpga_err |= 1 << 0;
 
     // Init IO Expander and turn  all LEDs
-    MCP23017::Init();
+    MCP23017::Instance();
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -145,13 +145,12 @@ int main() {
     Thread controller_task(Task_Controller, mainID, osPriorityHigh);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
-    // Start the thread task for handling radio communications
-    Thread comm_task(Task_CommCtrl, mainID, osPriorityAboveNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+
+    // Initialize the CommModule and CC1201 radio
+    InitializeCommModule();
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
@@ -195,7 +194,6 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
-    comm_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
@@ -205,7 +203,7 @@ int main() {
 
     unsigned int ll = 0;
 
-    MCP23017::write_mask(0xFF00, 0xFF00);
+    MCP23017::Instance()->writeMask(0xFF00, 0xFF00);
 
     while (true) {
         // make sure we can always reach back to main by
@@ -308,8 +306,8 @@ _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
         __get_MSP, SCB->HFSR, SCB->CFSR, r0, r1, r2, r3, r12, lr, pc, psr);
 
     // do nothing so everything remains unchanged for debugging
-    while (true)
-        ;
+    while (true) {
+    }
 }
 
 _EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }

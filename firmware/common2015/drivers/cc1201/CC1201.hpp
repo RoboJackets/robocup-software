@@ -18,17 +18,15 @@ public:
            const registerSetting_t* regs, size_t len,
            int rssiOffset = DEFAULT_RSSI_OFFSET);
 
-    virtual ~CC1201() { CommLink::cleanup(); }
+    int32_t sendData(uint8_t*, uint8_t);
 
-    virtual int32_t sendData(uint8_t*, uint8_t);
+    int32_t getData(uint8_t*, uint8_t*);
 
-    virtual int32_t getData(uint8_t*, uint8_t*);
+    void reset();
 
-    virtual void reset();
+    int32_t selfTest();
 
-    virtual int32_t selfTest();
-
-    virtual bool isConnected();
+    bool isConnected() const;
 
     uint8_t mode();
 

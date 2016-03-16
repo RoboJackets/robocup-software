@@ -23,10 +23,10 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
     set_rssi_offset(rssiOffset);
     selfTest();
 
-    // set initial configuration
-    setConfig(regs, len);
-
     if (_isInit == true) {
+        // set initial configuration
+        setConfig(regs, len);
+
         LOG(INIT, "CC1201 ready!");
         CommLink::ready();
     }
@@ -297,7 +297,7 @@ int32_t CC1201::selfTest() {
     }
 }
 
-bool CC1201::isConnected() { return _isInit; }
+bool CC1201::isConnected() const { return _isInit; }
 
 void CC1201::flush_tx() {
     idle();
@@ -319,11 +319,9 @@ void CC1201::calibrate() {
 }
 
 void CC1201::update_rssi() {
-    uint8_t offset = 0;
-
     // Only use the top MSB for simplicity. 1 dBm resolution.
     if (_offset_reg_written) {
-        offset = readReg(CC1201_RSSI1);
+        uint8_t offset = readReg(CC1201_RSSI1);
         _rssi = static_cast<float>((int8_t)twos_compliment(offset));
 
         LOG(INF3, "RSSI is from device.");
@@ -331,7 +329,7 @@ void CC1201::update_rssi() {
         _rssi = 0.0;
     }
 
-    LOG(INF3, "RSSI Register Val: 0x%02X", offset);
+    LOG(INF3, "RSSI Register Val: 0x%02X", _rssi);
 }
 
 float CC1201::rssi() { return _rssi; }
@@ -391,7 +389,7 @@ bool CC1201::isLocked() {
 
 void CC1201::set_rssi_offset(int8_t offset) {
     // HAVING THIS MEANS OFFSET MUST ONLY BE SET ONCE FOR THE CLASS
-    if (_offset_reg_written == true) return;
+    if (_offset_reg_written) return;
 
     _offset_reg_written = true;
     writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(offset));

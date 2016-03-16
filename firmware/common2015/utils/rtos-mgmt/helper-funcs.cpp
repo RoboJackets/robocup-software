@@ -1,8 +1,7 @@
 #include "helper-funcs.hpp"
 
 #include <vector>
-
-#include "rtos.h"
+#include <type_traits>
 
 #include "logger.hpp"
 #include "assert.hpp"
@@ -16,21 +15,6 @@ bool comm_led_tx_en = false;
 bool dir = false;
 }
 
-/**
- * Initializes the peripheral nested vector interrupt controller (PNVIC) with
- * appropriate values. Low values have the higest priority (with system
- * interrupts having negative priority). All maskable interrupts are
- * diabled; do not intialize any interrupt frameworks before this funtion is
- * called. PNVIC interrupt priorities are independent of thread and NVIC
- * priorities.
- *
- * The PNVIC is independent of the NVIC responsible for system NMI's. The NVIC
- * is not accissable through the library, so in this context the NVIC functions
- * refer to the PNVIC. The configuration system for PNVIC priorities is strange
- * and different from X86. If you haven't already, look over
- * doc/ARM-Cortex-M_Interrupt-Priorities.pdf from RJ root and the online
- * documentation regarding Interrupt Priority Registers (IPRs) first.
- */
 void setISRPriorities() {
     __disable_irq();
 
@@ -105,37 +89,15 @@ void imAlive(void const* arg) {
     dir = !dir;
 }
 
-/**
- * @brief      { Flash an LED }
- */
-void strobeStatusLED(DigitalInOut& led) {
-    led = !led;
-    Thread::wait(15);
-    led = !led;
-}
-void strobeStatusLED(DigitalOut& led) {
-    led = !led;
-    Thread::wait(15);
-    led = !led;
-}
-
-// all this to flash damn leds in a multithreaded environment...wtf
-void commLightsTask(DigitalInOut& led, bool tx_rx_led_en) {
-    if (tx_rx_led_en == true) strobeStatusLED(led);
-}
-void commLightsTask(DigitalOut& led, bool tx_rx_led_en) {
-    if (tx_rx_led_en == true) strobeStatusLED(led);
-}
-
 void commLightsTask_TX(void const* arg) {
     DigitalOut* led =
         const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
-    commLightsTask(*led, comm_led_tx_en);
+    if (comm_led_tx_en) flashLED(*led);
 }
 void commLightsTask_RX(void const* arg) {
     DigitalOut* led =
         const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
-    commLightsTask(*led, comm_led_rx_en);
+    if (comm_led_rx_en) flashLED(*led);
 }
 
 void commLightsTimeout_RX(void const* arg) { comm_led_rx_en = false; }
@@ -155,19 +117,4 @@ unsigned int get_num_threads() {
     }
 
     return num_threads;
-}
-
-// Helper function for creating a class that uses a
-// member function for the object's thread operations.
-// Take note that this allocates a stack!
-void define_thread(osThreadDef_t& t, void (*task)(void const* arg),
-                   osPriority priority, uint32_t stack_size) {
-#ifdef CMSIS_OS_RTX
-    t.pthread = task;
-    t.tpriority = priority;
-    t.stacksize = stack_size;
-    t.stack_pointer = (uint32_t*)new unsigned char[t.stacksize];
-    ASSERT(t.stack_pointer != nullptr);
-
-#endif
 }
