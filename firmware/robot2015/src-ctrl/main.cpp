@@ -19,6 +19,8 @@
 #include "neostrip.hpp"
 #include "CC1201.cpp"
 
+using namespace std;
+
 void Task_Controller(void const* args);
 
 /**
@@ -102,7 +104,7 @@ int main() {
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
-    std::vector<DigitalOut> mbed_lights;
+    vector<DigitalOut> mbed_lights;
     mbed_lights.push_back(DigitalOut(LED1, 0));
     mbed_lights.push_back(DigitalOut(LED2, 0));
     mbed_lights.push_back(DigitalOut(LED3, 0));
@@ -185,12 +187,17 @@ int main() {
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
 
         // Pack errors into bitmask
-        // clang-format off
-        uint16_t errorBitmask =
-            global_radio->isConnected() << RJ_ERR_LED_RADIO
-            | fpga_ready << RJ_ERR_LED_FPGA
-            ;
-        // clang-format on
+        uint16_t errorBitmask = global_radio->isConnected() << RJ_ERR_LED_RADIO;
+
+        // add motor errors to bitmask
+        static const auto motorErrLedMapping = {
+            make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
+            make_pair(2, RJ_ERR_LED_M3), make_pair(3, RJ_ERR_LED_M4),
+            make_pair(4, RJ_ERR_LED_DRIB)};
+        for (auto& pair : motorErrLedMapping) {
+            const motorErr_t& status = global_motors[pair.first].status;
+            errorBitmask |= (!status.encOK || !status.hallOK) << pair.second;
+        }
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);

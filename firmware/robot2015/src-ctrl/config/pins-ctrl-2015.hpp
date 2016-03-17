@@ -133,7 +133,6 @@ enum IOExpanderPin {
     RJ_ERR_LED_BSENSE = RJ_IOEXP_B5,
     RJ_ERR_LED_DRIB = RJ_IOEXP_B6,
     RJ_ERR_LED_RADIO = RJ_IOEXP_B7,
-    RJ_ERR_LED_FPGA = RJ_IOEXP_B6,  // TODO(justin): fix
 };
 
 constexpr uint16_t IOExpanderErrorLEDMask = 0xFF00;
