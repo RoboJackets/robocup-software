@@ -64,7 +64,15 @@ void Task_SerialConsole(void const* args) {
             char rx[rxLen];
             memcpy(rx, console->rxBuffer().c_str(), rxLen - 1);
             rx[rxLen - 1] = '\0';
+
+            // Detach the console from reading stdin while the comamnd is
+            // running to allow the command to read input.  We re-attach the
+            // Console's handler as soon as the command is done executing.
+            console->detachInputHandler();
             execute_line(rx);
+            // flush any extra characters that were input while executing cmd
+            while (console->pc.readable()) console->pc.getc();
+            console->attachInputHandler();
 
             // Now, reset the priority of the thread to its idle state
             tState = osThreadSetPriority(threadID, threadPriority);

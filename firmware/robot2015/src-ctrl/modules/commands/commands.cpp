@@ -995,15 +995,12 @@ int cmd_pong(cmd_args_t& args) {
                 rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
         }
 
-        // quit when ctrl+c is pressed
-        if (Console::Instance()->IterCmdBreakReq()) break;
+        // quit when any character is typed
+        if (Console::Instance()->pc.readable()) break;
     }
 
     // remove handlers, close port
     CommModule::Instance()->close(rtp::port::PING);
-
-    // reset break command
-    Console::Instance()->IterCmdBreakReq(false);
 
     return 0;
 }
@@ -1044,15 +1041,12 @@ int cmd_ping(cmd_args_t& args) {
             delete ack;
         }
 
-        // quit when ctrl+c is pressed
-        if (Console::Instance()->IterCmdBreakReq()) break;
+        // quit when any character is typed
+        if (Console::Instance()->pc.readable()) break;
     }
 
     // remove handlers, close port
     CommModule::Instance()->close(rtp::port::PING);
-
-    // reset break command
-    Console::Instance()->IterCmdBreakReq(false);
 
     return 0;
 }

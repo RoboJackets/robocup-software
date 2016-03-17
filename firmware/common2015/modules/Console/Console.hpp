@@ -92,6 +92,13 @@ public:
      */
     void RequestSystemStop();
 
+    /// Attach the Serial connection's RX handler to @RXCallback.
+    void attachInputHandler();
+
+    /// Detach the Serial connection's RX handler to allow something else
+    /// besides the Console to read from stdin.
+    void detachInputHandler();
+
     /**
      * returns if the main loop should break
      */
@@ -118,6 +125,11 @@ public:
     void SetTitle(const std::string&);
     std::string GetHostResponse();
 
+    /**
+    * Serial connection
+    */
+    Serial pc;
+
 private:
     /**
      * Console initialization routine. Attaches interrupt handlers and clears
@@ -141,11 +153,6 @@ private:
     std::string CONSOLE_HEADER;
     std::string CONSOLE_USER;
     std::string CONSOLE_HOSTNAME;
-
-    /**
-    * Serial connection
-    */
-    Serial pc;
 
     /// baud rate of serial connection
     uint16_t _baudRate;
