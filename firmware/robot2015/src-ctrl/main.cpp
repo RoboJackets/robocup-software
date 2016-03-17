@@ -12,20 +12,21 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "task-globals.hpp"
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "CC1201.cpp"
 
+using namespace std;
+
 void Task_Controller(void const* args);
 
 /**
- * @brief Sets the hardware configurations for the status LEDs & places
- * into the given state
+ * @brief      { Sets the hardware configurations for the status LEDs & places
+ * into the given state }
  *
- * @param[in]  state The next state of the LEDs
+ * @param[in]  state  { the next state of the LEDs }
  */
 void statusLights(bool state) {
     DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
@@ -37,18 +38,19 @@ void statusLights(bool state) {
 }
 
 /**
- * @brief Turn all status LEDs on
+ * @brief      { Turn all status LEDs on }
  */
 void statusLightsON(void const* args) { statusLights(1); }
 
 /**
- * @brief Turn all status LEDs off
+ * @brief      { Turn all status LEDs off }
  */
 void statusLightsOFF(void const* args) { statusLights(0); }
 
 /**
- * The entry point of the system where each submodule's thread is
- * started.
+ * [main Main The entry point of the system where each submodule's thread is
+ * started.]
+ * @return  [none]
  */
 int main() {
     // Store the thread's ID
@@ -132,8 +134,7 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
-                           DEFAULT_STACK_SIZE / 2);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
@@ -184,12 +185,17 @@ int main() {
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
 
         // Pack errors into bitmask
-        // clang-format off
-        uint16_t errorBitmask =
-            global_radio->isConnected() << RJ_ERR_LED_RADIO
-            | fpga_ready << RJ_ERR_LED_FPGA
-            ;
-        // clang-format on
+        uint16_t errorBitmask = global_radio->isConnected() << RJ_ERR_LED_RADIO;
+
+        // add motor errors to bitmask
+        static const auto motorErrLedMapping = {
+            make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
+            make_pair(2, RJ_ERR_LED_M3), make_pair(3, RJ_ERR_LED_M4),
+            make_pair(4, RJ_ERR_LED_DRIB)};
+        for (auto& pair : motorErrLedMapping) {
+            const motorErr_t& status = global_motors[pair.first].status;
+            errorBitmask |= !status.hallOK << pair.second;
+        }
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);

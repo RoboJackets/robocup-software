@@ -39,6 +39,9 @@ struct motor_t {
     std::string desc;
 };
 
+// TODO(justin): is there a better solution than having a global variable?
+extern std::vector<motor_t> global_motors;
+
 void motors_Init();
 void motors_show();
 int cmd_motors(const std::vector<std::string>&);
