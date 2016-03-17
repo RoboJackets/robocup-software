@@ -17,11 +17,7 @@
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "neostrip.hpp"
-
-// task globals
-uint16_t comm_err = 0;
-uint16_t fpga_err = 0;
-uint16_t imu_err = 0;
+#include "CC1201.cpp"
 
 void Task_Controller(void const* args);
 
@@ -126,12 +122,8 @@ int main() {
         LOG(FATAL, "FPGA Configuration Failed!");
     }
 
-    fpga_err |= 1 << !fpga_ready;
-    // the error code is valid now
-    fpga_err |= 1 << 0;
-
     // Init IO Expander and turn  all LEDs
-    MCP23017::Instance();
+    MCP23017 ioExpander(RJ_I2C_BUS, 0);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -156,35 +148,6 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
-    // Set error indicators
-    if (fpga_err > 1) {
-        // orange - error
-        rgbLED.brightness(4 * defaultBrightness);
-        rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
-    } else {
-        // green - no error...yet
-        rgbLED.brightness(defaultBrightness);
-        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-    }
-
-    if (comm_err > 1) {
-        // orange - error
-        rgbLED.brightness(6 * defaultBrightness);
-        rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
-    } else {
-        // green - no error...yet
-        rgbLED.brightness(6 * defaultBrightness);
-        rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
-    }
-
-    if (comm_err > 1 && fpga_err > 1) {
-        // bright as hell to make sure they know
-        rgbLED.brightness(10 * defaultBrightness);
-        // well, damn. everything is broke as hell
-        rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
-        rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
-    }
-
     // push out the LED changes to the hardware
     rgbLED.write();
 
@@ -202,7 +165,8 @@ int main() {
 
     unsigned int ll = 0;
 
-    MCP23017::Instance()->writeMask(0xFF00, 0xFF00);
+    // turn all error LEDs on
+    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     while (true) {
         // make sure we can always reach back to main by
@@ -219,29 +183,45 @@ int main() {
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
 
-        // M1
-        // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
+        // Pack errors into bitmask
+        // clang-format off
+        uint16_t errorBitmask =
+            global_radio->isConnected() << RJ_ERR_LED_RADIO
+            | fpga_ready << RJ_ERR_LED_FPGA
+            ;
+        // clang-format on
 
-        // // M2
-        // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
+        // Set error-indicating leds on the control board
+        ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);
 
-        // // M3
-        // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
+        // Set error indicators
+        if (!fpga_ready) {
+            // orange - error
+            rgbLED.brightness(4 * defaultBrightness);
+            rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
+        } else {
+            // green - no error...yet
+            rgbLED.brightness(defaultBrightness);
+            rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+        }
 
-        // // M4
-        // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
+        if (errorBitmask & RJ_ERR_LED_RADIO) {
+            // orange - error
+            rgbLED.brightness(6 * defaultBrightness);
+            rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
+        } else {
+            // green - no error...yet
+            rgbLED.brightness(6 * defaultBrightness);
+            rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+        }
 
-        // IMU
-        // MCP23017::write_mask(~(1 << (8 + 6)), 0xFF00);
-
-        // Det
-        // MCP23017::write_mask(~(1 << (8 + 3)), 0xFF00);
-
-        // Sense
-        // MCP23017::write_mask(~(1 << (8 + 4)), 0xFF00);
-
-        // Radio
-        // MCP23017::write_mask(~(1 << (8 + 2)), 0xFF00);
+        if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
+            // bright as hell to make sure they know
+            rgbLED.brightness(10 * defaultBrightness);
+            // well, damn. everything is broke as hell
+            rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
+            rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
+        }
     }
 }
 

@@ -3,15 +3,6 @@
 #include <mbed.h>
 #include <logger.hpp>
 
-// Declaration for the pointer to the global object
-shared_ptr<MCP23017> MCP23017::instance;
-
-shared_ptr<MCP23017>& MCP23017::Instance() {
-    if (!instance) instance.reset(new MCP23017(RJ_I2C_BUS, 0));
-
-    return instance;
-}
-
 MCP23017::MCP23017(PinName sda, PinName scl, int i2cAddress)
     : _i2c(sda, scl), _i2cAddress(i2cAddress) {
     _i2c.frequency(400000);
