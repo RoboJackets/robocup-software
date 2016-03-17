@@ -13,8 +13,8 @@ typedef struct {
 } registerSetting_t;
 
 /**
- * @brief The CC1201 handles wirelessly sending and receiving data using the TI
- * CC1201 radio transceiver.
+ * @brief The CC1201 class handles wirelessly sending and receiving data using
+ *     the TI CC1201 radio transceiver.
  *
  * The radio is configured via a collection of registers.  These control things
  * such as transceiver frequency, packet error checking, packet length, among
@@ -27,7 +27,7 @@ typedef struct {
 class CC1201 : public CommLink {
 public:
     /**
-     * Initialize the CC1201 with the given PI, chip select (inverted), and
+     * Initialize the CC1201 with the given SPI, chip select (inverted), and
      * interrupt line pins.
      *
      * The radio is configured by providing an array of registerSetting_t's
