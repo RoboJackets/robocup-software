@@ -128,28 +128,13 @@ void InitializeCommModule() {
         while (!commModule->isReady()) {
             Thread::wait(50);
         }
-
-        MCP23017::Instance()->writeMask(1 << (8 + 2), 1 << (8 + 2));
-
-        // Set the error code's valid bit
-        comm_err |= 1 << 0;
-
     } else {
         LOG(FATAL, "No radio interface found!\r\n");
-
-        // Set the error flag - bit positions are pretty arbitruary as of now
-        comm_err |= 1 << 1;
-
-        // Set the error code's valid bit
-        comm_err |= 1 << 0;
 
         // Wait until the threads with the commModule are all started up
         // and ready
         while (!commModule->isReady()) {
             Thread::wait(50);
         }
-
-        // Radio error LED
-        MCP23017::Instance()->writeMask(~(1 << (8 + 2)), 1 << (8 + 2));
     }
 }
