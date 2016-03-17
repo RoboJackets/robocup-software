@@ -106,11 +106,10 @@ int main() {
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
-    std::vector<DigitalOut> mbed_lights;
-    mbed_lights.push_back(DigitalOut(LED1, 0));
-    mbed_lights.push_back(DigitalOut(LED2, 0));
-    mbed_lights.push_back(DigitalOut(LED3, 0));
-    mbed_lights.push_back(DigitalOut(LED4, 0));
+    std::vector<DigitalOut> mbed_lights = {
+        DigitalOut(LED1, 0), DigitalOut(LED2, 0), DigitalOut(LED3, 0),
+        DigitalOut(LED4, 0),
+    };
     RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
     live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
 
