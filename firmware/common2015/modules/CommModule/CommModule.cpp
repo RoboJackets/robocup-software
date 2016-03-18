@@ -18,8 +18,10 @@ CommModule::~CommModule() {
 }
 
 CommModule::CommModule()
-    : _rxThread(&CommModule::rxThreadHelper, this, osPriorityAboveNormal),
-      _txThread(&CommModule::txThreadHelper, this, osPriorityHigh) {
+    : _rxThread(&CommModule::rxThreadHelper, this, osPriorityAboveNormal,
+                DEFAULT_STACK_SIZE / 2),
+      _txThread(&CommModule::txThreadHelper, this, osPriorityHigh,
+                DEFAULT_STACK_SIZE / 2) {
     // Create the data queues.
     _txQueue = osMailCreate(_txQueueHelper.def(), nullptr);
     _rxQueue = osMailCreate(_rxQueueHelper.def(), nullptr);

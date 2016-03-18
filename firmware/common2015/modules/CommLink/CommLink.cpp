@@ -13,7 +13,8 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs,
     : _spi(mosi, miso, sck),
       _nCs(nCs, 1),
       _int_in(int_pin),
-      _rxThread(&CommLink::rxThreadHelper, this) {
+      _rxThread(&CommLink::rxThreadHelper, this, osPriorityNormal,
+                DEFAULT_STACK_SIZE / 2) {
     _spi.format(8, 0);
     _spi.frequency(DEFAULT_BAUD);
 

@@ -142,7 +142,8 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
+                           DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
