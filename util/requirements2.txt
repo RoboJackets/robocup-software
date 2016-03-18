@@ -4,4 +4,9 @@ jinja2   # A dependency for the mbed build library
 colorama # A dependency for the mbed build library
 cpp-coveralls # A dependency for coverage testing
 
-pyOCD # for debugging code on MBED
+# firmware - required
+git+https://github.com/justbuchanan/mbed-ls@robojackets
+pyserial
+
+# firmware - optional
+pyocd
