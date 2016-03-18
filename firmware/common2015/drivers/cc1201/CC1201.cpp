@@ -97,6 +97,9 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
+    // TODO(justin): justify this delay.  It doesn't work without it, but why?
+    Thread::wait(5);
+
     // update frequency offset estimate and get the current state while at it
     uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);

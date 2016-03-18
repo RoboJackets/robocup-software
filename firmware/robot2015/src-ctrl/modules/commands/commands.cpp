@@ -985,14 +985,15 @@ int cmd_pong(cmd_args_t& args) {
         osEvent maybePing = pings.get(timeout_ms);
         if (maybePing.status == osEventMessage) {
             rtp::packet* ping = (rtp::packet*)maybePing.value.p;
-            int pingNbr = ping->payload[0];
+            uint8_t pingNbr = ping->payload[0];
             delete ping;
 
             printf("Got ping %d\r\n", pingNbr);
 
             // reply with ack
             CommModule::Instance()->send(
-                rtp::packet({(uint8_t)pingNbr}, rtp::port::PING));
+                rtp::packet({pingNbr}, rtp::port::PING));
+            printf("  Sent ack %d\r\n", pingNbr);
         }
 
         // quit when any character is typed
@@ -1015,9 +1016,9 @@ int cmd_ping(cmd_args_t& args) {
         acks.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
-    int pingCount = 0;
+    uint8_t pingCount = 0;
     int lastPingTime = 0;
-    const int PingInterval = 3;
+    const int PingInterval = 2;
 
     while (true) {
         // Send a ping packet if our interval has elapsed
@@ -1025,7 +1026,7 @@ int cmd_ping(cmd_args_t& args) {
             lastPingTime = clock();
 
             CommModule::Instance()->send(
-                rtp::packet({(uint8_t)pingCount}, rtp::port::PING));
+                rtp::packet({pingCount}, rtp::port::PING));
 
             printf("Sent ping %d\r\n", pingCount);
 
