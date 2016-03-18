@@ -1,14 +1,52 @@
-# ------------------------------------------------------------------------------
-# Copyright by Uwe Arzt mailto:mail@uwe-arzt.de, https://uwe-arzt.de
-# under BSD License, see https://uwe-arzt.de/bsd-license/
-# ------------------------------------------------------------------------------
-include(CMakeForceCompiler)
-set(CMAKE_SYSTEM_NAME Generic)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
-#-------------------------------------------------------------------------------
-# specify the cross compiler, later on we will set the correct path
-CMAKE_FORCE_C_COMPILER(arm-none-eabi-gcc GNU)
-CMAKE_FORCE_CXX_COMPILER(arm-none-eabi-g++ GNU)
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "")
 
-set(ASM arm-none-eabi-as)
+set( CMAKE_SYSTEM_NAME       Generic     )
+set( CMAKE_SYSTEM_PROCESSOR  arm         )
+set( CMAKE_SYSTEM_VERSION    1           )
+
+# narrow down the search scope of where cmake looks for programs/libraries
+# # for cross compilation
+set( CMAKE_FIND_ROOT_PATH                    ${PROJECT_SOURCE_DIR}   )
+# search for programs in the build host directories
+set( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM       NEVER                   )
+# for libraries and headers in the target directories
+set( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY       ONLY                    )
+set( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE       ONLY                    )
+
+set( ARM_PREFIX                 arm-none-eabi           )
+find_program( ARM_C_COMPILER    ${ARM_PREFIX}-gcc       )
+find_program( ARM_CXX_COMPILER  ${ARM_PREFIX}-g++       )
+find_program( ARM_RANLIB        ${ARM_PREFIX}-ranlib    )
+find_program( ARM_AR            ${ARM_PREFIX}-ar        )
+find_program( ARM_AS            ${ARM_PREFIX}-as        )
+find_program( ARM_NM            ${ARM_PREFIX}-nm        )
+find_program( ARM_LD            ${ARM_PREFIX}-ld        )
+find_program( ARM_OBJCOPY       ${ARM_PREFIX}-objcopy   )
+find_program( ARM_OBJDUMP       ${ARM_PREFIX}-objdump   )
+
+# make sure we define this since we'll be using GCC
+add_definitions(-DTOOLCHAIN_GCC)
+
+# Let cmake know we intend to cross compile from the point where
+# this file is included onward
+set( CMAKE_CROSSCOMPILING true )
+
+# set compiler things that were found above
+set( CMAKE_C_COMPILER       ${ARM_C_COMPILER}           )
+set( CMAKE_CXX_COMPILER     ${ARM_CXX_COMPILER}         )
+set( CMAKE_OBJCOPY          ${ARM_OBJCOPY}              )
+set( CMAKE_OBJDUMP          ${ARM_OBJDUMP}              )
+set( CMAKE_RANLIB           ${ARM_RANLIB}               )
+set( CMAKE_LINKER           ${ARM_LD}                   )
+set( CMAKE_AR               ${ARM_AR}                   )
+set( CMAKE_AS               ${ARM_AS}                   )
+set( ASM                    ${ARM_AS}                   )
 include(CMakeDetermineASMCompiler)
+
+# Find the assembly source files and make sure they're compiled using the C compiler
+set( CMAKE_ASM_FLAGS "${MCPU_FLAGS} -x assembler-with-cpp" CACHE INTERNAL "asm compiler flags" )
+set( CMAKE_ASM_FLAGS_DEBUG "-g -ggdb3" CACHE INTERNAL "asm debug compiler flags" )
+set( CMAKE_ASM_FLAGS_RELEASE "" CACHE INTERNAL "asm release compiler flags" )

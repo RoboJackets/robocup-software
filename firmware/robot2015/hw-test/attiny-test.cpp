@@ -19,7 +19,7 @@ int main() {
     lifeLight.attach(&imAlive, 0.25);
 
     //  initialize kicker board and flash it with new firmware if necessary
-    KickerBoard kickerBoard(p11, p12, p13, p27, string("/local/kickerFW"));
+    KickerBoard kickerBoard(p11, p12, p13, p27, string("/local/rj-kickr.nib"));
     bool kickerSuccess = kickerBoard.flash(true, true) == 0;
 
     while (true) {
@@ -29,5 +29,5 @@ int main() {
     }
 
     // clear light for main loop (shows its complete)
-    ledTwo = false;
+    ledTwo = false;  // <- yo!, it'll never get here.
 }
