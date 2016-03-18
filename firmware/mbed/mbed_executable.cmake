@@ -1,6 +1,6 @@
 # wrapper around add_executable for adding mbed executables
 function(rj_add_mbed_executable name)
-    set(binfile ${name}.bin)
+    set(binfile ${PROJECT_SOURCE_DIR}/run/${name}.bin)
 
     add_executable(${name} ${ARGN})
     _rj_configure_mbed_binary(${name})
@@ -10,16 +10,16 @@ function(rj_add_mbed_executable name)
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
     # custom target for creating a .bin file from an elf binary
-    add_custom_target(${binfile}
-        arm-none-eabi-objcopy -O binary ${name} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin # todo: rename binfile
+    add_custom_target(${name}-bin
+        arm-none-eabi-objcopy -O binary ${name} ${binfile} # todo: rename binfile
         DEPENDS ${name}
         COMMENT "objcopying to make mbed-compatible executable"
     )
-    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
+    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${binfile})
 
     add_custom_target(${name}-prog
-        COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin
-        DEPENDS ${binfile}
+        COMMAND ${MBED_COPY_SCRIPT} ${binfile}
+        DEPENDS ${name}-bin
         COMMENT "Copying the robot's binary over to the mbed"
     )
 endfunction(rj_add_mbed_executable)
