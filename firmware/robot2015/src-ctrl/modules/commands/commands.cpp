@@ -825,16 +825,16 @@ int cmd_ps(cmd_args_t& args) {
     } else {
         unsigned int num_threads = 0;
         P_TCB p_b = (P_TCB)&os_rdy;
-        std::printf("ID\tPRIOR\tB_PRIOR\tSTATE\tDELTA TIME\r\n");
+        printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
         // iterate over the linked list of tasks
         while (p_b != NULL) {
-            std::printf("%u\t%u\t%u\t%u\t%u\r\n", p_b->task_id, p_b->prio,
-                        p_b->state, p_b->delta_time);
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_b->task_id, p_b->prio,
+                   p_b->state, p_b->delta_time, ThreadMaxStackUsed(p_b));
 
             num_threads++;
             p_b = p_b->p_lnk;
         }
-        std::printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
+        printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
 
     return 0;
