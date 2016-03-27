@@ -55,3 +55,6 @@ arm-none-eabi-gdb
 
 # GNU debugger
 gdb
+
+# verilog synthesis and simulation tool
+iverilog
