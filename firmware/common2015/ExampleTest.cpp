@@ -7,14 +7,9 @@ TEST(ExampleTest, example) { EXPECT_EQ(true, !false); }
 
 class FakeDigitalIn {
 public:
-    FakeDigitalIn(int value) : _value(value){
+    FakeDigitalIn(int value) : _value(value) {}
 
-    }
-
-
-    int read() const {
-        return _value;
-    }
+    int read() const { return _value; }
 
 private:
     int _value;
@@ -22,10 +17,7 @@ private:
 
 TEST(RotarySelector, read) {
     RotarySelector<FakeDigitalIn> selector({
-        FakeDigitalIn(1),
-        FakeDigitalIn(1),
-        FakeDigitalIn(0),
-        FakeDigitalIn(1),
+        FakeDigitalIn(1), FakeDigitalIn(1), FakeDigitalIn(0), FakeDigitalIn(1),
     });
     EXPECT_EQ(11, selector.read());
 }
