@@ -44,3 +44,13 @@ void commLightsTimeout_TX(void const*);
 void commLightsRenew_RX();
 void commLightsRenew_TX();
 unsigned int get_num_threads();
+
+/**
+ * Get the max amount of stack space used by a given thread.
+ *
+ * This was borrowed from mbed's Thread.max_stack() function but uses a P_TCB as
+ * an argument rather than a Thread object.
+ *
+ * @return Max stack usage so far, in bytes
+ */
+uint32_t ThreadMaxStackUsed(const P_TCB tcb);
