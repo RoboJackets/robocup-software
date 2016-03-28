@@ -37,8 +37,8 @@ FPGA* FPGA::Instance() {
 }
 
 /**
- * [FPGA::Init Setup the FPGA interface]
- * @return  [The initialization error code.]
+ * Setup the FPGA interface
+ * @return The initialization error code.
  */
 bool FPGA::Init(const std::string& filepath) {
     int j = 0;

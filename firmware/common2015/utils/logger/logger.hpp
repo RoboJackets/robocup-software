@@ -86,11 +86,11 @@ private:
 };
 
 /**
- * [log The system-wide logging interface function. All log messages go through
- * this.]
- * @param logLevel [The "importance level" of the called log message.]
- * @param source   [The source of the message.]
- * @param format   [The string format for displaying the log message.]
+ * The system-wide logging interface function. All log messages go through
+ * this.
+ * @param logLevel The "importance level" of the called log message.
+ * @param source   The source of the message.
+ * @param format   The string format for displaying the log message.
  */
 void log(uint8_t logLevel, const char* source, int line, const char* func,
          const char* format, ...);

@@ -26,10 +26,10 @@ uint16_t imu_err = 0;
 void Task_Controller(void const* args);
 
 /**
- * @brief      { Sets the hardware configurations for the status LEDs & places
- * into the given state }
+ * @brief Sets the hardware configurations for the status LEDs & places
+ * into the given state
  *
- * @param[in]  state  { the next state of the LEDs }
+ * @param[in]  state The next state of the LEDs
  */
 void statusLights(bool state) {
     DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
@@ -41,19 +41,18 @@ void statusLights(bool state) {
 }
 
 /**
- * @brief      { Turn all status LEDs on }
+ * @brief Turn all status LEDs on
  */
 void statusLightsON(void const* args) { statusLights(1); }
 
 /**
- * @brief      { Turn all status LEDs off }
+ * @brief Turn all status LEDs off
  */
 void statusLightsOFF(void const* args) { statusLights(0); }
 
 /**
- * [main Main The entry point of the system where each submodule's thread is
- * started.]
- * @return  [none]
+ * The entry point of the system where each submodule's thread is
+ * started.
  */
 int main() {
     // Store the thread's ID
