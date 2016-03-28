@@ -182,43 +182,33 @@ void AVR910::poll() {
     chipDeselect();
 }
 
-int AVR910::readVendorCode() {
-    // Issue read signature byte command.
-    // Address 0x00 is vendor code.
+int AVR910::readRegister(int reg) {
     chipSelect();
     _spi->write(0x30);
     _spi->write(0x00);
-    _spi->write(0x00);
-    int code = _spi->write(0x00);
+    _spi->write(reg);
+    int val = _spi->write(0x00);
     chipDeselect();
 
-    return code;
+    return val;
+}
+
+int AVR910::readVendorCode() {
+    // Issue read signature byte command.
+    // Address 0x00 is vendor code.
+    return readRegister(0x00);
 }
 
 int AVR910::readPartFamilyAndFlashSize() {
     // Issue read signature byte command.
     // Address 0x01 is part family and flash size code.
-    chipSelect();
-    _spi->write(0x30);
-    _spi->write(0x00);
-    _spi->write(0x01);
-    int value = _spi->write(0x00);
-    chipDeselect();
-
-    return value;
+    return readRegister(0x01);
 }
 
 int AVR910::readPartNumber() {
     // Issue read signature byte command.
     // Address 0x02 is part number code.
-    chipSelect();
-    _spi->write(0x30);
-    _spi->write(0x00);
-    _spi->write(0x02);
-    int num = _spi->write(0x00);
-    chipDeselect();
-
-    return num;
+    return readRegister(0x02);
 }
 
 void AVR910::chipErase() {

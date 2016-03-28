@@ -127,6 +127,8 @@ public:
     int readPartNumber();
 
 protected:
+    int readRegister(int reg);
+
     /**
      * Check the binary has been written correctly.
      *
