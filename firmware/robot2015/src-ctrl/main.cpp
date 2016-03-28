@@ -1,60 +1,10 @@
-// ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
-#include <ctime>
-#include <string>
-#include <array>
-
-#include <rtos.h>
-
-#include <helper-funcs.hpp>
-#include <watchdog.hpp>
-#include <logger.hpp>
-#include <assert.hpp>
-
-#include "robot-devices.hpp"
-#include "task-signals.hpp"
-#include "task-globals.hpp"
-#include "commands.hpp"
-#include "fpga.hpp"
-#include "io-expander.hpp"
-#include "neostrip.hpp"
-
-// task globals
-uint16_t comm_err = 0;
-uint16_t fpga_err = 0;
-uint16_t imu_err = 0;
-
-void Task_Controller(void const* args);
-
 /**
- * @brief      { Sets the hardware configurations for the status LEDs & places
- * into the given state }
- *
- * @param[in]  state  { the next state of the LEDs }
+ * Program an AVR with an mbed.
  */
-void statusLights(bool state) {
-    DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
+#include "KickerBoard.hpp"
 
-    for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
-}
+LocalFileSystem local("local");
 
-/**
- * @brief      { Turn all status LEDs on }
- */
-void statusLightsON(void const* args) { statusLights(1); }
-
-/**
- * @brief      { Turn all status LEDs off }
- */
-void statusLightsOFF(void const* args) { statusLights(0); }
-
-/**
- * [main Main The entry point of the system where each submodule's thread is
- * started.]
- * @return  [none]
- */
 int main() {
     // Store the thread's ID
     const osThreadId mainID = Thread::gettid();
@@ -309,11 +259,3 @@ _EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
     while (true) {
     }
 }
-
-_EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }
-
-_EXTERN void MemManage_Handler() { std::printf("MemManage Fault!\n"); }
-
-_EXTERN void BusFault_Handler() { std::printf("BusFault Fault!\n"); }
-
-_EXTERN void UsageFault_Handler() { std::printf("UsageFault Fault!\n"); }
