@@ -11,12 +11,11 @@
 namespace {
 const int NUM_MOTORS = 5;
 
-motor_t mtrEx = {
-    .vel = 0x4D,
-    .hall = 0x0A,
-    .enc = {0x23, 0x18},
-    .status = {.encOK = false, .hallOK = true, .drvStatus = {0x26, 0x0F}},
-    .desc = "Motor"};
+motor_t mtrEx = {.vel = 0x4D,
+                 .hall = 0x0A,
+                 .enc = {0x23, 0x18},
+                 .status = {.hallOK = true, .drvStatus = {0x26, 0x0F}},
+                 .desc = "Motor"};
 }
 
 std::vector<motor_t> global_motors(NUM_MOTORS, mtrEx);
