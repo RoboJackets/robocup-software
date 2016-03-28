@@ -14,6 +14,7 @@
 #include "task-signals.hpp"
 #include "io-expander.hpp"
 #include "fpga.hpp"
+#include "FlashingTimeoutLED.hpp"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ using namespace std;
  */
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
-    CommModule::Instance()->send(ack_pck);
+    CommModule::Instance->send(ack_pck);
 }
 
 void legacy_rx_cb(rtp::packet* p) {
@@ -63,7 +64,7 @@ void loopback_tx_cb(rtp::packet* p) {
         LOG(WARN, "Sent empty packet on loopback interface");
     }
 
-    CommModule::Instance()->receive(*p);
+    CommModule::Instance->receive(*p);
 }
 
 // Setup some lights that will blink whenever we send/receive packets
@@ -74,16 +75,15 @@ shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
 
 void InitializeCommModule() {
-    // Startup the CommModule interface
-    shared_ptr<CommModule> commModule = CommModule::Instance();
+    // leds that flash if tx/rx have happened recently
+    auto rxTimeoutLED =
+        make_shared<FlashingTimeoutLED>(DigitalOut(RJ_RX_LED, OpenDrain));
+    auto txTimeoutLED =
+        make_shared<FlashingTimeoutLED>(DigitalOut(RJ_TX_LED, OpenDrain));
 
-    // initialize and start LED ticker timers
-    rx_led_ticker = make_shared<RtosTimer>(commLightsTask_RX, osTimerPeriodic,
-                                           (void*)&rx_led);
-    tx_led_ticker = make_shared<RtosTimer>(commLightsTask_TX, osTimerPeriodic,
-                                           (void*)&tx_led);
-    rx_led_ticker->start(80);
-    tx_led_ticker->start(80);
+    // Startup the CommModule interface
+    CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
+    shared_ptr<CommModule> commModule = CommModule::Instance;
 
     // TODO(justin): make this non-global
     // Create a new physical hardware communication link

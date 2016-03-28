@@ -10,8 +10,6 @@
 extern struct OS_XCB os_rdy;
 
 namespace {
-bool comm_led_rx_en = false;
-bool comm_led_tx_en = false;
 bool dir = false;
 }
 
@@ -88,23 +86,6 @@ void imAlive(void const* arg) {
 
     dir = !dir;
 }
-
-void commLightsTask_TX(void const* arg) {
-    DigitalOut* led =
-        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
-    if (comm_led_tx_en) flashLED(*led);
-}
-void commLightsTask_RX(void const* arg) {
-    DigitalOut* led =
-        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
-    if (comm_led_rx_en) flashLED(*led);
-}
-
-void commLightsTimeout_RX(void const* arg) { comm_led_rx_en = false; }
-void commLightsTimeout_TX(void const* arg) { comm_led_tx_en = false; }
-
-void commLightsRenew_RX() { comm_led_rx_en = true; }
-void commLightsRenew_TX() { comm_led_tx_en = true; }
 
 // returns how many active threads there are
 unsigned int get_num_threads() {

@@ -8,6 +8,7 @@
 #include "rtos-mgmt/mail-helper.hpp"
 #include "Console.hpp"
 #include "CommPort.hpp"
+#include "FlashingTimeoutLED.hpp"
 
 #include <algorithm>
 #include <vector>
@@ -34,13 +35,14 @@ private:
 
 public:
     /// The constructor initializes and starts threads and mail queues
-    CommModule();
+    CommModule(std::shared_ptr<FlashingTimeoutLED> rxTimeoutLED,
+               std::shared_ptr<FlashingTimeoutLED> txTimeoutLED);
 
     /// The destructor frees up allocated memory and stops threads
     ~CommModule();
 
-    /// Access the singleton CommModule instance
-    static shared_ptr<CommModule>& Instance();
+    /// global singleton instance of CommModule
+    static std::shared_ptr<CommModule> Instance;
 
     /// initializes and starts rx/tx threads and mail queues
     void init();
@@ -101,9 +103,6 @@ private:
 
     void ready();
 
-    /// global singleton instance of CommModule
-    static std::shared_ptr<CommModule> instance;
-
     bool _isReady = false;
 
     Thread _rxThread, _txThread;
@@ -111,4 +110,6 @@ private:
     // Mail helper objects
     MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;
     MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
+
+    std::shared_ptr<FlashingTimeoutLED> _rxTimeoutLED, _txTimeoutLED;
 };

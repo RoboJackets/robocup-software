@@ -50,7 +50,7 @@ int (*iterative_command_handler)(cmd_args_t& args);
 }  // end of anonymous namespace
 
 // Create an object to help find files
-//LocalFileSystem local("local");
+// LocalFileSystem local("local");
 
 /**
  * Commands list. Add command handlers to commands.hpp.
@@ -841,7 +841,7 @@ int cmd_ps(cmd_args_t& args) {
 }
 
 int cmd_radio(cmd_args_t& args) {
-    shared_ptr<CommModule> commModule = CommModule::Instance();
+    shared_ptr<CommModule> commModule = CommModule::Instance;
 
     if (args.empty()) {
         // Default to showing the list of ports
@@ -969,12 +969,12 @@ int cmd_radio(cmd_args_t& args) {
 }
 
 int cmd_pong(cmd_args_t& args) {
-    CommModule::Instance()->setTxHandler(
-        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
+    CommModule::Instance->setTxHandler((CommLink*)global_radio,
+                                       &CommLink::sendPacket, rtp::port::PING);
 
     // Any packets received on the PING port are placed in a queue.
     Queue<rtp::packet, 2> pings;
-    CommModule::Instance()->setRxHandler([&pings](rtp::packet* pkt) {
+    CommModule::Instance->setRxHandler([&pings](rtp::packet* pkt) {
         pings.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
@@ -991,8 +991,7 @@ int cmd_pong(cmd_args_t& args) {
             printf("Got ping %d\r\n", pingNbr);
 
             // reply with ack
-            CommModule::Instance()->send(
-                rtp::packet({pingNbr}, rtp::port::PING));
+            CommModule::Instance->send(rtp::packet({pingNbr}, rtp::port::PING));
             printf("  Sent ack %d\r\n", pingNbr);
         }
 
@@ -1001,18 +1000,18 @@ int cmd_pong(cmd_args_t& args) {
     }
 
     // remove handlers, close port
-    CommModule::Instance()->close(rtp::port::PING);
+    CommModule::Instance->close(rtp::port::PING);
 
     return 0;
 }
 
 int cmd_ping(cmd_args_t& args) {
-    CommModule::Instance()->setTxHandler(
-        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
+    CommModule::Instance->setTxHandler((CommLink*)global_radio,
+                                       &CommLink::sendPacket, rtp::port::PING);
 
     // Any packets received on the PING port are placed in a queue
     Queue<rtp::packet, 2> acks;
-    CommModule::Instance()->setRxHandler([&acks](rtp::packet* pkt) {
+    CommModule::Instance->setRxHandler([&acks](rtp::packet* pkt) {
         acks.put(new rtp::packet(*pkt));
     }, rtp::port::PING);
 
@@ -1025,7 +1024,7 @@ int cmd_ping(cmd_args_t& args) {
         if ((clock() - lastPingTime) / CLOCKS_PER_SEC > PingInterval) {
             lastPingTime = clock();
 
-            CommModule::Instance()->send(
+            CommModule::Instance->send(
                 rtp::packet({pingCount}, rtp::port::PING));
 
             printf("Sent ping %d\r\n", pingCount);
@@ -1047,7 +1046,7 @@ int cmd_ping(cmd_args_t& args) {
     }
 
     // remove handlers, close port
-    CommModule::Instance()->close(rtp::port::PING);
+    CommModule::Instance->close(rtp::port::PING);
 
     return 0;
 }
