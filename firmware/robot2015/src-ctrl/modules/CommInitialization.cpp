@@ -14,7 +14,7 @@
 #include "task-signals.hpp"
 #include "io-expander.hpp"
 #include "fpga.hpp"
-#include "FlashingTimeoutLED.hpp"
+#include "TimeoutLED.hpp"
 
 using namespace std;
 

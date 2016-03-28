@@ -8,7 +8,7 @@
 #include "rtos-mgmt/mail-helper.hpp"
 #include "Console.hpp"
 #include "CommPort.hpp"
-#include "FlashingTimeoutLED.hpp"
+#include "TimeoutLED.hpp"
 
 #include <algorithm>
 #include <vector>

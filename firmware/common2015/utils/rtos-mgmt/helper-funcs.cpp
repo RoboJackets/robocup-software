@@ -9,10 +9,6 @@
 // The head of the linked list of active threads
 extern struct OS_XCB os_rdy;
 
-namespace {
-bool dir = false;
-}
-
 void setISRPriorities() {
     __disable_irq();
 
@@ -60,31 +56,6 @@ void setISRPriorities() {
     NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 1, 4));
 
     __enable_irq();
-}
-
-/**
- * Timer interrupt based light flicker. If this stops, the code triggered
- * a fault.
- */
-void imAlive(void const* arg) {
-    std::vector<DigitalOut>* leds = const_cast<std::vector<DigitalOut>*>(
-        reinterpret_cast<const std::vector<DigitalOut>*>(arg));
-
-    if (dir) {
-        for (size_t i = 0; i < leds->size(); ++i) {
-            leds->at(i) = !(leds->at(i));
-            Thread::wait(17);
-            leds->at(i) = !(leds->at(i));
-        }
-    } else {
-        for (size_t i = leds->size(); i > 0; --i) {
-            leds->at(i - 1) = !(leds->at(i - 1));
-            Thread::wait(17);
-            leds->at(i - 1) = !(leds->at(i - 1));
-        }
-    }
-
-    dir = !dir;
 }
 
 // returns how many active threads there are

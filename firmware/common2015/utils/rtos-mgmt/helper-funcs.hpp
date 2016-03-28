@@ -24,8 +24,6 @@
  */
 void setISRPriorities();
 
-void imAlive(void const*);
-
 unsigned int get_num_threads();
 
 /**
