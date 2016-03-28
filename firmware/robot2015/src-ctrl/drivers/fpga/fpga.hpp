@@ -6,14 +6,23 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <memory>
 
 #include "pins-ctrl-2015.hpp"
+#include "SharedSPI.hpp"
 
 class FPGA {
 public:
     static FPGA* Instance();
 
-    bool Init(const std::string& filepath);
+    /// The FPGA global instance must be Initialize()'d before use.  Instance()
+    /// will return nullptr until this happens.
+    static FPGA* Initialize(std::shared_ptr<SharedSPI> sharedSPI);
+
+    /// Configure the fpga with the bitfile at the given path
+    /// @return true if successful
+    bool configure(const std::string& filepath);
+
     bool isReady();
     uint8_t set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
                              uint16_t* enc_deltas, size_t size_enc);
@@ -27,15 +36,21 @@ public:
     void gate_drivers(std::vector<uint16_t>&);
     bool send_config(const std::string& filepath);
 
+    /// Activate the chip select pin and acquire a lock on the shared spi bus
+    void fpga_select();
+
+    /// Deactivate the chip select pin and release a lock on the shared spi bus
+    void fpga_deselect();
+
 private:
-    FPGA(){};
+    FPGA(std::shared_ptr<SharedSPI> sharedSPI) : spi(sharedSPI){};
 
     static bool isInit;
     static FPGA* instance;
     Mutex mutex;
 
-    SPI* spi;
-    DigitalOut* cs;
+    std::shared_ptr<SharedSPI> spi;
+    DigitalOut* nCs;
     DigitalInOut* progB;
     DigitalIn* initB;
     DigitalIn* done;

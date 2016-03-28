@@ -104,9 +104,9 @@ int main() {
     sharedSPI->format(8, 0);  // 8 bits per transfer
     sharedSPI->frequency(5000000);
 
-    // This is where the FPGA is actually configured with the bitfile's name
-    // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    // Initialize and configure the fpga with the given bitfile
+    FPGA::Initialize(sharedSPI);
+    bool fpga_ready = FPGA::Instance()->configure("/local/rj-fpga.nib");
 
     if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");

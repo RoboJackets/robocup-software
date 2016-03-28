@@ -22,25 +22,20 @@ enum {
 };
 }
 
-FPGA* FPGA::Instance() {
-    if (instance == nullptr) {
-        instance = new FPGA;
-        instance->spi = new SPI(RJ_SPI_BUS);
-        instance->progB =
-            new DigitalInOut(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
-        instance->initB = new DigitalIn(RJ_FPGA_INIT_B);
-        instance->done = new DigitalIn(RJ_FPGA_DONE);
-        instance->cs = new DigitalOut(RJ_FPGA_nCS);
-    }
+FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
+    instance = new FPGA(sharedSPI);
+    instance->progB =
+        new DigitalInOut(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
+    instance->initB = new DigitalIn(RJ_FPGA_INIT_B);
+    instance->done = new DigitalIn(RJ_FPGA_DONE);
+    instance->nCs = new DigitalOut(RJ_FPGA_nCS);
 
     return instance;
 }
 
-/**
- * Setup the FPGA interface
- * @return The initialization error code.
- */
-bool FPGA::Init(const std::string& filepath) {
+FPGA* FPGA::Instance() { return instance; }
+
+bool FPGA::configure(const std::string& filepath) {
     int j = 0;
 
     // make sure the binary exists before doing anything
@@ -100,9 +95,8 @@ bool FPGA::Init(const std::string& filepath) {
 
             isInit = true;
 
-            cs->write(1);
-            spi->format(8, 0);
-            spi->frequency(1000000);
+            fpga_deselect();
+            // spi->frequency(1000000); // TODO(justin): remove?
 
             return true;
         }
@@ -159,12 +153,12 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     uint8_t status;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     status = spi->write(CMD_READ_HALLS);
 
     for (size_t i = 0; i < size; i++) halls[i] = spi->write(0x00);
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     return status;
@@ -174,7 +168,7 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     uint8_t status;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     status = spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
@@ -182,7 +176,7 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
         enc_counts[i] |= spi->write(0x00);
     }
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     return status;
@@ -192,7 +186,7 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     uint8_t status;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     status = spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
@@ -200,7 +194,7 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
         duty_cycles[i] |= spi->write(0x00);
     }
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     return status;
@@ -214,7 +208,7 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     status = spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
@@ -222,7 +216,7 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
         spi->write(duty_cycles[i] >> 8);
     }
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     return status;
@@ -237,7 +231,7 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     status = spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size_enc; i++) {
@@ -245,7 +239,7 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
         enc_deltas[i] |= spi->write(duty_cycles[i] >> 8);
     }
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     return status;
@@ -255,19 +249,19 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     bool dirty_bit;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     spi->write(CMD_READ_HASH1);
 
     for (size_t i = 0; i < 10; i++) v.push_back(spi->write(0x00));
 
-    *cs = !(*cs);
-    *cs = !(*cs);
+    fpga_deselect();
+    fpga_select();
 
     spi->write(CMD_READ_HASH2);
 
     for (size_t i = 0; i < 11; i++) v.push_back(spi->write(0x00));
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     // store the dirty bit for returning
@@ -283,7 +277,7 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
 
 void FPGA::gate_drivers(std::vector<uint16_t>& v) {
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
 
     spi->write(CMD_CHECK_DRV);
 
@@ -296,7 +290,7 @@ void FPGA::gate_drivers(std::vector<uint16_t>& v) {
         v.push_back(tmp);
     }
 
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 }
 
@@ -304,9 +298,9 @@ uint8_t FPGA::motors_en(bool state) {
     uint8_t status;
 
     mutex.lock();
-    *cs = !(*cs);
+    fpga_select();
     status = spi->write(CMD_EN_DIS_MTRS | (state << 7));
-    *cs = !(*cs);
+    fpga_deselect();
     mutex.unlock();
 
     return status;
@@ -318,3 +312,13 @@ uint8_t FPGA::watchdog_reset() {
 }
 
 bool FPGA::isReady() { return isInit; }
+
+void FPGA::fpga_select() {
+    spi->lock();
+    *nCs = 0;
+}
+
+void FPGA::fpga_deselect() {
+    *nCs = 1;
+    spi->lock();
+}
