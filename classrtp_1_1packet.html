@@ -116,21 +116,21 @@ $(document).ready(function(){initNavTree('classrtp_1_1packet.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>{ Real-Time packet definition }  
+<p>Real-Time packet definition.  
  <a href="classrtp_1_1packet.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a415ecb7ee5a79ba72b96bd6588a1955e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a415ecb7ee5a79ba72b96bd6588a1955e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>packet</b> (const std::string &amp;s)</td></tr>
-<tr class="separator:a415ecb7ee5a79ba72b96bd6588a1955e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c82b7418c0bb04cf55aa7c6a6dc9873"><td class="memTemplParams" colspan="2"><a class="anchor" id="a3c82b7418c0bb04cf55aa7c6a6dc9873"></a>
+<tr class="memitem:ab7573b4aaf99fef6edb6d23eb781d7cd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7573b4aaf99fef6edb6d23eb781d7cd"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>packet</b> (const std::string &amp;s, uint8_t p=SINK)</td></tr>
+<tr class="separator:ab7573b4aaf99fef6edb6d23eb781d7cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9db802107e092f89166ddad56d567202"><td class="memTemplParams" colspan="2"><a class="anchor" id="a9db802107e092f89166ddad56d567202"></a>
 template&lt;class T &gt; </td></tr>
-<tr class="memitem:a3c82b7418c0bb04cf55aa7c6a6dc9873"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>packet</b> (const std::vector&lt; T &gt; &amp;v)</td></tr>
-<tr class="separator:a3c82b7418c0bb04cf55aa7c6a6dc9873"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a482f755925ac195fd84beeb093965110"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a482f755925ac195fd84beeb093965110"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> (bool includeHeader=true)</td></tr>
-<tr class="separator:a482f755925ac195fd84beeb093965110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9db802107e092f89166ddad56d567202"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>packet</b> (const std::vector&lt; T &gt; &amp;v, uint8_t p=SINK)</td></tr>
+<tr class="separator:a9db802107e092f89166ddad56d567202"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa28941c93c15949238bf78e9c025ac92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa28941c93c15949238bf78e9c025ac92"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const </td></tr>
+<tr class="separator:aa28941c93c15949238bf78e9c025ac92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9acef7879ad292b5cf7f200748d2b2a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9acef7879ad292b5cf7f200748d2b2a6"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>port</b> () const </td></tr>
 <tr class="separator:a9acef7879ad292b5cf7f200748d2b2a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,25 +138,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>port</b> () const </td
 template&lt;class T &gt; </td></tr>
 <tr class="memitem:a7927093ada2f444827d435970ea6dc69"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>port</b> (T p)</td></tr>
 <tr class="separator:a7927093ada2f444827d435970ea6dc69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ada38ae8c436e575f6efd9f68b66a76"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7ada38ae8c436e575f6efd9f68b66a76"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>subclass</b> ()</td></tr>
-<tr class="separator:a7ada38ae8c436e575f6efd9f68b66a76"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67c388c586634289dad2ee443b7400cd"><td class="memTemplParams" colspan="2"><a class="anchor" id="a67c388c586634289dad2ee443b7400cd"></a>
-template&lt;class T &gt; </td></tr>
-<tr class="memitem:a67c388c586634289dad2ee443b7400cd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>subclass</b> (T c)</td></tr>
-<tr class="separator:a67c388c586634289dad2ee443b7400cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae11a22ea388d321c1da20d2ea8f5e1d7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae11a22ea388d321c1da20d2ea8f5e1d7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>ack</b> ()</td></tr>
-<tr class="separator:ae11a22ea388d321c1da20d2ea8f5e1d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf27c7d3f2081ca7fa52eef899a232c6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf27c7d3f2081ca7fa52eef899a232c6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>ack</b> (bool b)</td></tr>
-<tr class="separator:acf27c7d3f2081ca7fa52eef899a232c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3eb558c35c795f0cd3d80767d4b245e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3eb558c35c795f0cd3d80767d4b245e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>sfs</b> ()</td></tr>
-<tr class="separator:ae3eb558c35c795f0cd3d80767d4b245e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25b25a551627e1e3c4ed8b8838f913b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25b25a551627e1e3c4ed8b8838f913b1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sfs</b> (bool b)</td></tr>
-<tr class="separator:a25b25a551627e1e3c4ed8b8838f913b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab05124d543d2c4b9ce604cbd1f8f2a0f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab05124d543d2c4b9ce604cbd1f8f2a0f"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> ()</td></tr>
 <tr class="separator:ab05124d543d2c4b9ce604cbd1f8f2a0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,21 +148,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>address</b> (int a)</
 template&lt;class T &gt; </td></tr>
 <tr class="memitem:ac4b74bf4776cdfb7bd016f315977cc77"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>recv</b> (const std::vector&lt; T &gt; &amp;v)</td></tr>
 <tr class="separator:ac4b74bf4776cdfb7bd016f315977cc77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11e0d21cfe8826d3f211b49d21087c8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11e0d21cfe8826d3f211b49d21087c8b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>pack</b> (std::vector&lt; data_t &gt; *buffer, bool includeHeader=false) const </td></tr>
-<tr class="separator:a11e0d21cfe8826d3f211b49d21087c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4630d776dcad6c506480421324d6bd6f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4630d776dcad6c506480421324d6bd6f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pack</b> (std::vector&lt; uint8_t &gt; *buffer) const </td></tr>
+<tr class="separator:a4630d776dcad6c506480421324d6bd6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a9e9dedc55114d45f20cfa9738fffcca6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e9dedc55114d45f20cfa9738fffcca6"></a>
-<a class="el" href="classrtp_1_1header__data.html">rtp::header_data</a>&#160;</td><td class="memItemRight" valign="bottom"><b>header</b></td></tr>
+<a class="el" href="structrtp_1_1header__data.html">rtp::header_data</a>&#160;</td><td class="memItemRight" valign="bottom"><b>header</b></td></tr>
 <tr class="separator:a9e9dedc55114d45f20cfa9738fffcca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6da5baae40c38568ecc37a01a89749a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6da5baae40c38568ecc37a01a89749a3"></a>
-<a class="el" href="classrtp_1_1payload__data.html">rtp::payload_data</a>&#160;</td><td class="memItemRight" valign="bottom"><b>payload</b></td></tr>
-<tr class="separator:a6da5baae40c38568ecc37a01a89749a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa50f358a5d2103539231c533fd9b7ca4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa50f358a5d2103539231c533fd9b7ca4"></a>
+std::vector&lt; uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>payload</b></td></tr>
+<tr class="separator:aa50f358a5d2103539231c533fd9b7ca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>{ Real-Time packet definition } </p>
+<div class="textblock"><p>Real-Time packet definition. </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for rtp::packet:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -189,7 +170,7 @@ Public Attributes</h2></td></tr>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="classrtp_1_1packet__coll__graph.png" border="0" usemap="#rtp_1_1packet_coll__map" alt="Collaboration graph"/></div>
 <map name="rtp_1_1packet_coll__map" id="rtp_1_1packet_coll__map">
-<area shape="rect" id="node2" href="classrtp_1_1header__data.html" title="rtp::header_data" alt="" coords="5,96,133,123"/><area shape="rect" id="node3" href="classrtp_1_1payload__data.html" title="rtp::payload_data" alt="" coords="158,96,292,123"/></map>
+<area shape="rect" id="node2" href="structrtp_1_1header__data.html" title="rtp::header_data" alt="" coords="5,5,133,32"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>firmware/common2015/utils/<a class="el" href="rtp_8hpp_source.html">rtp.hpp</a></li>
@@ -200,7 +181,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>rtp</b></li><li class="navelem"><a class="el" href="classrtp_1_1packet.html">packet</a></li>
-    <li class="footer">Generated on Sun Mar 20 2016 03:46:28 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 28 2016 00:57:25 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

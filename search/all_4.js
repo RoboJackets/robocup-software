@@ -1,7 +1,6 @@
 var searchData=
 [
   ['d',['d',['../struct_robot_config_1_1_p_i_d.html#a491a7263592924e116223e8becd22a70',1,'RobotConfig::PID']]],
-  ['datarate',['datarate',['../class_c_c1101.html#afa7f7ecd35d338d219033d56a9428809',1,'CC1101']]],
   ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a17465304b544fbc51bbde5276d862635',1,'gameplay.tactics.defense.Defense.debug()']]],
   ['debugqmutex',['DebugQMutex',['../class_debug_q_mutex.html',1,'']]],
   ['debugwindowevaluator',['DebugWindowEvaluator',['../classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html',1,'gameplay::plays::testing::debug_window_evaluator']]],
@@ -12,6 +11,7 @@ var searchData=
   ['defendpenalty',['DefendPenalty',['../classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html',1,'gameplay::plays::restarts::defend_penalty']]],
   ['defense',['Defense',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html',1,'gameplay::tactics::defense']]],
   ['description',['description',['../structcommand__t.html#a94ed95e8cfafc8f0003c9068648adeb9',1,'command_t']]],
+  ['detachinputhandler',['detachInputHandler',['../class_console.html#ad4473996959833d5133307a0aca2438a',1,'Console']]],
   ['direction',['direction',['../class_geometry2d_1_1_point.html#a7ddcff0925ffe9f7405e8db84710d3a3',1,'Geometry2d::Point']]],
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],

@@ -143,21 +143,19 @@ template&lt;typename B &gt; </td></tr>
 template&lt;typename B &gt; </td></tr>
 <tr class="memitem:ac67fc6605463d58dc2c3bdb24a040e5d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>setRxHandler</b> (B *obj, void(B::*mptr)(<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *), uint8_t portNbr)</td></tr>
 <tr class="separator:ac67fc6605463d58dc2c3bdb24a040e5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a047fd01b31200aced100d662de8c7069"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a047fd01b31200aced100d662de8c7069"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setRxHandler</b> (CommCallback callback, uint8_t)</td></tr>
-<tr class="separator:a047fd01b31200aced100d662de8c7069"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7eb365fd6ab3e8aeeef02e895c9d7923"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7eb365fd6ab3e8aeeef02e895c9d7923"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setTxHandler</b> (CommCallback callback, uint8_t)</td></tr>
-<tr class="separator:a7eb365fd6ab3e8aeeef02e895c9d7923"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33eb15c167308888998e85a7881853eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33eb15c167308888998e85a7881853eb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>openSocket</b> (uint8_t portNbr)</td></tr>
-<tr class="separator:a33eb15c167308888998e85a7881853eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89b8585eddf876a8126b66978608f305"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89b8585eddf876a8126b66978608f305"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;)</td></tr>
-<tr class="separator:a89b8585eddf876a8126b66978608f305"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf4e8ac71c8130575497c7d791592f13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf4e8ac71c8130575497c7d791592f13"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>receive</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;)</td></tr>
-<tr class="separator:aaf4e8ac71c8130575497c7d791592f13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0704e9ca862914447238a43e161f9c34"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0704e9ca862914447238a43e161f9c34"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setRxHandler</b> (std::function&lt; CommCallback &gt; callback, uint8_t portNbr)</td></tr>
+<tr class="separator:a0704e9ca862914447238a43e161f9c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ec895043c7619f28d4bc2e8e549e9fc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ec895043c7619f28d4bc2e8e549e9fc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setTxHandler</b> (std::function&lt; CommCallback &gt; callback, uint8_t portNbr)</td></tr>
+<tr class="separator:a8ec895043c7619f28d4bc2e8e549e9fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5c460b1709a2790b41bf5dce0368301"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5c460b1709a2790b41bf5dce0368301"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>send</b> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;pkt)</td></tr>
+<tr class="separator:ab5c460b1709a2790b41bf5dce0368301"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61e910a9458ad5848b89d96a6a5c0d4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61e910a9458ad5848b89d96a6a5c0d4d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a61e910a9458ad5848b89d96a6a5c0d4d">receive</a> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> &amp;pkt)</td></tr>
+<tr class="memdesc:a61e910a9458ad5848b89d96a6a5c0d4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called by CommLink instances whenever a packet is received via radio. <br/></td></tr>
+<tr class="separator:a61e910a9458ad5848b89d96a6a5c0d4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbde7a8dc03cc44750ee5bf504907286"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adbde7a8dc03cc44750ee5bf504907286"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>numRxPackets</b> () const </td></tr>
 <tr class="separator:adbde7a8dc03cc44750ee5bf504907286"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,7 +216,7 @@ osMailQId&#160;</td><td class="memItemRight" valign="bottom"><b>_rxQueue</b></td
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_module.html">CommModule</a></li>
-    <li class="footer">Generated on Sun Mar 20 2016 03:46:27 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 28 2016 00:57:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -4,7 +4,8 @@ var searchData=
   ['saveplaybook',['savePlaybook',['../class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96',1,'Gameplay::GameplayModule']]],
   ['score',['score',['../classgameplay_1_1play_1_1_play.html#a3a7c13e330fea8e8d01c6f6692b5388b',1,'gameplay::play::Play']]],
   ['self',['self',['../class_robot.html#a54366c96e4367b00216f42ae0405c552',1,'Robot']]],
-  ['selftest',['selfTest',['../class_c_c1101.html#a518838e8066054c63fbe7801becedf2c',1,'CC1101::selfTest()'],['../class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c',1,'CC1201::selfTest()'],['../class_comm_link.html#a43c1119c09f26dba0e816f57bf1d70e0',1,'CommLink::selfTest()']]],
+  ['selftest',['selfTest',['../class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c',1,'CC1201::selfTest()'],['../class_comm_link.html#a43c1119c09f26dba0e816f57bf1d70e0',1,'CommLink::selfTest()']]],
+  ['senddata',['sendData',['../class_c_c1201.html#a1ea010ffd0b9be2f176eeaf396450745',1,'CC1201']]],
   ['sendpacket',['sendPacket',['../class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b',1,'CommLink']]],
   ['set',['Set',['../class_watchdog.html#a35b747177c2780f8247fd89adc08afe2',1,'Watchdog']]],
   ['setaccelerorange',['setAcceleroRange',['../class_m_p_u6050.html#a3811859c76080d0faea7ed0d43c34525',1,'MPU6050']]],
@@ -26,7 +27,7 @@ var searchData=
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#ac7ecf05e72f3229814b6bc2055f3ad68',1,'gameplay::skills::_kick::_Kick']]],
   ['shouldreplan',['shouldReplan',['../class_planning_1_1_r_r_t_planner.html#a43c789cf73ba8b48789c874c73d10816',1,'Planning::RRTPlanner::shouldReplan()'],['../class_planning_1_1_single_robot_path_planner.html#a46c274740b97d30e8f5e9aecefb891ae',1,'Planning::SingleRobotPathPlanner::shouldReplan()']]],
   ['sing',['sing',['../class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9',1,'OurRobot']]],
-  ['size',['size',['../class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542',1,'Planning::InterpolatedPath']]],
+  ['size',['size',['../class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542',1,'Planning::InterpolatedPath::size()'],['../structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29',1,'rtp::header_data::size()']]],
   ['softwarespi',['SoftwareSPI',['../class_software_s_p_i.html#a0fcfd3817236c348ed837a2d62b30aa7',1,'SoftwareSPI']]],
   ['spin',['spin',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html#a100de7075392515c4dff56d48543db60',1,'gameplay.composite_behavior.CompositeBehavior.spin()'],['../classgameplay_1_1fsm_1_1_state_machine.html#aa33ace9c403176134bf81d2930ff2a1d',1,'gameplay.fsm.StateMachine.spin()']]],
   ['spinkickwatcher',['spinKickWatcher',['../class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45',1,'NewRefereeModule']]],
@@ -37,7 +38,6 @@ var searchData=
   ['stopmaster',['stopMaster',['../classmbed_1_1_i2_c_driver.html#a057006a54ef33be39e4a638f2cfeba76',1,'mbed::I2CDriver']]],
   ['stopped',['stopped',['../class_motion_control.html#a0d8a00158b08f848c7bd03f65f2bb2b8',1,'MotionControl']]],
   ['stopslave',['stopSlave',['../classmbed_1_1_i2_c_driver.html#a605b4c6d27a2339b5ff055f89958c018',1,'mbed::I2CDriver']]],
-  ['strobe',['strobe',['../class_c_c1101.html#a1f4b65d0800cc0979470491bf78b5f3a',1,'CC1101']]],
   ['subpath',['subPath',['../class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b',1,'Planning::CompositePath::subPath()'],['../class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261',1,'Planning::InterpolatedPath::subPath()'],['../class_planning_1_1_path.html#addd308038986255e995c00208a1094f5',1,'Planning::Path::subPath()'],['../class_planning_1_1_angle_function_path.html#a71eb310d432e76f072f7a27cdf9f566a',1,'Planning::AngleFunctionPath::subPath()'],['../class_planning_1_1_trapezoidal_path.html#a0171be9c4ed3118e658362bde7a8e571',1,'Planning::TrapezoidalPath::subPath()']]],
   ['subscribe',['subscribe',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a3b13cc53c85d9ef11c7d6507843c2e8a',1,'gameplay::fs_watcher::FsWatcher']]]
 ];

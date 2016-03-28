@@ -18,6 +18,7 @@ var searchData=
   ['getaccelerorawz',['getAcceleroRawZ',['../class_m_p_u6050.html#a4e3242c701832f81b9a3d079b03cdd5b',1,'MPU6050']]],
   ['getchargelevel',['getChargeLevel',['../class_battery_profile.html#a60890c08094cb4ad4e97ba0ac9c2c2e1',1,'BatteryProfile']]],
   ['getcmdtext',['getCmdText',['../class_our_robot.html#a4170e6526e724b2bf36a06af62ea64b5',1,'OurRobot']]],
+  ['getdata',['getData',['../class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7',1,'CC1201::getData()'],['../class_comm_link.html#a9a9d3575f72afa2c61d215aa6708993e',1,'CommLink::getData()']]],
   ['getduration',['getDuration',['../class_planning_1_1_composite_path.html#a6ab16abe2a63f6ce12728ad15fed7fe0',1,'Planning::CompositePath::getDuration()'],['../class_planning_1_1_interpolated_path.html#abf1b044be359b99c86c395ac9216dce5',1,'Planning::InterpolatedPath::getDuration()'],['../class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688',1,'Planning::Path::getDuration()'],['../class_planning_1_1_angle_function_path.html#aa2a9b444eb2fcb5d3b744a0134c514d9',1,'Planning::AngleFunctionPath::getDuration()'],['../class_planning_1_1_trapezoidal_path.html#a558fcae4d2777c9d12251fc5a687e459',1,'Planning::TrapezoidalPath::getDuration()']]],
   ['getgyro',['getGyro',['../class_m_p_u6050.html#ab2d1a1a7501e8e2dc9a8d9a96228b5cd',1,'MPU6050']]],
   ['getgyroraw',['getGyroRaw',['../class_m_p_u6050.html#a217b9f25037a9b648804319144344434',1,'MPU6050']]],

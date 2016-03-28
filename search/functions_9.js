@@ -9,7 +9,7 @@ var searchData=
   ['intersects',['intersects',['../class_geometry2d_1_1_line.html#a01c483e8855d81463b8b93099b09c1fd',1,'Geometry2d::Line::intersects(const Line &amp;other, Point *intersection=nullptr) const '],['../class_geometry2d_1_1_line.html#a39c1165c80b834beb91fc47cdfe4cb7c',1,'Geometry2d::Line::intersects(const Circle &amp;circle, Point *p1=nullptr, Point *p2=nullptr) const ']]],
   ['ioexpanderdigitalinout',['IOExpanderDigitalInOut',['../class_i_o_expander_digital_in_out.html#aec04d19a69b76e1d086724ae69d276c6',1,'IOExpanderDigitalInOut']]],
   ['is_5fcontinuous',['is_continuous',['../classgameplay_1_1behavior_1_1_behavior.html#a57d1b66fe856ced64e0f085d054ab105',1,'gameplay::behavior::Behavior']]],
-  ['isconnected',['isConnected',['../class_c_c1101.html#a10daa3c1ed804f833f1561a50ca25bb7',1,'CC1101::isConnected()'],['../class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213',1,'CC1201::isConnected()'],['../class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f',1,'CommLink::isConnected()']]],
+  ['isconnected',['isConnected',['../class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213',1,'CC1201::isConnected()'],['../class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f',1,'CommLink::isConnected()']]],
   ['isr',['ISR',['../class_comm_link.html#a288c3410e4911738eb088e23817f9356',1,'CommLink']]],
   ['issystemstoprequested',['IsSystemStopRequested',['../class_console.html#a9dff64f8179cd12a04a8352e436f062d',1,'Console']]]
 ];

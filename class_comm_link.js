@@ -1,9 +1,9 @@
 var class_comm_link =
 [
     [ "CommLink", "class_comm_link.html#ae4d9c67d870744e4f37315788597509a", null ],
-    [ "CommLink", "class_comm_link.html#ac1b22663b87923446c52c2d7c0d9355c", null ],
-    [ "~CommLink", "class_comm_link.html#a1a5e501d6060fa6bb7e7a1392f70942d", null ],
-    [ "getData", "class_comm_link.html#a8a902ecdba1f75eff8691af245807a1e", null ],
+    [ "CommLink", "class_comm_link.html#a89ff1ababdbc39002f69ac2d778c2115", null ],
+    [ "~CommLink", "class_comm_link.html#acff1290e199689fac1f2f995303ad6bf", null ],
+    [ "getData", "class_comm_link.html#a9a9d3575f72afa2c61d215aa6708993e", null ],
     [ "isConnected", "class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f", null ],
     [ "ISR", "class_comm_link.html#a288c3410e4911738eb088e23817f9356", null ],
     [ "radio_deselect", "class_comm_link.html#ad338a026966575092aa616dbff3f6163", null ],
@@ -11,16 +11,10 @@ var class_comm_link =
     [ "ready", "class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5", null ],
     [ "reset", "class_comm_link.html#a9b3157ab0bbfd8fc2103f4a3c1f37e8b", null ],
     [ "selfTest", "class_comm_link.html#a43c1119c09f26dba0e816f57bf1d70e0", null ],
-    [ "sendData", "class_comm_link.html#a516aa7823d6c98683088e113afe8a16e", null ],
+    [ "sendData", "class_comm_link.html#a114ee23c970d2cf498879549a86867a7", null ],
     [ "sendPacket", "class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b", null ],
-    [ "setup_spi", "class_comm_link.html#ab7fa9f45919a1f5dbb2d9a0cdce7012a", null ],
-    [ "twos_compliment", "class_comm_link.html#a233dd75895e752afc727da70694d6beb", null ],
-    [ "_cs", "class_comm_link.html#a45d2281e51d6f0503825d04417536e99", null ],
-    [ "_cs_pin", "class_comm_link.html#aed5aee240d7f42a40c263ee7e5d8edd2", null ],
-    [ "_int_in", "class_comm_link.html#a297aa1c8d49aecd2dbb1517e63ede57f", null ],
-    [ "_int_pin", "class_comm_link.html#ac2272dbe03e567d691bf43b43c933d23", null ],
-    [ "_miso_pin", "class_comm_link.html#acbd912499db1fef127b863bddd26cadd", null ],
-    [ "_mosi_pin", "class_comm_link.html#a4a0418db716c55ea6d017042f53ad14b", null ],
-    [ "_sck_pin", "class_comm_link.html#a343159d1cd77174a6861d1233bf45f9a", null ],
-    [ "_spi", "class_comm_link.html#a0b536bfdd4b6d02ef52787c4b1524c0b", null ]
+    [ "twos_compliment", "class_comm_link.html#a92f2e5254618734d1697ea170093c4f5", null ],
+    [ "_int_in", "class_comm_link.html#a9eb02f9411deca5df3d2ddfb19daada1", null ],
+    [ "_nCs", "class_comm_link.html#ae4d488f96d335edf7cc215a8e487dbe9", null ],
+    [ "_spi", "class_comm_link.html#aee34809de38254a9960bd0b54fad3426", null ]
 ];

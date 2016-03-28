@@ -22,14 +22,10 @@ var hierarchy =
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
     [ "command_t", "structcommand__t.html", null ],
     [ "CommLink", "class_comm_link.html", [
-      [ "CC1101", "class_c_c1101.html", null ],
       [ "CC1201", "class_c_c1201.html", null ]
     ] ],
     [ "CommModule", "class_comm_module.html", null ],
     [ "CommPort< T >", "class_comm_port.html", null ],
-    [ "CommPort< CommCallback >", "class_comm_port.html", null ],
-    [ "CommPorts< T >", "class_comm_ports.html", null ],
-    [ "CommPorts< CommCallback >", "class_comm_ports.html", null ],
     [ "CompositeBehavior", null, [
       [ "circle_near_ball.CircleNearBall", "classcircle__near__ball_1_1_circle_near_ball.html", null ],
       [ "circle_on_center.CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", null ]
@@ -82,7 +78,7 @@ var hierarchy =
     ] ],
     [ "Gameplay::GameplayModule", "class_gameplay_1_1_gameplay_module.html", null ],
     [ "GameState", "class_game_state.html", null ],
-    [ "rtp::header_data", "classrtp_1_1header__data.html", null ],
+    [ "rtp::header_data", "structrtp_1_1header__data.html", null ],
     [ "mbed::I2CDriver", "classmbed_1_1_i2_c_driver.html", null ],
     [ "mbed::I2CMasterRtos", "classmbed_1_1_i2_c_master_rtos.html", null ],
     [ "mbed::I2CSlaveRtos", "classmbed_1_1_i2_c_slave_rtos.html", null ],
@@ -114,7 +110,6 @@ var hierarchy =
     [ "MailHelper< rtp::packet, RX_QUEUE_SIZE >", "class_mail_helper.html", null ],
     [ "MailHelper< rtp::packet, TX_QUEUE_SIZE >", "class_mail_helper.html", null ],
     [ "MCP23017", "class_m_c_p23017.html", null ],
-    [ "modem_t", "structmodem__t.html", null ],
     [ "Planning::MotionCommand", "class_planning_1_1_motion_command.html", [
       [ "Planning::DirectPathTargetCommand", "struct_planning_1_1_direct_path_target_command.html", null ],
       [ "Planning::EmptyCommand", "struct_planning_1_1_empty_command.html", null ],
@@ -151,8 +146,6 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "rtp::payload_data", "classrtp_1_1payload__data.html", null ],
-    [ "pck_ctrl_t", "structpck__ctrl__t.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
@@ -198,7 +191,6 @@ var hierarchy =
       [ "USBRadio", "class_u_s_b_radio.html", null ]
     ] ],
     [ "registerSetting_t", "structregister_setting__t.html", null ],
-    [ "rf_settings_t", "structrf__settings__t.html", null ],
     [ "gameplay.constants.Robot", "classgameplay_1_1constants_1_1_robot.html", null ],
     [ "RobotConfig", "class_robot_config.html", null ],
     [ "RobotFilter", "class_robot_filter.html", null ],
@@ -237,6 +229,9 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
     [ "SoftwareSPI", "class_software_s_p_i.html", null ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -313,9 +308,6 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

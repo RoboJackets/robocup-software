@@ -4,8 +4,6 @@ var searchData=
   ['passreceive',['PassReceive',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html',1,'gameplay::skills::pass_receive']]],
   ['path',['Path',['../class_planning_1_1_path.html',1,'Planning']]],
   ['pathtargetcommand',['PathTargetCommand',['../struct_planning_1_1_path_target_command.html',1,'Planning']]],
-  ['payload_5fdata',['payload_data',['../classrtp_1_1payload__data.html',1,'rtp']]],
-  ['pck_5fctrl_5ft',['pck_ctrl_t',['../structpck__ctrl__t.html',1,'']]],
   ['penalty',['Penalty',['../classgameplay_1_1tactics_1_1penalty_1_1_penalty.html',1,'gameplay::tactics::penalty']]],
   ['pid',['PID',['../struct_robot_config_1_1_p_i_d.html',1,'RobotConfig']]],
   ['pid',['Pid',['../class_pid.html',1,'']]],

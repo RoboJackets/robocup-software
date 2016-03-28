@@ -116,18 +116,21 @@ $(document).ready(function(){initNavTree('class_c_c1201.html','');});
 <div class="title">CC1201 Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The CC1201 class handles wirelessly sending and receiving data using the TI CC1201 radio transceiver.  
+ <a href="class_c_c1201.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9f922faf7e7b2242048c557f316f1c22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f922faf7e7b2242048c557f316f1c22"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>CC1201</b> (PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin, const <a class="el" href="structregister_setting__t.html">registerSetting_t</a> *regs, size_t len, int rssiOffset=DEFAULT_RSSI_OFFSET)</td></tr>
-<tr class="separator:a9f922faf7e7b2242048c557f316f1c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e0960a36a1b99e4d22d2fb48c39388f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e0960a36a1b99e4d22d2fb48c39388f"></a>
-int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>sendData</b> (uint8_t *, uint8_t)</td></tr>
-<tr class="separator:a1e0960a36a1b99e4d22d2fb48c39388f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeac8c1f298d648f5aa7cae00c6079e26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeac8c1f298d648f5aa7cae00c6079e26"></a>
-int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> (uint8_t *, uint8_t *)</td></tr>
-<tr class="separator:aeac8c1f298d648f5aa7cae00c6079e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f38097b12a266f020ccbbd2324f3db2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a9f38097b12a266f020ccbbd2324f3db2">CC1201</a> (PinName mosi, PinName miso, PinName sck, PinName nCs, PinName intPin, const <a class="el" href="structregister_setting__t.html">registerSetting_t</a> *regs, size_t len, int rssiOffset=DEFAULT_RSSI_OFFSET)</td></tr>
+<tr class="memdesc:a9f38097b12a266f020ccbbd2324f3db2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the CC1201 with the given SPI, chip select (inverted), and interrupt line pins.  <a href="#a9f38097b12a266f020ccbbd2324f3db2">More...</a><br/></td></tr>
+<tr class="separator:a9f38097b12a266f020ccbbd2324f3db2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ea010ffd0b9be2f176eeaf396450745"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a1ea010ffd0b9be2f176eeaf396450745">sendData</a> (const uint8_t *buf, uint8_t size)</td></tr>
+<tr class="memdesc:a1ea010ffd0b9be2f176eeaf396450745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmit data.  <a href="#a1ea010ffd0b9be2f176eeaf396450745">More...</a><br/></td></tr>
+<tr class="separator:a1ea010ffd0b9be2f176eeaf396450745"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7">getData</a> (std::vector&lt; uint8_t &gt; *buf)</td></tr>
+<tr class="memdesc:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from the radio's RX buffer.  <a href="#a6e42d30f3a52028101f724fd9d3ac3a7">More...</a><br/></td></tr>
+<tr class="separator:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5035f4001c6424cc5a283e75a3d8ce52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5035f4001c6424cc5a283e75a3d8ce52"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">reset</a> ()</td></tr>
 <tr class="memdesc:a5035f4001c6424cc5a283e75a3d8ce52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a soft reset for a communication link's hardware device. <br/></td></tr>
@@ -143,15 +146,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:af9e29663bc3437b4abd6a75da23b6c9e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9e29663bc3437b4abd6a75da23b6c9e"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>mode</b> ()</td></tr>
 <tr class="separator:af9e29663bc3437b4abd6a75da23b6c9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4c06c04a6147a569752e9fff8b0086e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4c06c04a6147a569752e9fff8b0086e"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>status</b> (uint8_t strobe=CC1201_STROBE_SNOP)</td></tr>
-<tr class="separator:ab4c06c04a6147a569752e9fff8b0086e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a121cbe57b0681371014e7af26c68cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a121cbe57b0681371014e7af26c68cf"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>strobe</b> (uint8_t cmd)</td></tr>
 <tr class="separator:a4a121cbe57b0681371014e7af26c68cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a121b93c498849f41b659e87638443808"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a121b93c498849f41b659e87638443808"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a121b93c498849f41b659e87638443808">readReg</a> (uint16_t addr)</td></tr>
-<tr class="memdesc:a121b93c498849f41b659e87638443808"><td class="mdescLeft">&#160;</td><td class="mdescRight">reads a standard register <br/></td></tr>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>readReg</b> (uint16_t addr)</td></tr>
 <tr class="separator:a121b93c498849f41b659e87638443808"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafc629e895ad9d36848a7c9f4652aaf2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aafc629e895ad9d36848a7c9f4652aaf2"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>readReg</b> (uint16_t addr, uint8_t *dataOut, uint8_t)</td></tr>
@@ -163,7 +162,8 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>writeReg</b> (uint
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>writeReg</b> (uint16_t addr, const uint8_t *data, uint8_t len)</td></tr>
 <tr class="separator:a7c11e8a7f81d15cd2168bf6dc9bdc977"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0df39468c128c4724a19a26f8e895c6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0df39468c128c4724a19a26f8e895c6"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>freq</b> ()</td></tr>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#aa0df39468c128c4724a19a26f8e895c6">freq</a> ()</td></tr>
+<tr class="memdesc:aa0df39468c128c4724a19a26f8e895c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the radio's frequency, in MHz. <br/></td></tr>
 <tr class="separator:aa0df39468c128c4724a19a26f8e895c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a5eb80344511d8acafe4b6a2e441e2e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a5eb80344511d8acafe4b6a2e441e2e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isLocked</b> ()</td></tr>
@@ -180,13 +180,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isDebugEnabled</b> ()
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink</a> ()</td></tr>
 <tr class="memdesc:ae4d9c67d870744e4f37315788597509a inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br/></td></tr>
 <tr class="separator:ae4d9c67d870744e4f37315788597509a inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1b22663b87923446c52c2d7c0d9355c inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1b22663b87923446c52c2d7c0d9355c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ac1b22663b87923446c52c2d7c0d9355c">CommLink</a> (PinName mosi, PinName miso, PinName sck, PinName cs=NC, PinName int_pin=NC)</td></tr>
-<tr class="memdesc:ac1b22663b87923446c52c2d7c0d9355c inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
-<tr class="separator:ac1b22663b87923446c52c2d7c0d9355c inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a5e501d6060fa6bb7e7a1392f70942d inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a1a5e501d6060fa6bb7e7a1392f70942d">~CommLink</a> ()</td></tr>
-<tr class="memdesc:a1a5e501d6060fa6bb7e7a1392f70942d inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual deconstructor Kills any threads and frees the allocated stack.  <a href="#a1a5e501d6060fa6bb7e7a1392f70942d">More...</a><br/></td></tr>
-<tr class="separator:a1a5e501d6060fa6bb7e7a1392f70942d inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89ff1ababdbc39002f69ac2d778c2115 inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89ff1ababdbc39002f69ac2d778c2115"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a89ff1ababdbc39002f69ac2d778c2115">CommLink</a> (PinName mosi, PinName miso, PinName sck, PinName nCs=NC, PinName int_pin=NC)</td></tr>
+<tr class="memdesc:a89ff1ababdbc39002f69ac2d778c2115 inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
+<tr class="separator:a89ff1ababdbc39002f69ac2d778c2115 inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#acff1290e199689fac1f2f995303ad6bf">~CommLink</a> ()</td></tr>
+<tr class="memdesc:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual deconstructor Kills any threads and frees the allocated stack.  <a href="#acff1290e199689fac1f2f995303ad6bf">More...</a><br/></td></tr>
+<tr class="separator:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa051240d07d3e320ca5ab45f9213082b"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">sendPacket</a> (<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *)</td></tr>
 <tr class="memdesc:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send &amp; Receive through the rtp structure. <br/></td></tr>
@@ -194,9 +194,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ab49ee62046d2a50f60b9a3957b42e3d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab49ee62046d2a50f60b9a3957b42e3d9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set_rssi_offset</b> (int8_t offset)</td></tr>
-<tr class="separator:ab49ee62046d2a50f60b9a3957b42e3d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64668f41e835da9ea1f9cd7f82635a6c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64668f41e835da9ea1f9cd7f82635a6c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>flush_tx</b> ()</td></tr>
 <tr class="separator:a64668f41e835da9ea1f9cd7f82635a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -239,12 +236,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>radio_deselect</b> ()
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">ready</a> ()</td></tr>
 <tr class="memdesc:a7dc25b226a3808312eb7d891816b86a5 inherit pro_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for giving derived classes a standaradized way to inform the base class that it is ready for communication and to begin the threads. <br/></td></tr>
 <tr class="separator:a7dc25b226a3808312eb7d891816b86a5 inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7fa9f45919a1f5dbb2d9a0cdce7012a inherit pro_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7fa9f45919a1f5dbb2d9a0cdce7012a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup_spi</b> (int baudrate=DEFAULT_BAUD)</td></tr>
-<tr class="separator:ab7fa9f45919a1f5dbb2d9a0cdce7012a inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a233dd75895e752afc727da70694d6beb inherit pro_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a233dd75895e752afc727da70694d6beb"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>twos_compliment</b> (uint8_t val)</td></tr>
-<tr class="separator:a233dd75895e752afc727da70694d6beb inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92f2e5254618734d1697ea170093c4f5 inherit pro_methods_class_comm_link"><td class="memTemplParams" colspan="2"><a class="anchor" id="a92f2e5254618734d1697ea170093c4f5"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a92f2e5254618734d1697ea170093c4f5 inherit pro_methods_class_comm_link"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>twos_compliment</b> (T val)</td></tr>
+<tr class="separator:a92f2e5254618734d1697ea170093c4f5 inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
@@ -263,32 +258,21 @@ Additional Inherited Members</h2></td></tr>
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>RX_QUEUE_SIZE</b> = 2</td></tr>
 <tr class="separator:ad323044ebb468dc0adb41969ac28ac30 inherit pub_static_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_comm_link"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_comm_link')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_comm_link.html">CommLink</a></td></tr>
-<tr class="memitem:acbd912499db1fef127b863bddd26cadd inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acbd912499db1fef127b863bddd26cadd"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_miso_pin</b></td></tr>
-<tr class="separator:acbd912499db1fef127b863bddd26cadd inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a0418db716c55ea6d017042f53ad14b inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a0418db716c55ea6d017042f53ad14b"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_mosi_pin</b></td></tr>
-<tr class="separator:a4a0418db716c55ea6d017042f53ad14b inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a343159d1cd77174a6861d1233bf45f9a inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a343159d1cd77174a6861d1233bf45f9a"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_sck_pin</b></td></tr>
-<tr class="separator:a343159d1cd77174a6861d1233bf45f9a inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed5aee240d7f42a40c263ee7e5d8edd2 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed5aee240d7f42a40c263ee7e5d8edd2"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_cs_pin</b></td></tr>
-<tr class="separator:aed5aee240d7f42a40c263ee7e5d8edd2 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2272dbe03e567d691bf43b43c933d23 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2272dbe03e567d691bf43b43c933d23"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_int_pin</b></td></tr>
-<tr class="separator:ac2272dbe03e567d691bf43b43c933d23 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b536bfdd4b6d02ef52787c4b1524c0b inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b536bfdd4b6d02ef52787c4b1524c0b"></a>
-SPI *&#160;</td><td class="memItemRight" valign="bottom"><b>_spi</b></td></tr>
-<tr class="separator:a0b536bfdd4b6d02ef52787c4b1524c0b inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45d2281e51d6f0503825d04417536e99 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45d2281e51d6f0503825d04417536e99"></a>
-DigitalOut *&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></td></tr>
-<tr class="separator:a45d2281e51d6f0503825d04417536e99 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a297aa1c8d49aecd2dbb1517e63ede57f inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a297aa1c8d49aecd2dbb1517e63ede57f"></a>
-InterruptIn *&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></td></tr>
-<tr class="separator:a297aa1c8d49aecd2dbb1517e63ede57f inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee34809de38254a9960bd0b54fad3426 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee34809de38254a9960bd0b54fad3426"></a>
+SPI&#160;</td><td class="memItemRight" valign="bottom"><b>_spi</b></td></tr>
+<tr class="separator:aee34809de38254a9960bd0b54fad3426 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4d488f96d335edf7cc215a8e487dbe9 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4d488f96d335edf7cc215a8e487dbe9"></a>
+DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_nCs</b></td></tr>
+<tr class="separator:ae4d488f96d335edf7cc215a8e487dbe9 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9eb02f9411deca5df3d2ddfb19daada1 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9eb02f9411deca5df3d2ddfb19daada1"></a>
+InterruptIn&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></td></tr>
+<tr class="separator:a9eb02f9411deca5df3d2ddfb19daada1 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The CC1201 class handles wirelessly sending and receiving data using the TI CC1201 radio transceiver. </p>
+<p>The radio is configured via a collection of registers. These control things such as transceiver frequency, packet error checking, packet length, among MANY other things.</p>
+<p>The best resource for learning more about the radio and it's SPI interface is the User Guide on TI's website: <a href="http://www.ti.com/lit/ug/swru346b/swru346b.pdf">http://www.ti.com/lit/ug/swru346b/swru346b.pdf</a> </p>
+</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for CC1201:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
@@ -306,7 +290,162 @@ InterruptIn *&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b><
 <map name="_c_c1201_coll__map" id="_c_c1201_coll__map">
 <area shape="rect" id="node2" href="class_comm_link.html" title="CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link..." alt="" coords="5,5,96,32"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a9f38097b12a266f020ccbbd2324f3db2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">CC1201::CC1201 </td>
+          <td>(</td>
+          <td class="paramtype">PinName&#160;</td>
+          <td class="paramname"><em>mosi</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PinName&#160;</td>
+          <td class="paramname"><em>miso</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PinName&#160;</td>
+          <td class="paramname"><em>sck</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PinName&#160;</td>
+          <td class="paramname"><em>nCs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PinName&#160;</td>
+          <td class="paramname"><em>intPin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structregister_setting__t.html">registerSetting_t</a> *&#160;</td>
+          <td class="paramname"><em>regs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>rssiOffset</em> = <code>DEFAULT_RSSI_OFFSET</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the CC1201 with the given SPI, chip select (inverted), and interrupt line pins. </p>
+<p>The radio is configured by providing an array of registerSetting_t's which specify (address, value pairs) for configuration registers. Typically the register settings files are exported from TI's SmartRF Studio program.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">regs</td><td>An array of registereSetting_t values </td></tr>
+    <tr><td class="paramname">len</td><td>The length of the  array </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a6e42d30f3a52028101f724fd9d3ac3a7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t CC1201::getData </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; uint8_t &gt; *&#160;</td>
+          <td class="paramname"><em>buf</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read data from the radio's RX buffer. </p>
+<p>This should be called after receiving an interrupt via the radio's interrupt pin.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>A pointer to a buffer to write the data into. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A status value indicating success/error. See CommLink for info. </dd></dl>
+
+<p>Implements <a class="el" href="class_comm_link.html#a9a9d3575f72afa2c61d215aa6708993e">CommLink</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a1ea010ffd0b9be2f176eeaf396450745"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t CC1201::sendData </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Transmit data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>A buffer containing the data to send </td></tr>
+    <tr><td class="paramname">size</td><td>The length, in bytes, of </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A status value indicating success/error. See CommLink for info. </dd></dl>
+
+<p>Implements <a class="el" href="class_comm_link.html">CommLink</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a758e241be6292a2e28837fa11f20754d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -354,7 +493,7 @@ InterruptIn *&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b><
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_c_c1201.html">CC1201</a></li>
-    <li class="footer">Generated on Sun Mar 20 2016 03:46:27 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 28 2016 00:57:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

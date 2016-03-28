@@ -1,4 +1,3 @@
 <map id="CommLink" name="CommLink">
-<area shape="rect" id="node2" href="$class_c_c1101.html" title="CC1101 Sub&#45;1GHz Transceiver class. " alt="" coords="5,80,77,107"/>
-<area shape="rect" id="node3" href="$class_c_c1201.html" title="CC1201" alt="" coords="101,80,173,107"/>
+<area shape="rect" id="node2" href="$class_c_c1201.html" title="The CC1201 class handles wirelessly sending and receiving data using the TI CC1201 radio transceiver..." alt="" coords="15,80,87,107"/>
 </map>

@@ -1,25 +1,13 @@
 var class_comm_port =
 [
-    [ "CommPort", "class_comm_port.html#a773362b47a42aeae7a4e95be93ad2acc", null ],
-    [ "close", "class_comm_port.html#a92735ebf18b07cddfbcf9dd680124eaf", null ],
-    [ "hasRxCallback", "class_comm_port.html#ac0e41adf6f88d624eade8e4043642d63", null ],
-    [ "hasTxCallback", "class_comm_port.html#a47dd521b9d1db5a8092189c955da191b", null ],
-    [ "incRxCount", "class_comm_port.html#a9a9ea6649e9fab0916d51ec2ce133537", null ],
-    [ "incTxCount", "class_comm_port.html#a55eaa7c737b034d4dae8809d5f68ae2b", null ],
-    [ "isOpen", "class_comm_port.html#a77123f512a8336e093b4ec3a2b11bbdf", null ],
-    [ "isReady", "class_comm_port.html#a683f2fb14f665f26ea017d8c06581e93", null ],
-    [ "open", "class_comm_port.html#a14f542f6333bc93735b7a5856dffc60b", null ],
-    [ "operator<", "class_comm_port.html#aa1a266e085b58c5804e4a6987463b2ce", null ],
-    [ "operator==", "class_comm_port.html#a8781164720b9134bb47058ba36e42500", null ],
-    [ "portNbr", "class_comm_port.html#acb2a07fabc27cd97b3f3f0a7c82d44ec", null ],
-    [ "portNbr", "class_comm_port.html#ad3d87dedf0c50c13b3a79dd5c8fe4b83", null ],
-    [ "printPort", "class_comm_port.html#a403a8dd108510e098f79ecd26924b48c", null ],
+    [ "CommPort", "class_comm_port.html#acf01a6f106a3c566fe68f90806fc5a73", null ],
     [ "resetPacketCount", "class_comm_port.html#ab67b70f5807ab61b956883834f30d7c7", null ],
     [ "rxCallback", "class_comm_port.html#aaa9f1d2410d56d256a4413c6f5fb40a4", null ],
-    [ "rxCount", "class_comm_port.html#aabb10f614bd635aa642c4815c57b7d4f", null ],
+    [ "rxCallback", "class_comm_port.html#a2b2642696465d802730d685b547b247c", null ],
     [ "setRxCallback", "class_comm_port.html#aa6d2bdbb58a56f563e90e41b97e61648", null ],
     [ "setTxCallback", "class_comm_port.html#a789c28b46090deb50a5f8b5dca593459", null ],
     [ "txCallback", "class_comm_port.html#adc0fa0f39e0907e1f4a17e64267cc247", null ],
-    [ "txCount", "class_comm_port.html#a766ae4f6abe1b4f75c31f1628156835e", null ],
-    [ "valid", "class_comm_port.html#a4423d867e3d819ac3d12e9322ff12f61", null ]
+    [ "txCallback", "class_comm_port.html#a969f1cdd504403a79fa361c69e0a8952", null ],
+    [ "rxCount", "class_comm_port.html#aa3c92b81bf585a0bb88a0c3b90879d12", null ],
+    [ "txCount", "class_comm_port.html#a0c7c1374d1e44aa5dba52907d5493d6f", null ]
 ];

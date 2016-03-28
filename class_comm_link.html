@@ -128,13 +128,13 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink</a> ()</td></tr>
 <tr class="memdesc:ae4d9c67d870744e4f37315788597509a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br/></td></tr>
 <tr class="separator:ae4d9c67d870744e4f37315788597509a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1b22663b87923446c52c2d7c0d9355c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1b22663b87923446c52c2d7c0d9355c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ac1b22663b87923446c52c2d7c0d9355c">CommLink</a> (PinName mosi, PinName miso, PinName sck, PinName cs=NC, PinName int_pin=NC)</td></tr>
-<tr class="memdesc:ac1b22663b87923446c52c2d7c0d9355c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
-<tr class="separator:ac1b22663b87923446c52c2d7c0d9355c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a5e501d6060fa6bb7e7a1392f70942d"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a1a5e501d6060fa6bb7e7a1392f70942d">~CommLink</a> ()</td></tr>
-<tr class="memdesc:a1a5e501d6060fa6bb7e7a1392f70942d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual deconstructor Kills any threads and frees the allocated stack.  <a href="#a1a5e501d6060fa6bb7e7a1392f70942d">More...</a><br/></td></tr>
-<tr class="separator:a1a5e501d6060fa6bb7e7a1392f70942d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89ff1ababdbc39002f69ac2d778c2115"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89ff1ababdbc39002f69ac2d778c2115"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a89ff1ababdbc39002f69ac2d778c2115">CommLink</a> (PinName mosi, PinName miso, PinName sck, PinName nCs=NC, PinName int_pin=NC)</td></tr>
+<tr class="memdesc:a89ff1ababdbc39002f69ac2d778c2115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
+<tr class="separator:a89ff1ababdbc39002f69ac2d778c2115"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acff1290e199689fac1f2f995303ad6bf"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#acff1290e199689fac1f2f995303ad6bf">~CommLink</a> ()</td></tr>
+<tr class="memdesc:acff1290e199689fac1f2f995303ad6bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual deconstructor Kills any threads and frees the allocated stack.  <a href="#acff1290e199689fac1f2f995303ad6bf">More...</a><br/></td></tr>
+<tr class="separator:acff1290e199689fac1f2f995303ad6bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b3157ab0bbfd8fc2103f4a3c1f37e8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b3157ab0bbfd8fc2103f4a3c1f37e8b"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a9b3157ab0bbfd8fc2103f4a3c1f37e8b">reset</a> ()=0</td></tr>
 <tr class="memdesc:a9b3157ab0bbfd8fc2103f4a3c1f37e8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a soft reset for a communication link's hardware device. <br/></td></tr>
@@ -160,12 +160,12 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>RX_QUE
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a516aa7823d6c98683088e113afe8a16e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a516aa7823d6c98683088e113afe8a16e"></a>
-virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>sendData</b> (uint8_t *, uint8_t)=0</td></tr>
-<tr class="separator:a516aa7823d6c98683088e113afe8a16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a902ecdba1f75eff8691af245807a1e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a902ecdba1f75eff8691af245807a1e"></a>
-virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>getData</b> (uint8_t *, uint8_t *)=0</td></tr>
-<tr class="separator:a8a902ecdba1f75eff8691af245807a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a114ee23c970d2cf498879549a86867a7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a114ee23c970d2cf498879549a86867a7"></a>
+virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>sendData</b> (const uint8_t *buf, uint8_t len)=0</td></tr>
+<tr class="separator:a114ee23c970d2cf498879549a86867a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a9d3575f72afa2c61d215aa6708993e"><td class="memItemLeft" align="right" valign="top">virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a9a9d3575f72afa2c61d215aa6708993e">getData</a> (std::vector&lt; uint8_t &gt; *buffer)=0</td></tr>
+<tr class="memdesc:a9a9d3575f72afa2c61d215aa6708993e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from the radio's RX buffer.  <a href="#a9a9d3575f72afa2c61d215aa6708993e">More...</a><br/></td></tr>
+<tr class="separator:a9a9d3575f72afa2c61d215aa6708993e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a288c3410e4911738eb088e23817f9356"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a288c3410e4911738eb088e23817f9356"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a288c3410e4911738eb088e23817f9356">ISR</a> ()</td></tr>
 <tr class="memdesc:a288c3410e4911738eb088e23817f9356"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD. <br/></td></tr>
@@ -180,39 +180,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>radio_deselect</b> ()
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">ready</a> ()</td></tr>
 <tr class="memdesc:a7dc25b226a3808312eb7d891816b86a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for giving derived classes a standaradized way to inform the base class that it is ready for communication and to begin the threads. <br/></td></tr>
 <tr class="separator:a7dc25b226a3808312eb7d891816b86a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7fa9f45919a1f5dbb2d9a0cdce7012a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7fa9f45919a1f5dbb2d9a0cdce7012a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup_spi</b> (int baudrate=DEFAULT_BAUD)</td></tr>
-<tr class="separator:ab7fa9f45919a1f5dbb2d9a0cdce7012a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a233dd75895e752afc727da70694d6beb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a233dd75895e752afc727da70694d6beb"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>twos_compliment</b> (uint8_t val)</td></tr>
-<tr class="separator:a233dd75895e752afc727da70694d6beb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92f2e5254618734d1697ea170093c4f5"><td class="memTemplParams" colspan="2"><a class="anchor" id="a92f2e5254618734d1697ea170093c4f5"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a92f2e5254618734d1697ea170093c4f5"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>twos_compliment</b> (T val)</td></tr>
+<tr class="separator:a92f2e5254618734d1697ea170093c4f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:acbd912499db1fef127b863bddd26cadd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acbd912499db1fef127b863bddd26cadd"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_miso_pin</b></td></tr>
-<tr class="separator:acbd912499db1fef127b863bddd26cadd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a0418db716c55ea6d017042f53ad14b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a0418db716c55ea6d017042f53ad14b"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_mosi_pin</b></td></tr>
-<tr class="separator:a4a0418db716c55ea6d017042f53ad14b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a343159d1cd77174a6861d1233bf45f9a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a343159d1cd77174a6861d1233bf45f9a"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_sck_pin</b></td></tr>
-<tr class="separator:a343159d1cd77174a6861d1233bf45f9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed5aee240d7f42a40c263ee7e5d8edd2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed5aee240d7f42a40c263ee7e5d8edd2"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_cs_pin</b></td></tr>
-<tr class="separator:aed5aee240d7f42a40c263ee7e5d8edd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2272dbe03e567d691bf43b43c933d23"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2272dbe03e567d691bf43b43c933d23"></a>
-PinName&#160;</td><td class="memItemRight" valign="bottom"><b>_int_pin</b></td></tr>
-<tr class="separator:ac2272dbe03e567d691bf43b43c933d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b536bfdd4b6d02ef52787c4b1524c0b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b536bfdd4b6d02ef52787c4b1524c0b"></a>
-SPI *&#160;</td><td class="memItemRight" valign="bottom"><b>_spi</b></td></tr>
-<tr class="separator:a0b536bfdd4b6d02ef52787c4b1524c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45d2281e51d6f0503825d04417536e99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45d2281e51d6f0503825d04417536e99"></a>
-DigitalOut *&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></td></tr>
-<tr class="separator:a45d2281e51d6f0503825d04417536e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a297aa1c8d49aecd2dbb1517e63ede57f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a297aa1c8d49aecd2dbb1517e63ede57f"></a>
-InterruptIn *&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></td></tr>
-<tr class="separator:a297aa1c8d49aecd2dbb1517e63ede57f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee34809de38254a9960bd0b54fad3426"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee34809de38254a9960bd0b54fad3426"></a>
+SPI&#160;</td><td class="memItemRight" valign="bottom"><b>_spi</b></td></tr>
+<tr class="separator:aee34809de38254a9960bd0b54fad3426"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4d488f96d335edf7cc215a8e487dbe9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4d488f96d335edf7cc215a8e487dbe9"></a>
+DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_nCs</b></td></tr>
+<tr class="separator:ae4d488f96d335edf7cc215a8e487dbe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9eb02f9411deca5df3d2ddfb19daada1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9eb02f9411deca5df3d2ddfb19daada1"></a>
+InterruptIn&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></td></tr>
+<tr class="separator:a9eb02f9411deca5df3d2ddfb19daada1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
@@ -229,10 +212,10 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>DEFAULT_B
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_comm_link__inherit__graph.png" border="0" usemap="#_comm_link_inherit__map" alt="Inheritance graph"/></div>
 <map name="_comm_link_inherit__map" id="_comm_link_inherit__map">
-<area shape="rect" id="node2" href="class_c_c1101.html" title="CC1101 Sub&#45;1GHz Transceiver class. " alt="" coords="5,80,77,107"/><area shape="rect" id="node3" href="class_c_c1201.html" title="CC1201" alt="" coords="101,80,173,107"/></map>
+<area shape="rect" id="node2" href="class_c_c1201.html" title="The CC1201 class handles wirelessly sending and receiving data using the TI CC1201 radio transceiver..." alt="" coords="15,80,87,107"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a1a5e501d6060fa6bb7e7a1392f70942d"></a>
+<a class="anchor" id="acff1290e199689fac1f2f995303ad6bf"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -240,7 +223,7 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>DEFAULT_B
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CommLink::~CommLink </td>
+          <td class="memname">virtual CommLink::~CommLink </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -248,12 +231,49 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>DEFAULT_B
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Virtual deconstructor Kills any threads and frees the allocated stack. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a9a9d3575f72afa2c61d215aa6708993e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int32_t CommLink::getData </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; uint8_t &gt; *&#160;</td>
+          <td class="paramname"><em>buffer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read data from the radio's RX buffer. </p>
+<p>Copies the contents of the RX buffer into the given  parameter.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>The buffer to write data into</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An error/success code. See the comm error enum above. </dd></dl>
+
+<p>Implemented in <a class="el" href="class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7">CC1201</a>.</p>
 
 </div>
 </div>
@@ -267,7 +287,7 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>DEFAULT_B
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_link.html">CommLink</a></li>
-    <li class="footer">Generated on Sun Mar 20 2016 03:46:27 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 28 2016 00:57:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -18,7 +18,7 @@ var searchData=
   ['ioexpanderdigitalinout',['IOExpanderDigitalInOut',['../class_i_o_expander_digital_in_out.html',1,'IOExpanderDigitalInOut'],['../class_i_o_expander_digital_in_out.html#aec04d19a69b76e1d086724ae69d276c6',1,'IOExpanderDigitalInOut::IOExpanderDigitalInOut()']]],
   ['is_5fcontinuous',['is_continuous',['../classgameplay_1_1behavior_1_1_behavior.html#a57d1b66fe856ced64e0f085d054ab105',1,'gameplay::behavior::Behavior']]],
   ['is_5fiterative',['is_iterative',['../structcommand__t.html#a816cc17fd5afbb6e347a1e45ff898fa7',1,'command_t']]],
-  ['isconnected',['isConnected',['../class_c_c1101.html#a10daa3c1ed804f833f1561a50ca25bb7',1,'CC1101::isConnected()'],['../class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213',1,'CC1201::isConnected()'],['../class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f',1,'CommLink::isConnected()']]],
+  ['isconnected',['isConnected',['../class_c_c1201.html#a6e38428d0ef057b215bb89c5b327a213',1,'CC1201::isConnected()'],['../class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f',1,'CommLink::isConnected()']]],
   ['isr',['ISR',['../class_comm_link.html#a288c3410e4911738eb088e23817f9356',1,'CommLink']]],
   ['issystemstoprequested',['IsSystemStopRequested',['../class_console.html#a9dff64f8179cd12a04a8352e436f062d',1,'Console']]]
 ];

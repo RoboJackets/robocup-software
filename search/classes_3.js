@@ -2,7 +2,6 @@ var searchData=
 [
   ['capture',['Capture',['../classgameplay_1_1skills_1_1capture_1_1_capture.html',1,'gameplay::skills::capture']]],
   ['category',['Category',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html',1,'gameplay::play_registry::PlayRegistry']]],
-  ['cc1101',['CC1101',['../class_c_c1101.html',1,'']]],
   ['cc1201',['CC1201',['../class_c_c1201.html',1,'']]],
   ['channel',['Channel',['../structmbed_1_1_i2_c_driver_1_1_channel.html',1,'mbed::I2CDriver']]],
   ['chipper',['Chipper',['../struct_robot_config_1_1_chipper.html',1,'RobotConfig']]],
@@ -14,9 +13,6 @@ var searchData=
   ['commlink',['CommLink',['../class_comm_link.html',1,'']]],
   ['commmodule',['CommModule',['../class_comm_module.html',1,'']]],
   ['commport',['CommPort',['../class_comm_port.html',1,'']]],
-  ['commport_3c_20commcallback_20_3e',['CommPort&lt; CommCallback &gt;',['../class_comm_port.html',1,'']]],
-  ['commports',['CommPorts',['../class_comm_ports.html',1,'']]],
-  ['commports_3c_20commcallback_20_3e',['CommPorts&lt; CommCallback &gt;',['../class_comm_ports.html',1,'']]],
   ['compositebehavior',['CompositeBehavior',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html',1,'gameplay::composite_behavior']]],
   ['compositepath',['CompositePath',['../class_planning_1_1_composite_path.html',1,'Planning']]],
   ['compositeshape',['CompositeShape',['../class_geometry2d_1_1_composite_shape.html',1,'Geometry2d']]],
