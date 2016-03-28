@@ -17,6 +17,7 @@
 #include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "CC1201.cpp"
+#include "BallSense.hpp"
 
 using namespace std;
 
@@ -90,8 +91,9 @@ int main() {
     // thread.
     setISRPriorities();
 
-    // TODO: periodically update ball sensor
+    // Initialize and start ball sensor
     BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
+    ballSense.start(100);
 
     // Force off since the neopixel's hardware is stateless from previous
     // settings
