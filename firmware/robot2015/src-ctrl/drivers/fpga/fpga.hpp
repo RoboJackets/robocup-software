@@ -43,15 +43,16 @@ public:
     void fpga_deselect();
 
 private:
-    FPGA(std::shared_ptr<SharedSPI> sharedSPI) : spi(sharedSPI){};
+    FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
+         PinName progB, PinName done);
 
     static bool isInit;
     static FPGA* instance;
     Mutex mutex;
 
     std::shared_ptr<SharedSPI> spi;
-    DigitalOut* nCs;
-    DigitalInOut* progB;
-    DigitalIn* initB;
-    DigitalIn* done;
+    DigitalOut nCs;
+    DigitalIn initB;
+    DigitalInOut progB;
+    DigitalIn done;
 };

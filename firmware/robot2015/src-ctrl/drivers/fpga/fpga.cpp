@@ -22,14 +22,19 @@ enum {
 };
 }
 
+FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
+           PinName progB, PinName done)
+    : spi(sharedSPI),
+      nCs(nCs),
+      initB(initB),
+      progB(progB, PIN_OUTPUT, OpenDrain, 1),
+      done(done) {
+    this->nCs = 1;  // start out de-asserted
+}
+
 FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
-    instance = new FPGA(sharedSPI);
-    instance->progB =
-        new DigitalInOut(RJ_FPGA_PROG_B, PIN_OUTPUT, OpenDrain, 1);
-    instance->initB = new DigitalIn(RJ_FPGA_INIT_B);
-    instance->done = new DigitalIn(RJ_FPGA_DONE);
-    instance->nCs = new DigitalOut(RJ_FPGA_nCS);
-    *instance->nCs = 1;  // start out de-asserted
+    instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B, RJ_FPGA_PROG_B,
+                        RJ_FPGA_DONE);
 
     return instance;
 }
@@ -47,9 +52,9 @@ bool FPGA::configure(const std::string& filepath) {
     fclose(fp);
 
     // toggle PROG_B to clear out anything prior
-    *progB = !(*progB);
+    progB = 0;
     Thread::wait(1);
-    *progB = !(*progB);
+    progB = 1;
     Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
@@ -58,7 +63,7 @@ bool FPGA::configure(const std::string& filepath) {
         Thread::wait(10);
 
         // We're ready to start the configuration process when initB goes high
-        if (*initB == true) {
+        if (initB == true) {
             fpgaReady = true;
             break;
         }
@@ -81,7 +86,7 @@ bool FPGA::configure(const std::string& filepath) {
         bool configureDone = false;
         for (int i = 0; i < 1000; i++) {
             Thread::wait(1);
-            if (*done == true) {
+            if (done == true) {
                 configureDone = true;
                 break;
             }
@@ -92,7 +97,7 @@ bool FPGA::configure(const std::string& filepath) {
             return false;
         } else {
             // everything worked are we're good to go!
-            LOG(INF1, "DONE pin state:\t%s", *done ? "HIGH" : "LOW");
+            LOG(INF1, "DONE pin state:\t%s", done ? "HIGH" : "LOW");
 
             isInit = true;
 
@@ -133,7 +138,7 @@ bool FPGA::send_config(const std::string& filepath) {
 
             spi.write(buf[0]);
 
-        } while (*initB == true || *done == false);
+        } while (initB || !done);
 
         mutex.unlock();
 
@@ -315,10 +320,10 @@ bool FPGA::isReady() { return isInit; }
 
 void FPGA::fpga_select() {
     spi->lock();
-    *nCs = 0;
+    nCs = 0;
 }
 
 void FPGA::fpga_deselect() {
-    *nCs = 1;
+    nCs = 1;
     spi->lock();
 }
