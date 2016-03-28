@@ -3,9 +3,9 @@
 
 using namespace std;
 
-KickerBoard::KickerBoard(PinName mosi, PinName miso, PinName sck,
-                         PinName nReset, const string& progFilename)
-    : AVR910(SPI(mosi, miso, sck), nReset), _filename(progFilename) {}
+KickerBoard::KickerBoard(shared_ptr<SharedSPI> sharedSPI, PinName nReset,
+                         const string& progFilename)
+    : AVR910(sharedSPI, nReset), _filename(progFilename) {}
 
 bool KickerBoard::verify_param(const char* name, char expected,
                                int (AVR910::*paramMethod)(), char mask,
