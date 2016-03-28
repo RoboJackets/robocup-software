@@ -29,19 +29,18 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
 class CommLink {
 public:
     /// Default Constructor
-    CommLink(){};
+    CommLink();
 
     /// Constructor
-    CommLink(PinName mosi, PinName miso, PinName sck, PinName cs = NC,
+    CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs = NC,
              PinName int_pin = NC);
 
     /// Virtual deconstructor
     /// Kills any threads and frees the allocated stack.
-    virtual ~CommLink();
+    virtual ~CommLink() {}
 
     // Class constants for data queues
     static const size_t RX_QUEUE_SIZE = 2;
-    // static const size_t BUFFER_SIZE = 64;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
@@ -58,9 +57,18 @@ public:
 
 protected:
     // write data out to the radio device using SPI
-    virtual int32_t sendData(uint8_t*, uint8_t) = 0;
-    // read data in from the radio device using SPI
-    virtual int32_t getData(uint8_t*, uint8_t*) = 0;
+    virtual int32_t sendData(const uint8_t* buf, uint8_t len) = 0;
+
+    /**
+     * @brief Read data from the radio's RX buffer
+     *
+     * Copies the contents of the RX buffer into the given @buf parameter.
+     *
+     * @param buf The buffer to write data into
+     *
+     * @return An error/success code.  See the comm error enum above.
+     */
+    virtual int32_t getData(std::vector<uint8_t>* buffer) = 0;
 
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
@@ -73,37 +81,26 @@ protected:
     //
     // Always call CommLink::ready() after derived class is ready
     void ready();
-    void setup_spi(int baudrate = DEFAULT_BAUD);
-    uint8_t twos_compliment(uint8_t val);
 
-    // SPI bus pins
-    PinName _miso_pin;
-    PinName _mosi_pin;
-    PinName _sck_pin;
-    PinName _cs_pin;   // CS pin
-    PinName _int_pin;  // Interrupt pin
+    template <typename T>
+    T twos_compliment(T val) {
+        return ~val + 1;
+    }
 
-    SPI* _spi;             // SPI pointer
-    DigitalOut* _cs;       // Chip Select pointer
-    InterruptIn* _int_in;  // Interrupt pin
+    SPI _spi;
+    DigitalOut _nCs;
+    InterruptIn _int_in;
 
     static const int DEFAULT_BAUD = 5000000;
 
 private:
-    Thread* _rxThread = nullptr;
+    Thread _rxThread;
 
-    // The working threads for handling RX data queue operations
+    // The working thread for handling RX data queue operations
     void rxThread();
 
     static void rxThreadHelper(const void* linkInst) {
         CommLink* link = (CommLink*)linkInst;
         link->rxThread();
     }
-
-    // Methods for initializing a transceiver's pins for communication
-    void setup();
-    void setup_pins(PinName mosi = NC, PinName miso = NC, PinName sck = NC,
-                    PinName cs = NC, PinName int_pin = NC);
-    void setup_cs();
-    void setup_interrupt();
 };

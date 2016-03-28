@@ -246,10 +246,8 @@
 #define CC1201_RXFIFO_PRE_BUF           0x2FDA
   
 /* DATA FIFO Access */
-#define CC1201_SINGLE_TXFIFO            0x003F     /*  TXFIFO  - Single accecss to Transmit FIFO */
-#define CC1201_BURST_TXFIFO             0x007F     /*  TXFIFO  - Burst accecss to Transmit FIFO  */
-#define CC1201_SINGLE_RXFIFO            0x00BF     /*  RXFIFO  - Single accecss to Receive FIFO  */
-#define CC1201_BURST_RXFIFO             0x00FF     /*  RXFIFO  - Busrrst ccecss to Receive FIFO  */
+#define CC1201_TXFIFO            0x003F     /*  TXFIFO  - Single accecss to Transmit FIFO */
+#define CC1201_RXFIFO            0x00BF     /*  RXFIFO  - Single accecss to Receive FIFO  */
   
 /* AES Workspace */
 /* AES Key */

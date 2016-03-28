@@ -16,13 +16,19 @@ Console::Console() : pc(USBTX, USBRX) {
     Baudrate(57600);
 
     // attach interrupt handlers
-    pc.attach(this, &Console::RXCallback, Serial::RxIrq);
+    attachInputHandler();
 
     // reserve space for 5 lines in rx buffer
     _rxBuffer.reserve(400);
 }
 
 Console::~Console() {}
+
+void Console::attachInputHandler() {
+    pc.attach(this, &Console::RXCallback, Serial::RxIrq);
+}
+
+void Console::detachInputHandler() { pc.attach(nullptr, Serial::RxIrq); }
 
 shared_ptr<Console>& Console::Instance() {
     if (!instance) instance.reset(new Console);

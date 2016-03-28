@@ -4,110 +4,75 @@
 #include <vector>
 #include <string>
 
-#if __BIG_ENDIAN
-#define RTP_HEADER(port, subclass, ack, sfs)                                 \
-    (((port & 0x0F) << 4) | ((subclass & 0x03) << 2) | ((ack & 0x01) << 1) | \
-     (sfs & 0x01))
-#else
-#define RTP_HEADER(port, subclass, ack, sfs)                                \
-    (((sfs & 0x01) << 7) | ((ack & 0x01) << 6) | ((subclass & 0x03) << 4) | \
-     (port & 0x0F))
-#endif
-
 #define BASE_STATION_ADDR (1)
 #define LOOPBACK_ADDR (127)
 
 namespace rtp {
 
-///
+/// Max packet size.  This is limited by the CC1201 buffer size.
 static const unsigned int MAX_DATA_SZ = 120;
 
 /**
- * @brief      { port enumerations for different communication protocols }
+ * @brief Port enumerations for different communication protocols.
  */
 enum port {
-    SINK = 0x00,
-    LINK = 0x01,
-    CONTROL = 0x02,
-    SETPOINT = 0x03,
-    GSTROBE = 0x04,
-    DISCOVER = 0x05,
-    LOGGER = 0x06,
-    TCP = 0x07,
-    LEGACY = 0x0E
+    SINK = 0,
+    LINK,
+    CONTROL,
+    // SETPOINT,
+    // GSTROBE,
+    DISCOVER,
+    LOGGER,
+    TCP,
+    LEGACY,
+    PING
 };
 
-namespace {
-// type of data field used in all packet classes
-// - must be 8 bits, (typedef used for eaiser compiler
-// type error debugging)
-typedef uint8_t data_t;
-}
+struct header_data {
+    enum Type { Control, Tuning, FirmwareUpdate, Misc };
 
-class header_data {
-public:
-    enum type { control, tuning, ota, misc };
+    header_data(uint8_t p = SINK) : address(0), port(p), type(Control){};
 
-    header_data() : t(control), address(0), port_fields(0){};
+    uint8_t address;
+    unsigned int port : 4;
+    Type type : 4;
 
+    /// "packed" size (in bytes) of header data
     size_t size() const { return 2; }
 
-    type t;
-    data_t address;
-
-    friend class payload_data;
-
-    // common header byte - union so it's easier to put into vector
-    data_t port_fields;
-    struct {
-#if __BIG_ENDIAN
-        data_t sfs : 1, ack : 1, subclass : 2, port : 4;
-#else
-        data_t port : 4, subclass : 2, ack : 1, sfs : 1;
-#endif
-    } __attribute__((packed));
-};
-
-class payload_data {
-public:
-    payload_data(){};
-
-    std::vector<data_t> d;
-
-    size_t size() const { return d.size(); }
-
-    template <class T>
-    void fill(const std::vector<T>& v) {
-        d = v;
+    void pack(std::vector<uint8_t>* buf) const {
+        buf->push_back(address);
+        buf->push_back(port << 4 | type);
     }
-    void fill(const std::string& str) {
-        for (const char& c : str) d.push_back(c);
-        d.push_back('\0');
+
+    void unpack(const std::vector<uint8_t>& buf) {
+        address = buf[1];
+        port = buf[2] >> 4;
+        type = (Type)(buf[2] & 0x0F);
     }
 };
 
 /**
- * @brief      { Real-Time packet definition }
+ * @brief Real-Time packet definition
  */
 class packet {
 public:
     rtp::header_data header;
-    rtp::payload_data payload;
+    std::vector<uint8_t> payload;
 
     packet(){};
-    packet(const std::string& s) { payload.fill(s); }
+    packet(const std::string& s, uint8_t p = SINK) : header(p) {
+        for (char c : s) payload.push_back(c);
+        payload.push_back('\0');
+    }
 
     template <class T>
-    packet(const std::vector<T>& v) {
-        payload.fill(v);
+    packet(const std::vector<T>& v, uint8_t p = SINK)
+        : header(p) {
+        for (T val : v) payload.push_back(val);
     }
 
-    size_t size(bool includeHeader = true) {
-        if (includeHeader)
-            return payload.size() + header.size();
-        else
-            return payload.size();
-    }
+    size_t size() const { return payload.size() + header.size(); }
 
     int port() const { return static_cast<int>(header.port); }
     template <class T>
@@ -115,42 +80,32 @@ public:
         header.port = static_cast<unsigned int>(p);
     }
 
-    int subclass() { return header.subclass; }
-    template <class T>
-    void subclass(T c) {
-        header.subclass = static_cast<unsigned int>(c);
-    }
-
-    bool ack() { return header.ack; }
-    void ack(bool b) { header.ack = b; }
-
-    bool sfs() { return header.sfs; }
-    void sfs(bool b) { header.sfs = b; }
-
     int address() { return header.address; }
     void address(int a) { header.address = static_cast<unsigned int>(a); }
 
     template <class T>
     void recv(const std::vector<T>& v) {
-        payload.fill(v);
-        // sort out header
+        // note: header ignores the first byte since it's the size byte
+        header.unpack(v);
+
+        // Everything after the header is payload data
+        payload.clear();
+        for (size_t i = header.size() + 1; i < v.size(); i++) {
+            payload.push_back(v[i]);
+        }
     }
 
-    void pack(std::vector<data_t>* buffer, bool includeHeader = false) const {
+    void pack(std::vector<uint8_t>* buffer) const {
         // first byte is total size (excluding the size byte)
-        const uint8_t total_size =
-            payload.size() + (includeHeader ? header.size() : 0);
+        const uint8_t total_size = payload.size() + header.size();
         buffer->reserve(total_size + 1);
+
         buffer->push_back(total_size);
 
-        // header data
-        if (includeHeader) {
-            buffer->push_back(header.address);
-            buffer->push_back(header.port_fields);
-        }
+        header.pack(buffer);
 
         // payload
-        buffer->insert(buffer->end(), payload.d.begin(), payload.d.end());
+        buffer->insert(buffer->end(), payload.begin(), payload.end());
     }
 };
 }

@@ -118,3 +118,13 @@ unsigned int get_num_threads() {
 
     return num_threads;
 }
+
+uint32_t ThreadMaxStackUsed(const P_TCB tcb) {
+#ifndef __MBED_CMSIS_RTOS_CA9
+    uint32_t high_mark = 0;
+    while (tcb->stack[high_mark] == 0xE25A2EA5) high_mark++;
+    return tcb->priv_stack - (high_mark * 4);
+#else
+    return 0;
+#endif
+}
