@@ -90,6 +90,9 @@ int main() {
     // thread.
     setISRPriorities();
 
+    // TODO: periodically update ball sensor
+    BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
+
     // Force off since the neopixel's hardware is stateless from previous
     // settings
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
@@ -182,7 +185,9 @@ int main() {
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
 
         // Pack errors into bitmask
-        uint16_t errorBitmask = global_radio->isConnected() << RJ_ERR_LED_RADIO;
+        uint16_t errorBitmask = global_radio->isConnected()
+                                    << RJ_ERR_LED_RADIO |
+                                ballSense.have_ball() << RJ_ERR_LED_BSENSE;
 
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
