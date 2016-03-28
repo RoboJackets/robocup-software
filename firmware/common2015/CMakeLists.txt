@@ -21,7 +21,7 @@ set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
 # subdirectories
-set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c software-spi)
+set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c shared-spi software-spi)
 set(MODULES             CommModule CommLink Console)
 set(UTILS               assert logger numparser rtos-mgmt)
 
