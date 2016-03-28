@@ -196,7 +196,7 @@ int main() {
             make_pair(4, RJ_ERR_LED_DRIB)};
         for (auto& pair : motorErrLedMapping) {
             const motorErr_t& status = global_motors[pair.first].status;
-            errorBitmask |= (!status.encOK || !status.hallOK) << pair.second;
+            errorBitmask |= !status.hallOK << pair.second;
         }
 
         // Set error-indicating leds on the control board
