@@ -8,6 +8,7 @@
 #include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
+#include "SharedSPI.hpp"
 
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
@@ -32,7 +33,7 @@ public:
     CommLink();
 
     /// Constructor
-    CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs = NC,
+    CommLink(std::shared_ptr<SharedSPI> spiBus, PinName nCs = NC,
              PinName int_pin = NC);
 
     /// Virtual deconstructor
@@ -73,7 +74,11 @@ protected:
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
+
+    /// Activate the chip select pin and acquire a lock on the shared spi bus
     void radio_select();
+
+    /// Deactivate the chip select pin and release a lock on the shared spi bus
     void radio_deselect();
 
     /// Used for giving derived classes a standaradized way to inform the base
@@ -87,11 +92,9 @@ protected:
         return ~val + 1;
     }
 
-    SPI _spi;
+    std::shared_ptr<SharedSPI> _spi;
     DigitalOut _nCs;
     InterruptIn _int_in;
-
-    static const int DEFAULT_BAUD = 5000000;
 
 private:
     Thread _rxThread;

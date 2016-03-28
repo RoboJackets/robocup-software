@@ -8,16 +8,14 @@
 
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
-CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs,
+CommLink::CommLink(shared_ptr<SharedSPI> sharedSPI, PinName nCs,
                    PinName int_pin)
-    : _spi(mosi, miso, sck),
+    : _spi(sharedSPI),
       _nCs(nCs, 1),
       _int_in(int_pin),
       _rxThread(&CommLink::rxThreadHelper, this, osPriorityNormal,
                 DEFAULT_STACK_SIZE / 2) {
-    _spi.format(8, 0);
-    _spi.frequency(DEFAULT_BAUD);
-
+    ASSERT(_spi != nullptr);
     _int_in.mode(PullUp);
 }
 
@@ -70,6 +68,12 @@ void CommLink::sendPacket(rtp::packet* p) {
 
 void CommLink::ISR() { _rxThread.signal_set(COMM_LINK_SIGNAL_RX_TRIGGER); }
 
-void CommLink::radio_select() { _nCs = 0; }
+void CommLink::radio_select() {
+    _spi->lock();
+    _nCs = 0;
+}
 
-void CommLink::radio_deselect() { _nCs = 1; }
+void CommLink::radio_deselect() {
+    _nCs = 1;
+    _spi->unlock();
+}
