@@ -3,7 +3,6 @@
 #include <mbed.h>
 #include <rtos.h>
 
-
 /// Determines if the emitter to reciever beam is broken while accounting for
 ///  ambiant light.
 class BallSense {
