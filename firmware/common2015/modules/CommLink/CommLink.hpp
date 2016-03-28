@@ -27,7 +27,7 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  * CommLink Class used as the hal (hardware abstraction layer) module for
  * interfacing communication links to the higher-level firmware
  */
-class CommLink {
+class CommLink : public SharedSPIDevice<> {
 public:
     /// Default Constructor
     CommLink();
@@ -75,12 +75,6 @@ protected:
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
 
-    /// Activate the chip select pin and acquire a lock on the shared spi bus
-    void radio_select();
-
-    /// Deactivate the chip select pin and release a lock on the shared spi bus
-    void radio_deselect();
-
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads
     //
@@ -92,8 +86,6 @@ protected:
         return ~val + 1;
     }
 
-    std::shared_ptr<SharedSPI> _spi;
-    DigitalOut _nCs;
     InterruptIn _int_in;
 
 private:

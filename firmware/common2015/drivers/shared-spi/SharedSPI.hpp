@@ -18,12 +18,11 @@ public:
     SharedSPI(PinName mosi, PinName miso, PinName sck) : SPI(mosi, miso, sck) {}
 };
 
-
 /**
  * Classes that provide an interface to a device on the shared spi bus should
  * inherit from this class.
  */
-template<class DIGITAL_OUT = mbed::DigitalOut>
+template <class DIGITAL_OUT = mbed::DigitalOut>
 class SharedSPIDevice {
 public:
     SharedSPIDevice(std::shared_ptr<SharedSPI> spi, DIGITAL_OUT cs,
@@ -38,12 +37,12 @@ public:
         _cs = !_csAssertValue;
     }
 
-    void chip_select() {
+    void chipSelect() {
         _spi->lock();
         _cs = _csAssertValue;
     }
 
-    void chip_deselect() {
+    void chipDeselect() {
         _cs = _csAssertValue;
         _spi->unlock();
     }
