@@ -29,6 +29,7 @@ FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
     instance->initB = new DigitalIn(RJ_FPGA_INIT_B);
     instance->done = new DigitalIn(RJ_FPGA_DONE);
     instance->nCs = new DigitalOut(RJ_FPGA_nCS);
+    *instance->nCs = 1;  // start out de-asserted
 
     return instance;
 }
@@ -36,8 +37,6 @@ FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
 FPGA* FPGA::Instance() { return instance; }
 
 bool FPGA::configure(const std::string& filepath) {
-    int j = 0;
-
     // make sure the binary exists before doing anything
     FILE* fp = fopen(filepath.c_str(), "r");
     if (fp == nullptr) {
@@ -54,16 +53,19 @@ bool FPGA::configure(const std::string& filepath) {
     Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
+    bool fpgaReady = false;
     for (int i = 0; i < 100; i++) {
-        j++;
         Thread::wait(10);
 
         // We're ready to start the configuration process when initB goes high
-        if (*initB == true) break;
+        if (*initB == true) {
+            fpgaReady = true;
+            break;
+        }
     }
 
     // show INIT_B error if it never went low
-    if (!(j < 100)) {
+    if (fpgaReady) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
 
         return false;
@@ -74,28 +76,26 @@ bool FPGA::configure(const std::string& filepath) {
         LOG(FATAL, "FPGA bitstream write error");
 
         return false;
-    }
-
-    else {
+    } else {
         // Wait some extra time in case the done pin needs time to be asserted
-        j = 0;
-
-        for (; j < 1000; j++) {
+        bool configureDone = false;
+        for (int i = 0; i < 1000; i++) {
             Thread::wait(1);
-            if (*done == true) break;
+            if (*done == true) {
+                configureDone = true;
+                break;
+            }
         }
 
-        if (j == 1000) {
+        if (!configureDone) {
             LOG(FATAL, "DONE pin timed out\t(POST CONFIGURATION ERROR)");
             return false;
-        }
-        // everything worked are we're good to go!
-        else {
+        } else {
+            // everything worked are we're good to go!
             LOG(INF1, "DONE pin state:\t%s", *done ? "HIGH" : "LOW");
 
             isInit = true;
 
-            fpga_deselect();
             // spi->frequency(1000000); // TODO(justin): remove?
 
             return true;
