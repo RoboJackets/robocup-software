@@ -129,7 +129,7 @@ bool FPGA::send_config(const std::string& filepath) {
         LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(),
             filesize);
 
-        mutex.lock();
+        fpga_select();
 
         do {
             read_byte = fread(buf, 1, 1, fp);
@@ -140,7 +140,7 @@ bool FPGA::send_config(const std::string& filepath) {
 
         } while (initB || !done);
 
-        mutex.unlock();
+        fpga_deselect();
 
         fclose(fp);
 
@@ -157,14 +157,12 @@ bool FPGA::send_config(const std::string& filepath) {
 uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     uint8_t status;
 
-    mutex.lock();
     fpga_select();
     status = spi->write(CMD_READ_HALLS);
 
     for (size_t i = 0; i < size; i++) halls[i] = spi->write(0x00);
 
     fpga_deselect();
-    mutex.unlock();
 
     return status;
 }
@@ -172,7 +170,6 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
 uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     uint8_t status;
 
-    mutex.lock();
     fpga_select();
     status = spi->write(CMD_READ_ENC);
 
@@ -182,7 +179,6 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     }
 
     fpga_deselect();
-    mutex.unlock();
 
     return status;
 }
@@ -190,7 +186,6 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
 uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     uint8_t status;
 
-    mutex.lock();
     fpga_select();
     status = spi->write(CMD_READ_DUTY);
 
@@ -200,7 +195,6 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     }
 
     fpga_deselect();
-    mutex.unlock();
 
     return status;
 }
@@ -212,7 +206,6 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
     for (size_t i = 0; i < size; i++)
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
-    mutex.lock();
     fpga_select();
     status = spi->write(CMD_R_ENC_W_VEL);
 
@@ -222,7 +215,6 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
     }
 
     fpga_deselect();
-    mutex.unlock();
 
     return status;
 }
@@ -235,7 +227,6 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
     for (size_t i = 0; i < size_dut; i++)
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
-    mutex.lock();
     fpga_select();
     status = spi->write(CMD_R_ENC_W_VEL);
 
@@ -245,7 +236,6 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
     }
 
     fpga_deselect();
-    mutex.unlock();
 
     return status;
 }
@@ -253,7 +243,6 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
 bool FPGA::git_hash(std::vector<uint8_t>& v) {
     bool dirty_bit;
 
-    mutex.lock();
     fpga_select();
     spi->write(CMD_READ_HASH1);
 
@@ -267,7 +256,6 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     for (size_t i = 0; i < 11; i++) v.push_back(spi->write(0x00));
 
     fpga_deselect();
-    mutex.unlock();
 
     // store the dirty bit for returning
     dirty_bit = (v.back() & 0x01);
@@ -281,7 +269,6 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
 }
 
 void FPGA::gate_drivers(std::vector<uint16_t>& v) {
-    mutex.lock();
     fpga_select();
 
     spi->write(CMD_CHECK_DRV);
@@ -296,17 +283,14 @@ void FPGA::gate_drivers(std::vector<uint16_t>& v) {
     }
 
     fpga_deselect();
-    mutex.unlock();
 }
 
 uint8_t FPGA::motors_en(bool state) {
     uint8_t status;
 
-    mutex.lock();
     fpga_select();
     status = spi->write(CMD_EN_DIS_MTRS | (state << 7));
     fpga_deselect();
-    mutex.unlock();
 
     return status;
 }

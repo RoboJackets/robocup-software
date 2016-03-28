@@ -48,7 +48,6 @@ private:
 
     static bool isInit;
     static FPGA* instance;
-    Mutex mutex;
 
     std::shared_ptr<SharedSPI> spi;
     DigitalOut nCs;
