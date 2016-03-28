@@ -35,8 +35,7 @@
 
 #include "AVR910.hpp"
 
-AVR910::AVR910(PinName mosi, PinName miso, PinName sclk, PinName nReset)
-    : spi_(mosi, miso, sclk), nReset_(nReset) {
+AVR910::AVR910(SPI spi, PinName nReset) : spi_(spi), nReset_(nReset) {
     // Slow frequency as default to ensure no errors from
     // trying to run it too fast. Increase as appropriate.
     spi_.frequency(32000);

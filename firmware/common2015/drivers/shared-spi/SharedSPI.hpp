@@ -28,7 +28,6 @@ public:
     SharedSPIDevice(std::shared_ptr<SharedSPI> spi, DIGITAL_OUT cs,
                     bool csInverted = true)
         : _spi(spi), _cs(cs) {
-
         /// The value we set the chip select pin to in order to assert it (it's
         /// often inverted).
         _csAssertValue = csInverted ? 0 : 1;

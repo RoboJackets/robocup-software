@@ -5,7 +5,7 @@ using namespace std;
 
 KickerBoard::KickerBoard(PinName mosi, PinName miso, PinName sck,
                          PinName nReset, const string& progFilename)
-    : AVR910(mosi, miso, sck, nReset), _filename(progFilename) {}
+    : AVR910(SPI(mosi, miso, sck), nReset), _filename(progFilename) {}
 
 bool KickerBoard::verify_param(const char* name, char expected,
                                int (AVR910::*paramMethod)(), char mask,

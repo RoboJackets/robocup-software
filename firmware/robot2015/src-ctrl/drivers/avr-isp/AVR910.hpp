@@ -68,7 +68,7 @@ public:
      * Sends an enable programming command, allowing device registers to be
      * read and commands sent.
      */
-    AVR910(PinName mosi, PinName miso, PinName sclk, PinName nReset);
+    AVR910(SPI spi, PinName nReset);
 
     /**
      * Program the AVR microcontroller connected to the mbed.
