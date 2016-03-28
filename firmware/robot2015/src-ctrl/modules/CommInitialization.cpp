@@ -12,7 +12,6 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "task-globals.hpp"
 #include "io-expander.hpp"
 #include "fpga.hpp"
 
