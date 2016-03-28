@@ -1,9 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$class_battery_widget.html" title="Draws a battery given a battery level value from 0 to 1. " alt="" coords="144,5,256,32"/>
-<area shape="rect" id="node3" href="$class_field_view.html" title="class that performs drawing of log data onto the field " alt="" coords="161,56,239,83"/>
-<area shape="rect" id="node5" href="$class_referee_tab.html" title="RefereeTab" alt="" coords="155,107,245,133"/>
-<area shape="rect" id="node6" href="$class_robot_status_widget.html" title="Shows the status of a single robot. " alt="" coords="129,157,271,184"/>
-<area shape="rect" id="node7" href="$class_robot_widget.html" title="Presents an image of a robot with errors drawn in red. " alt="" coords="149,208,251,235"/>
-<area shape="rect" id="node8" href="$class_strip_chart.html" title="StripChart" alt="" coords="157,259,243,285"/>
-<area shape="rect" id="node4" href="$class_sim_field_view.html" title="SimFieldView" alt="" coords="320,56,424,83"/>
+<area shape="rect" id="node1" href="$class_battery_profile.html" title="Calculates a battery&#39;s charge level given its voltage using a model of its discharge curve..." alt="" coords="6,5,114,32"/>
 </map>

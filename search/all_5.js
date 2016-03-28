@@ -18,5 +18,6 @@ var searchData=
   ['exceptioniterator',['ExceptionIterator',['../class_exception_iterator.html',1,'']]],
   ['excluded_5frobots',['excluded_robots',['../class_window_evaluator.html#a6ed16a6a51ee35a49ae29759b4290d84',1,'WindowEvaluator']]],
   ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a4994ec94ffe187229f25d47eba85fe1a',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
+  ['exitprogramming',['exitProgramming',['../class_a_v_r910.html#a6390cd4b442aa6267d934357ebdb42b9',1,'AVR910']]],
   ['extend',['extend',['../class_planning_1_1_tree.html#ae18f323a55ea3b91251b697f9176f646',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#aae4e5be14b801ad75e26dbd78bb061d2',1,'Planning::FixedStepTree::extend()']]]
 ];

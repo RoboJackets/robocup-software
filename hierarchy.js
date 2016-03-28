@@ -6,7 +6,7 @@ var hierarchy =
     [ "Planning::AngleInstant", "struct_planning_1_1_angle_instant.html", null ],
     [ "Geometry2d::Arc", "class_geometry2d_1_1_arc.html", null ],
     [ "AutoName", "class_auto_name.html", null ],
-    [ "AVR910", null, [
+    [ "AVR910", "class_a_v_r910.html", [
       [ "KickerBoard", "class_kicker_board.html", null ]
     ] ],
     [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],

@@ -114,15 +114,23 @@ $(document).ready(function(){initNavTree('class_kicker_board.html','');});
 
 <p>This is the complete list of members for <a class="el" href="class_kicker_board.html">KickerBoard</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_kicker_board.html#aa0e0d131b68af8a220f4d4fb13061d8a">flash</a>(bool onlyIfDifferent=true, bool verbose=true)</td><td class="entry"><a class="el" href="class_kicker_board.html">KickerBoard</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_kicker_board.html#a680497d5089035dd684b84d1e1ce96fb">KickerBoard</a>(PinName mosi, PinName miso, PinName sck, PinName nReset, const std::string &amp;progFilename)</td><td class="entry"><a class="el" href="class_kicker_board.html">KickerBoard</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_kicker_board.html#a89784b5caec54a0e7bc9695fb93a6483">verify_param</a>(const char *name, int expected, int(AVR910::*paramMethod)(), bool verbose=false)</td><td class="entry"><a class="el" href="class_kicker_board.html">KickerBoard</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_a_v_r910.html#a2e3e63958d70879ea197e19d8be346f6">AVR910</a>(PinName mosi, PinName miso, PinName sclk, PinName nReset)</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_a_v_r910.html#aaa52cb82f0afc83c5d41dd6b7010dc81">checkMemory</a>(int numPages, int pageSize, FILE *binary, bool verbose=true)</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_a_v_r910.html#a6390cd4b442aa6267d934357ebdb42b9">exitProgramming</a>()</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">protected</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_kicker_board.html#a61455be0828684366a62465ddb33fdb5">flash</a>(bool onlyIfDifferent=true, bool verbose=false)</td><td class="entry"><a class="el" href="class_kicker_board.html">KickerBoard</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_kicker_board.html#a680497d5089035dd684b84d1e1ce96fb">KickerBoard</a>(PinName mosi, PinName miso, PinName sck, PinName nReset, const std::string &amp;progFilename)</td><td class="entry"><a class="el" href="class_kicker_board.html">KickerBoard</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_a_v_r910.html#a355ef9fb0c84d822fb50bff21ff1a7b8">program</a>(FILE *binary, int pageSize, int numPages=1)</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_a_v_r910.html#a07c549c137848a2ecf78e1dcb241816e">readPartFamilyAndFlashSize</a>()</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_a_v_r910.html#ad1717b6ab05e7c0aba237a7c147354ae">readPartNumber</a>()</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_a_v_r910.html#a24a91ddb881d8e0d27c1cb203d0f7349">readVendorCode</a>()</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_a_v_r910.html#ab311c67f4b271b74eda93d905f51c152">setFrequency</a>(int frequency)</td><td class="entry"><a class="el" href="class_a_v_r910.html">AVR910</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_kicker_board.html#a34de349bcf21d784909184b41e0d944f">verify_param</a>(const char *name, char expected, int(AVR910::*paramMethod)(), char mask=0xFF, bool verbose=false)</td><td class="entry"><a class="el" href="class_kicker_board.html">KickerBoard</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Mar 28 2016 00:57:24 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 28 2016 01:12:40 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

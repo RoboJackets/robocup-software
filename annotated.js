@@ -310,6 +310,7 @@ var annotated =
       [ "TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", "classtest__role__assignment_1_1_test_role_assignment" ]
     ] ],
     [ "AutoName", "class_auto_name.html", "class_auto_name" ],
+    [ "AVR910", "class_a_v_r910.html", "class_a_v_r910" ],
     [ "Ball", "class_ball.html", "class_ball" ],
     [ "BallFilter", "class_ball_filter.html", "class_ball_filter" ],
     [ "BallObservation", "class_ball_observation.html", "class_ball_observation" ],

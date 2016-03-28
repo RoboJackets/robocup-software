@@ -14,6 +14,7 @@ var searchData=
   ['setconfig',['setConfig',['../class_c_c1201.html#a758e241be6292a2e28837fa11f20754d',1,'CC1201']]],
   ['setdebugenabled',['setDebugEnabled',['../class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df',1,'CC1201']]],
   ['seterrortext',['setErrorText',['../class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b',1,'RobotStatusWidget']]],
+  ['setfrequency',['setFrequency',['../class_a_v_r910.html#ab311c67f4b271b74eda93d905f51c152',1,'AVR910']]],
   ['setgyrorange',['setGyroRange',['../class_m_p_u6050.html#abff3f95db6bcfede68d8bcfa597d5dca',1,'MPU6050']]],
   ['seti2cbypass',['setI2CBypass',['../class_m_p_u6050.html#aae3131eac8cbf899f09c2ff1253719cc',1,'MPU6050']]],
   ['setpixel',['setPixel',['../class_neo_strip.html#ada4459f43a7bd1e09858ac6dd0714fe8',1,'NeoStrip::setPixel(size_t p, int color)'],['../class_neo_strip.html#ad9c35e3e5aff68f5457476ddde544609',1,'NeoStrip::setPixel(size_t p, unsigned int red, unsigned int green, unsigned int blue)']]],
