@@ -46,12 +46,12 @@ private:
     FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
          PinName progB, PinName done);
 
-    static bool isInit;
+    bool _isInit = false;
     static FPGA* instance;
 
-    std::shared_ptr<SharedSPI> spi;
-    DigitalOut nCs;
-    DigitalIn initB;
-    DigitalInOut progB;
-    DigitalIn done;
+    std::shared_ptr<SharedSPI> _spi;
+    DigitalOut _nCs;
+    DigitalIn _initB;
+    DigitalInOut _progB;
+    DigitalIn _done;
 };

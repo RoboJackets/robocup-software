@@ -7,7 +7,6 @@
 #include "commands.hpp"
 
 FPGA* FPGA::instance = nullptr;
-bool FPGA::isInit = false;
 
 namespace {
 enum {
@@ -24,12 +23,12 @@ enum {
 
 FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
            PinName progB, PinName done)
-    : spi(sharedSPI),
-      nCs(nCs),
-      initB(initB),
-      progB(progB, PIN_OUTPUT, OpenDrain, 1),
-      done(done) {
-    this->nCs = 1;  // start out de-asserted
+    : _spi(sharedSPI),
+      _nCs(nCs),
+      _initB(initB),
+      _progB(progB, PIN_OUTPUT, OpenDrain, 1),
+      _done(done) {
+    this->_nCs = 1;  // start out de-asserted
 }
 
 FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
@@ -52,9 +51,9 @@ bool FPGA::configure(const std::string& filepath) {
     fclose(fp);
 
     // toggle PROG_B to clear out anything prior
-    progB = 0;
+    _progB = 0;
     Thread::wait(1);
-    progB = 1;
+    _progB = 1;
     Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
@@ -62,8 +61,8 @@ bool FPGA::configure(const std::string& filepath) {
     for (int i = 0; i < 100; i++) {
         Thread::wait(10);
 
-        // We're ready to start the configuration process when initB goes high
-        if (initB == true) {
+        // We're ready to start the configuration process when _initB goes high
+        if (_initB == true) {
             fpgaReady = true;
             break;
         }
@@ -82,11 +81,11 @@ bool FPGA::configure(const std::string& filepath) {
 
         return false;
     } else {
-        // Wait some extra time in case the done pin needs time to be asserted
+        // Wait some extra time in case the _done pin needs time to be asserted
         bool configureDone = false;
         for (int i = 0; i < 1000; i++) {
             Thread::wait(1);
-            if (done == true) {
+            if (_done == true) {
                 configureDone = true;
                 break;
             }
@@ -97,9 +96,9 @@ bool FPGA::configure(const std::string& filepath) {
             return false;
         } else {
             // everything worked are we're good to go!
-            LOG(INF1, "DONE pin state:\t%s", done ? "HIGH" : "LOW");
+            LOG(INF1, "DONE pin state:\t%s", _done ? "HIGH" : "LOW");
 
-            isInit = true;
+            _isInit = true;
 
             // spi->frequency(1000000); // TODO(justin): remove?
 
@@ -138,7 +137,7 @@ bool FPGA::send_config(const std::string& filepath) {
 
             spi.write(buf[0]);
 
-        } while (initB || !done);
+        } while (_initB || !_done);
 
         fpga_deselect();
 
@@ -158,9 +157,9 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     uint8_t status;
 
     fpga_select();
-    status = spi->write(CMD_READ_HALLS);
+    status = _spi->write(CMD_READ_HALLS);
 
-    for (size_t i = 0; i < size; i++) halls[i] = spi->write(0x00);
+    for (size_t i = 0; i < size; i++) halls[i] = _spi->write(0x00);
 
     fpga_deselect();
 
@@ -171,11 +170,11 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     uint8_t status;
 
     fpga_select();
-    status = spi->write(CMD_READ_ENC);
+    status = _spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
-        enc_counts[i] = (spi->write(0x00) << 8);
-        enc_counts[i] |= spi->write(0x00);
+        enc_counts[i] = (_spi->write(0x00) << 8);
+        enc_counts[i] |= _spi->write(0x00);
     }
 
     fpga_deselect();
@@ -187,11 +186,11 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     uint8_t status;
 
     fpga_select();
-    status = spi->write(CMD_READ_DUTY);
+    status = _spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
-        duty_cycles[i] = (spi->write(0x00) << 8);
-        duty_cycles[i] |= spi->write(0x00);
+        duty_cycles[i] = (_spi->write(0x00) << 8);
+        duty_cycles[i] |= _spi->write(0x00);
     }
 
     fpga_deselect();
@@ -207,11 +206,11 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
     fpga_select();
-    status = spi->write(CMD_R_ENC_W_VEL);
+    status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
-        spi->write(duty_cycles[i] & 0xFF);
-        spi->write(duty_cycles[i] >> 8);
+        _spi->write(duty_cycles[i] & 0xFF);
+        _spi->write(duty_cycles[i] >> 8);
     }
 
     fpga_deselect();
@@ -228,11 +227,11 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
     fpga_select();
-    status = spi->write(CMD_R_ENC_W_VEL);
+    status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size_enc; i++) {
-        enc_deltas[i] = (spi->write(duty_cycles[i] & 0xFF) << 8);
-        enc_deltas[i] |= spi->write(duty_cycles[i] >> 8);
+        enc_deltas[i] = (_spi->write(duty_cycles[i] & 0xFF) << 8);
+        enc_deltas[i] |= _spi->write(duty_cycles[i] >> 8);
     }
 
     fpga_deselect();
@@ -244,16 +243,16 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
     bool dirty_bit;
 
     fpga_select();
-    spi->write(CMD_READ_HASH1);
+    _spi->write(CMD_READ_HASH1);
 
-    for (size_t i = 0; i < 10; i++) v.push_back(spi->write(0x00));
+    for (size_t i = 0; i < 10; i++) v.push_back(_spi->write(0x00));
 
     fpga_deselect();
     fpga_select();
 
-    spi->write(CMD_READ_HASH2);
+    _spi->write(CMD_READ_HASH2);
 
-    for (size_t i = 0; i < 11; i++) v.push_back(spi->write(0x00));
+    for (size_t i = 0; i < 11; i++) v.push_back(_spi->write(0x00));
 
     fpga_deselect();
 
@@ -271,14 +270,14 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
 void FPGA::gate_drivers(std::vector<uint16_t>& v) {
     fpga_select();
 
-    spi->write(CMD_CHECK_DRV);
+    _spi->write(CMD_CHECK_DRV);
 
     // each halfword is structured as follows:
     // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC |
     // FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
     for (size_t i = 0; i < 10; i++) {
-        uint16_t tmp = spi->write(0x00);
-        tmp |= (spi->write(0x00) << 8);
+        uint16_t tmp = _spi->write(0x00);
+        tmp |= (_spi->write(0x00) << 8);
         v.push_back(tmp);
     }
 
@@ -289,7 +288,7 @@ uint8_t FPGA::motors_en(bool state) {
     uint8_t status;
 
     fpga_select();
-    status = spi->write(CMD_EN_DIS_MTRS | (state << 7));
+    status = _spi->write(CMD_EN_DIS_MTRS | (state << 7));
     fpga_deselect();
 
     return status;
@@ -300,14 +299,14 @@ uint8_t FPGA::watchdog_reset() {
     return motors_en(true);
 }
 
-bool FPGA::isReady() { return isInit; }
+bool FPGA::isReady() { return _isInit; }
 
 void FPGA::fpga_select() {
-    spi->lock();
-    nCs = 0;
+    _spi->lock();
+    _nCs = 0;
 }
 
 void FPGA::fpga_deselect() {
-    nCs = 1;
-    spi->lock();
+    _nCs = 1;
+    _spi->lock();
 }
