@@ -18,6 +18,7 @@
 #include "neostrip.hpp"
 #include "CC1201.cpp"
 #include "SharedSPI.hpp"
+#include "KickerBoard.hpp"
 
 using namespace std;
 
@@ -115,6 +116,11 @@ int main() {
     }
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+
+    // Initialize kicker board
+    // TODO: clarify between kicker nCs and nReset
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, "/local/rj-kickr.nib");
+    bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on
     MCP23017 ioExpander(RJ_I2C_BUS, 0);
