@@ -23,13 +23,10 @@ enum {
 
 FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
            PinName progB, PinName done)
-    : _spi(sharedSPI),
-      _nCs(nCs),
+    : SharedSPIDevice(sharedSPI, nCs, true),
       _initB(initB),
       _progB(progB, PIN_OUTPUT, OpenDrain, 1),
-      _done(done) {
-    this->_nCs = 1;  // start out de-asserted
-}
+      _done(done) {}
 
 FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
     instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B, RJ_FPGA_PROG_B,
@@ -128,7 +125,7 @@ bool FPGA::send_config(const std::string& filepath) {
         LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(),
             filesize);
 
-        fpga_select();
+        chipSelect();
 
         do {
             read_byte = fread(buf, 1, 1, fp);
@@ -139,7 +136,7 @@ bool FPGA::send_config(const std::string& filepath) {
 
         } while (_initB || !_done);
 
-        fpga_deselect();
+        chipDeselect();
 
         fclose(fp);
 
@@ -156,12 +153,12 @@ bool FPGA::send_config(const std::string& filepath) {
 uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     uint8_t status;
 
-    fpga_select();
+    chipSelect();
     status = _spi->write(CMD_READ_HALLS);
 
     for (size_t i = 0; i < size; i++) halls[i] = _spi->write(0x00);
 
-    fpga_deselect();
+    chipDeselect();
 
     return status;
 }
@@ -169,7 +166,7 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
 uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     uint8_t status;
 
-    fpga_select();
+    chipSelect();
     status = _spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
@@ -177,7 +174,7 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
         enc_counts[i] |= _spi->write(0x00);
     }
 
-    fpga_deselect();
+    chipDeselect();
 
     return status;
 }
@@ -185,7 +182,7 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
 uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     uint8_t status;
 
-    fpga_select();
+    chipSelect();
     status = _spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
@@ -193,7 +190,7 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
         duty_cycles[i] |= _spi->write(0x00);
     }
 
-    fpga_deselect();
+    chipDeselect();
 
     return status;
 }
@@ -205,7 +202,7 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
     for (size_t i = 0; i < size; i++)
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
-    fpga_select();
+    chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
@@ -213,7 +210,7 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
         _spi->write(duty_cycles[i] >> 8);
     }
 
-    fpga_deselect();
+    chipDeselect();
 
     return status;
 }
@@ -226,7 +223,7 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
     for (size_t i = 0; i < size_dut; i++)
         if (duty_cycles[i] > 0x3FF) return 0x7F;
 
-    fpga_select();
+    chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size_enc; i++) {
@@ -234,7 +231,7 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
         enc_deltas[i] |= _spi->write(duty_cycles[i] >> 8);
     }
 
-    fpga_deselect();
+    chipDeselect();
 
     return status;
 }
@@ -242,19 +239,19 @@ uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
 bool FPGA::git_hash(std::vector<uint8_t>& v) {
     bool dirty_bit;
 
-    fpga_select();
+    chipSelect();
     _spi->write(CMD_READ_HASH1);
 
     for (size_t i = 0; i < 10; i++) v.push_back(_spi->write(0x00));
 
-    fpga_deselect();
-    fpga_select();
+    chipDeselect();
+    chipSelect();
 
     _spi->write(CMD_READ_HASH2);
 
     for (size_t i = 0; i < 11; i++) v.push_back(_spi->write(0x00));
 
-    fpga_deselect();
+    chipDeselect();
 
     // store the dirty bit for returning
     dirty_bit = (v.back() & 0x01);
@@ -268,7 +265,7 @@ bool FPGA::git_hash(std::vector<uint8_t>& v) {
 }
 
 void FPGA::gate_drivers(std::vector<uint16_t>& v) {
-    fpga_select();
+    chipSelect();
 
     _spi->write(CMD_CHECK_DRV);
 
@@ -281,15 +278,15 @@ void FPGA::gate_drivers(std::vector<uint16_t>& v) {
         v.push_back(tmp);
     }
 
-    fpga_deselect();
+    chipDeselect();
 }
 
 uint8_t FPGA::motors_en(bool state) {
     uint8_t status;
 
-    fpga_select();
+    chipSelect();
     status = _spi->write(CMD_EN_DIS_MTRS | (state << 7));
-    fpga_deselect();
+    chipDeselect();
 
     return status;
 }
@@ -300,13 +297,3 @@ uint8_t FPGA::watchdog_reset() {
 }
 
 bool FPGA::isReady() { return _isInit; }
-
-void FPGA::fpga_select() {
-    _spi->lock();
-    _nCs = 0;
-}
-
-void FPGA::fpga_deselect() {
-    _nCs = 1;
-    _spi->lock();
-}

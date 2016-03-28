@@ -11,7 +11,7 @@
 #include "pins-ctrl-2015.hpp"
 #include "SharedSPI.hpp"
 
-class FPGA {
+class FPGA : public SharedSPIDevice<> {
 public:
     static FPGA* Instance();
 
@@ -36,12 +36,6 @@ public:
     void gate_drivers(std::vector<uint16_t>&);
     bool send_config(const std::string& filepath);
 
-    /// Activate the chip select pin and acquire a lock on the shared spi bus
-    void fpga_select();
-
-    /// Deactivate the chip select pin and release a lock on the shared spi bus
-    void fpga_deselect();
-
 private:
     FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
          PinName progB, PinName done);
@@ -50,7 +44,6 @@ private:
     static FPGA* instance;
 
     std::shared_ptr<SharedSPI> _spi;
-    DigitalOut _nCs;
     DigitalIn _initB;
     DigitalInOut _progB;
     DigitalIn _done;
