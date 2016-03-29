@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <iostream>
 
 std::list<Configurable*>* Configurable::_configurables;
 
