@@ -43,7 +43,7 @@ void ConfigItem::setupItem() { _treeItem->setText(1, toString()); }
 
 ConfigBool::ConfigBool(Configuration* tree, QString name, bool value,
                        std::string description)
-    : ConfigItem(tree, name, std::string description) {
+    : ConfigItem(tree, name, description) {
     _value = value;
     addItem();
 }
@@ -82,7 +82,7 @@ void ConfigBool::setupItem() {
 
 ConfigInt::ConfigInt(Configuration* config, QString name, int value,
                      std::string description)
-    : ConfigItem(config, name, std::string description) {
+    : ConfigItem(config, name, description) {
     _value = value;
     addItem();
 }
@@ -95,7 +95,7 @@ void ConfigInt::setValue(const QString& str) { _value = str.toInt(); }
 
 ConfigDouble::ConfigDouble(Configuration* config, QString name, double value,
                            std::string description)
-    : ConfigItem(config, name, std::string description) {
+    : ConfigItem(config, name, description) {
     _value = value;
     addItem();
 }
@@ -160,7 +160,6 @@ void Configuration::addToTree(ConfigItem* item) {
     item->_treeItem->setText(0, path.back());
 
     if (item->_description != "") {
-        std::cout << item->_description << std::endl;
         item->_treeItem->setToolTip(0, QString(item->_description.c_str()));
     }
 
