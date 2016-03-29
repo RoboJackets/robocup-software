@@ -43,7 +43,9 @@ for file in args.files:
         print('{} does not exist'.format(file))
 
 # get the array of mbeds that are connected
-mbeds = mbedls.create().list_mbeds()
+mbed_tool = mbedls.create()
+mbed_tool.list_unmounted = True
+mbeds = mbed_tool.list_mbeds()
 
 if len(mbeds) == 0:
     print("No mbeds found", file=sys.stderr)
