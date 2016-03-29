@@ -4,8 +4,10 @@
 #include <rtos.h>
 
 /**
- * Flashes an LED as long as the timeout period hasn't elapsed since the last
- * call to renew().
+ * Utility class that lights LEDs as long as the timeout period hasn't elapsed
+ * since the last call to renew().  This class provides an update() method that
+ * subclasses override to actual light/flash/strobe the LED(s).  This class just
+ * handles the timing aspects.
  */
 class TimeoutLED {
 public:
@@ -22,6 +24,10 @@ public:
         _timeoutTimer.start(_timeoutInterval);
     }
 
+    /**
+     * Subclasses must override this method to handle the actual LED lighting,
+     * etc.
+     */
     virtual void update() = 0;
 
 private:
