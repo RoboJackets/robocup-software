@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-
 std::list<Configurable*>* Configurable::_configurables;
 
 // Role for tree column zero for storing ConfigItem pointers.
