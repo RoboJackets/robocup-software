@@ -35,33 +35,10 @@ set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 # Add a test runner target "test-firmware"
-set(FIRMWARE_TEST_SRC
-    "common2015/ExampleTest.cpp"
-)
-
-# test firmware target
+file(GLOB FIRMWARE_TEST_SRC "common2015/testing/*.cpp")
 add_executable(test-firmware ${FIRMWARE_TEST_SRC})
 add_dependencies(test-firmware googletest)
 target_link_libraries(test-firmware ${GTEST_LIBRARIES})
-
-# header files
-target_include_directories(test-firmware PUBLIC
-    "common2015/drivers"
-    "common2015/drivers/cc1101"
-    "common2015/drivers/cc1201"
-    "common2015/drivers/cc1201/ti"
-    "common2015/drivers/cc1201/cfg/default"
-    "common2015/drivers/rtos-i2c"
-    "common2015/drivers/software-spi"
-    "common2015/modules"
-    "common2015/modules/CommLink"
-    "common2015/modules/CommModule"
-    "common2015/modules/Console"
-    "common2015/utils/logger"
-    "common2015/utils/assert"
-    "common2015/utils/numparser"
-    "common2015/utils/rtos-mgmt"
-)
 
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)
