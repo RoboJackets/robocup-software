@@ -37,8 +37,8 @@
 
 using namespace std;
 
-AVR910::AVR910(shared_ptr<SharedSPI> spi, PinName nReset)
-    : SharedSPIDevice(spi, NC), nReset_(nReset) {
+AVR910::AVR910(shared_ptr<SharedSPI> spi, PinName nCs, PinName nReset)
+    : SharedSPIDevice(spi, nCs, true), nReset_(nReset) {
     // Slow frequency as default to ensure no errors from
     // trying to run it too fast. Increase as appropriate.
     setSPIFrequency(32000);

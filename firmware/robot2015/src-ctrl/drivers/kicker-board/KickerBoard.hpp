@@ -25,8 +25,8 @@ public:
      * @param progFilename Path to kicker program binary file that will be
      *     loaded by the flash() method
      */
-    KickerBoard(std::shared_ptr<SharedSPI> sharedSPI, PinName nReset,
-                const std::string& progFilename);
+    KickerBoard(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs,
+                PinName nReset, const std::string& progFilename);
 
     /**
      * @brief Reflashes the program on the kicker board MCU with the file

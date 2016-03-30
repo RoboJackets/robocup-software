@@ -70,7 +70,7 @@ public:
      * Sends an enable programming command, allowing device registers to be
      * read and commands sent.
      */
-    AVR910(std::shared_ptr<SharedSPI> spi, PinName nReset);
+    AVR910(std::shared_ptr<SharedSPI> spi, PinName nCs, PinName nReset);
 
     /**
      * Program the AVR microcontroller connected to the mbed.

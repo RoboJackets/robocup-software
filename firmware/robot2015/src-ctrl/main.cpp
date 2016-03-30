@@ -118,7 +118,8 @@ int main() {
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
-    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, "/local/rj-kickr.nib");
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+                            "/local/rj-kickr.nib");
     bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on
