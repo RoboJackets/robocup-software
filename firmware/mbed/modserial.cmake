@@ -3,7 +3,7 @@
 
 ExternalProject_Add(modserial_library
     HG_REPOSITORY       https://developer.mbed.org/users/Sissors/code/MODSERIAL
-    HG_TAG              39:8ef4f91813fd
+    HG_TAG              41:d8422efe4761
     CONFIGURE_COMMAND   ""
     BUILD_COMMAND       ""
     INSTALL_COMMAND     ""
@@ -15,7 +15,7 @@ set_target_properties(modserial_library PROPERTIES EXCLUDE_FROM_ALL TRUE)
 ExternalProject_Get_Property(modserial_library SOURCE_DIR)
 
 # the source files that will be added to common2015
-set(MODSERIAL_SRC ${SOURCE_DIR}/MODSERIAL.cpp)
+set(        MODSERIAL_SRC ${SOURCE_DIR}/MODSERIAL.cpp)
 list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/INIT.cpp)
 list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/PUTC.cpp)
 list(APPEND MODSERIAL_SRC ${SOURCE_DIR}/GETC.cpp)

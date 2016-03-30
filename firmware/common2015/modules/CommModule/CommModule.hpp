@@ -17,29 +17,33 @@
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */
-typedef void(FunctionPtr_t)(rtp::packet*);
-typedef CommPort<FunctionPtr_t> CommPort_t;
-typedef CommPorts<FunctionPtr_t> CommPorts_t;
-
-// forward declaration of the template is needed for the class
-extern CommPort_t _tmpPort;
+typedef void(CommCallback)(rtp::packet*);
+typedef CommPort<CommCallback> CommPort_t;
 
 /**
+ * @brief A high-level firmware class for packet handling & routing
+ *
  * The CommModule class provides the packet management routing
  * by distributing incoming packets to the correct area of the
  * firmware and distributing outgoing packets to the correct
  * hardware interface.
  */
-
-/**
- * @brief      { A high-level firmware class for packet handling & routing }
- */
 class CommModule {
 private:
-    static CommPorts_t _ports;
+    std::map<uint8_t, CommPort_t> _ports;
 
 public:
+    /// The constructor initializes and starts threads and mail queues
+    CommModule();
+
+    /// The destructor frees up allocated memory and stops threads
     ~CommModule();
+
+    /// Access the singleton CommModule instance
+    static shared_ptr<CommModule>& Instance();
+
+    /// initializes and starts rx/tx threads and mail queues
+    void init();
 
     // Class constants
     // Be careful of the queue sizes. The errors that result from
@@ -47,103 +51,62 @@ public:
     static const size_t TX_QUEUE_SIZE = 3;
     static const size_t RX_QUEUE_SIZE = 3;
 
-    static void Init();
-
     // Set a TX callback function on an object
     template <typename B>
-    static void TxHandler(B* obj, void (B::*mptr)(rtp::packet*),
-                          uint8_t portNbr) {
-        if (!_ports[portNbr].Exists()) {
-            CommPort_t _tmpPort(portNbr);
-            _ports += _tmpPort;
-        }
-
-        _ports[portNbr].TXCallback() =
-            std::bind(mptr, obj, std::placeholders::_1);
-
-        ready();
+    void setTxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
+        setTxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);
     }
 
     // Set an RX callback function on an object
     template <typename B>
-    static void RxHandler(B* obj, void (B::*mptr)(rtp::packet*),
-                          uint8_t portNbr) {
-        if (!_ports[portNbr].Exists()) {
-            CommPort_t _tmpPort(portNbr);
-            _ports += _tmpPort;
-        }
-
-        _ports[portNbr].RXCallback() =
-            std::bind(mptr, obj, std::placeholders::_1);
-
-        ready();
+    void setRxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
+        setRxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);
     }
 
     // Set a normal RX callback function without an object
-    static void RxHandler(void (*ptr)(rtp::packet*), uint8_t);
-    static void TxHandler(void (*ptr)(rtp::packet*), uint8_t);
-
-    // Open a socket connection for communicating.
-    static bool openSocket(uint8_t);
+    void setRxHandler(std::function<CommCallback> callback, uint8_t portNbr);
+    void setTxHandler(std::function<CommCallback> callback, uint8_t portNbr);
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
     // are determined from the rtp::packet's port and subclass values
-    static void send(const rtp::packet&);
-    static void receive(const rtp::packet&);
+    void send(const rtp::packet& pkt);
 
-    static unsigned int NumRXPackets();
-    static unsigned int NumTXPackets();
+    /// Called by CommLink instances whenever a packet is received via radio
+    void receive(const rtp::packet& pkt);
 
-    static void PrintInfo(bool forceHeader = false);
+    unsigned int numRxPackets() const;
+    unsigned int numTxPackets() const;
+    void resetCount(unsigned int portNbr);
 
-    static void ResetCount(unsigned int portNbr);
-    static void Close(unsigned int portNbr);
-    static bool isReady();
-    static int NumOpenSockets();
+    void printInfo() const;
+
+    void close(unsigned int portNbr);
+    bool isReady() const;
+    int numOpenSockets() const;
 
 protected:
-    // NOP function for keeping a communication link active
-    void nopFunc();
-
-    /// Kill any threads and free the allocated stack.
-    /// Always call in any derived class's deconstructors!
-    void cleanup();
-
     // Memory Queue IDs
     osMailQId _txQueue;
     osMailQId _rxQueue;
 
-    // Thread IDs
-    static osThreadId _txID;
-    static osThreadId _rxID;
-
 private:
-    // Private constructor
-    CommModule();
+    // The working threads for handling rx and tx data queues
+    void txThread();
+    void rxThread();
 
-    static shared_ptr<CommModule>& Instance();
+    /// The threadHelper methods accept a CommModule pointer as a parameter
+    /// and call the corresponding instance methods on the module.
+    static void rxThreadHelper(void const* moduleInst);
+    static void txThreadHelper(void const* moduleInst);
 
-    // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t, unsigned char*);
+    void ready();
 
-    // The working threads for handeling rx and tx data queues
-    static void txThread(void const*);
-    static void rxThread(void const*);
-
-    static void ready();
-
-    static void PrintHeader();
-
+    /// global singleton instance of CommModule
     static std::shared_ptr<CommModule> instance;
 
-    static bool _isReady;
+    bool _isReady = false;
 
-    // Thread and Mail defintion data structures
-    osThreadDef_t _txDef;
-    osThreadDef_t _rxDef;
-    osMailQDef_t _txQDef;
-    osMailQDef_t _rxQDef;
+    Thread _rxThread, _txThread;
 
     // Mail helper objects
     MailHelper<rtp::packet, TX_QUEUE_SIZE> _txQueueHelper;

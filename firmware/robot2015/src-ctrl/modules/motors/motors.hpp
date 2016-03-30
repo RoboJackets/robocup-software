@@ -26,7 +26,6 @@ struct motorErr_t {
     FETHB_OC, FETLB_OC
     FETHC_OC, FETLC_OC
     */
-    bool encOK;
     bool hallOK;
     std::array<uint16_t, 2> drvStatus;
 };
@@ -38,6 +37,9 @@ struct motor_t {
     motorErr_t status;
     std::string desc;
 };
+
+// TODO(justin): is there a better solution than having a global variable?
+extern std::vector<motor_t> global_motors;
 
 void motors_Init();
 void motors_show();

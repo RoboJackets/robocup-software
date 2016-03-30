@@ -754,6 +754,7 @@ WARN_LOGFILE           =
 
 INPUT                  = soccer \
                          firmware/robot2015 \
+                         firmware/common2015 \
                          common \
                          doc
 
@@ -807,9 +808,7 @@ FILE_PATTERNS          = *.c \
                          *.for \
                          *.vhd \
                          *.vhdl \
-                         *.md \
-                         *.v \
-                         *.vh
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.

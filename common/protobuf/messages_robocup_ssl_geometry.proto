@@ -1,18 +1,51 @@
+// At RoboCup-SSL/ssl-vision 2a604f1
+
+// A 2D float vector.
+message Vector2f {
+  required float x = 1;
+  required float y = 2;
+}
+
+// Represents a field marking as a line segment represented by a start point p1,
+// and end point p2, and a line thickness. The start and end points are along
+// the center of the line, so the thickness of the line extends by thickness / 2
+// on either side of the line.
+message SSL_FieldLineSegment {
+  // Name of this field marking.
+  required string name = 1;
+  // Start point of the line segment.
+  required Vector2f p1 = 2;
+  // End point of the line segment.
+  required Vector2f p2 = 3;
+  // Thickness of the line segment.
+  required float thickness = 4;
+}
+
+// Represents a field marking as a circular arc segment represented by center point, a
+// start angle, an end angle, and an arc thickness.
+message SSL_FieldCicularArc {
+  // Name of this field marking.
+  required string name = 1;
+  // Center point of the circular arc.
+  required Vector2f center = 2;
+  // Radius of the arc.
+  required float radius = 3;
+  // Start angle in counter-clockwise order.
+  required float a1 = 4;
+  // End angle in counter-clockwise order.
+  required float a2 = 5;
+  // Thickness of the arc.
+  required float thickness = 6;
+}
+
 message SSL_GeometryFieldSize {
-  required int32 line_width = 1;
-  required int32 field_length = 2;
-  required int32 field_width = 3;
-  required int32 boundary_width = 4;
-  required int32 referee_width = 5;
-  required int32 goal_width = 6;
-  required int32 goal_depth = 7;
-  required int32 goal_wall_width = 8;
-  required int32 center_circle_radius = 9;
-  required int32 defense_radius = 10;
-  required int32 defense_stretch = 11;
-  required int32 free_kick_from_defense_dist = 12;
-  required int32 penalty_spot_from_field_line_dist = 13;
-  required int32 penalty_line_from_spot_dist = 14;
+  required int32 field_length = 1;
+  required int32 field_width = 2;
+  required int32 goal_width = 3;
+  required int32 goal_depth = 4;
+  required int32 boundary_width = 5;
+  repeated SSL_FieldLineSegment field_lines = 6;
+  repeated SSL_FieldCicularArc field_arcs = 7;
 }
 
 message SSL_GeometryCameraCalibration {

@@ -10,6 +10,7 @@
 #include <multicast.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
+#include <joystick/Joystick.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
@@ -38,13 +39,6 @@ RobotConfig* Processor::robotConfig2011;
 RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
-
-// Joystick speed limits (for damped and non-damped mode)
-// Translation in m/s, Rotation in rad/s
-static const float JoystickRotationMaxSpeed = 4 * M_PI;
-static const float JoystickRotationMaxDampedSpeed = 1 * M_PI;
-static const float JoystickTranslationMaxSpeed = 3.0;
-static const float JoystickTranslationMaxDampedSpeed = 1.0;
 
 void Processor::createConfiguration(Configuration* cfg) {
     robotConfig2008 = new RobotConfig(cfg, "Rev2008");
@@ -403,6 +397,11 @@ void Processor::run() {
         // Run high-level soccer logic
         _gameplayModule->run();
 
+        // recalculates Field obstacles on every run through to account for
+        // changing inset
+        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
+            _gameplayModule->calculateFieldObstacles();
+        }
         /// Collect global obstacles
         Geometry2d::ShapeSet globalObstacles =
             _gameplayModule->globalObstacles();
@@ -438,7 +437,7 @@ void Processor::run() {
                 requests[r->shell()] = Planning::PlanRequest(
                     Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->motionConstraints(),
-                    std::move(r->path()),
+                    std::move(r->angleFunctionPath.path),
                     std::make_shared<ShapeSet>(std::move(fullObstacles)));
             }
         }
@@ -450,6 +449,9 @@ void Processor::run() {
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");
             r->setPath(std::move(path));
+
+            r->angleFunctionPath.angleFunction =
+                angleFunctionForCommandType(r->rotationCommand());
         }
 
         // Visualize obstacles
@@ -581,7 +583,6 @@ void Processor::run() {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
-
     vision.stop();
 }
 
@@ -680,16 +681,18 @@ JoystickControlValues Processor::getJoystickControlValues() {
     if (vals.rotation > 1) vals.rotation = 1;
     if (vals.rotation < -1) vals.rotation = -1;
 
-    // scale up speeds, respecting the damping modes
+    // Gets values from the configured joystick control values,respecting damped
+    // state
     if (_dampedTranslation) {
-        vals.translation *= JoystickTranslationMaxDampedSpeed;
+        vals.translation *=
+            Joystick::JoystickTranslationMaxDampedSpeed->value();
     } else {
-        vals.translation *= JoystickRotationMaxSpeed;
+        vals.translation *= Joystick::JoystickRotationMaxSpeed->value();
     }
     if (_dampedRotation) {
-        vals.rotation *= JoystickRotationMaxDampedSpeed;
+        vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
     } else {
-        vals.rotation *= JoystickRotationMaxSpeed;
+        vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
     }
 
     // scale up kicker and dribbler speeds
@@ -733,5 +736,4 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
-    _gameplayModule->sendFieldDimensionsToPython();
 }

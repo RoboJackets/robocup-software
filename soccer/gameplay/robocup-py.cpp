@@ -172,6 +172,10 @@ Geometry2d::Point* Line_get_pt(Geometry2d::Line* self, int index) {
     return &(self->pt[index]);
 }
 
+Geometry2d::Point* Segment_get_pt(Geometry2d::Segment* self, int index) {
+    return &(self->pt[index]);
+}
+
 Geometry2d::Point* Rect_get_pt(Geometry2d::Rect* self, int index) {
     return &(self->pt[index]);
 }
@@ -227,6 +231,19 @@ boost::python::object Line_line_intersection(Geometry2d::Line* self,
     }
 };
 
+boost::python::object Line_segment_intersection(Geometry2d::Line* self,
+                                                Geometry2d::Segment* other) {
+    if (other == nullptr) throw NullArgumentException("other");
+    Geometry2d::Point pt;
+    if (self->intersects(*other, &pt)) {
+        boost::python::object obj(pt);
+        return obj;
+    } else {
+        // return None
+        return boost::python::object();
+    }
+};
+
 boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
                                             Geometry2d::Circle* circle) {
     if (circle == nullptr) throw NullArgumentException("circle");
@@ -255,15 +272,26 @@ void State_draw_arc(SystemState* self, const Geometry2d::Arc* arc,
     self->drawArc(*arc, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+// TODO(ashaw596) Fix this lie of a function
 void State_draw_line(SystemState* self, const Geometry2d::Line* line,
                      boost::python::tuple rgb, const std::string& layer) {
     if (line == nullptr) throw NullArgumentException("line");
-    self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
+    self->drawLine(Geometry2d::Segment(*line), Color_from_tuple(rgb),
+                   QString::fromStdString(layer));
 }
 
-void State_draw_segment(SystemState* self, const Geometry2d::Point* p0,
-                        const Geometry2d::Point* p1, boost::python::tuple rgb,
-                        const std::string& layer) {
+void State_draw_segment(SystemState* self, const Geometry2d::Segment* segment,
+                        boost::python::tuple rgb, const std::string& layer) {
+    if (segment == nullptr) throw NullArgumentException("segment");
+    self->drawSegment(*segment, Color_from_tuple(rgb),
+                      QString::fromStdString(layer));
+}
+
+void State_draw_segment_from_points(SystemState* self,
+                                    const Geometry2d::Point* p0,
+                                    const Geometry2d::Point* p1,
+                                    boost::python::tuple rgb,
+                                    const std::string& layer) {
     if (p0 == nullptr) throw NullArgumentException{"p0"};
     if (p1 == nullptr) throw NullArgumentException{"p1"};
     self->drawLine(*p0, *p1, Color_from_tuple(rgb),
@@ -429,6 +457,8 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -449,7 +479,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("mag", &Geometry2d::Point::mag)
         .def("magsq", &Geometry2d::Point::magsq)
         .def("__repr__", &Point_repr)
-        .def("normalized", &Geometry2d::Point::normalized)
+        .def("normalized", &Geometry2d::Point::normalized, Point_overloads())
         .def("rotate", &Point_rotate)
         .def(self * float())
         .def(self / float())
@@ -466,18 +496,21 @@ BOOST_PYTHON_MODULE(robocup) {
         "Line", init<Geometry2d::Point, Geometry2d::Point>())
         .def("delta", &Geometry2d::Line::delta)
         .def("line_intersection", &Line_line_intersection)
+        .def("segment_intersection", &Line_segment_intersection)
         .def("dist_to", &Geometry2d::Line::distTo)
         .def("intersects_circle", &Line_intersects_circle)
         .def("get_pt", &Line_get_pt,
              return_value_policy<reference_existing_object>())
         .def("nearest_point", &Geometry2d::Line::nearestPoint);
 
-    class_<Geometry2d::Segment, Geometry2d::Segment*, bases<Geometry2d::Line>>(
+    class_<Geometry2d::Segment, Geometry2d::Segment*>(
         "Segment", init<Geometry2d::Point, Geometry2d::Point>())
         .def("center", &Geometry2d::Segment::center)
         .def("length", &Geometry2d::Segment::length)
         .def("dist_to", &Geometry2d::Segment::distTo)
-        .def("nearest_point_to_point", &Segment_nearest_point_to_point)
+        .def("get_pt", &Segment_get_pt,
+             return_value_policy<reference_existing_object>())
+        .def("nearest_point", &Segment_nearest_point_to_point)
         .def("segment_intersection", &Segment_segment_intersection)
         .def("line_intersection", &Segment_line_intersection)
         .def("near_point", &Geometry2d::Segment::nearPoint)
@@ -569,7 +602,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
-    register_ptr_to_python< Robot* >();
+    register_ptr_to_python<Robot*>();
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
         "OurRobot", init<int, SystemState*>())
@@ -607,17 +640,17 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker);
-    register_ptr_to_python< OurRobot* >();
+    register_ptr_to_python<OurRobot*>();
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
-    register_ptr_to_python< OpponentRobot* >();
+    register_ptr_to_python<OpponentRobot*>();
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
-    register_ptr_to_python< Ball* >();
+    register_ptr_to_python<Ball*>();
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -641,29 +674,42 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_text", &State_draw_text)
         .def("draw_shape", &SystemState::drawShape)
         .def("draw_line", &State_draw_line)
+        .def("draw_line", &State_draw_segment)
         .def("draw_segment", &State_draw_segment)
         .def("draw_polygon", &State_draw_polygon)
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
-    register_ptr_to_python< SystemState* >();
+    register_ptr_to_python<SystemState*>();
 
     class_<Field_Dimensions>("Field_Dimensions")
-        .def("Length", &Field_Dimensions::Length)
-        .def("Width", &Field_Dimensions::Width)
-        .def("Border", &Field_Dimensions::Border)
-        .def("LineWidth", &Field_Dimensions::LineWidth)
-        .def("GoalWidth", &Field_Dimensions::GoalWidth)
-        .def("GoalDepth", &Field_Dimensions::GoalDepth)
-        .def("GoalHeight", &Field_Dimensions::GoalHeight)
-        .def("PenaltyDist", &Field_Dimensions::PenaltyDist)
-        .def("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
-        .def("ArcRadius", &Field_Dimensions::ArcRadius)
-        .def("CenterRadius", &Field_Dimensions::CenterRadius)
-        .def("CenterDiameter", &Field_Dimensions::CenterDiameter)
-        .def("GoalFlat", &Field_Dimensions::GoalFlat)
-        .def("FloorLength", &Field_Dimensions::FloorLength)
-        .def("FloorWidth", &Field_Dimensions::FloorWidth);
+        .add_property("Length", &Field_Dimensions::Length)
+        .add_property("Width", &Field_Dimensions::Width)
+        .add_property("Border", &Field_Dimensions::Border)
+        .add_property("LineWidth", &Field_Dimensions::LineWidth)
+        .add_property("GoalWidth", &Field_Dimensions::GoalWidth)
+        .add_property("GoalDepth", &Field_Dimensions::GoalDepth)
+        .add_property("GoalHeight", &Field_Dimensions::GoalHeight)
+        .add_property("PenaltyDist", &Field_Dimensions::PenaltyDist)
+        .add_property("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
+        .add_property("ArcRadius", &Field_Dimensions::ArcRadius)
+        .add_property("CenterRadius", &Field_Dimensions::CenterRadius)
+        .add_property("CenterDiameter", &Field_Dimensions::CenterDiameter)
+        .add_property("GoalFlat", &Field_Dimensions::GoalFlat)
+        .add_property("FloorLength", &Field_Dimensions::FloorLength)
+        .add_property("FloorWidth", &Field_Dimensions::FloorWidth)
+        .add_property("CenterPoint", &Field_Dimensions::CenterPoint)
+        .add_property("OurGoalZoneShape", &Field_Dimensions::OurGoalZoneShape)
+        .add_property("TheirGoalZoneShape",
+                      &Field_Dimensions::TheirGoalZoneShape)
+        .add_property("OurGoalSegment", &Field_Dimensions::OurGoalSegment)
+        .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
+        .add_property("OurHalf", &Field_Dimensions::OurHalf)
+        .add_property("TheirHalf", &Field_Dimensions::TheirHalf)
+        .def_readonly("SingleFieldDimensions",
+                      &Field_Dimensions::Single_Field_Dimensions)
+        .def_readonly("DoubleFieldDimensions",
+                      &Field_Dimensions::Double_Field_Dimensions);
 
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)

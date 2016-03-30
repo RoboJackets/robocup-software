@@ -2,10 +2,12 @@
 
 #include <map>
 #include <ctime>
+#include <sstream>
 
 #include <rtos.h>
 #include <mbed_rpc.h>
 #include <CommModule.hpp>
+#include <CC1201.hpp>
 #include <numparser.hpp>
 #include <logger.hpp>
 
@@ -33,7 +35,7 @@ const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 /**
  * indicates if the command held in "iterativeCommand"
  */
-volatile bool iterative_command_state = false;
+bool iterative_command_state = false;
 
 /**
  * current iterative command args
@@ -134,7 +136,11 @@ static const vector<command_t> commands = {
      "show motor info (until receiving Ctrl-C).",
      "motorscroll"},
 
-    {{"ping"}, true, cmd_ping, "check the console's responsiveness.", "ping"},
+    {{"serialping"},
+     true,
+     cmd_serial_ping,
+     "check the console's responsiveness.",
+     "serialping"},
 
     {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
 
@@ -142,9 +148,20 @@ static const vector<command_t> commands = {
      false,
      cmd_radio,
      "test radio connectivity.",
-     "radio [show, {set {up,down,reset} <port>, {test-tx,test-rx} [<port>], "
-     "loopback "
-     "[<count>], stress-test <count> <delay> <pck-size>}]"},
+     "radio [show, {set {close,reset} <port>, {test-tx,test-rx} [<port>], "
+     "loopback [<count>], "
+     "debug, "
+     "ping, "
+     "pong, "
+     "strobe <num>, "
+     "stress-test <count> <delay> <pck-size>}]"},
+
+    {{"ping"},
+     false,
+     cmd_ping,
+     "periodically send ping packets out over radio broadcast"},
+
+    {{"pong"}, false, cmd_pong, "reply to ping"},
 
     {{"reboot", "reset", "restart"},
      false,
@@ -176,7 +193,7 @@ static const vector<command_t> commands = {
 */
 int cmd_alias(cmd_args_t& args) {
     // If no args given, list all aliases
-    if (args.empty() == true) {
+    if (args.empty()) {
         for (uint8_t i = 0; i < commands.size(); i++) {
             printf("\t%s:\t", commands[i].aliases[0].c_str());
 
@@ -229,7 +246,7 @@ int cmd_alias(cmd_args_t& args) {
                 }
             }
 
-            if (aliasFound == false) {
+            if (!aliasFound) {
                 printf("Error listing aliases: command '%s' not found",
                        args[argInd].c_str());
             }
@@ -245,11 +262,11 @@ int cmd_alias(cmd_args_t& args) {
 * Clears the console.
 */
 int cmd_console_clear(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
-        Console::Flush();
+        Console::Instance()->Flush();
         printf(ENABLE_SCROLL_SEQ.c_str());
         printf(CLEAR_SCREEN_SEQ.c_str());
     }
@@ -274,12 +291,12 @@ int cmd_console_echo(cmd_args_t& args) {
  * links to).
  */
 int cmd_console_exit(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
         printf("Shutting down serial console. Goodbye!\r\n");
-        Console::RequestSystemStop();
+        Console::Instance()->RequestSystemStop();
     }
 
     return 0;
@@ -290,7 +307,7 @@ int cmd_console_exit(cmd_args_t& args) {
  */
 int cmd_help(cmd_args_t& args) {
     // Prints all commands, with details
-    if (args.empty() == true) {
+    if (args.empty()) {
         // Default to a short listing of all the commands
         for (size_t i = 0; i < commands.size(); i++)
             printf("\t%s:\t%s\r\n", commands[i].aliases[0].c_str(),
@@ -301,8 +318,7 @@ int cmd_help(cmd_args_t& args) {
     // command
     // Prints all commands - either as a list block or all detailed
     else {
-        if (strcmp(args[0].c_str(), "--list") == 0 ||
-            strcmp(args[0].c_str(), "-l") == 0) {
+        if (args[0] == "--list" || args[0] == "-l") {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 if (i % 5 == 4) {
                     printf("%s\r\n", commands[i].aliases[0].c_str());
@@ -312,15 +328,14 @@ int cmd_help(cmd_args_t& args) {
                     printf("%s,\t\t", commands[i].aliases[0].c_str());
                 }
             }
-        } else if (strcmp(args[0].c_str(), "--all") == 0 ||
-                   strcmp(args[0].c_str(), "-a") == 0) {
+        } else if (args[0] == "--all" || args[0] == "-a") {
             for (uint8_t i = 0; i < commands.size(); i++) {
                 // print info about ALL commands
                 printf(
                     "%s%s:\r\n"
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
-                    commands[i].aliases.front().c_str(),
+                    commands[i].aliases[0].c_str(),
                     (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
@@ -351,14 +366,14 @@ int cmd_help_detail(cmd_args_t& args) {
                     "%s%s:\r\n"
                     "    Description:\t%s\r\n"
                     "    Usage:\t\t%s\r\n",
-                    commands[i].aliases.front().c_str(),
+                    commands[i].aliases[0].c_str(),
                     (commands[i].is_iterative ? " [ITERATIVE]" : ""),
                     commands[i].description.c_str(), commands[i].usage.c_str());
             }
         }
         // if the command wasn't found, notify
         if (!commandFound) {
-            printf("Command \"%s\" not found.\r\n", args.at(argInd).c_str());
+            printf("Command \"%s\" not found.\r\n", args[argInd].c_str());
         }
     }
 
@@ -368,15 +383,15 @@ int cmd_help_detail(cmd_args_t& args) {
 /**
  * Console responsiveness test.
  */
-int cmd_ping(cmd_args_t& args) {
-    if (args.empty() == false) {
+int cmd_serial_ping(cmd_args_t& args) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
         time_t sys_time = time(nullptr);
-        Console::Flush();
+        Console::Instance()->Flush();
         printf("reply: %lu\r\n", sys_time);
-        Console::Flush();
+        Console::Instance()->Flush();
 
         Thread::wait(600);
     }
@@ -388,12 +403,12 @@ int cmd_ping(cmd_args_t& args) {
  * Resets the mbed (should be the equivalent of pressing the reset button).
  */
 int cmd_interface_reset(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
         printf("The system is going down for reboot NOW!\033[0J\r\n");
-        Console::Flush();
+        Console::Instance()->Flush();
 
         // give some time for the feedback to get back to the console
         Thread::wait(800);
@@ -413,10 +428,10 @@ int cmd_ls(cmd_args_t& args) {
 
     std::vector<std::string> filenames;
 
-    if (args.empty() == true) {
+    if (args.empty()) {
         d = opendir("/local");
     } else {
-        d = opendir(args.front().c_str());
+        d = opendir(args[0].c_str());
     }
 
     if (d != nullptr) {
@@ -429,12 +444,12 @@ int cmd_ls(cmd_args_t& args) {
         // don't use printf until we close the directory
         for (auto& i : filenames) {
             printf(" - %s\r\n", i.c_str());
-            Console::Flush();
+            Console::Instance()->Flush();
         }
 
     } else {
-        if (args.empty() == false) {
-            printf("Could not find %s\r\n", args.front().c_str());
+        if (!args.empty()) {
+            printf("Could not find %s\r\n", args[0].c_str());
         }
 
         return 1;
@@ -447,7 +462,7 @@ int cmd_ls(cmd_args_t& args) {
  * Prints system info.
  */
 int cmd_info(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -470,7 +485,7 @@ int cmd_info(cmd_args_t& args) {
 
         // show the fpga build hash
         printf("\tFPGA Hash:\t");
-        if (FPGA::Instance()->isReady() == true) {
+        if (FPGA::Instance()->isReady()) {
             std::vector<uint8_t> fpga_version;
             bool dirty_check = FPGA::Instance()->git_hash(fpga_version);
 
@@ -490,8 +505,8 @@ int cmd_info(cmd_args_t& args) {
 
         printf("\tBase ID:\t");
 
-        if (ds2411_read_id(RJ_BASE_ID, &id, true) == ID_HANDSHAKE_FAIL)
-            printf("N/A\r\n");
+        if (ds2411_read_id(RJ_BASE_ID, &id) == ID_HANDSHAKE_FAIL)
+            printf("[id chip not connected]\r\n");
         else
             for (int i = 0; i < 6; i++) printf("%02X\r\n", id.serial[i]);
 
@@ -560,23 +575,19 @@ int cmd_info(cmd_args_t& args) {
     return 0;
 }
 
-/**
- * [cmd_disconnectMbed description]
- * @param args [description]
- */
 int cmd_interface_disconnect(cmd_args_t& args) {
     if (args.size() > 1) {
         show_invalid_args(args);
         return 1;
     }
 
-    else if (args.empty() == true) {
+    else if (args.empty()) {
         mbed_interface_disconnect();
         printf("Disconnected mbed interface.\r\n");
 
     }
 
-    else if (args.front().compare("-P") == 0) {
+    else if (args[0] == "-P") {
         printf("Powering down mbed interface.\r\n");
         mbed_interface_powerdown();
     }
@@ -585,7 +596,7 @@ int cmd_interface_disconnect(cmd_args_t& args) {
 }
 
 int cmd_interface_check_conn(cmd_args_t& args) {
-    if (args.empty() == false) {
+    if (!args.empty()) {
         show_invalid_args(args);
         return 1;
     }
@@ -603,15 +614,14 @@ int cmd_baudrate(cmd_args_t& args) {
                                     4800,  9600,   14400,  19200,  38400,
                                     57600, 115200, 230400, 460800, 921600};
 
-    if (args.empty() == true || args.size() > 1) {
-        printf("Baudrate: %u\r\n", Console::Baudrate());
+    if (args.empty() || args.size() > 1) {
+        printf("Baudrate: %u\r\n", Console::Instance()->Baudrate());
     }
 
     else if (args.size() == 1) {
-        std::string str_baud = args.front();
+        std::string str_baud = args[0];
 
-        if (strcmp(str_baud.c_str(), "--list") == 0 ||
-            strcmp(str_baud.c_str(), "-l") == 0) {
+        if (str_baud == "--list" || str_baud == "-l") {
             printf("Valid baudrates:\r\n");
 
             for (unsigned int i = 0; i < valid_rates.size(); i++)
@@ -622,7 +632,7 @@ int cmd_baudrate(cmd_args_t& args) {
 
             if (std::find(valid_rates.begin(), valid_rates.end(), new_rate) !=
                 valid_rates.end()) {
-                Console::Baudrate(new_rate);
+                Console::Instance()->Baudrate(new_rate);
                 printf("New baudrate: %u\r\n", new_rate);
             } else {
                 printf(
@@ -640,26 +650,26 @@ int cmd_baudrate(cmd_args_t& args) {
 }
 
 int cmd_console_user(cmd_args_t& args) {
-    if (args.empty() == true || args.size() > 1) {
+    if (args.empty() || args.size() > 1) {
         show_invalid_args(args);
         return 1;
     }
 
     else {
-        Console::changeUser(args.front());
+        Console::Instance()->changeUser(args[0]);
     }
 
     return 0;
 }
 
 int cmd_console_hostname(cmd_args_t& args) {
-    if (args.empty() == true || args.size() > 1) {
+    if (args.empty() || args.size() > 1) {
         show_invalid_args(args);
         return 1;
     }
 
     else {
-        Console::changeHostname(args.front());
+        Console::Instance()->changeHostname(args[0]);
     }
 
     return 0;
@@ -671,19 +681,17 @@ int cmd_log_level(cmd_args_t& args) {
         return 1;
     }
 
-    else if (args.empty() == true) {
+    else if (args.empty()) {
         printf("Log level: %s\r\n", LOG_LEVEL_STRING[rjLogLevel]);
     }
 
     else {
         // bool storeVals = true;
 
-        if (strcmp(args.front().c_str(), "on") == 0 ||
-            args.front().compare("enable") == 0) {
+        if (args[0] == "on" || args[0] == "enable") {
             isLogging = true;
             printf("Logging enabled.\r\n");
-        } else if (strcmp(args.front().c_str(), "off") == 0 ||
-                   args.front().compare("disable") == 0) {
+        } else if (args[0] == "off" || args[0] == "disable") {
             isLogging = false;
             printf("Logging disabled.\r\n");
         } else {
@@ -691,7 +699,7 @@ int cmd_log_level(cmd_args_t& args) {
             // could increase or decrease...or stay the same.
             int newLvl = (int)rjLogLevel;  // rjLogLevel is unsigned, so we'll
             // need to change that first
-            newLvl += logLvlChange(args.front());
+            newLvl += logLvlChange(args[0]);
 
             if (newLvl >= LOG_LEVEL_END) {
                 printf("Unable to set log level above maximum value.\r\n");
@@ -716,7 +724,7 @@ int cmd_log_level(cmd_args_t& args) {
 }
 
 int cmd_rpc(cmd_args_t& args) {
-    if (args.empty() == true) {
+    if (args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -735,7 +743,7 @@ int cmd_rpc(cmd_args_t& args) {
 }
 
 int cmd_led(cmd_args_t& args) {
-    if (args.empty() == true) {
+    if (args.empty()) {
         show_invalid_args(args);
         return 1;
     } else {
@@ -743,9 +751,9 @@ int cmd_led(cmd_args_t& args) {
         led.setFromDefaultBrightness();
         led.setFromDefaultColor();
 
-        if (args.front().compare("bright") == 0) {
+        if (args[0] == "bright") {
             if (args.size() > 1) {
-                float bri = atof(args.at(1).c_str());
+                float bri = atof(args[1].c_str());
                 printf("Setting LED brightness to %.2f.\r\n", bri);
                 if (bri > 0 && bri <= 1.0) {
                     NeoStrip::defaultBrightness(bri);
@@ -761,7 +769,7 @@ int cmd_led(cmd_args_t& args) {
             } else {
                 printf("Current brightness:\t%.2f\r\n", led.brightness());
             }
-        } else if (args.front().compare("color") == 0) {
+        } else if (args[0] == "color") {
             if (args.size() > 1) {
                 std::map<std::string, NeoColor> colors;
                 // order for struct is green, red, blue
@@ -771,7 +779,7 @@ int cmd_led(cmd_args_t& args) {
                 colors["yellow"] = {0xFF, 0xFF, 0x00};
                 colors["purple"] = {0x00, 0xFF, 0xFF};
                 colors["white"] = {0xFF, 0xFF, 0xFF};
-                auto it = colors.find(args.at(1));
+                auto it = colors.find(args[1]);
                 if (it != colors.end()) {
                     printf("Changing color to %s.\r\n", it->first.c_str());
                     led.setPixel(1, it->second.red, it->second.green,
@@ -785,15 +793,15 @@ int cmd_led(cmd_args_t& args) {
             }
             // push out the changes to the led
             led.write();
-        } else if (args.front().compare("state") == 0) {
+        } else if (args[0] == "state") {
             if (args.size() > 1) {
-                if (args.at(1).compare("on") == 0) {
+                if (args[1] == "on") {
                     printf("Turning LED on.\r\n");
-                } else if (args.at(1).compare("off") == 0) {
+                } else if (args[1] == "off") {
                     printf("Turning LED off.\r\n");
                     led.brightness(0.0);
                 } else {
-                    show_invalid_args(args.at(1));
+                    show_invalid_args(args[1]);
                     return 1;
                 }
                 led.setFromDefaultColor();
@@ -817,69 +825,66 @@ int cmd_ps(cmd_args_t& args) {
     } else {
         unsigned int num_threads = 0;
         P_TCB p_b = (P_TCB)&os_rdy;
-        std::printf("ID\tPRIOR\tB_PRIOR\tSTATE\tDELTA TIME\r\n");
+        printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
         // iterate over the linked list of tasks
         while (p_b != NULL) {
-            std::printf("%u\t%u\t%u\t%u\t%u\r\n", p_b->task_id, p_b->prio,
-                        p_b->state, p_b->delta_time);
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_b->task_id, p_b->prio,
+                   p_b->state, p_b->delta_time, ThreadMaxStackUsed(p_b));
 
             num_threads++;
             p_b = p_b->p_lnk;
         }
-        std::printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
+        printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
 
     return 0;
 }
 
-/**
- * [cmd_radio description]
- * @param args [description]
- */
 int cmd_radio(cmd_args_t& args) {
-    if (args.empty() == true) {
+    shared_ptr<CommModule> commModule = CommModule::Instance();
+
+    if (args.empty()) {
         // Default to showing the list of ports
-        CommModule::PrintInfo(true);
+        commModule->printInfo();
         return 0;
     }
 
-    if (CommModule::isReady() == false) {
+    if (!commModule->isReady()) {
         printf("The radio interface is not ready! Unseen bugs may occur!\r\n");
     }
 
     if (args.size() == 1 || args.size() == 2) {
         rtp::packet pck("LINK TEST PAYLOAD");
-        unsigned int portNbr = rtp::port::LINK;
+        unsigned int portNbr = rtp::port::DISCOVER;
 
-        if (args.size() > 1) portNbr = atoi(args.at(1).c_str());
+        if (args.size() > 1) portNbr = atoi(args[1].c_str());
 
         pck.port(portNbr);
-        pck.subclass(1);
         pck.address(BASE_STATION_ADDR);
 
-        if (args.front().compare("show") == 0) {
-            CommModule::PrintInfo(true);
+        if (args[0] == "show") {
+            commModule->printInfo();
 
-        } else if (args.front().compare("test-tx") == 0) {
+        } else if (args[0] == "test-tx") {
             printf("Placing %u byte packet in TX buffer.\r\n",
                    pck.payload.size());
-            CommModule::send(pck);
+            commModule->send(pck);
 
-        } else if (args.front().compare("test-rx") == 0) {
+        } else if (args[0] == "test-rx") {
             printf("Placing %u byte packet in RX buffer.\r\n",
                    pck.payload.size());
-            CommModule::receive(pck);
+            commModule->receive(pck);
 
-        } else if (args.front().compare("loopback") == 0) {
+        } else if (args[0] == "loopback") {
+            pck.port(rtp::port::LINK);
+
             unsigned int i = 1;
             if (args.size() > 1) {
-                i = atoi(args.at(1).c_str());
+                i = atoi(args[1].c_str());
                 portNbr = rtp::port::LINK;
             }
 
             pck.port(portNbr);
-            pck.subclass(2);
-            pck.ack(true);
             pck.address(LOOPBACK_ADDR);
 
             printf(
@@ -889,28 +894,34 @@ int cmd_radio(cmd_args_t& args) {
             for (size_t j = 0; j < i; ++j) {
                 rtp::packet pck2;
                 pck2 = pck;
-                CommModule::send(pck2);
+                commModule->send(pck2);
                 Thread::wait(50);
             }
 
+        } else if (args[0] == "strobe") {
+            global_radio->strobe(0x30 + atoi(args[1].c_str()));
+        } else if (args[0] == "debug") {
+            bool wasEnabled = global_radio->isDebugEnabled();
+            global_radio->setDebugEnabled(!wasEnabled);
+            printf("Radio debugging now %s\r\n",
+                   wasEnabled ? "DISABLED" : "ENABLED");
+            if (!wasEnabled)
+                printf("All strobes will appear in the INF2 logs\r\n");
         } else {
-            show_invalid_args(args.front());
+            show_invalid_args(args[0]);
             return 1;
         }
     } else if (args.size() == 3) {
-        if (args.front().compare("set") == 0) {
-            if (isPosInt(args.at(2).c_str())) {
-                unsigned int portNbr = atoi(args.at(2).c_str());
+        if (args[0] == "set") {
+            if (isPosInt(args[2].c_str())) {
+                unsigned int portNbr = atoi(args[2].c_str());
 
-                if (args.at(1).compare("up") == 0) {
-                    CommModule::openSocket(portNbr);
-
-                } else if (args.at(1).compare("down") == 0) {
-                    CommModule::Close(portNbr);
+                if (args[1] == "close") {
+                    commModule->close(portNbr);
                     printf("Port %u closed.\r\n", portNbr);
 
-                } else if (args.at(1).compare("reset") == 0) {
-                    CommModule::ResetCount(portNbr);
+                } else if (args[1] == "reset") {
+                    commModule->resetCount(portNbr);
                     printf("Reset packet counts for port %u.\r\n", portNbr);
 
                 } else {
@@ -918,35 +929,32 @@ int cmd_radio(cmd_args_t& args) {
                     return 1;
                 }
             } else {
-                show_invalid_args(args.at(2));
+                show_invalid_args(args[2]);
                 return 1;
             }
         } else {
-            show_invalid_args(args.at(2));
+            show_invalid_args(args[2]);
             return 1;
         }
     } else if (args.size() >= 4) {
-        if (args.front().compare("stress-test") == 0) {
-            unsigned int packet_cnt = atoi(args.at(1).c_str());
-            unsigned int ms_delay = atoi(args.at(2).c_str());
-            unsigned int pck_size = atoi(args.at(3).c_str());
+        if (args[0] == "stress-test") {
+            unsigned int packet_cnt = atoi(args[1].c_str());
+            unsigned int ms_delay = atoi(args[2].c_str());
+            unsigned int pck_size = atoi(args[3].c_str());
             rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
             pck.port(rtp::port::LINK);
-            pck.subclass(3);
             pck.address(LOOPBACK_ADDR);
 
-            if (args.size() > 4) pck.ack(true);
             printf(
-                "Beginning radio stress test with %u %sACK, %u byte "
+                "Beginning radio stress test with %u %u byte "
                 "packets. %ums delay between packets.\r\n",
-                packet_cnt, (args.size() > 4 ? "" : "NON-"), pck.payload.size(),
-                ms_delay);
+                packet_cnt, pck.payload.size(), ms_delay);
 
             int start_tick = clock();
             for (size_t i = 0; i < packet_cnt; ++i) {
                 Thread::wait(ms_delay);
-                CommModule::send(pck);
+                commModule->send(pck);
             }
             printf("Stress test finished in %.1fms.\r\n",
                    (clock() - start_tick) /
@@ -956,6 +964,90 @@ int cmd_radio(cmd_args_t& args) {
         show_invalid_args(args);
         return 1;
     }
+
+    return 0;
+}
+
+int cmd_pong(cmd_args_t& args) {
+    CommModule::Instance()->setTxHandler(
+        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
+
+    // Any packets received on the PING port are placed in a queue.
+    Queue<rtp::packet, 2> pings;
+    CommModule::Instance()->setRxHandler([&pings](rtp::packet* pkt) {
+        pings.put(new rtp::packet(*pkt));
+    }, rtp::port::PING);
+
+    while (true) {
+        // Check for a ping packet.  If we got one, print a message and reply
+        // with an ack packet.
+        uint32_t timeout_ms = 1;
+        osEvent maybePing = pings.get(timeout_ms);
+        if (maybePing.status == osEventMessage) {
+            rtp::packet* ping = (rtp::packet*)maybePing.value.p;
+            uint8_t pingNbr = ping->payload[0];
+            delete ping;
+
+            printf("Got ping %d\r\n", pingNbr);
+
+            // reply with ack
+            CommModule::Instance()->send(
+                rtp::packet({pingNbr}, rtp::port::PING));
+            printf("  Sent ack %d\r\n", pingNbr);
+        }
+
+        // quit when any character is typed
+        if (Console::Instance()->pc.readable()) break;
+    }
+
+    // remove handlers, close port
+    CommModule::Instance()->close(rtp::port::PING);
+
+    return 0;
+}
+
+int cmd_ping(cmd_args_t& args) {
+    CommModule::Instance()->setTxHandler(
+        (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::PING);
+
+    // Any packets received on the PING port are placed in a queue
+    Queue<rtp::packet, 2> acks;
+    CommModule::Instance()->setRxHandler([&acks](rtp::packet* pkt) {
+        acks.put(new rtp::packet(*pkt));
+    }, rtp::port::PING);
+
+    uint8_t pingCount = 0;
+    int lastPingTime = 0;
+    const int PingInterval = 2;
+
+    while (true) {
+        // Send a ping packet if our interval has elapsed
+        if ((clock() - lastPingTime) / CLOCKS_PER_SEC > PingInterval) {
+            lastPingTime = clock();
+
+            CommModule::Instance()->send(
+                rtp::packet({pingCount}, rtp::port::PING));
+
+            printf("Sent ping %d\r\n", pingCount);
+
+            pingCount++;
+        }
+
+        // Print a message if we got an ack packet
+        uint32_t timeout_ms = 1;
+        osEvent maybeAck = acks.get(timeout_ms);
+        if (maybeAck.status == osEventMessage) {
+            rtp::packet* ack = (rtp::packet*)maybeAck.value.p;
+            printf("  got ack %d\r\n", ack->payload[0]);
+            delete ack;
+        }
+
+        // quit when any character is typed
+        if (Console::Instance()->pc.readable()) break;
+    }
+
+    // remove handlers, close port
+    CommModule::Instance()->close(rtp::port::PING);
 
     return 0;
 }
@@ -975,7 +1067,6 @@ void execute_line(char* rawCommand) {
         uint8_t argc = 0;
         string cmdName = "\0";
         vector<string> args;
-        args.reserve(MAX_COMMAND_ARGS);
 
         char* endArg;
         char* pch = strtok_r(cmds, " ", &endArg);
@@ -997,7 +1088,7 @@ void execute_line(char* rawCommand) {
             pch = strtok_r(nullptr, " ", &endArg);
         }
 
-        if (cmdName.empty() == false) {
+        if (!cmdName.empty()) {
             bool commandFound = false;
 
             for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++) {
@@ -1051,7 +1142,8 @@ void execute_line(char* rawCommand) {
         }
 
         cmds = strtok_r(nullptr, ";", &endCmd);
-        Console::Flush();  // make sure we force everything out of stdout
+        // make sure we force everything out of stdout
+        Console::Instance()->Flush();
     }
 }
 
@@ -1060,13 +1152,13 @@ void execute_line(char* rawCommand) {
  * of if an iterative command is not running or not.
  */
 void execute_iterative_command() {
-    if (iterative_command_state == true) {
-        if (Console::IterCmdBreakReq() == true) {
+    if (iterative_command_state) {
+        if (Console::Instance()->IterCmdBreakReq()) {
             iterative_command_state = false;
 
             // reset the flag for receiving a break character in the Console
             // class
-            Console::IterCmdBreakReq(false);
+            Console::Instance()->IterCmdBreakReq(false);
             // make sure the cursor is enabled
             printf("\033[?25h");
         } else {
@@ -1078,11 +1170,11 @@ void execute_iterative_command() {
 void show_invalid_args(cmd_args_t& args) {
     printf("Invalid arguments");
 
-    if (args.empty() == false) {
+    if (!args.empty()) {
         printf(" ");
 
         for (unsigned int i = 0; i < args.size() - 1; i++)
-            printf("'%s', ", args.at(i).c_str());
+            printf("'%s', ", args[i].c_str());
 
         printf("'%s'.", args.back().c_str());
     } else {

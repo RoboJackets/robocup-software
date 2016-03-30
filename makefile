@@ -1,6 +1,6 @@
-MAKE_FLAGS=--no-print-directory
-HW_UNIT=default
-all:
+MAKE_FLAGS = --no-print-directory
+TESTS = *
+FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -14,7 +14,7 @@ endef
 # targeted code separately.
 define cmake_build_target_fw
 	mkdir -p build/firmware
-	cd build/firmware && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS)
+	cd build/firmware && cmake -Wno-dev --target $1 $2 ../.. && make $1 $(MAKE_FLAGS) -j
 endef
 
 all:
@@ -35,11 +35,12 @@ run-sim2play: all
 tests: test-cpp test-python
 test-cpp: test-soccer test-firmware
 test-soccer:
+
 	$(call cmake_build_target, test-soccer)
-	run/test-soccer
+	run/test-soccer --gtest_filter=$(TESTS)
 test-firmware:
 	$(call cmake_build_target, test-firmware)
-	run/test-firmware
+	run/test-firmware --gtest_filter=$(TESTS)
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
@@ -66,58 +67,54 @@ clean:
 	cd build && ninja clean || true
 	rm -rf build
 
-# Robot firmware (both 2008/2011)
-robot:
-	cd firmware; scons robot
-robot-prog:
-	cd firmware; scons robot; sudo scons robot-prog
-robot-ota:
-	cd firmware; scons robot; scons robot-ota
-robot-prog-samba:
-	cd firmware; scons robot; sudo scons robot-prog-samba
+# the alias names that point to the current set of firmware targets
+robot: robot2015
+robot-prog: robot2015-prog
+fpga: fpga2015
+fpga-prog: fpga2015-prog
+base: base2015
+base-prog: base2015-prog
+kicker: kicker2015
+kicker-prog: kicker2015-prog
+firmware: firmware2015
 
 # robot 2015 firmware
 robot2015:
 	$(call cmake_build_target_fw, robot2015)
-
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
-# I2C bus hardware test
-robot2015-i2c: HW_UNIT=i2c 
-robot2015-i2c: robot2015-test
-robot2015-i2c-prog: HW_UNIT=i2c
-robot2015-i2c-prog: robot2015-test-prog
+# robot2015-test-<test_unit>{-prog}
+# defines the targets described at the line above - test units defined in FIRMWR_TESTS
+$(FIRMWR_TESTS:-%=robot2015-test-%):
+	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(@F:robot2015-test-%=%))
+$(FIRMWR_TESTS:-%=robot2015-test-%-prog):
+	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(@F:robot2015-test-%-prog=%))
 
-# IO expander hardware test
-robot2015-io-expander: HW_UNIT=io-expander
-robot2015-io-expander: robot2015-test
-robot2015-io-expander-prog: HW_UNIT=io-expander
-robot2015-io-expander-prog: robot2015-test-prog
+GDB_PORT ?= 3333
+.INTERMEDIATE: build/robot2015-gdb.pid
+build/robot2015-gdb.pid:
+# this will cache sudo use without a password in the environment
+# so we won't enter the gdb server and skip past the password prompt.
+	@sudo echo "starting pyocd-gdbserver, logging to build/robot2015-gdb.log"
+# now we can refresh the sudo timeout and start up the gdb server
+	sudo -v && { sudo pyocd-gdbserver --allow-remote --port $(GDB_PORT) --reset-break \
+	--target lpc1768 -S -G > build/robot2015-gdb.log 2>&1 & sudo echo $$! > $@; }
 
-# fpga hardware test
-robot2015-fpga: HW_UNIT=fpga
-robot2015-fpga: robot2015-test
-robot2015-fpga-prog: HW_UNIT=fpga
-robot2015-fpga-prog: robot2015-test-prog
-
-# piezo buzzer hardware test
-robot2015-piezo: HW_UNIT=piezo 
-robot2015-piezo: robot2015-test
-robot2015-piezo-prog: HW_UNIT=piezo
-robot2015-piezo-prog: robot2015-test-prog
-
-# neopixel hardware test
-robot2015-neopixel: HW_UNIT=neopixel
-robot2015-neopixel: robot2015-test
-robot2015-neopixel-prog: HW_UNIT=neopixel
-robot2015-neopixel-prog: robot2015-test-prog
-
-# general target for calling the hardware tests
-robot2015-test:
-	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
-robot2015-test-prog:
-	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(HW_UNIT))
+GDB_NO_CONN ?= 0
+robot2015-gdb: robot2015 build/robot2015-gdb.pid
+# use pyocd-gdbserver, and explicitly pass it the type of target we want to connect with,
+# making sure that we enable semihosting and use gdb syscalls for the file io
+	@trap 'sudo pkill -9 -P `cat build/robot2015-gdb.pid`; exit' TERM INT EXIT && \
+	if [ $(GDB_NO_CONN) -eq 0 ]; then \
+		arm-none-eabi-gdb build/firmware/firmware/robot2015/src-ctrl/robot2015_elf \
+		  -ex "target remote localhost:$(GDB_PORT)" \
+		  -ex "load" \
+		  -ex "tbreak main" \
+		  -ex "continue"; \
+	else \
+		while true; do sleep 10; done; \
+	fi
 
 # kicker 2015 firmware
 kicker2015:
@@ -130,10 +127,6 @@ fpga2015:
 	$(call cmake_build_target_fw, fpga2015)
 fpga2015-prog:
 	$(call cmake_build_target_fw, fpga2015-prog)
-
-# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
-firmware2015: robot2015 kicker2015 fpga2015 
-firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
 	
 # Base station 2015 firmware
 base2015:
@@ -141,21 +134,34 @@ base2015:
 base2015-prog:
 	$(call cmake_build_target_fw, base2015-prog)
 
+# Build all of the 2015 firmware for a robot, and/or move all of the binaries over to the mbed
+firmware2015: robot2015 kicker2015 fpga2015 base2015
+firmware2015-prog: robot2015-prog kicker2015-prog fpga2015-prog
+
+# Robot firmware (both 2008/2011)
+robot2011:
+	cd firmware && scons robot
+robot2011-prog: robot
+	cd firmware && sudo scons robot-prog
+robot2011-prog-samba: robot
+	cd firmware && sudo scons robot-prog-samba
+robot2011-prog-ota: robot
+	cd firmware && scons robot-ota
+
 # Robot FPGA
 fpga2011:
-	cd firmware; scons fpga2011
+	cd firmware && scons fpga2011
 # program the fpga over the usb spi interface
-fpga2011-spi:
-	cd firmware; scons fpga2011; sudo scons fpga2011-spi
+fpga2011-prog-spi: fpga2011
+	cd firmware && sudo scons fpga2011-spi
 # program the fpga over the jtag interface
-fpga2011-jtag:
-	cd firmware; scons fpga2011; sudo scons fpga2011-jtag
-
+fpga2011-prog-jtag: fpga2011
+	cd firmware && sudo scons fpga2011-jtag
 # USB Radio Base Station
 base2011:
-	cd firmware; scons base2011
-base2011-prog:
-	cd firmware; scons base2011; sudo scons base2011-prog
+	cd firmware && scons base2011
+base2011-prog: base2011
+	cd firmware && sudo scons base2011-prog
 
 
 static-analysis:
@@ -178,7 +184,7 @@ apidocs:
 	cp doc/doxygen.css api_docs/html/
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
-
+STYLIZE_DIFFBASE ?= master
 STYLE_EXCLUDE_DIRS=build \
 	external \
 	firmware/robot/cpu/at91sam7s256 \
@@ -188,9 +194,9 @@ STYLE_EXCLUDE_DIRS=build \
 	firmware/robot/cpu/invensense
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
-	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl $${LINK_PREFIX:-./}clean.patch)\n\n"
-	@stylize --diffbase=master --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl $${LINK_PREFIX:-file://}clean.patch)\n\n"
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"

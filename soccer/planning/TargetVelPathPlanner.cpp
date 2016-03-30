@@ -16,7 +16,9 @@ ConfigDouble* TargetVelPathPlanner::_targetVelChangeReplanThreshold;
 
 void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
     _targetVelChangeReplanThreshold = new ConfigDouble(
-        cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05);
+        cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05,
+        "If the target velocity changes by this much (in m/s), the planner is "
+        "rerun.  Otherwise the previous path may be kept.");
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
@@ -78,8 +80,8 @@ bool TargetVelPathPlanner::shouldReplan(
     // See if obstacles have changed such that the end point is significantly
     // different
     const Point newEndpoint = calculateNonblockedPathEndpoint(
-        prevPath->start().pos, command.worldVel, obstacles);
-    const float endChange = (newEndpoint - prevPath->end().pos).mag();
+        prevPath->start().motion.pos, command.worldVel, obstacles);
+    const float endChange = (newEndpoint - prevPath->end().motion.pos).mag();
     if (endChange > SingleRobotPathPlanner::goalChangeThreshold()) {
         return true;
     }

@@ -49,3 +49,9 @@ libspnav
 
 # joystick library
 sdl
+
+# debugger for MBED code
+arm-none-eabi-gdb
+
+# GNU debugger
+gdb

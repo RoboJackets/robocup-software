@@ -7,7 +7,6 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "task-globals.hpp"
 #include "motors.hpp"
 #include "fpga.hpp"
 #include "mpu-6050.hpp"
@@ -19,7 +18,7 @@ static const int CONTROL_LOOP_WAIT_MS = 5;
 
 // Declaration for an alternative control loop thread for when the accel/gyro
 // can't be used for whatever reason
-void Task_Controller_Sensorless(const osThreadId*);
+void Task_Controller_Sensorless(const osThreadId mainThreadId);
 
 namespace {
 // The gyro/accel values are given RPC read/write access here
@@ -42,7 +41,7 @@ float accelVals[3] = {0};
  * initializes the motion controller thread
  */
 void Task_Controller(void const* args) {
-    const osThreadId* mainID = (const osThreadId*)args;
+    const osThreadId mainID = (const osThreadId)args;
 
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
@@ -69,38 +68,23 @@ void Task_Controller(void const* args) {
             resultRatio[0], resultRatio[1], resultRatio[2], resultRatio[3],
             resultRatio[4], resultRatio[5]);
 
-        LOG(INIT,
-            "Control loop ready!\r\n    Thread ID:\t%u\r\n    Priority:\t%d",
+        LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
             threadID, threadPriority);
-
-        // Set the error code's valid bit
-        imu_err |= 1 << 0;
-
-        MCP23017::write_mask(1 << (8 + 6), 1 << (8 + 6));
-
     } else {
         LOG(SEVERE,
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
             "sensorless control loop.",
             testResp);
 
-        // Set the error flag - bit positions are pretty arbitruary as of now
-        imu_err |= 1 << 1;
-        // Set the error code's valid bit
-        imu_err |= 1 << 0;
-
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
         Task_Controller_Sensorless(mainID);
-
-        // should never reach this point
-        osThreadTerminate(threadID);
 
         return;
     }
 
     // signal back to main and wait until we're signaled to continue
-    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     std::vector<uint16_t> duty_cycles;
@@ -159,15 +143,9 @@ void Task_Controller(void const* args) {
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
-
-    osThreadTerminate(threadID);
 }
 
-/**
- * [Task_Controller_Sensorless]
- * @param args [description]
- */
-void Task_Controller_Sensorless(const osThreadId* mainID) {
+void Task_Controller_Sensorless(const osThreadId mainID) {
     // Store the thread's ID
     osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -176,21 +154,15 @@ void Task_Controller_Sensorless(const osThreadId* mainID) {
     osPriority threadPriority = osThreadGetPriority(threadID);
 
     LOG(INIT,
-        "Sensorless control loop ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
+        "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
         threadID, threadPriority);
 
-    // IMU error LED
-    MCP23017::write_mask(~(1 << (8 + 6)), 1 << (8 + 6));
-
     // signal back to main and wait until we're signaled to continue
-    osSignalSet((osThreadId)mainID, MAIN_TASK_CONTINUE);
+    osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     while (true) {
         Thread::wait(CONTROL_LOOP_WAIT_MS);
         Thread::yield();
     }
-
-    osThreadTerminate(threadID);
 }

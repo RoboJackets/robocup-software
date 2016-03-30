@@ -1,25 +1,17 @@
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
+include(RemoveFlags)
 
-# Set the mbed target processor and settings for cmake
-set(MBED_TARGET LPC1768)
-set(MBED_USE_RTOS true)
-set(MBED_USE_ETH false)
-set(MBED_USE_USB false)
-set(MBED_USE_DSP false)
-set(MBED_USE_RPC true)
-
-# The name of the toolchain we're using.  Note: we don't actually set the CMake
-# toolchain here because it would require that all files compiled under this
-# CMakeLists file to be compiled for the MBED, which we don't want.  We want out
-# tests and other things to be compiled for the host computer.
-set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
-
-# set the path to a bash script for moving files to the mbed's USB memory
-set(MBED_COPY_SCRIPT ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.sh)
+# remove the color flag since it will get set on anything with clang assert
+# the default compiler (mostly apple computers). The arm compilers know
+# nothing about this flag however.
+remove_cxx_flag("-fcolor-diagnostics")
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
+
+# set the path to a script for moving files to the mbed's USB storage
+set(MBED_COPY_SCRIPT sudo ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py)
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:
@@ -29,34 +21,24 @@ include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
-# enable C++11
-set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
+# enable C++14
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++14")
 # Enable logging for the common2015 library
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -DRJ_LOGGING_EN")
 # ignore formatting flags for printf
-set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format")
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-format -Wno-switch -Wno-unused-parameter -Wno-missing-field-initializers")
 # generate debugging information for gdb
-# set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
-# header files
-include_directories("common2015/drivers" )
-include_directories("common2015/drivers/CC1101")
-include_directories("common2015/modules" )
-include_directories("common2015/modules/CommLink")
-include_directories("common2015/modules/CommModule")
-include_directories("common2015/utils/logger")
-
 # Add a test runner target "test-firmware"
-set(FIRMWARE_TEST_SRC
-    "common2015/ExampleTest.cpp"
-)
+file(GLOB FIRMWARE_TEST_SRC "common2015/testing/*.cpp")
 add_executable(test-firmware ${FIRMWARE_TEST_SRC})
-target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 add_dependencies(test-firmware googletest)
+target_link_libraries(test-firmware ${GTEST_LIBRARIES})
 
 # Don't build the tests by default
 set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)

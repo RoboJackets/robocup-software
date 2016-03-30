@@ -35,11 +35,13 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
     return length;
 }
 
-MotionInstant InterpolatedPath::start() const {
-    return waypoints.front().instant;
+RobotInstant InterpolatedPath::start() const {
+    return RobotInstant(waypoints.front().instant);
 }
 
-MotionInstant InterpolatedPath::end() const { return waypoints.back().instant; }
+RobotInstant InterpolatedPath::end() const {
+    return RobotInstant(waypoints.back().instant);
+}
 
 // Returns the index of the point in this path nearest to pt.
 int InterpolatedPath::nearestIndex(Point pt) const {
@@ -183,7 +185,7 @@ void InterpolatedPath::draw(SystemState* const state,
     }
 }
 
-boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
+boost::optional<RobotInstant> InterpolatedPath::evaluate(float t) const {
     if (t < 0) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
@@ -220,7 +222,7 @@ boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
     int i = 0;
     while (waypoints[i].time <= t) {
         if (waypoints[i].time == t) {
-            return waypoints[i].instant;
+            return RobotInstant(waypoints[i].instant);
         }
         i++;
         if (i == size()) {
@@ -229,14 +231,14 @@ boost::optional<MotionInstant> InterpolatedPath::evaluate(float t) const {
     }
     float deltaT = (waypoints[i].time - waypoints[i - 1].time);
     if (deltaT == 0) {
-        return waypoints[i].instant;
+        return RobotInstant(waypoints[i].instant);
     }
     float constant = (t - waypoints[i - 1].time) / deltaT;
 
-    return MotionInstant(waypoints[i - 1].pos() * (1 - constant) +
-                             waypoints[i].pos() * (constant),
-                         waypoints[i - 1].vel() * (1 - constant) +
-                             waypoints[i].vel() * (constant));
+    return RobotInstant(MotionInstant(waypoints[i - 1].pos() * (1 - constant) +
+                                          waypoints[i].pos() * (constant),
+                                      waypoints[i - 1].vel() * (1 - constant) +
+                                          waypoints[i].vel() * (constant)));
 }
 
 size_t InterpolatedPath::size() const { return waypoints.size(); }

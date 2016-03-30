@@ -2,6 +2,7 @@
 # be installed through homebrew on OS X in order to build this project.
 # In addition to these, you'll also need to install libspnav - see below.
 
+# core
 qt5
 pyqt5
 python3
@@ -21,3 +22,22 @@ bullet --with-shared
 protobuf
 clang-format
 graphviz
+
+# firmware - required
+hg
+python
+gcc-arm-none-eabi-49    # requires `brew tap PX4/homebrew-px4`
+avr-libc                # requires `brew tap osx-cross/avr`
+
+# firmware - optional
+# open-ocd
+# avrdude --with-usb
+
+# firmware - not required, but maybe needed for better bash scripting support?
+# binutils
+# coreutils
+# readline
+# gnutls
+# gawk
+# gnu-tar
+# gnu-sed

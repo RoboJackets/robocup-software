@@ -10,7 +10,7 @@
 
 // forward declaration of tasks
 void Task_SerialConsole(void const* args);
-void Task_CommCtrl(void const*);
+void InitializeCommModule();
 
 /**
  * Max number of command aliases.
@@ -81,6 +81,7 @@ int cmd_console_hostname(cmd_args_t&);
 int cmd_console_user(cmd_args_t&);
 int cmd_help(cmd_args_t&);
 int cmd_help_detail(cmd_args_t&);
+int cmd_serial_ping(cmd_args_t&);
 int cmd_info(cmd_args_t&);
 int cmd_interface_check_conn(cmd_args_t&);
 int cmd_interface_disconnect(cmd_args_t&);
@@ -91,5 +92,7 @@ int cmd_ls(cmd_args_t&);
 int cmd_ping(cmd_args_t&);
 int cmd_ps(cmd_args_t&);
 int cmd_radio(cmd_args_t&);
+int cmd_ping(cmd_args_t&);
+int cmd_pong(cmd_args_t&);
 int cmd_rpc(cmd_args_t&);
 int cmd_imu(cmd_args_t&);

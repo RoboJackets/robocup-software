@@ -15,16 +15,18 @@ import constants
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
 PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 
-
 # main init method for the python side of things
 _has_initialized = False
+
+
 def init():
     # by default, the logger only shows messages at the WARNING level or greater
     logging.getLogger().setLevel(logging.INFO)
 
     global _has_initialized
     if _has_initialized:
-        logging.warn("main robocoup python init() method called twice - ignoring")
+        logging.warn(
+            "main robocoup python init() method called twice - ignoring")
         return
 
     # init root play
@@ -37,12 +39,12 @@ def init():
     _play_registry = play_registry_module.PlayRegistry()
 
     # load all plays
-    play_classes = class_import.recursive_import_classes(GAMEPLAY_DIR, ['plays'], play.Play)
+    play_classes = class_import.recursive_import_classes(GAMEPLAY_DIR,
+                                                         ['plays'], play.Play)
     for entry in play_classes:
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
-
 
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
@@ -61,17 +63,22 @@ def init():
                     try:
                         module = importlib.import_module('.'.join(module_path))
                     except:
-                        logging.error("Error reloading module '" + '.'.join(module_path) + "': e")
+                        logging.error("Error reloading module '" + '.'.join(
+                            module_path) + "': e")
                         traceback.print_exc()
                         return
 
                     try:
-                        play_class = class_import.find_subclasses(module, play.Play)[0]
-                        _play_registry.insert(module_path[1:], play_class) # note: skipping index zero of module_path cuts off the 'plays' part
+                        play_class = class_import.find_subclasses(module,
+                                                                  play.Play)[0]
+                        _play_registry.insert(
+                            module_path[1:], play_class
+                        )  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
                         # FIXME: instead, we should unload the module and just log a warning
-                        raise Exception("Error: python files within the plays directory must contain a subclass of play.Play")
+                        raise Exception(
+                            "Error: python files within the plays directory must contain a subclass of play.Play")
             elif event_type == 'modified':
                 try:
                     # reload the module
@@ -82,20 +89,24 @@ def init():
                     try:
                         module = imp.reload(module)
                     except:
-                        logging.error("Error reloading module '" + '.'.join(module_path) + "': e")
+                        logging.error("Error reloading module '" + '.'.join(
+                            module_path) + "': e")
                         traceback.print_exc()
                         return
 
-                    logging.info("reloaded module '" + '.'.join(module_path) + "'")
+                    logging.info("reloaded module '" + '.'.join(module_path) +
+                                 "'")
 
                     if is_play:
                         # re-register the new play class
                         # FIXME: this logic should go inside the play_registry
-                        play_reg_node = _play_registry.node_for_module_path(module_path[1:])
-                        play_reg_node.play_class = class_import.find_subclasses(module, play.Play)[0]
+                        play_reg_node = _play_registry.node_for_module_path(
+                            module_path[1:])
+                        play_reg_node.play_class = class_import.find_subclasses(
+                            module, play.Play)[0]
                         # _play_registry.modelReset.emit()
 
-                    # kill currently-running stuff if needed
+                        # kill currently-running stuff if needed
                     if not is_play:
                         _root_play.drop_current_play()
                         _root_play.drop_goalie_behavior()
@@ -103,7 +114,8 @@ def init():
                         _root_play.drop_current_play()
 
                 except Exception as e:
-                    logging.error("EXCEPTION in file modified event: " + repr(e))
+                    logging.error("EXCEPTION in file modified event: " + repr(
+                        e))
                     traceback.print_exc()
                     raise e
             elif event_type == 'deleted':
@@ -117,8 +129,8 @@ def init():
                     _root_play.drop_current_play()
                     _root_play.drop_goalie_behavior()
             else:
-                raise AssertionError("Unknown FsWatcher event type: '" + event_type + "'")
-
+                raise AssertionError("Unknown FsWatcher event type: '" +
+                                     event_type + "'")
 
     # start up filesystem-watching
     watcher = fs_watcher.FsWatcher(GAMEPLAY_DIR)
@@ -127,17 +139,23 @@ def init():
 
     _has_initialized = True
 
+
 #loads the specified file_name from the playbooks folder
 #isAbsolute should be passed as True if the file_name is an absolute path
 def load_playbook(file_name, isAbsolute=False):
     global _play_registry
-    _play_registry.load_playbook(playbook.load_from_file((PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name))
+    _play_registry.load_playbook(playbook.load_from_file((
+        PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name))
+
 
 #saves the playbook into the specified file_name in the playbooks folder
 #isAbsolute should be passed as True if the file_name is an absolute path
 def save_playbook(file_name, isAbsolute=False):
     global _play_registry
-    playbook.save_to_file((PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name, _play_registry.get_enabled_plays_paths());
+    playbook.save_to_file(
+        (PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name,
+        _play_registry.get_enabled_plays_paths())
+
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():
@@ -150,19 +168,25 @@ def run():
             root_play().spin()
     except:
         exc = sys.exc_info()[0]
-        logging.error("Exception occurred in main.run(): " + str(exc) + "ignoring for now")
+        logging.error("Exception occurred in main.run(): " + str(exc) +
+                      "ignoring for now")
         traceback.print_exc()
 
 
 _root_play = None
+
+
 def root_play():
     return _root_play
 
 
 _play_registry = None
+
+
 def play_registry():
     global _play_registry
     return _play_registry
+
 
 # returns the first robot in our robots with matching ID,
 # or None if no robots have the given ID
@@ -173,45 +197,66 @@ def our_robot_with_id(ID):
 ############################################################
 
 _game_state = None
+
+
 def game_state():
     global _game_state
     return _game_state
+
+
 def set_game_state(value):
     global _game_state
     _game_state = value
 
+
 _ball = None
+
+
 def ball():
     global _ball
     return _ball
+
+
 def set_ball(value):
     global _ball
     _ball = value
 
+
 _our_robots = None
+
+
 def our_robots():
     global _our_robots
     return _our_robots
+
+
 def set_our_robots(value):
     global _our_robots
     root_play().robots = value
     _our_robots = value
 
+
 _their_robots = None
+
+
 def their_robots():
     global _their_robots
     return _their_robots
+
+
 def set_their_robots(value):
     global _their_robots
     _their_robots = value
 
+
 _system_state = None
+
+
 def system_state():
     global _system_state
     return _system_state
+
+
 def set_system_state(value):
     global _system_state
     _system_state = value
-
-def set_field_constants(value):
-    constants.setFieldConstantsFromField_Dimensions(value)
