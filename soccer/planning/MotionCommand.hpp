@@ -53,12 +53,16 @@ struct WorldVelTargetCommand : public MotionCommand {
     Geometry2d::Point worldVel;
 };
 struct PivotCommand : public MotionCommand {
-    explicit PivotCommand(Geometry2d::Point target)
-        : MotionCommand(MotionCommand::Pivot), pivotTarget(target){};
+    explicit PivotCommand(Geometry2d::Point pivotPoint, Geometry2d::Point target, float radius)
+        : MotionCommand(MotionCommand::Pivot), pivotPoint(pivotPoint), pivotTarget(target), radius(radius) {}
+
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<PivotCommand>(*this);
     }
+
     Geometry2d::Point pivotTarget;
+    Geometry2d::Point pivotPoint;
+    float radius;
 };
 
 struct DirectPathTargetCommand : public MotionCommand {

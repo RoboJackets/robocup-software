@@ -84,18 +84,18 @@ void MotionControl::run() {
     const auto& motionCommand = _robot->motionCommand();
 
     float targetAngleFinal = 0;
-    if (motionCommand->getCommandType() == MotionCommand::Pivot) {
-        PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
-        targetPt = command.pivotTarget;
-    } else {
-        if (optTarget) {
-            if (optTarget->angle) {
-                if (optTarget->angle->angle) {
-                    targetAngleFinal = *optTarget->angle->angle;
-                }
+    //if (motionCommand->getCommandType() == MotionCommand::Pivot) {
+    //    PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
+    //    targetPt = command.pivotTarget;
+    //} else {
+    if (optTarget) {
+        if (optTarget->angle) {
+            if (optTarget->angle->angle) {
+                targetAngleFinal = *optTarget->angle->angle;
             }
         }
     }
+    //}
 
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
@@ -125,6 +125,7 @@ void MotionControl::run() {
     _targetAngleVel(targetW);
 
     // handle body velocity for pivot command
+    /*
     if (motionCommand->getCommandType() == MotionCommand::Pivot) {
         float r = Robot_Radius;
         const float FudgeFactor = *_robot->config->pivotVelMultiplier;
@@ -138,6 +139,7 @@ void MotionControl::run() {
 
         return;  // pivot handles both angle and position
     }
+     */
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
