@@ -14,7 +14,7 @@ CommLink::CommLink(shared_ptr<SharedSPI> sharedSPI, PinName nCs,
       _int_in(int_pin),
       _rxThread(&CommLink::rxThreadHelper, this, osPriorityNormal,
                 DEFAULT_STACK_SIZE / 2) {
-    ASSERT(_spi != nullptr);
+    setSPIFrequency(5000000);
     _int_in.mode(PullUp);
 }
 

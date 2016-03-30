@@ -41,7 +41,7 @@ AVR910::AVR910(shared_ptr<SharedSPI> spi, PinName nReset)
     : SharedSPIDevice(spi, NC), nReset_(nReset) {
     // Slow frequency as default to ensure no errors from
     // trying to run it too fast. Increase as appropriate.
-    // _spi->frequency(32000); // TODO(justin): fix this
+    setSPIFrequency(32000);
 
     // Enter serial programming mode by pulling reset line low.
     nReset_ = 0;
@@ -149,8 +149,6 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
 
     return success;
 }
-
-void AVR910::setFrequency(int frequency) { _spi->frequency(frequency); }
 
 bool AVR910::enableProgramming() {
     // Programming Enable Command: 0xAC, 0x53, 0x00, 0x00

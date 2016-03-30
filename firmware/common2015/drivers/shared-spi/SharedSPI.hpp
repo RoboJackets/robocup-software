@@ -28,6 +28,8 @@ public:
     SharedSPIDevice(std::shared_ptr<SharedSPI> spi, DIGITAL_OUT cs,
                     bool csInverted = true)
         : _spi(spi), _cs(cs) {
+        ASSERT(spi != nullptr);
+
         /// The value we set the chip select pin to in order to assert it (it's
         /// often inverted).
         _csAssertValue = csInverted ? 0 : 1;
@@ -38,6 +40,7 @@ public:
 
     void chipSelect() {
         _spi->lock();
+        _spi->frequency(_frequency);
         _cs = _csAssertValue;
     }
 
@@ -46,10 +49,17 @@ public:
         _spi->unlock();
     }
 
+    /// Set the SPI frequency for this device
+    void setSPIFrequency(int hz) { _frequency = hz; }
+
 protected:
     std::shared_ptr<SharedSPI> _spi;
     DIGITAL_OUT _cs;
 
 private:
     int _csAssertValue;
+
+    /// The SPI bus frequency used by this device.
+    /// This default value is the same as the mbed's default (1MHz).
+    int _frequency = 1000000;
 };

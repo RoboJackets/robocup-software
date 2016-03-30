@@ -26,7 +26,9 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
     : SharedSPIDevice(sharedSPI, nCs, true),
       _initB(initB),
       _progB(progB, PIN_OUTPUT, OpenDrain, 1),
-      _done(done) {}
+      _done(done) {
+    setSPIFrequency(1000000);
+}
 
 FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
     instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B, RJ_FPGA_PROG_B,
@@ -96,8 +98,6 @@ bool FPGA::configure(const std::string& filepath) {
             LOG(INF1, "DONE pin state:\t%s", _done ? "HIGH" : "LOW");
 
             _isInit = true;
-
-            // spi->frequency(1000000); // TODO(justin): remove?
 
             return true;
         }

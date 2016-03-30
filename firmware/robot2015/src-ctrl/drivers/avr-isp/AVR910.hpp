@@ -92,15 +92,6 @@ public:
     bool program(FILE* binary, int pageSize, int numPages = 1);
 
     /**
-     * Set the frequency of the SPI communication.
-     *
-     * (Wrapper for SPI::frequency)
-     *
-     * @param frequency Frequency of the SPI communication in hertz.
-     */
-    void setFrequency(int frequency);
-
-    /**
      * Read the vendor code of the device.
      *
      * @return The vendor code - should be 0x1E for Atmel.

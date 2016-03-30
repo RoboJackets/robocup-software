@@ -103,7 +103,6 @@ int main() {
     /// A shared spi bus used for the fpga and cc1201 radio
     shared_ptr<SharedSPI> sharedSPI = make_shared<SharedSPI>(RJ_SPI_BUS);
     sharedSPI->format(8, 0);  // 8 bits per transfer
-    sharedSPI->frequency(5000000);
 
     // Initialize and configure the fpga with the given bitfile
     FPGA::Initialize(sharedSPI);
