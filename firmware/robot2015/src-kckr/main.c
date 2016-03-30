@@ -1,10 +1,10 @@
 /*
- * Pin - Action - SPI_Pin
- * 10 - SS - p8
- * 11 - MOSI - p5
- * 12 - MISO - p6
- * 13 - SCK - p7
- */
+* Pin - Action - SPI_Pin
+* 10 - SS - p8
+* 11 - MOSI - p5
+* 12 - MISO - p6
+* 13 - SCK - p7
+*/
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -18,12 +18,12 @@
 #define TOGGLE_BIT(P,B)  (P ^= BV(B))
 
 /* Inputs */
-#define VOLTAGE     PA1
+#define VOLTAGE     PA2
 #define N_KICK_CS   PA7
 
 /* Outputs */
-#define KICK        PA2
-#define CHIP        PA3
+#define KICK        PA0
+#define CHIP        PA1
 #define DO          PA5
 #define LED         PB0
 #define CHARGE      PB1
@@ -35,6 +35,7 @@ uint8_t spi_enabled = 0;
 uint8_t get_voltage();
 void init();
 void trigger(uint8_t time, uint8_t useKicker);
+void delay_us(uint16_t time);
 
 uint8_t time;
 
@@ -53,16 +54,16 @@ void main()
             if (had_interrupt_) {
                 char cmd = data_>>6;
                 switch(cmd) {
-                  case 0x1: // read voltage
-                    break;
-                  case 0x2: // chip
-                    time  = data_ & 0x3F;
-                    trigger(time, 0);
-                    break;
-                  case 0x3: // kick
-                    time  = data_ & 0x3F;
-                    trigger(time, 1);
-                    break;
+                    case 0x1: // read voltage
+                        break;
+                    case 0x2: // chip
+                        time  = data_ & 0x3F;
+                        trigger(time, 0);
+                        break;
+                    case 0x3: // kick
+                        time  = data_ & 0x3F;
+                        trigger(time, 1);
+                        break;
                 }
                 // // Simulate kick by toggling LED
                 // if (data_ == (uint8_t) 255) {
@@ -71,7 +72,8 @@ void main()
                 // Reset interrupt flag
                 had_interrupt_ = 0;
 
-                USIDR = get_voltage();
+                //USIDR = get_voltage();
+                USIDR = (char) 50;
                 //USIDR = data_;
             }
 
@@ -128,10 +130,10 @@ void init()
 
 void trigger(uint8_t timeKick, uint8_t useKicker)
 {
-  uint8_t action = useKicker ? KICK : CHIP;
-  TOGGLE_BIT(PORTA, action);
-  delay_us(timeKick*125);
-  TOGGLE_BIT(PORTA, action);
+    uint8_t action = useKicker ? KICK : CHIP;
+    TOGGLE_BIT(PORTA, action);
+    delay_us(timeKick*125);
+    TOGGLE_BIT(PORTA, action);
 }
 
 /* Voltage Function */
@@ -148,4 +150,10 @@ uint8_t get_voltage()
     // ADHC will go from 0 to 255 corresponding to
     // 0 through VCC
     return ADCH;
+}
+
+void delay_us(uint16_t count) {
+    while(count--) {
+        _delay_us(1);
+    }
 }

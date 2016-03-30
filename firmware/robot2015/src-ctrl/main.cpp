@@ -13,6 +13,7 @@ int kick( int time );
 int chip( int time );
 int vRead();
 int map(int x, int in_min, int in_max, int out_min, int out_max);
+DigitalOut n_kick_select(p9);
 
 int main() {
     pc.baud(57600); //set up the serial
@@ -21,8 +22,7 @@ int main() {
     bool success = kicker.flash(false, true);
     printf("Flashed kicker, success = %s\r\n", success ? "TRUE" : "FALSE");
 
-    DigitalOut n_kick_select(p9);
-    n_kick_select = 1;
+    n_kick_select = 0;
     uint8_t transByte;
     char getCmd;
     // Setup the spi for 8 bit data, high steady state clock,
@@ -43,22 +43,24 @@ int main() {
               case 'r':
                 transByte = vRead();
             }
+            int a;
+            transferAndWait(transByte, spi);
+            a = transferAndWait('0', spi);
+            pc.printf("Received:");
+            pc.printf("%d\r\n", a);
+            wait(.1); // tested down to .025 seconds between
         }
-        int a;
-        a = transferAndWait(transByte, spi);
-        pc.printf("Received:");
-        pc.printf("%d\r\n", a);
-        wait(.1); // tested down to .025 seconds between
     }
 }
 
 int transferAndWait (const char what, SPI& spi)
 {
     n_kick_select = !n_kick_select;
+    wait(.1);
     int a = spi.write(what);
     wait(.020);
-    return a;
     n_kick_select = !n_kick_select;
+    return a;
 } // end transferAndWait
 
 /*
