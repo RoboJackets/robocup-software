@@ -17,6 +17,7 @@ var searchData=
   ['robotwidget',['RobotWidget',['../class_robot_widget.html',1,'']]],
   ['rolerequirements',['RoleRequirements',['../classgameplay_1_1role__assignment_1_1_role_requirements.html',1,'gameplay::role_assignment']]],
   ['rootplay',['RootPlay',['../classgameplay_1_1root__play_1_1_root_play.html',1,'gameplay::root_play']]],
+  ['rotaryselector',['RotarySelector',['../class_rotary_selector.html',1,'']]],
   ['rotationcommand',['RotationCommand',['../struct_planning_1_1_rotation_command.html',1,'Planning']]],
   ['rotationconstraints',['RotationConstraints',['../struct_rotation_constraints.html',1,'']]],
   ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]]

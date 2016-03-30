@@ -40,6 +40,7 @@ var hierarchy =
     ] ],
     [ "Console", "class_console.html", null ],
     [ "Planning::CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", null ],
+    [ "fake_mbed::DigitalIn", "classfake__mbed_1_1_digital_in.html", null ],
     [ "gameplay.constants.Robot.Dribbler", "classgameplay_1_1constants_1_1_robot_1_1_dribbler.html", null ],
     [ "RobotConfig::Dribbler", "struct_robot_config_1_1_dribbler.html", null ],
     [ "DS2411_t", "struct_d_s2411__t.html", null ],
@@ -204,6 +205,7 @@ var hierarchy =
     ] ],
     [ "RobotStatus", "class_robot_status.html", null ],
     [ "gameplay.role_assignment.RoleRequirements", "classgameplay_1_1role__assignment_1_1_role_requirements.html", null ],
+    [ "RotarySelector< DIGITAL_IN >", "class_rotary_selector.html", null ],
     [ "Planning::RotationCommand", "struct_planning_1_1_rotation_command.html", [
       [ "Planning::EmptyAngleCommand", "struct_planning_1_1_empty_angle_command.html", null ],
       [ "Planning::FaceAngleCommand", "struct_planning_1_1_face_angle_command.html", null ],

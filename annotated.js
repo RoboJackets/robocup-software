@@ -11,6 +11,7 @@ var annotated =
     [ "circle_on_center", null, [
       [ "CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", "classcircle__on__center_1_1_circle_on_center" ]
     ] ],
+    [ "fake_mbed", "namespacefake__mbed.html", "namespacefake__mbed" ],
     [ "Gameplay", "namespace_gameplay.html", "namespace_gameplay" ],
     [ "gameplay", null, [
       [ "behavior", null, [
@@ -377,6 +378,7 @@ var annotated =
     [ "RobotStatus", "class_robot_status.html", "class_robot_status" ],
     [ "RobotStatusWidget", "class_robot_status_widget.html", "class_robot_status_widget" ],
     [ "RobotWidget", "class_robot_widget.html", "class_robot_widget" ],
+    [ "RotarySelector", "class_rotary_selector.html", "class_rotary_selector" ],
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],
     [ "SimRadio", "class_sim_radio.html", "class_sim_radio" ],
