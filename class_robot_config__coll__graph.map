@@ -1,10 +1,12 @@
 <map id="RobotConfig" name="RobotConfig">
-<area shape="rect" id="node2" href="$struct_robot_config_1_1_dribbler.html" title="RobotConfig::Dribbler" alt="" coords="749,192,905,219"/>
-<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="477,196,584,223"/>
-<area shape="rect" id="node7" href="$struct_robot_config_1_1_kicker.html" title="RobotConfig::Kicker" alt="" coords="755,243,899,269"/>
-<area shape="rect" id="node8" href="$struct_robot_config_1_1_p_i_d.html" title="RobotConfig::PID" alt="" coords="763,300,890,327"/>
-<area shape="rect" id="node10" href="$struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="749,5,904,32"/>
-<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="336,233,427,260"/>
-<area shape="rect" id="node9" href="$class_config_int.html" title="ConfigInt" alt="" coords="491,281,570,308"/>
-<area shape="rect" id="node5" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="131,233,237,260"/>
+<area shape="rect" id="node2" href="$struct_robot_config_1_1_dribbler.html" title="RobotConfig::Dribbler" alt="" coords="845,192,1001,219"/>
+<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="573,196,680,223"/>
+<area shape="rect" id="node9" href="$struct_robot_config_1_1_kicker.html" title="RobotConfig::Kicker" alt="" coords="851,243,995,269"/>
+<area shape="rect" id="node10" href="$struct_robot_config_1_1_p_i_d.html" title="RobotConfig::PID" alt="" coords="859,300,986,327"/>
+<area shape="rect" id="node12" href="$struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="845,5,1000,32"/>
+<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="432,233,523,260"/>
+<area shape="rect" id="node11" href="$class_config_int.html" title="ConfigInt" alt="" coords="587,281,666,308"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="205,203,291,229"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="6,194,143,235"/>
+<area shape="rect" id="node7" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="195,259,301,285"/>
 </map>

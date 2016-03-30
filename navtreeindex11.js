@@ -1,5 +1,6 @@
 var NAVTREEINDEX11 =
 {
+"struct_rotation_constraints.html#af76589d4a8c5cf50d7a42876a37edfe7":[12,0,83,2],
 "structcommand__t.html":[12,0,25],
 "structcommand__t.html#a6556a176b3057ab399c02f14dafbc2cc":[12,0,25,2],
 "structcommand__t.html#a816cc17fd5afbb6e347a1e45ff898fa7":[12,0,25,3],

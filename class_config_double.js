@@ -1,6 +1,6 @@
 var class_config_double =
 [
-    [ "ConfigDouble", "class_config_double.html#a3b68a674b6f8f4c5c10ce60495188e45", null ],
+    [ "ConfigDouble", "class_config_double.html#a0156cc256bd72348859abdf58be522e5", null ],
     [ "operator double", "class_config_double.html#ae8b8dd0d472c5933d8e6bcbc3f822401", null ],
     [ "operator=", "class_config_double.html#a85c3d021b416107bbde51272577aecfd", null ],
     [ "setValue", "class_config_double.html#a2ee761b3607570a987d00d1a809b3227", null ],

@@ -1,6 +1,6 @@
 var class_config_bool =
 [
-    [ "ConfigBool", "class_config_bool.html#a451f1f38ac24e65fe92a8369c08c0eb4", null ],
+    [ "ConfigBool", "class_config_bool.html#a8eece01e881afb0e4d9eb73cb9ad083e", null ],
     [ "operator bool", "class_config_bool.html#a4bfafa723bfe195ced7dea41fd71cf71", null ],
     [ "operator=", "class_config_bool.html#a31c83a6f6542f246c2db254afe26744d", null ],
     [ "setupItem", "class_config_bool.html#a4e0b74836a839f6b64065a1fffd30c1e", null ],

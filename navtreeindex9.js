@@ -1,11 +1,12 @@
 var NAVTREEINDEX9 =
 {
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a23d45359c7010f38be147f49819f6578":[12,0,5,14,6,0,0,8],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html":[12,0,5,14,6,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a23d45359c7010f38be147f49819f6578":[12,0,5,14,6,0,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a23d45359c7010f38be147f49819f6578":[12,0,5,14,6,0,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a2d5c4af0d5fc9246752208a62795c88a":[12,0,5,14,6,0,0,10],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a73f4c6d8836edd2efb0c3e79db354f9b":[12,0,5,14,6,0,0,2],
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8507aaa4175eb16e8cf87c2b6689da2d":[12,0,5,14,6,0,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8507aaa4175eb16e8cf87c2b6689da2d":[12,0,5,14,6,0,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8507aaa4175eb16e8cf87c2b6689da2d":[12,0,5,14,6,0,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8bc7652f3d42f1d1e199094f1a12fb69":[12,0,5,14,6,0,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aa065da8f7ee87c5a84ec9e8fb2a3b05f":[12,0,5,14,6,0,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aeec4c2eb05b89bc6776484ff122aef83":[12,0,5,14,6,0,0,7],
@@ -18,8 +19,8 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a5847709a71e5bbd59527c9e16bad317c":[12,0,5,14,6,1,0,1],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a6677f2ae800e0b170ff26017c7343af2":[12,0,5,14,6,1,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a718425a0308107e2fd06a731521683ac":[12,0,5,14,6,1,0,13],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a73e52f2678641d49ba9efa184a137208":[12,0,5,14,6,1,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a73e52f2678641d49ba9efa184a137208":[12,0,5,14,6,1,0,15],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a73e52f2678641d49ba9efa184a137208":[12,0,5,14,6,1,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a7614b585d740427e55f9634f3eed1491":[12,0,5,14,6,1,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a81b0c6033c679cf766a6a26c06fe7963":[12,0,5,14,6,1,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a90cde8483a2cc35eeb26beb6f3d1c5cd":[12,0,5,14,6,1,0,3],
@@ -42,8 +43,8 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html":[12,0,5,14,6,2,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html":[12,0,5,14,6,3,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a2b3807bee7f9df4c34785aafd7d1db99":[12,0,5,14,6,3,0,12],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,5,14,6,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,5,14,6,3,0,15],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,5,14,6,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a3984aaf96d2d82f81260fc7a5526aafb":[12,0,5,14,6,3,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a467b08d0245e7114cd3814bb0a683969":[12,0,5,14,6,3,0,16],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a4fd3e448729a69f8e009d4cd819e8017":[12,0,5,14,6,3,0,11],
@@ -229,8 +230,8 @@ var NAVTREEINDEX9 =
 "ds2411_8hpp_source.html":[13,0,1,1,0,1,3,0],
 "files.html":[13,0],
 "fpga_8hpp_source.html":[13,0,1,1,0,1,4,0],
-"functions.html":[12,3,0],
 "functions.html":[12,3,0,0],
+"functions.html":[12,3,0],
 "functions_a.html":[12,3,0,1],
 "functions_b.html":[12,3,0,2],
 "functions_c.html":[12,3,0,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "functions_func_f.html":[12,3,1,6],
 "functions_func_g.html":[12,3,1,7],
 "functions_func_h.html":[12,3,1,8],
-"functions_func_i.html":[12,3,1,9],
-"functions_func_j.html":[12,3,1,10]
+"functions_func_i.html":[12,3,1,9]
 };

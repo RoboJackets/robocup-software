@@ -1,3 +1,5 @@
 <map id="ConfigItem" name="ConfigItem">
-<area shape="rect" id="node2" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="5,83,112,109"/>
+<area shape="rect" id="node2" title="STL class. " alt="" coords="33,99,119,125"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="5,6,141,47"/>
+<area shape="rect" id="node4" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="148,99,255,125"/>
 </map>

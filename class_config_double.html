@@ -119,9 +119,9 @@ $(document).ready(function(){initNavTree('class_config_double.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3b68a674b6f8f4c5c10ce60495188e45"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b68a674b6f8f4c5c10ce60495188e45"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigDouble</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, QString name, double value=0)</td></tr>
-<tr class="separator:a3b68a674b6f8f4c5c10ce60495188e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0156cc256bd72348859abdf58be522e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0156cc256bd72348859abdf58be522e5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigDouble</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, QString name, double value=0, std::string description=&quot;&quot;)</td></tr>
+<tr class="separator:a0156cc256bd72348859abdf58be522e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98a6b831f27cb37f79e6cdcce8a28bd6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98a6b831f27cb37f79e6cdcce8a28bd6"></a>
 virtual QString&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> () override</td></tr>
 <tr class="separator:a98a6b831f27cb37f79e6cdcce8a28bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,6 +160,9 @@ QStringList&#160;</td><td class="memItemRight" valign="bottom"><b>_path</b></td>
 <tr class="memitem:af033102954adf801822cf81894957cc7 inherit pro_attribs_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af033102954adf801822cf81894957cc7"></a>
 QTreeWidgetItem *&#160;</td><td class="memItemRight" valign="bottom"><b>_treeItem</b></td></tr>
 <tr class="separator:af033102954adf801822cf81894957cc7 inherit pro_attribs_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab7db255e7e8abf3cde918d71da08c99 inherit pro_attribs_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab7db255e7e8abf3cde918d71da08c99"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>_description</b></td></tr>
+<tr class="separator:aab7db255e7e8abf3cde918d71da08c99 inherit pro_attribs_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -170,9 +173,9 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Configuration</b></t
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_config_item"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_config_item')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_config_item.html">ConfigItem</a></td></tr>
-<tr class="memitem:ad77b4cb0cf66701cc56e2fb9df91986c inherit pro_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad77b4cb0cf66701cc56e2fb9df91986c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;name)</td></tr>
-<tr class="separator:ad77b4cb0cf66701cc56e2fb9df91986c inherit pro_methods_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b84ce77b512f660ed7dc35f3586327c inherit pro_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b84ce77b512f660ed7dc35f3586327c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;name, std::string description=&quot;&quot;)</td></tr>
+<tr class="separator:a4b84ce77b512f660ed7dc35f3586327c inherit pro_methods_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4df937131b54f1000f7fd8c564f47a2 inherit pro_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4df937131b54f1000f7fd8c564f47a2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addItem</b> ()</td></tr>
 <tr class="separator:af4df937131b54f1000f7fd8c564f47a2 inherit pro_methods_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,7 +202,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>valueChanged</b> (con
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_config_double__coll__graph.png" border="0" usemap="#_config_double_coll__map" alt="Collaboration graph"/></div>
 <map name="_config_double_coll__map" id="_config_double_coll__map">
-<area shape="rect" id="node2" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="13,173,104,200"/><area shape="rect" id="node3" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="5,83,112,109"/></map>
+<area shape="rect" id="node2" href="class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="95,189,185,216"/><area shape="rect" id="node3" title="STL class. " alt="" coords="33,99,119,125"/><area shape="rect" id="node4" title="STL class. " alt="" coords="5,6,141,47"/><area shape="rect" id="node5" href="class_configuration.html" title="static variable for the program, extremely general " alt="" coords="148,99,255,125"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/<a class="el" href="_configuration_8hpp_source.html">Configuration.hpp</a></li>
@@ -211,7 +214,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>valueChanged</b> (con
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_config_double.html">ConfigDouble</a></li>
-    <li class="footer">Generated on Wed Mar 30 2016 00:18:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 30 2016 00:34:22 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

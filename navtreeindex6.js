@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"class_u_s_b_radio.html#a9cc536afac2872f1e7cf7663ba3e3dbc":[12,0,92,8],
 "class_u_s_b_radio.html#aa011f3463d5c1647f2f90c5716ec6af5":[12,0,92,19],
 "class_u_s_b_radio.html#aab5042f7b2da255dcb1a5cf56366afae":[12,0,92,9],
 "class_u_s_b_radio.html#abad64399c0bde81e826a038f45dc6434":[12,0,92,6],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html#addc26e8b8e6be793ccbfd83f5682901c":[12,0,5,8,1,5,0,9],
 "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html#af7b212e02704b62e727697c7a57d9ea6":[12,0,5,8,1,5,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html":[12,0,5,8,1,5,0,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html":[12,0,5,8,1,6,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a6f7e060bc82740842d37b2b210fd3b5a":[12,0,5,8,1,6,0,0]
+"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html":[12,0,5,8,1,6,0]
 };

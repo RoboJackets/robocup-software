@@ -1,6 +1,6 @@
 var class_config_int =
 [
-    [ "ConfigInt", "class_config_int.html#a8f044cd24d7454da495d9167899f4ede", null ],
+    [ "ConfigInt", "class_config_int.html#a5785a9d26b682296d22f94013165524a", null ],
     [ "operator int", "class_config_int.html#a10140935764195b77a83ae69a497e682", null ],
     [ "operator=", "class_config_int.html#ab99ab44454d9a0e18796a8b736817564", null ],
     [ "setValue", "class_config_int.html#acb2d7cc6e4dd1424de66a3bd70dac4ec", null ],
