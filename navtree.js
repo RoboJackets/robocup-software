@@ -36,17 +36,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_c_c1201.html#aafc629e895ad9d36848a7c9f4652aaf2",
-"class_game_state.html#ab956ed0c998590adb885340cb1217681",
-"class_geometry2d_1_1_transform_matrix.html#a49bd7578e1108fad998d4d072124cde0",
-"class_our_robot.html#a5b4559811248e148990e74aa3eceb74b",
-"class_processor.html#afaad3140ad4f40c8f5b8d1af647b9194",
-"class_u_s_b_radio.html#a9cc536afac2872f1e7cf7663ba3e3dbc",
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a6f7e060bc82740842d37b2b210fd3b5a",
-"classgameplay_1_1skills_1_1aim_1_1_aim.html#a0e3e4b349eac4f12d8d4e81f1bce321f",
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html",
-"functions_func_j.html",
-"struct_rotation_constraints.html#af76589d4a8c5cf50d7a42876a37edfe7"
+"class_c_c1201.html#aaf5b57ac979c61fe3ca540c4579d5662",
+"class_game_state.html#aa98b0c2d2e8a4524b2d619ad1f55dd47",
+"class_geometry2d_1_1_transform_matrix.html#a38324bdeeff4d83c09786009870f7045",
+"class_our_robot.html#a52323f5fed33ef642888df497d0f72d5",
+"class_processor.html#ade4b410819be6fe3b6fe64086b2c8b8d",
+"class_u_s_b_radio.html#a14428d30859e868b57ce73d9ec9ad824",
+"classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html#a3462398e9b0a76fc17e8757ca19c29a0",
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#aa031cd4d7eb1bc53391b179051ffab86",
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#aecbcbd3930744070c504a999cc65469b",
+"functions_func.html",
+"struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,6 +1,6 @@
 var class_comm_module =
 [
-    [ "CommModule", "class_comm_module.html#a0ff8d8d5998430766d111072edaaf5b1", null ],
+    [ "CommModule", "class_comm_module.html#ac44efb07ed811af904521e1f338edaf2", null ],
     [ "~CommModule", "class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595", null ],
     [ "close", "class_comm_module.html#a37a040e808593687c5a1cda222e28708", null ],
     [ "init", "class_comm_module.html#adb2d4e3625fcad87ca1ae1ae9569adca", null ],

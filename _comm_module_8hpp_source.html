@@ -118,102 +118,104 @@ $(document).ready(function(){initNavTree('_comm_module_8hpp_source.html','');});
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;rtos-mgmt/mail-helper.hpp&quot;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;Console.hpp&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;CommPort.hpp&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;algorithm&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">/* These define the function pointer type that&#39;s used for every callback</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> * function type set through the CommModule class.</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">typedef</span> void(CommCallback)(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">typedef</span> <a class="code" href="class_comm_port.html">CommPort&lt;CommCallback&gt;</a> <a class="code" href="class_comm_port.html">CommPort_t</a>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="class_comm_module.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_module.html">CommModule</a> {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    std::map&lt;uint8_t, CommPort_t&gt; _ports;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="class_comm_module.html#a0ff8d8d5998430766d111072edaaf5b1">CommModule</a>();</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595">~CommModule</a>();</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> shared_ptr&lt;CommModule&gt;&amp; <a class="code" href="class_comm_module.html#a38c59837a72f9b9f74cb5d1318d56290">Instance</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_module.html#adb2d4e3625fcad87ca1ae1ae9569adca">init</a>();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// Class constants</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// Be careful of the queue sizes. The errors that result from</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="comment">// over allocation are very tricky to catch.</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> TX_QUEUE_SIZE = 3;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> RX_QUEUE_SIZE = 3;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// Set a TX callback function on an object</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> B&gt;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">void</span> setTxHandler(B* obj, <span class="keywordtype">void</span> (B::*mptr)(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*), uint8_t portNbr) {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        setTxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    }</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// Set an RX callback function on an object</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> B&gt;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> setRxHandler(B* obj, <span class="keywordtype">void</span> (B::*mptr)(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*), uint8_t portNbr) {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        setRxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// Set a normal RX callback function without an object</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> setRxHandler(std::function&lt;CommCallback&gt; callback, uint8_t portNbr);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">void</span> setTxHandler(std::function&lt;CommCallback&gt; callback, uint8_t portNbr);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="comment">// Send a rtp::packet. The details of exactly how the packet will be sent</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="comment">// are determined from the rtp::packet&#39;s port and subclass values</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> send(<span class="keyword">const</span> <a class="code" href="classrtp_1_1packet.html">rtp::packet</a>&amp; pkt);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_module.html#a61e910a9458ad5848b89d96a6a5c0d4d">receive</a>(<span class="keyword">const</span> <a class="code" href="classrtp_1_1packet.html">rtp::packet</a>&amp; pkt);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> numRxPackets() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> numTxPackets() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> resetCount(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> portNbr);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> printInfo() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;TimeoutLED.hpp&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">/* These define the function pointer type that&#39;s used for every callback</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * function type set through the CommModule class.</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">typedef</span> void(CommCallback)(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">typedef</span> <a class="code" href="class_comm_port.html">CommPort&lt;CommCallback&gt;</a> <a class="code" href="class_comm_port.html">CommPort_t</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="class_comm_module.html">   32</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_comm_module.html">CommModule</a> {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    std::map&lt;uint8_t, CommPort_t&gt; _ports;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="class_comm_module.html#ac44efb07ed811af904521e1f338edaf2">CommModule</a>(std::shared_ptr&lt;FlashingTimeoutLED&gt; rxTimeoutLED,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;               std::shared_ptr&lt;FlashingTimeoutLED&gt; txTimeoutLED);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595">~CommModule</a>();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="class_comm_module.html#ad3b026b224e451bfe2f94a490e8ede68">   45</a></span>&#160;    <span class="keyword">static</span> std::shared_ptr&lt;CommModule&gt; <a class="code" href="class_comm_module.html#ad3b026b224e451bfe2f94a490e8ede68">Instance</a>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_module.html#adb2d4e3625fcad87ca1ae1ae9569adca">init</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="comment">// Class constants</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// Be careful of the queue sizes. The errors that result from</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">// over allocation are very tricky to catch.</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> TX_QUEUE_SIZE = 3;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">size_t</span> RX_QUEUE_SIZE = 3;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="comment">// Set a TX callback function on an object</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> B&gt;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> setTxHandler(B* obj, <span class="keywordtype">void</span> (B::*mptr)(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*), uint8_t portNbr) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        setTxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">// Set an RX callback function on an object</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> B&gt;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">void</span> setRxHandler(B* obj, <span class="keywordtype">void</span> (B::*mptr)(<a class="code" href="classrtp_1_1packet.html">rtp::packet</a>*), uint8_t portNbr) {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        setRxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">// Set a normal RX callback function without an object</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> setRxHandler(std::function&lt;CommCallback&gt; callback, uint8_t portNbr);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> setTxHandler(std::function&lt;CommCallback&gt; callback, uint8_t portNbr);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="comment">// Send a rtp::packet. The details of exactly how the packet will be sent</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// are determined from the rtp::packet&#39;s port and subclass values</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">void</span> send(<span class="keyword">const</span> <a class="code" href="classrtp_1_1packet.html">rtp::packet</a>&amp; pkt);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_comm_module.html#a61e910a9458ad5848b89d96a6a5c0d4d">receive</a>(<span class="keyword">const</span> <a class="code" href="classrtp_1_1packet.html">rtp::packet</a>&amp; pkt);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> numRxPackets() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> numTxPackets() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">void</span> resetCount(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> portNbr);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> close(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> portNbr);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">bool</span> isReady() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">int</span> numOpenSockets() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="comment">// Memory Queue IDs</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    osMailQId _txQueue;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    osMailQId _rxQueue;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="comment">// The working threads for handling rx and tx data queues</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">void</span> txThread();</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">void</span> rxThread();</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> rxThreadHelper(<span class="keywordtype">void</span> <span class="keyword">const</span>* moduleInst);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> txThreadHelper(<span class="keywordtype">void</span> <span class="keyword">const</span>* moduleInst);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">void</span> ready();</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> printInfo() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> close(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> portNbr);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">bool</span> isReady() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">int</span> numOpenSockets() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="comment">// Memory Queue IDs</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    osMailQId _txQueue;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    osMailQId _rxQueue;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="comment">// The working threads for handling rx and tx data queues</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">void</span> txThread();</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">void</span> rxThread();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> rxThreadHelper(<span class="keywordtype">void</span> <span class="keyword">const</span>* moduleInst);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> txThreadHelper(<span class="keywordtype">void</span> <span class="keyword">const</span>* moduleInst);</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keyword">static</span> std::shared_ptr&lt;CommModule&gt; instance;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordtype">bool</span> _isReady = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    Thread _rxThread, _txThread;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="comment">// Mail helper objects</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <a class="code" href="class_mail_helper.html">MailHelper&lt;rtp::packet, TX_QUEUE_SIZE&gt;</a> _txQueueHelper;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <a class="code" href="class_mail_helper.html">MailHelper&lt;rtp::packet, RX_QUEUE_SIZE&gt;</a> _rxQueueHelper;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;};</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordtype">void</span> ready();</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordtype">bool</span> _isReady = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    Thread _rxThread, _txThread;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="comment">// Mail helper objects</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="class_mail_helper.html">MailHelper&lt;rtp::packet, TX_QUEUE_SIZE&gt;</a> _txQueueHelper;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <a class="code" href="class_mail_helper.html">MailHelper&lt;rtp::packet, RX_QUEUE_SIZE&gt;</a> _rxQueueHelper;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    std::shared_ptr&lt;FlashingTimeoutLED&gt; _rxTimeoutLED, _txTimeoutLED;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;};</div>
 <div class="ttc" id="class_comm_port_html"><div class="ttname"><a href="class_comm_port.html">CommPort</a></div><div class="ttdef"><b>Definition:</b> CommPort.hpp:13</div></div>
-<div class="ttc" id="class_comm_module_html_a38c59837a72f9b9f74cb5d1318d56290"><div class="ttname"><a href="class_comm_module.html#a38c59837a72f9b9f74cb5d1318d56290">CommModule::Instance</a></div><div class="ttdeci">static shared_ptr&lt; CommModule &gt; &amp; Instance()</div><div class="ttdoc">Access the singleton CommModule instance. </div><div class="ttdef"><b>Definition:</b> CommModule.cpp:30</div></div>
 <div class="ttc" id="class_comm_module_html_adb2d4e3625fcad87ca1ae1ae9569adca"><div class="ttname"><a href="class_comm_module.html#adb2d4e3625fcad87ca1ae1ae9569adca">CommModule::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">initializes and starts rx/tx threads and mail queues </div></div>
+<div class="ttc" id="class_comm_module_html_ad3b026b224e451bfe2f94a490e8ede68"><div class="ttname"><a href="class_comm_module.html#ad3b026b224e451bfe2f94a490e8ede68">CommModule::Instance</a></div><div class="ttdeci">static std::shared_ptr&lt; CommModule &gt; Instance</div><div class="ttdoc">global singleton instance of CommModule </div><div class="ttdef"><b>Definition:</b> CommModule.hpp:45</div></div>
 <div class="ttc" id="classrtp_1_1packet_html"><div class="ttname"><a href="classrtp_1_1packet.html">rtp::packet</a></div><div class="ttdoc">Real-Time packet definition. </div><div class="ttdef"><b>Definition:</b> rtp.hpp:58</div></div>
 <div class="ttc" id="class_comm_module_html_a8fc34ff99f70c3b3b8dcfe52119ca595"><div class="ttname"><a href="class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595">CommModule::~CommModule</a></div><div class="ttdeci">~CommModule()</div><div class="ttdoc">The destructor frees up allocated memory and stops threads. </div><div class="ttdef"><b>Definition:</b> CommModule.cpp:15</div></div>
-<div class="ttc" id="class_comm_module_html"><div class="ttname"><a href="class_comm_module.html">CommModule</a></div><div class="ttdoc">A high-level firmware class for packet handling &amp; routing. </div><div class="ttdef"><b>Definition:</b> CommModule.hpp:31</div></div>
-<div class="ttc" id="class_comm_module_html_a61e910a9458ad5848b89d96a6a5c0d4d"><div class="ttname"><a href="class_comm_module.html#a61e910a9458ad5848b89d96a6a5c0d4d">CommModule::receive</a></div><div class="ttdeci">void receive(const rtp::packet &amp;pkt)</div><div class="ttdoc">Called by CommLink instances whenever a packet is received via radio. </div><div class="ttdef"><b>Definition:</b> CommModule.cpp:204</div></div>
-<div class="ttc" id="class_comm_module_html_a0ff8d8d5998430766d111072edaaf5b1"><div class="ttname"><a href="class_comm_module.html#a0ff8d8d5998430766d111072edaaf5b1">CommModule::CommModule</a></div><div class="ttdeci">CommModule()</div><div class="ttdoc">The constructor initializes and starts threads and mail queues. </div><div class="ttdef"><b>Definition:</b> CommModule.cpp:20</div></div>
+<div class="ttc" id="class_comm_module_html"><div class="ttname"><a href="class_comm_module.html">CommModule</a></div><div class="ttdoc">A high-level firmware class for packet handling &amp; routing. </div><div class="ttdef"><b>Definition:</b> CommModule.hpp:32</div></div>
+<div class="ttc" id="class_comm_module_html_ac44efb07ed811af904521e1f338edaf2"><div class="ttname"><a href="class_comm_module.html#ac44efb07ed811af904521e1f338edaf2">CommModule::CommModule</a></div><div class="ttdeci">CommModule(std::shared_ptr&lt; FlashingTimeoutLED &gt; rxTimeoutLED, std::shared_ptr&lt; FlashingTimeoutLED &gt; txTimeoutLED)</div><div class="ttdoc">The constructor initializes and starts threads and mail queues. </div><div class="ttdef"><b>Definition:</b> CommModule.cpp:20</div></div>
+<div class="ttc" id="class_comm_module_html_a61e910a9458ad5848b89d96a6a5c0d4d"><div class="ttname"><a href="class_comm_module.html#a61e910a9458ad5848b89d96a6a5c0d4d">CommModule::receive</a></div><div class="ttdeci">void receive(const rtp::packet &amp;pkt)</div><div class="ttdoc">Called by CommLink instances whenever a packet is received via radio. </div><div class="ttdef"><b>Definition:</b> CommModule.cpp:191</div></div>
 <div class="ttc" id="class_mail_helper_html"><div class="ttname"><a href="class_mail_helper.html">MailHelper&lt; rtp::packet, TX_QUEUE_SIZE &gt;</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -221,7 +223,7 @@ $(document).ready(function(){initNavTree('_comm_module_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html">common2015</a></li><li class="navelem"><a class="el" href="dir_97a522e108a6deae26cc0258e2b12092.html">modules</a></li><li class="navelem"><a class="el" href="dir_b4ec8a03fc6520dd881dec64068485f5.html">CommModule</a></li><li class="navelem"><b>CommModule.hpp</b></li>
-    <li class="footer">Generated on Wed Mar 30 2016 00:34:22 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Mar 31 2016 00:45:06 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

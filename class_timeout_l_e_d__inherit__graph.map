@@ -1,0 +1,4 @@
+<map id="TimeoutLED" name="TimeoutLED">
+<area shape="rect" id="node2" href="$class_flashing_timeout_l_e_d.html" title="Flashes a single LED as long as the timer hasn&#39;t expired. " alt="" coords="5,88,155,115"/>
+<area shape="rect" id="node3" href="$class_strobing_timeout_l_e_ds.html" title="Strobes an array of leds as long as the timer hasn&#39;t expired. " alt="" coords="180,81,339,122"/>
+</map>

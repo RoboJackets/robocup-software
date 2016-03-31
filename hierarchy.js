@@ -231,9 +231,6 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
     [ "SoftwareSPI", "class_software_s_p_i.html", null ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -311,6 +308,9 @@ var hierarchy =
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
     ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],
     [ "TeamInfo", "class_team_info.html", null ],
@@ -321,6 +321,10 @@ var hierarchy =
       [ "test_role_assignment.TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", null ]
     ] ],
     [ "Timeout", "class_timeout.html", null ],
+    [ "TimeoutLED", "class_timeout_l_e_d.html", [
+      [ "FlashingTimeoutLED", "class_flashing_timeout_l_e_d.html", null ],
+      [ "StrobingTimeoutLEDs< NUM_LEDS >", "class_strobing_timeout_l_e_ds.html", null ]
+    ] ],
     [ "Geometry2d::TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", null ],
     [ "Planning::Tree", "class_planning_1_1_tree.html", [
       [ "Planning::FixedStepTree", "class_planning_1_1_fixed_step_tree.html", null ]

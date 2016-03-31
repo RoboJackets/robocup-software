@@ -109,7 +109,6 @@ $(document).ready(function(){initNavTree('class_comm_module.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_comm_module-members.html">List of all members</a>  </div>
@@ -123,10 +122,10 @@ $(document).ready(function(){initNavTree('class_comm_module.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ff8d8d5998430766d111072edaaf5b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ff8d8d5998430766d111072edaaf5b1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a0ff8d8d5998430766d111072edaaf5b1">CommModule</a> ()</td></tr>
-<tr class="memdesc:a0ff8d8d5998430766d111072edaaf5b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor initializes and starts threads and mail queues. <br/></td></tr>
-<tr class="separator:a0ff8d8d5998430766d111072edaaf5b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac44efb07ed811af904521e1f338edaf2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac44efb07ed811af904521e1f338edaf2"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#ac44efb07ed811af904521e1f338edaf2">CommModule</a> (std::shared_ptr&lt; <a class="el" href="class_flashing_timeout_l_e_d.html">FlashingTimeoutLED</a> &gt; rxTimeoutLED, std::shared_ptr&lt; <a class="el" href="class_flashing_timeout_l_e_d.html">FlashingTimeoutLED</a> &gt; txTimeoutLED)</td></tr>
+<tr class="memdesc:ac44efb07ed811af904521e1f338edaf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor initializes and starts threads and mail queues. <br/></td></tr>
+<tr class="separator:ac44efb07ed811af904521e1f338edaf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fc34ff99f70c3b3b8dcfe52119ca595"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8fc34ff99f70c3b3b8dcfe52119ca595"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595">~CommModule</a> ()</td></tr>
 <tr class="memdesc:a8fc34ff99f70c3b3b8dcfe52119ca595"><td class="mdescLeft">&#160;</td><td class="mdescRight">The destructor frees up allocated memory and stops threads. <br/></td></tr>
@@ -178,15 +177,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReady</b> () const 
 int&#160;</td><td class="memItemRight" valign="bottom"><b>numOpenSockets</b> () const </td></tr>
 <tr class="separator:a48b8582e2120cd488f95dcd269d2aec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a38c59837a72f9b9f74cb5d1318d56290"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38c59837a72f9b9f74cb5d1318d56290"></a>
-static shared_ptr&lt; <a class="el" href="class_comm_module.html">CommModule</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#a38c59837a72f9b9f74cb5d1318d56290">Instance</a> ()</td></tr>
-<tr class="memdesc:a38c59837a72f9b9f74cb5d1318d56290"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the singleton CommModule instance. <br/></td></tr>
-<tr class="separator:a38c59837a72f9b9f74cb5d1318d56290"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
+<tr class="memitem:ad3b026b224e451bfe2f94a490e8ede68"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3b026b224e451bfe2f94a490e8ede68"></a>
+static std::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="class_comm_module.html">CommModule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_module.html#ad3b026b224e451bfe2f94a490e8ede68">Instance</a></td></tr>
+<tr class="memdesc:ad3b026b224e451bfe2f94a490e8ede68"><td class="mdescLeft">&#160;</td><td class="mdescRight">global singleton instance of CommModule <br/></td></tr>
+<tr class="separator:ad3b026b224e451bfe2f94a490e8ede68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a212d9de7f115d2ae69e2f1f5d36ee036"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a212d9de7f115d2ae69e2f1f5d36ee036"></a>
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>TX_QUEUE_SIZE</b> = 3</td></tr>
 <tr class="separator:a212d9de7f115d2ae69e2f1f5d36ee036"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -216,7 +213,7 @@ osMailQId&#160;</td><td class="memItemRight" valign="bottom"><b>_rxQueue</b></td
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_module.html">CommModule</a></li>
-    <li class="footer">Generated on Wed Mar 30 2016 00:34:22 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Mar 31 2016 00:45:07 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
