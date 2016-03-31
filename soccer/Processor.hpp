@@ -186,7 +186,7 @@ protected:
     void run() override;
 
     void applyJoystickControls(const JoystickControlValues& controlVals,
-                               Packet::RadioTx::Robot* txRobot,
+                               Packet::Control* txRobot,
                                OurRobot* robot);
 
 private:

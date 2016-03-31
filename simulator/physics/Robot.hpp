@@ -4,6 +4,7 @@
 #include "RaycastVehicle.hpp"
 
 #include <protobuf/RadioTx.pb.h>
+#include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
 class Ball;
@@ -124,7 +125,7 @@ public:
     void setBrakingForce(float val) { _brakingForce = val; }
 
     /** set control data */
-    void radioTx(const Packet::RadioTx::Robot* data);
+    void radioTx(const Packet::Control* data);
 
     /** get robot information data */
     Packet::RadioRx radioRx() const;

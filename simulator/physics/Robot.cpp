@@ -245,10 +245,10 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const {
     _robotChassis->getMotionState()->getWorldTransform(chassisWorldTrans);
 }
 
-void Robot::radioTx(const Packet::RadioTx::Robot* data) {
-    velocity(data->body_x(), data->body_y(), data->body_w());
-    _controller->prepareKick(data->kick(), data->use_chipper());
-    _controller->prepareDribbler(data->dribbler());
+void Robot::radioTx(const Packet::Control* data) {
+    velocity(data->xvelocity(), data->yvelocity(), data->avelocity());
+    _controller->prepareKick(data->triggermode() == Packet::Control::IMMEDIATE ? data->kcstrength() : 0, data->shootmode());
+    _controller->prepareDribbler(data->dvelocity());
 }
 
 Packet::RadioRx Robot::radioRx() const {

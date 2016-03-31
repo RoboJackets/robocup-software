@@ -5,7 +5,7 @@
 #include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
 #include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
+#include "radio/USB2015Radio.hpp"
 #include "modeling/BallTracker.hpp"
 #include <multicast.hpp>
 #include <Constants.hpp>
@@ -221,7 +221,7 @@ void Processor::run() {
 
     // Create radio socket
     _radio =
-        _simulation ? (Radio*)new SimRadio(_blueTeam) : (Radio*)new USBRadio();
+        _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam)) : static_cast<Radio*>(new USB2015Radio());
 
     Status curStatus;
 
@@ -593,28 +593,29 @@ void Processor::sendRadioData() {
     if (_state.gameState.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _state.self) {
-            Packet::RadioTx::Robot& txRobot = r->radioTx;
-            txRobot.set_body_x(0);
-            txRobot.set_body_y(0);
-            txRobot.set_body_w(0);
-            txRobot.set_kick(0);
-            txRobot.set_dribbler(0);
+            Packet::Control& control = r->control;
+            control.set_xvelocity(0);
+            control.set_yvelocity(0);
+            control.set_avelocity(0);
+            control.set_dvelocity(0);
+            control.set_triggermode(Packet::Control::STAND_DOWN);
         }
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
-            Packet::RadioTx::Robot* txRobot = tx->add_robots();
+            // Packet::RadioTx::Robot* txRobot = tx->add_robots();
+            Packet::Robot* txRobot = tx->mutable_robotcollection()->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
             // number of motors.
-            txRobot->CopyFrom(r->radioTx);
+            txRobot->CopyFrom(r->robotPacket);
 
             if (r->shell() == _manualID) {
                 JoystickControlValues controlVals = getJoystickControlValues();
-                applyJoystickControls(controlVals, txRobot, r);
+                applyJoystickControls(controlVals, txRobot->control, r);
             }
         }
     }
@@ -625,7 +626,7 @@ void Processor::sendRadioData() {
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::RadioTx::Robot* tx,
+                                      Packet::Control* tx,
                                       OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
@@ -640,20 +641,20 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     }
 
     // translation
-    tx->set_body_x(translation.x);
-    tx->set_body_y(translation.y);
+    tx->set_xvelocity(translation.x);
+    tx->set_yvelocity(translation.y);
 
     // rotation
-    tx->set_body_w(controlVals.rotation);
+    tx->set_avelocity(controlVals.rotation);
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_kick_immediate(kick);
-    tx->set_kick(kick ? controlVals.kickPower : 0);
-    tx->set_use_chipper(controlVals.chip);
+    tx->set_triggermode(Packet::Control::IMMEDIATE);
+    tx->set_kcstrength(kick ? controlVals.kickPower : 0);
+    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK : Packet::Control::CHIP);
 
     // dribbler
-    tx->set_dribbler(controlVals.dribble ? controlVals.dribblerPower : 0);
+    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValues() {

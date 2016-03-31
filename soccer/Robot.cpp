@@ -128,10 +128,12 @@ void OurRobot::resetForNextIteration() {
 
     _clearCmdText();
 
-    radioTx.Clear();
-    radioTx.set_robot_id(shell());
-    radioTx.set_accel(10);
-    radioTx.set_decel(10);
+    robotPacket.Clear();
+    robotPacket.set_uid(shell());
+
+    // This will probably move to tuning
+    // radioTx.set_accel(10);
+    // radioTx.set_decel(10);
 
     if (charged()) {
         _lastChargedTime = RJ::timestamp();
@@ -233,7 +235,7 @@ float OurRobot::kickTimer() const {
 
 void OurRobot::dribble(uint8_t speed) {
     uint8_t scaled = *config->dribbler.multiplier * speed;
-    radioTx.set_dribbler(scaled);
+    control.set_dvelocity(scaled);
 
     *_cmdText << "dribble(" << (float)speed << ")" << endl;
 }
@@ -277,21 +279,25 @@ void OurRobot::chipLevel(uint8_t strength) {
 
 void OurRobot::_kick(uint8_t strength) {
     uint8_t max = *config->kicker.maxKick;
-    radioTx.set_kick(strength > max ? max : strength);
-    radioTx.set_use_chipper(false);
+    control.set_kcstrength(strength > max ? max : strength);
+    control.set_shootmode(Packet::Control::KICK);
+    control.set_triggermode(Packet::Control::IMMEDIATE);
 }
 
 void OurRobot::_chip(uint8_t strength) {
     uint8_t max = *config->kicker.maxChip;
-    radioTx.set_kick(strength > max ? max : strength);
-    radioTx.set_use_chipper(true);
+    control.set_kcstrength(strength > max ? max : strength);
+    control.set_shootmode(Packet::Control::CHIP);
+    control.set_triggermode(Packet::Control::IMMEDIATE);
 }
 
 void OurRobot::_unkick() {
-    _kick(0);
-    _chip(0);
-    radioTx.set_use_chipper(false);
-    radioTx.set_kick_immediate(false);
+    // _kick(0);
+    // _chip(0);
+    // control.set_use_chipper(false);
+    // control.set_kick_immediate(false);
+    control.set_kcstrength(0);
+    control.set_triggermode(Packet::Control::STAND_DOWN);
 }
 
 void OurRobot::unkick() {
@@ -300,7 +306,7 @@ void OurRobot::unkick() {
     *_cmdText << "unkick()" << endl;
 }
 
-void OurRobot::kickImmediately(bool im) { radioTx.set_kick_immediate(im); }
+void OurRobot::kickImmediately(bool im) { control.set_triggermode(Packet::Control::IMMEDIATE); }
 
 #pragma mark Robot Avoidance
 

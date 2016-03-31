@@ -10,6 +10,8 @@
 #include "planning/RotationCommand.hpp"
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
+#include <protobuf/Control.pb.h>
+#include <protobuf/Tuning.pb.h>
 #include <Utils.hpp>
 
 #include <array>
@@ -123,6 +125,11 @@ private:
 class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
+
+    /** radio packets */
+    Packet::Control control;
+    Packet::Tuning  tuning;
+    Packet::Robot   robotPacket;
 
     RobotConfig* config;
     RobotStatus* status;
@@ -380,9 +387,6 @@ public:
     float kickerVoltage() const;
     Packet::HardwareVersion hardwareVersion() const;
 
-    /** radio packets */
-    Packet::RadioTx::Robot radioTx;
-
     Packet::RadioRx& radioRx() { return _radioRx; }
     const Packet::RadioRx& radioRx() const { return _radioRx; }
 
@@ -409,14 +413,14 @@ public:
      * @brief Starts the robot playing the fight song
      */
     void sing() {
-        sing(::Packet::RadioTx_Robot_Control_Song::RadioTx_Robot_Control_Song_FIGHT_SONG); 
+        sing(Packet::Control::FIGHT_SONG); 
     }
 
     /**
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(::Packet::RadioTx_Robot_Control_Song song)
+    void sing(Packet::Control::Song song)
     {
         // std::string songName = "";
         // switch (song)
@@ -425,7 +429,7 @@ public:
         // }
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
         //radioTx.set_sing(true);
-        radioTx.set_song(song)
+        control.set_song(song);
     }
 
     bool isPenaltyKicker = false;

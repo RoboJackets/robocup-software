@@ -11,13 +11,12 @@
 #include <wchar.h>
 
 USB2015Radio::USB2015Radio(const unsigned int PRODUCT_ID, const unsigned int VENDOR_ID) {
-    if (!hidAPIInit) {
         hidAPIInit = (hid_init() == 0 ? true : false);
-        if (!hidAPIInit) {}
+        if (!hidAPIInit) {
             //change to exception
             std::cerr << "Cannot initialize the HID interface for radio 2015" << std::endl;
+            return;
         }
-    }
 
 #ifdef _USB2015RADIO_DEBUG
     struct hid_device_info *devices, *currentDevice;
@@ -47,9 +46,6 @@ USB2015Radio::USB2015Radio(const unsigned int PRODUCT_ID, const unsigned int VEN
 
 USB2015Radio::~USB2015Radio() {
     hid_close(base);
-    if (--numInstances == 0) {
-        hidAPIInit = static_cast<bool>(hid_exit());
-    }
 }
 
 bool USB2015Radio::isOpen() {
