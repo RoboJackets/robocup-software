@@ -18,11 +18,11 @@ public:
 
 
 private:
-    static volatile bool hidAPIInit = false;
-    static volatile int numInstances = 0;
+    //static volatile bool hidAPIInit = false;
+    //static volatile int numInstances = 0;
     hid_device *base;
 
     const unsigned char hidBufLen = 64;
     unsigned char hidTxBuf[64];
     unsigned char hidRxBuf[64];
-}
+};

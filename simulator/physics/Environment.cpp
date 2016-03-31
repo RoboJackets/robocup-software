@@ -21,7 +21,6 @@
 
 using namespace std;
 using namespace Geometry2d;
-using namespace Packet;
 
 static const QHostAddress LocalAddress(QHostAddress::LocalHost);
 static const QHostAddress MulticastAddress(SharedVisionAddress);
@@ -63,11 +62,11 @@ void Environment::connectSockets() {
 }
 
 void Environment::preStep(float deltaTime) {
-    for (Robot* robot : _yellow) {
+    for (::Robot* robot : _yellow) {
         robot->applyEngineForces(deltaTime);
     }
 
-    for (Robot* robot : _blue) {
+    for (::Robot* robot : _blue) {
         robot->applyEngineForces(deltaTime);
     }
 }
@@ -75,23 +74,23 @@ void Environment::preStep(float deltaTime) {
 void Environment::step() {
     // Check for SimCommands
     while (_visionSocket.hasPendingDatagrams()) {
-        SimCommand cmd;
-        if (!loadPacket<SimCommand>(_visionSocket, cmd)) continue;
+        Packet::SimCommand cmd;
+        if (!loadPacket<Packet::SimCommand>(_visionSocket, cmd)) continue;
         handleSimCommand(cmd);
     }
 
     // Check for RadioTx packets from blue team
     while (_radioSocketBlue.hasPendingDatagrams()) {
-        RadioTx tx;
-        if (!loadPacket<RadioTx>(_radioSocketBlue, tx)) continue;
+        Packet::RadioTx tx;
+        if (!loadPacket<Packet::RadioTx>(_radioSocketBlue, tx)) continue;
 
         handleRadioTx(true, tx);
     }
 
     // Check for RadioTx packets from yellow team
     while (_radioSocketYellow.hasPendingDatagrams()) {
-        RadioTx tx;
-        if (!loadPacket<RadioTx>(_radioSocketYellow, tx)) continue;
+        Packet::RadioTx tx;
+        if (!loadPacket<Packet::RadioTx>(_radioSocketYellow, tx)) continue;
         handleRadioTx(false, tx);
     }
 
@@ -126,7 +125,7 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
         }
     }
 
-    for (const SimCommand::Robot& rcmd : cmd.robots()) {
+    for (const Packet::SimCommand::Robot& rcmd : cmd.robots()) {
         const RobotMap& team = rcmd.blue_team() ? _blue : _yellow;
         RobotMap::const_iterator i = team.find(rcmd.shell());
 
@@ -346,13 +345,13 @@ Robot* Environment::robot(bool blue, int board_id) const {
 }
 
 void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
-    for (int i = 0; i < tx.robots_size(); ++i) {
-        const Packet::RadioTx::Robot& cmd = tx.robots(i);
+    for (int i = 0; i < tx.robotcollection().robots_size(); ++i) {
+        const Packet::Robot& cmd = tx.robotcollection().robots(i);
 
-        Robot* r = robot(blue, cmd.robot_id());
+        Robot* r = robot(blue, cmd.uid());
         if (r) {
             // run controls update
-            r->radioTx(&cmd);
+            r->radioTx(&cmd.control());
 
             // trigger signals to update visualization
             Geometry2d::Point pos2 = r->getPosition();
@@ -360,7 +359,7 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
             QVector3D axis(0.0, 0.0, 1.0);
         } else {
             printf("Commanding nonexistent robot %s:%d\n",
-                   blue ? "Blue" : "Yellow", cmd.robot_id());
+                   blue ? "Blue" : "Yellow", cmd.uid());
         }
 
         Packet::RadioRx rx = r->radioRx();

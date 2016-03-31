@@ -17,11 +17,16 @@ message RadioTx
 		FIRMWARE = 2;
 	}
 
+	message RobotCollection {
+		//required uint32 botCount = 1;
+		repeated Robot robots = 2;
+	}
+
 	required TxMode txMode = 1;
 	required TxType txType = 2;
 	oneof TxBody 
 	{
 		Firmware firmware = 3;
-		Robot robot = 4;
+		RobotCollection robotCollection = 4;
 	}
 }
