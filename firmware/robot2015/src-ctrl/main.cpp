@@ -29,11 +29,10 @@ void Task_Controller(void const* args);
  * @param[in] state The next state of the LEDs
  */
 void statusLights(bool state) {
+    DigitalOut init_leds[] = {
+        {RJ_BALL_LED}, {RJ_RX_LED}, {RJ_TX_LED}, {RJ_RDY_LED}};
     // the state is inverted because the leds are wired active-low
-    DigitalOut init_leds[] = {{RJ_BALL_LED, PullUp, !state},
-                              {RJ_RX_LED, PullUp, !state},
-                              {RJ_TX_LED, PullUp, !state},
-                              {RJ_RDY_LED, PullUp, !state}};
+    for (DigitalOut& led : init_leds) led = !state;
 }
 
 /// Turn all status LEDs on
