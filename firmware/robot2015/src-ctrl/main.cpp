@@ -103,12 +103,9 @@ int main() {
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
-    std::vector<DigitalOut> mbed_lights = {
-        DigitalOut(LED1, 0), DigitalOut(LED2, 0), DigitalOut(LED3, 0),
-        DigitalOut(LED4, 0),
-    };
-    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
-    live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
+    // This is set to never timeout, so it will only stop if the system halts
+    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
+                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);

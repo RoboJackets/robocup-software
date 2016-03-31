@@ -9,12 +9,6 @@
 // The head of the linked list of active threads
 extern struct OS_XCB os_rdy;
 
-namespace {
-bool comm_led_rx_en = false;
-bool comm_led_tx_en = false;
-bool dir = false;
-}
-
 void setISRPriorities() {
     __disable_irq();
 
@@ -63,48 +57,6 @@ void setISRPriorities() {
 
     __enable_irq();
 }
-
-/**
- * Timer interrupt based light flicker. If this stops, the code triggered
- * a fault.
- */
-void imAlive(void const* arg) {
-    std::vector<DigitalOut>* leds = const_cast<std::vector<DigitalOut>*>(
-        reinterpret_cast<const std::vector<DigitalOut>*>(arg));
-
-    if (dir) {
-        for (size_t i = 0; i < leds->size(); ++i) {
-            leds->at(i) = !(leds->at(i));
-            Thread::wait(17);
-            leds->at(i) = !(leds->at(i));
-        }
-    } else {
-        for (size_t i = leds->size(); i > 0; --i) {
-            leds->at(i - 1) = !(leds->at(i - 1));
-            Thread::wait(17);
-            leds->at(i - 1) = !(leds->at(i - 1));
-        }
-    }
-
-    dir = !dir;
-}
-
-void commLightsTask_TX(void const* arg) {
-    DigitalOut* led =
-        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
-    if (comm_led_tx_en) flashLED(*led);
-}
-void commLightsTask_RX(void const* arg) {
-    DigitalOut* led =
-        const_cast<DigitalOut*>(reinterpret_cast<const DigitalOut*>(arg));
-    if (comm_led_rx_en) flashLED(*led);
-}
-
-void commLightsTimeout_RX(void const* arg) { comm_led_rx_en = false; }
-void commLightsTimeout_TX(void const* arg) { comm_led_tx_en = false; }
-
-void commLightsRenew_RX() { comm_led_rx_en = true; }
-void commLightsRenew_TX() { comm_led_tx_en = true; }
 
 // returns how many active threads there are
 unsigned int get_num_threads() {
