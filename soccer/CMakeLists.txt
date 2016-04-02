@@ -3,16 +3,18 @@
 set(CMAKE_AUTOMOC ON)
 
 # use rrt library from external/ directory
+set(rrt_install_dir ${CMAKE_CURRENT_BINARY_DIR}/rrt)
+set(rrt_lib_path ${rrt_install_dir}/lib/libRRT.a)
 ExternalProject_Add(rrt_project
     URL ${PROJECT_SOURCE_DIR}/external/rrt
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/rrt
+    BUILD_BYPRODUCTS ${rrt_lib_path}
 )
 set_target_properties(rrt_project PROPERTIES EXCLUDE_FROM_ALL TRUE)
-set(rrt_install_dir ${CMAKE_CURRENT_BINARY_DIR}/rrt)
 
 # add rrt library target.  IMPORTED means that it is created externally
 add_library(rrt STATIC IMPORTED)
-set_property(TARGET rrt PROPERTY IMPORTED_LOCATION ${rrt_install_dir}/lib/libRRT.a)
+set_property(TARGET rrt PROPERTY IMPORTED_LOCATION ${rrt_lib_path})
 add_dependencies(rrt rrt_project)
 
 # include rrt library headers
