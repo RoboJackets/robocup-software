@@ -27,26 +27,7 @@ void PCLink::read(void) {
    if (usbLink.readNB(&in)) {
       *led = !(*led);
 
-      switch (in.data[0]) {
-         case HID_FWD_GLOB_PKT:
-            //set pkt data
-            break;
-         case HID_FWD_GLOB_TX:
-            //tx pkt data
-            break;
-         case HID_FWD_BOT_TUNE_PKT:
-            //set tune data
-            break;
-         case HID_FWD_BOT_TUNE_TX:
-            //tx tune data
-            break;
-         case HID_FWD_
-      }
-
       if (pc != NULL) {
-         // std::string tmp(reinterpret_cast<const char *>(in.data));
-         // tmp = tmp.append("\r\n");
-         // pc->printf("%s", tmp.c_str()); 
          pc->printf("%d\r\n", in.data[0]);
       }
    }
