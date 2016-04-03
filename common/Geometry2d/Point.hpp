@@ -271,6 +271,9 @@ public:
         return Point(magnitude * x / m, magnitude * y / m);
     }
 
+    /// Alias for normalized() - matches Eigen's syntax
+    Point norm() const { return normalized(); }
+
     /**
     * Returns true if this point is within the given distance (threshold) of
     * (pt)
