@@ -50,11 +50,14 @@ int main(int argc, char *argv[]) {
    printf("opened device\r\n");
    const unsigned char LEN = 64;
    unsigned char buf[LEN];
-   for (unsigned char count;;) {
+   for (char count = 'A';;) {
       // sprintf(buf, "%d", count++);
       buf[0] = count++;
       buf[1] = '\0';
       hid_write(handle, buf, 2/*strlen(buf)*/);
+      if (count == 'z') {
+        count = 'A';
+      }
       sleep(1);
    }
 

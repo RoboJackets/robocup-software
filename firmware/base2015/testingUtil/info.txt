@@ -4,3 +4,5 @@ https://github.com/signal11/hidapi
 OR
 
 sudo apt-get install libhidapi-dev
+
+If su access is reuqired to open the device, update robocup.rules
