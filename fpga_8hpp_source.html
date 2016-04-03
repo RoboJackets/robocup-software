@@ -116,49 +116,54 @@ $(document).ready(function(){initNavTree('fpga_8hpp_source.html','');});
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;pins-ctrl-2015.hpp&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_f_p_g_a.html">   12</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_f_p_g_a.html">FPGA</a> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_f_p_g_a.html">FPGA</a>* Instance();</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_f_p_g_a.html#a994e8990d72a6196d20f4512657c3fbe">Init</a>(<span class="keyword">const</span> std::string&amp; filepath);</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">bool</span> isReady();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    uint8_t set_duty_get_enc(uint16_t* duty_cycles, <span class="keywordtype">size_t</span> size_dut,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                             uint16_t* enc_deltas, <span class="keywordtype">size_t</span> size_enc);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    uint8_t set_duty_cycles(uint16_t* duty_cycles, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    uint8_t read_duty_cycles(uint16_t* duty_cycles, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    uint8_t read_encs(uint16_t* enc_counts, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    uint8_t read_halls(uint8_t* halls, <span class="keywordtype">size_t</span> size);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    uint8_t motors_en(<span class="keywordtype">bool</span> state);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    uint8_t watchdog_reset();</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">bool</span> git_hash(std::vector&lt;uint8_t&gt;&amp;);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">void</span> gate_drivers(std::vector&lt;uint16_t&gt;&amp;);</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">bool</span> send_config(<span class="keyword">const</span> std::string&amp; filepath);</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="class_f_p_g_a.html">FPGA</a>(){};</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">bool</span> isInit;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_f_p_g_a.html">FPGA</a>* instance;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    Mutex mutex;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    SPI* spi;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    DigitalOut* cs;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    DigitalInOut* progB;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    DigitalIn* initB;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    DigitalIn* done;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;};</div>
-<div class="ttc" id="class_f_p_g_a_html_a994e8990d72a6196d20f4512657c3fbe"><div class="ttname"><a href="class_f_p_g_a.html#a994e8990d72a6196d20f4512657c3fbe">FPGA::Init</a></div><div class="ttdeci">bool Init(const std::string &amp;filepath)</div><div class="ttdoc">Setup the FPGA interface. </div><div class="ttdef"><b>Definition:</b> fpga.cpp:43</div></div>
-<div class="ttc" id="class_f_p_g_a_html"><div class="ttname"><a href="class_f_p_g_a.html">FPGA</a></div><div class="ttdef"><b>Definition:</b> fpga.hpp:12</div></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;pins-ctrl-2015.hpp&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;SharedSPI.hpp&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="class_f_p_g_a.html">   14</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_f_p_g_a.html">FPGA</a> : <span class="keyword">public</span> <a class="code" href="class_shared_s_p_i_device.html">SharedSPIDevice</a>&lt;&gt; {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_f_p_g_a.html">FPGA</a>* Instance();</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_f_p_g_a.html">FPGA</a>* <a class="code" href="class_f_p_g_a.html#abac907441bd0e082fe5d50103683ed88">Initialize</a>(std::shared_ptr&lt;SharedSPI&gt; sharedSPI);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_f_p_g_a.html#afc8d26c5164d391fe9916f4f626e4f9c">configure</a>(<span class="keyword">const</span> std::string&amp; filepath);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">bool</span> isReady();</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    uint8_t set_duty_get_enc(uint16_t* duty_cycles, <span class="keywordtype">size_t</span> size_dut,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                             uint16_t* enc_deltas, <span class="keywordtype">size_t</span> size_enc);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    uint8_t set_duty_cycles(uint16_t* duty_cycles, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    uint8_t read_duty_cycles(uint16_t* duty_cycles, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    uint8_t read_encs(uint16_t* enc_counts, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    uint8_t read_halls(uint8_t* halls, <span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    uint8_t motors_en(<span class="keywordtype">bool</span> state);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    uint8_t watchdog_reset();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">bool</span> git_hash(std::vector&lt;uint8_t&gt;&amp;);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> gate_drivers(std::vector&lt;uint16_t&gt;&amp;);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">bool</span> send_config(<span class="keyword">const</span> std::string&amp; filepath);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="class_f_p_g_a.html">FPGA</a>(std::shared_ptr&lt;SharedSPI&gt; sharedSPI, PinName nCs, PinName initB,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;         PinName progB, PinName done);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">bool</span> _isInit = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_f_p_g_a.html">FPGA</a>* instance;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    DigitalIn _initB;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    DigitalInOut _progB;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    DigitalIn _done;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;};</div>
+<div class="ttc" id="class_shared_s_p_i_device_html"><div class="ttname"><a href="class_shared_s_p_i_device.html">SharedSPIDevice</a></div><div class="ttdoc">Classes that provide an interface to a device on the shared spi bus should inherit from this class...</div><div class="ttdef"><b>Definition:</b> SharedSPI.hpp:26</div></div>
+<div class="ttc" id="class_f_p_g_a_html_afc8d26c5164d391fe9916f4f626e4f9c"><div class="ttname"><a href="class_f_p_g_a.html#afc8d26c5164d391fe9916f4f626e4f9c">FPGA::configure</a></div><div class="ttdeci">bool configure(const std::string &amp;filepath)</div><div class="ttdoc">Configure the fpga with the bitfile at the given path. </div><div class="ttdef"><b>Definition:</b> fpga.cpp:42</div></div>
+<div class="ttc" id="class_f_p_g_a_html"><div class="ttname"><a href="class_f_p_g_a.html">FPGA</a></div><div class="ttdef"><b>Definition:</b> fpga.hpp:14</div></div>
+<div class="ttc" id="class_f_p_g_a_html_abac907441bd0e082fe5d50103683ed88"><div class="ttname"><a href="class_f_p_g_a.html#abac907441bd0e082fe5d50103683ed88">FPGA::Initialize</a></div><div class="ttdeci">static FPGA * Initialize(std::shared_ptr&lt; SharedSPI &gt; sharedSPI)</div><div class="ttdoc">The FPGA global instance must be Initialize()&#39;d before use. </div><div class="ttdef"><b>Definition:</b> fpga.cpp:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_081079849da51869e7ffd8e108d45510.html">src-ctrl</a></li><li class="navelem"><a class="el" href="dir_a378caac559486f927469cd0e7a2b165.html">drivers</a></li><li class="navelem"><a class="el" href="dir_51d103342f1d0fcab12bb18fb1be003e.html">fpga</a></li><li class="navelem"><b>fpga.hpp</b></li>
-    <li class="footer">Generated on Sun Apr 3 2016 19:24:39 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Apr 3 2016 19:42:07 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

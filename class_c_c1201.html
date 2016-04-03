@@ -122,9 +122,9 @@ $(document).ready(function(){initNavTree('class_c_c1201.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9f38097b12a266f020ccbbd2324f3db2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a9f38097b12a266f020ccbbd2324f3db2">CC1201</a> (PinName mosi, PinName miso, PinName sck, PinName nCs, PinName intPin, const <a class="el" href="structregister_setting__t.html">registerSetting_t</a> *regs, size_t len, int rssiOffset=DEFAULT_RSSI_OFFSET)</td></tr>
-<tr class="memdesc:a9f38097b12a266f020ccbbd2324f3db2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the CC1201 with the given SPI, chip select (inverted), and interrupt line pins.  <a href="#a9f38097b12a266f020ccbbd2324f3db2">More...</a><br/></td></tr>
-<tr class="separator:a9f38097b12a266f020ccbbd2324f3db2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8381abed7da4e387921dae94c198b620"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a8381abed7da4e387921dae94c198b620">CC1201</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; sharedSPI, PinName nCs, PinName intPin, const <a class="el" href="structregister_setting__t.html">registerSetting_t</a> *regs, size_t len, int rssiOffset=DEFAULT_RSSI_OFFSET)</td></tr>
+<tr class="memdesc:a8381abed7da4e387921dae94c198b620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the CC1201 with the given SPI, chip select (inverted), and interrupt line pins.  <a href="#a8381abed7da4e387921dae94c198b620">More...</a><br/></td></tr>
+<tr class="separator:a8381abed7da4e387921dae94c198b620"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ea010ffd0b9be2f176eeaf396450745"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a1ea010ffd0b9be2f176eeaf396450745">sendData</a> (const uint8_t *buf, uint8_t size)</td></tr>
 <tr class="memdesc:a1ea010ffd0b9be2f176eeaf396450745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmit data.  <a href="#a1ea010ffd0b9be2f176eeaf396450745">More...</a><br/></td></tr>
 <tr class="separator:a1ea010ffd0b9be2f176eeaf396450745"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -180,10 +180,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isDebugEnabled</b> ()
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ae4d9c67d870744e4f37315788597509a">CommLink</a> ()</td></tr>
 <tr class="memdesc:ae4d9c67d870744e4f37315788597509a inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor. <br/></td></tr>
 <tr class="separator:ae4d9c67d870744e4f37315788597509a inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89ff1ababdbc39002f69ac2d778c2115 inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89ff1ababdbc39002f69ac2d778c2115"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a89ff1ababdbc39002f69ac2d778c2115">CommLink</a> (PinName mosi, PinName miso, PinName sck, PinName nCs=NC, PinName int_pin=NC)</td></tr>
-<tr class="memdesc:a89ff1ababdbc39002f69ac2d778c2115 inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
-<tr class="separator:a89ff1ababdbc39002f69ac2d778c2115 inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad00ce7653d5d4f985d85cd719f62dcf4 inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad00ce7653d5d4f985d85cd719f62dcf4"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ad00ce7653d5d4f985d85cd719f62dcf4">CommLink</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; spiBus, PinName nCs=NC, PinName int_pin=NC)</td></tr>
+<tr class="memdesc:ad00ce7653d5d4f985d85cd719f62dcf4 inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br/></td></tr>
+<tr class="separator:ad00ce7653d5d4f985d85cd719f62dcf4 inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#acff1290e199689fac1f2f995303ad6bf">~CommLink</a> ()</td></tr>
 <tr class="memdesc:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual deconstructor Kills any threads and frees the allocated stack.  <a href="#acff1290e199689fac1f2f995303ad6bf">More...</a><br/></td></tr>
 <tr class="separator:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,6 +191,19 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isDebugEnabled</b> ()
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">sendPacket</a> (<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *)</td></tr>
 <tr class="memdesc:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send &amp; Receive through the rtp structure. <br/></td></tr>
 <tr class="separator:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_shared_s_p_i_device"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_shared_s_p_i_device')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a></td></tr>
+<tr class="memitem:a6213cd1a7917762f310dc2abe66d3897 inherit pub_methods_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared_s_p_i_device.html#a6213cd1a7917762f310dc2abe66d3897">SharedSPIDevice</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; spi, mbed::DigitalOutcs, bool csInverted=true)</td></tr>
+<tr class="separator:a6213cd1a7917762f310dc2abe66d3897 inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f86eefe59ee13189c867424f017965e inherit pub_methods_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f86eefe59ee13189c867424f017965e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>chipSelect</b> ()</td></tr>
+<tr class="separator:a9f86eefe59ee13189c867424f017965e inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a642aeaf9cc0ff39a56ef13cb85eba40b inherit pub_methods_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a642aeaf9cc0ff39a56ef13cb85eba40b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>chipDeselect</b> ()</td></tr>
+<tr class="separator:a642aeaf9cc0ff39a56ef13cb85eba40b inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72b94604822101722a63b2f873e4e38c inherit pub_methods_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72b94604822101722a63b2f873e4e38c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared_s_p_i_device.html#a72b94604822101722a63b2f873e4e38c">setSPIFrequency</a> (int hz)</td></tr>
+<tr class="memdesc:a72b94604822101722a63b2f873e4e38c inherit pub_methods_class_shared_s_p_i_device"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the SPI frequency for this device. <br/></td></tr>
+<tr class="separator:a72b94604822101722a63b2f873e4e38c inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -226,12 +239,6 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>freqUpdate</b> ()<
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a288c3410e4911738eb088e23817f9356">ISR</a> ()</td></tr>
 <tr class="memdesc:a288c3410e4911738eb088e23817f9356 inherit pro_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD. <br/></td></tr>
 <tr class="separator:a288c3410e4911738eb088e23817f9356 inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af95d397575b8acaeb08f38d248781212 inherit pro_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af95d397575b8acaeb08f38d248781212"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>radio_select</b> ()</td></tr>
-<tr class="separator:af95d397575b8acaeb08f38d248781212 inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad338a026966575092aa616dbff3f6163 inherit pro_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad338a026966575092aa616dbff3f6163"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>radio_deselect</b> ()</td></tr>
-<tr class="separator:ad338a026966575092aa616dbff3f6163 inherit pro_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dc25b226a3808312eb7d891816b86a5 inherit pro_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7dc25b226a3808312eb7d891816b86a5"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a7dc25b226a3808312eb7d891816b86a5">ready</a> ()</td></tr>
 <tr class="memdesc:a7dc25b226a3808312eb7d891816b86a5 inherit pro_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used for giving derived classes a standaradized way to inform the base class that it is ready for communication and to begin the threads. <br/></td></tr>
@@ -246,10 +253,6 @@ Static Protected Attributes</h2></td></tr>
 <tr class="memitem:a99e1e0ca49e3058f40dc012b73aca880"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99e1e0ca49e3058f40dc012b73aca880"></a>
 static const int&#160;</td><td class="memItemRight" valign="bottom"><b>DEFAULT_RSSI_OFFSET</b> = -81</td></tr>
 <tr class="separator:a99e1e0ca49e3058f40dc012b73aca880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_static_attribs_class_comm_link"><td colspan="2" onclick="javascript:toggleInherit('pro_static_attribs_class_comm_link')"><img src="closed.png" alt="-"/>&#160;Static Protected Attributes inherited from <a class="el" href="class_comm_link.html">CommLink</a></td></tr>
-<tr class="memitem:a03c1edf3bb2e6449c29e58a31f29801f inherit pro_static_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03c1edf3bb2e6449c29e58a31f29801f"></a>
-static const int&#160;</td><td class="memItemRight" valign="bottom"><b>DEFAULT_BAUD</b> = 5000000</td></tr>
-<tr class="separator:a03c1edf3bb2e6449c29e58a31f29801f inherit pro_static_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -258,15 +261,16 @@ Additional Inherited Members</h2></td></tr>
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>RX_QUEUE_SIZE</b> = 2</td></tr>
 <tr class="separator:ad323044ebb468dc0adb41969ac28ac30 inherit pub_static_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_comm_link"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_comm_link')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_comm_link.html">CommLink</a></td></tr>
-<tr class="memitem:aee34809de38254a9960bd0b54fad3426 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee34809de38254a9960bd0b54fad3426"></a>
-SPI&#160;</td><td class="memItemRight" valign="bottom"><b>_spi</b></td></tr>
-<tr class="separator:aee34809de38254a9960bd0b54fad3426 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4d488f96d335edf7cc215a8e487dbe9 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4d488f96d335edf7cc215a8e487dbe9"></a>
-DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_nCs</b></td></tr>
-<tr class="separator:ae4d488f96d335edf7cc215a8e487dbe9 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9eb02f9411deca5df3d2ddfb19daada1 inherit pro_attribs_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9eb02f9411deca5df3d2ddfb19daada1"></a>
 InterruptIn&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></td></tr>
 <tr class="separator:a9eb02f9411deca5df3d2ddfb19daada1 inherit pro_attribs_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_shared_s_p_i_device"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_shared_s_p_i_device')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a></td></tr>
+<tr class="memitem:a8519100bec4c669ed791ef69c87ffffc inherit pro_attribs_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8519100bec4c669ed791ef69c87ffffc"></a>
+std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_spi</b></td></tr>
+<tr class="separator:a8519100bec4c669ed791ef69c87ffffc inherit pro_attribs_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4a7a211ca0d7c6b28fb9148fdf218f2 inherit pro_attribs_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4a7a211ca0d7c6b28fb9148fdf218f2"></a>
+mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></td></tr>
+<tr class="separator:af4a7a211ca0d7c6b28fb9148fdf218f2 inherit pro_attribs_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The CC1201 class handles wirelessly sending and receiving data using the TI CC1201 radio transceiver. </p>
@@ -279,7 +283,7 @@ InterruptIn&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></t
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_c_c1201__inherit__graph.png" border="0" usemap="#_c_c1201_inherit__map" alt="Inheritance graph"/></div>
 <map name="_c_c1201_inherit__map" id="_c_c1201_inherit__map">
-<area shape="rect" id="node2" href="class_comm_link.html" title="CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link..." alt="" coords="5,5,96,32"/></map>
+<area shape="rect" id="node2" href="class_comm_link.html" title="CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link..." alt="" coords="36,80,127,107"/><area shape="rect" id="node3" href="class_shared_s_p_i_device.html" title="SharedSPIDevice\&lt;\&gt;" alt="" coords="5,5,157,32"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-1-trigger" src="closed.png" alt="+"/> Collaboration diagram for CC1201:</div>
@@ -288,30 +292,18 @@ InterruptIn&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></t
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_c_c1201__coll__graph.png" border="0" usemap="#_c_c1201_coll__map" alt="Collaboration graph"/></div>
 <map name="_c_c1201_coll__map" id="_c_c1201_coll__map">
-<area shape="rect" id="node2" href="class_comm_link.html" title="CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link..." alt="" coords="5,5,96,32"/></map>
+<area shape="rect" id="node2" href="class_comm_link.html" title="CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link..." alt="" coords="36,80,127,107"/><area shape="rect" id="node3" href="class_shared_s_p_i_device.html" title="SharedSPIDevice\&lt;\&gt;" alt="" coords="5,5,157,32"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a9f38097b12a266f020ccbbd2324f3db2"></a>
+<a class="anchor" id="a8381abed7da4e387921dae94c198b620"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">CC1201::CC1201 </td>
           <td>(</td>
-          <td class="paramtype">PinName&#160;</td>
-          <td class="paramname"><em>mosi</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">PinName&#160;</td>
-          <td class="paramname"><em>miso</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">PinName&#160;</td>
-          <td class="paramname"><em>sck</em>, </td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt;&#160;</td>
+          <td class="paramname"><em>sharedSPI</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -493,7 +485,7 @@ InterruptIn&#160;</td><td class="memItemRight" valign="bottom"><b>_int_in</b></t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_c_c1201.html">CC1201</a></li>
-    <li class="footer">Generated on Sun Apr 3 2016 19:24:39 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Apr 3 2016 19:42:07 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

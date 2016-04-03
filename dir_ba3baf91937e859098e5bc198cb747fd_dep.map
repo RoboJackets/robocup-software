@@ -1,7 +1,8 @@
 <map id="firmware/common2015/drivers" name="firmware/common2015/drivers">
-<area shape="rect" id="node2" href="dir_a397f754f743d7cde165bd68db099d59.html" title="cc1201" alt="" coords="256,63,328,111"/>
-<area shape="rect" id="node3" href="dir_4433d8e166deeac57b91c7063c89e862.html" title="rtos&#45;i2c" alt="" coords="160,63,232,111"/>
-<area shape="rect" id="node4" href="dir_da01ce70317722428be74fe7487fd8f7.html" title="software&#45;spi" alt="" coords="37,63,136,111"/>
-<area shape="rect" id="clust2" href="dir_ba3baf91937e859098e5bc198cb747fd.html" alt="" coords="27,52,435,121"/>
-<area shape="rect" id="clust1" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html" title="common2015" alt="" coords="16,16,445,132"/>
+<area shape="rect" id="node2" href="dir_a397f754f743d7cde165bd68db099d59.html" title="cc1201" alt="" coords="371,63,443,111"/>
+<area shape="rect" id="node3" href="dir_4433d8e166deeac57b91c7063c89e862.html" title="rtos&#45;i2c" alt="" coords="275,63,347,111"/>
+<area shape="rect" id="node4" href="dir_98ca5a21fd81f6b88ec7fb51d9e19a7e.html" title="shared&#45;spi" alt="" coords="161,63,249,111"/>
+<area shape="rect" id="node5" href="dir_da01ce70317722428be74fe7487fd8f7.html" title="software&#45;spi" alt="" coords="37,63,136,111"/>
+<area shape="rect" id="clust2" href="dir_ba3baf91937e859098e5bc198cb747fd.html" alt="" coords="27,52,549,121"/>
+<area shape="rect" id="clust1" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html" title="common2015" alt="" coords="16,16,560,132"/>
 </map>

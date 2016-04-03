@@ -1,3 +1,4 @@
 <map id="KickerBoard" name="KickerBoard">
-<area shape="rect" id="node2" href="$class_a_v_r910.html" title="AVR910 ISP. " alt="" coords="19,5,89,32"/>
+<area shape="rect" id="node2" href="$class_a_v_r910.html" title="AVR910 ISP. " alt="" coords="46,80,116,107"/>
+<area shape="rect" id="node3" href="$class_shared_s_p_i_device.html" title="SharedSPIDevice\&lt;\&gt;" alt="" coords="5,5,157,32"/>
 </map>

@@ -1,6 +1,6 @@
 var class_c_c1201 =
 [
-    [ "CC1201", "class_c_c1201.html#a9f38097b12a266f020ccbbd2324f3db2", null ],
+    [ "CC1201", "class_c_c1201.html#a8381abed7da4e387921dae94c198b620", null ],
     [ "calibrate", "class_c_c1201.html#a8684563559992c9586f9da6ca5268509", null ],
     [ "flush_rx", "class_c_c1201.html#a707cc7b74d83cd215fbc6b81ca7f3e0a", null ],
     [ "flush_tx", "class_c_c1201.html#a64668f41e835da9ea1f9cd7f82635a6c", null ],

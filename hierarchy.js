@@ -6,9 +6,6 @@ var hierarchy =
     [ "Planning::AngleInstant", "struct_planning_1_1_angle_instant.html", null ],
     [ "Geometry2d::Arc", "class_geometry2d_1_1_arc.html", null ],
     [ "AutoName", "class_auto_name.html", null ],
-    [ "AVR910", "class_a_v_r910.html", [
-      [ "KickerBoard", "class_kicker_board.html", null ]
-    ] ],
     [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
     [ "Ball", "class_ball.html", null ],
     [ "BallFilter", "class_ball_filter.html", null ],
@@ -21,9 +18,6 @@ var hierarchy =
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
     [ "command_t", "structcommand__t.html", null ],
-    [ "CommLink", "class_comm_link.html", [
-      [ "CC1201", "class_c_c1201.html", null ]
-    ] ],
     [ "CommModule", "class_comm_module.html", null ],
     [ "CommPort< T >", "class_comm_port.html", null ],
     [ "CompositeBehavior", null, [
@@ -72,7 +66,6 @@ var hierarchy =
       [ "gameplay.fs_watcher.FsWatcher.FsEventHandler", "classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html", null ]
     ] ],
     [ "FIRFilter< T >", "class_f_i_r_filter.html", null ],
-    [ "FPGA", "class_f_p_g_a.html", null ],
     [ "Chart::Function", "struct_chart_1_1_function.html", [
       [ "Chart::NumericField", "struct_chart_1_1_numeric_field.html", null ],
       [ "Chart::PointMagnitude", "struct_chart_1_1_point_magnitude.html", null ]
@@ -126,6 +119,9 @@ var hierarchy =
     [ "MPU6050", "class_m_p_u6050.html", null ],
     [ "Planning::MultiRobotPathPlanner", "class_planning_1_1_multi_robot_path_planner.html", [
       [ "Planning::IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", null ]
+    ] ],
+    [ "Mutex", null, [
+      [ "SharedSPI", "class_shared_s_p_i.html", null ]
     ] ],
     [ "NeoColor", "struct_neo_color.html", null ],
     [ "NeoStrip", "class_neo_strip.html", null ],
@@ -223,6 +219,16 @@ var hierarchy =
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
     ] ],
     [ "Geometry2d::ShapeSet", "class_geometry2d_1_1_shape_set.html", null ],
+    [ "SharedSPIDevice< DIGITAL_OUT >", "class_shared_s_p_i_device.html", null ],
+    [ "SharedSPIDevice<>", "class_shared_s_p_i_device.html", [
+      [ "AVR910", "class_a_v_r910.html", [
+        [ "KickerBoard", "class_kicker_board.html", null ]
+      ] ],
+      [ "CommLink", "class_comm_link.html", [
+        [ "CC1201", "class_c_c1201.html", null ]
+      ] ],
+      [ "FPGA", "class_f_p_g_a.html", null ]
+    ] ],
     [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
       [ "Planning::DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", null ],
       [ "Planning::EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", null ],
@@ -231,6 +237,9 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
     [ "SoftwareSPI", "class_software_s_p_i.html", null ],
+    [ "SPI", null, [
+      [ "SharedSPI", "class_shared_s_p_i.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [

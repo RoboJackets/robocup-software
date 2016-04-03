@@ -1,3 +1,4 @@
 <map id="AVR910" name="AVR910">
-<area shape="rect" id="node2" href="$class_kicker_board.html" title="A class for interfacing with the kicker board, which is based on an AVR chip. " alt="" coords="5,80,104,107"/>
+<area shape="rect" id="node3" href="$class_kicker_board.html" title="A class for interfacing with the kicker board, which is based on an AVR chip. " alt="" coords="32,155,131,181"/>
+<area shape="rect" id="node2" href="$class_shared_s_p_i_device.html" title="SharedSPIDevice\&lt;\&gt;" alt="" coords="5,5,157,32"/>
 </map>

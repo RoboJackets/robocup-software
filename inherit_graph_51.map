@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_joystick_control_values.html" title="JoystickControlValues" alt="" coords="5,5,163,32"/>
+<area shape="rect" id="node2" href="$class_log_viewer.html" title="LogViewer" alt="" coords="169,5,255,32"/>
+<area shape="rect" id="node3" href="$class_main_window.html" title="main gui thread class " alt="" coords="163,56,261,83"/>
 </map>

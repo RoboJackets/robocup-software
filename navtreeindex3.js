@@ -1,8 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"class_geometry2d_1_1_transform_matrix.html#a38324bdeeff4d83c09786009870f7045":[12,0,6,10,8],
-"class_geometry2d_1_1_transform_matrix.html#a3c89ae803df7f7f80444dc3229df959a":[12,0,6,10,5],
-"class_geometry2d_1_1_transform_matrix.html#a4075ce40cff2126d34e5a92a2d19f44f":[12,0,6,10,0],
 "class_geometry2d_1_1_transform_matrix.html#a46259a83d660f2f926c8afd108e2fdfb":[12,0,6,10,12],
 "class_geometry2d_1_1_transform_matrix.html#a49bd7578e1108fad998d4d072124cde0":[12,0,6,10,1],
 "class_geometry2d_1_1_transform_matrix.html#a69da57864988ac1f8c27b63c062d9f00":[12,0,6,10,15],
@@ -31,7 +28,7 @@ var NAVTREEINDEX3 =
 "class_kicker_board.html":[12,0,50],
 "class_kicker_board.html#a34de349bcf21d784909184b41e0d944f":[12,0,50,2],
 "class_kicker_board.html#a61455be0828684366a62465ddb33fdb5":[12,0,50,1],
-"class_kicker_board.html#a680497d5089035dd684b84d1e1ce96fb":[12,0,50,0],
+"class_kicker_board.html#af920fd082afa3bdae58840505a9223da":[12,0,50,0],
 "class_log_helper.html":[12,0,52],
 "class_log_helper.html#a8d61a79f74d9b30b36d0bb2d365f6ac6":[12,0,52,0],
 "class_log_helper.html#a9e64a4235ad4baaa5a36b64ff1faf02a":[12,0,52,1],
@@ -249,5 +246,8 @@ var NAVTREEINDEX3 =
 "class_our_robot.html#a3c97bd2f555880c5e63197072180356b":[12,0,67,20],
 "class_our_robot.html#a4170e6526e724b2bf36a06af62ea64b5":[12,0,67,42],
 "class_our_robot.html#a47574cba97a8970a1437e47e8657d032":[12,0,67,3],
-"class_our_robot.html#a4e60906752c6be31fda315fe8ae958ed":[12,0,67,70]
+"class_our_robot.html#a4e60906752c6be31fda315fe8ae958ed":[12,0,67,70],
+"class_our_robot.html#a52323f5fed33ef642888df497d0f72d5":[12,0,67,39],
+"class_our_robot.html#a52e73bbe9a4e546a0103838e1a1da08e":[12,0,67,92],
+"class_our_robot.html#a530fd127fdbbfcc1ae33b7458a21f416":[12,0,67,63]
 };

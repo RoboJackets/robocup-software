@@ -381,6 +381,8 @@ var annotated =
     [ "RobotWidget", "class_robot_widget.html", "class_robot_widget" ],
     [ "RotarySelector", "class_rotary_selector.html", "class_rotary_selector" ],
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
+    [ "SharedSPI", "class_shared_s_p_i.html", "class_shared_s_p_i" ],
+    [ "SharedSPIDevice", "class_shared_s_p_i_device.html", "class_shared_s_p_i_device" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],
     [ "SimRadio", "class_sim_radio.html", "class_sim_radio" ],
     [ "SoftwareSPI", "class_software_s_p_i.html", "class_software_s_p_i" ],

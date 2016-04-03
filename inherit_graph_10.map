@@ -1,5 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_chart_1_1_function.html" title="Chart::Function" alt="" coords="6,31,125,57"/>
-<area shape="rect" id="node2" href="$struct_chart_1_1_numeric_field.html" title="Chart::NumericField" alt="" coords="183,5,329,32"/>
-<area shape="rect" id="node3" href="$struct_chart_1_1_point_magnitude.html" title="Chart::PointMagnitude" alt="" coords="174,56,338,83"/>
+<area shape="rect" id="node2" href="$classcircle__near__ball_1_1_circle_near_ball.html" title="Robots position themselves along a portion of the circle centered at the ball. " alt="" coords="200,5,413,32"/>
+<area shape="rect" id="node3" href="$classcircle__on__center_1_1_circle_on_center.html" title="Robots position themselves along a portion of the circle centered at the ball. " alt="" coords="215,57,398,98"/>
 </map>

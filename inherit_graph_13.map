@@ -1,4 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_comm_link.html" title="CommLink Class used as the hal (hardware abstraction layer) module for interfacing communication link..." alt="" coords="5,5,96,32"/>
-<area shape="rect" id="node2" href="$class_c_c1201.html" title="The CC1201 class handles wirelessly sending and receiving data using the TI CC1201 radio transceiver..." alt="" coords="144,5,216,32"/>
+<area shape="rect" id="node1" href="$class_comm_port.html" title="CommPort\&lt; T \&gt;" alt="" coords="5,5,133,32"/>
 </map>

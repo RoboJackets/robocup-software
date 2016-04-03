@@ -1,3 +1,8 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_planning_1_1_plan_request.html" title="The PlanRequest encapsulates all information that the planner needs to know about an individual robot..." alt="" coords="5,5,168,32"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="5,129,192,170"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_direct_target_path_planner.html" title="Simple path planner that generates a straight&#45;line path from the start instant to the goal..." alt="" coords="255,5,444,46"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_escape_obstacles_path_planner.html" title="This planner finds a path to quickly get out of an obstacle. " alt="" coords="253,70,446,111"/>
+<area shape="rect" id="node4" href="$class_planning_1_1_pivot_path_planner.html" title="Plans a path that brings the robot to the given velocity as fast as possible. " alt="" coords="254,136,445,163"/>
+<area shape="rect" id="node5" href="$class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="272,187,427,213"/>
+<area shape="rect" id="node6" href="$class_planning_1_1_target_vel_path_planner.html" title="Plans a path that brings the robot to the given velocity as fast as possible. " alt="" coords="240,237,459,264"/>
 </map>

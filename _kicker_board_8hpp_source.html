@@ -123,22 +123,22 @@ $(document).ready(function(){initNavTree('_kicker_board_8hpp_source.html','');})
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="class_kicker_board.html">   18</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_kicker_board.html">KickerBoard</a> : <span class="keyword">public</span> <a class="code" href="class_a_v_r910.html">AVR910</a> {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="class_kicker_board.html#a680497d5089035dd684b84d1e1ce96fb">KickerBoard</a>(PinName mosi, PinName miso, PinName sck, PinName nReset,</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                <span class="keyword">const</span> std::string&amp; progFilename);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_kicker_board.html#a61455be0828684366a62465ddb33fdb5">flash</a>(<span class="keywordtype">bool</span> onlyIfDifferent = <span class="keyword">true</span>, <span class="keywordtype">bool</span> verbose = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_kicker_board.html#a34de349bcf21d784909184b41e0d944f">verify_param</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* name, <span class="keywordtype">char</span> expected,</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                      <span class="keywordtype">int</span> (<a class="code" href="class_a_v_r910.html">AVR910</a>::*paramMethod)(), <span class="keywordtype">char</span> mask = 0xFF,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                      <span class="keywordtype">bool</span> verbose = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    std::string _filename;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;};</div>
-<div class="ttc" id="class_kicker_board_html_a680497d5089035dd684b84d1e1ce96fb"><div class="ttname"><a href="class_kicker_board.html#a680497d5089035dd684b84d1e1ce96fb">KickerBoard::KickerBoard</a></div><div class="ttdeci">KickerBoard(PinName mosi, PinName miso, PinName sck, PinName nReset, const std::string &amp;progFilename)</div><div class="ttdoc">Constructor for KickerBoard. </div><div class="ttdef"><b>Definition:</b> KickerBoard.cpp:6</div></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="class_kicker_board.html#af920fd082afa3bdae58840505a9223da">KickerBoard</a>(std::shared_ptr&lt;SharedSPI&gt; sharedSPI, PinName nCs,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                PinName nReset, <span class="keyword">const</span> std::string&amp; progFilename);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_kicker_board.html#a61455be0828684366a62465ddb33fdb5">flash</a>(<span class="keywordtype">bool</span> onlyIfDifferent = <span class="keyword">true</span>, <span class="keywordtype">bool</span> verbose = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_kicker_board.html#a34de349bcf21d784909184b41e0d944f">verify_param</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* name, <span class="keywordtype">char</span> expected,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                      <span class="keywordtype">int</span> (<a class="code" href="class_a_v_r910.html">AVR910</a>::*paramMethod)(), <span class="keywordtype">char</span> mask = 0xFF,</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                      <span class="keywordtype">bool</span> verbose = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    std::string _filename;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
+<div class="ttc" id="class_kicker_board_html_af920fd082afa3bdae58840505a9223da"><div class="ttname"><a href="class_kicker_board.html#af920fd082afa3bdae58840505a9223da">KickerBoard::KickerBoard</a></div><div class="ttdeci">KickerBoard(std::shared_ptr&lt; SharedSPI &gt; sharedSPI, PinName nCs, PinName nReset, const std::string &amp;progFilename)</div><div class="ttdoc">Constructor for KickerBoard. </div><div class="ttdef"><b>Definition:</b> KickerBoard.cpp:6</div></div>
 <div class="ttc" id="class_kicker_board_html"><div class="ttname"><a href="class_kicker_board.html">KickerBoard</a></div><div class="ttdoc">A class for interfacing with the kicker board, which is based on an AVR chip. </div><div class="ttdef"><b>Definition:</b> KickerBoard.hpp:18</div></div>
-<div class="ttc" id="class_a_v_r910_html"><div class="ttname"><a href="class_a_v_r910.html">AVR910</a></div><div class="ttdoc">AVR910 ISP. </div><div class="ttdef"><b>Definition:</b> AVR910.hpp:58</div></div>
+<div class="ttc" id="class_a_v_r910_html"><div class="ttname"><a href="class_a_v_r910.html">AVR910</a></div><div class="ttdoc">AVR910 ISP. </div><div class="ttdef"><b>Definition:</b> AVR910.hpp:60</div></div>
 <div class="ttc" id="class_kicker_board_html_a34de349bcf21d784909184b41e0d944f"><div class="ttname"><a href="class_kicker_board.html#a34de349bcf21d784909184b41e0d944f">KickerBoard::verify_param</a></div><div class="ttdeci">bool verify_param(const char *name, char expected, int(AVR910::*paramMethod)(), char mask=0xFF, bool verbose=false)</div><div class="ttdoc">Uses the given function to check if it&#39;s return value equals the expected value. </div><div class="ttdef"><b>Definition:</b> KickerBoard.cpp:10</div></div>
 <div class="ttc" id="class_kicker_board_html_a61455be0828684366a62465ddb33fdb5"><div class="ttname"><a href="class_kicker_board.html#a61455be0828684366a62465ddb33fdb5">KickerBoard::flash</a></div><div class="ttdeci">bool flash(bool onlyIfDifferent=true, bool verbose=false)</div><div class="ttdoc">Reflashes the program on the kicker board MCU with the file specified in the constructor. </div><div class="ttdef"><b>Definition:</b> KickerBoard.cpp:26</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -147,7 +147,7 @@ $(document).ready(function(){initNavTree('_kicker_board_8hpp_source.html','');})
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_081079849da51869e7ffd8e108d45510.html">src-ctrl</a></li><li class="navelem"><a class="el" href="dir_a378caac559486f927469cd0e7a2b165.html">drivers</a></li><li class="navelem"><a class="el" href="dir_13fecc6051e234d500320be34f5bedf1.html">kicker-board</a></li><li class="navelem"><b>KickerBoard.hpp</b></li>
-    <li class="footer">Generated on Sun Apr 3 2016 19:24:39 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Apr 3 2016 19:42:07 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
