@@ -29,8 +29,8 @@ TEST(TargetVelPathPlannerTest, run) {
     // (positive y-axis)
     boost::optional<RobotInstant> instant = path->evaluate(0.1);
     ASSERT_TRUE(instant);
-    EXPECT_FLOAT_EQ(0, instant->motion.pos.x);
-    EXPECT_GT(instant->motion.pos.y, 0);
+    EXPECT_FLOAT_EQ(0, instant->motion.pos.x());
+    EXPECT_GT(instant->motion.pos.y(), 0);
 }
 
 }  // namespace Planning
