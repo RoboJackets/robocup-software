@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SingleRobotPathPlanner.hpp"
-#include "Tree.hpp"
 #include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <planning/InterpolatedPath.hpp>
@@ -55,7 +54,7 @@ public:
      */
     static std::unique_ptr<Planning::InterpolatedPath> generatePath(
         const std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
+        std::shared_ptr<const Geometry2d::ShapeSet> obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
 
@@ -103,7 +102,7 @@ protected:
      */
     static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
         const std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
+        std::shared_ptr<const Geometry2d::ShapeSet> obstacles,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf);
 

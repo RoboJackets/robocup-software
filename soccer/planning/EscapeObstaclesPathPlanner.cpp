@@ -1,10 +1,12 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "TrapezoidalPath.hpp"
-#include "Tree.hpp"
 #include "Util.hpp"
 #include <Configuration.hpp>
+#include "RoboCupStateSpace.hpp"
+#include <rrt/Tree.hpp>
 
 using namespace Geometry2d;
+using namespace std;
 
 namespace Planning {
 
@@ -50,28 +52,31 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
 }
 
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
-    Point goal, boost::optional<Point> prevGoal, const ShapeSet& obstacles,
-    int maxItr) {
-    if (obstacles.hit(goal)) {
-        FixedStepTree goalTree;
-        goalTree.init(goal, &obstacles);
-        goalTree.step = stepSize();
+    Point goal, boost::optional<Point> prevGoal,
+    shared_ptr<const ShapeSet> obstacles, int maxItr) {
+    if (obstacles->hit(goal)) {
+        auto stateSpace = make_shared<RoboCupStateSpace>();
+        // TODO(justin): set obstacles
+        RRT::Tree<Geometry2d::Point> rrt(stateSpace);
+        rrt.setStartState(goal);
+        // TODO: rrt.setGoalState();
+        rrt.setStepSize(stepSize());
 
         // The starting point is in an obstacle, extend the tree until we find
         // an unobstructed point
         Point newGoal;
         for (int i = 0; i < maxItr; ++i) {
             // extend towards a random point
-            Tree::Point* newPoint = goalTree.extend(RandomFieldLocation());
+            RRT::Tree<Point>::Node<Point>* newNode = rrt.grow();
 
             // if the new point is not blocked, it becomes the new goal
-            if (newPoint && newPoint->hit.empty()) {
-                newGoal = newPoint->pos;
+            if (newNode && !obstacles->hit(newNode->state)) {
+                newGoal = newNode->state();
                 break;
             }
         }
 
-        if (!prevGoal || obstacles.hit(*prevGoal)) return newGoal;
+        if (!prevGoal || obstacles->hit(*prevGoal)) return newGoal;
 
         // Only use this newly-found point if it's closer to the desired goal by
         // at least a certain threshold
