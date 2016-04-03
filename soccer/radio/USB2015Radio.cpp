@@ -1,9 +1,8 @@
-#pragma once
-
 #define _USB2015RADIO_DEBUG
 
 #include "USB2015Radio.hpp"
 #include <hidapi.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,8 +10,7 @@
 #include <wchar.h>
 
 USB2015Radio::USB2015Radio(const unsigned int PRODUCT_ID, const unsigned int VENDOR_ID) {
-        hidAPIInit = (hid_init() == 0 ? true : false);
-        if (!hidAPIInit) {
+        if (!hid_init()) {
             //change to exception
             std::cerr << "Cannot initialize the HID interface for radio 2015" << std::endl;
             return;
@@ -35,19 +33,30 @@ USB2015Radio::USB2015Radio(const unsigned int PRODUCT_ID, const unsigned int VEN
     hid_free_enumeration(devices);
 #endif  
 
-    hid_device *handle = hid_open(VENDIR_ID, PRODUCT_ID, NULL);
+    hid_device *handle = hid_open(VENDOR_ID, PRODUCT_ID, NULL);
     if (handle == NULL) {
         //throw exception
     }
 
     base = handle;
-    numInstances++;
 }
 
 USB2015Radio::~USB2015Radio() {
     hid_close(base);
 }
 
-bool USB2015Radio::isOpen() {
+bool USB2015Radio::isOpen() const {
     return false;
+}
+
+void USB2015Radio::receive() {
+    return;
+}
+
+void USB2015Radio::send(Packet::RadioTx& pkt) {
+    return;
+}
+
+void USB2015Radio::switchTeam(bool blueTeam) {
+    std::cerr << "Error: switching teams on non-simulation radio" << std::endl;
 }
