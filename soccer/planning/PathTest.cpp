@@ -18,10 +18,10 @@ TEST(Path, nearestSegment) {
     path.waypoints.emplace_back(MotionInstant(p3, Point()), 0);
 
     Segment actSeg = path.nearestSegment(Point(0.5, -0.5));
-    EXPECT_FLOAT_EQ(p0.x, actSeg.pt[0].x);
-    EXPECT_FLOAT_EQ(p0.y, actSeg.pt[0].y);
-    EXPECT_FLOAT_EQ(p1.x, actSeg.pt[1].x);
-    EXPECT_FLOAT_EQ(p1.y, actSeg.pt[1].y);
+    EXPECT_FLOAT_EQ(p0.x(), actSeg.pt[0].x());
+    EXPECT_FLOAT_EQ(p0.y(), actSeg.pt[0].y());
+    EXPECT_FLOAT_EQ(p1.x(), actSeg.pt[1].x());
+    EXPECT_FLOAT_EQ(p1.y(), actSeg.pt[1].y());
 }
 
 TEST(InterpolatedPath, evaluate) {
@@ -55,13 +55,13 @@ TEST(InterpolatedPath, subPath1) {
     float midTime = (5 - 1) / 2.0;
     auto mid = subPath->evaluate(midTime);
     ASSERT_TRUE(mid);
-    EXPECT_FLOAT_EQ(Point(1, 1).x, mid->motion.vel.x);
+    EXPECT_FLOAT_EQ(Point(1, 1).x(), mid->motion.vel.x());
 
     //  mid velocity of subpath should be the same as velocity of original path
-    EXPECT_FLOAT_EQ(Point(1, 1).y, mid->motion.vel.y);
+    EXPECT_FLOAT_EQ(Point(1, 1).y(), mid->motion.vel.y());
 
-    EXPECT_FLOAT_EQ(1, mid->motion.pos.x);
-    EXPECT_FLOAT_EQ(2, mid->motion.pos.y);
+    EXPECT_FLOAT_EQ(1, mid->motion.pos.x());
+    EXPECT_FLOAT_EQ(2, mid->motion.pos.y());
 
     //  test the subpath at t = 0
     auto start = subPath->evaluate(0);
@@ -74,8 +74,8 @@ TEST(InterpolatedPath, subPath1) {
 
     //  the starting position of the subpath should be somewhere between the
     //  start pos of the original path and the middle point
-    EXPECT_GT(start->motion.pos.y, 1);
-    EXPECT_LT(start->motion.pos.x, 2);
+    EXPECT_GT(start->motion.pos.y(), 1);
+    EXPECT_LT(start->motion.pos.x(), 2);
 }
 
 TEST(InterpolatedPath, subpath2) {
@@ -102,13 +102,13 @@ TEST(InterpolatedPath, subpath2) {
 
             ASSERT_TRUE(org);
             ASSERT_TRUE(sub);
-            EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
+            EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
+            EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
+            EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001)
+            EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
                 << "i+j=" << i + j;
         }
     }
@@ -138,13 +138,14 @@ TEST(CompositePath, CompositeSubPath) {
 
         ASSERT_TRUE(org);
         ASSERT_TRUE(sub);
-        EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
-            << "i=" << i;
-        EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
-            << "i=" << i;
-        EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
-            << "i=" << i;
-        EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001) << "i=" << i;
+        EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001) << "i="
+                                                                        << i;
+        EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001) << "i="
+                                                                        << i;
+        EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001) << "i="
+                                                                        << i;
+        EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001) << "i="
+                                                                       << i;
     }
 
     // Create 9 subPaths from the compositePaths
@@ -163,13 +164,13 @@ TEST(CompositePath, CompositeSubPath) {
             auto sub = subPaths[i]->evaluate(j);
             ASSERT_TRUE(org);
             ASSERT_TRUE(sub);
-            EXPECT_NEAR(org->motion.vel.x, sub->motion.vel.x, 0.000001)
+            EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.vel.y, sub->motion.vel.y, 0.000001)
+            EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.x, sub->motion.pos.x, 0.000001)
+            EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
                 << "i+j=" << i + j;
-            EXPECT_NEAR(org->motion.pos.y, sub->motion.pos.y, 0.00001)
+            EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
                 << "i+j=" << i + j;
         }
     }
