@@ -17,6 +17,8 @@
 #include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "CC1201.cpp"
+#include "SharedSPI.hpp"
+#include "KickerBoard.hpp"
 
 using namespace std;
 
@@ -98,9 +100,13 @@ int main() {
     RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
-    // This is where the FPGA is actually configured with the bitfile's name
-    // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    /// A shared spi bus used for the fpga and cc1201 radio
+    shared_ptr<SharedSPI> sharedSPI = make_shared<SharedSPI>(RJ_SPI_BUS);
+    sharedSPI->format(8, 0);  // 8 bits per transfer
+
+    // Initialize and configure the fpga with the given bitfile
+    FPGA::Initialize(sharedSPI);
+    bool fpga_ready = FPGA::Instance()->configure("/local/rj-fpga.nib");
 
     if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");
@@ -109,6 +115,12 @@ int main() {
     }
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+
+    // Initialize kicker board
+    // TODO: clarify between kicker nCs and nReset
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+                            "/local/rj-kickr.nib");
+    bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on
     MCP23017 ioExpander(RJ_I2C_BUS, 0);
@@ -130,7 +142,7 @@ int main() {
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
-    InitializeCommModule();
+    InitializeCommModule(sharedSPI);
 
     // Make sure all of the motors are enabled
     motors_Init();

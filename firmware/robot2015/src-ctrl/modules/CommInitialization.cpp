@@ -74,7 +74,7 @@ const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
 
-void InitializeCommModule() {
+void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     // leds that flash if tx/rx have happened recently
     auto rxTimeoutLED =
         make_shared<FlashingTimeoutLED>(DigitalOut(RJ_RX_LED, OpenDrain));
@@ -88,7 +88,7 @@ void InitializeCommModule() {
     // TODO(justin): make this non-global
     // Create a new physical hardware communication link
     global_radio =
-        new CC1201(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+        new CC1201(sharedSPI, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
                    sizeof(preferredSettings) / sizeof(registerSetting_t));
 
     // Open a socket for running tests across the link layer

@@ -4,13 +4,15 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 #include "robot-devices.hpp"
 #include "motors.hpp"
+#include "SharedSPI.hpp"
 
 // forward declaration of tasks
 void Task_SerialConsole(void const* args);
-void InitializeCommModule();
+void InitializeCommModule(std::shared_ptr<SharedSPI> sharedSPI);
 
 /**
  * Max number of command aliases.
