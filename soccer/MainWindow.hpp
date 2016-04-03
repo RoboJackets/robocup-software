@@ -115,7 +115,6 @@ private Q_SLOTS:
     void on_actionStart_Logging_triggered();
 
     /// Gameplay menu
-    void on_menu_Gameplay_aboutToShow();
     void on_actionSeed_triggered();
 
     /// Log controls
