@@ -2230,20 +2230,6 @@ p, li { white-space: pre-wrap; }
     <string>Start Logging</string>
    </property>
   </action>
-  <action name="actionMenu_Debug_Show">
-   <property name="text">
-    <string>menu_Debug_Show</string>
-   </property>
-   <property name="autoRepeat">
-    <bool>false</bool>
-   </property>
-   <property name="visible">
-    <bool>false</bool>
-   </property>
-   <property name="iconVisibleInMenu">
-    <bool>false</bool>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -2276,22 +2262,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>573</x>
      <y>39</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>menu_Debug</sender>
-   <signal>triggered(QAction*)</signal>
-   <receiver>actionMenu_Debug_Show</receiver>
-   <slot>trigger()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>113</x>
-     <y>57</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>-1</x>
-     <y>-1</y>
     </hint>
    </hints>
   </connection>
