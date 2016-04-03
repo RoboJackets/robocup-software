@@ -13,10 +13,12 @@ static const int ConfigItemRole = Qt::UserRole;
 
 Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this
 
-ConfigItem::ConfigItem(Configuration* config, const QString& name) {
+ConfigItem::ConfigItem(Configuration* config, const QString& name,
+                       std::string description) {
     _config = config;
     _treeItem = nullptr;
     _path = name.split('/');
+    _description = description;
 }
 
 ConfigItem::~ConfigItem() {
@@ -37,8 +39,9 @@ void ConfigItem::setupItem() { _treeItem->setText(1, toString()); }
 
 ////////
 
-ConfigBool::ConfigBool(Configuration* tree, QString name, bool value)
-    : ConfigItem(tree, name) {
+ConfigBool::ConfigBool(Configuration* tree, QString name, bool value,
+                       std::string description)
+    : ConfigItem(tree, name, description) {
     _value = value;
     addItem();
 }
@@ -75,8 +78,9 @@ void ConfigBool::setupItem() {
 
 ////////
 
-ConfigInt::ConfigInt(Configuration* config, QString name, int value)
-    : ConfigItem(config, name) {
+ConfigInt::ConfigInt(Configuration* config, QString name, int value,
+                     std::string description)
+    : ConfigItem(config, name, description) {
     _value = value;
     addItem();
 }
@@ -87,8 +91,9 @@ void ConfigInt::setValue(const QString& str) { _value = str.toInt(); }
 
 ////////
 
-ConfigDouble::ConfigDouble(Configuration* config, QString name, double value)
-    : ConfigItem(config, name) {
+ConfigDouble::ConfigDouble(Configuration* config, QString name, double value,
+                           std::string description)
+    : ConfigItem(config, name, description) {
     _value = value;
     addItem();
 }
@@ -151,6 +156,11 @@ void Configuration::addToTree(ConfigItem* item) {
     item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
     item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
     item->_treeItem->setText(0, path.back());
+
+    if (item->_description != "") {
+        item->_treeItem->setToolTip(0, QString(item->_description.c_str()));
+    }
+
     item->setupItem();
 }
 
