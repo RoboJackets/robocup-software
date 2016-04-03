@@ -60,7 +60,8 @@ protected:
  */
 class ConfigItem {
 protected:
-    ConfigItem(Configuration* tree, const QString& name);
+    ConfigItem(Configuration* tree, const QString& name,
+               std::string description = "");
 
 public:
     virtual ~ConfigItem();
@@ -88,11 +89,13 @@ protected:
     QStringList _path;
     Configuration* _config;
     QTreeWidgetItem* _treeItem;
+    std::string _description;
 };
 
 class ConfigBool : public ConfigItem {
 public:
-    ConfigBool(Configuration* tree, QString name, bool value = false);
+    ConfigBool(Configuration* tree, QString name, bool value = false,
+               std::string description = "");
 
     bool value();
 
@@ -116,7 +119,8 @@ protected:
 
 class ConfigInt : public ConfigItem {
 public:
-    ConfigInt(Configuration* tree, QString name, int value = 0);
+    ConfigInt(Configuration* tree, QString name, int value = 0,
+              std::string description = "");
 
     virtual QString toString() override;
     virtual void setValue(const QString& str) override;
@@ -142,7 +146,8 @@ protected:
 
 class ConfigDouble : public ConfigItem {
 public:
-    ConfigDouble(Configuration* tree, QString name, double value = 0);
+    ConfigDouble(Configuration* tree, QString name, double value = 0,
+                 std::string description = "");
 
     virtual QString toString() override;
     virtual void setValue(const QString& str) override;

@@ -23,34 +23,26 @@ using namespace std;
 void Task_Controller(void const* args);
 
 /**
- * @brief      { Sets the hardware configurations for the status LEDs & places
- * into the given state }
+ * @brief Sets the hardware configurations for the status LEDs & places
+ * into the given state
  *
- * @param[in]  state  { the next state of the LEDs }
+ * @param[in] state The next state of the LEDs
  */
 void statusLights(bool state) {
-    DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
-
-    for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
+    DigitalOut init_leds[] = {
+        {RJ_BALL_LED}, {RJ_RX_LED}, {RJ_TX_LED}, {RJ_RDY_LED}};
+    // the state is inverted because the leds are wired active-low
+    for (DigitalOut& led : init_leds) led = !state;
 }
 
-/**
- * @brief      { Turn all status LEDs on }
- */
-void statusLightsON(void const* args) { statusLights(1); }
+/// Turn all status LEDs on
+void statusLightsON(void const* args) { statusLights(true); }
+
+/// Turn all status LEDs off
+void statusLightsOFF(void const* args) { statusLights(false); }
 
 /**
- * @brief      { Turn all status LEDs off }
- */
-void statusLightsOFF(void const* args) { statusLights(0); }
-
-/**
- * [main Main The entry point of the system where each submodule's thread is
- * started.]
- * @return  [none]
+ * The entry point of the system where each submodule's thread is started.
  */
 int main() {
     // Store the thread's ID
@@ -58,16 +50,11 @@ int main() {
     ASSERT(mainID != nullptr);
 
     // clear any extraneous rx serial bytes
-    if (true) {
-        Serial s(RJ_SERIAL_RXTX);
-        // flush rx queue
-        while (s.readable()) s.getc();
+    Serial s(RJ_SERIAL_RXTX);
+    while (s.readable()) s.getc();
 
-        // print out the baudrate we're using as a last resort
-        // to let the user know they may or may not see it
-        // depending on many factors.
-        s.baud(57600);
-    }
+    // set baud rate to higher value than the default for faster terminal
+    s.baud(57600);
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
@@ -103,12 +90,9 @@ int main() {
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
-    std::vector<DigitalOut> mbed_lights = {
-        DigitalOut(LED1, 0), DigitalOut(LED2, 0), DigitalOut(LED3, 0),
-        DigitalOut(LED4, 0),
-    };
-    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
-    live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
+    // This is set to never timeout, so it will only stop if the system halts
+    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
+                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
@@ -118,14 +102,17 @@ int main() {
     // passed in
     bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
 
-    if (fpga_ready == true) {
+    if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
     }
 
-    // Init IO Expander and turn  all LEDs
+    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+
+    // Init IO Expander and turn all LEDs on
     MCP23017 ioExpander(RJ_I2C_BUS, 0);
+    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -144,13 +131,8 @@ int main() {
     // Initialize the CommModule and CC1201 radio
     InitializeCommModule();
 
-    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
-
     // Make sure all of the motors are enabled
     motors_Init();
-
-    // push out the LED changes to the hardware
-    rgbLED.write();
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
@@ -162,17 +144,11 @@ int main() {
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
 
-    rdy_led = fpga_ready;
-
     unsigned int ll = 0;
-
-    // turn all error LEDs on
-    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
-        rdy_led = !rdy_led;
         Watchdog::Renew();
 
         // periodically reset the console text's format
