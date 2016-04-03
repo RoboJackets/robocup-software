@@ -121,7 +121,8 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
+                           DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
@@ -161,7 +162,8 @@ int main() {
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
 
         // Pack errors into bitmask
-        uint16_t errorBitmask = global_radio->isConnected() << RJ_ERR_LED_RADIO;
+        uint16_t errorBitmask = !global_radio->isConnected()
+                                << RJ_ERR_LED_RADIO;
 
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
