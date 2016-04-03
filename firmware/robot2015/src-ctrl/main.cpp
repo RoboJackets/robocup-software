@@ -93,7 +93,7 @@ int main() {
 
     // Initialize and start ball sensor
     BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
-    ballSense.start(100);
+    ballSense.start(100);  // TODO(justin): choose smarter update frequency
     DigitalOut ballSenseStatusLED(RJ_BALL_LED, 1);
 
     // Force off since the neopixel's hardware is stateless from previous
