@@ -22,7 +22,7 @@ void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
-    Point start, Point dir, const ShapeSet& obstacles) const {
+    Point start, Point dir, shared_ptr<const Geometry2d::ShapeSet> obstacles) {
     dir = dir.normalized();
 
     // TODO(justbuchanan): handle dynamic obstacles (robots)
@@ -59,12 +59,19 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 }
 
 bool TargetVelPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) const {
-    const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-    const Path* prevPath = planRequest.prevPath.get();
+    MotionInstant startInstant, const MotionCommand* cmd,
+    const MotionConstraints& motionConstraints,
+    shared_ptr<const Geometry2d::ShapeSet> obstacles, const Path* prevPath) {
+    // TODO Undo this hack to use TargetVelPlanner to do Pivot
+    WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
+        if (cmd->getCommandType() == MotionCommand::WorldVel) {
+            return *static_cast<const WorldVelTargetCommand*>(cmd);
+        } else if (cmd->getCommandType() == MotionCommand::Pivot) {
+            return WorldVelTargetCommand(
+                static_cast<const PivotCommand*>(cmd)->pivotTarget);
+        }
+        throw("That Command is not support by the TargetVelPathPlanner");
+    }();
 
     const WorldVelTargetCommand& command =
         static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
