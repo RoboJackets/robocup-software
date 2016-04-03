@@ -29,9 +29,8 @@ private:
                       const MotionConstraints& motionConstraints,
                       const Geometry2d::ShapeSet* obstacles,
                       const Path* prevPath);
-    Geometry2d::Point calculateNonblockedPathEndpoint(
-        Geometry2d::Point start, Geometry2d::Point dir,
-        const Geometry2d::ShapeSet* obstacles);
+
+    static ConfigDouble* _pivotRadius;
 };
 
 }  // namespace Planning

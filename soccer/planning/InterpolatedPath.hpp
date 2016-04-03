@@ -25,12 +25,15 @@ public:
 
         MotionInstant instant;
         float time;
+        boost::optional<AngleInstant> angle;
 
         Geometry2d::Point& pos() { return instant.pos; }
         const Geometry2d::Point& pos() const { return instant.pos; }
 
         Geometry2d::Point& vel() { return instant.vel; }
         const Geometry2d::Point& vel() const { return instant.vel; }
+
+
     };
 
     // Set of points in the path - used as waypoints

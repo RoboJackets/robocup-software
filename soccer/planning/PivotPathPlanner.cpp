@@ -1,15 +1,20 @@
 #include "PivotPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <cmath>
-#include <boost/range/irange.hpp>
 #include "RRTPlanner.hpp"
 
 using namespace std;
 using namespace Geometry2d;
 
 namespace Planning {
+
+REGISTER_CONFIGURABLE(PivotPathPlanner);
+
+ConfigDouble* PivotPathPlanner::_pivotRadius;
+
+void PivotPathPlanner::createConfiguration(Configuration* cfg) {
+    _pivotRadius = new ConfigDouble(cfg, "Pivot/radius", 1.0);
+}
 
 bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
                                     const PivotCommand command,
@@ -43,7 +48,8 @@ std::unique_ptr<Path> PivotPathPlanner::run(
 
     if (shouldReplan(startInstant, command, motionConstraints, obstacles, prevPath.get())) {
 
-        float radius = command.radius;
+        //float radius = command.radius;
+        float radius = (float)_pivotRadius->value() * Robot_Radius;
         auto pivotPoint = command.pivotPoint;
         auto pivotTarget = command.pivotTarget;
         auto endTarget = pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
