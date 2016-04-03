@@ -43,7 +43,6 @@ private:
     bool _isInit = false;
     static FPGA* instance;
 
-    std::shared_ptr<SharedSPI> _spi;
     DigitalIn _initB;
     DigitalInOut _progB;
     DigitalIn _done;
