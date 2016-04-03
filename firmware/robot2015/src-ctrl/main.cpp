@@ -18,40 +18,34 @@
 #include "neostrip.hpp"
 #include "CC1201.cpp"
 #include "BallSense.hpp"
+#include "SharedSPI.hpp"
+#include "KickerBoard.hpp"
 
 using namespace std;
 
 void Task_Controller(void const* args);
 
 /**
- * @brief      { Sets the hardware configurations for the status LEDs & places
- * into the given state }
+ * @brief Sets the hardware configurations for the status LEDs & places
+ * into the given state
  *
- * @param[in]  state  { the next state of the LEDs }
+ * @param[in] state The next state of the LEDs
  */
 void statusLights(bool state) {
-    DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
-
-    for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
+    DigitalOut init_leds[] = {
+        {RJ_BALL_LED}, {RJ_RX_LED}, {RJ_TX_LED}, {RJ_RDY_LED}};
+    // the state is inverted because the leds are wired active-low
+    for (DigitalOut& led : init_leds) led = !state;
 }
 
-/**
- * @brief      { Turn all status LEDs on }
- */
-void statusLightsON(void const* args) { statusLights(1); }
+/// Turn all status LEDs on
+void statusLightsON(void const* args) { statusLights(true); }
+
+/// Turn all status LEDs off
+void statusLightsOFF(void const* args) { statusLights(false); }
 
 /**
- * @brief      { Turn all status LEDs off }
- */
-void statusLightsOFF(void const* args) { statusLights(0); }
-
-/**
- * [main Main The entry point of the system where each submodule's thread is
- * started.]
- * @return  [none]
+ * The entry point of the system where each submodule's thread is started.
  */
 int main() {
     // Store the thread's ID
@@ -59,16 +53,11 @@ int main() {
     ASSERT(mainID != nullptr);
 
     // clear any extraneous rx serial bytes
-    if (true) {
-        Serial s(RJ_SERIAL_RXTX);
-        // flush rx queue
-        while (s.readable()) s.getc();
+    Serial s(RJ_SERIAL_RXTX);
+    while (s.readable()) s.getc();
 
-        // print out the baudrate we're using as a last resort
-        // to let the user know they may or may not see it
-        // depending on many factors.
-        s.baud(57600);
-    }
+    // set baud rate to higher value than the default for faster terminal
+    s.baud(57600);
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
@@ -117,18 +106,31 @@ int main() {
     RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
-    // This is where the FPGA is actually configured with the bitfile's name
-    // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    /// A shared spi bus used for the fpga and cc1201 radio
+    shared_ptr<SharedSPI> sharedSPI = make_shared<SharedSPI>(RJ_SPI_BUS);
+    sharedSPI->format(8, 0);  // 8 bits per transfer
 
-    if (fpga_ready == true) {
+    // Initialize and configure the fpga with the given bitfile
+    FPGA::Initialize(sharedSPI);
+    bool fpga_ready = FPGA::Instance()->configure("/local/rj-fpga.nib");
+
+    if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
     }
 
-    // Init IO Expander and turn  all LEDs
+    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+
+    // Initialize kicker board
+    // TODO: clarify between kicker nCs and nReset
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+                            "/local/rj-kickr.nib");
+    bool kickerReady = kickerBoard.flash(true, true);
+
+    // Init IO Expander and turn all LEDs on
     MCP23017 ioExpander(RJ_I2C_BUS, 0);
+    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -137,7 +139,8 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
+                           DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
@@ -145,15 +148,10 @@ int main() {
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
-    InitializeCommModule();
-
-    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+    InitializeCommModule(sharedSPI);
 
     // Make sure all of the motors are enabled
     motors_Init();
-
-    // push out the LED changes to the hardware
-    rgbLED.write();
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
@@ -165,17 +163,11 @@ int main() {
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
 
-    rdy_led = fpga_ready;
-
     unsigned int ll = 0;
-
-    // turn all error LEDs on
-    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
-        rdy_led = !rdy_led;
         Watchdog::Renew();
 
         // periodically reset the console text's format
@@ -191,7 +183,8 @@ int main() {
         ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
-        uint16_t errorBitmask = global_radio->isConnected() << RJ_ERR_LED_RADIO;
+        uint16_t errorBitmask = !global_radio->isConnected()
+                                << RJ_ERR_LED_RADIO;
 
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {

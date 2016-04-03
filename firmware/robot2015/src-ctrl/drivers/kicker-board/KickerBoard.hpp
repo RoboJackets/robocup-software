@@ -20,15 +20,13 @@ public:
     /**
      * @brief Constructor for KickerBoard
      *
-     * @param mosi mbed pin for MOSI SPI line.
-     * @param miso mbed pin for MISO SPI line.
-     * @param sclk mbed pin for SCLK SPI line.
+     * @param sharedSPI A pointer to the shared spi bus
      * @param nReset mbed pin for not reset line on the ISP interface.
      * @param progFilename Path to kicker program binary file that will be
      *     loaded by the flash() method
      */
-    KickerBoard(PinName mosi, PinName miso, PinName sck, PinName nReset,
-                const std::string& progFilename);
+    KickerBoard(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs,
+                PinName nReset, const std::string& progFilename);
 
     /**
      * @brief Reflashes the program on the kicker board MCU with the file

@@ -54,7 +54,7 @@
 
 // This defines one of the mbed's unused pins. It is not connected to anything
 // on the 2015 Control Board rev. 1.
-#define RJ_SPARE_IO p20
+#define RJ_KICKER_nRESET p20
 
 // This defines the pin used for communicating with the Mechanical Base's ID#.
 #define RJ_BASE_ID p21

@@ -8,6 +8,7 @@
 #include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
+#include "SharedSPI.hpp"
 
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
@@ -26,13 +27,13 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  * CommLink Class used as the hal (hardware abstraction layer) module for
  * interfacing communication links to the higher-level firmware
  */
-class CommLink {
+class CommLink : public SharedSPIDevice<> {
 public:
     /// Default Constructor
     CommLink();
 
     /// Constructor
-    CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs = NC,
+    CommLink(std::shared_ptr<SharedSPI> spiBus, PinName nCs = NC,
              PinName int_pin = NC);
 
     /// Virtual deconstructor
@@ -73,8 +74,6 @@ protected:
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
-    void radio_select();
-    void radio_deselect();
 
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads
@@ -87,11 +86,7 @@ protected:
         return ~val + 1;
     }
 
-    SPI _spi;
-    DigitalOut _nCs;
     InterruptIn _int_in;
-
-    static const int DEFAULT_BAUD = 5000000;
 
 private:
     Thread _rxThread;

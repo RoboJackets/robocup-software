@@ -21,6 +21,8 @@ set(MBED_COPY_SCRIPT sudo ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py)
 
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
+# the mbed libraries are compiled with -fno-rtti, so we need to as well
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fno-rtti")
 # enable C++14
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++14")
 # Enable logging for the common2015 library

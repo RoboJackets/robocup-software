@@ -40,6 +40,8 @@
 
 #include "mbed.h"
 
+#include "SharedSPI.hpp"
+
 // AVR SPI Commands
 #define ATMEL_VENDOR_CODE 0x1E
 #define DEVICE_LOCKED 0x00
@@ -55,7 +57,7 @@
  *
  * This class facilitates loading a program onto an AVR chip's flash memory.
  */
-class AVR910 {
+class AVR910 : public SharedSPIDevice<> {
 public:
     /**
      * Constructor.
@@ -68,7 +70,7 @@ public:
      * Sends an enable programming command, allowing device registers to be
      * read and commands sent.
      */
-    AVR910(PinName mosi, PinName miso, PinName sclk, PinName nReset);
+    AVR910(std::shared_ptr<SharedSPI> spi, PinName nCs, PinName nReset);
 
     /**
      * Program the AVR microcontroller connected to the mbed.
@@ -88,15 +90,6 @@ public:
      * @return  boolean value indicating success
      */
     bool program(FILE* binary, int pageSize, int numPages = 1);
-
-    /**
-     * Set the frequency of the SPI communication.
-     *
-     * (Wrapper for SPI::frequency)
-     *
-     * @param frequency Frequency of the SPI communication in hertz.
-     */
-    void setFrequency(int frequency);
 
     /**
      * Read the vendor code of the device.
@@ -125,6 +118,8 @@ public:
     int readPartNumber();
 
 protected:
+    int readRegister(int reg);
+
     /**
      * Check the binary has been written correctly.
      *
@@ -200,6 +195,5 @@ private:
      */
     char readProgramMemory(int highLow, char pageNumber, char pageOffset);
 
-    SPI spi_;
     DigitalOut nReset_;
 };
