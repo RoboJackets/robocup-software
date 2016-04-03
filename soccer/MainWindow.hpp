@@ -112,6 +112,7 @@ private Q_SLOTS:
     /// Debug menu commands
     void on_actionRestartUpdateTimer_triggered();
     void on_actionQuaternion_Demo_toggled(bool value);
+    void on_actionStart_Logging_triggered();
 
     /// Gameplay menu
     void on_menu_Gameplay_aboutToShow();
