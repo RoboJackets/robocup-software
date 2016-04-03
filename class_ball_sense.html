@@ -114,17 +114,31 @@ $(document).ready(function(){initNavTree('class_ball_sense.html','');});
 <div class="title">BallSense Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Determines if the emitter to reciever beam is broken while accounting for ambiant light.  
+ <a href="class_ball_sense.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae01dcf18d54e723b9d7bd6aa92167e9b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae01dcf18d54e723b9d7bd6aa92167e9b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>update_ball_sensor</b> ()</td></tr>
-<tr class="separator:ae01dcf18d54e723b9d7bd6aa92167e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a211c422102c1a3e3d67f676ac8426162"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a211c422102c1a3e3d67f676ac8426162"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>BallSense</b> (DigitalOut emitter, AnalogIn detector)</td></tr>
+<tr class="separator:a211c422102c1a3e3d67f676ac8426162"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4406377ed92f1cc46116049217271715"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4406377ed92f1cc46116049217271715"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>have_ball</b> ()</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ball_sense.html#a4406377ed92f1cc46116049217271715">have_ball</a> ()</td></tr>
+<tr class="memdesc:a4406377ed92f1cc46116049217271715"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if beam is broken (Ball is contained) <br/></td></tr>
 <tr class="separator:a4406377ed92f1cc46116049217271715"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcc69360d831c54acb7f6293bb19f513"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcc69360d831c54acb7f6293bb19f513"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ball_sense.html#adcc69360d831c54acb7f6293bb19f513">start</a> (uint32_t updateInterval)</td></tr>
+<tr class="memdesc:adcc69360d831c54acb7f6293bb19f513"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begin updating the sensor every  ms. <br/></td></tr>
+<tr class="separator:adcc69360d831c54acb7f6293bb19f513"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a71e9b73cdc1f2dc077509c45f2ad6e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a71e9b73cdc1f2dc077509c45f2ad6e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ball_sense.html#a1a71e9b73cdc1f2dc077509c45f2ad6e">stop</a> ()</td></tr>
+<tr class="memdesc:a1a71e9b73cdc1f2dc077509c45f2ad6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop updates. <br/></td></tr>
+<tr class="separator:a1a71e9b73cdc1f2dc077509c45f2ad6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Determines if the emitter to reciever beam is broken while accounting for ambiant light. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>firmware/robot2015/src-ctrl/drivers/ball_sense/<a class="el" href="_ball_sense_8hpp_source.html">BallSense.hpp</a></li>
 <li>firmware/robot2015/src-ctrl/drivers/ball_sense/BallSense.cpp</li>
 </ul>
@@ -134,7 +148,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>have_ball</b> ()</td>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_ball_sense.html">BallSense</a></li>
-    <li class="footer">Generated on Sun Apr 3 2016 19:42:07 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Apr 3 2016 19:50:01 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

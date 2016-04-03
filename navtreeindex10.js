@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"functions.html":[12,3,0],
 "functions_a.html":[12,3,0,1],
 "functions_b.html":[12,3,0,2],
 "functions_c.html":[12,3,0,3],
@@ -67,8 +68,8 @@ var NAVTREEINDEX10 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[12,0,93,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[12,0,93,8],
 "group__matrices.html":[10,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,4,0,2],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
@@ -99,8 +100,8 @@ var NAVTREEINDEX10 =
 "multicast_8hpp_source.html":[13,0,0,5],
 "namespace_gameplay.html":[12,0,4],
 "namespace_gameplay.html":[11,0,1],
-"namespacefake__mbed.html":[11,0,0],
 "namespacefake__mbed.html":[12,0,3],
+"namespacefake__mbed.html":[11,0,0],
 "namespaces.html":[11,0],
 "neopixel_8h_source.html":[13,0,1,1,1,1],
 "neostrip_8hpp_source.html":[13,0,1,1,0,1,9,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "struct_processor_1_1_status.html#ac917ee297205853cc2c2db2c650a06d4":[12,0,69,0,3],
 "struct_processor_1_1_status.html#ae33d43f2745cf42ebcbfa63fba79db18":[12,0,69,0,1],
 "struct_processor_1_1_status.html#afd32302448045aaeb36a5a1890ed7b0d":[12,0,69,0,4],
-"struct_robot_config_1_1_chipper.html":[12,0,76,0],
-"struct_robot_config_1_1_chipper.html#a8accf10376a9ed2ca7776f13c82ca214":[12,0,76,0,1]
+"struct_robot_config_1_1_chipper.html":[12,0,76,0]
 };

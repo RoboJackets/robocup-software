@@ -210,9 +210,10 @@ var NAVTREEINDEX0 =
 "class_ball_observation.html#a366e98d8292453e12b4a2034248474d5":[12,0,18,2],
 "class_ball_observation.html#a3cb3086cfafc699c6fd624cbfc83345f":[12,0,18,0],
 "class_ball_sense.html":[12,0,19],
+"class_ball_sense.html#a1a71e9b73cdc1f2dc077509c45f2ad6e":[12,0,19,3],
+"class_ball_sense.html#a211c422102c1a3e3d67f676ac8426162":[12,0,19,0],
 "class_ball_sense.html#a4406377ed92f1cc46116049217271715":[12,0,19,1],
-"class_ball_sense.html#a578ca5e97321cc7cbc2e375e9725fc3b":[12,0,19,0],
-"class_ball_sense.html#ae01dcf18d54e723b9d7bd6aa92167e9b":[12,0,19,2],
+"class_ball_sense.html#adcc69360d831c54acb7f6293bb19f513":[12,0,19,2],
 "class_ball_tracker.html":[12,0,20],
 "class_ball_tracker.html#a088a2261541b39b99a9f545c32438ade":[12,0,20,1],
 "class_ball_tracker.html#aec5c060f83ae59d5083a6790c8239555":[12,0,20,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "class_c_c1201.html#a7c11e8a7f81d15cd2168bf6dc9bdc977":[12,0,24,24],
 "class_c_c1201.html#a8381abed7da4e387921dae94c198b620":[12,0,24,0],
 "class_c_c1201.html#a8684563559992c9586f9da6ca5268509":[12,0,24,1],
-"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2":[12,0,24,23],
-"class_c_c1201.html#a960cde5ec86b2ca0a213b073aa5b216f":[12,0,24,7]
+"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2":[12,0,24,23]
 };

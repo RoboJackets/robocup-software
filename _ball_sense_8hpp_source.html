@@ -108,55 +108,63 @@ $(document).ready(function(){initNavTree('_ball_sense_8hpp_source.html','');});
 <div class="title">BallSense.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// Determines if the emitter to reciever beam is broken</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//  while accounting for ambiant light</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;mbed.h&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;rtos.h&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;pins-ctrl-2015.hpp&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
 <div class="line"><a name="l00008"></a><span class="lineno"><a class="line" href="class_ball_sense.html">    8</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_ball_sense.html">BallSense</a> {</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <a class="code" href="class_ball_sense.html">BallSense</a>();</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <a class="code" href="class_ball_sense.html">BallSense</a>(DigitalOut emitter, AnalogIn detector);</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="comment">// Call once per cycle</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordtype">void</span> update_ball_sensor();</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_ball_sense.html#a4406377ed92f1cc46116049217271715">have_ball</a>();</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">// Returns true if beam is broken (Ball is contained)</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">bool</span> have_ball();</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="class_ball_sense.html#adcc69360d831c54acb7f6293bb19f513">   16</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_ball_sense.html#adcc69360d831c54acb7f6293bb19f513">start</a>(uint32_t updateInterval) { _updateTimer.start(updateInterval); }</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    DigitalOut emitter_pin = DigitalOut(RJ_BALL_EMIT);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    AnalogIn detector_pin = AnalogIn(RJ_BALL_DETECTOR);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// Holds the light sensed when</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">//  emitter is lit (sense_light) and</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">//  dark (sense_dark)</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordtype">int</span> sense_light = 0, sense_dark = 0;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="comment">// Emitter state (Light or dark)</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">bool</span> emitter_on = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="comment">// Difference between the light and dark</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="comment">//  values before the sensor is considered</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="comment">//  broken</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> sense_threshold = 8000;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">// Number of consecative &quot;broken&quot; senses</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">//  before we are confident the beam is broken</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> consec_num = 2;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="comment">// Consecative &quot;broken&quot; senses counter</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> consec_ctr = 0;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;};</div>
-<div class="ttc" id="class_ball_sense_html"><div class="ttname"><a href="class_ball_sense.html">BallSense</a></div><div class="ttdef"><b>Definition:</b> BallSense.hpp:8</div></div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="class_ball_sense.html#a1a71e9b73cdc1f2dc077509c45f2ad6e">   19</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_ball_sense.html#a1a71e9b73cdc1f2dc077509c45f2ad6e">stop</a>() { _updateTimer.stop(); }</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// Call periodically when the update timer fires</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">void</span> update_ball_sensor();</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    DigitalOut emitter_pin;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    AnalogIn detector_pin;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="comment">// Holds the light sensed when</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="comment">//  emitter is lit (sense_light) and</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="comment">//  dark (sense_dark)</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">int</span> sense_dark = 0;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="comment">// Emitter state (Light or dark)</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">bool</span> emitter_on = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="comment">// Difference between the light and dark</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">//  values before the sensor is considered</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="comment">//  broken</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> sense_threshold = 8000;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="comment">// Number of consecative &quot;broken&quot; senses</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="comment">//  before we are confident the beam is broken</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> consec_num = 2;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// Consecative &quot;broken&quot; senses counter</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> consec_ctr = 0;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    RtosTimer _updateTimer;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> updateCallback(<span class="keyword">const</span> <span class="keywordtype">void</span>* instance);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;};</div>
+<div class="ttc" id="class_ball_sense_html"><div class="ttname"><a href="class_ball_sense.html">BallSense</a></div><div class="ttdoc">Determines if the emitter to reciever beam is broken while accounting for ambiant light...</div><div class="ttdef"><b>Definition:</b> BallSense.hpp:8</div></div>
+<div class="ttc" id="class_ball_sense_html_a4406377ed92f1cc46116049217271715"><div class="ttname"><a href="class_ball_sense.html#a4406377ed92f1cc46116049217271715">BallSense::have_ball</a></div><div class="ttdeci">bool have_ball()</div><div class="ttdoc">Returns true if beam is broken (Ball is contained) </div><div class="ttdef"><b>Definition:</b> BallSense.cpp:36</div></div>
+<div class="ttc" id="class_ball_sense_html_a1a71e9b73cdc1f2dc077509c45f2ad6e"><div class="ttname"><a href="class_ball_sense.html#a1a71e9b73cdc1f2dc077509c45f2ad6e">BallSense::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stop updates. </div><div class="ttdef"><b>Definition:</b> BallSense.hpp:19</div></div>
+<div class="ttc" id="class_ball_sense_html_adcc69360d831c54acb7f6293bb19f513"><div class="ttname"><a href="class_ball_sense.html#adcc69360d831c54acb7f6293bb19f513">BallSense::start</a></div><div class="ttdeci">void start(uint32_t updateInterval)</div><div class="ttdoc">Begin updating the sensor every  ms. </div><div class="ttdef"><b>Definition:</b> BallSense.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_081079849da51869e7ffd8e108d45510.html">src-ctrl</a></li><li class="navelem"><a class="el" href="dir_a378caac559486f927469cd0e7a2b165.html">drivers</a></li><li class="navelem"><a class="el" href="dir_942f7bb26a4e1092c4f4da6217382361.html">ball_sense</a></li><li class="navelem"><b>BallSense.hpp</b></li>
-    <li class="footer">Generated on Sun Apr 3 2016 19:42:07 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Apr 3 2016 19:50:01 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
