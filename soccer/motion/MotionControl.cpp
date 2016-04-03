@@ -161,8 +161,8 @@ void MotionControl::run() {
     target.vel += accelFactor;
 
     // PID on position
-    target.vel.x += _positionXController.run(posError.x);
-    target.vel.y += _positionYController.run(posError.y);
+    target.vel.x() += _positionXController.run(posError.x());
+    target.vel.y() += _positionYController.run(posError.y());
 
     // draw target pt
     _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
@@ -216,7 +216,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // make sure we don't send any bad values
-    if (isnan(targetVel.x) || isnan(targetVel.y)) {
+    if (isnan(targetVel.x()) || isnan(targetVel.y())) {
         targetVel = Point(0, 0);
     }
 
@@ -235,6 +235,6 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // set radioTx values
-    _robot->radioTx.set_body_x(targetVel.x);
-    _robot->radioTx.set_body_y(targetVel.y);
+    _robot->radioTx.set_body_x(targetVel.x());
+    _robot->radioTx.set_body_y(targetVel.y());
 }

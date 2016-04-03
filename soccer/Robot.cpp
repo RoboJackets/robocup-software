@@ -162,8 +162,8 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
 
     // sets flags for future movement
     if (verbose)
-        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
-             << ", " << goal.y << ")" << endl;
+        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x()
+             << ", " << goal.y() << ")" << endl;
 
     _motionCommand = std::make_unique<Planning::DirectPathTargetCommand>(
         MotionInstant(goal, (goal - pos).normalized() * endSpeed));
@@ -177,21 +177,21 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 
     // sets flags for future movement
     if (verbose)
-        cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", "
-             << goal.y << ")" << std::endl;
+        cout << " in OurRobot::move(goal): adding a goal (" << goal.x() << ", "
+             << goal.y() << ")" << std::endl;
 
     _motionCommand = std::make_unique<Planning::PathTargetCommand>(
         MotionInstant(goal, endVelocity));
 
-    *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
-    *_cmdText << "endVelocity(" << endVelocity.x << ", " << endVelocity.y << ")"
-              << endl;
+    *_cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
+    *_cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
+              << ")" << endl;
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
     _motionCommand = std::make_unique<Planning::WorldVelTargetCommand>(v);
     setPath(nullptr);
-    *_cmdText << "worldVel(" << v.x << ", " << v.y << ")" << endl;
+    *_cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
@@ -201,7 +201,7 @@ void OurRobot::pivot(Geometry2d::Point pivotTarget) {
     _motionCommand = std::make_unique<Planning::PivotCommand>(pivotTarget);
     setPath(nullptr);
 
-    *_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")"
+    *_cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
               << endl;
 }
 
@@ -222,7 +222,7 @@ const Geometry2d::Segment OurRobot::kickerBar() const {
 
 bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
     Point ballTransformed = pointInRobotSpace(ballPos);
-    return ballTransformed.x < -Robot_Radius;
+    return ballTransformed.x() < -Robot_Radius;
 }
 
 float OurRobot::kickTimer() const {
@@ -241,7 +241,7 @@ void OurRobot::dribble(uint8_t speed) {
 void OurRobot::face(Geometry2d::Point pt) {
     _rotationCommand = std::make_unique<Planning::FacePointCommand>(pt);
 
-    *_cmdText << "face(" << pt.x << ", " << pt.y << ")" << endl;
+    *_cmdText << "face(" << pt.x() << ", " << pt.y() << ")" << endl;
 }
 
 void OurRobot::faceNone() {

@@ -37,10 +37,10 @@ int Circle::intersects(Circle& other, Point* i) const {
     }
 
     if (i) {
-        float x0 = center.x;
-        float y0 = center.y;
-        float x1 = other.center.x;
-        float y1 = other.center.y;
+        float x0 = center.x();
+        float y0 = center.y();
+        float x1 = other.center.x();
+        float y1 = other.center.y();
 
         float a_over_d = sqrtf(asq / dsq);
         float h_over_d = sqrtf(hsq / dsq);
@@ -48,12 +48,12 @@ int Circle::intersects(Circle& other, Point* i) const {
         float x2 = x0 + (x1 - x0) * a_over_d;
         float y2 = y0 + (y1 - y0) * a_over_d;
 
-        i[0].x = x2 + (y1 - y0) * h_over_d;
-        i[0].y = y2 - (x1 - x0) * h_over_d;
+        i[0].x() = x2 + (y1 - y0) * h_over_d;
+        i[0].y() = y2 - (x1 - x0) * h_over_d;
 
         if (n == 2) {
-            i[1].x = x2 - (y1 - y0) * h_over_d;
-            i[1].y = y2 + (x1 - x0) * h_over_d;
+            i[1].x() = x2 - (y1 - y0) * h_over_d;
+            i[1].y() = y2 + (x1 - x0) * h_over_d;
         }
     }
 
@@ -62,13 +62,13 @@ int Circle::intersects(Circle& other, Point* i) const {
 
 int Circle::intersects(const Line& line, Point* i) const {
     // http://mathworld.wolfram.com/Circle2d-LineIntersection.html
-    float cx = center.x;
-    float cy = center.y;
+    float cx = center.x();
+    float cy = center.y();
 
-    float x1 = line.pt[0].x - cx;
-    float y1 = line.pt[0].y - cy;
-    float x2 = line.pt[1].x - cx;
-    float y2 = line.pt[1].y - cy;
+    float x1 = line.pt[0].x() - cx;
+    float y1 = line.pt[0].y() - cy;
+    float x2 = line.pt[1].x() - cx;
+    float y2 = line.pt[1].y() - cy;
 
     float dx = x2 - x1;
     float dy = y2 - y1;
@@ -82,8 +82,8 @@ int Circle::intersects(const Line& line, Point* i) const {
     } else if (disc == 0) {
         // One point
         if (i) {
-            i[0].x = det * dy / drsq + cx;
-            i[0].y = -det * dx / drsq + cy;
+            i[0].x() = det * dy / drsq + cx;
+            i[0].y() = -det * dx / drsq + cy;
         }
 
         return 1;
@@ -94,11 +94,11 @@ int Circle::intersects(const Line& line, Point* i) const {
             float sqrt_disc = sqrtf(disc);
             float abs_dy = fabs(dy);
 
-            i[0].x = (det * dy + sgn_dy * dx * sqrt_disc) / drsq + cx;
-            i[0].y = (-det * dx + abs_dy * sqrt_disc) / drsq + cy;
+            i[0].x() = (det * dy + sgn_dy * dx * sqrt_disc) / drsq + cx;
+            i[0].y() = (-det * dx + abs_dy * sqrt_disc) / drsq + cy;
 
-            i[1].x = (det * dy - sgn_dy * dx * sqrt_disc) / drsq + cx;
-            i[1].y = (-det * dx - abs_dy * sqrt_disc) / drsq + cy;
+            i[1].x() = (det * dy - sgn_dy * dx * sqrt_disc) / drsq + cx;
+            i[1].y() = (-det * dx - abs_dy * sqrt_disc) / drsq + cy;
         }
 
         return 2;

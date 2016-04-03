@@ -61,14 +61,14 @@ public:
     }
 
     Point operator*(const Point& pt) const {
-        return Point(pt.x * _m[0] + pt.y * _m[1] + _m[2],
-                     pt.x * _m[3] + pt.y * _m[4] + _m[5]);
+        return Point(pt.x() * _m[0] + pt.y() * _m[1] + _m[2],
+                     pt.x() * _m[3] + pt.y() * _m[4] + _m[5]);
     }
 
     // Transforms a direction vector (3rd element is zero)
     Point transformDirection(const Point& dir) const {
-        return Point(dir.x * _m[0] + dir.y * _m[1],
-                     dir.x * _m[3] + dir.y * _m[4]);
+        return Point(dir.x() * _m[0] + dir.y() * _m[1],
+                     dir.x() * _m[3] + dir.y() * _m[4]);
     }
 
     // Transforms the given angle in radians
@@ -106,7 +106,7 @@ public:
 
     // Translation
     static TransformMatrix translate(const Point& delta) {
-        return TransformMatrix(1, 0, delta.x, 0, 1, delta.y);
+        return TransformMatrix(1, 0, delta.x(), 0, 1, delta.y());
     }
 
     static TransformMatrix translate(float x, float y) {

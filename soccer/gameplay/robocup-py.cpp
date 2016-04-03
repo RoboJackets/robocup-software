@@ -459,6 +459,11 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
+float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
+float Point_get_y(const Geometry2d::Point* self) { return self->y(); }
+void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
+void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -472,8 +477,8 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
         .def(init<const Geometry2d::Point&>())
-        .def_readwrite("x", &Geometry2d::Point::x)
-        .def_readwrite("y", &Geometry2d::Point::y)
+        .add_property("x", &Point_get_x, &Point_set_x)
+        .add_property("y", &Point_get_y, &Point_set_y)
         .def(self - self)
         .def(self + self)
         .def("mag", &Geometry2d::Point::mag)

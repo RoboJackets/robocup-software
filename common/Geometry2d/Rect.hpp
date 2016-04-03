@@ -67,10 +67,10 @@ public:
     void expand(Point pt);
     void expand(const Rect& rect);
 
-    float minx() const { return std::min(pt[0].x, pt[1].x); }
-    float miny() const { return std::min(pt[0].y, pt[1].y); }
-    float maxx() const { return std::max(pt[0].x, pt[1].x); }
-    float maxy() const { return std::max(pt[0].y, pt[1].y); }
+    float minx() const { return std::min(pt[0].x(), pt[1].x()); }
+    float miny() const { return std::min(pt[0].y(), pt[1].y()); }
+    float maxx() const { return std::max(pt[0].x(), pt[1].x()); }
+    float maxy() const { return std::max(pt[0].y(), pt[1].y()); }
 
     bool nearPoint(Point pt, float threshold) const;
     bool nearSegment(const Segment& seg, float threshold) const;
