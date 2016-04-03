@@ -614,8 +614,11 @@ void Processor::sendRadioData() {
             txRobot->CopyFrom(r->robotPacket);
 
             if (r->shell() == _manualID) {
-                JoystickControlValues controlVals = getJoystickControlValues();
-                applyJoystickControls(controlVals, txRobot->control, r);
+                const JoystickControlValues controlVals = getJoystickControlValues();
+                // myTestFunc();
+                applyJoystickControls(controlVals, 
+                    txRobot->mutable_control(), 
+                    r);
             }
         }
     }

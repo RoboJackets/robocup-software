@@ -42,6 +42,7 @@ set(ROBOCUP_LIB_SRC
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
 #    "radio/USBRadio.cpp"
+    "radio/USB2015Radio.cpp"
     "RefereeTab.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
@@ -117,6 +118,7 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL_LIBRARY})
+target_link_libraries(robocup "/usr/lib/x86_64-linux-gnu/libhidapi-libusb.so")
 
 # python
 # note: these are set in the root CMakeLists.txt file
