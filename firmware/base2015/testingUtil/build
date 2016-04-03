@@ -1,0 +1,3 @@
+#!/bin/bash
+export LD_LIBRARY_PATH=/usr/local/lib
+gcc -std=c11 main.c -o main.o -I /usr/local/include/hidapi -lhidapi-hidraw

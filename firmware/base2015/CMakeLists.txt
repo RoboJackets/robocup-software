@@ -2,16 +2,13 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
-set(CMAKE_C_COMPILER    ${ARM_C_COMPILER})
-set(CMAKE_CXX_COMPILER  ${ARM_CXX_COMPILER})
-
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
 set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
 set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # firmware source files
-set(base2015_SRC "main.cpp")
+set(base2015_SRC "main.cpp" "PCLink.hpp" "PCLink.cpp")
 
 add_executable(base2015_elf ${base2015_SRC})
 target_link_libraries(base2015_elf common2015)
@@ -24,8 +21,8 @@ set_target_properties(base2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # custom target for creating a .bin file from an elf binary
 add_custom_target(base2015
-    ${ARM_OBJCOPY} -O binary base2015_elf rj-base.bin
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/rj-base.bin ${PROJECT_SOURCE_DIR}/run/
+    arm-none-eabi-objcopy -O binary base2015_elf rj-base.bin
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/rj-base.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS base2015_elf
     COMMENT "objcopying to make MBED-compatible executable"
 )
