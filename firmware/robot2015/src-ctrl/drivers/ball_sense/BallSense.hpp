@@ -1,28 +1,34 @@
-// Determines if the emitter to reciever beam is broken
-//  while accounting for ambiant light
+#pragma once
+
 #include <mbed.h>
 #include <rtos.h>
 
-#include "pins-ctrl-2015.hpp"
-
+/// Determines if the emitter to reciever beam is broken while accounting for
+///  ambiant light.
 class BallSense {
 public:
-    BallSense();
+    BallSense(DigitalOut emitter, AnalogIn detector);
 
-    // Call once per cycle
-    void update_ball_sensor();
-
-    // Returns true if beam is broken (Ball is contained)
+    /// Returns true if beam is broken (Ball is contained)
     bool have_ball();
 
+    /// Begin updating the sensor every @updateInterval ms
+    void start(uint32_t updateInterval) { _updateTimer.start(updateInterval); }
+
+    /// Stop updates
+    void stop() { _updateTimer.stop(); }
+
 private:
-    DigitalOut emitter_pin = DigitalOut(RJ_BALL_EMIT);
-    AnalogIn detector_pin = AnalogIn(RJ_BALL_DETECTOR);
+    // Call periodically when the update timer fires
+    void update_ball_sensor();
+
+    DigitalOut emitter_pin;
+    AnalogIn detector_pin;
 
     // Holds the light sensed when
     //  emitter is lit (sense_light) and
     //  dark (sense_dark)
-    int sense_light = 0, sense_dark = 0;
+    int sense_dark = 0;
 
     // Emitter state (Light or dark)
     bool emitter_on = false;
@@ -38,4 +44,8 @@ private:
 
     // Consecative "broken" senses counter
     unsigned int consec_ctr = 0;
+
+    RtosTimer _updateTimer;
+
+    static void updateCallback(const void* instance);
 };

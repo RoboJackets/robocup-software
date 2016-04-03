@@ -1,11 +1,16 @@
 #include "BallSense.hpp"
 
-BallSense::BallSense() { emitter_pin.write(0); }
+BallSense::BallSense(DigitalOut emitter, AnalogIn detector)
+    : emitter_pin(emitter),
+      detector_pin(detector),
+      _updateTimer(&updateCallback, osTimerPeriodic, this) {
+    emitter_pin = false;
+}
 
 void BallSense::update_ball_sensor() {
     if (emitter_on) {
         // Update value
-        sense_light = detector_pin.read_u16();
+        int sense_light = detector_pin.read_u16();
 
         // Shutoff light
         emitter_on = false;
@@ -29,3 +34,9 @@ void BallSense::update_ball_sensor() {
 }
 
 bool BallSense::have_ball() { return consec_ctr >= consec_num; }
+
+void BallSense::updateCallback(const void* instance) {
+    BallSense* thiss =
+        const_cast<BallSense*>(reinterpret_cast<const BallSense*>(instance));
+    thiss->update_ball_sensor();
+}

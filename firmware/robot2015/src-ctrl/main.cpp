@@ -17,6 +17,7 @@
 #include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "CC1201.cpp"
+#include "BallSense.hpp"
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
 
@@ -78,6 +79,11 @@ int main() {
     // Setup the interrupt priorities before launching each subsystem's task
     // thread.
     setISRPriorities();
+
+    // Initialize and start ball sensor
+    BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
+    ballSense.start(100);  // TODO(justin): choose smarter update frequency
+    DigitalOut ballSenseStatusLED(RJ_BALL_LED, 1);
 
     // Force off since the neopixel's hardware is stateless from previous
     // settings
@@ -172,6 +178,9 @@ int main() {
         }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
+
+        // the value is inverted because this led is wired active-low
+        ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
         uint16_t errorBitmask = !global_radio->isConnected()

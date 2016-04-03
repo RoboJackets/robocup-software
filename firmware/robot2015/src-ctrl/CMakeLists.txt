@@ -15,8 +15,20 @@ set(DRIVERS_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/drivers)
 set(MODULES_ROOT_NAME   ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 set(CONFIG_ROOT_NAME    ${CMAKE_CURRENT_SOURCE_DIR}/config)
 set(CONFIG_ROOT_NAME    ${CONFIG_ROOT_NAME} PARENT_SCOPE)
-set(DRIVERS             avr-isp buzzer dma ds2411 fpga mcp23017 mpu-6050 kicker-board rotarySelector ws2811)
-set(MODULES             commands motors)
+set(DRIVERS
+    avr-isp
+    ball_sense
+    buzzer
+    dma
+    ds2411
+    fpga
+    mcp23017
+    mpu-6050
+    kicker-board
+    rotarySelector
+    ws2811
+)
+set(MODULES commands motors)
 
 # generate a list of directories that we need to include from the values set above
 set(ROBOT2015_ELF_INCLUDES ${CONFIG_ROOT_NAME} ${DRIVERS_ROOT_NAME} ${MODULES_ROOT_NAME})
