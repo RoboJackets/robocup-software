@@ -243,12 +243,14 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         startDirections.push_back(difference.normalized(
             (points[i] - points[i + 1]).mag() * directionDistance));
     }
-    Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight);
-    endDirections.push_back((vf + endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    Point endPathDirection =
+        (points[points.size() - 1] - points[points.size() - 2])
+            .normalized(pathWeight);
+    endDirections.push_back(
+        (vf + endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 
@@ -274,8 +276,8 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     vector<double> ks2(length - 1);
 
     for (int i = 0; i < length; i++) {
-        pointsX[i] = points[i].x;
-        pointsY[i] = points[i].y;
+        pointsX[i] = points[i].x();
+        pointsY[i] = points[i].y();
     }
     const float startSpeed = vi.mag();
 
@@ -310,9 +312,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     }
 
     VectorXd solutionX =
-        RRTPlanner::cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
+        RRTPlanner::cubicBezierCalc(vi.x(), vf.x(), pointsX, ks, ks2);
     VectorXd solutionY =
-        RRTPlanner::cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
+        RRTPlanner::cubicBezierCalc(vi.y(), vf.y(), pointsY, ks, ks2);
 
     vector<CubicBezierControlPoints> path;
 
@@ -419,8 +421,8 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             // https://en.wikipedia.org/wiki/Curvature#Local_expressions
             // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2)
             float curvature =
-                std::abs(d1.x * d2.y - d1.y * d2.x) /
-                std::pow(std::pow(d1.x, 2) + std::pow(d1.y, 2), 1.5);
+                std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
+                std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
             // Handle 0 velocity case
             if (isnan(curvature)) {
@@ -459,8 +461,8 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     Point pos = p3;
     Point d1 = vf;
     Geometry2d::Point d2 = 6 * (1) * (p3 - 2 * p2 + p1);
-    float curvature = std::abs(d1.x * d2.y - d1.y * d2.x) /
-                      std::pow(std::pow(d1.x, 2) + std::pow(d1.y, 2), 1.5);
+    float curvature = std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
+                      std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
     // handle 0 velcoity case
     if (isnan(curvature)) {

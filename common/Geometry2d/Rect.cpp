@@ -24,8 +24,8 @@ bool Rect::containsRect(const Rect& other) const {
 }
 
 bool Rect::containsPoint(Point point) const {
-    return point.x >= minx() && point.x <= maxx() && point.y >= miny() &&
-           point.y <= maxy();
+    return point.x() >= minx() && point.x() <= maxx() && point.y() >= miny() &&
+           point.y() <= maxy();
 }
 
 bool Rect::hit(const Segment& seg) const {
@@ -35,10 +35,10 @@ bool Rect::hit(const Segment& seg) const {
 bool Rect::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
 
 void Rect::expand(Point p) {
-    pt[0].x = min(pt[0].x, p.x);
-    pt[0].y = min(pt[0].y, p.y);
-    pt[1].x = max(pt[1].x, p.x);
-    pt[1].y = max(pt[1].y, p.y);
+    pt[0].x() = min(pt[0].x(), p.x());
+    pt[0].y() = min(pt[0].y(), p.y());
+    pt[1].x() = max(pt[1].x(), p.x());
+    pt[1].y() = max(pt[1].y(), p.y());
 }
 
 void Rect::expand(const Rect& rect) {
@@ -60,8 +60,8 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
 
     // If any corner of this rect is near the segment,
     // then the segment is near this rect.
-    Point ur = Point(pt[1].x, pt[0].y);
-    Point ll = Point(pt[0].x, pt[1].y);
+    Point ur = Point(pt[1].x(), pt[0].y());
+    Point ll = Point(pt[0].x(), pt[1].y());
     if (seg.nearPoint(pt[0], threshold) || seg.nearPoint(ur, threshold) ||
         seg.nearPoint(ll, threshold) || seg.nearPoint(pt[1], threshold)) {
         return true;
@@ -93,8 +93,8 @@ bool Rect::nearPoint(Point other, float threshold) const {
     // If the point is inside this rect then it is near it.
     if (this->containsPoint(other)) return true;
 
-    Point ur = Point(pt[1].x, pt[0].y);
-    Point ll = Point(pt[0].x, pt[1].y);
+    Point ur = Point(pt[1].x(), pt[0].y());
+    Point ll = Point(pt[0].x(), pt[1].y());
     Segment edges[4] = {Segment(pt[0], ur), Segment(ur, pt[1]),
                         Segment(pt[0], ll), Segment(ll, pt[1])};
 

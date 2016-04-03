@@ -12,10 +12,10 @@ TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror,
     // Set up translation
     _m[0] = 1;
     _m[1] = 0;
-    _m[2] = origin.x;
+    _m[2] = origin.x();
     _m[3] = 0;
     _m[4] = 1;
-    _m[5] = origin.y;
+    _m[5] = origin.y();
 
     *this *= rotate(rotation);
     *this *= scale(s);

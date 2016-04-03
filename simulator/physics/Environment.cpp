@@ -219,10 +219,10 @@ void Environment::sendVision() {
         if ((rand() % 100) < ballVisibility) {
             SSL_DetectionBall* out = det->add_balls();
             out->set_confidence(1);
-            out->set_x(ballPos.x * 1000);
-            out->set_y(ballPos.y * 1000);
-            out->set_pixel_x(ballPos.x * 1000);
-            out->set_pixel_y(ballPos.y * 1000);
+            out->set_x(ballPos.x() * 1000);
+            out->set_y(ballPos.y() * 1000);
+            out->set_pixel_x(ballPos.x() * 1000);
+            out->set_pixel_y(ballPos.y() * 1000);
         }
     }
 
@@ -244,21 +244,21 @@ void Environment::convert_robot(const Robot* robot, SSL_DetectionRobot* out) {
     Geometry2d::Point pos = robot->getPosition();
     out->set_confidence(1);
     out->set_robot_id(robot->shell);
-    out->set_x(pos.x * 1000);
-    out->set_y(pos.y * 1000);
+    out->set_x(pos.x() * 1000);
+    out->set_y(pos.y() * 1000);
     out->set_orientation(robot->getAngle());
-    out->set_pixel_x(pos.x * 1000);
-    out->set_pixel_y(pos.y * 1000);
+    out->set_pixel_x(pos.x() * 1000);
+    out->set_pixel_y(pos.y() * 1000);
 }
 
 void Environment::addBall(Geometry2d::Point pos) {
     Ball* b = new Ball(this);
     b->initPhysics();
-    b->position(pos.x, pos.y);
+    b->position(pos.x(), pos.y());
 
     _balls.append(b);
 
-    printf("New Ball: %f %f\n", pos.x, pos.y);
+    printf("New Ball: %f %f\n", pos.x(), pos.y());
 }
 
 void Environment::addRobot(bool blue, int id, Geometry2d::Point pos,
@@ -276,13 +276,13 @@ void Environment::addRobot(bool blue, int id, Geometry2d::Point pos,
 
     switch (rev) {
         case Robot::rev2008:
-            printf("New 2008 Robot: %d : %f %f\n", id, actPos.x, actPos.y);
+            printf("New 2008 Robot: %d : %f %f\n", id, actPos.x(), actPos.y());
             break;
         case Robot::rev2011:
-            printf("New 2011 Robot: %d : %f %f\n", id, actPos.x, actPos.y);
+            printf("New 2011 Robot: %d : %f %f\n", id, actPos.x(), actPos.y());
     }
 
-    QVector3D pos3(pos.x, pos.y, 0.0);
+    QVector3D pos3(pos.x(), pos.y(), 0.0);
     QVector3D axis(0.0, 0.0, 1.0);
 }
 
@@ -297,8 +297,8 @@ void Environment::removeRobot(bool blue, int id) {
 Geometry2d::Point gaussianPoint(int n, float scale) {
     Geometry2d::Point pt;
     for (int i = 0; i < n; ++i) {
-        pt.x += drand48() - 0.5;
-        pt.y += drand48() - 0.5;
+        pt.x() += drand48() - 0.5;
+        pt.y() += drand48() - 0.5;
     }
     pt *= scale / n;
 
@@ -318,8 +318,8 @@ bool Environment::occluded(Geometry2d::Point ball, Geometry2d::Point camera) {
     // intZ = (ballZ - camZ) * t + camZ
     float t = (intZ - camZ) / (ballZ - camZ);
     Geometry2d::Point intersection;
-    intersection.x = (ball.x - camera.x) * t + camera.x;
-    intersection.y = (ball.y - camera.y) * t + camera.y;
+    intersection.x() = (ball.x() - camera.x()) * t + camera.x();
+    intersection.y() = (ball.y() - camera.y()) * t + camera.y();
 
     // Return true if the intersection point is inside any robot
     for (const Robot* r : _blue) {
@@ -356,7 +356,7 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
 
             // trigger signals to update visualization
             Geometry2d::Point pos2 = r->getPosition();
-            QVector3D pos3(pos2.x, pos2.y, 0.0);
+            QVector3D pos3(pos2.x(), pos2.y(), 0.0);
             QVector3D axis(0.0, 0.0, 1.0);
         } else {
             printf("Commanding nonexistent robot %s:%d\n",

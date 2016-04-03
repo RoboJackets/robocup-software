@@ -640,8 +640,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     }
 
     // translation
-    tx->set_body_x(translation.x);
-    tx->set_body_y(translation.y);
+    tx->set_body_x(translation.x());
+    tx->set_body_y(translation.y());
 
     // rotation
     tx->set_body_w(controlVals.rotation);

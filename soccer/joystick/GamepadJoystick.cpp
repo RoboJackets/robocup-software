@@ -102,20 +102,20 @@ void GamepadJoystick::update() {
     auto mVal = fabs(rightY);
 
     if (SDL_JoystickGetAxis(_joystick, 5) < 0) {
-        input.y = mVal;
-        input.x = 0;
+        input.y() = mVal;
+        input.x() = 0;
     } else if (SDL_JoystickGetAxis(_joystick, 5) > 0) {
-        input.y = -mVal;
-        input.x = 0;
+        input.y() = -mVal;
+        input.x() = 0;
     } else if (SDL_JoystickGetAxis(_joystick, 4) > 0) {
-        input.y = 0;
-        input.x = mVal;
+        input.y() = 0;
+        input.x() = mVal;
     } else if (SDL_JoystickGetAxis(_joystick, 4) < 0) {
-        input.y = 0;
-        input.x = -mVal;
+        input.y() = 0;
+        input.x() = -mVal;
     }
 
-    _controls.translation = Geometry2d::Point(input.x, input.y);
+    _controls.translation = Geometry2d::Point(input.x(), input.y());
 
     _controls.rotation = -leftX;
 }
