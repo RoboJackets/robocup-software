@@ -7,8 +7,11 @@ set(CMAKE_CXX_FLAGS         ${MBED_CMAKE_CXX_FLAGS}         )
 set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
 set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
 
-file(GLOB_RECURSE   common2015_SRC  "*.cpp")
-list(REMOVE_ITEM    common2015_SRC  "${CMAKE_CURRENT_LIST_DIR}/ExampleTest.cpp")
+file(GLOB_RECURSE common2015_SRC
+    "drivers/*.cpp"
+    "modules/*.cpp"
+    "utils/*.cpp"
+)
 
 # append all of the accessory library sources
 list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
@@ -18,7 +21,7 @@ set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
 # subdirectories
-set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c software-spi)
+set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c shared-spi software-spi)
 set(MODULES             CommModule CommLink Console)
 set(UTILS               assert logger numparser rtos-mgmt)
 

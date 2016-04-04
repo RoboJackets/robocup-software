@@ -16,7 +16,9 @@ ConfigDouble* TargetVelPathPlanner::_targetVelChangeReplanThreshold;
 
 void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
     _targetVelChangeReplanThreshold = new ConfigDouble(
-        cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05);
+        cfg, "TargetVelPathPlanner/velChangeReplanThreshold", 0.05,
+        "If the target velocity changes by this much (in m/s), the planner is "
+        "rerun.  Otherwise the previous path may be kept.");
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(

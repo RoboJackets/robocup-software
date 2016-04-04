@@ -7,7 +7,6 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "task-globals.hpp"
 #include "motors.hpp"
 #include "fpga.hpp"
 #include "mpu-6050.hpp"
@@ -71,22 +70,11 @@ void Task_Controller(void const* args) {
 
         LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
             threadID, threadPriority);
-
-        // Set the error code's valid bit
-        imu_err |= 1 << 0;
-
-        MCP23017::Instance()->writeMask(1 << (8 + 6), 1 << (8 + 6));
-
     } else {
         LOG(SEVERE,
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
             "sensorless control loop.",
             testResp);
-
-        // Set the error flag - bit positions are pretty arbitruary as of now
-        imu_err |= 1 << 1;
-        // Set the error code's valid bit
-        imu_err |= 1 << 0;
 
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
@@ -153,9 +141,6 @@ void Task_Controller_Sensorless(const osThreadId mainID) {
     LOG(INIT,
         "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
         threadID, threadPriority);
-
-    // IMU error LED
-    MCP23017::Instance()->writeMask(~(1 << (8 + 6)), 1 << (8 + 6));
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);

@@ -12,48 +12,40 @@
 
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "task-globals.hpp"
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "neostrip.hpp"
+#include "CC1201.cpp"
+#include "BallSense.hpp"
+#include "SharedSPI.hpp"
+#include "KickerBoard.hpp"
 
-// task globals
-uint16_t comm_err = 0;
-uint16_t fpga_err = 0;
-uint16_t imu_err = 0;
+using namespace std;
 
 void Task_Controller(void const* args);
 
 /**
- * @brief      { Sets the hardware configurations for the status LEDs & places
- * into the given state }
+ * @brief Sets the hardware configurations for the status LEDs & places
+ * into the given state
  *
- * @param[in]  state  { the next state of the LEDs }
+ * @param[in] state The next state of the LEDs
  */
 void statusLights(bool state) {
-    DigitalInOut init_leds[] = {{RJ_BALL_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_TX_LED, PIN_OUTPUT, OpenDrain, !state},
-                                {RJ_RDY_LED, PIN_OUTPUT, OpenDrain, !state}};
-
-    for (int i = 0; i < 4; i++) init_leds[i].mode(PullUp);
+    DigitalOut init_leds[] = {
+        {RJ_BALL_LED}, {RJ_RX_LED}, {RJ_TX_LED}, {RJ_RDY_LED}};
+    // the state is inverted because the leds are wired active-low
+    for (DigitalOut& led : init_leds) led = !state;
 }
 
-/**
- * @brief      { Turn all status LEDs on }
- */
-void statusLightsON(void const* args) { statusLights(1); }
+/// Turn all status LEDs on
+void statusLightsON(void const* args) { statusLights(true); }
+
+/// Turn all status LEDs off
+void statusLightsOFF(void const* args) { statusLights(false); }
 
 /**
- * @brief      { Turn all status LEDs off }
- */
-void statusLightsOFF(void const* args) { statusLights(0); }
-
-/**
- * [main Main The entry point of the system where each submodule's thread is
- * started.]
- * @return  [none]
+ * The entry point of the system where each submodule's thread is started.
  */
 int main() {
     // Store the thread's ID
@@ -61,16 +53,11 @@ int main() {
     ASSERT(mainID != nullptr);
 
     // clear any extraneous rx serial bytes
-    if (true) {
-        Serial s(RJ_SERIAL_RXTX);
-        // flush rx queue
-        while (s.readable()) s.getc();
+    Serial s(RJ_SERIAL_RXTX);
+    while (s.readable()) s.getc();
 
-        // print out the baudrate we're using as a last resort
-        // to let the user know they may or may not see it
-        // depending on many factors.
-        s.baud(57600);
-    }
+    // set baud rate to higher value than the default for faster terminal
+    s.baud(57600);
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
@@ -93,6 +80,11 @@ int main() {
     // thread.
     setISRPriorities();
 
+    // Initialize and start ball sensor
+    BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
+    ballSense.start(100);  // TODO(justin): choose smarter update frequency
+    DigitalOut ballSenseStatusLED(RJ_BALL_LED, 1);
+
     // Force off since the neopixel's hardware is stateless from previous
     // settings
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
@@ -106,33 +98,39 @@ int main() {
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
-    std::vector<DigitalOut> mbed_lights = {
-        DigitalOut(LED1, 0), DigitalOut(LED2, 0), DigitalOut(LED3, 0),
-        DigitalOut(LED4, 0),
-    };
-    RtosTimer live_light(imAlive, osTimerPeriodic, (void*)&mbed_lights);
-    live_light.start(RJ_LIFELIGHT_TIMEOUT_MS);
+    // This is set to never timeout, so it will only stop if the system halts
+    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
+                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
-    // This is where the FPGA is actually configured with the bitfile's name
-    // passed in
-    bool fpga_ready = FPGA::Instance()->Init("/local/rj-fpga.nib");
+    /// A shared spi bus used for the fpga and cc1201 radio
+    shared_ptr<SharedSPI> sharedSPI = make_shared<SharedSPI>(RJ_SPI_BUS);
+    sharedSPI->format(8, 0);  // 8 bits per transfer
 
-    if (fpga_ready == true) {
+    // Initialize and configure the fpga with the given bitfile
+    FPGA::Initialize(sharedSPI);
+    bool fpga_ready = FPGA::Instance()->configure("/local/rj-fpga.nib");
+
+    if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");
     } else {
         LOG(FATAL, "FPGA Configuration Failed!");
     }
 
-    fpga_err |= 1 << !fpga_ready;
-    // the error code is valid now
-    fpga_err |= 1 << 0;
+    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
 
-    // Init IO Expander and turn  all LEDs
-    MCP23017::Instance();
+    // Initialize kicker board
+    // TODO: clarify between kicker nCs and nReset
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+                            "/local/rj-kickr.nib");
+    bool kickerReady = kickerBoard.flash(true, true);
+
+    // Init IO Expander and turn all LEDs on
+    MCP23017 ioExpander(RJ_I2C_BUS, 0);
+    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -141,7 +139,8 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
+                           DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
@@ -149,44 +148,10 @@ int main() {
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
-    InitializeCommModule();
-
-    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+    InitializeCommModule(sharedSPI);
 
     // Make sure all of the motors are enabled
     motors_Init();
-
-    // Set error indicators
-    if (fpga_err > 1) {
-        // orange - error
-        rgbLED.brightness(4 * defaultBrightness);
-        rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
-    } else {
-        // green - no error...yet
-        rgbLED.brightness(defaultBrightness);
-        rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
-    }
-
-    if (comm_err > 1) {
-        // orange - error
-        rgbLED.brightness(6 * defaultBrightness);
-        rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
-    } else {
-        // green - no error...yet
-        rgbLED.brightness(6 * defaultBrightness);
-        rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
-    }
-
-    if (comm_err > 1 && fpga_err > 1) {
-        // bright as hell to make sure they know
-        rgbLED.brightness(10 * defaultBrightness);
-        // well, damn. everything is broke as hell
-        rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
-        rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
-    }
-
-    // push out the LED changes to the hardware
-    rgbLED.write();
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
@@ -198,16 +163,11 @@ int main() {
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
 
-    rdy_led = fpga_ready;
-
     unsigned int ll = 0;
-
-    MCP23017::Instance()->writeMask(0xFF00, 0xFF00);
 
     while (true) {
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
-        rdy_led = !rdy_led;
         Watchdog::Renew();
 
         // periodically reset the console text's format
@@ -219,29 +179,54 @@ int main() {
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
 
-        // M1
-        // MCP23017::write_mask(~(1 << (8 + 1)), 0xFF00);
+        // the value is inverted because this led is wired active-low
+        ballSenseStatusLED = !ballSense.have_ball();
 
-        // // M2
-        // MCP23017::write_mask(~(1 << (8 + 0)), 0xFF00);
+        // Pack errors into bitmask
+        uint16_t errorBitmask = !global_radio->isConnected()
+                                << RJ_ERR_LED_RADIO;
 
-        // // M3
-        // MCP23017::write_mask(~(1 << (8 + 5)), 0xFF00);
+        // add motor errors to bitmask
+        static const auto motorErrLedMapping = {
+            make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
+            make_pair(2, RJ_ERR_LED_M3), make_pair(3, RJ_ERR_LED_M4),
+            make_pair(4, RJ_ERR_LED_DRIB)};
+        for (auto& pair : motorErrLedMapping) {
+            const motorErr_t& status = global_motors[pair.first].status;
+            errorBitmask |= !status.hallOK << pair.second;
+        }
 
-        // // M4
-        // MCP23017::write_mask(~(1 << (8 + 7)), 0xFF00);
+        // Set error-indicating leds on the control board
+        ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);
 
-        // IMU
-        // MCP23017::write_mask(~(1 << (8 + 6)), 0xFF00);
+        // Set error indicators
+        if (!fpga_ready) {
+            // orange - error
+            rgbLED.brightness(4 * defaultBrightness);
+            rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
+        } else {
+            // green - no error...yet
+            rgbLED.brightness(defaultBrightness);
+            rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+        }
 
-        // Det
-        // MCP23017::write_mask(~(1 << (8 + 3)), 0xFF00);
+        if (errorBitmask & RJ_ERR_LED_RADIO) {
+            // orange - error
+            rgbLED.brightness(6 * defaultBrightness);
+            rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
+        } else {
+            // green - no error...yet
+            rgbLED.brightness(6 * defaultBrightness);
+            rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+        }
 
-        // Sense
-        // MCP23017::write_mask(~(1 << (8 + 4)), 0xFF00);
-
-        // Radio
-        // MCP23017::write_mask(~(1 << (8 + 2)), 0xFF00);
+        if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
+            // bright as hell to make sure they know
+            rgbLED.brightness(10 * defaultBrightness);
+            // well, damn. everything is broke as hell
+            rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
+            rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
+        }
     }
 }
 

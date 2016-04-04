@@ -24,23 +24,14 @@
  */
 void setISRPriorities();
 
-void imAlive(void const*);
-
-/// Flash an LED on for a small duration, then back off
-template <class IO_CLASS>
-void flashLED(IO_CLASS& led, uint32_t durationMsec = 15) {
-    static_assert(std::is_same<DigitalOut, IO_CLASS>::value ||
-                      std::is_same<DigitalInOut, IO_CLASS>::value,
-                  "Invalid IO class for flashLED()");
-    led = !led;
-    Thread::wait(durationMsec);
-    led = !led;
-}
-
-void commLightsTask_TX(void const*);
-void commLightsTask_RX(void const*);
-void commLightsTimeout_RX(void const*);
-void commLightsTimeout_TX(void const*);
-void commLightsRenew_RX();
-void commLightsRenew_TX();
 unsigned int get_num_threads();
+
+/**
+ * Get the max amount of stack space used by a given thread.
+ *
+ * This was borrowed from mbed's Thread.max_stack() function but uses a P_TCB as
+ * an argument rather than a Thread object.
+ *
+ * @return Max stack usage so far, in bytes
+ */
+uint32_t ThreadMaxStackUsed(const P_TCB tcb);

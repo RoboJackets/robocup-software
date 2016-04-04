@@ -54,7 +54,7 @@
 
 // This defines one of the mbed's unused pins. It is not connected to anything
 // on the 2015 Control Board rev. 1.
-#define RJ_SPARE_IO p20
+#define RJ_KICKER_nRESET p20
 
 // This defines the pin used for communicating with the Mechanical Base's ID#.
 #define RJ_BASE_ID p21
@@ -97,23 +97,23 @@
 #define RJ_IO_EXPANDER_I2C_ADDRESS (0x42)
 
 // Port A bit masks
-#define RJ_IOEXP_A0 (0)
-#define RJ_IOEXP_A1 (1)
-#define RJ_IOEXP_A2 (2)
-#define RJ_IOEXP_A3 (3)
-#define RJ_IOEXP_A4 (4)
-#define RJ_IOEXP_A5 (5)
-#define RJ_IOEXP_A6 (6)
-#define RJ_IOEXP_A7 (7)
+#define RJ_IOEXP_A0 0
+#define RJ_IOEXP_A1 1
+#define RJ_IOEXP_A2 2
+#define RJ_IOEXP_A3 3
+#define RJ_IOEXP_A4 4
+#define RJ_IOEXP_A5 5
+#define RJ_IOEXP_A6 6
+#define RJ_IOEXP_A7 7
 // Port B bit masks
-#define RJ_IOEXP_B0 (8)
-#define RJ_IOEXP_B1 (9)
-#define RJ_IOEXP_B2 (10)
-#define RJ_IOEXP_B3 (11)
-#define RJ_IOEXP_B4 (12)
-#define RJ_IOEXP_B5 (13)
-#define RJ_IOEXP_B6 (14)
-#define RJ_IOEXP_B7 (15)
+#define RJ_IOEXP_B0 8
+#define RJ_IOEXP_B1 9
+#define RJ_IOEXP_B2 10
+#define RJ_IOEXP_B3 11
+#define RJ_IOEXP_B4 12
+#define RJ_IOEXP_B5 13
+#define RJ_IOEXP_B6 14
+#define RJ_IOEXP_B7 15
 
 enum IOExpanderPin {
     RJ_HEX_SWITCH_BIT0 = RJ_IOEXP_A0,
@@ -132,5 +132,7 @@ enum IOExpanderPin {
     RJ_ERR_LED_MPU = RJ_IOEXP_B4,
     RJ_ERR_LED_BSENSE = RJ_IOEXP_B5,
     RJ_ERR_LED_DRIB = RJ_IOEXP_B6,
-    RJ_ERR_LED_RADIO = RJ_IOEXP_B7
+    RJ_ERR_LED_RADIO = RJ_IOEXP_B7,
 };
+
+constexpr uint16_t IOExpanderErrorLEDMask = 0xFF00;

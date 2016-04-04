@@ -14,28 +14,30 @@ void ASSERT_IS_ADDR(uint16_t addr) {
 // TODO(justin): remove this
 CC1201* global_radio = nullptr;
 
-CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs,
-               PinName intPin, const registerSetting_t* regs, size_t len,
-               int rssiOffset)
-    : CommLink(mosi, miso, sck, cs, intPin) {
-    _offset_reg_written = false;
+CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
+               const registerSetting_t* regs, size_t len, int rssiOffset)
+    : CommLink(sharedSPI, nCs, intPin) {
     reset();
-    set_rssi_offset(rssiOffset);
     selfTest();
 
-    if (_isInit == true) {
+    if (_isInit) {
         // set initial configuration
         setConfig(regs, len);
+
+        writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(rssiOffset));
+
+        // start out in RX mode
+        strobe(CC1201_STROBE_SRX);
 
         LOG(INIT, "CC1201 ready!");
         CommLink::ready();
     }
 }
 
-int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
+int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
-    if (_isInit == false) return -1;
+    if (!_isInit) return -1;
 
     if (size != (buf[0] + 1)) {
         LOG(SEVERE,
@@ -47,15 +49,27 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
 
     strobe(CC1201_STROBE_SFTX);
 
+    // In order for radio transmission to work, the cc1201 must be first strobed
+    // into IDLE, then into TX.  We're not sure why this is the case, but it
+    // works.  Many hours were spent reading the data sheet to figure out why
+    // the transition through IDLE is necessary, but it remains a mystery.  See
+    // the GitHub pull request for more info:
+    // https://github.com/RoboJackets/robocup-software/pull/562
+    strobe(CC1201_STROBE_SIDLE);
+
     // Send the data to the CC1201.
-    uint8_t device_state = writeReg(CC1201_SINGLE_TXFIFO, buf, size);
+    chipSelect();
+    uint8_t device_state =
+        _spi->write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
+    for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
+    chipDeselect();
 
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
         CC1201_STATE_TXFIFO_ERROR) {
         LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
-        flush_tx();  // flush the TX buffer & return if the FIFO is in a corrupt
-        // state
+        // flush the TX buffer & return if the FIFO is in a corrupt state
+        flush_tx();
 
         // set in IDLE mode and strobe back into RX to ensure the states will
         // fall through calibration then return
@@ -81,17 +95,13 @@ int32_t CC1201::sendData(uint8_t* buf, uint8_t size) {
     return COMM_SUCCESS;
 }
 
-int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
-    uint8_t device_state = freqUpdate();  // update frequency offset estimate &
-    // get the current state while at it
+int32_t CC1201::getData(std::vector<uint8_t>* buf) {
+    // TODO(justin): justify this delay.  It doesn't work without it, but why?
+    Thread::wait(5);
+
+    // update frequency offset estimate and get the current state while at it
+    uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
-
-    if (((*len) + 2) < num_rx_bytes) {
-        LOG(SEVERE, "%u bytes in RX FIFO with given buffer size of %u bytes.",
-            num_rx_bytes, *len);
-
-        return COMM_FUNC_BUF_ERR;
-    }
 
     if ((device_state & CC1201_STATE_RXFIFO_ERROR) ==
         CC1201_STATE_RXFIFO_ERROR) {
@@ -102,31 +112,33 @@ int32_t CC1201::getData(uint8_t* buf, uint8_t* len) {
     }
 
     if (num_rx_bytes > 0) {
-        device_state = readReg(CC1201_SINGLE_RXFIFO, buf, num_rx_bytes);
-        *len = num_rx_bytes;
+        chipSelect();
+        _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
+        for (int i = 0; i < num_rx_bytes; i++) {
+            buf->push_back(_spi->write(CC1201_STROBE_SNOP));
+        }
+        chipDeselect();
 
         LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
-            buf[0]);
+            (*buf)[0]);
     } else {
         return COMM_NO_DATA;
     }
 
     update_rssi();
-    // return back to RX mode
-    strobe(CC1201_STROBE_SRX);
+
+    // Note: we configured the radio to return to RX mode after a successful RX,
+    // so there's no need to explicitly strobe it into RX here.
 
     return COMM_SUCCESS;
 }
 
-/**
- * reads a standard register
- */
 uint8_t CC1201::readReg(uint16_t addr) {
     ASSERT_IS_ADDR(addr);
 
     uint8_t returnVal;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
         _spi->write(addr & 0xFF);
@@ -134,16 +146,17 @@ uint8_t CC1201::readReg(uint16_t addr) {
         _spi->write(addr | CC1201_READ);
     }
     returnVal = _spi->write(0x00);
-    radio_deselect();
+    chipDeselect();
 
     return returnVal;
 }
+
 uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
     ASSERT_IS_ADDR(addr);
 
     uint8_t status_byte;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
             _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
@@ -152,7 +165,7 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
         status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
     }
     for (uint8_t i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
-    radio_deselect();
+    chipDeselect();
 
     return status_byte;
 }
@@ -162,7 +175,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
 
     uint8_t status_byte;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE);
         _spi->write(addr & 0xFF);
@@ -170,7 +183,7 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
         status_byte = _spi->write(addr);
     }
     _spi->write(value);
-    radio_deselect();
+    chipDeselect();
 
     return status_byte;
 }
@@ -180,17 +193,17 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
             _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
         _spi->write(addr & 0xFF);  // write lower byte of address
     } else {
-        status_byte = _spi->write(addr | CC1201_WRITE |
-                                  CC1201_BURST);  // write lower byte of address
+        // write lower byte of address
+        status_byte = _spi->write(addr | CC1201_WRITE | CC1201_BURST);
     }
     for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
-    radio_deselect();
+    chipDeselect();
 
     return status_byte;
 }
@@ -201,9 +214,9 @@ uint8_t CC1201::strobe(uint8_t addr) {
         return -1;
     }
 
-    radio_select();
+    chipSelect();
     uint8_t ret = _spi->write(addr);
-    radio_deselect();
+    chipDeselect();
 
     // If debug is enabled, we wait for a brief interval, then send a NOP to get
     // the radio's status, then log it to the console
@@ -213,9 +226,9 @@ uint8_t CC1201::strobe(uint8_t addr) {
         int delay = 2;
         Thread::wait(delay);
 
-        radio_select();
+        chipSelect();
         uint8_t ret2 = _spi->write(CC1201_STROBE_SNOP);
-        radio_deselect();
+        chipDeselect();
 
         const char* strobe_names[] = {
             "RES",     // 0x30
@@ -258,13 +271,11 @@ uint8_t CC1201::strobe(uint8_t addr) {
 
 uint8_t CC1201::mode() { return 0x1F & readReg(CC1201_MARCSTATE); }
 
-uint8_t CC1201::status(uint8_t addr) { return strobe(addr); }
-
 void CC1201::reset() {
     idle();
-    radio_select();
+    chipSelect();
     _spi->write(CC1201_STROBE_SRES);
-    radio_deselect();
+    chipDeselect();
 
     // Wait up to 300ms for the radio to do anything. Don't block everything
     // else if it doesn't startup correctly
@@ -279,7 +290,7 @@ void CC1201::reset() {
 }
 
 int32_t CC1201::selfTest() {
-    if (_isInit == true) return 0;
+    if (_isInit) return 0;
 
     _chip_version = readReg(CC1201_PARTNUMBER);
 
@@ -301,16 +312,16 @@ bool CC1201::isConnected() const { return _isInit; }
 
 void CC1201::flush_tx() {
     idle();
+    size_t bytes = readReg(CC1201_NUM_TXBYTES);
     strobe(CC1201_STROBE_SFTX);
-    LOG(WARN, "%u bytes flushed from TX FIFO buffer.",
-        readReg(CC1201_NUM_TXBYTES));
+    LOG(WARN, "%u bytes flushed from TX FIFO buffer.", bytes);
 }
 
 void CC1201::flush_rx() {
     idle();
+    size_t bytes = readReg(CC1201_NUM_RXBYTES);
     strobe(CC1201_STROBE_SFRX);
-    LOG(WARN, "%u bytes flushed from RX FIFO buffer.",
-        readReg(CC1201_NUM_RXBYTES));
+    LOG(WARN, "%u bytes flushed from RX FIFO buffer.", bytes);
 }
 
 void CC1201::calibrate() {
@@ -320,14 +331,10 @@ void CC1201::calibrate() {
 
 void CC1201::update_rssi() {
     // Only use the top MSB for simplicity. 1 dBm resolution.
-    if (_offset_reg_written) {
-        uint8_t offset = readReg(CC1201_RSSI1);
-        _rssi = static_cast<float>((int8_t)twos_compliment(offset));
+    uint8_t offset = readReg(CC1201_RSSI1);
+    _rssi = static_cast<float>((int8_t)twos_compliment(offset));
 
-        LOG(INF3, "RSSI is from device.");
-    } else {
-        _rssi = 0.0;
-    }
+    LOG(INF3, "RSSI is from device.");
 
     LOG(INF3, "RSSI Register Val: 0x%02X", _rssi);
 }
@@ -337,18 +344,17 @@ float CC1201::rssi() { return _rssi; }
 uint8_t CC1201::idle() {
     uint8_t status_byte = strobe(CC1201_STROBE_SIDLE);
 
-    if (_isInit == false) return status_byte;
+    if (!_isInit) return status_byte;
 
-    // block until we've reached idle
-    while (mode() != 0x01)
-        ;
+    // Wait up to 300ms for the radio to do become ready
+    for (size_t i = 0; i < 300; i++) {
+        if (mode() == 0x01)  // chip is in idle state
+            break;
+        else
+            Thread::wait(1);
+    }
 
     return status_byte;
-}
-
-uint8_t CC1201::rand() {
-    writeReg(CC1201_RNDGEN, 0x80);
-    return readReg(CC1201_RNDGEN);
 }
 
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
@@ -357,7 +363,7 @@ float CC1201::freq() {
     freqUpdate();
 
     // read the 5 frequency-related bytes in order:
-    // FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0
+    // [FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0]
     uint8_t buf[5];
     readReg(CC1201_FREQOFF1, buf, 5);
 
@@ -385,14 +391,6 @@ float CC1201::freq() {
 bool CC1201::isLocked() {
     // This is only valid in RX, TX, & FSTXON
     return readReg(CC1201_FSCAL_CTRL) & 0x01;
-}
-
-void CC1201::set_rssi_offset(int8_t offset) {
-    // HAVING THIS MEANS OFFSET MUST ONLY BE SET ONCE FOR THE CLASS
-    if (_offset_reg_written) return;
-
-    _offset_reg_written = true;
-    writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(offset));
 }
 
 void CC1201::setConfig(const registerSetting_t* regs, size_t len) {

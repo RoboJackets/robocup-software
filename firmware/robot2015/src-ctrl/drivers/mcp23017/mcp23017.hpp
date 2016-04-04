@@ -29,8 +29,6 @@ public:
 
     MCP23017(PinName sda, PinName scl, int i2cAddress);
 
-    static std::shared_ptr<MCP23017>& Instance();
-
     /** Reset MCP23017 device to its power-on state
      */
     void reset();
@@ -102,8 +100,6 @@ public:
     void write(int data);
 
 private:
-    static std::shared_ptr<MCP23017> instance;
-
     I2CMasterRtos _i2c;
     int _i2cAddress;  // physical I2C address
 

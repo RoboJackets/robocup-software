@@ -12,15 +12,54 @@ typedef struct {
     uint8_t value;
 } registerSetting_t;
 
+/**
+ * @brief The CC1201 class handles wirelessly sending and receiving data using
+ *     the TI CC1201 radio transceiver.
+ *
+ * The radio is configured via a collection of registers.  These control things
+ * such as transceiver frequency, packet error checking, packet length, among
+ * MANY other things.
+ *
+ * The best resource for learning more about the radio and it's SPI interface is
+ * the User Guide on TI's website:
+ * http://www.ti.com/lit/ug/swru346b/swru346b.pdf
+ */
 class CC1201 : public CommLink {
 public:
-    CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin,
+    /**
+     * Initialize the CC1201 with the given SPI, chip select (inverted), and
+     * interrupt line pins.
+     *
+     * The radio is configured by providing an array of registerSetting_t's
+     * which specify (address, value pairs) for configuration registers.
+     * Typically the register settings files are exported from TI's SmartRF
+     * Studio program.
+     *
+     * @param regs An array of registereSetting_t values
+     * @param len The length of the @regs array
+     */
+    CC1201(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
            const registerSetting_t* regs, size_t len,
            int rssiOffset = DEFAULT_RSSI_OFFSET);
 
-    int32_t sendData(uint8_t*, uint8_t);
+    /**
+     * Transmit data
+     *
+     * @param buf A buffer containing the data to send
+     * @param size The length, in bytes, of @buf
+     *
+     * @return A status value indicating success/error. See CommLink for info.
+     */
+    int32_t sendData(const uint8_t* buf, uint8_t size);
 
-    int32_t getData(uint8_t*, uint8_t*);
+    /**
+     * Read data from the radio's RX buffer.  This should be called after
+     * receiving an interrupt via the radio's interrupt pin.
+     *
+     * @param buf A pointer to a buffer to write the data into.
+     * @return A status value indicating success/error. See CommLink for info.
+     */
+    int32_t getData(std::vector<uint8_t>* buf);
 
     void reset();
 
@@ -30,19 +69,15 @@ public:
 
     uint8_t mode();
 
-    uint8_t status(uint8_t strobe = CC1201_STROBE_SNOP);
-
-    // TODO: Move any direct register reads/writes & strobes to protected when
-    // done testing
     uint8_t strobe(uint8_t cmd);
 
     uint8_t readReg(uint16_t addr);
-    uint8_t readReg(uint16_t addr, uint8_t* dataOut,
-                    uint8_t);  // TODO: var names?
+    uint8_t readReg(uint16_t addr, uint8_t* dataOut, uint8_t);
 
     uint8_t writeReg(uint16_t addr, uint8_t value);
     uint8_t writeReg(uint16_t addr, const uint8_t* data, uint8_t len);
 
+    /// Read the radio's frequency, in MHz
     float freq();
 
     bool isLocked();
@@ -52,8 +87,6 @@ public:
     bool isDebugEnabled() const { return _debugEnabled; }
 
 protected:
-    void set_rssi_offset(int8_t offset);
-
     void flush_tx();
 
     void flush_rx();
@@ -82,7 +115,6 @@ private:
     uint8_t _lqi;
     uint8_t _chip_version;
     bool _isInit;
-    bool _offset_reg_written;
     float _rssi;
 
     // In debug mode, all strobe commands are logged at INF2
