@@ -50,7 +50,7 @@ void Task_Controller(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-    MPU6050 imu(RJ_I2C_BUS);
+    MPU6050 imu(RJ_I2C_SDA, RJ_I2C_SCL);
 
     imu.setBW(MPU6050_BW_256);
     imu.setGyroRange(MPU6050_GYRO_RANGE_250);

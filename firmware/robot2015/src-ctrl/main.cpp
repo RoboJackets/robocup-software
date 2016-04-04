@@ -107,7 +107,8 @@ int main() {
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
     /// A shared spi bus used for the fpga and cc1201 radio
-    shared_ptr<SharedSPI> sharedSPI = make_shared<SharedSPI>(RJ_SPI_BUS);
+    shared_ptr<SharedSPI> sharedSPI =
+        make_shared<SharedSPI>(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
     sharedSPI->format(8, 0);  // 8 bits per transfer
 
     // Initialize and configure the fpga with the given bitfile
@@ -129,7 +130,7 @@ int main() {
     bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on
-    MCP23017 ioExpander(RJ_I2C_BUS, 0);
+    MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
     ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
 
     // Startup the 3 separate threads, being sure that we wait for it
