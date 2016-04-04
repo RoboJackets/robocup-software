@@ -10,13 +10,14 @@ public:
     PCLink(void);
     PCLink(uint16_t vendorID, uint16_t productID, uint16_t release);
     virtual ~PCLink(void);
-    void setSerialDebugging(Serial *pc);
-    void setLed(DigitalOut *led);
+    void setSerialDebugging(Serial* pc);
+    void setLed(DigitalOut* led);
     void read(void);
     void reply(void);
+
 private:
-    Serial *pc;
-    DigitalOut *led;
+    Serial* pc;
+    DigitalOut* led;
     USBHID usbLink;
     HID_REPORT in;
     HID_REPORT out;
