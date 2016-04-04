@@ -7,13 +7,13 @@ public:
     static const uint16_t RJ_PRODUCT_ID = 0x4253;
     static const uint16_t RJ_RELEASE = 0x0000;
 
-    PCLink(void);
+    PCLink();
     PCLink(uint16_t vendorID, uint16_t productID, uint16_t release);
-    virtual ~PCLink(void);
+    virtual ~PCLink();
     void setSerialDebugging(Serial* pc);
     void setLed(DigitalOut* led);
-    void read(void);
-    void reply(void);
+    void read();
+    void reply();
 
 private:
     Serial* pc;

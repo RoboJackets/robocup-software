@@ -1,8 +1,7 @@
 #include <string>
 #include "PCLink.hpp"
 
-PCLink::PCLink(void)
-    : usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE) {}
+PCLink::PCLink() : usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE) {}
 
 PCLink::PCLink(uint16_t vendorID = RJ_VENDOR_ID,
                uint16_t productID = RJ_PRODUCT_ID,
@@ -11,7 +10,7 @@ PCLink::PCLink(uint16_t vendorID = RJ_VENDOR_ID,
     pc = NULL;
 }
 
-PCLink::~PCLink(void) {
+PCLink::~PCLink() {
     // delete usbLink;
 }
 
@@ -19,7 +18,7 @@ void PCLink::setSerialDebugging(Serial* pc) { this->pc = pc; }
 
 void PCLink::setLed(DigitalOut* led) { this->led = led; }
 
-void PCLink::read(void) {
+void PCLink::read() {
     if (usbLink.readNB(&in)) {
         *led = !(*led);
 
@@ -29,4 +28,4 @@ void PCLink::read(void) {
     }
 }
 
-void PCLink::reply(void) { usbLink.sendNB(&out); }
+void PCLink::reply() { usbLink.sendNB(&out); }
