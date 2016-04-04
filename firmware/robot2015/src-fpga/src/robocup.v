@@ -252,7 +252,7 @@ localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
 // DON'T SET THIS PAST 14! Ever!
-localparam DRV8303_OC_ADJ_VAL = 12;
+localparam DRV8303_OC_ADJ_VAL = 13;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature
@@ -273,7 +273,7 @@ localparam DRV8303_AMP_GAIN = 1;
 // This sets how the over-current protection is handled once triggered
 //   0 = cycle-by-cycle control
 //   1 = timed control
-localparam DRV8303_OC_TOFF = 0;
+localparam DRV8303_OC_TOFF = 1;
 
 wire sys_begin_startup = ( start_delay_done == 1 ) && ( sys_rdy == 0 );
 wire gate_drivers_set_config;
@@ -616,6 +616,7 @@ generate
             .reset_hall_count       ( ~hall_conns[i]                ) ,
             .duty_cycle             ( duty_cycle[i]                 ) , 
             .enc                    ( enc_s[i]                      ) ,
+            //.hall                   ( 3'b101                     ) ,
             .hall                   ( hall_s[i]                     ) ,
             .phaseH                 ( phaseH_o[i]                   ) ,
             .phaseL                 ( phaseL_o[i]                   ) , 
