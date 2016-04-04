@@ -14,7 +14,7 @@
 
 using namespace std;
 
-USBHID usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE);
+// USBHID usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE);
 
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
@@ -46,7 +46,8 @@ bool initRadio() {
 void radioRxHandler(rtp::packet* pkt) {
     // TODO: copy data
     HID_REPORT data;
-    bool success = usbLink.sendNB(&data);
+    bool success = false;  // usbLink.sendNB(&data);
+
     if (!success) {
         LOG(WARN, "Failed to transfer received packet over usb");
     }
@@ -84,8 +85,10 @@ int main() {
         Watchdog::Renew();
 
         HID_REPORT data;
-        usbLink.readNB(&data);
-        rtp::packet pkt;  // TODO: fill data
-        CommModule::Instance->send(pkt);
+        // usbLink.readNB(&data);
+        if (false) {
+            rtp::packet pkt;  // TODO: fill data
+            CommModule::Instance->send(pkt);
+        }
     }
 }
