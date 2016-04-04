@@ -841,9 +841,9 @@ int cmd_ps(cmd_args_t& args) {
         // iterate over the ready list
         P_TCB p = reinterpret_cast<P_TCB>(&os_rdy);
         while (p != nullptr) {
-            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n", p->task_id,
-                   p->prio, p->state, p->delta_time, ThreadMaxStackUsed(p),
-                   p->priv_stack, ThreadNowStackUsed(p));
+            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
+                   p->task_id, p->prio, p->state, p->delta_time,
+                   ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
 
             num_threads++;
             p = p->p_lnk;
@@ -851,9 +851,9 @@ int cmd_ps(cmd_args_t& args) {
         // switch to the delay list
         p = reinterpret_cast<P_TCB>(&os_dly);
         while (p != nullptr) {
-            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n", p->task_id,
-                   p->prio, p->state, p->delta_time, ThreadMaxStackUsed(p),
-                   p->priv_stack, ThreadNowStackUsed(p));
+            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
+                   p->task_id, p->prio, p->state, p->delta_time,
+                   ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
 
             num_threads++;
             p = p->p_dlnk;

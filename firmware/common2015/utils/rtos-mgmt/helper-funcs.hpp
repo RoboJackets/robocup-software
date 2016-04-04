@@ -33,11 +33,11 @@ void setISRPriorities();
  */
 unsigned int get_num_threads();
 
-
 /**
  * @brief      Get the max amount of stack space used by a given thread.
  *
- * This was borrowed from mbed's <a href="https://developer.mbed.org/users/mbed_official/code/mbed-rtos/docs/bdd541595fc5/classrtos_1_1Thread.html#pub-methods">Thread.max_stack()</a>
+ * This was borrowed from mbed's <a
+ *href="https://developer.mbed.org/users/mbed_official/code/mbed-rtos/docs/bdd541595fc5/classrtos_1_1Thread.html#pub-methods">Thread.max_stack()</a>
  * function, but this uses a P_TCB as an argument rather than a Thread object.
  *
  * @param tcb  The pointer for the task's struct of info.
@@ -49,7 +49,8 @@ unsigned int ThreadMaxStackUsed(const P_TCB tcb);
 /**
  * @brief      Get the currently used stack size for a thread.
  *
- * This was borrowed from mbed's <a href="https://developer.mbed.org/users/mbed_official/code/mbed-rtos/docs/bdd541595fc5/classrtos_1_1Thread.html#pub-methods">Thread.used_stack()</a>
+ * This was borrowed from mbed's <a
+ *href="https://developer.mbed.org/users/mbed_official/code/mbed-rtos/docs/bdd541595fc5/classrtos_1_1Thread.html#pub-methods">Thread.used_stack()</a>
  * function, but this uses a P_TCB as an argument rather than a Thread object.
  *
  * @param tcb  The pointer for the task's struct of info.
