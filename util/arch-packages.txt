@@ -55,3 +55,6 @@ arm-none-eabi-gdb
 
 # GNU debugger
 gdb
+
+# library for interfacing with usb devices
+hidapi

@@ -79,6 +79,7 @@ libsdl1.2-dev
 # everything else...
 build-essential
 libusb-1.0-0-dev
+libhidapi-dev
 libgtkmm-2.4-dev
 libpcap-dev
 binutils-dev
