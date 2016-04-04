@@ -57,22 +57,25 @@ do not alternate going on and off so there is no danger of shoot through.
 
 module Phase_Driver ( clk, duty_cycle, high_z, pwm_high, pwm_low );
 
-parameter DEAD_TIME = 0;            // dead time in units of clock ticks
+parameter DEAD_TIME = 8;            // dead time in units of clock ticks
 parameter COUNTER_WIDTH = 10;        // bits available to counter
 parameter MAX_COUNTER = 'h3ff;     // PWM period = MAX_COUNTER * clockPeriod
 parameter DUTY_CYCLE_WIDTH = 10;     // bits available to duty_cycle
 parameter MAX_DUTY_CYCLE = 'h3ff;  // Value represeting a duty cycle of 100%
-parameter DUTY_CYCLE_STEP_RES = 1;  // ceil( MAX_COUNTER / MAX_DUTY_CYCLE ) 
+parameter DUTY_CYCLE_STEP_RES = 1;  // ceil( MAX_COUNTER / MAX_DUTY_CYCLE )
 
 input   clk;
 input   [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
 input   high_z;
 output  pwm_high, pwm_low;
-// ===============================================  
+// ===============================================
 
 reg [COUNTER_WIDTH-1:0] counter = 0;
-wire h = ( ( counter + DEAD_TIME ) < ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) ? 1 : 0;
-wire l = ( ( counter >= ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) && ( ( counter + DEAD_TIME ) < MAX_COUNTER ) ) ? 1 : 0;
+
+wire on_count = counter + DEAD_TIME;
+
+wire h = ( on_count < ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) ? 1 : 0;
+wire l = ( ~h && ( on_count < MAX_COUNTER ) ) ? 1 : 0;
 
 
 assign  pwm_high =  (high_z == 1) ? 0 : h;

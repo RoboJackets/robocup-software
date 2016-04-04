@@ -127,4 +127,4 @@ NET "adc_*" PULLUP;
 #                Timing Specs.                  #
 #################################################
 NET "sysclk" TNM_NET = "clock";
-TIMESPEC "TS_clock"=PERIOD "tnm_clock" 54.25ns; #18.432Mhz = 54.25ns 27Mhz = 37.04
+TIMESPEC "TS_clock"=PERIOD "clock" 54.25ns; #18.432Mhz = 54.25ns 27Mhz = 37.04

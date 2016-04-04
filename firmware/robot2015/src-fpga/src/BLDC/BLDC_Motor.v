@@ -1,9 +1,9 @@
 /*
 *  BLDC_Motor.v
-*  
+*
 *  A BLDC controller that includes hall sensor error detection and incremental
 *  duty cycles during startup for reducing motor startup current.
-*  
+*
 */
 
 `ifndef _BLDC_MOTOR_
@@ -72,7 +72,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER <<1) ,
     .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE << 1       ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 200                         )
+    .DEAD_TIME                  ( 8                         )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,
@@ -132,7 +132,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER <<1) ,
     .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE << 1       ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 200                         )
+    .DEAD_TIME                  ( 8                         )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,

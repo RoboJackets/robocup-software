@@ -4,7 +4,7 @@ module RoboCup_Top_tb;
 
 integer ii, jj;
 
-/*Output values to file */ 
+/*Output values to file */
 initial begin
     $dumpfile("RoboCup_Top_tb-results.vcd");
     $dumpvars(0,RoboCup_Top_tb);
@@ -95,7 +95,7 @@ task spi;
     begin
         if (SPI_S_CPHA) begin
             for ( i = SPI_SLAVE_DATA_WIDTH-1; i >= 0; i = i - 1 ) begin
-                spi_slave_sck = !SPI_S_CPOL;  
+                spi_slave_sck = !SPI_S_CPOL;
                 spi_slave_mosi = in[i]; #16;
             end
         end else begin
@@ -219,7 +219,7 @@ initial begin
     spi(8'h00);
     spi(8'h00);
     spi_off();
-    
+
     // Read hall counts
     #100 spi_on();
     spi(8'h92);
@@ -308,7 +308,7 @@ initial begin
 end
 
 // Encoder input simulation
-initial begin	
+initial begin
     // trying to match timings that would translate to ~1500 rpm on a motor
     //
     // with 2048 pulses/rev, that's 51200 pulses/sec. or ~20MHz, a 50ns delay
@@ -338,7 +338,6 @@ end
 
 initial begin
 	forever #0.5 clk = !clk;
-	// #500000 $finish;
 end
 
 

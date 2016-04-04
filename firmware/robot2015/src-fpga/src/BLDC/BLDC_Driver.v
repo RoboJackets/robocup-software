@@ -1,9 +1,9 @@
 /*
 *  BLDC_Driver.v
-*  
+*
 *  A BLDC controller that includes hall sensor error detection and incremental
 *  duty cycles during startup for reducing motor startup current.
-*  
+*
 */
 
 `ifndef _BLDC_DRIVER_
@@ -18,7 +18,7 @@
 *  the desired duty cycle. When not defined, the state machine will exit `STATE_STARTUP`
 *  when the duty cycle is equal to `STARTUP_END_DUTY_CYCLE`.
 */
-`define STARTUP_INCREMENT_COMPLETELY
+// `define STARTUP_INCREMENT_COMPLETELY
 
 // Use a fixed time startup period vs a duty cycle thereshold for exiting the startup state
 `define STARTUP_FIXED_TIME_RAMPING
@@ -31,7 +31,7 @@ module BLDC_Driver ( clk, en, hall, duty_cycle, direction, phaseH, phaseL, conne
 parameter PHASE_DRIVER_MAX_COUNTER =            ( 'h3FF );
 parameter MAX_DUTY_CYCLE =                      ( 'h3FF );
 parameter DUTY_CYCLE_STEP_RES =                 ( 1 );
-parameter DEAD_TIME =                           ( 3 );
+parameter DEAD_TIME =                           ( 8 );
 
 // Local parameters - can not be altered outside this module
 `include "log2-macro.v"     // This must be included here
@@ -42,7 +42,7 @@ input clk, en;
 input [2:0] hall;
 input [DUTY_CYCLE_WIDTH-1:0] duty_cycle;
 input direction;
-output reg [2:0] phaseH, phaseL; 
+output reg [2:0] phaseH, phaseL;
 output reg connected = 0;
 output reg fault = 0;
 // ===============================================
@@ -73,10 +73,9 @@ localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 2 / 100 );       
 // ===============================================
 localparam STATE_STOP           = 0;
 localparam STATE_STARTUP        = 1;
-localparam STATE_STARTUP_CHECK  = 2;
-localparam STATE_RUN            = 3;
-localparam STATE_POLL_HALL      = 4;
-localparam STATE_ERR            = 5;
+localparam STATE_RUN            = 2;
+localparam STATE_POLL_HALL      = 3;
+localparam STATE_ERR            = 4;
 
 
 // Register and Wire declarations
@@ -170,7 +169,6 @@ begin : MOTOR_STATES
         fault_s <= 0;
         en_s <= 0;
         duty_cycle_s <= 0;
-        // duty_cycle_save <= 0;
         state <= STATE_STOP;
 
     end else begin
@@ -181,7 +179,7 @@ begin : MOTOR_STATES
 
         // Increment everytime
         hall_check_time <= hall_check_time + 1;
-        
+
         if ( fault_s == 1 ) begin
             fault_s <= 0;
             en_s <= 0;
@@ -208,7 +206,7 @@ begin : MOTOR_STATES
                         `ifdef STARTUP_FIXED_TIME_RAMPING
                         // startup_duty_cycle_step <= ((duty_cycle - MIN_DUTY_CYCLE) >> (`LOG2(STARTUP_END_STEP_COUNT + 1) + 1));
                         startup_duty_cycle_step <= 1;
-                        `else 
+                        `else
                         startup_duty_cycle_step <= 1;
                         `endif
 
@@ -232,44 +230,32 @@ begin : MOTOR_STATES
                             startup_duty_cycle_step <= 1;
                         end
 
-                        // end else begin
-                            `ifdef STARTUP_FIXED_TIME_RAMPING
-                            // Exit the startup phase based on a fixed time startup period
-                            if ( startup_step_count < STARTUP_END_STEP_COUNT ) begin
-                            `else
-                            // Transition to the run state once target duty cycle reached the max startup duty cycle.
-                            `ifdef STARTUP_INCREMENT_COMPLETELY
-                            if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) | ( duty_cycle_s < duty_cycle ) ) begin
-                            `else
-                            if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) & ( duty_cycle_s < duty_cycle ) ) begin
-                            `endif
-                            `endif
+                        `ifdef STARTUP_FIXED_TIME_RAMPING
+                        // Exit the startup phase based on a fixed time startup period
+                        if ( startup_step_count < STARTUP_END_STEP_COUNT ) begin
+                        `else
+                        // Transition to the run state once target duty cycle reached the max startup duty cycle.
+                        `ifdef STARTUP_INCREMENT_COMPLETELY
+                        if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) | ( duty_cycle_s < duty_cycle ) ) begin
+                        `else
+                        if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) & ( duty_cycle_s < duty_cycle ) ) begin
+                        `endif
+                        `endif
 
-                                if ( startup_counter == 0 ) begin
-                                    startup_counter <= 1;
-                                    startup_step_count <= startup_step_count + 1;
-                                    duty_cycle_s <= duty_cycle_s + startup_duty_cycle_step;
-                                end else begin
-                                    startup_counter <= startup_counter + 1;
-                                end
-
+                            if ( startup_counter == 0 ) begin
+                                startup_counter <= 1;
+                                startup_step_count <= startup_step_count + 1;
+                                duty_cycle_s <= duty_cycle_s + startup_duty_cycle_step;
                             end else begin
-                                duty_cycle_s <= duty_cycle;
-                                state <= STATE_RUN;
+                                startup_counter <= startup_counter + 1;
                             end
-                        // end
 
+                        end else begin
+                            duty_cycle_s <= duty_cycle;
+                            state <= STATE_RUN;
+                        end
                     end
                 end    // STATE_STARTUP
-
-                STATE_STARTUP_CHECK: begin
-                    // Currently unused - still a bit more testing before deciding the fate of this state
-                    if ( startup_counter == 0 ) begin
-                        state <= STATE_STARTUP;
-                        startup_counter <= 1;
-                        startup_wait_delay <= 0;
-                    end
-                end    // STATE_STARTUP_CHECK
 
                 STATE_RUN: begin
                     // Stay in the running state as long as the given duty cycle can be used to spin the motor
@@ -284,7 +270,6 @@ begin : MOTOR_STATES
 
                 STATE_POLL_HALL: begin
                     // Wait in this state until a hall sensor is connected and is giving a valid input
-                    // state <= STATE_POLL_HALL;
                     if ( disconnect_fault_latched == 0 ) begin
                         state <= STATE_STOP;
                     end
@@ -294,7 +279,7 @@ begin : MOTOR_STATES
                     // Die if a motor error occurs at this level. Set the `fault` output HIGH.
                     // This is reset by toggling the `en` input for one clock cycle - or by
                     // disconnecting and reconnecting the motor.
-                    
+
                     // reset once the motor is disconnected
                     if ( hall_s == 3'b111 ) begin
                         disconnect_fault_latched <= 1;
