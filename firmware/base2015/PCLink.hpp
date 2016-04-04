@@ -7,19 +7,25 @@ public:
     static const uint16_t RJ_PRODUCT_ID = 0x4253;
     static const uint16_t RJ_RELEASE = 0x0000;
 
-    PCLink();
-    PCLink(uint16_t vendorID, uint16_t productID, uint16_t release);
-    virtual ~PCLink();
+    PCLink(uint16_t vendorID = RJ_VENDOR_ID, uint16_t productID = RJ_PRODUCT_ID,
+           uint16_t release = RJ_RELEASE);
+
+    template <class ARRAY_TYPE>
+    void send(const ARRAY_TYPE& array) {
+        ASSERT(array.size() <= MAX_HID_REPORT_SIZE);
+        _out.length = array.size();
+        memcpy(&_out.data, array.data(), array.size());
+        _usbLink.sendNB(&_out);
+    }
+
     void setSerialDebugging(Serial* pc);
-    void setLed(DigitalOut* led);
+    void setLed(DigitalOut led);
     void read();
-    void reply();
 
 private:
-    Serial* pc;
-    DigitalOut* led;
-    USBHID usbLink;
-    HID_REPORT in;
-    HID_REPORT out;
-    // unsigned char buf[65];
+    Serial* _pc;
+    DigitalOut _led;
+    USBHID _usbLink;
+    HID_REPORT _in;
+    HID_REPORT _out;
 };
