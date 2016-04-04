@@ -53,11 +53,22 @@ void radioRxHandler(rtp::packet* pkt) {
 }
 
 int main() {
+    printf("hi\r\n");
+
+    DigitalOut led(LED3);
+    while (true) {
+        led = !led;
+        wait(3);
+    }
+
     Serial s(RJ_SERIAL_RXTX);
     while (s.readable()) s.getc();
 
     // set baud rate to higher value than the default for faster terminal
     s.baud(57600);
+
+    s.printf("base station starting...\r\n");
+    // fflush(s);
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
@@ -72,6 +83,8 @@ int main() {
     } else {
         LOG(FATAL, "No radio interface found!\r\n");
     }
+
+    DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
