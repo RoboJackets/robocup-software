@@ -67,10 +67,6 @@ void loopback_tx_cb(rtp::packet* p) {
     CommModule::Instance->receive(*p);
 }
 
-// Setup some lights that will blink whenever we send/receive packets
-const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
-const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
-
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
 
