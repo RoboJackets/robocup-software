@@ -53,26 +53,15 @@ void radioRxHandler(rtp::packet* pkt) {
 }
 
 int main() {
-    printf("hi\r\n");
-
-    DigitalOut led(LED3);
-    while (true) {
-        led = !led;
-        wait(3);
-    }
-
-    Serial s(RJ_SERIAL_RXTX);
-    while (s.readable()) s.getc();
-
     // set baud rate to higher value than the default for faster terminal
+    Serial s(RJ_SERIAL_RXTX);
     s.baud(57600);
-
-    s.printf("base station starting...\r\n");
-    // fflush(s);
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
     rjLogLevel = INIT;
+
+    LOG(INIT, "Base station starting...");
 
     if (initRadio()) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
@@ -91,7 +80,7 @@ int main() {
 
     while (true) {
         // make sure we can always reach back to main by
-        // renewing the watchdog timer periodicly
+        // renewing the watchdog timer periodically
         Watchdog::Renew();
 
         HID_REPORT data;
