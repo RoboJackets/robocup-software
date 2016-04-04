@@ -3,10 +3,16 @@
 #include <mbed.h>
 #include <logger.hpp>
 
-MCP23017::MCP23017(PinName sda, PinName scl, int i2cAddress)
-    : _i2c(sda, scl), _i2cAddress(i2cAddress) {
+MCP23017::MCP23017(PinName sda, PinName scl, int i2cAddress, PinName interrupt)
+    : _i2c(sda, scl), _i2cAddress(i2cAddress), _intIn(interrupt) {
     _i2c.frequency(400000);
     reset();
+
+    // Configure interrupts
+    if (interrupt != NC) {
+        writeRegister(INTCON, 0);
+        _intIn.rise(this, &MCP23017::_interrupt);
+    }
 
     LOG(OK, "MCP23017 initialized");
 }
@@ -144,4 +150,8 @@ void MCP23017::inputOutputMask(uint16_t mask) {
 void MCP23017::internalPullupMask(uint16_t mask) {
     _cachedGPPU = mask;
     writeRegister(GPPU, _cachedGPPU);
+}
+
+void MCP23017::_interrupt() {
+    if (_interruptHandler) _interruptHandler();
 }

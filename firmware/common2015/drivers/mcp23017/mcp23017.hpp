@@ -47,7 +47,7 @@ public:
         PinB7 = 15
     } ExpPinName;
 
-    MCP23017(PinName sda, PinName scl, int i2cAddress);
+    MCP23017(PinName sda, PinName scl, int i2cAddress, PinName interrupt);
 
     /** Reset MCP23017 device to its power-on state
      */
@@ -113,9 +113,20 @@ public:
     // disabled)
     void internalPullupMask(uint16_t mask);
 
+    /// The interrupt handler is called whenever any of the input pins changes.
+    typedef std::function<void()> InterruptHandler;
+    void setInterruptHandler(InterruptHandler handler) {
+        _interruptHandler = handler;
+    }
+
 private:
+    void _interrupt();
+
     I2CMasterRtos _i2c;
     int _i2cAddress;  // physical I2C address
+
+    InterruptIn _intIn;
+    InterruptHandler _interruptHandler;
 
     // Cached copies of the register values
     uint16_t _cachedGPIO, _cachedIODIR, _cachedGPPU, _cachedIPOL;
