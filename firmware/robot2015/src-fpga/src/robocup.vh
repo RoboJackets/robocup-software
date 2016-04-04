@@ -9,7 +9,7 @@
 /**
  * Enable/Disable the module for the dribbler motor.
  */
-`define DRIBBLER_MOTOR_EN
+`define DRIBBLER_MOTOR_DISABLE
 
 
 `endif  // _ROBOCUP_HEADER_

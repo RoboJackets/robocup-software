@@ -89,7 +89,7 @@ assign connected = hall_connected & ~(hall_fault);
 endmodule
 
 
-`ifdef DRIBBLER_MOTOR_EN
+`ifndef DRIBBLER_MOTOR_DISABLE
 
 // BLDC_Motor module - no encoder
 module BLDC_Motor_No_Encoder ( clk, en, reset_hall_count, duty_cycle, hall, phaseH, phaseL, hall_count, connected );
@@ -149,6 +149,6 @@ assign connected = hall_connected & ~(hall_fault);
 
 endmodule
 
-`endif  // DRIBBLER_MOTOR_EN
+`endif  // DRIBBLER_MOTOR_DISABLE
 
 `endif

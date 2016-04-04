@@ -42,7 +42,7 @@ foreach(TMPVAR ${XILINX_VERSION_DIRS})
     endif()
 endforeach()
 
-# Find the highester version 
+# Find the highester version
 set(XILINX_ROOT "0.0")
 foreach(TMPVAR ${XILINX_VERSION_DIRS})
     get_filename_component(VERSION_FOUND ${TMPVAR} NAME)
@@ -68,7 +68,7 @@ else()
     else()
         message(STATUS "${AVAILABLE_XILINX_VERSIONS_COUNT} versions of Xilinx tools found:")
     endif()
-    
+
     foreach(VERSION_NUM ${XILINX_VERSION_DIRS})
         message(STATUS "  Found '${VERSION_NUM}'")
     endforeach()
@@ -85,6 +85,8 @@ endif()
 ###############################################################################
 # Gather a list of all of the project sources
 file(GLOB_RECURSE verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.v)
+# Add the global header file
+list(APPEND verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/${TOP_LEVEL_NAME}.vh)
 # Make sure the constraint file is part of the project file
 list(APPEND verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${UCF_IN_FILENAME})
 list(LENGTH verilog_SRC NUM_SRCS)

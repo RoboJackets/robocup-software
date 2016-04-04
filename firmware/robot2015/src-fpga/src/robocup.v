@@ -632,7 +632,7 @@ generate
 endgenerate
 
 
-`ifdef DRIBBLER_MOTOR_EN
+`ifndef DRIBBLER_MOTOR_DISABLE
 BLDC_Motor_No_Encoder #(
     .MAX_DUTY_CYCLE         ( (1 << DUTY_CYCLE_WIDTH) - 1           ) ,
     .HALL_COUNT_WIDTH       ( HALL_COUNT_WIDTH                      )
@@ -647,6 +647,6 @@ BLDC_Motor_No_Encoder #(
     .hall_count             ( hall_count[NUM_MOTORS-1]              ) ,
     .connected              ( hall_conns[NUM_MOTORS-1]              )
 );
-`endif
+`endif  // DRIBBLER_MOTOR_DISABLE
 
 endmodule   // RoboCup
