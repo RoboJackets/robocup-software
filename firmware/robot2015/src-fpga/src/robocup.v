@@ -1,5 +1,7 @@
 // Top module for the FPGA logic
 
+`include "robocup.vh"
+
 `include "BLDC_Motor.v"
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
@@ -53,7 +55,7 @@ integer j, k;
 // Derived parameters
 localparam ENCODER_COUNT_WIDTH          =   ( 16 );
 localparam HALL_COUNT_WIDTH             =   (  8 );
-localparam DUTY_CYCLE_WIDTH             =   (  9 );
+localparam DUTY_CYCLE_WIDTH             =   ( 10 );
 localparam STARTUP_DELAY_WIDTH          =   (  5 );
 
 // To calculate the watchdog timer's expire time, use the following equation:

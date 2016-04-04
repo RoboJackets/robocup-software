@@ -295,7 +295,7 @@ initial begin
     duty_cycle_level_step = 0;
 
     // The starting direction for the motors
-    motor_direction = 1'b0;
+    motor_direction = 1;
 
     wait ( start_spinning_motors );
 
@@ -307,7 +307,7 @@ initial begin
         spi(8'h80);
         for ( i = 0; i < NUM_MOTORS; i = i + 1 ) begin
             spi( duty_cycle_level[7:0] );
-            spi( { motor_direction, duty_cycle_level[8] } );
+            spi( { 6'h00, motor_direction, duty_cycle_level[8] } );
         end
         spi_off();
         duty_cycle_level = duty_cycle_level + duty_cycle_level_step;

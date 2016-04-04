@@ -347,7 +347,7 @@ end  // MOTOR_STATES
 
 
 // The Hall_Effect_Sensor module does not use synced inputs - no need to as long as we sync things at the top module.
-Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .u( u ), .z( z ) );
+Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .direction( direction ), .u( u ), .z( z ) );
 
 
 // The Phase_Driver module does not use synced inputs. Synchronization is taken care of within this module because it must be used along with the Hall_Effect_Sensor module.

@@ -70,12 +70,10 @@ input   high_z;
 output  pwm_high, pwm_low;
 // ===============================================
 
-reg [COUNTER_WIDTH-1:0] counter = 0;
+reg [COUNTER_WIDTH:0] counter = 0;
 
-wire on_count = counter + DEAD_TIME;
-
-wire h = ( on_count < ( duty_cycle * DUTY_CYCLE_STEP_RES ) ) ? 1 : 0;
-wire l = ( ~h && ( on_count < MAX_COUNTER ) ) ? 1 : 0;
+wire h = ( ( counter + DEAD_TIME ) < ( duty_cycle ) ) ? 1 : 0;
+wire l = ( ( counter >= ( duty_cycle ) ) && ( ( counter + DEAD_TIME ) <= MAX_COUNTER ) ) ? 1 : 0;
 
 
 assign  pwm_high =  (high_z == 1) ? 0 : h;
