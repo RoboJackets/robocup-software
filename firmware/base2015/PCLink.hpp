@@ -22,12 +22,13 @@ public:
     void setRxLed(DigitalOut led) { _rxLed = led; }
     void setTxLed(DigitalOut led) { _txLed = led; }
 
-    void read();
+    /// Returns true if a message was received
+    bool read();
 
 private:
     Serial* _pc;
-    DigitalOut _rxLed, _txLed;
     USBHID _usbLink;
+    DigitalOut _rxLed, _txLed;
     HID_REPORT _in;
     HID_REPORT _out;
 };
