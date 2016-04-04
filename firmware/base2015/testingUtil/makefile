@@ -1,8 +1,8 @@
-#!/bin/bash
+all: main
 
-main: main.c base2015.h
+main: main.cpp base2015.h
 	export LD_LIBRARY_PATH=/usr/local/lib
-	gcc -std=c11 main.c -o main -I /usr/include/hidapi -lhidapi-hidraw
+	g++ -std=c++11 main.cpp -o main -I /usr/include/hidapi -lhidapi-hidraw
 
 run: main
 	./main

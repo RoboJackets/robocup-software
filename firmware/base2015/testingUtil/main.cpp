@@ -9,52 +9,43 @@
 #define BASE_PID 0x4253
 
 int main(int argc, char* argv[]) {
+    // print out info for all usb devices connected
     hid_device* handle;
     struct hid_device_info *devices, *currentDevice;
     devices = hid_enumerate(0x00, 0x00);
     currentDevice = devices;
     while (currentDevice) {
-        // printf("lp start\r\n");
-        printf("Device Found\n  type: %04hx %04hx\n", currentDevice->vendor_id,
+        printf("Device Found\n");
+        printf("  type: %04hx %04hx\n", currentDevice->vendor_id,
                currentDevice->product_id);
-        // printf("path: %s\n  serial_number: %ls",
-        //    currentDevice->path,
-        //    currentDevice->serial_number);
-        // printf("\n");
         printf("  Manufacturer: %ls\n", currentDevice->manufacturer_string);
         printf("  Product:      %ls\n", currentDevice->product_string);
         printf("  Release:      %hx\n", currentDevice->release_number);
         printf("  Interface:    %d\n", currentDevice->interface_number);
-        // printf("\n");
-        // struct hid_device_info *tmp = currentDevice->next;
-        // printf("mid\r\n");
+        printf("  Serial #:     %ls\n", currentDevice->serial_number);
+        printf("  Path: %s\n", currentDevice->path);
         currentDevice = currentDevice->next;
-        // printf("lp end\r\n");
     }
     hid_free_enumeration(devices);
 
-    // unsigned char buf[9];
-    // memset(buf, 0x00, sizeof(buf));
-    // buf[0] = 0x01;
-    // buf[1] = 0x81;
+    printf("\n");
 
+    // attempt to connect to base station
     handle = hid_open(BASE_VID, BASE_PID, 0x0);
     if (handle == NULL) {
         printf("unable to open device\r\n");
         return -1;
     }
 
+    // repeatedly send a character to the device, iterating from 'A' to 'Z'
     printf("opened device\r\n");
-    const unsigned char LEN = 64;
-    unsigned char buf[LEN];
-    for (char count = 'A';;) {
-        // sprintf(buf, "%d", count++);
-        buf[0] = count++;
+    unsigned char buf[64];
+    buf[0] = 'A';
+    while (true) {
+        buf[0]++;
+        if (buf[0] > 'Z') buf[0] = 'A';
         buf[1] = '\0';
-        hid_write(handle, buf, 2 /*strlen(buf)*/);
-        if (count == 'z') {
-            count = 'A';
-        }
+        hid_write(handle, buf, strlen((const char*)buf));
         sleep(1);
     }
 
