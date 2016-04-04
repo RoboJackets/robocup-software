@@ -1,3 +1,5 @@
+/** @file */
+
 #pragma once
 
 #include <cstdint>
@@ -24,14 +26,34 @@
  */
 void setISRPriorities();
 
+/**
+ * @brief      Get the number of active threads in runtime.
+ *
+ * @return     Number of active threads.
+ */
 unsigned int get_num_threads();
 
+
 /**
- * Get the max amount of stack space used by a given thread.
+ * @brief      Get the max amount of stack space used by a given thread.
  *
- * This was borrowed from mbed's Thread.max_stack() function but uses a P_TCB as
- * an argument rather than a Thread object.
+ * This was borrowed from mbed's <a href="https://developer.mbed.org/users/mbed_official/code/mbed-rtos/docs/bdd541595fc5/classrtos_1_1Thread.html#pub-methods">Thread.max_stack()</a>
+ * function, but this uses a P_TCB as an argument rather than a Thread object.
  *
- * @return Max stack usage so far, in bytes
+ * @param tcb  The pointer for the task's struct of info.
+ *
+ * @return     Max stack usage so far, in bytes
  */
-uint32_t ThreadMaxStackUsed(const P_TCB tcb);
+unsigned int ThreadMaxStackUsed(const P_TCB tcb);
+
+/**
+ * @brief      Get the currently used stack size for a thread.
+ *
+ * This was borrowed from mbed's <a href="https://developer.mbed.org/users/mbed_official/code/mbed-rtos/docs/bdd541595fc5/classrtos_1_1Thread.html#pub-methods">Thread.used_stack()</a>
+ * function, but this uses a P_TCB as an argument rather than a Thread object.
+ *
+ * @param tcb  The pointer for the task's struct of info.
+ *
+ * @return     Currently used stack size, in bytes
+ */
+unsigned int ThreadNowStackUsed(const P_TCB tcb);

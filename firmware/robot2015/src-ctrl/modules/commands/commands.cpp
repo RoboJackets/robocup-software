@@ -825,22 +825,27 @@ int cmd_ps(cmd_args_t& args) {
         return 1;
     } else {
         unsigned int num_threads = 0;
+
+        printf(
+            "ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\tALLOC STACK "
+            "(bytes)\tCURRENT STACK\r\n");
+
         // iterate over the ready list
-        P_TCB p = (P_TCB)&os_rdy;
-        printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
-        // iterate over the linked list of tasks
-        while (p != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u\r\n", p->task_id, p->prio,
-                   p->state, p->delta_time, ThreadMaxStackUsed(p));
+        P_TCB p = reinterpret_cast<P_TCB>(&os_rdy);
+        while (p != nullptr) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\t\t%u,\t%u\r\n", p->task_id,
+                   p->prio, p->state, p->delta_time, ThreadMaxStackUsed(p),
+                   p->priv_stack, ThreadNowStackUsed(p));
 
             num_threads++;
             p = p->p_lnk;
         }
         // switch to the delay list
-        p = (P_TCB)&os_dly;
-        while (p != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u\r\n", p->task_id, p->prio,
-                   p->state, p->delta_time, ThreadMaxStackUsed(p));
+        p = reinterpret_cast<P_TCB>(&os_dly);
+        while (p != nullptr) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\t\t%u,\t%u\r\n", p->task_id,
+                   p->prio, p->state, p->delta_time, ThreadMaxStackUsed(p),
+                   p->priv_stack, ThreadNowStackUsed(p));
 
             num_threads++;
             p = p->p_dlnk;

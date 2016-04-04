@@ -80,3 +80,12 @@ uint32_t ThreadMaxStackUsed(const P_TCB tcb) {
     return 0;
 #endif
 }
+
+uint32_t ThreadNowStackUsed(const P_TCB tcb) {
+#ifndef __MBED_CMSIS_RTOS_CA9
+    uint32_t top = reinterpret_cast<uint32_t>(tcb->stack) + tcb->priv_stack;
+    return top - tcb->tsk_stack;
+#else
+    return 0;
+#endif
+}
