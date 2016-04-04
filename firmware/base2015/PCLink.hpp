@@ -19,12 +19,14 @@ public:
     }
 
     void setSerialDebugging(Serial* pc);
-    void setLed(DigitalOut led);
+    void setRxLed(DigitalOut led) { _rxLed = led; }
+    void setTxLed(DigitalOut led) { _txLed = led; }
+
     void read();
 
 private:
     Serial* _pc;
-    DigitalOut _led;
+    DigitalOut _rxLed, _txLed;
     USBHID _usbLink;
     HID_REPORT _in;
     HID_REPORT _out;

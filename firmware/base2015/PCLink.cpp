@@ -8,8 +8,6 @@ PCLink::PCLink(uint16_t vendorID, uint16_t productID, uint16_t release)
 
 void PCLink::setSerialDebugging(Serial* pc) { _pc = pc; }
 
-void PCLink::setLed(DigitalOut led) { _led = led; }
-
 void PCLink::read() {
     if (usbLink.readNB(&_in)) {
         _led = !_led;
