@@ -71,7 +71,7 @@ unsigned int get_num_threads() {
     return num_threads;
 }
 
-uint32_t ThreadMaxStackUsed(const P_TCB tcb) {
+unsigned int ThreadMaxStackUsed(const P_TCB tcb) {
 #ifndef __MBED_CMSIS_RTOS_CA9
     uint32_t high_mark = 0;
     while (tcb->stack[high_mark] == 0xE25A2EA5) high_mark++;
@@ -81,7 +81,7 @@ uint32_t ThreadMaxStackUsed(const P_TCB tcb) {
 #endif
 }
 
-uint32_t ThreadNowStackUsed(const P_TCB tcb) {
+unsigned int ThreadNowStackUsed(const P_TCB tcb) {
 #ifndef __MBED_CMSIS_RTOS_CA9
     uint32_t top = reinterpret_cast<uint32_t>(tcb->stack) + tcb->priv_stack;
     return top - tcb->tsk_stack;
