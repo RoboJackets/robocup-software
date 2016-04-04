@@ -19,6 +19,7 @@ using std::string;
 using std::vector;
 
 extern struct OS_XCB os_rdy;
+extern struct OS_XCB os_dly;
 
 namespace {
 /**
@@ -824,15 +825,25 @@ int cmd_ps(cmd_args_t& args) {
         return 1;
     } else {
         unsigned int num_threads = 0;
-        P_TCB p_b = (P_TCB)&os_rdy;
+        // iterate over the ready list
+        P_TCB p = (P_TCB)&os_rdy;
         printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
         // iterate over the linked list of tasks
-        while (p_b != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_b->task_id, p_b->prio,
-                   p_b->state, p_b->delta_time, ThreadMaxStackUsed(p_b));
+        while (p != NULL) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u\r\n", p->task_id, p->prio,
+                   p->state, p->delta_time, ThreadMaxStackUsed(p));
 
             num_threads++;
-            p_b = p_b->p_lnk;
+            p = p->p_lnk;
+        }
+        // switch to the delay list
+        p = (P_TCB)&os_dly;
+        while (p != NULL) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u\r\n", p->task_id, p->prio,
+                   p->state, p->delta_time, ThreadMaxStackUsed(p));
+
+            num_threads++;
+            p = p->p_dlnk;
         }
         printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
