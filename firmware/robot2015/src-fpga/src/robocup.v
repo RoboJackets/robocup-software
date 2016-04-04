@@ -225,6 +225,9 @@ reg [SPI_MASTER_DATA_WIDTH-1:0] spi_master_data_array_out [2:0];
 reg [11:0] spi_master_data_array_in  [NUM_MOTORS - 1:0];
 reg spi_master_config_state;
 
+// latch in the valid signal on the falling edges
+reg spi_master_valid_q;  always @(negedge sysclk) spi_master_valid_q <= spi_master_valid;
+
 // This is where we assign the data we want to send to the selected SPI slave
 assign spi_master_di = spi_master_data_array_out[spi_master_recv_index];
 
@@ -309,7 +312,7 @@ begin : SPI_MASTER_COMM
 
     end else if ( spi_master_trxfr_done_flag == 1 ) begin
         // take appropiate action if the SPI received data is flagged as being valid
-        if ( spi_master_valid == 1 ) begin
+        if ( spi_master_valid_q == 1 ) begin
             // start the next transfer out
             spi_master_start <= 1;
 
