@@ -8,6 +8,9 @@
 #include "logger.hpp"
 #include "pins.hpp"
 #include "usb-interface.hpp"
+#include "watchdog.hpp"
+
+#define RJ_WATCHDOG_TIMER_VALUE 2  // seconds
 
 using namespace std;
 
@@ -50,6 +53,16 @@ void radioRxHandler(rtp::packet* pkt) {
 }
 
 int main() {
+    Serial s(RJ_SERIAL_RXTX);
+    while (s.readable()) s.getc();
+
+    // set baud rate to higher value than the default for faster terminal
+    s.baud(57600);
+
+    // Set the default logging configurations
+    isLogging = RJ_LOGGING_EN;
+    rjLogLevel = INIT;
+
     if (initRadio()) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
@@ -60,7 +73,14 @@ int main() {
         LOG(FATAL, "No radio interface found!\r\n");
     }
 
+    // Set the watdog timer's initial config
+    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
+
     while (true) {
+        // make sure we can always reach back to main by
+        // renewing the watchdog timer periodicly
+        Watchdog::Renew();
+
         HID_REPORT data;
         usbLink.readNB(&data);
         rtp::packet pkt;  // TODO: fill data

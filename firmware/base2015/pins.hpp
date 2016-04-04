@@ -12,3 +12,7 @@ const PinName RJ_RADIO_nCS = p29;
 
 // This defines the Radio Transceiver's interrupt pin.
 const PinName RJ_RADIO_INT = p10;
+
+// This defines the pins used for a `Serial Connection` over the mbed's USB port
+// (for use with a virtual serial connection to a computer)
+#define RJ_SERIAL_RXTX MBED_UARTUSB
