@@ -1,13 +1,17 @@
 #include <mbed.h>
 #include <cmsis_os.h>
+#include <USBHID.h>
 #include <memory>
 
-#include "PCLink.hpp"
 #include "SharedSPI.hpp"
 #include "CC1201Radio.hpp"
+#include "logger.hpp"
 #include "pins.hpp"
+#include "usb-interface.hpp"
 
 using namespace std;
+
+USBHID usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE);
 
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
@@ -36,19 +40,30 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-int main() {
-    PCLink pcLink;
-    pcLink.setTxLed(LED1);
-    pcLink.setRxLed(LED2);
+void radioRxHandler(rtp::packet* pkt) {
+    // TODO: copy data
+    HID_REPORT data;
+    bool success = usbLink.sendNB(&data);
+    if (!success) {
+        LOG(WARN, "Failed to transfer received packet over usb");
+    }
+}
 
+int main() {
     if (initRadio()) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
+
+        CommModule::Instance->setRxHandler(&radioRxHandler, rtp::port::CONTROL);
+        CommModule::Instance->setTxHandler(
+            (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::CONTROL);
     } else {
         LOG(FATAL, "No radio interface found!\r\n");
     }
 
     while (true) {
-        wait(0.1);
-        pcLink.read();
+        HID_REPORT data;
+        usbLink.readNB(&data);
+        rtp::packet pkt;  // TODO: fill data
+        CommModule::Instance->send(pkt);
     }
 }
