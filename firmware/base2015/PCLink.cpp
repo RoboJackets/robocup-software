@@ -6,8 +6,6 @@ PCLink::PCLink(uint16_t vendorID, uint16_t productID, uint16_t release)
     _pc = nullptr;
 }
 
-void PCLink::setSerialDebugging(Serial* pc) { _pc = pc; }
-
 bool PCLink::read() {
     if (_usbLink.readNB(&_in)) {
         _rxLed = 1;

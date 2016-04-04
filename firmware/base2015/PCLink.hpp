@@ -18,7 +18,6 @@ public:
         _usbLink.sendNB(&_out);
     }
 
-    void setSerialDebugging(Serial* pc);
     void setRxLed(DigitalOut led) { _rxLed = led; }
     void setTxLed(DigitalOut led) { _txLed = led; }
 
@@ -26,7 +25,6 @@ public:
     bool read();
 
 private:
-    Serial* _pc;
     USBHID _usbLink;
     DigitalOut _rxLed, _txLed;
     HID_REPORT _in;

@@ -12,8 +12,6 @@ using namespace std;
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
 
-Serial pc(USBTX, USBRX);
-
 bool initRadio() {
     /// A shared spi bus used for the fpga and cc1201 radio
     shared_ptr<SharedSPI> sharedSPI =
@@ -40,7 +38,6 @@ bool initRadio() {
 
 int main() {
     PCLink pcLink;
-    pcLink.setSerialDebugging(&pc);
     pcLink.setTxLed(LED1);
     pcLink.setRxLed(LED2);
 
