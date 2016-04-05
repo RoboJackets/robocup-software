@@ -66,6 +66,8 @@ bool USBRadio::open() {
         }
     }
 
+    printf("num radios: %d\n", numRadios);
+
     libusb_free_device_list(devices, 1);
 
     if (!numRadios) {
@@ -84,17 +86,19 @@ bool USBRadio::open() {
         return false;
     }
 
-    if (libusb_set_configuration(_device, 1)) {
+    int claimRetCode = libusb_claim_interface(_device, 0);
+    if (claimRetCode != 0) {
         if (!_printedError) {
-            fprintf(stderr, "USBRadio: Can't set configuration\n");
-            _printedError = true;
-        }
-        return false;
-    }
-
-    if (libusb_claim_interface(_device, 0)) {
-        if (!_printedError) {
-            fprintf(stderr, "USBRadio: Can't claim interface\n");
+            fprintf(stderr, "USBRadio: Can't claim interface, ");
+            if (claimRetCode == LIBUSB_ERROR_NOT_FOUND)
+                fprintf(stderr, "'not found'");
+            else if (claimRetCode == LIBUSB_ERROR_BUSY)
+                fprintf(stderr, "'busy'");
+            else if (claimRetCode == LIBUSB_ERROR_NO_DEVICE)
+                fprintf(stderr, "'no device'");
+            else
+                fprintf(stderr, "'?'");
+            fprintf(stderr, "\n");
             _printedError = true;
         }
         return false;
