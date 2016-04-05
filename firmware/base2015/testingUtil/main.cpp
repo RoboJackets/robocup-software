@@ -38,13 +38,20 @@ int main(int argc, char* argv[]) {
     // repeatedly send a character to the device, iterating from 'A' to 'Z'
     printf("opened device\r\n");
     unsigned char buf[64];
-    buf[0] = 'A';
+
+    // this value as byte 0 indicates VENDOR_TYPE.  Without it, the transfer
+    // isn't passed to our custom mbed program's functions and instead gets
+    // eaten by lower-level mbed code in USBHID/USBDevice.
+    buf[0] = 2 << 5;
+
+    buf[1] = 'A';
     while (true) {
-        buf[0]++;
-        if (buf[0] > 'Z') buf[0] = 'A';
-        buf[1] = '\0';
+        buf[2] = '\0';
         hid_write(handle, buf, strlen((const char*)buf));
         sleep(1);
+        printf("wrote string '%s'\n", (char*)buf);
+        buf[1]++;
+        if (buf[1] > 'Z') buf[1] = 'A';
     }
 
     return 0;

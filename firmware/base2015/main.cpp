@@ -85,16 +85,23 @@ int main() {
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
+    LOG(INIT, "Listening for commands over USB");
+
     while (true) {
         // make sure we can always reach back to main by renewing the watchdog
         // timer periodically
         Watchdog::Renew();
 
         HID_REPORT data;
-        usbLink.readNB(&data);
-        if (false) {
-            rtp::packet pkt;  // TODO: fill data
-            CommModule::Instance->send(pkt);
+        if (usbLink.readNB(&data)) {
+            // rtp::packet pkt;  // TODO: fill data
+            // CommModule::Instance->send(pkt);
+
+            printf("Got data\r\n");
+            for (size_t i = 1; i < data.length; i++) {
+                printf("%c", (char)data.data[i]);
+            }
+            printf("\r\n");
         }
     }
 }
