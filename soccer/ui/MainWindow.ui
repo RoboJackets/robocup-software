@@ -1884,6 +1884,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionRestartUpdateTimer"/>
     <addaction name="actionQuaternion_Demo"/>
+    <addaction name="actionStart_Logging"/>
    </widget>
    <widget class="QMenu" name="menu_Gameplay">
     <property name="title">
@@ -2222,6 +2223,11 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Quickload Robot Locations</string>
+   </property>
+  </action>
+  <action name="actionStart_Logging">
+   <property name="text">
+    <string>Start Logging</string>
    </property>
   </action>
  </widget>
