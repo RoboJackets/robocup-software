@@ -60,7 +60,15 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 OurRobot::OurRobot(int shell, SystemState* state)
     : Robot(shell, true), _state(state) {
     _cmdText = new std::stringstream();
+    robotPacket = new Packet::Robot();
+    robotPacket->set_txtype(Packet::Robot::CONTROL);
+    Packet::Control* ctl = new Packet::Control();
+    robotPacket->set_allocated_control(ctl);
+    control = ctl;
 
+    robotPacket->set_txtype(Packet::Robot::CONTROL);
+
+    clearFlash();
     resetAvoidBall();
     _lastChargedTime = 0;
     _lastKickerStatus = 0;
@@ -128,8 +136,9 @@ void OurRobot::resetForNextIteration() {
 
     _clearCmdText();
 
-    robotPacket.Clear();
-    robotPacket.set_uid(shell());
+    control->Clear();
+    //robotPacket->Clear();
+    robotPacket->set_uid(shell());
 
     // This will probably move to tuning
     // radioTx.set_accel(10);
@@ -140,8 +149,11 @@ void OurRobot::resetForNextIteration() {
     }
 
     _local_obstacles.clear();
+
     resetMotionConstraints();
     _unkick();
+    control->set_firmwareenable(flashingFw);
+    control->set_song(Packet::Control::STOP);
 
     isPenaltyKicker = false;
 }
@@ -235,7 +247,7 @@ float OurRobot::kickTimer() const {
 
 void OurRobot::dribble(uint8_t speed) {
     uint8_t scaled = *config->dribbler.multiplier * speed;
-    control.set_dvelocity(scaled);
+    control->set_dvelocity(scaled);
 
     *_cmdText << "dribble(" << (float)speed << ")" << endl;
 }
@@ -279,25 +291,23 @@ void OurRobot::chipLevel(uint8_t strength) {
 
 void OurRobot::_kick(uint8_t strength) {
     uint8_t max = *config->kicker.maxKick;
-    control.set_kcstrength(strength > max ? max : strength);
-    control.set_shootmode(Packet::Control::KICK);
-    control.set_triggermode(Packet::Control::IMMEDIATE);
+    control->set_kcstrength(strength > max ? max : strength);
+    control->set_shootmode(Packet::Control::KICK);
+    control->set_triggermode(Packet::Control::IMMEDIATE);
 }
 
 void OurRobot::_chip(uint8_t strength) {
     uint8_t max = *config->kicker.maxChip;
-    control.set_kcstrength(strength > max ? max : strength);
-    control.set_shootmode(Packet::Control::CHIP);
-    control.set_triggermode(Packet::Control::IMMEDIATE);
+    control->set_kcstrength(strength > max ? max : strength);
+    control->set_shootmode(Packet::Control::CHIP);
+    control->set_triggermode(Packet::Control::IMMEDIATE);
 }
 
 void OurRobot::_unkick() {
-    // _kick(0);
-    // _chip(0);
-    // control.set_use_chipper(false);
-    // control.set_kick_immediate(false);
-    control.set_kcstrength(0);
-    control.set_triggermode(Packet::Control::STAND_DOWN);
+    control->set_dvelocity(0);
+    control->set_kcstrength(0);
+    control->set_shootmode(Packet::Control::KICK);
+    control->set_triggermode(Packet::Control::STAND_DOWN);
 }
 
 void OurRobot::unkick() {
@@ -306,7 +316,15 @@ void OurRobot::unkick() {
     *_cmdText << "unkick()" << endl;
 }
 
-void OurRobot::kickImmediately(bool im) { control.set_triggermode(Packet::Control::IMMEDIATE); }
+void OurRobot::flagFlash() {
+    flashingFw = true;
+}
+
+void OurRobot::clearFlash() {
+    flashingFw = false;
+}
+
+void OurRobot::kickImmediately(bool im) { control->set_triggermode(Packet::Control::IMMEDIATE); }
 
 #pragma mark Robot Avoidance
 

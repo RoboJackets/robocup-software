@@ -11,11 +11,8 @@ message Robot
         TUNING   = 2;
     }
 
-    required TxType txType = 1;
-    required uint32 uid = 2;
-    oneof RobotBody
-    {
-        Control control = 3;
-        Tuning tuning = 4;
-    }
+    required uint32 uid = 1;
+    required TxType txType = 2;
+    required Control control = 3;
+    optional Tuning tuning = 4;
 }

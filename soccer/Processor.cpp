@@ -588,17 +588,23 @@ void Processor::run() {
 
 void Processor::sendRadioData() {
     Packet::RadioTx* tx = _state.logFrame->mutable_radio_tx();
+    tx->set_txmode(Packet::RadioTx::UNICAST);
+    tx->set_txtype(Packet::RadioTx::ROBOTS);
 
     // Halt overrides normal motion control, but not joystick
     if (_state.gameState.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _state.self) {
-            Packet::Control& control = r->control;
-            control.set_xvelocity(0);
-            control.set_yvelocity(0);
-            control.set_avelocity(0);
-            control.set_dvelocity(0);
-            control.set_triggermode(Packet::Control::STAND_DOWN);
+            Packet::Control* control = r->control;
+            control->set_xvelocity(0);
+            control->set_yvelocity(0);
+            control->set_avelocity(0);
+            control->set_dvelocity(0);
+            control->set_kcstrength(255);
+            control->set_shootmode(Packet::Control::KICK);
+            control->set_triggermode(Packet::Control::STAND_DOWN);
+            control->set_firmwareenable(false);
+            control->set_song(Packet::Control::STOP);
         }
     }
 
@@ -611,7 +617,7 @@ void Processor::sendRadioData() {
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
             // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
+            txRobot->CopyFrom(*(r->robotPacket));
 
             if (r->shell() == _manualID) {
                 const JoystickControlValues controlVals = getJoystickControlValues();

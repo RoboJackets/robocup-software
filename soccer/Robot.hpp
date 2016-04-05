@@ -127,9 +127,9 @@ public:
     typedef std::array<float, Num_Shells> RobotMask;
 
     /** radio packets */
-    Packet::Control control;
-    Packet::Tuning  tuning;
-    Packet::Robot   robotPacket;
+    Packet::Robot   *robotPacket;
+    Packet::Control *control;// = *robotPacket.mutable_control();
+    // Packet::Tuning  tuning;
 
     RobotConfig* config;
     RobotStatus* status;
@@ -291,6 +291,10 @@ public:
      */
     std::string getCmdText() const;
 
+    bool flashingFw;
+    void flagFlash();
+    void clearFlash();
+
     /**
      * ignore ball sense and kick immediately
      */
@@ -429,7 +433,7 @@ public:
         // }
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
         //radioTx.set_sing(true);
-        control.set_song(song);
+        control->set_song(song);
     }
 
     bool isPenaltyKicker = false;
