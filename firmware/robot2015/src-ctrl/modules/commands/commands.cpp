@@ -19,6 +19,8 @@ using std::string;
 using std::vector;
 
 extern struct OS_XCB os_rdy;
+extern struct OS_XCB os_dly;
+extern struct OS_TCB os_idle_TCB;
 
 namespace {
 /**
@@ -824,16 +826,36 @@ int cmd_ps(cmd_args_t& args) {
         return 1;
     } else {
         unsigned int num_threads = 0;
-        P_TCB p_b = (P_TCB)&os_rdy;
+        P_TCB p_r = (P_TCB)&os_rdy;
+	P_TCB p_d = (P_TCB)&os_dly;
+	P_TCB p_t = (P_TCB)&os_idle_TCB;
+
         printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
         // iterate over the linked list of tasks
-        while (p_b != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_b->task_id, p_b->prio,
-                   p_b->state, p_b->delta_time, ThreadMaxStackUsed(p_b));
+        while (p_r != NULL) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_r->task_id, p_r->prio,
+                   p_r->state, p_r->delta_time, ThreadMaxStackUsed(p_r));
 
             num_threads++;
-            p_b = p_b->p_lnk;
+            p_r = p_r->p_lnk;
         }
+
+        // iterate over the linked list of tasks
+        while (p_d != NULL) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_d->task_id, p_d->prio,
+                   p_d->state, p_d->delta_time, ThreadMaxStackUsed(p_d));
+            num_threads++;
+            p_d = p_d->p_lnk;
+        }
+
+        // iterate over the linked list of tasks
+        while (p_t != NULL) {
+            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_t->task_id, p_t->prio,
+                   p_t->state, p_t->delta_time, ThreadMaxStackUsed(p_t));
+            num_threads++;
+            p_t = p_t->p_lnk;
+	}
+
         printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
 
