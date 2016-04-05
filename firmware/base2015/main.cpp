@@ -14,7 +14,8 @@
 
 using namespace std;
 
-// USBHID usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE);
+// USBHID interface.  The false at the end tells it not to connect initially
+USBHID usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE, false);
 
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
@@ -46,7 +47,7 @@ bool initRadio() {
 void radioRxHandler(rtp::packet* pkt) {
     // TODO: copy data
     HID_REPORT data;
-    bool success = false;  // usbLink.sendNB(&data);
+    bool success = usbLink.sendNB(&data);
 
     if (!success) {
         LOG(WARN, "Failed to transfer received packet over usb");
@@ -64,6 +65,10 @@ int main() {
 
     LOG(INIT, "Base station starting...");
 
+    LOG(INIT, "Initializing USBHID interface...");
+    usbLink.connect(); // note: this blocks until the link is connected
+    LOG(INIT, "Initialized USBHID interface!");
+
     if (initRadio()) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
@@ -71,7 +76,7 @@ int main() {
         CommModule::Instance->setTxHandler(
             (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::CONTROL);
     } else {
-        LOG(FATAL, "No radio interface found!\r\n");
+        LOG(FATAL, "No radio interface found!");
     }
 
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
@@ -85,7 +90,7 @@ int main() {
         Watchdog::Renew();
 
         HID_REPORT data;
-        // usbLink.readNB(&data);
+        usbLink.readNB(&data);
         if (false) {
             rtp::packet pkt;  // TODO: fill data
             CommModule::Instance->send(pkt);
