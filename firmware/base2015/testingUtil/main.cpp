@@ -4,9 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <wchar.h>
-
-#define BASE_VID 0x524A
-#define BASE_PID 0x4253
+#include "../usb-interface.hpp"
 
 int main(int argc, char* argv[]) {
     // print out info for all usb devices connected
@@ -31,7 +29,7 @@ int main(int argc, char* argv[]) {
     printf("\n");
 
     // attempt to connect to base station
-    handle = hid_open(BASE_VID, BASE_PID, 0x0);
+    handle = hid_open(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID, nullptr);
     if (handle == NULL) {
         printf("unable to open device\r\n");
         return -1;

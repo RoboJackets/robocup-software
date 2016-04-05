@@ -1,6 +1,5 @@
 #include <mbed.h>
 #include <cmsis_os.h>
-#include <USBHID.h>
 #include <memory>
 
 #include "SharedSPI.hpp"
@@ -9,13 +8,15 @@
 #include "pins.hpp"
 #include "usb-interface.hpp"
 #include "watchdog.hpp"
+#include "RJBaseHID.hpp"
 
 #define RJ_WATCHDOG_TIMER_VALUE 2  // seconds
 
 using namespace std;
 
 // USBHID interface.  The false at the end tells it not to connect initially
-USBHID usbLink(64, 64, RJ_VENDOR_ID, RJ_PRODUCT_ID, RJ_RELEASE, false);
+RJBaseHID usbLink(64, 64, RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
+                  RJ_BASE2015_RELEASE, false);
 
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
@@ -66,7 +67,7 @@ int main() {
     LOG(INIT, "Base station starting...");
 
     LOG(INIT, "Initializing USBHID interface...");
-    usbLink.connect(); // note: this blocks until the link is connected
+    usbLink.connect();  // note: this blocks until the link is connected
     LOG(INIT, "Initialized USBHID interface!");
 
     if (initRadio()) {
@@ -85,8 +86,8 @@ int main() {
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
     while (true) {
-        // make sure we can always reach back to main by
-        // renewing the watchdog timer periodically
+        // make sure we can always reach back to main by renewing the watchdog
+        // timer periodically
         Watchdog::Renew();
 
         HID_REPORT data;
