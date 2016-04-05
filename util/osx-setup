@@ -23,7 +23,7 @@ echo "-- Installing xquartz through homebrew cask"
 brew cask install xquartz
 
 echo "-- Add tap for px4/px4/gcc-arm-none-eabi"
-brew tap px4/homebrew-px4
+brew tap PX4/homebrew-px4
 
 echo "-- Add tap for osx-cross/avr/arv-libc"
 brew tap osx-cross/avr
