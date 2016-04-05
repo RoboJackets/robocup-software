@@ -56,7 +56,8 @@ bool USBRadio::open() {
     for (int i = 0; i < numDevices; ++i) {
         struct libusb_device_descriptor desc;
         int err = libusb_get_device_descriptor(devices[i], &desc);
-        if (err == 0 && desc.idVendor == 0x3141 && desc.idProduct == 0x0004) {
+        if (err == 0 && desc.idVendor == RJ_BASE2015_VENDOR_ID &&
+            desc.idProduct == RJ_BASE2015_PRODUCT_ID) {
             ++numRadios;
             int err = libusb_open(devices[i], &_device);
             if (err == 0) {
