@@ -13,7 +13,7 @@ message RadioTx
 
 	enum TxType
 	{
-		ROBOT = 1;
+		ROBOTS = 1;
 		FIRMWARE = 2;
 	}
 

@@ -22,13 +22,13 @@ message Control
         FIGHT_SONG = 2;
     }
 
-    required uint32 xVelocity = 1;
-    required uint32 yVelocity = 2;
-    required uint32 aVelocity = 3;
-    required uint32 dVelocity = 4;
-    required uint32 kcStrength = 5;
-    required ShootMode shootMode = 6;
-    required TriggerMode triggerMode = 7;
-    required bool firmwareEnable = 8;
-    required Song song = 9;
+    required float xVelocity = 1         [default = 0];
+    required float yVelocity = 2         [default = 0];
+    required float aVelocity = 3         [default = 0];
+    required float dVelocity = 4         [default = 0];
+    required uint32 kcStrength = 5       [default = 255];
+    required ShootMode shootMode = 6     [default = KICK];
+    required TriggerMode triggerMode = 7 [default = STAND_DOWN];
+    required bool firmwareEnable = 8     [default = false];
+    required Song song = 9               [default = STOP];
 }

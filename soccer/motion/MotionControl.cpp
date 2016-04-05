@@ -33,7 +33,7 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50) {
     _robot = robot;
 
-    _robot->robotPacket.set_uid(_robot->shell());
+    _robot->robotPacket->set_uid(_robot->shell());
     _lastCmdTime = -1;
 }
 
@@ -198,7 +198,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     }
 
     // the robot firmware still speaks degrees, so that's how we send it over
-    _robot->control.set_avelocity(angleVel);
+    _robot->control->set_avelocity(angleVel);
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
@@ -236,6 +236,6 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // set control values
-    _robot->control.set_xvelocity(static_cast<::google::protobuf::uint32>(targetVel.x));
-    _robot->control.set_yvelocity(static_cast<::google::protobuf::uint32>(targetVel.y));
+    _robot->control->set_xvelocity(targetVel.x);
+    _robot->control->set_yvelocity(targetVel.y);
 }
