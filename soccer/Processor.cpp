@@ -746,5 +746,4 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
-    _gameplayModule->sendFieldDimensionsToPython();
 }

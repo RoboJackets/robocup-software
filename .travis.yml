@@ -17,7 +17,11 @@ cache:
     - $HOME/.ccache
     - /usr/local
 
-script: make
+script:
+    - make
+    - make robot2015
+    - make kicker2015
+    - make base2015
 
 notifications:
   email: false
