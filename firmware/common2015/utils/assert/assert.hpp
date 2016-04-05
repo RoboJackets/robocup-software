@@ -5,9 +5,9 @@
 #define ASSERT_ON
 
 /**
- * [ASSERT A macro for assertion checks.]
- * @param  e [The variable to check.]
- * @return   [Nothing is returned.]
+ * A macro for assertion checks.
+ * @param e The variable to check.
+ * @return Nothing is returned.
  */
 #ifdef ASSERT_ON
 #define ASSERT(e) \
@@ -17,6 +17,6 @@
 #endif
 
 /**
- * [assertFail This is called when an assertion fails.]
+ * This is called when an assertion fails.
  */
 void assertFail(const char* expr, const char* file, int line);

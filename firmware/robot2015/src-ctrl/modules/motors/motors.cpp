@@ -11,25 +11,24 @@
 namespace {
 const int NUM_MOTORS = 5;
 
-motor_t mtrEx = {
-    .vel = 0x4D,
-    .hall = 0x0A,
-    .enc = {0x23, 0x18},
-    .status = {.encOK = false, .hallOK = true, .drvStatus = {0x26, 0x0F}},
-    .desc = "Motor"};
+motor_t mtrEx = {.vel = 0x4D,
+                 .hall = 0x0A,
+                 .enc = {0x23, 0x18},
+                 .status = {.hallOK = true, .drvStatus = {0x26, 0x0F}},
+                 .desc = "Motor"};
 }
 
-std::vector<motor_t> motors(NUM_MOTORS, mtrEx);
+std::vector<motor_t> global_motors(NUM_MOTORS, mtrEx);
 int start_s = clock();
 
 void motors_Init() {
     // not sure why this sometimes causes a hard fault...
     // this will be changed anyways once motors are working
-    motors.at(0).desc += "1";
-    motors.at(1).desc += "2";
-    motors.at(2).desc += "3";
-    motors.at(3).desc += "4";
-    motors.at(4).desc = "Dribb.";
+    global_motors[0].desc += "1";
+    global_motors[1].desc += "2";
+    global_motors[2].desc += "3";
+    global_motors[3].desc += "4";
+    global_motors[4].desc = "Dribb.";
 }
 
 void motors_show() {
@@ -57,15 +56,15 @@ void motors_show() {
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\t\tFAULTS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
         printf("\033[K    %s\t%-3u\t%-3u\t%-5u\t%s\t%s\t0x%03X\033E",
-               motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF,
+               global_motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF,
                halls.at(i), enc_deltas.at(i),
                duty_cycles.at(i) & (1 << 9) ? "CW" : "CCW",
                (status_byte & (1 << i)) ? "[OK]    " : "[UNCONN]",
                driver_regs.at(i));
     }
     printf("\033[K    %s\t%-3u\t%-3u\tN/A\t%s\t%s\t0x%03X\033E",
-           motors.back().desc.c_str(), duty_cycles.back() & 0x1FF, halls.back(),
-           duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
+           global_motors.back().desc.c_str(), duty_cycles.back() & 0x1FF,
+           halls.back(), duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
            (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]    "
                                                           : "[UNCONN]",
            driver_regs.back());
@@ -76,7 +75,7 @@ int cmd_motors_scroll(const std::vector<std::string>& args) {
 
     // move cursor back 8 rows
     printf("\033[%uA", 8);
-    Console::Flush();
+    Console::Instance()->Flush();
 
     Thread::wait(350);
     return 0;
@@ -120,7 +119,7 @@ int cmd_motors(const std::vector<std::string>& args) {
                 FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
                                                   duty_cycles.size());
                 printf("%s velocity set to %u (%s)\r\n",
-                       motors.at(motor_id).desc.c_str(), new_vel & 0x1FF,
+                       global_motors.at(motor_id).desc.c_str(), new_vel & 0x1FF,
                        new_vel & (1 << 9) ? "CW" : "CCW");
             } else {
                 // return an error if an invalid duty cycle was given

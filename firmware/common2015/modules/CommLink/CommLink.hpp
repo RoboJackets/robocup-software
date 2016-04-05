@@ -8,6 +8,7 @@
 #include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
+#include "SharedSPI.hpp"
 
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
@@ -26,22 +27,21 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  * CommLink Class used as the hal (hardware abstraction layer) module for
  * interfacing communication links to the higher-level firmware
  */
-class CommLink {
+class CommLink : public SharedSPIDevice<> {
 public:
-    /// Defautl Constructor
-    CommLink(){};
+    /// Default Constructor
+    CommLink();
 
     /// Constructor
-    CommLink(PinName, PinName, PinName, PinName = NC, PinName = NC);
+    CommLink(std::shared_ptr<SharedSPI> spiBus, PinName nCs = NC,
+             PinName int_pin = NC);
 
     /// Virtual deconstructor
-    /// Always define and call CommLink::cleanup() in a derived class's
-    /// deconstructor!
-    virtual ~CommLink();
+    /// Kills any threads and frees the allocated stack.
+    virtual ~CommLink() {}
 
     // Class constants for data queues
     static const size_t RX_QUEUE_SIZE = 2;
-    // static const size_t BUFFER_SIZE = 64;
 
     // The pure virtual methods for making CommLink an abstract class
     /// Perform a soft reset for a communication link's hardware device
@@ -51,75 +51,51 @@ public:
     virtual int32_t selfTest() = 0;
 
     /// Determine if communication can occur with another device
-    virtual bool isConnected() = 0;
+    virtual bool isConnected() const = 0;
 
     /// Send & Receive through the rtp structure
     void sendPacket(rtp::packet*);
 
-    void receivePacket(rtp::packet*);
-
 protected:
-    virtual int32_t sendData(
-        uint8_t*, uint8_t) = 0;  // write data out to the radio device using SPI
-    virtual int32_t getData(
-        uint8_t*,
-        uint8_t*) = 0;  // read data in from the radio device using SPI
+    // write data out to the radio device using SPI
+    virtual int32_t sendData(const uint8_t* buf, uint8_t len) = 0;
 
-    /// Kill any threads and free the allocated stack.
-    /// Always call in any derived class's deconstructors!
-    void cleanup();
+    /**
+     * @brief Read data from the radio's RX buffer
+     *
+     * Copies the contents of the RX buffer into the given @buf parameter.
+     *
+     * @param buf The buffer to write data into
+     *
+     * @return An error/success code.  See the comm error enum above.
+     */
+    virtual int32_t getData(std::vector<uint8_t>* buffer) = 0;
 
     /// Interrupt Service Routine - KEEP OPERATIONS TO ABSOLUTE MINIMUM HERE AND
     /// IN ANY OVERRIDDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
     void ISR();
-    void radio_select();
-    void radio_deselect();
 
     /// Used for giving derived classes a standaradized way to inform the base
     /// class that it is ready for communication and to begin the threads
     //
     // Always call CommLink::ready() after derived class is ready
     void ready();
-    void setup_spi(int baudrate = DEFAULT_BAUD);
-    uint8_t twos_compliment(uint8_t val);
 
-    // The data queues for temporarily holding received packets
-    osMailQId _rxQueue;
+    template <typename T>
+    T twos_compliment(T val) {
+        return ~val + 1;
+    }
 
-    // SPI bus pins
-    PinName _miso_pin;
-    PinName _mosi_pin;
-    PinName _sck_pin;
-    PinName _cs_pin;   // CS pin
-    PinName _int_pin;  // Interrupt pin
-
-    SPI* _spi;             // SPI pointer
-    DigitalOut* _cs;       // Chip Select pointer
-    InterruptIn* _int_in;  // Interrupt pin
-
-    static const int DEFAULT_BAUD = 5000000;
+    InterruptIn _int_in;
 
 private:
-    // Used to help define the class's threads in the constructor
-    friend void define_thread(osThreadDef_t&, void (*task)(void const* arg),
-                              osPriority, uint32_t);
+    Thread _rxThread;
 
-    /**
-     * Data queue helper for RX queue.
-     */
-    MailHelper<rtp::packet, RX_QUEUE_SIZE> _rxQueueHelper;
+    // The working thread for handling RX data queue operations
+    void rxThread();
 
-    // Thread definitions and IDs
-    osThreadDef_t _rxDef;
-    osThreadId _rxID;
-
-    // The working threads for handeling RX data queue operations
-    static void rxThread(void const*);
-
-    // Methods for initializing a transceiver's pins for communication
-    void setup();
-    void setup_pins(PinName = NC, PinName = NC, PinName = NC, PinName = NC,
-                    PinName = NC);
-    void setup_cs();
-    void setup_interrupt();
+    static void rxThreadHelper(const void* linkInst) {
+        CommLink* link = (CommLink*)linkInst;
+        link->rxThread();
+    }
 };

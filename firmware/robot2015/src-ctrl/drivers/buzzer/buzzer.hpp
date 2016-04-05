@@ -6,7 +6,7 @@
 #include "pins-ctrl-2015.hpp"
 
 /**
- * @brief [A buzzer for controlling a pieze element to play sounds using a DAC.]
+ * @brief A buzzer for controlling a pieze element to play sounds using a DAC.
  */
 class Buzzer : public AnalogOut {
 public:
