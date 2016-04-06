@@ -15,8 +15,8 @@
 using namespace std;
 
 // USBHID interface.  The false at the end tells it not to connect initially
-RJBaseHID usbLink(64, 64, RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
-                  RJ_BASE2015_RELEASE, false);
+RJBaseHID usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
+                  RJ_BASE2015_RELEASE);
 
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
@@ -48,11 +48,11 @@ bool initRadio() {
 void radioRxHandler(rtp::packet* pkt) {
     // TODO: copy data
     HID_REPORT data;
-    bool success = usbLink.sendNB(&data);
+    // bool success = usbLink.sendNB(&data);
 
-    if (!success) {
-        LOG(WARN, "Failed to transfer received packet over usb");
-    }
+    // if (!success) {
+    //     LOG(WARN, "Failed to transfer received packet over usb");
+    // }
 }
 
 int main() {
@@ -92,16 +92,16 @@ int main() {
         // timer periodically
         Watchdog::Renew();
 
-        HID_REPORT data;
-        if (usbLink.readNB(&data)) {
-            // rtp::packet pkt;  // TODO: fill data
-            // CommModule::Instance->send(pkt);
+        // HID_REPORT data;
+        // if (usbLink.readNB(&data)) {
+        //     // rtp::packet pkt;  // TODO: fill data
+        //     // CommModule::Instance->send(pkt);
 
-            printf("Got data\r\n");
-            for (size_t i = 1; i < data.length; i++) {
-                printf("%c", (char)data.data[i]);
-            }
-            printf("\r\n");
-        }
+        //     printf("Got data\r\n");
+        //     for (size_t i = 1; i < data.length; i++) {
+        //         printf("%c", (char)data.data[i]);
+        //     }
+        //     printf("\r\n");
+        // }
     }
 }

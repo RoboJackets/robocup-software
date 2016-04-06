@@ -6,14 +6,11 @@
 /** Subclass of USBHID to customize usb product and manufacturer strings.  The
  * descriptor methods were copied from mbed's USBDevice.cpp file and modified
  */
-class RJBaseHID : public USBHID {
+class RJBaseHID : public USBDevice {
 public:
-    RJBaseHID(uint8_t output_report_length = 64,
-              uint8_t input_report_length = 64, uint16_t vendor_id = 0x1234,
-              uint16_t product_id = 0x0006, uint16_t product_release = 0x0001,
-              bool connect = true)
-        : USBHID(output_report_length, input_report_length, vendor_id,
-                 product_id, product_release, connect) {}
+    RJBaseHID(uint16_t vendor_id = 0x1234, uint16_t product_id = 0x0006,
+              uint16_t product_release = 0x0001)
+        : USBDevice(vendor_id, product_id, product_release) {}
 
     uint8_t* stringImanufacturerDesc() {
         // clang-format off
