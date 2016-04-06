@@ -177,6 +177,8 @@ public:
 
     void setFieldDimensions(const Field_Dimensions& dims);
 
+    const bool isRadioOpen();
+
     ////////
 
     // Time of the first LogFrame
