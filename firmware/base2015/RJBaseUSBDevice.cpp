@@ -1,9 +1,11 @@
 #include "RJBaseUSBDevice.hpp"
-#include <USBEndpoints.h>
+#include "logger.hpp"
 #include <USBDescriptor.h>
 #include <USBDevice_Types.h>
 
 bool RJBaseUSBDevice::USBCallback_setConfiguration(uint8_t configuration) {
+    LOG(INIT, "RJBaseUSBDevice::USBCallback_setConfiguration() called");
+
     // Configuration 1 is our only configuration
     if (configuration != 1) return false;
 
@@ -16,6 +18,7 @@ bool RJBaseUSBDevice::USBCallback_setConfiguration(uint8_t configuration) {
     return true;
 }
 
+// This implementation was borrowed from mbed's USBDevice class and modified
 uint8_t* RJBaseUSBDevice::stringImanufacturerDesc() {
     // clang-format off
         static uint8_t stringImanufacturerDescriptor[] = {
@@ -28,6 +31,7 @@ uint8_t* RJBaseUSBDevice::stringImanufacturerDesc() {
     return stringImanufacturerDescriptor;
 }
 
+// This implementation was borrowed from mbed's USBDevice class and modified
 uint8_t* RJBaseUSBDevice::stringIproductDesc() {
     // clang-format off
         static uint8_t stringIproductDescriptor[] = {
@@ -43,13 +47,13 @@ uint8_t* RJBaseUSBDevice::stringIproductDesc() {
 // Used for putting words in descriptor byte arrays
 #define WORD(x) ((x)&0xff), (((x) >> 8) & 0xff)
 
-#define CONFIG_SIZE 9
-#define INTF_SIZE 9
-#define EP_SIZE 7
-
 // The contents of this method were copied from the usb config descriptor in
 // the old base station's firmware.  See 'device.c' for context.
 uint8_t* RJBaseUSBDevice::configurationDesc() {
+    static const uint8_t CONFIG_SIZE = 9;
+    static const uint8_t INTF_SIZE = 9;
+    static const uint8_t EP_SIZE = 7;
+
     static uint8_t configurationDescriptor[] = {
         // Configuration
         CONFIG_SIZE,  // bLength

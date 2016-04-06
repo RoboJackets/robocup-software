@@ -18,6 +18,7 @@ using namespace std;
 RJBaseUSBDevice usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
                         RJ_BASE2015_RELEASE);
 
+// LEDs that indicate rx/tx traffic
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
 
@@ -46,12 +47,14 @@ bool initRadio() {
 }
 
 void radioRxHandler(rtp::packet* pkt) {
-    // TODO: copy data
-    // bool success = usbLink.sendNB(&data);
+    // TODO: include header bytes?
+    // write packet content out to endpoint 1
+    bool success = usbLink.writeNB(1, pkt->payload.data(), pkt->payload.size(),
+                                   MAX_PACKET_SIZE_EPBULK);
 
-    // if (!success) {
-    //     LOG(WARN, "Failed to transfer received packet over usb");
-    // }
+    if (!success) {
+        LOG(WARN, "Failed to transfer received packet over usb");
+    }
 }
 
 int main() {
@@ -86,20 +89,25 @@ int main() {
 
     LOG(INIT, "Listening for commands over USB");
 
+    uint8_t buf[MAX_PACKET_SIZE_EPBULK];
+    uint32_t bufSize;
+
     while (true) {
         // make sure we can always reach back to main by renewing the watchdog
         // timer periodically
         Watchdog::Renew();
 
-        // if (usbLink.readNB(&data)) {
-        //     // rtp::packet pkt;  // TODO: fill data
-        //     // CommModule::Instance->send(pkt);
+        // attempt to read data from endpoint 2
+        // if data is available, write it into @pkt and send it
+        if (usbLink.readEP_NB(2, buf, &bufSize, sizeof(buf))) {
+            // TODO: header data?  port?
 
-        //     printf("Got data\r\n");
-        //     for (size_t i = 1; i < data.length; i++) {
-        //         printf("%c", (char)data.data[i]);
-        //     }
-        //     printf("\r\n");
-        // }
+            // construct packet from buffer received over USB
+            rtp::packet pkt;
+            pkt.payload.reserve(bufSize);
+            for (size_t i = 0; i < bufSize; i++) pkt.payload.push_back(buf[i]);
+
+            CommModule::Instance->send(pkt);
+        }
     }
 }
