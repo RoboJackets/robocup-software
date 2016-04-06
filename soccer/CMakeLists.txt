@@ -98,16 +98,11 @@ include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 # SDL
 include_directories(SYSTEM ${SDL_INCLUDE_DIRS})
 
-# HID API
-include_directories(SYSTEM "/usr/include/hidapi")
-
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
 add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
-
-
 
 target_link_libraries(robocup common)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
@@ -117,7 +112,6 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL_LIBRARY})
-target_link_libraries(robocup "/usr/lib/x86_64-linux-gnu/libhidapi-libusb.so")
 
 # python
 # note: these are set in the root CMakeLists.txt file
