@@ -737,3 +737,7 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
 }
+
+const bool Processor::isRadioOpen(){
+    return _radio->isOpen();
+}
