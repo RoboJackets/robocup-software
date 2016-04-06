@@ -12,8 +12,7 @@ message Control
     {
         IMMEDIATE = 1;
         ON_BREAK_BEAM = 2;
-        ARM = 3;
-        STAND_DOWN = 4;
+        STAND_DOWN = 3;
     }
 
     enum Song
