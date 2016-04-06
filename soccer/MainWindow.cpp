@@ -693,8 +693,7 @@ void MainWindow::updateStatus() {
     // Some conditions are different in simulation
     bool sim = _processor->simulation();
 
-
-    if (!sim){
+    if (!sim) {
         radioBaseStatus(_processor->isRadioOpen());
     }
 
@@ -798,14 +797,15 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
     }
 }
 
-void MainWindow::radioBaseStatus(bool usbRadio){
-    QString label = QString(usbRadio ? "Radio Connected":"Radio Disconnected");
-    if(_ui.radioBaseStatus->text()!=label){
+void MainWindow::radioBaseStatus(bool usbRadio) {
+    QString label =
+        QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
+    if (_ui.radioBaseStatus->text() != label) {
         _ui.radioBaseStatus->setText(label);
-        _ui.radioBaseStatus->setStyleSheet(usbRadio ? "background-color: #00ff00":"background-color: #ff4040");
-        
+        _ui.radioBaseStatus->setStyleSheet(usbRadio
+                                               ? "background-color: #00ff00"
+                                               : "background-color: #ff4040");
     }
-
 }
 
 void MainWindow::on_fieldView_robotSelected(int shell) {
