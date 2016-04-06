@@ -137,12 +137,7 @@ void OurRobot::resetForNextIteration() {
     _clearCmdText();
 
     control->Clear();
-    //robotPacket->Clear();
     robotPacket->set_uid(shell());
-
-    // This will probably move to tuning
-    // radioTx.set_accel(10);
-    // radioTx.set_decel(10);
 
     if (charged()) {
         _lastChargedTime = RJ::timestamp();
@@ -316,15 +311,13 @@ void OurRobot::unkick() {
     *_cmdText << "unkick()" << endl;
 }
 
-void OurRobot::flagFlash() {
-    flashingFw = true;
-}
+void OurRobot::flagFlash() { flashingFw = true; }
 
-void OurRobot::clearFlash() {
-    flashingFw = false;
-}
+void OurRobot::clearFlash() { flashingFw = false; }
 
-void OurRobot::kickImmediately(bool im) { control->set_triggermode(Packet::Control::IMMEDIATE); }
+void OurRobot::kickImmediately(bool im) {
+    control->set_triggermode(Packet::Control::IMMEDIATE);
+}
 
 #pragma mark Robot Avoidance
 

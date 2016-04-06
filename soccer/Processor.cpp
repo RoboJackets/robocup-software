@@ -220,8 +220,8 @@ void Processor::run() {
     vision.start();
 
     // Create radio socket
-    _radio =
-        _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam)) : static_cast<Radio*>(new USBRadio());
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+                         : static_cast<Radio*>(new USBRadio());
 
     Status curStatus;
 
@@ -612,7 +612,8 @@ void Processor::sendRadioData() {
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
             // Packet::RadioTx::Robot* txRobot = tx->add_robots();
-            Packet::Robot* txRobot = tx->mutable_robotcollection()->add_robots();
+            Packet::Robot* txRobot =
+                tx->mutable_robotcollection()->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
@@ -620,11 +621,11 @@ void Processor::sendRadioData() {
             txRobot->CopyFrom(*(r->robotPacket));
 
             if (r->shell() == _manualID) {
-                const JoystickControlValues controlVals = getJoystickControlValues();
+                const JoystickControlValues controlVals =
+                    getJoystickControlValues();
                 // myTestFunc();
-                applyJoystickControls(controlVals, 
-                    txRobot->mutable_control(), 
-                    r);
+                applyJoystickControls(controlVals, txRobot->mutable_control(),
+                                      r);
             }
         }
     }
@@ -635,8 +636,7 @@ void Processor::sendRadioData() {
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::Control* tx,
-                                      OurRobot* robot) {
+                                      Packet::Control* tx, OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -660,7 +660,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     bool kick = controlVals.kick || controlVals.chip;
     tx->set_triggermode(Packet::Control::IMMEDIATE);
     tx->set_kcstrength(kick ? controlVals.kickPower : 0);
-    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK : Packet::Control::CHIP);
+    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
+                                       : Packet::Control::CHIP);
 
     // dribbler
     tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);

@@ -127,9 +127,8 @@ public:
     typedef std::array<float, Num_Shells> RobotMask;
 
     /** radio packets */
-    Packet::Robot   *robotPacket;
-    Packet::Control *control;// = *robotPacket.mutable_control();
-    // Packet::Tuning  tuning;
+    Packet::Robot* robotPacket;
+    Packet::Control* control;
 
     RobotConfig* config;
     RobotStatus* status;
@@ -416,23 +415,20 @@ public:
     /**
      * @brief Starts the robot playing the fight song
      */
-    void sing() {
-        sing(Packet::Control::FIGHT_SONG); 
-    }
+    void sing() { sing(Packet::Control::FIGHT_SONG); }
 
     /**
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(Packet::Control::Song song)
-    {
+    void sing(Packet::Control::Song song) {
         // std::string songName = "";
         // switch (song)
         // {
-        //     case 
+        //     case
         // }
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        //radioTx.set_sing(true);
+        // radioTx.set_sing(true);
         control->set_song(song);
     }
 
