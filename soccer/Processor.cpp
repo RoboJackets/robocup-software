@@ -5,7 +5,7 @@
 #include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
 #include "radio/SimRadio.hpp"
-#include "radio/USB2015Radio.hpp"
+#include "radio/USBRadio.hpp"
 #include "modeling/BallTracker.hpp"
 #include <multicast.hpp>
 #include <Constants.hpp>
@@ -221,7 +221,7 @@ void Processor::run() {
 
     // Create radio socket
     _radio =
-        _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam)) : static_cast<Radio*>(new USB2015Radio());
+        _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam)) : static_cast<Radio*>(new USBRadio());
 
     Status curStatus;
 
