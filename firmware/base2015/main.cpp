@@ -8,15 +8,15 @@
 #include "pins.hpp"
 #include "usb-interface.hpp"
 #include "watchdog.hpp"
-#include "RJBaseHID.hpp"
+#include "RJBaseUSBDevice.hpp"
 
 #define RJ_WATCHDOG_TIMER_VALUE 2  // seconds
 
 using namespace std;
 
 // USBHID interface.  The false at the end tells it not to connect initially
-RJBaseHID usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
-                  RJ_BASE2015_RELEASE);
+RJBaseUSBDevice usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
+                        RJ_BASE2015_RELEASE);
 
 shared_ptr<RtosTimer> rx_led_ticker;
 shared_ptr<RtosTimer> tx_led_ticker;
@@ -47,7 +47,6 @@ bool initRadio() {
 
 void radioRxHandler(rtp::packet* pkt) {
     // TODO: copy data
-    HID_REPORT data;
     // bool success = usbLink.sendNB(&data);
 
     // if (!success) {
@@ -92,7 +91,6 @@ int main() {
         // timer periodically
         Watchdog::Renew();
 
-        // HID_REPORT data;
         // if (usbLink.readNB(&data)) {
         //     // rtp::packet pkt;  // TODO: fill data
         //     // CommModule::Instance->send(pkt);
