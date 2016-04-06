@@ -10,6 +10,7 @@ set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 # firmware source files
 set(base2015_SRC
     main.cpp
+    RJBaseUSBDevice.cpp
 )
 
 add_executable(base2015_elf ${base2015_SRC})
