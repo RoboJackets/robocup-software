@@ -202,7 +202,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     // Build a forward packet
     forward_packet[0] = _sequence;
-    packet.set_sequence(_sequence);
+    //packet.set_sequence(_sequence);
 
     // Unit conversions
     static const float Seconds_Per_Cycle = 0.005f;
@@ -211,22 +211,22 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     int offset = 1;
     int slot;
-    for (slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
-        const RadioTx::Robot& robot = packet.robots(slot);
-        int robot_id = robot.robot_id();
+    for (slot = 0; slot < 6 && slot < packet.robotcollection().robots_size(); ++slot) {
+        const Packet::Control& robot = packet.robotcollection().robots(slot).control();
+        int robot_id = packet.robotcollection().robots(slot).uid();
 
         float bodyVelX =
-            robot.body_x() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
+            robot.xvelocity() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
         float bodyVelY =
-            robot.body_y() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
-        float bodyVelW = robot.body_w() * Seconds_Per_Cycle / Radians_Per_Tick;
+            robot.yvelocity() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
+        float bodyVelW = robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
 
         int outX = clamp((int)roundf(bodyVelX), -511, 511);
         int outY = clamp((int)roundf(bodyVelY), -511, 511);
         int outW = clamp((int)roundf(bodyVelW), -511, 511);
 
-        uint8_t kick = robot.kick();
-        uint8_t dribbler = max(0, min(255, robot.dribbler() * 2));
+        uint8_t kick = static_cast<uint8_t>(robot.shootmode() == Packet::Control::KICK);
+        uint8_t dribbler = max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));
 
         forward_packet[offset++] = outX & 0xff;
         forward_packet[offset++] = outY & 0xff;
@@ -237,11 +237,11 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
         forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
         forward_packet[offset++] = kick;
-        forward_packet[offset++] = robot.use_chipper() |
-                                   (robot.kick_immediate() << 1) |
-                                   (robot.sing() << 2) | (robot.anthem() << 3);
-        forward_packet[offset++] = robot.accel();
-        forward_packet[offset++] = robot.decel();
+        forward_packet[offset++] = (robot.shootmode() == Packet::Control::CHIP) |
+                                   ((robot.triggermode() == Packet::Control::IMMEDIATE) << 1) |
+                                   (robot.song() << 2) | (0 /*robot.anthem()*/ << 3);
+        forward_packet[offset++] = 10; //robot.accel();
+        forward_packet[offset++] = 10; //robot.decel();
     }
 
     // Unused slots
