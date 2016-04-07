@@ -18,10 +18,6 @@ using namespace std;
 RJBaseUSBDevice usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
                         RJ_BASE2015_RELEASE);
 
-// LEDs that indicate rx/tx traffic
-shared_ptr<RtosTimer> rx_led_ticker;
-shared_ptr<RtosTimer> tx_led_ticker;
-
 bool initRadio() {
     /// A shared spi bus used for the fpga and cc1201 radio
     shared_ptr<SharedSPI> sharedSPI =
