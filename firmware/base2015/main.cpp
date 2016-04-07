@@ -68,9 +68,13 @@ int main() {
     if (initRadio()) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
-        CommModule::Instance->setRxHandler(&radioRxHandler, rtp::port::CONTROL);
-        CommModule::Instance->setTxHandler(
-            (CommLink*)global_radio, &CommLink::sendPacket, rtp::port::CONTROL);
+        // register handlers for any ports we might use
+        for (rtp::port port :
+             {rtp::port::CONTROL, rtp::port::PING, rtp::port::LEGACY}) {
+            CommModule::Instance->setRxHandler(&radioRxHandler, port);
+            CommModule::Instance->setTxHandler((CommLink*)global_radio,
+                                               &CommLink::sendPacket, port);
+        }
     } else {
         LOG(FATAL, "No radio interface found!");
     }
