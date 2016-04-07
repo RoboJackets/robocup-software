@@ -165,8 +165,6 @@ uint8_t USBRadio::read(uint8_t reg) {
 }
 
 void USBRadio::configure() {
-    auto_calibrate(false);
-
     command(SIDLE);
     command(SFTX);
     command(SFRX);
@@ -178,15 +176,6 @@ void USBRadio::configure() {
     }
 
     write(CHANNR, _channel);
-
-    auto_calibrate(true);
-}
-
-void USBRadio::auto_calibrate(bool enable) {
-    int flag = enable ? 1 : 0;
-    assert(libusb_control_transfer(
-               _device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 4,
-               flag, 0, nullptr, 0, Control_Timeout) == 0);
 }
 
 bool USBRadio::isOpen() const { return _device; }
@@ -350,14 +339,10 @@ void USBRadio::channel(int n) {
     QMutexLocker lock(&_mutex);
 
     if (_device) {
-        auto_calibrate(false);
-
         write(CHANNR, n);
 
         command(SIDLE);
         command(SRX);
-
-        auto_calibrate(true);
     }
 
     Radio::channel(n);

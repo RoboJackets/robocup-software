@@ -63,9 +63,6 @@ protected:
     void write(uint8_t reg, uint8_t value);
     uint8_t read(uint8_t reg);
 
-    // Turns on/off automatic calibration when there is no traffic
-    void auto_calibrate(bool enable);
-
     // Configures the base station firmware and radio
     void configure();
 };
