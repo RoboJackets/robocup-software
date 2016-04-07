@@ -20,6 +20,6 @@ KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="6119", SYMLI
 KERNEL=="ttyACM[0-9]*", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", SYMLINK+="mbed%n", MODE="0660", GROUP="plugdev"
 
 # base station
-ATTRS{idVendor}=="524a", ATTRS{idProduct}=="4253", MODE="0666", GROUP="plugdev", SYMLINK+="rj_base_2015"
+ATTRS{idVendor}=="524a", ATTRS{idProduct}=="4253", MODE="0660", GROUP="plugdev", SYMLINK+="rj_base_2015"
 
 KERNEL=="sd[a-z]*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", MODE="0660", GROUP="plugdev"
