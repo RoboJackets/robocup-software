@@ -19,7 +19,7 @@ RJBaseUSBDevice usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
                         RJ_BASE2015_RELEASE);
 
 bool initRadio() {
-    /// A shared spi bus used for the fpga and cc1201 radio
+    // setup SPI bus
     shared_ptr<SharedSPI> sharedSPI =
         make_shared<SharedSPI>(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
     sharedSPI->format(8, 0);  // 8 bits per transfer
