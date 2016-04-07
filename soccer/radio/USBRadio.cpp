@@ -3,17 +3,17 @@
 
 #include <stdio.h>
 #include <stdexcept>
-#include <boost/format.hpp>
 
 #include <QMutexLocker>
 
 #include <Utils.hpp>
 #include "USBRadio.hpp"
-#include "../firmware/base_2011/cc1101.h"
-#include "radio_config.h"
+#include "../firmware/common2015/drivers/cc1201/ti/defines.hpp"
+
+// Include this file for base station usb vendor/product ids
+#include "../firmware/base2015/usb-interface.hpp"
 
 using namespace std;
-using namespace boost;
 using namespace Packet;
 
 // Timeout for control transfers, in milliseconds
@@ -100,7 +100,7 @@ bool USBRadio::open() {
         return false;
     }
 
-    configure();
+    channel(_channel);
 
     // Start the receive transfers
     for (int i = 0; i < NumRXTransfers; ++i) {
@@ -162,20 +162,6 @@ uint8_t USBRadio::read(uint8_t reg) {
     }
 
     return value;
-}
-
-void USBRadio::configure() {
-    command(SIDLE);
-    command(SFTX);
-    command(SFRX);
-
-    // Write configuration.
-    // This is mainly for frequency, bit rate, and packetization.
-    for (unsigned int i = 0; i < sizeof(cc1101_regs); i += 2) {
-        write(cc1101_regs[i], cc1101_regs[i + 1]);
-    }
-
-    write(CHANNR, _channel);
 }
 
 bool USBRadio::isOpen() const { return _device; }
@@ -339,10 +325,12 @@ void USBRadio::channel(int n) {
     QMutexLocker lock(&_mutex);
 
     if (_device) {
-        write(CHANNR, n);
+        // TODO(justin): fix
+        // write(CHANNR, n);
+        throw std::runtime_error("Channel-setting not implemented for cc1201");
 
-        command(SIDLE);
-        command(SRX);
+        command(CC1201_STROBE_SIDLE);
+        command(CC1201_STROBE_SRX);
     }
 
     Radio::channel(n);
