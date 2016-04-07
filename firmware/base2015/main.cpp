@@ -25,10 +25,8 @@ bool initRadio() {
     sharedSPI->format(8, 0);  // 8 bits per transfer
 
     // RX/TX leds
-    auto rxTimeoutLED =
-        make_shared<FlashingTimeoutLED>(DigitalOut(LED1, OpenDrain));
-    auto txTimeoutLED =
-        make_shared<FlashingTimeoutLED>(DigitalOut(LED2, OpenDrain));
+    auto rxTimeoutLED = make_shared<FlashingTimeoutLED>(LED1);
+    auto txTimeoutLED = make_shared<FlashingTimeoutLED>(LED2);
 
     // Startup the CommModule interface
     CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
