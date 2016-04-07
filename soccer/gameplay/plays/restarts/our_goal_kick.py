@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import robocup
 import skills
@@ -12,7 +12,7 @@ import main
 # otherwise, chips/kicks the ball to opposite side of field and
 # sends another robot to go intercept
 # NOTE: this is a por of the C++ OurGoalKick2, NOT OurGoalKick (it was trashed)
-class OurGoalKick(play.Play):
+class OurGoalKick(standard_play.StandardPlay):
 
     # tunable params
     MinChipRange = 0.3
@@ -39,9 +39,7 @@ class OurGoalKick(play.Play):
         center2 = skills.move.Move()
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
+        
 
     @classmethod
     def score(cls):

@@ -1,11 +1,11 @@
-import play
+import standard_play
 import behavior
 import skills.bump
 import robocup
 import main
 
 
-class TestBump(play.Play):
+class TestBump(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,

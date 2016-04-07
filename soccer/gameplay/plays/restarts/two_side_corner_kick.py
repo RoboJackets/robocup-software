@@ -1,5 +1,5 @@
 import robocup
-import play
+import standard_play
 import behavior
 import constants
 import main
@@ -11,7 +11,7 @@ import tactics.coordinated_pass
 import tactics.defense
 
 
-class TwoSideCornerKick(play.Play):
+class TwoSideCornerKick(standard_play.StandardPlay):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py
     # Tell where passing from and where to pass to
@@ -69,9 +69,7 @@ class TwoSideCornerKick(play.Play):
         self.passRobot2 = None
         self.captureRobot = None
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
+        
 
     @classmethod
     def score(cls):

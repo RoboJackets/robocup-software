@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import main
 import robocup
@@ -9,7 +9,7 @@ import math
 
 ## This isn't a real play, but it's pretty useful
 # Turn it on and we'll draw the window evaluator stuff on-screen from the ball to our goal
-class DebugWindowEvaluator(play.Play):
+class DebugWindowEvaluator(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 

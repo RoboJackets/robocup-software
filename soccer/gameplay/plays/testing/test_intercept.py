@@ -1,11 +1,11 @@
-import play
+import standard_play
 import behavior
 import skills.intercept
 import robocup
 import main
 
 
-class TestIntercept(play.Play):
+class TestIntercept(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,

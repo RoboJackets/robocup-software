@@ -1,11 +1,11 @@
-import play
+import standard_play
 import behavior
 import tactics.positions.defender
 import skills.mark
 import main
 
 
-class TheirRestart(play.Play):
+class TheirRestart(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -13,9 +13,7 @@ class TheirRestart(play.Play):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False, )
+        
 
         self.marks = []
         for i in range(3):
