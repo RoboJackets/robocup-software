@@ -43,9 +43,10 @@ bool initRadio() {
 }
 
 void radioRxHandler(rtp::packet* pkt) {
-    // TODO: include header bytes?
     // write packet content out to endpoint 1
-    bool success = usbLink.writeNB(1, pkt->payload.data(), pkt->payload.size(),
+    vector<uint8_t> buffer;
+    pkt->pack(&buffer);
+    bool success = usbLink.writeNB(1, buffer.data(), buffer.size(),
                                    MAX_PACKET_SIZE_EPBULK);
 
     if (!success) {
@@ -111,9 +112,9 @@ int main() {
 
             // construct packet from buffer received over USB
             rtp::packet pkt;
-            pkt.payload.reserve(bufSize);
-            for (size_t i = 0; i < bufSize; i++) pkt.payload.push_back(buf[i]);
+            pkt.recv(buf, bufSize);
 
+            // transmit!
             CommModule::Instance->send(pkt);
         }
     }

@@ -45,7 +45,9 @@ struct header_data {
         buf->push_back(port << 4 | type);
     }
 
-    void unpack(const std::vector<uint8_t>& buf) {
+    void unpack(const std::vector<uint8_t>& buf) { unpack(buf.data()); }
+
+    void unpack(const uint8_t* buf) {
         address = buf[1];
         port = buf[2] >> 4;
         type = (Type)(buf[2] & 0x0F);
@@ -85,13 +87,17 @@ public:
 
     template <class T>
     void recv(const std::vector<T>& v) {
+        recv(v.data(), v.size());
+    }
+
+    void recv(const uint8_t* buffer, size_t size) {
         // note: header ignores the first byte since it's the size byte
-        header.unpack(v);
+        header.unpack(buffer);
 
         // Everything after the header is payload data
         payload.clear();
-        for (size_t i = header.size() + 1; i < v.size(); i++) {
-            payload.push_back(v[i]);
+        for (size_t i = header.size() + 1; i < size; i++) {
+            payload.push_back(buffer[i]);
         }
     }
 
