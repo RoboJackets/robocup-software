@@ -64,10 +64,6 @@ int main() {
 
     LOG(INIT, "Base station starting...");
 
-    LOG(INIT, "Initializing USBHID interface...");
-    usbLink.connect();  // note: this blocks until the link is connected
-    LOG(INIT, "Initialized USBHID interface!");
-
     if (initRadio()) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
@@ -79,6 +75,21 @@ int main() {
     }
 
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
+
+    // set callbacks for usb control transfers
+    usbLink.writeRegisterCallback = [](uint8_t reg, uint8_t val) {
+        global_radio->writeReg(reg, val);
+    };
+    usbLink.readRegisterCallback = [](uint8_t reg) {
+        return global_radio->readReg(reg);
+    };
+    usbLink.strobeCallback = [](uint8_t strobe) {
+        global_radio->strobe(strobe);
+    };
+
+    LOG(INIT, "Initializing USB interface...");
+    usbLink.connect();  // note: this blocks until the link is connected
+    LOG(INIT, "Initialized USB interface!");
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);

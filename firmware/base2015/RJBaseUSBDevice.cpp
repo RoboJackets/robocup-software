@@ -18,6 +18,50 @@ bool RJBaseUSBDevice::USBCallback_setConfiguration(uint8_t configuration) {
     return true;
 }
 
+bool RJBaseUSBDevice::USBCallback_request() {
+    /* Called in ISR context */
+
+    CONTROL_TRANSFER* transfer = getTransferPtr();
+
+    // Handle vendor-specific requests
+    if (transfer->setup.bmRequestType.Type == VENDOR_TYPE) {
+        switch (transfer->setup.bRequest) {
+            case 1:  // Write radio register
+                if (writeRegisterCallback)
+                    writeRegisterCallback(transfer->setup.wIndex,
+                                          transfer->setup.wValue);
+                return true;
+
+            case 2:  // Radio command
+                if (strobeCallback) strobeCallback(transfer->setup.wIndex);
+                return true;
+
+            case 3:  // Read radio register
+                if (transfer->setup.wLength > 0 && readRegisterCallback) {
+                    _controlTransferReplyValue =
+                        readRegisterCallback(transfer->setup.wIndex);
+
+                    // setup reply transfer with reg value
+                    transfer->direction = DEVICE_TO_HOST;
+                    transfer->ptr = &_controlTransferReplyValue;
+                    transfer->remaining = sizeof(_controlTransferReplyValue);
+                } else {
+                    // TODO: stall EP0 to indicate error
+                }
+                return true;
+
+            default:
+                LOG(WARN, "Unrecognized usb control request '%d'",
+                    transfer->setup.bRequest);
+                // TODO: stall EP0 to indicate error
+                break;
+        }
+    }
+
+    // unhandled request
+    return false;
+}
+
 // This implementation was borrowed from mbed's USBDevice class and modified
 uint8_t* RJBaseUSBDevice::stringImanufacturerDesc() {
     // clang-format off
