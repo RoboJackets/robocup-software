@@ -9,7 +9,7 @@
 
 #include <Utils.hpp>
 #include "USBRadio.hpp"
-#include "cc1101.h"
+#include "../firmware/base_2011/cc1101.h"
 #include "radio_config.h"
 
 using namespace std;
