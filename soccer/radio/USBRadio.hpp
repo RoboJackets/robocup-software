@@ -25,7 +25,6 @@ const unsigned int Reverse_Size = 7;
  */
 class USBRadio : public Radio {
 public:
-    // n identifies which base station to use.
     USBRadio();
     ~USBRadio();
 
