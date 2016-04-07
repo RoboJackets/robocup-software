@@ -41,6 +41,7 @@ bool initRadio() {
 }
 
 void radioRxHandler(rtp::packet* pkt) {
+    LOG(INF3, "radioRxHandler()");
     // write packet content out to endpoint 1
     vector<uint8_t> buffer;
     pkt->pack(&buffer);
@@ -57,9 +58,11 @@ int main() {
     Serial s(RJ_SERIAL_RXTX);
     s.baud(57600);
 
+    printf("****************************************\r\n");
+
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
-    rjLogLevel = INIT;
+    rjLogLevel = INF3;
 
     LOG(INIT, "Base station starting...");
 
@@ -107,6 +110,7 @@ int main() {
         // attempt to read data from endpoint 2
         // if data is available, write it into @pkt and send it
         if (usbLink.readEP_NB(2, buf, &bufSize, sizeof(buf))) {
+            LOG(INF3, "Read %d bytes from BULK IN", bufSize);
             // construct packet from buffer received over USB
             rtp::packet pkt;
             pkt.recv(buf, bufSize);

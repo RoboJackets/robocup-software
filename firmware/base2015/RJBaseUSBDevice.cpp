@@ -27,16 +27,19 @@ bool RJBaseUSBDevice::USBCallback_request() {
     if (transfer->setup.bmRequestType.Type == VENDOR_TYPE) {
         switch (transfer->setup.bRequest) {
             case 1:  // Write radio register
+                LOG(INF3, "writeReg request");
                 if (writeRegisterCallback)
                     writeRegisterCallback(transfer->setup.wIndex,
                                           transfer->setup.wValue);
                 return true;
 
             case 2:  // Radio command
+                LOG(INF3, "strobe request");
                 if (strobeCallback) strobeCallback(transfer->setup.wIndex);
                 return true;
 
             case 3:  // Read radio register
+                LOG(INF3, "readReg request");
                 if (transfer->setup.wLength > 0 && readRegisterCallback) {
                     _controlTransferReplyValue =
                         readRegisterCallback(transfer->setup.wIndex);
@@ -51,7 +54,7 @@ bool RJBaseUSBDevice::USBCallback_request() {
                 return true;
 
             default:
-                LOG(WARN, "Unrecognized usb control request '%d'",
+                LOG(WARN, "Unrecognized usb VENDOR request '%d'",
                     transfer->setup.bRequest);
                 // TODO: stall EP0 to indicate error
                 break;
@@ -94,16 +97,13 @@ uint8_t* RJBaseUSBDevice::stringIproductDesc() {
 // The contents of this method were copied from the usb config descriptor in
 // the old base station's firmware.  See 'device.c' for context.
 uint8_t* RJBaseUSBDevice::configurationDesc() {
-    static const uint8_t CONFIG_SIZE = 9;
-    static const uint8_t INTF_SIZE = 9;
-    static const uint8_t EP_SIZE = 7;
-
     static uint8_t configurationDescriptor[] = {
         // Configuration
-        CONFIG_SIZE,  // bLength
-        2,            // bDescriptorType
-        WORD(         // wTotalLength
-            CONFIG_SIZE + INTF_SIZE + EP_SIZE * 2),
+        CONFIGURATION_DESCRIPTOR_LENGTH,  // bLength
+        2,                                // bDescriptorType
+        WORD(                             // wTotalLength
+            CONFIGURATION_DESCRIPTOR_LENGTH + INTERFACE_DESCRIPTOR_LENGTH +
+            ENDPOINT_DESCRIPTOR_LENGTH * 2),
         1,     // bNumInterfaces
         1,     // bConfigurationValue
         0,     // iConfiguration
@@ -111,29 +111,29 @@ uint8_t* RJBaseUSBDevice::configurationDesc() {
         0,     // MaxPower
 
         // Interface 0
-        INTF_SIZE,  // bLength
-        4,          // bDescriptorType
-        0,          // bInterfaceNumber
-        0,          // bAlternateSetting
-        2,          // bNumEndpoints (not counting endpoint 0)
-        0xff,       // bInterfaceClass
-        0xff,       // bInterfaceSubclass
-        0,          // bInterfaceProtocol
-        0,          // iInterface
+        INTERFACE_DESCRIPTOR_LENGTH,  // bLength
+        4,                            // bDescriptorType
+        0,                            // bInterfaceNumber
+        0,                            // bAlternateSetting
+        2,                            // bNumEndpoints (not counting endpoint 0)
+        0xff,                         // bInterfaceClass
+        0xff,                         // bInterfaceSubclass
+        0,                            // bInterfaceProtocol
+        0,                            // iInterface
 
         // Endpoint 1: bulk OUT
-        EP_SIZE,                       // bLength
-        5,                             // bDescriptorType
-        1,                             // bEndpointAddress
-        2,                             // bmAttributes
+        ENDPOINT_DESCRIPTOR_LENGTH,    // bLength
+        ENDPOINT_DESCRIPTOR,           // bDescriptorType
+        PHY_TO_DESC(EPBULK_OUT),       // bEndpointAddress
+        E_BULK,                        // bmAttributes
         WORD(MAX_PACKET_SIZE_EPBULK),  // wMaxPacketSize
         0,                             // bInterval
 
         // Endpoint 2: bulk IN
-        EP_SIZE,                       // bLength
-        5,                             // bDescriptorType
-        0x82,                          // bEndpointAddress
-        2,                             // bmAttributes
+        ENDPOINT_DESCRIPTOR_LENGTH,    // bLength
+        ENDPOINT_DESCRIPTOR,           // bDescriptorType
+        PHY_TO_DESC(EPBULK_IN),        // bEndpointAddress
+        E_BULK,                        // bmAttributes
         WORD(MAX_PACKET_SIZE_EPBULK),  // wMaxPacketSize
         0                              // bInterval
     };
