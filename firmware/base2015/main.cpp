@@ -112,8 +112,6 @@ int main() {
         // attempt to read data from endpoint 2
         // if data is available, write it into @pkt and send it
         if (usbLink.readEP_NB(2, buf, &bufSize, sizeof(buf))) {
-            // TODO: header data?  port?
-
             // construct packet from buffer received over USB
             rtp::packet pkt;
             pkt.recv(buf, bufSize);
