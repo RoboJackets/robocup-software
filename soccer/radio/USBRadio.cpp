@@ -327,7 +327,8 @@ void USBRadio::channel(int n) {
     if (_device) {
         // TODO(justin): fix
         // write(CHANNR, n);
-        throw std::runtime_error("Channel-setting not implemented for cc1201");
+        // throw std::runtime_error("Channel-setting not implemented for
+        // cc1201");
 
         command(CC1201_STROBE_SIDLE);
         command(CC1201_STROBE_SRX);
