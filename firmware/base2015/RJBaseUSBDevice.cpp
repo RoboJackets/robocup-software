@@ -65,12 +65,12 @@ bool RJBaseUSBDevice::USBCallback_request() {
 // This implementation was borrowed from mbed's USBDevice class and modified
 uint8_t* RJBaseUSBDevice::stringImanufacturerDesc() {
     // clang-format off
-        static uint8_t stringImanufacturerDescriptor[] = {
-            0x18,              /*bLength*/
-            STRING_DESCRIPTOR, /*bDescriptorType 0x03*/
-            'R', 0, 'o', 0, 'b', 0, 'o', 0, 'J', 0, 'a', 0, 'c', 0, 'k', 0, 'e', 0, 't', 0, 's',
-            0, /*bString iManufacturer - RoboJackets*/
-        };
+    static uint8_t stringImanufacturerDescriptor[] = {
+        0x18,              /*bLength*/
+        STRING_DESCRIPTOR, /*bDescriptorType 0x03*/
+        'R', 0, 'o', 0, 'b', 0, 'o', 0, 'J', 0, 'a', 0, 'c', 0, 'k', 0, 'e', 0, 't', 0, 's',
+        0, /*bString iManufacturer - RoboJackets*/
+    };
     // clang-format on
     return stringImanufacturerDescriptor;
 }
@@ -78,12 +78,12 @@ uint8_t* RJBaseUSBDevice::stringImanufacturerDesc() {
 // This implementation was borrowed from mbed's USBDevice class and modified
 uint8_t* RJBaseUSBDevice::stringIproductDesc() {
     // clang-format off
-        static uint8_t stringIproductDescriptor[] = {
-            0x14,              /*bLength*/
-            STRING_DESCRIPTOR, /*bDescriptorType 0x03*/
-            'B', 0, 'a', 0, 's', 0, 'e', 0, ' ', 0, '2', 0, '0', 0, '1', 0, '5',
-            0 /*bString iProduct - Base 2015*/
-        };
+    static uint8_t stringIproductDescriptor[] = {
+        0x14,              /*bLength*/
+        STRING_DESCRIPTOR, /*bDescriptorType 0x03*/
+        'B', 0, 'a', 0, 's', 0, 'e', 0, ' ', 0, '2', 0, '0', 0, '1', 0, '5',
+        0 /*bString iProduct - Base 2015*/
+    };
     // clang-format on
     return stringIproductDescriptor;
 }
