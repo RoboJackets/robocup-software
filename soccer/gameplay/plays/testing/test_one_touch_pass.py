@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import tactics.one_touch_pass
 import tactics.behavior_sequence
@@ -8,7 +8,7 @@ import main
 
 
 ## Continually runs a one_touch_pass pass tactic
-class TestOneTouchPass(play.Play):
+class TestOneTouchPass(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 

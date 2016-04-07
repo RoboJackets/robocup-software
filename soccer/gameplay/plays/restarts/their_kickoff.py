@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import robocup
 import tactics.positions.defender
@@ -6,7 +6,7 @@ import tactics.stopped.circle_near_ball
 import main
 
 
-class TheirKickoff(play.Play):
+class TheirKickoff(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -14,9 +14,7 @@ class TheirKickoff(play.Play):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
+        
 
         circle_up = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(circle_up, 'circle_up')

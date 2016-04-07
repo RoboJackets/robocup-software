@@ -1,4 +1,4 @@
-import play
+import standard_play
 import skills
 import robocup
 import behavior
@@ -8,7 +8,7 @@ import main
 
 # Makes a robot continually run laps
 # note: only really works with one robot on the field at a time
-class StressTest(play.Play):
+class StressTest(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 

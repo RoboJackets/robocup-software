@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import skills.move
 import skills.capture
@@ -8,7 +8,7 @@ import role_assignment
 
 
 # this test repeatedly runs the capture behavior
-class TestCapture(play.Play):
+class TestCapture(standard_play.StandardPlay):
     class State(enum.Enum):
         setup = 1
         capturing = 2

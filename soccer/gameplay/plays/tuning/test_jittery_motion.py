@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import single_robot_behavior
 import robocup
@@ -47,7 +47,7 @@ class Jitterer(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_world_vel(vel)
 
 
-class TestJitteryMotion(play.Play):
+class TestJitteryMotion(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 

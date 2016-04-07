@@ -1,11 +1,11 @@
-import play
+import standard_play
 import behavior
 import tactics.line_up
 import robocup
 import constants
 
 
-class LineUp(play.Play):
+class LineUp(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=False)
 

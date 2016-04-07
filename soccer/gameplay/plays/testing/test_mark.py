@@ -1,11 +1,11 @@
-import play
+import standard_play
 import behavior
 import skills.mark
 import robocup
 import main
 
 
-class TestMark(play.Play):
+class TestMark(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,

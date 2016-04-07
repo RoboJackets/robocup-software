@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import tactics.coordinated_pass
 import tactics.behavior_sequence
@@ -8,7 +8,7 @@ import main
 
 
 ## Continually runs a coordinated pass to opposite sides of the field
-class TestCoordinatedPass(play.Play):
+class TestCoordinatedPass(standard_play.StandardPlay):
 
     ReceiveXCoord = 1
     ReceiveYCoord = constants.Field.Length / 2.0 * 1.0 / 3.0

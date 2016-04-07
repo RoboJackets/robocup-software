@@ -69,11 +69,6 @@ class TwoSideAttack(standard_play.StandardPlay):
         self.passRobot2 = None
         self.captureRobot = None
 
-        #self.pernamentBehaviors = ['defense']
-        #self.add_subbehavior(tactics.defense.Defense(),
-        #                     'defense',
-        #                     required=False)
-
     @classmethod
     def score(cls):
         if main.game_state().is_playing():

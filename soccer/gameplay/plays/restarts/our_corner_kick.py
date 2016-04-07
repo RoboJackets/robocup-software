@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import skills
 import tactics
@@ -7,7 +7,7 @@ import constants
 import main
 
 
-class OurCornerKick(play.Play):
+class OurCornerKick(standard_play.StandardPlay):
 
     MinChipRange = 0.3
     MaxChipRange = 3.0
@@ -44,9 +44,7 @@ class OurCornerKick(play.Play):
                              required=False,
                              priority=3)
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
+        
 
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,

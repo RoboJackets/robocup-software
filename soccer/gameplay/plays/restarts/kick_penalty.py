@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import robocup
 import main
@@ -7,7 +7,7 @@ import tactics.penalty
 
 
 # one robot kicks the ball, the others just line up and wait
-class KickPenalty(play.Play):
+class KickPenalty(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
