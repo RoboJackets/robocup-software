@@ -19,7 +19,7 @@ using namespace Packet;
 // Timeout for control transfers, in milliseconds
 static const int Control_Timeout = 1000;
 
-USBRadio::USBRadio() {
+USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
     _sequence = 0;
     _printedError = false;
     _device = nullptr;
