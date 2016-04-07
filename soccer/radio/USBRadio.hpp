@@ -6,9 +6,6 @@
 
 #include "Radio.hpp"
 
-// Include this file for base station usb vendor/product ids
-#include "../firmware/base2015/usb-interface.hpp"
-
 // FIXME - This needs to go somewhere common to this code, the robot firmware,
 // and the base station test code.
 const unsigned int Forward_Size = 55;
@@ -62,7 +59,4 @@ protected:
     void command(uint8_t cmd);
     void write(uint8_t reg, uint8_t value);
     uint8_t read(uint8_t reg);
-
-    // Configures the base station firmware and radio
-    void configure();
 };
