@@ -6,7 +6,7 @@
 #include <functional>
 
 /** Subclass of USBDevice to customize usb descriptors and setup two bulk
- * endpints, one IN and one OUT.
+ * endpoints, one IN and one OUT.
  */
 class RJBaseUSBDevice : public USBDevice {
 public:

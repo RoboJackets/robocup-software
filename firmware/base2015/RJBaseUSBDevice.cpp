@@ -12,7 +12,7 @@ bool RJBaseUSBDevice::USBCallback_setConfiguration(uint8_t configuration) {
     addEndpoint(EPBULK_OUT, MAX_PACKET_SIZE_EPBULK);
     addEndpoint(EPBULK_IN, MAX_PACKET_SIZE_EPBULK);
 
-    // We activate the endpoint to be able to recceive data
+    // activate the endpoint to be able to recceive data
     readStart(EPBULK_OUT, MAX_PACKET_SIZE_EPBULK);
 
     return true;

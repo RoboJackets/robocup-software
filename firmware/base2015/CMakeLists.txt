@@ -24,8 +24,8 @@ set_target_properties(base2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # custom target for creating a .bin file from an elf binary
 add_custom_target(base2015
-    arm-none-eabi-objcopy -O binary base2015_elf rj-base.bin
-    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/rj-base.bin ${PROJECT_SOURCE_DIR}/run/
+    ${ARM_OBJCOPY} -O binary base2015_elf rj-base.bin
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/rj-base.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS base2015_elf
     COMMENT "objcopying to make MBED-compatible executable"
 )

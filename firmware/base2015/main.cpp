@@ -14,7 +14,7 @@
 
 using namespace std;
 
-// USBHID interface.  The false at the end tells it not to connect initially
+// setup USB interface with custom vendor/product ids
 RJBaseUSBDevice usbLink(RJ_BASE2015_VENDOR_ID, RJ_BASE2015_PRODUCT_ID,
                         RJ_BASE2015_RELEASE);
 
@@ -30,7 +30,6 @@ bool initRadio() {
 
     // Startup the CommModule interface
     CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
-    shared_ptr<CommModule> commModule = CommModule::Instance;
 
     // Create a new physical hardware communication link
     global_radio =
@@ -48,9 +47,7 @@ void radioRxHandler(rtp::packet* pkt) {
     bool success = usbLink.writeNB(EPBULK_IN, pkt->payload.data(),
                                    pkt->payload.size(), MAX_PACKET_SIZE_EPBULK);
 
-    if (!success) {
-        LOG(WARN, "Failed to transfer received packet over usb");
-    }
+    if (!success) LOG(WARN, "Failed to transfer received packet over usb");
 }
 
 int main() {
@@ -58,12 +55,11 @@ int main() {
     Serial s(RJ_SERIAL_RXTX);
     s.baud(57600);
 
-    printf("****************************************\r\n");
-
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
     rjLogLevel = INIT;
 
+    printf("****************************************\r\n");
     LOG(INIT, "Base station starting...");
 
     if (initRadio()) {
