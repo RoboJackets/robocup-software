@@ -1,6 +1,5 @@
 var class_comm_link =
 [
-    [ "CommLink", "class_comm_link.html#ae4d9c67d870744e4f37315788597509a", null ],
     [ "CommLink", "class_comm_link.html#ad00ce7653d5d4f985d85cd719f62dcf4", null ],
     [ "~CommLink", "class_comm_link.html#acff1290e199689fac1f2f995303ad6bf", null ],
     [ "getData", "class_comm_link.html#a9a9d3575f72afa2c61d215aa6708993e", null ],
