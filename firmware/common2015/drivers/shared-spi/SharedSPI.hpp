@@ -45,7 +45,7 @@ public:
     }
 
     void chipDeselect() {
-        _cs = _csAssertValue;
+        _cs = !_csAssertValue;
         _spi->unlock();
     }
 
