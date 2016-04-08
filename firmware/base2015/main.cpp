@@ -99,7 +99,9 @@ int main() {
 
     LOG(INIT, "Listening for commands over USB");
 
-    uint8_t buf[MAX_PACKET_SIZE_EPBULK];
+    // buffer to read data from usb bulk transfers into
+    // buf[0] will contain the length of the rest of the buffer
+    uint8_t buf[MAX_PACKET_SIZE_EPBULK + 1];
     uint32_t bufSize;
 
     while (true) {
@@ -109,11 +111,15 @@ int main() {
 
         // attempt to read data from endpoint 2
         // if data is available, write it into @pkt and send it
-        if (usbLink.readEP_NB(2, buf, &bufSize, sizeof(buf))) {
+        if (usbLink.readEP_NB(EPBULK_OUT, &buf[1], &bufSize, sizeof(buf) - 1)) {
             LOG(INF3, "Read %d bytes from BULK IN", bufSize);
             // construct packet from buffer received over USB
             rtp::packet pkt;
-            pkt.recv(buf, bufSize);
+            buf[0] = (uint8_t)bufSize;
+            pkt.recv(buf, bufSize + 1);
+
+            // TODO: remove this, the buffer should contain this
+            pkt.port(rtp::port::CONTROL);
 
             // transmit!
             CommModule::Instance->send(pkt);
