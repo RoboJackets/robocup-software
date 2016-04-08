@@ -140,7 +140,8 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
 void USBRadio::command(uint8_t cmd) {
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                2, 0, cmd, nullptr, 0, Control_Timeout)) {
+                                Base2015ControlCommand::RadioStrobe, 0, cmd,
+                                nullptr, 0, Control_Timeout)) {
         throw runtime_error("USBRadio::command control write failed");
     }
 }
@@ -148,7 +149,8 @@ void USBRadio::command(uint8_t cmd) {
 void USBRadio::write(uint8_t reg, uint8_t value) {
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                1, value, reg, nullptr, 0, Control_Timeout)) {
+                                Base2015ControlCommand::RadioWriteRegister,
+                                value, reg, nullptr, 0, Control_Timeout)) {
         throw runtime_error("USBRadio::write control write failed");
     }
 }
@@ -157,7 +159,8 @@ uint8_t USBRadio::read(uint8_t reg) {
     uint8_t value = 0;
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                3, 0, reg, &value, 1, Control_Timeout)) {
+                                Base2015ControlCommand::RadioReadRegister, 0,
+                                reg, &value, 1, Control_Timeout)) {
         throw runtime_error("USBRadio::read control write failed");
     }
 
