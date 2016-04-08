@@ -42,11 +42,11 @@ bool initRadio() {
 
 void radioRxHandler(rtp::packet* pkt) {
     LOG(INF3, "radioRxHandler()");
-    // write packet content out to endpoint 1
-    vector<uint8_t> buffer;
-    pkt->pack(&buffer);
-    bool success = usbLink.writeNB(1, buffer.data(), buffer.size(),
-                                   MAX_PACKET_SIZE_EPBULK);
+    // write packet content out to EPBULK_IN
+    // TODO(justin): use pkt.pack() and include header info once packet
+    // structure changes
+    bool success = usbLink.writeNB(EPBULK_IN, pkt->payload.data(),
+                                   pkt->payload.size(), MAX_PACKET_SIZE_EPBULK);
 
     if (!success) {
         LOG(WARN, "Failed to transfer received packet over usb");
@@ -100,8 +100,7 @@ int main() {
     LOG(INIT, "Listening for commands over USB");
 
     // buffer to read data from usb bulk transfers into
-    // buf[0] will contain the length of the rest of the buffer
-    uint8_t buf[MAX_PACKET_SIZE_EPBULK + 1];
+    uint8_t buf[MAX_PACKET_SIZE_EPBULK];
     uint32_t bufSize;
 
     while (true) {
@@ -109,17 +108,18 @@ int main() {
         // timer periodically
         Watchdog::Renew();
 
-        // attempt to read data from endpoint 2
+        // attempt to read data from EPBULK_OUT
         // if data is available, write it into @pkt and send it
-        if (usbLink.readEP_NB(EPBULK_OUT, &buf[1], &bufSize, sizeof(buf) - 1)) {
+        if (usbLink.readEP_NB(EPBULK_OUT, buf, &bufSize, sizeof(buf))) {
             LOG(INF3, "Read %d bytes from BULK IN", bufSize);
             // construct packet from buffer received over USB
             rtp::packet pkt;
-            buf[0] = (uint8_t)bufSize;
-            pkt.recv(buf, bufSize + 1);
+            pkt.payload.insert(pkt.payload.end(), buf, &buf[bufSize]);
 
-            // TODO: remove this, the buffer should contain this
-            pkt.port(rtp::port::CONTROL);
+            // TODO(justin): remove this, the buffer should contain this
+            pkt.header.port = rtp::port::CONTROL;
+            pkt.header.address = rtp::BROADCAST_ADDRESS;
+            pkt.header.type = rtp::header_data::Control;
 
             // transmit!
             CommModule::Instance->send(pkt);

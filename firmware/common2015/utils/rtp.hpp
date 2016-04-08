@@ -12,6 +12,8 @@ namespace rtp {
 /// Max packet size.  This is limited by the CC1201 buffer size.
 static const unsigned int MAX_DATA_SZ = 120;
 
+const uint8_t BROADCAST_ADDRESS = 0;
+
 /**
  * @brief Port enumerations for different communication protocols.
  */
