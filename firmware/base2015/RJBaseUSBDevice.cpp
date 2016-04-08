@@ -49,14 +49,16 @@ bool RJBaseUSBDevice::USBCallback_request() {
                     transfer->ptr = &_controlTransferReplyValue;
                     transfer->remaining = sizeof(_controlTransferReplyValue);
                 } else {
-                    // TODO: stall EP0 to indicate error
+                    // stall EP0 to indicate error
+                    EP0stall();
                 }
                 return true;
 
             default:
                 LOG(WARN, "Unrecognized usb VENDOR request '%d'",
                     transfer->setup.bRequest);
-                // TODO: stall EP0 to indicate error
+                // stall EP0 to indicate error
+                EP0stall();
                 break;
         }
     }
