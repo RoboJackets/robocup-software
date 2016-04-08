@@ -2,6 +2,7 @@
 #include "logger.hpp"
 #include <USBDescriptor.h>
 #include <USBDevice_Types.h>
+#include "usb-interface.hpp"
 
 bool RJBaseUSBDevice::USBCallback_setConfiguration(uint8_t configuration) {
     LOG(INIT, "RJBaseUSBDevice::USBCallback_setConfiguration() called");
@@ -26,19 +27,14 @@ bool RJBaseUSBDevice::USBCallback_request() {
     // Handle vendor-specific requests
     if (transfer->setup.bmRequestType.Type == VENDOR_TYPE) {
         switch (transfer->setup.bRequest) {
-            case 1:  // Write radio register
+            case Base2015ControlCommand::RadioWriteRegister:
                 LOG(INF3, "writeReg request");
                 if (writeRegisterCallback)
                     writeRegisterCallback(transfer->setup.wIndex,
                                           transfer->setup.wValue);
                 return true;
 
-            case 2:  // Radio command
-                LOG(INF3, "strobe request");
-                if (strobeCallback) strobeCallback(transfer->setup.wIndex);
-                return true;
-
-            case 3:  // Read radio register
+            case Base2015ControlCommand::RadioReadRegister:
                 LOG(INF3, "readReg request");
                 if (transfer->setup.wLength > 0 && readRegisterCallback) {
                     _controlTransferReplyValue =
@@ -52,6 +48,11 @@ bool RJBaseUSBDevice::USBCallback_request() {
                     // stall EP0 to indicate error
                     EP0stall();
                 }
+                return true;
+
+            case Base2015ControlCommand::RadioStrobe:
+                LOG(INF3, "strobe request");
+                if (strobeCallback) strobeCallback(transfer->setup.wIndex);
                 return true;
 
             default:
