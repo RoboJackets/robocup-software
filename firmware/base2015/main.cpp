@@ -62,7 +62,7 @@ int main() {
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
-    rjLogLevel = INF3;
+    rjLogLevel = INIT;
 
     LOG(INIT, "Base station starting...");
 
