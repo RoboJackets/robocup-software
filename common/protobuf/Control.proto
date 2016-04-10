@@ -30,5 +30,5 @@ message Control
     required ShootMode shootMode = 6     [default = KICK];
     required TriggerMode triggerMode = 7 [default = STAND_DOWN];
     required bool firmwareEnable = 8     [default = false];
-    required Song song = 9               [default = STOP];
+    required Song song = 9               [default = CONTINUE];
 }

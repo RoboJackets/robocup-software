@@ -2,7 +2,6 @@ syntax = "proto2";
 package Packet;
 
 import "Robot.proto";
-import "Firmware.proto";
 
 message RadioTx
 {
@@ -15,16 +14,14 @@ message RadioTx
 	enum TxType
 	{
 		ROBOTS = 1;
-		FIRMWARE = 2;
+		// FIRMWARE = 2;
 	}
 
 	message RobotCollection {
-		//required uint32 botCount = 1;
 		repeated Robot robots = 2;
 	}
 
 	required TxMode txMode = 1;
 	required TxType txType = 2;
-	optional Firmware firmware = 3;
 	optional RobotCollection robotCollection = 4;
 }
