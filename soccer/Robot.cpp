@@ -145,7 +145,6 @@ void OurRobot::resetForNextIteration() {
 
     resetMotionConstraints();
     _unkick();
-    control->set_firmwareenable(false);
     control->set_song(Packet::Control::STOP);
 
     isPenaltyKicker = false;

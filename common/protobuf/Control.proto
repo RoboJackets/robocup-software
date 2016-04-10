@@ -29,6 +29,5 @@ message Control
     required uint32 kcStrength = 5       [default = 255];
     required ShootMode shootMode = 6     [default = KICK];
     required TriggerMode triggerMode = 7 [default = STAND_DOWN];
-    required bool firmwareEnable = 8     [default = false];
     required Song song = 9               [default = CONTINUE];
 }
