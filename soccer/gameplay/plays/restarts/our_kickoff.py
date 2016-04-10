@@ -53,8 +53,6 @@ class OurKickoff(standard_play.StandardPlay):
                                  priority=4 - i)
             self.centers.append(center_i)
 
-        
-
     @classmethod
     def score(cls):
         gs = main.game_state()

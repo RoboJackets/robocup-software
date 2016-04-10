@@ -44,8 +44,6 @@ class OurCornerKick(standard_play.StandardPlay):
                              required=False,
                              priority=3)
 
-        
-
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,
                             self.kicker.is_done_running, 'kicker is done')

@@ -13,8 +13,6 @@ class TheirRestart(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
-        
-
         self.marks = []
         for i in range(3):
             mark_i = skills.mark.Mark()

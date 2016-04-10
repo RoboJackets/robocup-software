@@ -20,8 +20,6 @@ class DefendPenalty(standard_play.StandardPlay):
         lineup = tactics.line_up.LineUp(line)
         self.add_subbehavior(lineup, 'lineup')
 
-        
-
     @classmethod
     def score(cls):
         gs = main.game_state()

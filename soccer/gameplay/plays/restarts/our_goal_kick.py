@@ -39,8 +39,6 @@ class OurGoalKick(standard_play.StandardPlay):
         center2 = skills.move.Move()
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
-        
-
     @classmethod
     def score(cls):
         gs = main.game_state()

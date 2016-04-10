@@ -6,7 +6,7 @@ import main
 
 
 ## Runs our Defense tactic
-class TestDefense(standard_play.StandardPlay):
+class TestDefense(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
