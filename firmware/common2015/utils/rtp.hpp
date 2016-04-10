@@ -13,6 +13,7 @@ namespace rtp {
 static const unsigned int MAX_DATA_SZ = 120;
 
 const uint8_t BROADCAST_ADDRESS = 0;
+const uint8_t BASE_STATION_ADDRESS = 1;
 
 /**
  * @brief Port enumerations for different communication protocols.

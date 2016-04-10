@@ -20,6 +20,7 @@
 #include "BallSense.hpp"
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
+#include "RadioProtocol2011.hpp"
 
 using namespace std;
 
@@ -153,6 +154,14 @@ int main() {
 
     // Make sure all of the motors are enabled
     motors_Init();
+
+    RadioProtocol2011 radioProtocol(CommModule::Instance, global_radio);
+    radioProtocol.start();
+    radioProtocol.rxCallback = [](uint8_t* msg) {
+        // TODO: parse @msg
+        // TODO: create actual message
+        return vector<uint8_t>(10, 1);
+    };
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
