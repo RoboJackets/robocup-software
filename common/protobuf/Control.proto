@@ -18,7 +18,8 @@ message Control
     enum Song
     {
         STOP = 1;
-        FIGHT_SONG = 2;
+        CONTINUE = 2;
+        FIGHT_SONG = 3;
     }
 
     required float xVelocity = 1         [default = 0];

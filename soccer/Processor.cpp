@@ -611,7 +611,6 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
-            // Packet::RadioTx::Robot* txRobot = tx->add_robots();
             Packet::Robot* txRobot =
                 tx->mutable_robotcollection()->add_robots();
 
@@ -623,7 +622,6 @@ void Processor::sendRadioData() {
             if (r->shell() == _manualID) {
                 const JoystickControlValues controlVals =
                     getJoystickControlValues();
-                // myTestFunc();
                 applyJoystickControls(controlVals, txRobot->mutable_control(),
                                       r);
             }
@@ -658,8 +656,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(Packet::Control::IMMEDIATE);
-    tx->set_kcstrength(kick ? controlVals.kickPower : 0);
+    tx->set_triggermode(kick ? Packet::Control::IMMEDIATE : Packet::Control::STAND_DOWN);
+    tx->set_kcstrength(controlVals.kickPower);
     tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
                                        : Packet::Control::CHIP);
 
