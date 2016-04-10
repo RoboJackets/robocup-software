@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import tactics.defense
 import robocup
