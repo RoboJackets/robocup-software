@@ -30,8 +30,6 @@ class OurFreeKick(standard_play.StandardPlay):
         center2 = skills.move.Move(robocup.Point(0, 1.5))
         self.add_subbehavior(center1, 'center2', required=False, priority=3)
 
-        
-
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
             lambda: kicker.is_done_running(), 'kicker completes')

@@ -69,8 +69,6 @@ class TwoSideCornerKick(standard_play.StandardPlay):
         self.passRobot2 = None
         self.captureRobot = None
 
-        
-
     @classmethod
     def score(cls):
         gs = main.game_state()

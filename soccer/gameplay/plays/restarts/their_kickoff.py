@@ -14,8 +14,6 @@ class TheirKickoff(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
-        
-
         circle_up = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(circle_up, 'circle_up')
 

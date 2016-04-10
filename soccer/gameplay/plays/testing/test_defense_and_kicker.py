@@ -8,7 +8,7 @@ import main
 
 
 ## Runs our Defense tactic and a pivot kicker than tries to score on our defense
-class TestDefenseAndKicker(standard_play.StandardPlay):
+class TestDefenseAndKicker(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,

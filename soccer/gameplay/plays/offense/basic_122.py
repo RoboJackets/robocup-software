@@ -49,8 +49,6 @@ class Basic122(standard_play.StandardPlay):
         support2.mark_line_thresh = 1.0
         self.add_subbehavior(support2, 'support2', required=False, priority=1)
 
-        
-
     @classmethod
     def score(cls):
         return 10 if main.game_state().is_playing() else float("inf")
