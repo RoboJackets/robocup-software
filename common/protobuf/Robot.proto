@@ -4,13 +4,6 @@ import "Control.proto";
 
 message Robot
 {
-    enum TxType
-    {
-        CONTROL  = 1;
-        // TUNING   = 2;
-    }
-
     required uint32 uid = 1;
-    required TxType txType = 2;
     required Control control = 3;
 }

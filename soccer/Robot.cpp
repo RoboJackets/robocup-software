@@ -61,12 +61,9 @@ OurRobot::OurRobot(int shell, SystemState* state)
     : Robot(shell, true), _state(state) {
     _cmdText = new std::stringstream();
     robotPacket = new Packet::Robot();
-    robotPacket->set_txtype(Packet::Robot::CONTROL);
     Packet::Control* ctl = new Packet::Control();
     robotPacket->set_allocated_control(ctl);
     control = ctl;
-
-    robotPacket->set_txtype(Packet::Robot::CONTROL);
 
     _lastChargedTime = 0;
     _lastKickerStatus = 0;
