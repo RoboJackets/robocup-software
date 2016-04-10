@@ -22,8 +22,8 @@ int main() {
     bool success = kicker.flash(false, true);
     printf("Flashed kicker, success = %s\r\n", success ? "TRUE" : "FALSE");
 
-    n_kick_select = 0;
-    uint8_t transByte;
+    n_kick_select = 1;
+    uint8_t transByte = 0;
     char getCmd;
     // Setup the spi for 8 bit data, high steady state clock,
     SPI spi(p5, p6, p7); // mosi, miso, sclk
@@ -37,15 +37,46 @@ int main() {
             getCmd = pc.getc();
             switch(getCmd){
               case 'k':
-                transByte = kick(255);
+                transByte = kick(4);
+                break;
               case 'c':
-                transByte = chip(255);
+                transByte = chip(50);
+                break;
               case 'r':
                 transByte = vRead();
+                break;
+              default:
+                transByte = 0;
             }
+            /* ** */
+            // if (getCmd == k)
+            //   transByte = 1;
+            // else
+            //   transByte = 0;
+            // getCmd = 0;
+
+            // below works fine
+            // switch(getCmd){
+            //   case 'k':
+            //     transByte = 1;
+            //     break;
+            //   case 'c':
+            //     transByte = 2;
+            //     break;
+            //   case 'r':
+            //     transByte = 3;
+            //     break;
+            //   default:
+            //     transByte = 0;
+            //     break;
+            // }
             int a;
             transferAndWait(transByte, spi);
-            a = transferAndWait('0', spi);
+            wait(.1);
+            a = transferAndWait(0, spi);
+            /**/
+
+            // a = transferAndWait('3', spi);
             pc.printf("Received:");
             pc.printf("%d\r\n", a);
             wait(.1); // tested down to .025 seconds between
@@ -75,9 +106,6 @@ Commands:
 10 chip
 01 read
 00 null
-
-swedish fish theory
-
 */
 
 // map time into 0-63 range

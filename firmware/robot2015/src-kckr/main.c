@@ -1,9 +1,9 @@
 /*
 * Pin - Action - SPI_Pin
-* 10 - SS - p8
-* 11 - MOSI - p5
-* 12 - MISO - p6
-* 13 - SCK - p7
+* SS - p8
+* MOSI - p5
+* MISO - p6
+* SCK - p7
 */
 
 #include <avr/io.h>
@@ -53,18 +53,47 @@ void main()
 
             if (had_interrupt_) {
                 char cmd = data_>>6;
+                /*
+                below just for debugging
+                */
+
+                // char cmd = data_;
+                //
+                //
+                // switch(cmd) {
+                //     case 1: // chip
+                //         time = 2;
+                //         // time  = data_ & 0x3F;
+                //         trigger(time, 0);
+                //         break;
+                //     case 2: // kick
+                //         time = 2;
+                //         // time  = data_ & 0x3F;
+                //         trigger(time, 1);
+                //         break;
+                //     default:
+                //         break;
+                // }
+                /* end just for debugging*/
+
+
                 switch(cmd) {
                     case 0x1: // read voltage
                         break;
                     case 0x2: // chip
+                        // time = 2;
                         time  = data_ & 0x3F;
                         trigger(time, 0);
                         break;
                     case 0x3: // kick
+                        // time = 2;
                         time  = data_ & 0x3F;
                         trigger(time, 1);
                         break;
+                    default:
+                        break;
                 }
+
                 // // Simulate kick by toggling LED
                 // if (data_ == (uint8_t) 255) {
                 //     TOGGLE_BIT(PORTB, LED);
@@ -132,7 +161,8 @@ void trigger(uint8_t timeKick, uint8_t useKicker)
 {
     uint8_t action = useKicker ? KICK : CHIP;
     TOGGLE_BIT(PORTA, action);
-    delay_us(timeKick*125);
+    // delay_us(timeKick*125);
+    _delay_ms(200);
     TOGGLE_BIT(PORTA, action);
 }
 
