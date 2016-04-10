@@ -656,7 +656,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick ? Packet::Control::IMMEDIATE : Packet::Control::STAND_DOWN);
+    tx->set_triggermode(kick ? Packet::Control::IMMEDIATE
+                             : Packet::Control::STAND_DOWN);
     tx->set_kcstrength(controlVals.kickPower);
     tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
                                        : Packet::Control::CHIP);
