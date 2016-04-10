@@ -610,8 +610,7 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
-            Packet::Robot* txRobot =
-                tx->add_robots();
+            Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the

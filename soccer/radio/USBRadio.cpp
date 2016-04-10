@@ -210,10 +210,8 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     int offset = 1;
     int slot;
-    for (slot = 0; slot < 6 && slot < packet.robots_size();
-         ++slot) {
-        const Packet::Control& robot =
-            packet.robots(slot).control();
+    for (slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
+        const Packet::Control& robot = packet.robots(slot).control();
         int robot_id = packet.robots(slot).uid();
 
         float bodyVelX =
