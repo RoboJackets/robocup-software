@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import constants
 import tactics.defense
@@ -14,7 +14,7 @@ class TestDefenseAndKicker(play.Play):
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             "immediately")
-
+        
     def on_enter_running(self):
         b = tactics.defense.Defense()
         self.add_subbehavior(b, name='defense', required=True)
