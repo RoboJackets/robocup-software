@@ -245,6 +245,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
             (robot.shootmode() == Packet::Control::CHIP) |
             ((robot.triggermode() == Packet::Control::IMMEDIATE) << 1) |
             (robot.song() << 2) | (0 /*robot.anthem()*/ << 3);
+        // TODO remove, no longer used
         forward_packet[offset++] = 10;  // robot.accel();
         forward_packet[offset++] = 10;  // robot.decel();
     }
