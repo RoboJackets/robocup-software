@@ -67,7 +67,7 @@ OurRobot::OurRobot(int shell, SystemState* state)
     control = ctl;
 
     robotPacket->set_txtype(Packet::Robot::CONTROL);
-    
+
     _lastChargedTime = 0;
     _lastKickerStatus = 0;
     _lastKickTime = 0;
