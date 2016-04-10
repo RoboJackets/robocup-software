@@ -11,17 +11,6 @@ message RadioTx
 		MULTICAST = 2;
 	}
 
-	enum TxType
-	{
-		ROBOTS = 1;
-		// FIRMWARE = 2;
-	}
-
-	message RobotCollection {
-		repeated Robot robots = 2;
-	}
-
 	required TxMode txMode = 1;
-	required TxType txType = 2;
-	optional RobotCollection robotCollection = 4;
+	repeated Robot robots = 2;
 }

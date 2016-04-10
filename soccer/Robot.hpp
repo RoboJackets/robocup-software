@@ -11,7 +11,6 @@
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/Control.pb.h>
-#include <protobuf/Tuning.pb.h>
 #include <Utils.hpp>
 
 #include <array>
@@ -290,10 +289,6 @@ public:
      */
     std::string getCmdText() const;
 
-    bool flashingFw;
-    void flagFlash();
-    void clearFlash();
-
     /**
      * ignore ball sense and kick immediately
      */
@@ -422,13 +417,7 @@ public:
      * @param song
      */
     void sing(Packet::Control::Song song) {
-        // std::string songName = "";
-        // switch (song)
-        // {
-        //     case
-        // }
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        // radioTx.set_sing(true);
         control->set_song(song);
     }
 

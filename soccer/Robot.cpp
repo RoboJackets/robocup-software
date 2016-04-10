@@ -67,9 +67,7 @@ OurRobot::OurRobot(int shell, SystemState* state)
     control = ctl;
 
     robotPacket->set_txtype(Packet::Robot::CONTROL);
-
-    clearFlash();
-    resetAvoidBall();
+    
     _lastChargedTime = 0;
     _lastKickerStatus = 0;
     _lastKickTime = 0;
@@ -147,7 +145,7 @@ void OurRobot::resetForNextIteration() {
 
     resetMotionConstraints();
     _unkick();
-    control->set_firmwareenable(flashingFw);
+    control->set_firmwareenable(false);
     control->set_song(Packet::Control::STOP);
 
     isPenaltyKicker = false;
@@ -310,10 +308,6 @@ void OurRobot::unkick() {
 
     *_cmdText << "unkick()" << endl;
 }
-
-void OurRobot::flagFlash() { flashingFw = true; }
-
-void OurRobot::clearFlash() { flashingFw = false; }
 
 void OurRobot::kickImmediately(bool im) {
     control->set_triggermode(Packet::Control::IMMEDIATE);
