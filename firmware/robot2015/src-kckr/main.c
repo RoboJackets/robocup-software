@@ -78,8 +78,8 @@ void main()
 
 
                 switch(cmd) {
-                    case 0x1: // read voltage
-                        break;
+                    // case 0x1: // read voltage
+                    //     break;
                     case 0x2: // chip
                         // time = 2;
                         time  = data_ & 0x3F;
@@ -90,7 +90,7 @@ void main()
                         time  = data_ & 0x3F;
                         trigger(time, 1);
                         break;
-                    default:
+                    default: //just read voltage otherwise
                         break;
                 }
 
@@ -162,7 +162,7 @@ void trigger(uint8_t timeKick, uint8_t useKicker)
     uint8_t action = useKicker ? KICK : CHIP;
     TOGGLE_BIT(PORTA, action);
     // delay_us(timeKick*125);
-    _delay_ms(200);
+    delay_ms(timeKick*13);
     TOGGLE_BIT(PORTA, action);
 }
 
@@ -186,4 +186,10 @@ void delay_us(uint16_t count) {
     while(count--) {
         _delay_us(1);
     }
+}
+
+void delay_ms(uint16_t count) {
+  while(count--) {
+      _delay_ms(1);
+  }
 }

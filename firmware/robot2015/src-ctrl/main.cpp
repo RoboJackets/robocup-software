@@ -37,13 +37,14 @@ int main() {
             getCmd = pc.getc();
             switch(getCmd){
               case 'k':
-                transByte = kick(4);
+                transByte = kick(10);
                 break;
               case 'c':
                 transByte = chip(50);
                 break;
               case 'r':
-                transByte = vRead();
+                // transByte = vRead();
+                transByte = 1;
                 break;
               default:
                 transByte = 0;
@@ -125,12 +126,12 @@ int chip( int time )
   time = map(time, 0, 255, 0, 63);
   return cmd | time;
 }
-int vRead()
-{
-  //set voltage read command
-  int cmd = 0xA0;
-  return cmd;
-}
+// int vRead()
+// {
+//   //set voltage read command
+//   int cmd = 0xA0;
+//   return cmd;
+// }
 
 int map(int x, int in_min, int in_max, int out_min, int out_max)
 // originally an Arduino function
