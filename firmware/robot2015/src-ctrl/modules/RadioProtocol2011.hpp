@@ -28,6 +28,10 @@ public:
         ASSERT(radio != nullptr);
     }
 
+    ~RadioProtocol2011() {
+        stop();
+    }
+
     /// robot unique id
     void setUID(uint8_t uid) { _uid = uid; }
 
@@ -50,6 +54,8 @@ public:
                                   rtp::port::CONTROL);
         _commModule->setTxHandler((CommLink*)global_radio,
                                   &CommLink::sendPacket, rtp::port::CONTROL);
+
+        LOG(INF1, "Radio protocol listening on port %d", rtp::port::CONTROL);
     }
 
     void stop() {
@@ -57,6 +63,8 @@ public:
 
         _replyTimer.stop();
         _state = STOPPED;
+
+        LOG(INF1, "Radio protocol stopped");
     }
 
     State state() const { return _state; }
