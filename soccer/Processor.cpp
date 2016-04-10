@@ -602,7 +602,6 @@ void Processor::sendRadioData() {
             control->set_kcstrength(255);
             control->set_shootmode(Packet::Control::KICK);
             control->set_triggermode(Packet::Control::STAND_DOWN);
-            control->set_firmwareenable(false);
             control->set_song(Packet::Control::STOP);
         }
     }
