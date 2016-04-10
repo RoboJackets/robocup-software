@@ -5,15 +5,12 @@
 #include <logger.hpp>
 #include <assert.hpp>
 
-#include "task-signals.hpp"
 #include "commands.hpp"
 
 /**
  * Initializes the console
  */
 void Task_SerialConsole(void const* args) {
-    const osThreadId mainID = (const osThreadId)args;
-
     // Store the thread's ID
     const osThreadId threadID = Thread::gettid();
     ASSERT(threadID != nullptr);
@@ -32,10 +29,6 @@ void Task_SerialConsole(void const* args) {
         "Serial console ready!\r\n"
         "    Thread ID: %u, Priority: %d",
         threadID, threadPriority);
-
-    // Signal back to main and wait until we're signaled to continue
-    osSignalSet(mainID, MAIN_TASK_CONTINUE);
-    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     // Display RoboJackets if we're up and running at this point during startup
     console->ShowLogo();
