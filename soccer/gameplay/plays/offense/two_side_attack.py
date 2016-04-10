@@ -140,12 +140,10 @@ class TwoSideAttack(standard_play.StandardPlay):
 
     def remove_temporary_subbehaviors(self):
         for (key, value) in self.subbehaviors_by_name().items():
-            if not (key in self.pernamentBehaviors):
                 self.remove_subbehavior(key)
 
     def temporary_behaviors_completed(self):
         for (key, value) in self.subbehaviors_by_name().items():
-            if not (key in self.pernamentBehaviors):
                 if not value.is_done_running():
                     return False
         return True
