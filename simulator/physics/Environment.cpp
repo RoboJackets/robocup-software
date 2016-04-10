@@ -345,8 +345,8 @@ Robot* Environment::robot(bool blue, int board_id) const {
 }
 
 void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
-    for (int i = 0; i < tx.robotcollection().robots_size(); ++i) {
-        const Packet::Robot& cmd = tx.robotcollection().robots(i);
+    for (int i = 0; i < tx.robots_size(); ++i) {
+        const Packet::Robot& cmd = tx.robots(i);
 
         Robot* r = robot(blue, cmd.uid());
         if (r) {

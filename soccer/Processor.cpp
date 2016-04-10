@@ -589,7 +589,6 @@ void Processor::run() {
 void Processor::sendRadioData() {
     Packet::RadioTx* tx = _state.logFrame->mutable_radio_tx();
     tx->set_txmode(Packet::RadioTx::UNICAST);
-    tx->set_txtype(Packet::RadioTx::ROBOTS);
 
     // Halt overrides normal motion control, but not joystick
     if (_state.gameState.halt()) {
@@ -612,7 +611,7 @@ void Processor::sendRadioData() {
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
             Packet::Robot* txRobot =
-                tx->mutable_robotcollection()->add_robots();
+                tx->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the

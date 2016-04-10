@@ -202,7 +202,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     // Build a forward packet
     forward_packet[0] = _sequence;
-    // packet.set_sequence(_sequence);
 
     // Unit conversions
     static const float Seconds_Per_Cycle = 0.005f;
@@ -211,11 +210,11 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     int offset = 1;
     int slot;
-    for (slot = 0; slot < 6 && slot < packet.robotcollection().robots_size();
+    for (slot = 0; slot < 6 && slot < packet.robots_size();
          ++slot) {
         const Packet::Control& robot =
-            packet.robotcollection().robots(slot).control();
-        int robot_id = packet.robotcollection().robots(slot).uid();
+            packet.robots(slot).control();
+        int robot_id = packet.robots(slot).uid();
 
         float bodyVelX =
             robot.xvelocity() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
