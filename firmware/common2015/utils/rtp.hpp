@@ -23,7 +23,6 @@ enum port {
     LINK,
     CONTROL,
     DISCOVER,
-    LOGGER,
     LEGACY,
     PING
 };
