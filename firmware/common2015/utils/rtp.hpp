@@ -22,11 +22,8 @@ enum port {
     SINK = 0,
     LINK,
     CONTROL,
-    // SETPOINT,
-    // GSTROBE,
     DISCOVER,
     LOGGER,
-    TCP,
     LEGACY,
     PING
 };
