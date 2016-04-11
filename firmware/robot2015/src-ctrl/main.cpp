@@ -216,6 +216,8 @@ int main() {
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
+        LOG(INIT, "Shell id: %d", rotarySelector.read());
+
         // Set error indicators
         if (!fpga_ready) {
             // orange - error
