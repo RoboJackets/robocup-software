@@ -1189,7 +1189,7 @@ void MainWindow::on_actionVisionSecondary_Half_triggered() {
 }
 
 void MainWindow::on_actionVisionFull_Field_triggered() {
-    _processor->changeVisionChannel(SharedVisionPortDoubleOld);
+    _processor->changeVisionChannel(SharedVisionPortDoubleNew);
     _processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
     _ui.actionVisionPrimary_Half->setChecked(false);
     _ui.actionVisionSecondary_Half->setChecked(false);

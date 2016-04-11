@@ -312,6 +312,9 @@ void Processor::run() {
                     fieldSize.field_width() << endl;
                 // FIXME - Account for network latency
 
+
+                cout << "line count: " << fieldSize.field_lines_size() << endl;
+
                 if (fieldSize.field_length() != 0 &&
                     (currentDimensions.Length() != fieldSize.field_length())) {
                     // Set the changed field dimensions to the current ones
