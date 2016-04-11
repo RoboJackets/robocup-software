@@ -21,6 +21,7 @@
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
 #include "RadioProtocol2011.hpp"
+#include "RtosTimerHelper.hpp"
 
 using namespace std;
 
@@ -39,12 +40,6 @@ void statusLights(bool state) {
     for (DigitalOut& led : init_leds) led = !state;
 }
 
-/// Turn all status LEDs on
-void statusLightsON(void const* args) { statusLights(true); }
-
-/// Turn all status LEDs off
-void statusLightsOFF(void const* args) { statusLights(false); }
-
 /**
  * The entry point of the system where each submodule's thread is started.
  */
@@ -62,7 +57,7 @@ int main() {
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
-    statusLightsON(nullptr);
+    statusLights(true);
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
@@ -104,7 +99,7 @@ int main() {
                                      RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
-    RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
+    RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
     /// A shared spi bus used for the fpga and cc1201 radio
@@ -130,9 +125,12 @@ int main() {
                             "/local/rj-kickr.nib");
     bool kickerReady = kickerBoard.flash(true, true);
 
-    // Init IO Expander and turn all LEDs on
+    // Init IO Expander and turn all LEDs on.  The first parameter to config()
+    // sets the first 8 lines to input and the last 8 to output.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
+    ioExpander.config(0x00FF, 0x0000, 0x0000);
+    ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
+                         IOExpanderErrorLEDMask);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -207,7 +205,7 @@ int main() {
         }
 
         // Set error-indicating leds on the control board
-        ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);
+        ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
         // Set error indicators
         if (!fpga_ready) {
