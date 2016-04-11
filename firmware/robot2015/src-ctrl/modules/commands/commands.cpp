@@ -773,17 +773,16 @@ int cmd_led(cmd_args_t& args) {
             if (args.size() > 1) {
                 std::map<std::string, NeoColor> colors;
                 // order for struct is green, red, blue
-                colors["red"] = {0x00, 0xFF, 0x00};
-                colors["green"] = {0xFF, 0x00, 0x00};
-                colors["blue"] = {0x00, 0x00, 0xFF};
-                colors["yellow"] = {0xFF, 0xFF, 0x00};
-                colors["purple"] = {0x00, 0xFF, 0xFF};
-                colors["white"] = {0xFF, 0xFF, 0xFF};
+                colors["red"] = NeoColorRed;
+                colors["green"] = NeoColorGreen;
+                colors["blue"] = NeoColorBlue;
+                colors["yellow"] = NeoColorYellow;
+                colors["purple"] = NeoColorPurple;
+                colors["white"] = NeoColorWhite;
                 auto it = colors.find(args[1]);
                 if (it != colors.end()) {
                     printf("Changing color to %s.\r\n", it->first.c_str());
-                    led.setPixel(1, it->second.red, it->second.green,
-                                 it->second.blue);
+                    led.setPixel(1, it->second);
                 } else {
                     show_invalid_args(args);
                     return 1;

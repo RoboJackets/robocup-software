@@ -93,8 +93,8 @@ int main() {
     // Set the RGB LEDs to a medium blue while the threads are started up
     float defaultBrightness = 0.02f;
     rgbLED.brightness(3 * defaultBrightness);
-    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
+    rgbLED.setPixel(0, NeoColorBlue);
+    rgbLED.setPixel(1, NeoColorBlue);
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
@@ -207,29 +207,29 @@ int main() {
         if (!fpga_ready) {
             // orange - error
             rgbLED.brightness(4 * defaultBrightness);
-            rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
+            rgbLED.setPixel(0, NeoColorOrange);
         } else {
             // green - no error...yet
             rgbLED.brightness(defaultBrightness);
-            rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+            rgbLED.setPixel(0, NeoColorGreen);
         }
 
         if (errorBitmask & RJ_ERR_LED_RADIO) {
             // orange - error
             rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
+            rgbLED.setPixel(1, NeoColorOrange);
         } else {
             // green - no error...yet
             rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+            rgbLED.setPixel(1, NeoColorGreen);
         }
 
         if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
             // bright as hell to make sure they know
             rgbLED.brightness(10 * defaultBrightness);
             // well, damn. everything is broke as hell
-            rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
-            rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
+            rgbLED.setPixel(0, NeoColorRed);
+            rgbLED.setPixel(1, NeoColorRed);
         }
     }
 }
