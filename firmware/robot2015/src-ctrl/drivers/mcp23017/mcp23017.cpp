@@ -38,11 +38,11 @@ uint16_t MCP23017::readRegister(MCP23017::Register regAddress) {
     return (uint16_t)(buffer[0] | (buffer[1] << 8));
 }
 
-void MCP23017::writeBit(int value, int bit_number) {
+void MCP23017::writePin(int value, MCP23017::ExpPinName pin) {
     if (value == 0) {
-        _cachedGPIO &= ~(1 << bit_number);
+        _cachedGPIO &= ~(1 << pin);
     } else {
-        _cachedGPIO |= 1 << bit_number;
+        _cachedGPIO |= 1 << pin;
     }
 
     digitalWordWrite(_cachedGPIO);
@@ -53,16 +53,16 @@ void MCP23017::writeMask(uint16_t data, uint16_t mask) {
     digitalWordWrite(_cachedGPIO);
 }
 
-uint8_t MCP23017::readBit(int bit_number) {
+uint8_t MCP23017::readPin(MCP23017::ExpPinName pin) {
     _cachedGPIO = digitalWordRead();
 
     LOG(INF2,
         "Read an I/O pin bit:"
         "    Bit:\t%u\r\n"
         "    State:\t%s",
-        bit_number, ((_cachedGPIO >> bit_number) & 0x0001) ? "ON" : "OFF");
+        pin, ((_cachedGPIO >> pin) & 0x0001) ? "ON" : "OFF");
 
-    return ((_cachedGPIO >> bit_number) & 0x0001);
+    return ((_cachedGPIO >> pin) & 0x0001);
 }
 
 int MCP23017::readMask(uint16_t mask) { return readRegister(GPIO) & mask; }
