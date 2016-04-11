@@ -3,6 +3,7 @@
 #include <rtos.h>
 #include "CommModule.hpp"
 #include "CC1201.hpp"
+#include "RtosTimerHelper.hpp"
 
 class RadioProtocol2011 {
 public:
@@ -22,15 +23,13 @@ public:
           _radio(radio),
           _uid(uid),
           _state(STOPPED),
-          _replyTimer(&replyTimerFired, osTimerOnce, this),
-          _timeoutTimer(&timeoutTimerFired, osTimerOnce, this) {
+          _replyTimer(this, &RadioProtocol2011::reply, osTimerOnce),
+          _timeoutTimer(this, &RadioProtocol2011::_timeout, osTimerOnce) {
         ASSERT(commModule != nullptr);
         ASSERT(radio != nullptr);
     }
 
-    ~RadioProtocol2011() {
-        stop();
-    }
+    ~RadioProtocol2011() { stop(); }
 
     /// robot unique id
     void setUID(uint8_t uid) { _uid = uid; }
@@ -101,12 +100,6 @@ public:
     }
 
 private:
-    static void replyTimerFired(const void* instance) {
-        RadioProtocol2011* thiss = const_cast<RadioProtocol2011*>(
-            reinterpret_cast<const RadioProtocol2011*>(instance));
-        thiss->reply();
-    }
-
     void reply() {
         rtp::packet pkt;
         pkt.header.port = rtp::port::CONTROL;
@@ -118,12 +111,7 @@ private:
         _commModule->send(pkt);
     }
 
-    /// Transitition to DISCONNECTED if timeout timer fires
-    static void timeoutTimerFired(const void* instance) {
-        RadioProtocol2011* thiss = const_cast<RadioProtocol2011*>(
-            reinterpret_cast<const RadioProtocol2011*>(instance));
-        thiss->_state = DISCONNECTED;
-    }
+    void _timeout() { _state = DISCONNECTED; }
 
     std::shared_ptr<CommModule> _commModule;
     CC1201* _radio;
@@ -135,6 +123,6 @@ private:
 
     std::vector<uint8_t> _reply;
 
-    RtosTimer _replyTimer;
-    RtosTimer _timeoutTimer;
+    RtosTimerHelper _replyTimer;
+    RtosTimerHelper _timeoutTimer;
 };
