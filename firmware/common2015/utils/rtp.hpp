@@ -18,14 +18,7 @@ const uint8_t BASE_STATION_ADDRESS = 1;
 /**
  * @brief Port enumerations for different communication protocols.
  */
-enum port {
-    SINK = 0,
-    LINK,
-    CONTROL,
-    DISCOVER,
-    LEGACY,
-    PING
-};
+enum port { SINK = 0, LINK, CONTROL, LEGACY, PING };
 
 struct header_data {
     enum Type { Control, Tuning, FirmwareUpdate, Misc };

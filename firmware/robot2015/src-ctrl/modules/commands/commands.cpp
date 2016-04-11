@@ -855,9 +855,9 @@ int cmd_radio(cmd_args_t& args) {
 
     if (args.size() == 1 || args.size() == 2) {
         rtp::packet pck("LINK TEST PAYLOAD");
-        unsigned int portNbr = rtp::port::DISCOVER;
+        rtp::port portNbr = rtp::port::LINK;
 
-        if (args.size() > 1) portNbr = atoi(args[1].c_str());
+        if (args.size() > 1) portNbr = (rtp::port)atoi(args[1].c_str());
 
         pck.port(portNbr);
         pck.address(BASE_STATION_ADDR);
