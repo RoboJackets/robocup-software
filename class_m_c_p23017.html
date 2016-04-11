@@ -138,6 +138,29 @@ Public Types</h2></td></tr>
 <br/>
  }</td></tr>
 <tr class="separator:a3f402d0f5722dfbbfca400a36bc5d66e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a212b5a8e279b09067dd96eee9a1deb67"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ExpPinName</b> { <br/>
+&#160;&#160;<b>PinA0</b> = 0, 
+<b>PinA1</b> = 1, 
+<b>PinA2</b> = 2, 
+<b>PinA3</b> = 3, 
+<br/>
+&#160;&#160;<b>PinA4</b> = 4, 
+<b>PinA5</b> = 5, 
+<b>PinA6</b> = 6, 
+<b>PinA7</b> = 7, 
+<br/>
+&#160;&#160;<b>PinB0</b> = 8, 
+<b>PinB1</b> = 9, 
+<b>PinB2</b> = 10, 
+<b>PinB3</b> = 11, 
+<br/>
+&#160;&#160;<b>PinB4</b> = 12, 
+<b>PinB5</b> = 13, 
+<b>PinB6</b> = 14, 
+<b>PinB7</b> = 15
+<br/>
+ }</td></tr>
+<tr class="separator:a212b5a8e279b09067dd96eee9a1deb67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a722f23d7767a135c669222da836339be"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>PinMode</b> { <b>DIR_OUTPUT</b> = 0, 
 <b>DIR_INPUT</b> = 1
  }</td></tr>
@@ -152,24 +175,24 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a8e108f5da7099d11e6916e0badc133c0">reset</a> ()</td></tr>
 <tr class="memdesc:a8e108f5da7099d11e6916e0badc133c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset MCP23017 device to its power-on state. <br/></td></tr>
 <tr class="separator:a8e108f5da7099d11e6916e0badc133c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7be00de0a0c7349eeef4a8558427fb03"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a7be00de0a0c7349eeef4a8558427fb03">writeBit</a> (int value, int bit_number)</td></tr>
-<tr class="memdesc:a7be00de0a0c7349eeef4a8558427fb03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a 0/1 value to an output bit.  <a href="#a7be00de0a0c7349eeef4a8558427fb03">More...</a><br/></td></tr>
-<tr class="separator:a7be00de0a0c7349eeef4a8558427fb03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf2d0d52597391e51a5ec6c25a6b05a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#abf2d0d52597391e51a5ec6c25a6b05a1">writePin</a> (int value, MCP23017::ExpPinName pin)</td></tr>
+<tr class="memdesc:abf2d0d52597391e51a5ec6c25a6b05a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a 0/1 value to an output bit.  <a href="#abf2d0d52597391e51a5ec6c25a6b05a1">More...</a><br/></td></tr>
+<tr class="separator:abf2d0d52597391e51a5ec6c25a6b05a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03a2643a1e2fbf8c2aa998d48f360498"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a03a2643a1e2fbf8c2aa998d48f360498">writeMask</a> (uint16_t data, uint16_t mask)</td></tr>
 <tr class="memdesc:a03a2643a1e2fbf8c2aa998d48f360498"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a masked 16-bit value to the device.  <a href="#a03a2643a1e2fbf8c2aa998d48f360498">More...</a><br/></td></tr>
 <tr class="separator:a03a2643a1e2fbf8c2aa998d48f360498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e120ab112709bdb32b7becbd534413e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e120ab112709bdb32b7becbd534413e"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>readMask</b> (uint16_t mask)</td></tr>
 <tr class="separator:a6e120ab112709bdb32b7becbd534413e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14c0ac74c83ae73e5455f7b92b29b0c4"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a14c0ac74c83ae73e5455f7b92b29b0c4">readBit</a> (int bit_number)</td></tr>
-<tr class="memdesc:a14c0ac74c83ae73e5455f7b92b29b0c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a 0/1 value from an input bit.  <a href="#a14c0ac74c83ae73e5455f7b92b29b0c4">More...</a><br/></td></tr>
-<tr class="separator:a14c0ac74c83ae73e5455f7b92b29b0c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b9fc988b1bae8bf9cd9b9082f952ee1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a6b9fc988b1bae8bf9cd9b9082f952ee1">readPin</a> (MCP23017::ExpPinName pin)</td></tr>
+<tr class="memdesc:a6b9fc988b1bae8bf9cd9b9082f952ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a 0/1 value from an input bit.  <a href="#a6b9fc988b1bae8bf9cd9b9082f952ee1">More...</a><br/></td></tr>
+<tr class="separator:a6b9fc988b1bae8bf9cd9b9082f952ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0012ecd9ece2bbe2f1ac473abf76fe29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a0012ecd9ece2bbe2f1ac473abf76fe29">config</a> (uint16_t dir_config, uint16_t pullup_config, uint16_t polarity_config)</td></tr>
 <tr class="memdesc:a0012ecd9ece2bbe2f1ac473abf76fe29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure an MCP23017 device.  <a href="#a0012ecd9ece2bbe2f1ac473abf76fe29">More...</a><br/></td></tr>
 <tr class="separator:a0012ecd9ece2bbe2f1ac473abf76fe29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2c4ff61e423fc99a8cf740a995fa87f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2c4ff61e423fc99a8cf740a995fa87f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>writeRegister</b> (MCP23017::Register regAddress, uint8_t val)</td></tr>
-<tr class="separator:ae2c4ff61e423fc99a8cf740a995fa87f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7e0f3b57f9eee9988689643f59b67d3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7e0f3b57f9eee9988689643f59b67d3"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>writeRegister</b> (MCP23017::Register regAddress, uint16_t val)</td></tr>
+<tr class="separator:ab7e0f3b57f9eee9988689643f59b67d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a369951f5ce7e9ae6a338bcf9cc9f10f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a369951f5ce7e9ae6a338bcf9cc9f10f6"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>readRegister</b> (MCP23017::Register regAddress)</td></tr>
 <tr class="separator:a369951f5ce7e9ae6a338bcf9cc9f10f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -197,9 +220,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>inputOutputMask</b> (
 <tr class="memitem:a167b866cd44e3389b1cc8315d547db95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a167b866cd44e3389b1cc8315d547db95"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>internalPullupMask</b> (uint16_t mask)</td></tr>
 <tr class="separator:a167b866cd44e3389b1cc8315d547db95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee9c22bd6168e2f2cc488d5f5e4212b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee9c22bd6168e2f2cc488d5f5e4212b1"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>read</b> ()</td></tr>
-<tr class="separator:aee9c22bd6168e2f2cc488d5f5e4212b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a206109703fa6de983491fe575e6485ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a206109703fa6de983491fe575e6485ce"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)</td></tr>
 <tr class="separator:a206109703fa6de983491fe575e6485ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -249,15 +269,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)<
 
 </div>
 </div>
-<a class="anchor" id="a14c0ac74c83ae73e5455f7b92b29b0c4"></a>
+<a class="anchor" id="a6b9fc988b1bae8bf9cd9b9082f952ee1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t MCP23017::readBit </td>
+          <td class="memname">uint8_t MCP23017::readPin </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>bit_number</em></td><td>)</td>
+          <td class="paramtype">MCP23017::ExpPinName&#160;</td>
+          <td class="paramname"><em>pin</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -271,41 +291,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)<
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>0/1 value read </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a7be00de0a0c7349eeef4a8558427fb03"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void MCP23017::writeBit </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>value</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>bit_number</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Write a 0/1 value to an output bit. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">value</td><td>0 or 1 </td></tr>
-    <tr><td class="paramname">bit_number</td><td>bit number range 0 &ndash;&gt; 15 </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -344,6 +329,41 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)<
 
 </div>
 </div>
+<a class="anchor" id="abf2d0d52597391e51a5ec6c25a6b05a1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MCP23017::writePin </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">MCP23017::ExpPinName&#160;</td>
+          <td class="paramname"><em>pin</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write a 0/1 value to an output bit. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>0 or 1 </td></tr>
+    <tr><td class="paramname">bit_number</td><td>bit number range 0 &ndash;&gt; 15 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>firmware/robot2015/src-ctrl/drivers/mcp23017/<a class="el" href="mcp23017_8hpp_source.html">mcp23017.hpp</a></li>
 <li>firmware/robot2015/src-ctrl/drivers/mcp23017/mcp23017.cpp</li>
@@ -354,7 +374,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_m_c_p23017.html">MCP23017</a></li>
-    <li class="footer">Generated on Fri Apr 8 2016 01:54:35 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Apr 11 2016 17:19:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
