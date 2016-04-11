@@ -16,7 +16,7 @@ public:
     void play(float freq, int dur, float vol = 1.0);
 
 private:
-    friend void analogUpdate(void const* args);
+    void analogUpdate();
 
     int j;
 };

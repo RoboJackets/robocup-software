@@ -20,6 +20,7 @@
 #include "BallSense.hpp"
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
+#include "RtosTimerHelper.hpp"
 
 using namespace std;
 
@@ -38,12 +39,6 @@ void statusLights(bool state) {
     for (DigitalOut& led : init_leds) led = !state;
 }
 
-/// Turn all status LEDs on
-void statusLightsON(void const* args) { statusLights(true); }
-
-/// Turn all status LEDs off
-void statusLightsOFF(void const* args) { statusLights(false); }
-
 /**
  * The entry point of the system where each submodule's thread is started.
  */
@@ -61,7 +56,7 @@ int main() {
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
-    statusLightsON(nullptr);
+    statusLights(true);
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
@@ -103,7 +98,7 @@ int main() {
                                      RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
-    RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
+    RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
     /// A shared spi bus used for the fpga and cc1201 radio
