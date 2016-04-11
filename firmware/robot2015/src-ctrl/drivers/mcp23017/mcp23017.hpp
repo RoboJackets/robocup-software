@@ -65,7 +65,7 @@ public:
     void config(uint16_t dir_config, uint16_t pullup_config,
                 uint16_t polarity_config);
 
-    void writeRegister(MCP23017::Register regAddress, uint8_t val);
+    void writeRegister(MCP23017::Register regAddress, uint16_t val);
     uint16_t readRegister(MCP23017::Register regAddress);
 
     typedef enum { DIR_OUTPUT = 0, DIR_INPUT = 1 } PinMode;
@@ -94,8 +94,6 @@ public:
     // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 =
     // disabled)
     void internalPullupMask(uint16_t mask);
-
-    int read();
 
     void write(int data);
 

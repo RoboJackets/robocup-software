@@ -7,7 +7,6 @@ MCP23017::MCP23017(PinName sda, PinName scl, int i2cAddress)
     : _i2c(sda, scl), _i2cAddress(i2cAddress) {
     _i2c.frequency(400000);
     reset();
-    config(0x00FF, 0x0000, 0x0000);
 
     LOG(OK, "MCP23017 initialized");
 }
@@ -26,8 +25,8 @@ void MCP23017::reset() {
     _cachedIPOL = 0;
 }
 
-void MCP23017::writeRegister(MCP23017::Register regAddress, uint8_t data) {
-    char buffer[] = {regAddress, data};
+void MCP23017::writeRegister(MCP23017::Register regAddress, uint16_t data) {
+    char buffer[] = {regAddress, (char)(data & 0xff), (char)(data >> 8)};
     _i2c.write(_i2cAddress, buffer, sizeof(buffer));
 }
 
@@ -136,15 +135,15 @@ void MCP23017::digitalWordWrite(uint16_t w) {
 
 void MCP23017::inputPolarityMask(uint16_t mask) {
     _cachedIPOL = mask;
-    writeRegister(IPOL, (uint16_t)_cachedIPOL);
+    writeRegister(IPOL, _cachedIPOL);
 }
 
 void MCP23017::inputOutputMask(uint16_t mask) {
     _cachedIODIR = mask;
-    writeRegister(IODIR, (uint16_t)_cachedIODIR);
+    writeRegister(IODIR, _cachedIODIR);
 }
 
 void MCP23017::internalPullupMask(uint16_t mask) {
     _cachedGPPU = mask;
-    writeRegister(GPPU, (uint16_t)_cachedGPPU);
+    writeRegister(GPPU, _cachedGPPU);
 }

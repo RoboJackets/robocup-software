@@ -129,9 +129,12 @@ int main() {
                             "/local/rj-kickr.nib");
     bool kickerReady = kickerBoard.flash(true, true);
 
-    // Init IO Expander and turn all LEDs on
+    // Init IO Expander and turn all LEDs on.  The first parameter to config()
+    // sets the first 8 lines to input and the last 8 to output.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
+    ioExpander.config(0x00FF, 0x0000, 0x0000);
+    ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
+                         IOExpanderErrorLEDMask);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -198,7 +201,7 @@ int main() {
         }
 
         // Set error-indicating leds on the control board
-        ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);
+        ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
         // Set error indicators
         if (!fpga_ready) {
