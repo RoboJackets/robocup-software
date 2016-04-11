@@ -21,6 +21,8 @@
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
 #include "RtosTimerHelper.hpp"
+#include "io-expander.hpp"
+#include "RotarySelector.hpp"
 
 using namespace std;
 
@@ -130,6 +132,17 @@ int main() {
     ioExpander.config(0x00FF, 0x0000, 0x0000);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
+
+    // rotary selector for shell id
+    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
+        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
+                                MCP23017::DIR_INPUT)});
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
