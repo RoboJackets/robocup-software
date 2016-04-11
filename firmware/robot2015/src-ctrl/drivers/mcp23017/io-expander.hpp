@@ -33,18 +33,6 @@ public:
         return *this;
     }
 
-    /// Allows the equals operator to read the state of another IOExpander pin
-    IOExpanderDigitalInOut& operator=(IOExpanderDigitalInOut& rhs) {
-        write(rhs.read());
-        return *this;
-    }
-
-    /// Allows the equals operator to read the state of another normal IO pin
-    IOExpanderDigitalInOut& operator=(DigitalInOut& rhs) {
-        write(rhs.read());
-        return *this;
-    }
-
     /// Allows the pin to return its value like a simple integer variable
     operator int() { return read(); }
 };
