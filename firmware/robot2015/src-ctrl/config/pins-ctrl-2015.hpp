@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PinNames.h"
+#include "mcp23017.hpp"
 
 // ** PIN DECLARATIONS ============================= **
 
@@ -92,45 +93,24 @@ const PinName RJ_FPGA_DONE = p30;
 #define RJ_SERIAL_RXTX MBED_UARTUSB
 
 // ** IO-EXPANDER PINS ** ============================= **
-const int RJ_IO_EXPANDER_I2C_ADDRESS = 0x42;
+constexpr int RJ_IO_EXPANDER_I2C_ADDRESS = 0x42;
 
-// Port A bit masks
-const uint8_t RJ_IOEXP_A0 = 0;
-const uint8_t RJ_IOEXP_A1 = 1;
-const uint8_t RJ_IOEXP_A2 = 2;
-const uint8_t RJ_IOEXP_A3 = 3;
-const uint8_t RJ_IOEXP_A4 = 4;
-const uint8_t RJ_IOEXP_A5 = 5;
-const uint8_t RJ_IOEXP_A6 = 6;
-const uint8_t RJ_IOEXP_A7 = 7;
-// Port B bit masks
-const uint8_t RJ_IOEXP_B0 = 8;
-const uint8_t RJ_IOEXP_B1 = 9;
-const uint8_t RJ_IOEXP_B2 = 10;
-const uint8_t RJ_IOEXP_B3 = 11;
-const uint8_t RJ_IOEXP_B4 = 12;
-const uint8_t RJ_IOEXP_B5 = 13;
-const uint8_t RJ_IOEXP_B6 = 14;
-const uint8_t RJ_IOEXP_B7 = 15;
+constexpr auto RJ_HEX_SWITCH_BIT0 = MCP23017::PinA0;
+constexpr auto RJ_HEX_SWITCH_BIT1 = MCP23017::PinA1;
+constexpr auto RJ_HEX_SWITCH_BIT2 = MCP23017::PinA2;
+constexpr auto RJ_HEX_SWITCH_BIT3 = MCP23017::PinA3;
+constexpr auto RJ_DIP_SWITCH_1 = MCP23017::PinA4;
+constexpr auto RJ_DIP_SWITCH_2 = MCP23017::PinA5;
+constexpr auto RJ_DIP_SWITCH_3 = MCP23017::PinA6;
+constexpr auto RJ_PUSHBUTTON = MCP23017::PinA7;
 
-enum IOExpanderPin {
-    RJ_HEX_SWITCH_BIT0 = RJ_IOEXP_A0,
-    RJ_HEX_SWITCH_BIT1 = RJ_IOEXP_A1,
-    RJ_HEX_SWITCH_BIT2 = RJ_IOEXP_A2,
-    RJ_HEX_SWITCH_BIT3 = RJ_IOEXP_A3,
-    RJ_DIP_SWITCH_1 = RJ_IOEXP_A4,
-    RJ_DIP_SWITCH_2 = RJ_IOEXP_A5,
-    RJ_DIP_SWITCH_3 = RJ_IOEXP_A6,
-    RJ_PUSHBUTTON = RJ_IOEXP_A7,
-
-    RJ_ERR_LED_M1 = RJ_IOEXP_B0,
-    RJ_ERR_LED_M2 = RJ_IOEXP_B1,
-    RJ_ERR_LED_M3 = RJ_IOEXP_B2,
-    RJ_ERR_LED_M4 = RJ_IOEXP_B3,
-    RJ_ERR_LED_MPU = RJ_IOEXP_B4,
-    RJ_ERR_LED_BSENSE = RJ_IOEXP_B5,
-    RJ_ERR_LED_DRIB = RJ_IOEXP_B6,
-    RJ_ERR_LED_RADIO = RJ_IOEXP_B7,
-};
+constexpr auto RJ_ERR_LED_M1 = MCP23017::PinB1;
+constexpr auto RJ_ERR_LED_M2 = MCP23017::PinB0;
+constexpr auto RJ_ERR_LED_M3 = MCP23017::PinB5;
+constexpr auto RJ_ERR_LED_M4 = MCP23017::PinB7;
+constexpr auto RJ_ERR_LED_MPU = MCP23017::PinB6;
+constexpr auto RJ_ERR_LED_BSENSE = MCP23017::PinB4;
+constexpr auto RJ_ERR_LED_DRIB = MCP23017::PinB3;
+constexpr auto RJ_ERR_LED_RADIO = MCP23017::PinB2;
 
 constexpr uint16_t IOExpanderErrorLEDMask = 0xFF00;
