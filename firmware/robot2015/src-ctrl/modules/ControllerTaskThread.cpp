@@ -112,8 +112,7 @@ void Task_Controller(void const* args) {
         // Console::Flush();
 
         // write all duty cycles
-        FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                          duty_cycles.size());
+        FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
 
         ii++;
         // 0.5 sec with 5ms loop

@@ -5,7 +5,7 @@
 #include <software-spi.hpp>
 #include <algorithm>
 
-FPGA* FPGA::instance = nullptr;
+FPGA* FPGA::Instance = nullptr;
 
 namespace {
 enum {
@@ -28,16 +28,6 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
       _done(done) {
     setSPIFrequency(1000000);
 }
-
-FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
-    instance = nullptr;
-    // new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B, RJ_FPGA_PROG_B,
-    // RJ_FPGA_DONE);
-
-    return instance;
-}
-
-FPGA* FPGA::Instance() { return instance; }
 
 bool FPGA::configure(const std::string& filepath) {
     // make sure the binary exists before doing anything
@@ -104,6 +94,9 @@ bool FPGA::configure(const std::string& filepath) {
     }
 }
 
+// TODO(justin): remove this hack once GitHub issue #590 is fixed
+#include "../../robot2015/src-ctrl/config/pins-ctrl-2015.hpp"
+
 bool FPGA::send_config(const std::string& filepath) {
     char buf[10];
 
@@ -114,7 +107,7 @@ bool FPGA::send_config(const std::string& filepath) {
     if (fp != nullptr) {
         // MISO & MOSI are intentionally switched here
         // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
-        // SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
+        SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
 
         size_t read_byte;
 
@@ -132,7 +125,7 @@ bool FPGA::send_config(const std::string& filepath) {
 
             if (read_byte == 0) break;
 
-            // _spi.write(buf[0]);
+            spi.write(buf[0]);
 
         } while (_initB || !_done);
 

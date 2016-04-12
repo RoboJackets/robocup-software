@@ -12,11 +12,11 @@
 
 class FPGA : public SharedSPIDevice<> {
 public:
-    static FPGA* Instance();
+    // Global fpga instance.  Must be set to an initialized fpga instance.
+    static FPGA* Instance;
 
-    /// The FPGA global instance must be Initialize()'d before use.  Instance()
-    /// will return nullptr until this happens.
-    static FPGA* Initialize(std::shared_ptr<SharedSPI> sharedSPI);
+    FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
+         PinName progB, PinName done);
 
     /// Configure the fpga with the bitfile at the given path
     /// @return true if successful
@@ -36,11 +36,7 @@ public:
     bool send_config(const std::string& filepath);
 
 private:
-    FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
-         PinName progB, PinName done);
-
     bool _isInit = false;
-    static FPGA* instance;
 
     DigitalIn _initB;
     DigitalInOut _progB;

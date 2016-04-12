@@ -485,9 +485,9 @@ int cmd_info(cmd_args_t& args) {
 
         // show the fpga build hash
         printf("\tFPGA Hash:\t");
-        if (FPGA::Instance()->isReady()) {
+        if (FPGA::Instance->isReady()) {
             std::vector<uint8_t> fpga_version;
-            bool dirty_check = FPGA::Instance()->git_hash(fpga_version);
+            bool dirty_check = FPGA::Instance->git_hash(fpga_version);
 
             for (auto const& i : fpga_version) printf("%0x", i);
             if (dirty_check) printf(" (dirty)");
