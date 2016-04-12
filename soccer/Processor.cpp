@@ -614,7 +614,7 @@ void Processor::sendRadioData() {
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
             // number of motors.
-            txRobot->CopyFrom(*(r->robotPacket));
+            txRobot->CopyFrom(r->robotPacket);
 
             if (r->shell() == _manualID) {
                 const JoystickControlValues controlVals =

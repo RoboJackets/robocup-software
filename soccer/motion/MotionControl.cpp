@@ -33,7 +33,7 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50) {
     _robot = robot;
 
-    _robot->robotPacket->set_uid(_robot->shell());
+    _robot->robotPacket.set_uid(_robot->shell());
     _lastCmdTime = -1;
 }
 

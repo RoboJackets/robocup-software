@@ -60,9 +60,8 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 OurRobot::OurRobot(int shell, SystemState* state)
     : Robot(shell, true), _state(state) {
     _cmdText = new std::stringstream();
-    robotPacket = new Packet::Robot();
     Packet::Control* ctl = new Packet::Control();
-    robotPacket->set_allocated_control(ctl);
+    robotPacket.set_allocated_control(ctl);
     control = ctl;
 
     _lastChargedTime = 0;
@@ -132,7 +131,7 @@ void OurRobot::resetForNextIteration() {
     _clearCmdText();
 
     control->Clear();
-    robotPacket->set_uid(shell());
+    robotPacket.set_uid(shell());
 
     if (charged()) {
         _lastChargedTime = RJ::timestamp();
