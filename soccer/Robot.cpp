@@ -293,7 +293,6 @@ void OurRobot::_chip(uint8_t strength) {
 }
 
 void OurRobot::_unkick() {
-    control->set_dvelocity(0);
     control->set_kcstrength(0);
     control->set_shootmode(Packet::Control::KICK);
     control->set_triggermode(Packet::Control::STAND_DOWN);
