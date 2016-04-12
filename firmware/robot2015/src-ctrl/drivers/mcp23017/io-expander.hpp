@@ -12,7 +12,7 @@ class IOExpanderDigitalInOut {
 public:
     /// Other constructors for creating objects for pinouts
     IOExpanderDigitalInOut(MCP23017* mcp, MCP23017::ExpPinName pin,
-                           bool state = false)
+                           MCP23017::PinMode mode, bool state = false)
         : _pin(pin), _mcp23017(mcp) {
         pinMode(mode);
         if (state != read()) write(state);
@@ -36,6 +36,6 @@ public:
     operator int() { return read(); }
 
 private:
-    IOExpanderPin _pin;
+    MCP23017::ExpPinName _pin;
     MCP23017* _mcp23017;
 };
