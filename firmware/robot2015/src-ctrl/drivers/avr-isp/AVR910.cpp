@@ -143,7 +143,7 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
 
     // Leave serial programming mode by toggling reset
     exitProgramming();
-    
+
     return success;
 }
 

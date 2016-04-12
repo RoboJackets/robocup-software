@@ -60,7 +60,8 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
         bool shouldProgram = true;
         // TODO: Fix memory checking
         /* if (onlyIfDifferent && */
-        /*    (checkMemory(ATTINY84A_PAGESIZE, ATTINY84A_NUM_PAGES, fp, false) == */
+        /*    (checkMemory(ATTINY84A_PAGESIZE, ATTINY84A_NUM_PAGES, fp, false)
+         * == */
         /*     0)) */
         /*    shouldProgram = false; */
 
