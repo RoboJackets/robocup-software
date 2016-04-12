@@ -2,6 +2,7 @@
 
 #include <mbed.h>
 #include <rtos.h>
+#include <RtosTimerHelper.hpp>
 
 /**
  * Utility class that lights LEDs as long as the timeout period hasn't elapsed
@@ -12,8 +13,8 @@
 class TimeoutLED {
 public:
     TimeoutLED(uint32_t updateInterval = 80, uint32_t timeoutInterval = 275)
-        : _updateTimer(&updateCallback, osTimerPeriodic, this),
-          _timeoutTimer(timeoutCallback, osTimerOnce, this),
+        : _updateTimer(this, &TimeoutLED::_update, osTimerPeriodic),
+          _timeoutTimer(this, &TimeoutLED::_timeout, osTimerOnce),
           _timeoutInterval(timeoutInterval) {
         _updateTimer.start(updateInterval);
         renew();
@@ -31,20 +32,14 @@ public:
     virtual void update() = 0;
 
 private:
-    static void updateCallback(const void* instance) {
-        TimeoutLED* thiss = const_cast<TimeoutLED*>(
-            reinterpret_cast<const TimeoutLED*>(instance));
-        if (!thiss->_timedOut) thiss->update();
+    void _timeout() { _timedOut = true; }
+
+    void _update() {
+        if (!_timedOut) update();
     }
 
-    static void timeoutCallback(const void* instance) {
-        TimeoutLED* thiss = const_cast<TimeoutLED*>(
-            reinterpret_cast<const TimeoutLED*>(instance));
-        thiss->_timedOut = true;
-    }
-
-    RtosTimer _updateTimer;
-    RtosTimer _timeoutTimer;
+    RtosTimerHelper _updateTimer;
+    RtosTimerHelper _timeoutTimer;
     bool _timedOut = false;
     uint32_t _timeoutInterval;
 };
