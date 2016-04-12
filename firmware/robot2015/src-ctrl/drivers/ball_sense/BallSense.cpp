@@ -3,7 +3,7 @@
 BallSense::BallSense(DigitalOut emitter, AnalogIn detector)
     : emitter_pin(emitter),
       detector_pin(detector),
-      _updateTimer(&updateCallback, osTimerPeriodic, this) {
+      _updateTimer(this, &BallSense::update_ball_sensor, osTimerPeriodic) {
     emitter_pin = false;
 }
 
@@ -34,9 +34,3 @@ void BallSense::update_ball_sensor() {
 }
 
 bool BallSense::have_ball() { return consec_ctr >= consec_num; }
-
-void BallSense::updateCallback(const void* instance) {
-    BallSense* thiss =
-        const_cast<BallSense*>(reinterpret_cast<const BallSense*>(instance));
-    thiss->update_ball_sensor();
-}
