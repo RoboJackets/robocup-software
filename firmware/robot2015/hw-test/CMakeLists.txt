@@ -10,13 +10,13 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     set(CMAKE_C_FLAGS           ${MBED_CMAKE_C_FLAGS}           )
     set(CMAKE_EXE_LINKER_FLAGS  ${MBED_CMAKE_EXE_LINKER_FLAGS}  )
     
-    set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR} ../src-ctrl/drivers/ws2811 ../src-ctrl/drivers/mcp23017 ../src-ctrl/drivers/rotarySelector)
+    set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR} ../src-ctrl/drivers/mcp23017 ../src-ctrl/drivers/rotarySelector)
     set(TEST_UNIT_FILE "${HW_TEST_UNIT}-test.cpp")
 
     string(SUBSTRING "${HW_TEST_UNIT}" 0 3 TEST_UNIT_BIN_FILE)
     set(TEST_UNIT_BIN_FILE "${TEST_UNIT_BIN_FILE}-test.bin")
 
-    add_executable(robot2015_test_ELF ${TEST_UNIT_FILE} ${asm_SRC})
+    add_executable(robot2015_test_ELF ${TEST_UNIT_FILE})
 
     # specify that we depend on the common2015 library and link to it
     target_link_libraries(robot2015_test_ELF common2015)

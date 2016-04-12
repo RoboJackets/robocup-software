@@ -34,7 +34,6 @@ file(GLOB_RECURSE robot2015_SRC "*.cpp")
 add_executable(robot2015_elf ${robot2015_SRC} ${asm_SRC})
 
 # specify that we depend on the common2015 library and link to it
-add_dependencies(robot2015_elf common2015)
 target_link_libraries(robot2015_elf common2015)
 
 # include directories
