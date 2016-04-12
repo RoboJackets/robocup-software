@@ -599,7 +599,7 @@ void Processor::sendRadioData() {
             control->set_yvelocity(0);
             control->set_avelocity(0);
             control->set_dvelocity(0);
-            control->set_kcstrength(255);
+            control->set_kcstrength(0);
             control->set_shootmode(Packet::Control::KICK);
             control->set_triggermode(Packet::Control::STAND_DOWN);
             control->set_song(Packet::Control::STOP);

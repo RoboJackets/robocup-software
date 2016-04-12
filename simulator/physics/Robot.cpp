@@ -250,7 +250,7 @@ void Robot::radioTx(const Packet::Control* data) {
     _controller->prepareKick(data->triggermode() != Packet::Control::STAND_DOWN
                                  ? data->kcstrength()
                                  : 0,
-                             data->shootmode());
+                             data->shootmode() == Packet::Control::CHIP);
     _controller->prepareDribbler(data->dvelocity());
 }
 
