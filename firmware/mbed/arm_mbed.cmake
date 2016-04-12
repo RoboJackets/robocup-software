@@ -242,5 +242,5 @@ include_directories(${MBED_INC_DIRS})
 
 # ------------------------------------------------------------------------------
 # set some standaradized variables for the file that included this one to use if needed
-set( MBED_INCLUDE_DIR  ${MBED_INC_DIRS}      )
+set( MBED_INCLUDE_DIR  ${MBED_INC_DIRS})
 set( MBED_LIBRARY      ${MBED_TARGET_SYS_OBJS} ${MBED_TARGET_OBJS} )

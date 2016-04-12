@@ -84,12 +84,12 @@ robot2015:
 robot2015-prog:
 	$(call cmake_build_target_fw, robot2015-prog)
 
-# robot2015-test-<test_unit>{-prog}
+# <test-name>-test{-prog}
 # defines the targets described at the line above - test units defined in FIRMWR_TESTS
-$(FIRMWR_TESTS:-%=robot2015-test-%):
-	$(call cmake_build_target_fw, robot2015-test, -DHW_TEST_UNIT:STRING=$(@F:robot2015-test-%=%))
-$(FIRMWR_TESTS:-%=robot2015-test-%-prog):
-	$(call cmake_build_target_fw, robot2015-test-prog, -DHW_TEST_UNIT:STRING=$(@F:robot2015-test-%-prog=%))
+$(FIRMWR_TESTS:-%=%-test):
+	$(call cmake_build_target_fw, $@)
+$(FIRMWR_TESTS:-%=%-test-prog):
+	$(call cmake_build_target_fw, $@)
 
 GDB_PORT ?= 3333
 .INTERMEDIATE: build/robot2015-gdb.pid
