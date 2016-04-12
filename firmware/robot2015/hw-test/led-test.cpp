@@ -1,3 +1,6 @@
+#include <rtos.h>
+#include <mbed.h>
+#include "robot-config.hpp"
 #include "pins-ctrl-2015.hpp"
 #include "mcp23017.hpp"
 #include "io-expander.hpp"
