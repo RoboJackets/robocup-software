@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import constants
 import tactics.defense
@@ -8,17 +8,14 @@ import main
 
 
 ## Runs our Defense tactic and a pivot kicker than tries to score on our defense
-class TestDefenseAndKicker(play.Play):
+class TestDefenseAndKicker(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             "immediately")
-        
-    def on_enter_running(self):
-        b = tactics.defense.Defense()
-        self.add_subbehavior(b, name='defense', required=True)
 
+    def on_enter_running(self):
         kick = skills.pivot_kick.PivotKick()
         kick.target = constants.Field.OurGoalSegment
         kick.aim_params['desperate_timeout'] = 3
@@ -30,7 +27,6 @@ class TestDefenseAndKicker(play.Play):
             kick.restart()
 
     def on_exit_running(self):
-        self.remove_subbehavior('defense')
         self.remove_subbehavior('kick')
 
     @classmethod
