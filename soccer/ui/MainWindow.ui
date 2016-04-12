@@ -883,7 +883,7 @@
            <enum>QFrame::Sunken</enum>
           </property>
           <property name="text">
-           <string>Simulating</string>
+           <string>Simulator Radio</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
