@@ -10,14 +10,16 @@
 // For some reason, the linker fails if there is no call to Thread::wait()...
 void fix() { Thread::wait(1); }
 
+/*
+ * This demo program lights up an error led on the control board corresponding
+ * to the positin of the rotary selector (shell id dial).  The rotary selector
+ * also controls the color of the two rgb leds.
+ */
 int main(int argc, char** argv) {
-    // Force off since the neopixel's hardware is stateless from previous
-    // settings
+    // setup rgb leds
     NeoStrip rgbLED(RJ_NEOPIXEL, 2);
     float defaultBrightness = 0.02f;
     rgbLED.brightness(3 * defaultBrightness);
-
-    DigitalOut rdy_led(RJ_RDY_LED);
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -40,24 +42,24 @@ int main(int argc, char** argv) {
 
     while (true) {
         int selector = rotarySelector.read();
-        const NeoColor colors[] = {
+
+        // set rgb led color based on selector
+        const std::array<NeoColor, 7> colors = {
             NeoColorRed,  NeoColorOrange, NeoColorYellow, NeoColorGreen,
             NeoColorBlue, NeoColorPurple, NeoColorWhite,
         };
-        NeoColor color = colors[selector % 7];
+        NeoColor color = colors[selector % colors.size()];
         rgbLED.setPixel(0, color);
         rgbLED.setPixel(1, color);
         rgbLED.write();
 
-        // LED demo - move rotary selector to control which red is lit up.
-        const MCP23017::ExpPinName orderedErrLeds[]{
+        // select red led to be lit
+        const std::array<MCP23017::ExpPinName, 8> orderedErrLeds = {
             RJ_ERR_LED_M1,     RJ_ERR_LED_M2,   RJ_ERR_LED_M3,
             RJ_ERR_LED_M4,     RJ_ERR_LED_MPU,  RJ_ERR_LED_DRIB,
             RJ_ERR_LED_BSENSE, RJ_ERR_LED_RADIO};
 
-        int ledMask = 1 << orderedErrLeds[selector % 8];
+        int ledMask = 1 << orderedErrLeds[selector % orderedErrLeds.size()];
         ioExpander.writeMask(~ledMask, IOExpanderErrorLEDMask);
-
-        rdy_led = rotarySelector.read() % 2 == 0;
     }
 }
