@@ -5,7 +5,6 @@
 #include <software-spi.hpp>
 #include <algorithm>
 
-
 FPGA* FPGA::instance = nullptr;
 
 namespace {
@@ -33,7 +32,7 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
 FPGA* FPGA::Initialize(shared_ptr<SharedSPI> sharedSPI) {
     instance = nullptr;
     // new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B, RJ_FPGA_PROG_B,
-                        // RJ_FPGA_DONE);
+    // RJ_FPGA_DONE);
 
     return instance;
 }

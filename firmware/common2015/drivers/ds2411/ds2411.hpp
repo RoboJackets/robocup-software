@@ -10,7 +10,6 @@
 
 #include "mbed.h"
 
-
 struct DS2411_t {
     char family;
     char serial[6];  // 0 = LSB, 5 = MSB

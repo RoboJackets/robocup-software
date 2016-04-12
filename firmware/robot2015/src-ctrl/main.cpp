@@ -210,13 +210,8 @@ int main() {
         }
 
         const NeoColor colors[] = {
-            NeoColorRed,
-            NeoColorOrange,
-            NeoColorYellow,
-            NeoColorGreen,
-            NeoColorBlue,
-            NeoColorPurple,
-            NeoColorWhite,
+            NeoColorRed,  NeoColorOrange, NeoColorYellow, NeoColorGreen,
+            NeoColorBlue, NeoColorPurple, NeoColorWhite,
         };
 
         rdy_led = rotarySelector.read() % 2 == 0;

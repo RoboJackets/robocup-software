@@ -7,6 +7,8 @@
 #include "neostrip.hpp"
 #include "RotarySelector.hpp"
 
+// For some reason, the linker fails if there is no call to Thread::wait()...
+void fix() { Thread::wait(1); }
 
 int main(int argc, char** argv) {
     // Force off since the neopixel's hardware is stateless from previous
@@ -39,13 +41,8 @@ int main(int argc, char** argv) {
     while (true) {
         int selector = rotarySelector.read();
         const NeoColor colors[] = {
-            NeoColorRed,
-            NeoColorOrange,
-            NeoColorYellow,
-            NeoColorGreen,
-            NeoColorBlue,
-            NeoColorPurple,
-            NeoColorWhite,
+            NeoColorRed,  NeoColorOrange, NeoColorYellow, NeoColorGreen,
+            NeoColorBlue, NeoColorPurple, NeoColorWhite,
         };
         NeoColor color = colors[selector % 7];
         rgbLED.setPixel(0, color);
