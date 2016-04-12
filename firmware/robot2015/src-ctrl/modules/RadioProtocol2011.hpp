@@ -91,7 +91,7 @@ public:
             _timeoutTimer.stop();
             _timeoutTimer.start(TIMEOUT_INTERVAL);
 
-            _replyTimer.start(slot * SLOT_DELAY);
+            _replyTimer.start(1);
 
             if (rxCallback) {
                 _reply = std::move(rxCallback(pkt->payload.data() + offset));
@@ -101,6 +101,7 @@ public:
 
 private:
     void reply() {
+        LOG(INIT, "sent reply");
         rtp::packet pkt;
         pkt.header.port = rtp::port::CONTROL;
         pkt.header.type = rtp::header_data::Control;

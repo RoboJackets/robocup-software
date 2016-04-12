@@ -155,19 +155,22 @@ int main() {
 
     RadioProtocol2011 radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.start();
+    radioProtocol.setUID(2); // TODO: remove
     radioProtocol.rxCallback = [](uint8_t* msg) {
         // TODO: parse @msg
 
         // TODO: create actual message
-        return vector<uint8_t>({
-            // uid,
-            // last_rssi,
-            // battery_level,
-            // kicker_status, // TODO: kicker failure?
-            // motor_status,
-            // failures, // bit field of failures, status, etc
-            // kicker_voltage
-        });
+        // return vector<uint8_t>({
+        //     // uid,
+        //     // last_rssi,
+        //     // battery_level,
+        //     // kicker_status, // TODO: kicker failure?
+        //     // motor_status,
+        //     // failures, // bit field of failures, status, etc
+        //     // kicker_voltage
+        // });
+        LOG(INIT, "rx!");
+        return vector<uint8_t>(10, 1);
     };
 
     // Set the watdog timer's initial config
