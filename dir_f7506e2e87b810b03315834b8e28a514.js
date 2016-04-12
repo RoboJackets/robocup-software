@@ -6,6 +6,7 @@ var dir_f7506e2e87b810b03315834b8e28a514 =
     [ "rtos-mgmt", "dir_e75ad1230ac722caa61a37a6057c3ad6.html", "dir_e75ad1230ac722caa61a37a6057c3ad6" ],
     [ "const-math.hpp", "const-math_8hpp_source.html", null ],
     [ "rj-macros.hpp", "rj-macros_8hpp_source.html", null ],
+    [ "RtosTimerHelper.hpp", "_rtos_timer_helper_8hpp_source.html", null ],
     [ "rtp.hpp", "rtp_8hpp_source.html", null ],
     [ "TimeoutLED.hpp", "_timeout_l_e_d_8hpp_source.html", null ],
     [ "watchdog.hpp", "watchdog_8hpp_source.html", null ]

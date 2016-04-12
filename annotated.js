@@ -381,6 +381,7 @@ var annotated =
     [ "RobotWidget", "class_robot_widget.html", "class_robot_widget" ],
     [ "RotarySelector", "class_rotary_selector.html", "class_rotary_selector" ],
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
+    [ "RtosTimerHelper", "class_rtos_timer_helper.html", "class_rtos_timer_helper" ],
     [ "SharedSPI", "class_shared_s_p_i.html", "class_shared_s_p_i" ],
     [ "SharedSPIDevice", "class_shared_s_p_i_device.html", "class_shared_s_p_i_device" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],

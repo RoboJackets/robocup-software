@@ -143,8 +143,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
+    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -208,6 +208,9 @@ var hierarchy =
       [ "Planning::FacePointCommand", "struct_planning_1_1_face_point_command.html", null ]
     ] ],
     [ "RotationConstraints", "struct_rotation_constraints.html", null ],
+    [ "RtosTimer", null, [
+      [ "RtosTimerHelper", "class_rtos_timer_helper.html", null ]
+    ] ],
     [ "RuntimeError", null, [
       [ "gameplay.role_assignment.ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ]
     ] ],

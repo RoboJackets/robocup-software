@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_vision_packet.html" title="VisionPacket" alt="" coords="6,5,109,32"/>
+<area shape="rect" id="node1" href="$class_timeout_l_e_d.html" title="Utility class that lights LEDs as long as the timeout period hasn&#39;t elapsed since the last call to re..." alt="" coords="5,35,104,61"/>
+<area shape="rect" id="node2" href="$class_flashing_timeout_l_e_d.html" title="Flashes a single LED as long as the timer hasn&#39;t expired. " alt="" coords="157,5,307,32"/>
+<area shape="rect" id="node3" href="$class_strobing_timeout_l_e_ds.html" title="Strobes an array of leds as long as the timer hasn&#39;t expired. " alt="" coords="152,57,312,98"/>
 </map>

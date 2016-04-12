@@ -20,5 +20,6 @@ var searchData=
   ['rotaryselector',['RotarySelector',['../class_rotary_selector.html',1,'']]],
   ['rotationcommand',['RotationCommand',['../struct_planning_1_1_rotation_command.html',1,'Planning']]],
   ['rotationconstraints',['RotationConstraints',['../struct_rotation_constraints.html',1,'']]],
-  ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]]
+  ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]],
+  ['rtostimerhelper',['RtosTimerHelper',['../class_rtos_timer_helper.html',1,'']]]
 ];
