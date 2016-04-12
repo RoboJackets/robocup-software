@@ -1,5 +1,6 @@
 var class_f_p_g_a =
 [
+    [ "FPGA", "class_f_p_g_a.html#ac61f0928c4fd0893e8a28fd2d73bc1a6", null ],
     [ "configure", "class_f_p_g_a.html#afc8d26c5164d391fe9916f4f626e4f9c", null ],
     [ "gate_drivers", "class_f_p_g_a.html#af5c2ce42aaa3ea41c748c66504fe576c", null ],
     [ "git_hash", "class_f_p_g_a.html#ad4634d18d494835c0dab25ed991eff18", null ],

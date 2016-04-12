@@ -119,10 +119,10 @@ $(document).ready(function(){initNavTree('class_f_p_g_a.html','');});
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>chipDeselect</b>() (defined in <a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a>)</td><td class="entry"><a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>chipSelect</b>() (defined in <a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a>)</td><td class="entry"><a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_f_p_g_a.html#afc8d26c5164d391fe9916f4f626e4f9c">configure</a>(const std::string &amp;filepath)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>gate_drivers</b>(std::vector&lt; uint16_t &gt; &amp;) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>git_hash</b>(std::vector&lt; uint8_t &gt; &amp;) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_f_p_g_a.html#abac907441bd0e082fe5d50103683ed88">Initialize</a>(std::shared_ptr&lt; SharedSPI &gt; sharedSPI)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Instance</b>() (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>FPGA</b>(std::shared_ptr&lt; SharedSPI &gt; sharedSPI, PinName nCs, PinName initB, PinName progB, PinName done) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>gate_drivers</b>(std::vector&lt; uint16_t &gt; &amp;) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>git_hash</b>(std::vector&lt; uint8_t &gt; &amp;) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Instance</b> (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>isReady</b>() (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>motors_en</b>(bool state) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>read_duty_cycles</b>(uint16_t *duty_cycles, size_t size) (defined in <a class="el" href="class_f_p_g_a.html">FPGA</a>)</td><td class="entry"><a class="el" href="class_f_p_g_a.html">FPGA</a></td><td class="entry"></td></tr>
@@ -139,7 +139,7 @@ $(document).ready(function(){initNavTree('class_f_p_g_a.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Apr 12 2016 03:26:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Apr 12 2016 23:04:30 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

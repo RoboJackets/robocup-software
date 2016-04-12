@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('class_f_p_g_a.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_f_p_g_a-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">FPGA Class Reference</div>  </div>
@@ -118,6 +118,9 @@ $(document).ready(function(){initNavTree('class_f_p_g_a.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:ac61f0928c4fd0893e8a28fd2d73bc1a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac61f0928c4fd0893e8a28fd2d73bc1a6"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>FPGA</b> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; sharedSPI, PinName nCs, PinName initB, PinName progB, PinName done)</td></tr>
+<tr class="separator:ac61f0928c4fd0893e8a28fd2d73bc1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc8d26c5164d391fe9916f4f626e4f9c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_p_g_a.html#afc8d26c5164d391fe9916f4f626e4f9c">configure</a> (const std::string &amp;filepath)</td></tr>
 <tr class="memdesc:afc8d26c5164d391fe9916f4f626e4f9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure the fpga with the bitfile at the given path.  <a href="#afc8d26c5164d391fe9916f4f626e4f9c">More...</a><br/></td></tr>
 <tr class="separator:afc8d26c5164d391fe9916f4f626e4f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,14 +171,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a72b94604822101722a63b2f873e4e38c inherit pub_methods_class_shared_s_p_i_device"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the SPI frequency for this device. <br/></td></tr>
 <tr class="separator:a72b94604822101722a63b2f873e4e38c inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a4aa69724691222df5296678a69f9617a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4aa69724691222df5296678a69f9617a"></a>
-static <a class="el" href="class_f_p_g_a.html">FPGA</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>Instance</b> ()</td></tr>
-<tr class="separator:a4aa69724691222df5296678a69f9617a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abac907441bd0e082fe5d50103683ed88"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_f_p_g_a.html">FPGA</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_p_g_a.html#abac907441bd0e082fe5d50103683ed88">Initialize</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; sharedSPI)</td></tr>
-<tr class="memdesc:abac907441bd0e082fe5d50103683ed88"><td class="mdescLeft">&#160;</td><td class="mdescRight">The FPGA global instance must be Initialize()'d before use.  <a href="#abac907441bd0e082fe5d50103683ed88">More...</a><br/></td></tr>
-<tr class="separator:abac907441bd0e082fe5d50103683ed88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aa00e96a8fdefd9517ca69385e726b333"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa00e96a8fdefd9517ca69385e726b333"></a>
+static <a class="el" href="class_f_p_g_a.html">FPGA</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>Instance</b> = nullptr</td></tr>
+<tr class="separator:aa00e96a8fdefd9517ca69385e726b333"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -225,36 +225,9 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 
 </div>
 </div>
-<a class="anchor" id="abac907441bd0e082fe5d50103683ed88"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_f_p_g_a.html">FPGA</a> * FPGA::Initialize </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt;&#160;</td>
-          <td class="paramname"><em>sharedSPI</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The FPGA global instance must be Initialize()'d before use. </p>
-<p>Instance() will return nullptr until this happens. </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>firmware/robot2015/src-ctrl/drivers/fpga/<a class="el" href="fpga_8hpp_source.html">fpga.hpp</a></li>
-<li>firmware/robot2015/src-ctrl/drivers/fpga/fpga.cpp</li>
+<li>firmware/common2015/drivers/fpga/<a class="el" href="fpga_8hpp_source.html">fpga.hpp</a></li>
+<li>firmware/common2015/drivers/fpga/fpga.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -262,7 +235,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_f_p_g_a.html">FPGA</a></li>
-    <li class="footer">Generated on Tue Apr 12 2016 03:26:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Apr 12 2016 23:04:30 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

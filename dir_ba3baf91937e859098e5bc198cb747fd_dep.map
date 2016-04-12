@@ -1,8 +1,18 @@
 <map id="firmware/common2015/drivers" name="firmware/common2015/drivers">
-<area shape="rect" id="node2" href="dir_a397f754f743d7cde165bd68db099d59.html" title="cc1201" alt="" coords="371,63,443,111"/>
-<area shape="rect" id="node3" href="dir_4433d8e166deeac57b91c7063c89e862.html" title="rtos&#45;i2c" alt="" coords="275,63,347,111"/>
-<area shape="rect" id="node4" href="dir_98ca5a21fd81f6b88ec7fb51d9e19a7e.html" title="shared&#45;spi" alt="" coords="161,63,249,111"/>
-<area shape="rect" id="node5" href="dir_da01ce70317722428be74fe7487fd8f7.html" title="software&#45;spi" alt="" coords="37,63,136,111"/>
-<area shape="rect" id="clust2" href="dir_ba3baf91937e859098e5bc198cb747fd.html" alt="" coords="27,52,549,121"/>
-<area shape="rect" id="clust1" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html" title="common2015" alt="" coords="16,16,560,132"/>
+<area shape="rect" id="node2" href="dir_cc377981fd1d02b69253e810027bf757.html" title="avr&#45;isp" alt="" coords="1456,63,1528,111"/>
+<area shape="rect" id="node3" href="dir_0e25c8318ff580e62acf12c46e3df3d6.html" title="ball_sense" alt="" coords="1342,63,1431,111"/>
+<area shape="rect" id="node4" href="dir_a1e02de2bd52837e0c77b83e2e75d45d.html" title="buzzer" alt="" coords="1245,63,1317,111"/>
+<area shape="rect" id="node5" href="dir_a397f754f743d7cde165bd68db099d59.html" title="cc1201" alt="" coords="1149,63,1221,111"/>
+<area shape="rect" id="node6" href="dir_71dec0200a6cb9de656ba8f221436896.html" title="ds2411" alt="" coords="1053,63,1125,111"/>
+<area shape="rect" id="node7" href="dir_2be787df26f5639346362c3651735377.html" title="fpga" alt="" coords="957,63,1029,111"/>
+<area shape="rect" id="node8" href="dir_62d3a80730c6bb1b50303a50fde04880.html" title="kicker&#45;board" alt="" coords="833,63,932,111"/>
+<area shape="rect" id="node9" href="dir_3499cfee84986e5d7eb8d0544f714994.html" title="mcp23017" alt="" coords="717,63,808,111"/>
+<area shape="rect" id="node10" href="dir_dae3b2c1b669a03b67c2743c22c3495a.html" title="mpu&#45;6050" alt="" coords="605,63,693,111"/>
+<area shape="rect" id="node11" href="dir_630fbeefb0fea10ea92134a60e5e66d8.html" title="rotarySelector" alt="" coords="467,63,580,111"/>
+<area shape="rect" id="node12" href="dir_4433d8e166deeac57b91c7063c89e862.html" title="rtos&#45;i2c" alt="" coords="371,63,443,111"/>
+<area shape="rect" id="node13" href="dir_98ca5a21fd81f6b88ec7fb51d9e19a7e.html" title="shared&#45;spi" alt="" coords="257,63,345,111"/>
+<area shape="rect" id="node14" href="dir_da01ce70317722428be74fe7487fd8f7.html" title="software&#45;spi" alt="" coords="133,63,232,111"/>
+<area shape="rect" id="node15" href="dir_4f978fdb3284005046093cb55069086a.html" title="ws2811" alt="" coords="37,63,109,111"/>
+<area shape="rect" id="clust2" href="dir_ba3baf91937e859098e5bc198cb747fd.html" alt="" coords="27,52,1635,121"/>
+<area shape="rect" id="clust1" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html" title="common2015" alt="" coords="16,16,1645,132"/>
 </map>
