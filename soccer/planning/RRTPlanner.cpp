@@ -42,7 +42,7 @@ bool shouldFullReplan(float timeIntoPath, MotionInstant current, MotionInstant g
     // If we went off the end of the path, use the end for calculations.
     MotionInstant targetInstant = optTarget ? optTarget->motion : prevPath->end().motion;
     float pathError = current.pos.distTo(targetInstant.pos);
-    float replanThreshold = *motionConstraints._replan_threshold;
+    float replanThreshold = (float) *motionConstraints._replan_threshold;
 
     if (*motionConstraints._replan_threshold != 0 && pathError > replanThreshold) {
         return true;
