@@ -408,15 +408,10 @@ public:
     bool rxIsFresh(RJ::Time age = 500000) const;
 
     /**
-     * @brief Starts the robot playing the fight song
-     */
-    void sing() { sing(Packet::Control::FIGHT_SONG); }
-
-    /**
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(Packet::Control::Song song) {
+    void sing(Packet::Control::Song song = Packet::Control::FIGHT_SONG) {
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
         control->set_song(song);
     }
