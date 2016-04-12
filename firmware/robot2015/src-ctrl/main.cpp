@@ -209,37 +209,63 @@ int main() {
             errorBitmask |= !status.hallOK << pair.second;
         }
 
+        const NeoColor colors[] = {
+            NeoColorRed,
+            NeoColorOrange,
+            NeoColorYellow,
+            NeoColorGreen,
+            NeoColorBlue,
+            NeoColorPurple,
+            NeoColorWhite,
+        };
+
+        rdy_led = rotarySelector.read() % 2 == 0;
+
+        NeoColor color = colors[rotarySelector.read() % 7];
+        rgbLED.setPixel(0, color);
+        rgbLED.setPixel(1, color);
+        rgbLED.write();
+
+        // LED demo - move rotary selector to control which red is lit up.
+        const MCP23017::ExpPinName orderedErrLeds[]{
+            RJ_ERR_LED_M1,     RJ_ERR_LED_M2,   RJ_ERR_LED_M3,
+            RJ_ERR_LED_M4,     RJ_ERR_LED_MPU,  RJ_ERR_LED_DRIB,
+            RJ_ERR_LED_BSENSE, RJ_ERR_LED_RADIO};
+
+        errorBitmask |= 1 << orderedErrLeds[rotarySelector.read() % 8];
+        // printf("errorBitmask: %d\r\n", errorBitmask);
+
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
-        // Set error indicators
-        if (!fpga_ready) {
-            // orange - error
-            rgbLED.brightness(4 * defaultBrightness);
-            rgbLED.setPixel(0, NeoColorOrange);
-        } else {
-            // green - no error...yet
-            rgbLED.brightness(defaultBrightness);
-            rgbLED.setPixel(0, NeoColorGreen);
-        }
+        // // Set error indicators
+        // if (!fpga_ready) {
+        //     // orange - error
+        //     rgbLED.brightness(4 * defaultBrightness);
+        //     rgbLED.setPixel(0, NeoColorOrange);
+        // } else {
+        //     // green - no error...yet
+        //     rgbLED.brightness(defaultBrightness);
+        //     rgbLED.setPixel(0, NeoColorGreen);
+        // }
 
-        if (errorBitmask & RJ_ERR_LED_RADIO) {
-            // orange - error
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, NeoColorOrange);
-        } else {
-            // green - no error...yet
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, NeoColorGreen);
-        }
+        // if (errorBitmask & RJ_ERR_LED_RADIO) {
+        //     // orange - error
+        //     rgbLED.brightness(6 * defaultBrightness);
+        //     rgbLED.setPixel(1, NeoColorOrange);
+        // } else {
+        //     // green - no error...yet
+        //     rgbLED.brightness(6 * defaultBrightness);
+        //     rgbLED.setPixel(1, NeoColorGreen);
+        // }
 
-        if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
-            // bright as hell to make sure they know
-            rgbLED.brightness(10 * defaultBrightness);
-            // well, damn. everything is broke as hell
-            rgbLED.setPixel(0, NeoColorRed);
-            rgbLED.setPixel(1, NeoColorRed);
-        }
+        // if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
+        //     // bright as hell to make sure they know
+        //     rgbLED.brightness(10 * defaultBrightness);
+        //     // well, damn. everything is broke as hell
+        //     rgbLED.setPixel(0, NeoColorRed);
+        //     rgbLED.setPixel(1, NeoColorRed);
+        // }
     }
 }
 
