@@ -45,7 +45,6 @@ void main() {
 
             if (had_interrupt_) {
                 char cmd = PARSE_CMD(data);
-                USIDR = get_voltage();
 
                 switch (cmd) {
                     case 0x2:  // chip
@@ -79,6 +78,7 @@ ISR(USI_OVF_vect) {
     data = USIDR;
     // Clear the interrupt flag (would have been done by USIBR)
     SET_BIT(USISR, USIOIF);
+    USIDR = get_voltage();
     had_interrupt_ = 1;
 }
 
@@ -128,8 +128,7 @@ uint8_t get_voltage() {
     // Start conversation by writing to start bit
     SET_BIT(ADCSRA, ADSC);
     // Wait for ADSC bit to clear
-    while (ADCSRA & _BV(ADSC))
-        ;
+    while (ADCSRA & _BV(ADSC));
     // ADHC will go from 0 to 255 corresponding to
     // 0 through VCC
     return ADCH;
