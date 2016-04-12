@@ -247,7 +247,7 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const {
 
 void Robot::radioTx(const Packet::Control* data) {
     velocity(data->xvelocity(), data->yvelocity(), data->avelocity());
-    _controller->prepareKick(data->triggermode() == Packet::Control::IMMEDIATE
+    _controller->prepareKick(data->triggermode() != Packet::Control::STAND_DOWN
                                  ? data->kcstrength()
                                  : 0,
                              data->shootmode());
