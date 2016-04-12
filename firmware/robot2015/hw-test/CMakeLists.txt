@@ -13,17 +13,6 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     set(ROBOT2015_HW_TEST_INCLUDES ${CONFIG_ROOT_NAME} ${CMAKE_CURRENT_LIST_DIR} ../src-ctrl/drivers/ws2811 ../src-ctrl/drivers/mcp23017 ../src-ctrl/drivers/rotarySelector)
     set(TEST_UNIT_FILE "${HW_TEST_UNIT}-test.cpp")
 
-    # list(APPEND TEST_UNIT_FILE ../src-ctrl/drivers/fpga/fpga.cpp)
-    list(APPEND TEST_UNIT_FILE ../src-ctrl/drivers/ws2811/neostrip.cpp)
-    list(APPEND TEST_UNIT_FILE ../src-ctrl/drivers/mcp23017/mcp23017.cpp)
-    # list(APPEND TEST_UNIT_FILE )
-
-    set(asmfile ../src-ctrl/drivers/ws2811/neocore.S)
-
-    set_property(SOURCE ${asmfile} PROPERTY LANGUAGE C)
-
-    list(APPEND TEST_UNIT_FILE ${asmfile})
-
     string(SUBSTRING "${HW_TEST_UNIT}" 0 3 TEST_UNIT_BIN_FILE)
     set(TEST_UNIT_BIN_FILE "${TEST_UNIT_BIN_FILE}-test.bin")
 

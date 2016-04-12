@@ -4,7 +4,6 @@
 #include <logger.hpp>
 #include <software-spi.hpp>
 
-#include "commands.hpp"
 
 FPGA* FPGA::instance = nullptr;
 

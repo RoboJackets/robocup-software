@@ -13,6 +13,11 @@ file(GLOB_RECURSE common2015_SRC
     "utils/*.cpp"
 )
 
+# Find the assembly source files and make sure they're compiled using the C compiler
+file(GLOB_RECURSE asm_SRC "*.S")
+set_property(SOURCE ${asm_SRC} PROPERTY LANGUAGE C)
+list(APPEND common2015_SRC ${asm_SRC})
+
 # append all of the accessory library sources
 list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
 
@@ -21,7 +26,23 @@ set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
 # subdirectories
-set(DRIVERS             cc1101 cc1201 cc1201/cfg rtos-i2c shared-spi software-spi)
+set(DRIVERS
+    avr-isp
+    ball_sense
+    buzzer
+    cc1201
+    cc1201/cfg
+    ds2411
+    fpga
+    kicker-board
+    mcp23017
+    mpu-6050
+    rotarySelector
+    rtos-i2c
+    shared-spi
+    software-spi
+    ws2811
+)
 set(MODULES             CommModule CommLink Console)
 set(UTILS               assert logger numparser rtos-mgmt)
 

@@ -8,7 +8,6 @@
 #include <vector>
 #include <memory>
 
-#include "pins-ctrl-2015.hpp"
 #include "SharedSPI.hpp"
 
 class FPGA : public SharedSPIDevice<> {
