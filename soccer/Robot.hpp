@@ -126,7 +126,7 @@ public:
     typedef std::array<float, Num_Shells> RobotMask;
 
     /** radio packets */
-    Packet::Robot* robotPacket;
+    Packet::Robot robotPacket;
     Packet::Control* control;
 
     RobotConfig* config;
