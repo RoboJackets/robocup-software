@@ -89,9 +89,9 @@ public:
     uint16_t readRegister(MCP23017::Register regAddress);
 
     typedef enum { DIR_OUTPUT = 0, DIR_INPUT = 1 } PinMode;
-    void pinMode(int pin, PinMode mode);
-    void digitalWrite(int pin, int val);
-    int digitalRead(int pin);
+    void pinMode(ExpPinName pin, PinMode mode);
+    void digitalWrite(ExpPinName pin, int val);
+    int digitalRead(ExpPinName pin);
 
     // These provide a more advanced mapping of the chip functionality
     // See the data sheet for more information on what they do

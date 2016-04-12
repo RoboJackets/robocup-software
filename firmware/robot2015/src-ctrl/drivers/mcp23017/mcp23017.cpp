@@ -81,7 +81,7 @@ void MCP23017::config(uint16_t dir_config, uint16_t pullup_config,
         _cachedIODIR, _cachedGPPU, _cachedIPOL);
 }
 
-void MCP23017::pinMode(int pin, PinMode mode) {
+void MCP23017::pinMode(ExpPinName pin, PinMode mode) {
     if (mode == DIR_INPUT) {
         _cachedIODIR |= 1 << pin;
     } else {
@@ -91,12 +91,12 @@ void MCP23017::pinMode(int pin, PinMode mode) {
     inputOutputMask(_cachedIODIR);
 }
 
-int MCP23017::digitalRead(int pin) {
+int MCP23017::digitalRead(ExpPinName pin) {
     _cachedGPIO = readRegister(GPIO);
     return ((_cachedGPIO & (1 << pin)) ? 1 : 0);
 }
 
-void MCP23017::digitalWrite(int pin, int val) {
+void MCP23017::digitalWrite(ExpPinName pin, int val) {
     // If this pin is an INPUT pin, a write here will
     // enable the internal pullup
     // otherwise, it will set the OUTPUT voltage
