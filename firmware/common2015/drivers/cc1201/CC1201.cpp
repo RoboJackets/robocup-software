@@ -333,10 +333,6 @@ void CC1201::update_rssi() {
     // Only use the top MSB for simplicity. 1 dBm resolution.
     uint8_t offset = readReg(CC1201_RSSI1);
     _rssi = static_cast<float>((int8_t)twos_compliment(offset));
-
-    LOG(INF3, "RSSI is from device.");
-
-    LOG(INF3, "RSSI Register Val: 0x%02X", _rssi);
 }
 
 float CC1201::rssi() { return _rssi; }
