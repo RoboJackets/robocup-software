@@ -131,6 +131,7 @@ void OurRobot::resetForNextIteration() {
     _clearCmdText();
 
     control->Clear();
+    control->set_dvelocity(0);
     robotPacket.set_uid(shell());
 
     if (charged()) {
