@@ -5,6 +5,8 @@
 #include <protobuf/LogFrame.pb.h>
 #include "motion/TrapezoidalMotion.hpp"
 #include "Util.hpp"
+#include "CompositePath.hpp"
+#include "Configuration.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,9 +18,61 @@ using namespace std;
 using namespace Eigen;
 using namespace Geometry2d;
 
+
+
 namespace Planning {
+REGISTER_CONFIGURABLE(RRTPlanner);
+
+ConfigDouble* RRTPlanner::_partialReplanLeadTime;
+
+void RRTPlanner::createConfiguration(Configuration* cfg) {
+    _partialReplanLeadTime = new ConfigDouble(
+            cfg, "RRTPlanner/partialReplanLeadTime", 0.2,
+            "partialReplanLeadTime");
+}
 
 RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
+
+bool shouldFullReplan(float timeIntoPath, MotionInstant current, MotionInstant goal,
+                      const MotionConstraints& motionConstraints,
+                      const Geometry2d::ShapeSet* obstacles,
+                      const Path* prevPath) {
+
+    boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
+    // If we went off the end of the path, use the end for calculations.
+    MotionInstant targetInstant = optTarget ? optTarget->motion : prevPath->end().motion;
+    float pathError = current.pos.distTo(targetInstant.pos);
+    float replanThreshold = *motionConstraints._replan_threshold;
+
+    if (*motionConstraints._replan_threshold != 0 && pathError > replanThreshold) {
+        return true;
+    }
+
+    return false;
+}
+
+boost::optional<float> shouldPartialReplan(float timeIntoPath, MotionInstant current, MotionInstant goal,
+                                           const MotionConstraints& motionConstraints,
+                                           const Geometry2d::ShapeSet* obstacles,
+                                           const Path* prevPath) {
+
+    // Replan if we enter new obstacles
+    float hitTime = 0;
+    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
+        return hitTime;
+    }
+
+    float goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
+    float goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
+    if (goalPosDiff > RRTPlanner::goalChangeThreshold() ||
+        goalVelDiff > RRTPlanner::goalChangeThreshold()) {
+        // FIXME: goalChangeThreshold shouldn't be used for velocities as it
+        // is above
+        return prevPath->getDuration() - timeIntoPath;
+    }
+
+    return boost::none;
+}
 
 bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
@@ -44,16 +98,39 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
     return false;
 }
 
+std::unique_ptr<Path> RRTPlanner::plan(
+            const MotionInstant start, const MotionInstant goal,
+            const MotionConstraints& motionConstraints,
+            const Geometry2d::ShapeSet* obstacles) {
+
+    // Run bi-directional RRT to generate a path.
+    auto points = runRRT(start, goal, motionConstraints, obstacles);
+
+    // Optimize out uneccesary waypoints
+    optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
+
+    // Check if Planning or optimization failed
+    if (points.size() < 2) {
+        debugLog("PathPlanning Failed");
+        return nullptr;
+    }
+
+    // Generate and return a cubic bezier path using the waypoints
+    return generateCubicBezier(points, *obstacles, motionConstraints,
+                               start.vel, goal.vel);
+
+}
+
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
     const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
     // This planner only works with commands of type 'PathTarget'
     assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
-    Planning::PathTargetCommand target =
+    Planning::PathTargetCommand pathTargetCommand =
         *static_cast<const Planning::PathTargetCommand*>(cmd);
 
-    MotionInstant goal = target.pathGoal;
+    MotionInstant goal = pathTargetCommand.pathGoal;
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -70,29 +147,66 @@ std::unique_ptr<Path> RRTPlanner::run(
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, *obstacles);
 
-    // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(start, goal, motionConstraints, obstacles,
-                     prevPath.get())) {
-        // Run bi-directional RRT to generate a path.
-        auto points = runRRT(start, goal, motionConstraints, obstacles);
 
-        // Optimize out uneccesary waypoints
-        optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
 
-        // Check if Planning or optimization failed
-        if (points.size() < 2) {
-            debugLog("PathPlanning Failed");
-            auto path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            return std::move(path);
+    //Determine full replan or partial replan
+
+    if (prevPath) {
+        float timeIntoPath = RJ::TimestampToSecs((RJ::timestamp() - prevPath->startTime()));
+        //if (!shouldReplan(start, goal, motionConstraints, obstacles, prevPath.get())) {
+        //    return prevPath;
+        //}
+
+
+
+        if (!shouldFullReplan(timeIntoPath, start, goal, motionConstraints, obstacles, prevPath.get())) {
+            boost::optional<float> timeToReplan =
+                    shouldPartialReplan(timeIntoPath, start, goal, motionConstraints, obstacles, prevPath.get());
+            if (!timeToReplan) {
+                return prevPath;
+            } else {
+                float keepLength = (float) *_partialReplanLeadTime;
+
+                RJ::Time startTime = RJ::timestamp();
+                RJ::Time prevPathStartTime = prevPath->startTime();
+                float prevPathTimeInto = RJ::TimestampToSecs(startTime - prevPathStartTime);
+                if (prevPathTimeInto < *timeToReplan-keepLength) {
+                    printf("Partial Replan %f\n\n", *timeToReplan - prevPathTimeInto);
+                    auto subPath = prevPath->subPath(prevPathTimeInto, prevPathTimeInto + keepLength);
+
+                    RobotInstant newStart = subPath->end();
+                    auto newSubPath = plan(newStart.motion, goal, motionConstraints, obstacles);
+                    if (newSubPath) {
+                        printf("duration: %f %f\n", subPath->getDuration(), newSubPath->getDuration());
+
+                        auto path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
+                        path->setStartTime(startTime);
+                        return std::move(path);
+                    }
+                } else {
+                    printf("Too Soon\n");
+                }
+            }
+        } else {
+            printf("shouldFullReplan\n");
         }
 
-        // Generate and return a cubic bezier path using the waypoints
-        return generateCubicBezier(points, *obstacles, motionConstraints,
-                                   start.vel, goal.vel);
     } else {
-        return prevPath;
+        printf("newPath\n");
+    }
+
+    printf("fullReplan\n\n");
+
+    //TODO change this to a little in the future
+    MotionInstant newStart = start;
+    unique_ptr<Path> path = plan(newStart, goal, motionConstraints, obstacles);
+
+    if (path) {
+        //TODO abit in the future
+        path->setStartTime(RJ::timestamp());
+        return path;
+    } else {
+        return make_unique<EmptyPath>(RobotInstant(start));
     }
 }
 
