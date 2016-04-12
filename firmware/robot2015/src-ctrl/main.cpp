@@ -70,23 +70,19 @@ int main() {
             // }
             int a;
             transferAndWait(transByte, spi);
-            wait(.1);
             a = transferAndWait(0, spi);
             /**/
 
             // a = transferAndWait('3', spi);
             pc.printf("Received:");
             pc.printf("%d\r\n", a);
-            wait(.1);  // tested down to .025 seconds between
         }
     }
 }
 
 int transferAndWait(const char what, SPI& spi) {
     n_kick_select = !n_kick_select;
-    wait(.1);
     int a = spi.write(what);
-    wait(.020);
     n_kick_select = !n_kick_select;
     return a;
 }  // end transferAndWait
