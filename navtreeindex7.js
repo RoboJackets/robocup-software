@@ -1,7 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a28b19f6ad08c0cf6e3b1b05983cbbb52":[12,0,5,8,1,1,0,1],
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a886e44c013e3e3486d8764947d9d9734":[12,0,5,8,1,1,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#ad41cf0e9f8bac1c77e15332ea6c1f090":[12,0,5,8,1,1,0,3],
 "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html":[12,0,5,8,1,2,0],
 "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a248e91eae28bbd17cf3c415b167574ec":[12,0,5,8,1,2,0,2],
@@ -214,8 +212,8 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#ab6f7994d310416fd28140eabbbc9cc50":[12,0,5,9,0,24],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#acd7505e29b6c9befcfacfe2a2d47932d":[12,0,5,9,0,20],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#acea1876d4023b65440f2604146f24889":[12,0,5,9,0,19],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#acf952b7beec0af9de9d23afa209e13e7":[12,0,5,9,0,5],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#acf952b7beec0af9de9d23afa209e13e7":[12,0,5,9,0,6],
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#acf952b7beec0af9de9d23afa209e13e7":[12,0,5,9,0,5],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#ad36e5ece214e123367dda0712596f987":[12,0,5,9,0,11],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#ad36e5ece214e123367dda0712596f987":[12,0,5,9,0,12],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#ade50e4160bb0395f7db983542943c3b6":[12,0,5,9,0,21],
@@ -224,14 +222,14 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1root__play_1_1_root_play.html#a00c8d8d71754855f459d032a57a2eb6e":[12,0,5,10,0,3],
 "classgameplay_1_1root__play_1_1_root_play.html#a0f638b2eca1af3828225a6137e5d90e8":[12,0,5,10,0,6],
 "classgameplay_1_1root__play_1_1_root_play.html#a0f638b2eca1af3828225a6137e5d90e8":[12,0,5,10,0,5],
-"classgameplay_1_1root__play_1_1_root_play.html#a1d9999e8f19ce5272dfb5e6f364aff11":[12,0,5,10,0,10],
 "classgameplay_1_1root__play_1_1_root_play.html#a1d9999e8f19ce5272dfb5e6f364aff11":[12,0,5,10,0,11],
+"classgameplay_1_1root__play_1_1_root_play.html#a1d9999e8f19ce5272dfb5e6f364aff11":[12,0,5,10,0,10],
 "classgameplay_1_1root__play_1_1_root_play.html#a3b0e6044421c568e1b462b2f2c795b4a":[12,0,5,10,0,4],
 "classgameplay_1_1root__play_1_1_root_play.html#a55757a79ffbea0294f774b71e886b73e":[12,0,5,10,0,1],
 "classgameplay_1_1root__play_1_1_root_play.html#a765b07e637ff630dea5e06280f1ce993":[12,0,5,10,0,2],
 "classgameplay_1_1root__play_1_1_root_play.html#a9ee1f43610d416f5c7270610d3a5f7a3":[12,0,5,10,0,14],
-"classgameplay_1_1root__play_1_1_root_play.html#aa27d056340be3008239dd536894f729f":[12,0,5,10,0,8],
 "classgameplay_1_1root__play_1_1_root_play.html#aa27d056340be3008239dd536894f729f":[12,0,5,10,0,9],
+"classgameplay_1_1root__play_1_1_root_play.html#aa27d056340be3008239dd536894f729f":[12,0,5,10,0,8],
 "classgameplay_1_1root__play_1_1_root_play.html#aad94884f38b5f9c15ee2f775a8422f17":[12,0,5,10,0,15],
 "classgameplay_1_1root__play_1_1_root_play.html#aafe204ad98ef3c89f05fe1828e7ec946":[12,0,5,10,0,0],
 "classgameplay_1_1root__play_1_1_root_play.html#accd719b90f6f1a0748ed58a746219e62":[12,0,5,10,0,12],
@@ -249,5 +247,7 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html":[12,0,5,12,0],
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a271c7a4d1b259880cb953ab9fe3f94ac":[12,0,5,12,0,6],
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a52cd69318ad215e3dac99583597352a8":[12,0,5,12,0,0],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a5e8a2aa4f7e9e8fa3c14dc8470cd8f6a":[12,0,5,12,0,4]
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a5e8a2aa4f7e9e8fa3c14dc8470cd8f6a":[12,0,5,12,0,4],
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a8af5729939e7fb71778b69cbdf9387d0":[12,0,5,12,0,1],
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a9400445986b12848e49d1c0c4aaecde4":[12,0,5,12,0,2]
 };

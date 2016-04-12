@@ -18,7 +18,7 @@ var searchData=
   ['seterrortext',['setErrorText',['../class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b',1,'RobotStatusWidget']]],
   ['setgyrorange',['setGyroRange',['../class_m_p_u6050.html#abff3f95db6bcfede68d8bcfa597d5dca',1,'MPU6050']]],
   ['seti2cbypass',['setI2CBypass',['../class_m_p_u6050.html#aae3131eac8cbf899f09c2ff1253719cc',1,'MPU6050']]],
-  ['setpixel',['setPixel',['../class_neo_strip.html#ada4459f43a7bd1e09858ac6dd0714fe8',1,'NeoStrip::setPixel(size_t p, int color)'],['../class_neo_strip.html#ad9c35e3e5aff68f5457476ddde544609',1,'NeoStrip::setPixel(size_t p, unsigned int red, unsigned int green, unsigned int blue)']]],
+  ['setpixel',['setPixel',['../class_neo_strip.html#ada4459f43a7bd1e09858ac6dd0714fe8',1,'NeoStrip::setPixel(size_t p, int color)'],['../class_neo_strip.html#aa02e47bcbdab5e94639c4e5f523675ce',1,'NeoStrip::setPixel(size_t p, uint8_t red, uint8_t green, uint8_t blue)'],['../class_neo_strip.html#a1f1ed1c6b788752901a1b9ffdc2ca5af',1,'NeoStrip::setPixel(size_t p, NeoColor color)']]],
   ['setpixels',['setPixels',['../class_neo_strip.html#ab0cd3c31995b2849b7a01a7089d83c82',1,'NeoStrip']]],
   ['setshowstopper',['setShowstopper',['../class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98',1,'RobotStatusWidget']]],
   ['setsleepmode',['setSleepMode',['../class_m_p_u6050.html#aef8cf162a22513736313ebaa108cb9b7',1,'MPU6050']]],

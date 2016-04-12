@@ -115,15 +115,18 @@ $(document).ready(function(){initNavTree('class_i_o_expander_digital_in_out.html
 </div><!--header-->
 <div class="contents">
 
-<p>A DigitalInOut class meant to replicate basic functionality of the mBed digitalOut and digitalIn.  
+<p>A DigitalInOut class meant to replicate basic functionality of the mBed DigitalOut and DigitalIn on the io-expander.  
  <a href="class_i_o_expander_digital_in_out.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a07067394809633e9e8f5175e1e3ec9c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a07067394809633e9e8f5175e1e3ec9c3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#a07067394809633e9e8f5175e1e3ec9c3">IOExpanderDigitalInOut</a> (<a class="el" href="class_m_c_p23017.html">MCP23017</a> *mcp, MCP23017::ExpPinName pin, bool state=false)</td></tr>
-<tr class="memdesc:a07067394809633e9e8f5175e1e3ec9c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Other constructors for creating objects for pinouts. <br/></td></tr>
-<tr class="separator:a07067394809633e9e8f5175e1e3ec9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83c8b6dc7331ab3cd6b8fb24bcb213b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83c8b6dc7331ab3cd6b8fb24bcb213b3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#a83c8b6dc7331ab3cd6b8fb24bcb213b3">IOExpanderDigitalInOut</a> (<a class="el" href="class_m_c_p23017.html">MCP23017</a> *mcp, MCP23017::ExpPinName pin, MCP23017::PinMode mode, bool state=false)</td></tr>
+<tr class="memdesc:a83c8b6dc7331ab3cd6b8fb24bcb213b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Other constructors for creating objects for pinouts. <br/></td></tr>
+<tr class="separator:a83c8b6dc7331ab3cd6b8fb24bcb213b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac36968692d1b2c6584aa53af6b75f03f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac36968692d1b2c6584aa53af6b75f03f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pinMode</b> (MCP23017::PinMode mode)</td></tr>
+<tr class="separator:ac36968692d1b2c6584aa53af6b75f03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7f37890760ec610beebfdf6a7cd17a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7f37890760ec610beebfdf6a7cd17a0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#aa7f37890760ec610beebfdf6a7cd17a0">write</a> (int val)</td></tr>
 <tr class="memdesc:aa7f37890760ec610beebfdf6a7cd17a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pulls pin low if val = 0 and pulls pin high if val &gt;= 1. <br/></td></tr>
@@ -136,21 +139,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#adff6364f15113e8bd1b153c2a9d62888">operator=</a> (int value)</td></tr>
 <tr class="memdesc:adff6364f15113e8bd1b153c2a9d62888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the equals operator to write to a pin. <br/></td></tr>
 <tr class="separator:adff6364f15113e8bd1b153c2a9d62888"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e28af4159566ae9ff44357a60669d27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e28af4159566ae9ff44357a60669d27"></a>
-<a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#a4e28af4159566ae9ff44357a60669d27">operator=</a> (<a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;rhs)</td></tr>
-<tr class="memdesc:a4e28af4159566ae9ff44357a60669d27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the equals operator to read the state of another IOExpander pin. <br/></td></tr>
-<tr class="separator:a4e28af4159566ae9ff44357a60669d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3c71b9c9940b5fcdd4b35bd471cee07"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3c71b9c9940b5fcdd4b35bd471cee07"></a>
-<a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#af3c71b9c9940b5fcdd4b35bd471cee07">operator=</a> (DigitalInOut &amp;rhs)</td></tr>
-<tr class="memdesc:af3c71b9c9940b5fcdd4b35bd471cee07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the equals operator to read the state of another normal IO pin. <br/></td></tr>
-<tr class="separator:af3c71b9c9940b5fcdd4b35bd471cee07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb472b73e9a9bd7512a87c309fbdc893"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb472b73e9a9bd7512a87c309fbdc893"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_i_o_expander_digital_in_out.html#afb472b73e9a9bd7512a87c309fbdc893">operator int</a> ()</td></tr>
 <tr class="memdesc:afb472b73e9a9bd7512a87c309fbdc893"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows the pin to return its value like a simple integer variable. <br/></td></tr>
 <tr class="separator:afb472b73e9a9bd7512a87c309fbdc893"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A DigitalInOut class meant to replicate basic functionality of the mBed digitalOut and digitalIn. </p>
+<div class="textblock"><p>A DigitalInOut class meant to replicate basic functionality of the mBed DigitalOut and DigitalIn on the io-expander. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>firmware/robot2015/src-ctrl/drivers/mcp23017/<a class="el" href="io-expander_8hpp_source.html">io-expander.hpp</a></li>
 </ul>
@@ -160,7 +155,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_i_o_expander_digital_in_out.html">IOExpanderDigitalInOut</a></li>
-    <li class="footer">Generated on Tue Apr 12 2016 02:19:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Apr 12 2016 03:26:44 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

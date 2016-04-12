@@ -181,9 +181,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a03a2643a1e2fbf8c2aa998d48f360498"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a03a2643a1e2fbf8c2aa998d48f360498">writeMask</a> (uint16_t data, uint16_t mask)</td></tr>
 <tr class="memdesc:a03a2643a1e2fbf8c2aa998d48f360498"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a masked 16-bit value to the device.  <a href="#a03a2643a1e2fbf8c2aa998d48f360498">More...</a><br/></td></tr>
 <tr class="separator:a03a2643a1e2fbf8c2aa998d48f360498"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e120ab112709bdb32b7becbd534413e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e120ab112709bdb32b7becbd534413e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>readMask</b> (uint16_t mask)</td></tr>
-<tr class="separator:a6e120ab112709bdb32b7becbd534413e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b9fc988b1bae8bf9cd9b9082f952ee1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p23017.html#a6b9fc988b1bae8bf9cd9b9082f952ee1">readPin</a> (MCP23017::ExpPinName pin)</td></tr>
 <tr class="memdesc:a6b9fc988b1bae8bf9cd9b9082f952ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a 0/1 value from an input bit.  <a href="#a6b9fc988b1bae8bf9cd9b9082f952ee1">More...</a><br/></td></tr>
 <tr class="separator:a6b9fc988b1bae8bf9cd9b9082f952ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,15 +193,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>writeRegister</b> (MC
 <tr class="memitem:a369951f5ce7e9ae6a338bcf9cc9f10f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a369951f5ce7e9ae6a338bcf9cc9f10f6"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>readRegister</b> (MCP23017::Register regAddress)</td></tr>
 <tr class="separator:a369951f5ce7e9ae6a338bcf9cc9f10f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0a87702440ae3b6fbe42457546009ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0a87702440ae3b6fbe42457546009ad"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>pinMode</b> (int pin, PinMode mode)</td></tr>
-<tr class="separator:ac0a87702440ae3b6fbe42457546009ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9fc2a42e6b41227009edaff4d990c31"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9fc2a42e6b41227009edaff4d990c31"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>digitalWrite</b> (int pin, int val)</td></tr>
-<tr class="separator:ab9fc2a42e6b41227009edaff4d990c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4af83fcced4c98c507530bba189721bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4af83fcced4c98c507530bba189721bb"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>digitalRead</b> (int pin)</td></tr>
-<tr class="separator:a4af83fcced4c98c507530bba189721bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab23fbf252bc8823771aa0109b5f09955"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab23fbf252bc8823771aa0109b5f09955"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pinMode</b> (ExpPinName pin, PinMode mode)</td></tr>
+<tr class="separator:ab23fbf252bc8823771aa0109b5f09955"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab143d9fd9c65bd4361cda701833f400a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab143d9fd9c65bd4361cda701833f400a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>digitalWrite</b> (ExpPinName pin, int val)</td></tr>
+<tr class="separator:ab143d9fd9c65bd4361cda701833f400a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af329a9def6704f71efa586687155bd26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af329a9def6704f71efa586687155bd26"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>digitalRead</b> (ExpPinName pin)</td></tr>
+<tr class="separator:af329a9def6704f71efa586687155bd26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd2401da8537875428522c181ecd9769"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd2401da8537875428522c181ecd9769"></a>
 uint16_t&#160;</td><td class="memItemRight" valign="bottom"><b>digitalWordRead</b> ()</td></tr>
 <tr class="separator:abd2401da8537875428522c181ecd9769"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -220,9 +217,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>inputOutputMask</b> (
 <tr class="memitem:a167b866cd44e3389b1cc8315d547db95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a167b866cd44e3389b1cc8315d547db95"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>internalPullupMask</b> (uint16_t mask)</td></tr>
 <tr class="separator:a167b866cd44e3389b1cc8315d547db95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a206109703fa6de983491fe575e6485ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a206109703fa6de983491fe575e6485ce"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)</td></tr>
-<tr class="separator:a206109703fa6de983491fe575e6485ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Allow access to an I2C-connected MCP23017 16-bit I/O extender chip. </p>
@@ -374,7 +368,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>write</b> (int data)<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_m_c_p23017.html">MCP23017</a></li>
-    <li class="footer">Generated on Tue Apr 12 2016 02:19:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Apr 12 2016 03:26:44 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
