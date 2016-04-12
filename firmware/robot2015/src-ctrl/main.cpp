@@ -109,8 +109,9 @@ int main() {
     sharedSPI->format(8, 0);  // 8 bits per transfer
 
     // Initialize and configure the fpga with the given bitfile
-    FPGA::Initialize(sharedSPI);
-    bool fpga_ready = FPGA::Instance()->configure("/local/rj-fpga.nib");
+    FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
+                              RJ_FPGA_PROG_B, RJ_FPGA_DONE);
+    bool fpga_ready = FPGA::Instance->configure("/local/rj-fpga.nib");
 
     if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");
