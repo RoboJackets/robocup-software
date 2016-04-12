@@ -292,7 +292,7 @@ public:
     /**
      * ignore ball sense and kick immediately
      */
-    void kickImmediately(bool im);
+    void kickImmediately();
 
     boost::ptr_vector<Packet::DebugText> robotText;
 
