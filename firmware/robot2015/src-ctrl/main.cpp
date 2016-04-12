@@ -34,10 +34,10 @@ int main() {
             getCmd = pc.getc();
             switch (getCmd) {
                 case 'k':
-                    transByte = kick(10);
+                    transByte = kick(20);
                     break;
                 case 'c':
-                    transByte = chip(50);
+                    transByte = chip(8);
                     break;
                 case 'r':
                     // transByte = vRead();
@@ -106,15 +106,17 @@ Commands:
 
 int kick(int time) {
     // set kick command
-    int cmd = 0xC0;
-    time = map(time, 0, 255, 0, 63);
+    int cmd = 0x3 << 6;
+    // int cmd = 0xC0;
+    // time = map(time, 0, 255, 0, 63);
     return cmd | time;
 }
 
 int chip(int time) {
     // set chip command
-    int cmd = 0xB0;
-    time = map(time, 0, 255, 0, 63);
+    int cmd = 0x2 << 6;
+    // int cmd = 0x80;
+    // time = map(time, 0, 255, 0, 63);
     return cmd | time;
 }
 // int vRead()

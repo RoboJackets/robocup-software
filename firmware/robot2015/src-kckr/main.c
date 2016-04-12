@@ -50,6 +50,7 @@ void main() {
                     case 0x2:  // chip
                         time = PARSE_TIME(data);
                         trigger(time, 0);
+                        // trigger(8, 0);
                         break;
                     case 0x3:  // kick
                         time = PARSE_TIME(data);
@@ -115,7 +116,7 @@ void trigger(uint8_t timeKick, uint8_t useKicker) {
     uint8_t action = useKicker ? KICK : CHIP;
     TOGGLE_BIT(PORTA, action);
     // delay_us(timeKick*125);
-    delay_ms(timeKick * 13);
+    delay_ms(timeKick * 100);
     TOGGLE_BIT(PORTA, action);
 }
 
