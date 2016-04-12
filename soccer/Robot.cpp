@@ -305,7 +305,7 @@ void OurRobot::unkick() {
     *_cmdText << "unkick()" << endl;
 }
 
-void OurRobot::kickImmediately(bool im) {
+void OurRobot::kickImmediately() {
     control->set_triggermode(Packet::Control::IMMEDIATE);
 }
 
