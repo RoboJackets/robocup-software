@@ -32,7 +32,7 @@ void MCP23017::writeRegister(MCP23017::Register regAddress, uint16_t data) {
 
 uint16_t MCP23017::readRegister(MCP23017::Register regAddress) {
     char buffer[2];
-    _i2c.write(regAddress);
+    _i2c.write(_i2cAddress, (char*)&regAddress);
     _i2c.read(_i2cAddress, buffer, 2);
 
     return (uint16_t)(buffer[0] | (buffer[1] << 8));
@@ -64,8 +64,6 @@ uint8_t MCP23017::readPin(MCP23017::ExpPinName pin) {
 
     return ((_cachedGPIO >> pin) & 0x0001);
 }
-
-int MCP23017::readMask(uint16_t mask) { return readRegister(GPIO) & mask; }
 
 void MCP23017::config(uint16_t dir_config, uint16_t pullup_config,
                       uint16_t polarity_config) {

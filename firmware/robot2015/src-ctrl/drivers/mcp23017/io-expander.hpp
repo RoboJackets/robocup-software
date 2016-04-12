@@ -15,7 +15,8 @@ public:
                            MCP23017::PinMode mode, bool state = false)
         : _pin(pin), _mcp23017(mcp) {
         pinMode(mode);
-        if (state != read()) write(state);
+        if ((state != (bool)read()) && mode == MCP23017::DIR_OUTPUT)
+            write(state);
     }
 
     void pinMode(MCP23017::PinMode mode) { _mcp23017->pinMode(_pin, mode); }

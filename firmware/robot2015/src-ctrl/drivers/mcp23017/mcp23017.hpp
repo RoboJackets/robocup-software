@@ -67,8 +67,6 @@ public:
      */
     void writeMask(uint16_t data, uint16_t mask);
 
-    int readMask(uint16_t mask);
-
     /** Read a 0/1 value from an input bit
      *
      * @param   bit_number    bit number range 0 --> 15
@@ -114,8 +112,6 @@ public:
     // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 =
     // disabled)
     void internalPullupMask(uint16_t mask);
-
-    void write(int data);
 
 private:
     I2CMasterRtos _i2c;

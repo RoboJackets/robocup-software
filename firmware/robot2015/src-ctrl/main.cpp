@@ -127,21 +127,22 @@ int main() {
     bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
-    // sets the first 8 lines to input and the last 8 to output.
+    // sets the first 8 lines to input and the last 8 to output.  The pullup
+    // resistors and polarity swap are enabled for the 4 rotary selector lines.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.config(0x00FF, 0x0000, 0x0000);
+    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
 
     // rotary selector for shell id
     RotarySelector<IOExpanderDigitalInOut> rotarySelector(
-        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
                                 MCP23017::DIR_INPUT),
          IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
                                 MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
                                 MCP23017::DIR_INPUT)});
 
     // Startup the 3 separate threads, being sure that we wait for it
