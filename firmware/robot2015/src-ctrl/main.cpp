@@ -157,8 +157,17 @@ int main() {
     radioProtocol.start();
     radioProtocol.rxCallback = [](uint8_t* msg) {
         // TODO: parse @msg
+
         // TODO: create actual message
-        return vector<uint8_t>(10, 1);
+        return vector<uint8_t>({
+            // uid,
+            // last_rssi,
+            // battery_level,
+            // kicker_status, // TODO: kicker failure?
+            // motor_status,
+            // failures, // bit field of failures, status, etc
+            // kicker_voltage
+        });
     };
 
     // Set the watdog timer's initial config
