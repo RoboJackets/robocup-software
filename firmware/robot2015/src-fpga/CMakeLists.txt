@@ -196,3 +196,30 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/git_version.vh
     "`define GIT_VERSION_HASH_32\t32'h${GIT_HASH_8}\n"
     "`define GIT_VERSION_DIRTY\t1'b${GIT_DIRTY}\n"
 )
+
+
+########################## Icarus Verilog compilation ##########################
+# Icarus verilog is a tool for synthesizing and simulating verilog code.  It
+# does not synthesize verilog for loading onto actual fpgas - we use xilinx for
+# that.
+
+list(REMOVE_ITEM verilog_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${UCF_IN_FILENAME})
+
+add_custom_target(fpga2015_iverilog
+    COMMAND iverilog ${verilog_SRC}
+            -o ${CMAKE_CURRENT_BINARY_DIR}/robocup_iverilog
+            -I ${CMAKE_CURRENT_SOURCE_DIR}/src/BLDC
+            -I ${CMAKE_CURRENT_BINARY_DIR}
+            -I ${CMAKE_CURRENT_SOURCE_DIR}/src
+            -D ICARUS_VERILOG 2>&1
+            | tee ${CMAKE_CURRENT_BINARY_DIR}/iverilog-compile.log
+    COMMENT "Compiling verilog code with iverilog"
+)
+
+# A command that only succeeds if the iverilog compile log doesn't contain the
+# word "warning".
+add_custom_target(fpga2015_iverilog_strict
+    DEPENDS fpga2015_iverilog
+    COMMAND ! grep warning ${CMAKE_CURRENT_BINARY_DIR}/iverilog-compile.log > /dev/null
+    COMMENT "Ensuring iverilog compilation succeeded without warnings"
+)
