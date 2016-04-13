@@ -66,8 +66,8 @@ int main() {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
         // register handlers for any ports we might use
-        for (rtp::port port :
-             {rtp::port::CONTROL, rtp::port::PING, rtp::port::LEGACY}) {
+        for (rtp::Port port :
+             {rtp::Port::CONTROL, rtp::Port::PING, rtp::Port::LEGACY}) {
             CommModule::Instance->setRxHandler(&radioRxHandler, port);
             CommModule::Instance->setTxHandler((CommLink*)global_radio,
                                                &CommLink::sendPacket, port);
@@ -79,12 +79,15 @@ int main() {
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
     // set callbacks for usb control transfers
-    usbLink.writeRegisterCallback =
-        [](uint8_t reg, uint8_t val) { global_radio->writeReg(reg, val); };
-    usbLink.readRegisterCallback =
-        [](uint8_t reg) { return global_radio->readReg(reg); };
-    usbLink.strobeCallback =
-        [](uint8_t strobe) { global_radio->strobe(strobe); };
+    usbLink.writeRegisterCallback = [](uint8_t reg, uint8_t val) {
+        global_radio->writeReg(reg, val);
+    };
+    usbLink.readRegisterCallback = [](uint8_t reg) {
+        return global_radio->readReg(reg);
+    };
+    usbLink.strobeCallback = [](uint8_t strobe) {
+        global_radio->strobe(strobe);
+    };
 
     LOG(INIT, "Initializing USB interface...");
     usbLink.connect();  // note: this blocks until the link is connected
@@ -113,7 +116,7 @@ int main() {
             pkt.payload.insert(pkt.payload.end(), buf, &buf[bufSize]);
 
             // TODO(justin): remove this, the buffer should contain this
-            pkt.header.port = rtp::port::CONTROL;
+            pkt.header.port = rtp::Port::CONTROL;
             pkt.header.address = rtp::BROADCAST_ADDRESS;
             pkt.header.type = rtp::header_data::Control;
 

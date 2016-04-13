@@ -13,15 +13,28 @@ const uint8_t BROADCAST_ADDRESS = 0;
 const uint8_t BASE_STATION_ADDRESS = 1;
 const uint8_t LOOPBACK_ADDRESS = 2;
 
+template <typename PACKET_TYPE>
+void SerializeToVector(const PACKET_TYPE& pkt, std::vector<uint8_t>* buf) {
+    const uint8_t* bytes = (const uint8_t*)&pkt;
+    for (size_t i = 0; i < sizeof(PACKET_TYPE); i++) {
+        buf->push_back(bytes[i]);
+    }
+}
+
+template <typename PACKET_TYPE>
+void SerializeToBuffer(const PACKET_TYPE& pkt, uint8_t* buf, size_t bufSize) {
+    memcpy(buf, (const void*)&pkt, bufSize);
+}
+
 /**
  * @brief Port enumerations for different communication protocols.
  */
-enum port { SINK = 0, LINK = 1, CONTROL = 2, LEGACY = 3, PING = 4 };
+enum Port { SINK = 0, LINK = 1, CONTROL = 2, LEGACY = 3, PING = 4 };
 
 struct header_data {
     enum Type { Control, Tuning, FirmwareUpdate, Misc };
 
-    header_data(uint8_t p = SINK) : address(0), port(p), type(Control){};
+    header_data(Port p = SINK) : address(0), port(p), type(Control){};
 
     uint8_t address;
     unsigned int port : 4;
@@ -55,46 +68,58 @@ public:
     std::vector<uint8_t> payload;
 
     packet(){};
-    packet(const std::string& s, uint8_t p = SINK) : header(p) {
+    packet(const std::string& s, Port p = SINK) : header(p) {
         for (char c : s) payload.push_back(c);
         payload.push_back('\0');
     }
 
     template <class T>
-    packet(const std::vector<T>& v, uint8_t p = SINK)
+    packet(const std::vector<T>& v, Port p = SINK)
         : header(p) {
         for (T val : v) payload.push_back(val);
     }
 
-    size_t size() const { return payload.size() + sizeof(header); }
+    size_t size() const { return sizeof(header) + payload.size(); }
 
-    int port() const { return static_cast<int>(header.port); }
+    /// deserialize a packet from a buffer
     template <class T>
-    void port(T p) {
-        header.port = static_cast<unsigned int>(p);
+    void recv(const std::vector<T>& v) {
+        recv(v.data(), v.size());
     }
 
-    int address() { return header.address; }
-    void address(int a) { header.address = static_cast<unsigned int>(a); }
+    /// deserialize a packet from a buffer
+    void recv(const uint8_t* buffer, size_t size) {
+        // check that the buffer is big enough
+        if (size < sizeof(header)) return;
+
+        // deserialize header.  skip first byte because it indicates size and
+        // isn't part of the header
+        header = *((header_data*)buffer + 1);
+
+        // Everything after the header is payload data
+        payload.clear();
+        for (size_t i = sizeof(header) + 2; i < size; i++) {
+            payload.push_back(buffer[i]);
+        }
+    }
+
+    void pack(std::vector<uint8_t>* buffer) const {
+        // first byte is total size (excluding the size byte)
+        const uint8_t total_size = sizeof(header) + payload.size();
+        buffer->reserve(total_size + 1);
+
+        buffer->push_back(total_size);
+
+        SerializeToVector(header, buffer);
+
+        // payload
+        buffer->insert(buffer->end(), payload.begin(), payload.end());
+    }
 };
 
 // Packet sizes
 constexpr unsigned int Forward_Size =
     sizeof(header_data) + 6 * sizeof(ControlMessage);
-const unsigned int Reverse_Size = 7;
-
-template <typename PACKET_TYPE>
-void SerializeToVector(const PACKET_TYPE& pkt, std::vector<uint8_t> buf) {
-    uint8_t* bytes = (uint8_t*)pkt;
-    for (size_t i = 0; i < sizeof(PACKET_TYPE); i++) {
-        buf.push_back(bytes[i]);
-    }
-}
-
-/// Serializes the message to the buffer and returns the number of bytes written
-template <typename PACKET_TYPE>
-void SerializeToBuffer(const PACKET_TYPE& pkt, uint8_t* buf, size_t bufSize) {
-    memcpy(buf, (const void*)&pkt, bufSize);
-}
+constexpr unsigned int Reverse_Size = 7;
 
 }  // namespace rtp

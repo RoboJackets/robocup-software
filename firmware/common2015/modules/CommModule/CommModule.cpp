@@ -69,17 +69,17 @@ void CommModule::txThread() {
             ASSERT(tState == osOK);
 
             // Call the user callback function
-            if (_ports.find(p->port()) != _ports.end() &&
-                _ports[p->port()].txCallback() != nullptr) {
-                _ports[p->port()].txCallback()(p);
-                _ports[p->port()].txCount++;
+            if (_ports.find(p->header.port) != _ports.end() &&
+                _ports[p->header.port].txCallback() != nullptr) {
+                _ports[p->header.port].txCallback()(p);
+                _ports[p->header.port].txCount++;
 
-                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->port());
+                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            if (p->address() != 127) {
+            if (p->header.address != 127) {
                 _txTimeoutLED->renew();
             }
 
@@ -121,17 +121,17 @@ void CommModule::rxThread() {
             ASSERT(tState == osOK);
 
             // Call the user callback function (if set)
-            if (_ports.find(p->port()) != _ports.end() &&
-                _ports[p->port()].rxCallback() != nullptr) {
-                _ports[p->port()].rxCallback()(p);
-                _ports[p->port()].rxCount++;
+            if (_ports.find(p->header.port) != _ports.end() &&
+                _ports[p->header.port].rxCallback() != nullptr) {
+                _ports[p->header.port].rxCallback()(p);
+                _ports[p->header.port].rxCount++;
 
-                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->port());
+                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // this renews a countdown for turning off the strobing thread once
             // it expires
-            if (p->address() != 127) {
+            if (p->header.address != 127) {
                 _rxTimeoutLED->renew();
             }
 
@@ -168,8 +168,8 @@ void CommModule::ready() {
 
 void CommModule::send(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports.find(packet.port()) != _ports.end() &&
-        _ports[packet.port()].txCallback() != nullptr) {
+    if (_ports.find(packet.header.port) != _ports.end() &&
+        _ports[packet.header.port].txCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_txQueue, osWaitForever);
 
@@ -184,14 +184,14 @@ void CommModule::send(const rtp::packet& packet) {
         LOG(WARN,
             "Failed to send %u byte packet: There is no open transmitting "
             "socket for port %u",
-            packet.payload.size(), packet.port());
+            packet.payload.size(), packet.header.port);
     }
 }
 
 void CommModule::receive(const rtp::packet& packet) {
     // Check to make sure a socket for the port exists
-    if (_ports.find(packet.port()) != _ports.end() &&
-        _ports[packet.port()].rxCallback() != nullptr) {
+    if (_ports.find(packet.header.port) != _ports.end() &&
+        _ports[packet.header.port].rxCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_rxQueue, osWaitForever);
 
@@ -205,7 +205,7 @@ void CommModule::receive(const rtp::packet& packet) {
         LOG(WARN,
             "Failed to receive %u byte packet: There is no open receiving "
             "socket for port %u",
-            packet.payload.size(), packet.port());
+            packet.payload.size(), packet.header.port);
     }
 }
 

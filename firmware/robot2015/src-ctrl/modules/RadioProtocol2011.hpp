@@ -50,15 +50,15 @@ public:
         _state = DISCONNECTED;
 
         _commModule->setRxHandler(this, &RadioProtocol2011::rxHandler,
-                                  rtp::port::CONTROL);
+                                  rtp::Port::CONTROL);
         _commModule->setTxHandler((CommLink*)global_radio,
-                                  &CommLink::sendPacket, rtp::port::CONTROL);
+                                  &CommLink::sendPacket, rtp::Port::CONTROL);
 
-        LOG(INF1, "Radio protocol listening on port %d", rtp::port::CONTROL);
+        LOG(INF1, "Radio protocol listening on port %d", rtp::Port::CONTROL);
     }
 
     void stop() {
-        _commModule->close(rtp::port::CONTROL);
+        _commModule->close(rtp::Port::CONTROL);
 
         _replyTimer.stop();
         _state = STOPPED;
@@ -103,7 +103,7 @@ private:
     void reply() {
         LOG(INIT, "sent reply");
         rtp::packet pkt;
-        pkt.header.port = rtp::port::CONTROL;
+        pkt.header.port = rtp::Port::CONTROL;
         pkt.header.type = rtp::header_data::Control;
         pkt.header.address = rtp::BASE_STATION_ADDRESS;
 

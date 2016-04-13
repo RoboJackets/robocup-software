@@ -87,8 +87,8 @@ void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     // Open a socket for running tests across the link layer
     // The LINK port handlers are always active, regardless of whether or not a
     // working radio is connected.
-    commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
-    commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
+    commModule->setRxHandler(&loopback_rx_cb, rtp::Port::LINK);
+    commModule->setTxHandler(&loopback_tx_cb, rtp::Port::LINK);
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
@@ -99,8 +99,8 @@ void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
 
         // Legacy port
         commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::port::LEGACY);
-        commModule->setRxHandler(&legacy_rx_cb, rtp::port::LEGACY);
+                                 rtp::Port::LEGACY);
+        commModule->setRxHandler(&legacy_rx_cb, rtp::Port::LEGACY);
 
         LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 
