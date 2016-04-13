@@ -36,17 +36,17 @@ void motors_show() {
     std::array<uint8_t, NUM_MOTORS> halls = {0};
     std::array<uint16_t, NUM_MOTORS> enc_deltas = {0};
 
-    FPGA::Instance()->read_duty_cycles(duty_cycles.data(), duty_cycles.size());
-    FPGA::Instance()->read_halls(halls.data(), halls.size());
-    FPGA::Instance()->read_encs(enc_deltas.data(), enc_deltas.size());
+    FPGA::Instance->read_duty_cycles(duty_cycles.data(), duty_cycles.size());
+    FPGA::Instance->read_halls(halls.data(), halls.size());
+    FPGA::Instance->read_encs(enc_deltas.data(), enc_deltas.size());
 
     // get the driver register values from the fpga
     std::vector<uint16_t> driver_regs;
-    FPGA::Instance()->gate_drivers(driver_regs);
+    FPGA::Instance->gate_drivers(driver_regs);
 
     // The status byte fields:
     //   { sys_rdy, watchdog_trigger, motors_en, is_connected[4:0] }
-    uint8_t status_byte = FPGA::Instance()->watchdog_reset();
+    uint8_t status_byte = FPGA::Instance->watchdog_reset();
 
     printf("\033[?25l\033[25mStatus:\033[K\t\t\t%s\033E",
            status_byte & 0x20 ? "ENABLED" : "DISABLED");
@@ -89,12 +89,12 @@ int cmd_motors(const std::vector<std::string>& args) {
     }
 
     else if (strcmp(args.front().c_str(), "on") == 0) {
-        FPGA::Instance()->motors_en(true);
+        FPGA::Instance->motors_en(true);
         printf("Motors enabled.\r\n");
     }
 
     else if (strcmp(args.front().c_str(), "off") == 0) {
-        FPGA::Instance()->motors_en(false);
+        FPGA::Instance->motors_en(false);
         printf("Motors disabled.\r\n");
     }
 
@@ -110,14 +110,14 @@ int cmd_motors(const std::vector<std::string>& args) {
             // return error if motor id doesn't exist
             if (motor_id > 4) return 2;
             // get the current duty cycles for all motors
-            uint8_t status_byte = FPGA::Instance()->read_duty_cycles(
+            uint8_t status_byte = FPGA::Instance->read_duty_cycles(
                 duty_cycles.data(), duty_cycles.size());
             // change our specific motor's duty cycle and write all duty cycles
             // back to the FPGA
             if (status_byte != 0x7F) {
                 duty_cycles.at(motor_id) = new_vel;
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                                  duty_cycles.size());
+                FPGA::Instance->set_duty_cycles(duty_cycles.data(),
+                                                duty_cycles.size());
                 printf("%s velocity set to %u (%s)\r\n",
                        global_motors.at(motor_id).desc.c_str(), new_vel & 0x1FF,
                        new_vel & (1 << 9) ? "CW" : "CCW");

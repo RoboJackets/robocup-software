@@ -29,9 +29,6 @@ enum { FOREACH_COMM_ERR(GENERATE_ENUM) };
  */
 class CommLink : public SharedSPIDevice<> {
 public:
-    /// Default Constructor
-    CommLink();
-
     /// Constructor
     CommLink(std::shared_ptr<SharedSPI> spiBus, PinName nCs = NC,
              PinName int_pin = NC);
