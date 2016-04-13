@@ -18,12 +18,7 @@
 using std::string;
 using std::vector;
 
-extern struct OS_XCB os_rdy;
-extern struct OS_XCB os_dly;
-<<<<<<< HEAD
-extern struct OS_TCB os_idle_TCB;
-=======
->>>>>>> robojackets/jon/rtos-delay-list
+extern void *os_active_TCB;
 
 namespace {
 /**
@@ -828,28 +823,6 @@ int cmd_ps(cmd_args_t& args) {
         return 1;
     } else {
         unsigned int num_threads = 0;
-<<<<<<< HEAD
-        P_TCB p_r = (P_TCB)&os_rdy;
-	P_TCB p_d = (P_TCB)&os_dly;
-	P_TCB p_t = (P_TCB)&os_idle_TCB;
-
-        printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
-        // iterate over the linked list of tasks
-        while (p_r != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_r->task_id, p_r->prio,
-                   p_r->state, p_r->delta_time, ThreadMaxStackUsed(p_r));
-
-            num_threads++;
-            p_r = p_r->p_lnk;
-        }
-
-        // iterate over the linked list of tasks
-        while (p_d != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_d->task_id, p_d->prio,
-                   p_d->state, p_d->delta_time, ThreadMaxStackUsed(p_d));
-            num_threads++;
-            p_d = p_d->p_lnk;
-=======
 
         // go down 2 rows
         printf("\r\033[B");
@@ -864,34 +837,17 @@ int cmd_ps(cmd_args_t& args) {
         Console::Instance()->Flush();
 
         // iterate over the ready list
-        P_TCB p = reinterpret_cast<P_TCB>(&os_rdy);
-        while (p != nullptr) {
-            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
-                   p->task_id, p->prio, p->state, p->delta_time,
-                   ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
+	for (unsigned int i = 0; i < 14; i++) {
+	    P_TCB p = (P_TCB)os_active_TCB[i];
 
-            num_threads++;
-            p = p->p_lnk;
+	    if (p != NULL) {
+                printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
+                       p->task_id, p->prio, p->state, p->delta_time,
+                       ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
+
+            	num_threads++;
+	    }
         }
-        // switch to the delay list
-        p = reinterpret_cast<P_TCB>(&os_dly);
-        while (p != nullptr) {
-            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
-                   p->task_id, p->prio, p->state, p->delta_time,
-                   ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
-
-            num_threads++;
-            p = p->p_dlnk;
->>>>>>> robojackets/jon/rtos-delay-list
-        }
-
-        // iterate over the linked list of tasks
-        while (p_t != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_t->task_id, p_t->prio,
-                   p_t->state, p_t->delta_time, ThreadMaxStackUsed(p_t));
-            num_threads++;
-            p_t = p_t->p_lnk;
-	}
 
         printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
