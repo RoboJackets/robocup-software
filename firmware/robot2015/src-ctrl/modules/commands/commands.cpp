@@ -18,7 +18,7 @@
 using std::string;
 using std::vector;
 
-extern struct OS_XCB os_rdy;
+extern void* os_active_TCB[];
 
 namespace {
 /**
@@ -50,7 +50,7 @@ int (*iterative_command_handler)(cmd_args_t& args);
 }  // end of anonymous namespace
 
 // Create an object to help find files
-// LocalFileSystem local("local");
+LocalFileSystem local("local");
 
 /**
  * Commands list. Add command handlers to commands.hpp.
@@ -423,18 +423,12 @@ int cmd_interface_reset(cmd_args_t& args) {
  * Lists files.
  */
 int cmd_ls(cmd_args_t& args) {
-    DIR* d;
-    struct dirent* p;
+    string dirname = args.empty() ? "/local" : args[0];
 
-    std::vector<std::string> filenames;
-
-    if (args.empty()) {
-        d = opendir("/local");
-    } else {
-        d = opendir(args[0].c_str());
-    }
-
+    DIR* d = opendir(dirname.c_str());
     if (d != nullptr) {
+        std::vector<std::string> filenames;
+        struct dirent* p;
         while ((p = readdir(d)) != nullptr) {
             filenames.push_back(string(p->d_name));
         }
@@ -442,15 +436,12 @@ int cmd_ls(cmd_args_t& args) {
         closedir(d);
 
         // don't use printf until we close the directory
-        for (auto& i : filenames) {
-            printf(" - %s\r\n", i.c_str());
+        for (auto& name : filenames) {
+            printf(" - %s\r\n", name.c_str());
             Console::Instance()->Flush();
         }
-
     } else {
-        if (!args.empty()) {
-            printf("Could not find %s\r\n", args[0].c_str());
-        }
+        printf("Could not find '%s'\r\n", dirname.c_str());
 
         return 1;
     }
@@ -823,16 +814,34 @@ int cmd_ps(cmd_args_t& args) {
         return 1;
     } else {
         unsigned int num_threads = 0;
-        P_TCB p_b = (P_TCB)&os_rdy;
-        printf("ID\tPRIOR\tSTATE\tDELTA TIME\tMAX STACK (bytes)\r\n");
-        // iterate over the linked list of tasks
-        while (p_b != NULL) {
-            printf("%u,\t%u,\t%u,\t%u,\t\t%u,\r\n", p_b->task_id, p_b->prio,
-                   p_b->state, p_b->delta_time, ThreadMaxStackUsed(p_b));
 
-            num_threads++;
-            p_b = p_b->p_lnk;
+        // go down 2 rows
+        printf("\r\033[B");
+        printf("ID\tPRIOR\tSTATE\tΔ TIME\t\tMAX\t\t");
+        // go back up and move left by 4
+        printf("\033[A\033[4D");
+        printf("STACK SIZE (bytes)");
+        // go back 14 and then down again by 1
+        printf("\033[14D\033[B");
+        // now finish the line and flush it out
+        printf("ALLOC\t\tCURRENT\r\n");
+        Console::Instance()->Flush();
+
+        // Iterate over active threads
+        //  14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file
+        for (unsigned int i = 0; i < 14; i++) {
+            P_TCB p = (P_TCB)os_active_TCB[i];
+
+            if (p != nullptr) {
+                printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
+                       p->task_id, p->prio, p->state, p->delta_time,
+                       ThreadMaxStackUsed(p), p->priv_stack,
+                       ThreadNowStackUsed(p));
+
+                num_threads++;
+            }
         }
+
         printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
     }
 
