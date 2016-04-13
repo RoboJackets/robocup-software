@@ -63,7 +63,7 @@ unsigned int get_num_threads() {
     unsigned int num_threads = 0;
     P_TCB p_b = (P_TCB)&os_rdy;
 
-    while (p_b != NULL) {
+    while (p_b != nullptr) {
         num_threads++;
         p_b = p_b->p_lnk;
     }

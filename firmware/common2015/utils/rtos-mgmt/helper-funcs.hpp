@@ -1,5 +1,3 @@
-/** @file */
-
 #pragma once
 
 #include <cstdint>

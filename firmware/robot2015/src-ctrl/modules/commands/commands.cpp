@@ -841,7 +841,7 @@ int cmd_ps(cmd_args_t& args) {
         for (unsigned int i = 0; i < 14; i++) {
             P_TCB p = (P_TCB)os_active_TCB[i];
 
-            if (p != NULL) {
+            if (p != nullptr) {
                 printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
                        p->task_id, p->prio, p->state, p->delta_time,
                        ThreadMaxStackUsed(p), p->priv_stack,
