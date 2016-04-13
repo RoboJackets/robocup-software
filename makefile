@@ -78,6 +78,11 @@ kicker: kicker2015
 kicker-prog: kicker2015-prog
 firmware: firmware2015
 
+fpga2015-test:
+	$(call cmake_build_target_fw, fpga2015_iverilog)
+fpga2015-test-strict:
+	$(call cmake_build_target_fw, fpga2015_iverilog_strict)
+
 # robot 2015 firmware
 robot2015:
 	$(call cmake_build_target_fw, robot2015)
