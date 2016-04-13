@@ -16,7 +16,7 @@ const uint8_t LOOPBACK_ADDRESS = 2;
 /**
  * @brief Port enumerations for different communication protocols.
  */
-enum port { SINK = 0, LINK, CONTROL, LEGACY, PING };
+enum port { SINK = 0, LINK = 1, CONTROL = 2, LEGACY = 3, PING = 4 };
 
 struct header_data {
     enum Type { Control, Tuning, FirmwareUpdate, Misc };
