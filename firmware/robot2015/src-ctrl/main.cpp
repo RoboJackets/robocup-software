@@ -20,6 +20,9 @@
 #include "BallSense.hpp"
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
+#include "RtosTimerHelper.hpp"
+#include "io-expander.hpp"
+#include "RotarySelector.hpp"
 
 using namespace std;
 
@@ -38,12 +41,6 @@ void statusLights(bool state) {
     for (DigitalOut& led : init_leds) led = !state;
 }
 
-/// Turn all status LEDs on
-void statusLightsON(void const* args) { statusLights(true); }
-
-/// Turn all status LEDs off
-void statusLightsOFF(void const* args) { statusLights(false); }
-
 /**
  * The entry point of the system where each submodule's thread is started.
  */
@@ -61,7 +58,7 @@ int main() {
 
     // Turn on some startup LEDs to show they're working, they are turned off
     // before we hit the while loop
-    statusLightsON(nullptr);
+    statusLights(true);
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
@@ -93,8 +90,8 @@ int main() {
     // Set the RGB LEDs to a medium blue while the threads are started up
     float defaultBrightness = 0.02f;
     rgbLED.brightness(3 * defaultBrightness);
-    rgbLED.setPixel(0, 0x00, 0x00, 0xFF);
-    rgbLED.setPixel(1, 0x00, 0x00, 0xFF);
+    rgbLED.setPixel(0, NeoColorBlue);
+    rgbLED.setPixel(1, NeoColorBlue);
     rgbLED.write();
 
     // Start a periodic blinking LED to show system activity
@@ -103,7 +100,7 @@ int main() {
                                      RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
-    RtosTimer init_leds_off(statusLightsOFF, osTimerOnce);
+    RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
 
     /// A shared spi bus used for the fpga and cc1201 radio
@@ -112,8 +109,9 @@ int main() {
     sharedSPI->format(8, 0);  // 8 bits per transfer
 
     // Initialize and configure the fpga with the given bitfile
-    FPGA::Initialize(sharedSPI);
-    bool fpga_ready = FPGA::Instance()->configure("/local/rj-fpga.nib");
+    FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
+                              RJ_FPGA_PROG_B, RJ_FPGA_DONE);
+    bool fpga_ready = FPGA::Instance->configure("/local/rj-fpga.nib");
 
     if (fpga_ready) {
         LOG(INIT, "FPGA Configuration Successful!");
@@ -129,9 +127,24 @@ int main() {
                             "/local/rj-kickr.nib");
     bool kickerReady = kickerBoard.flash(true, true);
 
-    // Init IO Expander and turn all LEDs on
+    // Init IO Expander and turn all LEDs on.  The first parameter to config()
+    // sets the first 8 lines to input and the last 8 to output.  The pullup
+    // resistors and polarity swap are enabled for the 4 rotary selector lines.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.writeMask(IOExpanderErrorLEDMask, IOExpanderErrorLEDMask);
+    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
+    ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
+                         IOExpanderErrorLEDMask);
+
+    // rotary selector for shell id
+    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
+        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
+                                MCP23017::DIR_INPUT)});
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -198,35 +211,35 @@ int main() {
         }
 
         // Set error-indicating leds on the control board
-        ioExpander.writeMask(IOExpanderErrorLEDMask, errorBitmask);
+        ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
         // Set error indicators
         if (!fpga_ready) {
             // orange - error
             rgbLED.brightness(4 * defaultBrightness);
-            rgbLED.setPixel(0, 0xFF, 0xA5, 0x00);
+            rgbLED.setPixel(0, NeoColorOrange);
         } else {
             // green - no error...yet
             rgbLED.brightness(defaultBrightness);
-            rgbLED.setPixel(0, 0x00, 0xFF, 0x00);
+            rgbLED.setPixel(0, NeoColorGreen);
         }
 
         if (errorBitmask & RJ_ERR_LED_RADIO) {
             // orange - error
             rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, 0xFF, 0xA5, 0x00);
+            rgbLED.setPixel(1, NeoColorOrange);
         } else {
             // green - no error...yet
             rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, 0x00, 0xFF, 0x00);
+            rgbLED.setPixel(1, NeoColorGreen);
         }
 
         if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
             // bright as hell to make sure they know
             rgbLED.brightness(10 * defaultBrightness);
             // well, damn. everything is broke as hell
-            rgbLED.setPixel(0, 0xFF, 0x00, 0x00);
-            rgbLED.setPixel(1, 0xFF, 0x00, 0x00);
+            rgbLED.setPixel(0, NeoColorRed);
+            rgbLED.setPixel(1, NeoColorRed);
         }
     }
 }

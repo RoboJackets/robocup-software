@@ -92,6 +92,17 @@ void Task_Controller(void const* args) {
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
+
+        // printf(
+        //     "\r\n\033[K"
+        //     "\t(% 1.2f, % 1.2f, % 1.2f)\ r\n"
+        //     "\t(% 1.2f, % 1.2f, % 1.2f)\033[F\033[F",
+        //     gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0],
+        //     accelVals[1],
+        //     accelVals[2]);
+        // Console::Flush();
+
+        // write all duty cycles
         FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
                                           duty_cycles.size());
 

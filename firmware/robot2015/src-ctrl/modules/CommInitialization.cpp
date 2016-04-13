@@ -67,9 +67,6 @@ void loopback_tx_cb(rtp::packet* p) {
     CommModule::Instance->receive(*p);
 }
 
-shared_ptr<RtosTimer> rx_led_ticker;
-shared_ptr<RtosTimer> tx_led_ticker;
-
 void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     // leds that flash if tx/rx have happened recently
     auto rxTimeoutLED =
