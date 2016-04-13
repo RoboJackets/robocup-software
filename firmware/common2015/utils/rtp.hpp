@@ -4,9 +4,6 @@
 #include <vector>
 #include <string>
 
-#define BASE_STATION_ADDR (1)
-#define LOOPBACK_ADDR (127)
-
 namespace rtp {
 
 /// Max packet size.  This is limited by the CC1201 buffer size.
@@ -14,6 +11,7 @@ static const unsigned int MAX_DATA_SZ = 120;
 
 const uint8_t BROADCAST_ADDRESS = 0;
 const uint8_t BASE_STATION_ADDRESS = 1;
+const uint8_t LOOPBACK_ADDRESS = 2;
 
 /**
  * @brief Port enumerations for different communication protocols.

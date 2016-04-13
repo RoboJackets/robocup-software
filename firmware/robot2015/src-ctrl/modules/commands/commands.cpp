@@ -859,7 +859,7 @@ int cmd_radio(cmd_args_t& args) {
         if (args.size() > 1) portNbr = (rtp::port)atoi(args[1].c_str());
 
         pck.port(portNbr);
-        pck.address(BASE_STATION_ADDR);
+        pck.address(rtp::BASE_STATION_ADDRESS);
 
         if (args[0] == "show") {
             commModule->printInfo();
@@ -884,7 +884,7 @@ int cmd_radio(cmd_args_t& args) {
             }
 
             pck.port(portNbr);
-            pck.address(LOOPBACK_ADDR);
+            pck.address(rtp::LOOPBACK_ADDRESS);
 
             printf(
                 "Placing %u, %u byte packet(s) in TX buffer with ACK set.\r\n",
@@ -943,7 +943,7 @@ int cmd_radio(cmd_args_t& args) {
             rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
             pck.port(rtp::port::LINK);
-            pck.address(LOOPBACK_ADDR);
+            pck.address(rtp::LOOPBACK_ADDRESS);
 
             printf(
                 "Beginning radio stress test with %u %u byte "

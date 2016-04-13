@@ -170,7 +170,7 @@ int main() {
 
     RadioProtocol2011 radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.start();
-    radioProtocol.setUID(2); // TODO: remove
+    radioProtocol.setUID(2);  // TODO: remove
     radioProtocol.rxCallback = [](uint8_t* msg) {
         // TODO: parse @msg
 
