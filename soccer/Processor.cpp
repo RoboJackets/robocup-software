@@ -738,4 +738,4 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     _gameplayModule->calculateFieldObstacles();
 }
 
-const bool Processor::isRadioOpen() { return _radio->isOpen(); }
+bool Processor::isRadioOpen() const { return _radio->isOpen(); }
