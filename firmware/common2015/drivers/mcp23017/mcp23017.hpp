@@ -3,7 +3,6 @@
 #include <mbed.h>
 #include <memory>
 
-#include "pins-ctrl-2015.hpp"
 #include "I2CMasterRtos.hpp"
 
 /**
@@ -27,6 +26,27 @@ public:
         OLAT = 0x14
     } Register;
 
+    typedef enum {
+        // Port A bit masks
+        PinA0 = 0,
+        PinA1 = 1,
+        PinA2 = 2,
+        PinA3 = 3,
+        PinA4 = 4,
+        PinA5 = 5,
+        PinA6 = 6,
+        PinA7 = 7,
+        // Port B bit masks
+        PinB0 = 8,
+        PinB1 = 9,
+        PinB2 = 10,
+        PinB3 = 11,
+        PinB4 = 12,
+        PinB5 = 13,
+        PinB6 = 14,
+        PinB7 = 15
+    } ExpPinName;
+
     MCP23017(PinName sda, PinName scl, int i2cAddress);
 
     /** Reset MCP23017 device to its power-on state
@@ -38,7 +58,7 @@ public:
      * @param   value         0 or 1
      * @param   bit_number    bit number range 0 --> 15
      */
-    void writeBit(int value, int bit_number);
+    void writePin(int value, MCP23017::ExpPinName pin);
 
     /** Write a masked 16-bit value to the device
      *
@@ -47,14 +67,12 @@ public:
      */
     void writeMask(uint16_t data, uint16_t mask);
 
-    int readMask(uint16_t mask);
-
     /** Read a 0/1 value from an input bit
      *
      * @param   bit_number    bit number range 0 --> 15
      * @return                0/1 value read
      */
-    uint8_t readBit(int bit_number);
+    uint8_t readPin(MCP23017::ExpPinName pin);
 
     /** Configure an MCP23017 device
      *
@@ -65,13 +83,13 @@ public:
     void config(uint16_t dir_config, uint16_t pullup_config,
                 uint16_t polarity_config);
 
-    void writeRegister(MCP23017::Register regAddress, uint8_t val);
+    void writeRegister(MCP23017::Register regAddress, uint16_t val);
     uint16_t readRegister(MCP23017::Register regAddress);
 
     typedef enum { DIR_OUTPUT = 0, DIR_INPUT = 1 } PinMode;
-    void pinMode(int pin, PinMode mode);
-    void digitalWrite(int pin, int val);
-    int digitalRead(int pin);
+    void pinMode(ExpPinName pin, PinMode mode);
+    void digitalWrite(ExpPinName pin, int val);
+    int digitalRead(ExpPinName pin);
 
     // These provide a more advanced mapping of the chip functionality
     // See the data sheet for more information on what they do
@@ -94,10 +112,6 @@ public:
     // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 =
     // disabled)
     void internalPullupMask(uint16_t mask);
-
-    int read();
-
-    void write(int data);
 
 private:
     I2CMasterRtos _i2c;
