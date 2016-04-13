@@ -97,17 +97,6 @@ void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     if (global_radio->isConnected() == true) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
-        // The usual way of opening a port.
-        commModule->setRxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
-        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::port::DISCOVER);
-
-        // This port won't open since there's no RX callback to invoke. The
-        // packets are simply dropped.
-        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LOGGER);
-        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::port::LOGGER);
-
         // Legacy port
         commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
                                  rtp::port::LEGACY);

@@ -10,6 +10,7 @@
 #include "planning/RotationCommand.hpp"
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
+#include <protobuf/Control.pb.h>
 #include <Utils.hpp>
 
 #include <array>
@@ -123,6 +124,10 @@ private:
 class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
+
+    /** radio packets */
+    Packet::Robot robotPacket;
+    Packet::Control* control;
 
     RobotConfig* config;
     RobotStatus* status;
@@ -287,7 +292,7 @@ public:
     /**
      * ignore ball sense and kick immediately
      */
-    void kickImmediately(bool im);
+    void kickImmediately();
 
     boost::ptr_vector<Packet::DebugText> robotText;
 
@@ -380,9 +385,6 @@ public:
     float kickerVoltage() const;
     Packet::HardwareVersion hardwareVersion() const;
 
-    /** radio packets */
-    Packet::RadioTx::Robot radioTx;
-
     Packet::RadioRx& radioRx() { return _radioRx; }
     const Packet::RadioRx& radioRx() const { return _radioRx; }
 
@@ -406,11 +408,12 @@ public:
     bool rxIsFresh(RJ::Time age = 500000) const;
 
     /**
-     * @brief Starts the robot playing the fight song
+     * @brief start the robot playing a song
+     * @param song
      */
-    void sing() {
+    void sing(Packet::Control::Song song = Packet::Control::FIGHT_SONG) {
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        radioTx.set_sing(true);
+        control->set_song(song);
     }
 
     bool isPenaltyKicker = false;

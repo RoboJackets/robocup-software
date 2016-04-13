@@ -4,6 +4,7 @@
 
 #include <helper-funcs.hpp>
 #include <const-math.hpp>
+#include "RtosTimerHelper.hpp"
 
 /*
  * These must be extern here since conexpr is taken advantage
@@ -57,13 +58,11 @@ const auto analog_data = lut_generator<numPts>(wave_lut);
 auto analog_data_scaled = lut_generator<numPts>(wave_lut);
 
 // used to output next analog sample whenever a timer interrupt occurs
-void analogUpdate(void const* arg) {
-    // grab a pointer to the buzzer object
-    Buzzer* buzz = const_cast<Buzzer*>(reinterpret_cast<const Buzzer*>(arg));
+void Buzzer::analogUpdate() {
     // cycle through the index value for the lookup table
-    buzz->j = (buzz->j + 1) % numPts;
+    j = (j + 1) % numPts;
     // send next analog sample out to DAC
-    buzz->write(analog_data_scaled.at(buzz->j));
+    write(analog_data_scaled.at(j));
 }
 
 // class method to play a note based on AnalogOut class
@@ -79,7 +78,7 @@ void Buzzer::play(float freq, int dur, float vol) {
     // setup an interrupt timer that updates the currenly set
     // value at the given duration. This depends on our playing
     // frequency's period and the number of elements in our lookup table.
-    RtosTimer sin_wave(analogUpdate, osTimerPeriodic, (void*)this);
+    RtosTimerHelper sin_wave(this, &Buzzer::analogUpdate, osTimerPeriodic);
     sin_wave.start(1.0 / (freq * numPts));
 
     // keep the timer interrupt active for however long we

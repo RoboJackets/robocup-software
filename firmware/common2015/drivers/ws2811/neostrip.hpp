@@ -35,6 +35,15 @@ struct NeoColor {
     uint8_t blue;
 } __attribute__((packed));
 
+/// Define a few colors for convenience
+static constexpr NeoColor NeoColorRed = {0x00, 0xFF, 0x00};
+static constexpr NeoColor NeoColorGreen = {0xFF, 0x00, 0x00};
+static constexpr NeoColor NeoColorBlue = {0x00, 0x00, 0xFF};
+static constexpr NeoColor NeoColorYellow = {0xFF, 0xFF, 0x00};
+static constexpr NeoColor NeoColorPurple = {0x00, 0xFF, 0xFF};
+static constexpr NeoColor NeoColorWhite = {0xFF, 0xFF, 0xFF};
+static constexpr NeoColor NeoColorOrange = {0xA5, 0xFF, 0x00};
+
 /**
  * NeoStrip objects manage the buffering and assigning of
  * addressable NeoPixels
@@ -83,8 +92,10 @@ public:
      * Set a single pixel to the specified color, with red, green, and blue
      * values in separate arguments.
      */
-    void setPixel(size_t p, unsigned int red, unsigned int green,
-                  unsigned int blue);
+    void setPixel(size_t p, uint8_t red, uint8_t green, uint8_t blue);
+
+    /// Set a single pixel to the specified color
+    void setPixel(size_t p, NeoColor color);
 
     /**
      * Set n pixels starting at pixel p.

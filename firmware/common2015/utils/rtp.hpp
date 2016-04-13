@@ -4,31 +4,19 @@
 #include <vector>
 #include <string>
 
-#define BASE_STATION_ADDR (1)
-#define LOOPBACK_ADDR (127)
-
 namespace rtp {
 
 /// Max packet size.  This is limited by the CC1201 buffer size.
 static const unsigned int MAX_DATA_SZ = 120;
 
 const uint8_t BROADCAST_ADDRESS = 0;
+const uint8_t BASE_STATION_ADDRESS = 1;
+const uint8_t LOOPBACK_ADDRESS = 2;
 
 /**
  * @brief Port enumerations for different communication protocols.
  */
-enum port {
-    SINK = 0,
-    LINK,
-    CONTROL,
-    // SETPOINT,
-    // GSTROBE,
-    DISCOVER,
-    LOGGER,
-    TCP,
-    LEGACY,
-    PING
-};
+enum port { SINK = 0, LINK = 1, CONTROL = 2, LEGACY = 3, PING = 4 };
 
 struct header_data {
     enum Type { Control, Tuning, FirmwareUpdate, Misc };
@@ -38,22 +26,24 @@ struct header_data {
     uint8_t address;
     unsigned int port : 4;
     Type type : 4;
+};
 
-    /// "packed" size (in bytes) of header data
-    size_t size() const { return 2; }
+// binary-packed version of Control.proto
+struct ControlMessage {
+    uint8_t uid;  // robot id
+    int16_t bodyX;
+    int16_t bodyY;
+    int16_t bodyW;
+    int8_t dribbler;
+    uint8_t kickStrength;
+    unsigned shootMode : 1;    // 0 = kick, 1 = chip
+    unsigned triggerMode : 2;  // 0 = off, 1 = immediate, 2 = on break beam
+    unsigned song : 2;         // 0 = stop, 1 = continue, 2 = GT fight song
+} __attribute__((packed));
 
-    void pack(std::vector<uint8_t>* buf) const {
-        buf->push_back(address);
-        buf->push_back(port << 4 | type);
-    }
-
-    void unpack(const std::vector<uint8_t>& buf) { unpack(buf.data()); }
-
-    void unpack(const uint8_t* buf) {
-        address = buf[1];
-        port = buf[2] >> 4;
-        type = (Type)(buf[2] & 0x0F);
-    }
+struct RobotStatusMessage {
+    uint8_t uniqueId;  // robot id
+    uint8_t battVoltage;
 };
 
 /**
@@ -76,7 +66,7 @@ public:
         for (T val : v) payload.push_back(val);
     }
 
-    size_t size() const { return payload.size() + header.size(); }
+    size_t size() const { return payload.size() + sizeof(header); }
 
     int port() const { return static_cast<int>(header.port); }
     template <class T>
@@ -86,34 +76,25 @@ public:
 
     int address() { return header.address; }
     void address(int a) { header.address = static_cast<unsigned int>(a); }
-
-    template <class T>
-    void recv(const std::vector<T>& v) {
-        recv(v.data(), v.size());
-    }
-
-    void recv(const uint8_t* buffer, size_t size) {
-        // note: header ignores the first byte since it's the size byte
-        header.unpack(buffer);
-
-        // Everything after the header is payload data
-        payload.clear();
-        for (size_t i = header.size() + 1; i < size; i++) {
-            payload.push_back(buffer[i]);
-        }
-    }
-
-    void pack(std::vector<uint8_t>* buffer) const {
-        // first byte is total size (excluding the size byte)
-        const uint8_t total_size = payload.size() + header.size();
-        buffer->reserve(total_size + 1);
-
-        buffer->push_back(total_size);
-
-        header.pack(buffer);
-
-        // payload
-        buffer->insert(buffer->end(), payload.begin(), payload.end());
-    }
 };
+
+// Packet sizes
+constexpr unsigned int Forward_Size =
+    sizeof(header_data) + 6 * sizeof(ControlMessage);
+const unsigned int Reverse_Size = 7;
+
+template <typename PACKET_TYPE>
+void SerializeToVector(const PACKET_TYPE& pkt, std::vector<uint8_t> buf) {
+    uint8_t* bytes = (uint8_t*)pkt;
+    for (size_t i = 0; i < sizeof(PACKET_TYPE); i++) {
+        buf.push_back(bytes[i]);
+    }
 }
+
+/// Serializes the message to the buffer and returns the number of bytes written
+template <typename PACKET_TYPE>
+void SerializeToBuffer(const PACKET_TYPE& pkt, uint8_t* buf, size_t bufSize) {
+    memcpy(buf, (const void*)&pkt, bufSize);
+}
+
+}  // namespace rtp

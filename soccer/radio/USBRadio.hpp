@@ -6,10 +6,8 @@
 
 #include "Radio.hpp"
 
-// FIXME - This needs to go somewhere common to this code, the robot firmware,
-// and the base station test code.
-const unsigned int Forward_Size = 55;
-const unsigned int Reverse_Size = 7;
+// Included for packet layout
+#include "../firmware/common2015/utils/rtp.hpp"
 
 /**
  * @brief Radio IO with real robots
@@ -43,7 +41,7 @@ protected:
     // Try increasing this constant for larger RX packet throughput.
     static const int NumRXTransfers = 4;
     libusb_transfer* _rxTransfers[NumRXTransfers];
-    uint8_t _rxBuffers[NumRXTransfers][Reverse_Size + 2];
+    uint8_t _rxBuffers[NumRXTransfers][rtp::Reverse_Size + 2];
 
     QMutex _mutex;
     int _sequence;
