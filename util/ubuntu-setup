@@ -162,8 +162,8 @@ apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub
 if [ "$SYSTEM" = "ubuntu-14.04" ]; then
-    sudo update-alternatives --install /usr/bin/g++ g++ $(command -v g++-4.9) 40
-    sudo update-alternatives --set g++ $(command -v g++-4.9)
+    update-alternatives --install /usr/bin/g++ g++ $(command -v g++-4.9) 40
+    update-alternatives --set g++ $(command -v g++-4.9)
 fi
 
 if [ "$(clang --version | grep -Eo '[0-9]+\.[0-9]+' | head -n1)" \< "3.5" ]; then
@@ -176,7 +176,8 @@ pip3 install -r $BASE/util/requirements3.txt
 # install python2 requirements
 pip2 install -r $BASE/util/requirements2.txt
 
+# This script is run as sudo, but we don't want submodules to be owned by the
+# root user, so we use `su` to update submodules as the normal user
 echo "-- Updating submodules"
-git submodule sync
-git submodule update --init
-
+su $(whoami) -c 'git submodule sync'
+su $(whoami) -c 'git submodule update --init'
