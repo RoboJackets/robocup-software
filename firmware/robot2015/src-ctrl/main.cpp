@@ -20,7 +20,7 @@
 #include "BallSense.hpp"
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
-#include "RadioProtocol2011.hpp"
+#include "RadioProtocol.hpp"
 #include "RtosTimerHelper.hpp"
 #include "io-expander.hpp"
 #include "RotarySelector.hpp"
@@ -168,7 +168,7 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
-    RadioProtocol2011 radioProtocol(CommModule::Instance, global_radio);
+    RadioProtocol radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.start();
     radioProtocol.setUID(2);  // TODO: remove
     radioProtocol.rxCallback = [](uint8_t* msg) {

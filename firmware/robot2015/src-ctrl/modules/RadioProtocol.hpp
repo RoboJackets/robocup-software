@@ -5,7 +5,7 @@
 #include "CC1201.hpp"
 #include "RtosTimerHelper.hpp"
 
-class RadioProtocol2011 {
+class RadioProtocol {
 public:
     enum State {
         STOPPED,
@@ -17,19 +17,19 @@ public:
     /// base station, we are considered "disconnected"
     static const uint32_t TIMEOUT_INTERVAL = 2000;
 
-    RadioProtocol2011(std::shared_ptr<CommModule> commModule, CC1201* radio,
+    RadioProtocol(std::shared_ptr<CommModule> commModule, CC1201* radio,
                       uint8_t uid = 0)
         : _commModule(commModule),
           _radio(radio),
           _uid(uid),
           _state(STOPPED),
-          _replyTimer(this, &RadioProtocol2011::reply, osTimerOnce),
-          _timeoutTimer(this, &RadioProtocol2011::_timeout, osTimerOnce) {
+          _replyTimer(this, &RadioProtocol::reply, osTimerOnce),
+          _timeoutTimer(this, &RadioProtocol::_timeout, osTimerOnce) {
         ASSERT(commModule != nullptr);
         ASSERT(radio != nullptr);
     }
 
-    ~RadioProtocol2011() { stop(); }
+    ~RadioProtocol() { stop(); }
 
     /// robot unique id
     void setUID(uint8_t uid) { _uid = uid; }
@@ -49,7 +49,7 @@ public:
     void start() {
         _state = DISCONNECTED;
 
-        _commModule->setRxHandler(this, &RadioProtocol2011::rxHandler,
+        _commModule->setRxHandler(this, &RadioProtocol::rxHandler,
                                   rtp::Port::CONTROL);
         _commModule->setTxHandler((CommLink*)global_radio,
                                   &CommLink::sendPacket, rtp::Port::CONTROL);
