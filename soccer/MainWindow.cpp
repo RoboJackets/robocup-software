@@ -693,6 +693,10 @@ void MainWindow::updateStatus() {
     // Some conditions are different in simulation
     bool sim = _processor->simulation();
 
+    if (!sim) {
+        updateRadioBaseStatus(_processor->isRadioOpen());
+    }
+
     // Get processing thread status
     Processor::Status ps = _processor->status();
     RJ::Time curTime = RJ::timestamp();
@@ -790,6 +794,17 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
                 _ui.statusLabel->setStyleSheet("background-color: #ff4040");
                 break;
         }
+    }
+}
+
+void MainWindow::updateRadioBaseStatus(bool usbRadio) {
+    QString label =
+        QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
+    if (_ui.radioBaseStatus->text() != label) {
+        _ui.radioBaseStatus->setText(label);
+        _ui.radioBaseStatus->setStyleSheet(usbRadio
+                                               ? "background-color: #00ff00"
+                                               : "background-color: #ff4040");
     }
 }
 
