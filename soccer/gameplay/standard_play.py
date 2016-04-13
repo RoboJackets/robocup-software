@@ -14,7 +14,7 @@ class StandardPlay(play.Play):
     #Not just on selection
     def __init__(self, continuous):
         super().__init__(continuous)
-        self.use_standard_defense() #tessssssssssssssssssssssssssssssssssssssssssssssssssssssssting
+        self.use_standard_defense()
         
     #If the "Use Defense" checkbox is checked and the play isn't already running
     #defense, then it adds the defense behavior. If the box isn't checked and the
