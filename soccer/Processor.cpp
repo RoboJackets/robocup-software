@@ -61,6 +61,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     firstLogTime = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
+    _initialized = false;
 
     _simulation = sim;
     _radio = nullptr;
@@ -567,6 +568,9 @@ void Processor::run() {
         _status = curStatus;
         _statusMutex.unlock();
 
+        // Processor Initialization Completed
+        _initialized = true;
+
         ////////////////
         // Timing
 
@@ -744,3 +748,6 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
 }
+
+bool Processor::isRadioOpen() const { return _radio->isOpen(); }
+bool Processor::isInitialized() const { return _initialized; }

@@ -177,6 +177,10 @@ public:
 
     void setFieldDimensions(const Field_Dimensions& dims);
 
+    bool isRadioOpen() const;
+
+    bool isInitialized() const;
+
     ////////
 
     // Time of the first LogFrame
@@ -273,4 +277,6 @@ private:
     bool _useFieldOrientedManualDrive = false;
 
     VisionReceiver vision;
+
+    bool _initialized;
 };
