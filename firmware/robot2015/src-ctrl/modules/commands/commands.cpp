@@ -18,7 +18,7 @@
 using std::string;
 using std::vector;
 
-extern void *os_active_TCB;
+extern void *os_active_TCB[];
 
 namespace {
 /**
