@@ -103,8 +103,7 @@ void Task_Controller(void const* args) {
         // Console::Flush();
 
         // write all duty cycles
-        FPGA::Instance->set_duty_cycles(duty_cycles.data(),
-                                          duty_cycles.size());
+        FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
 
