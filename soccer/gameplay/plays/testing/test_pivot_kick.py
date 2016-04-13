@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills.pivot_kick
 import skills.move
@@ -9,7 +9,7 @@ import robocup
 
 
 # this test repeatedly runs the PivotKick behavior aimed at our goal
-class TestPivotKick(standard_play.StandardPlay):
+class TestPivotKick(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 

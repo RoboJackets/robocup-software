@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills.pivot_kick
 import skills.move
@@ -6,7 +6,7 @@ import constants
 import robocup
 
 
-class TestLineKick(standard_play.StandardPlay):
+class TestLineKick(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 

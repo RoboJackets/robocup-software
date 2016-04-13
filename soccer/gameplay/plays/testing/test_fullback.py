@@ -1,11 +1,11 @@
-import standard_play
+import play
 import behavior
 import tactics.positions.defender
 import robocup
 import main
 
 
-class TestDefender(standard_play.StandardPlay):
+class TestDefender(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
