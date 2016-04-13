@@ -1359,7 +1359,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <widget class="QListWidget" name="robotStatusList">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -1367,7 +1367,13 @@ p, li { white-space: pre-wrap; }
           <property name="minimumSize">
            <size>
             <width>300</width>
-            <height>378</height>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>1000</height>
            </size>
           </property>
           <property name="styleSheet">
