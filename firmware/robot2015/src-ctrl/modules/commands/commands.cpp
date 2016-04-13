@@ -20,7 +20,10 @@ using std::vector;
 
 extern struct OS_XCB os_rdy;
 extern struct OS_XCB os_dly;
+<<<<<<< HEAD
 extern struct OS_TCB os_idle_TCB;
+=======
+>>>>>>> robojackets/jon/rtos-delay-list
 
 namespace {
 /**
@@ -825,6 +828,7 @@ int cmd_ps(cmd_args_t& args) {
         return 1;
     } else {
         unsigned int num_threads = 0;
+<<<<<<< HEAD
         P_TCB p_r = (P_TCB)&os_rdy;
 	P_TCB p_d = (P_TCB)&os_dly;
 	P_TCB p_t = (P_TCB)&os_idle_TCB;
@@ -845,6 +849,40 @@ int cmd_ps(cmd_args_t& args) {
                    p_d->state, p_d->delta_time, ThreadMaxStackUsed(p_d));
             num_threads++;
             p_d = p_d->p_lnk;
+=======
+
+        // go down 2 rows
+        printf("\r\033[B");
+        printf("ID\tPRIOR\tSTATE\tΔ TIME\t\tMAX\t\t");
+        // go back up and move left by 4
+        printf("\033[A\033[4D");
+        printf("STACK SIZE (bytes)");
+        // go back 14 and then down again by 1
+        printf("\033[14D\033[B");
+        // now finish the line and flush it out
+        printf("ALLOC\t\tCURRENT\r\n");
+        Console::Instance()->Flush();
+
+        // iterate over the ready list
+        P_TCB p = reinterpret_cast<P_TCB>(&os_rdy);
+        while (p != nullptr) {
+            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
+                   p->task_id, p->prio, p->state, p->delta_time,
+                   ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
+
+            num_threads++;
+            p = p->p_lnk;
+        }
+        // switch to the delay list
+        p = reinterpret_cast<P_TCB>(&os_dly);
+        while (p != nullptr) {
+            printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
+                   p->task_id, p->prio, p->state, p->delta_time,
+                   ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
+
+            num_threads++;
+            p = p->p_dlnk;
+>>>>>>> robojackets/jon/rtos-delay-list
         }
 
         // iterate over the linked list of tasks
