@@ -18,7 +18,7 @@ public:
     static const uint32_t TIMEOUT_INTERVAL = 2000;
 
     RadioProtocol(std::shared_ptr<CommModule> commModule, CC1201* radio,
-                      uint8_t uid = 0)
+                  uint8_t uid = 0)
         : _commModule(commModule),
           _radio(radio),
           _uid(uid),
@@ -44,7 +44,8 @@ public:
      * @param msg A pointer to the start of the message addressed to this robot
      * @return formatted reply buffer
      */
-    std::function<std::vector<uint8_t>(uint8_t* msg)> rxCallback;
+    std::function<std::vector<uint8_t>(const rtp::ControlMessage* msg)>
+        rxCallback;
 
     void start() {
         _state = DISCONNECTED;
@@ -69,13 +70,14 @@ public:
     State state() const { return _state; }
 
     void rxHandler(rtp::packet* pkt) {
+        // TODO: check packet size before parsing
         bool addressed = false;
-        size_t offset, slot;
-        for (slot = 0; slot < 6; slot++) {
-            offset = 1 + slot * 9;  // slots are 9 bytes in size
-            uint8_t shellId = pkt->payload[offset + 4] & 0x0f;
+        const rtp::ControlMessage* msg;
+        for (size_t slot = 0; slot < 6; slot++) {
+            size_t offset = slot * sizeof(rtp::ControlMessage);
+            msg = (const rtp::ControlMessage*)(pkt->payload.data() + offset);
 
-            if (shellId == _uid) {
+            if (msg->uid == _uid) {
                 addressed = true;
                 break;
             }
@@ -91,10 +93,10 @@ public:
             _timeoutTimer.stop();
             _timeoutTimer.start(TIMEOUT_INTERVAL);
 
-            _replyTimer.start(1);
+            _replyTimer.start(1);  // TODO: use correct delay
 
             if (rxCallback) {
-                _reply = std::move(rxCallback(pkt->payload.data() + offset));
+                _reply = std::move(rxCallback(msg));
             }
         }
     }

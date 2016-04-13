@@ -169,9 +169,9 @@ int main() {
     motors_Init();
 
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
-    radioProtocol.start();
     radioProtocol.setUID(2);  // TODO: remove
-    radioProtocol.rxCallback = [](uint8_t* msg) {
+    radioProtocol.start();
+    radioProtocol.rxCallback = [](const rtp::ControlMessage* msg) {
 
         // TODO: parse @msg
 
@@ -185,7 +185,7 @@ int main() {
         //     // failures, // bit field of failures, status, etc
         //     // kicker_voltage
         // });
-        LOG(INIT, "rx!");
+        LOG(INIT, "rx!");  // TODO: rm
         return vector<uint8_t>(10, 1);
     };
 
