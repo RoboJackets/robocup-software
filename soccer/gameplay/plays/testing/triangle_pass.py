@@ -1,5 +1,5 @@
 import robocup
-import standard_play
+import play
 import behavior
 import skills.move
 import skills.capture
@@ -11,7 +11,7 @@ import enum
 
 ## A demo play written during a teaching session to demonstrate play-writing
 # Three robots form a triangle on the field and pass the ball A->B->C->A and so on.
-class TrianglePass(standard_play.StandardPlay):
+class TrianglePass(play.Play):
     class State(enum.Enum):
         ## 2 robots get on the corners of a triangle,
         # while a third fetches the ball

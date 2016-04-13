@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import tactics.line_up
 import robocup
@@ -8,7 +8,7 @@ import time
 
 
 ## Robots repeatedly line up on opposite sides of the field
-class RepeatedLineUp(standard_play.StandardPlay):
+class RepeatedLineUp(play.Play):
 
     Pause = 2.0
 

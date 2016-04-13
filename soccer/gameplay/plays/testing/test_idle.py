@@ -1,11 +1,11 @@
-import standard_play
+import play
 import behavior
 import tactics.stopped.circle_near_ball
 import robocup
 import main
 
 
-class TestIdle(standard_play.StandardPlay):
+class TestIdle(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
