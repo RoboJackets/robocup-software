@@ -177,7 +177,7 @@ public:
 
     void setFieldDimensions(const Field_Dimensions& dims);
 
-    const bool isRadioOpen();
+    bool isRadioOpen() const;
 
     ////////
 
