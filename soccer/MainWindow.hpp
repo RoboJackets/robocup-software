@@ -157,7 +157,7 @@ private:
     typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
 
     void status(QString text, StatusType status);
-    void radioBaseStatus(bool usbRadio);
+    void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
 
     Ui_MainWindow _ui;
