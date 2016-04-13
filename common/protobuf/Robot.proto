@@ -1,9 +1,11 @@
 package Packet;
 
 import "Control.proto";
+import "Tuning.proto";
 
 message Robot
 {
     required uint32 uid = 1;
-    required Control control = 3;
+    required Control control = 2;
+    optional Tuning tuning = 3;
 }
