@@ -2,7 +2,6 @@ import play
 import ui
 import tactics
 
-
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
 # the play with defense, but any action that a normal play should do can be 
