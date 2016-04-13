@@ -19,6 +19,8 @@ var class_processor =
     [ "getJoystickControlValues", "class_processor.html#a64b3d311ccd4a7945d06bb8ce747796a", null ],
     [ "goalieID", "class_processor.html#ab1368e6f2ef701e106ef0f9128bcafc2", null ],
     [ "goalieID", "class_processor.html#ac6e2aff5a345fa71b0847bb91bb815c7", null ],
+    [ "isInitialized", "class_processor.html#a45a87a89179daf1c497c602fb2218d4f", null ],
+    [ "isRadioOpen", "class_processor.html#a98c32d99d4d6dba0704ce82009f95835", null ],
     [ "joystickValid", "class_processor.html#ac921aeed15e3e38c88de9c8253b99c70", null ],
     [ "logger", "class_processor.html#a1f2112aaef6f7cf93cc700eec739716c", null ],
     [ "loopMutex", "class_processor.html#a2e2259c12e866894e0d6e082621a63aa", null ],

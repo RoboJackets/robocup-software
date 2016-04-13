@@ -40,13 +40,13 @@ var NAVTREEINDEX =
 "class_game_state.html#ab188f435c308c1b58d16f1e1eee8bca7",
 "class_geometry2d_1_1_transform_matrix.html#a4075ce40cff2126d34e5a92a2d19f44f",
 "class_our_robot.html#a22dbb3da6c0f44de0f1e83f772ed26e6",
-"class_processor.html#ab1368e6f2ef701e106ef0f9128bcafc2",
-"class_team_info.html",
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a28b19f6ad08c0cf6e3b1b05983cbbb52",
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a8af5729939e7fb71778b69cbdf9387d0",
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a536de1c9e858220a2a2756c8bab67284",
-"dir_cc377981fd1d02b69253e810027bf757.html",
-"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7"
+"class_processor.html#a96c4902b3169f62c96383c24899bce56",
+"class_system_state.html#af1d2d245231e05f0f057b275ed4a7318",
+"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html",
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a52cd69318ad215e3dac99583597352a8",
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a17465304b544fbc51bbde5276d862635",
+"dir_cbd8e190a8e460b48e48ebd2bd706a27.html",
+"struct_planning_1_1_rotation_command.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

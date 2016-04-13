@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a17465304b544fbc51bbde5276d862635":[12,0,5,14,2,0,2],
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1f2371db119a2ed88c57393a1f69cc5b":[12,0,5,14,2,0,11],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a536de1c9e858220a2a2756c8bab67284":[12,0,5,14,2,0,6],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a542a2ad7732d7ff9d2e40ac8c07eaf33":[12,0,5,14,2,0,8],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a75350694dfc0c2702a818149d5608272":[12,0,5,14,2,0,3],
@@ -79,8 +81,8 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html":[12,0,5,14,6,2,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html":[12,0,5,14,6,3,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a2b3807bee7f9df4c34785aafd7d1db99":[12,0,5,14,6,3,0,12],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,5,14,6,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,5,14,6,3,0,15],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a361f2878452e49c98f507234a3a19649":[12,0,5,14,6,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a3984aaf96d2d82f81260fc7a5526aafb":[12,0,5,14,6,3,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a467b08d0245e7114cd3814bb0a683969":[12,0,5,14,6,3,0,16],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a4fd3e448729a69f8e009d4cd819e8017":[12,0,5,14,6,3,0,11],
@@ -89,8 +91,8 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a756c7145d2902530af0451773c7f5afe":[12,0,5,14,6,3,0,1],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a9a1e1ee0d32f17649f85b6cc6fa1f2a7":[12,0,5,14,6,3,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4204c2608a6552305d61326a3750d39":[12,0,5,14,6,3,0,10],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4366ab62dfebe55d959f85e589935a2":[12,0,5,14,6,3,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4366ab62dfebe55d959f85e589935a2":[12,0,5,14,6,3,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4366ab62dfebe55d959f85e589935a2":[12,0,5,14,6,3,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ac7c6402625a7e2c68cf2675ef1354f03":[12,0,5,14,6,3,0,9],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ad153d4548cf727c3109958fd0c4c22b3":[12,0,5,14,6,3,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aedaaa02d8f747fc8e7c64553f043635f":[12,0,5,14,6,3,0,4],
@@ -247,7 +249,5 @@ var NAVTREEINDEX9 =
 "dir_ba3baf91937e859098e5bc198cb747fd.html":[13,0,1,0,0],
 "dir_bb139609278048406308a47332543a72.html":[13,0,1,1,0,1],
 "dir_bd708ded2d3afa7b27fe88d14c38735c.html":[13,0,1,0,0,3,0,0],
-"dir_bdd9a5d540de89e9fe90efdfc6973a4f.html":[13,0,0],
-"dir_cbd8e190a8e460b48e48ebd2bd706a27.html":[13,0,2,2],
-"dir_cc132907b6047b9805f38c63e061574e.html":[13,0,2,5]
+"dir_bdd9a5d540de89e9fe90efdfc6973a4f.html":[13,0,0]
 };

@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"class_system_state.html#af1d2d245231e05f0f057b275ed4a7318":[12,0,94,17],
+"class_system_state.html#affbc6a82a0ec079fb42f2d54ec8938ee":[12,0,94,20],
 "class_team_info.html":[12,0,95],
 "class_team_info.html#a06534c57dec84f48ae32609e1d2aa4bb":[12,0,95,4],
 "class_team_info.html#a0c7d89528a81a90c58e85d54ea4b22e1":[12,0,95,3],
@@ -142,8 +144,8 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a3b13cc53c85d9ef11c7d6507843c2e8a":[12,0,5,4,0,4],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a6ccdbd0bb8fa0de99614a132b398e262":[12,0,5,4,0,5],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a84b65a10f6fefed8532bd18eaf9d6666":[12,0,5,4,0,6],
-"classgameplay_1_1fs__watcher_1_1_fs_watcher.html#abbb36f0d7368f6d11ea650b15c89b852":[12,0,5,4,0,2],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#abbb36f0d7368f6d11ea650b15c89b852":[12,0,5,4,0,3],
+"classgameplay_1_1fs__watcher_1_1_fs_watcher.html#abbb36f0d7368f6d11ea650b15c89b852":[12,0,5,4,0,2],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#ac710c56b676e4cbd82c6111204fb9f0f":[12,0,5,4,0,1],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html":[12,0,5,4,0,0],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html#aa3f33254420fa833ab24c69853aa836c":[12,0,5,4,0,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#a6f8876c9f702afc46197c281b8d85466":[12,0,5,8,1,0,0,0],
 "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#a9a801ba1160b8527ca75f1541c048ba7":[12,0,5,8,1,0,0,3],
 "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#abcd7954f8f25540600eb9fa9e68fd1ec":[12,0,5,8,1,0,0,1],
-"classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#ae21dd1a8e160bcb16bcb7404636cda08":[12,0,5,8,1,0,0,2],
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html":[12,0,5,8,1,1,0],
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a1cfe84eaf34e8f1a3737cff5b32087e3":[12,0,5,8,1,1,0,0]
+"classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#ae21dd1a8e160bcb16bcb7404636cda08":[12,0,5,8,1,0,0,2]
 };
