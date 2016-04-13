@@ -168,25 +168,21 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
+    // Setup radio protocol handling
+    const uint8_t robotID = 2;
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
-    radioProtocol.setUID(2);  // TODO: remove
+    radioProtocol.setUID(robotID);  // TODO: remove
     radioProtocol.start();
     radioProtocol.rxCallback = [](const rtp::ControlMessage* msg) {
-
-        // TODO: parse @msg
-
-        // TODO: create actual message
-        // return vector<uint8_t>({
-        //     // uid,
-        //     // last_rssi,
-        //     // battery_level,
-        //     // kicker_status, // TODO: kicker failure?
-        //     // motor_status,
-        //     // failures, // bit field of failures, status, etc
-        //     // kicker_voltage
-        // });
         LOG(INIT, "rx!");  // TODO: rm
-        return vector<uint8_t>(10, 1);
+
+        rtp::RobotStatusMessage reply;
+        reply.uid = robotID;
+        reply.battVoltage = 12;  // TODO
+
+        vector<uint8_t> replyBuf;
+        rtp::SerializeToVector(reply, &replyBuf);
+        return replyBuf;
     };
 
     // Set the watdog timer's initial config

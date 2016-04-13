@@ -64,7 +64,7 @@ struct ControlMessage {
 } __attribute__((packed));
 
 struct RobotStatusMessage {
-    uint8_t uniqueId;  // robot id
+    uint8_t uid;  // robot id
     uint8_t battVoltage;
 };
 
