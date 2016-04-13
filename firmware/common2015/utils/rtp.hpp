@@ -26,6 +26,15 @@ void SerializeToBuffer(const PACKET_TYPE& pkt, uint8_t* buf, size_t bufSize) {
     memcpy(buf, (const void*)&pkt, bufSize);
 }
 
+template <typename PACKET_TYPE>
+bool DeserializeFromBuffer(PACKET_TYPE* pkt, uint8_t* buf, size_t bufSize) {
+    if (bufSize < sizeof(PACKET_TYPE)) return false;
+
+    memcpy(pkt, buf, bufSize);
+
+    return true;
+}
+
 /**
  * @brief Port enumerations for different communication protocols.
  */
