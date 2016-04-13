@@ -28,17 +28,23 @@ struct header_data {
     Type type : 4;
 };
 
+// binary-packed version of Control.proto
 struct ControlMessage {
-    uint8_t uid; // robot id
+    uint8_t uniqueId;  // robot id
     int16_t bodyX;
     int16_t bodyY;
     int16_t bodyW;
     int8_t dribbler;
     uint8_t kickStrength;
-    unsigned shootMode:1; // 0 = kick, 1 = chip
-    unsigned triggerMode:2; // 0 = off, 1 = immediate, 2 = on break beam
-    unsigned sing:2; // 0 = stop, 1 = continue, 2 = GT fight song
+    unsigned shootMode : 1;    // 0 = kick, 1 = chip
+    unsigned triggerMode : 2;  // 0 = off, 1 = immediate, 2 = on break beam
+    unsigned sing : 2;         // 0 = stop, 1 = continue, 2 = GT fight song
 } __attribute__((packed));
+
+struct RobotStatusMessage {
+    uint8_t uniqueId;  // robot id
+    uint8_t battVoltage;
+};
 
 /**
  * @brief Real-Time packet definition
