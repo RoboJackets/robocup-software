@@ -836,7 +836,8 @@ int cmd_ps(cmd_args_t& args) {
         printf("ALLOC\t\tCURRENT\r\n");
         Console::Instance()->Flush();
 
-        // iterate over the ready list
+        // Iterate over active threads
+        //  14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file
         for (unsigned int i = 0; i < 14; i++) {
             P_TCB p = (P_TCB)os_active_TCB[i];
 
