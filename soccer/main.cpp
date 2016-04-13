@@ -181,7 +181,9 @@ int main(int argc, char* argv[]) {
 
     processor->start();
 
-    while (!processor->isInitialized()) {
+    while (
+        !processor
+             ->isInitialized()) {  // Wait until processor finishes initializing
     }
 
     if (playbookFile.size() > 0)

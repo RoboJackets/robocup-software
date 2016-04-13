@@ -694,7 +694,7 @@ void MainWindow::updateStatus() {
     bool sim = _processor->simulation();
 
     if (!sim) {
-        radioBaseStatus(_processor->isRadioOpen());
+        updateRadioBaseStatus(_processor->isRadioOpen());
     }
 
     // Get processing thread status
@@ -797,7 +797,7 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
     }
 }
 
-void MainWindow::radioBaseStatus(bool usbRadio) {
+void MainWindow::updateRadioBaseStatus(bool usbRadio) {
     QString label =
         QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
     if (_ui.radioBaseStatus->text() != label) {
