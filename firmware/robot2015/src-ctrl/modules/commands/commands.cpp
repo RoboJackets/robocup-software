@@ -18,7 +18,7 @@
 using std::string;
 using std::vector;
 
-extern void *os_active_TCB[];
+extern void* os_active_TCB[];
 
 namespace {
 /**
@@ -837,16 +837,17 @@ int cmd_ps(cmd_args_t& args) {
         Console::Instance()->Flush();
 
         // iterate over the ready list
-	for (unsigned int i = 0; i < 14; i++) {
-	    P_TCB p = (P_TCB)os_active_TCB[i];
+        for (unsigned int i = 0; i < 14; i++) {
+            P_TCB p = (P_TCB)os_active_TCB[i];
 
-	    if (p != NULL) {
+            if (p != NULL) {
                 printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
                        p->task_id, p->prio, p->state, p->delta_time,
-                       ThreadMaxStackUsed(p), p->priv_stack, ThreadNowStackUsed(p));
+                       ThreadMaxStackUsed(p), p->priv_stack,
+                       ThreadNowStackUsed(p));
 
-            	num_threads++;
-	    }
+                num_threads++;
+            }
         }
 
         printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
