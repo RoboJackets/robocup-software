@@ -30,7 +30,7 @@ struct header_data {
 
 // binary-packed version of Control.proto
 struct ControlMessage {
-    uint8_t uniqueId;  // robot id
+    uint8_t uid;  // robot id
     int16_t bodyX;
     int16_t bodyY;
     int16_t bodyW;
@@ -38,7 +38,7 @@ struct ControlMessage {
     uint8_t kickStrength;
     unsigned shootMode : 1;    // 0 = kick, 1 = chip
     unsigned triggerMode : 2;  // 0 = off, 1 = immediate, 2 = on break beam
-    unsigned sing : 2;         // 0 = stop, 1 = continue, 2 = GT fight song
+    unsigned song : 2;         // 0 = stop, 1 = continue, 2 = GT fight song
 } __attribute__((packed));
 
 struct RobotStatusMessage {
@@ -66,7 +66,7 @@ public:
         for (T val : v) payload.push_back(val);
     }
 
-    size_t size() const { return payload.size() + header.size(); }
+    size_t size() const { return payload.size() + sizeof(header); }
 
     int port() const { return static_cast<int>(header.port); }
     template <class T>
@@ -78,7 +78,12 @@ public:
     void address(int a) { header.address = static_cast<unsigned int>(a); }
 };
 
-template <struct PACKET_TYPE>
+// Packet sizes
+constexpr unsigned int Forward_Size =
+    sizeof(header_data) + 6 * sizeof(ControlMessage);
+const unsigned int Reverse_Size = 7;
+
+template <typename PACKET_TYPE>
 void SerializeToVector(const PACKET_TYPE& pkt, std::vector<uint8_t> buf) {
     uint8_t* bytes = (uint8_t*)pkt;
     for (size_t i = 0; i < sizeof(PACKET_TYPE); i++) {
@@ -87,7 +92,7 @@ void SerializeToVector(const PACKET_TYPE& pkt, std::vector<uint8_t> buf) {
 }
 
 /// Serializes the message to the buffer and returns the number of bytes written
-template <struct PACKET_TYPE>
+template <typename PACKET_TYPE>
 void SerializeToBuffer(const PACKET_TYPE& pkt, uint8_t* buf, size_t bufSize) {
     memcpy(buf, (const void*)&pkt, bufSize);
 }
