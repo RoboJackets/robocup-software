@@ -10,6 +10,12 @@ MCP23017::MCP23017(PinName sda, PinName scl, int i2cAddress, PinName interrupt)
 
     // Configure interrupts
     if (interrupt != NC) {
+        // The mcp23017 has an interrupt out line for both port A and port B.
+        // We only have one of these connected to the control board, so we set
+        // the MIRROR bit so that an input change on either port triggers both
+        // interrupt lines
+        writeRegister(IOCON, 1 << 6);
+
         writeRegister(INTCON, 0);
         _intIn.rise(this, &MCP23017::_interrupt);
     }

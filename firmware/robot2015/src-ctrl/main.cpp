@@ -136,6 +136,8 @@ int main() {
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
 
+    ioExpander.setInterruptHandler([]() { LOG(INIT, "interrupt!"); });
+
     // rotary selector for shell id
     RotarySelector<IOExpanderDigitalInOut> rotarySelector(
         {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
