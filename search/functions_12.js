@@ -28,7 +28,7 @@ var searchData=
   ['shieldfromteammates',['shieldFromTeammates',['../class_our_robot.html#a9651d74f3d8839801adf5ab7ce509bf7',1,'OurRobot']]],
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#ac7ecf05e72f3229814b6bc2055f3ad68',1,'gameplay::skills::_kick::_Kick']]],
   ['shouldreplan',['shouldReplan',['../class_planning_1_1_r_r_t_planner.html#a43c789cf73ba8b48789c874c73d10816',1,'Planning::RRTPlanner::shouldReplan()'],['../class_planning_1_1_single_robot_path_planner.html#a46c274740b97d30e8f5e9aecefb891ae',1,'Planning::SingleRobotPathPlanner::shouldReplan()']]],
-  ['sing',['sing',['../class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9',1,'OurRobot']]],
+  ['sing',['sing',['../class_our_robot.html#a7304077bd824b4d8ccb57144692095a5',1,'OurRobot']]],
   ['size',['size',['../class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542',1,'Planning::InterpolatedPath::size()'],['../structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29',1,'rtp::header_data::size()']]],
   ['softwarespi',['SoftwareSPI',['../class_software_s_p_i.html#a0fcfd3817236c348ed837a2d62b30aa7',1,'SoftwareSPI']]],
   ['spin',['spin',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html#a100de7075392515c4dff56d48543db60',1,'gameplay.composite_behavior.CompositeBehavior.spin()'],['../classgameplay_1_1fsm_1_1_state_machine.html#aa33ace9c403176134bf81d2930ff2a1d',1,'gameplay.fsm.StateMachine.spin()']]],

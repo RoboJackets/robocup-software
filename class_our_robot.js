@@ -51,7 +51,7 @@ var class_our_robot =
     [ "kickerBar", "class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43", null ],
     [ "kickerVoltage", "class_our_robot.html#a0a7e0f4748e5421538b65fd22ebacf4e", null ],
     [ "kickerWorks", "class_our_robot.html#a02faabdbe05e3d34856ff7043dc40d58", null ],
-    [ "kickImmediately", "class_our_robot.html#a1b366ab867c9976e5915872d059e991f", null ],
+    [ "kickImmediately", "class_our_robot.html#a8dd08deb447b61509e765b3468fa3993", null ],
     [ "kickLevel", "class_our_robot.html#a0a7af7e311b88b1d594049a47139f33b", null ],
     [ "kickTimer", "class_our_robot.html#a808d23e992c9f6e6a40a8b9c35965e6e", null ],
     [ "lastKickTime", "class_our_robot.html#a89a1ad3a27acab69d8cf578a1c4cfae9", null ],
@@ -80,7 +80,7 @@ var class_our_robot =
     [ "rxIsFresh", "class_our_robot.html#a1b0dc40e35e1aaca2e6d8ece9219b81e", null ],
     [ "setPath", "class_our_robot.html#a7b0e5ed5c25cf218ebdbc4966c7ed720", null ],
     [ "shieldFromTeammates", "class_our_robot.html#a9651d74f3d8839801adf5ab7ce509bf7", null ],
-    [ "sing", "class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9", null ],
+    [ "sing", "class_our_robot.html#a7304077bd824b4d8ccb57144692095a5", null ],
     [ "state", "class_our_robot.html#a790dab042f6260cda5e1cf215777d8dd", null ],
     [ "stop", "class_our_robot.html#ad06cbfbea4234c95cbe813e1c8910363", null ],
     [ "unkick", "class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063", null ],
@@ -99,8 +99,9 @@ var class_our_robot =
     [ "_state", "class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff", null ],
     [ "angleFunctionPath", "class_our_robot.html#a99c3d92c2c979f9ff6eba73bbb0b41b3", null ],
     [ "config", "class_our_robot.html#a0d772617dda85ce48b6ee3fe4b7746ef", null ],
+    [ "control", "class_our_robot.html#a22dbb3da6c0f44de0f1e83f772ed26e6", null ],
     [ "isPenaltyKicker", "class_our_robot.html#aadeaaec4a8590e7851cdb8c1f3de207a", null ],
-    [ "radioTx", "class_our_robot.html#a955ab4a906727f54a123f4e788ce68ba", null ],
+    [ "robotPacket", "class_our_robot.html#a98883357829f30876112a521b6d8eccd", null ],
     [ "robotText", "class_our_robot.html#abdfb739ad95731cda9ecad9dc649a371", null ],
     [ "status", "class_our_robot.html#ab7b626ee8e0f231795e40d4c2d3944de", null ]
 ];

@@ -3,7 +3,7 @@ var class_processor =
     [ "Status", "struct_processor_1_1_status.html", "struct_processor_1_1_status" ],
     [ "Processor", "class_processor.html#ade4b410819be6fe3b6fe64086b2c8b8d", null ],
     [ "~Processor", "class_processor.html#acf37952c5b420d4e903a512571678692", null ],
-    [ "applyJoystickControls", "class_processor.html#ab70320b36ba05af4fa999a38d1ffca19", null ],
+    [ "applyJoystickControls", "class_processor.html#af9ab76bf7d2e52b90a9688a178cf4f05", null ],
     [ "autonomous", "class_processor.html#ae82d01435599d7ade385225832ef2bf2", null ],
     [ "blueTeam", "class_processor.html#a1a61818c88b94200bba7f56a5cc7de76", null ],
     [ "blueTeam", "class_processor.html#afaad3140ad4f40c8f5b8d1af647b9194", null ],

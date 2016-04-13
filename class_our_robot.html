@@ -244,10 +244,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a4170e6526e724b2bf36a06af62ea64b5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a4170e6526e724b2bf36a06af62ea64b5">getCmdText</a> () const </td></tr>
 <tr class="memdesc:a4170e6526e724b2bf36a06af62ea64b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a string representing the series of commands called on the robot this iteration.  <a href="#a4170e6526e724b2bf36a06af62ea64b5">More...</a><br/></td></tr>
 <tr class="separator:a4170e6526e724b2bf36a06af62ea64b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b366ab867c9976e5915872d059e991f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b366ab867c9976e5915872d059e991f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1b366ab867c9976e5915872d059e991f">kickImmediately</a> (bool im)</td></tr>
-<tr class="memdesc:a1b366ab867c9976e5915872d059e991f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ignore ball sense and kick immediately <br/></td></tr>
-<tr class="separator:a1b366ab867c9976e5915872d059e991f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dd08deb447b61509e765b3468fa3993"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8dd08deb447b61509e765b3468fa3993"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a8dd08deb447b61509e765b3468fa3993">kickImmediately</a> ()</td></tr>
+<tr class="memdesc:a8dd08deb447b61509e765b3468fa3993"><td class="mdescLeft">&#160;</td><td class="mdescRight">ignore ball sense and kick immediately <br/></td></tr>
+<tr class="separator:a8dd08deb447b61509e765b3468fa3993"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc03cb404cd381aa1c49c655f7b6f7ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc03cb404cd381aa1c49c655f7b6f7ac"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>avoidOpponents</b> () const </td></tr>
 <tr class="separator:adc03cb404cd381aa1c49c655f7b6f7ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -384,10 +384,9 @@ const <a class="el" href="struct_rotation_constraints.html">RotationConstraints<
 <tr class="separator:a790dab042f6260cda5e1cf215777d8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b0dc40e35e1aaca2e6d8ece9219b81e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1b0dc40e35e1aaca2e6d8ece9219b81e">rxIsFresh</a> (RJ::Time age=500000) const </td></tr>
 <tr class="separator:a1b0dc40e35e1aaca2e6d8ece9219b81e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1446bc7daeb6a68d549a98e328bdd5b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1446bc7daeb6a68d549a98e328bdd5b9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9">sing</a> ()</td></tr>
-<tr class="memdesc:a1446bc7daeb6a68d549a98e328bdd5b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the robot playing the fight song. <br/></td></tr>
-<tr class="separator:a1446bc7daeb6a68d549a98e328bdd5b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7304077bd824b4d8ccb57144692095a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a7304077bd824b4d8ccb57144692095a5">sing</a> (Packet::Control::Song song=Packet::Control::FIGHT_SONG)</td></tr>
+<tr class="memdesc:a7304077bd824b4d8ccb57144692095a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the robot playing a song  <a href="#a7304077bd824b4d8ccb57144692095a5">More...</a><br/></td></tr>
+<tr class="separator:a7304077bd824b4d8ccb57144692095a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a019e62061c483d79b3ecd88aa5f08e27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a019e62061c483d79b3ecd88aa5f08e27"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>distanceToChipLanding</b> (int chipPower)</td></tr>
 <tr class="separator:a019e62061c483d79b3ecd88aa5f08e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -427,6 +426,13 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfigur
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a98883357829f30876112a521b6d8eccd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98883357829f30876112a521b6d8eccd"></a>
+Packet::Robot&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a98883357829f30876112a521b6d8eccd">robotPacket</a></td></tr>
+<tr class="memdesc:a98883357829f30876112a521b6d8eccd"><td class="mdescLeft">&#160;</td><td class="mdescRight">radio packets <br/></td></tr>
+<tr class="separator:a98883357829f30876112a521b6d8eccd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22dbb3da6c0f44de0f1e83f772ed26e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a22dbb3da6c0f44de0f1e83f772ed26e6"></a>
+Packet::Control *&#160;</td><td class="memItemRight" valign="bottom"><b>control</b></td></tr>
+<tr class="separator:a22dbb3da6c0f44de0f1e83f772ed26e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d772617dda85ce48b6ee3fe4b7746ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d772617dda85ce48b6ee3fe4b7746ef"></a>
 <a class="el" href="class_robot_config.html">RobotConfig</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>config</b></td></tr>
 <tr class="separator:a0d772617dda85ce48b6ee3fe4b7746ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -437,10 +443,6 @@ Public Attributes</h2></td></tr>
 boost::ptr_vector<br class="typebreak"/>
 &lt; Packet::DebugText &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>robotText</b></td></tr>
 <tr class="separator:abdfb739ad95731cda9ecad9dc649a371"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a955ab4a906727f54a123f4e788ce68ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a955ab4a906727f54a123f4e788ce68ba"></a>
-Packet::RadioTx::Robot&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a955ab4a906727f54a123f4e788ce68ba">radioTx</a></td></tr>
-<tr class="memdesc:a955ab4a906727f54a123f4e788ce68ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">radio packets <br/></td></tr>
-<tr class="separator:a955ab4a906727f54a123f4e788ce68ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadeaaec4a8590e7851cdb8c1f3de207a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aadeaaec4a8590e7851cdb8c1f3de207a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPenaltyKicker</b> = false</td></tr>
 <tr class="separator:aadeaaec4a8590e7851cdb8c1f3de207a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -901,6 +903,38 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="a7304077bd824b4d8ccb57144692095a5"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OurRobot::sing </td>
+          <td>(</td>
+          <td class="paramtype">Packet::Control::Song&#160;</td>
+          <td class="paramname"><em>song</em> = <code>Packet::Control::FIGHT_SONG</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>start the robot playing a song </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">song</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/<a class="el" href="_robot_8hpp_source.html">Robot.hpp</a></li>
 <li>soccer/Robot.cpp</li>
@@ -911,7 +945,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Wed Apr 13 2016 00:43:39 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Apr 13 2016 00:53:09 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
