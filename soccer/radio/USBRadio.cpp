@@ -1,6 +1,3 @@
-// FIXME - Something hangs if PKTCTRL0==4 (fixed length packets) when
-// variable-length packets are in use.
-
 #include <stdio.h>
 #include <stdexcept>
 
@@ -110,12 +107,12 @@ bool USBRadio::open() {
             _device,  // handle of the device that will handle the transfer
             LIBUSB_ENDPOINT_IN |
                 2,  // address of the endpoint where this transfer will be sent
-            _rxBuffers[i],     // data buffer
-            Reverse_Size + 2,  // length of data buffer
-            rxCompleted,       // callback function to be invoked on transfer
-                               // completion
-            this,              // user data to pass to callback function
-            0);                // timeout for the transfer in milliseconds
+            _rxBuffers[i],          // data buffer
+            rtp::Reverse_Size + 2,  // length of data buffer
+            rxCompleted,  // callback function to be invoked on transfer
+                          // completion
+            this,         // user data to pass to callback function
+            0);           // timeout for the transfer in milliseconds
         libusb_submit_transfer(_rxTransfers[i]);
     }
 
@@ -128,7 +125,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
     USBRadio* radio = (USBRadio*)transfer->user_data;
 
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED &&
-        transfer->actual_length == Reverse_Size + 2) {
+        transfer->actual_length == rtp::Reverse_Size + 2) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
     }
@@ -177,65 +174,57 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    uint8_t forward_packet[Forward_Size];
+    uint8_t forward_packet[rtp::Forward_Size];
 
-    // Build a forward packet
-    forward_packet[0] = _sequence;
+    // ensure Forward_Size is correct
+    static_assert(sizeof(rtp::header_data) + 6 * sizeof(rtp::ControlMessage) <=
+                      rtp::Forward_Size,
+                  "Forward packet contents exceeds buffer size");
 
     // Unit conversions
     static const float Seconds_Per_Cycle = 0.005f;
     static const float Meters_Per_Tick = 0.026f * 2 * M_PI / 6480.0f;
     static const float Radians_Per_Tick = 0.026f * M_PI / (0.0812f * 3240.0f);
 
-    int offset = 1;
-    int slot;
-    for (slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
-        const Packet::Control& robot = packet.robots(slot).control();
-        int robot_id = packet.robots(slot).uid();
+    // Build a forward packet
+    for (int slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
+        // Calculate the offset into the @forward_packet for this robot's
+        // control message and cast it to a ControlMessage pointer for easy
+        // access
+        size_t offset =
+            sizeof(rtp::header_data) + slot * sizeof(rtp::ControlMessage);
+        rtp::ControlMessage* msg =
+            (rtp::ControlMessage*)(forward_packet + offset);
 
-        float bodyVelX =
-            robot.xvelocity() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
-        float bodyVelY =
-            robot.yvelocity() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
-        float bodyVelW =
-            robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
+        if (slot < packet.robots_size()) {
+            const Packet::Control& robot = packet.robots(slot).control();
 
-        int outX = clamp((int)roundf(bodyVelX), -511, 511);
-        int outY = clamp((int)roundf(bodyVelY), -511, 511);
-        int outW = clamp((int)roundf(bodyVelW), -511, 511);
+            // TODO: clarify units/resolution
+            float bodyVelX = robot.xvelocity() * Seconds_Per_Cycle /
+                             Meters_Per_Tick / sqrtf(2);
+            float bodyVelY = robot.yvelocity() * Seconds_Per_Cycle /
+                             Meters_Per_Tick / sqrtf(2);
+            float bodyVelW =
+                robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
 
-        uint8_t dribbler =
-            max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));
+            msg->uid = packet.robots(slot).uid();
 
-        forward_packet[offset++] = outX & 0xff;
-        forward_packet[offset++] = outY & 0xff;
-        forward_packet[offset++] = outW & 0xff;
-        forward_packet[offset++] = ((outX & 0x300) >> 8) |
-                                   ((outY & 0x300) >> 6) |
-                                   ((outW & 0x300) >> 4);
+            msg->bodyX = clamp((int)roundf(bodyVelX), -511, 511);
+            msg->bodyY = clamp((int)roundf(bodyVelY), -511, 511);
+            msg->bodyW = clamp((int)roundf(bodyVelW), -511, 511);
 
-        forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
-        forward_packet[offset++] = static_cast<uint8_t>(robot.kcstrength());
-        forward_packet[offset++] =
-            (robot.shootmode() == Packet::Control::CHIP) |
-            ((robot.triggermode() == Packet::Control::IMMEDIATE) << 1) |
-            (robot.song() << 2) | (0 /*robot.anthem()*/ << 3);
-        // TODO remove, no longer used
-        forward_packet[offset++] = 10;  // robot.accel();
-        forward_packet[offset++] = 10;  // robot.decel();
-    }
+            msg->dribbler =
+                max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));
 
-    // Unused slots
-    for (; slot < 6; ++slot) {
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0x0f;
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0;
-        forward_packet[offset++] = 0;
+            msg->kickStrength = robot.kcstrength();
+
+            msg->shootMode = robot.shootmode();
+            msg->triggerMode = robot.triggermode();
+            msg->song = robot.song();
+        } else {
+            // empty slot
+            msg->uid = 0;
+        }
     }
 
     // Send the forward packet
