@@ -26,7 +26,7 @@ int main() {
     SPI spi(p5, p6, p7);  // mosi, miso, sclk
     // mode 0 doesn't seem to work right, TODO investigate if necessary
     // we may have to use chip select to get this working properly
-    spi.format(8, 0);  // allow system to work with arduino
+    spi.format(8, 0);  // allow system to work with attiny
     spi.frequency(8000);
 
     while (1) {
@@ -40,40 +40,16 @@ int main() {
                     transByte = chip(8);
                     break;
                 case 'r':
-                    // transByte = vRead();
                     transByte = 1;
                     break;
                 default:
                     transByte = 0;
             }
-            /* ** */
-            // if (getCmd == k)
-            //   transByte = 1;
-            // else
-            //   transByte = 0;
-            // getCmd = 0;
 
-            // below works fine
-            // switch(getCmd){
-            //   case 'k':
-            //     transByte = 1;
-            //     break;
-            //   case 'c':
-            //     transByte = 2;
-            //     break;
-            //   case 'r':
-            //     transByte = 3;
-            //     break;
-            //   default:
-            //     transByte = 0;
-            //     break;
-            // }
             int a;
             transferAndWait(transByte, spi);
             a = transferAndWait(0, spi);
-            /**/
 
-            // a = transferAndWait('3', spi);
             pc.printf("Received:");
             pc.printf("%d\r\n", a);
         }
@@ -88,35 +64,26 @@ int transferAndWait(const char what, SPI& spi) {
 }  // end transferAndWait
 
 /*
-
 Each of these commands generates a byte that is sent over and unpacked by the
 ATTiny
 | Command | Value |
 |<---2--->|<--6-->|
-
 Commands:
-
 11 kick
 10 chip
 01 read
 00 null
 */
 
-// map time into 0-63 range
-
 int kick(int time) {
     // set kick command
     int cmd = 0x3 << 6;
-    // int cmd = 0xC0;
-    // time = map(time, 0, 255, 0, 63);
     return cmd | time;
 }
 
 int chip(int time) {
     // set chip command
     int cmd = 0x2 << 6;
-    // int cmd = 0x80;
-    // time = map(time, 0, 255, 0, 63);
     return cmd | time;
 }
 // int vRead()
