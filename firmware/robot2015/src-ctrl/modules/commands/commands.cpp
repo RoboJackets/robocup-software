@@ -50,7 +50,7 @@ int (*iterative_command_handler)(cmd_args_t& args);
 }  // end of anonymous namespace
 
 // Create an object to help find files
-// LocalFileSystem local("local");
+LocalFileSystem local("local");
 
 /**
  * Commands list. Add command handlers to commands.hpp.
@@ -423,18 +423,12 @@ int cmd_interface_reset(cmd_args_t& args) {
  * Lists files.
  */
 int cmd_ls(cmd_args_t& args) {
-    DIR* d;
-    struct dirent* p;
+    string dirname = args.empty() ? "/local" : args[0];
 
-    std::vector<std::string> filenames;
-
-    if (args.empty()) {
-        d = opendir("/local");
-    } else {
-        d = opendir(args[0].c_str());
-    }
-
+    DIR* d = opendir(dirname.c_str());
     if (d != nullptr) {
+        std::vector<std::string> filenames;
+        struct dirent* p;
         while ((p = readdir(d)) != nullptr) {
             filenames.push_back(string(p->d_name));
         }
@@ -442,15 +436,12 @@ int cmd_ls(cmd_args_t& args) {
         closedir(d);
 
         // don't use printf until we close the directory
-        for (auto& i : filenames) {
-            printf(" - %s\r\n", i.c_str());
+        for (auto& name : filenames) {
+            printf(" - %s\r\n", name.c_str());
             Console::Instance()->Flush();
         }
-
     } else {
-        if (!args.empty()) {
-            printf("Could not find %s\r\n", args[0].c_str());
-        }
+        printf("Could not find '%s'\r\n", dirname.c_str());
 
         return 1;
     }
