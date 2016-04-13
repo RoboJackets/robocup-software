@@ -1373,7 +1373,7 @@ p, li { white-space: pre-wrap; }
           <property name="maximumSize">
            <size>
             <width>300</width>
-            <height>378</height>
+            <height>1000</height>
            </size>
           </property>
           <property name="styleSheet">
