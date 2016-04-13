@@ -179,5 +179,6 @@ pip2 install -r $BASE/util/requirements2.txt
 # This script is run as sudo, but we don't want submodules to be owned by the
 # root user, so we use `su` to update submodules as the normal user
 echo "-- Updating submodules"
+chown -R $(whoami):$(whoami) $BASE/external
 su $(whoami) -c 'git submodule sync'
 su $(whoami) -c 'git submodule update --init'
