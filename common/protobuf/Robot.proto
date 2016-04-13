@@ -1,0 +1,9 @@
+package Packet;
+
+import "Control.proto";
+
+message Robot
+{
+    required uint32 uid = 1;
+    required Control control = 3;
+}
