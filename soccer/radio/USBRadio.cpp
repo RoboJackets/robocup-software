@@ -225,8 +225,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
         int outY = clamp((int)roundf(bodyVelY), -511, 511);
         int outW = clamp((int)roundf(bodyVelW), -511, 511);
 
-        uint8_t kick =
-            static_cast<uint8_t>(robot.shootmode() == Packet::Control::KICK);
         uint8_t dribbler =
             max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));
 
@@ -238,7 +236,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
                                    ((outW & 0x300) >> 4);
 
         forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
-        forward_packet[offset++] = kick;
+        forward_packet[offset++] = static_cast<uint8_t>(robot.kcstrength());
         forward_packet[offset++] =
             (robot.shootmode() == Packet::Control::CHIP) |
             ((robot.triggermode() == Packet::Control::IMMEDIATE) << 1) |
