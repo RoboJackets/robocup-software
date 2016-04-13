@@ -60,8 +60,10 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 OurRobot::OurRobot(int shell, SystemState* state)
     : Robot(shell, true), _state(state) {
     _cmdText = new std::stringstream();
+    Packet::Control* ctl = new Packet::Control();
+    robotPacket.set_allocated_control(ctl);
+    control = ctl;
 
-    resetAvoidBall();
     _lastChargedTime = 0;
     _lastKickerStatus = 0;
     _lastKickTime = 0;
@@ -128,18 +130,19 @@ void OurRobot::resetForNextIteration() {
 
     _clearCmdText();
 
-    radioTx.Clear();
-    radioTx.set_robot_id(shell());
-    radioTx.set_accel(10);
-    radioTx.set_decel(10);
+    control->Clear();
+    control->set_dvelocity(0);
+    robotPacket.set_uid(shell());
 
     if (charged()) {
         _lastChargedTime = RJ::timestamp();
     }
 
     _local_obstacles.clear();
+
     resetMotionConstraints();
     _unkick();
+    control->set_song(Packet::Control::STOP);
 
     isPenaltyKicker = false;
 }
@@ -233,7 +236,7 @@ float OurRobot::kickTimer() const {
 
 void OurRobot::dribble(uint8_t speed) {
     uint8_t scaled = *config->dribbler.multiplier * speed;
-    radioTx.set_dribbler(scaled);
+    control->set_dvelocity(scaled);
 
     *_cmdText << "dribble(" << (float)speed << ")" << endl;
 }
@@ -277,21 +280,22 @@ void OurRobot::chipLevel(uint8_t strength) {
 
 void OurRobot::_kick(uint8_t strength) {
     uint8_t max = *config->kicker.maxKick;
-    radioTx.set_kick(strength > max ? max : strength);
-    radioTx.set_use_chipper(false);
+    control->set_kcstrength(strength > max ? max : strength);
+    control->set_shootmode(Packet::Control::KICK);
+    control->set_triggermode(Packet::Control::IMMEDIATE);
 }
 
 void OurRobot::_chip(uint8_t strength) {
     uint8_t max = *config->kicker.maxChip;
-    radioTx.set_kick(strength > max ? max : strength);
-    radioTx.set_use_chipper(true);
+    control->set_kcstrength(strength > max ? max : strength);
+    control->set_shootmode(Packet::Control::CHIP);
+    control->set_triggermode(Packet::Control::IMMEDIATE);
 }
 
 void OurRobot::_unkick() {
-    _kick(0);
-    _chip(0);
-    radioTx.set_use_chipper(false);
-    radioTx.set_kick_immediate(false);
+    control->set_kcstrength(0);
+    control->set_shootmode(Packet::Control::KICK);
+    control->set_triggermode(Packet::Control::STAND_DOWN);
 }
 
 void OurRobot::unkick() {
@@ -300,7 +304,9 @@ void OurRobot::unkick() {
     *_cmdText << "unkick()" << endl;
 }
 
-void OurRobot::kickImmediately(bool im) { radioTx.set_kick_immediate(im); }
+void OurRobot::kickImmediately() {
+    control->set_triggermode(Packet::Control::IMMEDIATE);
+}
 
 #pragma mark Robot Avoidance
 
