@@ -9,9 +9,6 @@
  */
 
 #include "mbed.h"
-#include "robot-devices.hpp"
-
-#define ID_DS2411_PIN RJ_BASE_ID
 
 struct DS2411_t {
     char family;

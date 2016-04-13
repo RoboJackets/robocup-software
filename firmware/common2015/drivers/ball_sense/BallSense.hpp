@@ -2,6 +2,7 @@
 
 #include <mbed.h>
 #include <rtos.h>
+#include "RtosTimerHelper.hpp"
 
 /// Determines if the emitter to reciever beam is broken while accounting for
 ///  ambiant light.
@@ -45,7 +46,5 @@ private:
     // Consecative "broken" senses counter
     unsigned int consec_ctr = 0;
 
-    RtosTimer _updateTimer;
-
-    static void updateCallback(const void* instance);
+    RtosTimerHelper _updateTimer;
 };
