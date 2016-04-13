@@ -67,8 +67,6 @@ public:
      */
     void writeMask(uint16_t data, uint16_t mask);
 
-    int readMask(uint16_t mask);
-
     /** Read a 0/1 value from an input bit
      *
      * @param   bit_number    bit number range 0 --> 15
@@ -89,9 +87,9 @@ public:
     uint16_t readRegister(MCP23017::Register regAddress);
 
     typedef enum { DIR_OUTPUT = 0, DIR_INPUT = 1 } PinMode;
-    void pinMode(int pin, PinMode mode);
-    void digitalWrite(int pin, int val);
-    int digitalRead(int pin);
+    void pinMode(ExpPinName pin, PinMode mode);
+    void digitalWrite(ExpPinName pin, int val);
+    int digitalRead(ExpPinName pin);
 
     // These provide a more advanced mapping of the chip functionality
     // See the data sheet for more information on what they do
@@ -114,8 +112,6 @@ public:
     // Allows enabling of the internal 100k pullup resisters (1 = enabled, 0 =
     // disabled)
     void internalPullupMask(uint16_t mask);
-
-    void write(int data);
 
 private:
     I2CMasterRtos _i2c;

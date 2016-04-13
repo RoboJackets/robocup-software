@@ -32,7 +32,7 @@ void MCP23017::writeRegister(MCP23017::Register regAddress, uint16_t data) {
 
 uint16_t MCP23017::readRegister(MCP23017::Register regAddress) {
     char buffer[2];
-    _i2c.write(regAddress);
+    _i2c.write(_i2cAddress, (char*)&regAddress);
     _i2c.read(_i2cAddress, buffer, 2);
 
     return (uint16_t)(buffer[0] | (buffer[1] << 8));
@@ -65,8 +65,6 @@ uint8_t MCP23017::readPin(MCP23017::ExpPinName pin) {
     return ((_cachedGPIO >> pin) & 0x0001);
 }
 
-int MCP23017::readMask(uint16_t mask) { return readRegister(GPIO) & mask; }
-
 void MCP23017::config(uint16_t dir_config, uint16_t pullup_config,
                       uint16_t polarity_config) {
     inputOutputMask(dir_config);
@@ -81,7 +79,7 @@ void MCP23017::config(uint16_t dir_config, uint16_t pullup_config,
         _cachedIODIR, _cachedGPPU, _cachedIPOL);
 }
 
-void MCP23017::pinMode(int pin, PinMode mode) {
+void MCP23017::pinMode(ExpPinName pin, PinMode mode) {
     if (mode == DIR_INPUT) {
         _cachedIODIR |= 1 << pin;
     } else {
@@ -91,12 +89,12 @@ void MCP23017::pinMode(int pin, PinMode mode) {
     inputOutputMask(_cachedIODIR);
 }
 
-int MCP23017::digitalRead(int pin) {
+int MCP23017::digitalRead(ExpPinName pin) {
     _cachedGPIO = readRegister(GPIO);
     return ((_cachedGPIO & (1 << pin)) ? 1 : 0);
 }
 
-void MCP23017::digitalWrite(int pin, int val) {
+void MCP23017::digitalWrite(ExpPinName pin, int val) {
     // If this pin is an INPUT pin, a write here will
     // enable the internal pullup
     // otherwise, it will set the OUTPUT voltage

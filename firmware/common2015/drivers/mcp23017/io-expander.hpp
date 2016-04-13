@@ -6,20 +6,20 @@
 
 /**
  * A DigitalInOut class meant to replicate basic functionality of the
- * mBed digitalOut and digitalIn
+ * mBed DigitalOut and DigitalIn on the io-expander.
  */
 class IOExpanderDigitalInOut {
-private:
-    MCP23017::ExpPinName _pin;
-    MCP23017* _mcp23017;
-
 public:
     /// Other constructors for creating objects for pinouts
     IOExpanderDigitalInOut(MCP23017* mcp, MCP23017::ExpPinName pin,
-                           bool state = false)
+                           MCP23017::PinMode mode, bool state = false)
         : _pin(pin), _mcp23017(mcp) {
-        if (state != read()) write(state);
+        pinMode(mode);
+        if ((state != (bool)read()) && mode == MCP23017::DIR_OUTPUT)
+            write(state);
     }
+
+    void pinMode(MCP23017::PinMode mode) { _mcp23017->pinMode(_pin, mode); }
 
     /// Pulls pin low if val = 0 and pulls pin high if val >= 1
     void write(int val) { _mcp23017->writePin(val, _pin); }
@@ -33,18 +33,10 @@ public:
         return *this;
     }
 
-    /// Allows the equals operator to read the state of another IOExpander pin
-    IOExpanderDigitalInOut& operator=(IOExpanderDigitalInOut& rhs) {
-        write(rhs.read());
-        return *this;
-    }
-
-    /// Allows the equals operator to read the state of another normal IO pin
-    IOExpanderDigitalInOut& operator=(DigitalInOut& rhs) {
-        write(rhs.read());
-        return *this;
-    }
-
     /// Allows the pin to return its value like a simple integer variable
     operator int() { return read(); }
+
+private:
+    MCP23017::ExpPinName _pin;
+    MCP23017* _mcp23017;
 };
