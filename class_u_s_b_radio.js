@@ -2,10 +2,8 @@ var class_u_s_b_radio =
 [
     [ "USBRadio", "class_u_s_b_radio.html#abb6b86dfe3ea49b38387521ccbc36e15", null ],
     [ "~USBRadio", "class_u_s_b_radio.html#a8dd0b6c164c0c960112f71a6af5977df", null ],
-    [ "auto_calibrate", "class_u_s_b_radio.html#a2ab15aaf47fc9a207f12ddba5b0dd002", null ],
     [ "channel", "class_u_s_b_radio.html#a565f492d9ba5358b44fa7a1b6b6c7ecb", null ],
     [ "command", "class_u_s_b_radio.html#a14428d30859e868b57ce73d9ec9ad824", null ],
-    [ "configure", "class_u_s_b_radio.html#a1e05ad503c6edf9aabee43bef02835dc", null ],
     [ "handleRxData", "class_u_s_b_radio.html#abad64399c0bde81e826a038f45dc6434", null ],
     [ "isOpen", "class_u_s_b_radio.html#a6403ba3125362d413aae87cb93f6f61d", null ],
     [ "open", "class_u_s_b_radio.html#a9cc536afac2872f1e7cf7663ba3e3dbc", null ],

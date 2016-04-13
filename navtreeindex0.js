@@ -144,7 +144,7 @@ var NAVTREEINDEX0 =
 "_protobuf_tree_8hpp_source.html":[13,0,2,17],
 "_quaternion_demo_8hpp_source.html":[13,0,2,18],
 "_r_r_t_planner_8hpp_source.html":[13,0,2,4,13],
-"_radio_8hpp_source.html":[13,0,2,5,1],
+"_radio_8hpp_source.html":[13,0,2,5,0],
 "_rect_8hpp_source.html":[13,0,0,0,6],
 "_referee_tab_8hpp_source.html":[13,0,2,19],
 "_robot_8hpp_source.html":[13,0,2,20],
@@ -161,7 +161,7 @@ var NAVTREEINDEX0 =
 "_shape_set_8hpp_source.html":[13,0,0,0,9],
 "_shared_s_p_i_8hpp_source.html":[13,0,1,0,0,11,0],
 "_sim_field_view_8hpp_source.html":[13,0,2,24],
-"_sim_radio_8hpp_source.html":[13,0,2,5,3],
+"_sim_radio_8hpp_source.html":[13,0,2,5,1],
 "_single_robot_path_planner_8hpp_source.html":[13,0,2,4,14],
 "_space_nav_joystick_8hpp_source.html":[13,0,2,1,2],
 "_strip_chart_8hpp_source.html":[13,0,2,25],
@@ -174,7 +174,7 @@ var NAVTREEINDEX0 =
 "_trapezoidal_motion_8hpp_source.html":[13,0,2,3,1],
 "_trapezoidal_path_8hpp_source.html":[13,0,2,4,16],
 "_tree_8hpp_source.html":[13,0,2,4,17],
-"_u_s_b_radio_8hpp_source.html":[13,0,2,5,4],
+"_u_s_b_radio_8hpp_source.html":[13,0,2,5,2],
 "_utils_8hpp_source.html":[13,0,0,9],
 "_vision_dot_pattern_8hpp_source.html":[13,0,0,10],
 "_vision_receiver_8hpp_source.html":[13,0,2,29],
@@ -183,7 +183,6 @@ var NAVTREEINDEX0 =
 "assert_8hpp_source.html":[13,0,1,0,3,0,0],
 "buzzer_8hpp_source.html":[13,0,1,0,0,2,0],
 "cc1101-compatible_2registers_8h_source.html":[13,0,1,0,0,3,0,0,0],
-"cc1101_8h_source.html":[13,0,2,5,0],
 "class_a_v_r910.html":[12,0,15],
 "class_a_v_r910.html#a07c549c137848a2ecf78e1dcb241816e":[12,0,15,4],
 "class_a_v_r910.html#a24a91ddb881d8e0d27c1cb203d0f7349":[12,0,15,7],
@@ -249,5 +248,6 @@ var NAVTREEINDEX0 =
 "class_c_c1201.html#a7c11e8a7f81d15cd2168bf6dc9bdc977":[12,0,24,24],
 "class_c_c1201.html#a8381abed7da4e387921dae94c198b620":[12,0,24,0],
 "class_c_c1201.html#a8684563559992c9586f9da6ca5268509":[12,0,24,1],
-"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2":[12,0,24,23]
+"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2":[12,0,24,23],
+"class_c_c1201.html#a960cde5ec86b2ca0a213b073aa5b216f":[12,0,24,7]
 };

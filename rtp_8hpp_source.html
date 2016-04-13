@@ -121,106 +121,114 @@ $(document).ready(function(){initNavTree('rtp_8hpp_source.html','');});
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> MAX_DATA_SZ = 120;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">enum</span> port {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    SINK = 0,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    LINK,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    CONTROL,</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <span class="comment">// SETPOINT,</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="comment">// GSTROBE,</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    DISCOVER,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    LOGGER,</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    TCP,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    LEGACY,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    PING</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;};</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structrtp_1_1header__data.html">   31</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structrtp_1_1header__data.html">header_data</a> {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">enum</span> Type { Control, Tuning, FirmwareUpdate, Misc };</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="structrtp_1_1header__data.html">header_data</a>(uint8_t p = SINK) : address(0), port(p), type(Control){};</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">const</span> uint8_t BROADCAST_ADDRESS = 0;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">enum</span> port {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    SINK = 0,</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    LINK,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    CONTROL,</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="comment">// SETPOINT,</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="comment">// GSTROBE,</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    DISCOVER,</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    LOGGER,</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    TCP,</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    LEGACY,</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    PING</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structrtp_1_1header__data.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structrtp_1_1header__data.html">header_data</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">enum</span> Type { Control, Tuning, FirmwareUpdate, Misc };</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    uint8_t address;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> port : 4;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    Type type : 4;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">   41</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 2; }</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordtype">void</span> pack(std::vector&lt;uint8_t&gt;* buf)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        buf-&gt;push_back(address);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        buf-&gt;push_back(port &lt;&lt; 4 | type);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> unpack(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; buf) {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        address = buf[1];</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        port = buf[2] &gt;&gt; 4;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        type = (Type)(buf[2] &amp; 0x0F);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;};</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classrtp_1_1packet.html">   58</a></span>&#160;<span class="keyword">class </span><a class="code" href="classrtp_1_1packet.html">packet</a> {</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="structrtp_1_1header__data.html">rtp::header_data</a> header;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    std::vector&lt;uint8_t&gt; payload;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="classrtp_1_1packet.html">packet</a>(){};</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="classrtp_1_1packet.html">packet</a>(<span class="keyword">const</span> std::string&amp; s, uint8_t p = SINK) : header(p) {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">char</span> c : s) payload.push_back(c);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        payload.push_back(<span class="charliteral">&#39;\0&#39;</span>);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="classrtp_1_1packet.html">packet</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; v, uint8_t p = SINK)</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        : header(p) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">for</span> (T val : v) payload.push_back(val);</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> payload.size() + header.<a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>(); }</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordtype">int</span> port()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(header.port); }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> port(T p) {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        header.port = <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(p);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">int</span> address() { <span class="keywordflow">return</span> header.address; }</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> address(<span class="keywordtype">int</span> a) { header.address = <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(a); }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">void</span> recv(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; v) {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">// note: header ignores the first byte since it&#39;s the size byte</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        header.unpack(v);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="comment">// Everything after the header is payload data</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        payload.clear();</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = header.<a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>() + 1; i &lt; v.size(); i++) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            payload.push_back(v[i]);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">void</span> pack(std::vector&lt;uint8_t&gt;* buffer)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="comment">// first byte is total size (excluding the size byte)</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">const</span> uint8_t total_size = payload.size() + header.<a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>();</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        buffer-&gt;reserve(total_size + 1);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        buffer-&gt;push_back(total_size);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        header.pack(buffer);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="comment">// payload</span></div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        buffer-&gt;insert(buffer-&gt;end(), payload.begin(), payload.end());</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;};</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}</div>
-<div class="ttc" id="classrtp_1_1packet_html"><div class="ttname"><a href="classrtp_1_1packet.html">rtp::packet</a></div><div class="ttdoc">Real-Time packet definition. </div><div class="ttdef"><b>Definition:</b> rtp.hpp:58</div></div>
-<div class="ttc" id="structrtp_1_1header__data_html_a1b05836edcbc805722d7d7a15ad1dc29"><div class="ttname"><a href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">rtp::header_data::size</a></div><div class="ttdeci">size_t size() const </div><div class="ttdoc">&quot;packed&quot; size (in bytes) of header data </div><div class="ttdef"><b>Definition:</b> rtp.hpp:41</div></div>
-<div class="ttc" id="structrtp_1_1header__data_html"><div class="ttname"><a href="structrtp_1_1header__data.html">rtp::header_data</a></div><div class="ttdef"><b>Definition:</b> rtp.hpp:31</div></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="structrtp_1_1header__data.html">header_data</a>(uint8_t p = SINK) : address(0), port(p), type(Control){};</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    uint8_t address;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> port : 4;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    Type type : 4;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">   43</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 2; }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">void</span> pack(std::vector&lt;uint8_t&gt;* buf)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        buf-&gt;push_back(address);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        buf-&gt;push_back(port &lt;&lt; 4 | type);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> unpack(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; buf) { unpack(buf.data()); }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordtype">void</span> unpack(<span class="keyword">const</span> uint8_t* buf) {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        address = buf[1];</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        port = buf[2] &gt;&gt; 4;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        type = (Type)(buf[2] &amp; 0x0F);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;};</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classrtp_1_1packet.html">   62</a></span>&#160;<span class="keyword">class </span><a class="code" href="classrtp_1_1packet.html">packet</a> {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <a class="code" href="structrtp_1_1header__data.html">rtp::header_data</a> header;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    std::vector&lt;uint8_t&gt; payload;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="classrtp_1_1packet.html">packet</a>(){};</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="classrtp_1_1packet.html">packet</a>(<span class="keyword">const</span> std::string&amp; s, uint8_t p = SINK) : header(p) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">char</span> c : s) payload.push_back(c);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        payload.push_back(<span class="charliteral">&#39;\0&#39;</span>);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <a class="code" href="classrtp_1_1packet.html">packet</a>(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; v, uint8_t p = SINK)</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        : header(p) {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">for</span> (T val : v) payload.push_back(val);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    }</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">size_t</span> size()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> payload.size() + header.<a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>(); }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">int</span> port()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(header.port); }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> port(T p) {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        header.port = <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(p);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">int</span> address() { <span class="keywordflow">return</span> header.address; }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">void</span> address(<span class="keywordtype">int</span> a) { header.address = <span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">int</span><span class="keyword">&gt;</span>(a); }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> recv(<span class="keyword">const</span> std::vector&lt;T&gt;&amp; v) {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        recv(v.data(), v.size());</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">void</span> recv(<span class="keyword">const</span> uint8_t* buffer, <span class="keywordtype">size_t</span> size) {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="comment">// note: header ignores the first byte since it&#39;s the size byte</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        header.unpack(buffer);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="comment">// Everything after the header is payload data</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        payload.clear();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = header.<a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>() + 1; i &lt; size; i++) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            payload.push_back(buffer[i]);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordtype">void</span> pack(std::vector&lt;uint8_t&gt;* buffer)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="comment">// first byte is total size (excluding the size byte)</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keyword">const</span> uint8_t total_size = payload.size() + header.<a class="code" href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">size</a>();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        buffer-&gt;reserve(total_size + 1);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        buffer-&gt;push_back(total_size);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        header.pack(buffer);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="comment">// payload</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        buffer-&gt;insert(buffer-&gt;end(), payload.begin(), payload.end());</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;};</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
+<div class="ttc" id="classrtp_1_1packet_html"><div class="ttname"><a href="classrtp_1_1packet.html">rtp::packet</a></div><div class="ttdoc">Real-Time packet definition. </div><div class="ttdef"><b>Definition:</b> rtp.hpp:62</div></div>
+<div class="ttc" id="structrtp_1_1header__data_html_a1b05836edcbc805722d7d7a15ad1dc29"><div class="ttname"><a href="structrtp_1_1header__data.html#a1b05836edcbc805722d7d7a15ad1dc29">rtp::header_data::size</a></div><div class="ttdeci">size_t size() const </div><div class="ttdoc">&quot;packed&quot; size (in bytes) of header data </div><div class="ttdef"><b>Definition:</b> rtp.hpp:43</div></div>
+<div class="ttc" id="structrtp_1_1header__data_html"><div class="ttname"><a href="structrtp_1_1header__data.html">rtp::header_data</a></div><div class="ttdef"><b>Definition:</b> rtp.hpp:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_d810e9ee1bf6798e69c014f7b76afa6c.html">common2015</a></li><li class="navelem"><a class="el" href="dir_f7506e2e87b810b03315834b8e28a514.html">utils</a></li><li class="navelem"><b>rtp.hpp</b></li>
-    <li class="footer">Generated on Wed Apr 13 2016 01:02:54 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Apr 13 2016 02:16:16 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
