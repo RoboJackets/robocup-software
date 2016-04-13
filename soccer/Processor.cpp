@@ -2,6 +2,7 @@
 #include <QMutexLocker>
 #include <poll.h>
 
+#include <boost/algorithm/string.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
 #include "radio/SimRadio.hpp"
@@ -40,7 +41,7 @@ RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
-Field_Dimensions currentDimensions = Field_Dimensions::Default_Dimensions;
+Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
 // Joystick speed limits (for damped and non-damped mode)
 // Translation in m/s, Rotation in rad/s
@@ -308,17 +309,16 @@ void Processor::run() {
             if (packet->wrapper.has_geometry()) {
                 // DEMO: Test out field sizes
                 const SSL_GeometryFieldSize fieldSize = packet->wrapper.geometry().field();
-                cout << "Len: " << fieldSize.field_length() << " Width: " <<
-                    fieldSize.field_width() << endl;
                 // FIXME - Account for network latency
 
-
-                cout << "line count: " << fieldSize.field_lines_size() << endl;
-
                 if (fieldSize.field_length() != 0 &&
-                    (currentDimensions.Length() != fieldSize.field_length())) {
+                    // Compare floats with a small threshold
+                    (currentDimensions->Length() - (fieldSize.field_length() / 1000.0f)) > 0.001f) {
                     // Set the changed field dimensions to the current ones
                     decodeGeometryPacket(&fieldSize);
+                }
+                else  {
+                    decodeGeometryPacket(&fieldSize); // TODO REMOVE FORCE OVERRIDE
                 }
             }
 
@@ -613,54 +613,52 @@ void Processor::decodeGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
         return;
     }
 
-    cout << "Detected data!!!" <<endl;
-
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
     float displacement = 0.500f;  // default displacment
 
     for (int i = 0; i < fieldSize->field_arcs().size(); i++) {
-        if (fieldSize->field_arcs().Get(i).center().x() == 0) {
+        if (boost::iequals(fieldSize->field_arcs().Get(i).name(), "CenterCircle")) {
             // Assume center circle
             center = &fieldSize->field_arcs().Get(i);
-        } else if (fieldSize->field_arcs()
-                   .Get(i)
-                   .center()
-                   .y() == 0) {
-            // Assume one of the goal arcs on our side
-            if (penalty != nullptr) {
-                // If we find two we can get the displacement
-                // between them!
-                displacement = abs(penalty->center().x() -
-                                   fieldSize->field_arcs()
-                                   .Get(i)
-                                   .center()
-                                   .x());
-            } else {
-                penalty = &fieldSize->field_arcs().Get(i);
-            }
+        } else if (boost::iequals(fieldSize->field_arcs().Get(i).name(), "LeftFieldLeftPenaltyArc")) {
+            penalty = &fieldSize->field_arcs().Get(i);
         }
     }
 
+    for (int i = 0; i < fieldSize->field_lines().size(); i++) {
+        if (boost::iequals(fieldSize->field_lines().Get(i).name(), "RightPenaltyStretch")) {
+            displacement = abs(fieldSize->field_lines().Get(i).p2().y() - fieldSize->field_lines().Get(i).p1().y());
+        }
+    }
 
-    // Force a resize
-    // TODO fix hardcoded values here
-    setFieldDimensions(Field_Dimensions (
-                           fieldSize->field_width(), fieldSize->field_length(),
-                           fieldSize->boundary_width(),
-                           fieldSize->field_lines().Get(0).thickness(),
-                           fieldSize->goal_width(), fieldSize->goal_depth(),
-                           0.160f,                // Goal Height
-                           penalty->radius(),     // PenaltyDist
-                           0.010f,                // PenaltyDiam
-                           penalty->radius(),     // ArcRadius
-                           center->radius(),      // CenterRadius
-                           (center->radius()) * 2,// CenterDiameter
-                           displacement,          // GoalFlat
-                           fieldSize->field_width() +
-                           (fieldSize->boundary_width()) * 2,
-                           fieldSize->field_length() +
-                           (fieldSize->boundary_width()) * 2));
+    float thickness = fieldSize->field_lines().Get(0).thickness() / 1000.0f;
+
+    // The values we get are the center of the lines, we want to use the outside, so we can add this as an offset.
+    float adj = fieldSize->field_lines().Get(0).thickness() / 1000.0f / 2.0f;
+
+    float fieldBorder = currentDimensions->Border();
+
+    if (penalty != nullptr && center != nullptr && thickness != 0) {
+        // Force a resize
+        // TODO fix hardcoded values here
+        setFieldDimensions(Field_Dimensions (
+                               fieldSize->field_length() / 1000.0f, fieldSize->field_width() / 1000.0f,
+                               fieldBorder,
+                               thickness,
+                               fieldSize->goal_width() / 1000.0f, fieldSize->goal_depth() / 1000.0f,
+                               0.160f,                                  // Goal Height
+                               penalty->radius() / 1000.0f + adj,       // PenaltyDist
+                               0.010f,                                  // PenaltyDiam
+                               penalty->radius() / 1000.0f + adj,       // ArcRadius
+                               center->radius() / 1000.0f + adj,        // CenterRadius
+                               (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+                               displacement / 1000.0f,                  // GoalFlat
+                               (fieldSize->field_length() / 1000.0f + (fieldBorder) * 2),
+                               (fieldSize->field_width() / 1000.0f + (fieldBorder) * 2)));
+    } else {
+        // TODO log errors here
+    }
 }
 
 void Processor::sendRadioData() {
