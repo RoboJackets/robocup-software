@@ -67,6 +67,7 @@ class OurCornerKick(standard_play.StandardPlay):
         return True
 
     def execute_running(self):
+    super().execute_running()
         # setup the kicker target
         goal_x = constants.Field.GoalWidth * (1 if main.ball().pos.x < 0 else
                                               -1)
