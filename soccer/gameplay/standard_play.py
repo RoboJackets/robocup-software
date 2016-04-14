@@ -32,9 +32,9 @@ class StandardPlay(play.Play):
                 self.remove_subbehavior('defense')
 
     #Handles activity while the play is active. A play wishing to utilize this
-    #method in additionto having an "execute_running" method of its own must call it via super
+    #method in additionto having an "execute_running" method of its own must call
+    #it via super
     def execute_running(self):
-        print("Called!")
         self.use_standard_defense()
 
     #If using defense, it defaults to play's method, otherwise returns True
