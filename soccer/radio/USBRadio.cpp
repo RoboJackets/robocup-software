@@ -128,6 +128,8 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
         transfer->actual_length == rtp::Reverse_Size + 2) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
+    } else {
+        cerr << "bad rx from usbradio" << endl;  // TODO: remove
     }
 
     // Restart the transfer
@@ -177,7 +179,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
     uint8_t forward_packet[rtp::Forward_Size];
 
     // ensure Forward_Size is correct
-    static_assert(sizeof(rtp::header_data) + 6 * sizeof(rtp::ControlMessage) <=
+    static_assert(sizeof(rtp::header_data) + 6 * sizeof(rtp::ControlMessage) ==
                       rtp::Forward_Size,
                   "Forward packet contents exceeds buffer size");
 
@@ -185,6 +187,10 @@ void USBRadio::send(Packet::RadioTx& packet) {
     static const float Seconds_Per_Cycle = 0.005f;
     static const float Meters_Per_Tick = 0.026f * 2 * M_PI / 6480.0f;
     static const float Radians_Per_Tick = 0.026f * M_PI / (0.0812f * 3240.0f);
+
+    rtp::header_data* header = (rtp::header_data*)forward_packet;
+    header->port = rtp::Port::CONTROL;
+    header->address = rtp::BROADCAST_ADDRESS;
 
     // Build a forward packet
     for (int slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
@@ -262,33 +268,40 @@ void USBRadio::receive() {
 void USBRadio::handleRxData(uint8_t* buf) {
     RJ::Time rx_time = RJ::timestamp();
 
+    // TODO(justin): should the packet be populated before putting into the
+    // queue?
+
     _reversePackets.push_back(RadioRx());
     RadioRx& packet = _reversePackets.back();
 
+    // TODO(justin): check size of buf?
+    rtp::RobotStatusMessage* msg = (rtp::RobotStatusMessage*)buf;
+
+    // TODO(justin): add back missing fields
+
     packet.set_timestamp(rx_time);
-    packet.set_sequence((buf[0] >> 4) & 7);
-    packet.set_robot_id(buf[0] & 0x0f);
-    packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
-    packet.set_battery(buf[2] / 10.0f);
-    packet.set_kicker_status(buf[3]);
+    packet.set_robot_id(msg->uid);
+    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
+    packet.set_battery(msg->battVoltage);
+// packet.set_kicker_status(buf[3]);
 
-    // Drive motor status
-    for (int i = 0; i < 4; ++i) {
-        packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
-    }
+// // Drive motor status
+// for (int i = 0; i < 4; ++i) {
+//     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
+// }
 
-    // Dribbler status
-    packet.add_motor_status(MotorStatus(buf[5] & 3));
+// Dribbler status
+// packet.add_motor_status(MotorStatus(buf[5] & 3));
 
-    // Hardware version
-    if (buf[5] & (1 << 4)) {
-        packet.set_hardware_version(RJ2008);
-    } else {
-        packet.set_hardware_version(RJ2011);
-    }
+// Hardware version
+// if (buf[5] & (1 << 4)) {
+//     packet.set_hardware_version(RJ2008);
+// } else {
+//     packet.set_hardware_version(RJ2011);
+// }
 
-    packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
-    packet.set_kicker_voltage(buf[6]);
+// packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
+// packet.set_kicker_voltage(buf[6]);
 
 #if 0
 	// Encoders
