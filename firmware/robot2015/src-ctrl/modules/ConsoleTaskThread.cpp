@@ -31,7 +31,7 @@ void Task_SerialConsole(void const* args) {
     LOG(INIT,
         "Serial console ready!\r\n"
         "    Thread ID: %u, Priority: %d",
-        threadID, threadPriority);
+        ((P_TCB)threadID)->task_id, threadPriority);
 
     // Signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);

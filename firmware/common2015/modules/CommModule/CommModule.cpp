@@ -50,7 +50,7 @@ void CommModule::txThread() {
     LOG(INIT,
         "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
         "Priority:\t%d",
-        _txThread.gettid(), threadPriority);
+        ((P_TCB)_txThread.gettid())->task_id, threadPriority);
 
     // Signal to the RX thread that it can begin
     _rxThread.signal_set(COMM_MODULE_SIGNAL_START_THREAD);
@@ -105,7 +105,7 @@ void CommModule::rxThread() {
 
     LOG(INIT,
         "RX communication module ready!\r\n    Thread ID: %u, Priority: %d",
-        _rxThread.gettid(), threadPriority);
+        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     while (true) {
         // Wait until new data is placed in the class's RX queue from a CommLink
