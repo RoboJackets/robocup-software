@@ -191,6 +191,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
     rtp::header_data* header = (rtp::header_data*)forward_packet;
     header->port = rtp::Port::CONTROL;
     header->address = rtp::BROADCAST_ADDRESS;
+    header->type = rtp::header_data::Type::Control;
 
     // Build a forward packet
     for (int slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
