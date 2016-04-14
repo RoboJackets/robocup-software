@@ -46,7 +46,7 @@ struct header_data {
     header_data(Port p = SINK) : address(0), port(p), type(Control){};
 
     uint8_t address;
-    unsigned int port : 4;
+    Port port : 4;
     Type type : 4;
 };
 
