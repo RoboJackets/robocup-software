@@ -69,7 +69,7 @@ void Task_Controller(void const* args) {
             resultRatio[4], resultRatio[5]);
 
         LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
-            threadID, threadPriority);
+            ((P_TCB)threadID)->task_id, threadPriority);
     } else {
         LOG(SEVERE,
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
@@ -154,7 +154,7 @@ void Task_Controller_Sensorless(const osThreadId mainID) {
 
     LOG(INIT,
         "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
-        threadID, threadPriority);
+        ((P_TCB)threadID)->task_id, threadPriority);
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
