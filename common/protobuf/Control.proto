@@ -24,8 +24,11 @@ message Control
 
     required float xVelocity = 1         [default = 0];
     required float yVelocity = 2         [default = 0];
+    //angular velocity
     required float aVelocity = 3         [default = 0];
+    //dribbler velocity
     required float dVelocity = 4         [default = 0];
+    //kick/chip strength
     required uint32 kcStrength = 5       [default = 255];
     required ShootMode shootMode = 6     [default = KICK];
     required TriggerMode triggerMode = 7 [default = STAND_DOWN];
