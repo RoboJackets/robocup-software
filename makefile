@@ -191,7 +191,8 @@ STYLE_EXCLUDE_DIRS=build \
 	firmware/robot2011/cpu/at91sam7s321 \
 	firmware/robot2011/cpu/at91sam7s64 \
 	firmware/robot2011/cpu/usb \
-	firmware/robot2011/cpu/invensense
+	firmware/robot2011/cpu/invensense \
+	firmware/common2015/drivers/cc1201/cfg
 # automatically format code according to our style config defined in .clang-format
 pretty:
 	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
