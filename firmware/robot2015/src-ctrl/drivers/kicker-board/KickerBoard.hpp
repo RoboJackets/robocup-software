@@ -28,7 +28,7 @@ public:
      *     loaded by the flash() method
      */
     KickerBoard(PinName mosi, PinName miso, PinName sck, PinName nReset,
-                const std::string& progFilename);
+                PinName n_cs, const std::string& progFilename);
 
     /**
      * @brief Reflashes the program on the kicker board MCU with the file
@@ -42,6 +42,10 @@ public:
      */
     bool flash(bool onlyIfDifferent = true, bool verbose = false);
 
+    void kick(int time);
+    void chip(int time);
+    uint8_t read_voltage();
+
 protected:
     /**
      * @brief Uses the given function to check if it's return value equals the
@@ -53,6 +57,12 @@ protected:
                       int (AVR910::*paramMethod)(), char mask = 0xFF,
                       bool verbose = false);
 
+    uint8_t transfer(const uint8_t to_send);
+
 private:
     std::string _filename;
+    SPI spi;
+    DigitalOut n_kick_select;
+    // TODO Is this function really necessary?
+    int map(int x, int in_min, int in_max, int out_min, int out_max);
 };

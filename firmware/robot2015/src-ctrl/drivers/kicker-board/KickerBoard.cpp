@@ -4,8 +4,12 @@
 using namespace std;
 
 KickerBoard::KickerBoard(PinName mosi, PinName miso, PinName sck,
-                         PinName nReset, const string& progFilename)
-    : AVR910(mosi, miso, sck, nReset), _filename(progFilename) {}
+                         PinName nReset, PinName n_cs, const string& progFilename)
+    : AVR910(mosi, miso, sck, nReset), _filename(progFilename),
+    spi(mosi, miso, sck), n_kick_select(n_cs) {
+        spi.format(8, 0);
+        spi.frequency(8000);
+    }
 
 bool KickerBoard::verify_param(const char* name, char expected,
                                int (AVR910::*paramMethod)(), char mask,
@@ -89,4 +93,35 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
     }
 
     return true;
+}
+
+void KickerBoard::kick(int time) {
+    // TODO Replace these with constants
+    int cmd = 0x3 << 6;
+    transfer(cmd | time);
+}
+
+void KickerBoard::chip(int time) {
+    // TODO Replace these with constants
+    int cmd = 0x2 << 6;
+    transfer(cmd | time);
+}
+
+uint8_t KickerBoard::read_voltage() {
+    // TODO Replace these with constants
+    transfer(0);
+    return transfer(0);
+}
+
+uint8_t KickerBoard::transfer(const uint8_t to_send) {
+    n_kick_select = !n_kick_select;
+    uint8_t a = spi.write(to_send);
+    n_kick_select = !n_kick_select;
+    return a;
+}
+
+int KickerBoard::map(int x, int in_min, int in_max, int out_min, int out_max)
+// originally an Arduino function
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
