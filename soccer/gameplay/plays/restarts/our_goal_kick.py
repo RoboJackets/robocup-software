@@ -54,6 +54,7 @@ class OurGoalKick(standard_play.StandardPlay):
         return True
 
     def execute_running(self):
+        super().execute_running()
         kicker = self.subbehavior_with_name('kicker')
         center1 = self.subbehavior_with_name('center1')
         center2 = self.subbehavior_with_name('center2')
