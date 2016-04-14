@@ -48,7 +48,7 @@ struct header_data {
     uint8_t address;
     Port port : 4;
     Type type : 4;
-};
+} __attribute__((packed));
 
 // binary-packed version of Control.proto
 struct ControlMessage {
@@ -99,15 +99,15 @@ public:
     /// deserialize a packet from a buffer
     void recv(const uint8_t* buffer, size_t size) {
         // check that the buffer is big enough
-        if (size < sizeof(header)) return;
+        if (size < sizeof(header) + 1) return;
 
         // deserialize header.  skip first byte because it indicates size and
         // isn't part of the header
-        header = *((header_data*)buffer + 1);
+        header = *((header_data*)(buffer + 1));
 
         // Everything after the header is payload data
         payload.clear();
-        for (size_t i = sizeof(header) + 2; i < size; i++) {
+        for (size_t i = sizeof(header) + 1; i < size; i++) {
             payload.push_back(buffer[i]);
         }
     }
