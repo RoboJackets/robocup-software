@@ -119,8 +119,8 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         }
         chipDeselect();
 
-        LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
-            (*buf)[0]);
+        // LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
+        //     (*buf)[0]);
     } else {
         return COMM_NO_DATA;
     }

@@ -70,6 +70,7 @@ public:
     State state() const { return _state; }
 
     void rxHandler(rtp::packet* pkt) {
+        // LOG(INIT, "got pkt!");
         // TODO: check packet size before parsing
         bool addressed = false;
         const rtp::ControlMessage* msg;
@@ -97,13 +98,16 @@ public:
 
             if (rxCallback) {
                 _reply = std::move(rxCallback(msg));
+            } else {
+                LOG(WARN, "no callback set");
             }
+        } else {
+            LOG(WARN, "not addressed");
         }
     }
 
 private:
     void reply() {
-        LOG(INIT, "sent reply");
         rtp::packet pkt;
         pkt.header.port = rtp::Port::CONTROL;
         pkt.header.type = rtp::header_data::Control;
