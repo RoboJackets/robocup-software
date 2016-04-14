@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import robocup
 import tactics.line_up
@@ -6,7 +6,7 @@ import tactics.defense
 import main
 
 
-class DefendPenalty(standard_play.StandardPlay):
+class DefendPenalty(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -19,6 +19,10 @@ class DefendPenalty(standard_play.StandardPlay):
             robocup.Point(1.5, 1.3), robocup.Point(1.5, 2.5))
         lineup = tactics.line_up.LineUp(line)
         self.add_subbehavior(lineup, 'lineup')
+
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False, )
 
     @classmethod
     def score(cls):

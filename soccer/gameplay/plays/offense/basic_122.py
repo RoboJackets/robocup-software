@@ -58,6 +58,7 @@ class Basic122(standard_play.StandardPlay):
         return True
 
     def execute_running(self):
+        super().execute_running()
         striker = self.subbehavior_with_name('striker')
         support1 = self.subbehavior_with_name('support1')
         support2 = self.subbehavior_with_name('support2')
