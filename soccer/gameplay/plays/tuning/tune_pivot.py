@@ -1,4 +1,4 @@
-import standard_play
+import play
 import single_robot_behavior
 import robocup
 import constants
@@ -37,7 +37,7 @@ class Pivoter(single_robot_behavior.SingleRobotBehavior):
 
 # This play rotates the bot 90 degrees, pauses, and repeats
 # It's useful for tuning the angle PID controller
-class TunePivoting(standard_play.StandardPlay):
+class TunePivoting(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 

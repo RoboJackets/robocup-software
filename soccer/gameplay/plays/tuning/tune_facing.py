@@ -1,4 +1,4 @@
-import standard_play
+import play
 import single_robot_composite_behavior
 import robocup
 import constants
@@ -71,7 +71,7 @@ class Facer(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
 ## This play rotates the bot 90 degrees, pauses, and repeats
 # It's useful for tuning the angle PID controller
-class TuneFacing(standard_play.StandardPlay):
+class TuneFacing(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
