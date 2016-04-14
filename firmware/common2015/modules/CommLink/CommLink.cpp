@@ -62,7 +62,8 @@ void CommLink::ready() { _rxThread.signal_set(COMM_LINK_SIGNAL_START_THREAD); }
 void CommLink::sendPacket(rtp::packet* p) {
     std::vector<uint8_t> buffer;
     p->pack(&buffer);
-    sendData(buffer.data(), buffer.size());
+    if (sendData(buffer.data(), buffer.size()) != COMM_SUCCESS)
+        LOG(WARN, "CC1201 send not successful");
 }
 
 void CommLink::ISR() { _rxThread.signal_set(COMM_LINK_SIGNAL_RX_TRIGGER); }
