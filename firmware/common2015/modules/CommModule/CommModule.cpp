@@ -48,8 +48,7 @@ void CommModule::txThread() {
     const osPriority threadPriority = _txThread.get_priority();
 
     LOG(INIT,
-        "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
+        "TX communication module ready!\r\n    Thread ID: %u, Priority: %d",
         ((P_TCB)_txThread.gettid())->task_id, threadPriority);
 
     // Signal to the RX thread that it can begin
