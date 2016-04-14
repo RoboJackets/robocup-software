@@ -31,6 +31,12 @@ class StandardPlay(play.Play):
             if self.has_subbehavior_with_name('defense'):
                 self.remove_subbehavior('defense')
 
+    #Handles activity while the play is active. A play wishing to utilize this method must call it via super
+    def execute_running(self):
+        print("Called!")
+        self.use_standard_defense()
+
+
     #If using defense, it defaults to play's method, otherwise returns True
     @classmethod
     def handles_goalie(cls):
