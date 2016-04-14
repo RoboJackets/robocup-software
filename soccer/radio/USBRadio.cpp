@@ -194,7 +194,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
     header->type = rtp::header_data::Type::Control;
 
     // Build a forward packet
-    for (int slot = 0; slot < 6 && slot < packet.robots_size(); ++slot) {
+    for (int slot = 0; slot < 6; ++slot) {
         // Calculate the offset into the @forward_packet for this robot's
         // control message and cast it to a ControlMessage pointer for easy
         // access
@@ -214,7 +214,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
             float bodyVelW =
                 robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
 
-            msg->uid = packet.robots(slot).uid();
+            msg->uid = 2;  // packet.robots(slot).uid(); // TODO(justin): fix
 
             msg->bodyX = clamp((int)roundf(bodyVelX), -511, 511);
             msg->bodyY = clamp((int)roundf(bodyVelY), -511, 511);
