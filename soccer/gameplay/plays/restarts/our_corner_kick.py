@@ -62,7 +62,6 @@ class OurCornerKick(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-
     def execute_running(self):
         super().execute_running()
         # setup the kicker target

@@ -49,8 +49,6 @@ class OurGoalKick(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-    
-
     def execute_running(self):
         super().execute_running()
         kicker = self.subbehavior_with_name('kicker')

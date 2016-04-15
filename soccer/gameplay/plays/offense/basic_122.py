@@ -53,8 +53,6 @@ class Basic122(standard_play.StandardPlay):
     def score(cls):
         return 10 if main.game_state().is_playing() else float("inf")
 
-
-
     def execute_running(self):
         super().execute_running()
         striker = self.subbehavior_with_name('striker')
