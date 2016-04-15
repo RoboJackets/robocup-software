@@ -34,10 +34,6 @@ class TheirRestart(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-    @classmethod
-    def handles_goalie(cls):
-        return True
-
     def execute_running(self):
         super().execute_running()
         # abort if we can't see the ball
