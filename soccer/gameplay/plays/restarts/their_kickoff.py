@@ -26,5 +26,3 @@ class TheirKickoff(standard_play.StandardPlay):
     @classmethod
     def is_restart(cls):
         return True
-
-
