@@ -28,7 +28,7 @@ void CommLink::rxThread() {
     const osPriority threadPriority = _rxThread.get_priority();
 
     LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
-        _rxThread.gettid(), threadPriority);
+        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     // Set the function to call on an interrupt trigger
     _int_in.rise(this, &CommLink::ISR);
