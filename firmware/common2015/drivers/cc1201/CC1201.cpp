@@ -107,6 +107,12 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
+    // strobe(CC1201_STROBE_SIDLE);
+    // strobe(CC1201_STROBE_SFRX);
+    // strobe(CC1201_STROBE_SRX);
+    // return COMM_NO_DATA;
+
+
     uint8_t device_state = freqUpdate();
     if (strobe(CC1201_STROBE_SNOP) == CC1201_STATE_TX) return COMM_NO_DATA;
     // TODO(justin): justify this delay.  It doesn't work without it, but why?
@@ -124,7 +130,8 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         return COMM_DEV_BUF_ERR;
     }
 
-    if (num_rx_bytes > 0) {
+    // if (num_rx_bytes == 0) num_rx_bytes = 1;
+    // if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
         for (int i = 0; i < num_rx_bytes; i++) {
@@ -134,9 +141,9 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
 
         // LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
         //     (*buf)[0]);
-    } else {
-        return COMM_NO_DATA;
-    }
+    // } else {
+    //     return COMM_NO_DATA;
+    // }
 
     update_rssi();
 

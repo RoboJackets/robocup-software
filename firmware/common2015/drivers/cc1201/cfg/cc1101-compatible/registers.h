@@ -1,7 +1,7 @@
 
 static const registerSetting_t preferredSettings[] = {
     {CC1201_IOCFG3, 0x06},
-    {CC1201_IOCFG2, 0x06},
+    {CC1201_IOCFG2, 0x07},
     {CC1201_IOCFG1, 0x30},
     {CC1201_IOCFG0, 0x05},
     {CC1201_SYNC3, 0xD3},
