@@ -163,6 +163,4 @@ class TwoSideCornerKick(standard_play.StandardPlay):
     def on_exit_kicking(self):
         self.remove_all_subbehaviors()
 
-    @classmethod
-    def handles_goalie(cls):
-        return True
+

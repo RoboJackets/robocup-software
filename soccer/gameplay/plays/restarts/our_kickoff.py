@@ -62,9 +62,7 @@ class OurKickoff(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-    @classmethod
-    def handles_goalie(cls):
-        return True
+    
 
     def on_enter_setup(self):
         mover = skills.move.Move(robocup.Point(0, constants.Field.Length / 2.0
