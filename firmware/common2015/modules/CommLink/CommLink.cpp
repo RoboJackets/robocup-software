@@ -52,6 +52,9 @@ void CommLink::rxThread() {
             // Write the data to the CommModule object's rxQueue
             p.recv(buf);
             CommModule::Instance->receive(p);
+        } else {
+            // printf("*");
+            // fflush(stdout);
         }
     }
 }

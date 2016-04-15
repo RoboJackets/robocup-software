@@ -112,6 +112,8 @@ protected:
     void setConfig(const registerSetting_t* regs, size_t len);
 
 private:
+void _recalibrate();
+    RtosTimerHelper _recalTimeout;
     uint8_t _lqi;
     uint8_t _chip_version;
     bool _isInit;
