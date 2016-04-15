@@ -47,7 +47,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
         return COMM_FUNC_BUF_ERR;
     }
 
-    strobe(CC1201_STROBE_SFTX);
 
     // In order for radio transmission to work, the cc1201 must be first strobed
     // into IDLE, then into TX.  We're not sure why this is the case, but it
@@ -56,6 +55,9 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // the GitHub pull request for more info:
     // https://github.com/RoboJackets/robocup-software/pull/562
     strobe(CC1201_STROBE_SIDLE);
+    strobe(CC1201_STROBE_SFTX);
+    strobe(CC1201_STROBE_SCAL);
+    strobe(CC1201_STROBE_SFSTXON);
 
     // Send the data to the CC1201.
     chipSelect();
