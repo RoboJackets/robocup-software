@@ -133,12 +133,12 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
         Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
 
     y = dimensions.FloorLength();
-    _nonFloor[2] = make_shared<Polygon>(
-        vector<Point>{Point(-x, -3*deadspace), Point(-x - 1000, -3*deadspace),
-                      Point(-x - 1000, y), Point(-x, y)});
+    _nonFloor[2] = make_shared<Polygon>(vector<Point>{
+        Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
+        Point(-x - 1000, y), Point(-x, y)});
 
     _nonFloor[3] = make_shared<Polygon>(
-        vector<Point>{Point(x, -3*deadspace), Point(x + 1000, -3*deadspace),
+        vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
                       Point(x + 1000, y), Point(x, y)});
 
     const float halfFlat = dimensions.GoalFlat() / 2.0;
