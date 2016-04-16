@@ -3,6 +3,8 @@
 #include <string>
 #include <array>
 
+#include <stdlib.h>
+
 #include <rtos.h>
 
 #include <helper-funcs.hpp>
@@ -21,8 +23,7 @@
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
 #include "RtosTimerHelper.hpp"
-#include "io-expander.hpp"
-#include "RotarySelector.hpp"
+#include "IOExpanderInputs.hpp"
 
 using namespace std;
 
@@ -73,6 +74,13 @@ int main() {
         fflush(stdout);
     }
 
+    rj_putenv("OSTYPE=rjinx");
+    // rj_putenv("FPGA_BINARY=/local/rj-fpga.nib");
+    // rj_putenv("KICKER_BINARY=/local/rj-kickr.nib");
+
+    rj_putenv("USER=" + std::string(git_head_author));
+    rj_putenv("ROBOT_ID=??");
+
     // Setup the interrupt priorities before launching each subsystem's task
     // thread.
     setISRPriorities();
@@ -96,8 +104,8 @@ int main() {
 
     // Start a periodic blinking LED to show system activity
     // This is set to never timeout, so it will only stop if the system halts
-    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
-                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
+    StrobingTimeoutLEDs<2> liveLight({LED1, LED4}, RJ_LIFELIGHT_TIMEOUT_MS,
+                                     osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
@@ -131,20 +139,11 @@ int main() {
     // sets the first 8 lines to input and the last 8 to output.  The pullup
     // resistors and polarity swap are enabled for the 4 rotary selector lines.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
-    ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
+    ioExpander.config(0x00FF, 0x00FF, 0x00FF, 0x00FF);
+    ioExpander.writeMask(static_cast<uint16_t>(~IOExpanderErrorLEDMask),
                          IOExpanderErrorLEDMask);
 
-    // rotary selector for shell id
-    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
-        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
-                                MCP23017::DIR_INPUT)});
+    RobotInputs robotInputs(&ioExpander, RJ_IOEXP_INT);
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -154,11 +153,12 @@ int main() {
 
     // Start the thread task for the on-board control loop
     Thread controller_task(Task_Controller, mainID, osPriorityHigh,
-                           DEFAULT_STACK_SIZE / 2);
+                           0.5 * DEFAULT_STACK_SIZE);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
-    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    Thread console_task(Task_SerialConsole, mainID, osPriorityLow,
+                        0.65 * DEFAULT_STACK_SIZE);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
@@ -174,12 +174,14 @@ int main() {
     controller_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
-    osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
+    osStatus tState = osThreadSetPriority(mainID, osPriorityBelowNormal);
     ASSERT(tState == osOK);
 
     unsigned int ll = 0;
 
     while (true) {
+        uint16_t errorBitmask = 0;
+
         // make sure we can always reach back to main by
         // renewing the watchdog timer periodicly
         Watchdog::Renew();
@@ -197,9 +199,10 @@ int main() {
         ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
-        uint16_t errorBitmask = !global_radio->isConnected()
-                                << RJ_ERR_LED_RADIO;
+        errorBitmask = !global_radio->isConnected() << RJ_ERR_LED_RADIO;
 
+        // make sure the motor info is recently updated
+        motors_refresh();
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
             make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
@@ -207,7 +210,7 @@ int main() {
             make_pair(4, RJ_ERR_LED_DRIB)};
         for (auto& pair : motorErrLedMapping) {
             const motorErr_t& status = global_motors[pair.first].status;
-            errorBitmask |= !status.hallOK << pair.second;
+            errorBitmask |= !status.isready << pair.second;
         }
 
         // Set error-indicating leds on the control board

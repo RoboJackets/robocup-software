@@ -77,13 +77,13 @@ public:
         if (_dir) {
             for (size_t i = 0; i < _leds.size(); ++i) {
                 _leds[i] = !_leds[i];
-                Thread::wait(17);
+                Thread::wait(35);
                 _leds[i] = !_leds[i];
             }
         } else {
             for (size_t i = _leds.size(); i > 0; --i) {
                 _leds[i - 1] = !_leds[i - 1];
-                Thread::wait(17);
+                Thread::wait(35);
                 _leds[i - 1] = !_leds[i - 1];
             }
         }

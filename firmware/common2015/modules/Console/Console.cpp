@@ -1,5 +1,6 @@
 #include "Console.hpp"
 
+#include "helper-funcs.hpp"
 #include "logger.hpp"
 
 const std::string Console::COMMAND_BREAK_MSG = "*BREAK*\033[K";
@@ -7,19 +8,14 @@ const std::string Console::COMMAND_BREAK_MSG = "*BREAK*\033[K";
 shared_ptr<Console> Console::instance;
 
 Console::Console() : pc(USBTX, USBRX) {
-    // Set default values for the header parameters
-    CONSOLE_USER = "anon";
-    CONSOLE_HOSTNAME = "robot";
-    setHeader();
-
     // Use a higher baudrate than the default for a faster console
     Baudrate(57600);
 
     // attach interrupt handlers
     attachInputHandler();
 
-    // reserve space for 5 lines in rx buffer
-    _rxBuffer.reserve(400);
+    // reserve space for ~2.5 lines in rx buffer
+    _rxBuffer.reserve(200);
 }
 
 Console::~Console() {}
@@ -39,7 +35,7 @@ shared_ptr<Console>& Console::Instance() {
 void Console::PrintHeader() {
     // prints out a bash-like header
     Flush();
-    pc.printf("\r\n%s", CONSOLE_HEADER.c_str());
+    pc.printf("\r%s", getPS1().c_str());
     Flush();
 }
 
@@ -113,7 +109,7 @@ void Console::RXCallback() {
                     !(_rxBuffer.size() == 0 && c == ARROW_DOWN_KEY)) {
                     std::string cmd =
                         history.at(history.size() - 1 - history_index);
-                    pc.printf("\r%s%s", CONSOLE_HEADER.c_str(), cmd.c_str());
+                    pc.printf("\r%s%s", getPS1().c_str(), cmd.c_str());
                     _rxBuffer = cmd;
                 }
 
@@ -181,25 +177,12 @@ void Console::CommandHandled() {
     command_ready = false;
 
     // print out the header without a newline first
-    if (!iter_break_req) {
-        pc.printf("%s", CONSOLE_HEADER.c_str());
-        Flush();
-    }
+    if (!iter_break_req) PrintHeader();
 }
 
-void Console::changeHostname(const std::string& hostname) {
-    CONSOLE_HOSTNAME = hostname;
-    setHeader();
-}
-
-void Console::changeUser(const std::string& user) {
-    CONSOLE_USER = user;
-    setHeader();
-}
-
-void Console::setHeader() {
-    CONSOLE_HEADER = "\033[1;36m" + CONSOLE_USER + "\033[1;32m@\033[1;33m" +
-                     CONSOLE_HOSTNAME + " \033[36m$\033[m \033[J\033[m";
+std::string Console::getPS1() {
+    return "\033[1;36m" + rj_getenv("USER") + "\033[1;32m@\033[1;33mrobot-" +
+           rj_getenv("ROBOT_ID") + " \033[36m$\033[m \033[J\033[m";
 }
 
 void Console::Baudrate(uint16_t baud) {
@@ -209,29 +192,8 @@ void Console::Baudrate(uint16_t baud) {
 
 uint16_t Console::Baudrate() const { return _baudRate; }
 
-std::string Console::GetHostResponse() {
-    if (esc_host_res_rdy) {
-        esc_host_res_rdy = false;
-
-        return esc_host_res;
-    } else {
-        return "";
-    }
-}
-
 void Console::ShowLogo() {
-    Flush();
-
-    pc.printf(
-        "\033[01;33m"
-        "   _____       _                _            _        _\r\n"
-        "  |  __ \\     | |              | |          | |      | |      \r\n"
-        "  | |__) |___ | |__   ___      | | __ _  ___| | _____| |_ ___ \r\n"
-        "  |  _  // _ \\| '_ \\ / _ \\ _   | |/ _` |/ __| |/ / _ \\ __/ __|\r\n"
-        "  | | \\ \\ (_) | |_) | (_) | |__| | (_| | (__|   <  __/ |_\\__ \\\r\n"
-        "  |_|  \\_\\___/|_.__/ \\___/ \\____/ "
-        "\\__,_|\\___|_|\\_\\___|\\__|___/\r\n\033[0m");
-
+    pc.printf("\033[01;33mREADY!\r\n\033[0m");
     Flush();
 }
 

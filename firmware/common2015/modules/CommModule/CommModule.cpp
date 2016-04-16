@@ -20,9 +20,9 @@ CommModule::~CommModule() {
 CommModule::CommModule(std::shared_ptr<FlashingTimeoutLED> rxTimeoutLED,
                        std::shared_ptr<FlashingTimeoutLED> txTimeoutLED)
     : _rxThread(&CommModule::rxThreadHelper, this, osPriorityAboveNormal,
-                DEFAULT_STACK_SIZE / 2),
+                0.4 * DEFAULT_STACK_SIZE),
       _txThread(&CommModule::txThreadHelper, this, osPriorityHigh,
-                DEFAULT_STACK_SIZE / 2),
+                0.4 * DEFAULT_STACK_SIZE),
       _rxTimeoutLED(rxTimeoutLED),
       _txTimeoutLED(txTimeoutLED) {
     // Create the data queues.

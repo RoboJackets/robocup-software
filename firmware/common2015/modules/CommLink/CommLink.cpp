@@ -13,7 +13,7 @@ CommLink::CommLink(shared_ptr<SharedSPI> sharedSPI, PinName nCs,
     : SharedSPIDevice(sharedSPI, nCs, true),
       _int_in(int_pin),
       _rxThread(&CommLink::rxThreadHelper, this, osPriorityNormal,
-                DEFAULT_STACK_SIZE / 2) {
+                0.4 * DEFAULT_STACK_SIZE) {
     setSPIFrequency(5000000);
     _int_in.mode(PullUp);
 }

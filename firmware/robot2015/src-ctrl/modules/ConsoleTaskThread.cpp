@@ -25,7 +25,7 @@ void Task_SerialConsole(void const* args) {
     std::shared_ptr<Console> console = Console::Instance();
 
     // Set the console username to whoever the git author is
-    console->changeUser(git_head_author);
+    // console->changeUser(git_head_author);
 
     // Let everyone know we're ok
     LOG(INIT,
@@ -70,7 +70,7 @@ void Task_SerialConsole(void const* args) {
             console->detachInputHandler();
             execute_line(rx);
             // flush any extra characters that were input while executing cmd
-            while (console->pc.readable()) console->pc.getc();
+            // while (console->pc.readable()) console->pc.getc();
             console->attachInputHandler();
 
             // Now, reset the priority of the thread to its idle state

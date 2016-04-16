@@ -2,7 +2,6 @@
 
 #include <map>
 #include <ctime>
-#include <sstream>
 
 #include <rtos.h>
 #include <mbed_rpc.h>
@@ -96,12 +95,6 @@ static const vector<command_t> commands = {
      "print this message.",
      "help [{[--list|-l], [--all|-a]}] [<command name>...]"},
 
-    {{"host", "hostname"},
-     false,
-     cmd_console_hostname,
-     "set system hostname.",
-     "host <new-name>"},
-
     {{"info", "version", "i"}, false, cmd_info, "Display system info.", "info"},
 
     {{"isconn", "checkconn"},
@@ -180,6 +173,12 @@ static const vector<command_t> commands = {
      cmd_rpc,
      "execute RPC commands.",
      "rpc <rpc-cmd> [<rpc-arg>...]"},
+
+    {{"env", "printenv"},
+     false,
+     cmd_printenv,
+     "show all environment variables.",
+     "env"},
 
     {{"su", "user"},
      false,
@@ -278,8 +277,19 @@ int cmd_console_clear(cmd_args_t& args) {
  * Echos text.
  */
 int cmd_console_echo(cmd_args_t& args) {
-    for (uint8_t argInd = 0; argInd < args.size(); argInd++)
-        printf("%s ", args[argInd].c_str());
+    for (uint8_t argInd = 0; argInd < args.size(); argInd++) {
+        if (args[argInd].at(0) == '$') {
+            std::string env_var_name(args[argInd]);
+            // pop off the first character so the variable name
+            // is all that is left
+            env_var_name.erase(env_var_name.begin());
+            // make the system call to get the system variable
+            std::string env_val = rj_getenv(env_var_name);
+            printf("%s ", env_val.c_str());
+        } else {
+            printf("%s ", args[argInd].c_str());
+        }
+    }
 
     printf("\r\n");
 
@@ -647,20 +657,7 @@ int cmd_console_user(cmd_args_t& args) {
     }
 
     else {
-        Console::Instance()->changeUser(args[0]);
-    }
-
-    return 0;
-}
-
-int cmd_console_hostname(cmd_args_t& args) {
-    if (args.empty() || args.size() > 1) {
-        show_invalid_args(args);
-        return 1;
-    }
-
-    else {
-        Console::Instance()->changeHostname(args[0]);
+        rj_putenv("USER=" + args[0]);
     }
 
     return 0;
@@ -817,26 +814,42 @@ int cmd_ps(cmd_args_t& args) {
 
         // go down 2 rows
         printf("\r\033[B");
-        printf("ID\tPRIOR\tSTATE\tΔ TIME\t\tMAX\t\t");
-        // go back up and move left by 4
-        printf("\033[A\033[4D");
+        printf("ID\tPRIOR\tSTATE\tΔ TIME\t   MAX      ");
+        // go back up and move left by 6
+        printf("\033[A\033[6D");
         printf("STACK SIZE (bytes)");
-        // go back 14 and then down again by 1
-        printf("\033[14D\033[B");
+        // go back 12 and then down again by 1
+        printf("\033[12D\033[B");
         // now finish the line and flush it out
-        printf("ALLOC\t\tCURRENT\r\n");
+        printf("ALLOC    CURRENT (NOW|MAX)\r\n");
         Console::Instance()->Flush();
 
-        // Iterate over active threads
-        //  14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file
-        for (unsigned int i = 0; i < 14; i++) {
+        /*
+         * Iterate over active threads
+         *
+         * 14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file, and
+         * 1 is added for our target (14 + 1) from RTX_CM_lib.h, so
+         * OS_TASKCNT = 15 here and is undefined since we build that
+         * part as a library.
+        */
+        for (unsigned int i = 0; i < 15; i++) {
             P_TCB p = (P_TCB)os_active_TCB[i];
 
             if (p != nullptr) {
-                printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
-                       p->task_id, p->prio, p->state, p->delta_time,
-                       ThreadMaxStackUsed(p), p->priv_stack,
-                       ThreadNowStackUsed(p));
+                // get the thread's stack sizes
+                size_t alloc = p->priv_stack;
+                size_t now = ThreadNowStackUsed(p);
+                size_t max_used = ThreadMaxStackUsed(p);
+
+                // compute max and current utilization percentages
+                float util_now = static_cast<float>(now) / alloc;
+                float util_max = static_cast<float>(max_used) / alloc;
+
+                printf(
+                    "%-4u\t  %-3u\t  %-3u\t%-6u\t   %-7u  %-7u  "
+                    "%-7u (%.0f%%|%-.0f%%)\r\n",
+                    p->task_id, p->prio, p->state, p->delta_time, max_used,
+                    alloc, now, util_now * 100, util_max * 100);
 
                 num_threads++;
             }
@@ -1060,6 +1073,11 @@ int cmd_ping(cmd_args_t& args) {
 }
 
 int cmd_imu(cmd_args_t& args) { return 0; }
+
+int cmd_printenv(cmd_args_t& args) {
+    rj_printenv();
+    return 0;
+}
 
 /**
  * Command executor.

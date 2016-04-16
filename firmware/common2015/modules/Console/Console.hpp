@@ -114,16 +114,13 @@ public:
     /// mark the current command as being handled and cleanup
     void CommandHandled();
 
-    void changeHostname(const std::string&);
-    void changeUser(const std::string&);
-
     void Baudrate(uint16_t);
     uint16_t Baudrate() const;
 
     void PrintHeader();
     void ShowLogo();
     void SetTitle(const std::string&);
-    std::string GetHostResponse();
+    std::string getPS1();
 
     /**
     * Serial connection
@@ -138,8 +135,6 @@ private:
     Console();
 
     void RXCallback();
-
-    void setHeader();
 
     static std::shared_ptr<Console> instance;
 
@@ -180,7 +175,7 @@ private:
 
     char esc_host_end_char = 'R';
 
-    const size_t MAX_HISTORY = 10;
+    const size_t MAX_HISTORY = 6;
     int history_index = 0;
     std::deque<std::string> history;
 };

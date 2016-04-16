@@ -2,12 +2,17 @@
 
 #include <vector>
 #include <type_traits>
+#include <string>
+#include <map>
 
 #include "logger.hpp"
 #include "assert.hpp"
 
 // The head of the linked list of active threads
 extern struct OS_XCB os_rdy;
+
+std::map<std::string, std::string> sys_env;
+Mutex env_mutex;
 
 void setISRPriorities() {
     __disable_irq();
@@ -88,4 +93,49 @@ unsigned int ThreadNowStackUsed(const P_TCB tcb) {
 #else
     return 0;
 #endif
+}
+
+int rj_putenv(const std::string& s) {
+    size_t pos = 0;
+    std::string s_copy(s);
+    std::vector<std::string> vals;
+    env_mutex.lock();
+    while ((pos = s_copy.find('=')) != std::string::npos) {
+        std::string token = s_copy.substr(0, pos);
+        vals.push_back(token);
+        s_copy.erase(0, pos + 1);
+    }
+    if (s_copy.size()) vals.push_back(s_copy);
+
+    // must have exactly 2 values
+    //   ex: 'x=y' goes to 'x' and 'y'
+    if (vals.size() != 2) {
+        env_mutex.unlock();
+        return 1;
+    }
+
+    // set the mapped value in the sys_env container and return
+    sys_env[vals.at(0)] = vals.at(1);
+    env_mutex.unlock();
+    return 0;
+}
+
+std::string rj_getenv(const std::string& name) {
+    env_mutex.lock();
+    if (sys_env.find(name) == sys_env.end()) {
+        // not found
+        env_mutex.unlock();
+        return std::string("");
+    }
+    // found
+    env_mutex.unlock();
+    return sys_env.find(name)->second;
+}
+
+void rj_printenv() {
+    env_mutex.lock();
+    for (std::map<std::string, std::string>::iterator it = sys_env.begin();
+         it != sys_env.end(); ++it)
+        printf("%s=%s\r\n", it->first.c_str(), it->second.c_str());
+    env_mutex.unlock();
 }

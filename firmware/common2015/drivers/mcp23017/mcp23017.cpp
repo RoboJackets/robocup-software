@@ -66,17 +66,23 @@ uint8_t MCP23017::readPin(MCP23017::ExpPinName pin) {
 }
 
 void MCP23017::config(uint16_t dir_config, uint16_t pullup_config,
-                      uint16_t polarity_config) {
+                      uint16_t polarity_config, uint16_t interrupt_config) {
     inputOutputMask(dir_config);
     internalPullupMask(pullup_config);
     inputPolarityMask(polarity_config);
+    writeRegister(GPINTEN, interrupt_config);
+
+    // initialize the initial readings internally for the MCP23017
+    // for comparing interrupt change triggers
+    digitalWordRead();
 
     LOG(INF2,
         "IO Expander Configuration:\r\n"
         "    IODIR:\t0x%04X\r\n"
         "    GPPU:\t0x%04X\r\n"
         "    IPOL:\t0x%04X",
-        _cachedIODIR, _cachedGPPU, _cachedIPOL);
+        "    GPINTEN:\t0x%04X", _cachedIODIR, _cachedGPPU, _cachedIPOL,
+        interrupt_config);
 }
 
 void MCP23017::pinMode(ExpPinName pin, PinMode mode) {

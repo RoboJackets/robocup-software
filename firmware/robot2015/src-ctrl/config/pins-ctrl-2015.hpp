@@ -99,10 +99,10 @@ constexpr auto RJ_HEX_SWITCH_BIT0 = MCP23017::PinA6;
 constexpr auto RJ_HEX_SWITCH_BIT1 = MCP23017::PinA4;
 constexpr auto RJ_HEX_SWITCH_BIT2 = MCP23017::PinA7;
 constexpr auto RJ_HEX_SWITCH_BIT3 = MCP23017::PinA5;
-constexpr auto RJ_DIP_SWITCH_1 = MCP23017::PinA4;
-constexpr auto RJ_DIP_SWITCH_2 = MCP23017::PinA5;
-constexpr auto RJ_DIP_SWITCH_3 = MCP23017::PinA6;
-constexpr auto RJ_PUSHBUTTON = MCP23017::PinA7;
+constexpr auto RJ_DIP_SWITCH_1 = MCP23017::PinA3;
+constexpr auto RJ_DIP_SWITCH_2 = MCP23017::PinA2;
+constexpr auto RJ_DIP_SWITCH_3 = MCP23017::PinA1;
+constexpr auto RJ_PUSHBUTTON = MCP23017::PinA0;
 
 constexpr auto RJ_ERR_LED_M1 = MCP23017::PinB1;
 constexpr auto RJ_ERR_LED_M2 = MCP23017::PinB0;

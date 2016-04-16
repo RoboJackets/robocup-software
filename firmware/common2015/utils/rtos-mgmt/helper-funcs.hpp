@@ -56,3 +56,7 @@ unsigned int ThreadMaxStackUsed(const P_TCB tcb);
  * @return     Currently used stack size, in bytes
  */
 unsigned int ThreadNowStackUsed(const P_TCB tcb);
+
+int rj_putenv(const std::string& str);
+std::string rj_getenv(const std::string& name);
+void rj_printenv();

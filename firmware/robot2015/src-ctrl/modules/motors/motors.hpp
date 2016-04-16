@@ -26,7 +26,7 @@ struct motorErr_t {
     FETHB_OC, FETLB_OC
     FETHC_OC, FETLC_OC
     */
-    bool hallOK;
+    bool isready;
     std::array<uint16_t, 2> drvStatus;
 };
 
@@ -43,5 +43,6 @@ extern std::vector<motor_t> global_motors;
 
 void motors_Init();
 void motors_show();
+void motors_refresh();
 int cmd_motors(const std::vector<std::string>&);
 int cmd_motors_scroll(const std::vector<std::string>&);

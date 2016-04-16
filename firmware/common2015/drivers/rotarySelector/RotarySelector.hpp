@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 /**
  * This class facilitates reading the value from a rotary selector.
@@ -32,6 +33,19 @@ public:
         for (size_t i = 0; i < NUM_PINS; i++) reading |= _pins[i].read() << i;
         return reading;
     }
+
+    /**
+     * Gives the reading (0x0 - 0xF) in string standard format.
+    */
+    std::string readStr() {
+        char ridStr[2];
+        sprintf(ridStr, "%02u", read());
+        return std::string(ridStr);
+    }
+
+    /** An operator shorthand for read()
+     */
+    operator int() { return read(); }
 
 private:
     std::array<DIGITAL_IN, NUM_PINS> _pins;
