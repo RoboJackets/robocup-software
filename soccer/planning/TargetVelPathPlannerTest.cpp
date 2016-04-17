@@ -16,7 +16,7 @@ TEST(TargetVelPathPlannerTest, run) {
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
 
     TargetVelPathPlanner planner;
-    auto path = planner.run(startInstant, &cmd, motionConstraints, &obstacles);
+    auto path = planner.run(startInstant, &cmd, motionConstraints, &obstacles, std::vector<const Path *>());
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 

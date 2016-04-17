@@ -47,7 +47,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+    const Geometry2d::ShapeSet* obstacles,
+    const std::vector<const Path *> &paths, std::unique_ptr<Path> prevPath) {
     // This planner only works with commands of type 'PathTarget'
     assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
     Planning::PathTargetCommand target =

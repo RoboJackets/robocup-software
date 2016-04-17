@@ -21,6 +21,7 @@ public:
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet* obstacles,
+        const std::vector<const Path *> &paths,
         std::unique_ptr<Path> prevPath = nullptr) = 0;
 
     /// The MotionCommand type that this planner handles
