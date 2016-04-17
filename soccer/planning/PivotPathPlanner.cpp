@@ -25,13 +25,14 @@ bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
 std::unique_ptr<Path> PivotPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+    const Geometry2d::ShapeSet* obstacles,
+    const std::vector<const Path *> &paths, std::unique_ptr<Path> prevPath) {
     // TODO implement actual Pivoting
     debugThrow("Unfinished Class");
 
     EscapeObstaclesPathPlanner escapePlanner;
     EmptyCommand emptyCommand;
     return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
-                             obstacles, std::move(prevPath));
+                             obstacles, std::vector<const Path *>(), std::move(prevPath));
 }
 }

@@ -21,9 +21,10 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.prevPath = nullptr;
         }
 
+        std::vector<const Path *> oldPaths;
         paths[shell] = _planners[shell]->run(
             request.start, request.motionCommand.get(), request.constraints,
-            request.obstacles.get(), std::move(request.prevPath));
+            request.obstacles.get(), oldPaths, std::move(request.prevPath));
     }
 
     return paths;

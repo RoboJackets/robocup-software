@@ -6,7 +6,8 @@ namespace Planning {
 std::unique_ptr<Path> DirectTargetPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+    const Geometry2d::ShapeSet* obstacles,
+    const std::vector<const Path *> &paths, std::unique_ptr<Path> prevPath) {
     assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
     Planning::DirectPathTargetCommand command =
         *static_cast<const Planning::DirectPathTargetCommand*>(cmd);
