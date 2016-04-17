@@ -78,6 +78,10 @@ std::string stringFromCommand(Command c) {
             return "Goal Yellow";
         case GOAL_BLUE:
             return "Goal Blue";
+        case BALL_PLACEMENT_YELLOW:
+            return "Ball Placement Yellow";
+        case BALL_PLACEMENT_BLUE:
+            return "Ball Placement Blue";
         default:
             return "";
     }
@@ -328,6 +332,14 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
             break;
         case Command::GOAL_BLUE:
             break;
+        case Command::BALL_PLACEMENT_YELLOW:
+            _state.gameState.restart = GameState::Placement;
+            _state.gameState.ourRestart = !blueTeam;
+             break;
+        case Command::BALL_PLACEMENT_BLUE:
+            _state.gameState.restart = GameState::Placement;
+            _state.gameState.ourRestart = blueTeam;
+             break;
     }
 
     if (command != prev_command)
@@ -343,6 +355,8 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
     }
     _state.gameState.OurInfo = blueTeam ? blue_info : yellow_info;
     _state.gameState.TheirInfo = blueTeam ? yellow_info : blue_info;
+
+
 }
 
 void NewRefereeModule::ready() {

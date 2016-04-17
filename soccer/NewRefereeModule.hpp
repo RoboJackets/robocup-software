@@ -92,7 +92,13 @@ enum Command {
     // For rules compliance, teams must treat as STOP.
     GOAL_YELLOW = 14,
     // The blue team just scored a goal.
-    GOAL_BLUE = 15
+    GOAL_BLUE = 15,
+    // Equivalent to STOP, but the yellow team must pick up the ball and
+    // drop it in the Designated Position.
+    BALL_PLACEMENT_YELLOW = 16,
+    // Equivalent to STOP, but the blue team must pick up the ball and drop
+    // it in the Designated Position.
+    BALL_PLACEMENT_BLUE = 17
 };
 
 std::string stringFromCommand(Command c);

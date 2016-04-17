@@ -30,7 +30,7 @@ public:
     };
 
     // Types of restarts
-    enum Restart { None, Kickoff, Direct, Indirect, Penalty };
+    enum Restart { None, Kickoff, Direct, Indirect, Penalty, Placement };
 
     Period period;
     State state;
@@ -72,6 +72,8 @@ public:
 
     bool penalty() const { return restart == Penalty; }
 
+    bool placement() const { return restart == Placement; }
+
     bool isOurRestart() const { return ourRestart; }
 
     bool direct() const { return restart == Direct; }
@@ -88,6 +90,8 @@ public:
 
     bool ourFreeKick() const { return ourDirect() || ourIndirect(); }
 
+    bool ourPlacement() const { return placement() && ourRestart; }
+
     bool theirKickoff() const { return kickoff() && !ourRestart; }
 
     bool theirPenalty() const { return penalty() && !ourRestart; }
@@ -97,6 +101,9 @@ public:
     bool theirIndirect() const { return indirect() && !ourRestart; }
 
     bool theirFreeKick() const { return theirDirect() || theirIndirect(); }
+
+    bool theirPlacement() const { return placement() && !ourRestart; }
+    
 
     // Robots must be in position for a restart
     bool setupRestart() const { return state == Setup || state == Ready; }
