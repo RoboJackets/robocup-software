@@ -7,7 +7,6 @@ import imp
 
 ## Watches the filesytem for changes and executes any registered callbacks
 class FsWatcher(Observer):
-
     def __init__(self, path):
         super().__init__()
         handler = FsWatcher.FsEventHandler(self)
@@ -15,27 +14,24 @@ class FsWatcher(Observer):
         self.schedule(handler, path, recursive=True)
         self.root_path = path
 
-
     ## the callback is passed event_type, module_path
     # where event_type is a string with the following possible values: 'modified', 'created', 'deleted'
     def subscribe(self, callback):
         self._subscribers.append(callback)
-
 
     ## removes a given subscriber
     def unsubscribe(self, callback):
         idx = self._subscribers.index(callback)
         del self._subscribers[idx]
 
-
     ## The directory to watch recursively
     @property
     def root_path(self):
         return self._root_path
+
     @root_path.setter
     def root_path(self, value):
         self._root_path = value
-
 
     # the handler calls _notify on its parent FsWatcher
     def _notify(self, event_type, path):
@@ -49,7 +45,7 @@ class FsWatcher(Observer):
             # remove the prefix @root from @subpath
             root = os.path.abspath(self.root_path)
             subpath = name[len(root):]
-            if len(subpath) > 0 and subpath[0] == '/': subpath = subpath[1:] 
+            if len(subpath) > 0 and subpath[0] == '/': subpath = subpath[1:]
 
             # if we're watching /robocup/soccer/gameplay and within that, plays/my_play.py changes,
             # we extract ['plays', 'my_play'] into the @modpath list
@@ -69,10 +65,7 @@ class FsWatcher(Observer):
             for subscriber in self._subscribers:
                 subscriber(event_type, modpath)
 
-
-
     class FsEventHandler(FileSystemEventHandler):
-
         def __init__(self, watcher):
             super().__init__()
             self._watcher = watcher
@@ -90,8 +83,8 @@ class FsWatcher(Observer):
                 self._watcher._notify('deleted', event.src_path)
 
 
-
 if __name__ == '__main__':
+
     def watcher_callback(event_type, modpath):
         print("CALLBACK")
         is_play = modpath[0] == 'plays'

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="<path-to-project-directory>/RoboCup_Top_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="RoboCup_Top_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="8" />
+   <wave_markers>
+      <marker time="830760000000" label="" />
+      <marker time="6022780000000" label="" />
+   </wave_markers>
+   <wvobject fp_name="/RoboCup_Top_tb/clk" type="logic" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#c8c800</obj_property>
+      <obj_property name="label">Global Clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/duty_cycle[0]" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">[0,8:0]</obj_property>
+      <obj_property name="ObjectShortName">duty_cycle[0,8:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="label">Duty Cycle (Target: Top Level)</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#969696</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/duty_cycle" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">duty_cycle[9:0]</obj_property>
+      <obj_property name="ObjectShortName">duty_cycle[9:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ffa500</obj_property>
+      <obj_property name="label">Duty Cycle (Target: In Module)</obj_property>
+   </wvobject>
+   <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/duty_cycle_s" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">duty_cycle_s[9:0]</obj_property>
+      <obj_property name="ObjectShortName">duty_cycle_s[9:0]</obj_property>
+      <obj_property name="label">Duty Cycle (Actual: In Module)</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ffa500</obj_property>
+   </wvobject>
+   <wvobject fp_name="vbus61" type="vbus" db_ref_id="1">
+      <obj_property name="label">Hall Sensor</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ff0000</obj_property>
+      <wvobject fp_name="/RoboCup_Top_tb/halls_c[0]" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">halls_c[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#7d0000</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/halls_a[0]" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">halls_a[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#7d0000</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/halls_b[0]" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">halls_b[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#7d0000</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group50" type="group">
+      <obj_property name="label">Phase Outputs</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/RoboCup_Top_tb/phases_aH[0]" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phases_aH[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#ffff00</obj_property>
+         <obj_property name="label">aH</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/phases_aL[0]" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phases_aL[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#afaf00</obj_property>
+         <obj_property name="label">aL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/phases_bH[0]" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phases_bH[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#ff00ff</obj_property>
+         <obj_property name="label">bH</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/phases_bL[0]" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phases_bL[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#af00af</obj_property>
+         <obj_property name="label">bL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/phases_cH[0]" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phases_cH[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#00ffff</obj_property>
+         <obj_property name="label">cH</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/phases_cL[0]" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phases_cL[0]</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#00afaf</obj_property>
+         <obj_property name="label">cL</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/startup_step_count" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">startup_step_count[6:0]</obj_property>
+         <obj_property name="ObjectShortName">startup_step_count[6:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#00c800</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/startup_counter" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">startup_counter[11:0]</obj_property>
+         <obj_property name="ObjectShortName">startup_counter[11:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#00c800</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group86" type="group">
+      <obj_property name="label">Motor Connection Flags</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/connected" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">connected</obj_property>
+         <obj_property name="ObjectShortName">connected</obj_property>
+         <obj_property name="label">Connected</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#965f00</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/hall_recheck" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">hall_recheck</obj_property>
+         <obj_property name="ObjectShortName">hall_recheck</obj_property>
+         <obj_property name="label">Check for Conn.</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#965f00</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/disconnect_fault_latched" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">disconnect_fault_latched</obj_property>
+         <obj_property name="ObjectShortName">disconnect_fault_latched</obj_property>
+         <obj_property name="label">Disconnect Latched</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#965f00</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/\BLDC_MOTOR_INST[0].motor /bldc_motor/fault" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">fault</obj_property>
+         <obj_property name="ObjectShortName">fault</obj_property>
+         <obj_property name="label">Hall Fault Latched</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#965f00</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group87" type="group">
+      <obj_property name="label">SPI Slave (from mbed)</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/spi_slave_ncs" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">spi_slave_ncs</obj_property>
+         <obj_property name="ObjectShortName">spi_slave_ncs</obj_property>
+         <obj_property name="label">nCS</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#c0c0c0</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/spi_slave_sck" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">spi_slave_sck</obj_property>
+         <obj_property name="ObjectShortName">spi_slave_sck</obj_property>
+         <obj_property name="label">SCK</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#c0c0c0</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/spi_slave_mosi" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">spi_slave_mosi</obj_property>
+         <obj_property name="ObjectShortName">spi_slave_mosi</obj_property>
+         <obj_property name="label">MOSI</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#c0c0c0</obj_property>
+      </wvobject>
+      <wvobject fp_name="/RoboCup_Top_tb/robocup_top_module/spi_slave_miso" type="logic" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">spi_slave_miso</obj_property>
+         <obj_property name="ObjectShortName">spi_slave_miso</obj_property>
+         <obj_property name="label">MISO</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">#c0c0c0</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

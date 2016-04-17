@@ -12,9 +12,10 @@ def getMainWindow():
 
     return win
 
-
 # sets up the PlayConfigTab in the main soccer gui
 _has_setup_ui = False
+
+
 def setup():
     global _has_setup_ui
 
@@ -23,7 +24,8 @@ def setup():
         return
 
     win = getMainWindow()
-    if win == None: raise AssertionError("Unable to get a reference to the main window")
+    if win == None:
+        raise AssertionError("Unable to get a reference to the main window")
 
     pcTab = win.findChild(QtWidgets.QTreeView, 'plays')
 

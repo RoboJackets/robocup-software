@@ -1,179 +1,68 @@
 #include "CommLink.hpp"
 
+#include "logger.hpp"
+#include "assert.hpp"
 
-// Set the class's constants for streamlined use in other areas of the code
-const int CommLink::TX_QUEUE_SIZE = COMM_LINK_TX_QUEUE_SIZE;
-const int CommLink::RX_QUEUE_SIZE = COMM_LINK_RX_QUEUE_SIZE;
+#define COMM_LINK_SIGNAL_START_THREAD (1 << 0)
+#define COMM_LINK_SIGNAL_RX_TRIGGER (1 << 1)
 
+const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
-// =================== CONSTRUCTORS ===================
-// Default constructor
-CommLink::CommLink()
-{
+CommLink::CommLink(shared_ptr<SharedSPI> sharedSPI, PinName nCs,
+                   PinName int_pin)
+    : SharedSPIDevice(sharedSPI, nCs, true),
+      _int_in(int_pin),
+      _rxThread(&CommLink::rxThreadHelper, this, osPriorityNormal,
+                DEFAULT_STACK_SIZE / 2) {
+    setSPIFrequency(5000000);
+    _int_in.mode(PullUp);
 }
 
-CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin) :
-    _txQueueHelper(),
-    _rxQueueHelper()
-{
-    static unsigned int _nbr_links = 0;
-
-    setup_pins(mosi, miso, sck, cs, int_pin);
-    setup();
-    _nbr_links++;
-}
-
-
-// =================== CLASS SETUP ===================
-void CommLink::setup()
-{
-    // [X] - 1 - Initialize the hardware for communication.
-    // =================
-    setup_spi();
-    setup_cs();
-    setup_interrupt();
-
-    // [X] - 2 - Define the thread tasks for controlling the data queues
-    // =================
-    define_thread(_txDef, &CommLink::txThread);
-    define_thread(_rxDef, &CommLink::rxThread);
-
-    // [X] - 3 - Create the threads and pass them a pointer to the created object
-    // =================
-    _txID = osThreadCreate(&_txDef, (void*)this);
-    _rxID = osThreadCreate(&_rxDef, (void*)this);
-}
-
-
-// =================== PIN SETUP ===================
-void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin)
-{
-    _mosi_pin = mosi;
-    _miso_pin = miso;
-    _sck_pin = sck;
-    _cs_pin = cs;
-    _int_pin = int_pin;
-}
-
-void CommLink::setup_spi(void)
-{
-    if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
-        _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        _spi->format(8,0);
-        _spi->frequency(5000000);
-    }
-}
-
-void CommLink::setup_cs(void)
-{
-    if (_cs_pin != NC) {
-        _cs = new DigitalOut(_cs_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-    }
-}
-
-void CommLink::setup_interrupt(void)
-{
-    if (_int_pin != NC) {
-        _int_in = new InterruptIn(_int_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
-        _int_in->mode(PullDown);
-    }
-}
-
-
-// =================== TX/RX THREADS ===================
-// Task operations for sending data over the hardware link when a new item is placed in the queue
-void CommLink::txThread(void const *arg)
-{
-    //CommLink *inst = (CommLink*)arg;
-
-    // Only continue past this point once the hardware link is initialized
-    osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
-
-    while (true) {
-        // [X] - 1 - Wait until the CommModule class sends a signal to begin operation on new data being placed in its txQueue
-        // =================
-        osSignalWait(COMM_LINK_SIGNAL_TX_TRIGGER, osWaitForever);
-
-        // [] - 2 - Copy the packet from the CommModule txQueue into the CommLink txQueue
-        // =================
-        //void *  osMailAlloc (osMailQId queue_id, uint32_t millisec);
-
-        // [] - 3 - Call the method for sending the packet over a hardware communication link
-        // =================
-
-        // [] - 4 - Blink the TX LED for the hardware link
-        // =================
-    }
-}
-
-
+// =================== RX THREAD ===================
 // Task operations for placing received data into the received data queue
-void CommLink::rxThread(void const *arg)
-{
-    CommLink *inst = (CommLink*)arg;
-
+void CommLink::rxThread() {
     // Only continue past this point once the hardware link is initialized
-    osSignalWait(COMM_LINK_SIGNAL_START_THREAD & COMM_LINK_SIGNAL_MODULE_LINKED, osWaitForever);
+    Thread::signal_wait(COMM_LINK_SIGNAL_START_THREAD);
+
+    // Store our priority so we know what to reset it to if ever needed
+    const osPriority threadPriority = _rxThread.get_priority();
+
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
+        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     // Set the function to call on an interrupt trigger
-    inst->_int_in->rise(inst, &CommLink::ISR);
+    _int_in.rise(this, &CommLink::ISR);
 
-    DigitalOut rx_led(LED4, 0);
+    rtp::packet p;
+    std::vector<uint8_t> buf;
+    buf.reserve(rtp::MAX_DATA_SZ);
 
     while (true) {
-        // [X] - 1 - Wait until new data has arrived - this is interrupt triggered by CommLink::ISR()
-        // =================
-        osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
+        // Wait until new data has arrived
+        // this is triggered by CommLink::ISR()
+        Thread::signal_wait(COMM_LINK_SIGNAL_RX_TRIGGER);
 
-        // [X] - 2 - Get the received data from the external chip
-        // =================
-        uint8_t rec_bytes = COMM_LINK_BUFFER_SIZE;  // this sets how much data can be placed in the passed buffer by the function call
-        RTP_t p;
+        LOG(INF3, "RX interrupt triggered");
 
-        if (!(inst->getData(p.raw, &rec_bytes)) ) {
-            
-            // [X] - 3 - Write the data to the CommModule object's rxQueue
-            // =================
-            inst->_comm_module->receive(p);
+        // Get the received data from the external chip
+        buf.clear();
+        int32_t response = getData(&buf);
 
-            // [~] - 4 - Blink the RX LED for the hardware link
-            // =================
-
+        if (response == COMM_SUCCESS) {
+            // Write the data to the CommModule object's rxQueue
+            p.recv(buf);
+            CommModule::Instance->receive(p);
         }
     }
 }
 
-
 // Called by the derived class to begin thread operations
-void CommLink::ready(void)
-{
-    //osSignalSet(_txID, COMM_LINK_SIGNAL_START_THREAD);
-    osSignalSet(_rxID, COMM_LINK_SIGNAL_START_THREAD);
+void CommLink::ready() { _rxThread.signal_set(COMM_LINK_SIGNAL_START_THREAD); }
+
+void CommLink::sendPacket(rtp::packet* p) {
+    std::vector<uint8_t> buffer;
+    p->pack(&buffer);
+    sendData(buffer.data(), buffer.size());
 }
 
-
-void CommLink::sendPacket(RTP_t *p)
-{
-    p->payload_size = p->total_size - 1; // fixup factor for headers. Exclude the `size` byte from being counted
-    sendData(p->raw, p->total_size);
-}
-
-
-// Interrupt Service Routine - KEEP OPERATIONS TO ABOSOLUTE MINIMUM HERE AND IN ANY OVERRIDEN BASE CLASS IMPLEMENTATIONS OF THIS CLASS METHOD
-void CommLink::ISR(void)
-{
-    osSignalSet(_rxID , COMM_LINK_SIGNAL_RX_TRIGGER);
-}
-
-
-void CommLink::toggle_cs(void)
-{
-    *_cs = !*_cs;
-}
-
-
-void CommLink::setModule(CommModule& com)
-{
-    _comm_module = &com;
-    osSignalSet(_rxID , COMM_LINK_SIGNAL_MODULE_LINKED);
-}
+void CommLink::ISR() { _rxThread.signal_set(COMM_LINK_SIGNAL_RX_TRIGGER); }

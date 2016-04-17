@@ -754,6 +754,7 @@ WARN_LOGFILE           =
 
 INPUT                  = soccer \
                          firmware/robot2015 \
+                         firmware/common2015 \
                          common \
                          doc
 

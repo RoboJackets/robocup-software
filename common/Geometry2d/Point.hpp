@@ -258,16 +258,17 @@ public:
 
     /**
     * Returns a vector with the same direction as this vector but with magnitude
-    * one.
+    * given,
+    * unless this vector is zero.
     * If the vector is (0,0), Point(0,0) is returned
     */
-    Point normalized() const {
+    Point normalized(float magnitude = 1.0) const {
         float m = mag();
         if (m == 0) {
             return Point(0, 0);
         }
 
-        return Point(x / m, y / m);
+        return Point(magnitude * x / m, magnitude * y / m);
     }
 
     /**

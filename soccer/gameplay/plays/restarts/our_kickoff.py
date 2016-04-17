@@ -14,7 +14,6 @@ class OurKickoff(play.Play):
     KickPower = 0.5
     ChipPower = 1.0
 
-
     class State(enum.Enum):
         setup = 1
         kick = 2
@@ -28,20 +27,17 @@ class OurKickoff(play.Play):
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-            OurKickoff.State.setup,
-            lambda: True,
-            'immediately')
+                            OurKickoff.State.setup, lambda: True,
+                            'immediately')
 
-        self.add_transition(OurKickoff.State.setup,
-            OurKickoff.State.kick,
-            lambda: not main.game_state().is_setup_state(),
-            "referee leaves setup")
+        self.add_transition(OurKickoff.State.setup, OurKickoff.State.kick,
+                            lambda: not main.game_state().is_setup_state(),
+                            "referee leaves setup")
 
-        self.add_transition(OurKickoff.State.kick,
-            behavior.Behavior.State.completed,
+        self.add_transition(
+            OurKickoff.State.kick, behavior.Behavior.State.completed,
             lambda: self.has_subbehavior_with_name('kicker') and self.subbehavior_with_name('kicker').is_done_running(),
             "kicker finished")
-
 
         # TODO: verify that these values are right - I'm fuzzy on my matrix multiplication...
         idle_positions = [
@@ -51,13 +47,15 @@ class OurKickoff(play.Play):
         self.centers = []
         for i, pos_i in enumerate(idle_positions):
             center_i = skills.move.Move(pos_i)
-            self.add_subbehavior(center_i, 'center' + str(i), required=False, priority=4-i)
+            self.add_subbehavior(center_i,
+                                 'center' + str(i),
+                                 required=False,
+                                 priority=4 - i)
             self.centers.append(center_i)
 
-
-        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
-
-
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False)
 
     @classmethod
     def score(cls):
@@ -72,9 +70,9 @@ class OurKickoff(play.Play):
     def handles_goalie(cls):
         return True
 
-
     def on_enter_setup(self):
-        mover = skills.move.Move(robocup.Point(0, constants.Field.Length / 2.0 - 0.30))
+        mover = skills.move.Move(robocup.Point(0, constants.Field.Length / 2.0
+                                               - 0.30))
         self.add_subbehavior(mover, 'move', required=False, priority=5)
 
     def execute_setup(self):
@@ -84,7 +82,8 @@ class OurKickoff(play.Play):
 
     def on_enter_kick(self):
         if self.subbehavior_with_name('move').robot is not None:
-            self._kicker_shell_id = self.subbehavior_with_name('move').robot.shell_id()
+            self._kicker_shell_id = self.subbehavior_with_name(
+                'move').robot.shell_id()
         self.remove_subbehavior('move')
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment
@@ -102,9 +101,11 @@ class OurKickoff(play.Play):
     def role_requirements(self):
         reqs = super().role_requirements()
         if 'move' in reqs:
-            for r in role_assignment.iterate_role_requirements_tree_leaves(reqs['move']):
+            for r in role_assignment.iterate_role_requirements_tree_leaves(
+                    reqs['move']):
                 r.chipper_preference_weight = role_assignment.PreferChipper
         if 'kicker' in reqs:
-            for r in role_assignment.iterate_role_requirements_tree_leaves(reqs['kicker']):
+            for r in role_assignment.iterate_role_requirements_tree_leaves(
+                    reqs['kicker']):
                 r.previous_shell_id = self._kicker_shell_id
         return reqs

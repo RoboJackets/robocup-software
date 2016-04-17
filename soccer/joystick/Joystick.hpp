@@ -57,12 +57,14 @@ public:
     /**
      * @brief Returns the control values from this joystick
      * @details Note: The controls should be scaled between 0 and 1.
-     * The processor handles scaling to real world values
+     * The processor handles scaling to real world values.
      * @return The control values for this joystick
      */
     virtual JoystickControlValues getJoystickControlValues() = 0;
+
     static void createConfiguration(Configuration* cfg);
 
+    // declaration of Config values
     static ConfigDouble* JoystickRotationMaxSpeed;
     static ConfigDouble* JoystickRotationMaxDampedSpeed;
     static ConfigDouble* JoystickTranslationMaxSpeed;

@@ -18,8 +18,8 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     pass_dir = to_point - from_point
     pass_perp = pass_dir.perp_ccw()
     receive_seg_half_len = math.tan(pass_angle) * pass_dist
-    receive_seg = robocup.Segment(to_point + pass_perp*receive_seg_half_len,
-        to_point + pass_perp*-receive_seg_half_len)
+    receive_seg = robocup.Segment(to_point + pass_perp * receive_seg_half_len,
+                                  to_point + pass_perp * -receive_seg_half_len)
 
     win_eval = robocup.WindowEvaluator(main.system_state())
     for r in excluded_robots:

@@ -33,7 +33,7 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50) {
     _robot = robot;
 
-    _robot->radioTx.set_robot_id(_robot->shell());
+    _robot->robotPacket.set_uid(_robot->shell());
     _lastCmdTime = -1;
 }
 
@@ -62,8 +62,15 @@ void MotionControl::run() {
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
         _robot->path().evaluate(timeIntoPath);
+
     if (!optTarget) {
         optTarget = _robot->path().end();
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red,
+                                    "Planning");
+    } else {
+        Point start = _robot->pos;
+        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green,
+                                    "Planning");
     }
 
     // Angle control //////////////////////////////////////////////////
@@ -134,16 +141,8 @@ void MotionControl::run() {
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-    MotionInstant target;
+    MotionInstant target = optTarget->motion;
 
-    // convert from microseconds to seconds
-    if (!optTarget) {
-        // use the path end if our timeIntoPath is greater than the duration
-        target.vel = Point();
-        target.pos = _robot->path().end().motion.pos;
-    } else {
-        target = optTarget->motion;
-    }
     // tracking error
     Point posError = target.pos - _robot->pos;
 
@@ -198,7 +197,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     }
 
     // the robot firmware still speaks degrees, so that's how we send it over
-    _robot->radioTx.set_body_w(angleVel);
+    _robot->control->set_avelocity(angleVel);
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
@@ -235,7 +234,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
         targetVel = targetVel.normalized() * minEffectiveVelocity;
     }
 
-    // set radioTx values
-    _robot->radioTx.set_body_x(targetVel.x);
-    _robot->radioTx.set_body_y(targetVel.y);
+    // set control values
+    _robot->control->set_xvelocity(targetVel.x);
+    _robot->control->set_yvelocity(targetVel.y);
 }

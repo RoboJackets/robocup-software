@@ -28,7 +28,8 @@ def recursive_import_classes(base_path, module_path, parent_class):
         new_module_path = module_path + [module_name]
 
         if is_pkg:
-            classes += recursive_import_classes(base_path, new_module_path, parent_class)
+            classes += recursive_import_classes(base_path, new_module_path,
+                                                parent_class)
         else:
             module = importlib.import_module('.'.join(new_module_path))
             entry = (new_module_path, find_subclasses(module, parent_class)[0])
@@ -40,7 +41,8 @@ def recursive_import_classes(base_path, module_path, parent_class):
 def find_subclasses(module, parent_class):
     classes = []
     for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj) and issubclass(obj, parent_class) and obj != parent_class:
+        if inspect.isclass(obj) and issubclass(
+                obj, parent_class) and obj != parent_class:
             # print('module: ' + str(module))
             classes.append(obj)
     return classes
@@ -53,4 +55,3 @@ if __name__ == '__main__':
     print("imports:")
     for res in results:
         print("\t" + str(res))
-

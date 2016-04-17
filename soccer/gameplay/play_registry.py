@@ -13,16 +13,13 @@ import logging
 #
 # This is a subclass of QAbstractItemModel so that we can easily attach a UI
 class PlayRegistry(QtCore.QAbstractItemModel):
-
     def __init__(self):
         super().__init__()
         self._root = PlayRegistry.Category(None, "")
 
-
     @property
     def root(self):
         return self._root
-    
 
     # the module path is a list
     # for a demo play called RunAround, module_path = ['demo', 'run_around']
@@ -52,7 +49,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             if node is not None:
                 node.enabled = True
             else:
-                logging.warn("Attempt to load non-existent play " + '/'.join(play) + " from playbook.")
+                logging.warn("Attempt to load non-existent play " + '/'.join(
+                    play) + " from playbook.")
 
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
@@ -73,14 +71,14 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
 
-
     # cache and calculate the score() function for each play class
     def recalculate_scores(self):
         self.root.recalculate_scores(self)
 
     ## Get a list of all plays in the tree that are currently enabled
     def get_enabled_plays_and_scores(self):
-        return [(node.play_class, node.last_score) for node in self if node.enabled]
+        return [(node.play_class, node.last_score)
+                for node in self if node.enabled]
 
     ## Returns a list of module paths for the currently-enabled plays
     # The module path is a list or tuple giving the path the the play's python module
@@ -110,15 +108,14 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     yield child
                 else:
                     yield from _recursive_iter(child)
-        return _recursive_iter(self.root)
 
+        return _recursive_iter(self.root)
 
     def __contains__(self, play_class):
         for node in self:
             if node.play_class == play_class:
                 return True
         return False
-
 
     def __str__(self):
         def _cat_str(category, indent):
@@ -131,10 +128,9 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     desc += "    " * indent + child.name + ':' + '\n'
                     desc += _cat_str(child, indent + 1)
                 desc += '\n'
-            return desc[:-1]    # delete trailing newline
+            return desc[:-1]  # delete trailing newline
 
         return "PlayRegistry:\n-------------\n" + _cat_str(self.root, 0)
-
 
     # module_path is a list like ['demo', 'my_demo']
     # returns a Node or None if it can't find it
@@ -152,7 +148,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
         return None
 
-
     ## Categories correspond to filesystem directories
     class Category():
         def __init__(self, parent, name):
@@ -162,7 +157,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._parent = parent
             self._children = list()
 
-
         @property
         def name(self):
             return self._name
@@ -170,7 +164,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         @property
         def module_name(self):
             return self.name
-
 
         # Instructs all child nodes to recalculate their scores.
         # if a child node returns True indicating that the score value changed, we
@@ -182,9 +175,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     col = 1
                     parent = child.parent
                     index = model.createIndex(row, col, child)
-                    model.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
+                    model.dataChanged.emit(index, index)
             return False
-
 
         def __delitem__(self, name):
             for idx, child in enumerate(self.children):
@@ -193,11 +185,9 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     return
             raise KeyError("Attempt to delete a child node that doesn't exist")
 
-
         def append_child(self, child):
             self.children.append(child)
             child.parent = self
-
 
         def __getitem__(self, name):
             for child in self.children:
@@ -205,19 +195,16 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     return child
             return None
 
-
         def has_child_with_name(self, name):
             return self[name] != None
-
 
         @property
         def parent(self):
             return self._parent
+
         @parent.setter
         def parent(self, value):
             self._parent = value
-        
-
 
         # @children is a list
         @property
@@ -231,11 +218,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             else:
                 return 0
 
-
-
-
     class Node():
-
         def __init__(self, module_name, play_class):
             self._module_name = module_name
             self._play_class = play_class
@@ -243,10 +226,10 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._last_score = float("inf")
             self._parent = None
 
-
         @property
         def parent(self):
             return self._parent
+
         @parent.setter
         def parent(self, value):
             self._parent = value
@@ -262,17 +245,18 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         @property
         def play_class(self):
             return self._play_class
+
         @play_class.setter
         def play_class(self, value):
             self._play_class = value
-        
+
         @property
         def enabled(self):
             return self._enabled
+
         @enabled.setter
         def enabled(self, value):
             self._enabled = value
-
 
         # recalculates and caches the score value for the play
         # returns True if the value changed and False otherwise
@@ -281,18 +265,13 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._last_score = self.play_class.score()
             return prev != self._last_score
 
-
-
         @property
         def last_score(self):
             return self._last_score
 
-
         def __str__(self):
-            return self.play_class.__name__ + " " + ("[ENABLED]" if self.enabled else "[DISABLED]")
-
-
-
+            return self.play_class.__name__ + " " + (
+                "[ENABLED]" if self.enabled else "[DISABLED]")
 
     # Note: a lot of the QAbstractModel-specific implementation is borrowed from here:
     # http://www.hardcoded.net/articles/using_qtreeview_with_qabstractitemmodel.htm
@@ -301,13 +280,11 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     def columnCount(self, parent):
         return 2
 
-
     def flags(self, index):
         if index.column() == 0:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable
         else:
             return QtCore.Qt.ItemIsEnabled
-
 
     def data(self, index, role):
         if not index.isValid():
@@ -321,13 +298,13 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     return str(node.play_class.score())
                 else:
                     return None
-        elif role == QtCore.Qt.CheckStateRole and isinstance(node, PlayRegistry.Node):
+        elif role == QtCore.Qt.CheckStateRole and isinstance(
+                node, PlayRegistry.Node):
             if index.column() == 0:
                 return node.enabled
             else:
                 return None
         return None
-
 
     def rowCount(self, parent):
         if not parent.isValid():
@@ -337,7 +314,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             return 0
         else:
             return len(node.children)
-
 
     def parent(self, index):
         if not index.isValid():
@@ -352,7 +328,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                 parentRow = node.parent.row
             return self.createIndex(parentRow, index.column(), node.parent)
 
-
     def index(self, row, column, parent):
         if not parent.isValid():
             return self.createIndex(row, column, self.root.children[row])
@@ -362,7 +337,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         else:
             return QtCore.QModelIndex()
 
-
     def headerData(self, section, orientation, role):
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             if section == 0:
@@ -371,14 +345,14 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                 return 'Score'
         return None
 
-
     # this is implemented so we can enable/disable plays from the gui
     def setData(self, index, value, role):
         if role == QtCore.Qt.CheckStateRole:
             if index.isValid():
                 playNode = index.internalPointer()
                 if not isinstance(playNode, PlayRegistry.Node):
-                    raise AssertionError("Only Play Nodes should be checkable...")
+                    raise AssertionError(
+                        "Only Play Nodes should be checkable...")
                 playNode.enabled = not playNode.enabled
                 self.dataChanged.emit(index, index)
                 return True
