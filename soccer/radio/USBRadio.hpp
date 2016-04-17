@@ -15,20 +15,16 @@ const unsigned int Reverse_Size = 7;
  * @brief Radio IO with real robots
  *
  * @details This class provides us the ability to communicate with real robots
- * using our own radio protocol.
- * The radio sends one large packet to all of the robots at once that contains
- * the data in each
- * robot's radioTx packet.  Note that it isn't sent in protobuf format though,
- * it's sent straight-up
- * data to avoid the overhead of protobuf.  Robots respond individually in order
- * of their shell
- * numbers in a set time slot.  The bot with the lowest shell number replies in
- * the first time slot,
- * and so on.  This ensures that robots don't jam each other's communication.
+ *     using our own radio protocol. The radio sends one large packet to all of
+ *     the robots at once that contains the data in each robot's radioTx packet.
+ *     Note that it isn't sent in protobuf format though, it's sent straight-up
+ *     data to avoid the overhead of protobuf.  Robots respond individually in
+ *     order of their shell numbers in a set time slot.  The bot with the lowest
+ *     shell number replies in the first time slot, and so on.  This ensures
+ *     that robots don't jam each other's communication.
  */
 class USBRadio : public Radio {
 public:
-    // n identifies which base station to use.
     USBRadio();
     ~USBRadio();
 
@@ -62,10 +58,4 @@ protected:
     void command(uint8_t cmd);
     void write(uint8_t reg, uint8_t value);
     uint8_t read(uint8_t reg);
-
-    // Turns on/off automatic calibration when there is no traffic
-    void auto_calibrate(bool enable);
-
-    // Configures the base station firmware and radio
-    void configure();
 };

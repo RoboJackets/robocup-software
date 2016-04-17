@@ -126,20 +126,20 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     float deadspace = (float)_fieldEdgeInset->value();
     x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
     _nonFloor[0] = make_shared<Polygon>(vector<Point>{
-        Point(-x, y), Point(-x, y - 1), Point(x, y - 1), Point(x, y)});
+        Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
 
     y = dimensions.Length() + (float)_fieldEdgeInset->value();
     _nonFloor[1] = make_shared<Polygon>(vector<Point>{
-        Point(-x, y), Point(-x, y + 1), Point(x, y + 1), Point(x, y)});
+        Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
 
     y = dimensions.FloorLength();
-    _nonFloor[2] = make_shared<Polygon>(
-        vector<Point>{Point(-x, -deadspace), Point(-x - 1, -deadspace),
-                      Point(-x - 1, y), Point(-x, y)});
+    _nonFloor[2] = make_shared<Polygon>(vector<Point>{
+        Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
+        Point(-x - 1000, y), Point(-x, y)});
 
     _nonFloor[3] = make_shared<Polygon>(
-        vector<Point>{Point(x, -deadspace), Point(x + 1, -deadspace),
-                      Point(x + 1, y), Point(x, y)});
+        vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
+                      Point(x + 1000, y), Point(x, y)});
 
     const float halfFlat = dimensions.GoalFlat() / 2.0;
     const float radius = dimensions.ArcRadius();
