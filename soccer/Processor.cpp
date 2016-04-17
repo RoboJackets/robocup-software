@@ -43,13 +43,6 @@ std::vector<RobotStatus*>
 
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
-// Joystick speed limits (for damped and non-damped mode)
-// Translation in m/s, Rotation in rad/s
-static const float JoystickRotationMaxSpeed = 4 * M_PI;
-static const float JoystickRotationMaxDampedSpeed = 1 * M_PI;
-static const float JoystickTranslationMaxSpeed = 3.0;
-static const float JoystickTranslationMaxDampedSpeed = 1.0;
-
 void Processor::createConfiguration(Configuration* cfg) {
     robotConfig2008 = new RobotConfig(cfg, "Rev2008");
     robotConfig2011 = new RobotConfig(cfg, "Rev2011");
@@ -311,15 +304,7 @@ void Processor::run() {
                 const SSL_GeometryFieldSize fieldSize = packet->wrapper.geometry().field();
                 // FIXME - Account for network latency
 
-                if (fieldSize.field_length() != 0 &&
-                    // Compare floats with a small threshold
-                    (currentDimensions->Length() - (fieldSize.field_length() / 1000.0f)) > 0.001f) {
-                    // Set the changed field dimensions to the current ones
-                    decodeGeometryPacket(&fieldSize);
-                }
-                else  {
-                    decodeGeometryPacket(&fieldSize); // TODO REMOVE FORCE OVERRIDE
-                }
+                updateGeometryPacket(&fieldSize);
             }
 
             if (packet->wrapper.has_detection()) {
@@ -608,26 +593,30 @@ void Processor::run() {
     vision.stop();
 }
 
-void Processor::decodeGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
+/*
+ * Updates the geometry packet if different from the existing one,
+ * Based on the geometry vision data.
+ */
+void Processor::updateGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
     if (fieldSize->field_lines_size() == 0) {
         return;
     }
 
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
-    float displacement = 0.500f;  // default displacment
+    float displacement = Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
     for (int i = 0; i < fieldSize->field_arcs().size(); i++) {
-        if (boost::iequals(fieldSize->field_arcs().Get(i).name(), "CenterCircle")) {
+        if (fieldSize->field_arcs().Get(i).name() == "CenterCircle") {
             // Assume center circle
             center = &fieldSize->field_arcs().Get(i);
-        } else if (boost::iequals(fieldSize->field_arcs().Get(i).name(), "LeftFieldLeftPenaltyArc")) {
+        } else if (fieldSize->field_arcs().Get(i).name() == "LeftFieldLeftPenaltyArc") {
             penalty = &fieldSize->field_arcs().Get(i);
         }
     }
 
     for (int i = 0; i < fieldSize->field_lines().size(); i++) {
-        if (boost::iequals(fieldSize->field_lines().Get(i).name(), "RightPenaltyStretch")) {
+        if (fieldSize->field_lines().Get(i).name() == "RightPenaltyStretch") {
             displacement = abs(fieldSize->field_lines().Get(i).p2().y() - fieldSize->field_lines().Get(i).p1().y());
         }
     }
@@ -641,23 +630,28 @@ void Processor::decodeGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
 
     if (penalty != nullptr && center != nullptr && thickness != 0) {
         // Force a resize
-        // TODO fix hardcoded values here
-        setFieldDimensions(Field_Dimensions (
-                               fieldSize->field_length() / 1000.0f, fieldSize->field_width() / 1000.0f,
-                               fieldBorder,
-                               thickness,
-                               fieldSize->goal_width() / 1000.0f, fieldSize->goal_depth() / 1000.0f,
-                               0.160f,                                  // Goal Height
-                               penalty->radius() / 1000.0f + adj,       // PenaltyDist
-                               0.010f,                                  // PenaltyDiam
-                               penalty->radius() / 1000.0f + adj,       // ArcRadius
-                               center->radius() / 1000.0f + adj,        // CenterRadius
-                               (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-                               displacement / 1000.0f,                  // GoalFlat
-                               (fieldSize->field_length() / 1000.0f + (fieldBorder) * 2),
-                               (fieldSize->field_width() / 1000.0f + (fieldBorder) * 2)));
+        Field_Dimensions newDim = Field_Dimensions (
+            fieldSize->field_length() / 1000.0f, fieldSize->field_width() / 1000.0f,
+            fieldBorder,
+            thickness,
+            fieldSize->goal_width() / 1000.0f, fieldSize->goal_depth() / 1000.0f,
+            Field_Dimensions::Default_Dimensions.GoalHeight(),
+            penalty->radius() / 1000.0f + adj,       // PenaltyDist
+            Field_Dimensions::Default_Dimensions.PenaltyDiam(),
+            penalty->radius() / 1000.0f + adj,       // ArcRadius
+            center->radius() / 1000.0f + adj,        // CenterRadius
+            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+            displacement / 1000.0f,                  // GoalFlat
+            (fieldSize->field_length() / 1000.0f + (fieldBorder) * 2),
+            (fieldSize->field_width() / 1000.0f + (fieldBorder) * 2));
+
+        if (newDim != *currentDimensions) {
+            // Set the changed field dimensions to the current ones
+            cerr << "Updating field geometry based off of vision packet." << endl;
+            setFieldDimensions(newDim);
+        }
     } else {
-        // TODO log errors here
+        cerr << "Error: failed to decode SSL geometry packet. Not resizing field." << endl;
     }
 }
 
