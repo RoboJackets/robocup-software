@@ -8,8 +8,8 @@ const Field_Dimensions Field_Dimensions::Double_Field_Dimensions(
     9.000f, 6.000f, 0.700f, 0.010f, 1.000f, 0.180f, 0.160f, 1.000f, 0.010f,
     1.000f, 0.500f, 1.000f, 0.500f, 10.400f, 7.400f);
 
-Field_Dimensions Field_Dimensions::Current_Dimensions =
+const Field_Dimensions Field_Dimensions::Default_Dimensions =
     Field_Dimensions::Double_Field_Dimensions;
 
-const Field_Dimensions Field_Dimensions::Default_Dimensions =
-    Field_Dimensions::Current_Dimensions;
+Field_Dimensions Field_Dimensions::Current_Dimensions =
+    Field_Dimensions::Default_Dimensions;
