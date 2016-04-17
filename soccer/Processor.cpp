@@ -302,7 +302,8 @@ void Processor::run() {
 
             if (packet->wrapper.has_geometry()) {
                 // DEMO: Test out field sizes
-                const SSL_GeometryFieldSize fieldSize = packet->wrapper.geometry().field();
+                const SSL_GeometryFieldSize fieldSize =
+                    packet->wrapper.geometry().field();
                 // FIXME - Account for network latency
 
                 updateGeometryPacket(&fieldSize);
@@ -612,54 +613,60 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
 
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
-    float displacement = Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
+    float displacement =
+        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
     for (int i = 0; i < fieldSize->field_arcs().size(); i++) {
         if (fieldSize->field_arcs().Get(i).name() == "CenterCircle") {
             // Assume center circle
             center = &fieldSize->field_arcs().Get(i);
-        } else if (fieldSize->field_arcs().Get(i).name() == "LeftFieldLeftPenaltyArc") {
+        } else if (fieldSize->field_arcs().Get(i).name() ==
+                   "LeftFieldLeftPenaltyArc") {
             penalty = &fieldSize->field_arcs().Get(i);
         }
     }
 
     for (int i = 0; i < fieldSize->field_lines().size(); i++) {
         if (fieldSize->field_lines().Get(i).name() == "RightPenaltyStretch") {
-            displacement = abs(fieldSize->field_lines().Get(i).p2().y() - fieldSize->field_lines().Get(i).p1().y());
+            displacement = abs(fieldSize->field_lines().Get(i).p2().y() -
+                               fieldSize->field_lines().Get(i).p1().y());
         }
     }
 
     float thickness = fieldSize->field_lines().Get(0).thickness() / 1000.0f;
 
-    // The values we get are the center of the lines, we want to use the outside, so we can add this as an offset.
+    // The values we get are the center of the lines, we want to use the
+    // outside, so we can add this as an offset.
     float adj = fieldSize->field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
     float fieldBorder = currentDimensions->Border();
 
     if (penalty != nullptr && center != nullptr && thickness != 0) {
         // Force a resize
-        Field_Dimensions newDim = Field_Dimensions (
-            fieldSize->field_length() / 1000.0f, fieldSize->field_width() / 1000.0f,
-            fieldBorder,
-            thickness,
-            fieldSize->goal_width() / 1000.0f, fieldSize->goal_depth() / 1000.0f,
+        Field_Dimensions newDim = Field_Dimensions(
+            fieldSize->field_length() / 1000.0f,
+            fieldSize->field_width() / 1000.0f, fieldBorder, thickness,
+            fieldSize->goal_width() / 1000.0f,
+            fieldSize->goal_depth() / 1000.0f,
             Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penalty->radius() / 1000.0f + adj,       // PenaltyDist
+            penalty->radius() / 1000.0f + adj,  // PenaltyDist
             Field_Dimensions::Default_Dimensions.PenaltyDiam(),
             penalty->radius() / 1000.0f + adj,       // ArcRadius
             center->radius() / 1000.0f + adj,        // CenterRadius
             (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
             displacement / 1000.0f,                  // GoalFlat
-            (fieldSize->field_length() / 1000.0f + (fieldBorder) * 2),
-            (fieldSize->field_width() / 1000.0f + (fieldBorder) * 2));
+            (fieldSize->field_length() / 1000.0f + (fieldBorder)*2),
+            (fieldSize->field_width() / 1000.0f + (fieldBorder)*2));
 
         if (newDim != *currentDimensions) {
             // Set the changed field dimensions to the current ones
-            cerr << "Updating field geometry based off of vision packet." << endl;
+            cerr << "Updating field geometry based off of vision packet."
+                 << endl;
             setFieldDimensions(newDim);
         }
     } else {
-        cerr << "Error: failed to decode SSL geometry packet. Not resizing field." << endl;
+        cerr << "Error: failed to decode SSL geometry packet. Not resizing "
+                "field." << endl;
     }
 }
 
