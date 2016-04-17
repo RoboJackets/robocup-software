@@ -10,37 +10,33 @@ import sys
 ## A composite behavior is one that has 0+ named subbehaviors
 # this class has methods for making it easy to work with and manage subbehaviors
 class CompositeBehavior(behavior.Behavior):
-
     def __init__(self, continuous):
         super().__init__(continuous=continuous)
 
         self._subbehavior_info = {}
-
 
     # FIXME: what if a subbehavior of @bhvr is required, but this is not?
     # FIXME: how do priorities work?
     # FIXME: how do nested priorities work?
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
         if name in self._subbehavior_info:
-            raise AssertionError("There's already a subbehavior with name: '" + name + "'")
-        self._subbehavior_info[name] = {'required': required, 'priority': priority, 'behavior': bhvr}            
-
+            raise AssertionError("There's already a subbehavior with name: '" +
+                                 name + "'")
+        self._subbehavior_info[name] = {'required': required,
+                                        'priority': priority,
+                                        'behavior': bhvr}
 
     def remove_subbehavior(self, name):
         del self._subbehavior_info[name]
 
-
     def has_subbehavior_with_name(self, name):
         return name in self._subbehavior_info
-
 
     def has_subbehaviors(self):
         return len(self._subbehavior_info) > 0
 
-
     def subbehavior_with_name(self, name):
         return self._subbehavior_info[name]['behavior']
-
 
     def subbehaviors_by_name(self):
         by_name = {}
@@ -48,20 +44,19 @@ class CompositeBehavior(behavior.Behavior):
             by_name[name] = self._subbehavior_info[name]['behavior']
         return by_name
 
-
     def remove_all_subbehaviors(self):
         subbehaviorNames = list(self._subbehavior_info.keys())
         for name in subbehaviorNames:
             self.remove_subbehavior(name)
 
-
     ## Returns a list of all subbehaviors
     def all_subbehaviors(self):
-        return [self._subbehavior_info[name]['behavior'] for name in self._subbehavior_info]
+        return [self._subbehavior_info[name]['behavior']
+                for name in self._subbehavior_info]
 
     def all_subbehaviors_completed(self):
-        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
-
+        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()
+                    ])
 
     ## Override StateMachine.spin() so we can call spin() on subbehaviors
     def spin(self):
@@ -74,7 +69,9 @@ class CompositeBehavior(behavior.Behavior):
             # multi-robot behaviors always get spun
             # only spin single robot behaviors when they have a robot
             should_spin = True
-            if isinstance(bhvr, single_robot_behavior.SingleRobotBehavior) and bhvr.robot == None:
+            if isinstance(
+                    bhvr,
+                    single_robot_behavior.SingleRobotBehavior) and bhvr.robot == None:
                 should_spin = False
 
             # try executing the subbehavior
@@ -86,16 +83,15 @@ class CompositeBehavior(behavior.Behavior):
                     exc = sys.exc_info()[0]
                     self.handle_subbehavior_exception(name, exc)
 
-
     ## Override point for exception handling
     # this is called whenever a subbehavior throws an exception during spin()
     # subclasses of CompositeBehavior can override this to perform custom actions, such as removing the offending subbehavior
     # the default implementation logs the exception and re-raises it
     def handle_subbehavior_exception(self, name, exception):
-        logging.error("Exception occurred when spinning subbehavior named '" + name + "': " + str(exception))
+        logging.error("Exception occurred when spinning subbehavior named '" +
+                      name + "': " + str(exception))
         traceback.print_exc()
         raise
-
 
     ## returns a tree of role_requirements
     def role_requirements(self):
@@ -110,14 +106,12 @@ class CompositeBehavior(behavior.Behavior):
             reqs[name] = r
         return reqs
 
-
     # assignments is a tree with the same structure as that returned by role_requirements()
     # the only difference is that leaf nodes are (RoleRequirements, OurRobot) tuples
     # instead of just RoleRequirements
     def assign_roles(self, assignments):
         for name, subtree in assignments.items():
             self.subbehavior_with_name(name).assign_roles(subtree)
-
 
     def __str__(self):
         desc = super().__str__()

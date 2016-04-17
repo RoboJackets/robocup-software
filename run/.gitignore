@@ -26,8 +26,10 @@ libPhysXCore.so.1
 libPhysXLoader.so.1
 robocup.so
 run_tests
-robot2015.bin
+rj-robot.bin
 base2015.bin
+rj-fpga.nib
+rj-kickr.nib
 test-*
 
 /qt_vehicle_demo

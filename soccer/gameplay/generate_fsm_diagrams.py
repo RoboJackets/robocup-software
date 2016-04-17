@@ -5,7 +5,6 @@ import os, errno
 import sys
 import traceback
 
-
 sys.path.append('../../run')
 
 
@@ -25,7 +24,8 @@ import main
 main.init()
 
 for behavior_type in ['skills', 'tactics', 'plays']:
-    entries = class_import.recursive_import_classes('.', [behavior_type], fsm.StateMachine)
+    entries = class_import.recursive_import_classes('.', [behavior_type],
+                                                    fsm.StateMachine)
 
     for entry in entries:
         try:
@@ -37,5 +37,6 @@ for behavior_type in ['skills', 'tactics', 'plays']:
             klass().write_diagram_png(filepath)
             print("generated " + filepath)
         except Exception as e:
-            logging.error("Error generating fsm diagram for behavior '" + klass.__name__ + "':" + str(e))
+            logging.error("Error generating fsm diagram for behavior '" +
+                          klass.__name__ + "':" + str(e))
             traceback.print_exc()

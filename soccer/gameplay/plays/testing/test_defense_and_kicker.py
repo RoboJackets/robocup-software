@@ -9,14 +9,11 @@ import main
 
 ## Runs our Defense tactic and a pivot kicker than tries to score on our defense
 class TestDefenseAndKicker(play.Play):
-
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running,
-            lambda: True,
-            "immediately")
-
+                            behavior.Behavior.State.running, lambda: True,
+                            "immediately")
 
     def on_enter_running(self):
         b = tactics.defense.Defense()

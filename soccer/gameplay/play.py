@@ -7,10 +7,8 @@ import composite_behavior
 # however, by overriding the handles_goalie() class method, a Play can choose to handle
 # the goalie on its own, which allows for greater coordination.
 class Play(composite_behavior.CompositeBehavior):
-
     def __init__(self, continuous):
         super().__init__(continuous)
-
 
     ## Used to determine when to run a play
     # Return float("inf") if the play cannot be used or a score (lower is better) used to select the best play.
@@ -20,8 +18,7 @@ class Play(composite_behavior.CompositeBehavior):
 
     @classmethod
     def is_restart(cls):
-    	return False
-
+        return False
 
     ## Override to opt-in to handling the Goalie
     # By default, the root play allocates and runs the goalie behavior

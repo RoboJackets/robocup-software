@@ -15,6 +15,11 @@
 #include <QActionGroup>
 #include <QMessageBox>
 
+#include <QFile>
+#include <QDir>
+#include <QDateTime>
+#include <QString>
+
 #include <iostream>
 #include <ctime>
 
@@ -136,6 +141,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
+
+    new QShortcut(QKeySequence(Qt::Key_Q), this,
+                  SLOT(on_actionQuicksaveRobotLocations_triggered()));
+    new QShortcut(QKeySequence(Qt::Key_E), this,
+                  SLOT(on_actionQuickloadRobotLocations_triggered()));
 }
 
 void MainWindow::configuration(Configuration* config) {
@@ -161,11 +171,20 @@ void MainWindow::processor(Processor* value) {
 
     _ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
     _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
+
+    if (_processor->logger().recording()) {
+        _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
+                                         _processor->logger().filename());
+        _ui.actionStart_Logging->setEnabled(false);
+    }
 }
 
 void MainWindow::logFileChanged() {
     if (_processor->logger().recording()) {
         _logFile->setText(_processor->logger().filename());
+        _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
+                                         _processor->logger().filename());
+        _ui.actionStart_Logging->setEnabled(false);
     } else {
         _logFile->setText("Not Recording");
     }
@@ -304,9 +323,10 @@ void MainWindow::updateViews() {
              i < liveFrame->debug_layers_size(); ++i) {
             const QString name =
                 QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled = !std::any_of(
-                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
-                [&](QString string) { return string == name; });
+            bool enabled =
+                !std::any_of(defaultHiddenLayers.begin(),
+                             defaultHiddenLayers.end(),
+                             [&](QString string) { return string == name; });
             addLayer(i, name, enabled);
         }
 
@@ -392,11 +412,9 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage)
-                              .c_str());
+                              _processor->refereeModule()->stage).c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command)
-                                .c_str());
+                                _processor->refereeModule()->command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
@@ -675,6 +693,10 @@ void MainWindow::updateStatus() {
     // Some conditions are different in simulation
     bool sim = _processor->simulation();
 
+    if (!sim) {
+        updateRadioBaseStatus(_processor->isRadioOpen());
+    }
+
     // Get processing thread status
     Processor::Status ps = _processor->status();
     RJ::Time curTime = RJ::timestamp();
@@ -772,6 +794,17 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
                 _ui.statusLabel->setStyleSheet("background-color: #ff4040");
                 break;
         }
+    }
+}
+
+void MainWindow::updateRadioBaseStatus(bool usbRadio) {
+    QString label =
+        QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
+    if (_ui.radioBaseStatus->text() != label) {
+        _ui.radioBaseStatus->setText(label);
+        _ui.radioBaseStatus->setStyleSheet(usbRadio
+                                               ? "background-color: #00ff00"
+                                               : "background-color: #ff4040");
     }
 }
 
@@ -878,22 +911,78 @@ void MainWindow::on_actionStopRobots_triggered() {
     SimCommand cmd;
     // TODO: check that this handles threads properly
     for (OurRobot* robot : state()->self) {
-        SimCommand::Robot* r = cmd.add_robots();
-        r->set_shell(robot->shell());
-        r->set_blue_team(processor()->blueTeam());
-        r->mutable_vel()->set_x(0);
-        r->mutable_vel()->set_y(0);
-        r->set_w(0);
+        if (robot->visible) {
+            SimCommand::Robot* r = cmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
     }
     for (OpponentRobot* robot : state()->opp) {
-        SimCommand::Robot* r = cmd.add_robots();
-        r->set_shell(robot->shell());
-        r->set_blue_team(processor()->blueTeam());
-        r->mutable_vel()->set_x(0);
-        r->mutable_vel()->set_y(0);
-        r->set_w(0);
+        if (robot->visible) {
+            SimCommand::Robot* r = cmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(!processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
     }
     _ui.fieldView->sendSimCommand(cmd);
+}
+
+void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
+    _ui.actionQuickloadRobotLocations->setEnabled(true);
+    _quickLoadCmd.reset();
+    for (OurRobot* robot : state()->self) {
+        if (robot->visible) {
+            SimCommand::Robot* r = _quickLoadCmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
+    }
+    for (OpponentRobot* robot : state()->opp) {
+        if (robot->visible) {
+            SimCommand::Robot* r = _quickLoadCmd.add_robots();
+            r->set_shell(robot->shell());
+            r->set_blue_team(!processor()->blueTeam());
+            Geometry2d::Point newPos =
+                _ui.fieldView->getTeamToWorld() * robot->pos;
+            r->mutable_pos()->set_x(newPos.x);
+            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_vel()->set_x(0);
+            r->mutable_vel()->set_y(0);
+            r->set_w(0);
+        }
+    }
+
+    Geometry2d::Point ballPos =
+        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
+    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x);
+    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y);
+    _quickLoadCmd.mutable_ball_vel()->set_x(0);
+    _quickLoadCmd.mutable_ball_vel()->set_y(0);
+}
+
+void MainWindow::on_actionQuickloadRobotLocations_triggered() {
+    _ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
 // Manual control commands
@@ -938,9 +1027,27 @@ void MainWindow::on_actionQuaternion_Demo_toggled(bool value) {
     }
 }
 
-// Gameplay commands
+void MainWindow::on_actionStart_Logging_triggered() {
+    if (!_processor->logger().recording()) {
+        if (!QDir("logs").exists()) {
+            QDir().mkdir("logs");
+        }
 
-void MainWindow::on_menu_Gameplay_aboutToShow() {}
+        QString logFile =
+            QString("logs/") +
+            QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+
+        if (!_processor->openLog(logFile)) {
+            printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
+        } else {
+            _ui.actionStart_Logging->setText(QString("Now Logging to:") +
+                                             logFile);
+            _ui.actionStart_Logging->setEnabled(false);
+        }
+    }
+}
+
+// Gameplay commands
 
 void MainWindow::on_actionSeed_triggered() {
     QString text =
@@ -1053,7 +1160,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction *single = nullptr, *notSingle = nullptr;
+    QAction* single = nullptr, * notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");

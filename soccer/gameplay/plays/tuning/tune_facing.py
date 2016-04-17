@@ -10,11 +10,9 @@ import time
 
 
 class Facer(single_robot_composite_behavior.SingleRobotCompositeBehavior):
-
     class State(enum.Enum):
         rotating = 1
         pausing = 2
-
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -26,39 +24,36 @@ class Facer(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.point = robocup.Point(0, constants.Field.Length / 4.0)
 
         self.add_transition(behavior.Behavior.State.start,
-            Facer.State.rotating,
-            lambda: True,
-            'immediately')
-        self.add_transition(Facer.State.rotating,
-            Facer.State.pausing,
+                            Facer.State.rotating, lambda: True, 'immediately')
+        self.add_transition(
+            Facer.State.rotating, Facer.State.pausing,
             lambda: self.subbehavior_with_name('rotate').state == behavior.Behavior.State.completed,
             'rotated to appropriate angle')
-        self.add_transition(Facer.State.pausing,
-            Facer.State.rotating,
-            lambda: self.done_pausing(),
-            'done pausing')
-
+        self.add_transition(Facer.State.pausing, Facer.State.rotating,
+                            lambda: self.done_pausing(), 'done pausing')
 
     @property
     def angle(self):
         return self._angle
+
     @angle.setter
     def angle(self, value):
         self._angle = value
-    
 
     # where the robot sits on the field as it rotates
     # Default: center of our half of the field
     @property
     def point(self):
         return self._point
+
     @point.setter
     def point(self, value):
         self._point = value
 
-
     def on_enter_rotating(self):
-        self.add_subbehavior(skills.face.Face(self.point, self.angle), 'rotate')
+        self.add_subbehavior(
+            skills.face.Face(self.point, self.angle), 'rotate')
+
     def on_exit_rotating(self):
         self.remove_subbehavior('rotate')
         self.angle += math.pi / 2
@@ -66,12 +61,12 @@ class Facer(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_enter_pausing(self):
         self.add_subbehavior(skills.move.Move(self.point), 'hold')
         self.pause_start_time = time.time()
+
     def on_exit_pausing(self):
         self.remove_subbehavior('hold')
 
     def done_pausing(self):
         return (time.time() - self.pause_start_time) > 1.5
-
 
 
 ## This play rotates the bot 90 degrees, pauses, and repeats

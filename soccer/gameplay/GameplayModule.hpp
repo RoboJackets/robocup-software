@@ -16,6 +16,7 @@
 #include <QString>
 
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <Configuration.hpp>
 
 class OurRobot;
 class SystemState;
@@ -101,6 +102,10 @@ public:
 
     void calculateFieldObstacles();
 
+    bool hasFieldEdgeInsetChanged() const;
+
+    static void createConfiguration(Configuration* cfg);
+
     /**
      * Returns the current set of global obstacles, including the field
      */
@@ -119,6 +124,9 @@ private:
     /// This protects all of Gameplay.
     /// This is held while plays are running.
     QMutex _mutex;
+
+    static ConfigDouble* _fieldEdgeInset;
+    double _oldFieldEdgeInset;
 
     SystemState* _state;
 

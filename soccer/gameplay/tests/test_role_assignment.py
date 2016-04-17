@@ -32,7 +32,6 @@ class TestRoleAssignment(unittest.TestCase):
         self.assertEqual(assignments['role1'][1], bot1)
         self.assertEqual(assignments['role2'][1], bot2)
 
-
     def test_not_enough_bots(self):
         """If there's not enough robots to do an assignment, it should raise an error"""
 
@@ -49,6 +48,4 @@ class TestRoleAssignment(unittest.TestCase):
 
         req_tree = {'role1': req1, 'role2': req2}
         self.assertRaises(role_assignment.ImpossibleAssignmentError,
-            role_assignment.assign_roles,
-            [bot1],
-            req_tree)
+                          role_assignment.assign_roles, [bot1], req_tree)

@@ -830,35 +830,70 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="statusLabel">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-        <property name="text">
-         <string>STATUS</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="margin">
-         <number>4</number>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="StatusLayout">
+        <item>
+         <widget class="QLabel" name="statusLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="text">
+           <string>STATUS</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="margin">
+           <number>4</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="radioBaseStatus">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Box</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="text">
+           <string>Simulator Radio</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="margin">
+           <number>4</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -1359,7 +1394,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <widget class="QListWidget" name="robotStatusList">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -1367,7 +1402,13 @@ p, li { white-space: pre-wrap; }
           <property name="minimumSize">
            <size>
             <width>300</width>
-            <height>378</height>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>300</width>
+            <height>1000</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -1816,7 +1857,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1874,6 +1915,9 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionStopBall"/>
     <addaction name="actionResetField"/>
     <addaction name="actionStopRobots"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuicksaveRobotLocations"/>
+    <addaction name="actionQuickloadRobotLocations"/>
    </widget>
    <widget class="QMenu" name="menu_Debug">
     <property name="title">
@@ -1881,6 +1925,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionRestartUpdateTimer"/>
     <addaction name="actionQuaternion_Demo"/>
+    <addaction name="actionStart_Logging"/>
    </widget>
    <widget class="QMenu" name="menu_Gameplay">
     <property name="title">
@@ -2085,7 +2130,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionStopRobots">
    <property name="text">
-    <string>S&amp;top Robots</string>
+    <string>&amp;Stop Robots</string>
    </property>
   </action>
   <action name="action904MHz">
@@ -2206,6 +2251,24 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Use Field-Oriented Controls</string>
+   </property>
+  </action>
+  <action name="actionQuicksaveRobotLocations">
+   <property name="text">
+    <string>Quicksave Robot Locations</string>
+   </property>
+  </action>
+  <action name="actionQuickloadRobotLocations">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Quickload Robot Locations</string>
+   </property>
+  </action>
+  <action name="actionStart_Logging">
+   <property name="text">
+    <string>Start Logging</string>
    </property>
   </action>
  </widget>

@@ -25,12 +25,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     KickPower = 0.6
 
-
     class State(enum.Enum):
-        preparing = 1   # the kicker is aiming and the receiver is getting ready
-        kicking = 2     # waiting for the kicker to kick
-        receiving = 3   # the kicker has kicked and the receiver is trying to get the ball
-
+        preparing = 1  # the kicker is aiming and the receiver is getting ready
+        kicking = 2  # waiting for the kicker to kick
+        receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
 
     ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
     # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
@@ -48,39 +46,36 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         for state in CoordinatedPass.State:
             self.add_state(state, behavior.Behavior.State.running)
 
-
         self.add_transition(behavior.Behavior.State.start,
-            CoordinatedPass.State.preparing,
-            lambda: True,
-            'immediately')
+                            CoordinatedPass.State.preparing, lambda: True,
+                            'immediately')
 
-        self.add_transition(CoordinatedPass.State.preparing,
-            CoordinatedPass.State.kicking,
-            lambda: (self.subbehavior_with_name('kicker').state == skills.pivot_kick.PivotKick.State.aimed
-                and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
+        self.add_transition(
+            CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
+            lambda: (self.subbehavior_with_name('kicker').state == skills.pivot_kick.PivotKick.State.aimed and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
 
-        self.add_transition(CoordinatedPass.State.kicking,
-            CoordinatedPass.State.receiving,
+        self.add_transition(
+            CoordinatedPass.State.kicking, CoordinatedPass.State.receiving,
             lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.completed,
             'kicker kicked')
 
-        self.add_transition(CoordinatedPass.State.receiving,
-            behavior.Behavior.State.completed,
+        self.add_transition(
+            CoordinatedPass.State.receiving, behavior.Behavior.State.completed,
             lambda: self.subbehavior_with_name('receiver').state == behavior.Behavior.State.completed,
             'pass received!')
 
-        self.add_transition(CoordinatedPass.State.receiving,
-            behavior.Behavior.State.failed,
+        self.add_transition(
+            CoordinatedPass.State.receiving, behavior.Behavior.State.failed,
             lambda: self.subbehavior_with_name('receiver').state == behavior.Behavior.State.failed,
             'pass failed :(')
-
 
     # set the location where the receiving bot should camp out and wait for the ball
     # Default: None
     @property
     def receive_point(self):
         return self._receive_point
+
     @receive_point.setter
     def receive_point(self, value):
         self._receive_point = value
@@ -89,9 +84,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if self.has_subbehavior_with_name('kicker'):
             self.subbehavior_with_name('kicker').target = self.receive_point
         if self.has_subbehavior_with_name('receiver'):
-            self.subbehavior_with_name('receiver').receive_point = self.receive_point
-
-
+            self.subbehavior_with_name(
+                'receiver').receive_point = self.receive_point
 
     def on_enter_running(self):
         receiver = self.skillreceiver
@@ -99,14 +93,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiver.receive_point = self.receive_point
         self.add_subbehavior(receiver, 'receiver', required=True)
 
-
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
-
     def on_enter_kicking(self):
         self.subbehavior_with_name('kicker').enable_kick = True
-
 
     def on_enter_preparing(self):
         kicker = skills.pivot_kick.PivotKick()
@@ -118,7 +109,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if (kickpower > 1.0):
             kickpower = 1.0
         kicker.kick_power = kickpower
-        kicker.enable_kick = False # we'll re-enable kick once both bots are ready
+        kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
         kicker.aim_params['error_threshold'] = 0.2
@@ -130,7 +121,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         # receive point renegotiation
         self._last_unsteady_time = None
         self._has_renegotiated_receive_point = False
-
 
     def execute_running(self):
         # The shot obstacle doesn't apply to the receiver
@@ -154,35 +144,31 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             toReturn.extend([kicker.robot])
         return toReturn
 
-
     def execute_preparing(self):
         kicker = self.subbehavior_with_name('kicker')
 
         # receive point renegotiation
         # if the kicker sits there aiming close to target and gets stuck,
         # we set the receive point to the point the kicker is currently aiming at
-        if kicker.current_shot_point() != None and not self._has_renegotiated_receive_point:
-            if (not kicker.is_steady()
-                and kicker.state == skills.pivot_kick.PivotKick.State.aiming):
+        if kicker.current_shot_point(
+        ) != None and not self._has_renegotiated_receive_point:
+            if (not kicker.is_steady() and
+                    kicker.state == skills.pivot_kick.PivotKick.State.aiming):
                 self._last_unsteady_time = time.time()
 
-            if (self._last_unsteady_time != None
-                and time.time() - self._last_unsteady_time > 0.75
-                and kicker.current_shot_point().dist_to(self.receive_point) < 0.1):
+            if (self._last_unsteady_time != None and
+                    time.time() - self._last_unsteady_time > 0.75 and
+                    kicker.current_shot_point().dist_to(self.receive_point) <
+                    0.1):
                 # renegotiate receive_point
                 logging.info("Pass renegotiated RCV PT")
                 self.receive_point = kicker.current_shot_point()
                 self._has_renegotiated_receive_point = True
 
-
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
         self.subbehavior_with_name('receiver').ball_kicked = True
         self.remove_subbehavior('kicker')
-
-        
-
-
 
     def __str__(self):
         desc = super().__str__()

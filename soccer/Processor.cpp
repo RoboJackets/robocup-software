@@ -64,6 +64,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     firstLogTime = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
+    _initialized = false;
 
     _simulation = sim;
     _radio = nullptr;
@@ -223,8 +224,8 @@ void Processor::run() {
     vision.start();
 
     // Create radio socket
-    _radio =
-        _simulation ? (Radio*)new SimRadio(_blueTeam) : (Radio*)new USBRadio();
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+                         : static_cast<Radio*>(new USBRadio());
 
     Status curStatus;
 
@@ -408,6 +409,11 @@ void Processor::run() {
         // Run high-level soccer logic
         _gameplayModule->run();
 
+        // recalculates Field obstacles on every run through to account for
+        // changing inset
+        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
+            _gameplayModule->calculateFieldObstacles();
+        }
         /// Collect global obstacles
         Geometry2d::ShapeSet globalObstacles =
             _gameplayModule->globalObstacles();
@@ -573,6 +579,9 @@ void Processor::run() {
         _status = curStatus;
         _statusMutex.unlock();
 
+        // Processor Initialization Completed
+        _initialized = true;
+
         ////////////////
         // Timing
 
@@ -589,7 +598,6 @@ void Processor::run() {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
-
     vision.stop();
 }
 
@@ -657,33 +665,39 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize* fieldSize) {
 
 void Processor::sendRadioData() {
     Packet::RadioTx* tx = _state.logFrame->mutable_radio_tx();
+    tx->set_txmode(Packet::RadioTx::UNICAST);
 
     // Halt overrides normal motion control, but not joystick
     if (_state.gameState.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _state.self) {
-            Packet::RadioTx::Robot& txRobot = r->radioTx;
-            txRobot.set_body_x(0);
-            txRobot.set_body_y(0);
-            txRobot.set_body_w(0);
-            txRobot.set_kick(0);
-            txRobot.set_dribbler(0);
+            Packet::Control* control = r->control;
+            control->set_xvelocity(0);
+            control->set_yvelocity(0);
+            control->set_avelocity(0);
+            control->set_dvelocity(0);
+            control->set_kcstrength(0);
+            control->set_shootmode(Packet::Control::KICK);
+            control->set_triggermode(Packet::Control::STAND_DOWN);
+            control->set_song(Packet::Control::STOP);
         }
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
-            Packet::RadioTx::Robot* txRobot = tx->add_robots();
+            Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
             // number of motors.
-            txRobot->CopyFrom(r->radioTx);
+            txRobot->CopyFrom(r->robotPacket);
 
             if (r->shell() == _manualID) {
-                JoystickControlValues controlVals = getJoystickControlValues();
-                applyJoystickControls(controlVals, txRobot, r);
+                const JoystickControlValues controlVals =
+                    getJoystickControlValues();
+                applyJoystickControls(controlVals, txRobot->mutable_control(),
+                                      r);
             }
         }
     }
@@ -694,8 +708,7 @@ void Processor::sendRadioData() {
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::RadioTx::Robot* tx,
-                                      OurRobot* robot) {
+                                      Packet::Control* tx, OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -709,20 +722,22 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     }
 
     // translation
-    tx->set_body_x(translation.x);
-    tx->set_body_y(translation.y);
+    tx->set_xvelocity(translation.x);
+    tx->set_yvelocity(translation.y);
 
     // rotation
-    tx->set_body_w(controlVals.rotation);
+    tx->set_avelocity(controlVals.rotation);
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_kick_immediate(kick);
-    tx->set_kick(kick ? controlVals.kickPower : 0);
-    tx->set_use_chipper(controlVals.chip);
+    tx->set_triggermode(kick ? Packet::Control::IMMEDIATE
+                             : Packet::Control::STAND_DOWN);
+    tx->set_kcstrength(controlVals.kickPower);
+    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
+                                       : Packet::Control::CHIP);
 
     // dribbler
-    tx->set_dribbler(controlVals.dribble ? controlVals.dribblerPower : 0);
+    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValues() {
@@ -805,5 +820,7 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
-    _gameplayModule->sendFieldDimensionsToPython();
 }
+
+bool Processor::isRadioOpen() const { return _radio->isOpen(); }
+bool Processor::isInitialized() const { return _initialized; }

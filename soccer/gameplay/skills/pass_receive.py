@@ -9,12 +9,14 @@ import time
 import role_assignment
 import skills
 
+
 ## PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
 # It transitions to the 'aligned' state once it's there within its error thresholds and is steady
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class PassReceive(
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
@@ -29,7 +31,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     ## we have to be going slower than this to be considered 'steady'
     SteadyMaxVel = 0.04
-    SteadyMaxAngleVel = 3   # degrees / second
+    SteadyMaxAngleVel = 3  # degrees / second
 
     MarginAngle = math.pi / 18
     StabilizationFrames = 3
@@ -45,7 +47,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
 
-
     def __init__(self):
         super().__init__(continuous=False)
 
@@ -58,81 +59,72 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.stable_frame = 0
         self.kicked_time = 0
 
-
         for state in PassReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
 
-
         self.add_transition(behavior.Behavior.State.start,
-            PassReceive.State.aligning,
-            lambda: True,
-            'immediately')
+                            PassReceive.State.aligning, lambda: True,
+                            'immediately')
 
-        self.add_transition(PassReceive.State.aligning,
-            PassReceive.State.aligned,
+        self.add_transition(
+            PassReceive.State.aligning, PassReceive.State.aligned,
             lambda: self.errors_below_thresholds() and self.is_steady() and not self.ball_kicked,
             'steady and in position to receive')
 
-        self.add_transition(PassReceive.State.aligned,
-            PassReceive.State.aligning,
+        self.add_transition(
+            PassReceive.State.aligned, PassReceive.State.aligning,
             lambda: (not self.errors_below_thresholds() or not self.is_steady()) and not self.ball_kicked,
             'not in receive position')
 
         for state in [PassReceive.State.aligning, PassReceive.State.aligned]:
-            self.add_transition(state,
-                PassReceive.State.receiving,
-                lambda: self.ball_kicked,
-                'ball kicked')
+            self.add_transition(state, PassReceive.State.receiving,
+                                lambda: self.ball_kicked, 'ball kicked')
 
         self.add_transition(PassReceive.State.receiving,
-            behavior.Behavior.State.completed,
-            lambda: self.robot.has_ball(),
-            'ball received!')
+                            behavior.Behavior.State.completed,
+                            lambda: self.robot.has_ball(), 'ball received!')
 
-        self.add_transition(PassReceive.State.receiving,
-            behavior.Behavior.State.failed,
+        self.add_transition(
+            PassReceive.State.receiving, behavior.Behavior.State.failed,
             lambda: self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
-
-
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
     # Default: False
     @property
     def ball_kicked(self):
         return self._ball_kicked
+
     @ball_kicked.setter
     def ball_kicked(self, value):
         self._ball_kicked = value
         if value:
             self._ball_kick_time = time.time()
 
-
     ## The point that the receiver should expect the ball to hit it's mouth
     # Default: None
     @property
     def receive_point(self):
         return self._receive_point
+
     @receive_point.setter
     def receive_point(self, value):
         self._receive_point = value
         self.recalculate()
-
 
     ## returns True if we're facing the right direction and in the right position and steady
     def errors_below_thresholds(self):
         if self.receive_point == None:
             return False
 
-        return (abs(self._angle_error) < PassReceive.FaceAngleErrorThreshold
-            and abs(self._x_error) < PassReceive.PositionXErrorThreshold
-            and abs(self._y_error) < PassReceive.PositionYErrorThreshold)
-
+        return (
+            abs(self._angle_error) < PassReceive.FaceAngleErrorThreshold and
+            abs(self._x_error) < PassReceive.PositionXErrorThreshold and
+            abs(self._y_error) < PassReceive.PositionYErrorThreshold)
 
     def is_steady(self):
-        return (self.robot.vel.mag() < PassReceive.SteadyMaxVel
-            and abs(self.robot.angle_vel) < PassReceive.SteadyMaxAngleVel)
-
+        return (self.robot.vel.mag() < PassReceive.SteadyMaxVel and
+                abs(self.robot.angle_vel) < PassReceive.SteadyMaxAngleVel)
 
     # calculates:
     # self._pass_line - the line from the ball along where we think we're going
@@ -145,12 +137,11 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         if self.receive_point == None or self.robot == None:
             return
 
-
         ball = main.ball()
 
         if self.ball_kicked:
             # when the ball's in motion, the line is based on the ball's velocity
-            self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel*10)
+            self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel * 10)
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
@@ -159,29 +150,27 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         angle_rad = self.robot.angle
         self._angle_error = target_angle_rad - angle_rad
 
-
         if self.ball_kicked:
-            actual_receive_point = self._pass_line.nearest_point(self.robot.pos)
+            actual_receive_point = self._pass_line.nearest_point(
+                self.robot.pos)
         else:
             actual_receive_point = self.receive_point
 
-        pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
+        pass_line_dir = (
+            self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
 
-
         # vector pointing down the pass line toward the kicker
-        pass_dir = (self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
+        pass_dir = (
+            self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
 
         pos_error = self._target_pos - self.robot.pos
         self._x_error = pos_error.dot(pass_dir.perp_ccw())
         self._y_error = pos_error.dot(pass_dir)
 
-
-
     def on_exit_start(self):
         # reset
         self.ball_kicked = False
-
 
     def execute_running(self):
         # make sure teammates don't bump into us
@@ -191,10 +180,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.face(main.ball().pos)
 
         if self._pass_line != None:
-            main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
-            main.system_state().draw_circle(self._target_pos, 0.03, constants.Colors.Blue, "Pass")
-
-
+            main.system_state().draw_line(self._pass_line,
+                                          constants.Colors.Blue, "Pass")
+            main.system_state().draw_circle(self._target_pos, 0.03,
+                                            constants.Colors.Blue, "Pass")
 
     def execute_aligning(self):
         if self._target_pos != None:
@@ -202,7 +191,8 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def reset_correct_location(self):
         # Extrapolate center of robot location from kick velocity
-        self.kicked_from = main.ball().pos #- (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
+        self.kicked_from = main.ball(
+        ).pos  #- (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
         self.kicked_vel = main.ball().vel
 
     def on_enter_receiving(self):
@@ -231,11 +221,11 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         pass_distance = pass_segment.mag() + 0.5
         pass_dir = pass_segment.normalized()
 
-        left_kick =  robocup.Point(-offset, -offset)
-        right_kick =  robocup.Point(offset, -offset)
+        left_kick = robocup.Point(-offset, -offset)
+        right_kick = robocup.Point(offset, -offset)
 
         # Create a channel on the left/right of the mouth of the kicker to a bit behind the receiver
-        left_recieve = left_kick + straight_line * pass_distance;
+        left_recieve = left_kick + straight_line * pass_distance
         right_recieve = right_kick + straight_line * pass_distance
 
         # Widen the channel to allow for catching the ball.
@@ -245,11 +235,11 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         origin = robocup.Point(0, 0)
 
         passDirRadians = pass_dir.angle()
-        left_kick.rotate(origin, passDirRadians - math.pi/2)
-        right_kick.rotate(origin, passDirRadians - math.pi/2)
+        left_kick.rotate(origin, passDirRadians - math.pi / 2)
+        right_kick.rotate(origin, passDirRadians - math.pi / 2)
 
-        left_recieve.rotate(origin, passDirRadians - math.pi/2)
-        right_recieve.rotate(origin, passDirRadians - math.pi/2)
+        left_recieve.rotate(origin, passDirRadians - math.pi / 2)
+        right_recieve.rotate(origin, passDirRadians - math.pi / 2)
 
         # Add points that create the good_area to a polygon
         good_area = robocup.Polygon()
@@ -259,9 +249,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         good_area.add_vertex(self.kicked_from + right_recieve)
         good_area.add_vertex(self.kicked_from + left_recieve)
 
-        main.system_state().draw_raw_polygon(good_area, constants.Colors.Green, "Good Pass Area")
+        main.system_state().draw_raw_polygon(good_area, constants.Colors.Green,
+                                             "Good Pass Area")
         return not good_area.contains_point(main.ball().pos)
-
 
     def execute_receiving(self):
         # Freeze ball position and velocity once Stabilizationframes is up.
@@ -285,7 +275,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             elif self.receive_point != None:
                 req.destination_shape = self.receive_point
         return reqs
-
 
     def __str__(self):
         desc = super().__str__()

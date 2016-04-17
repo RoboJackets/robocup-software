@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Define some colors because...why not?
+
+export R1="$(tput setab 9)"
+export R2="$(tput setaf 9)"
+export AOFF="$(tput sgr0)"     # Attributes off
+export R="$AOFF$R1$R2"
+
+# bold/normal font types   
+export INVT="$(tput smso)"
+export BOLD="$(tput bold)"
+export NORM="$(tput rmso)"
+
+# Foreground Colors
+export BLACK="$(tput setaf 0)"
+export RED="$(tput setaf 1)"
+export GREEN="$(tput setaf 2)"
+export YELLOW="$(tput setaf 3)"
+export BLUE="$(tput setaf 4)"
+export PURP="$(tput setaf 5)"
+export CYAN="$(tput setaf 6)"
+export WHITE="$(tput setaf 7)"
+
+# Background colors
+export BLACKBG="$(tput setab 0)"
+export REDBG="$(tput setab 1)"
+export GREENBG="$(tput setab 2)"
+export YELLOWBG="$(tput setab 3)"
+export BLUEBG="$(tput setab 4)"
+export PURPBG="$(tput setab 5)"
+export CYANBG="$(tput setab 6)"
+export WHITEBG="$(tput setab 7)"
+
+# Insert a blank line
+export CLRLN="$(tput el1)"
+export PUTLN="$CLRLN$(tput ich $(tput cols))"
+export FINLN="$(tput el)"
+
