@@ -14,10 +14,9 @@ void ASSERT_IS_ADDR(uint16_t addr) {
 // TODO(justin): remove this
 CC1201* global_radio = nullptr;
 
-CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName nCs,
-               PinName intPin, const registerSetting_t* regs, size_t len,
-               int rssiOffset)
-    : CommLink(mosi, miso, sck, nCs, intPin) {
+CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
+               const registerSetting_t* regs, size_t len, int rssiOffset)
+    : CommLink(sharedSPI, nCs, intPin) {
     reset();
     selfTest();
 
@@ -59,11 +58,11 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     strobe(CC1201_STROBE_SIDLE);
 
     // Send the data to the CC1201.
-    radio_select();
+    chipSelect();
     uint8_t device_state =
-        _spi.write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
-    for (uint8_t i = 0; i < size; i++) _spi.write(buf[i]);
-    radio_deselect();
+        _spi->write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
+    for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
+    chipDeselect();
 
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
@@ -113,12 +112,12 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     }
 
     if (num_rx_bytes > 0) {
-        radio_select();
-        _spi.write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
+        chipSelect();
+        _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
         for (int i = 0; i < num_rx_bytes; i++) {
-            buf->push_back(_spi.write(CC1201_STROBE_SNOP));
+            buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
-        radio_deselect();
+        chipDeselect();
 
         LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
             (*buf)[0]);
@@ -139,15 +138,15 @@ uint8_t CC1201::readReg(uint16_t addr) {
 
     uint8_t returnVal;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
-        _spi.write(CC1201_EXTENDED_ACCESS | CC1201_READ);
-        _spi.write(addr & 0xFF);
+        _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ);
+        _spi->write(addr & 0xFF);
     } else {
-        _spi.write(addr | CC1201_READ);
+        _spi->write(addr | CC1201_READ);
     }
-    returnVal = _spi.write(0x00);
-    radio_deselect();
+    returnVal = _spi->write(0x00);
+    chipDeselect();
 
     return returnVal;
 }
@@ -157,16 +156,16 @@ uint8_t CC1201::readReg(uint16_t addr, uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
-            _spi.write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
-        _spi.write(addr & 0xFF);
+            _spi->write(CC1201_EXTENDED_ACCESS | CC1201_READ | CC1201_BURST);
+        _spi->write(addr & 0xFF);
     } else {
-        status_byte = _spi.write(addr | CC1201_READ | CC1201_BURST);
+        status_byte = _spi->write(addr | CC1201_READ | CC1201_BURST);
     }
-    for (uint8_t i = 0; i < len; i++) buffer[i] = _spi.write(0x00);
-    radio_deselect();
+    for (uint8_t i = 0; i < len; i++) buffer[i] = _spi->write(0x00);
+    chipDeselect();
 
     return status_byte;
 }
@@ -176,15 +175,15 @@ uint8_t CC1201::writeReg(uint16_t addr, uint8_t value) {
 
     uint8_t status_byte;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
-        status_byte = _spi.write(CC1201_EXTENDED_ACCESS | CC1201_WRITE);
-        _spi.write(addr & 0xFF);
+        status_byte = _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE);
+        _spi->write(addr & 0xFF);
     } else {
-        status_byte = _spi.write(addr);
+        status_byte = _spi->write(addr);
     }
-    _spi.write(value);
-    radio_deselect();
+    _spi->write(value);
+    chipDeselect();
 
     return status_byte;
 }
@@ -194,17 +193,17 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
 
     uint8_t status_byte;
 
-    radio_select();
+    chipSelect();
     if (addr >= CC1201_EXTENDED_ACCESS) {
         status_byte =
-            _spi.write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
-        _spi.write(addr & 0xFF);  // write lower byte of address
+            _spi->write(CC1201_EXTENDED_ACCESS | CC1201_WRITE | CC1201_BURST);
+        _spi->write(addr & 0xFF);  // write lower byte of address
     } else {
         // write lower byte of address
-        status_byte = _spi.write(addr | CC1201_WRITE | CC1201_BURST);
+        status_byte = _spi->write(addr | CC1201_WRITE | CC1201_BURST);
     }
-    for (uint8_t i = 0; i < len; i++) _spi.write(buffer[i]);
-    radio_deselect();
+    for (uint8_t i = 0; i < len; i++) _spi->write(buffer[i]);
+    chipDeselect();
 
     return status_byte;
 }
@@ -215,9 +214,9 @@ uint8_t CC1201::strobe(uint8_t addr) {
         return -1;
     }
 
-    radio_select();
-    uint8_t ret = _spi.write(addr);
-    radio_deselect();
+    chipSelect();
+    uint8_t ret = _spi->write(addr);
+    chipDeselect();
 
     // If debug is enabled, we wait for a brief interval, then send a NOP to get
     // the radio's status, then log it to the console
@@ -227,9 +226,9 @@ uint8_t CC1201::strobe(uint8_t addr) {
         int delay = 2;
         Thread::wait(delay);
 
-        radio_select();
-        uint8_t ret2 = _spi.write(CC1201_STROBE_SNOP);
-        radio_deselect();
+        chipSelect();
+        uint8_t ret2 = _spi->write(CC1201_STROBE_SNOP);
+        chipDeselect();
 
         const char* strobe_names[] = {
             "RES",     // 0x30
@@ -274,9 +273,9 @@ uint8_t CC1201::mode() { return 0x1F & readReg(CC1201_MARCSTATE); }
 
 void CC1201::reset() {
     idle();
-    radio_select();
-    _spi.write(CC1201_STROBE_SRES);
-    radio_deselect();
+    chipSelect();
+    _spi->write(CC1201_STROBE_SRES);
+    chipDeselect();
 
     // Wait up to 300ms for the radio to do anything. Don't block everything
     // else if it doesn't startup correctly

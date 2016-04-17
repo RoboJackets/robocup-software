@@ -32,6 +32,7 @@ avr-libc                # requires `brew tap osx-cross/avr`
 # firmware - optional
 # open-ocd
 # avrdude --with-usb
+# icarus-verilog # used to synthesize and simulate verilog code on the computer
 
 # firmware - not required, but maybe needed for better bash scripting support?
 # binutils

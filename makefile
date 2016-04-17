@@ -1,6 +1,6 @@
 MAKE_FLAGS = --no-print-directory
 TESTS = *
-FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny
+FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -77,6 +77,11 @@ base-prog: base2015-prog
 kicker: kicker2015
 kicker-prog: kicker2015-prog
 firmware: firmware2015
+
+fpga2015-test:
+	$(call cmake_build_target_fw, fpga2015_iverilog)
+fpga2015-test-strict:
+	$(call cmake_build_target_fw, fpga2015_iverilog_strict)
 
 # robot 2015 firmware
 robot2015:
@@ -187,11 +192,11 @@ apidocs:
 STYLIZE_DIFFBASE ?= master
 STYLE_EXCLUDE_DIRS=build \
 	external \
-	firmware/robot/cpu/at91sam7s256 \
-	firmware/robot/cpu/at91sam7s321 \
-	firmware/robot/cpu/at91sam7s64 \
-	firmware/robot/cpu/usb \
-	firmware/robot/cpu/invensense
+	firmware/robot2011/cpu/at91sam7s256 \
+	firmware/robot2011/cpu/at91sam7s321 \
+	firmware/robot2011/cpu/at91sam7s64 \
+	firmware/robot2011/cpu/usb \
+	firmware/robot2011/cpu/invensense
 # automatically format code according to our style config defined in .clang-format
 pretty:
 	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
