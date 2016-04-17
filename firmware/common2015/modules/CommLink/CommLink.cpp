@@ -8,16 +8,13 @@
 
 const char* COMM_ERR_STRING[] = {FOREACH_COMM_ERR(GENERATE_STRING)};
 
-CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName nCs,
+CommLink::CommLink(shared_ptr<SharedSPI> sharedSPI, PinName nCs,
                    PinName int_pin)
-    : _spi(mosi, miso, sck),
-      _nCs(nCs, 1),
+    : SharedSPIDevice(sharedSPI, nCs, true),
       _int_in(int_pin),
       _rxThread(&CommLink::rxThreadHelper, this, osPriorityNormal,
                 DEFAULT_STACK_SIZE / 2) {
-    _spi.format(8, 0);
-    _spi.frequency(DEFAULT_BAUD);
-
+    setSPIFrequency(5000000);
     _int_in.mode(PullUp);
 }
 
@@ -31,7 +28,7 @@ void CommLink::rxThread() {
     const osPriority threadPriority = _rxThread.get_priority();
 
     LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
-        _rxThread.gettid(), threadPriority);
+        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     // Set the function to call on an interrupt trigger
     _int_in.rise(this, &CommLink::ISR);
@@ -54,7 +51,7 @@ void CommLink::rxThread() {
         if (response == COMM_SUCCESS) {
             // Write the data to the CommModule object's rxQueue
             p.recv(buf);
-            CommModule::Instance()->receive(p);
+            CommModule::Instance->receive(p);
         }
     }
 }
@@ -69,7 +66,3 @@ void CommLink::sendPacket(rtp::packet* p) {
 }
 
 void CommLink::ISR() { _rxThread.signal_set(COMM_LINK_SIGNAL_RX_TRIGGER); }
-
-void CommLink::radio_select() { _nCs = 0; }
-
-void CommLink::radio_deselect() { _nCs = 1; }

@@ -14,6 +14,7 @@
 #include "task-signals.hpp"
 #include "io-expander.hpp"
 #include "fpga.hpp"
+#include "TimeoutLED.hpp"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ using namespace std;
  */
 void loopback_ack_pck(rtp::packet* p) {
     rtp::packet ack_pck = *p;
-    CommModule::Instance()->send(ack_pck);
+    CommModule::Instance->send(ack_pck);
 }
 
 void legacy_rx_cb(rtp::packet* p) {
@@ -63,32 +64,24 @@ void loopback_tx_cb(rtp::packet* p) {
         LOG(WARN, "Sent empty packet on loopback interface");
     }
 
-    CommModule::Instance()->receive(*p);
+    CommModule::Instance->receive(*p);
 }
 
-// Setup some lights that will blink whenever we send/receive packets
-const DigitalInOut tx_led(RJ_TX_LED, PIN_OUTPUT, OpenDrain, 1);
-const DigitalInOut rx_led(RJ_RX_LED, PIN_OUTPUT, OpenDrain, 1);
+void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
+    // leds that flash if tx/rx have happened recently
+    auto rxTimeoutLED =
+        make_shared<FlashingTimeoutLED>(DigitalOut(RJ_RX_LED, OpenDrain));
+    auto txTimeoutLED =
+        make_shared<FlashingTimeoutLED>(DigitalOut(RJ_TX_LED, OpenDrain));
 
-shared_ptr<RtosTimer> rx_led_ticker;
-shared_ptr<RtosTimer> tx_led_ticker;
-
-void InitializeCommModule() {
     // Startup the CommModule interface
-    shared_ptr<CommModule> commModule = CommModule::Instance();
-
-    // initialize and start LED ticker timers
-    rx_led_ticker = make_shared<RtosTimer>(commLightsTask_RX, osTimerPeriodic,
-                                           (void*)&rx_led);
-    tx_led_ticker = make_shared<RtosTimer>(commLightsTask_TX, osTimerPeriodic,
-                                           (void*)&tx_led);
-    rx_led_ticker->start(80);
-    tx_led_ticker->start(80);
+    CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
+    shared_ptr<CommModule> commModule = CommModule::Instance;
 
     // TODO(justin): make this non-global
     // Create a new physical hardware communication link
     global_radio =
-        new CC1201(RJ_SPI_BUS, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+        new CC1201(sharedSPI, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
                    sizeof(preferredSettings) / sizeof(registerSetting_t));
 
     // Open a socket for running tests across the link layer

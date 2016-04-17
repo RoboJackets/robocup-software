@@ -8,7 +8,7 @@ include(MbedUtil)
 # turn build options on/off with there cmake options
 rj_add_op( MBED_WITH_RTOS      "Include mbed RTOS support"                 ON    )
 rj_add_op( MBED_WITH_RPC       "Include mbed RPC support"                  ON    )
-rj_add_op( MBED_WITH_USB       "Include mbed USB support"                  OFF   )
+rj_add_op( MBED_WITH_USB       "Include mbed USB support"                  ON   )
 rj_add_op( MBED_WITH_USB_HOST  "Include mbed USB Host support"             OFF   )
 rj_add_op( MBED_WITH_ETH       "Include mbed ethernet/networking support"  OFF   )
 rj_add_op( MBED_WITH_DSP       "Include mbed DSP support"                  OFF   )

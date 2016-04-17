@@ -10,27 +10,24 @@ using namespace std;
 
 #define COMM_MODULE_SIGNAL_START_THREAD (1 << 0)
 
-std::shared_ptr<CommModule> CommModule::instance;
+std::shared_ptr<CommModule> CommModule::Instance;
 
 CommModule::~CommModule() {
     // note: the destructor for the Thread class automatically calls
     // terminate(), so we don't have to do it here.
 }
 
-CommModule::CommModule()
+CommModule::CommModule(std::shared_ptr<FlashingTimeoutLED> rxTimeoutLED,
+                       std::shared_ptr<FlashingTimeoutLED> txTimeoutLED)
     : _rxThread(&CommModule::rxThreadHelper, this, osPriorityAboveNormal,
                 DEFAULT_STACK_SIZE / 2),
       _txThread(&CommModule::txThreadHelper, this, osPriorityHigh,
-                DEFAULT_STACK_SIZE / 2) {
+                DEFAULT_STACK_SIZE / 2),
+      _rxTimeoutLED(rxTimeoutLED),
+      _txTimeoutLED(txTimeoutLED) {
     // Create the data queues.
     _txQueue = osMailCreate(_txQueueHelper.def(), nullptr);
     _rxQueue = osMailCreate(_rxQueueHelper.def(), nullptr);
-}
-
-shared_ptr<CommModule>& CommModule::Instance() {
-    if (!instance) instance.reset(new CommModule);
-
-    return instance;
 }
 
 void CommModule::rxThreadHelper(void const* moduleInst) {
@@ -50,14 +47,9 @@ void CommModule::txThread() {
     // Store our priority so we know what to reset it to if ever needed
     const osPriority threadPriority = _txThread.get_priority();
 
-    // Start up a ticker that disables the strobing TX LED. This is essentially
-    // a watchdog timer for the TX LED's activity light
-    RtosTimer led_ticker_timeout(commLightsTimeout_TX, osTimerOnce, nullptr);
-
     LOG(INIT,
-        "TX communication module ready!\r\n    Thread ID:\t%u\r\n    "
-        "Priority:\t%d",
-        _txThread.gettid(), threadPriority);
+        "TX communication module ready!\r\n    Thread ID: %u, Priority: %d",
+        ((P_TCB)_txThread.gettid())->task_id, threadPriority);
 
     // Signal to the RX thread that it can begin
     _rxThread.signal_set(COMM_MODULE_SIGNAL_START_THREAD);
@@ -87,8 +79,7 @@ void CommModule::txThread() {
             // this renews a countdown for turning off the
             // strobing thread once it expires
             if (p->address() != 127) {
-                led_ticker_timeout.start(275);
-                commLightsRenew_TX();
+                _txTimeoutLED->renew();
             }
 
             // Release the allocated memory once data is sent
@@ -111,13 +102,9 @@ void CommModule::rxThread() {
     // Store our priority so we know what to reset it to if ever needed
     const osPriority threadPriority = _rxThread.get_priority();
 
-    // Start up a ticker that disables the strobing RX LED. This is essentially
-    // a watchdog timer for the RX LED's activity light
-    RtosTimer led_ticker_timeout(commLightsTimeout_RX, osTimerOnce, nullptr);
-
     LOG(INIT,
         "RX communication module ready!\r\n    Thread ID: %u, Priority: %d",
-        _rxThread.gettid(), threadPriority);
+        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     while (true) {
         // Wait until new data is placed in the class's RX queue from a CommLink
@@ -144,8 +131,7 @@ void CommModule::rxThread() {
             // this renews a countdown for turning off the strobing thread once
             // it expires
             if (p->address() != 127) {
-                led_ticker_timeout.start(275);
-                commLightsRenew_RX();
+                _rxTimeoutLED->renew();
             }
 
             // free memory allocated for mail

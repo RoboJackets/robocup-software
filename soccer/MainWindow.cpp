@@ -15,6 +15,11 @@
 #include <QActionGroup>
 #include <QMessageBox>
 
+#include <QFile>
+#include <QDir>
+#include <QDateTime>
+#include <QString>
+
 #include <iostream>
 #include <ctime>
 
@@ -166,11 +171,20 @@ void MainWindow::processor(Processor* value) {
 
     _ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
     _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
+
+    if (_processor->logger().recording()) {
+        _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
+                                         _processor->logger().filename());
+        _ui.actionStart_Logging->setEnabled(false);
+    }
 }
 
 void MainWindow::logFileChanged() {
     if (_processor->logger().recording()) {
         _logFile->setText(_processor->logger().filename());
+        _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
+                                         _processor->logger().filename());
+        _ui.actionStart_Logging->setEnabled(false);
     } else {
         _logFile->setText("Not Recording");
     }
@@ -679,6 +693,10 @@ void MainWindow::updateStatus() {
     // Some conditions are different in simulation
     bool sim = _processor->simulation();
 
+    if (!sim) {
+        updateRadioBaseStatus(_processor->isRadioOpen());
+    }
+
     // Get processing thread status
     Processor::Status ps = _processor->status();
     RJ::Time curTime = RJ::timestamp();
@@ -776,6 +794,17 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
                 _ui.statusLabel->setStyleSheet("background-color: #ff4040");
                 break;
         }
+    }
+}
+
+void MainWindow::updateRadioBaseStatus(bool usbRadio) {
+    QString label =
+        QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
+    if (_ui.radioBaseStatus->text() != label) {
+        _ui.radioBaseStatus->setText(label);
+        _ui.radioBaseStatus->setStyleSheet(usbRadio
+                                               ? "background-color: #00ff00"
+                                               : "background-color: #ff4040");
     }
 }
 
@@ -998,9 +1027,27 @@ void MainWindow::on_actionQuaternion_Demo_toggled(bool value) {
     }
 }
 
-// Gameplay commands
+void MainWindow::on_actionStart_Logging_triggered() {
+    if (!_processor->logger().recording()) {
+        if (!QDir("logs").exists()) {
+            QDir().mkdir("logs");
+        }
 
-void MainWindow::on_menu_Gameplay_aboutToShow() {}
+        QString logFile =
+            QString("logs/") +
+            QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+
+        if (!_processor->openLog(logFile)) {
+            printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
+        } else {
+            _ui.actionStart_Logging->setText(QString("Now Logging to:") +
+                                             logFile);
+            _ui.actionStart_Logging->setEnabled(false);
+        }
+    }
+}
+
+// Gameplay commands
 
 void MainWindow::on_actionSeed_triggered() {
     QString text =

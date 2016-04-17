@@ -38,7 +38,7 @@ public:
      * @param regs An array of registereSetting_t values
      * @param len The length of the @regs array
      */
-    CC1201(PinName mosi, PinName miso, PinName sck, PinName nCs, PinName intPin,
+    CC1201(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
            const registerSetting_t* regs, size_t len,
            int rssiOffset = DEFAULT_RSSI_OFFSET);
 
