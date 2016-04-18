@@ -143,8 +143,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "Pid", "class_pid.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
+    [ "Pid", "class_pid.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -243,25 +243,10 @@ var hierarchy =
     [ "SPI", null, [
       [ "SharedSPI", "class_shared_s_p_i.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
           [ "gameplay.play.Play", "classgameplay_1_1play_1_1_play.html", [
-            [ "gameplay.plays.offense.basic_122.Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", null ],
-            [ "gameplay.plays.offense.two_side_attack.TwoSideAttack", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html", null ],
-            [ "gameplay.plays.restarts.defend_penalty.DefendPenalty", "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html", null ],
-            [ "gameplay.plays.restarts.kick_penalty.KickPenalty", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html", null ],
-            [ "gameplay.plays.restarts.our_corner_kick.OurCornerKick", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html", null ],
-            [ "gameplay.plays.restarts.our_free_kick.OurFreeKick", "classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html", null ],
-            [ "gameplay.plays.restarts.our_goal_kick.OurGoalKick", "classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html", null ],
-            [ "gameplay.plays.restarts.our_kickoff.OurKickoff", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html", null ],
-            [ "gameplay.plays.restarts.their_kickoff.TheirKickoff", "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html", null ],
-            [ "gameplay.plays.restarts.their_restart.TheirRestart", "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html", null ],
-            [ "gameplay.plays.restarts.two_side_corner_kick.TwoSideCornerKick", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html", null ],
-            [ "gameplay.plays.stopped.Stopped", "classgameplay_1_1plays_1_1stopped_1_1_stopped.html", null ],
             [ "gameplay.plays.testing.debug_window_evaluator.DebugWindowEvaluator", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html", null ],
             [ "gameplay.plays.testing.line_up.LineUp", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up.html", null ],
             [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html", null ],
@@ -282,7 +267,21 @@ var hierarchy =
             [ "gameplay.plays.tuning.test_jittery_motion.TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", null ],
             [ "gameplay.plays.tuning.tune_facing.TuneFacing", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html", null ],
             [ "gameplay.plays.tuning.tune_pivot.TunePivoting", "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html", null ],
-            [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ]
+            [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ],
+            [ "gameplay.standard_play.StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", [
+              [ "gameplay.plays.offense.basic_122.Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", null ],
+              [ "gameplay.plays.offense.two_side_attack.TwoSideAttack", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html", null ],
+              [ "gameplay.plays.restarts.defend_penalty.DefendPenalty", "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html", null ],
+              [ "gameplay.plays.restarts.kick_penalty.KickPenalty", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html", null ],
+              [ "gameplay.plays.restarts.our_corner_kick.OurCornerKick", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html", null ],
+              [ "gameplay.plays.restarts.our_free_kick.OurFreeKick", "classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html", null ],
+              [ "gameplay.plays.restarts.our_goal_kick.OurGoalKick", "classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html", null ],
+              [ "gameplay.plays.restarts.our_kickoff.OurKickoff", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html", null ],
+              [ "gameplay.plays.restarts.their_kickoff.TheirKickoff", "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html", null ],
+              [ "gameplay.plays.restarts.their_restart.TheirRestart", "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html", null ],
+              [ "gameplay.plays.restarts.two_side_corner_kick.TwoSideCornerKick", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html", null ],
+              [ "gameplay.plays.stopped.Stopped", "classgameplay_1_1plays_1_1stopped_1_1_stopped.html", null ]
+            ] ]
           ] ],
           [ "gameplay.single_robot_composite_behavior.SingleRobotCompositeBehavior", "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html", [
             [ "gameplay.plays.tuning.tune_facing.Facer", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html", null ],
@@ -322,6 +321,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

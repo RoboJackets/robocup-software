@@ -1,10 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7a235b523bf2cf21fd95049c50e8e38e45":[12,0,8,19,0,1],
-"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7a93c0b3a325f8a323edd04d364c56011f":[12,0,8,19,0,0],
-"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7acb1aab5f40cbd5578a31a1d48771a17f":[12,0,8,19,0,2],
-"struct_planning_1_1_rotation_command.html#ab4993a4f73613d6488245233f9f933c7":[12,0,8,19,1],
-"struct_planning_1_1_rotation_command.html#acba23cfcfe914268c3480c90a0150785":[12,0,8,19,2],
 "struct_planning_1_1_world_vel_target_command.html":[12,0,8,8],
 "struct_planning_1_1_world_vel_target_command.html#a0fd0d8789c03b5bd1e21f329bf1581bc":[12,0,8,8,2],
 "struct_planning_1_1_world_vel_target_command.html#a185a58009a80971c16deb766fe835dbf":[12,0,8,8,1],

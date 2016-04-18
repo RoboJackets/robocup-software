@@ -205,6 +205,9 @@ var annotated =
           [ "PivotKick", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick" ]
         ] ]
       ] ],
+      [ "standard_play", null, [
+        [ "StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", "classgameplay_1_1standard__play_1_1_standard_play" ]
+      ] ],
       [ "tactics", null, [
         [ "behavior_sequence", null, [
           [ "BehaviorSequence", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence" ]

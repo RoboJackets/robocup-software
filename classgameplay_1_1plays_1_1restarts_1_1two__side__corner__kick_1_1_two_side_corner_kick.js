@@ -2,7 +2,6 @@ var classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_c
 [
     [ "State", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick_1_1_state.html", null ],
     [ "__init__", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a2ffbf07e673d7e13bf5a88cdda0a47d5", null ],
-    [ "handles_goalie", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a72d3c551c4f8cb056ea27625cca88b64", null ],
     [ "is_restart", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a66dad4467d4ece3a6426ae85fd679e48", null ],
     [ "on_enter_kicking", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a81716bdfcf2c6b6a5c284a06b58e6a49", null ],
     [ "on_enter_passing", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a58f0b9bb251e593c3f183d6c9771bc2f", null ],
