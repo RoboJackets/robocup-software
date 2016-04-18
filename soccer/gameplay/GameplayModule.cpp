@@ -26,12 +26,13 @@ using namespace Geometry2d;
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
 void GameplayModule::createConfiguration(Configuration* cfg) {
-     /*  This sets the disance from the field boundries to the edge of the global
+    /*  This sets the disance from the field boundries to the edge of the global
 +     * obstacles, which the robots will not move through or into.
 +     * The value is given in meters. As of April 20, 2016 the inner 300mm
 +     * is free space for the robots.
 +     */
-+     fieldEdgeInset = new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
+    +fieldEdgeInset =
+        new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
