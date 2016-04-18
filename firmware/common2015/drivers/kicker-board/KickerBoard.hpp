@@ -55,12 +55,8 @@ protected:
                       int (AVR910::*paramMethod)(), char mask = 0xFF,
                       bool verbose = false);
 
-    uint8_t transfer(const uint8_t to_send);
-
 private:
     std::string _filename;
-    SPI spi;
-    DigitalOut n_kick_select;
     // TODO Is this function really necessary?
     int map(int x, int in_min, int in_max, int out_min, int out_max);
 };

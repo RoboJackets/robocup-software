@@ -94,26 +94,26 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
 void KickerBoard::kick(int time) {
     // TODO Replace these with constants
     int cmd = 0x3 << 6;
-    transfer(cmd | time);
+    chipSelect();
+    _spi->write(cmd | time);
+    chipDeselect();
 }
 
 void KickerBoard::chip(int time) {
     // TODO Replace these with constants
     int cmd = 0x2 << 6;
-    transfer(cmd | time);
+    chipSelect();
+    _spi->write(cmd | time);
+    chipDeselect();
 }
 
 uint8_t KickerBoard::read_voltage() {
     // TODO Replace these with constants
-    transfer(0);
-    return transfer(0);
-}
-
-uint8_t KickerBoard::transfer(const uint8_t to_send) {
-    n_kick_select = !n_kick_select;
-    uint8_t a = spi.write(to_send);
-    n_kick_select = !n_kick_select;
-    return a;
+    chipSelect();
+    _spi->write(0);
+    uint8_t volts = _spi->write(0);
+    chipDeselect();
+    return volts;
 }
 
 int KickerBoard::map(int x, int in_min, int in_max, int out_min, int out_max)
