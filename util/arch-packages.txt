@@ -50,12 +50,6 @@ libspnav
 # joystick library
 sdl
 
-# arm compiler/tools (for mbed development)
-arm-none-eabi-binutils
-arm-none-eabi-gcc
-arm-none-eabi-gdb
-arm-none-eabi-newlib
-
 # debugger for MBED code
 arm-none-eabi-gdb
 
