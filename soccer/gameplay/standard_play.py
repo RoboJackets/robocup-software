@@ -37,7 +37,7 @@ class StandardPlay(play.Play):
     def execute_running(self):
         self.use_standard_defense()
 
-    #If using defense, it defaults to play's method, otherwise returns True
+    #Since the standard_play handles defense, it will always handle the goalie
     @classmethod
     def handles_goalie(cls):
         return True
