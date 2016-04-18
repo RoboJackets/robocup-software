@@ -2,7 +2,7 @@
 
 module Motor_Driver_tb;
 
-/*Output values to 'test.vcd' file */ 
+/*Output values to 'test.vcd' file */
 initial begin
     $dumpfile("test.vcd");
     $dumpvars(0,Motor_Driver_tb);
@@ -19,10 +19,8 @@ wire [2:0] phaseHInv, phaseLInv;
 Motor_Driver motorDriver (clock, duty_cycle, h, phaseHInv, phaseLInv);
 
 initial begin
-	
 	duty_cycle = 8'h80; //dutycycle
 	clock = 0;
-
 end
 
 
