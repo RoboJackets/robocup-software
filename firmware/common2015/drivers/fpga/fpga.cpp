@@ -120,14 +120,13 @@ bool FPGA::send_config(const std::string& filepath) {
 
         chipSelect();
 
-        do {
+        for(size_t i = 0; i < filesize; i++) {
             read_byte = fread(buf, 1, 1, fp);
 
-            if (read_byte == 0) break;
+            if ( !read_byte || !_done || _initB ) break;
 
             spi.write(buf[0]);
-
-        } while (_initB || !_done);
+        }
 
         chipDeselect();
 
