@@ -30,11 +30,18 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
 }
 
 bool FPGA::configure(const std::string& filepath) {
+    // we go ahead and lock down the SPI bus mutex here to
+    // keep the SPI bus silent until the FPGA is successfully
+    // configured (FPGA config writing don't use chip select,
+    // so this must always happen first)
+    chipSelect();
+
     // make sure the binary exists before doing anything
     FILE* fp = fopen(filepath.c_str(), "r");
     if (fp == nullptr) {
         LOG(FATAL, "No FPGA bitfile!");
 
+        chipDeselect();
         return false;
     }
     fclose(fp);
@@ -58,9 +65,10 @@ bool FPGA::configure(const std::string& filepath) {
     }
 
     // show INIT_B error if it never went low
-    if (fpgaReady) {
+    if (!fpgaReady) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
 
+        chipDeselect();
         return false;
     }
 
@@ -68,6 +76,7 @@ bool FPGA::configure(const std::string& filepath) {
     if (send_config(filepath)) {
         LOG(FATAL, "FPGA bitstream write error");
 
+        chipDeselect();
         return false;
     } else {
         // Wait some extra time in case the _done pin needs time to be asserted
@@ -80,8 +89,10 @@ bool FPGA::configure(const std::string& filepath) {
             }
         }
 
-        if (!configureDone) {
+        if (configureDone) {
             LOG(FATAL, "DONE pin timed out\t(POST CONFIGURATION ERROR)");
+
+            chipDeselect();
             return false;
         } else {
             // everything worked are we're good to go!
@@ -89,6 +100,7 @@ bool FPGA::configure(const std::string& filepath) {
 
             _isInit = true;
 
+            chipDeselect();
             return true;
         }
     }
@@ -118,8 +130,6 @@ bool FPGA::send_config(const std::string& filepath) {
         LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(),
             filesize);
 
-        chipSelect();
-
         for(size_t i = 0; i < filesize; i++) {
             read_byte = fread(buf, 1, 1, fp);
 
@@ -127,8 +137,6 @@ bool FPGA::send_config(const std::string& filepath) {
 
             spi.write(buf[0]);
         }
-
-        chipDeselect();
 
         fclose(fp);
 
