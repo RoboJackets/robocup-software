@@ -26,7 +26,6 @@ class StandardPlay(play.Play):
             self.add_subbehavior(tactics.defense.Defense(),
                                  'defense',
                                  required=False)
-
         elif not ui.main.defenseEnabled():
             if self.has_subbehavior_with_name('defense'):
                 self.remove_subbehavior('defense')
@@ -37,10 +36,7 @@ class StandardPlay(play.Play):
     def execute_running(self):
         self.use_standard_defense()
 
-    #If using defense, it defaults to play's method, otherwise returns True
+    #Since the standard_play handles defense, it will always handle the goalie
     @classmethod
     def handles_goalie(cls):
-        if ui.main.defenseEnabled():
-            return True
-        else:
-            return super().handles_goalie()
+        return True
