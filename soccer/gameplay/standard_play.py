@@ -26,7 +26,6 @@ class StandardPlay(play.Play):
             self.add_subbehavior(tactics.defense.Defense(),
                                  'defense',
                                  required=False)
-
         elif not ui.main.defenseEnabled():
             if self.has_subbehavior_with_name('defense'):
                 self.remove_subbehavior('defense')
