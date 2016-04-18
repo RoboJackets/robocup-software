@@ -40,7 +40,4 @@ class StandardPlay(play.Play):
     #If using defense, it defaults to play's method, otherwise returns True
     @classmethod
     def handles_goalie(cls):
-        if ui.main.defenseEnabled():
-            return True
-        else:
-            return super().handles_goalie()
+        return True
