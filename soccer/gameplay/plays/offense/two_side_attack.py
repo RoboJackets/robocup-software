@@ -1,5 +1,5 @@
 import robocup
-import play
+import standard_play
 import behavior
 import constants
 import main
@@ -11,7 +11,7 @@ import tactics.coordinated_pass
 import tactics.defense
 
 
-class TwoSideAttack(play.Play):
+class TwoSideAttack(standard_play.StandardPlay):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py
     # Tell where passing from and where to pass to
@@ -68,11 +68,6 @@ class TwoSideAttack(play.Play):
         self.passRobot1 = None
         self.passRobot2 = None
         self.captureRobot = None
-
-        self.pernamentBehaviors = ['defense']
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
 
     @classmethod
     def score(cls):
@@ -145,14 +140,12 @@ class TwoSideAttack(play.Play):
 
     def remove_temporary_subbehaviors(self):
         for (key, value) in self.subbehaviors_by_name().items():
-            if not (key in self.pernamentBehaviors):
-                self.remove_subbehavior(key)
+            self.remove_subbehavior(key)
 
     def temporary_behaviors_completed(self):
         for (key, value) in self.subbehaviors_by_name().items():
-            if not (key in self.pernamentBehaviors):
-                if not value.is_done_running():
-                    return False
+            if not value.is_done_running():
+                return False
         return True
 
     def on_exit_passing(self):
@@ -167,7 +160,3 @@ class TwoSideAttack(play.Play):
 
     def on_exit_kicking(self):
         self.remove_temporary_subbehaviors()
-
-    @classmethod
-    def handles_goalie(cls):
-        return True
