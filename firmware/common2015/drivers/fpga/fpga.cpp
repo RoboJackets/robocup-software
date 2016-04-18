@@ -30,18 +30,11 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
 }
 
 bool FPGA::configure(const std::string& filepath) {
-    // we go ahead and lock down the SPI bus mutex here to
-    // keep the SPI bus silent until the FPGA is successfully
-    // configured (FPGA config writing don't use chip select,
-    // so this must always happen first)
-    chipSelect();
-
     // make sure the binary exists before doing anything
     FILE* fp = fopen(filepath.c_str(), "r");
     if (fp == nullptr) {
         LOG(FATAL, "No FPGA bitfile!");
 
-        chipDeselect();
         return false;
     }
     fclose(fp);
@@ -68,7 +61,6 @@ bool FPGA::configure(const std::string& filepath) {
     if (!fpgaReady) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
 
-        chipDeselect();
         return false;
     }
 
@@ -90,7 +82,6 @@ bool FPGA::configure(const std::string& filepath) {
             _isInit = true;
             LOG(INF1, "DONE pin state:\t%s", _done ? "HIGH" : "LOW");
 
-            chipDeselect();
             return true;
         }
 
@@ -99,7 +90,6 @@ bool FPGA::configure(const std::string& filepath) {
 
     LOG(FATAL, "FPGA bitstream write error");
 
-    chipDeselect();
     return false;
 }
 
@@ -117,6 +107,8 @@ bool FPGA::send_config(const std::string& filepath) {
         size_t filesize;
         char buf[bufSize];
 
+        chipSelect();
+
         // MISO & MOSI are intentionally switched here
         // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
         SoftwareSPI softSpi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
@@ -132,11 +124,12 @@ bool FPGA::send_config(const std::string& filepath) {
             bool breakOut = false;
             size_t readSize = fread(buf, 1, bufSize, fp);
 
-            if(!readSize) break;
+            if (!readSize) break;
 
             for (size_t j = 0; j < bufSize; j++) {
                 if (!_initB || _done) {
-                    breakOut = true; break;
+                    breakOut = true;
+                    break;
                 }
 
                 softSpi.write(buf[j]);
@@ -145,6 +138,7 @@ bool FPGA::send_config(const std::string& filepath) {
             if (breakOut) break;
         }
 
+        chipDeselect();
         fclose(fp);
 
         return true;
