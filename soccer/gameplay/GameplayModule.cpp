@@ -31,7 +31,7 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 +     * The value is given in meters. As of April 20, 2016 the inner 300mm
 +     * is free space for the robots.
 +     */
-+     fieldEdgeInset = new ConfigDouble(cfg, "Pathplanner/Field Edge Obstacle", .33);
++     fieldEdgeInset = new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
