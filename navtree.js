@@ -46,7 +46,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a42878a6843e76f1caf64f55108ea7d66",
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#ab7de3a0dfa89b9e2861c4ce46e5f16bf",
 "dir_dae3b2c1b669a03b67c2743c22c3495a.html",
-"struct_planning_1_1_world_vel_target_command.html"
+"struct_planning_1_1_rotation_command.html#ab4993a4f73613d6488245233f9f933c7"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
