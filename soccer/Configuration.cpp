@@ -192,8 +192,8 @@ void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
     }
 }
 
-ConfigItem* Configuration::nameLookup(const QString& name) const {
-    QStringList path = name.split('/');
+ConfigItem* Configuration::nameLookup(const std::string name) const {
+    QStringList path = QString::fromStdString(name).split('/');
     for (ConfigItem* item : _allItems) {
         if (item->path() == path) {
             return item;

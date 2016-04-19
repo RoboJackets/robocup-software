@@ -660,7 +660,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field." << endl;
+                "field."
+             << endl;
     }
 }
 
