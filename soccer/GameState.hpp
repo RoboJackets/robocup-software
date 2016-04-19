@@ -103,7 +103,6 @@ public:
     bool theirFreeKick() const { return theirDirect() || theirIndirect(); }
 
     bool theirPlacement() const { return placement() && !ourRestart; }
-    
 
     // Robots must be in position for a restart
     bool setupRestart() const { return state == Setup || state == Ready; }

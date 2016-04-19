@@ -582,7 +582,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_their_direct", &GameState::theirDirect)
         .def("is_their_indirect", &GameState::theirIndirect)
         .def("is_their_free_kick", &GameState::theirFreeKick)
-        .def("is_their_placement", & GameState::theirPlacement)
+        .def("is_their_placement", &GameState::theirPlacement)
         .def("is_setup_state", &GameState::inSetupState)
         .def("is_ready_state", &GameState::inReadyState)
         .def("can_kick", &GameState::canKick)
