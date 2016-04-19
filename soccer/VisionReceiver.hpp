@@ -34,7 +34,7 @@ public:
  */
 class VisionReceiver : public QThread {
 public:
-    VisionReceiver(bool sim = false, int port = SharedVisionPortDoubleOld);
+    VisionReceiver(bool sim = false, int port = SharedVisionPortDoubleNew);
 
     void stop();
 

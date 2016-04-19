@@ -47,7 +47,7 @@ static const int SharedVisionPortSinglePrimary = 10002;
 static const int SharedVisionPortSingleSecondary = 10004;
 
 // Double-sized field port with old Protobuf protocol
-static const int SharedVisionPortDoubleOld = 10005;
+// static const int SharedVisionPortDoubleOld = 10005;
 
 // Double-sized field port with new Protobuf protocol
 static const int SharedVisionPortDoubleNew = 10006;
