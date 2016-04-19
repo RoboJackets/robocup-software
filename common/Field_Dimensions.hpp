@@ -8,6 +8,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Rect.hpp>
+#include <Geometry2d/Line.hpp>
 
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
@@ -55,6 +56,9 @@ struct Field_Dimensions {
     }
     inline Geometry2d::Rect OurHalf() const { return _OurHalf; }
     inline Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
+
+    //We play on a 2D rectangular field, hence the length "4" of the array
+    inline std::array<Geometry2d::Line, 4> FieldBorders() const { return _FieldBorders; }
 
     static const Field_Dimensions Single_Field_Dimensions;
 
@@ -129,6 +133,17 @@ struct Field_Dimensions {
                              Geometry2d::Point(_Width / 2, _Length / 2));
         _OurHalf = Geometry2d::Rect(Geometry2d::Point(-_Width / 2, 0),
                                     Geometry2d::Point(_Width / 2, _Length / 2));
+
+        _FieldBorders = {
+            Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, 0),
+                Geometry2d::Point(-_Width / 2.0, _Length)),
+            Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, _Length),
+                Geometry2d::Point(_Width / 2.0, _Length)),
+            Geometry2d::Line(Geometry2d::Point(_Width / 2.0, _Length),
+                Geometry2d::Point(_Width / 2.0, 0)),
+            Geometry2d::Line(Geometry2d::Point(_Width / 2.0, 0),
+                Geometry2d::Point(-_Width / 2.0, 0))
+        };
     }
 
 private:
@@ -155,4 +170,6 @@ private:
     Geometry2d::Segment _TheirGoalSegment;
     Geometry2d::Rect _OurHalf;
     Geometry2d::Rect _TheirHalf;
+    //Once Again: 4 Borders -> 4 Lines -> Array of length 4
+    std::array<Geometry2d::Line, 4> _FieldBorders;
 };
