@@ -115,7 +115,6 @@ struct Field_Dimensions {
                  std::abs(PenaltyDiam() - a.PenaltyDiam()) > FLT_EPSILON ||
                  std::abs(ArcRadius() - a.ArcRadius()) > FLT_EPSILON ||
                  std::abs(CenterRadius() - a.CenterRadius()) > FLT_EPSILON ||
-                 std::abs(CenterRadius() - a.CenterRadius()) > FLT_EPSILON ||
                  std::abs(CenterDiameter() - a.CenterDiameter()) >
                      FLT_EPSILON ||
                  std::abs(GoalFlat() - a.GoalFlat()) > FLT_EPSILON ||
