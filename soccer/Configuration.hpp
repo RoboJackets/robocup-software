@@ -28,7 +28,7 @@ public:
     QTreeWidget* tree() const { return _tree; }
 
     // name lookup - returns pointer if exists, null otherwise
-    ConfigItem* nameLookup(const QString& name) const;
+    ConfigItem* nameLookup(const std::string name) const;
 
     bool load(const QString& filename, QString& error);
     bool save(const QString& filename, QString& error);
@@ -102,11 +102,15 @@ public:
 
     bool value();
 
+    void setValue(bool val) {
+        _value = val;
+        setupItem();
+    }
+
     operator bool() { return value(); }
 
     bool operator=(bool x) {
-        _value = x;
-        setupItem();
+        setValue(x);
         return x;
     }
 
