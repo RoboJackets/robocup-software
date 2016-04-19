@@ -131,13 +131,13 @@ public:
     operator int() const { return _value; }
 
     int operator=(int x) {
-        value(x);
+        setValue(x);
         return x;
     }
 
     int value() const { return _value; }
 
-    void value(int v) {
+    void setValue(int v) {
         _value = v;
         valueChanged(QString::number(v));
     }
@@ -158,13 +158,13 @@ public:
     operator double() const { return _value; }
 
     double operator=(double x) {
-        value(x);
+        setValue(x);
         return x;
     }
 
     double value() const { return _value; }
 
-    void value(double v) {
+    void setValue(double v) {
         _value = v;
         valueChanged(QString::number(v));
     }
