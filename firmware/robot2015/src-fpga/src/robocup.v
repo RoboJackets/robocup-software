@@ -37,7 +37,7 @@ module robocup #(
 
     // SPI Slave pins
     input                               spi_slave_sck,          spi_slave_mosi,         spi_slave_ncs,
-    output                              spi_slave_miso,
+    inout                               spi_slave_miso,
 
     // SPI Master pins
     input                               spi_master_miso,
