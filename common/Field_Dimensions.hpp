@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <cfloat>
+#include <cmath>
 
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
@@ -16,8 +18,11 @@
 struct Field_Dimensions {
     inline float Length() const { return _Length; }
     inline float Width() const { return _Width; }
+
+    /** the distance from the edge of the field to the border line */
     inline float Border() const { return _Border; }
 
+    /** The width of the border lines */
     inline float LineWidth() const { return _LineWidth; }
 
     inline float GoalWidth() const { return _GoalWidth; }
@@ -64,6 +69,8 @@ struct Field_Dimensions {
 
     static const Field_Dimensions Double_Field_Dimensions;
 
+    static const Field_Dimensions Default_Dimensions;
+
     static Field_Dimensions Current_Dimensions;
 
     Field_Dimensions()
@@ -99,6 +106,27 @@ struct Field_Dimensions {
             _CenterDiameter * scalar, _GoalFlat * scalar, _FloorLength * scalar,
             _FloorWidth * scalar);
     }
+
+    bool operator==(const Field_Dimensions& a) const {
+        return !(std::abs(Length() - a.Length()) > FLT_EPSILON ||
+                 std::abs(Width() - a.Width()) > FLT_EPSILON ||
+                 std::abs(Border() - a.Border()) > FLT_EPSILON ||
+                 std::abs(LineWidth() - a.LineWidth()) > FLT_EPSILON ||
+                 std::abs(GoalWidth() - a.GoalWidth()) > FLT_EPSILON ||
+                 std::abs(GoalDepth() - a.GoalDepth()) > FLT_EPSILON ||
+                 std::abs(GoalHeight() - a.GoalHeight()) > FLT_EPSILON ||
+                 std::abs(PenaltyDist() - a.PenaltyDist()) > FLT_EPSILON ||
+                 std::abs(PenaltyDiam() - a.PenaltyDiam()) > FLT_EPSILON ||
+                 std::abs(ArcRadius() - a.ArcRadius()) > FLT_EPSILON ||
+                 std::abs(CenterRadius() - a.CenterRadius()) > FLT_EPSILON ||
+                 std::abs(CenterDiameter() - a.CenterDiameter()) >
+                     FLT_EPSILON ||
+                 std::abs(GoalFlat() - a.GoalFlat()) > FLT_EPSILON ||
+                 std::abs(FloorLength() - a.FloorLength()) > FLT_EPSILON ||
+                 std::abs(FloorWidth() - a.FloorWidth()) > FLT_EPSILON);
+    }
+
+    bool operator!=(const Field_Dimensions& a) const { return !(*this == a); }
 
     void updateGeometry() {
         _CenterPoint = Geometry2d::Point(0.0, _Length / 2.0);

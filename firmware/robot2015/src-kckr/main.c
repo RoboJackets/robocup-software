@@ -3,8 +3,8 @@
 
 int main(void) {
     DDRA = 0xFF;
-    
-    while(1) {
+
+    while (1) {
         PORTA = 0xFF;
         _delay_ms(50);
         PORTA = 0x00;
