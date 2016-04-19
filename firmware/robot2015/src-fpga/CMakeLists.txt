@@ -2,8 +2,12 @@
 ################################ LOCAL VARIABLES ##############################
 ###############################################################################
 # Device specifics
-# set(FPGA_PARTNUM "xc3s100e-tq144-4" CACHE STRING "FPGA partnumber to use during HDL synthesis")
 set(FPGA_PARTNUM "xc3s250e-tq144-4" CACHE STRING "FPGA partnumber to use during HDL synthesis")
+# set(FPGA_PARTNUM "xc3s100e-tq144-4" CACHE STRING "FPGA partnumber to use during HDL synthesis")
+if(DEFINED ENV{FPGA_SERIES})
+    set(FPGA_PARTNUM "$ENV{FPGA_SERIES}")
+    set(FPGA_PARTNUM "xc3s${FPGA_PARTNUM}e-tq144-4")
+endif()
 
 # names are limited to 8.3 filename types since we need on-board access to this during runtime
 # lookup the limitations of an 8.3 filename before changing the output bitfile's name if that's ever needed
