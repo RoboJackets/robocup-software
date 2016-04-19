@@ -70,10 +70,13 @@ public:
     // The path is a list of these segments in order.
     const QStringList& path() const { return _path; }
 
+    /// Returns the same name that was passed to the constructor
+    const std::string name() const { return _path.join('/').toStdString(); }
+
     virtual QString toString() = 0;
 
     // Called by Configuration when the user changes the value
-    virtual void setValue(const QString& str) = 0;
+    virtual void setValueString(const QString& str) = 0;
 
 protected:
     friend class Configuration;
@@ -108,7 +111,7 @@ public:
     }
 
     virtual QString toString() override;
-    virtual void setValue(const QString& str) override;
+    virtual void setValueString(const QString& str) override;
 
 protected:
     friend class Configuration;
@@ -123,7 +126,7 @@ public:
               std::string description = "");
 
     virtual QString toString() override;
-    virtual void setValue(const QString& str) override;
+    virtual void setValueString(const QString& str) override;
 
     operator int() const { return _value; }
 
@@ -150,7 +153,7 @@ public:
                  std::string description = "");
 
     virtual QString toString() override;
-    virtual void setValue(const QString& str) override;
+    virtual void setValueString(const QString& str) override;
 
     operator double() const { return _value; }
 
