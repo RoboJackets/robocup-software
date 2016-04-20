@@ -14,7 +14,7 @@ const int NUM_MOTORS = 5;
 motor_t mtrEx = {.vel = 0x4D,
                  .hall = 0x0A,
                  .enc = {0x23, 0x18},
-                 .status = {.hallOK = true, .drvStatus = {0x26, 0x0F}},
+                 .status = {.hasError = false, .drvStatus = {0x26, 0x0F}},
                  .desc = "Motor"};
 }
 
@@ -29,6 +29,14 @@ void motors_Init() {
     global_motors[2].desc += "3";
     global_motors[3].desc += "4";
     global_motors[4].desc = "Dribb.";
+}
+
+void motors_refresh() {
+    std::array<uint16_t, NUM_MOTORS> enc_deltas = {0};
+    uint8_t status_byte = FPGA::Instance->read_encs(enc_deltas.data(), enc_deltas.size());
+
+    for (size_t i = 0; i < global_motors.size(); i++)
+        global_motors[i].status.hasError = !(status_byte & (1 << i));
 }
 
 void motors_show() {

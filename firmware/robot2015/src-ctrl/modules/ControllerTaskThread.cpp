@@ -107,36 +107,22 @@ void Task_Controller(void const* args) {
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
 
-        /**
         for (int i=50; i<200; i+=2) {
-            duty_cycles.at(0) = i;
-            duty_cycles.at(1) = i;
             // write all duty cycles
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
-
-                Thread::wait(CONTROL_LOOP_WAIT_MS);
+            duty_cycles.assign(5, i);
+            FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+            Thread::wait(CONTROL_LOOP_WAIT_MS);
         }
         for (int i=0; i<200; i++) {
-            duty_cycles.at(0) = 200;
-            duty_cycles.at(1) = 200;
-
-            // write all duty cycles
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
-
-                Thread::wait(CONTROL_LOOP_WAIT_MS);
+            duty_cycles.assign(5, 200);
+            FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+            Thread::wait(CONTROL_LOOP_WAIT_MS);
         }
         for (int i=0; i<200; i++) {
-            duty_cycles.at(0) = 0;
-            duty_cycles.at(1) = 0;
-
-            // write all duty cycles
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
-
-                Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }*/
+            duty_cycles.assign(5, 0);
+            FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+            Thread::wait(CONTROL_LOOP_WAIT_MS);
+        }
     }
 }
 

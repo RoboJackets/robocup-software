@@ -43,7 +43,6 @@ bool FPGA::configure(const std::string& filepath) {
     _progB = 0;
     Thread::wait(1);
     _progB = 1;
-    Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
     bool fpgaReady = false;
@@ -137,6 +136,8 @@ bool FPGA::send_config(const std::string& filepath) {
 
             if (breakOut) break;
         }
+
+        SPI dummySPI(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
 
         chipDeselect();
         fclose(fp);
