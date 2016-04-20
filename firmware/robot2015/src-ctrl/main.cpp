@@ -216,6 +216,8 @@ int main() {
         // Pack errors into bitmask
         errorBitmask |= !global_radio->isConnected() << RJ_ERR_LED_RADIO;
 
+        motors_refresh();
+
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
             make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
@@ -223,6 +225,7 @@ int main() {
             make_pair(4, RJ_ERR_LED_DRIB)};
         for (auto& pair : motorErrLedMapping) {
             const motorErr_t& status = global_motors[pair.first].status;
+            errorBitmask &= ~(status.hasError << pair.second);
             errorBitmask |= status.hasError << pair.second;
         }
 

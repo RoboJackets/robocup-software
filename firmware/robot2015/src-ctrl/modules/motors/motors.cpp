@@ -31,6 +31,14 @@ void motors_Init() {
     global_motors[4].desc = "Dribb.";
 }
 
+void motors_refresh() {
+    std::array<uint16_t, NUM_MOTORS> enc_deltas = {0};
+    uint8_t status_byte = FPGA::Instance->read_encs(enc_deltas.data(), enc_deltas.size());
+
+    for (size_t i = 0; i < global_motors.size(); i++)
+        global_motors[i].status.hasError = !(status_byte & (1 << i));
+}
+
 void motors_show() {
     std::array<uint16_t, NUM_MOTORS> duty_cycles = {0};
     std::array<uint8_t, NUM_MOTORS> halls = {0};

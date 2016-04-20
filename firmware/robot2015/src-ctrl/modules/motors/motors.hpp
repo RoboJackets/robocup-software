@@ -42,6 +42,7 @@ struct motor_t {
 extern std::vector<motor_t> global_motors;
 
 void motors_Init();
+void motors_refresh();
 void motors_show();
 int cmd_motors(const std::vector<std::string>&);
 int cmd_motors_scroll(const std::vector<std::string>&);
