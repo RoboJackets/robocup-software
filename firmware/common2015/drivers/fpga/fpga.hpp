@@ -37,8 +37,6 @@ public:
 
 private:
     bool _isInit = false;
-
-    DigitalIn _initB;
+    DigitalIn _initB, _done;
     DigitalInOut _progB;
-    DigitalIn _done;
 };
