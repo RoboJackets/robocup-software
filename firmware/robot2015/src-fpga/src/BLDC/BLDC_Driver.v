@@ -18,7 +18,7 @@
 *  the desired duty cycle. When not defined, the state machine will exit `STATE_STARTUP`
 *  when the duty cycle is equal to `STARTUP_END_DUTY_CYCLE`.
 */
-// `define STARTUP_INCREMENT_COMPLETELY
+`define STARTUP_INCREMENT_COMPLETELY
 
 // Use a fixed time startup period vs a duty cycle thereshold for exiting the startup state
 `define STARTUP_FIXED_TIME_RAMPING
@@ -66,7 +66,7 @@ localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << (DUTY_CYCLE_WIDTH + 3) );    
                                                                                             // set to a value that evenly divides into the PWM period from 'Phase_Driver.v'
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
-localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 2 / 100 );                   // 5% of the max
+localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 5 / 100 );                   // 5% of the max
 
 
 // State machine declarations for readability
@@ -124,14 +124,15 @@ initial begin
 // Make sure only one of these are defined - default to STARTUP_FIXED_TIME_RAMPING
 // being enabled if both are defined
 `ifdef STARTUP_FIXED_TIME_RAMPING
+    `ifdef STARTUP_INCREMENT_COMPLETELY
+        `undef STARTUP_INCREMENT_COMPLETELY
+    `endif
+`endif
+
 `ifdef STARTUP_INCREMENT_COMPLETELY
-`undef STARTUP_INCREMENT_COMPLETELY
-`endif
-`endif
-`ifdef STARTUP_INCREMENT_COMPLETELY
-`ifdef STARTUP_FIXED_TIME_RAMPING
-`undef STARTUP_INCREMENT_COMPLETELY
-`endif
+    `ifdef STARTUP_FIXED_TIME_RAMPING
+        `undef STARTUP_INCREMENT_COMPLETELY
+    `endif
 `endif
 
 `ifdef STARTUP_INCREMENT_COMPLETELY
@@ -203,12 +204,11 @@ begin : MOTOR_STATES
                         state <= STATE_STARTUP;
 
                         // set the amount that we increment the duty cycle on every startup update period
-                        `ifdef STARTUP_FIXED_TIME_RAMPING
-                        // startup_duty_cycle_step <= ((duty_cycle - MIN_DUTY_CYCLE) >> (`LOG2(STARTUP_END_STEP_COUNT + 1) + 1));
+`ifdef STARTUP_FIXED_TIME_RAMPING
+                        startup_duty_cycle_step <= ((duty_cycle - MIN_DUTY_CYCLE) >> (`LOG2(STARTUP_END_STEP_COUNT + 1) + 1));
+`else
                         startup_duty_cycle_step <= 1;
-                        `else
-                        startup_duty_cycle_step <= 1;
-                        `endif
+`endif
 
                     end else begin
                         duty_cycle_s <= 0;
@@ -230,18 +230,17 @@ begin : MOTOR_STATES
                             startup_duty_cycle_step <= 1;
                         end
 
-                        `ifdef STARTUP_FIXED_TIME_RAMPING
+`ifdef STARTUP_FIXED_TIME_RAMPING
                         // Exit the startup phase based on a fixed time startup period
                         if ( startup_step_count < STARTUP_END_STEP_COUNT ) begin
-                        `else
+`else
                         // Transition to the run state once target duty cycle reached the max startup duty cycle.
-                        `ifdef STARTUP_INCREMENT_COMPLETELY
+    `ifdef STARTUP_INCREMENT_COMPLETELY
                         if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) | ( duty_cycle_s < duty_cycle ) ) begin
-                        `else
+    `else
                         if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) & ( duty_cycle_s < duty_cycle ) ) begin
-                        `endif
-                        `endif
-
+    `endif
+`endif
                             if ( startup_counter == 0 ) begin
                                 startup_counter <= 1;
                                 startup_step_count <= startup_step_count + 1;
