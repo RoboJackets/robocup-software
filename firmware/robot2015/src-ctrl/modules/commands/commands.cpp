@@ -836,7 +836,8 @@ int cmd_ps(cmd_args_t& args) {
         printf("STACK SIZE (bytes)");
         // go back 18 and then down again by 1
         printf("\033[18D\033[B");
-        // now finish the line and flush it out after adding another vertical line
+        // now finish the line and flush it out after adding another vertical
+        // line
         printf("ALLOC    CURRENT (NOW|MAX)");
         printf("\033[A\033[1D|\033[B\r\n");
         Console::Instance()->Flush();
@@ -866,8 +867,8 @@ int cmd_ps(cmd_args_t& args) {
                 printf(
                     "%-4u\t  %-3u\t %s\t%-6u\t   %-7u  %-7u  "
                     "%-7u (%.0f%%|%-.0f%%)\r\n",
-                    p->task_id, p->prio, state_now.c_str(), p->delta_time, max_used,
-                    alloc, now, util_now * 100, util_max * 100);
+                    p->task_id, p->prio, state_now.c_str(), p->delta_time,
+                    max_used, alloc, now, util_now * 100, util_max * 100);
 
                 num_threads++;
             }
