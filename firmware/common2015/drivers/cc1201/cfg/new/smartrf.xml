@@ -54,7 +54,7 @@
         </Register>
         <Register>
             <Name>FREQOFF_CFG</Name>
-            <Value>0x23</Value>
+            <Value>0x22</Value>
         </Register>
         <Register>
             <Name>FS_CAL0</Name>
@@ -134,7 +134,7 @@
         </Register>
         <Register>
             <Name>MDMCFG1</Name>
-            <Value>0x42</Value>
+            <Value>0x40</Value>
         </Register>
         <Register>
             <Name>MDMCFG2</Name>
@@ -155,10 +155,6 @@
         <Register>
             <Name>PARTVERSION</Name>
             <Value>0x11</Value>
-        </Register>
-        <Register>
-            <Name>PKT_CFG0</Name>
-            <Value>0x20</Value>
         </Register>
         <Register>
             <Name>PKT_CFG1</Name>
@@ -208,7 +204,7 @@
         <Property name="m_tabUserMode" role="37">1</Property>
         <Property name="m_easyModeSettings" role="33">-1</Property>
         <Property name="m_typicalSettings" role="33">-1</Property>
-        <Property name="m_testFuncPanel" role="37">2</Property>
+        <Property name="m_testFuncPanel" role="37">3</Property>
     </dcpanel>
     <rfparameters>
         <Property name="m_cmbFrontends" role="46">0</Property>
@@ -240,7 +236,7 @@
         <Property name="m_rbtText" role="45">0</Property>
         <Property name="m_rbtHex" role="45">0</Property>
         <Property name="m_chkAdvanced" role="44">0</Property>
-        <Property name="m_cmbLengthConfig" role="46">1</Property>
+        <Property name="m_cmbLengthConfig" role="46">0</Property>
         <Property name="m_edtFixedPktLength" role="42">255</Property>
         <Property name="m_edtBitLength" role="42">0</Property>
         <Property name="m_grp802154g" role="20">0</Property>
@@ -264,7 +260,7 @@
         <Property name="m_chkInfinite" role="44">0</Property>
         <Property name="m_chkInfiniteEsy" role="44">0</Property>
         <Property name="m_cmbViewFormat" role="46">0</Property>
-        <Property name="m_chkSeqNbrIncluded" role="44">2</Property>
+        <Property name="m_chkSeqNbrIncluded" role="44">0</Property>
         <Property name="m_edtDumpFile" role="42"></Property>
         <Property name="m_chkAdvanced" role="44">0</Property>
         <Property name="m_chk802154gMode" role="44">0</Property>
