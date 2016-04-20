@@ -815,6 +815,17 @@ int cmd_ps(cmd_args_t& args) {
     } else {
         unsigned int num_threads = 0;
 
+        std::map<int, std::string> thread_states;
+        thread_states[0] = "NA";
+        thread_states[1] = "RDY";
+        thread_states[2] = "RUN";
+        thread_states[3] = "WDL";
+        thread_states[4] = "WIT";
+        thread_states[5] = "WOR";
+        thread_states[6] = "WSM";
+        thread_states[7] = "WMB";
+        thread_states[8] = "WMX";
+
         // go down 2 rows
         printf("\r\033[B");
         printf("ID\tPRIOR\tSTATE\tΔ TIME\t   MAX      ");
@@ -843,15 +854,16 @@ int cmd_ps(cmd_args_t& args) {
                 size_t alloc = p->priv_stack;
                 size_t now = ThreadNowStackUsed(p);
                 size_t max_used = ThreadMaxStackUsed(p);
+                std::string state_now = thread_states.find(p->state)->second;
 
                 // compute max and current utilization percentages
                 float util_now = static_cast<float>(now) / alloc;
                 float util_max = static_cast<float>(max_used) / alloc;
 
                 printf(
-                    "%-4u\t  %-3u\t  %-3u\t%-6u\t   %-7u  %-7u  "
+                    "%-4u\t  %-3u\t %s\t%-6u\t   %-7u  %-7u  "
                     "%-7u (%.0f%%|%-.0f%%)\r\n",
-                    p->task_id, p->prio, p->state, p->delta_time, max_used,
+                    p->task_id, p->prio, state_now.c_str(), p->delta_time, max_used,
                     alloc, now, util_now * 100, util_max * 100);
 
                 num_threads++;
