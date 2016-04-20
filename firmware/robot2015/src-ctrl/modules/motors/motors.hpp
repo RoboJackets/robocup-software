@@ -26,7 +26,7 @@ struct motorErr_t {
     FETHB_OC, FETLB_OC
     FETHC_OC, FETLC_OC
     */
-    bool hallOK;
+    bool hasError;
     std::array<uint16_t, 2> drvStatus;
 };
 
