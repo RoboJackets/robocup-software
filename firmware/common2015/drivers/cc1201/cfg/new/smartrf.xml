@@ -169,6 +169,14 @@
             <Value>0x8a</Value>
         </Register>
         <Register>
+            <Name>RFEND_CFG0</Name>
+            <Value>0x30</Value>
+        </Register>
+        <Register>
+            <Name>RFEND_CFG1</Name>
+            <Value>0x3f</Value>
+        </Register>
+        <Register>
             <Name>SYMBOL_RATE0</Name>
             <Value>0x99</Value>
         </Register>
