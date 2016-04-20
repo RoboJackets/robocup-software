@@ -16,7 +16,7 @@ CC1201* global_radio = nullptr;
 
 CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
                const registerSetting_t* regs, size_t len, int rssiOffset)
-    : CommLink(sharedSPI, nCs, intPin), _recalTimeout(this, &CC1201::_recalibrate, osTimerPeriodic) {
+    : CommLink(sharedSPI, nCs, intPin) {
     reset();
     selfTest();
 
@@ -26,21 +26,12 @@ CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
 
         writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(rssiOffset));
 
-        // _recalTimeout.start(300);
-
         // start out in RX mode
         strobe(CC1201_STROBE_SRX);
 
         LOG(INIT, "CC1201 ready!");
         CommLink::ready();
     }
-}
-
-void CC1201::_recalibrate() {
-    // strobe(CC1201_STROBE_SIDLE);
-    // strobe(CC1201_STROBE_SCAL);
-    // strobe(CC1201_STROBE_SRX);
-    // printf("recal\r\n");
 }
 
 int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
@@ -65,6 +56,9 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // the GitHub pull request for more info:
     // https://github.com/RoboJackets/robocup-software/pull/562
     strobe(CC1201_STROBE_SIDLE);
+//     strobe(CC1201_STROBE_SFTX);
+//     strobe(CC1201_STROBE_SCAL);
+//     strobe(CC1201_STROBE_SFSTXON);
 
     // Send the data to the CC1201.
     chipSelect();
@@ -89,7 +83,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     }
 
     // Enter TX mode
-    strobe(CC1201_STROBE_SCAL);
     strobe(CC1201_STROBE_STX);
 
     // Wait until radio's TX buffer is emptied
@@ -106,19 +99,11 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
-    // strobe(CC1201_STROBE_SIDLE);
-    // strobe(CC1201_STROBE_SFRX);
-    // strobe(CC1201_STROBE_SRX);
-    // return COMM_NO_DATA;
-
-
-    uint8_t device_state = freqUpdate();
-    if (strobe(CC1201_STROBE_SNOP) == CC1201_STATE_TX) return COMM_NO_DATA;
     // TODO(justin): justify this delay.  It doesn't work without it, but why?
-    Thread::wait(4);
-
+    Thread::wait(5);
 
     // update frequency offset estimate and get the current state while at it
+    uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
 
     if ((device_state & CC1201_STATE_RXFIFO_ERROR) ==
