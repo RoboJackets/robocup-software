@@ -91,7 +91,7 @@ NET "enc_a[3]" LOC="P89";                       # Drive Motor 4
 NET "enc_b[3]" LOC="P84";
 
 # Attach a pullup to all of the encoder pins
-# NET "enc_*" PULLUP;
+NET "enc_*" PULLUP;
 
 
 #################################################
