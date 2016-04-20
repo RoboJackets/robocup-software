@@ -70,7 +70,7 @@
         </Register>
         <Register>
             <Name>FS_DIG1</Name>
-            <Value>0x04</Value>
+            <Value>0x07</Value>
         </Register>
         <Register>
             <Name>FS_DIVTWO</Name>

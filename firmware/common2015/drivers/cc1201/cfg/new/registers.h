@@ -66,7 +66,7 @@ static const registerSetting_t preferredSettings[]=
   {CC1201_IF_ADC2,             0x02},
   {CC1201_IF_ADC1,             0xEE},
   {CC1201_IF_ADC0,             0x10},
-  {CC1201_FS_DIG1,             0x04},
+  {CC1201_FS_DIG1,             0x07},
   {CC1201_FS_DIG0,             0xA3},
   {CC1201_FS_CAL3,             0x00},
   {CC1201_FS_CAL2,             0x20},
