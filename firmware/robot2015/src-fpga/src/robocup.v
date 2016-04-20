@@ -608,7 +608,6 @@ end
 // This is where all of the motors modules are instantiated
 generate
     for (i = 0; i < NUM_ENCODERS; i = i + 1)
-    // for (i = 0; i < 3; i = i + 1)
     begin : BLDC_MOTOR_INST
         BLDC_Motor #(
             .MAX_DUTY_CYCLE         ( (1 << DUTY_CYCLE_WIDTH) - 1   ) ,
