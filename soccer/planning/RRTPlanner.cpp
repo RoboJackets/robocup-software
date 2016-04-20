@@ -185,48 +185,20 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     // unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
-    FixedStepTree startTree;
-    FixedStepTree goalTree;
-    startTree.init(start.pos, &obstacles);
-    goalTree.init(goal.pos, &obstacles);
-    startTree.step = goalTree.step = .15f;
+    auto stateSpace =
+        make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions);
+    RRT::BiRRT<Geometry2d::Point> biRRT(stateSpace);
+    biRRT.setStartState(start.pos);
+    biRRT.setGoalState(goal.pos);
+    // TODO: set state space obstacles
+    biRRT.setStepSize(0.15);
+    biRRT.setMaxIterations(_maxIterations);
+    // TODO: remove _maxIterations ivar?
 
-    // Run bi-directional RRT algorithm
-    Tree* ta = &startTree;
-    Tree* tb = &goalTree;
-    for (unsigned int i = 0; i < _maxIterations; ++i) {
-        Geometry2d::Point r = RandomFieldLocation();
-
-        Tree::Point* newPoint = ta->extend(r);
-
-        if (newPoint) {
-            // try to connect the other tree to this point
-            if (tb->connect(newPoint->pos)) {
-                // trees connected
-                // done with global path finding
-                // the path is from start to goal
-                // runRRT will handle the rest
-                break;
-            }
-        }
-
-        swap(ta, tb);
-    }
-
-    Tree::Point* p0 = startTree.last();
-    Tree::Point* p1 = goalTree.last();
-
+    // TODO: what happens if it fails?
+    biRRT.run();
     vector<Point> points;
-    // sanity check
-    if (!p0 || !p1 || p0->pos != p1->pos) {
-        return points;
-    }
-
-    // extract path from RRTs
-    // add the start tree first...normal order (aka from root to p0)
-    startTree.addPath(points, p0);
-    // add the goal tree in reverse (aka p1 to root)
-    goalTree.addPath(points, p1, true);
+    biRRT.getPath(points);
 
     return points;
 }
