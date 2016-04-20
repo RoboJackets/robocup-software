@@ -20,12 +20,12 @@ class RobotExpanderInputs {
 public:
     /// Other constructors for creating objects for pinouts
     RobotExpanderInputs(MCP23017* mcp, PinName interruptPin)
-        : interruptThread_(&RobotExpanderInputs::ThreadHelper, this, osPriorityBelowNormal,
-                    0.33 * DEFAULT_STACK_SIZE),
+        : interruptThread_(&RobotExpanderInputs::ThreadHelper, this,
+                           osPriorityBelowNormal, 0.33 * DEFAULT_STACK_SIZE),
           mcp23017_(mcp),
           interrupt_(interruptPin) {
-            interrupt_.fall(this, &RobotExpanderInputs::ISR);
-            interrupt_.mode(PullUp);
+        interrupt_.fall(this, &RobotExpanderInputs::ISR);
+        interrupt_.mode(PullUp);
     }
 
     uint8_t RotarySelector() {
