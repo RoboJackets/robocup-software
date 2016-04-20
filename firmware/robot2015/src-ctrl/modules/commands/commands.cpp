@@ -829,13 +829,15 @@ int cmd_ps(cmd_args_t& args) {
         // go down 2 rows
         printf("\r\033[B");
         printf("ID\tPRIOR\tSTATE\tΔ TIME\t   MAX      ");
-        // go back up and move left by 6
-        printf("\033[A\033[6D");
+        // go back up and move left by 9, then write a vertical line
+        printf("\033[A\033[9D|");
+        printf("\033[8C");
         printf("STACK SIZE (bytes)");
         // go back 12 and then down again by 1
-        printf("\033[12D\033[B");
+        printf("\033[18D\033[B");
         // now finish the line and flush it out
-        printf("ALLOC    CURRENT (NOW|MAX)\r\n");
+        printf("ALLOC    CURRENT (NOW|MAX)");
+        printf("\033[A\033[1D|\033[B\r\n");
         Console::Instance()->Flush();
 
         /*
