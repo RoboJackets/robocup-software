@@ -37,10 +37,6 @@
             <Value>0x47</Value>
         </Register>
         <Register>
-            <Name>FIFO_CFG</Name>
-            <Value>0x00</Value>
-        </Register>
-        <Register>
             <Name>FREQ0</Name>
             <Value>0x5c</Value>
         </Register>

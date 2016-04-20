@@ -30,7 +30,7 @@ static const registerSetting_t preferredSettings[]=
   {CC1201_AGC_CFG2,            0x60},
   {CC1201_AGC_CFG1,            0x12},
   {CC1201_AGC_CFG0,            0x84},
-  {CC1201_FIFO_CFG,            0x00},
+  {CC1201_FIFO_CFG,            0x80},
   {CC1201_DEV_ADDR,            0x00},
   {CC1201_SETTLING_CFG,        0x0B},
   {CC1201_FS_CFG,              0x12},
