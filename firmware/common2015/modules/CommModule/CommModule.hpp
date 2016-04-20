@@ -50,8 +50,8 @@ public:
     // Class constants
     // Be careful of the queue sizes. The errors that result from
     // over allocation are very tricky to catch.
-    static const size_t TX_QUEUE_SIZE = 2;
-    static const size_t RX_QUEUE_SIZE = 5;
+    static const size_t TX_QUEUE_SIZE = 3;
+    static const size_t RX_QUEUE_SIZE = 3;
 
     // Set a TX callback function on an object
     template <typename B>

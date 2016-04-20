@@ -114,9 +114,6 @@ int main() {
                               MAX_PACKET_SIZE_EPBULK)) {
             LOG(INF3, "Read %d bytes from BULK IN", bufSize);
 
-            // printf("*\r\n");
-            // fflush(stdout);
-
             // construct packet from buffer received over USB
             rtp::packet pkt;
             pkt.recv(buf, bufSize);
