@@ -831,11 +831,12 @@ int cmd_ps(cmd_args_t& args) {
         printf("ID\tPRIOR\tSTATE\tΔ TIME\t   MAX      ");
         // go back up and move left by 9, then write a vertical line
         printf("\033[A\033[9D|");
+        // go forward by 8
         printf("\033[8C");
         printf("STACK SIZE (bytes)");
-        // go back 12 and then down again by 1
+        // go back 18 and then down again by 1
         printf("\033[18D\033[B");
-        // now finish the line and flush it out
+        // now finish the line and flush it out after adding another vertical line
         printf("ALLOC    CURRENT (NOW|MAX)");
         printf("\033[A\033[1D|\033[B\r\n");
         Console::Instance()->Flush();
