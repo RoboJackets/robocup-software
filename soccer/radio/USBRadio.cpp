@@ -233,7 +233,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->song = robot.song();
         } else {
             // empty slot
-            msg->uid = 2;
+            msg->uid = 0;
         }
     }
 
