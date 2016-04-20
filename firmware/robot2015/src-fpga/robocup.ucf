@@ -21,7 +21,7 @@ NET "phase_cL[0]" LOC="P103";
 NET "phase_aH[1]" LOC="P5";                     # Drive Motor 2
 NET "phase_aL[1]" LOC="P7";
 NET "phase_bH[1]" LOC="P8";
-NET "phase_bL[1]" LOC="P4";                     # ** CHANGED SINCE 100 SERIES **
+NET "phase_bL[1]" LOC="P4";                     # ** CHANGED SINCE 100 SERIES (P10) **
 NET "phase_cH[1]" LOC="P14";
 NET "phase_cL[1]" LOC="P15";
 
@@ -40,7 +40,7 @@ NET "phase_cH[3]" LOC="P86";
 NET "phase_cL[3]" LOC="P87";
 
                                                 # Dribbler
-NET "phase_aH[4]" LOC="P32";                    # ** CHANGED SINCE 100 SERIES **
+NET "phase_aH[4]" LOC="P32";                    # ** CHANGED SINCE 100 SERIES (P26) **
 NET "phase_aL[4]" LOC="P26";
 NET "phase_bH[4]" LOC="P25";
 NET "phase_bL[4]" LOC="P23";
