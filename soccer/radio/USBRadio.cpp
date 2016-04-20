@@ -176,9 +176,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    // static int count = 0;
-    // if (count++ % 2 == 0) return;
-
     uint8_t forward_packet[rtp::Forward_Size];
 
     // ensure Forward_Size is correct
