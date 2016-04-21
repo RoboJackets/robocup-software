@@ -2,7 +2,7 @@
 ################################ LOCAL VARIABLES ##############################
 ###############################################################################
 # Device specifics
-set(FPGA_PARTNUM "xc3s250e-tq144-4" CACHE STRING "FPGA partnumber to use during HDL synthesis")
+set(FPGA_PARTNUM "xc3s250e-tq144" CACHE STRING "FPGA partnumber to use during HDL synthesis")
 # set(FPGA_PARTNUM "xc3s100e-tq144-4" CACHE STRING "FPGA partnumber to use during HDL synthesis")
 if(DEFINED ENV{FPGA_SERIES})
     set(FPGA_PARTNUM "$ENV{FPGA_SERIES}")
@@ -124,9 +124,9 @@ add_custom_target(fpga2015bit
         -wd ${CMAKE_CURRENT_BINARY_DIR}
         -p  ${FPGA_PARTNUM}
         -synth xst_verilog
-        -implement fast_runtime
+        # -implement fast_runtime
         # -implement balanced.opt
-        # -implement high_effort.opt
+        -implement high_effort.opt
         -config bitgen
         ${TOP_LEVEL_NAME}
     COMMENT "Using Xilinx xflow to generate the FPGA's bitstream from ${NUM_SRCS} Verilog files"
