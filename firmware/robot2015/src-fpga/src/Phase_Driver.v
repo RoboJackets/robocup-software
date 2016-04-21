@@ -72,7 +72,7 @@ output  pwm_high, pwm_low;
 
 reg [COUNTER_WIDTH-1:0] counter = 0;
 
-wire h = ( ( counter + DEAD_TIME ) < ( duty_cycle ) ) ? 1 : 0;
+wire h = ( ( counter + DEAD_TIME ) < duty_cycle ) ? 1 : 0;
 wire l = ( ( counter >= ( duty_cycle ) ) && ( ( counter + DEAD_TIME ) <= MAX_COUNTER ) ) ? 1 : 0;
 
 

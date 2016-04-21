@@ -51,7 +51,7 @@ output reg fault = 0;
 // Local parameters that can not be altered outside of this file
 // ===============================================
 localparam NUM_PHASES =                  3;  // This will always be constant
-localparam HALL_STATE_STEADY_COUNT =    31;  // Threshold value in determining when the hall effect sensor is locked into an error state
+localparam HALL_STATE_STEADY_COUNT =   120;  // Threshold value in determining when the hall effect sensor is locked into an error state
 
 localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
 localparam STARTUP_STEP_COUNTER_WIDTH =  7;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
@@ -205,7 +205,8 @@ begin : MOTOR_STATES
 
                         // set the amount that we increment the duty cycle on every startup update period
 `ifdef STARTUP_FIXED_TIME_RAMPING
-                        startup_duty_cycle_step <= ((duty_cycle - MIN_DUTY_CYCLE) >> (`LOG2(STARTUP_END_STEP_COUNT + 1) + 1));
+                        startup_duty_cycle_step <= 1;
+                        // startup_duty_cycle_step <= ((duty_cycle - MIN_DUTY_CYCLE) >> (`LOG2(STARTUP_END_STEP_COUNT + 1) + 1));
 `else
                         startup_duty_cycle_step <= 1;
 `endif
@@ -346,7 +347,7 @@ end  // MOTOR_STATES
 
 
 // The Hall_Effect_Sensor module does not use synced inputs - no need to as long as we sync things at the top module.
-Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .direction( direction ), .u( u ), .z( z ) );
+Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .direction( ~direction ), .u( u ), .z( z ) );
 
 
 // The Phase_Driver module does not use synced inputs. Synchronization is taken care of within this module because it must be used along with the Hall_Effect_Sensor module.

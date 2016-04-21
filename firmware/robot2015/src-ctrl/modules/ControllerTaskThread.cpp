@@ -88,41 +88,14 @@ void Task_Controller(void const* args) {
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     std::vector<uint16_t> duty_cycles;
-    duty_cycles.assign(5, 150);
+    duty_cycles.assign(5, 125);
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        // printf(
-        //     "\r\n\033[K"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\ r\n"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\033[F\033[F",
-        //     gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0],
-        //     accelVals[1],
-        //     accelVals[2]);
-        // Console::Flush();
-
         // write all duty cycles
         FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-
         Thread::wait(CONTROL_LOOP_WAIT_MS);
-
-        for (int i=50; i<200; i+=2) {
-            // write all duty cycles
-            duty_cycles.assign(5, i);
-            FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-            Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }
-        for (int i=0; i<200; i++) {
-            duty_cycles.assign(5, 200);
-            FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-            Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }
-        for (int i=0; i<200; i++) {
-            duty_cycles.assign(5, 0);
-            FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-            Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }
     }
 }
 
