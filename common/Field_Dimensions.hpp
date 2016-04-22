@@ -16,53 +16,52 @@
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct Field_Dimensions {
-     float Length() const { return _Length; }
-     float Width() const { return _Width; }
+    float Length() const { return _Length; }
+    float Width() const { return _Width; }
 
     /** the distance from the edge of the field to the border line */
-     float Border() const { return _Border; }
+    float Border() const { return _Border; }
 
     /** The width of the border lines */
-     float LineWidth() const { return _LineWidth; }
+    float LineWidth() const { return _LineWidth; }
 
-     float GoalWidth() const { return _GoalWidth; }
-     float GoalDepth() const { return _GoalDepth; }
-     float GoalHeight() const { return _GoalHeight; }
+    float GoalWidth() const { return _GoalWidth; }
+    float GoalDepth() const { return _GoalDepth; }
+    float GoalHeight() const { return _GoalHeight; }
 
     /** Distance of the penalty marker from the goal line */
-     float PenaltyDist() const { return _PenaltyDist; }
-     float PenaltyDiam() const { return _PenaltyDiam; }
+    float PenaltyDist() const { return _PenaltyDist; }
+    float PenaltyDiam() const { return _PenaltyDiam; }
 
     /** Radius of the goal arcs */
-     float ArcRadius() const { return _ArcRadius; }
+    float ArcRadius() const { return _ArcRadius; }
 
     /** diameter of the center circle */
-     float CenterRadius() const { return _CenterRadius; }
-     float CenterDiameter() const { return _CenterDiameter; }
+    float CenterRadius() const { return _CenterRadius; }
+    float CenterDiameter() const { return _CenterDiameter; }
 
     /** flat area for defence markings */
-     float GoalFlat() const { return _GoalFlat; }
+    float GoalFlat() const { return _GoalFlat; }
 
-     float FloorLength() const { return _FloorLength; }
-     float FloorWidth() const { return _FloorWidth; }
+    float FloorLength() const { return _FloorLength; }
+    float FloorWidth() const { return _FloorWidth; }
 
-     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
-     Geometry2d::CompositeShape OurGoalZoneShape() const {
+    Geometry2d::Point CenterPoint() const { return _CenterPoint; }
+    Geometry2d::CompositeShape OurGoalZoneShape() const {
         return _OurGoalZoneShape;
     }
-     Geometry2d::CompositeShape TheirGoalZoneShape() const {
+    Geometry2d::CompositeShape TheirGoalZoneShape() const {
         return _TheirGoalZoneShape;
     }
-     Geometry2d::Segment OurGoalSegment() const {
-        return _OurGoalSegment;
-    }
-     Geometry2d::Segment TheirGoalSegment() const {
-        return _TheirGoalSegment;
-    }
-     Geometry2d::Rect OurHalf() const { return _OurHalf; }
-     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
+    Geometry2d::Segment OurGoalSegment() const { return _OurGoalSegment; }
+    Geometry2d::Segment TheirGoalSegment() const { return _TheirGoalSegment; }
+    Geometry2d::Rect OurHalf() const { return _OurHalf; }
+    Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
+    Geometry2d::Rect FieldRect() const { return _FieldRect; }
 
-     const std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
+    const std::vector<Geometry2d::Line> FieldBorders() const {
+        return _FieldBorders;
+    }
 
     static const Field_Dimensions Single_Field_Dimensions;
 
@@ -161,16 +160,18 @@ struct Field_Dimensions {
         _OurHalf = Geometry2d::Rect(Geometry2d::Point(-_Width / 2, 0),
                                     Geometry2d::Point(_Width / 2, _Length / 2));
 
+        _FieldRect = Geometry2d::Rect(Geometry2d::Point(-_Width / 2.0, 0),
+                                      Geometry2d::Point(_Width / 2.0, _Length));
+
         _FieldBorders = {
             Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, 0),
-                Geometry2d::Point(-_Width / 2.0, _Length)),
+                             Geometry2d::Point(-_Width / 2.0, _Length)),
             Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, _Length),
-                Geometry2d::Point(_Width / 2.0, _Length)),
+                             Geometry2d::Point(_Width / 2.0, _Length)),
             Geometry2d::Line(Geometry2d::Point(_Width / 2.0, _Length),
-                Geometry2d::Point(_Width / 2.0, 0)),
+                             Geometry2d::Point(_Width / 2.0, 0)),
             Geometry2d::Line(Geometry2d::Point(_Width / 2.0, 0),
-                Geometry2d::Point(-_Width / 2.0, 0))
-        };
+                             Geometry2d::Point(-_Width / 2.0, 0))};
     }
 
 private:
@@ -197,6 +198,7 @@ private:
     Geometry2d::Segment _TheirGoalSegment;
     Geometry2d::Rect _OurHalf;
     Geometry2d::Rect _TheirHalf;
-    //Once Again: 4 Borders -> 4 Lines -> Array of length 4
+    Geometry2d::Rect _FieldRect;
+    // Once Again: 4 Borders -> 4 Lines -> Array of length 4
     std::vector<Geometry2d::Line> _FieldBorders;
 };
