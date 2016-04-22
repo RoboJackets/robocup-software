@@ -16,54 +16,53 @@
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct Field_Dimensions {
-    inline float Length() const { return _Length; }
-    inline float Width() const { return _Width; }
+     float Length() const { return _Length; }
+     float Width() const { return _Width; }
 
     /** the distance from the edge of the field to the border line */
-    inline float Border() const { return _Border; }
+     float Border() const { return _Border; }
 
     /** The width of the border lines */
-    inline float LineWidth() const { return _LineWidth; }
+     float LineWidth() const { return _LineWidth; }
 
-    inline float GoalWidth() const { return _GoalWidth; }
-    inline float GoalDepth() const { return _GoalDepth; }
-    inline float GoalHeight() const { return _GoalHeight; }
+     float GoalWidth() const { return _GoalWidth; }
+     float GoalDepth() const { return _GoalDepth; }
+     float GoalHeight() const { return _GoalHeight; }
 
     /** Distance of the penalty marker from the goal line */
-    inline float PenaltyDist() const { return _PenaltyDist; }
-    inline float PenaltyDiam() const { return _PenaltyDiam; }
+     float PenaltyDist() const { return _PenaltyDist; }
+     float PenaltyDiam() const { return _PenaltyDiam; }
 
     /** Radius of the goal arcs */
-    inline float ArcRadius() const { return _ArcRadius; }
+     float ArcRadius() const { return _ArcRadius; }
 
     /** diameter of the center circle */
-    inline float CenterRadius() const { return _CenterRadius; }
-    inline float CenterDiameter() const { return _CenterDiameter; }
+     float CenterRadius() const { return _CenterRadius; }
+     float CenterDiameter() const { return _CenterDiameter; }
 
     /** flat area for defence markings */
-    inline float GoalFlat() const { return _GoalFlat; }
+     float GoalFlat() const { return _GoalFlat; }
 
-    inline float FloorLength() const { return _FloorLength; }
-    inline float FloorWidth() const { return _FloorWidth; }
+     float FloorLength() const { return _FloorLength; }
+     float FloorWidth() const { return _FloorWidth; }
 
-    inline Geometry2d::Point CenterPoint() const { return _CenterPoint; }
-    inline Geometry2d::CompositeShape OurGoalZoneShape() const {
+     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
+     Geometry2d::CompositeShape OurGoalZoneShape() const {
         return _OurGoalZoneShape;
     }
-    inline Geometry2d::CompositeShape TheirGoalZoneShape() const {
+     Geometry2d::CompositeShape TheirGoalZoneShape() const {
         return _TheirGoalZoneShape;
     }
-    inline Geometry2d::Segment OurGoalSegment() const {
+     Geometry2d::Segment OurGoalSegment() const {
         return _OurGoalSegment;
     }
-    inline Geometry2d::Segment TheirGoalSegment() const {
+     Geometry2d::Segment TheirGoalSegment() const {
         return _TheirGoalSegment;
     }
-    inline Geometry2d::Rect OurHalf() const { return _OurHalf; }
-    inline Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
+     Geometry2d::Rect OurHalf() const { return _OurHalf; }
+     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
 
-    //We play on a 2D rectangular field, hence the length "4" of the array
-    inline std::array<Geometry2d::Line, 4> FieldBorders() const { return _FieldBorders; }
+     const std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
 
     static const Field_Dimensions Single_Field_Dimensions;
 
@@ -199,5 +198,5 @@ private:
     Geometry2d::Rect _OurHalf;
     Geometry2d::Rect _TheirHalf;
     //Once Again: 4 Borders -> 4 Lines -> Array of length 4
-    std::array<Geometry2d::Line, 4> _FieldBorders;
+    std::vector<Geometry2d::Line> _FieldBorders;
 };
