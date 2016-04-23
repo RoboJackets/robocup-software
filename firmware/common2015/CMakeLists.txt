@@ -25,6 +25,7 @@ list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
 set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
+
 # subdirectories
 set(DRIVERS
     avr-isp
@@ -43,13 +44,24 @@ set(DRIVERS
     software-spi
     ws2811
 )
-set(MODULES             CommModule CommLink Console)
-set(UTILS               assert logger numparser rtos-mgmt)
+
+set(MODULES
+    CommModule
+    CommLink
+    Console
+)
+
+set(UTILS
+    assert
+    logger
+    numparser
+    rtos-mgmt
+)
 
 # generate a list of directories that we need to include from the values set above
-set(common2015_INCLUDE_DIRS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/${DRIVERS_ROOT_NAME} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/${MODULES_ROOT_NAME} 
+set(common2015_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/${DRIVERS_ROOT_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${MODULES_ROOT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/${UTILS_ROOT_NAME}
 )
 
