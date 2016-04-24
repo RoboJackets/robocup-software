@@ -16,6 +16,7 @@ using namespace boost::python;
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Rect.hpp>
+#include <Geometry2d/Line.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <SystemState.hpp>
@@ -457,6 +458,16 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
+struct VecToList {
+    static PyObject* convert(const std::vector<Geometry2d::Line>& vec) {
+        boost::python::list* l = new boost::python::list();
+        for (size_t i = 0; i < vec.size(); i++){
+            (*l).append(vec[i]);
+        }
+        return l->ptr();
+    }
+};
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 /**
@@ -685,6 +696,10 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc);
     register_ptr_to_python<SystemState*>();
 
+    to_python_converter<
+        std::vector<Geometry2d::Line, std::allocator<Geometry2d::Line>>,
+        VecToList>();
+
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
@@ -709,6 +724,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
         .add_property("OurHalf", &Field_Dimensions::OurHalf)
         .add_property("TheirHalf", &Field_Dimensions::TheirHalf)
+        .add_property("FieldRect", &Field_Dimensions::FieldRect)
+        .add_property("FieldBorders", &Field_Dimensions::FieldBorders)
         .def_readonly("SingleFieldDimensions",
                       &Field_Dimensions::Single_Field_Dimensions)
         .def_readonly("DoubleFieldDimensions",
