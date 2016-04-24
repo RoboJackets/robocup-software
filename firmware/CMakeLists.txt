@@ -6,6 +6,7 @@ include(RemoveFlags)
 # the default compiler (mostly apple computers). The arm compilers know
 # nothing about this flag however.
 remove_cxx_flag("-fcolor-diagnostics")
+remove_cxx_flag("-Werror=return-stack-address")
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
