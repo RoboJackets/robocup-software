@@ -458,7 +458,13 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
-struct VecToList {
+/*
+ * Our method of converting C++ vectors into Python lines. Iterates through
+ * the vector and appends it to the python list (which is a pointer). Right now
+ * it only works for vectors Geometry2d::Line, but it would be pretty
+ * straightforward to make it a template.
+ */
+struct FieldBordersVectorToPythonList {
     static PyObject* convert(const std::vector<Geometry2d::Line>& vec) {
         boost::python::list* l = new boost::python::list();
         for (size_t i = 0; i < vec.size(); i++){
@@ -693,9 +699,14 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc);
     register_ptr_to_python<SystemState*>();
 
+    /*
+     * A special converter for vectors of Geometry2d::Line because the 
+     * normal method of using .def() and the vector_indexing_suite weren't
+     * working for the Geometry2d::Line vector
+     */
     to_python_converter<
         std::vector<Geometry2d::Line, std::allocator<Geometry2d::Line>>,
-        VecToList>();
+        FieldBordersVectorToPythonList>();
 
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
