@@ -18,11 +18,11 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
+RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations), SingleRobotPathPlanner(false) {}
 
 bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
-                              const Geometry2d::ShapeSet* obstacles,
+                              const Geometry2d::ShapeSet& obstacles,
                               const Path* prevPath) const {
     if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
                                              obstacles, prevPath)) {
@@ -47,14 +47,16 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles,
-    const std::vector<const Path *> &paths, std::unique_ptr<Path> prevPath) {
+    Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle> &dynamicObstacles, std::unique_ptr<Path> prevPath) {
     // This planner only works with commands of type 'PathTarget'
     assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
     Planning::PathTargetCommand target =
         *static_cast<const Planning::PathTargetCommand*>(cmd);
 
     MotionInstant goal = target.pathGoal;
+
+    allDynamicToStatic(obstacles, dynamicObstacles);
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -69,7 +71,7 @@ std::unique_ptr<Path> RRTPlanner::run(
     boost::optional<Geometry2d::Point> prevGoal;
     if (prevPath) prevGoal = prevPath->end().motion.pos;
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
-        goal.pos, prevGoal, *obstacles);
+        goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles,
@@ -90,7 +92,7 @@ std::unique_ptr<Path> RRTPlanner::run(
         }
 
         // Generate and return a cubic bezier path using the waypoints
-        return generateCubicBezier(points, *obstacles, motionConstraints,
+        return generateCubicBezier(points, obstacles, motionConstraints,
                                    start.vel, goal.vel);
     } else {
         return prevPath;
@@ -98,15 +100,15 @@ std::unique_ptr<Path> RRTPlanner::run(
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
-                                 const MotionConstraints& motionConstraints,
-                                 const Geometry2d::ShapeSet* obstacles) {
+                                 const MotionConstraints &motionConstraints,
+                                 const ShapeSet &obstacles) {
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
     FixedStepTree startTree;
     FixedStepTree goalTree;
-    startTree.init(start.pos, obstacles);
-    goalTree.init(goal.pos, obstacles);
+    startTree.init(start.pos, &obstacles);
+    goalTree.init(goal.pos, &obstacles);
     startTree.step = goalTree.step = .15f;
 
     // Run bi-directional RRT algorithm
@@ -150,7 +152,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
 }
 
 void RRTPlanner::optimize(vector<Geometry2d::Point>& pts,
-                          const Geometry2d::ShapeSet* obstacles,
+                          const Geometry2d::ShapeSet& obstacles,
                           const MotionConstraints& motionConstraints,
                           Geometry2d::Point vi, Geometry2d::Point vf) {
     unsigned int start = 0;
@@ -160,14 +162,14 @@ void RRTPlanner::optimize(vector<Geometry2d::Point>& pts,
     }
 
     // The set of obstacles the starting point was inside of
-    const auto startHitSet = obstacles->hitSet(pts[start]);
+    const auto startHitSet = obstacles.hitSet(pts[start]);
     int span = 2;
     while (span < pts.size()) {
         bool changed = false;
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
             const auto newHitSet =
-                obstacles->hitSet(Geometry2d::Segment(pts[i], pts[i + span]));
+                obstacles.hitSet(Geometry2d::Segment(pts[i], pts[i + span]));
             if (!newHitSet.empty()) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {

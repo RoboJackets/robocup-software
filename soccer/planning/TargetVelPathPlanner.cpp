@@ -22,7 +22,7 @@ void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
-    Point start, Point dir, const Geometry2d::ShapeSet* obstacles) {
+        Point start, Point dir, const ShapeSet &obstacles) {
     dir = dir.normalized();
 
     // TODO(justbuchanan): handle dynamic obstacles (robots)
@@ -46,12 +46,12 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     auto val = std::lower_bound(
         scaledDistRange.begin(), scaledDistRange.end(), obstacles,
         [start, dir, rangeScaleFactor](int scaledDist,
-                                       const Geometry2d::ShapeSet* obstacles) {
+                                       const Geometry2d::ShapeSet& obstacles) {
             Geometry2d::Segment pathSegment(
                 start, start + dir * (scaledDist / rangeScaleFactor));
             // Returns true if a path of the given distance doesn't hit
             // obstacles
-            return !obstacles->hit(pathSegment);
+            return !obstacles.hit(pathSegment);
         });
     const float nonblockedPathLen = *val / rangeScaleFactor;
 
@@ -61,7 +61,7 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 bool TargetVelPathPlanner::shouldReplan(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
+    const Geometry2d::ShapeSet& obstacles, const Path* prevPath) {
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
     WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
         if (cmd->getCommandType() == MotionCommand::WorldVel) {
@@ -108,14 +108,14 @@ bool TargetVelPathPlanner::shouldReplan(
 std::unique_ptr<Path> TargetVelPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles,
-    const std::vector<const Path *> &paths, std::unique_ptr<Path> prevPath) {
+    Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle> &dynamicObstacles, std::unique_ptr<Path> prevPath) {
     // If the start point is in an obstacle, escape from it
-    if (obstacles->hit(startInstant.pos)) {
+    if (obstacles.hit(startInstant.pos)) {
         EscapeObstaclesPathPlanner escapePlanner;
         EmptyCommand emptyCommand;
         return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
-                                 obstacles, std::vector<const Path *>(), std::move(prevPath));
+                                 obstacles, dynamicObstacles, std::move(prevPath));
     }
 
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
