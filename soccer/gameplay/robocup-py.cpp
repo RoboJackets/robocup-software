@@ -458,12 +458,12 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
-template <class T>
 struct VecToList {
-    static PyObject* convert(const std::vector<T>& vec) {
+    static PyObject* convert(const std::vector<Geometry2d::Line>& vec) {
         boost::python::list* l = new boost::python::list();
-        for (size_t i = 0; i < vec.size(); i++) (*l).append(vec[i]);
-
+        for (size_t i = 0; i < vec.size(); i++){
+            (*l).append(vec[i]);
+        }
         return l->ptr();
     }
 };
@@ -695,7 +695,7 @@ BOOST_PYTHON_MODULE(robocup) {
 
     to_python_converter<
         std::vector<Geometry2d::Line, std::allocator<Geometry2d::Line>>,
-        VecToList<Geometry2d::Line>>();
+        VecToList>();
 
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
