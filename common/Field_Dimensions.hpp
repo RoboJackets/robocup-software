@@ -162,7 +162,7 @@ struct Field_Dimensions {
 
         _FieldRect = Geometry2d::Rect(Geometry2d::Point(-_Width / 2.0, 0),
                                       Geometry2d::Point(_Width / 2.0, _Length));
-
+        // Vector of 4 lines that outline the entire field
         _FieldBorders = {
             Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, 0),
                              Geometry2d::Point(-_Width / 2.0, _Length)),
