@@ -24,6 +24,7 @@
 
 volatile char had_interrupt_ = 0;
 volatile uint8_t data = 0;
+volatile unsigned chip_on = 0;
 uint8_t spi_enabled = 0;
 
 uint8_t get_voltage();
@@ -36,13 +37,13 @@ uint8_t time;
 void main() {
     init();
     while (1) {
-        if (!(PINA & _BV(N_KICK_CS))) {  // Check if N_KICK_CS == 0
-            if (!spi_enabled) {
-                SET_BIT(USICR, USIOIE);  // Enable ISR
-                SET_BIT(DDRA, DO);       // Drive DO
-                spi_enabled = 1;
-            }
-
+        // if (!(PINA & _BV(N_KICK_CS))) {  // Check if N_KICK_CS == 0
+            // if (!spi_enabled) {
+            //     SET_BIT(USICR, USIOIE);  // Enable ISR
+            //     SET_BIT(DDRA, DO);       // Drive DO
+            //     spi_enabled = 1;
+            // }
+        if (chip_on) {
             if (had_interrupt_) {
                 char cmd = PARSE_CMD(data);
 
@@ -63,12 +64,15 @@ void main() {
                 // Reset interrupt flag
                 had_interrupt_ = 0;
             }
-
-        } else if (spi_enabled) {
-            CLEAR_BIT(USICR, USIOIE);  // Disable ISR
-            CLEAR_BIT(DDRA, DO);       // DO to Z
-            spi_enabled = 0;
+        } else {
+            had_interrupt_ = 0;
         }
+        //
+        // } else if (spi_enabled) {
+        //     CLEAR_BIT(USICR, USIOIE);  // Disable ISR
+        //     CLEAR_BIT(DDRA, DO);       // DO to Z
+        //     spi_enabled = 0;
+        // }
     }
 }
 
@@ -83,6 +87,21 @@ ISR(USI_OVF_vect) {
     had_interrupt_ = 1;
 }
 
+/* Chip Select Interrupt */
+ISR(PCINT0_vect) {
+    if (!(PINA & _BV(N_KICK_CS))) {
+        // SPI should be enabled
+        SET_BIT(DDRA, DO);
+        //SET_BIT(USICR, USIOIE);  // Enable ISR
+        chip_on = 1;
+    } else {
+        // SPI should not be enabled
+        CLEAR_BIT(DDRA, DO);
+        //CLEAR_BIT(USICR, USIOIE);  // Enable ISR
+        chip_on = 0;
+    }
+}
+
 void init() {
     /* Port direction settings */
     SET_BIT(DDRA, KICK);
@@ -92,6 +111,10 @@ void init() {
     SET_BIT(DDRB, CHARGE);
 
     SET_BIT(PORTA, N_KICK_CS);
+
+    // CS Interrupt
+    SET_BIT(GIMSK, PCIE0);
+    SET_BIT(PCMSK0, PCINT7);
 
     /* SPI init - Pg. 120 */
     // 3 Wire Mode DO, DI, USCK - Pg. 124
