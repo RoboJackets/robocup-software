@@ -4,6 +4,7 @@
 #include <cfloat>
 #include <cmath>
 
+
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
@@ -14,6 +15,8 @@
 #include <boost/python.hpp>
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
+
+using namespace boost::python;
 
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
