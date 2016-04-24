@@ -467,7 +467,7 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
 struct FieldBordersVectorToPythonList {
     static PyObject* convert(const std::vector<Geometry2d::Line>& vec) {
         boost::python::list* l = new boost::python::list();
-        for (size_t i = 0; i < vec.size(); i++){
+        for (size_t i = 0; i < vec.size(); i++) {
             (*l).append(vec[i]);
         }
         return l->ptr();
@@ -700,7 +700,7 @@ BOOST_PYTHON_MODULE(robocup) {
     register_ptr_to_python<SystemState*>();
 
     /*
-     * A special converter for vectors of Geometry2d::Line because the 
+     * A special converter for vectors of Geometry2d::Line because the
      * normal method of using .def() and the vector_indexing_suite weren't
      * working for the Geometry2d::Line vector
      */
