@@ -14,7 +14,7 @@ namespace Planning {
 bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
                                     const MotionCommand* cmd,
                                     const MotionConstraints& motionConstraints,
-                                    const Geometry2d::ShapeSet* obstacles,
+                                    const Geometry2d::ShapeSet& obstacles,
                                     const Path* prevPath) {
     PivotCommand command = *dynamic_cast<const PivotCommand*>(cmd);
     debugThrow("Unfinished Class");
@@ -25,14 +25,14 @@ bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
 std::unique_ptr<Path> PivotPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles,
-    const std::vector<const Path *> &paths, std::unique_ptr<Path> prevPath) {
+    Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle> &dynamicObstacles, std::unique_ptr<Path> prevPath) {
     // TODO implement actual Pivoting
     debugThrow("Unfinished Class");
 
     EscapeObstaclesPathPlanner escapePlanner;
     EmptyCommand emptyCommand;
     return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
-                             obstacles, std::vector<const Path *>(), std::move(prevPath));
+                             obstacles, dynamicObstacles, std::move(prevPath));
 }
 }

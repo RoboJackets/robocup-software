@@ -6,6 +6,7 @@
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
 #include "planning/RotationCommand.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
 
@@ -14,14 +15,15 @@ namespace Planning {
  */
 class SingleRobotPathPlanner {
 public:
+
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
     virtual std::unique_ptr<Path> run(
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles,
-        const std::vector<const Path *> &paths,
+        Geometry2d::ShapeSet& obstacles,
+        const std::vector<DynamicObstacle> &dynamicObstacles,
         std::unique_ptr<Path> prevPath = nullptr) = 0;
 
     /// The MotionCommand type that this planner handles
@@ -31,6 +33,9 @@ public:
     static double replanTimeout() { return *_replanTimeout; }
 
     static void createConfiguration(Configuration* cfg);
+
+    //Adds all static obstacle portions of the dynamic obstacle to static obstacles
+    static void allDynamicToStatic(Geometry2d::ShapeSet &obstacles, const std::vector<DynamicObstacle> &dynamicObstacles);
 
     /// Checks if the previous path is no longer valid and needs to be
     /// re-planned.  This method does the following checks:
@@ -44,12 +49,21 @@ public:
     /// planner-specific checks to determine if a replan is necessary.
     static bool shouldReplan(MotionInstant currentInstant,
                              const MotionConstraints& motionConstraints,
-                             const Geometry2d::ShapeSet* obstacles,
+                             const Geometry2d::ShapeSet& obstacles,
                              const Path* prevPath);
+
+    virtual bool canHandleDynamic() {
+        return handlesDynamic;
+    }
+
+protected:
+    SingleRobotPathPlanner(bool handlesDynamic) : handlesDynamic(handlesDynamic) {}
 
 private:
     static ConfigDouble* _goalChangeThreshold;
     static ConfigDouble* _replanTimeout;
+
+    const bool handlesDynamic;
 };
 
 /// Gets the subclass of SingleRobotPathPlanner responsible for handling the

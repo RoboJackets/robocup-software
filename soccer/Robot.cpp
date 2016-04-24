@@ -404,21 +404,18 @@ float OurRobot::avoidBallRadius() const { return _avoidBallRadius; }
 
 void OurRobot::resetAvoidBall() { avoidBallRadius(Ball_Avoid_Small); }
 
-std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
+std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
     // if game is stopped, large obstacle regardless of flags
     if (_state->gameState.state != GameState::Playing &&
         !(_state->gameState.ourRestart || _state->gameState.theirPenalty())) {
-        return std::shared_ptr<Geometry2d::Shape>(
-            new Circle(_state->ball.pos,
-                       Field_Dimensions::Current_Dimensions.CenterRadius()));
+        return std::make_shared<Geometry2d::Circle>(_state->ball.pos, Field_Dimensions::Current_Dimensions.CenterRadius());
     }
 
     // create an obstacle if necessary
     if (_avoidBallRadius > 0.0) {
-        return std::shared_ptr<Geometry2d::Shape>(
-            new Circle(_state->ball.pos, _avoidBallRadius));
+        return std::make_shared<Geometry2d::Circle>(_state->ball.pos, _avoidBallRadius);
     } else {
-        return std::shared_ptr<Geometry2d::Shape>();
+        return nullptr;
     }
 }
 
@@ -426,6 +423,39 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     angleFunctionPath.path = std::move(path);
+}
+
+std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
+    vector<Planning::DynamicObstacle> obstacles;
+
+
+    //const Geometry2d::ShapeSet selfObs = createRobotObstacles(
+    //        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
+
+    //Add Opponent Robots
+    auto &mask = _opp_avoid_mask;
+    auto &robots = _state->opp;
+    for (size_t i = 0; i < mask.size(); ++i)
+        if (mask[i] > 0 && robots[i] && robots[i]->visible)
+            obstacles.push_back(Planning::DynamicObstacle(robots[i]->pos, mask[i]));
+
+    //Add ball
+    if (_state->ball.valid) {
+        auto ballObs = createBallObstacle();
+        if (ballObs) obstacles.emplace_back(*ballObs);
+    }
+
+    return obstacles;
+}
+
+Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
+        const Geometry2d::ShapeSet& globalObstacles) {
+
+    Geometry2d::ShapeSet fullObstacles(_local_obstacles);
+
+    fullObstacles.add(globalObstacles);
+
+    return fullObstacles;
 }
 
 Geometry2d::ShapeSet OurRobot::collectAllObstacles(

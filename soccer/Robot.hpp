@@ -8,6 +8,8 @@
 #include <planning/RotationConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
 #include "planning/RotationCommand.hpp"
+#include "planning/DynamicObstacle.hpp"
+
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/Control.pb.h>
@@ -320,6 +322,11 @@ public:
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
 
+    std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
+
+    Geometry2d::ShapeSet collectStaticObstacles(
+            const Geometry2d::ShapeSet& globalObstacles);
+
     Geometry2d::ShapeSet collectAllObstacles(
         const Geometry2d::ShapeSet& globalObstacles);
 
@@ -495,7 +502,7 @@ protected:
     /**
      * Creates an obstacle for the ball if necessary
      */
-    std::shared_ptr<Geometry2d::Shape> createBallObstacle() const;
+    std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
 
 protected:
     friend class Processor;
