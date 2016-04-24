@@ -706,6 +706,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
         .add_property("OurHalf", &Field_Dimensions::OurHalf)
         .add_property("TheirHalf", &Field_Dimensions::TheirHalf)
+        .add_property("FieldRect", &Field_Dimensions::FieldRect)
+        .add_property("FieldBorders", &Field_Dimensions::FieldBorders)
         .def_readonly("SingleFieldDimensions",
                       &Field_Dimensions::Single_Field_Dimensions)
         .def_readonly("DoubleFieldDimensions",

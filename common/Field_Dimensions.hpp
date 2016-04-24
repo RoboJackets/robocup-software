@@ -12,6 +12,8 @@
 #include <Geometry2d/Rect.hpp>
 
 #include <boost/python.hpp>
+#include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
 
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
@@ -58,6 +60,10 @@ struct Field_Dimensions {
     Geometry2d::Segment TheirGoalSegment() const { return _TheirGoalSegment; }
     Geometry2d::Rect OurHalf() const { return _OurHalf; }
     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
+    Geometry2d::Rect FieldRect() const { return _FieldRect;}
+
+    boost::python::tuple FieldBorders() const {return _FieldBorders;}
+
 
     static const Field_Dimensions Single_Field_Dimensions;
 
@@ -155,6 +161,18 @@ struct Field_Dimensions {
                              Geometry2d::Point(_Width / 2, _Length / 2));
         _OurHalf = Geometry2d::Rect(Geometry2d::Point(-_Width / 2, 0),
                                     Geometry2d::Point(_Width / 2, _Length / 2));
+
+        _FieldRect = Geometry2d::Rect(Geometry2d::Point(-_Width / 2.0, 0),
+ +                                      Geometry2d::Point(_Width / 2.0, _Length));
+
+        _FieldBorders = boost::python::make_tuple(Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, 0),
+ +                             Geometry2d::Point(-_Width / 2.0, _Length)),
+ +            Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, _Length),
+ +                             Geometry2d::Point(_Width / 2.0, _Length)),
+ +            Geometry2d::Line(Geometry2d::Point(_Width / 2.0, _Length),
+ +                             Geometry2d::Point(_Width / 2.0, 0)),
+ +            Geometry2d::Line(Geometry2d::Point(_Width / 2.0, 0),
+ +                             Geometry2d::Point(-_Width / 2.0, 0)))
     }
 
 private:
@@ -181,4 +199,7 @@ private:
     Geometry2d::Segment _TheirGoalSegment;
     Geometry2d::Rect _OurHalf;
     Geometry2d::Rect _TheirHalf;
+    Geometry2d::Rect _FieldRect;
+
+    boost::python::tuple _FieldBorders;
 };
