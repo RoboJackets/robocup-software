@@ -37,6 +37,8 @@ public:
     //Adds all static obstacle portions of the dynamic obstacle to static obstacles
     static void allDynamicToStatic(Geometry2d::ShapeSet &obstacles, const std::vector<DynamicObstacle> &dynamicObstacles);
 
+    static void splitDynamic(Geometry2d::ShapeSet &obstacles, std::vector<const Path *> &dynamicOut,
+                             const std::vector<DynamicObstacle> &dynamicObstacles);
     /// Checks if the previous path is no longer valid and needs to be
     /// re-planned.  This method does the following checks:
     /// * Is path non-null?
