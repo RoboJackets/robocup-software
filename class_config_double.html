@@ -120,14 +120,14 @@ $(document).ready(function(){initNavTree('class_config_double.html','');});
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0156cc256bd72348859abdf58be522e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0156cc256bd72348859abdf58be522e5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigDouble</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, QString name, double value=0, std::string description=&quot;&quot;)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigDouble</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, QString <a class="el" href="class_config_item.html#a82be6a96bda766e3a0d0819738a07c2f">name</a>, double value=0, std::string description=&quot;&quot;)</td></tr>
 <tr class="separator:a0156cc256bd72348859abdf58be522e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98a6b831f27cb37f79e6cdcce8a28bd6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98a6b831f27cb37f79e6cdcce8a28bd6"></a>
 virtual QString&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> () override</td></tr>
 <tr class="separator:a98a6b831f27cb37f79e6cdcce8a28bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ee761b3607570a987d00d1a809b3227"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ee761b3607570a987d00d1a809b3227"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setValue</b> (const QString &amp;str) override</td></tr>
-<tr class="separator:a2ee761b3607570a987d00d1a809b3227"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9cf3d1cf0fbbff8d271afcec210a2e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9cf3d1cf0fbbff8d271afcec210a2e5"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setValueString</b> (const QString &amp;str) override</td></tr>
+<tr class="separator:ae9cf3d1cf0fbbff8d271afcec210a2e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8b8dd0d472c5933d8e6bcbc3f822401"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8b8dd0d472c5933d8e6bcbc3f822401"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>operator double</b> () const </td></tr>
 <tr class="separator:ae8b8dd0d472c5933d8e6bcbc3f822401"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,13 +137,17 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (doub
 <tr class="memitem:a80ce0ee0a1ccb112c987885690e1e1ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80ce0ee0a1ccb112c987885690e1e1ad"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>value</b> () const </td></tr>
 <tr class="separator:a80ce0ee0a1ccb112c987885690e1e1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b4ca784765bd2c2d7e45453e2d674d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b4ca784765bd2c2d7e45453e2d674d5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>value</b> (double v)</td></tr>
-<tr class="separator:a0b4ca784765bd2c2d7e45453e2d674d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26eff5f4ecc703774be1bef5391a96c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26eff5f4ecc703774be1bef5391a96c7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setValue</b> (double v)</td></tr>
+<tr class="separator:a26eff5f4ecc703774be1bef5391a96c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_config_item"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_config_item')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_config_item.html">ConfigItem</a></td></tr>
 <tr class="memitem:a8ebeafa9a6183b55e0413e08c3902ad0 inherit pub_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ebeafa9a6183b55e0413e08c3902ad0"></a>
 const QStringList &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>path</b> () const </td></tr>
 <tr class="separator:a8ebeafa9a6183b55e0413e08c3902ad0 inherit pub_methods_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82be6a96bda766e3a0d0819738a07c2f inherit pub_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82be6a96bda766e3a0d0819738a07c2f"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config_item.html#a82be6a96bda766e3a0d0819738a07c2f">name</a> () const </td></tr>
+<tr class="memdesc:a82be6a96bda766e3a0d0819738a07c2f inherit pub_methods_class_config_item"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the same name that was passed to the constructor. <br/></td></tr>
+<tr class="separator:a82be6a96bda766e3a0d0819738a07c2f inherit pub_methods_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -174,7 +178,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Configuration</b></t
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_config_item"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_config_item')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_config_item.html">ConfigItem</a></td></tr>
 <tr class="memitem:a4b84ce77b512f660ed7dc35f3586327c inherit pro_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b84ce77b512f660ed7dc35f3586327c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;name, std::string description=&quot;&quot;)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;<a class="el" href="class_config_item.html#a82be6a96bda766e3a0d0819738a07c2f">name</a>, std::string description=&quot;&quot;)</td></tr>
 <tr class="separator:a4b84ce77b512f660ed7dc35f3586327c inherit pro_methods_class_config_item"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4df937131b54f1000f7fd8c564f47a2 inherit pro_methods_class_config_item"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4df937131b54f1000f7fd8c564f47a2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addItem</b> ()</td></tr>
@@ -214,7 +218,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>valueChanged</b> (con
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_config_double.html">ConfigDouble</a></li>
-    <li class="footer">Generated on Mon Apr 25 2016 21:30:23 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Apr 25 2016 21:38:37 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

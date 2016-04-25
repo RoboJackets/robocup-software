@@ -126,17 +126,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8ebeafa9a6183b55e0413e08c3902ad0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ebeafa9a6183b55e0413e08c3902ad0"></a>
 const QStringList &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>path</b> () const </td></tr>
 <tr class="separator:a8ebeafa9a6183b55e0413e08c3902ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82be6a96bda766e3a0d0819738a07c2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82be6a96bda766e3a0d0819738a07c2f"></a>
+const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config_item.html#a82be6a96bda766e3a0d0819738a07c2f">name</a> () const </td></tr>
+<tr class="memdesc:a82be6a96bda766e3a0d0819738a07c2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the same name that was passed to the constructor. <br/></td></tr>
+<tr class="separator:a82be6a96bda766e3a0d0819738a07c2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7e2b5917f7bfbe49f9afb267321f2f2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7e2b5917f7bfbe49f9afb267321f2f2"></a>
 virtual QString&#160;</td><td class="memItemRight" valign="bottom"><b>toString</b> ()=0</td></tr>
 <tr class="separator:ac7e2b5917f7bfbe49f9afb267321f2f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac971757b9050c14eef89bff4ff61c522"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac971757b9050c14eef89bff4ff61c522"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setValue</b> (const QString &amp;str)=0</td></tr>
-<tr class="separator:ac971757b9050c14eef89bff4ff61c522"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cdda273594a9c2875bb4b196a91b9ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cdda273594a9c2875bb4b196a91b9ed"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setValueString</b> (const QString &amp;str)=0</td></tr>
+<tr class="separator:a7cdda273594a9c2875bb4b196a91b9ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a4b84ce77b512f660ed7dc35f3586327c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b84ce77b512f660ed7dc35f3586327c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;name, std::string description=&quot;&quot;)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigItem</b> (<a class="el" href="class_configuration.html">Configuration</a> *tree, const QString &amp;<a class="el" href="class_config_item.html#a82be6a96bda766e3a0d0819738a07c2f">name</a>, std::string description=&quot;&quot;)</td></tr>
 <tr class="separator:a4b84ce77b512f660ed7dc35f3586327c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4df937131b54f1000f7fd8c564f47a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4df937131b54f1000f7fd8c564f47a2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addItem</b> ()</td></tr>
@@ -199,7 +203,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Configuration</b></t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_config_item.html">ConfigItem</a></li>
-    <li class="footer">Generated on Mon Apr 25 2016 21:30:23 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Apr 25 2016 21:38:37 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

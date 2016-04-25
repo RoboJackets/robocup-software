@@ -143,8 +143,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
+    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -329,6 +329,7 @@ var hierarchy =
     [ "SystemState", "class_system_state.html", null ],
     [ "TeamInfo", "class_team_info.html", null ],
     [ "TestCase", null, [
+      [ "test_config.TestConfig", "classtest__config_1_1_test_config.html", null ],
       [ "test_constants.TestConstants", "classtest__constants_1_1_test_constants.html", null ],
       [ "test_fsm.TestFsm", "classtest__fsm_1_1_test_fsm.html", null ],
       [ "test_play_registry.TestPlayRegistry", "classtest__play__registry_1_1_test_play_registry.html", null ],

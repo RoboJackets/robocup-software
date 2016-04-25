@@ -6,7 +6,7 @@ var class_configuration =
     [ "configItem", "class_configuration.html#a2b0d35c18e67160c5fdbc1b600c59aca", null ],
     [ "itemChanged", "class_configuration.html#ad9683cf6c54e715ff1a9c66d8c2e962c", null ],
     [ "load", "class_configuration.html#ab4a6d758b6c67684f6a2706522373046", null ],
-    [ "nameLookup", "class_configuration.html#a1da95e17f5d3c4d722282de5bf2e4044", null ],
+    [ "nameLookup", "class_configuration.html#a0471551f88acd2ec513c352f076a5a69", null ],
     [ "save", "class_configuration.html#a2d51cbf56498dbfd4b0849b2efdd1b84", null ],
     [ "tree", "class_configuration.html#ad3b87065e84fc752017ed2a16b99271d", null ],
     [ "tree", "class_configuration.html#afbb1965bdd68c3bff1113d231f2ce76b", null ],

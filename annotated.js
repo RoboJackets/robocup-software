@@ -300,6 +300,9 @@ var annotated =
       [ "header_data", "structrtp_1_1header__data.html", "structrtp_1_1header__data" ],
       [ "packet", "classrtp_1_1packet.html", "classrtp_1_1packet" ]
     ] ],
+    [ "test_config", null, [
+      [ "TestConfig", "classtest__config_1_1_test_config.html", "classtest__config_1_1_test_config" ]
+    ] ],
     [ "test_constants", null, [
       [ "TestConstants", "classtest__constants_1_1_test_constants.html", "classtest__constants_1_1_test_constants" ]
     ] ],
