@@ -1,6 +1,5 @@
 #include "Path.hpp"
 #include <protobuf/LogFrame.pb.h>
-#include <MacTypes.h>
 
 using namespace std;
 namespace Planning {
