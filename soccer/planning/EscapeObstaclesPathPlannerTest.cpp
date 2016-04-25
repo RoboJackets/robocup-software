@@ -19,7 +19,7 @@ TEST(EscapeObstaclesPathPlanner, run) {
 
     EscapeObstaclesPathPlanner planner;
     auto path =
-        planner.run(startInstant, &cmd, MotionConstraints(), &obstacles, std::vector<const Path *>());
+        planner.run(startInstant, &cmd, MotionConstraints(), obstacles);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 

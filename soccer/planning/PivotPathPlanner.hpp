@@ -17,7 +17,7 @@ public:
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> &dynamicObstacles,
+        const std::vector<DynamicObstacle> &dynamicObstacles=std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) override;
 
     virtual MotionCommand::CommandType commandType() const override {
