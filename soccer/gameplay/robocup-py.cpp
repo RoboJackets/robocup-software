@@ -713,6 +713,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("DoubleFieldDimensions",
                       &Field_Dimensions::Double_Field_Dimensions);
 
+    class_<std::vector<Geometry2d::Line>>("vector_Line")
+        .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());
+
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)
         .def_readwrite("a1", &Window::a1)
