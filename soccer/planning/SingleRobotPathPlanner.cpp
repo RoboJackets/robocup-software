@@ -57,6 +57,17 @@ void SingleRobotPathPlanner::allDynamicToStatic(Geometry2d::ShapeSet &obstacles,
     }
 }
 
+void SingleRobotPathPlanner::splitDynamic(Geometry2d::ShapeSet &obstacles, std::vector<const Path *> &dynamicOut,
+                  const std::vector<DynamicObstacle> &dynamicObstacles) {
+    for (auto &dynObs : dynamicObstacles) {
+        if (dynObs.hasPath()) {
+            dynamicOut.push_back(dynObs.getPath());
+        } else {
+            obstacles.add(dynObs.getStaticObstacle());
+        }
+    }
+}
+
 boost::optional<std::function<AngleInstant(MotionInstant)>>
 angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
@@ -124,5 +135,4 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     return false;
 }
-
 }  // namespace Planning

@@ -18,11 +18,12 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations), SingleRobotPathPlanner(false) {}
+RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet& obstacles,
+                              const vector<const Path *> dynamicObs,
                               const Path* prevPath) const {
     if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
                                              obstacles, prevPath)) {
@@ -41,6 +42,10 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
         return true;
     }
 
+    if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr, RJ::timestamp())) {
+        return true;
+    }
+
     return false;
 }
 
@@ -55,8 +60,9 @@ std::unique_ptr<Path> RRTPlanner::run(
         *static_cast<const Planning::PathTargetCommand*>(cmd);
 
     MotionInstant goal = target.pathGoal;
-
-    allDynamicToStatic(obstacles, dynamicObstacles);
+    vector<const Path *> actualDynamic;
+    splitDynamic(obstacles, actualDynamic, dynamicObstacles);
+    //allDynamicToStatic(obstacles, dynamicObstacles);
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -74,26 +80,51 @@ std::unique_ptr<Path> RRTPlanner::run(
         goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(start, goal, motionConstraints, obstacles,
+    if (shouldReplan(start, goal, motionConstraints, obstacles, actualDynamic,
                      prevPath.get())) {
-        // Run bi-directional RRT to generate a path.
-        auto points = runRRT(start, goal, motionConstraints, obstacles);
 
-        // Optimize out uneccesary waypoints
-        optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
-
-        // Check if Planning or optimization failed
-        if (points.size() < 2) {
-            debugLog("PathPlanning Failed");
-            auto path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            return std::move(path);
+        if (target.debug == 2) {
+            cout << "replan2" << endl;
         }
 
-        // Generate and return a cubic bezier path using the waypoints
-        return generateCubicBezier(points, obstacles, motionConstraints,
-                                   start.vel, goal.vel);
+        const int tries = 10;
+        for (int i=0; i<tries; i++) {
+            // Run bi-directional RRT to generate a path.
+            auto points = runRRT(start, goal, motionConstraints, obstacles);
+
+            // Optimize out uneccesary waypoints
+            optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
+
+            // Check if Planning or optimization failed
+            if (points.size() < 2) {
+                /*
+                debugLog("PathPlanning Failed");
+                auto path = make_unique<InterpolatedPath>();
+                path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+                path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+                return std::move(path);
+                */
+                continue;
+            }
+
+            // Generate and return a cubic bezier path using the waypoints
+            auto path = generateCubicBezier(points, obstacles, motionConstraints,
+                                       start.vel, goal.vel);
+            float hitTime;
+            Point hitLocation;
+            bool hit = path->pathsIntersect(actualDynamic, &hitTime, &hitLocation, path->startTime());
+            if (hit) {
+                obstacles.add(make_shared<Circle>(hitLocation, Robot_Radius*1.5));
+            } else {
+                return std::move(path);
+            }
+        }
+
+        debugLog("PathPlanning Failed");
+        auto path = make_unique<InterpolatedPath>();
+        path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+        path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+        return std::move(path);
     } else {
         return prevPath;
     }

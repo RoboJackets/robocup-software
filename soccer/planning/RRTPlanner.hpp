@@ -82,6 +82,7 @@ protected:
     bool shouldReplan(MotionInstant start, MotionInstant goal,
                       const MotionConstraints& motionConstraints,
                       const Geometry2d::ShapeSet& obstacles,
+                      const std::vector<const Path *> dynamicObs,
                       const Path* prevPath) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
