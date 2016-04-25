@@ -1,6 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"class_system_state.html#af1d2d245231e05f0f057b275ed4a7318":[12,0,94,17],
 "class_system_state.html#affbc6a82a0ec079fb42f2d54ec8938ee":[12,0,94,20],
 "class_team_info.html":[12,0,95],
 "class_team_info.html#a06534c57dec84f48ae32609e1d2aa4bb":[12,0,95,4],
@@ -249,5 +248,6 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a28b19f6ad08c0cf6e3b1b05983cbbb52":[12,0,5,8,1,1,0,1],
 "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a886e44c013e3e3486d8764947d9d9734":[12,0,5,8,1,1,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#ad41cf0e9f8bac1c77e15332ea6c1f090":[12,0,5,8,1,1,0,3],
-"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html":[12,0,5,8,1,2,0]
+"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html":[12,0,5,8,1,2,0],
+"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a41a65a1e6f255126ba0ef915aa049e69":[12,0,5,8,1,2,0,6]
 };

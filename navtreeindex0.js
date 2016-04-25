@@ -98,8 +98,8 @@ var NAVTREEINDEX0 =
 "_ball_tracker_8hpp_source.html":[13,0,2,2,1],
 "_battery_profile_8hpp_source.html":[13,0,2,6],
 "_battery_widget_8hpp_source.html":[13,0,2,7],
-"_c_c1201_8hpp_source.html":[13,0,1,0,0,3,2],
-"_c_c1201_radio_8hpp_source.html":[13,0,1,0,0,3,3],
+"_c_c1201_8hpp_source.html":[13,0,1,0,0,3,1],
+"_c_c1201_radio_8hpp_source.html":[13,0,1,0,0,3,2],
 "_circle_8hpp_source.html":[13,0,0,0,1],
 "_comm_link_8hpp_source.html":[13,0,1,0,1,0,0],
 "_comm_module_8hpp_source.html":[13,0,1,0,1,1,0],
@@ -183,7 +183,6 @@ var NAVTREEINDEX0 =
 "annotated.html":[12,0],
 "assert_8hpp_source.html":[13,0,1,0,3,0,0],
 "buzzer_8hpp_source.html":[13,0,1,0,0,2,0],
-"cc1101-compatible_2registers_8h_source.html":[13,0,1,0,0,3,0,0,0],
 "class_a_v_r910.html":[12,0,15],
 "class_a_v_r910.html#a07c549c137848a2ecf78e1dcb241816e":[12,0,15,4],
 "class_a_v_r910.html#a24a91ddb881d8e0d27c1cb203d0f7349":[12,0,15,7],
@@ -249,5 +248,6 @@ var NAVTREEINDEX0 =
 "class_c_c1201.html#a7c11e8a7f81d15cd2168bf6dc9bdc977":[12,0,24,24],
 "class_c_c1201.html#a8381abed7da4e387921dae94c198b620":[12,0,24,0],
 "class_c_c1201.html#a8684563559992c9586f9da6ca5268509":[12,0,24,1],
-"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2":[12,0,24,23]
+"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2":[12,0,24,23],
+"class_c_c1201.html#a960cde5ec86b2ca0a213b073aa5b216f":[12,0,24,7]
 };
