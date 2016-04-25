@@ -18,6 +18,27 @@ set(COMMON_SRC
     "Utils.cpp"
 )
 
+# Boost Python
+set(Boost_USE_STATIC_LIBS   OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost COMPONENTS system REQUIRED)
+
+# find boost python
+# This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
+set(FOUND_A_BOOST_PYTHON FALSE)
+foreach(possible_name python3 python-py32 python-py33 python-py34 python)
+    find_package(Boost COMPONENTS ${possible_name})
+    if (Boost_FOUND)
+        set(FOUND_A_BOOST_PYTHON TRUE)
+        break()
+    endif()
+endforeach()
+if (NOT FOUND_A_BOOST_PYTHON)
+    message(FATAL_ERROR "Unable to find a suitable version of boost python")
+endif()
+
+
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -29,6 +50,11 @@ add_library(common STATIC ${COMMON_SRC} git_version.cpp)
 target_link_libraries(common proto_messages)
 qt5_use_modules(common Core Network Widgets)
 
+
+target_link_libraries(common ${Boost_LIBRARIES})
+include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
+link_directories(${PYTHON_LINK_DIRS})
+target_link_libraries(common ${PYTHON_LIBRARIES})
 
 # write git_version.cpp with the current git SHA and dirty status
 # see http://www.cmake.org/pipermail/cmake/2010-July/038015.html
