@@ -1,5 +1,6 @@
 #pragma once
 #include "TeamInfo.hpp"
+#include <Geometry2d/Point.hpp>
 
 /**
  * @brief Holds the state of the game according to the referee
@@ -48,6 +49,8 @@ public:
 
     TeamInfo OurInfo;
     TeamInfo TheirInfo;
+
+    Geometry2d::Point ballPlacementPoint;
 
     GameState() {
         period = FirstHalf;
@@ -125,4 +128,8 @@ public:
     // Our robots (except the penalty kicker) must stay 400mm behind the penalty
     // line
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
+
+    void setBallPlacementPoint(float x, float y){ ballPlacementPoint = Geometry2d::Point(x,y); }
+
+    Geometry2d::Point getBallPlacementPoint() const { return ballPlacementPoint; }
 };
