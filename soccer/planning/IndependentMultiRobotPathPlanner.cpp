@@ -47,7 +47,6 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
     vector<DynamicObstacle> ourRobotsObstacles;
     for (int shell: inOrderRequests) {
         PlanRequest& request = requests[shell];
-        request.motionCommand->debug = shell;
 
         if (_planners[shell]->canHandleDynamic()) {
             std::copy(std::begin(ourRobotsObstacles), std::end(ourRobotsObstacles), std::back_inserter(request.dynamicObstacles));

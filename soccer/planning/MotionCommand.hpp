@@ -18,9 +18,6 @@ public:
     CommandType getCommandType() const { return commandType; }
     virtual std::unique_ptr<Planning::MotionCommand> clone() const = 0;
 
-
-    int debug;
-
 protected:
     MotionCommand(const MotionCommand& that) = default;
     MotionCommand(CommandType command) : commandType(command) {}

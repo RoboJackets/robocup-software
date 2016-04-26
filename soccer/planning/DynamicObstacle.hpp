@@ -22,7 +22,6 @@ private:
     const std::shared_ptr<Geometry2d::Circle> staticObstacle;
 
 public:
-
     DynamicObstacle(Geometry2d::Point staticPoint, float radius, const Path *path = nullptr)
             : staticPoint(staticPoint), path(path), radius(radius),
               staticObstacle(std::make_shared<Geometry2d::Circle>(staticPoint, radius)) {}
@@ -51,12 +50,6 @@ public:
     std::shared_ptr<Geometry2d::Circle> getStaticObstacle() const {
         return staticObstacle;
     }
-
-    //virtual std::unique_ptr<Planning::MotionCommand> clone() const = 0;
-
-protected:
-    //MotionCommand(const MotionCommand& that) = default;
-    //MotionCommand(CommandType command) : commandType(command) {}
 
 };
 }  // namespace Planning
