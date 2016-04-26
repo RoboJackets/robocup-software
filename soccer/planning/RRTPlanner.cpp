@@ -18,12 +18,13 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
+RRTPlanner::RRTPlanner(int maxIterations)
+    : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
                               const Geometry2d::ShapeSet& obstacles,
-                              const vector<const Path *> dynamicObs,
+                              const vector<const Path*> dynamicObs,
                               const Path* prevPath) const {
     if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
                                              obstacles, prevPath)) {
@@ -42,7 +43,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
         return true;
     }
 
-    if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr, RJ::timestamp())) {
+    if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr,
+                                 RJ::timestamp())) {
         return true;
     }
 
@@ -51,16 +53,16 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
 
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    Geometry2d::ShapeSet& obstacles,
-    const std::vector<DynamicObstacle> &dynamicObstacles, std::unique_ptr<Path> prevPath) {
+    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles,
+    std::unique_ptr<Path> prevPath) {
     // This planner only works with commands of type 'PathTarget'
     assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
     Planning::PathTargetCommand target =
         *static_cast<const Planning::PathTargetCommand*>(cmd);
 
     MotionInstant goal = target.pathGoal;
-    vector<const Path *> actualDynamic;
+    vector<const Path*> actualDynamic;
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
     // Simple case: no path
@@ -81,9 +83,8 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles, actualDynamic,
                      prevPath.get())) {
-
         const int tries = 10;
-        for (int i=0; i<tries; i++) {
+        for (int i = 0; i < tries; i++) {
             // Run bi-directional RRT to generate a path.
             auto points = runRRT(start, goal, motionConstraints, obstacles);
 
@@ -96,13 +97,15 @@ std::unique_ptr<Path> RRTPlanner::run(
             }
 
             // Generate and return a cubic bezier path using the waypoints
-            auto path = generateCubicBezier(points, obstacles, motionConstraints,
-                                       start.vel, goal.vel);
+            auto path = generateCubicBezier(
+                points, obstacles, motionConstraints, start.vel, goal.vel);
             float hitTime;
             Point hitLocation;
-            bool hit = path->pathsIntersect(actualDynamic, &hitTime, &hitLocation, path->startTime());
+            bool hit = path->pathsIntersect(actualDynamic, &hitTime,
+                                            &hitLocation, path->startTime());
             if (hit) {
-                obstacles.add(make_shared<Circle>(hitLocation, Robot_Radius*1.5));
+                obstacles.add(
+                    make_shared<Circle>(hitLocation, Robot_Radius * 1.5));
             } else {
                 return std::move(path);
             }
@@ -119,8 +122,8 @@ std::unique_ptr<Path> RRTPlanner::run(
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
-                                 const MotionConstraints &motionConstraints,
-                                 const ShapeSet &obstacles) {
+                                 const MotionConstraints& motionConstraints,
+                                 const ShapeSet& obstacles) {
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
@@ -265,12 +268,14 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         startDirections.push_back(difference.normalized(
             (points[i] - points[i + 1]).mag() * directionDistance));
     }
-    Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight);
-    endDirections.push_back((vf + endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    Point endPathDirection =
+        (points[points.size() - 1] - points[points.size() - 2])
+            .normalized(pathWeight);
+    endDirections.push_back(
+        (vf + endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 

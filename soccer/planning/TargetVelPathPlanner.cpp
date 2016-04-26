@@ -22,7 +22,7 @@ void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
-        Point start, Point dir, const ShapeSet &obstacles) {
+    Point start, Point dir, const ShapeSet& obstacles) {
     dir = dir.normalized();
 
     // TODO(justbuchanan): handle dynamic obstacles (robots)
@@ -107,15 +107,16 @@ bool TargetVelPathPlanner::shouldReplan(
 // doesn't account for initial velocity
 std::unique_ptr<Path> TargetVelPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    Geometry2d::ShapeSet& obstacles,
-    const std::vector<DynamicObstacle> &dynamicObstacles, std::unique_ptr<Path> prevPath) {
+    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles,
+    std::unique_ptr<Path> prevPath) {
     // If the start point is in an obstacle, escape from it
     if (obstacles.hit(startInstant.pos)) {
         EscapeObstaclesPathPlanner escapePlanner;
         EmptyCommand emptyCommand;
         return escapePlanner.run(startInstant, &emptyCommand, motionConstraints,
-                                 obstacles, dynamicObstacles, std::move(prevPath));
+                                 obstacles, dynamicObstacles,
+                                 std::move(prevPath));
     }
 
     // TODO Undo this hack to use TargetVelPlanner to do Pivot

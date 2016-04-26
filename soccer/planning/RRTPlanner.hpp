@@ -69,7 +69,7 @@ public:
         MotionInstant start, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> &dynamicObstacles,
+        const std::vector<DynamicObstacle>& dynamicObstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
 
 protected:
@@ -82,14 +82,14 @@ protected:
     bool shouldReplan(MotionInstant start, MotionInstant goal,
                       const MotionConstraints& motionConstraints,
                       const Geometry2d::ShapeSet& obstacles,
-                      const std::vector<const Path *> dynamicObs,
+                      const std::vector<const Path*> dynamicObs,
                       const Path* prevPath) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     std::vector<Geometry2d::Point> runRRT(
-            MotionInstant start, MotionInstant goal,
-            const MotionConstraints &motionConstraints,
-            const Geometry2d::ShapeSet &obstacles);
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet& obstacles);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated

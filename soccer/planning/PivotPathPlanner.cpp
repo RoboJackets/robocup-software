@@ -24,9 +24,9 @@ bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
 
 std::unique_ptr<Path> PivotPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    Geometry2d::ShapeSet& obstacles,
-    const std::vector<DynamicObstacle> &dynamicObstacles, std::unique_ptr<Path> prevPath) {
+    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles,
+    std::unique_ptr<Path> prevPath) {
     // TODO implement actual Pivoting
     debugThrow("Unfinished Class");
 

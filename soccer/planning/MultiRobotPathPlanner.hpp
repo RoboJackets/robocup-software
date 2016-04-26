@@ -22,7 +22,7 @@ struct PlanRequest {
           constraints(constraints),
           prevPath(std::move(prevPath)),
           obstacles(obs),
-          dynamicObstacles(dObs)  {}
+          dynamicObstacles(dObs) {}
 
     PlanRequest() {}
 

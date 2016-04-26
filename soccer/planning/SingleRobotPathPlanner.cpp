@@ -51,15 +51,18 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
     return std::unique_ptr<SingleRobotPathPlanner>(planner);
 }
 
-void SingleRobotPathPlanner::allDynamicToStatic(Geometry2d::ShapeSet &obstacles, const std::vector<DynamicObstacle> &dynamicObstacles) {
-    for (auto &dynObs : dynamicObstacles) {
+void SingleRobotPathPlanner::allDynamicToStatic(
+    Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles) {
+    for (auto& dynObs : dynamicObstacles) {
         obstacles.add(dynObs.getStaticObstacle());
     }
 }
 
-void SingleRobotPathPlanner::splitDynamic(Geometry2d::ShapeSet &obstacles, std::vector<const Path *> &dynamicOut,
-                  const std::vector<DynamicObstacle> &dynamicObstacles) {
-    for (auto &dynObs : dynamicObstacles) {
+void SingleRobotPathPlanner::splitDynamic(
+    Geometry2d::ShapeSet& obstacles, std::vector<const Path*>& dynamicOut,
+    const std::vector<DynamicObstacle>& dynamicObstacles) {
+    for (auto& dynObs : dynamicObstacles) {
         if (dynObs.hasPath()) {
             dynamicOut.push_back(dynObs.getPath());
         } else {
@@ -75,17 +78,18 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             Geometry2d::Point targetPt =
                 static_cast<const Planning::FacePointCommand&>(command)
                     .targetPos;
-            std::function<AngleInstant(MotionInstant)> function =
-                [targetPt](MotionInstant instant) {
-                    return AngleInstant(instant.pos.angleTo(targetPt));
-                };
+            std::function<AngleInstant(MotionInstant)> function = [targetPt](
+                MotionInstant instant) {
+                return AngleInstant(instant.pos.angleTo(targetPt));
+            };
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle = static_cast<const Planning::FaceAngleCommand&>(
-                              command).targetAngle;
-            std::function<AngleInstant(MotionInstant)> function =
-                [angle](MotionInstant instant) { return AngleInstant(angle); };
+            float angle =
+                static_cast<const Planning::FaceAngleCommand&>(command)
+                    .targetAngle;
+            std::function<AngleInstant(MotionInstant)> function = [angle](
+                MotionInstant instant) { return AngleInstant(angle); };
             return function;
         }
         case RotationCommand::None:
