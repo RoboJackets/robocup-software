@@ -36,14 +36,6 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
     inOrderRequests.insert(std::end(inOrderRequests), std::begin(staticRequests), std::end(staticRequests));
     inOrderRequests.insert(std::end(inOrderRequests), std::begin(dynamicRequests), std::end(dynamicRequests));
 
-    /*
-    printf("order: ");
-    for (int i : inOrderRequests) {
-        printf("%d ", i);
-    }
-    printf("\n");
-     */
-
     vector<DynamicObstacle> ourRobotsObstacles;
     for (int shell: inOrderRequests) {
         PlanRequest& request = requests[shell];
