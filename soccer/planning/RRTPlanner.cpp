@@ -51,6 +51,8 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
     return false;
 }
 
+const int maxContinue = 10;
+
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
@@ -83,42 +85,63 @@ std::unique_ptr<Path> RRTPlanner::run(
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(start, goal, motionConstraints, obstacles, actualDynamic,
                      prevPath.get())) {
-        const int tries = 10;
-        for (int i = 0; i < tries; i++) {
-            // Run bi-directional RRT to generate a path.
-            auto points = runRRT(start, goal, motionConstraints, obstacles);
+        auto path = generateRRTPath(start, goal, motionConstraints, obstacles, actualDynamic);
 
-            // Optimize out uneccesary waypoints
-            optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
-
-            // Check if Planning or optimization failed
-            if (points.size() < 2) {
-                continue;
-            }
-
-            // Generate and return a cubic bezier path using the waypoints
-            auto path = generateCubicBezier(
-                points, obstacles, motionConstraints, start.vel, goal.vel);
-            float hitTime;
-            Point hitLocation;
-            bool hit = path->pathsIntersect(actualDynamic, &hitTime,
-                                            &hitLocation, path->startTime());
-            if (hit) {
-                obstacles.add(
-                    make_shared<Circle>(hitLocation, Robot_Radius * 1.5));
-            } else {
-                return std::move(path);
-            }
+        if (!path) {
+            path = make_unique<InterpolatedPath>();
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
         }
-
-        debugLog("PathPlanning Failed");
-        auto path = make_unique<InterpolatedPath>();
-        path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-        path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
         return std::move(path);
     } else {
+        if (reusePathTries >= maxContinue) {
+            reusePathTries = 0;
+            auto path = generateRRTPath(start, goal, motionConstraints, obstacles, actualDynamic);
+            if (path) {
+                float remaining =
+                        prevPath->getDuration() - RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime());
+                if (remaining > path->getDuration()) {
+                    return std::move(path);
+                }
+            }
+        }
+        reusePathTries++;
         return prevPath;
     }
+}
+
+std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(const MotionInstant& start, const MotionInstant& goal,
+                                                  const MotionConstraints& motionConstraints,
+                                                  ShapeSet& obstacles,
+                                                  const std::vector<const Path *> paths) {
+    const int tries = 10;
+    for (int i = 0; i < tries; i++) {
+        // Run bi-directional RRT to generate a path.
+        auto points = runRRT(start, goal, motionConstraints, obstacles);
+
+        // Optimize out uneccesary waypoints
+        optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
+
+        // Check if Planning or optimization failed
+        if (points.size() < 2) {
+            continue;
+        }
+
+        // Generate and return a cubic bezier path using the waypoints
+        auto path = generateCubicBezier(
+                points, obstacles, motionConstraints, start.vel, goal.vel);
+        float hitTime;
+        Point hitLocation;
+        bool hit = path->pathsIntersect(paths, &hitTime,
+                                        &hitLocation, path->startTime());
+        if (hit) {
+            obstacles.add(
+                    make_shared<Circle>(hitLocation, Robot_Radius * 1.5));
+        } else {
+            return std::move(path);
+        }
+    }
+    return nullptr;
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
