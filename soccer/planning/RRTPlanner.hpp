@@ -72,6 +72,8 @@ public:
         const std::vector<DynamicObstacle>& dynamicObstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
 
+    int reusePathTries = 0;
+
 protected:
     /// maximum number of rrt iterations to run
     /// this does not include connect attempts
@@ -90,6 +92,11 @@ protected:
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet& obstacles);
+
+    std::unique_ptr<InterpolatedPath> generateRRTPath(const MotionInstant& start, const MotionInstant& goal,
+                                                  const MotionConstraints& motionConstraints,
+                                                  Geometry2d::ShapeSet& obstacles,
+                                                  const std::vector<const Path *> paths);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
