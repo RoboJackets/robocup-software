@@ -4,7 +4,7 @@
 using namespace std;
 namespace Planning {
 
-    class ConstPathIterator;
+class ConstPathIterator;
 
 // This method is a default implementation of draw() that works by evaluating
 // the path at fixed time intervals form t = 0 to t = duration.

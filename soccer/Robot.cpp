@@ -428,10 +428,6 @@ void OurRobot::setPath(unique_ptr<Planning::Path> path) {
 std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
     vector<Planning::DynamicObstacle> obstacles;
 
-
-    //const Geometry2d::ShapeSet selfObs = createRobotObstacles(
-    //        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
-
     //Add Opponent Robots
     auto &mask = _opp_avoid_mask;
     auto &robots = _state->opp;
