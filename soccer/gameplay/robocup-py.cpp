@@ -742,8 +742,27 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
 
-    class_<std::shared_ptr<Configuration>>("Configuration")
+    class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
+        .def_readonly("name", &ConfigItem::name);
+
+    class_<Configuration, std::shared_ptr<Configuration>, boost::noncopyable>(
+        "Configuration")
         .def("FromRegisteredConfigurables",
              &Configuration::FromRegisteredConfigurables)
+        .def("nameLookup", &Configuration::nameLookup,
+             return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
+    register_ptr_to_python<std::shared_ptr<Configuration>>();
+
+    // Add wrappers for ConfigItem subclasses
+    class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
+        .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
+        .def("__str__", &ConfigBool::toString);
+    class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
+                                                           no_init)
+        .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
+        .def("__str__", &ConfigDouble::toString);
+    class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
+        .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
+        .def("__str__", &ConfigInt::toString);
 }
