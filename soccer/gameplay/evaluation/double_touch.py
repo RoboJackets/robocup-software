@@ -7,6 +7,7 @@ import enum
 import evaluation
 
 
+
 ## A state machine that tracks the double touch rule
 #
 # From the official rules (as of 2013):
@@ -44,7 +45,7 @@ class DoubleTouchTracker(fsm.StateMachine):
 
         self.add_transition(DoubleTouchTracker.State.kicking,
                             DoubleTouchTracker.State.kicker_forbidden,
-                            lambda: not self.kicker_has_possession(),
+                            lambda: not self.kicker_has_possession() and not main.game_state().is_placement,
                             'kicker kicks or fumbles ball')
 
         self.add_transition(DoubleTouchTracker.State.kicker_forbidden,
