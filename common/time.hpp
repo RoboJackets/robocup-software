@@ -25,8 +25,4 @@ static inline float TimestampToSecs(RJ::Time timestamp) {
     return (float)(timestamp / 1000000.0f);
 }
 
-/** returns the local system time in seconds */
-static inline float seconds() {
-    return TimestampToSecs(timestamp());
-}
 }  // namespace RJ
