@@ -15,7 +15,6 @@ namespace Planning {
  */
 class SingleRobotPathPlanner {
 public:
-
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
@@ -23,7 +22,8 @@ public:
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> &dynamicObstacles = std::vector<DynamicObstacle>(),
+        const std::vector<DynamicObstacle>&
+            dynamicObstacles = std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) = 0;
 
     /// The MotionCommand type that this planner handles
@@ -34,11 +34,15 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    //Adds all static obstacle portions of the dynamic obstacle to static obstacles
-    static void allDynamicToStatic(Geometry2d::ShapeSet &obstacles, const std::vector<DynamicObstacle> &dynamicObstacles);
+    // Adds all static obstacle portions of the dynamic obstacle to static
+    // obstacles
+    static void allDynamicToStatic(
+        Geometry2d::ShapeSet& obstacles,
+        const std::vector<DynamicObstacle>& dynamicObstacles);
 
-    static void splitDynamic(Geometry2d::ShapeSet &obstacles, std::vector<const Path *> &dynamicOut,
-                             const std::vector<DynamicObstacle> &dynamicObstacles);
+    static void splitDynamic(
+        Geometry2d::ShapeSet& obstacles, std::vector<const Path*>& dynamicOut,
+        const std::vector<DynamicObstacle>& dynamicObstacles);
     /// Checks if the previous path is no longer valid and needs to be
     /// re-planned.  This method does the following checks:
     /// * Is path non-null?
@@ -54,12 +58,11 @@ public:
                              const Geometry2d::ShapeSet& obstacles,
                              const Path* prevPath);
 
-    virtual bool canHandleDynamic() {
-        return handlesDynamic;
-    }
+    virtual bool canHandleDynamic() { return handlesDynamic; }
 
 protected:
-    SingleRobotPathPlanner(bool handlesDynamic) : handlesDynamic(handlesDynamic) {}
+    SingleRobotPathPlanner(bool handlesDynamic)
+        : handlesDynamic(handlesDynamic) {}
 
 private:
     static ConfigDouble* _goalChangeThreshold;

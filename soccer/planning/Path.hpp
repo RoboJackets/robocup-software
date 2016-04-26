@@ -94,10 +94,12 @@ public:
     virtual RJ::Time startTime() const { return _startTime; }
     virtual void setStartTime(RJ::Time t) { _startTime = t; }
 
-    virtual bool pathsIntersect(const std::vector<const Path *> &paths, float *hitTime, Geometry2d::Point *hitLocation
-            , RJ::Time startTime) const;
+    virtual bool pathsIntersect(const std::vector<const Path*>& paths,
+                                float* hitTime, Geometry2d::Point* hitLocation,
+                                RJ::Time startTime) const;
 
-    virtual std::unique_ptr<ConstPathIterator> iterator(RJ::Time startTime, float deltaT) const;
+    virtual std::unique_ptr<ConstPathIterator> iterator(RJ::Time startTime,
+                                                        float deltaT) const;
 
 protected:
     RJ::Time _startTime;
@@ -227,11 +229,13 @@ public:
     virtual void setStartTime(RJ::Time t) override { path->setStartTime(t); }
 };
 
-class ConstPathIterator
-{
+class ConstPathIterator {
 public:
-    explicit ConstPathIterator(const Path* path, RJ::Time startTime, float deltaT)
-            : path(path), time(RJ::TimestampToSecs(startTime - path->startTime())), deltaT(deltaT) {}
+    explicit ConstPathIterator(const Path* path, RJ::Time startTime,
+                               float deltaT)
+        : path(path),
+          time(RJ::TimestampToSecs(startTime - path->startTime())),
+          deltaT(deltaT) {}
 
     virtual RobotInstant operator*() const {
         auto temp = path->evaluate(time);
@@ -242,7 +246,7 @@ public:
         }
     }
 
-    virtual ConstPathIterator &operator++() {
+    virtual ConstPathIterator& operator++() {
         time += deltaT;
         return *this;
     }

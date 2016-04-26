@@ -23,7 +23,7 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
     const MotionConstraints& motionConstraints, ShapeSet& obstacles,
-    const std::vector<DynamicObstacle> &dynamicObstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles,
     std::unique_ptr<Path> prevPath) {
     assert(cmd->getCommandType() == MotionCommand::None);
 

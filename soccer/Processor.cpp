@@ -435,7 +435,8 @@ void Processor::run() {
                 Geometry2d::ShapeSet staticObstacles =
                     r->collectStaticObstacles(globalObstaclesForBot);
 
-                std::vector<Planning::DynamicObstacle> dynamicObstacles = r->collectDynamicObstacles();
+                std::vector<Planning::DynamicObstacle> dynamicObstacles =
+                    r->collectDynamicObstacles();
 
                 requests[r->shell()] = Planning::PlanRequest(
                     Planning::MotionInstant(r->pos, r->vel),
