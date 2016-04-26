@@ -62,7 +62,6 @@ std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant goal = target.pathGoal;
     vector<const Path *> actualDynamic;
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
-    //allDynamicToStatic(obstacles, dynamicObstacles);
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -83,10 +82,6 @@ std::unique_ptr<Path> RRTPlanner::run(
     if (shouldReplan(start, goal, motionConstraints, obstacles, actualDynamic,
                      prevPath.get())) {
 
-        if (target.debug == 2) {
-            cout << "replan2" << endl;
-        }
-
         const int tries = 10;
         for (int i=0; i<tries; i++) {
             // Run bi-directional RRT to generate a path.
@@ -97,13 +92,6 @@ std::unique_ptr<Path> RRTPlanner::run(
 
             // Check if Planning or optimization failed
             if (points.size() < 2) {
-                /*
-                debugLog("PathPlanning Failed");
-                auto path = make_unique<InterpolatedPath>();
-                path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-                path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-                return std::move(path);
-                */
                 continue;
             }
 

@@ -8,8 +8,6 @@
 #include <boost/optional.hpp>
 #include <QColor>
 #include <QString>
-#include <iterator>
-
 
 namespace Planning {
 
@@ -47,7 +45,7 @@ public:
      * @return 		true if it hits an obstacle, otherwise false
      */
     virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float startTime = 0) const = 0;
+                     float startTime) const = 0;
 
     /**
      * Draws the path.  The default implementation adds a DebugRobotPath to the
