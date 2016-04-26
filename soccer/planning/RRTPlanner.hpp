@@ -93,10 +93,10 @@ protected:
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet& obstacles);
 
-    std::unique_ptr<InterpolatedPath> generateRRTPath(const MotionInstant& start, const MotionInstant& goal,
-                                                  const MotionConstraints& motionConstraints,
-                                                  Geometry2d::ShapeSet& obstacles,
-                                                  const std::vector<const Path *> paths);
+    std::unique_ptr<InterpolatedPath> generateRRTPath(
+        const MotionInstant& start, const MotionInstant& goal,
+        const MotionConstraints& motionConstraints,
+        Geometry2d::ShapeSet& obstacles, const std::vector<const Path*> paths);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
