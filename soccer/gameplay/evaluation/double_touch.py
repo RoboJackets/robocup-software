@@ -40,12 +40,12 @@ class DoubleTouchTracker(fsm.StateMachine):
         self.add_transition(
             DoubleTouchTracker.State.restart_play_began,
             DoubleTouchTracker.State.kicking,
-            lambda: any(bot.has_ball() for bot in main.our_robots()),
+            lambda: (any(bot.has_ball() for bot in main.our_robots())) and not main.game_state().is_placement,
             'one of our bots has the ball')
 
         self.add_transition(DoubleTouchTracker.State.kicking,
                             DoubleTouchTracker.State.kicker_forbidden,
-                            lambda: not self.kicker_has_possession() and not main.game_state().is_placement,
+                            lambda: not self.kicker_has_possession(),
                             'kicker kicks or fumbles ball')
 
         self.add_transition(DoubleTouchTracker.State.kicker_forbidden,
