@@ -463,16 +463,6 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
-struct VecToList {
-    static PyObject* convert(const std::vector<Geometry2d::Line>& vec) {
-        boost::python::list* l = new boost::python::list();
-        for (size_t i = 0; i < vec.size(); i++) {
-            (*l).append(vec[i]);
-        }
-        return l->ptr();
-    }
-};
-
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 /**
@@ -703,10 +693,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc);
     register_ptr_to_python<SystemState*>();
 
-    to_python_converter<
-        std::vector<Geometry2d::Line, std::allocator<Geometry2d::Line>>,
-        VecToList>();
-
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
@@ -738,6 +724,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("DoubleFieldDimensions",
                       &Field_Dimensions::Double_Field_Dimensions);
 
+    class_<std::vector<Geometry2d::Line>>("vector_Line")
+        .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());
+
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)
         .def_readwrite("a1", &Window::a1)
@@ -764,8 +753,27 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
 
-    class_<std::shared_ptr<Configuration>>("Configuration")
+    class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
+        .def_readonly("name", &ConfigItem::name);
+
+    class_<Configuration, std::shared_ptr<Configuration>, boost::noncopyable>(
+        "Configuration")
         .def("FromRegisteredConfigurables",
              &Configuration::FromRegisteredConfigurables)
+        .def("nameLookup", &Configuration::nameLookup,
+             return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
+    register_ptr_to_python<std::shared_ptr<Configuration>>();
+
+    // Add wrappers for ConfigItem subclasses
+    class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
+        .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
+        .def("__str__", &ConfigBool::toString);
+    class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
+                                                           no_init)
+        .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
+        .def("__str__", &ConfigDouble::toString);
+    class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
+        .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
+        .def("__str__", &ConfigInt::toString);
 }
