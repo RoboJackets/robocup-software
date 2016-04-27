@@ -7,7 +7,6 @@ import enum
 import evaluation
 
 
-
 ## A state machine that tracks the double touch rule
 #
 # From the official rules (as of 2013):

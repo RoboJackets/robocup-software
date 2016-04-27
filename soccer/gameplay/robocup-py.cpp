@@ -95,9 +95,10 @@ void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
     self->moveDirect(*to);
 }
-void OurRobot_move_to_direct_end_vel(OurRobot* self, Geometry2d::Point* to, float endvel=0){
-    if(to==nullptr) throw NullArgumentException("to");
-    self->moveDirect(*to,endvel);
+void OurRobot_move_to_direct_end_vel(OurRobot* self, Geometry2d::Point* to,
+                                     float endvel = 0) {
+    if (to == nullptr) throw NullArgumentException("to");
+    self->moveDirect(*to, endvel);
 }
 
 void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
@@ -465,7 +466,7 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
 struct VecToList {
     static PyObject* convert(const std::vector<Geometry2d::Line>& vec) {
         boost::python::list* l = new boost::python::list();
-        for (size_t i = 0; i < vec.size(); i++){
+        for (size_t i = 0; i < vec.size(); i++) {
             (*l).append(vec[i]);
         }
         return l->ptr();
