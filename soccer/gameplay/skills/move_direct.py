@@ -3,6 +3,7 @@ import behavior
 
 
 ## Behavior that moves a robot to a specified location, circumventing the path planner.
+
 class MoveDirect(single_robot_behavior.SingleRobotBehavior):
     def __init__(self, pos=None):
         super().__init__(continuous=False)

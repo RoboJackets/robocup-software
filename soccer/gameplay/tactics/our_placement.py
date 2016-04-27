@@ -6,18 +6,14 @@ import role_assignment
 import enum
 import robocup
 import skills
-import constants
-import skills.pivot_kick
-import skills.capture
+import skills.dribble
 import skills.move
-import skills.move_direct
 
 
 class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
-        capturing = 1  #waiting
-        placing = 2  #setup
-        standby = 3  #ready
+        dribble=1
+        avoid=2
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -26,70 +22,38 @@ class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior)
             self.add_state(substate, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            OurPlacement.State.capturing, lambda: True,
+                            OurPlacement.State.dribble, lambda: True,
                             'immediately')
-
+        #place the ball in the target area
+        self.add_transition(OurPlacement.State.dribble, OurPlacement.State.avoid,
+            lambda: self.subbehavior_with_name('dribble') == behavior.Behavior.State.completed,
+            'finished dribbling')
+        #if the ball comes out of the target area, put it back
         self.add_transition(
-            OurPlacement.State.capturing, OurPlacement.State.placing,
-            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
-            'done capturing')
+            OurPlacement.State.avoid, OurPlacement.State.dribble,
+            lambda: (main.ball().pos - main.game_state().get_ball_placement_point()).mag() < 0.01,
+            'ball moved out of target area')
 
-        self.add_transition(
-            OurPlacement.State.placing, OurPlacement.State.standby,
-            lambda: self.subbehavior_with_name('place').state == behavior.Behavior.State.completed,
-            'done placing')
+        #this play stays perpetually in the avoid state until a different command is given 
 
-        self.add_transition(
-            OurPlacement.State.standby, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('standby').state == behavior.Behavior.State.completed,
-            'finished standby')
+    def on_enter_dribble(self):
+        dribble=skills.dribble.Dribble(main.game_state().get_ball_placement_point(),0)
+        self.add_subbehavior(dribble, 'dribble', required=True, priority=100)
+    
+    def on_exit_dribble(self):
+        self.robot.set_dribble_speed(0)
+        self.remove_subbehavior('dribble')
 
-    def on_enter_capturing(self):
-        print("CAPTURING")
-        capture = skills.capture.Capture()
-        self.add_subbehavior(capture, 'capture', required=True, priority=100)
-
-    def on_execute_capturing(self):
-        main.system_state().draw_circle(main.game_state().get_ball_placement_point(),5,constants.Colors.White,"Place")
-
-    def on_exit_capturing(self):
-        self.remove_subbehavior('capture')
-
-    def on_enter_placing(self):
-        print("PLACING")
-        place = skills.move_direct.MoveDirect(main.game_state().get_ball_placement_point())
-        print("SET UP PLACE")
-        self.add_subbehavior(place, 'place', required=True, priority=100)
-        print("ADDED SUBBEHAVIOR")
-
-    def on_execute_placing(self):
-        print("EXECUTING PLACING")
-        main.system_state().draw_circle(main.game_state().get_ball_placement_point(),5,constants.Colors.White,"Place")
-
-    def on_exit_placing(self):
-        print("DONE PLACING")
-        self.remove_subbehavior('place')
-
-        direction = constants.Field.CenterPoint - main.ball().pos
-        self.robot.move_to(main.ball().pos + direction.normalized())
-
-    def on_enter_standby(self):
-        print("STANDBY  ---------------------------------------")
-        standby = skills.move.Move(10, 10)
-        self.add_subbehavior(standby, 'standby', required=True, priority=100)
-
-    def on_execute_standby(self):
-        main.system_state().draw_circle(main.game_state().get_ball_placement_point(),5,constants.Colors.White,"Place")
-
-    def on_exit_standby(self):
-        self.remove_subbehavior('standby')
+    def on_enter_avoid(self):
+        avoid=skills.move.Move(robocup.point(10,10))
+        self.add_subbehavior(avoid,'avoid', required=True, priority=100)
 
     ## prefer to get assigned robot closest to ball
-    """
     def role_requirements(self):
         reqs = super().role_requirements()
         if isinstance(reqs, role_assignment.RoleRequirements):
             reqs.destination_shape = main.ball().pos
 
         return reqs
-"""
+
+#change moveplay to something else
