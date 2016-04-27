@@ -120,47 +120,47 @@ $(document).ready(function(){initNavTree('_field___dimensions_8hpp_source.html',
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Point.hpp&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Polygon.hpp&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Rect.hpp&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html">   17</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_field___dimensions.html">Field_Dimensions</a> {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> Length()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _Length; }</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> Width()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _Width; }</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd">   22</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd">Border</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _Border; }</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f">   25</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f">LineWidth</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _LineWidth; }</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> GoalWidth()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalWidth; }</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> GoalDepth()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalDepth; }</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> GoalHeight()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalHeight; }</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f">   32</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f">PenaltyDist</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _PenaltyDist; }</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> PenaltyDiam()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _PenaltyDiam; }</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f">   36</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f">ArcRadius</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ArcRadius; }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">   39</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">CenterRadius</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _CenterRadius; }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> CenterDiameter()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _CenterDiameter; }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d">   43</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d">GoalFlat</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalFlat; }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> FloorLength()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _FloorLength; }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">float</span> FloorWidth()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _FloorWidth; }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> CenterPoint()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _CenterPoint; }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> OurGoalZoneShape()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">return</span> _OurGoalZoneShape;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> TheirGoalZoneShape()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="keywordflow">return</span> _TheirGoalZoneShape;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> OurGoalSegment()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">return</span> _OurGoalSegment;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> TheirGoalSegment()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordflow">return</span> _TheirGoalSegment;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> OurHalf()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _OurHalf; }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">inline</span> <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> TheirHalf()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _TheirHalf; }</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Line.hpp&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html">   18</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_field___dimensions.html">Field_Dimensions</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">float</span> Length()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _Length; }</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">float</span> Width()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _Width; }</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd">   23</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd">Border</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _Border; }</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f">   26</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f">LineWidth</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _LineWidth; }</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">float</span> GoalWidth()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalWidth; }</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">float</span> GoalDepth()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalDepth; }</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">float</span> GoalHeight()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalHeight; }</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f">   33</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f">PenaltyDist</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _PenaltyDist; }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">float</span> PenaltyDiam()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _PenaltyDiam; }</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f">   37</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f">ArcRadius</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ArcRadius; }</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">   40</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">CenterRadius</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _CenterRadius; }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">float</span> CenterDiameter()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _CenterDiameter; }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d">   44</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d">GoalFlat</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _GoalFlat; }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">float</span> FloorLength()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _FloorLength; }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">float</span> FloorWidth()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _FloorWidth; }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> CenterPoint()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _CenterPoint; }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> OurGoalZoneShape()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">return</span> _OurGoalZoneShape;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> TheirGoalZoneShape()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">return</span> _TheirGoalZoneShape;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> OurGoalSegment()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _OurGoalSegment; }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> TheirGoalSegment()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _TheirGoalSegment; }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> OurHalf()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _OurHalf; }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> TheirHalf()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _TheirHalf; }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> FieldRect()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _FieldRect; }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    std::vector&lt;Geometry2d::Line&gt; FieldBorders()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _FieldBorders; }</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <a class="code" href="struct_field___dimensions.html">Field_Dimensions</a> Single_Field_Dimensions;</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
@@ -258,51 +258,68 @@ $(document).ready(function(){initNavTree('_field___dimensions_8hpp_source.html',
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                             <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2, _Length / 2));</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        _OurHalf = <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(-_Width / 2, 0),</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                                    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2, _Length / 2));</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    }</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">float</span> _Length;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">float</span> _Width;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">float</span> _Border;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">float</span> _LineWidth;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">float</span> _GoalWidth;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">float</span> _GoalDepth;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordtype">float</span> _GoalHeight;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordtype">float</span> _PenaltyDist;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">float</span> _PenaltyDiam;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">float</span> _ArcRadius;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordtype">float</span> _CenterRadius;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordtype">float</span> _CenterDiameter;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordtype">float</span> _GoalFlat;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordtype">float</span> _FloorLength;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordtype">float</span> _FloorWidth;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> _CenterPoint;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _OurGoalZoneShape;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _TheirGoalZoneShape;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> _OurGoalSegment;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> _TheirGoalSegment;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> _OurHalf;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> _TheirHalf;</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;};</div>
-<div class="ttc" id="struct_field___dimensions_html"><div class="ttname"><a href="struct_field___dimensions.html">Field_Dimensions</a></div><div class="ttdoc">This class contains constants defining the layout of the field. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:17</div></div>
-<div class="ttc" id="struct_field___dimensions_html_aecc66ef950ceee7a15a435f1e1e4a238"><div class="ttname"><a href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">Field_Dimensions::CenterRadius</a></div><div class="ttdeci">float CenterRadius() const </div><div class="ttdoc">diameter of the center circle </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:39</div></div>
-<div class="ttc" id="struct_field___dimensions_html_ac25b621e4a5e235f01e1c95f5bf642dd"><div class="ttname"><a href="struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd">Field_Dimensions::Border</a></div><div class="ttdeci">float Border() const </div><div class="ttdoc">the distance from the edge of the field to the border line </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:22</div></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        _FieldRect = <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(-_Width / 2.0, 0),</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                                      <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2.0, _Length));</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        _FieldBorders = {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(-_Width / 2.0, 0),</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                             <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(-_Width / 2.0, _Length)),</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(-_Width / 2.0, _Length),</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                             <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2.0, _Length)),</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2.0, _Length),</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                             <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2.0, 0)),</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            <a class="code" href="class_geometry2d_1_1_line.html">Geometry2d::Line</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(_Width / 2.0, 0),</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                             <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>(-_Width / 2.0, 0))};</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    }</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordtype">float</span> _Length;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordtype">float</span> _Width;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordtype">float</span> _Border;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordtype">float</span> _LineWidth;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">float</span> _GoalWidth;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keywordtype">float</span> _GoalDepth;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">float</span> _GoalHeight;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">float</span> _PenaltyDist;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">float</span> _PenaltyDiam;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordtype">float</span> _ArcRadius;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordtype">float</span> _CenterRadius;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordtype">float</span> _CenterDiameter;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordtype">float</span> _GoalFlat;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">float</span> _FloorLength;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">float</span> _FloorWidth;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> _CenterPoint;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _OurGoalZoneShape;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _TheirGoalZoneShape;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> _OurGoalSegment;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <a class="code" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a> _TheirGoalSegment;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> _OurHalf;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> _TheirHalf;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <a class="code" href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a> _FieldRect;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    std::vector&lt;Geometry2d::Line&gt; _FieldBorders;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;};</div>
+<div class="ttc" id="struct_field___dimensions_html"><div class="ttname"><a href="struct_field___dimensions.html">Field_Dimensions</a></div><div class="ttdoc">This class contains constants defining the layout of the field. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:18</div></div>
+<div class="ttc" id="struct_field___dimensions_html_aecc66ef950ceee7a15a435f1e1e4a238"><div class="ttname"><a href="struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238">Field_Dimensions::CenterRadius</a></div><div class="ttdeci">float CenterRadius() const </div><div class="ttdoc">diameter of the center circle </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:40</div></div>
+<div class="ttc" id="struct_field___dimensions_html_ac25b621e4a5e235f01e1c95f5bf642dd"><div class="ttname"><a href="struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd">Field_Dimensions::Border</a></div><div class="ttdeci">float Border() const </div><div class="ttdoc">the distance from the edge of the field to the border line </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:23</div></div>
 <div class="ttc" id="class_geometry2d_1_1_segment_html"><div class="ttname"><a href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a></div><div class="ttdef"><b>Definition:</b> Segment.hpp:12</div></div>
-<div class="ttc" id="struct_field___dimensions_html_acef9413dbbebc30418e9c4e75a6f6b5f"><div class="ttname"><a href="struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f">Field_Dimensions::PenaltyDist</a></div><div class="ttdeci">float PenaltyDist() const </div><div class="ttdoc">Distance of the penalty marker from the goal line. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:32</div></div>
-<div class="ttc" id="struct_field___dimensions_html_a12e1adb8899f6b963e7e8f1d5d964d8d"><div class="ttname"><a href="struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d">Field_Dimensions::GoalFlat</a></div><div class="ttdeci">float GoalFlat() const </div><div class="ttdoc">flat area for defence markings </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:43</div></div>
+<div class="ttc" id="struct_field___dimensions_html_acef9413dbbebc30418e9c4e75a6f6b5f"><div class="ttname"><a href="struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f">Field_Dimensions::PenaltyDist</a></div><div class="ttdeci">float PenaltyDist() const </div><div class="ttdoc">Distance of the penalty marker from the goal line. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:33</div></div>
+<div class="ttc" id="class_geometry2d_1_1_line_html"><div class="ttname"><a href="class_geometry2d_1_1_line.html">Geometry2d::Line</a></div><div class="ttdef"><b>Definition:</b> Line.hpp:10</div></div>
+<div class="ttc" id="struct_field___dimensions_html_a12e1adb8899f6b963e7e8f1d5d964d8d"><div class="ttname"><a href="struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d">Field_Dimensions::GoalFlat</a></div><div class="ttdeci">float GoalFlat() const </div><div class="ttdoc">flat area for defence markings </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:44</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:15</div></div>
-<div class="ttc" id="struct_field___dimensions_html_a01d05184f9c582f489d4058f42e9644f"><div class="ttname"><a href="struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f">Field_Dimensions::ArcRadius</a></div><div class="ttdeci">float ArcRadius() const </div><div class="ttdoc">Radius of the goal arcs. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:36</div></div>
+<div class="ttc" id="struct_field___dimensions_html_a01d05184f9c582f489d4058f42e9644f"><div class="ttname"><a href="struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f">Field_Dimensions::ArcRadius</a></div><div class="ttdeci">float ArcRadius() const </div><div class="ttdoc">Radius of the goal arcs. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:37</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:13</div></div>
 <div class="ttc" id="class_geometry2d_1_1_rect_html"><div class="ttname"><a href="class_geometry2d_1_1_rect.html">Geometry2d::Rect</a></div><div class="ttdoc">Represents a rectangle by storing two opposite corners. </div><div class="ttdef"><b>Definition:</b> Rect.hpp:11</div></div>
-<div class="ttc" id="struct_field___dimensions_html_a1582fedd7e2b8c75ee560499beced10f"><div class="ttname"><a href="struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f">Field_Dimensions::LineWidth</a></div><div class="ttdeci">float LineWidth() const </div><div class="ttdoc">The width of the border lines. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:25</div></div>
+<div class="ttc" id="struct_field___dimensions_html_a1582fedd7e2b8c75ee560499beced10f"><div class="ttname"><a href="struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f">Field_Dimensions::LineWidth</a></div><div class="ttdeci">float LineWidth() const </div><div class="ttdoc">The width of the border lines. </div><div class="ttdef"><b>Definition:</b> Field_Dimensions.hpp:26</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><b>Field_Dimensions.hpp</b></li>
-    <li class="footer">Generated on Mon Apr 25 2016 21:38:37 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Apr 27 2016 20:33:01 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

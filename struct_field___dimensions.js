@@ -7,6 +7,8 @@ var struct_field___dimensions =
     [ "CenterDiameter", "struct_field___dimensions.html#a9a93b32bd3e10095e0326694d93c9258", null ],
     [ "CenterPoint", "struct_field___dimensions.html#ac847bf9ae2f6380d8b304484638a78b2", null ],
     [ "CenterRadius", "struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238", null ],
+    [ "FieldBorders", "struct_field___dimensions.html#a4dcfcb15e4c2df67895e241807b7bd8f", null ],
+    [ "FieldRect", "struct_field___dimensions.html#a2e0de7e35c08e988b9acca952de9f1fe", null ],
     [ "FloorLength", "struct_field___dimensions.html#adc743d8ab55128d43b1ede8e8c0041ff", null ],
     [ "FloorWidth", "struct_field___dimensions.html#a50b9f1bccb7ece5abe4386478f86194f", null ],
     [ "GoalDepth", "struct_field___dimensions.html#a9f76b1196c562c93b2dc3fba6def4f27", null ],

@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a95d7543870678275b1d31337f10f5c34":[12,0,5,15,2,0,7],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a9ed6189c5f7fccfbdc89680544776133":[12,0,5,15,2,0,9],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#aa29c5c0d66e53242c97cd8bca0e2c197":[12,0,5,15,2,0,10],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#ab7de3a0dfa89b9e2861c4ce46e5f16bf":[12,0,5,15,2,0,0],
@@ -85,8 +86,8 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a756c7145d2902530af0451773c7f5afe":[12,0,5,15,6,3,0,1],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a9a1e1ee0d32f17649f85b6cc6fa1f2a7":[12,0,5,15,6,3,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4204c2608a6552305d61326a3750d39":[12,0,5,15,6,3,0,10],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4366ab62dfebe55d959f85e589935a2":[12,0,5,15,6,3,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4366ab62dfebe55d959f85e589935a2":[12,0,5,15,6,3,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ab4366ab62dfebe55d959f85e589935a2":[12,0,5,15,6,3,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ac7c6402625a7e2c68cf2675ef1354f03":[12,0,5,15,6,3,0,9],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ad153d4548cf727c3109958fd0c4c22b3":[12,0,5,15,6,3,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aedaaa02d8f747fc8e7c64553f043635f":[12,0,5,15,6,3,0,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "dir_cbd8e190a8e460b48e48ebd2bd706a27.html":[13,0,2,2],
 "dir_cc132907b6047b9805f38c63e061574e.html":[13,0,2,5],
 "dir_cc377981fd1d02b69253e810027bf757.html":[13,0,1,0,0,0],
-"dir_d3c5fb12f0292fb6db40368d62a74434.html":[13,0,1,1,0,1,0],
-"dir_d810e9ee1bf6798e69c014f7b76afa6c.html":[13,0,1,0]
+"dir_d3c5fb12f0292fb6db40368d62a74434.html":[13,0,1,1,0,1,0]
 };

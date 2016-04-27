@@ -38,15 +38,15 @@ var NAVTREEINDEX =
 ".html",
 "class_c_c1201.html#a960cde5ec86b2ca0a213b073aa5b216f",
 "class_game_state.html#aa98b0c2d2e8a4524b2d619ad1f55dd47",
-"class_geometry2d_1_1_transform_matrix.html#a38324bdeeff4d83c09786009870f7045",
-"class_our_robot.html#a1c8096f39bcbd67ab9cac81263687b87",
-"class_processor.html#a85912e041f022fe3c73102b254df8922",
-"class_system_state.html#ab4c21aebd95542b0f0afc18b9b8bf413",
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#ad41cf0e9f8bac1c77e15332ea6c1f090",
+"class_geometry2d_1_1_transform_matrix.html#a2c87980e1c62e294e295d742a6c997cf",
+"class_our_robot.html#a1bad1a1649dfdd1f218a60effe2362d3",
+"class_processor.html#a80d47b696cbba4ce58438c9ec3921c24",
+"class_system_state.html#a812653eed4f23e3636ca4ebad24d6174",
+"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a886e44c013e3e3486d8764947d9d9734",
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a3bfc1231b8a013f41ab0e92859564032",
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a9ed6189c5f7fccfbdc89680544776133",
-"dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html",
-"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7a93c0b3a325f8a323edd04d364c56011f"
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a95d7543870678275b1d31337f10f5c34",
+"dir_d810e9ee1bf6798e69c014f7b76afa6c.html",
+"struct_planning_1_1_rotation_command.html#a09bce3a07dc8f1336176838b951cf40d"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
