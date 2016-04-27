@@ -9,13 +9,13 @@ import enum
 import skills.aim
 import skills.capture
 
+
 ## Behavior that moves the ball to a specified location
 class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
-
     class State(enum.Enum):
-        capture=1
-        aim=2
-        drive=3
+        capture = 1
+        aim = 2
+        drive = 3
 
     def __init__(self, pos=None, vel=0):
         super().__init__(continuous=False)
@@ -23,13 +23,12 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for state in Dribble.State:
             self.add_state(state, behavior.Behavior.State.running)
 
-        self.threshold = 0.01 #default value matches the required accuracy for a placement command
+        self.threshold = 0.01  #default value matches the required accuracy for a placement command
         self.pos = pos
         self.vel = vel
 
         self.add_transition(behavior.Behavior.State.start,
-                            Dribble.State.capture, lambda: True,
-                            'immediately')
+                            Dribble.State.capture, lambda: True, 'immediately')
 
         self.add_transition(
             Dribble.State.capture, Dribble.State.aim,
@@ -47,8 +46,9 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             lambda: self.subbehavior_with_name("aim").state == behavior.Behavior.State.failed,
             'fumbled')
 
-        self.add_transition(
-            Dribble.State.drive, Dribble.State.capture, lambda: self.fumbled() or self.robot.vel.mag()>1, 'fumbled')
+        self.add_transition(Dribble.State.drive, Dribble.State.capture,
+                            lambda: self.fumbled() or self.robot.vel.mag() > 1,
+                            'fumbled')
 
         self.add_transition(
             Dribble.State.drive, behavior.Behavior.State.completed,
@@ -56,7 +56,6 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             'finished driving')
 
         self.last_ball_time = 0
-
 
     def fumbled(self):
         return not self.robot.has_ball() and time.time(
@@ -77,7 +76,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     @vel.setter
     def vel(self, value):
-        self._vel=value;
+        self._vel = value
 
     ## how close (in meters) the robot has to be to the target position for it be complete
     @property
@@ -89,17 +88,16 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._threshold = value
 
     def on_enter_capture(self):
-        capture=skills.capture.Capture()
+        capture = skills.capture.Capture()
         self.add_subbehavior(capture, 'capture', required=True, priority=100)
 
     def on_exit_capture(self):
         self.remove_subbehavior('capture')
 
-
     def on_enter_aim(self):
-        aim=skills.aim.Aim()
+        aim = skills.aim.Aim()
         aim.target_point = self.pos
-        self.add_subbehavior(aim,'aim', required=True, priority=100)
+        self.add_subbehavior(aim, 'aim', required=True, priority=100)
 
         if self.robot.has_ball():
             self.last_ball_time = time.time()
@@ -107,15 +105,14 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_exit_aim(self):
         self.remove_subbehavior('aim')
 
-
     def on_enter_drive(self):
         print("in drive")
         self.robot.set_dribble_speed(int(constants.Robot.Dribbler.MaxPower))
-    
+
     def execute_drive(self):
         print("executing drive")
         self.robot.face(self.pos)
-        self.robot.move_to_direct_end_vel(self.pos,self.vel)
+        self.robot.move_to_direct_end_vel(self.pos, self.vel)
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 

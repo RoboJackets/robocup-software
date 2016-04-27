@@ -129,7 +129,11 @@ public:
     // line
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
 
-    void setBallPlacementPoint(float x, float y){ ballPlacementPoint = Geometry2d::Point(x,y); }
+    void setBallPlacementPoint(float x, float y) {
+        ballPlacementPoint = Geometry2d::Point(x, y);
+    }
 
-    Geometry2d::Point getBallPlacementPoint() const { return ballPlacementPoint; }
+    Geometry2d::Point getBallPlacementPoint() const {
+        return ballPlacementPoint;
+    }
 };

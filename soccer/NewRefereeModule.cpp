@@ -173,8 +173,8 @@ void NewRefereeModule::run() {
         command_timestamp = packet->wrapper.command_timestamp();
         yellow_info.ParseRefboxPacket(packet->wrapper.yellow());
         blue_info.ParseRefboxPacket(packet->wrapper.blue());
-        ballPlacementx=packet->wrapper.designated_position().x();
-        ballPlacementy=packet->wrapper.designated_position().y();
+        ballPlacementx = packet->wrapper.designated_position().x();
+        ballPlacementy = packet->wrapper.designated_position().y();
 
         _mutex.unlock();
     }
@@ -337,12 +337,14 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
         case Command::BALL_PLACEMENT_YELLOW:
             _state.gameState.restart = GameState::Placement;
             _state.gameState.ourRestart = !blueTeam;
-            _state.gameState.setBallPlacementPoint(ballPlacementx,ballPlacementy);
+            _state.gameState.setBallPlacementPoint(ballPlacementx,
+                                                   ballPlacementy);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             _state.gameState.restart = GameState::Placement;
             _state.gameState.ourRestart = blueTeam;
-            _state.gameState.setBallPlacementPoint(ballPlacementx,ballPlacementy);
+            _state.gameState.setBallPlacementPoint(ballPlacementx,
+                                                   ballPlacementy);
             break;
     }
 
