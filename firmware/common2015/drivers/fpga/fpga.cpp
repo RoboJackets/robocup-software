@@ -72,7 +72,7 @@ bool FPGA::configure(const std::string& filepath) {
         for (int i = 0; i < 1000; i++) {
             Thread::wait(1);
             if (_done == true) {
-                configSuccess = true;
+                configSuccess = !_initB;
                 break;
             }
         }
