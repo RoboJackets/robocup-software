@@ -59,9 +59,7 @@ struct Field_Dimensions {
     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
     Geometry2d::Rect FieldRect() const { return _FieldRect; }
 
-    const std::vector<Geometry2d::Line> FieldBorders() const {
-        return _FieldBorders;
-    }
+    std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
 
     static const Field_Dimensions Single_Field_Dimensions;
 
@@ -162,7 +160,7 @@ struct Field_Dimensions {
 
         _FieldRect = Geometry2d::Rect(Geometry2d::Point(-_Width / 2.0, 0),
                                       Geometry2d::Point(_Width / 2.0, _Length));
-        // Vector of 4 lines that outline the entire field
+
         _FieldBorders = {
             Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, 0),
                              Geometry2d::Point(-_Width / 2.0, _Length)),
@@ -199,6 +197,6 @@ private:
     Geometry2d::Rect _OurHalf;
     Geometry2d::Rect _TheirHalf;
     Geometry2d::Rect _FieldRect;
-    // Once Again: 4 Borders -> 4 Lines -> Array of length 4
+
     std::vector<Geometry2d::Line> _FieldBorders;
 };

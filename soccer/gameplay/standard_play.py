@@ -1,5 +1,5 @@
 import play
-import ui
+import ui.main
 import tactics
 
 
