@@ -1,4 +1,3 @@
-import standard_play
 import behavior
 import robocup
 import main
@@ -8,7 +7,7 @@ import tactics.our_placement
 
 
 # one robot places the ball, the others just line up and wait
-class Placement(standard_play.StandardPlay):
+class Placement(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -18,23 +17,45 @@ class Placement(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
-        self.add_transition(
-            behavior.Behavior.State.running, behavior.Behavior.State.completed,
-            lambda: self.placer.is_done_running(), 'when placer finishes.')
+        self._pos = main.game_state().get_ball_placement_point()
+        self._our_restart = None
 
-        self.placer = tactics.our_placement.OurPlacement()
-        self.add_subbehavior(self.placer, 'placer', required=True, priority=90)
+    def create_lineup(self):
+        xsize = 2.5
+        if self._pos.x > 0:
+            xsize = -xsize
 
-        line = robocup.Segment(robocup.Point(1.5, 1), robocup.Point(1.5, 2.5))
-        line_up = tactics.line_up.LineUp(line)
+        return robocup.Segment(
+            robocup.Point(xsize, 1), robocup.Point(xsize, 2.5))
+
+    def check_update(self):
+        #for some reason using != doesnt work
+        return (self._pos - main.game_state().get_ball_placement_point()).mag()
+            != 0 or self._our_restart != main.game_state().is_our_restart()
 
     def execute_running(self):
-        main.system_state().draw_circle(
-            main.game_state().get_ball_placement_point(), 0.01,
-            constants.Colors.Green, "Place")
-        main.system_state().draw_circle(
-            main.game_state().get_ball_placement_point(), 0.05,
-            constants.Colors.Red, "Avoid")
+        super().execute_running()
+        #if the ball placement command changes, reset the behaviors accordingly
+        if self.check_update():
+
+            #print(self._our_restart!=main.game_state().is_our_restart())
+            self._pos = main.game_state().get_ball_placement_point()
+            self._our_restart = main.game_state().is_our_restart()
+
+            self.remove_all_subbehaviors()
+            if self._our_restart:
+                self.placer = tactics.our_placement.OurPlacement()
+                self.add_subbehavior(self.placer,
+                    'placer', required=True, priority=90)
+
+            line_up = tactics.line_up.LineUp(self.create_lineup())
+            self.add_subbehavior(line_up,
+                'line_up', required=True, priority=80)
+
+        main.system_state().draw_circle(self._pos, 0.1, 
+            constants.Colors.Green,"Place")
+        main.system_state().draw_circle(self._pos, 0.5, 
+            constants.Colors.Red,"Avoid")
 
     @classmethod
     def score(cls):
