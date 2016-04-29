@@ -1,10 +1,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+// TODO: Make this path less explicit!
+#include "../../common2015/drivers/kicker-board/kicker_commands.h"
 #include "pins.h"
-
-#define PARSE_CMD(P) (P >> 6)
-#define PARSE_TIME(P) (P & 0x3F)
 
 typedef enum { OFF, ON, ACTING } state_type;
 volatile state_type state = OFF;
@@ -63,8 +62,8 @@ void main() {
 /* SPI Starting Interrupt */
 /* NOTE: This is intentionally not done with an overflow interrupt,
  * as the software chip select interrupt will be triggered almost at
- * the same time as an SPI overflow, and pin change interrupts have
- * higher priority.
+ * the same time as an SPI overflow, causing the SPI interrupt to not be
+ * handled.
  */
 ISR(USI_STR_vect) {
     // Wait for overflow flag to become 1
@@ -76,23 +75,38 @@ ISR(USI_STR_vect) {
     USISR |= _BV(USIOIF);  // setting the bit actually clears it
     // Clear the SPI start flag
     USISR |= _BV(USISIF);
-    USIDR = last_voltage;
     if (state == ON) {
         uint8_t cmd = PARSE_CMD(data);
+        uint8_t arg = PARSE_ARG(data);
+        // TODO: Add error return values
+        USIDR = 0;
         switch (cmd) {
-            case 0x2:  // chip
-                state = ACTING;
-                PORTA |= _BV(CHIP);
+            case NOP_CMD:
                 break;
-            case 0x3:  // kick
+            case KICK_CMD:
                 state = ACTING;
-                PORTA |= _BV(KICK);
+                PORTA |= _BV(KICK); // set KICK pin
+                millis_left = arg;
+                TCCR0B |= _BV(CS01); // start timer /8 prescale
+                break;
+            case CHIP_CMD:
+                state = ACTING;
+                PORTA |= _BV(CHIP); // set CHIP pin
+                millis_left = arg;
+                TCCR0B |= _BV(CS01); // start timer /8 prescale
+                break;
+            case CHARGE_ON_CMD:
+                PORTB |= _BV(CHARGE);
+                break;
+            case CHARGE_OFF_CMD:
+                PORTB &= ~_BV(CHARGE);
+                break;
+            case GET_VOLTAGE_CMD:
+                USIDR = last_voltage;
                 break;
             default:
                 break;
         }
-        millis_left = PARSE_TIME(data);
-        TCCR0B |= _BV(CS01); // start timer /8 prescale
     }
 }
 

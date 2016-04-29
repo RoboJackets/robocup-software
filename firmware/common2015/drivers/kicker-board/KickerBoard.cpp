@@ -1,4 +1,5 @@
 #include "KickerBoard.hpp"
+#include "kicker_commands.h"
 #include <tuple>
 
 using namespace std;
@@ -87,37 +88,37 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
 
         fclose(fp);
     }
-
     return true;
 }
 
-void KickerBoard::kick(int time) {
-    // TODO Replace these with constants
-    int cmd = 0x3 << 6;
+void KickerBoard::kick(uint8_t time) {
     chipSelect();
-    _spi->write(cmd | time);
+    _spi->write(MAKE_BYTE(KICK_CMD, time));
     chipDeselect();
 }
 
-void KickerBoard::chip(int time) {
-    // TODO Replace these with constants
-    int cmd = 0x2 << 6;
+void KickerBoard::chip(uint8_t time) {
     chipSelect();
-    _spi->write(cmd | time);
+    _spi->write(MAKE_BYTE(CHIP_CMD, time));
     chipDeselect();
 }
 
 uint8_t KickerBoard::read_voltage() {
-    // TODO Replace these with constants
     chipSelect();
-    _spi->write(0);
-    uint8_t volts = _spi->write(0);
+    _spi->write(MAKE_BYTE(GET_VOLTAGE_CMD, NOP_ARG));
+    uint8_t volts = _spi->write(MAKE_BYTE(NOP_CMD, NOP_ARG));
     chipDeselect();
     return volts;
 }
 
-int KickerBoard::map(int x, int in_min, int in_max, int out_min, int out_max)
-// originally an Arduino function
-{
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+void KickerBoard::charge() {
+    chipSelect();
+    _spi->write(MAKE_BYTE(CHARGE_ON_CMD, NOP_ARG));
+    chipDeselect();
+}
+
+void KickerBoard::stop_charging() {
+    chipSelect();
+    _spi->write(MAKE_BYTE(CHARGE_OFF_CMD, NOP_ARG));
+    chipDeselect();
 }

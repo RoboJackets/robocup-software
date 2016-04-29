@@ -40,9 +40,11 @@ public:
      */
     bool flash(bool onlyIfDifferent = true, bool verbose = false);
 
-    void kick(int time);
-    void chip(int time);
+    void kick(uint8_t time);
+    void chip(uint8_t time);
     uint8_t read_voltage();
+    void charge();
+    void stop_charging();
 
 protected:
     /**
