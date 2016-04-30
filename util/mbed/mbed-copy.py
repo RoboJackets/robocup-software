@@ -19,6 +19,11 @@ parser = argparse.ArgumentParser(
 parser.add_argument('files',
                     nargs='+',
                     help='files to move to all connected mbeds')
+parser.add_argument(
+    '--mbed_index',
+    '-i',
+    type=int,
+    help='Index of mbed to copy to.  If unset, copies to all mbeds.')
 args = parser.parse_args()
 
 
@@ -59,10 +64,24 @@ def find_mbed_disk(mbed):
             return os.path.join(dirpath, path)
     return None
 
+# sort alphabetically by serial port
+mbeds.sort(key=lambda m: m['serial_port'])
+
+# if args.mbed_index is set, copy only to that one
+if args.mbed_index:
+    index = args.mbed_index
+    if  index < len(mbeds):
+        mbeds = [mbeds[index]]
+    else:
+        print("Unable to find mbed at index '%'" % index, file=sys.stderr)
+        sys.exit(1)
+
 # iterate copying all files to all mbeds
 for i in range(len(mbeds)):
     mbed = mbeds[i]
     mount_point = mbed['mount_point']
+
+    print("Using mbed at '%s'" % mbed['serial_port'])
 
     already_mounted = mount_point != None
 

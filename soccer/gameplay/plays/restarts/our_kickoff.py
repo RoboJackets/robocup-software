@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import robocup
 import skills.line_kick
@@ -9,7 +9,7 @@ import enum
 import role_assignment
 
 
-class OurKickoff(play.Play):
+class OurKickoff(standard_play.StandardPlay):
 
     KickPower = 0.5
     ChipPower = 1.0
@@ -53,10 +53,6 @@ class OurKickoff(play.Play):
                                  priority=4 - i)
             self.centers.append(center_i)
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
-
     @classmethod
     def score(cls):
         gs = main.game_state()
@@ -64,10 +60,6 @@ class OurKickoff(play.Play):
 
     @classmethod
     def is_restart(cls):
-        return True
-
-    @classmethod
-    def handles_goalie(cls):
         return True
 
     def on_enter_setup(self):

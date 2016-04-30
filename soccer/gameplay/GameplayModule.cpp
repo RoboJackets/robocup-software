@@ -26,10 +26,13 @@ using namespace Geometry2d;
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
 void GameplayModule::createConfiguration(Configuration* cfg) {
-    // this sets the disance from the field boundries to the edge of the global
-    // obstacles, which the
-    // robots will not move through or into
-    _fieldEdgeInset = new ConfigDouble(cfg, "Field Edge Obstacle", .3);
+    /*  This sets the disance from the field boundries to the edge of the global
++     * obstacles, which the robots will not move through or into.
++     * The value is given in meters. As of April 20, 2016 the inner 300mm
++     * is free space for the robots.
++     */
+    _fieldEdgeInset =
+        new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
@@ -126,20 +129,20 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     float deadspace = (float)_fieldEdgeInset->value();
     x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
     _nonFloor[0] = make_shared<Polygon>(vector<Point>{
-        Point(-x, y), Point(-x, y - 1), Point(x, y - 1), Point(x, y)});
+        Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
 
     y = dimensions.Length() + (float)_fieldEdgeInset->value();
     _nonFloor[1] = make_shared<Polygon>(vector<Point>{
-        Point(-x, y), Point(-x, y + 1), Point(x, y + 1), Point(x, y)});
+        Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
 
     y = dimensions.FloorLength();
-    _nonFloor[2] = make_shared<Polygon>(
-        vector<Point>{Point(-x, -deadspace), Point(-x - 1, -deadspace),
-                      Point(-x - 1, y), Point(-x, y)});
+    _nonFloor[2] = make_shared<Polygon>(vector<Point>{
+        Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
+        Point(-x - 1000, y), Point(-x, y)});
 
     _nonFloor[3] = make_shared<Polygon>(
-        vector<Point>{Point(x, -deadspace), Point(x + 1, -deadspace),
-                      Point(x + 1, y), Point(x, y)});
+        vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
+                      Point(x + 1000, y), Point(x, y)});
 
     const float halfFlat = dimensions.GoalFlat() / 2.0;
     const float radius = dimensions.ArcRadius();

@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import skills.move
 import skills.pivot_kick
@@ -8,7 +8,7 @@ import robocup
 import main
 
 
-class OurFreeKick(play.Play):
+class OurFreeKick(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -30,10 +30,6 @@ class OurFreeKick(play.Play):
         center2 = skills.move.Move(robocup.Point(0, 1.5))
         self.add_subbehavior(center1, 'center2', required=False, priority=3)
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
-
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
             lambda: kicker.is_done_running(), 'kicker completes')
@@ -46,8 +42,4 @@ class OurFreeKick(play.Play):
 
     @classmethod
     def is_restart(cls):
-        return True
-
-    @classmethod
-    def handles_goalie(cls):
         return True

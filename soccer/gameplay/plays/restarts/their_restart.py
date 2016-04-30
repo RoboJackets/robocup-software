@@ -1,21 +1,17 @@
-import play
+import standard_play
 import behavior
 import tactics.positions.defender
 import skills.mark
 import main
 
 
-class TheirRestart(play.Play):
+class TheirRestart(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
-
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False, )
 
         self.marks = []
         for i in range(3):
@@ -38,11 +34,8 @@ class TheirRestart(play.Play):
     def is_restart(cls):
         return True
 
-    @classmethod
-    def handles_goalie(cls):
-        return True
-
     def execute_running(self):
+        super().execute_running()
         # abort if we can't see the ball
         if not main.ball().valid:
             return
