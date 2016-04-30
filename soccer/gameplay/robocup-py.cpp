@@ -8,6 +8,7 @@
 using namespace boost::python;
 
 #include "motion/TrapezoidalMotion.hpp"
+#include "planning/MotionConstraints.hpp"
 #include "WindowEvaluator.hpp"
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
@@ -771,4 +772,8 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
+
+    class_<MotionConstraints>("MotionConstraints")
+        .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
+        .def_readonly("MaxRobotAccel", &MotionConstraints::_max_acceleration);
 }
