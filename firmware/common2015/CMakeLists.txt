@@ -80,7 +80,12 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 
 # CC1201 Register settings
 # Automatically generate a C header with the register values from a chosen smartrf xml file
-set(CC1201_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/cc1101-compatible.xml)
+if(DEFINED ENV{CC1201_CONFIG_NAME})
+    set(CC1201_CONFIG_NAME $ENV{CC1201_CONFIG_NAME})
+else()
+    set(CC1201_CONFIG_NAME cc1101-compatible)
+endif()
+set(CC1201_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/${CC1201_CONFIG_NAME}.xml)
 add_custom_target(cc1201_register_export
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/smartrf_exporter.py
         ${CC1201_CONFIG}
