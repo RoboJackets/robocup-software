@@ -68,7 +68,7 @@ def find_mbed_disk(mbed):
 mbeds.sort(key=lambda m: m['serial_port'])
 
 # if args.mbed_index is set, copy only to that one
-if args.mbed_index:
+if args.mbed_index != None:
     index = args.mbed_index
     if  index < len(mbeds):
         mbeds = [mbeds[index]]
