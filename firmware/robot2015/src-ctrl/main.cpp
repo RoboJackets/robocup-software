@@ -112,15 +112,23 @@ int main() {
     // Initialize and configure the fpga with the given bitfile
     FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
                               RJ_FPGA_PROG_B, RJ_FPGA_DONE);
-    bool fpga_ready = FPGA::Instance->configure("/local/rj-fpga.nib");
+    bool fpgaReady = FPGA::Instance->configure("/local/rj-fpga.nib");
 
-    if (fpga_ready) {
+    if (fpgaReady) {
+        rgbLED.brightness(3 * defaultBrightness);
+        rgbLED.setPixel(1, NeoColorGreen);
+
         LOG(INIT, "FPGA Configuration Successful!");
+
     } else {
+        rgbLED.brightness(4 * defaultBrightness);
+        rgbLED.setPixel(1, NeoColorOrange);
+
         LOG(FATAL, "FPGA Configuration Failed!");
     }
+    rgbLED.write();
 
-    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+    DigitalOut rdy_led(RJ_RDY_LED, !fpgaReady);
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
@@ -196,6 +204,17 @@ int main() {
     ASSERT(tState == osOK);
 
     unsigned int ll = 0;
+    uint16_t errorBitmask = 0;
+    bool errorFlash = false;
+
+    if (!fpgaReady) {
+        // assume all motors have errors if FPGA does not work
+        errorBitmask |= (1 << RJ_ERR_LED_M1);
+        errorBitmask |= (1 << RJ_ERR_LED_M2);
+        errorBitmask |= (1 << RJ_ERR_LED_M3);
+        errorBitmask |= (1 << RJ_ERR_LED_M4);
+        errorBitmask |= (1 << RJ_ERR_LED_DRIB);
+    }
 
     while (true) {
         // make sure we can always reach back to main by
@@ -215,8 +234,7 @@ int main() {
         ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
-        uint16_t errorBitmask = !global_radio->isConnected()
-                                << RJ_ERR_LED_RADIO;
+        errorBitmask |= !global_radio->isConnected() << RJ_ERR_LED_RADIO;
 
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
@@ -231,34 +249,24 @@ int main() {
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
-        // Set error indicators
-        if (!fpga_ready) {
+        if (errorBitmask || !fpgaReady) {
             // orange - error
-            rgbLED.brightness(4 * defaultBrightness);
+            rgbLED.brightness(6 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorOrange);
+
+            if (!fpgaReady) {
+                errorFlash = !errorFlash;
+                // bright as hell to make sure they know
+                rgbLED.brightness(10 * defaultBrightness * errorFlash);
+                // well, damn. everything is broke as hell
+                rgbLED.setPixel(0, NeoColorRed);
+            }
         } else {
-            // green - no error...yet
-            rgbLED.brightness(defaultBrightness);
+            // no errors, yay!
+            rgbLED.brightness(3 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorGreen);
         }
-
-        if (errorBitmask & RJ_ERR_LED_RADIO) {
-            // orange - error
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, NeoColorOrange);
-        } else {
-            // green - no error...yet
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, NeoColorGreen);
-        }
-
-        if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
-            // bright as hell to make sure they know
-            rgbLED.brightness(10 * defaultBrightness);
-            // well, damn. everything is broke as hell
-            rgbLED.setPixel(0, NeoColorRed);
-            rgbLED.setPixel(1, NeoColorRed);
-        }
+        rgbLED.write();
     }
 }
 

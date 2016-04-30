@@ -6,4 +6,4 @@
 /*
  * default configuration include.  See cfg/readme.md for more info.
  */
-#include "cfg/new/registers.h"
+#include "cc1201_register_export.h"
