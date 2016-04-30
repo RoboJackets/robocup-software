@@ -42,7 +42,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         #Put the ball between the robot and the target
         self.add_transition(Dribble.State.aim, Dribble.State.drive,
-                            lambda: self.aimed() and not self.fumbled(),
+                            lambda: self.aimed() and self.robot.has_ball(),
                             'done aiming')
 
         self.add_transition(Dribble.State.aim, Dribble.State.capture,
@@ -59,7 +59,8 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.last_ball_time = 0
 
     def fumbled(self):
-        return not self.robot.has_ball() and time.time() - self.last_ball_time > 0.3
+        return not self.robot.has_ball() and time.time(
+        ) - self.last_ball_time > 0.3
 
     ## the position to move to (a robocup.Point object)
     @property
