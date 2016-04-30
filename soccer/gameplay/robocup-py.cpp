@@ -765,13 +765,18 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
+    register_ptr_to_python<ConfigBool*>();
+
     class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
                                                            no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
+    register_ptr_to_python<ConfigDouble*>();
+
     class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
+    register_ptr_to_python<ConfigInt*>();
 
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
