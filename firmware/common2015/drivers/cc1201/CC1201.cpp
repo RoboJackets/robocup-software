@@ -37,7 +37,7 @@ CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
 int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
-    if (!_isInit) return -1;
+    if (!_isInit) return COMM_FAILURE;
 
     if (size != (buf[0] + 1)) {
         LOG(SEVERE,
@@ -115,7 +115,7 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     }
 
     // if (num_rx_bytes == 0) num_rx_bytes = 1;
-    // if (num_rx_bytes > 0) {
+    if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
         for (int i = 0; i < num_rx_bytes; i++) {
@@ -123,11 +123,11 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         }
         chipDeselect();
 
-        // LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
-        //     (*buf)[0]);
-    // } else {
-    //     return COMM_NO_DATA;
-    // }
+        LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
+            (*buf)[0]);
+    } else {
+        return COMM_NO_DATA;
+    }
 
     update_rssi();
 
