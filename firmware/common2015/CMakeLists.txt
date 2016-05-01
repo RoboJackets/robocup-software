@@ -91,7 +91,7 @@ add_custom_target(cc1201_register_export
         ${CC1201_CONFIG}
         ${CMAKE_CURRENT_BINARY_DIR}/cc1201_register_export.h
     DEPENDS ${CC1201_CONFIG}
-    COMMENT "Generating C header file for cc1201 registers from smartrf xml file"
+    COMMENT "Generating C header file for cc1201 registers from '${CC1201_CONFIG_NAME}' smartrf xml file"
 )
 set_target_properties(cc1201_register_export PROPERTIES EXCLUDE_FROM_ALL TRUE)
 add_dependencies(common2015 cc1201_register_export)
