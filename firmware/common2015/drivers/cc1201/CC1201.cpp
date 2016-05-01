@@ -39,7 +39,7 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // lockup otherwise
     if (!_isInit) return COMM_FAILURE;
 
-    strobe(CC1201_STROBE_SFTX);
+    // strobe(CC1201_STROBE_SFTX);
 
     // In order for radio transmission to work, the cc1201 must be first strobed
     // into IDLE, then into TX.  We're not sure why this is the case, but it
@@ -79,11 +79,11 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     strobe(CC1201_STROBE_STX);
 
     // Wait until radio's TX buffer is emptied
-    uint8_t bts = 1;
-    do {
-        bts = readReg(CC1201_NUM_TXBYTES);
-        Thread::wait(2);
-    } while (bts != 0);
+    // uint8_t bts = 1;
+    // do {
+    //     bts = readReg(CC1201_NUM_TXBYTES);
+    //     Thread::wait(2);
+    // } while (bts != 0);
 
     // send a NOP to read and log the radio's state
     if (_debugEnabled) strobe(CC1201_STROBE_SNOP);
@@ -107,17 +107,26 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         return COMM_DEV_BUF_ERR;
     }
 
-    // if (num_rx_bytes == 0) num_rx_bytes = 1;
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        _spi->write(CC1201_STROBE_SNOP);  // discard size byte
-        for (int i = 1; i < num_rx_bytes; i++) {
+        size_t len = _spi->write(CC1201_STROBE_SNOP);  // discard size byte
+
+        if (len > num_rx_bytes) {
+            // the length byte isn't right
+            chipDeselect();
+            LOG(WARN, "Invalid length byte: %u", len);
+            strobe(CC1201_STROBE_SFRX);
+            strobe(CC1201_STROBE_SRX);
+            return COMM_DEV_BUF_ERR;
+        }
+        for (int i = 0; i < len; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
+        strobe(CC1201_STROBE_SFRX);
 
-        LOG(INF3, "Bytes in RX buffer: %u", num_rx_bytes);
+        LOG(INF3, "Bytes in RX buffer: %u, msg len: %u", num_rx_bytes, len);
     } else {
         return COMM_NO_DATA;
     }
