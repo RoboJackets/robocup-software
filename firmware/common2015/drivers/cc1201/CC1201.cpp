@@ -111,8 +111,8 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        uint8_t len = _spi->write(CC1201_STROBE_SNOP);  // discard size byte
-        for (int i = 0; i < len; i++) {
+        _spi->write(CC1201_STROBE_SNOP);  // discard size byte
+        for (int i = 1; i < num_rx_bytes; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
