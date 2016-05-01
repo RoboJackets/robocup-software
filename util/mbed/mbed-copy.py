@@ -73,7 +73,7 @@ if args.mbed_index != None:
     if index < len(mbeds):
         mbeds = [mbeds[index]]
     else:
-        print("Unable to find mbed at index '%'" % index, file=sys.stderr)
+        print("Unable to find mbed at index '%d'" % index, file=sys.stderr)
         sys.exit(1)
 
 # iterate copying all files to all mbeds
