@@ -117,10 +117,6 @@
             <Value>0xee</Value>
         </Register>
         <Register>
-            <Name>IOCFG2</Name>
-            <Value>0x06</Value>
-        </Register>
-        <Register>
             <Name>IQIC</Name>
             <Value>0x00</Value>
         </Register>
@@ -139,18 +135,6 @@
         <Register>
             <Name>MODCFG_DEV_E</Name>
             <Value>0x2f</Value>
-        </Register>
-        <Register>
-            <Name>MODEM_STATUS1</Name>
-            <Value>0x10</Value>
-        </Register>
-        <Register>
-            <Name>PARTNUMBER</Name>
-            <Value>0x21</Value>
-        </Register>
-        <Register>
-            <Name>PARTVERSION</Name>
-            <Value>0x11</Value>
         </Register>
         <Register>
             <Name>PKT_CFG1</Name>
