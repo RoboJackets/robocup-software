@@ -70,7 +70,7 @@ mbeds.sort(key=lambda m: m['serial_port'])
 # if args.mbed_index is set, copy only to that one
 if args.mbed_index != None:
     index = args.mbed_index
-    if  index < len(mbeds):
+    if index < len(mbeds):
         mbeds = [mbeds[index]]
     else:
         print("Unable to find mbed at index '%'" % index, file=sys.stderr)
