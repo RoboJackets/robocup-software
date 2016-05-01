@@ -99,29 +99,21 @@ public:
     /// deserialize a packet from a buffer
     void recv(const uint8_t* buffer, size_t size) {
         // check that the buffer is big enough
-        if (size < sizeof(header) + 1) return;
+        if (size < sizeof(header)) return;
 
-        // deserialize header.  skip first byte because it indicates size and
-        // isn't part of the header
-        header = *((header_data*)(buffer + 1));
+        // deserialize header
+        header = *((header_data*)buffer);
 
         // Everything after the header is payload data
         payload.clear();
-        for (size_t i = sizeof(header) + 1; i < size; i++) {
+        for (size_t i = sizeof(header); i < size; i++) {
             payload.push_back(buffer[i]);
         }
     }
 
     void pack(std::vector<uint8_t>* buffer) const {
-        // first byte is total size (excluding the size byte)
-        const uint8_t total_size = sizeof(header) + payload.size();
-        buffer->reserve(total_size + 1);
-
-        buffer->push_back(total_size);
-
+        buffer->reserve(sizeof(header) + payload.size());
         SerializeToVector(header, buffer);
-
-        // payload
         buffer->insert(buffer->end(), payload.begin(), payload.end());
     }
 };

@@ -39,14 +39,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // lockup otherwise
     if (!_isInit) return COMM_FAILURE;
 
-    if (size != (buf[0] + 1)) {
-        LOG(SEVERE,
-            "Packet size is inconsistent with expected number of "
-            "bytes! %u bytes expected, %u bytes found in buffer.",
-            size, buf[0]);
-        return COMM_FUNC_BUF_ERR;
-    }
-
     strobe(CC1201_STROBE_SFTX);
 
     // In order for radio transmission to work, the cc1201 must be first strobed
@@ -56,14 +48,15 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // the GitHub pull request for more info:
     // https://github.com/RoboJackets/robocup-software/pull/562
     strobe(CC1201_STROBE_SIDLE);
-//     strobe(CC1201_STROBE_SFTX);
-//     strobe(CC1201_STROBE_SCAL);
-//     strobe(CC1201_STROBE_SFSTXON);
+    //     strobe(CC1201_STROBE_SFTX);
+    //     strobe(CC1201_STROBE_SCAL);
+    //     strobe(CC1201_STROBE_SFSTXON);
 
     // Send the data to the CC1201.
     chipSelect();
     uint8_t device_state =
         _spi->write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
+    _spi->write(size);  // write size byte first
     for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
     chipDeselect();
 
@@ -118,13 +111,13 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        for (int i = 0; i < num_rx_bytes; i++) {
+        _spi->write(CC1201_STROBE_SNOP);  // discard size byte
+        for (int i = 1; i < num_rx_bytes; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
 
-        LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
-            (*buf)[0]);
+        LOG(INF3, "Bytes in RX buffer: %u", num_rx_bytes);
     } else {
         return COMM_NO_DATA;
     }
