@@ -92,8 +92,8 @@ public:
      * this modifies the value instead of returning a new value
      */
     Point& operator+=(Point other) {
-        _x += other.x();
-        _y += other.y();
+        x() += other.x();
+        y() += other.y();
 
         return *this;
     }
@@ -103,8 +103,8 @@ public:
      * this modifies the value instead of returning a new value
      */
     Point& operator-=(Point other) {
-        _x -= other.x();
-        _y -= other.y();
+        x() -= other.x();
+        y() -= other.y();
 
         return *this;
     }
@@ -114,8 +114,8 @@ public:
      * this modifies the value instead of returning a new value
      */
     Point& operator*=(float s) {
-        _x *= s;
-        _y *= s;
+        x() *= s;
+        y() *= s;
 
         return *this;
     }
@@ -125,8 +125,8 @@ public:
      * this modifies the value instead of returning a new value
      */
     Point& operator/=(float s) {
-        _x /= s;
-        _y /= s;
+        x() /= s;
+        y() /= s;
 
         return *this;
     }
@@ -147,7 +147,7 @@ public:
      * adds the == operator
      */
     bool operator==(Point other) const {
-        return _x == other.x() && _y == other.y();
+        return x() == other.x() && y() == other.y();
     }
 
     /**
@@ -185,8 +185,8 @@ public:
     Point& clamp(float max) {
         float ratio = mag() / max;
         if (ratio > 1) {
-            _x /= ratio;
-            _y /= ratio;
+            x() /= ratio;
+            y() /= ratio;
         }
         return *this;
     }
@@ -210,8 +210,8 @@ public:
     Point& rotate(float angle) {
         float newX = x() * cos(angle) - y() * sin(angle);
         float newY = y() * cos(angle) + x() * sin(angle);
-        _x = newX;
-        _y = newY;
+        x() = newX;
+        y() = newY;
         return *this;
     }
 
