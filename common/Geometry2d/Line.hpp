@@ -19,6 +19,8 @@ public:
 
     Point delta() const { return pt[1] - pt[0]; }
 
+    bool operator==(const Line& other) { return pt == other.pt; }
+
     /**
     returns the shortest distance between the line and a point
     @param other the point to find the distance to

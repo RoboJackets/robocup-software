@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import robocup
 import tactics.line_up
@@ -6,7 +6,7 @@ import tactics.defense
 import main
 
 
-class DefendPenalty(play.Play):
+class DefendPenalty(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -20,10 +20,6 @@ class DefendPenalty(play.Play):
         lineup = tactics.line_up.LineUp(line)
         self.add_subbehavior(lineup, 'lineup')
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False, )
-
     @classmethod
     def score(cls):
         gs = main.game_state()
@@ -32,8 +28,4 @@ class DefendPenalty(play.Play):
 
     @classmethod
     def is_restart(cls):
-        return True
-
-    @classmethod
-    def handles_goalie(cls):
         return True
