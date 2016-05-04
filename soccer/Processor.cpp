@@ -40,6 +40,8 @@ RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
+Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
+
 void Processor::createConfiguration(Configuration* cfg) {
     robotConfig2008 = new RobotConfig(cfg, "Rev2008");
     robotConfig2011 = new RobotConfig(cfg, "Rev2011");
@@ -61,6 +63,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     firstLogTime = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
+    _initialized = false;
 
     _simulation = sim;
     _radio = nullptr;
@@ -220,8 +223,8 @@ void Processor::run() {
     vision.start();
 
     // Create radio socket
-    _radio =
-        _simulation ? (Radio*)new SimRadio(_blueTeam) : (Radio*)new USBRadio();
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+                         : static_cast<Radio*>(new USBRadio());
 
     Status curStatus;
 
@@ -295,10 +298,16 @@ void Processor::run() {
             log->CopyFrom(packet->wrapper);
 
             curStatus.lastVisionTime = packet->receivedTime;
+
+            // If packet has geometry data, attempt to read information and
+            // update if changed.
+            if (packet->wrapper.has_geometry()) {
+                updateGeometryPacket(packet->wrapper.geometry().field());
+            }
+
             if (packet->wrapper.has_detection()) {
                 SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
-                // FIXME - Account for network latency
                 double rt = packet->receivedTime / 1000000.0;
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
                 det->set_t_sent(rt);
@@ -567,6 +576,9 @@ void Processor::run() {
         _status = curStatus;
         _statusMutex.unlock();
 
+        // Processor Initialization Completed
+        _initialized = true;
+
         ////////////////
         // Timing
 
@@ -586,35 +598,107 @@ void Processor::run() {
     vision.stop();
 }
 
+/*
+ * Updates the geometry packet if different from the existing one,
+ * Based on the geometry vision data.
+ */
+void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
+    if (fieldSize.field_lines_size() == 0) {
+        return;
+    }
+
+    const SSL_FieldCicularArc* penalty = nullptr;
+    const SSL_FieldCicularArc* center = nullptr;
+    float displacement =
+        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
+
+    // Loop through field arcs looking for needed fields
+    for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
+        if (arc.name() == "CenterCircle") {
+            // Assume center circle
+            center = &arc;
+        } else if (arc.name() == "LeftFieldLeftPenaltyArc") {
+            penalty = &arc;
+        }
+    }
+
+    for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
+        if (line.name() == "RightPenaltyStretch") {
+            displacement = abs(line.p2().y() - line.p1().y());
+        }
+    }
+
+    float thickness = fieldSize.field_lines().Get(0).thickness() / 1000.0f;
+
+    // The values we get are the center of the lines, we want to use the
+    // outside, so we can add this as an offset.
+    float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
+
+    float fieldBorder = currentDimensions->Border();
+
+    if (penalty != nullptr && center != nullptr && thickness != 0) {
+        // Force a resize
+        Field_Dimensions newDim = Field_Dimensions(
+            fieldSize.field_length() / 1000.0f,
+            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
+            Field_Dimensions::Default_Dimensions.GoalHeight(),
+            penalty->radius() / 1000.0f + adj,  // PenaltyDist
+            Field_Dimensions::Default_Dimensions.PenaltyDiam(),
+            penalty->radius() / 1000.0f + adj,       // ArcRadius
+            center->radius() / 1000.0f + adj,        // CenterRadius
+            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+            displacement / 1000.0f,                  // GoalFlat
+            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
+            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+
+        if (newDim != *currentDimensions) {
+            // Set the changed field dimensions to the current ones
+            cout << "Updating field geometry based off of vision packet."
+                 << endl;
+            setFieldDimensions(newDim);
+        }
+    } else {
+        cerr << "Error: failed to decode SSL geometry packet. Not resizing "
+                "field." << endl;
+    }
+}
+
 void Processor::sendRadioData() {
     Packet::RadioTx* tx = _state.logFrame->mutable_radio_tx();
+    tx->set_txmode(Packet::RadioTx::UNICAST);
 
     // Halt overrides normal motion control, but not joystick
     if (_state.gameState.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _state.self) {
-            Packet::RadioTx::Robot& txRobot = r->radioTx;
-            txRobot.set_body_x(0);
-            txRobot.set_body_y(0);
-            txRobot.set_body_w(0);
-            txRobot.set_kick(0);
-            txRobot.set_dribbler(0);
+            Packet::Control* control = r->control;
+            control->set_xvelocity(0);
+            control->set_yvelocity(0);
+            control->set_avelocity(0);
+            control->set_dvelocity(0);
+            control->set_kcstrength(0);
+            control->set_shootmode(Packet::Control::KICK);
+            control->set_triggermode(Packet::Control::STAND_DOWN);
+            control->set_song(Packet::Control::STOP);
         }
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell()) {
-            Packet::RadioTx::Robot* txRobot = tx->add_robots();
+            Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
             // number of motors.
-            txRobot->CopyFrom(r->radioTx);
+            txRobot->CopyFrom(r->robotPacket);
 
             if (r->shell() == _manualID) {
-                JoystickControlValues controlVals = getJoystickControlValues();
-                applyJoystickControls(controlVals, txRobot, r);
+                const JoystickControlValues controlVals =
+                    getJoystickControlValues();
+                applyJoystickControls(controlVals, txRobot->mutable_control(),
+                                      r);
             }
         }
     }
@@ -625,8 +709,7 @@ void Processor::sendRadioData() {
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::RadioTx::Robot* tx,
-                                      OurRobot* robot) {
+                                      Packet::Control* tx, OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -640,20 +723,22 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     }
 
     // translation
-    tx->set_body_x(translation.x());
-    tx->set_body_y(translation.y());
+    tx->set_xvelocity(translation.x());
+    tx->set_yvelocity(translation.y());
 
     // rotation
-    tx->set_body_w(controlVals.rotation);
+    tx->set_avelocity(controlVals.rotation);
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_kick_immediate(kick);
-    tx->set_kick(kick ? controlVals.kickPower : 0);
-    tx->set_use_chipper(controlVals.chip);
+    tx->set_triggermode(kick ? Packet::Control::IMMEDIATE
+                             : Packet::Control::STAND_DOWN);
+    tx->set_kcstrength(controlVals.kickPower);
+    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
+                                       : Packet::Control::CHIP);
 
     // dribbler
-    tx->set_dribbler(controlVals.dribble ? controlVals.dribblerPower : 0);
+    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValues() {
@@ -737,3 +822,6 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
 }
+
+bool Processor::isRadioOpen() const { return _radio->isOpen(); }
+bool Processor::isInitialized() const { return _initialized; }

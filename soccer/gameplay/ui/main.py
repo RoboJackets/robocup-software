@@ -16,6 +16,18 @@ def getMainWindow():
 _has_setup_ui = False
 
 
+def defenseEnabled():
+    win = getMainWindow()
+    if win == None:
+        logging.warn(
+            "At defenseEnabled(), unable to get a reference to the main window")
+        return True
+
+    defenseCheckbox = win.findChild(QtWidgets.QCheckBox, 'useDefenseCheckBox')
+
+    return defenseCheckbox.isChecked()
+
+
 def setup():
     global _has_setup_ui
 

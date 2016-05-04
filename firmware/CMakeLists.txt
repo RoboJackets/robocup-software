@@ -6,6 +6,7 @@ include(RemoveFlags)
 # the default compiler (mostly apple computers). The arm compilers know
 # nothing about this flag however.
 remove_cxx_flag("-fcolor-diagnostics")
+remove_cxx_flag("-Werror=return-stack-address")
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
@@ -21,6 +22,8 @@ set(MBED_COPY_SCRIPT sudo ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py)
 
 # enable C++ exceptions
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
+# the mbed libraries are compiled with -fno-rtti, so we need to as well
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fno-rtti")
 # enable C++14
 set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++14")
 # Enable logging for the common2015 library

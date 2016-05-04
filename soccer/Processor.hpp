@@ -177,6 +177,10 @@ public:
 
     void setFieldDimensions(const Field_Dimensions& dims);
 
+    bool isRadioOpen() const;
+
+    bool isInitialized() const;
+
     ////////
 
     // Time of the first LogFrame
@@ -186,8 +190,7 @@ protected:
     void run() override;
 
     void applyJoystickControls(const JoystickControlValues& controlVals,
-                               Packet::RadioTx::Robot* txRobot,
-                               OurRobot* robot);
+                               Packet::Control* txRobot, OurRobot* robot);
 
 private:
     // Configuration for different models of robots
@@ -200,6 +203,8 @@ private:
 
     /** send out the radio data for the radio program */
     void sendRadioData();
+
+    void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
     void runModels(
         const std::vector<const SSL_DetectionFrame*>& detectionFrames);
@@ -274,4 +279,6 @@ private:
     bool _useFieldOrientedManualDrive = false;
 
     VisionReceiver vision;
+
+    bool _initialized;
 };
