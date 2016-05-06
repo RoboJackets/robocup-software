@@ -1,26 +1,38 @@
 import behavior
 import robocup
 import main
+import enum
 import constants
 import tactics.line_up
 import tactics.our_placement
-import standard_play
+import play
 
 
 # one robot places the ball, the others just line up and wait
-class Placement(standard_play.StandardPlay):
+class Placement(play.Play):
+    class State(enum.Enum):
+        placing = 1  # Normal
+        reset = 2  # update information and go back into placing
+
     def __init__(self):
         super().__init__(continuous=True)
 
-        if self.has_subbehavior_with_name('defense'):
-            self.remove_subbehavior('defense')
+        #if self.has_subbehavior_with_name('defense'):
+        #   self.remove_subbehavior('defense')
+
+        for state in Placement.State:
+            self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running, lambda: True,
+                            Placement.State.placing, lambda: True,
                             'immediately')
+        self.add_transition(Placement.State.placing, Placement.State.reset,
+                            lambda: self.check_update(), 'command changed')
+        self.add_transition(Placement.State.reset, Placement.State.placing,
+                            lambda: True, 'immediately')
 
         self._pos = main.game_state().get_ball_placement_point()
-        self._our_restart = None
+        self._our_restart = main.game_state().is_our_restart()
 
     def create_lineup(self):
         xsize = constants.Field.Width / 2 - .5
@@ -35,32 +47,30 @@ class Placement(standard_play.StandardPlay):
         return (self._pos - main.game_state().get_ball_placement_point()).mag(
         ) != 0 or self._our_restart != main.game_state().is_our_restart()
 
-    def execute_running(self):
-        #if the ball placement command changes, reset the behaviors accordingly
-        if self.check_update():
+    def on_enter_reset(self):
+        self._pos = main.game_state().get_ball_placement_point()
+        self._our_restart = main.game_state().is_our_restart()
 
-            #print(self._our_restart!=main.game_state().is_our_restart())
-            self._pos = main.game_state().get_ball_placement_point()
-            self._our_restart = main.game_state().is_our_restart()
-
-            self.remove_all_subbehaviors()
-            if self._our_restart:
-                self.placer = tactics.our_placement.OurPlacement()
-                self.add_subbehavior(self.placer,
-                                     'placer',
-                                     required=True,
-                                     priority=90)
-
-            line_up = tactics.line_up.LineUp(self.create_lineup())
-            self.add_subbehavior(line_up,
-                                 'line_up',
+    def on_enter_placing(self):
+        if self._our_restart:
+            self.placer = tactics.our_placement.OurPlacement()
+            self.add_subbehavior(self.placer,
+                                 'placer',
                                  required=True,
-                                 priority=80)
+                                 priority=90)
 
+        line_up = tactics.line_up.LineUp(self.create_lineup())
+        self.add_subbehavior(line_up, 'line_up', required=True, priority=80)
+
+    def execute_placing(self):
         main.system_state().draw_circle(self._pos, 0.1, constants.Colors.Green,
                                         "Place")
         main.system_state().draw_circle(self._pos, 0.5, constants.Colors.Red,
                                         "Avoid")
+
+    def on_exit_placing(self):
+        self.remove_subbehavior('placer')
+        self.remove_subbehavior('line_up')
 
     @classmethod
     def score(cls):
@@ -69,4 +79,8 @@ class Placement(standard_play.StandardPlay):
 
     @classmethod
     def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
         return True

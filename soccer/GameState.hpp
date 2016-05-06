@@ -1,6 +1,8 @@
 #pragma once
 #include "TeamInfo.hpp"
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
+#include "Constants.hpp"
 
 /**
  * @brief Holds the state of the game according to the referee
@@ -130,7 +132,12 @@ public:
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
 
     void setBallPlacementPoint(float x, float y) {
-        ballPlacementPoint = Geometry2d::Point(x, y);
+        Geometry2d::TransformMatrix _worldToTeam =
+            Geometry2d::TransformMatrix();
+        _worldToTeam *= Geometry2d::TransformMatrix::translate(
+            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+        ballPlacementPoint =
+            _worldToTeam * Geometry2d::Point(x / 1000, y / 1000);
     }
 
     Geometry2d::Point getBallPlacementPoint() const {
