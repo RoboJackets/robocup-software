@@ -41,8 +41,8 @@ class OurPlacement(
         #this play stays perpetually in the avoid state until a different command is given
 
     def on_enter_dribble(self):
-        dribble = skills.dribble.Dribble(
-            main.game_state().get_ball_placement_point(), 0)
+        dribble = skills.dribble.Dribble(main.game_state(
+        ).get_ball_placement_point())
         self.add_subbehavior(dribble, 'dribble', required=True, priority=100)
 
     def execute_dribble(self):

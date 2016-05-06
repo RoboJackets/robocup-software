@@ -17,7 +17,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         aim = 2
         drive = 3
 
-    def __init__(self, pos=None, vel=0):
+    def __init__(self, pos=None):
         super().__init__(continuous=False)
 
         for state in Dribble.State:
@@ -25,7 +25,8 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self._threshold = 0.1  #default value matches the required accuracy for a placement command
         self._pos = pos
-        self._vel = vel
+
+        self._dribble_speed = 100
 
         self.add_transition(behavior.Behavior.State.start,
                             Dribble.State.capture, lambda: True, 'immediately')
@@ -53,7 +54,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.add_transition(
             Dribble.State.drive, behavior.Behavior.State.completed,
-            lambda: (main.ball().pos - self._pos).mag() < self._threshold and not self.fumbled() and main.ball().vel.mag() < .05,
+            lambda: (main.ball().pos - self._pos).mag() < self._threshold and not self.fumbled() and main.ball().vel.mag() < .1,
             'finished driving')
 
         self.last_ball_time = 0
@@ -67,17 +68,12 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def pos(self):
         return self._pos
 
-    @property
-    def vel(self):
-        return self._vel
-
     @pos.setter
     def pos(self, value):
         self._pos = value
 
-    @vel.setter
-    def vel(self, value):
-        self._vel = value
+    def set_dribble_speed(self, value):
+        self._dribble_speed = value
 
     ## how close (in meters) the robot has to be to the target position for it be complete
     @property
@@ -103,12 +99,12 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_aim(self):
         self.robot.set_max_angle_speed(3)
         self.robot.pivot(self._pos)
-        self.robot.set_dribble_speed(100)
+        self.robot.set_dribble_speed(self._dribble_speed)
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 
     def execute_drive(self):
-        self.robot.set_dribble_speed(100)
+        self.robot.set_dribble_speed(self._dribble_speed)
         self.robot.face(self._pos)
 
         #offset by the size of the robot so the ball is on the target position
