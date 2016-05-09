@@ -24,6 +24,8 @@
 #include "io-expander.hpp"
 #include "RotarySelector.hpp"
 
+LocalFileSystem local2("local");
+
 using namespace std;
 
 void Task_Controller(void const* args);
@@ -48,6 +50,7 @@ int main() {
     // Store the thread's ID
     const osThreadId mainID = Thread::gettid();
     ASSERT(mainID != nullptr);
+
 
     // clear any extraneous rx serial bytes
     Serial s(RJ_SERIAL_RXTX);
@@ -93,6 +96,9 @@ int main() {
     rgbLED.setPixel(0, NeoColorBlue);
     rgbLED.setPixel(1, NeoColorBlue);
     rgbLED.write();
+
+    FILE* fp = fopen("/local/logfile.txt", "w");
+    LOG(INIT, "Opened fp: %p", fp);
 
     // Start a periodic blinking LED to show system activity
     // This is set to never timeout, so it will only stop if the system halts
@@ -208,6 +214,18 @@ int main() {
         if ((ll % 4) == 0) {
             printf("\033[m");
             fflush(stdout);
+        }
+
+        if (((ll+1) % 4) == 0 && fp) {
+            fprintf(fp, "text\r\n");
+            LOG(INIT, "wrote to logfiles");
+        }
+
+
+        if (((ll+1) % 20) == 0 && fp) {
+            fclose(fp);
+            fp = nullptr;
+            LOG(INIT, "saved logfile");
         }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
