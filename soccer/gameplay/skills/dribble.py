@@ -54,7 +54,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.add_transition(
             Dribble.State.drive, behavior.Behavior.State.completed,
-            lambda: (main.ball().pos - self._pos).mag() < self._threshold and not self.fumbled() and main.ball().vel.mag() < .1,
+            lambda: (main.ball().pos - self._pos).mag() < self._threshold - constants.Ball.Radius and not self.fumbled() and main.ball().vel.mag() < .1,
             'finished driving')
 
         self.last_ball_time = 0
@@ -107,7 +107,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.set_dribble_speed(self._dribble_speed)
         self.robot.face(self._pos)
 
-        #offset by the size of the robot so the ball is on the target position
+        #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.move_to_direct(self._pos - (
             self._pos - self.robot.pos).normalized(constants.Robot.Radius))
         if self.robot.has_ball():
