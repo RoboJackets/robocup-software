@@ -17,9 +17,6 @@ class Placement(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
-        #if self.has_subbehavior_with_name('defense'):
-        #   self.remove_subbehavior('defense')
-
         for state in Placement.State:
             self.add_state(state, behavior.Behavior.State.running)
 
