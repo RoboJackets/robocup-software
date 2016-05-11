@@ -129,6 +129,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
     def execute_running(self):
         self.recalculate_aim_target_point()
         super().execute_running()
+        self.robot.set_planning_priority(10)
 
     def on_enter_aiming(self):
         if not self.has_subbehavior_with_name('aim'):

@@ -56,6 +56,9 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
             lambda: self._area.contains_point(main.ball().pos) or self.find_robot_to_block() is not None,
             "if ball or opponent enters my area")
 
+    def execute_running(self):
+        self.robot.set_planning_priority(15)
+
     def execute_marking(self):
         #main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Defender")
         self.block_robot = self.find_robot_to_block()

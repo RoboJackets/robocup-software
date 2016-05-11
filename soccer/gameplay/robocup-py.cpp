@@ -612,6 +612,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)
+        .def("set_planning_priority", &OurRobot::setPlanningPriority)
         .def("set_max_angle_speed", OurRobot_set_max_angle_speed)
         .def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
         .def("shield_from_teammates", &OurRobot::shieldFromTeammates)

@@ -152,6 +152,7 @@ void OurRobot::resetMotionConstraints() {
     _motionConstraints = MotionConstraints();
     _motionCommand = std::make_unique<Planning::EmptyCommand>();
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
+    _planningPriority = 0;
 }
 
 void OurRobot::stop() {

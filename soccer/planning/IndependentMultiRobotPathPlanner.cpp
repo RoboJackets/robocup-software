@@ -3,6 +3,8 @@
 using namespace std;
 namespace Planning {
 
+bool sortByPriority(const PlanRequest &lhs, const PlanRequest &rhs) { return lhs.priority > rhs.priority; }
+
 std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
     std::map<int, PlanRequest> requests) {
     std::map<int, std::unique_ptr<Path>> paths;
@@ -33,6 +35,14 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
         staticRobotObstacles[shell] = std::make_shared<Geometry2d::Circle>(
             request.start.pos, Robot_Radius);
     }
+
+    auto comparator = [&](int &lhs, int &rhs) {
+            return sortByPriority(requests[lhs], requests[rhs]);
+        };
+
+    std::sort(std::begin(staticRequests), std::end(staticRequests), comparator);
+    std::sort(std::begin(dynamicRequests), std::end(dynamicRequests), comparator);
+
     std::vector<int> inOrderRequests;
     inOrderRequests.insert(std::end(inOrderRequests),
                            std::begin(staticRequests),
