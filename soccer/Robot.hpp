@@ -432,6 +432,23 @@ public:
 
     void setPath(std::unique_ptr<Planning::Path> path);
 
+
+    /**
+     * Sets the priority which paths are planned.
+     * Higher priority values are planned first.
+     */
+    void setPlanningPriority(int8_t priority) {
+        _planningPriority = priority;
+    }
+
+    /**
+     * Gets the priority which paths are planned.
+     * Higher priority values are planned first.
+     */
+    int8_t getPlanningPriority() {
+        return _planningPriority;
+    }
+
 protected:
     MotionControl* _motionControl;
 
@@ -504,14 +521,12 @@ protected:
      */
     std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
 
-protected:
     friend class Processor;
 
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
 
-protected:
     friend class MotionControl;
 
 private:
@@ -540,6 +555,8 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
+
+    int8_t _planningPriority;
 };
 
 /**

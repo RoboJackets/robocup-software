@@ -442,7 +442,8 @@ void Processor::run() {
                     Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->motionConstraints(),
                     std::move(r->angleFunctionPath.path),
-                    std::move(staticObstacles), std::move(dynamicObstacles));
+                    std::move(staticObstacles), std::move(dynamicObstacles),
+                    r->getPlanningPriority());
             }
         }
 

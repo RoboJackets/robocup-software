@@ -100,6 +100,7 @@ class SubmissiveGoalie(
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
         self.robot.face(main.ball().pos)
+        self.robot.set_planning_priority(20)
 
     def on_enter_clear(self):
         # FIXME: what we really want is a less-precise LineKick

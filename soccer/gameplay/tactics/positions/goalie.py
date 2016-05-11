@@ -105,6 +105,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_running(self):
         if self.robot != None:
             self.robot.face(main.ball().pos)
+            self.robot.set_planning_priority(20)
 
     def execute_chill(self):
         if self.robot != None:
