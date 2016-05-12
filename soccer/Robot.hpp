@@ -432,22 +432,17 @@ public:
 
     void setPath(std::unique_ptr<Planning::Path> path);
 
-
     /**
      * Sets the priority which paths are planned.
      * Higher priority values are planned first.
      */
-    void setPlanningPriority(int8_t priority) {
-        _planningPriority = priority;
-    }
+    void setPlanningPriority(int8_t priority) { _planningPriority = priority; }
 
     /**
      * Gets the priority which paths are planned.
      * Higher priority values are planned first.
      */
-    int8_t getPlanningPriority() {
-        return _planningPriority;
-    }
+    int8_t getPlanningPriority() { return _planningPriority; }
 
 protected:
     MotionControl* _motionControl;
