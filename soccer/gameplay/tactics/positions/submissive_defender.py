@@ -108,7 +108,6 @@ class SubmissiveDefender(
         self.robot.set_avoid_opponents(False)
         self.robot.set_planning_priority(15)
 
-
     ## move to a position to block the 'block_line'
     # if no block_line is specified, blocks the ball
     def execute_marking(self):
