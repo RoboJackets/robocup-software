@@ -723,8 +723,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     }
 
     // translation
-    tx->set_xvelocity(translation.x);
-    tx->set_yvelocity(translation.y);
+    tx->set_xvelocity(translation.x());
+    tx->set_yvelocity(translation.y());
 
     // rotation
     tx->set_avelocity(controlVals.rotation);

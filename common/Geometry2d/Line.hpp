@@ -64,7 +64,7 @@ public:
         Point d = delta();
         Point v = p - pt[0];
 
-        return (d.x * v.y - v.x * d.y);
+        return (d.x() * v.y() - v.x() * d.y());
     }
 
     /**
