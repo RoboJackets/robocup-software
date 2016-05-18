@@ -73,9 +73,9 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
     Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
     QString s = "X: ";
-    s += QString::number(roundf(pos.x * 100) / 100);
+    s += QString::number(roundf(pos.x() * 100) / 100);
     s += " Y: ";
-    s += QString::number(roundf(pos.y * 100) / 100);
+    s += QString::number(roundf(pos.y() * 100) / 100);
     _posLabel->setText(s);
 }
 
