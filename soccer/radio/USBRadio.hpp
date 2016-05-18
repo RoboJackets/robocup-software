@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include <libusb.h>
+#include <stdint.h>
 #include <QMutex>
 
 #include "Radio.hpp"
