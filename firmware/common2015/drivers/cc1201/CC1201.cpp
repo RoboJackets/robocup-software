@@ -1,7 +1,7 @@
 #include "CC1201.hpp"
 
-#include "logger.hpp"
 #include "assert.hpp"
+#include "logger.hpp"
 
 // check that the address byte doesn't have any non-address bits set
 // see "3.2 Access Types" in User Guide

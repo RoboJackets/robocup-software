@@ -1,14 +1,14 @@
-#include <mbed.h>
 #include <cmsis_os.h>
+#include <mbed.h>
 #include <memory>
 
-#include "SharedSPI.hpp"
 #include "CC1201Radio.hpp"
+#include "RJBaseUSBDevice.hpp"
+#include "SharedSPI.hpp"
 #include "logger.hpp"
 #include "pins.hpp"
 #include "usb-interface.hpp"
 #include "watchdog.hpp"
-#include "RJBaseUSBDevice.hpp"
 
 #define RJ_WATCHDOG_TIMER_VALUE 2  // seconds
 

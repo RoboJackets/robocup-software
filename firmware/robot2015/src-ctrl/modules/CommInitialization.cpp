@@ -1,20 +1,20 @@
 #include <rtos.h>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
+#include <CC1201Radio.hpp>
 #include <CommModule.hpp>
 #include <CommPort.hpp>
-#include <CC1201Radio.hpp>
+#include <assert.hpp>
 #include <helper-funcs.hpp>
 #include <logger.hpp>
-#include <assert.hpp>
 
+#include "TimeoutLED.hpp"
+#include "fpga.hpp"
+#include "io-expander.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "io-expander.hpp"
-#include "fpga.hpp"
-#include "TimeoutLED.hpp"
 
 using namespace std;
 

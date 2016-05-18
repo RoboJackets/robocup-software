@@ -1,7 +1,7 @@
 #include "CommLink.hpp"
 
-#include "logger.hpp"
 #include "assert.hpp"
+#include "logger.hpp"
 
 #define COMM_LINK_SIGNAL_START_THREAD (1 << 0)
 #define COMM_LINK_SIGNAL_RX_TRIGGER (1 << 1)

@@ -6,19 +6,19 @@
  * to be used along with the radio-receiver-test program.
  */
 
-#include <mbed.h>
 #include <cmsis_os.h>
+#include <mbed.h>
 #include <memory>
 
-#include "SharedSPI.hpp"
 #include "CC1201Radio.hpp"
+#include "SharedSPI.hpp"
 #include "logger.hpp"
 #include "pins-ctrl-2015.hpp"
 
 using namespace std;
 
 // how often to send a packet (in seconds)
-const float TRANSMIT_INTERVAL = 1.0f/2.0f;
+const float TRANSMIT_INTERVAL = 1.0f / 2.0f;
 
 bool initRadio() {
     // setup SPI bus
@@ -41,9 +41,7 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-void radioRxHandler(rtp::packet* pkt) {
-    printf("<--\r\n");
-}
+void radioRxHandler(rtp::packet* pkt) { printf("<--\r\n"); }
 
 int main() {
     // set baud rate to higher value than the default for faster terminal
@@ -81,7 +79,7 @@ int main() {
 
         // create control message and add it to the packet payload
         rtp::ControlMessage msg;
-        msg.uid = 1; // address message to robot 1
+        msg.uid = 1;  // address message to robot 1
         msg.bodyX = 2;
         msg.bodyY = 3;
         msg.bodyW = 4;

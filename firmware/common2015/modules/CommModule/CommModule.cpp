@@ -1,8 +1,8 @@
 #include "CommModule.hpp"
 #include "CommPort.hpp"
+#include "assert.hpp"
 #include "helper-funcs.hpp"
 #include "logger.hpp"
-#include "assert.hpp"
 
 #include <ctime>
 

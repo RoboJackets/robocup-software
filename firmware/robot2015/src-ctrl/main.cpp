@@ -1,29 +1,29 @@
 // ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
+#include <array>
 #include <ctime>
 #include <string>
-#include <array>
 
 #include <rtos.h>
 
-#include <helper-funcs.hpp>
-#include <watchdog.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <helper-funcs.hpp>
+#include <logger.hpp>
+#include <watchdog.hpp>
 
-#include "robot-devices.hpp"
-#include "task-signals.hpp"
+#include "BallSense.hpp"
+#include "CC1201.cpp"
+#include "KickerBoard.hpp"
+#include "RadioProtocol.hpp"
+#include "RotarySelector.hpp"
+#include "RtosTimerHelper.hpp"
+#include "SharedSPI.hpp"
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "neostrip.hpp"
-#include "CC1201.cpp"
-#include "BallSense.hpp"
-#include "SharedSPI.hpp"
-#include "KickerBoard.hpp"
-#include "RadioProtocol.hpp"
-#include "RtosTimerHelper.hpp"
 #include "io-expander.hpp"
-#include "RotarySelector.hpp"
+#include "neostrip.hpp"
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 
 using namespace std;
 

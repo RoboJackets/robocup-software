@@ -1,8 +1,8 @@
 #pragma once
 
 #include <rtos.h>
-#include "CommModule.hpp"
 #include "CC1201.hpp"
+#include "CommModule.hpp"
 #include "RtosTimerHelper.hpp"
 
 class RadioProtocol {

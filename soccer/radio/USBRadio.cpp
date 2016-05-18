@@ -4,8 +4,8 @@
 #include <QMutexLocker>
 
 #include <Utils.hpp>
-#include "USBRadio.hpp"
 #include "../firmware/common2015/drivers/cc1201/ti/defines.hpp"
+#include "USBRadio.hpp"
 
 // Include this file for base station usb vendor/product ids
 #include "../firmware/base2015/usb-interface.hpp"
