@@ -41,7 +41,11 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-void radioRxHandler(rtp::packet* pkt) { printf("<--\r\n"); }
+void radioRxHandler(rtp::packet* pkt) {
+    static int rxCount = 0;
+    rxCount++;
+    printf("<-- %d\r\n", rxCount);
+}
 
 int main() {
     // set baud rate to higher value than the default for faster terminal
@@ -73,6 +77,8 @@ int main() {
 
     // send packets every @TRANSMIT_INTERVAL forever
     while (true) {
+        static int txCount = 0;
+
         rtp::packet pkt;
         pkt.header.port = rtp::Port::CONTROL;
         pkt.header.address = rtp::BROADCAST_ADDRESS;
@@ -87,7 +93,8 @@ int main() {
 
         // transmit!
         CommModule::Instance->send(pkt);
-        printf("-->\r\n");
+        txCount++;
+        printf("--> %d\r\n", txCount);
 
         Thread::wait(TRANSMIT_INTERVAL * 1e3);
     }

@@ -42,7 +42,9 @@ bool initRadio() {
 }
 
 void radioRxHandler(rtp::packet* pkt) {
-    printf("<--\r\n");
+    static int rxCount = 0;
+    rxCount++;
+    printf("<-- %d\r\n", rxCount);
 
     rtp::ControlMessage controlMsg;
     bool success = rtp::DeserializeFromBuffer(&controlMsg, pkt->payload.data(),
@@ -70,7 +72,9 @@ void radioRxHandler(rtp::packet* pkt) {
 
     // transmit!
     CommModule::Instance->send(replyPkt);
-    printf("-->\r\n");
+    static int txCount = 0;
+    txCount++;
+    printf("--> %d\r\n", txCount);
 }
 
 int main() {
