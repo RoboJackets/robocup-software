@@ -369,8 +369,8 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
            trans[2]);
 
     printf("angle = %5.3f\n", _vehicle->getAngle());
-    printf("position = (%5.3f,%5.3f)\n", _vehicle->getPosition().x,
-           _vehicle->getPosition().y);
+    printf("position = (%5.3f,%5.3f)\n", _vehicle->getPosition().x(),
+           _vehicle->getPosition().y());
 #else
     if (_vehicle) {
         int xOffset = 10;
@@ -506,7 +506,7 @@ void SimulatorGLUTThread::showVehicleInfo(int& xOffset, int& yStart,
 
     if (DisplayMotion) {
         sprintf(robotText, "linear velocity = (%+7.5f,%+7.5f)",
-                _vehicle->getVelFS().x, _vehicle->getVelFS().y);
+                _vehicle->getVelFS().x(), _vehicle->getVelFS().y());
         displayProfileString(xOffset, yStart, robotText);
         yStart += yIncr;
 
@@ -523,7 +523,7 @@ void SimulatorGLUTThread::showVehicleInfo(int& xOffset, int& yStart,
         yStart += yIncr;*/
 
         sprintf(robotText, "target linear = (% 7.5f,% 7.5f)",
-                _vehicle->getTargetVelFS().x, _vehicle->getTargetVelFS().y);
+                _vehicle->getTargetVelFS().x(), _vehicle->getTargetVelFS().y());
         displayProfileString(xOffset, yStart, robotText);
         yStart += yIncr;
 
