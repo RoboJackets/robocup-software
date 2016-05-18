@@ -11,6 +11,7 @@ var searchData=
   ['newrefereemodule',['NewRefereeModule',['../class_new_referee_module.html',1,'']]],
   ['newrefereepacket',['NewRefereePacket',['../class_new_referee_packet.html',1,'']]],
   ['node',['Node',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html',1,'gameplay::play_registry::PlayRegistry']]],
+  ['norm',['norm',['../class_geometry2d_1_1_point.html#aea4ee6f222f9a565673493b46a231c13',1,'Geometry2d::Point']]],
   ['normalized',['normalized',['../class_geometry2d_1_1_point.html#a7c7521b1a73de5503582e1856c704853',1,'Geometry2d::Point']]],
   ['numericfield',['NumericField',['../struct_chart_1_1_numeric_field.html',1,'Chart']]]
 ];

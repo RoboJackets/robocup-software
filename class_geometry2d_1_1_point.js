@@ -1,7 +1,6 @@
 var class_geometry2d_1_1_point =
 [
-    [ "Point", "class_geometry2d_1_1_point.html#a8e0ac151ee451f036d322d24677bc691", null ],
-    [ "Point", "class_geometry2d_1_1_point.html#a36b9e202aef2c2c2cfb39386ac1dbfd3", null ],
+    [ "Point", "class_geometry2d_1_1_point.html#a1858cacd8a855169662f065adea1a1f3", null ],
     [ "Point", "class_geometry2d_1_1_point.html#a2aad84e5b971dd66e6baa95309cf9431", null ],
     [ "Point", "class_geometry2d_1_1_point.html#a4b8aa1c6f25b270aafc4af11942d6a0e", null ],
     [ "Point", "class_geometry2d_1_1_point.html#a54c43beabe2548e7d0c57c66d1849a26", null ],
@@ -16,6 +15,7 @@ var class_geometry2d_1_1_point =
     [ "magsq", "class_geometry2d_1_1_point.html#aaafa7c842d0f79280fbf1b03bcae411f", null ],
     [ "nearlyEquals", "class_geometry2d_1_1_point.html#af29d0268f0ae9f5e36757e6fa2e1262f", null ],
     [ "nearPoint", "class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb", null ],
+    [ "norm", "class_geometry2d_1_1_point.html#aea4ee6f222f9a565673493b46a231c13", null ],
     [ "normalized", "class_geometry2d_1_1_point.html#a7c7521b1a73de5503582e1856c704853", null ],
     [ "operator Packet::Point", "class_geometry2d_1_1_point.html#a0b8208fc1be4d663db4886148b3946c1", null ],
     [ "operator!=", "class_geometry2d_1_1_point.html#a4eba8c40e062c4932fbdec61fd75d978", null ],
@@ -39,7 +39,9 @@ var class_geometry2d_1_1_point =
     [ "rotated", "class_geometry2d_1_1_point.html#a091a1f61eb2db2fd020688390e0a9022", null ],
     [ "toQPointF", "class_geometry2d_1_1_point.html#acb2e043ceee333391ee67f19d1673f9b", null ],
     [ "toString", "class_geometry2d_1_1_point.html#ac06a322bbe2369b33770278af4944f1f", null ],
-    [ "operator<<", "class_geometry2d_1_1_point.html#a64d624691f52b0539792bde65ee76164", null ],
-    [ "x", "class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1", null ],
-    [ "y", "class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc", null ]
+    [ "x", "class_geometry2d_1_1_point.html#a4d5790707a2d17496a7aa7d573cf6a56", null ],
+    [ "x", "class_geometry2d_1_1_point.html#aab3d7045f5d24c478920977b87c77624", null ],
+    [ "y", "class_geometry2d_1_1_point.html#a21b4d52f400d6d4eff3821bcf6ea0f19", null ],
+    [ "y", "class_geometry2d_1_1_point.html#ac424a365e6d08c16936a68116cc2a6f4", null ],
+    [ "operator<<", "class_geometry2d_1_1_point.html#a64d624691f52b0539792bde65ee76164", null ]
 ];

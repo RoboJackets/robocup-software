@@ -171,14 +171,14 @@ $(document).ready(function(){initNavTree('_transform_matrix_8hpp_source.html',''
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    }</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Point</a> operator*(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>&amp; pt)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>(pt.<a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a> * _m[0] + pt.<a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> * _m[1] + _m[2],</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                     pt.<a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a> * _m[3] + pt.<a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> * _m[4] + _m[5]);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>(pt.x() * _m[0] + pt.y() * _m[1] + _m[2],</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                     pt.x() * _m[3] + pt.y() * _m[4] + _m[5]);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="comment">// Transforms a direction vector (3rd element is zero)</span></div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Point</a> transformDirection(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>&amp; dir)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>(dir.<a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a> * _m[0] + dir.<a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> * _m[1],</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                     dir.<a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a> * _m[3] + dir.<a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> * _m[4]);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>(dir.x() * _m[0] + dir.y() * _m[1],</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                     dir.x() * _m[3] + dir.y() * _m[4]);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    }</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="comment">// Transforms the given angle in radians</span></div>
@@ -215,7 +215,7 @@ $(document).ready(function(){initNavTree('_transform_matrix_8hpp_source.html',''
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="comment">// Translation</span></div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_geometry2d_1_1_transform_matrix.html">TransformMatrix</a> translate(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Point</a>&amp; delta) {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_transform_matrix.html">TransformMatrix</a>(1, 0, delta.<a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a>, 0, 1, delta.<a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a>);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_transform_matrix.html">TransformMatrix</a>(1, 0, delta.x(), 0, 1, delta.y());</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_geometry2d_1_1_transform_matrix.html">TransformMatrix</a> translate(<span class="keywordtype">float</span> x, <span class="keywordtype">float</span> y) {</div>
@@ -259,9 +259,7 @@ $(document).ready(function(){initNavTree('_transform_matrix_8hpp_source.html',''
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">float</span> _m[6];</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;};</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;}</div>
-<div class="ttc" id="class_geometry2d_1_1_point_html_a08dec353958dc87c3206346beab423cc"><div class="ttname"><a href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">Geometry2d::Point::y</a></div><div class="ttdeci">float y</div><div class="ttdoc">the y coordinate </div><div class="ttdef"><b>Definition:</b> Point.hpp:19</div></div>
-<div class="ttc" id="class_geometry2d_1_1_point_html_aa2a2716a3d562e5aa4771697687c7ab1"><div class="ttname"><a href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">Geometry2d::Point::x</a></div><div class="ttdeci">float x</div><div class="ttdoc">the x coordinate </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
-<div class="ttc" id="class_geometry2d_1_1_point_html_a6ed5c08d2d6593452ca07f3b93f10a71"><div class="ttname"><a href="class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71">Geometry2d::Point::mag</a></div><div class="ttdeci">float mag() const </div><div class="ttdoc">computes the magnitude of the point, as if it were a vector </div><div class="ttdef"><b>Definition:</b> Point.hpp:178</div></div>
+<div class="ttc" id="class_geometry2d_1_1_point_html_a6ed5c08d2d6593452ca07f3b93f10a71"><div class="ttname"><a href="class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71">Geometry2d::Point::mag</a></div><div class="ttdeci">float mag() const </div><div class="ttdoc">computes the magnitude of the point, as if it were a vector </div><div class="ttdef"><b>Definition:</b> Point.hpp:172</div></div>
 <div class="ttc" id="class_geometry2d_1_1_transform_matrix_html"><div class="ttname"><a href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a></div><div class="ttdef"><b>Definition:</b> TransformMatrix.hpp:11</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:13</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -270,7 +268,7 @@ $(document).ready(function(){initNavTree('_transform_matrix_8hpp_source.html',''
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_bdd9a5d540de89e9fe90efdfc6973a4f.html">common</a></li><li class="navelem"><a class="el" href="dir_40506df144da4b42abe7ffe21204d9b9.html">Geometry2d</a></li><li class="navelem"><b>TransformMatrix.hpp</b></li>
-    <li class="footer">Generated on Wed May 18 2016 00:43:22 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed May 18 2016 02:15:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

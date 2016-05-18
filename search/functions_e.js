@@ -6,5 +6,6 @@ var searchData=
   ['nearestsegment',['nearestSegment',['../class_planning_1_1_interpolated_path.html#a5fd30372ff5c814efe795fd599768fc6',1,'Planning::InterpolatedPath']]],
   ['nearpoint',['nearPoint',['../class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb',1,'Geometry2d::Point']]],
   ['neostrip',['NeoStrip',['../class_neo_strip.html#a6e3142ef98589c57c55e7019e83d8076',1,'NeoStrip']]],
+  ['norm',['norm',['../class_geometry2d_1_1_point.html#aea4ee6f222f9a565673493b46a231c13',1,'Geometry2d::Point']]],
   ['normalized',['normalized',['../class_geometry2d_1_1_point.html#a7c7521b1a73de5503582e1856c704853',1,'Geometry2d::Point']]]
 ];
