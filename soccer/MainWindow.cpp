@@ -234,8 +234,8 @@ void MainWindow::updateViews() {
     }
     if (manual >= 0) {
         JoystickControlValues vals = _processor->getJoystickControlValues();
-        _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x));
-        _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y));
+        _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
+        _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
         _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
         _ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
         _ui.joystickDibblerPowerLabel->setText(
@@ -917,8 +917,8 @@ void MainWindow::on_actionStopRobots_triggered() {
             r->set_blue_team(processor()->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x);
-            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_pos()->set_x(newPos.x());
+            r->mutable_pos()->set_y(newPos.y());
             r->mutable_vel()->set_x(0);
             r->mutable_vel()->set_y(0);
             r->set_w(0);
@@ -931,8 +931,8 @@ void MainWindow::on_actionStopRobots_triggered() {
             r->set_blue_team(!processor()->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x);
-            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_pos()->set_x(newPos.x());
+            r->mutable_pos()->set_y(newPos.y());
             r->mutable_vel()->set_x(0);
             r->mutable_vel()->set_y(0);
             r->set_w(0);
@@ -951,8 +951,8 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
             r->set_blue_team(processor()->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x);
-            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_pos()->set_x(newPos.x());
+            r->mutable_pos()->set_y(newPos.y());
             r->mutable_vel()->set_x(0);
             r->mutable_vel()->set_y(0);
             r->set_w(0);
@@ -965,8 +965,8 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
             r->set_blue_team(!processor()->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x);
-            r->mutable_pos()->set_y(newPos.y);
+            r->mutable_pos()->set_x(newPos.x());
+            r->mutable_pos()->set_y(newPos.y());
             r->mutable_vel()->set_x(0);
             r->mutable_vel()->set_y(0);
             r->set_w(0);
@@ -975,8 +975,8 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
 
     Geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x);
-    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y);
+    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x());
+    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y());
     _quickLoadCmd.mutable_ball_vel()->set_x(0);
     _quickLoadCmd.mutable_ball_vel()->set_y(0);
 }
@@ -1296,7 +1296,7 @@ void MainWindow::on_actionVisionSecondary_Half_triggered() {
 }
 
 void MainWindow::on_actionVisionFull_Field_triggered() {
-    _processor->changeVisionChannel(SharedVisionPortDoubleOld);
+    _processor->changeVisionChannel(SharedVisionPortDoubleNew);
     _processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
     _ui.actionVisionPrimary_Half->setChecked(false);
     _ui.actionVisionSecondary_Half->setChecked(false);
