@@ -40,6 +40,8 @@ RobotConfig* Processor::robotConfig2015;
 std::vector<RobotStatus*>
     Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
+Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
+
 void Processor::createConfiguration(Configuration* cfg) {
     robotConfig2008 = new RobotConfig(cfg, "Rev2008");
     robotConfig2011 = new RobotConfig(cfg, "Rev2011");
@@ -296,10 +298,16 @@ void Processor::run() {
             log->CopyFrom(packet->wrapper);
 
             curStatus.lastVisionTime = packet->receivedTime;
+
+            // If packet has geometry data, attempt to read information and
+            // update if changed.
+            if (packet->wrapper.has_geometry()) {
+                updateGeometryPacket(packet->wrapper.geometry().field());
+            }
+
             if (packet->wrapper.has_detection()) {
                 SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
-                // FIXME - Account for network latency
                 double rt = packet->receivedTime / 1000000.0;
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
                 det->set_t_sent(rt);
@@ -590,6 +598,72 @@ void Processor::run() {
     vision.stop();
 }
 
+/*
+ * Updates the geometry packet if different from the existing one,
+ * Based on the geometry vision data.
+ */
+void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
+    if (fieldSize.field_lines_size() == 0) {
+        return;
+    }
+
+    const SSL_FieldCicularArc* penalty = nullptr;
+    const SSL_FieldCicularArc* center = nullptr;
+    float displacement =
+        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
+
+    // Loop through field arcs looking for needed fields
+    for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
+        if (arc.name() == "CenterCircle") {
+            // Assume center circle
+            center = &arc;
+        } else if (arc.name() == "LeftFieldLeftPenaltyArc") {
+            penalty = &arc;
+        }
+    }
+
+    for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
+        if (line.name() == "RightPenaltyStretch") {
+            displacement = abs(line.p2().y() - line.p1().y());
+        }
+    }
+
+    float thickness = fieldSize.field_lines().Get(0).thickness() / 1000.0f;
+
+    // The values we get are the center of the lines, we want to use the
+    // outside, so we can add this as an offset.
+    float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
+
+    float fieldBorder = currentDimensions->Border();
+
+    if (penalty != nullptr && center != nullptr && thickness != 0) {
+        // Force a resize
+        Field_Dimensions newDim = Field_Dimensions(
+            fieldSize.field_length() / 1000.0f,
+            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
+            Field_Dimensions::Default_Dimensions.GoalHeight(),
+            penalty->radius() / 1000.0f + adj,  // PenaltyDist
+            Field_Dimensions::Default_Dimensions.PenaltyDiam(),
+            penalty->radius() / 1000.0f + adj,       // ArcRadius
+            center->radius() / 1000.0f + adj,        // CenterRadius
+            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+            displacement / 1000.0f,                  // GoalFlat
+            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
+            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+
+        if (newDim != *currentDimensions) {
+            // Set the changed field dimensions to the current ones
+            cout << "Updating field geometry based off of vision packet."
+                 << endl;
+            setFieldDimensions(newDim);
+        }
+    } else {
+        cerr << "Error: failed to decode SSL geometry packet. Not resizing "
+                "field." << endl;
+    }
+}
+
 void Processor::sendRadioData() {
     Packet::RadioTx* tx = _state.logFrame->mutable_radio_tx();
     tx->set_txmode(Packet::RadioTx::UNICAST);
@@ -649,8 +723,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     }
 
     // translation
-    tx->set_xvelocity(translation.x);
-    tx->set_yvelocity(translation.y);
+    tx->set_xvelocity(translation.x());
+    tx->set_yvelocity(translation.y());
 
     // rotation
     tx->set_avelocity(controlVals.rotation);

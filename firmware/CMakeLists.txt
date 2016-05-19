@@ -6,12 +6,18 @@ include(RemoveFlags)
 # the default compiler (mostly apple computers). The arm compilers know
 # nothing about this flag however.
 remove_cxx_flag("-fcolor-diagnostics")
+remove_cxx_flag("-Werror=return-stack-address")
 
 # sets many variables and paths related to building for the MBED
 include(${CMAKE_CURRENT_LIST_DIR}/mbed/arm_mbed.cmake)
 
 # set the path to a script for moving files to the mbed's USB storage
-set(MBED_COPY_SCRIPT sudo ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py)
+# passes the MBED_INDEX environment variable as a parameter if it is set
+if(DEFINED ENV{MBED_INDEX})
+    set(MBED_COPY_SCRIPT sudo ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py --mbed_index=$ENV{MBED_INDEX})
+else()
+    set(MBED_COPY_SCRIPT sudo ${PROJECT_SOURCE_DIR}/util/mbed/mbed-copy.py)
+endif()
 
 # Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
 # file used to build MBED code like so:

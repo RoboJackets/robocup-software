@@ -6,9 +6,9 @@ namespace Geometry2d {
 Polygon::Polygon(const Rect& rect) {
     vertices.resize(4);
     vertices[0] = rect.pt[0];
-    vertices[1] = Point(rect.pt[1].x, rect.pt[0].y);
+    vertices[1] = Point(rect.pt[1].x(), rect.pt[0].y());
     vertices[2] = rect.pt[1];
-    vertices[3] = Point(rect.pt[0].x, rect.pt[1].y);
+    vertices[3] = Point(rect.pt[0].x(), rect.pt[1].y());
 }
 
 Polygon::Polygon(std::vector<Point> verts) { vertices = std::move(verts); }
@@ -135,15 +135,15 @@ bool Polygon::containsPoint(Point pt) const {
         const Point& p2 = vertices[j];
         i = j;
 
-        if (p1.y <= pt.y) {
-            if (p2.y > pt.y) {
+        if (p1.y() <= pt.y()) {
+            if (p2.y() > pt.y()) {
                 // Edge is going up
                 if (Line(p1, p2).pointSide(pt) > 0) {
                     ++count;
                 }
             }
         } else {
-            if (p2.y <= pt.y) {
+            if (p2.y() <= pt.y()) {
                 // Edge is going down
                 if (Line(p1, p2).pointSide(pt) < 0) {
                     --count;

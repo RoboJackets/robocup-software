@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import skills
 import tactics
@@ -9,7 +9,7 @@ import constants
 import math
 
 
-class Basic122(play.Play):
+class Basic122(standard_play.StandardPlay):
 
     # how far the 2 support robots should stay away from the striker
     SupportAvoidTeammateRadius = 0.5
@@ -49,19 +49,12 @@ class Basic122(play.Play):
         support2.mark_line_thresh = 1.0
         self.add_subbehavior(support2, 'support2', required=False, priority=1)
 
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
-
     @classmethod
     def score(cls):
         return 10 if main.game_state().is_playing() else float("inf")
 
-    @classmethod
-    def handles_goalie(cls):
-        return True
-
     def execute_running(self):
+        super().execute_running()
         striker = self.subbehavior_with_name('striker')
         support1 = self.subbehavior_with_name('support1')
         support2 = self.subbehavior_with_name('support2')
