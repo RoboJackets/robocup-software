@@ -329,7 +329,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
 
 float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
                                float c1, float d2, float v2, float c2) {
-    float d = d2 - d1;
+    float d = std::abs(d2 - d1);
     float deltaSpeed = v2 - v1;
     if (deltaSpeed < 0) {
         return v2;
@@ -350,6 +350,7 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     // b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1))
     // and 4 c^2 d^2+1!=0 and d!=0
     // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+%28%28b-v%29%28%28v%2Bb%29%2F2%29%2F%28d%29%29%5E2+%2B+%28b%5E2*c%29%5E2
+    /*
     float vPossible1 = sqrt((v1 * v1 -
                              2 * sqrt(d * d * (4 * a * a * c * c * d * d +
                                                a * a - c * c * pow(v1, 4)))) /
@@ -361,19 +362,8 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
                                                a * a - c * c * pow(v1, 4))) +
                              v1 * v1) /
                             (4 * c * c * d * d + 1));
-
-    float maxSpeed;
-    if (isnan(vPossible1) && isnan(vPossible2)) {
-        maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
-    } else {
-        if (isnan(vPossible1)) {
-            maxSpeed = vPossible2;
-        } else if (isnan(vPossible2)) {
-            maxSpeed = vPossible1;
-        } else {
-            maxSpeed = max(vPossible1, vPossible2);
-        }
-    }
+    */
+    float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
     return std::min(v2, maxSpeed);
 }
 
