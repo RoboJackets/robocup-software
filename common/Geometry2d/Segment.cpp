@@ -9,10 +9,10 @@ namespace Geometry2d {
 Rect Segment::bbox() const {
     Rect bbox;
 
-    bbox.pt[0].x = min(pt[0].x, pt[1].x);
-    bbox.pt[0].y = min(pt[0].y, pt[1].y);
-    bbox.pt[1].x = max(pt[0].x, pt[1].x);
-    bbox.pt[1].y = max(pt[0].y, pt[1].y);
+    bbox.pt[0].x() = min(pt[0].x(), pt[1].x());
+    bbox.pt[0].y() = min(pt[0].y(), pt[1].y());
+    bbox.pt[1].x() = max(pt[0].x(), pt[1].x());
+    bbox.pt[1].y() = max(pt[0].y(), pt[1].y());
 
     return bbox;
 }
@@ -30,14 +30,14 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line2d-Line2dIntersection.html
 
-    float x1 = pt[0].x;
-    float y1 = pt[0].y;
-    float x2 = pt[1].x;
-    float y2 = pt[1].y;
-    float x3 = other.pt[0].x;
-    float y3 = other.pt[0].y;
-    float x4 = other.pt[1].x;
-    float y4 = other.pt[1].y;
+    float x1 = pt[0].x();
+    float y1 = pt[0].y();
+    float x2 = pt[1].x();
+    float y2 = pt[1].y();
+    float x3 = other.pt[0].x();
+    float y3 = other.pt[0].y();
+    float x4 = other.pt[1].x();
+    float y4 = other.pt[1].y();
 
     float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     if (denom == 0) {
@@ -63,8 +63,8 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     }
 
     if (intr) {
-        intr->x = ix;
-        intr->y = iy;
+        intr->x() = ix;
+        intr->y() = iy;
     }
 
     return true;

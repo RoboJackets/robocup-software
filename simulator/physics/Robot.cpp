@@ -41,7 +41,8 @@ Robot::Robot(Environment* env, unsigned int id, Robot::RobotRevision rev,
     visibility = 100;
 
     _startTransform.setIdentity();
-    _startTransform.setOrigin(btVector3(startPos.y, 0, startPos.x) * scaling);
+    _startTransform.setOrigin(btVector3(startPos.y(), 0, startPos.x()) *
+                              scaling);
     setEngineForce(0);
 }
 
