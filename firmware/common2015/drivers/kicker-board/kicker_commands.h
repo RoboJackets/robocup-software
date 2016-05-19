@@ -8,15 +8,17 @@
 #define CHARGE_OFF_CMD 0x4
 #define GET_VOLTAGE_CMD 0x5
 
+/* Args */
 #define NOP_ARG 0x0
+#define MAX_TIME_ARG 0xF
 /*
  * Each byte sent is split into a command and argument (like duration for kicks)
  * Bits 7:4 | Bits 3:0
  *   CMD    |   ARG
  */
 // To be used on the ATTINY84A side
-#define PARSE_CMD(BYTE) ((BYTE & (0xF << 4)) >> 4)
-#define PARSE_ARG(BYTE) (BYTE & 0xF)
+#define PARSE_CMD(BYTE) (((BYTE) & (0xF << 4)) >> 4)
+#define PARSE_ARG(BYTE) ((BYTE) & 0xF)
 // To be used on the MBED side
 // These cut CMD and ARG down to 4 bits and ARG is in millis for kick and chip
-#define MAKE_BYTE(CMD, ARG) (((CMD & 0xF) << 4) | (ARG & 0xF))
+#define MAKE_BYTE(CMD, ARG) ((((CMD) & 0xF) << 4) | ((ARG) & 0xF))
