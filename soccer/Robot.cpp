@@ -145,6 +145,7 @@ void OurRobot::resetForNextIteration() {
     control->set_song(Packet::Control::STOP);
 
     isPenaltyKicker = false;
+    isBallPlacer = false;
 }
 
 void OurRobot::resetMotionConstraints() {
