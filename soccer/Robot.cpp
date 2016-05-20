@@ -313,7 +313,6 @@ void OurRobot::kickImmediately() {
 
 void OurRobot::resetAvoidRobotRadii() {
     for (size_t i = 0; i < Num_Shells; ++i) {
-        _self_avoid_mask[i] = (i != (size_t)shell()) ? *_selfAvoidRadius : -1.0;
         _opp_avoid_mask[i] = (i == state()->gameState.TheirInfo.goalie)
                                  ? *_oppGoalieAvoidRadius
                                  : *_oppAvoidRadius;
@@ -361,34 +360,6 @@ void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
 
 void OurRobot::avoidAllOpponentRadius(float radius) {
     for (float& ar : _opp_avoid_mask) ar = radius;
-}
-
-void OurRobot::avoidAllTeammates(bool enable) {
-    for (size_t i = 0; i < Num_Shells; ++i) avoidTeammate(i, enable);
-}
-void OurRobot::avoidTeammate(unsigned shell_id, bool enable) {
-    if (shell_id != shell())
-        _self_avoid_mask[shell_id] = (enable) ? Robot_Radius : -1.0;
-}
-
-void OurRobot::avoidTeammateRadius(unsigned shell_id, float radius) {
-    if (shell_id != shell()) _self_avoid_mask[shell_id] = radius;
-}
-
-bool OurRobot::avoidTeammate(unsigned shell_id) const {
-    return _self_avoid_mask[shell_id] < Robot_Radius;
-}
-
-float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
-    return _self_avoid_mask[shell_id];
-}
-
-void OurRobot::shieldFromTeammates(float radius) {
-    for (OurRobot* teammate : state()->self) {
-        if (teammate) {
-            teammate->avoidTeammateRadius(shell(), radius);
-        }
-    }
 }
 
 #pragma mark Ball Avoidance
@@ -463,8 +434,10 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
     Geometry2d::ShapeSet fullObstacles(_local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
+    RobotMask self_avoid_mask;
+    std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask), *_selfAvoidRadius);
     const Geometry2d::ShapeSet selfObs = createRobotObstacles(
-        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
+        _state->self, self_avoid_mask, this->pos, 0.6 + this->vel.mag());
     const Geometry2d::ShapeSet oppObs =
         createRobotObstacles(_state->opp, _opp_avoid_mask);
 
