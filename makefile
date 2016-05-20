@@ -22,6 +22,7 @@ all:
 
 run: all
 	cd run; ./soccer
+rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
@@ -132,7 +133,7 @@ fpga2015:
 	$(call cmake_build_target_fw, fpga2015)
 fpga2015-prog:
 	$(call cmake_build_target_fw, fpga2015-prog)
-	
+
 # Base station 2015 firmware
 base2015:
 	$(call cmake_build_target_fw, base2015)
