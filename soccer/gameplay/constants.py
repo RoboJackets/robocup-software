@@ -4,6 +4,7 @@ import math
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
 
+
 class Colors:
     White = (255, 255, 255)
     Black = (0, 0, 0)

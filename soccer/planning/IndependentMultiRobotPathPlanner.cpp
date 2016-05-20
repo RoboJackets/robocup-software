@@ -34,7 +34,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.start.pos, Robot_Radius);
     }
 
-    //Sorts descending so that higher priorities are first
+    // Sorts descending so that higher priorities are first
     auto comparator = [&](int& lhs, int& rhs) {
         return requests[lhs].priority > requests[rhs].priority;
     };
