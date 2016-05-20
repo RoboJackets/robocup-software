@@ -3,10 +3,6 @@
 using namespace std;
 namespace Planning {
 
-bool sortByPriority(const PlanRequest& lhs, const PlanRequest& rhs) {
-    return lhs.priority > rhs.priority;
-}
-
 std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
     std::map<int, PlanRequest> requests) {
     std::map<int, std::unique_ptr<Path>> paths;
@@ -38,8 +34,9 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.start.pos, Robot_Radius);
     }
 
+    //Sorts descending so that higher priorities are first
     auto comparator = [&](int& lhs, int& rhs) {
-        return sortByPriority(requests[lhs], requests[rhs]);
+        return requests[lhs].priority > requests[rhs].priority;
     };
 
     std::sort(std::begin(staticRequests), std::end(staticRequests), comparator);

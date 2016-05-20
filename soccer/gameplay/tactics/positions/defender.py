@@ -5,6 +5,7 @@ import robocup
 import main
 from enum import Enum
 import math
+import planning_priority
 
 
 ## The Defender behavior positions a robot on a certain area of the field and defends it
@@ -57,7 +58,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
             "if ball or opponent enters my area")
 
     def execute_running(self):
-        self.robot.set_planning_priority(15)
+        self.robot.set_planning_priority(planning_priority.DEFENDER)
 
     def execute_marking(self):
         #main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Defender")
