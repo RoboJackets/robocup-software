@@ -435,7 +435,8 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
     RobotMask self_avoid_mask;
-    std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask), *_selfAvoidRadius);
+    std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
+              *_selfAvoidRadius);
     const Geometry2d::ShapeSet selfObs = createRobotObstacles(
         _state->self, self_avoid_mask, this->pos, 0.6 + this->vel.mag());
     const Geometry2d::ShapeSet oppObs =
