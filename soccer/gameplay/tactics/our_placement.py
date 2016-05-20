@@ -46,6 +46,7 @@ class OurPlacement(
         self.add_subbehavior(dribble, 'dribble', required=True, priority=100)
 
     def execute_dribble(self):
+        self.robot.is_ball_placer = True
         self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
         self.robot.set_max_speed(5)
 
@@ -54,6 +55,7 @@ class OurPlacement(
         self.remove_subbehavior('dribble')
 
     def execute_avoid(self):
+        self.robot.is_ball_placer = True
         #the avoid radius is 6cm larger than the area we need to stay out of plus the radius of the robot just for safety
         self.robot.move_to(main.ball().pos + ((self.robot.pos - main.ball().pos
                                                ).normalized() * .65))

@@ -649,7 +649,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("ball_sense_works", &OurRobot::ballSenseWorks)
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
-        .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker);
+        .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
+        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
     register_ptr_to_python<OurRobot*>();
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
