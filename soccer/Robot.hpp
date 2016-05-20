@@ -357,24 +357,6 @@ public:
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
     /**
-     * determines whether a robot will avoid another robot when it plans - use
-     * for priority
-     */
-
-    void avoidAllTeammates(bool enable = true);
-    void avoidTeammate(unsigned shell_id, bool enable = true);
-    void avoidTeammateRadius(unsigned shell_id, float radius);
-    bool avoidTeammate(unsigned shell_id) const;
-    float avoidTeammateRadius(unsigned shell_id) const;
-
-    /**
-     * Sets the avoid radius of all teammates to @radius for this robot.
-     * This is useful to easily keep our teammates from bumping the ball
-     * carrier.
-     */
-    void shieldFromTeammates(float radius);
-
-    /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
      */
@@ -453,7 +435,7 @@ protected:
     Geometry2d::ShapeSet _local_obstacles;
 
     /// masks for obstacle avoidance
-    RobotMask _self_avoid_mask, _opp_avoid_mask;
+    RobotMask _opp_avoid_mask;
     float _avoidBallRadius;  /// radius of ball obstacle
 
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
