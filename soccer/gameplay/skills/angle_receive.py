@@ -135,6 +135,17 @@ class AngleReceive(skills.pass_receive.PassReceive):
             main.system_state().draw_line(self._kick_line,
                                           constants.Colors.Red, "Shot")
 
+    # This depends on the superclasse's implementation somewhat
+    # If we stop using capture in pass_receive, this needs to be modified.
+    def on_enter_receiving(self):
+        super().on_enter_receiving()
+
+        self.remove_subbehavior('capture')
+
+        capture = skills.capture.Capture(onlyApproach=True)
+        capture.dribbler_power = skills.pass_receive.PassReceive.DribbleSpeed
+        self.add_subbehavior(capture, 'capture', required=True)
+
     def execute_receiving(self):
         super().execute_receiving()
 
