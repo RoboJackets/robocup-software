@@ -18,7 +18,7 @@
 using namespace std;
 
 // how often to send a packet (in seconds)
-const float TRANSMIT_INTERVAL = 1.0f / 2.0f;
+const float TRANSMIT_INTERVAL = 1.0f / 20.0f;
 
 bool initRadio() {
     // setup SPI bus
@@ -73,6 +73,7 @@ int main() {
         LOG(FATAL, "No radio interface found!");
     }
 
+    DigitalOut senderIndicator(LED3, 1);
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
     // send packets every @TRANSMIT_INTERVAL forever

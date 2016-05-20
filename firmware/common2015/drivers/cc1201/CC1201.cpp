@@ -110,23 +110,24 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        size_t len = _spi->write(CC1201_STROBE_SNOP);  // discard size byte
+        size_t size_byte = _spi->write(CC1201_STROBE_SNOP);  // discard size byte
 
-        if (len > num_rx_bytes) {
+        if (size_byte > num_rx_bytes) {
             // the length byte isn't right
             chipDeselect();
-            LOG(WARN, "Invalid length byte: %u", len);
+            LOG(WARN, "Invalid size byte: %u, rx byte count reg: %u", size_byte, num_rx_bytes);
+            strobe(CC1201_STROBE_SIDLE);
             strobe(CC1201_STROBE_SFRX);
             strobe(CC1201_STROBE_SRX);
             return COMM_DEV_BUF_ERR;
         }
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < size_byte; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
         strobe(CC1201_STROBE_SFRX);
 
-        LOG(INF3, "Bytes in RX buffer: %u, msg len: %u", num_rx_bytes, len);
+        LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes, size_byte);
     } else {
         return COMM_NO_DATA;
     }
