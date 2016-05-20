@@ -6,6 +6,7 @@ import evaluation
 import constants
 import role_assignment
 import robocup
+import planning_priority
 
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
@@ -93,7 +94,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         # make sure teammates don't bump into us
         self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
-        self.robot.set_planning_priority(5)
+        self.robot.set_planning_priority(planning_priority.CAPTURE)
 
     def on_enter_course_approach(self):
         self.lastApproachTarget == None

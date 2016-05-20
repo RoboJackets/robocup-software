@@ -9,6 +9,7 @@ import main
 import enum
 import math
 import evaluation
+import planning_priority
 
 
 class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
@@ -105,7 +106,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_running(self):
         if self.robot != None:
             self.robot.face(main.ball().pos)
-            self.robot.set_planning_priority(20)
+            self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def execute_chill(self):
         if self.robot != None:
