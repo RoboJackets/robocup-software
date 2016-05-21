@@ -36,17 +36,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_c_c1201.html#a960cde5ec86b2ca0a213b073aa5b216f",
-"class_game_state.html#aa98b0c2d2e8a4524b2d619ad1f55dd47",
-"class_geometry2d_1_1_transform_matrix.html#a15ae40a6efc70e0cceed78c24a942ad3",
+"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2",
+"class_game_state.html#a9efbc7dcfeb5e20c92847127d46f8043",
+"class_geometry2d_1_1_transform_matrix.html#a14c7df3618fdc28e377f9119e5a5452f",
 "class_our_robot.html#a1ae0e2de02a6c6834281a8a6868056f0",
-"class_processor.html#a731ff4331aef13a8586d00a34024eb96",
-"class_system_state.html#a6a7f7e376e3c3c22e296440ebbc14ffe",
-"classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html#a1cfe84eaf34e8f1a3737cff5b32087e3",
-"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a324269319152a33096ba8a77c000f463",
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a542a2ad7732d7ff9d2e40ac8c07eaf33",
-"dir_cc377981fd1d02b69253e810027bf757.html",
-"struct_planning_1_1_rotation_command.html#a09bce3a07dc8f1336176838b951cf40d"
+"class_planning_1_1_tree_1_1_point.html#a171c9732a341054d23bf8c305320b393",
+"class_strip_chart.html#a63c1ebf716323c7c8fdf39b98464ceab",
+"classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html#a1c7a2853c52d8abb8988089759175abb",
+"classgameplay_1_1root__play_1_1_root_play.html#ad5a23d3fc7fd91e440dfda0beaf5d6ed",
+"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html",
+"dir_35e5706fd63e5c8944975582312a2569.html",
+"struct_planning_1_1_motion_instant.html#af543ee52c2e3be1f11de4be4089d5523"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

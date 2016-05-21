@@ -9,7 +9,8 @@ var searchData=
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],
-  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
   ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
-  ['ds2411_5ft',['DS2411_t',['../struct_d_s2411__t.html',1,'']]]
+  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
+  ['ds2411_5ft',['DS2411_t',['../struct_d_s2411__t.html',1,'']]],
+  ['dynamicobstacle',['DynamicObstacle',['../class_planning_1_1_dynamic_obstacle.html',1,'Planning']]]
 ];

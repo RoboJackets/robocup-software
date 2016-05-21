@@ -7,6 +7,7 @@ var classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender =
     [ "block_robot", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8507aaa4175eb16e8cf87c2b6689da2d", null ],
     [ "execute_area_marking", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8bc7652f3d42f1d1e199094f1a12fb69", null ],
     [ "execute_marking", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aa065da8f7ee87c5a84ec9e8fb2a3b05f", null ],
+    [ "execute_running", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#ae2629a4cee80842726c6e54e24009048", null ],
     [ "find_robot_to_block", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aeec4c2eb05b89bc6776484ff122aef83", null ],
     [ "side", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a23d45359c7010f38be147f49819f6578", null ],
     [ "side", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a23d45359c7010f38be147f49819f6578", null ],

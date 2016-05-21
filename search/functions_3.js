@@ -23,7 +23,7 @@ var searchData=
   ['configure',['configure',['../class_f_p_g_a.html#afc8d26c5164d391fe9916f4f626e4f9c',1,'FPGA']]],
   ['connect',['connect',['../class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce',1,'Planning::Tree::connect()'],['../class_planning_1_1_fixed_step_tree.html#a0df94725122ad972287c2387e9f1e366',1,'Planning::FixedStepTree::connect()']]],
   ['containsvertex',['containsVertex',['../class_geometry2d_1_1_polygon.html#a93a9c936d6e76f371bf03d4ecbdab9e8',1,'Geometry2d::Polygon']]],
-  ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5',1,'OurRobot']]],
+  ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a99b33094d5e557edfc6409eaefc051e0',1,'OurRobot']]],
   ['createconfiguration',['createConfiguration',['../class_window_evaluator.html#a7ab9155d6a95badbfad544fba7472217',1,'WindowEvaluator']]],
   ['createrobotobstacles',['createRobotObstacles',['../class_our_robot.html#a1c8096f39bcbd67ab9cac81263687b87',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask) const '],['../class_our_robot.html#a096bfe0d36b529058f75fafa84aba04e',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, Geometry2d::Point currentPosition, float checkRadius) const ']]],
   ['cubicbeziercalc',['cubicBezierCalc',['../class_planning_1_1_r_r_t_planner.html#af2b5d8adb23e36218c390fa7e51603a9',1,'Planning::RRTPlanner']]]

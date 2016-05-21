@@ -267,6 +267,7 @@ var annotated =
     [ "Planning", null, [
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
       [ "DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", "class_planning_1_1_direct_target_path_planner" ],
+      [ "DynamicObstacle", "class_planning_1_1_dynamic_obstacle.html", "class_planning_1_1_dynamic_obstacle" ],
       [ "EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", "class_planning_1_1_escape_obstacles_path_planner" ],
       [ "IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", "class_planning_1_1_independent_multi_robot_path_planner" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
@@ -283,6 +284,7 @@ var annotated =
       [ "MultiRobotPathPlanner", "class_planning_1_1_multi_robot_path_planner.html", "class_planning_1_1_multi_robot_path_planner" ],
       [ "Path", "class_planning_1_1_path.html", "class_planning_1_1_path" ],
       [ "AngleFunctionPath", "class_planning_1_1_angle_function_path.html", "class_planning_1_1_angle_function_path" ],
+      [ "ConstPathIterator", "class_planning_1_1_const_path_iterator.html", "class_planning_1_1_const_path_iterator" ],
       [ "PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", "class_planning_1_1_pivot_path_planner" ],
       [ "RotationCommand", "struct_planning_1_1_rotation_command.html", "struct_planning_1_1_rotation_command" ],
       [ "FacePointCommand", "struct_planning_1_1_face_point_command.html", "struct_planning_1_1_face_point_command" ],

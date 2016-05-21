@@ -8,6 +8,8 @@ var class_planning_1_1_path =
     [ "evaluate", "class_planning_1_1_path.html#aed4a59aa878ef5e55fd0e870eb625054", null ],
     [ "getDuration", "class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688", null ],
     [ "hit", "class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d", null ],
+    [ "iterator", "class_planning_1_1_path.html#a5ca1fe547e0ee9391ec66ce925c2aba6", null ],
+    [ "pathsIntersect", "class_planning_1_1_path.html#a1fbbd374db41029e6af7c48913e5efc3", null ],
     [ "setStartTime", "class_planning_1_1_path.html#a65b4b6f44f1b57976824479d3bf5c2c0", null ],
     [ "start", "class_planning_1_1_path.html#a7bc15fa7dd8d22afb2a2a375d120bd6f", null ],
     [ "startTime", "class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7", null ],

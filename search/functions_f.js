@@ -13,6 +13,6 @@ var searchData=
   ['operator_3d',['operator=',['../class_i_o_expander_digital_in_out.html#adff6364f15113e8bd1b153c2a9d62888',1,'IOExpanderDigitalInOut']]],
   ['operator_3d_3d',['operator==',['../class_geometry2d_1_1_point.html#a446c6e7344a32e17db98fcab3f14b2cc',1,'Geometry2d::Point']]],
   ['oppmatrix',['oppMatrix',['../group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93',1,'Gameplay::GameplayModule']]],
-  ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a36ba119982b029394571197616c68469',1,'Planning::RRTPlanner']]],
+  ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a64338e5125b05ee07387ebc22c4f16b3',1,'Planning::RRTPlanner']]],
   ['ourrobot',['OurRobot',['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot']]]
 ];

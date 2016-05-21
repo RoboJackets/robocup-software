@@ -24,6 +24,7 @@ var searchData=
   ['getjoystickcontrolvalues',['getJoystickControlValues',['../class_gamepad_joystick.html#a5295fd0b867b599ac4310e7bf85dcc79',1,'GamepadJoystick::getJoystickControlValues()'],['../class_joystick.html#a8e9bf845ab30bc6f661ce91db1dd75be',1,'Joystick::getJoystickControlValues()'],['../class_space_nav_joystick.html#acec51bd365a69a149e5c502e563a154e',1,'SpaceNavJoystick::getJoystickControlValues()']]],
   ['getmainmodule',['getMainModule',['../class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2',1,'Gameplay::GameplayModule']]],
   ['getpackets',['getPackets',['../class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4',1,'VisionReceiver']]],
+  ['getplanningpriority',['getPlanningPriority',['../class_our_robot.html#a74fae988a3d6d672a84277f92851ea33',1,'OurRobot']]],
   ['gettemp',['getTemp',['../class_m_p_u6050.html#a461efabbf6022dd3d4a8f1483a4a0bdc',1,'MPU6050']]],
   ['gettempraw',['getTempRaw',['../class_m_p_u6050.html#aebcf3caeae38faa0126a5849e76ab70f',1,'MPU6050']]],
   ['gettime',['getTime',['../class_planning_1_1_interpolated_path.html#ae63a3df5106a5334019156bcbf8f7c45',1,'Planning::InterpolatedPath']]],
