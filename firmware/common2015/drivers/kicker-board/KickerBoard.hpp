@@ -40,10 +40,37 @@ public:
      */
     bool flash(bool onlyIfDifferent = true, bool verbose = false);
 
+    /**
+     * @brief Sends the KickerBoard a command to kick for the allotted time in
+     *     in milliseconds. This roughly corresponds to kick strength.
+     *
+     * @param time Millisecond kick time, can only range from 0 to 16 ms
+     */
     void kick(uint8_t time);
+
+    /**
+     * @brief Sends the KickerBoard a command to chip for the allotted time in
+     *     in milliseconds. This roughly corresponds to chip strength.
+     *
+     * @param time Millisecond chip time, can only range from 0 to 16 ms
+     */
     void chip(uint8_t time);
+
+    /**
+     * @brief Reads the charge voltage back from the KickerBoard.
+     *
+     * @return Voltage between 0 (Kicker GND) and 255 (Kicker VD)
+     */
     uint8_t read_voltage();
+
+    /**
+     * @brief Sets the charge pin (to high)
+     */
     void charge();
+
+    /**
+     * @brief Clears the charge pin
+     */
     void stop_charging();
 
 protected:
@@ -59,6 +86,6 @@ protected:
 
 private:
     std::string _filename;
-    // TODO Is this function really necessary?
-    int map(int x, int in_min, int in_max, int out_min, int out_max);
+
+    void send_to_kicker(const uint8_t cmd, const uint8_t arg);
 };

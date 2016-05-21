@@ -91,34 +91,40 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
     return true;
 }
 
+// this function enforces the design choice that each cmd must have an arg
+void KickerBoard::send_to_kicker(const uint8_t cmd, const uint8_t arg) {
+    _spi->write(cmd);
+    _spi->write(arg);
+}
+
 void KickerBoard::kick(uint8_t time) {
     chipSelect();
-    _spi->write(MAKE_BYTE(KICK_CMD, time));
+    send_to_kicker(KICK_CMD, time);
     chipDeselect();
 }
 
 void KickerBoard::chip(uint8_t time) {
     chipSelect();
-    _spi->write(MAKE_BYTE(CHIP_CMD, time));
+    send_to_kicker(CHIP_CMD, time);
     chipDeselect();
 }
 
 uint8_t KickerBoard::read_voltage() {
     chipSelect();
-    _spi->write(MAKE_BYTE(GET_VOLTAGE_CMD, NOP_ARG));
-    uint8_t volts = _spi->write(MAKE_BYTE(NOP_CMD, NOP_ARG));
+    send_to_kicker(GET_VOLTAGE_CMD, NOP_ARG); // send our request
+    uint8_t volts = _spi->write(NOP_ARG); // recieve voltage
     chipDeselect();
     return volts;
 }
 
 void KickerBoard::charge() {
     chipSelect();
-    _spi->write(MAKE_BYTE(CHARGE_ON_CMD, NOP_ARG));
+    send_to_kicker(SET_CHARGE_CMD, ON_ARG);
     chipDeselect();
 }
 
 void KickerBoard::stop_charging() {
     chipSelect();
-    _spi->write(MAKE_BYTE(CHARGE_OFF_CMD, NOP_ARG));
+    send_to_kicker(SET_CHARGE_CMD, OFF_ARG);
     chipDeselect();
 }

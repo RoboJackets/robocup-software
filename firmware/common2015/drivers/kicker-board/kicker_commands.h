@@ -1,24 +1,29 @@
-/* Commands */
-#define NOP_CMD 0x0
-// Duration Commands
-#define KICK_CMD 0x1
-#define CHIP_CMD 0x2
-// Other Commands
-#define CHARGE_ON_CMD 0x3
-#define CHARGE_OFF_CMD 0x4
-#define GET_VOLTAGE_CMD 0x5
-
-/* Args */
-#define NOP_ARG 0x0
-#define MAX_TIME_ARG 0xF
 /*
- * Each byte sent is split into a command and argument (like duration for kicks)
- * Bits 7:4 | Bits 3:0
- *   CMD    |   ARG
+ * In order to command the KickerBoard, a command byte must be sent,
+ * followed by an argument byte. The command byte will not be executed without
+ * the argument, even if that argument is not really needed like in the
+ * get_voltage command.
+ *
+ * If getting a varible, it will be returned on the spi write after the
+ * command write and the argument write.
  */
-// To be used on the ATTINY84A side
-#define PARSE_CMD(BYTE) (((BYTE) & (0xF << 4)) >> 4)
-#define PARSE_ARG(BYTE) ((BYTE) & 0xF)
-// To be used on the MBED side
-// These cut CMD and ARG down to 4 bits and ARG is in millis for kick and chip
-#define MAKE_BYTE(CMD, ARG) ((((CMD) & 0xF) << 4) | ((ARG) & 0xF))
+
+/* Commands */
+// Duration Commands
+#define KICK_CMD 0x01
+#define CHIP_CMD 0x02
+// Other Commands
+#define SET_CHARGE_CMD 0x03
+#define GET_VOLTAGE_CMD 0x04
+#define PING_CMD 0x05 // Pings the KickerBoard, the board should return the ACK
+
+/* Arguments */
+#define NOP_ARG 0x00 // Used for clarity when passing useless arguments
+#define MAX_TIME_ARG 0xFF // Used if we want to wait max time
+#define DEBUG_KICK_TIME 0x8
+#define DEBUG_CHIP_TIME 0x8
+#define ON_ARG 0x01 // Used for setting a wire high
+#define OFF_ARG 0x00 // Used for setting a wire low, same as NOP_ARG
+
+/* Other */
+#define PING_ACK 0x4C // Arbitrary code used to check if board is working
