@@ -69,8 +69,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
-        if main.ball().vel.mag() > 0.25 and self.robot.pos.dist_to(main.ball(
-        ).pos) > 0.2:
+        if (main.ball().vel.mag() > 0.25
+            and self.robot.pos.dist_to(main.ball().pos) > 0.2):
             # ball's moving, get on the side it's moving towards
             return main.ball().vel.normalized()
         else:
@@ -113,6 +113,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if (self.lastApproachTarget != None and
             (pos - self.lastApproachTarget).mag() < 0.1):
             self.robot.move_to(self.lastApproachTarget)
+            main.system_state().draw_circle(self.lastApproachTarget,
+                                            constants.Ball.Radius,
+                                            constants.Colors.White, "Capture")
         else:
             main.system_state().draw_circle(pos, constants.Ball.Radius,
                                             constants.Colors.White, "Capture")
