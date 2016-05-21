@@ -110,12 +110,14 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        size_t size_byte = _spi->write(CC1201_STROBE_SNOP);  // discard size byte
+        size_t size_byte =
+            _spi->write(CC1201_STROBE_SNOP);  // discard size byte
 
         if (size_byte > num_rx_bytes) {
             // the length byte isn't right
             chipDeselect();
-            LOG(WARN, "Invalid size byte: %u, rx byte count reg: %u", size_byte, num_rx_bytes);
+            LOG(WARN, "Invalid size byte: %u, rx byte count reg: %u", size_byte,
+                num_rx_bytes);
             strobe(CC1201_STROBE_SIDLE);
             strobe(CC1201_STROBE_SFRX);
             strobe(CC1201_STROBE_SRX);
@@ -127,7 +129,8 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         chipDeselect();
         strobe(CC1201_STROBE_SFRX);
 
-        LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes, size_byte);
+        LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes,
+            size_byte);
     } else {
         return COMM_NO_DATA;
     }
@@ -215,6 +218,18 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
     return status_byte;
 }
 
+const char* state_names[] = {"IDLE",  "RX",     "TX",          "FSTXON",
+                             "CALIB", "SETTLE", "RX_FIFO_ERR", "TX_FIFO_ERR"};
+
+void CC1201::printDebugInfo() {
+    uint8_t stateByte = strobe(CC1201_STROBE_SNOP);
+    bool ready = !(stateByte & 0x80);
+    uint8_t state = (stateByte >> 4) & 7;
+
+    printf("Radio Status:\r\n  ready: %u, state: %s, int pin: %u\r\n", ready,
+           state_names[state], _int_in == 1);
+}
+
 uint8_t CC1201::strobe(uint8_t addr) {
     if (addr > 0x3d || addr < 0x30) {
         LOG(WARN, "Invalid address: %02X", addr);
@@ -253,10 +268,6 @@ uint8_t CC1201::strobe(uint8_t addr) {
             "WORRST",  // 0x3c
             "NOP"      // 0x3d
         };
-
-        const char* state_names[] = {"IDLE",        "RX",         "TX",
-                                     "FSTXON",      "CALIB",      "SETTLE",
-                                     "RX_FIFO_ERR", "TX_FIFO_ERR"};
 
         // The status byte returned from strobe() contains from (msb to lsb):
         // * 1 bit - chip ready (0 indicates xosc is stable)

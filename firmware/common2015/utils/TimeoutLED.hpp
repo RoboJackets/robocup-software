@@ -17,7 +17,8 @@ public:
           _timeoutTimer(this, &TimeoutLED::_timeout, osTimerOnce),
           _timeoutInterval(timeoutInterval) {
         _updateTimer.start(updateInterval);
-        renew();
+        // renew();
+        _timedOut = true;
     }
 
     void renew() {
