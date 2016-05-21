@@ -106,6 +106,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
+
         if (not self.onlyApproach):
             self.robot.face(main.ball().pos)
 
