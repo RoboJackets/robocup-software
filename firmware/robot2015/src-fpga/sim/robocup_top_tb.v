@@ -4,7 +4,7 @@ module RoboCup_Top_tb;
 
 integer ii, jj;
 
-/*Output values to file */ 
+/*Output values to file */
 initial begin
     $dumpfile("RoboCup_Top_tb-results.vcd");
     $dumpvars(0,RoboCup_Top_tb);
@@ -95,7 +95,7 @@ task spi;
     begin
         if (SPI_S_CPHA) begin
             for ( i = SPI_SLAVE_DATA_WIDTH-1; i >= 0; i = i - 1 ) begin
-                spi_slave_sck = !SPI_S_CPOL;  
+                spi_slave_sck = !SPI_S_CPOL;
                 spi_slave_mosi = in[i]; #16;
             end
         end else begin
@@ -178,8 +178,8 @@ initial begin
     end
     // we end this at index 5 since the next steps will start the motor at index 0
 
-    start_running_motor_state = 1;
     // start simulating "motor running"
+    start_running_motor_state = 1;
 end
 
 task motors_on;
@@ -200,8 +200,9 @@ task motors_off;
     end
 endtask
 
-reg [10:0] duty_cycle_level;
-reg [10:0] duty_cycle_level_step;
+reg motor_direction;
+reg [8:0] duty_cycle_level;
+reg [8:0] duty_cycle_level_step;
 integer i;
 // Send an SPI transfer on the slave bus once the motors are up and running
 initial begin
@@ -219,7 +220,7 @@ initial begin
     spi(8'h00);
     spi(8'h00);
     spi_off();
-    
+
     // Read hall counts
     #100 spi_on();
     spi(8'h92);
@@ -287,8 +288,14 @@ initial begin
     //     #100000 motors_on();
     // end
 
+    // The starting duty cycle for the motors
     duty_cycle_level = 85;
+
+    // The duty cycle step increment for every SPI transfer (every ~5ms)
     duty_cycle_level_step = 0;
+
+    // The starting direction for the motors
+    motor_direction = 1;
 
     wait ( start_spinning_motors );
 
@@ -299,8 +306,8 @@ initial begin
         #9216 spi_on();
         spi(8'h80);
         for ( i = 0; i < NUM_MOTORS; i = i + 1 ) begin
-            spi(duty_cycle_level[7:0]);
-            spi(duty_cycle_level[10:8]>>8);
+            spi( duty_cycle_level[7:0] );
+            spi( { 6'h00, motor_direction, duty_cycle_level[8] } );
         end
         spi_off();
         duty_cycle_level = duty_cycle_level + duty_cycle_level_step;
@@ -308,7 +315,7 @@ initial begin
 end
 
 // Encoder input simulation
-initial begin	
+initial begin
     // trying to match timings that would translate to ~1500 rpm on a motor
     //
     // with 2048 pulses/rev, that's 51200 pulses/sec. or ~20MHz, a 50ns delay
@@ -338,7 +345,6 @@ end
 
 initial begin
 	forever #0.5 clk = !clk;
-	// #500000 $finish;
 end
 
 

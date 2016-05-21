@@ -5,7 +5,7 @@ using namespace std;
 using namespace Geometry2d;
 
 bool pointEqual(Point p1, Point p2) {
-    return nearlyEqual(p1.x, p2.x) && nearlyEqual(p1.y, p2.y);
+    return nearlyEqual(p1.x(), p2.x()) && nearlyEqual(p1.y(), p2.y());
 }
 /*
  * Tests the constructor and basic operators of the Point class
@@ -13,12 +13,12 @@ bool pointEqual(Point p1, Point p2) {
 TEST(Point, constructors) {
     // Test Constructors
     Point defaultConstructed;
-    EXPECT_FLOAT_EQ(defaultConstructed.x, 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.y, 0);
+    EXPECT_FLOAT_EQ(defaultConstructed.x(), 0);
+    EXPECT_FLOAT_EQ(defaultConstructed.y(), 0);
 
     Point test(0, 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.x, 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.y, 0);
+    EXPECT_FLOAT_EQ(defaultConstructed.x(), 0);
+    EXPECT_FLOAT_EQ(defaultConstructed.y(), 0);
 
     EXPECT_EQ(test, defaultConstructed);
 }
@@ -26,8 +26,8 @@ TEST(Point, constructors) {
 TEST(Point, operators) {
     // Test +, - operator
     Point expected;
-    expected.x += 5.5;
-    expected.y -= 1.3;
+    expected.x() += 5.5;
+    expected.y() -= 1.3;
     EXPECT_NE(expected, Point());
 
     EXPECT_EQ(expected, Point() + Point(5.5, -1.3));
@@ -43,20 +43,20 @@ TEST(Point, operators) {
     EXPECT_EQ(expected, temp);
 
     // Test negative Operator
-    EXPECT_FLOAT_EQ(-5.5, (-Point(5.5, 3.5)).x);
-    EXPECT_FLOAT_EQ(-3.5, (-Point(5.5, 3.5)).y);
+    EXPECT_FLOAT_EQ(-5.5, (-Point(5.5, 3.5)).x());
+    EXPECT_FLOAT_EQ(-3.5, (-Point(5.5, 3.5)).y());
 
     // Test * Point operator
     expected = Point(2.5, 4.5);
-    expected.x *= 2.5;
-    expected.y *= -4.5;
+    expected.x() *= 2.5;
+    expected.y() *= -4.5;
 
     EXPECT_EQ(expected, Point(2.5, 4.5) * Point(2.5, -4.5));
 
     // Test / Point Operator
     expected = Point(2.5, 4.5);
-    expected.x /= 2.5;
-    expected.y /= -2.5;
+    expected.x() /= 2.5;
+    expected.y() /= -2.5;
 
     EXPECT_EQ(expected, Point(2.5, 4.5) / Point(2.5, -2.5));
 

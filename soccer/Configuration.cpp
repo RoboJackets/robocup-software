@@ -55,7 +55,7 @@ bool ConfigBool::value() {
     return _value;
 }
 
-void ConfigBool::setValue(const QString& str) {
+void ConfigBool::setValueString(const QString& str) {
     if (str == "true") {
         _value = true;
     } else if (str == "false") {
@@ -87,7 +87,7 @@ ConfigInt::ConfigInt(Configuration* config, QString name, int value,
 
 QString ConfigInt::toString() { return QString::number(_value); }
 
-void ConfigInt::setValue(const QString& str) { _value = str.toInt(); }
+void ConfigInt::setValueString(const QString& str) { _value = str.toInt(); }
 
 ////////
 
@@ -100,7 +100,9 @@ ConfigDouble::ConfigDouble(Configuration* config, QString name, double value,
 
 QString ConfigDouble::toString() { return QString::number(_value); }
 
-void ConfigDouble::setValue(const QString& str) { _value = str.toDouble(); }
+void ConfigDouble::setValueString(const QString& str) {
+    _value = str.toDouble();
+}
 
 Configuration::Configuration() {
     _tree = nullptr;
@@ -185,13 +187,13 @@ void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
     if (column == 1) {
         ConfigItem* ci = configItem(item);
         if (ci) {
-            ci->setValue(item->text(1));
+            ci->setValueString(item->text(1));
         }
     }
 }
 
-ConfigItem* Configuration::nameLookup(const QString& name) const {
-    QStringList path = name.split('/');
+ConfigItem* Configuration::nameLookup(const std::string name) const {
+    QStringList path = QString::fromStdString(name).split('/');
     for (ConfigItem* item : _allItems) {
         if (item->path() == path) {
             return item;
@@ -246,7 +248,7 @@ bool Configuration::load(const QString& filename, QString& error) {
         if (!el.isNull()) {
             QString str = el.attribute("value");
             if (!str.isNull()) {
-                item->setValue(str);
+                item->setValueString(str);
                 item->valueChanged(str);
             }
         }

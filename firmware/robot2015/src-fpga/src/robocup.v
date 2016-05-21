@@ -1,5 +1,7 @@
 // Top module for the FPGA logic
 
+`include "robocup.vh"
+
 `include "BLDC_Motor.v"
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
@@ -50,10 +52,10 @@ module robocup #(
 genvar i;
 integer j, k;
 
-// Derived parameters 
+// Derived parameters
 localparam ENCODER_COUNT_WIDTH          =   ( 16 );
 localparam HALL_COUNT_WIDTH             =   (  8 );
-localparam DUTY_CYCLE_WIDTH             =   (  9 );
+localparam DUTY_CYCLE_WIDTH             =   ( 10 );
 localparam STARTUP_DELAY_WIDTH          =   (  5 );
 
 // To calculate the watchdog timer's expire time, use the following equation:
@@ -68,9 +70,9 @@ reg sys_rdy = 0;
 // Input register synchronization declarations - for the notation, we add a '_s' after the name indicating it is synced
 reg [ 2:0 ] hall_s  [ NUM_HALL_SENS - 1 : 0 ];
 reg [ 1:0 ] enc_s   [ NUM_ENCODERS  - 1 : 0 ];
-reg         spi_slave_sck_s,    
+reg         spi_slave_sck_s,
             spi_slave_mosi_s,
-            spi_slave_ncs_s, 
+            spi_slave_ncs_s,
             spi_slave_ncs_d,    // we have a delayed version of the chip select line
             spi_master_miso_s;
 
@@ -83,7 +85,7 @@ begin : SYNC_INPUTS
         hall_s[j]       <=  { hall_a[j], hall_b[j], hall_c[j] };
     end
     // Encoder inputs
-    for (j = 0; j < NUM_ENCODERS; j = j + 1) 
+    for (j = 0; j < NUM_ENCODERS; j = j + 1)
     begin : GEN_ENC_ARRAY
         enc_s[j]        <=  { enc_a[j], enc_b[j] };
     end
@@ -102,14 +104,14 @@ wire [ 2:0 ]                phaseH_o [ NUM_MOTORS - 1:0 ],
                             phaseL_o [ NUM_MOTORS - 1:0 ];
 wire [ NUM_MOTORS - 1:0 ]   drv_ncs_o;
 wire [ 1:0 ]                adc_ncs_o;
-wire                        spi_slave_miso_o, 
-                            spi_master_sck_o, 
+wire                        spi_slave_miso_o,
+                            spi_master_sck_o,
                             spi_master_mosi_o;
 
 // Sync all of the output pins for the same reasons we sync all of the input pins - this time in reverse
 always @( posedge sysclk )
 begin : SYNC_OUTPUTS
-    for ( j= 0; j < NUM_MOTORS; j = j + 1 ) 
+    for ( j= 0; j < NUM_MOTORS; j = j + 1 )
     begin : GEN_PHASE_ARRAY
         // Phase outputs (HIGH)
         { phase_aH[j], phase_bH[j], phase_cH[j] }   <=  phaseH_o[j];
@@ -225,6 +227,9 @@ reg [SPI_MASTER_DATA_WIDTH-1:0] spi_master_data_array_out [2:0];
 reg [11:0] spi_master_data_array_in  [NUM_MOTORS - 1:0];
 reg spi_master_config_state;
 
+// latch in the valid signal on the falling edges
+reg spi_master_valid_q;  always @(negedge sysclk) spi_master_valid_q <= spi_master_valid;
+
 // This is where we assign the data we want to send to the selected SPI slave
 assign spi_master_di = spi_master_data_array_out[spi_master_recv_index];
 
@@ -237,7 +242,7 @@ localparam DRV8303_GATE_CURRENT = 0;
 
 // This is a strobe bit that resets the gate outputs
 //   0 = Normal mode
-//   1 = Reset gate driver latched faults (reverts to 0) 
+//   1 = Reset gate driver latched faults (reverts to 0)
 localparam DRV8303_GATE_RESET = 1;
 
 // This enables/disables the over-current protection
@@ -252,7 +257,7 @@ localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
 // DON'T SET THIS PAST 14! Ever!
-localparam DRV8303_OC_ADJ_VAL = 12;
+localparam DRV8303_OC_ADJ_VAL = 13;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature
@@ -273,7 +278,7 @@ localparam DRV8303_AMP_GAIN = 1;
 // This sets how the over-current protection is handled once triggered
 //   0 = cycle-by-cycle control
 //   1 = timed control
-localparam DRV8303_OC_TOFF = 0;
+localparam DRV8303_OC_TOFF = 1;
 
 wire sys_begin_startup = ( start_delay_done == 1 ) && ( sys_rdy == 0 );
 wire gate_drivers_set_config;
@@ -309,7 +314,7 @@ begin : SPI_MASTER_COMM
 
     end else if ( spi_master_trxfr_done_flag == 1 ) begin
         // take appropiate action if the SPI received data is flagged as being valid
-        if ( spi_master_valid == 1 ) begin
+        if ( spi_master_valid_q == 1 ) begin
             // start the next transfer out
             spi_master_start <= 1;
 
@@ -376,7 +381,7 @@ begin : SPI_SLAVE_LOAD_BYTE
     if ( spi_slave_end_flag ) begin
         // Signal to do something with the received bytes & save how may bytes were received. We do this here so it will happen after we set the received byte count
         rx_vals_flag <= 1;
-        
+
     end else if ( spi_slave_start_flag ) begin
         // Set the command byte if it's the first received byte.
         spi_slave_byte_count <= 0;
@@ -418,7 +423,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
             // If the byte count is 2, we need to go back and decode our first byte so we know what data to send out for everything else
             case ( command_byte )
                 // Send the encoder counts
-                CMD_UPDATE_MTRS :   
+                CMD_UPDATE_MTRS :
                 begin
                     // Encoder inputs are latched here so all readings are from the same time
                     for (j = 0; j < NUM_ENCODERS; j = j + 1)
@@ -432,7 +437,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                     motor_update_flag <= 1;
                 end
 
-                CMD_ENCODER_COUNT :   
+                CMD_ENCODER_COUNT :
                 begin
                     // Encoder inputs are latched here so all readings are from the same time
                     for (j = 0; j < NUM_ENCODERS; j = j + 1)
@@ -493,10 +498,10 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                     end
                 end
 
-                default :   
+                default :
                 begin
                     // Default is to set everything in the response buffer to 0xAA. This makes is a bit easier to debug the SPI protocol.
-                    for (j = 0; j < (SPI_SLAVE_RES_BUF_LEN - 1); j = j + 1) 
+                    for (j = 0; j < (SPI_SLAVE_RES_BUF_LEN - 1); j = j + 1)
                     begin : RESET_RESPONSE_BUF_ON_READ_DEFAULT
                         spi_slave_res_buf[j+1]  <=  'hAA;
                     end
@@ -516,11 +521,11 @@ begin : SPI_SORT_REQUEST_BUFFER
         // enable the motors once the system is ready
         motors_en <= 1;
 
-        for (j = 0; j < NUM_MOTORS; j = j + 1) 
+        for (j = 0; j < NUM_MOTORS; j = j + 1)
         begin : INIT_DUTY_CYCLES
             duty_cycle[j] <= 0;
         end
-        
+
     end else if ( watchdog_trigger == 1 ) begin
         motors_en <= 0;
 
@@ -542,10 +547,10 @@ begin : SPI_SORT_REQUEST_BUFFER
                 // Send the encoder counts
                 CMD_UPDATE_MTRS :
                 begin
-                    /* 
+                    /*
                      * Only update the duty cycles if the transfer is what we
                      * expected. The results in the real world could end badly
-                     * if the user flips the top and low bytes of the duty 
+                     * if the user flips the top and low bytes of the duty
                      * cycle, so don't do that.
                      */
                     if ( spi_slave_byte_count == (2 * NUM_MOTORS) ) begin
@@ -614,11 +619,11 @@ generate
             .en                     ( motors_en && sys_rdy          ) ,
             .reset_enc_count        ( motor_update_flag             ) ,
             .reset_hall_count       ( ~hall_conns[i]                ) ,
-            .duty_cycle             ( duty_cycle[i]                 ) , 
+            .duty_cycle             ( duty_cycle[i]                 ) ,
             .enc                    ( enc_s[i]                      ) ,
             .hall                   ( hall_s[i]                     ) ,
             .phaseH                 ( phaseH_o[i]                   ) ,
-            .phaseL                 ( phaseL_o[i]                   ) , 
+            .phaseL                 ( phaseL_o[i]                   ) ,
             .enc_count              ( enc_count[i]                  ) ,
             .hall_count             ( hall_count[i]                 ) ,
             .connected              ( hall_conns[i]                 )
@@ -627,7 +632,7 @@ generate
 endgenerate
 
 
-`ifdef DRIBBLER_MOTOR_EN
+`ifndef DRIBBLER_MOTOR_DISABLE
 BLDC_Motor_No_Encoder #(
     .MAX_DUTY_CYCLE         ( (1 << DUTY_CYCLE_WIDTH) - 1           ) ,
     .HALL_COUNT_WIDTH       ( HALL_COUNT_WIDTH                      )
@@ -635,13 +640,13 @@ BLDC_Motor_No_Encoder #(
     .clk                    ( sysclk                                ) ,
     .en                     ( motors_en && sys_rdy                  ) ,
     .reset_hall_count       ( ~hall_conns[NUM_MOTORS-1]             ) ,
-    .duty_cycle             ( duty_cycle[NUM_MOTORS-1]              ) ,  
+    .duty_cycle             ( duty_cycle[NUM_MOTORS-1]              ) ,
     .hall                   ( hall_s[NUM_MOTORS-1]                  ) ,
     .phaseH                 ( phaseH_o[NUM_MOTORS-1]                ) ,
-    .phaseL                 ( phaseL_o[NUM_MOTORS-1]                ) ,  
+    .phaseL                 ( phaseL_o[NUM_MOTORS-1]                ) ,
     .hall_count             ( hall_count[NUM_MOTORS-1]              ) ,
     .connected              ( hall_conns[NUM_MOTORS-1]              )
 );
-`endif
+`endif  // DRIBBLER_MOTOR_DISABLE
 
 endmodule   // RoboCup

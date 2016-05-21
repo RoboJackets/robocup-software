@@ -78,6 +78,20 @@ set_source_files_properties(
 # both the base station and robot firmware
 add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp)
 
+# CC1201 Register settings
+# Automatically generate a C header with the register values from a chosen smartrf xml file
+set(CC1201_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/cc1101-compatible.xml)
+add_custom_target(cc1201_register_export
+    ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/smartrf_exporter.py
+        ${CC1201_CONFIG}
+        ${CMAKE_CURRENT_BINARY_DIR}/cc1201_register_export.h
+    DEPENDS ${CC1201_CONFIG}
+    COMMENT "Generating C header file for cc1201 registers from smartrf xml file"
+)
+set_target_properties(cc1201_register_export PROPERTIES EXCLUDE_FROM_ALL TRUE)
+add_dependencies(common2015 cc1201_register_export)
+target_include_directories(common2015 PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
 # depends on the mbed libraries and all of the accessory libraries
 add_dependencies(common2015 mbed_libraries ${MBED_ASSEC_LIBS_DEPENDS})
 

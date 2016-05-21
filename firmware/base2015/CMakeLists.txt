@@ -2,16 +2,16 @@
 set(CMAKE_TOOLCHAIN_FILE ${ARM_TOOLCHAIN_FILE})
 include(${ARM_TOOLCHAIN_FILE})
 
-set(CMAKE_C_COMPILER    ${ARM_C_COMPILER})
-set(CMAKE_CXX_COMPILER  ${ARM_CXX_COMPILER})
-
 # Set compiler and linker flags
 set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
 set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
 set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # firmware source files
-set(base2015_SRC "main.cpp")
+set(base2015_SRC
+    main.cpp
+    RJBaseUSBDevice.cpp
+)
 
 add_executable(base2015_elf ${base2015_SRC})
 target_link_libraries(base2015_elf common2015)

@@ -58,89 +58,96 @@ bool FPGA::configure(const std::string& filepath) {
     }
 
     // show INIT_B error if it never went low
-    if (fpgaReady) {
+    if (!fpgaReady) {
         LOG(FATAL, "INIT_B pin timed out\t(PRE CONFIGURATION ERROR)");
 
         return false;
     }
 
-    // Configure the FPGA with the bitstream file
+    // Configure the FPGA with the bitstream file, this returns false if file
+    // can't be opened
     if (send_config(filepath)) {
-        LOG(FATAL, "FPGA bitstream write error");
-
-        return false;
-    } else {
         // Wait some extra time in case the _done pin needs time to be asserted
-        bool configureDone = false;
+        bool configSuccess = false;
         for (int i = 0; i < 1000; i++) {
             Thread::wait(1);
             if (_done == true) {
-                configureDone = true;
+                configSuccess = !_initB;
                 break;
             }
         }
 
-        if (!configureDone) {
-            LOG(FATAL, "DONE pin timed out\t(POST CONFIGURATION ERROR)");
-            return false;
-        } else {
+        if (configSuccess) {
             // everything worked are we're good to go!
-            LOG(INF1, "DONE pin state:\t%s", _done ? "HIGH" : "LOW");
-
             _isInit = true;
+            LOG(INF1, "DONE pin state:\t%s", _done ? "HIGH" : "LOW");
 
             return true;
         }
+
+        LOG(FATAL, "DONE pin timed out\t(POST CONFIGURATION ERROR)");
     }
+
+    LOG(FATAL, "FPGA bitstream write error");
+
+    return false;
 }
 
 // TODO(justin): remove this hack once GitHub issue #590 is fixed
 #include "../../robot2015/src-ctrl/config/pins-ctrl-2015.hpp"
 
 bool FPGA::send_config(const std::string& filepath) {
-    char buf[10];
+    const uint8_t bufSize = 50;
 
     // open the bitstream file
     FILE* fp = fopen(filepath.c_str(), "r");
 
     // send it out if successfully opened
     if (fp != nullptr) {
+        size_t filesize;
+        char buf[bufSize];
+
+        chipSelect();
+
         // MISO & MOSI are intentionally switched here
         // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
-        SoftwareSPI spi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
-
-        size_t read_byte;
+        SoftwareSPI softSpi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
 
         fseek(fp, 0, SEEK_END);
-        size_t filesize = ftell(fp);
+        filesize = ftell(fp);
         fseek(fp, 0, SEEK_SET);
 
         LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(),
             filesize);
 
-        chipSelect();
+        for (size_t i = 0; i < filesize; i++) {
+            bool breakOut = false;
+            size_t readSize = fread(buf, 1, bufSize, fp);
 
-        do {
-            read_byte = fread(buf, 1, 1, fp);
+            if (!readSize) break;
 
-            if (read_byte == 0) break;
+            for (size_t j = 0; j < bufSize; j++) {
+                if (!_initB || _done) {
+                    breakOut = true;
+                    break;
+                }
 
-            spi.write(buf[0]);
+                softSpi.write(buf[j]);
+            }
 
-        } while (_initB || !_done);
+            if (breakOut) break;
+        }
 
         chipDeselect();
-
         fclose(fp);
-
-        return false;
-
-    } else {
-        LOG(INIT, "FPGA configuration failed\r\n    Unable to open %s",
-            filepath.c_str());
 
         return true;
     }
+
+    LOG(INIT, "FPGA configuration failed\r\n    Unable to open %s",
+        filepath.c_str());
+
+    return false;
 }
 
 uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {

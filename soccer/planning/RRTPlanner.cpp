@@ -388,8 +388,8 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     vector<double> ks2(length - 1);
 
     for (int i = 0; i < length; i++) {
-        pointsX[i] = points[i].x;
-        pointsY[i] = points[i].y;
+        pointsX[i] = points[i].x();
+        pointsY[i] = points[i].y();
     }
     const float startSpeed = vi.mag();
 
@@ -424,9 +424,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     }
 
     VectorXd solutionX =
-        RRTPlanner::cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
+        RRTPlanner::cubicBezierCalc(vi.x(), vf.x(), pointsX, ks, ks2);
     VectorXd solutionY =
-        RRTPlanner::cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
+        RRTPlanner::cubicBezierCalc(vi.y(), vf.y(), pointsY, ks, ks2);
 
     vector<CubicBezierControlPoints> path;
 
@@ -443,7 +443,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
 
 float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
                                float c1, float d2, float v2, float c2) {
-    float d = d2 - d1;
+    float d = std::abs(d2 - d1);
     float deltaSpeed = v2 - v1;
     if (deltaSpeed < 0) {
         return v2;
@@ -464,6 +464,7 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     // b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1))
     // and 4 c^2 d^2+1!=0 and d!=0
     // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+%28%28b-v%29%28%28v%2Bb%29%2F2%29%2F%28d%29%29%5E2+%2B+%28b%5E2*c%29%5E2
+    /*
     float vPossible1 = sqrt((v1 * v1 -
                              2 * sqrt(d * d * (4 * a * a * c * c * d * d +
                                                a * a - c * c * pow(v1, 4)))) /
@@ -475,19 +476,8 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
                                                a * a - c * c * pow(v1, 4))) +
                              v1 * v1) /
                             (4 * c * c * d * d + 1));
-
-    float maxSpeed;
-    if (isnan(vPossible1) && isnan(vPossible2)) {
-        maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
-    } else {
-        if (isnan(vPossible1)) {
-            maxSpeed = vPossible2;
-        } else if (isnan(vPossible2)) {
-            maxSpeed = vPossible1;
-        } else {
-            maxSpeed = max(vPossible1, vPossible2);
-        }
-    }
+    */
+    float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
     return std::min(v2, maxSpeed);
 }
 
@@ -533,8 +523,8 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             // https://en.wikipedia.org/wiki/Curvature#Local_expressions
             // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2)
             float curvature =
-                std::abs(d1.x * d2.y - d1.y * d2.x) /
-                std::pow(std::pow(d1.x, 2) + std::pow(d1.y, 2), 1.5);
+                std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
+                std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
             // Handle 0 velocity case
             if (isnan(curvature)) {
@@ -573,8 +563,8 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     Point pos = p3;
     Point d1 = vf;
     Geometry2d::Point d2 = 6 * (1) * (p3 - 2 * p2 + p1);
-    float curvature = std::abs(d1.x * d2.y - d1.y * d2.x) /
-                      std::pow(std::pow(d1.x, 2) + std::pow(d1.y, 2), 1.5);
+    float curvature = std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
+                      std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
     // handle 0 velcoity case
     if (isnan(curvature)) {
