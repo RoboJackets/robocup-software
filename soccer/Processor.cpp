@@ -440,14 +440,18 @@ void Processor::run() {
                         : globalObstaclesWithGoalZones;
 
                 // create and visualize obstacles
-                Geometry2d::ShapeSet fullObstacles =
-                    r->collectAllObstacles(globalObstaclesForBot);
+                Geometry2d::ShapeSet staticObstacles =
+                    r->collectStaticObstacles(globalObstaclesForBot);
+
+                std::vector<Planning::DynamicObstacle> dynamicObstacles =
+                    r->collectDynamicObstacles();
 
                 requests[r->shell()] = Planning::PlanRequest(
                     Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->motionConstraints(),
                     std::move(r->angleFunctionPath.path),
-                    std::make_shared<ShapeSet>(std::move(fullObstacles)));
+                    std::move(staticObstacles), std::move(dynamicObstacles),
+                    r->getPlanningPriority());
             }
         }
 
