@@ -16,9 +16,11 @@ class TouchBall(skills.capture.Capture):
     # Move back so we hit the mouth, not the side
     adjDist = constants.Robot.Radius * 2
 
-    ## Override so this has no impact on state transitions
+    ## Override so this so we only transition when the ball is in front
     def bot_in_front_of_ball(self):
-        return False
+        adjFactor = robocup.Point(math.cos(self.robot.angle) * -TouchBall.adjDist, math.sin(self.robot.angle) * -TouchBall.adjDist)
+        return (self.robot.pos - adjFactor).dist_to(main.ball().pos) \
+            < TouchBall.adjDist + constants.Robot.Radius
 
 
     ## A touch is different from a capture in that we should try to keep our
