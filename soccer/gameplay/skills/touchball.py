@@ -13,7 +13,8 @@ class TouchBall(skills.capture.Capture):
     def __init__(self):
         super().__init__(onlyApproach=True)
 
-    adjDist = constants.Robot.Radius * 2 # Move back so the
+    # Move back so we hit the mouth, not the side
+    adjDist = constants.Robot.Radius * 2
 
     ## Override so this has no impact on state transitions
     def bot_in_front_of_ball(self):
@@ -31,28 +32,11 @@ class TouchBall(skills.capture.Capture):
         approach_vec = self.approach_vector()
 
         adjFactor = robocup.Point(math.cos(self.robot.angle) * -TouchBall.adjDist, math.sin(self.robot.angle) * -TouchBall.adjDist)
-
-        # sample every 5 cm in the -approach_vector direction from the ball
-        pos = None
-        # Adjust where this algorithm thinks we are by the adjust factor.
         robotPos = self.robot.pos - adjFactor
-        finalPos = None
-        minBotTime = float('inf')
-        for i in range(50):
-            dist = i * 0.05
-            pos = main.ball().pos + approach_vec * dist
-            # how long will it take the ball to get there
-            ball_time = evaluation.ball.rev_predict(main.ball().vel, dist)
-            robotDist = (pos - (robotPos)).mag() * 0.6
-            bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2,
-                                                    1, self.robot.vel.mag(), 0)
 
-            if bot_time < minBotTime or finalPos == None:
-                minBotTime = bot_time
-                finalPos = pos
+        # multiply by a large enough value to cover the field.
+        approach_line = robocup.Line(main.ball().pos, main.ball().pos + approach_vec * constants.Field.Length)
+        pos = approach_line.nearest_point(robotPos)
 
-        # Push found point back a bit to have the ball hit our mouth,
-        # instead of our side.
-        finalPos += adjFactor
-
-        return finalPos
+        pos += adjFactor
+        return pos
