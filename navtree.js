@@ -36,17 +36,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_c_c1201.html#a906bd9c05edceb3e627d5952f62ac5c2",
-"class_game_state.html#a9efbc7dcfeb5e20c92847127d46f8043",
-"class_geometry2d_1_1_transform_matrix.html#a14c7df3618fdc28e377f9119e5a5452f",
-"class_our_robot.html#a1ae0e2de02a6c6834281a8a6868056f0",
-"class_planning_1_1_tree_1_1_point.html#a171c9732a341054d23bf8c305320b393",
-"class_strip_chart.html#a63c1ebf716323c7c8fdf39b98464ceab",
-"classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html#a1c7a2853c52d8abb8988089759175abb",
-"classgameplay_1_1root__play_1_1_root_play.html#ad5a23d3fc7fd91e440dfda0beaf5d6ed",
-"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html",
-"dir_35e5706fd63e5c8944975582312a2569.html",
-"struct_planning_1_1_motion_instant.html#af543ee52c2e3be1f11de4be4089d5523"
+"class_c_c1201.html#a7c11e8a7f81d15cd2168bf6dc9bdc977",
+"class_game_state.html#a81618e0403319d48e9f25347111f8157",
+"class_geometry2d_1_1_shape_set.html#a2a68694667d1ec4140a4463027d88e4e",
+"class_our_robot.html#a096bfe0d36b529058f75fafa84aba04e",
+"class_planning_1_1_tree.html#a4103eb06ecbb53551849356d8e5eb6a2",
+"class_space_nav_joystick.html#a917cd395a6608895cf2ee9abf806cb82",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae223de49d3ecd99839ae7cd2b700f6c",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#ab43e43f91349123136d7932106894af7",
+"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html",
+"classrtp_1_1packet.html#ac4b74bf4776cdfb7bd016f315977cc77",
+"struct_joystick_control_values.html#a69c6b58dc3f26c1afc8f9ccaebf1c532"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

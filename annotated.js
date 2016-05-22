@@ -70,6 +70,9 @@ var annotated =
           [ "our_kickoff", null, [
             [ "OurKickoff", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff" ]
           ] ],
+          [ "placement", null, [
+            [ "Placement", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement" ]
+          ] ],
           [ "their_kickoff", null, [
             [ "TheirKickoff", "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html", "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff" ]
           ] ],
@@ -180,6 +183,9 @@ var annotated =
         [ "capture", null, [
           [ "Capture", "classgameplay_1_1skills_1_1capture_1_1_capture.html", "classgameplay_1_1skills_1_1capture_1_1_capture" ]
         ] ],
+        [ "dribble", null, [
+          [ "Dribble", "classgameplay_1_1skills_1_1dribble_1_1_dribble.html", "classgameplay_1_1skills_1_1dribble_1_1_dribble" ]
+        ] ],
         [ "face", null, [
           [ "Face", "classgameplay_1_1skills_1_1face_1_1_face.html", "classgameplay_1_1skills_1_1face_1_1_face" ]
         ] ],
@@ -223,6 +229,9 @@ var annotated =
         ] ],
         [ "one_touch_pass", null, [
           [ "OneTouchPass", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass" ]
+        ] ],
+        [ "our_placement", null, [
+          [ "OurPlacement", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement" ]
         ] ],
         [ "penalty", null, [
           [ "Penalty", "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html", "classgameplay_1_1tactics_1_1penalty_1_1_penalty" ]

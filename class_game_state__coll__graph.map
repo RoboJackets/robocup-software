@@ -1,5 +1,6 @@
 <map id="GameState" name="GameState">
-<area shape="rect" id="node2" href="$class_team_info.html" title="TeamInfo" alt="" coords="137,189,215,216"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="30,99,116,125"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="5,6,141,47"/>
+<area shape="rect" id="node2" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,189,147,216"/>
+<area shape="rect" id="node3" href="$class_team_info.html" title="TeamInfo" alt="" coords="194,189,272,216"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="103,99,189,125"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="78,6,215,47"/>
 </map>

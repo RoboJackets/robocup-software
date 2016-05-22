@@ -20,5 +20,6 @@ var searchData=
   ['ourfreekick',['OurFreeKick',['../classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html',1,'gameplay::plays::restarts::our_free_kick']]],
   ['ourgoalkick',['OurGoalKick',['../classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html',1,'gameplay::plays::restarts::our_goal_kick']]],
   ['ourkickoff',['OurKickoff',['../classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html',1,'gameplay::plays::restarts::our_kickoff']]],
+  ['ourplacement',['OurPlacement',['../classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html',1,'gameplay::tactics::our_placement']]],
   ['ourrobot',['OurRobot',['../class_our_robot.html',1,'OurRobot'],['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot::OurRobot()']]]
 ];

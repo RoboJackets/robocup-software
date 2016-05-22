@@ -13,7 +13,8 @@ var class_game_state =
       [ "Kickoff", "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa97fbd6196b35a3c30dc4626a54acd282", null ],
       [ "Direct", "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa254d29720b0bd3231a1abbf82d2d8ccf", null ],
       [ "Indirect", "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa5a6066fb741a5519c0b74c02f2a87515", null ],
-      [ "Penalty", "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa2fda1b383cdce39f083fd8bdf68f6ccb", null ]
+      [ "Penalty", "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa2fda1b383cdce39f083fd8bdf68f6ccb", null ],
+      [ "Placement", "class_game_state.html#a48426d26bbbebbe7a8e146aca14058bfa021d1322b7dd113a6f8ab58332a0984a", null ]
     ] ],
     [ "State", "class_game_state.html#a81618e0403319d48e9f25347111f8157", [
       [ "Halt", "class_game_state.html#a81618e0403319d48e9f25347111f8157a7652ef26ad972c4aa283d0601ea91fc7", null ],
@@ -25,6 +26,7 @@ var class_game_state =
     [ "GameState", "class_game_state.html#a4fa0a2bf50315c4a35a3890a0adcee5c", null ],
     [ "canKick", "class_game_state.html#a868bbec72975daa13df37bba694a7126", null ],
     [ "direct", "class_game_state.html#a2f855d59e50c5adea23c141e564b1ca1", null ],
+    [ "getBallPlacementPoint", "class_game_state.html#a2be4ce88438520651674c0fd512e5f46", null ],
     [ "halt", "class_game_state.html#aea416a4239013ee8ac5b0be8cc8ec68e", null ],
     [ "indirect", "class_game_state.html#ad11de2607de0b90995e4029b57adc03f", null ],
     [ "inReadyState", "class_game_state.html#a57ff21fd6e98cc983be56169ea941520", null ],
@@ -36,8 +38,11 @@ var class_game_state =
     [ "ourIndirect", "class_game_state.html#acf3e0ec35c54752fdf3235fa76718def", null ],
     [ "ourKickoff", "class_game_state.html#a5310f2e5e2dd4d236177260c8d20d7d6", null ],
     [ "ourPenalty", "class_game_state.html#a7dba03aa97b5d4ff89d0dac54896db88", null ],
+    [ "ourPlacement", "class_game_state.html#a5e068080dea33a3053f540047937fdac", null ],
     [ "penalty", "class_game_state.html#a2493247480ba9f449b477b2b0b0d89af", null ],
+    [ "placement", "class_game_state.html#a6d40354ca4196e6673d8c5fe64e38bef", null ],
     [ "playing", "class_game_state.html#ab0d05b5e32cb0d4bacc3c69f33848242", null ],
+    [ "setBallPlacementPoint", "class_game_state.html#ac327852071625f1f3cc935d09742417b", null ],
     [ "setupRestart", "class_game_state.html#ab188f435c308c1b58d16f1e1eee8bca7", null ],
     [ "stayAwayFromBall", "class_game_state.html#ab956ed0c998590adb885340cb1217681", null ],
     [ "stayBehindPenaltyLine", "class_game_state.html#a5229c9e1af2587f57c94cef16add63d2", null ],
@@ -48,6 +53,8 @@ var class_game_state =
     [ "theirIndirect", "class_game_state.html#a12b9a60d64dcbacc38f626f67a934087", null ],
     [ "theirKickoff", "class_game_state.html#a88c07a53e1c7d26934d4fca841d52722", null ],
     [ "theirPenalty", "class_game_state.html#a67880007b825a57545d31c1679f43f63", null ],
+    [ "theirPlacement", "class_game_state.html#a63fd0f3e2c38c05e261c520bede9c18e", null ],
+    [ "ballPlacementPoint", "class_game_state.html#a259a8abf163dd49d2ce09dfec66512a7", null ],
     [ "OurInfo", "class_game_state.html#a616b52e126a8825fc58572900373ffe6", null ],
     [ "ourRestart", "class_game_state.html#a2ab7a0bf2c263a79e9ce316b895461ca", null ],
     [ "ourScore", "class_game_state.html#a28fa8cc475212cfc952a46c64f9d3207", null ],

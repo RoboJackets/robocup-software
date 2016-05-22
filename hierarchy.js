@@ -45,6 +45,7 @@ var hierarchy =
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker.State", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker_1_1_state.html", null ],
       [ "gameplay.plays.offense.two_side_attack.TwoSideAttack.State", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack_1_1_state.html", null ],
       [ "gameplay.plays.restarts.our_kickoff.OurKickoff.State", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html", null ],
+      [ "gameplay.plays.restarts.placement.Placement.State", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement_1_1_state.html", null ],
       [ "gameplay.plays.restarts.two_side_corner_kick.TwoSideCornerKick.State", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick_1_1_state.html", null ],
       [ "gameplay.plays.stopped.Stopped.State", "classgameplay_1_1plays_1_1stopped_1_1_stopped_1_1_state.html", null ],
       [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp.State", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up_1_1_state.html", null ],
@@ -53,10 +54,12 @@ var hierarchy =
       [ "gameplay.plays.tuning.tune_facing.Facer.State", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html", null ],
       [ "gameplay.skills.aim.Aim.State", "classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html", null ],
       [ "gameplay.skills.bump.Bump.State", "classgameplay_1_1skills_1_1bump_1_1_bump_1_1_state.html", null ],
+      [ "gameplay.skills.dribble.Dribble.State", "classgameplay_1_1skills_1_1dribble_1_1_dribble_1_1_state.html", null ],
       [ "gameplay.skills.line_kick.LineKick.State", "classgameplay_1_1skills_1_1line__kick_1_1_line_kick_1_1_state.html", null ],
       [ "gameplay.skills.pass_receive.PassReceive.State", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html", null ],
       [ "gameplay.tactics.coordinated_pass.CoordinatedPass.State", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html", null ],
       [ "gameplay.tactics.one_touch_pass.OneTouchPass.State", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html", null ],
+      [ "gameplay.tactics.our_placement.OurPlacement.State", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement_1_1_state.html", null ],
       [ "gameplay.tactics.penalty.Penalty.State", "classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html", null ],
       [ "gameplay.tactics.positions.goalie.Goalie.State", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
@@ -245,13 +248,11 @@ var hierarchy =
     [ "SPI", null, [
       [ "SharedSPI", "class_shared_s_p_i.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
           [ "gameplay.play.Play", "classgameplay_1_1play_1_1_play.html", [
+            [ "gameplay.plays.restarts.placement.Placement", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html", null ],
             [ "gameplay.plays.testing.debug_window_evaluator.DebugWindowEvaluator", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html", null ],
             [ "gameplay.plays.testing.line_up.LineUp", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up.html", null ],
             [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html", null ],
@@ -290,11 +291,13 @@ var hierarchy =
           ] ],
           [ "gameplay.single_robot_composite_behavior.SingleRobotCompositeBehavior", "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html", [
             [ "gameplay.plays.tuning.tune_facing.Facer", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html", null ],
+            [ "gameplay.skills.dribble.Dribble", "classgameplay_1_1skills_1_1dribble_1_1_dribble.html", null ],
             [ "gameplay.skills.face.Face", "classgameplay_1_1skills_1_1face_1_1_face.html", null ],
             [ "gameplay.skills.pass_receive.PassReceive", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html", [
               [ "gameplay.skills.angle_receive.AngleReceive", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html", null ]
             ] ],
             [ "gameplay.skills.pivot_kick.PivotKick", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html", null ],
+            [ "gameplay.tactics.our_placement.OurPlacement", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html", null ],
             [ "gameplay.tactics.penalty.Penalty", "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html", null ],
             [ "gameplay.tactics.positions.goalie.Goalie", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html", null ],
             [ "gameplay.tactics.positions.submissive_defender.SubmissiveDefender", "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html", null ],
@@ -326,6 +329,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

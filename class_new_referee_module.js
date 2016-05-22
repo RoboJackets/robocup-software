@@ -26,6 +26,8 @@ var class_new_referee_module =
     [ "_running", "class_new_referee_module.html#acf78225e9998043f0be3d39363fc80ec", null ],
     [ "_state", "class_new_referee_module.html#a8f339df7555d0542e5fb70f759764036", null ],
     [ "_useExternalRef", "class_new_referee_module.html#a772247a544bbdcc8f0d1d38f9707a7df", null ],
+    [ "ballPlacementx", "class_new_referee_module.html#ac10a86d678709a59b8567a3ea395f498", null ],
+    [ "ballPlacementy", "class_new_referee_module.html#a5d817db7252087da53ed57624d01fdd7", null ],
     [ "blue_info", "class_new_referee_module.html#ad37c38b456502c1780f709dfbb7cb677", null ],
     [ "command", "class_new_referee_module.html#ab3aecfc78770002322221843a3775a88", null ],
     [ "command_counter", "class_new_referee_module.html#a38db00b2baea991333d5b772d5496b1e", null ],

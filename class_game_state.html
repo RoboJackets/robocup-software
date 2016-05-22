@@ -149,7 +149,8 @@ Public Types</h2></td></tr>
 <b>Direct</b>, 
 <b>Indirect</b>, 
 <br/>
-&#160;&#160;<b>Penalty</b>
+&#160;&#160;<b>Penalty</b>, 
+<b>Placement</b>
 <br/>
  }</td></tr>
 <tr class="separator:a48426d26bbbebbe7a8e146aca14058bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,6 +172,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>kickoff</b> () const 
 <tr class="memitem:a2493247480ba9f449b477b2b0b0d89af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2493247480ba9f449b477b2b0b0d89af"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>penalty</b> () const </td></tr>
 <tr class="separator:a2493247480ba9f449b477b2b0b0d89af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d40354ca4196e6673d8c5fe64e38bef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d40354ca4196e6673d8c5fe64e38bef"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>placement</b> () const </td></tr>
+<tr class="separator:a6d40354ca4196e6673d8c5fe64e38bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a06bf6943c04b66c1aaee2efc75644924"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06bf6943c04b66c1aaee2efc75644924"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isOurRestart</b> () const </td></tr>
 <tr class="separator:a06bf6943c04b66c1aaee2efc75644924"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -195,6 +199,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>ourIndirect</b> () co
 <tr class="memitem:ad06ea37bbe9a28289a60d6330e48378f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad06ea37bbe9a28289a60d6330e48378f"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>ourFreeKick</b> () const </td></tr>
 <tr class="separator:ad06ea37bbe9a28289a60d6330e48378f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e068080dea33a3053f540047937fdac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e068080dea33a3053f540047937fdac"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>ourPlacement</b> () const </td></tr>
+<tr class="separator:a5e068080dea33a3053f540047937fdac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88c07a53e1c7d26934d4fca841d52722"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88c07a53e1c7d26934d4fca841d52722"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>theirKickoff</b> () const </td></tr>
 <tr class="separator:a88c07a53e1c7d26934d4fca841d52722"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -210,6 +217,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>theirIndirect</b> () 
 <tr class="memitem:a1001cc35e43c664e866f62abcc016260"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1001cc35e43c664e866f62abcc016260"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>theirFreeKick</b> () const </td></tr>
 <tr class="separator:a1001cc35e43c664e866f62abcc016260"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63fd0f3e2c38c05e261c520bede9c18e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63fd0f3e2c38c05e261c520bede9c18e"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>theirPlacement</b> () const </td></tr>
+<tr class="separator:a63fd0f3e2c38c05e261c520bede9c18e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab188f435c308c1b58d16f1e1eee8bca7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab188f435c308c1b58d16f1e1eee8bca7"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>setupRestart</b> () const </td></tr>
 <tr class="separator:ab188f435c308c1b58d16f1e1eee8bca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -231,6 +241,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>stayOnSide</b> () con
 <tr class="memitem:a5229c9e1af2587f57c94cef16add63d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5229c9e1af2587f57c94cef16add63d2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>stayBehindPenaltyLine</b> () const </td></tr>
 <tr class="separator:a5229c9e1af2587f57c94cef16add63d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac327852071625f1f3cc935d09742417b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac327852071625f1f3cc935d09742417b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setBallPlacementPoint</b> (float x, float y)</td></tr>
+<tr class="separator:ac327852071625f1f3cc935d09742417b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2be4ce88438520651674c0fd512e5f46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2be4ce88438520651674c0fd512e5f46"></a>
+<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getBallPlacementPoint</b> () const </td></tr>
+<tr class="separator:a2be4ce88438520651674c0fd512e5f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -261,6 +277,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>secondsRemaining</b></
 <tr class="memitem:adf8863cca508d7a2a2ac46ff2bc0c8c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf8863cca508d7a2a2ac46ff2bc0c8c1"></a>
 <a class="el" href="class_team_info.html">TeamInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><b>TheirInfo</b></td></tr>
 <tr class="separator:adf8863cca508d7a2a2ac46ff2bc0c8c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a259a8abf163dd49d2ce09dfec66512a7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a259a8abf163dd49d2ce09dfec66512a7"></a>
+<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>ballPlacementPoint</b></td></tr>
+<tr class="separator:a259a8abf163dd49d2ce09dfec66512a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Holds the state of the game according to the referee. </p>
@@ -272,7 +291,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>secondsRemaining</b></
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_game_state__coll__graph.png" border="0" usemap="#_game_state_coll__map" alt="Collaboration graph"/></div>
 <map name="_game_state_coll__map" id="_game_state_coll__map">
-<area shape="rect" id="node2" href="class_team_info.html" title="TeamInfo" alt="" coords="137,189,215,216"/><area shape="rect" id="node3" title="STL class. " alt="" coords="30,99,116,125"/><area shape="rect" id="node4" title="STL class. " alt="" coords="5,6,141,47"/></map>
+<area shape="rect" id="node2" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,189,147,216"/><area shape="rect" id="node3" href="class_team_info.html" title="TeamInfo" alt="" coords="194,189,272,216"/><area shape="rect" id="node4" title="STL class. " alt="" coords="103,99,189,125"/><area shape="rect" id="node5" title="STL class. " alt="" coords="78,6,215,47"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/<a class="el" href="_game_state_8hpp_source.html">GameState.hpp</a></li>
@@ -283,7 +302,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>secondsRemaining</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_game_state.html">GameState</a></li>
-    <li class="footer">Generated on Sat May 21 2016 02:00:45 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun May 22 2016 04:05:17 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

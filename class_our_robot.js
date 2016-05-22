@@ -97,6 +97,7 @@ var class_our_robot =
     [ "angleFunctionPath", "class_our_robot.html#a99c3d92c2c979f9ff6eba73bbb0b41b3", null ],
     [ "config", "class_our_robot.html#a0d772617dda85ce48b6ee3fe4b7746ef", null ],
     [ "control", "class_our_robot.html#a22dbb3da6c0f44de0f1e83f772ed26e6", null ],
+    [ "isBallPlacer", "class_our_robot.html#a4c6066d6e7b634c86ee0648245fee6eb", null ],
     [ "isPenaltyKicker", "class_our_robot.html#aadeaaec4a8590e7851cdb8c1f3de207a", null ],
     [ "robotPacket", "class_our_robot.html#a98883357829f30876112a521b6d8eccd", null ],
     [ "robotText", "class_our_robot.html#abdfb739ad95731cda9ecad9dc649a371", null ],
