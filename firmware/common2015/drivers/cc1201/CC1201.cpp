@@ -92,9 +92,8 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
-    // update frequency offset estimate and get the current state while at it
-    uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
+    uint8_t device_state = strobe(CC1201_STROBE_SNOP);
 
     if ((device_state & CC1201_STATE_RXFIFO_ERROR) ==
         CC1201_STATE_RXFIFO_ERROR) {
@@ -133,6 +132,12 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     }
 
     update_rssi();
+
+    // update frequency offset estimate and get the current state while at it
+    // uint8_t device_state = freqUpdate();
+    // TODO: use freqUpdate()?
+    strobe(CC1201_STROBE_SIDLE);
+    strobe(CC1201_STROBE_SAFC);
 
     // Note: we configured the radio to return to RX mode after a successful RX,
     // so there's no need to explicitly strobe it into RX here.
