@@ -96,6 +96,12 @@ message SSL_Referee {
 		GOAL_YELLOW = 14;
 		// The blue team just scored a goal.
 		GOAL_BLUE = 15;
+		// Equivalent to STOP, but the yellow team must pick up the ball and
+		// drop it in the Designated Position.
+		BALL_PLACEMENT_YELLOW = 16;
+		// Equivalent to STOP, but the blue team must pick up the ball and drop
+		// it in the Designated Position.
+		BALL_PLACEMENT_BLUE = 17;
 	}
 	required Command command = 4;
 
@@ -132,4 +138,14 @@ message SSL_Referee {
 	// Information about the two teams.
 	required TeamInfo yellow = 7;
 	required TeamInfo blue = 8;
+
+	// The coordinates of the Designated Position. These are measured in
+	// millimetres and correspond to SSL-Vision coordinates. These fields are
+	// always either both present (in the case of a ball placement command) or
+	// both absent (in the case of any other command).
+	message Point {
+		required float x = 1;
+		required float y = 2;
+	}
+	optional Point designated_position = 9;
 }
