@@ -406,6 +406,7 @@ public:
     }
 
     bool isPenaltyKicker = false;
+    bool isBallPlacer = false;
 
     static void createConfiguration(Configuration* cfg);
 

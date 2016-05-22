@@ -435,7 +435,7 @@ void Processor::run() {
 
                 auto& globalObstaclesForBot =
                     (r->shell() == _gameplayModule->goalieID() ||
-                     r->isPenaltyKicker)
+                     r->isPenaltyKicker || r->isBallPlacer)
                         ? globalObstacles
                         : globalObstaclesWithGoalZones;
 
