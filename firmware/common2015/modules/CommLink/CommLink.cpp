@@ -31,7 +31,7 @@ void CommLink::rxThread() {
         ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     // Set the function to call on an interrupt trigger
-    _int_in.rise(this, &CommLink::ISR);
+    _int_in.fall(this, &CommLink::ISR);
 
     rtp::packet p;
     std::vector<uint8_t> buf;
