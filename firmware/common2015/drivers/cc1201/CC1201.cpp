@@ -136,8 +136,10 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     // update frequency offset estimate and get the current state while at it
     // uint8_t device_state = freqUpdate();
     // TODO: use freqUpdate()?
-    strobe(CC1201_STROBE_SIDLE);
-    strobe(CC1201_STROBE_SAFC);
+    // TODO: put this code back in?
+    // strobe(CC1201_STROBE_SIDLE);
+    // strobe(CC1201_STROBE_SAFC);
+    // strobe(CC1201_STROBE_SRX);
 
     // Note: we configured the radio to return to RX mode after a successful RX,
     // so there's no need to explicitly strobe it into RX here.
@@ -373,10 +375,12 @@ uint8_t CC1201::idle() {
     return status_byte;
 }
 
+// TODO: make this method strobe into IDLE first?
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
 
 float CC1201::freq() {
-    freqUpdate();
+    // TODO: should freqUpdate() be called here?
+    // freqUpdate();
 
     // read the 5 frequency-related bytes in order:
     // [FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0]
