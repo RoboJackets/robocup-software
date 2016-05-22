@@ -73,7 +73,7 @@ void CommModule::txThread() {
                 _ports[p->header.port].txCallback()(p);
                 _ports[p->header.port].txCount++;
 
-                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->header.port);
+                // LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // this renews a countdown for turning off the
@@ -125,7 +125,7 @@ void CommModule::rxThread() {
                 _ports[p->header.port].rxCallback()(p);
                 _ports[p->header.port].rxCount++;
 
-                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
+                // LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // this renews a countdown for turning off the strobing thread once

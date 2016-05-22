@@ -92,6 +92,8 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
+    // Thread::wait(9);
+
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
     uint8_t device_state = strobe(CC1201_STROBE_SNOP);
 
@@ -125,8 +127,8 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         chipDeselect();
         strobe(CC1201_STROBE_SFRX);
 
-        LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes,
-            size_byte);
+        // LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes,
+            // size_byte);
     } else {
         return COMM_NO_DATA;
     }
@@ -143,6 +145,8 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
 
     // Note: we configured the radio to return to RX mode after a successful RX,
     // so there's no need to explicitly strobe it into RX here.
+
+    // LOG(INIT, "getData() success!");
 
     return COMM_SUCCESS;
 }
