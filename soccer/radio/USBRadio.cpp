@@ -214,7 +214,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
             float bodyVelW =
                 robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
 
-            msg->uid = 2;  // packet.robots(slot).uid(); // TODO(justin): fix
+            msg->uid = packet.robots(slot).uid();
 
             msg->bodyX = clamp((int)roundf(bodyVelX), -511, 511);
             msg->bodyY = clamp((int)roundf(bodyVelY), -511, 511);
@@ -230,7 +230,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->song = robot.song();
         } else {
             // empty slot
-            msg->uid = 2;  // TODO(justin): set this back to zero
+            msg->uid = 0;
         }
     }
 
