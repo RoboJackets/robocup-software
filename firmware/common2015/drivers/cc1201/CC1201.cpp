@@ -92,8 +92,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
-    // Thread::wait(9);
-
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
     uint8_t device_state = strobe(CC1201_STROBE_SNOP);
 
@@ -128,7 +126,7 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         strobe(CC1201_STROBE_SFRX);
 
         // LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes,
-            // size_byte);
+        // size_byte);
     } else {
         return COMM_NO_DATA;
     }
@@ -236,6 +234,12 @@ void CC1201::printDebugInfo() {
 
     printf("Radio Status:\r\n  ready: %u, state: %s, int pin: %u\r\n", ready,
            state_names[state], _int_in == 1);
+
+    // TODO: remove this hack
+    if (state == 6) {
+        flush_rx();
+        strobe(CC1201_STROBE_SRX);
+    }
 }
 
 uint8_t CC1201::strobe(uint8_t addr) {

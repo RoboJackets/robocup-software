@@ -84,7 +84,7 @@ int main() {
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
-    rjLogLevel = INF3;
+    rjLogLevel = INIT;
 
     printf("****************************************\r\n");
     LOG(INIT, "Radio test receiver starting...");
@@ -104,14 +104,6 @@ int main() {
     }
 
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
-
-    // while (true) {
-    //     global_radio->printDebugInfo();
-    //     global_radio->flush_rx();
-    //     global_radio->strobe(CC1201_STROBE_SCAL);
-    //     global_radio->strobe(CC1201_STROBE_SRX);
-    //     Thread::wait(3000);
-    // }
 
     // wait for incoming packets
     while (true) {
