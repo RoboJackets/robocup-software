@@ -17,6 +17,10 @@ uint8_t rjLogLevel;
 
 Mutex log_mutex;
 
+LocalFileSystem local2("local");
+FILE* fp = NULL;
+
+
 LogHelper::LogHelper(uint8_t logLevel, const char* source, int line,
                      const char* func) {
     _logLevel = logLevel;
@@ -41,6 +45,8 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
     if (isLogging && logLevel <= rjLogLevel) {
         log_mutex.lock();
 
+	fp = fopen("/local/log.txt", "a");
+
         va_list args;
         static char newFormat[300];
         char time_buf[25];
@@ -57,7 +63,13 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         vprintf(newFormat, args);
         fflush(stdout);
 
+	if (fp != NULL)
+		fprintf(fp, newFormat, args);
+
         va_end(args);
+
+	fclose(fp);
+
         log_mutex.unlock();
     }
 }
