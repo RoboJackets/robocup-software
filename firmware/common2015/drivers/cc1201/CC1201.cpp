@@ -234,12 +234,6 @@ void CC1201::printDebugInfo() {
 
     printf("Radio Status:\r\n  ready: %u, state: %s, int pin: %u\r\n", ready,
            state_names[state], _int_in == 1);
-
-    // TODO: remove this hack
-    if (state == 6) {
-        flush_rx();
-        strobe(CC1201_STROBE_SRX);
-    }
 }
 
 uint8_t CC1201::strobe(uint8_t addr) {

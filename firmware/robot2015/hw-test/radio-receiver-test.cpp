@@ -105,6 +105,10 @@ int main() {
 
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
+    // flush rx before starting
+    global_radio->flush_rx();
+    global_radio->strobe(CC1201_STROBE_SRX);
+
     // wait for incoming packets
     while (true) {
         global_radio->printDebugInfo();
