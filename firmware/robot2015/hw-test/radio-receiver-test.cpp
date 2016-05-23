@@ -37,7 +37,7 @@ bool initRadio() {
     global_radio =
         new CC1201(sharedSPI, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
                    sizeof(preferredSettings) / sizeof(registerSetting_t));
-
+ 
     return global_radio->isConnected();
 }
 
@@ -104,10 +104,6 @@ int main() {
     }
 
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
-
-    // flush rx before starting
-    global_radio->flush_rx();
-    global_radio->strobe(CC1201_STROBE_SRX);
 
     // wait for incoming packets
     while (true) {

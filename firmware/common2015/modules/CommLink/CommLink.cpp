@@ -21,14 +21,8 @@ CommLink::CommLink(shared_ptr<SharedSPI> sharedSPI, PinName nCs,
 // =================== RX THREAD ===================
 // Task operations for placing received data into the received data queue
 void CommLink::rxThread() {
-    // Only continue past this point once the hardware link is initialized
-    Thread::signal_wait(COMM_LINK_SIGNAL_START_THREAD);
-
     // Store our priority so we know what to reset it to if ever needed
     const osPriority threadPriority = _rxThread.get_priority();
-
-    LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
-        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     // Set the function to call on an interrupt trigger
     _int_in.fall(this, &CommLink::ISR);
@@ -37,6 +31,12 @@ void CommLink::rxThread() {
     rtp::packet p;
     std::vector<uint8_t> buf;
     buf.reserve(rtp::MAX_DATA_SZ);
+
+    // Only continue past this point once the hardware link is initialized
+    Thread::signal_wait(COMM_LINK_SIGNAL_START_THREAD);
+
+    LOG(INIT, "RX communication link ready!\r\n    Thread ID: %u, Priority: %d",
+        ((P_TCB)_rxThread.gettid())->task_id, threadPriority);
 
     while (true) {
         // Wait until new data has arrived

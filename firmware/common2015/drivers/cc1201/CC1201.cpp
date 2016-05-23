@@ -128,6 +128,11 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
         // LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes,
         // size_byte);
     } else {
+        // flush rx
+        strobe(CC1201_STROBE_SIDLE);
+        strobe(CC1201_STROBE_SFRX);
+        strobe(CC1201_STROBE_SRX);
+
         return COMM_NO_DATA;
     }
 
