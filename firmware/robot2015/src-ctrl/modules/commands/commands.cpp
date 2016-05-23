@@ -982,9 +982,9 @@ int cmd_pong(cmd_args_t& args) {
 
     // Any packets received on the PING port are placed in a queue.
     Queue<rtp::packet, 2> pings;
-    CommModule::Instance->setRxHandler(
-        [&pings](rtp::packet* pkt) { pings.put(new rtp::packet(*pkt)); },
-        rtp::Port::PING);
+    CommModule::Instance->setRxHandler([&pings](rtp::packet* pkt) {
+        pings.put(new rtp::packet(*pkt));
+    }, rtp::Port::PING);
 
     while (true) {
         // Check for a ping packet.  If we got one, print a message and reply
@@ -1019,9 +1019,9 @@ int cmd_ping(cmd_args_t& args) {
 
     // Any packets received on the PING port are placed in a queue
     Queue<rtp::packet, 2> acks;
-    CommModule::Instance->setRxHandler(
-        [&acks](rtp::packet* pkt) { acks.put(new rtp::packet(*pkt)); },
-        rtp::Port::PING);
+    CommModule::Instance->setRxHandler([&acks](rtp::packet* pkt) {
+        acks.put(new rtp::packet(*pkt));
+    }, rtp::Port::PING);
 
     uint8_t pingCount = 0;
     int lastPingTime = 0;

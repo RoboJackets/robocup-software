@@ -83,7 +83,8 @@ public:
     }
 
     template <class T>
-    packet(const std::vector<T>& v, Port p = SINK) : header(p) {
+    packet(const std::vector<T>& v, Port p = SINK)
+        : header(p) {
         for (T val : v) payload.push_back(val);
     }
 
