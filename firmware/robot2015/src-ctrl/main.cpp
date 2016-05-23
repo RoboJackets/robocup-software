@@ -162,9 +162,9 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    // Thread controller_task(Task_Controller, mainID, osPriorityHigh,
-    //                        DEFAULT_STACK_SIZE / 2);
-    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
+                           DEFAULT_STACK_SIZE / 2);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
@@ -182,8 +182,6 @@ int main() {
     radioProtocol.setUID(robotID);
     radioProtocol.start();
     radioProtocol.rxCallback = [](const rtp::ControlMessage* msg) {
-        // LOG(INIT, "rx!");  // TODO: rm
-
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
         reply.battVoltage = 5;  // TODO
@@ -197,7 +195,7 @@ int main() {
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
     // Release each thread into its operations in a structured manner
-    // controller_task.signal_set(SUB_TASK_CONTINUE);
+    controller_task.signal_set(SUB_TASK_CONTINUE);
     console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
