@@ -18,7 +18,7 @@
 using namespace std;
 
 // how often to send a packet (in seconds)
-const float TRANSMIT_INTERVAL = 1.0f;
+const float TRANSMIT_INTERVAL = 1.0f / 100.0f;
 
 bool initRadio() {
     // setup SPI bus
