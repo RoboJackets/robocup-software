@@ -47,7 +47,12 @@ void radioRxHandler(rtp::packet* pkt) {
     bool success = usbLink.writeNB(EPBULK_IN, pkt->payload.data(),
                                    pkt->payload.size(), MAX_PACKET_SIZE_EPBULK);
 
-    if (!success) LOG(WARN, "Failed to transfer received packet over usb");
+    // TODO(justin): add this message back in. For some reason, the usb system
+    // reports failure *unless* I add a print statement inside
+    // USBDevice.writeNB() after result = endpointWrite().  No idea why this is
+    // the case
+    //
+    // if (!success) LOG(WARN, "Failed to transfer received %u byte packet over usb", pkt->payload.size());
 }
 
 int main() {

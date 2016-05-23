@@ -125,7 +125,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
     USBRadio* radio = (USBRadio*)transfer->user_data;
 
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED &&
-        transfer->actual_length == rtp::Reverse_Size + 2) {
+        transfer->actual_length == sizeof(rtp::RobotStatusMessage)) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
     } else {
@@ -230,9 +230,17 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->song = robot.song();
         } else {
             // empty slot
-            msg->uid = 0;
+            msg->uid = 2; // TODO(justin): set this back to zero
         }
     }
+
+    _sequence = (_sequence + 1) & 7;
+
+    // TODO(justin): remove this. skip every other packet because the system
+    // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
+    // definitely needs to be invesitgated.  If this rate-limit is removed and
+    // we try to send at 60Hz, we get TX buffer overflows in the base station.
+    if (_sequence % 2 == 0) return;
 
     // Send the forward packet
     int sent = 0;
@@ -248,8 +256,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
         libusb_close(_device);
         _device = nullptr;
     }
-
-    _sequence = (_sequence + 1) & 7;
 }
 
 void USBRadio::receive() {

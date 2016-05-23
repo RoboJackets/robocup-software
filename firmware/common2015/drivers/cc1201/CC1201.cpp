@@ -63,7 +63,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
         CC1201_STATE_TXFIFO_ERROR) {
-        LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
         // flush the TX buffer & return if the FIFO is in a corrupt state
         flush_tx();
 
