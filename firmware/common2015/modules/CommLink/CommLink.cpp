@@ -26,7 +26,6 @@ void CommLink::rxThread() {
 
     // Set the function to call on an interrupt trigger
     _int_in.fall(this, &CommLink::ISR);
-    // if (_int_in.read() == 0) ISR();
 
     rtp::packet p;
     std::vector<uint8_t> buf;
