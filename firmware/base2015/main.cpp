@@ -52,7 +52,8 @@ void radioRxHandler(rtp::packet* pkt) {
     // USBDevice.writeNB() after result = endpointWrite().  No idea why this is
     // the case
     //
-    // if (!success) LOG(WARN, "Failed to transfer received %u byte packet over usb", pkt->payload.size());
+    // if (!success) LOG(WARN, "Failed to transfer received %u byte packet over
+    // usb", pkt->payload.size());
 }
 
 int main() {

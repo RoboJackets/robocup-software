@@ -88,7 +88,7 @@ public:
 
     void printDebugInfo();
 
-    // protected:
+protected:
     void flush_tx();
 
     void flush_rx();

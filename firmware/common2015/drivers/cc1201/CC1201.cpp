@@ -3,6 +3,19 @@
 #include "assert.hpp"
 #include "logger.hpp"
 
+// clang-format off
+const char* CC1201_STATE_NAMES[] = {
+    "IDLE",
+    "RX",
+    "TX",
+    "FSTXON",
+    "CALIB",
+    "SETTLE",
+    "RX_FIFO_ERR",
+    "TX_FIFO_ERR"
+};
+// clang-format on
+
 // check that the address byte doesn't have any non-address bits set
 // see "3.2 Access Types" in User Guide
 void ASSERT_IS_ADDR(uint16_t addr) {
@@ -39,8 +52,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // lockup otherwise
     if (!_isInit) return COMM_FAILURE;
 
-    // strobe(CC1201_STROBE_SFTX);
-
     // In order for radio transmission to work, the cc1201 must be first strobed
     // into IDLE, then into TX.  We're not sure why this is the case, but it
     // works.  Many hours were spent reading the data sheet to figure out why
@@ -48,9 +59,6 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // the GitHub pull request for more info:
     // https://github.com/RoboJackets/robocup-software/pull/562
     strobe(CC1201_STROBE_SIDLE);
-    //     strobe(CC1201_STROBE_SFTX);
-    //     strobe(CC1201_STROBE_SCAL);
-    //     strobe(CC1201_STROBE_SFSTXON);
 
     // Send the data to the CC1201.
     chipSelect();
@@ -105,11 +113,10 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        size_t size_byte =
-            _spi->write(CC1201_STROBE_SNOP);  // discard size byte
+        size_t size_byte = _spi->write(CC1201_STROBE_SNOP);
 
         if (size_byte > num_rx_bytes) {
-            // the length byte isn't right
+            // the size byte isn't right
             chipDeselect();
             LOG(WARN, "Invalid size byte: %u, rx byte count reg: %u", size_byte,
                 num_rx_bytes);
@@ -136,14 +143,6 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     }
 
     update_rssi();
-
-    // update frequency offset estimate and get the current state while at it
-    // uint8_t device_state = freqUpdate();
-    // TODO: use freqUpdate()?
-    // TODO: put this code back in?
-    // strobe(CC1201_STROBE_SIDLE);
-    // strobe(CC1201_STROBE_SAFC);
-    // strobe(CC1201_STROBE_SRX);
 
     // Note: we configured the radio to return to RX mode after a successful RX,
     // so there's no need to explicitly strobe it into RX here.
@@ -226,16 +225,13 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
     return status_byte;
 }
 
-const char* state_names[] = {"IDLE",  "RX",     "TX",          "FSTXON",
-                             "CALIB", "SETTLE", "RX_FIFO_ERR", "TX_FIFO_ERR"};
-
 void CC1201::printDebugInfo() {
     uint8_t stateByte = strobe(CC1201_STROBE_SNOP);
     bool ready = !(stateByte & 0x80);
     uint8_t state = (stateByte >> 4) & 7;
 
     printf("Radio Status:\r\n  ready: %u, state: %s, int pin: %u\r\n", ready,
-           state_names[state], _int_in == 1);
+           CC1201_STATE_NAMES[state], _int_in == 1);
 }
 
 uint8_t CC1201::strobe(uint8_t addr) {
@@ -288,8 +284,8 @@ uint8_t CC1201::strobe(uint8_t addr) {
         LOG(INF2,
             "strobe '%s' sent, status = {rdy_n: %d, state: %s}, "
             "after %dms = {rdy_n: %d, state: %s}",
-            strobe_names[addr - 0x30], rdy_n, state_names[state], delay, rdy2_n,
-            state_names[state2]);
+            strobe_names[addr - 0x30], rdy_n, CC1201_STATE_NAMES[state], delay,
+            rdy2_n, CC1201_STATE_NAMES[state2]);
     }
 
     return ret;
