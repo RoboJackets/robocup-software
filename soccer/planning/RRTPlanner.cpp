@@ -389,30 +389,19 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     float c = max(c1, c2);
     float a = maxAceleration;
 
-    // newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
-    // continue;
     // acceleration = (v2-v1)/t;
     // t = distance/((v1+v2)/2)
     // acceleration = (v2-v1)/(distance/((v1+v2)/2))
     // acceleration = (v2-v1)(v1+v2)/2)/distance
     // acceleration^2 = ((v2-v1)((v1+v2)/2)/(distance))^2 + (v^2*curvature)^2
     // a^2 = ((b-v)((v+b)/2)/(d))^2 + (b^2*c)^2
-    // b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1))
-    // and 4 c^2 d^2+1!=0 and d!=0
-    // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+%28%28b-v%29%28%28v%2Bb%29%2F2%29%2F%28d%29%29%5E2+%2B+%28b%5E2*c%29%5E2
-    /*
-    float vPossible1 = sqrt((v1 * v1 -
-                             2 * sqrt(d * d * (4 * a * a * c * c * d * d +
-                                               a * a - c * c * pow(v1, 4)))) /
-                            (4 * c * c * d * d + 1));
+    // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+((b-v)((v%2Bb)%2F2)%2F(d))%5E2+%2B+(v%5E2*c)%5E2
+    double part = d * d * (a * a - c * c * pow(v1, 4));
+    if (part >= 0) {
+        float possible = sqrt(v1 * v1 + 2 * sqrt(part));
+        return std::min(v2, possible);
+    }
 
-    // b = ±sqrt((2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4))+v^2)/(4 c^2 d^2+1))
-    // and 4 c^2 d^2+1!=0 and d!=0
-    float vPossible2 = sqrt((2 * sqrt(d * d * (4 * a * a * c * c * d * d +
-                                               a * a - c * c * pow(v1, 4))) +
-                             v1 * v1) /
-                            (4 * c * c * d * d + 1));
-    */
     float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
     return std::min(v2, maxSpeed);
 }
