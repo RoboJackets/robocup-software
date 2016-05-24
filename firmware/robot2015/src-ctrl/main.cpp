@@ -21,8 +21,8 @@
 #include "SharedSPI.hpp"
 #include "KickerBoard.hpp"
 #include "RtosTimerHelper.hpp"
-#include "io-expander.hpp"
 #include "RotarySelector.hpp"
+#include "robot-expander-inputs.hpp"
 
 using namespace std;
 
@@ -139,9 +139,11 @@ int main() {
     // sets the first 8 lines to input and the last 8 to output.  The pullup
     // resistors and polarity swap are enabled for the 4 rotary selector lines.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
+    ioExpander.config(0x00FF, 0x00F0, 0x00F0);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
+
+    RobotExpanderInputs ioInputs(&ioExpander, RJ_IOEXP_INT);
 
     // rotary selector for shell id
     RotarySelector<IOExpanderDigitalInOut> rotarySelector(
