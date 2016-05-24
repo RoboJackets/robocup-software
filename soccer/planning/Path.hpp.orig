@@ -229,6 +229,7 @@ public:
     virtual void setStartTime(RJ::Time t) override { path->setStartTime(t); }
 };
 
+<<<<<<< HEAD
 class EmptyPath : public Path {
 public:
     EmptyPath(const RobotInstant &instant): instant(instant) {}
@@ -307,8 +308,7 @@ public:
 
     virtual RJ::Time startTime() const override { return 0; }
     virtual void setStartTime(RJ::Time t) override {}
-};
-
+=======
 class ConstPathIterator {
 public:
     explicit ConstPathIterator(const Path* path, RJ::Time startTime,
@@ -335,6 +335,7 @@ private:
     const Path* const path;
     float time;
     const float deltaT;
+>>>>>>> ab663327467ae425b29108bde7a706e8547153fb
 };
 
 }  // namespace Planning

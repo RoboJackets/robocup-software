@@ -72,18 +72,21 @@ public:
         const std::vector<DynamicObstacle>& dynamicObstacles,
         std::unique_ptr<Path> prevPath = nullptr) override;
 
+<<<<<<< HEAD
     std::unique_ptr<Path> plan(
             const MotionInstant start, const MotionInstant goal,
             const MotionConstraints& motionConstraints,
-            const Geometry2d::ShapeSet& obstacles);
+            const Geometry2d::ShapeSet* obstacles);
 
 
     static void createConfiguration(Configuration* cfg);
 
 private:
+=======
     int reusePathTries = 0;
 
 protected:
+>>>>>>> ab663327467ae425b29108bde7a706e8547153fb
     /// maximum number of rrt iterations to run
     /// this does not include connect attempts
     unsigned int _maxIterations;
