@@ -293,12 +293,14 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         startDirections.push_back(difference.normalized(
             (points[i] - points[i + 1]).mag() * directionDistance));
     }
-    Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight);
-    endDirections.push_back((vf + endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    Point endPathDirection =
+        (points[points.size() - 1] - points[points.size() - 2])
+            .normalized(pathWeight);
+    endDirections.push_back(
+        (vf + endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 
@@ -395,11 +397,11 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     // acceleration = (v2-v1)(v1+v2)/2)/distance
     // acceleration^2 = ((v2-v1)((v1+v2)/2)/(distance))^2 + (v^2*curvature)^2
     // a^2 = ((b-v)((v+b)/2)/(d))^2 + (b^2*c)^2
-    //http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+((b-v)((v%2Bb)%2F2)%2F(d))%5E2+%2B+(b%5E2*c)%5E2
+    // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+((b-v)((v%2Bb)%2F2)%2F(d))%5E2+%2B+(b%5E2*c)%5E2
     double part = d * d * (a * a - c * c * pow(v1, 4));
-    if(part >= 0) {
+    if (part >= 0) {
         float possible = sqrt(v1 * v1 + 2 * sqrt(part));
-        return std::min(v2,possible);
+        return std::min(v2, possible);
     }
 
     float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
