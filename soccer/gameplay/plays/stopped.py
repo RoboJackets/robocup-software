@@ -50,7 +50,6 @@ class Stopped(standard_play.StandardPlay):
 
     def on_enter_normal(self):
         self.remove_all_subbehaviors()
-
         idle = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
