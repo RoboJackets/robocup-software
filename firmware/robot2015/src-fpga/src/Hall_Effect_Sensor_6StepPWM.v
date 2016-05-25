@@ -53,12 +53,12 @@ wire [2:0] u = direction ? (
                                 ( hall == STATE_FAULT   )   ? ALL_OFF:ALL_OFF
                              ) :
                              (
-                                ( hall == STATE1        )   ? C: // -> A
-                                ( hall == STATE2        )   ? C: // -> B
-                                ( hall == STATE3        )   ? B: // -> C
-                                ( hall == STATE4        )   ? B: // -> A
-                                ( hall == STATE5        )   ? A: // -> B
-                                ( hall == STATE6        )   ? A: // -> C
+                                ( hall == STATE1        )   ? C: // -> B
+                                ( hall == STATE2        )   ? B: // -> C
+                                ( hall == STATE3        )   ? B: // -> A
+                                ( hall == STATE4        )   ? A: // -> B
+                                ( hall == STATE5        )   ? A: // -> C
+                                ( hall == STATE6        )   ? C: // -> A
                                 ( hall == STATE_NO_CONN )   ? ALL_OFF:
                                 ( hall == STATE_FAULT   )   ? ALL_OFF:ALL_OFF
                              );
@@ -74,12 +74,12 @@ wire [2:0] z = direction ? (
                                 ( hall == STATE_FAULT   )   ? ALL_ON:ALL_ON
                              ) :
                              (
-                                ( hall == STATE1        )   ? A: // -> C
-                                ( hall == STATE2        )   ? B: // -> A
-                                ( hall == STATE3        )   ? C: // -> A
-                                ( hall == STATE4        )   ? A: // -> B
-                                ( hall == STATE5        )   ? B: // -> B
-                                ( hall == STATE6        )   ? C: // -> C
+                                ( hall == STATE1        )   ? B: // -> A
+                                ( hall == STATE2        )   ? C: // -> A
+                                ( hall == STATE3        )   ? A: // -> B
+                                ( hall == STATE4        )   ? B: // -> B
+                                ( hall == STATE5        )   ? C: // -> C
+                                ( hall == STATE6        )   ? A: // -> C
                                 ( hall == STATE_NO_CONN )   ? ALL_OFF:
                                 ( hall == STATE_FAULT   )   ? ALL_ON:ALL_ON
                              );
