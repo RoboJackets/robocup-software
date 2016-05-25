@@ -11,6 +11,10 @@
 #include "fpga.hpp"
 #include "mpu-6050.hpp"
 #include "io-expander.hpp"
+#include "Pid.hpp"
+
+// TODO(justin): do better
+#define M_PI 3.14159
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
@@ -87,14 +91,48 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
+    const uint16_t ENC_TICKS_PER_TURN = 2048;
+
+    Pid motor2pid(0.1, 0, 0);
+
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 125);
+    uint32_t prev_us = us_ticker_read();
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
+        uint16_t encDeltas[4];
+        FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
+            encDeltas, 4);
+
+        // get dt in seconds, update prev_us
+        uint32_t t = us_ticker_read();
+        float dt = (t - prev_us) / 1000000.0f;
+        prev_us = t;
+
+        // angular velocity of motor 2 in rad/s
+        const float vel2 = 2 * M_PI * (encDeltas[1] / ENC_TICKS_PER_TURN) / dt;
+
+        const float targetRps2 = 5;
+        const float targetVel2 = (2 * M_PI) * targetRps2;
+
+        // @125 duty cycle, 1260rpm @ no load
+        const float multiplier = 125.0f / (1260.0f*2*M_PI*60);
+
+        const float vel2Err = targetVel2 - vel2;
+
+        uint16_t dc = targetVel2 * multiplier;// + motor2pid.run(vel2Err);
+
+        // duty cycle values range 0-512
+        // ~400 is as high as we want to go
+        dc = std::max(dc, (uint16_t)1);
+        dc = std::min(dc, (uint16_t)400);
+        duty_cycles[1] = dc;
+
+
         // write all duty cycles
-        FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+        // FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
 }
