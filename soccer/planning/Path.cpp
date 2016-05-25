@@ -1,6 +1,11 @@
 #include "Path.hpp"
 #include <protobuf/LogFrame.pb.h>
+
+using namespace std;
 namespace Planning {
+
+class ConstPathIterator;
+
 // This method is a default implementation of draw() that works by evaluating
 // the path at fixed time intervals form t = 0 to t = duration.
 void Path::draw(SystemState* const state, const QColor& color,
@@ -32,4 +37,42 @@ void Path::draw(SystemState* const state, const QColor& color,
     addPoint(end().motion);
 }
 
-}  // namespace Planning
+std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
+                                                  float deltaT) const {
+    return std::move(
+        std::make_unique<ConstPathIterator>(this, startTime, deltaT));
+}
+
+bool Path::pathsIntersect(const std::vector<const Path*>& paths, float* hitTime,
+                          Geometry2d::Point* hitLocation,
+                          RJ::Time startTime) const {
+    const float deltaT = 0.05;
+    const float hitRadius = Robot_Radius * 2.5f;
+
+    auto thisPathIterator = iterator(startTime, deltaT);
+    vector<unique_ptr<ConstPathIterator>> pathIterators(paths.size());
+    std::transform(
+        std::begin(paths), std::end(paths), std::begin(pathIterators),
+        [&](auto path) { return path->iterator(startTime, deltaT); });
+
+    float time = RJ::SecsToTimestamp(startTime - this->startTime());
+    for (; time < getDuration(); time += deltaT) {
+        auto current = **thisPathIterator;
+        for (auto& it : pathIterators) {
+            auto temp = (**it);
+            if (current.motion.pos.distTo(temp.motion.pos) < hitRadius) {
+                if (hitTime) {
+                    *hitTime = time;
+                }
+                if (hitLocation) {
+                    *hitLocation = std::move(temp.motion.pos);
+                }
+                return true;
+            }
+            it->operator++();
+        }
+        thisPathIterator->operator++();
+    }
+    return false;
+}
+}

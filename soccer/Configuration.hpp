@@ -28,7 +28,7 @@ public:
     QTreeWidget* tree() const { return _tree; }
 
     // name lookup - returns pointer if exists, null otherwise
-    ConfigItem* nameLookup(const QString& name) const;
+    ConfigItem* nameLookup(const std::string name) const;
 
     bool load(const QString& filename, QString& error);
     bool save(const QString& filename, QString& error);
@@ -70,10 +70,13 @@ public:
     // The path is a list of these segments in order.
     const QStringList& path() const { return _path; }
 
+    /// Returns the same name that was passed to the constructor
+    const std::string name() const { return _path.join('/').toStdString(); }
+
     virtual QString toString() = 0;
 
     // Called by Configuration when the user changes the value
-    virtual void setValue(const QString& str) = 0;
+    virtual void setValueString(const QString& str) = 0;
 
 protected:
     friend class Configuration;
@@ -99,16 +102,20 @@ public:
 
     bool value();
 
+    void setValue(bool val) {
+        _value = val;
+        setupItem();
+    }
+
     operator bool() { return value(); }
 
     bool operator=(bool x) {
-        _value = x;
-        setupItem();
+        setValue(x);
         return x;
     }
 
     virtual QString toString() override;
-    virtual void setValue(const QString& str) override;
+    virtual void setValueString(const QString& str) override;
 
 protected:
     friend class Configuration;
@@ -123,18 +130,18 @@ public:
               std::string description = "");
 
     virtual QString toString() override;
-    virtual void setValue(const QString& str) override;
+    virtual void setValueString(const QString& str) override;
 
     operator int() const { return _value; }
 
     int operator=(int x) {
-        value(x);
+        setValue(x);
         return x;
     }
 
     int value() const { return _value; }
 
-    void value(int v) {
+    void setValue(int v) {
         _value = v;
         valueChanged(QString::number(v));
     }
@@ -150,18 +157,18 @@ public:
                  std::string description = "");
 
     virtual QString toString() override;
-    virtual void setValue(const QString& str) override;
+    virtual void setValueString(const QString& str) override;
 
     operator double() const { return _value; }
 
     double operator=(double x) {
-        value(x);
+        setValue(x);
         return x;
     }
 
     double value() const { return _value; }
 
-    void value(double v) {
+    void setValue(double v) {
         _value = v;
         valueChanged(QString::number(v));
     }
