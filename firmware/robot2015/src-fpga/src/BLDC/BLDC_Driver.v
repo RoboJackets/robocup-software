@@ -364,9 +364,9 @@ begin : GEN_PHASE_DRIVER
         ) motorPhaseDriver (
         .clk                    ( clk                               ) ,
         .duty_cycle             ( (u[j] == 1) ? duty_cycle_s : 0    ) ,
-        .high_z                 ( (z[j] || ~en_s ) ? 1 : 0          ) ,
+        .high_z                 ( z[j]                              ) ,
         .pwm_high               ( phaseH_s[j]                       ) ,
-        .pwm_low                ( phaseL_s[j]                       )
+        .pwm_low                ( (phaseL_s[j] || ~en_s) ? 1 : 0    )
     );
 end
 endgenerate
