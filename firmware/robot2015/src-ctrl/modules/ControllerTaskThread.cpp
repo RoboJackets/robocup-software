@@ -1,4 +1,5 @@
 #include <rtos.h>
+#include <cmsis_os.h>
 #include <RPCVariable.h>
 
 #include <Console.hpp>
@@ -93,7 +94,7 @@ void Task_Controller(void const* args) {
 
     const uint16_t ENC_TICKS_PER_TURN = 2048;
 
-    Pid motor2pid(0.1, 0, 0);
+    Pid motor2pid(1, 0, 0);
 
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 125);
@@ -102,9 +103,9 @@ void Task_Controller(void const* args) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        uint16_t encDeltas[4];
+        uint16_t encDeltas[5];
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-            encDeltas, 4);
+            encDeltas, 5);
 
         // get dt in seconds, update prev_us
         uint32_t t = us_ticker_read();
@@ -118,11 +119,13 @@ void Task_Controller(void const* args) {
         const float targetVel2 = (2 * M_PI) * targetRps2;
 
         // @125 duty cycle, 1260rpm @ no load
-        const float multiplier = 125.0f / (1260.0f*2*M_PI*60);
+        const float multiplier = 125.0f / (1260.0f*2*M_PI/60);
 
         const float vel2Err = targetVel2 - vel2;
 
-        uint16_t dc = targetVel2 * multiplier;// + motor2pid.run(vel2Err);
+        // printf("vel: %f\r\n", vel2);
+
+        uint16_t dc = targetVel2 * multiplier + motor2pid.run(vel2Err);
 
         // duty cycle values range 0-512
         // ~400 is as high as we want to go
@@ -130,9 +133,6 @@ void Task_Controller(void const* args) {
         dc = std::min(dc, (uint16_t)400);
         duty_cycles[1] = dc;
 
-
-        // write all duty cycles
-        // FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
 }
