@@ -10,10 +10,14 @@ namespace Planning {
 /// point isn't in an obstacle, returns a path containing only the start point.
 class EscapeObstaclesPathPlanner : public SingleRobotPathPlanner {
 public:
+    EscapeObstaclesPathPlanner() : SingleRobotPathPlanner(false){};
+
     virtual std::unique_ptr<Path> run(
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles,
+        Geometry2d::ShapeSet& obstacles,
+        const std::vector<DynamicObstacle>&
+            dynamicObstacles = std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) override;
 
     /// The MotionCommand type that this planner handles
