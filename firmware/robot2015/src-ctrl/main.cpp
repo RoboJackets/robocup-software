@@ -227,9 +227,9 @@ int main() {
         for (auto& pair : motorErrLedMapping) {
             const motorErr_t& status = global_motors[pair.first].status;
             // clear the bit
-            errorBitmask &= ~(1<< pair.second);
+            errorBitmask &= ~(1 << pair.second);
             // set the bit to whatever hasError is set to
-            errorBitmask |= (status.hasError<<pair.second) ;
+            errorBitmask |= (status.hasError << pair.second);
         }
 
         // Set error-indicating leds on the control board

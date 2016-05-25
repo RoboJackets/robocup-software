@@ -111,9 +111,9 @@ bool FPGA::send_config(const std::string& filepath) {
 
         chipSelect();
 
-        // MISO & MOSI are intentionally switched here
-        // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
-        #warning FPGA configuration pins currently flipped due to PCB design errors, the final revision requires firmware updates.
+// MISO & MOSI are intentionally switched here
+// defaults to 8 bit field size with CPOL = 0 & CPHA = 0
+#warning FPGA configuration pins currently flipped due to PCB design errors, the final revision requires firmware updates.
         SoftwareSPI softSpi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
 
         fseek(fp, 0, SEEK_END);
