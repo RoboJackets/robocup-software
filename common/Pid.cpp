@@ -1,8 +1,5 @@
 #include "Pid.hpp"
 
-#include <cstring>
-#include <stdio.h>
-#include <iostream>
 #include <cmath>
 
 using namespace std;
