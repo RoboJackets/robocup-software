@@ -82,8 +82,7 @@ localparam STATE_ERR            = 4;
 // ===============================================
 
 // Synced input/output registers
-reg                         en_s                                = 0,
-                            fault_s                             = 0;
+reg                         fault_s                             = 0;
 reg  [2:0]                  hall_s                              = 0;
 reg  [DUTY_CYCLE_WIDTH-1:0] duty_cycle_s                        = 0;
 wire [2:0]                  phaseH_s,
@@ -168,7 +167,6 @@ begin : MOTOR_STATES
     if ( en == 0 ) begin
         fault <= 0;
         fault_s <= 0;
-        en_s <= 0;
         duty_cycle_s <= 0;
         state <= STATE_STOP;
 
@@ -183,7 +181,6 @@ begin : MOTOR_STATES
 
         if ( fault_s == 1 ) begin
             fault_s <= 0;
-            en_s <= 0;
             duty_cycle_s <= 0;
 
             if ( disconnect_fault_latched == 1 ) begin
@@ -196,7 +193,6 @@ begin : MOTOR_STATES
 
                 STATE_STOP: begin
 
-                    en_s <= 0;
                     startup_step_count <= 0;
 
                     if ( duty_cycle > MIN_DUTY_CYCLE ) begin
@@ -212,7 +208,6 @@ begin : MOTOR_STATES
 `endif
 
                     end else begin
-                        duty_cycle_s <= 0;
                         state <= STATE_STOP;
                     end
                 end    // STATE_STOP
@@ -221,10 +216,8 @@ begin : MOTOR_STATES
 
                     if ( duty_cycle <= MIN_DUTY_CYCLE ) begin
                         // Exit the startup state if the duty cycle is ever below the min starting duty cycle.
-                        en_s <= 0;
                         state <= STATE_STOP;
                     end else begin
-                        en_s <= 1;
 
                         // make sure that we didn't push out all the bits in this number when we divided
                         if ( startup_duty_cycle_step == 0 ) begin
@@ -263,7 +256,6 @@ begin : MOTOR_STATES
 
                     if ( duty_cycle <= MIN_DUTY_CYCLE ) begin
                         // Stop the motor if below the minimum required duty cycle
-                        en_s <= 0;
                         state <= STATE_STOP;
                     end
                 end    // STATE_RUN
@@ -294,8 +286,6 @@ begin : MOTOR_STATES
                 end    // STATE_ERR
 
                 default: begin
-                    en_s <= 0;
-                    duty_cycle_s <= duty_cycle;
                     state <= STATE_STOP;
                 end    // default
 
@@ -366,7 +356,7 @@ begin : GEN_PHASE_DRIVER
         .duty_cycle             ( (u[j] == 1) ? duty_cycle_s : 0    ) ,
         .high_z                 ( z[j]                              ) ,
         .pwm_high               ( phaseH_s[j]                       ) ,
-        .pwm_low                ( (phaseL_s[j] || ~en_s) ? 1 : 0    )
+        .pwm_low                ( phaseL_s[j]                       )
     );
 end
 endgenerate
