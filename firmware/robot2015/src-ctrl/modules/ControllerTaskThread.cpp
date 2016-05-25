@@ -6,7 +6,6 @@
 #include <assert.hpp>
 
 #include "robot-devices.hpp"
-#include "task-signals.hpp"
 #include "motors.hpp"
 #include "fpga.hpp"
 #include "mpu-6050.hpp"
@@ -83,10 +82,6 @@ void Task_Controller(void const* args) {
         return;
     }
 
-    // signal back to main and wait until we're signaled to continue
-    osSignalSet(mainID, MAIN_TASK_CONTINUE);
-    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
-
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 150);
     while (true) {
@@ -151,10 +146,6 @@ void Task_Controller_Sensorless(const osThreadId mainID) {
     LOG(INIT,
         "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
         ((P_TCB)threadID)->task_id, threadPriority);
-
-    // signal back to main and wait until we're signaled to continue
-    osSignalSet(mainID, MAIN_TASK_CONTINUE);
-    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
     while (true) {
         Thread::wait(CONTROL_LOOP_WAIT_MS);

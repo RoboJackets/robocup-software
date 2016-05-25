@@ -11,7 +11,6 @@
 #include <assert.hpp>
 
 #include "robot-devices.hpp"
-#include "task-signals.hpp"
 #include "io-expander.hpp"
 #include "fpga.hpp"
 #include "TimeoutLED.hpp"
