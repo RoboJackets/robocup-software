@@ -10,6 +10,7 @@ namespace Planning {
 /// replaced by something better.
 class DirectTargetPathPlanner : public SingleRobotPathPlanner {
 public:
+    DirectTargetPathPlanner() : SingleRobotPathPlanner(false){};
     MotionCommand::CommandType commandType() const override {
         return MotionCommand::CommandType::DirectPathTarget;
     }
@@ -17,12 +18,14 @@ public:
     virtual std::unique_ptr<Path> run(
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles,
+        Geometry2d::ShapeSet& obstacles,
+        const std::vector<DynamicObstacle>&
+            dynamicObstacles = std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) override;
 
     bool shouldReplan(MotionInstant startInstant, const MotionCommand* cmd,
                       const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet* obstacles,
+                      const Geometry2d::ShapeSet& obstacles,
                       const Path* prevPath) const;
 };
 
