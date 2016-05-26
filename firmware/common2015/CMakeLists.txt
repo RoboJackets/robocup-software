@@ -65,6 +65,10 @@ set(common2015_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/${UTILS_ROOT_NAME}
 )
 
+# TODO(justin): do better
+list(APPEND common2015_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/common)
+list(APPEND common2015_SRC ${PROJECT_SOURCE_DIR}/common/Pid.cpp)
+
 # append all of the common2015 subdirectories listed in the variables above
 foreach(driver_subdir ${DRIVERS})
     list(APPEND common2015_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/${DRIVERS_ROOT_NAME}/${driver_subdir})
