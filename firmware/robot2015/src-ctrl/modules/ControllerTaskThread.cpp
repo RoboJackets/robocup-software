@@ -128,15 +128,18 @@ void Task_Controller(void const* args) {
          * timer's tick since the last SPI transfer.
          *
          * Multiply the received tick count by:
-         *   2 * (1/18.432) * (2^WATCHDOG_TIMER_CLK_WIDTH)
+         *     (1/18.432) * 2 * (2^WATCHDOG_TIMER_CLK_WIDTH)
          *
          * This will give you the duration since the last SPI transfer in
          * microseconds (us).
          *
-         * For example, if WATCHDOG_TIMER_CLK_WIDTH = 2, here's how you would
+         * For example, if WATCHDOG_TIMER_CLK_WIDTH = 6, here's how you would
          * convert into time assuming the fpga returned a reading of 1265 ticks:
+         *     time_in_us = [ 1265 * (1/18.432) * 2 * (2^6) ] = 8784.7us
          *
-         *   time_in_us = [ 1265 * (1/18.432) * 2 * (2^2) ] = 274.5us
+         * The precision would be in increments of the multiplier. For
+         * this example, that is:
+         *     time_precision = 6.94us
          *
          */
         const float kdt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
