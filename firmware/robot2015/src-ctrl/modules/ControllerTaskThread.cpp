@@ -103,16 +103,25 @@ void Task_Controller(void const* args) {
 
     size_t ii = 0;
 
-    bool spin_rev = false;
+    bool spin_rev = 1;
+
+    uint16_t duty_cycle_all = 0;
 
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
         uint16_t encDeltas[5];
-        // force the fpga's watchdog timer to expire
-        if (ii < 2000)
-            FPGA::Instance->set_duty_get_enc(duty_cycles.data(),
+
+        if (ii < 80) {
+            duty_cycle_all = (510 | (spin_rev << 9));
+        } else {
+            ii = 0;
+            spin_rev = !spin_rev;
+            // duty_cycle_all = 0;
+        }
+
+        FPGA::Instance->set_duty_get_enc(duty_cycles.data(),
                                              duty_cycles.size(), encDeltas, 5);
 
         const float dt = encDeltas[4] * (1 / 18.432e6) * 64;
@@ -142,8 +151,7 @@ void Task_Controller(void const* args) {
 
         if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, dt);
 
-        std::fill(duty_cycles.begin(), duty_cycles.end(),
-                  (50 | (spin_rev << 9)));
+        std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }

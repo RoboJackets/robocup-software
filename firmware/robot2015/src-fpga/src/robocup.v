@@ -240,7 +240,7 @@ assign spi_master_di = spi_master_data_array_out[spi_master_recv_index];
 //   0 = 1.7A
 //   1 = 0.7A
 //   2 = 0.25A
-localparam DRV8303_GATE_CURRENT = 0;
+localparam DRV8303_GATE_CURRENT = 2;
 
 // This is a strobe bit that resets the gate outputs
 //   0 = Normal mode
@@ -259,7 +259,7 @@ localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
 // DON'T SET THIS PAST 14! Ever!
-localparam DRV8303_OC_ADJ_VAL = 13;
+localparam DRV8303_OC_ADJ_VAL = 5;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature
@@ -275,12 +275,12 @@ localparam DRV8303_OC_REPORT = 0;
 //   1 = 20V/V
 //   2 = 40V/V
 //   3 = 80V/V
-localparam DRV8303_AMP_GAIN = 1;
+localparam DRV8303_AMP_GAIN = 2;
 
 // This sets how the over-current protection is handled once triggered
 //   0 = cycle-by-cycle control
 //   1 = timed control
-localparam DRV8303_OC_TOFF = 1;
+localparam DRV8303_OC_TOFF = 0;
 
 wire sys_begin_startup = ( start_delay_done == 1 ) && ( sys_rdy == 0 );
 wire gate_drivers_set_config;

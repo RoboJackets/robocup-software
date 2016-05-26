@@ -51,7 +51,7 @@ output reg fault = 0;
 // Local parameters that can not be altered outside of this file
 // ===============================================
 localparam NUM_PHASES =                  3;  // This will always be constant
-localparam HALL_STATE_STEADY_COUNT =   105;  // Threshold value in determining when the hall effect sensor is locked into an error state
+localparam HALL_STATE_STEADY_COUNT =   125;  // Threshold value in determining when the hall effect sensor is locked into an error state
 
 localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
 localparam STARTUP_STEP_COUNTER_WIDTH =  7;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
@@ -168,6 +168,8 @@ begin : MOTOR_STATES
         fault <= 0;
         fault_s <= 0;
         duty_cycle_s <= 0;
+        phaseH <= 3'b000;
+
         state <= STATE_STOP;
 
     end else begin
@@ -208,6 +210,7 @@ begin : MOTOR_STATES
 `endif
 
                     end else begin
+                        duty_cycle_s <= 0;
                         state <= STATE_STOP;
                     end
                 end    // STATE_STOP
@@ -355,7 +358,7 @@ begin : GEN_PHASE_DRIVER
         .clk                    ( clk                               ) ,
         .duty_cycle             ( (u[j] == 1) ? duty_cycle_s : 0    ) ,
         .high_z                 ( z[j]                              ) ,
-        // .high_z                 ( (z[j] || ~en ) ? 1 : 0          ) ,
+        // .high_z                 ( (z[j] || (z[j] && ~en )) ? 1 : 0  ) ,
         .pwm_high               ( phaseH_s[j]                       ) ,
         .pwm_low                ( phaseL_s[j]                       )
     );
