@@ -1,5 +1,4 @@
 #include <rtos.h>
-#include <cmsis_os.h>
 #include <RPCVariable.h>
 
 #include <Console.hpp>
@@ -14,8 +13,7 @@
 #include "io-expander.hpp"
 #include "Pid.hpp"
 
-// TODO(justin): do better
-#define M_PI 3.14159
+const float kpi = 3.14159265358979f;
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
@@ -94,62 +92,75 @@ void Task_Controller(void const* args) {
 
     const uint16_t ENC_TICKS_PER_TURN = 2048;
 
-    Pid motor2pid(1.0, 0.0, 0.0);
+    Pid motor2pid(0.0, 0.0, 0.0);
 
     std::vector<uint16_t> duty_cycles;
-    duty_cycles.assign(5, 125);
 
-    uint32_t prev_us = us_ticker_read();
+    const uint16_t kduty_cycle = 100;
+    uint16_t duty_cycle_all = 0;
+    duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
-
-    bool spin_rev = 1;
-
-    uint16_t duty_cycle_all = 0;
+    bool spin_rev = true;
 
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        uint16_t encDeltas[5];
+        std::vector<uint16_t> enc_deltas(5);
 
-        if (ii < 80) {
-            duty_cycle_all = (510 | (spin_rev << 9));
-        } else {
-            ii = 0;
-            spin_rev = !spin_rev;
-            // duty_cycle_all = 0;
-        }
+        FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
+                                         enc_deltas.data(), enc_deltas.capacity());
 
-        FPGA::Instance->set_duty_get_enc(duty_cycles.data(),
-                                             duty_cycles.size(), encDeltas, 5);
-
-        const float dt = encDeltas[4] * (1 / 18.432e6) * 64;
-
-        // angular velocity of motor 2 in rad/s
-        const float vel2 = 2 * M_PI * (encDeltas[1] / ENC_TICKS_PER_TURN) / dt;
-
-        const float targetRps2 = 5;
-        const float targetVel2 = (2 * M_PI) * targetRps2;
-
-        // @125 duty cycle, 1260rpm @ no load
-        const float multiplier = 125.0f / (1260.0f * 2 * M_PI / 60);
-
-        const float vel2Err = targetVel2 - vel2;
-
-        uint16_t dc = targetVel2 * multiplier + motor2pid.run(vel2Err);
-
-        // duty cycle values range 0-512
-        // ~400 is as high as we want to go
-        dc = std::min(std::max(dc, (uint16_t)1), (uint16_t)400);
-
-        ii++;
-        // if ((ii % 1000) == 0) {
+        // if (ii < 80) {
+        //     duty_cycle_all = (kduty_cycle | (spin_rev << 9));
+        // } else {
+        //     ii = 0;
         //     spin_rev = !spin_rev;
-        //     printf("reversing direction\r\n");
+        //     duty_cycle_all = 0;
         // }
 
-        if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, dt);
+        /*
+         * The time since the last update is derived with the value of
+         * WATCHDOG_TIMER_CLK_WIDTH in robocup.v
+         *
+         * The last encoder reading (5th one) from the FPGA is the watchdog
+         * timer's tick since the last SPI transfer.
+         *
+         * Multiply the received tick count by:
+         *   2 * (1/18.432) * (2^WATCHDOG_TIMER_CLK_WIDTH)
+         *
+         * This will give you the duration since the last SPI transfer in
+         * microseconds (us).
+         *
+         * For example, if WATCHDOG_TIMER_CLK_WIDTH = 2, here's how you would
+         * convert into time assuming the fpga returned a reading of 1265 ticks:
+         *
+         *   time_in_us = [ 1265 * (1/18.432) * 2 * (2^2) ] = 274.5us
+         *
+         */
+        const float kdt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
+
+        // the target rev/s
+        const float ktarget_rps = 5;
+
+        // angular velocity of motor 2 in rad/s
+        const float kvel = 2 * kpi * (enc_deltas[2] / ENC_TICKS_PER_TURN) / kdt;
+
+        const float ktarget_vel = (2 * kpi) * ktarget_rps;
+
+        // @125 duty cycle, 1260rpm @ no load
+        const float kmultiplier = 125.0f / (1260.0f * 2 * kpi / 60);
+
+        const float vel_err = ktarget_vel - kvel;
+
+        uint16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
+
+        // duty cycle values range: 0 -> 511, the 9th bit is direction
+        dc = std::min(dc, static_cast<uint16_t>(511));
+
+        ii++;
+        if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
 
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 

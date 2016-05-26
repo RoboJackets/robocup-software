@@ -59,28 +59,10 @@ void motors_show() {
 
     printf("\033[?25l\033[25mStatus:\033[K\t\t\t%s\033E",
            status_byte & 0x20 ? "ENABLED" : "DISABLED");
-    /*
-     *  'Last Update' time here is derived using WATCHDOG_TIMER_CLK_WIDTH in
-     *robocup.v
-     *
-     *   The last encoder reading (5th one) from the FPGA is the watchdog
-     *timer's tick
-     *   since the last SPI transfer.
-     *
-     *   Multiply the received tick count by [ (1/18.432) *
-     *(2^WATCHDOG_TIMER_CLK_WIDTH) ]
-     *   and this will give you the duration since the last SPI transfer in
-     *microseconds (us).
-     *
-     *   For example, if WATCHDOG_TIMER_CLK_WIDTH = 2, here's how you would
-     *convert into time
-     *   assuming the fpga returned a reading of 1265 ticks:
-     *
-     *   time_in_us = [ 1265 * (1/18.432) * (2^2) ] = 274.5us
-     */
-    printf("\033[KLast Update:\t\t%-6.2fms\t%s\033E",
-           (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 64) / 1000,
-           status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
+    printf(
+        "\033[KLast Update:\t\t%-6.2fms\t%s\033E",
+        (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 2 * 64) / 1000,
+        status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\t\tFAULTS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
         printf("\033[K    %s\t%-3u\t%-3u\t%-5u\t%s\t%s\t0x%03X\033E",
