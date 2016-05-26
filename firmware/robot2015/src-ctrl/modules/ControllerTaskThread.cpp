@@ -97,11 +97,12 @@ void Task_Controller(void const* args) {
     std::vector<uint16_t> duty_cycles;
 
     const uint16_t kduty_cycle = 100;
-    uint16_t duty_cycle_all = 0;
     duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
     bool spin_rev = true;
+
+    uint16_t duty_cycle_all = 0;
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -110,15 +111,8 @@ void Task_Controller(void const* args) {
         std::vector<uint16_t> enc_deltas(5);
 
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-                                         enc_deltas.data(), enc_deltas.capacity());
-
-        // if (ii < 80) {
-        //     duty_cycle_all = (kduty_cycle | (spin_rev << 9));
-        // } else {
-        //     ii = 0;
-        //     spin_rev = !spin_rev;
-        //     duty_cycle_all = 0;
-        // }
+                                         enc_deltas.data(),
+                                         enc_deltas.capacity());
 
         /*
          * The time since the last update is derived with the value of
@@ -164,6 +158,14 @@ void Task_Controller(void const* args) {
 
         ii++;
         if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
+
+        // if (ii < 80) {
+        //     duty_cycle_all = (kduty_cycle | (spin_rev << 9));
+        // } else {
+        //     ii = 0;
+        //     spin_rev = !spin_rev;
+        //     duty_cycle_all = 0;
+        // }
 
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 
