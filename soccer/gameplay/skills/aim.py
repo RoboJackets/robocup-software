@@ -201,9 +201,6 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         return time.time() - self._start_time > self.desperate_timeout
 
     def execute_running(self):
-        # make sure teammates don't bump into us
-        self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
-
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 

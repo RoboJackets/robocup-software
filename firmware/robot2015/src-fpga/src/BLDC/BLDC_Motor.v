@@ -71,7 +71,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER    ) ,
     .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE            ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 8                         )
+    .DEAD_TIME                  ( 10                        )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,
@@ -132,7 +132,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .PHASE_DRIVER_MAX_COUNTER   ( MAX_DUTY_CYCLE_COUNTER    ) ,
     .MAX_DUTY_CYCLE             ( MAX_DUTY_CYCLE            ) ,
     .DUTY_CYCLE_STEP_RES        ( 1                         ) ,
-    .DEAD_TIME                  ( 8                         )
+    .DEAD_TIME                  ( 10                        )
     ) bldc_motor (
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,

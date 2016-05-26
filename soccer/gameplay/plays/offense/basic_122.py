@@ -160,14 +160,6 @@ class Basic122(standard_play.StandardPlay):
             for support in supports:
                 support.ratio = Basic122.DefenseSupportRatio
 
-        # keep support robots away from the striker
-        if striker.robot != None:
-            for supp in [support1, support2]:
-                if supp.robot != None:
-                    supp.robot.set_avoid_teammate_radius(
-                        striker.robot.shell_id(),
-                        Basic122.SupportAvoidTeammateRadius)
-
             # raise NotImplementedError("Make support robots avoid the shot channel")
             # FROM C++:
             # Polygon shot_obs;

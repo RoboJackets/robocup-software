@@ -480,7 +480,7 @@ int cmd_info(cmd_args_t& args) {
             std::vector<uint8_t> fpga_version;
             bool dirty_check = FPGA::Instance->git_hash(fpga_version);
 
-            for (auto const& i : fpga_version) printf("%0x", i);
+            for (auto const& i : fpga_version) printf("%02x", i);
             if (dirty_check) printf(" (dirty)");
         } else {
             printf("N/A");

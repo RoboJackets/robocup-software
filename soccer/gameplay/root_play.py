@@ -39,10 +39,18 @@ class RootPlay(Play, QtCore.QObject):
         ################################################################################
 
         if main.game_state().is_stopped():
-            if not isinstance(self.play, plays.stopped.Stopped):
-                logging.info("Running 'Stopped' play due to game state change")
-                self.play = plays.stopped.Stopped()
-                self._currently_restarting = True
+            if main.game_state().is_placement():
+                if not isinstance(self.play,
+                                  plays.restarts.placement.Placement):
+                    logging.info("Placing Ball")
+                    self.play = plays.restarts.placement.Placement()
+                    self._currently_restarting = True
+            else:
+                if not isinstance(self.play, plays.stopped.Stopped):
+                    logging.info(
+                        "Running 'Stopped' play due to game state change")
+                    self.play = plays.stopped.Stopped()
+                    self._currently_restarting = True
         elif main.game_state().is_halted():
             self.play = None
         else:

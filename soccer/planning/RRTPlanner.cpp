@@ -18,11 +18,13 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations) {}
+RRTPlanner::RRTPlanner(int maxIterations)
+    : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
                               const MotionConstraints& motionConstraints,
-                              const Geometry2d::ShapeSet* obstacles,
+                              const Geometry2d::ShapeSet& obstacles,
+                              const vector<const Path*> dynamicObs,
                               const Path* prevPath) const {
     if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
                                              obstacles, prevPath)) {
@@ -41,19 +43,29 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
         return true;
     }
 
+    if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr,
+                                 RJ::timestamp())) {
+        return true;
+    }
+
     return false;
 }
 
+const int maxContinue = 10;
+
 std::unique_ptr<Path> RRTPlanner::run(
     MotionInstant start, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles,
+    std::unique_ptr<Path> prevPath) {
     // This planner only works with commands of type 'PathTarget'
     assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
     Planning::PathTargetCommand target =
         *static_cast<const Planning::PathTargetCommand*>(cmd);
 
     MotionInstant goal = target.pathGoal;
+    vector<const Path*> actualDynamic;
+    splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -68,11 +80,45 @@ std::unique_ptr<Path> RRTPlanner::run(
     boost::optional<Geometry2d::Point> prevGoal;
     if (prevPath) prevGoal = prevPath->end().motion.pos;
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
-        goal.pos, prevGoal, *obstacles);
+        goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(start, goal, motionConstraints, obstacles,
+    if (shouldReplan(start, goal, motionConstraints, obstacles, actualDynamic,
                      prevPath.get())) {
+        auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
+                                    actualDynamic);
+
+        if (!path) {
+            path = make_unique<InterpolatedPath>();
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+        }
+        return std::move(path);
+    } else {
+        if (reusePathTries >= maxContinue) {
+            reusePathTries = 0;
+            auto path = generateRRTPath(start, goal, motionConstraints,
+                                        obstacles, actualDynamic);
+            if (path) {
+                float remaining = prevPath->getDuration() -
+                                  RJ::TimestampToSecs(RJ::timestamp() -
+                                                      prevPath->startTime());
+                if (remaining > path->getDuration()) {
+                    return std::move(path);
+                }
+            }
+        }
+        reusePathTries++;
+        return prevPath;
+    }
+}
+
+std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
+    const MotionInstant& start, const MotionInstant& goal,
+    const MotionConstraints& motionConstraints, ShapeSet& obstacles,
+    const std::vector<const Path*> paths) {
+    const int tries = 10;
+    for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
         auto points = runRRT(start, goal, motionConstraints, obstacles);
 
@@ -81,31 +127,35 @@ std::unique_ptr<Path> RRTPlanner::run(
 
         // Check if Planning or optimization failed
         if (points.size() < 2) {
-            debugLog("PathPlanning Failed");
-            auto path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            return std::move(path);
+            continue;
         }
 
         // Generate and return a cubic bezier path using the waypoints
-        return generateCubicBezier(points, *obstacles, motionConstraints,
-                                   start.vel, goal.vel);
-    } else {
-        return prevPath;
+        auto path = generateCubicBezier(points, obstacles, motionConstraints,
+                                        start.vel, goal.vel);
+        float hitTime;
+        Point hitLocation;
+        bool hit = path->pathsIntersect(paths, &hitTime, &hitLocation,
+                                        path->startTime());
+        if (hit) {
+            obstacles.add(make_shared<Circle>(hitLocation, Robot_Radius * 1.5));
+        } else {
+            return std::move(path);
+        }
     }
+    return nullptr;
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
-                                 const Geometry2d::ShapeSet* obstacles) {
+                                 const ShapeSet& obstacles) {
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
     FixedStepTree startTree;
     FixedStepTree goalTree;
-    startTree.init(start.pos, obstacles);
-    goalTree.init(goal.pos, obstacles);
+    startTree.init(start.pos, &obstacles);
+    goalTree.init(goal.pos, &obstacles);
     startTree.step = goalTree.step = .15f;
 
     // Run bi-directional RRT algorithm
@@ -149,7 +199,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
 }
 
 void RRTPlanner::optimize(vector<Geometry2d::Point>& pts,
-                          const Geometry2d::ShapeSet* obstacles,
+                          const Geometry2d::ShapeSet& obstacles,
                           const MotionConstraints& motionConstraints,
                           Geometry2d::Point vi, Geometry2d::Point vf) {
     unsigned int start = 0;
@@ -159,14 +209,14 @@ void RRTPlanner::optimize(vector<Geometry2d::Point>& pts,
     }
 
     // The set of obstacles the starting point was inside of
-    const auto startHitSet = obstacles->hitSet(pts[start]);
+    const auto startHitSet = obstacles.hitSet(pts[start]);
     int span = 2;
     while (span < pts.size()) {
         bool changed = false;
         for (int i = 0; i + span < pts.size(); i++) {
             bool transitionValid = true;
             const auto newHitSet =
-                obstacles->hitSet(Geometry2d::Segment(pts[i], pts[i + span]));
+                obstacles.hitSet(Geometry2d::Segment(pts[i], pts[i + span]));
             if (!newHitSet.empty()) {
                 for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
@@ -329,7 +379,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
 
 float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
                                float c1, float d2, float v2, float c2) {
-    float d = d2 - d1;
+    float d = std::abs(d2 - d1);
     float deltaSpeed = v2 - v1;
     if (deltaSpeed < 0) {
         return v2;
@@ -339,41 +389,20 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     float c = max(c1, c2);
     float a = maxAceleration;
 
-    // newPointsSpeed[i] = std::min(v2, std::sqrt(a * d * 2 + v1 * v1));
-    // continue;
     // acceleration = (v2-v1)/t;
     // t = distance/((v1+v2)/2)
     // acceleration = (v2-v1)/(distance/((v1+v2)/2))
     // acceleration = (v2-v1)(v1+v2)/2)/distance
     // acceleration^2 = ((v2-v1)((v1+v2)/2)/(distance))^2 + (v^2*curvature)^2
     // a^2 = ((b-v)((v+b)/2)/(d))^2 + (b^2*c)^2
-    // b = ±sqrt((v^2-2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4)))/(4 c^2 d^2+1))
-    // and 4 c^2 d^2+1!=0 and d!=0
-    // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+%28%28b-v%29%28%28v%2Bb%29%2F2%29%2F%28d%29%29%5E2+%2B+%28b%5E2*c%29%5E2
-    float vPossible1 = sqrt((v1 * v1 -
-                             2 * sqrt(d * d * (4 * a * a * c * c * d * d +
-                                               a * a - c * c * pow(v1, 4)))) /
-                            (4 * c * c * d * d + 1));
-
-    // b = ±sqrt((2 sqrt(d^2 (4 a^2 c^2 d^2+a^2-c^2 v^4))+v^2)/(4 c^2 d^2+1))
-    // and 4 c^2 d^2+1!=0 and d!=0
-    float vPossible2 = sqrt((2 * sqrt(d * d * (4 * a * a * c * c * d * d +
-                                               a * a - c * c * pow(v1, 4))) +
-                             v1 * v1) /
-                            (4 * c * c * d * d + 1));
-
-    float maxSpeed;
-    if (isnan(vPossible1) && isnan(vPossible2)) {
-        maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
-    } else {
-        if (isnan(vPossible1)) {
-            maxSpeed = vPossible2;
-        } else if (isnan(vPossible2)) {
-            maxSpeed = vPossible1;
-        } else {
-            maxSpeed = max(vPossible1, vPossible2);
-        }
+    // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+((b-v)((v%2Bb)%2F2)%2F(d))%5E2+%2B+(v%5E2*c)%5E2
+    double part = d * d * (a * a - c * c * pow(v1, 4));
+    if (part >= 0) {
+        float possible = sqrt(v1 * v1 + 2 * sqrt(part));
+        return std::min(v2, possible);
     }
+
+    float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
     return std::min(v2, maxSpeed);
 }
 

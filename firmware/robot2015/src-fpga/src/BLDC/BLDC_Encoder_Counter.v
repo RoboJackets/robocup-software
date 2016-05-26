@@ -1,9 +1,9 @@
 /*
 *  BLDC_Encoder_Counter.v
-*  
+*
 *  Give the encoder readings as an input and this gives the number times they have changed states as an output.
 *  A synchronous reset input is used to reset the count number.
-*  
+*
 */
 
 `ifndef _BLDC_ENCODER_COUNTER_
@@ -58,7 +58,7 @@ always @( posedge clk ) begin : ENCODER_COUNTER
         if ( count_up == 1 ) begin
             count <= count + 1;
         end else if ( count_down == 1 ) begin
-            count <= count - 1;
+            count <= count + 1;
         end
     end
 
