@@ -110,9 +110,9 @@ void Task_Controller(void const* args) {
 
         std::vector<uint16_t> enc_deltas(5);
 
-        FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-                                         enc_deltas.data(),
-                                         enc_deltas.capacity());
+        // FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
+        //                                  enc_deltas.data(),
+        //                                  enc_deltas.capacity());
 
         /*
          * The time since the last update is derived with the value of

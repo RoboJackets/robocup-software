@@ -182,6 +182,45 @@ int main() {
     radioProtocol.setUID(robotID);
     radioProtocol.start();
     radioProtocol.rxCallback = [](const rtp::ControlMessage* msg) {
+        // Set motor duty cycles based on bodyX, bodyY, bodyW
+
+        // scale down
+        // TODO: these values are made up
+        int16_t bodyX = msg->bodyX * 100 / 140.24;
+        int16_t bodyY = msg->bodyY * 100 / 140.24;
+        int16_t bodyW = msg->bodyW * 1 / 16;
+
+        std::array<int, 5> dutyCycles = {
+            -bodyX - bodyY + bodyW,
+            -bodyX + bodyY + bodyW,
+            bodyX + bodyY + bodyW,
+            bodyX - bodyY + bodyW,
+
+            // dribbler
+            0,
+        };
+
+        printf("Motor 0 duty cycle: %d\r\n", dutyCycles[0]);
+
+        // limit
+        for (int& dc : dutyCycles) {
+            uint8_t dir = 0;
+            if (dc < 0) {
+                dc = -dc;
+                dir = 1;
+            }
+            if (dc > 400) dc = 400;
+
+            // direction
+            dc |= dir << 9;
+        }
+
+        std::array<uint16_t, 5> uintDutyCycles;
+        for (int i = 0; i < 5; i++) uintDutyCycles[i] = dutyCycles[i];
+
+        FPGA::Instance->set_duty_cycles(uintDutyCycles.data(), uintDutyCycles.size());
+
+
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
         reply.battVoltage = 5;  // TODO
