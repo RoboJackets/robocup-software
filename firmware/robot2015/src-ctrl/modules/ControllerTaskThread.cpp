@@ -131,8 +131,8 @@ void Task_Controller(void const* args) {
         // ~400 is as high as we want to go
         dc = std::max(dc, (uint16_t)1);
         dc = std::min(dc, (uint16_t)400);
-        duty_cycles[1] = (150) | 1 << 9;
-        // duty_cycles[1] = 150;
+        // duty_cycles[1] = (150) | 1 << 9;
+        duty_cycles[1] = 150;
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
