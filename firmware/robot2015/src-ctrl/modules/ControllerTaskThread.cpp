@@ -147,7 +147,7 @@ void Task_Controller(void const* args) {
         const float ktarget_vel = (2 * kpi) * ktarget_rps;
 
         // @125 duty cycle, 1260rpm @ no load
-        TODO(remeasure the duty cycle and rad/s relationship of the motor)
+        TODO(remeasure the duty cycle and rad / s relationship of the motor)
         const float kmultiplier = 125.0f / (1260.0f * 2 * kpi / 60);
 
         const float vel_err = ktarget_vel - kvel;
