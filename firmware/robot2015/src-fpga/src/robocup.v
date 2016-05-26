@@ -201,7 +201,7 @@ wire                                    spi_master_busy,
                                         spi_master_valid;
 wire [ SPI_MASTER_DATA_WIDTH - 1:0 ]    spi_master_d0,
                                         spi_master_di;
-wire                                    spi_master_sel_num_i = ( spi_master_sel_num < (NUM_MOTORS - 1) ) ? spi_master_sel_num : 0;
+wire                                    spi_master_sel_num_i = ( spi_master_sel_num < NUM_MOTORS ) ? spi_master_sel_num : 0;
 
 // shift register for detecting falling edge of spi_master_busy signal
 reg [1:0] spi_master_busy_sr = 0;  always @(posedge sysclk) spi_master_busy_sr <= { spi_master_busy_sr[0], spi_master_busy };
