@@ -21,26 +21,25 @@ NET "phase_cL[0]" LOC="P103";
 NET "phase_aH[1]" LOC="P15";                     # Drive Motor 2
 NET "phase_aL[1]" LOC="P14";
 NET "phase_bH[1]" LOC="P4";
-NET "phase_bL[1]" LOC="P8";                     # ** CHANGED SINCE 100 SERIES (P10) **
+NET "phase_bL[1]" LOC="P8";
 NET "phase_cH[1]" LOC="P7";
 NET "phase_cL[1]" LOC="P5";
 
-NET "phase_aH[2]" LOC="P16";                    # Drive Motor 3
-NET "phase_aL[2]" LOC="P17";
-NET "phase_bH[2]" LOC="P82";
-NET "phase_bL[2]" LOC="P81";
-NET "phase_cH[2]" LOC="P77";
-NET "phase_cL[2]" LOC="P76";
+NET "phase_aH[2]" LOC="P125";                   # Drive Motor 3
+NET "phase_aL[2]" LOC="P124";
+NET "phase_bH[2]" LOC="P83";
+NET "phase_bL[2]" LOC="P85";
+NET "phase_cH[2]" LOC="P86";
+NET "phase_cL[2]" LOC="P87";
 
-NET "phase_aH[3]" LOC="P124";                   # Drive Motor 4
-NET "phase_aL[3]" LOC="P125";
-NET "phase_bH[3]" LOC="P83";
-NET "phase_bL[3]" LOC="P85";
-NET "phase_cH[3]" LOC="P86";
-NET "phase_cL[3]" LOC="P87";
+NET "phase_aH[3]" LOC="P16";                    # Drive Motor 4
+NET "phase_aL[3]" LOC="P17";
+NET "phase_bH[3]" LOC="P82";
+NET "phase_bL[3]" LOC="P81";
+NET "phase_cH[3]" LOC="P77";
+NET "phase_cL[3]" LOC="P76";
 
-                                                # Dribbler
-NET "phase_aH[4]" LOC="P32";                    # ** CHANGED SINCE 100 SERIES (P26) **
+NET "phase_aH[4]" LOC="P32";                    # Dribbler
 NET "phase_aL[4]" LOC="P26";
 NET "phase_bH[4]" LOC="P25";
 NET "phase_bL[4]" LOC="P23";
@@ -51,21 +50,21 @@ NET "phase_cL[4]" LOC="P70";
 #################################################
 #                  Hall Sensors                 #
 #################################################
-NET "hall_a[0]" LOC="P104";                     # Drive Motor 1
+NET "hall_a[0]" LOC="P106";                     # Drive Motor 1
 NET "hall_b[0]" LOC="P105";
-NET "hall_c[0]" LOC="P106";
+NET "hall_c[0]" LOC="P104";
 
-NET "hall_a[1]" LOC="P116";                     # Drive Motor 2
+NET "hall_a[1]" LOC="P112";                     # Drive Motor 2
 NET "hall_b[1]" LOC="P113";
-NET "hall_c[1]" LOC="P112";
+NET "hall_c[1]" LOC="P116";
 
-NET "hall_a[2]" LOC="P75";                      # Drive Motor 3
-NET "hall_b[2]" LOC="P74";
+NET "hall_a[2]" LOC="P74";                      # Drive Motor 3
+NET "hall_b[2]" LOC="P75";
 NET "hall_c[2]" LOC="P68";
 
-NET "hall_a[3]" LOC="P117";                     # Drive Motor 4
+NET "hall_a[3]" LOC="P123";                     # Drive Motor 4
 NET "hall_b[3]" LOC="P122";
-NET "hall_c[3]" LOC="P123";
+NET "hall_c[3]" LOC="P117";
 
 NET "hall_a[4]" LOC="P88";                      # Dribbler
 NET "hall_b[4]" LOC="P91";
