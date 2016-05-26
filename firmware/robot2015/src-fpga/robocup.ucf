@@ -40,7 +40,7 @@ NET "phase_cH[3]" LOC="P77";
 NET "phase_cL[3]" LOC="P76";
 
 NET "phase_aH[4]" LOC="P32";                    # Dribbler
-NET "phase_aL[4]" LOC="P29";
+NET "phase_aL[4]" LOC="P26";
 NET "phase_bH[4]" LOC="P25";
 NET "phase_bL[4]" LOC="P23";
 NET "phase_cH[4]" LOC="P21";
