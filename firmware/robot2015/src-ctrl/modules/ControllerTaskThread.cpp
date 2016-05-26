@@ -96,7 +96,7 @@ void Task_Controller(void const* args) {
 
     std::vector<uint16_t> duty_cycles;
 
-    const uint16_t kduty_cycle = 250;
+    const uint16_t kduty_cycle = 400;
     duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
@@ -158,13 +158,13 @@ void Task_Controller(void const* args) {
         dc = std::min(dc, static_cast<uint16_t>(511));
 
         ii++;
-        if (ii < 20) {
-            duty_cycle_all = kduty_cycle;
-        } else {
-            duty_cycle_all = 0;
-            spin_rev = !spin_rev;
-            ii = 0;
-        }
+        // if (ii < 20) {
+        //     duty_cycle_all = kduty_cycle;
+        // } else {
+        //     duty_cycle_all = 0;
+        //     spin_rev = !spin_rev;
+        //     ii = 0;
+        // }
 
         // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
 
