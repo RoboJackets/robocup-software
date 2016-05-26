@@ -62,7 +62,9 @@ localparam STARTUP_DELAY_WIDTH          =   (  5 );
 // (1/<freq-of-sysclk>) * (2^WATCHDOG_TIMER_CLK_WIDTH) * (2^WATCHDOG_TIMER_WIDTH)
 // `<freq-of-sysclk>` will usually be: (18.432*10^6)
 // When WATCHDOG_TIMER_CLK_WIDTH = 5, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~114ms
-localparam WATCHDOG_TIMER_CLK_WIDTH     =   (  2 );
+// When WATCHDOG_TIMER_CLK_WIDTH = 4, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~57ms
+// When WATCHDOG_TIMER_CLK_WIDTH = 3, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~28ms
+localparam WATCHDOG_TIMER_CLK_WIDTH     =   (  4 );
 localparam WATCHDOG_TIMER_WIDTH         =   ( 16 );     // KEEP THIS AT 16 to make things easy for the SPI_Slave
 
 reg sys_rdy = 0;

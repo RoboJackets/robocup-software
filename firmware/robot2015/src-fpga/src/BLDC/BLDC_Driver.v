@@ -51,7 +51,7 @@ output reg fault = 0;
 // Local parameters that can not be altered outside of this file
 // ===============================================
 localparam NUM_PHASES =                  3;  // This will always be constant
-localparam HALL_STATE_STEADY_COUNT =   120;  // Threshold value in determining when the hall effect sensor is locked into an error state
+localparam HALL_STATE_STEADY_COUNT =   105;  // Threshold value in determining when the hall effect sensor is locked into an error state
 
 localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
 localparam STARTUP_STEP_COUNTER_WIDTH =  7;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
@@ -66,7 +66,7 @@ localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << (DUTY_CYCLE_WIDTH + 3) );    
                                                                                             // set to a value that evenly divides into the PWM period from 'Phase_Driver.v'
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
-localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 5 / 100 );                   // 5% of the max
+localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 3 / 100 );                   // 3% of the max
 
 
 // State machine declarations for readability

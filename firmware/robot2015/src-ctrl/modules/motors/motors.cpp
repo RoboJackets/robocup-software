@@ -74,7 +74,7 @@ void motors_show() {
      *   time_in_us = [ 1265 * (1/18.432) * (2^2) ] = 274.5us
      */
     printf("\033[KLast Update:\t\t%-6.2fms\t%s\033E",
-           (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 4) / 1000,
+           (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 16) / 1000,
            status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\t\tFAULTS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
