@@ -96,7 +96,7 @@ void Task_Controller(void const* args) {
 
     std::vector<uint16_t> duty_cycles;
 
-    const uint16_t kduty_cycle = 100;
+    const uint16_t kduty_cycle = 250;
     duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
@@ -141,12 +141,13 @@ void Task_Controller(void const* args) {
         // the target rev/s
         const float ktarget_rps = 5;
 
-        // angular velocity of motor 2 in rad/s
+        // angular velocity of motor 3 in rad/s
         const float kvel = 2 * kpi * (enc_deltas[2] / ENC_TICKS_PER_TURN) / kdt;
 
         const float ktarget_vel = (2 * kpi) * ktarget_rps;
 
         // @125 duty cycle, 1260rpm @ no load
+        TODO(remeasure the duty cycle and rad/s relationship of the motor)
         const float kmultiplier = 125.0f / (1260.0f * 2 * kpi / 60);
 
         const float vel_err = ktarget_vel - kvel;
@@ -157,15 +158,18 @@ void Task_Controller(void const* args) {
         dc = std::min(dc, static_cast<uint16_t>(511));
 
         ii++;
-        if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
+        if (ii < 20) {
+            duty_cycle_all = kduty_cycle;
+        } else {
+            duty_cycle_all = 0;
+            spin_rev = !spin_rev;
+            ii = 0;
+        }
 
-        // if (ii < 80) {
-        //     duty_cycle_all = (kduty_cycle | (spin_rev << 9));
-        // } else {
-        //     ii = 0;
-        //     spin_rev = !spin_rev;
-        //     duty_cycle_all = 0;
-        // }
+        // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
+
+        // set the direction
+        duty_cycle_all |= (spin_rev << 9);
 
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 
