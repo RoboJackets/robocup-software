@@ -94,11 +94,15 @@ void Task_Controller(void const* args) {
 
     const uint16_t ENC_TICKS_PER_TURN = 2048;
 
-    Pid motor2pid(1, 0, 0);
+    Pid motor2pid(1.0, 0.0, 0.0);
 
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 125);
+
     uint32_t prev_us = us_ticker_read();
+
+    size_t ii = 0;
+
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
@@ -108,9 +112,11 @@ void Task_Controller(void const* args) {
             encDeltas, 5);
 
         // get dt in seconds, update prev_us
-        uint32_t t = us_ticker_read();
-        float dt = (t - prev_us) / 1000000.0f;
-        prev_us = t;
+        // uint32_t t = us_ticker_read();
+        // const float dt = (t - prev_us) / 1000000.0f;
+        // prev_us = t;
+
+        const float dt = encDeltas[4] * (1/18.432e6) * 64;
 
         // angular velocity of motor 2 in rad/s
         const float vel2 = 2 * M_PI * (encDeltas[1] / ENC_TICKS_PER_TURN) / dt;
@@ -123,16 +129,19 @@ void Task_Controller(void const* args) {
 
         const float vel2Err = targetVel2 - vel2;
 
-        // printf("vel: %f\r\n", vel2);
+        const bool spin_rev = true;
 
         uint16_t dc = targetVel2 * multiplier + motor2pid.run(vel2Err);
 
         // duty cycle values range 0-512
         // ~400 is as high as we want to go
-        dc = std::max(dc, (uint16_t)1);
-        dc = std::min(dc, (uint16_t)400);
-        // duty_cycles[1] = (150) | 1 << 9;
-        duty_cycles[1] = 150;
+        dc = std::min(std::max(dc, (uint16_t)1), (uint16_t)400);
+
+        ii++;
+        if ((ii % 100) == 0)
+            printf("dc: %u, dt: %f\r\n", dc, dt);
+
+        std::fill(duty_cycles.begin(), duty_cycles.end(), (45 | (spin_rev << 9)) );
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
