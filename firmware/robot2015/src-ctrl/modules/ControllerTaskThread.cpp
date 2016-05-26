@@ -102,7 +102,7 @@ void Task_Controller(void const* args) {
     size_t ii = 0;
     bool spin_rev = true;
 
-    uint16_t duty_cycle_all = 0;
+    uint16_t duty_cycle_all = kduty_cycle;
 
     while (true) {
         imu.getGyro(gyroVals);
