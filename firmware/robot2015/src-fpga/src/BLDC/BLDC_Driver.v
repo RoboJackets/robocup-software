@@ -66,7 +66,7 @@ localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << (DUTY_CYCLE_WIDTH + 3) );    
                                                                                             // set to a value that evenly divides into the PWM period from 'Phase_Driver.v'
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
-localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 3 / 100 );                   // 3% of the max
+localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 1 / 100 );                   // 1% of the max
 
 
 // State machine declarations for readability
@@ -337,7 +337,7 @@ end  // MOTOR_STATES
 
 
 // The Hall_Effect_Sensor module does not use synced inputs - no need to as long as we sync things at the top module.
-Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .direction( ~direction ), .u( u ), .z( z ) );
+Hall_Effect_Sensor hallEffectSensor ( .hall( hall_s ), .direction( direction ), .u( u ), .z( z ) );
 
 
 // The Phase_Driver module does not use synced inputs. Synchronization is taken care of within this module because it must be used along with the Hall_Effect_Sensor module.
@@ -355,6 +355,7 @@ begin : GEN_PHASE_DRIVER
         .clk                    ( clk                               ) ,
         .duty_cycle             ( (u[j] == 1) ? duty_cycle_s : 0    ) ,
         .high_z                 ( z[j]                              ) ,
+        // .high_z                 ( (z[j] || ~en ) ? 1 : 0          ) ,
         .pwm_high               ( phaseH_s[j]                       ) ,
         .pwm_low                ( phaseL_s[j]                       )
     );

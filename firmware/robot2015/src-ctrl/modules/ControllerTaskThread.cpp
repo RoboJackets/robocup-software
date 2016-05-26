@@ -103,20 +103,19 @@ void Task_Controller(void const* args) {
 
     size_t ii = 0;
 
+    bool spin_rev = false;
+
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
         uint16_t encDeltas[5];
-        FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-            encDeltas, 5);
+        // force the fpga's watchdog timer to expire
+        if (ii < 2000)
+            FPGA::Instance->set_duty_get_enc(duty_cycles.data(),
+                                             duty_cycles.size(), encDeltas, 5);
 
-        // get dt in seconds, update prev_us
-        // uint32_t t = us_ticker_read();
-        // const float dt = (t - prev_us) / 1000000.0f;
-        // prev_us = t;
-
-        const float dt = encDeltas[4] * (1/18.432e6) * 64;
+        const float dt = encDeltas[4] * (1 / 18.432e6) * 64;
 
         // angular velocity of motor 2 in rad/s
         const float vel2 = 2 * M_PI * (encDeltas[1] / ENC_TICKS_PER_TURN) / dt;
@@ -125,11 +124,9 @@ void Task_Controller(void const* args) {
         const float targetVel2 = (2 * M_PI) * targetRps2;
 
         // @125 duty cycle, 1260rpm @ no load
-        const float multiplier = 125.0f / (1260.0f*2*M_PI/60);
+        const float multiplier = 125.0f / (1260.0f * 2 * M_PI / 60);
 
         const float vel2Err = targetVel2 - vel2;
-
-        const bool spin_rev = true;
 
         uint16_t dc = targetVel2 * multiplier + motor2pid.run(vel2Err);
 
@@ -138,10 +135,15 @@ void Task_Controller(void const* args) {
         dc = std::min(std::max(dc, (uint16_t)1), (uint16_t)400);
 
         ii++;
-        if ((ii % 100) == 0)
-            printf("dc: %u, dt: %f\r\n", dc, dt);
+        // if ((ii % 1000) == 0) {
+        //     spin_rev = !spin_rev;
+        //     printf("reversing direction\r\n");
+        // }
 
-        std::fill(duty_cycles.begin(), duty_cycles.end(), (45 | (spin_rev << 9)) );
+        if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, dt);
+
+        std::fill(duty_cycles.begin(), duty_cycles.end(),
+                  (50 | (spin_rev << 9)));
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
