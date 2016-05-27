@@ -186,15 +186,12 @@ libusb_device_handle *&#160;</td><td class="memItemRight" valign="bottom"><b>_de
 <tr class="memitem:a13175984818f4acf43b96321ca23b474"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13175984818f4acf43b96321ca23b474"></a>
 libusb_transfer *&#160;</td><td class="memItemRight" valign="bottom"><b>_rxTransfers</b> [NumRXTransfers]</td></tr>
 <tr class="separator:a13175984818f4acf43b96321ca23b474"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a843493d805d6db77518084485ad89daf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a843493d805d6db77518084485ad89daf"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_rxBuffers</b> [NumRXTransfers][Reverse_Size+2]</td></tr>
-<tr class="separator:a843493d805d6db77518084485ad89daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68d61e81200ebff9372c4e969eadf1a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68d61e81200ebff9372c4e969eadf1a6"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_rxBuffers</b> [NumRXTransfers][rtp::Reverse_Size+2]</td></tr>
+<tr class="separator:a68d61e81200ebff9372c4e969eadf1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15c2a15aaece057ccb68bf5803cd2246"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15c2a15aaece057ccb68bf5803cd2246"></a>
 QMutex&#160;</td><td class="memItemRight" valign="bottom"><b>_mutex</b></td></tr>
 <tr class="separator:a15c2a15aaece057ccb68bf5803cd2246"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa011f3463d5c1647f2f90c5716ec6af5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa011f3463d5c1647f2f90c5716ec6af5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>_sequence</b></td></tr>
-<tr class="separator:aa011f3463d5c1647f2f90c5716ec6af5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c31b1ab72c8698bccad9db74b527651"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c31b1ab72c8698bccad9db74b527651"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>_printedError</b></td></tr>
 <tr class="separator:a0c31b1ab72c8698bccad9db74b527651"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -243,7 +240,7 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>NumRXTran
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_u_s_b_radio.html">USBRadio</a></li>
-    <li class="footer">Generated on Fri May 27 2016 02:28:38 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri May 27 2016 06:46:38 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

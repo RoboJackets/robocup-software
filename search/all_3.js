@@ -48,6 +48,7 @@ var searchData=
   ['console',['Console',['../class_console.html',1,'']]],
   ['constpathiterator',['ConstPathIterator',['../class_planning_1_1_const_path_iterator.html',1,'Planning']]],
   ['containsvertex',['containsVertex',['../class_geometry2d_1_1_polygon.html#a93a9c936d6e76f371bf03d4ecbdab9e8',1,'Geometry2d::Polygon']]],
+  ['controlmessage',['ControlMessage',['../structrtp_1_1_control_message.html',1,'rtp']]],
   ['coordinatedpass',['CoordinatedPass',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html',1,'gameplay::tactics::coordinated_pass']]],
   ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a99b33094d5e557edfc6409eaefc051e0',1,'OurRobot']]],
   ['createconfiguration',['createConfiguration',['../class_window_evaluator.html#a7ab9155d6a95badbfad544fba7472217',1,'WindowEvaluator']]],

@@ -309,6 +309,8 @@ var annotated =
     ] ],
     [ "rtp", null, [
       [ "header_data", "structrtp_1_1header__data.html", "structrtp_1_1header__data" ],
+      [ "ControlMessage", "structrtp_1_1_control_message.html", "structrtp_1_1_control_message" ],
+      [ "RobotStatusMessage", "structrtp_1_1_robot_status_message.html", "structrtp_1_1_robot_status_message" ],
       [ "packet", "classrtp_1_1packet.html", "classrtp_1_1packet" ]
     ] ],
     [ "test_config", null, [
@@ -386,6 +388,7 @@ var annotated =
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
     [ "QuaternionDemo", "class_quaternion_demo.html", "class_quaternion_demo" ],
     [ "Radio", "class_radio.html", "class_radio" ],
+    [ "RadioProtocol", "class_radio_protocol.html", "class_radio_protocol" ],
     [ "RefereeTab", "class_referee_tab.html", "class_referee_tab" ],
     [ "registerSetting_t", "structregister_setting__t.html", "structregister_setting__t" ],
     [ "Robot", "class_robot.html", "class_robot" ],

@@ -15,8 +15,7 @@ var class_u_s_b_radio =
     [ "_device", "class_u_s_b_radio.html#ace98721c14f9e72b9f56a456b8680ff4", null ],
     [ "_mutex", "class_u_s_b_radio.html#a15c2a15aaece057ccb68bf5803cd2246", null ],
     [ "_printedError", "class_u_s_b_radio.html#a0c31b1ab72c8698bccad9db74b527651", null ],
-    [ "_rxBuffers", "class_u_s_b_radio.html#a843493d805d6db77518084485ad89daf", null ],
+    [ "_rxBuffers", "class_u_s_b_radio.html#a68d61e81200ebff9372c4e969eadf1a6", null ],
     [ "_rxTransfers", "class_u_s_b_radio.html#a13175984818f4acf43b96321ca23b474", null ],
-    [ "_sequence", "class_u_s_b_radio.html#aa011f3463d5c1647f2f90c5716ec6af5", null ],
     [ "_usb_context", "class_u_s_b_radio.html#a60593a5a7f029d52e1f7d5479a829d3c", null ]
 ];

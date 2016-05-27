@@ -25,6 +25,7 @@ var searchData=
   ['configuration',['Configuration',['../class_configuration.html',1,'']]],
   ['console',['Console',['../class_console.html',1,'']]],
   ['constpathiterator',['ConstPathIterator',['../class_planning_1_1_const_path_iterator.html',1,'Planning']]],
+  ['controlmessage',['ControlMessage',['../structrtp_1_1_control_message.html',1,'rtp']]],
   ['coordinatedpass',['CoordinatedPass',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html',1,'gameplay::tactics::coordinated_pass']]],
   ['cubicbeziercontrolpoints',['CubicBezierControlPoints',['../struct_planning_1_1_cubic_bezier_control_points.html',1,'Planning']]]
 ];

@@ -1,5 +1,7 @@
 var NAVTREEINDEX2 =
 {
+"class_game_state.html#a786dcfa26ab3a847650031fda8d1563d":[12,0,47,27],
+"class_game_state.html#a7dba03aa97b5d4ff89d0dac54896db88":[12,0,47,17],
 "class_game_state.html#a81618e0403319d48e9f25347111f8157":[12,0,47,2],
 "class_game_state.html#a81618e0403319d48e9f25347111f8157a0c7c919903ffb50f3d56b0ef11fb5532":[12,0,47,2,4],
 "class_game_state.html#a81618e0403319d48e9f25347111f8157a4f5d0b7c436a153ecd00beee557bf597":[12,0,47,2,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX2 =
 "class_geometry2d_1_1_shape.html#ac791f35db4e0efa1a6f07a619100d700":[12,0,6,8,0],
 "class_geometry2d_1_1_shape.html#acf902863336b26eb2de2d9e03182913f":[12,0,6,8,1],
 "class_geometry2d_1_1_shape.html#aea5443fe39c94f1f5fd91d2432969815":[12,0,6,8,7],
-"class_geometry2d_1_1_shape_set.html":[12,0,6,9],
-"class_geometry2d_1_1_shape_set.html#a020564cb7e46e4114359fd9131eab63d":[12,0,6,9,7],
-"class_geometry2d_1_1_shape_set.html#a23071cb7abb791ae8bcaabaa5c403ee4":[12,0,6,9,2]
+"class_geometry2d_1_1_shape_set.html":[12,0,6,9]
 };

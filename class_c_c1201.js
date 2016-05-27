@@ -12,6 +12,7 @@ var class_c_c1201 =
     [ "isDebugEnabled", "class_c_c1201.html#ac674a3cbf7fdb135ed25dd3677650d20", null ],
     [ "isLocked", "class_c_c1201.html#a7a5eb80344511d8acafe4b6a2e441e2e", null ],
     [ "mode", "class_c_c1201.html#af9e29663bc3437b4abd6a75da23b6c9e", null ],
+    [ "printDebugInfo", "class_c_c1201.html#a34e7b96b51a1e611440515ef926fbe64", null ],
     [ "rand", "class_c_c1201.html#ae6716b32b53d05ddba22b65cc2909b83", null ],
     [ "readReg", "class_c_c1201.html#a121b93c498849f41b659e87638443808", null ],
     [ "readReg", "class_c_c1201.html#aafc629e895ad9d36848a7c9f4652aaf2", null ],
