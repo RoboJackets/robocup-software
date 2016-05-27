@@ -197,7 +197,7 @@ int main() {
             bodyX - bodyY + bodyW,
 
             // dribbler
-            0,
+            msg->dribbler * 3 / 2,
         };
 
         printf("Motor 0 duty cycle: %d\r\n", dutyCycles[0]);
