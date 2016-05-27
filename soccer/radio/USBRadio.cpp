@@ -106,12 +106,12 @@ bool USBRadio::open() {
             _device,  // handle of the device that will handle the transfer
             LIBUSB_ENDPOINT_IN |
                 2,  // address of the endpoint where this transfer will be sent
-            _rxBuffers[i],          // data buffer
+            _rxBuffers[i],      // data buffer
             rtp::Reverse_Size,  // length of data buffer
-            rxCompleted,  // callback function to be invoked on transfer
-                          // completion
-            this,         // user data to pass to callback function
-            0);           // timeout for the transfer in milliseconds
+            rxCompleted,        // callback function to be invoked on transfer
+                                // completion
+            this,               // user data to pass to callback function
+            0);                 // timeout for the transfer in milliseconds
         libusb_submit_transfer(_rxTransfers[i]);
     }
 
@@ -231,7 +231,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-
     // TODO(justin): remove this. skip every other packet because the system
     // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
     // definitely needs to be invesitgated.  If this rate-limit is removed and
@@ -276,7 +275,8 @@ void USBRadio::handleRxData(uint8_t* buf) {
     RadioRx packet = RadioRx();
 
     rtp::header_data* header = (rtp::header_data*)buf;
-    rtp::RobotStatusMessage* msg = (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
+    rtp::RobotStatusMessage* msg =
+        (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
     packet.set_timestamp(rx_time);
     packet.set_robot_id(msg->uid);
