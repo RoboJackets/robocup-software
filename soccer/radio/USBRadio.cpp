@@ -125,7 +125,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
     USBRadio* radio = (USBRadio*)transfer->user_data;
 
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED &&
-        transfer->actual_length == sizeof(rtp::RobotStatusMessage)) {
+        transfer->actual_length == rtp::Reverse_Size) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
     } else {
@@ -272,6 +272,7 @@ void USBRadio::receive() {
     libusb_handle_events_timeout(_usb_context, &tv);
 }
 
+// Note: this method assumes that sizeof(buf) == rtp::Reverse_Size
 void USBRadio::handleRxData(uint8_t* buf) {
     RJ::Time rx_time = RJ::timestamp();
 
@@ -281,8 +282,8 @@ void USBRadio::handleRxData(uint8_t* buf) {
     _reversePackets.push_back(RadioRx());
     RadioRx& packet = _reversePackets.back();
 
-    // TODO(justin): check size of buf?
-    rtp::RobotStatusMessage* msg = (rtp::RobotStatusMessage*)buf;
+    rtp::header_data* header = (rtp::header_data*)buf;
+    rtp::RobotStatusMessage* msg = (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
     // TODO(justin): add back missing fields
 
