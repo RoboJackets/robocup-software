@@ -74,7 +74,8 @@ public:
         // TODO: check packet size before parsing
         bool addressed = false;
         const rtp::ControlMessage* msg;
-        for (size_t slot = 0; slot < 6; slot++) {
+        size_t slot;
+        for (slot = 0; slot < 6; slot++) {
             size_t offset = slot * sizeof(rtp::ControlMessage);
             msg = (const rtp::ControlMessage*)(pkt->payload.data() + offset);
 
@@ -85,6 +86,7 @@ public:
         }
 
         /// time, in ms, for each reply slot
+        // TODO(justin): double-check this
         const uint32_t SLOT_DELAY = 2;
 
         if (addressed) {
@@ -94,7 +96,7 @@ public:
             _timeoutTimer.stop();
             _timeoutTimer.start(TIMEOUT_INTERVAL);
 
-            _replyTimer.start(1);  // TODO: use correct delay
+            _replyTimer.start(1 + SLOT_DELAY * slot);
 
             if (rxCallback) {
                 _reply = std::move(rxCallback(msg));
