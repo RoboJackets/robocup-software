@@ -17,7 +17,6 @@ using namespace Packet;
 static const int Control_Timeout = 1000;
 
 USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
-    _sequence = 0;
     _printedError = false;
     _device = nullptr;
     _usb_context = nullptr;
@@ -107,12 +106,12 @@ bool USBRadio::open() {
             _device,  // handle of the device that will handle the transfer
             LIBUSB_ENDPOINT_IN |
                 2,  // address of the endpoint where this transfer will be sent
-            _rxBuffers[i],          // data buffer
-            rtp::Reverse_Size + 2,  // length of data buffer
-            rxCompleted,  // callback function to be invoked on transfer
-                          // completion
-            this,         // user data to pass to callback function
-            0);           // timeout for the transfer in milliseconds
+            _rxBuffers[i],      // data buffer
+            rtp::Reverse_Size,  // length of data buffer
+            rxCompleted,        // callback function to be invoked on transfer
+                                // completion
+            this,               // user data to pass to callback function
+            0);                 // timeout for the transfer in milliseconds
         libusb_submit_transfer(_rxTransfers[i]);
     }
 
@@ -125,11 +124,9 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
     USBRadio* radio = (USBRadio*)transfer->user_data;
 
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED &&
-        transfer->actual_length == sizeof(rtp::RobotStatusMessage)) {
+        transfer->actual_length == rtp::Reverse_Size) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
-    } else {
-        cerr << "bad rx from usbradio" << endl;  // TODO: remove
     }
 
     // Restart the transfer
@@ -230,17 +227,16 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->song = robot.song();
         } else {
             // empty slot
-            msg->uid = 0;
+            msg->uid = rtp::INVALID_ROBOT_UID;
         }
     }
-
-    _sequence = (_sequence + 1) & 7;
 
     // TODO(justin): remove this. skip every other packet because the system
     // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
     // definitely needs to be invesitgated.  If this rate-limit is removed and
     // we try to send at 60Hz, we get TX buffer overflows in the base station.
-    if (_sequence % 2 == 0) return;
+    static int pktCount = 0;
+    if (pktCount++ % 2 == 0) return;
 
     // Send the forward packet
     int sent = 0;
@@ -272,39 +268,38 @@ void USBRadio::receive() {
     libusb_handle_events_timeout(_usb_context, &tv);
 }
 
+// Note: this method assumes that sizeof(buf) == rtp::Reverse_Size
 void USBRadio::handleRxData(uint8_t* buf) {
     RJ::Time rx_time = RJ::timestamp();
 
-    // TODO(justin): should the packet be populated before putting into the
-    // queue?
+    RadioRx packet = RadioRx();
 
-    _reversePackets.push_back(RadioRx());
-    RadioRx& packet = _reversePackets.back();
-
-    // TODO(justin): check size of buf?
-    rtp::RobotStatusMessage* msg = (rtp::RobotStatusMessage*)buf;
-
-    // TODO(justin): add back missing fields
+    rtp::header_data* header = (rtp::header_data*)buf;
+    rtp::RobotStatusMessage* msg =
+        (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
     packet.set_timestamp(rx_time);
     packet.set_robot_id(msg->uid);
-    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
     packet.set_battery(msg->battVoltage);
-// packet.set_kicker_status(buf[3]);
-
-// // Drive motor status
-// for (int i = 0; i < 4; ++i) {
-//     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
-// }
-
-// Dribbler status
-// packet.add_motor_status(MotorStatus(buf[5] & 3));
 
     // Hardware version
     packet.set_hardware_version(RJ2015);
 
-// packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
-// packet.set_kicker_voltage(buf[6]);
+    // ball sense
+    packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+
+    // TODO(justin): add back missing fields
+    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
+    // packet.set_kicker_status(buf[3]);
+    // // Drive motor status
+    // for (int i = 0; i < 4; ++i) {
+    //     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
+    // }
+    // Dribbler status
+    // packet.add_motor_status(MotorStatus(buf[5] & 3));
+    // packet.set_kicker_voltage(buf[6]);
+
+    _reversePackets.push_back(packet);
 }
 
 void USBRadio::channel(int n) {

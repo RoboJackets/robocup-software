@@ -815,28 +815,61 @@ int cmd_ps(cmd_args_t& args) {
     } else {
         unsigned int num_threads = 0;
 
+        static const std::array<const char*, 9> thread_states = {
+            "NA",
+            "RDY",
+            "RUN",
+            "WDL",
+            "WIT",
+            "WOR",
+            "WSM",
+            "WMB",
+            "WMX",
+        };
+
         // go down 2 rows
         printf("\r\033[B");
-        printf("ID\tPRIOR\tSTATE\tΔ TIME\t\tMAX\t\t");
-        // go back up and move left by 4
-        printf("\033[A\033[4D");
+        printf("ID\tPRIOR\tSTATE\tΔ TIME\t   MAX      ");
+        // go back up and move left by 9, then write a vertical line
+        printf("\033[A\033[9D|");
+        // go forward by 8
+        printf("\033[8C");
         printf("STACK SIZE (bytes)");
-        // go back 14 and then down again by 1
-        printf("\033[14D\033[B");
-        // now finish the line and flush it out
-        printf("ALLOC\t\tCURRENT\r\n");
+        // go back 18 and then down again by 1
+        printf("\033[18D\033[B");
+        // now finish the line and flush it out after adding another vertical
+        // line
+        printf("ALLOC    CURRENT (NOW|MAX)");
+        printf("\033[A\033[1D|\033[B\r\n");
         Console::Instance()->Flush();
 
-        // Iterate over active threads
-        //  14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file
-        for (unsigned int i = 0; i < 14; i++) {
+        /*
+         * Iterate over active threads
+         *
+         * 14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file, and
+         * 1 is added for our target (14 + 1) from RTX_CM_lib.h, so
+         * OS_TASKCNT = 15 here and is undefined since we build that
+         * part as a library.
+        */
+        for (unsigned int i = 0; i < 15; i++) {
             P_TCB p = (P_TCB)os_active_TCB[i];
 
             if (p != nullptr) {
-                printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
-                       p->task_id, p->prio, p->state, p->delta_time,
-                       ThreadMaxStackUsed(p), p->priv_stack,
-                       ThreadNowStackUsed(p));
+                // get the thread's stack sizes
+                size_t alloc = p->priv_stack;
+                size_t now = ThreadNowStackUsed(p);
+                size_t max_used = ThreadMaxStackUsed(p);
+                const char* state_now = thread_states[p->state];
+
+                // compute max and current utilization percentages
+                float util_now = static_cast<float>(now) / alloc;
+                float util_max = static_cast<float>(max_used) / alloc;
+
+                printf(
+                    "%-4u\t  %-3u\t %s\t%-6u\t   %-7u  %-7u  "
+                    "%-7u (%.0f%%|%-.0f%%)\r\n",
+                    p->task_id, p->prio, state_now, p->delta_time,
+                    max_used, alloc, now, util_now * 100, util_max * 100);
 
                 num_threads++;
             }

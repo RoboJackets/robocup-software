@@ -18,7 +18,7 @@ public:
     static const uint32_t TIMEOUT_INTERVAL = 2000;
 
     RadioProtocol(std::shared_ptr<CommModule> commModule, CC1201* radio,
-                  uint8_t uid = 0)
+                  uint8_t uid = rtp::INVALID_ROBOT_UID)
         : _commModule(commModule),
           _radio(radio),
           _uid(uid),
@@ -74,7 +74,8 @@ public:
         // TODO: check packet size before parsing
         bool addressed = false;
         const rtp::ControlMessage* msg;
-        for (size_t slot = 0; slot < 6; slot++) {
+        size_t slot;
+        for (slot = 0; slot < 6; slot++) {
             size_t offset = slot * sizeof(rtp::ControlMessage);
             msg = (const rtp::ControlMessage*)(pkt->payload.data() + offset);
 
@@ -85,6 +86,7 @@ public:
         }
 
         /// time, in ms, for each reply slot
+        // TODO(justin): double-check this
         const uint32_t SLOT_DELAY = 2;
 
         if (addressed) {
@@ -94,7 +96,7 @@ public:
             _timeoutTimer.stop();
             _timeoutTimer.start(TIMEOUT_INTERVAL);
 
-            _replyTimer.start(1);  // TODO: use correct delay
+            _replyTimer.start(1 + SLOT_DELAY * slot);
 
             if (rxCallback) {
                 _reply = std::move(rxCallback(msg));
@@ -102,7 +104,7 @@ public:
                 LOG(WARN, "no callback set");
             }
         } else {
-            LOG(WARN, "not addressed");
+            // TODO(justin): reply in an available slot
         }
     }
 

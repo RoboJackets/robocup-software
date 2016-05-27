@@ -181,7 +181,7 @@ int main() {
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.setUID(robotID);
     radioProtocol.start();
-    radioProtocol.rxCallback = [](const rtp::ControlMessage* msg) {
+    radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         // Set motor duty cycles based on bodyX, bodyY, bodyW
 
         // scale down
@@ -220,10 +220,10 @@ int main() {
 
         FPGA::Instance->set_duty_cycles(uintDutyCycles.data(), uintDutyCycles.size());
 
-
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
         reply.battVoltage = 5;  // TODO
+        reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
         vector<uint8_t> replyBuf;
         rtp::SerializeToVector(reply, &replyBuf);
