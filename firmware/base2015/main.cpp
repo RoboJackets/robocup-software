@@ -44,8 +44,8 @@ void radioRxHandler(rtp::packet* pkt) {
     // write packet content (including header) out to EPBULK_IN
     vector<uint8_t> buf;
     pkt->pack(&buf);
-    bool success = usbLink.writeNB(EPBULK_IN, buf.data(),
-                                   buf.size(), MAX_PACKET_SIZE_EPBULK);
+    bool success = usbLink.writeNB(EPBULK_IN, buf.data(), buf.size(),
+                                   MAX_PACKET_SIZE_EPBULK);
 
     // TODO(justin): add this message back in. For some reason, the usb system
     // reports failure *unless* I add a print statement inside

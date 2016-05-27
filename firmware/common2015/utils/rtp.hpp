@@ -70,7 +70,7 @@ struct ControlMessage {
 struct RobotStatusMessage {
     uint8_t uid;  // robot id
     uint8_t battVoltage;
-    uint8_t ballSenseStatus:2;
+    uint8_t ballSenseStatus : 2;
 };
 
 /**
@@ -88,7 +88,8 @@ public:
     }
 
     template <class T>
-    packet(const std::vector<T>& v, Port p = SINK) : header(p) {
+    packet(const std::vector<T>& v, Port p = SINK)
+        : header(p) {
         for (T val : v) payload.push_back(val);
     }
 
