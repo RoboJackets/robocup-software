@@ -1,19 +1,19 @@
 #include "commands.hpp"
 
-#include <map>
 #include <ctime>
+#include <map>
 #include <sstream>
 
-#include <rtos.h>
 #include <mbed_rpc.h>
-#include <CommModule.hpp>
+#include <rtos.h>
 #include <CC1201.hpp>
-#include <numparser.hpp>
+#include <CommModule.hpp>
 #include <logger.hpp>
+#include <numparser.hpp>
 
 #include "ds2411.hpp"
-#include "neostrip.hpp"
 #include "fpga.hpp"
+#include "neostrip.hpp"
 
 using std::string;
 using std::vector;
@@ -896,12 +896,12 @@ int cmd_radio(cmd_args_t& args) {
 
     if (args.size() == 1 || args.size() == 2) {
         rtp::packet pck("LINK TEST PAYLOAD");
-        unsigned int portNbr = rtp::port::DISCOVER;
+        rtp::Port portNbr = rtp::Port::LINK;
 
-        if (args.size() > 1) portNbr = atoi(args[1].c_str());
+        if (args.size() > 1) portNbr = (rtp::Port)atoi(args[1].c_str());
 
-        pck.port(portNbr);
-        pck.address(BASE_STATION_ADDR);
+        pck.header.port = portNbr;
+        pck.header.address = rtp::BASE_STATION_ADDRESS;
 
         if (args[0] == "show") {
             commModule->printInfo();
@@ -917,16 +917,16 @@ int cmd_radio(cmd_args_t& args) {
             commModule->receive(pck);
 
         } else if (args[0] == "loopback") {
-            pck.port(rtp::port::LINK);
+            pck.header.port = rtp::Port::LINK;
 
             unsigned int i = 1;
             if (args.size() > 1) {
                 i = atoi(args[1].c_str());
-                portNbr = rtp::port::LINK;
+                portNbr = rtp::Port::LINK;
             }
 
-            pck.port(portNbr);
-            pck.address(LOOPBACK_ADDR);
+            pck.header.port = portNbr;
+            pck.header.address = rtp::LOOPBACK_ADDRESS;
 
             printf(
                 "Placing %u, %u byte packet(s) in TX buffer with ACK set.\r\n",
@@ -984,8 +984,8 @@ int cmd_radio(cmd_args_t& args) {
             unsigned int pck_size = atoi(args[3].c_str());
             rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
-            pck.port(rtp::port::LINK);
-            pck.address(LOOPBACK_ADDR);
+            pck.header.port = rtp::Port::LINK;
+            pck.header.address = rtp::LOOPBACK_ADDRESS;
 
             printf(
                 "Beginning radio stress test with %u %u byte "
@@ -1011,13 +1011,13 @@ int cmd_radio(cmd_args_t& args) {
 
 int cmd_pong(cmd_args_t& args) {
     CommModule::Instance->setTxHandler((CommLink*)global_radio,
-                                       &CommLink::sendPacket, rtp::port::PING);
+                                       &CommLink::sendPacket, rtp::Port::PING);
 
     // Any packets received on the PING port are placed in a queue.
     Queue<rtp::packet, 2> pings;
     CommModule::Instance->setRxHandler([&pings](rtp::packet* pkt) {
         pings.put(new rtp::packet(*pkt));
-    }, rtp::port::PING);
+    }, rtp::Port::PING);
 
     while (true) {
         // Check for a ping packet.  If we got one, print a message and reply
@@ -1032,7 +1032,7 @@ int cmd_pong(cmd_args_t& args) {
             printf("Got ping %d\r\n", pingNbr);
 
             // reply with ack
-            CommModule::Instance->send(rtp::packet({pingNbr}, rtp::port::PING));
+            CommModule::Instance->send(rtp::packet({pingNbr}, rtp::Port::PING));
             printf("  Sent ack %d\r\n", pingNbr);
         }
 
@@ -1041,20 +1041,20 @@ int cmd_pong(cmd_args_t& args) {
     }
 
     // remove handlers, close port
-    CommModule::Instance->close(rtp::port::PING);
+    CommModule::Instance->close(rtp::Port::PING);
 
     return 0;
 }
 
 int cmd_ping(cmd_args_t& args) {
     CommModule::Instance->setTxHandler((CommLink*)global_radio,
-                                       &CommLink::sendPacket, rtp::port::PING);
+                                       &CommLink::sendPacket, rtp::Port::PING);
 
     // Any packets received on the PING port are placed in a queue
     Queue<rtp::packet, 2> acks;
     CommModule::Instance->setRxHandler([&acks](rtp::packet* pkt) {
         acks.put(new rtp::packet(*pkt));
-    }, rtp::port::PING);
+    }, rtp::Port::PING);
 
     uint8_t pingCount = 0;
     int lastPingTime = 0;
@@ -1066,7 +1066,7 @@ int cmd_ping(cmd_args_t& args) {
             lastPingTime = clock();
 
             CommModule::Instance->send(
-                rtp::packet({pingCount}, rtp::port::PING));
+                rtp::packet({pingCount}, rtp::Port::PING));
 
             printf("Sent ping %d\r\n", pingCount);
 
@@ -1087,7 +1087,7 @@ int cmd_ping(cmd_args_t& args) {
     }
 
     // remove handlers, close port
-    CommModule::Instance->close(rtp::port::PING);
+    CommModule::Instance->close(rtp::Port::PING);
 
     return 0;
 }
