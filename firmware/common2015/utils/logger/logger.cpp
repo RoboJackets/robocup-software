@@ -12,6 +12,7 @@ const char* LOG_LEVEL_STRING[] = {FOREACH_LEVEL(GENERATE_STRING)};
  * warning messages [but hopefully there's none of those :) ].
  */
 bool isLogging;  // = RJ_LOGGING_EN;
+bool isFileLogging;  // = RJ_FILE_LOGGING_EN;
 
 uint8_t rjLogLevel;
 
@@ -44,8 +45,6 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
     if (isLogging && logLevel <= rjLogLevel) {
         log_mutex.lock();
 
-        fp = fopen("/local/log.txt", "a");
-
         va_list args;
         static char newFormat[300];
         char time_buf[25];
@@ -62,7 +61,14 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         vprintf(newFormat, args);
         fflush(stdout);
 
-        if (fp != NULL) fprintf(fp, newFormat, args);
+	if (isFileLogging) {
+		FILE* fp = fopen("/local/log.txt", "a");
+
+	        if (fp != NULL) {
+			 fprintf(fp, newFormat, args);
+		}
+		fclose(fp);
+	}
 
         va_end(args);
 

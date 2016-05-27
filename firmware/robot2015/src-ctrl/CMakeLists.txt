@@ -59,3 +59,12 @@ add_custom_target(robot2015-prog
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"
 )
+
+# deletes the log file on the mbed
+file(WRITE ${PROJECT_SOURCE_DIR}/run/LOG.TXT "")
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/LOG.TXT)
+
+add_custom_target(
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/LOG.TXT
+    COMMENT "Deleting log file contents"
+)
