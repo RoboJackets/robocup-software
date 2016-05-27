@@ -104,7 +104,7 @@ public:
                 LOG(WARN, "no callback set");
             }
         } else {
-            LOG(WARN, "not addressed");
+            // TODO(justin): reply in an available slot
         }
     }
 
