@@ -17,7 +17,6 @@ using namespace Packet;
 static const int Control_Timeout = 1000;
 
 USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
-    _sequence = 0;
     _printedError = false;
     _device = nullptr;
     _usb_context = nullptr;
@@ -234,13 +233,13 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    _sequence = (_sequence + 1) & 7;
 
     // TODO(justin): remove this. skip every other packet because the system
     // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
     // definitely needs to be invesitgated.  If this rate-limit is removed and
     // we try to send at 60Hz, we get TX buffer overflows in the base station.
-    if (_sequence % 2 == 0) return;
+    static int pktCount = 0;
+    if (pktCount++ % 2 == 0) return;
 
     // Send the forward packet
     int sent = 0;
