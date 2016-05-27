@@ -83,8 +83,7 @@ public:
     }
 
     template <class T>
-    packet(const std::vector<T>& v, Port p = SINK)
-        : header(p) {
+    packet(const std::vector<T>& v, Port p = SINK) : header(p) {
         for (T val : v) payload.push_back(val);
     }
 
@@ -121,6 +120,7 @@ public:
 // Packet sizes
 constexpr unsigned int Forward_Size =
     sizeof(header_data) + 6 * sizeof(ControlMessage);
-constexpr unsigned int Reverse_Size = 7;
+constexpr unsigned int Reverse_Size =
+    sizeof(header_data) + sizeof(RobotStatusMessage);
 
 }  // namespace rtp
