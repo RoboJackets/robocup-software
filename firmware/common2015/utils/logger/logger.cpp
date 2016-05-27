@@ -19,7 +19,6 @@ uint8_t rjLogLevel;
 Mutex log_mutex;
 
 LocalFileSystem local2("local");
-FILE* fp = NULL;
 
 LogHelper::LogHelper(uint8_t logLevel, const char* source, int line,
                      const char* func) {
@@ -62,17 +61,31 @@ void log(uint8_t logLevel, const char* source, int line, const char* func,
         fflush(stdout);
 
 	if (isFileLogging) {
+		struct stat statbuf;
+
 		FILE* fp = fopen("/local/log.txt", "a");
 
 	        if (fp != NULL) {
-			 fprintf(fp, newFormat, args);
+			int prev = ftell(fp);
+			fseek(fp, 0, SEEK_END);
+			int size = ftell(fp);
+			fseek(fp, prev, SEEK_SET);
+
+			// Max size of MBED is 2MB
+			if (size > 512000) {
+				fclose(fp);
+				fp = fopen("/local/log.txt", "w");
+			}
 		}
+	
+		if (fp != NULL) {
+			fprintf(fp, newFormat, args);
+		}
+
 		fclose(fp);
 	}
 
         va_end(args);
-
-        fclose(fp);
 
         log_mutex.unlock();
     }
