@@ -118,7 +118,7 @@
         </Register>
         <Register>
             <Name>IOCFG2</Name>
-            <Value>0x06</Value>
+            <Value>0x13</Value>
         </Register>
         <Register>
             <Name>IQIC</Name>
