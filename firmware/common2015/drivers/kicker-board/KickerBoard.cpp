@@ -91,40 +91,51 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
     return true;
 }
 
-// this function enforces the design choice that each cmd must have an arg
-void KickerBoard::send_to_kicker(const uint8_t cmd, const uint8_t arg) {
+/* this function enforces the design choice that each cmd must have an arg
+ * and return a value */
+uint8_t KickerBoard::send_to_kicker(const uint8_t cmd, const uint8_t arg) {
+    chipSelect();
     _spi->write(cmd);
     _spi->write(arg);
+    uint8_t ret = _spi->write(NOP_ARG);
+    chipDeselect();
+    return ret;
 }
 
-void KickerBoard::kick(uint8_t time) {
-    chipSelect();
-    send_to_kicker(KICK_CMD, time);
-    chipDeselect();
+uint8_t KickerBoard::kick(uint8_t time) {
+    return send_to_kicker(KICK_CMD, time);
 }
 
-void KickerBoard::chip(uint8_t time) {
-    chipSelect();
-    send_to_kicker(CHIP_CMD, time);
-    chipDeselect();
+uint8_t KickerBoard::chip(uint8_t time) {
+    return send_to_kicker(CHIP_CMD, time);
 }
 
 uint8_t KickerBoard::read_voltage() {
-    chipSelect();
-    send_to_kicker(GET_VOLTAGE_CMD, NOP_ARG); // send our request
-    uint8_t volts = _spi->write(NOP_ARG); // recieve voltage
-    chipDeselect();
+    uint8_t volts =
+        send_to_kicker(GET_VOLTAGE_CMD, NOP_ARG);  // send our request
     return volts;
 }
 
-void KickerBoard::charge() {
-    chipSelect();
-    send_to_kicker(SET_CHARGE_CMD, ON_ARG);
-    chipDeselect();
+uint8_t KickerBoard::charge() {
+    return send_to_kicker(SET_CHARGE_CMD, ON_ARG) == SET_CHARGE_ACK;
 }
 
-void KickerBoard::stop_charging() {
-    chipSelect();
-    send_to_kicker(SET_CHARGE_CMD, OFF_ARG);
-    chipDeselect();
+uint8_t KickerBoard::stop_charging() {
+    return send_to_kicker(SET_CHARGE_CMD, OFF_ARG) == SET_CHARGE_ACK;
+}
+
+uint8_t KickerBoard::is_pingable() {
+    return send_to_kicker(PING_CMD, NOP_ARG) == PING_ACK;
+}
+
+uint8_t KickerBoard::is_kick_debug_pressed() {
+    return send_to_kicker(GET_BUTTON_STATE_CMD, DB_KICK_STATE);
+}
+
+uint8_t KickerBoard::is_chip_debug_pressed() {
+    return send_to_kicker(GET_BUTTON_STATE_CMD, DB_CHIP_STATE);
+}
+
+uint8_t KickerBoard::is_charge_debug_pressed() {
+    return send_to_kicker(GET_BUTTON_STATE_CMD, DB_CHARGE_STATE);
 }
