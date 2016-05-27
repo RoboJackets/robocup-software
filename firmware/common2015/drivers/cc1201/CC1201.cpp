@@ -72,11 +72,8 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
         CC1201_STATE_TXFIFO_ERROR) {
         // flush the TX buffer & return if the FIFO is in a corrupt state
-        flush_tx();
-
-        // set in IDLE mode and strobe back into RX to ensure the states will
-        // fall through calibration then return
-        idle();
+        strobe(CC1201_STROBE_SIDLE);
+        strobe(CC1201_STROBE_SFTX);
         strobe(CC1201_STROBE_SRX);
 
         return COMM_DEV_BUF_ERR;
