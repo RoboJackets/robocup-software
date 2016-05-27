@@ -18,7 +18,7 @@ public:
     static const uint32_t TIMEOUT_INTERVAL = 2000;
 
     RadioProtocol(std::shared_ptr<CommModule> commModule, CC1201* radio,
-                  uint8_t uid = 0)
+                  uint8_t uid = rtp::INVALID_ROBOT_UID)
         : _commModule(commModule),
           _radio(radio),
           _uid(uid),

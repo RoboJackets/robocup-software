@@ -13,6 +13,10 @@ const uint8_t BROADCAST_ADDRESS = 0;
 const uint8_t BASE_STATION_ADDRESS = 1;
 const uint8_t LOOPBACK_ADDRESS = 2;
 
+// The value 0 is a valid robot id, so we have to choose something else to
+// represent "null"
+const uint8_t INVALID_ROBOT_UID = 0xFF;
+
 template <typename PACKET_TYPE>
 void SerializeToVector(const PACKET_TYPE& pkt, std::vector<uint8_t>* buf) {
     const uint8_t* bytes = (const uint8_t*)&pkt;
