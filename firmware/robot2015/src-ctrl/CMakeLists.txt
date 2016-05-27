@@ -64,3 +64,5 @@ add_custom_target(robot2015-prog
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"
 )
+
+file(REMOVE ${PROJECT_SOURCE_DIR}/run/LOG.TXT)
