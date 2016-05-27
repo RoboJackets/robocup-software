@@ -44,7 +44,6 @@ protected:
     uint8_t _rxBuffers[NumRXTransfers][rtp::Reverse_Size + 2];
 
     QMutex _mutex;
-    int _sequence;
     bool _printedError;
 
     static void rxCompleted(struct libusb_transfer* transfer);
