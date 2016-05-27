@@ -186,8 +186,8 @@ int main() {
 
         // scale down
         // TODO: these values are made up
-        int16_t bodyX = msg->bodyX * 100 / 140.24;
-        int16_t bodyY = msg->bodyY * 100 / 140.24;
+        int16_t bodyX = msg->bodyX * 200 / 140.24;
+        int16_t bodyY = msg->bodyY * 200 / 140.24;
         int16_t bodyW = msg->bodyW * 1 / 16;
 
         std::array<int, 5> dutyCycles = {
@@ -209,7 +209,7 @@ int main() {
                 dc = -dc;
                 dir = 1;
             }
-            if (dc > 400) dc = 400;
+            if (dc > 500) dc = 500;
 
             // direction
             dc |= dir << 9;
