@@ -275,36 +275,33 @@ void USBRadio::receive() {
 void USBRadio::handleRxData(uint8_t* buf) {
     RJ::Time rx_time = RJ::timestamp();
 
-    // TODO(justin): should the packet be populated before putting into the
-    // queue?
-
-    _reversePackets.push_back(RadioRx());
-    RadioRx& packet = _reversePackets.back();
+    RadioRx packet = RadioRx();
 
     rtp::header_data* header = (rtp::header_data*)buf;
     rtp::RobotStatusMessage* msg = (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
-    // TODO(justin): add back missing fields
-
     packet.set_timestamp(rx_time);
     packet.set_robot_id(msg->uid);
-    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
     packet.set_battery(msg->battVoltage);
-// packet.set_kicker_status(buf[3]);
-
-// // Drive motor status
-// for (int i = 0; i < 4; ++i) {
-//     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
-// }
-
-// Dribbler status
-// packet.add_motor_status(MotorStatus(buf[5] & 3));
 
     // Hardware version
     packet.set_hardware_version(RJ2015);
 
-// packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
-// packet.set_kicker_voltage(buf[6]);
+    // ball sense
+    packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+
+    // TODO(justin): add back missing fields
+    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
+    // packet.set_kicker_status(buf[3]);
+    // // Drive motor status
+    // for (int i = 0; i < 4; ++i) {
+    //     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
+    // }
+    // Dribbler status
+    // packet.add_motor_status(MotorStatus(buf[5] & 3));
+    // packet.set_kicker_voltage(buf[6]);
+
+    _reversePackets.push_back(packet);
 }
 
 void USBRadio::channel(int n) {

@@ -181,10 +181,11 @@ int main() {
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.setUID(robotID);
     radioProtocol.start();
-    radioProtocol.rxCallback = [](const rtp::ControlMessage* msg) {
+    radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
         reply.battVoltage = 5;  // TODO
+        reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
         vector<uint8_t> replyBuf;
         rtp::SerializeToVector(reply, &replyBuf);

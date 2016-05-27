@@ -70,6 +70,7 @@ struct ControlMessage {
 struct RobotStatusMessage {
     uint8_t uid;  // robot id
     uint8_t battVoltage;
+    uint8_t ballSenseStatus:2;
 };
 
 /**
