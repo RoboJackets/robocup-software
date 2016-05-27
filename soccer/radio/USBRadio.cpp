@@ -127,8 +127,6 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
         transfer->actual_length == rtp::Reverse_Size) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
-    } else {
-        cerr << "bad rx from usbradio" << endl;  // TODO: remove
     }
 
     // Restart the transfer
