@@ -274,16 +274,26 @@ void USBRadio::handleRxData(uint8_t* buf) {
 
     RadioRx packet = RadioRx();
 
+    // Unit conversions
+    //
+    // theoretical
+    //static const float Batt_VConv_2015 = 0.100546875f;
+    //
+    // real world tested
+    static const float Batt_VConv_2015 = 0.09884f;
+
     rtp::header_data* header = (rtp::header_data*)buf;
     rtp::RobotStatusMessage* msg =
         (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
     packet.set_timestamp(rx_time);
     packet.set_robot_id(msg->uid);
-    packet.set_battery(msg->battVoltage);
 
     // Hardware version
     packet.set_hardware_version(RJ2015);
+
+    // battery voltage
+    packet.set_battery(msg->battVoltage * Batt_VConv_2015);
 
     // ball sense
     packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));

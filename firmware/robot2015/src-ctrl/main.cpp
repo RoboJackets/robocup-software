@@ -245,6 +245,14 @@ int main() {
             errorBitmask |= !status.hallOK << pair.second;
         }
 
+        // get the battery voltage
+        AnalogIn batt(RJ_BATT_SENSE);
+
+        uint8_t batt_vol = (batt.read_u16() >> 8);
+
+        const float batt_vol_in_soccer = batt_vol * 0.09884f;
+        printf("battery voltage: %.5fV\r\n", batt_vol_in_soccer);
+
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
