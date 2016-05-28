@@ -6,7 +6,7 @@ import main
 import math
 import enum
 import time
-import skills.touchball
+import skills.touch_ball
 import skills._kick
 import skills.pass_receive
 
@@ -143,7 +143,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
 
         self.remove_subbehavior('capture')
 
-        capture = skills.touchball.TouchBall()
+        capture = skills.touch_ball.TouchBall()
         capture.dribbler_power = skills.pass_receive.PassReceive.DribbleSpeed
         self.add_subbehavior(capture, 'capture', required=True)
 
