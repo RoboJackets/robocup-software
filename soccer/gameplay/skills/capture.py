@@ -24,9 +24,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         fine_approach = 2
 
     ## Capture Constructor
-    # onlyApproach - If true, any turning functions are turned off,
+    # faceBall - If false, any turning functions are turned off,
     # useful for using capture to reflect/bounce moving ballls.
-    def __init__(self, onlyApproach=False):
+    def __init__(self, faceBall=True):
         super().__init__(continuous=False)
 
         self.add_state(Capture.State.course_approach,
@@ -54,7 +54,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.lastApproachTarget = None
 
-        self.onlyApproach = onlyApproach
+        self.faceBall = faceBall
 
     def bot_to_ball(self):
         return main.ball().pos - self.robot.pos
@@ -107,7 +107,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
 
-        if (not self.onlyApproach):
+        if (self.faceBall):
             self.robot.face(main.ball().pos)
 
         if (self.lastApproachTarget != None and
@@ -129,7 +129,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
 
-        if (not self.onlyApproach):
+        if (self.faceBall):
             self.robot.face(main.ball().pos)
 
         # TODO(ashaw596): explain this math a bit
