@@ -97,8 +97,8 @@ int main() {
 
     // Start a periodic blinking LED to show system activity
     // This is set to never timeout, so it will only stop if the system halts
-    // StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
-    //                                  RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
+    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
+                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
@@ -167,8 +167,8 @@ int main() {
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
-    // Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
-    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
     InitializeCommModule(sharedSPI);
@@ -177,10 +177,11 @@ int main() {
     motors_Init();
 
     // This is changed according to what the selector is set to
-    uint8_t robotID = 0;
+    uint8_t robotID = rotarySelector.read();
 
     // Setup radio protocol handling
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
+    radioProtocol.setUID(robotID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         // Set motor duty cycles based on bodyX, bodyY, bodyW
@@ -200,8 +201,6 @@ int main() {
             // dribbler
             msg->dribbler * 3 / 2,
         };
-
-        printf("Motor 0 duty cycle: %d\r\n", dutyCycles[0]);
 
         // limit
         for (int& dc : dutyCycles) {
@@ -236,7 +235,7 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
-    // console_task.signal_set(SUB_TASK_CONTINUE);
+    console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
@@ -303,7 +302,6 @@ int main() {
         rgbLED.write();
 
         robotID = rotarySelector.read();
-        radioProtocol.setUID(robotID);
     }
 }
 

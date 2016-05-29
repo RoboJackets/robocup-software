@@ -19,7 +19,7 @@ Console::Console() : pc(USBTX, USBRX) {
     attachInputHandler();
 
     // reserve space for 5 lines in rx buffer
-    _rxBuffer.reserve(400);
+    // _rxBuffer.reserve(400);
 }
 
 Console::~Console() {}
