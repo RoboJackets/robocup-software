@@ -2,6 +2,10 @@
 
 `include "robocup.vh"
 
+`ifndef DRIBBLER_MOTOR_DISABLE
+`include "BLDC_Motor_No_Encoder.v"
+`endif
+
 `include "BLDC_Motor.v"
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
