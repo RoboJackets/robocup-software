@@ -60,7 +60,7 @@ struct ControlMessage {
     int16_t bodyX;
     int16_t bodyY;
     int16_t bodyW;
-    int8_t dribbler;
+    uint8_t dribbler;
     uint8_t kickStrength;
     unsigned shootMode : 1;    // 0 = kick, 1 = chip
     unsigned triggerMode : 2;  // 0 = off, 1 = immediate, 2 = on break beam

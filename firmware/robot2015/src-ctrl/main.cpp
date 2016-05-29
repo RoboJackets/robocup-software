@@ -200,9 +200,8 @@ int main() {
             -bodyX + bodyY + bodyW,
             bodyX + bodyY + bodyW,
             bodyX - bodyY + bodyW,
-
             // dribbler
-            msg->dribbler * 3 / 2,
+            msg->dribbler,
         };
 
         // limit
@@ -212,7 +211,7 @@ int main() {
                 dc = -dc;
                 dir = 1;
             }
-            if (dc > 500) dc = 500;
+            if (dc > 511) dc = 511;
 
             // direction
             dc |= dir << 9;
@@ -221,6 +220,7 @@ int main() {
         std::array<uint16_t, 5> uintDutyCycles;
         for (int i = 0; i < 5; i++) uintDutyCycles[i] = dutyCycles[i];
 
+        // printf("dribbler:\t%u (%u)\r\n", uintDutyCycles[4], msg->dribbler);
         FPGA::Instance->set_duty_cycles(uintDutyCycles.data(), uintDutyCycles.size());
 
         rtp::RobotStatusMessage reply;
