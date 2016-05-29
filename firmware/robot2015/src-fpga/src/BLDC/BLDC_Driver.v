@@ -358,7 +358,6 @@ begin : GEN_PHASE_DRIVER
         .clk                    ( clk                               ) ,
         .duty_cycle             ( (u[j] == 1) ? duty_cycle_s : 0    ) ,
         .high_z                 ( z[j]                              ) ,
-        // .high_z                 ( (z[j] || (z[j] && ~en )) ? 1 : 0  ) ,
         .pwm_high               ( phaseH_s[j]                       ) ,
         .pwm_low                ( phaseL_s[j]                       )
     );

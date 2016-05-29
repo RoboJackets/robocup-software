@@ -137,7 +137,7 @@ BLDC_Driver #(                  // Instantiation of the motor driving module
     .clk                        ( clk                       ) ,
     .en                         ( en                        ) ,
     .hall                       ( hall                      ) ,
-    .direction                  ( duty_cycle[DUTY_CYCLE_WIDTH-1] ) ,
+    .direction                  ( 1'b1                      ) ,
     .duty_cycle                 ( { duty_cycle[DUTY_CYCLE_WIDTH-2:0], 1'b0 } ) ,
     .phaseH                     ( phaseH                    ) ,
     .phaseL                     ( phaseL                    ) ,

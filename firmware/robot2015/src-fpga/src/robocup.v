@@ -641,7 +641,7 @@ endgenerate
 
 `ifndef DRIBBLER_MOTOR_DISABLE
 BLDC_Motor_No_Encoder #(
-    .MAX_DUTY_CYCLE         ( (1 << DUTY_CYCLE_WIDTH) - 1           ) ,
+    .MAX_DUTY_CYCLE         ( (1 << (DUTY_CYCLE_WIDTH - 1)) - 1     ) ,
     .HALL_COUNT_WIDTH       ( HALL_COUNT_WIDTH                      )
     ) dribbler_motor (
     .clk                    ( sysclk                                ) ,
