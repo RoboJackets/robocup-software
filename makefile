@@ -2,7 +2,7 @@ MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led
 
-GDB=$(shell if [ "`uname`" = "Linux" ]; then echo gdb; else echo lldb; fi)
+GDB=$(shell if [ "`uname`" = "Linux" ]; then echo gdb --args; else echo lldb --; fi)
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -39,7 +39,7 @@ debug: all
 debug-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
-	$(GDB) --args ./run/soccer -sim
+	$(GDB) ./run/soccer -sim
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
