@@ -167,14 +167,17 @@ int main() {
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
-    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    // Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
     InitializeCommModule(sharedSPI);
 
     // Make sure all of the motors are enabled
     motors_Init();
+
+    // The battery voltage is set every cycle of main
+    uint8_t battVoltage = 0;
 
     // This is changed according to what the selector is set to
     uint8_t robotID = rotarySelector.read();
@@ -222,7 +225,7 @@ int main() {
 
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
-        reply.battVoltage = 5;  // TODO
+        reply.battVoltage = battVoltage;
         reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
         vector<uint8_t> replyBuf;
@@ -235,7 +238,7 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
-    console_task.signal_set(SUB_TASK_CONTINUE);
+    // console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
@@ -302,6 +305,10 @@ int main() {
         rgbLED.write();
 
         robotID = rotarySelector.read();
+
+        // get the battery voltage
+        AnalogIn batt(RJ_BATT_SENSE);
+        battVoltage = (batt.read_u16() >> 8);
     }
 }
 
