@@ -176,10 +176,11 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
+    // This is changed according to what the selector is set to
+    uint8_t robotID = 0;
+
     // Setup radio protocol handling
-    const uint8_t robotID = 2;  // TODO: remove
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
-    radioProtocol.setUID(robotID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         // Set motor duty cycles based on bodyX, bodyY, bodyW
@@ -300,6 +301,9 @@ int main() {
             rgbLED.setPixel(0, NeoColorGreen);
         }
         rgbLED.write();
+
+        robotID = rotarySelector.read();
+        radioProtocol.setUID(robotID);
     }
 }
 
