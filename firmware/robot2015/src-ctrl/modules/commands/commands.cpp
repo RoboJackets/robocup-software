@@ -816,15 +816,7 @@ int cmd_ps(cmd_args_t& args) {
         unsigned int num_threads = 0;
 
         static const std::array<const char*, 9> thread_states = {
-            "NA",
-            "RDY",
-            "RUN",
-            "WDL",
-            "WIT",
-            "WOR",
-            "WSM",
-            "WMB",
-            "WMX",
+            "NA", "RDY", "RUN", "WDL", "WIT", "WOR", "WSM", "WMB", "WMX",
         };
 
         // go down 2 rows
@@ -868,8 +860,8 @@ int cmd_ps(cmd_args_t& args) {
                 printf(
                     "%-4u\t  %-3u\t %s\t%-6u\t   %-7u  %-7u  "
                     "%-7u (%.0f%%|%-.0f%%)\r\n",
-                    p->task_id, p->prio, state_now, p->delta_time,
-                    max_used, alloc, now, util_now * 100, util_max * 100);
+                    p->task_id, p->prio, state_now, p->delta_time, max_used,
+                    alloc, now, util_now * 100, util_max * 100);
 
                 num_threads++;
             }
