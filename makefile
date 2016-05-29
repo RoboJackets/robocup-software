@@ -39,7 +39,7 @@ debug: all
 debug-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
-	gdb ./run/soccer
+	$(GDB) --args ./run/soccer -sim
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
