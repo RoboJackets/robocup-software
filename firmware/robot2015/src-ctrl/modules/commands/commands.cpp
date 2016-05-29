@@ -1,19 +1,19 @@
 #include "commands.hpp"
 
-#include <map>
 #include <ctime>
+#include <map>
 #include <sstream>
 
-#include <rtos.h>
 #include <mbed_rpc.h>
-#include <CommModule.hpp>
+#include <rtos.h>
 #include <CC1201.hpp>
-#include <numparser.hpp>
+#include <CommModule.hpp>
 #include <logger.hpp>
+#include <numparser.hpp>
 
 #include "ds2411.hpp"
-#include "neostrip.hpp"
 #include "fpga.hpp"
+#include "neostrip.hpp"
 
 using std::string;
 using std::vector;
@@ -815,28 +815,61 @@ int cmd_ps(cmd_args_t& args) {
     } else {
         unsigned int num_threads = 0;
 
+        static const std::array<const char*, 9> thread_states = {
+            "NA",
+            "RDY",
+            "RUN",
+            "WDL",
+            "WIT",
+            "WOR",
+            "WSM",
+            "WMB",
+            "WMX",
+        };
+
         // go down 2 rows
         printf("\r\033[B");
-        printf("ID\tPRIOR\tSTATE\tΔ TIME\t\tMAX\t\t");
-        // go back up and move left by 4
-        printf("\033[A\033[4D");
+        printf("ID\tPRIOR\tSTATE\tΔ TIME\t   MAX      ");
+        // go back up and move left by 9, then write a vertical line
+        printf("\033[A\033[9D|");
+        // go forward by 8
+        printf("\033[8C");
         printf("STACK SIZE (bytes)");
-        // go back 14 and then down again by 1
-        printf("\033[14D\033[B");
-        // now finish the line and flush it out
-        printf("ALLOC\t\tCURRENT\r\n");
+        // go back 18 and then down again by 1
+        printf("\033[18D\033[B");
+        // now finish the line and flush it out after adding another vertical
+        // line
+        printf("ALLOC    CURRENT (NOW|MAX)");
+        printf("\033[A\033[1D|\033[B\r\n");
         Console::Instance()->Flush();
 
-        // Iterate over active threads
-        //  14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file
-        for (unsigned int i = 0; i < 14; i++) {
+        /*
+         * Iterate over active threads
+         *
+         * 14 is taken from OS_TASKCNT in the RTX_Conf_CM.c file, and
+         * 1 is added for our target (14 + 1) from RTX_CM_lib.h, so
+         * OS_TASKCNT = 15 here and is undefined since we build that
+         * part as a library.
+        */
+        for (unsigned int i = 0; i < 15; i++) {
             P_TCB p = (P_TCB)os_active_TCB[i];
 
             if (p != nullptr) {
-                printf("%-4u\t%-5u\t%-5u\t%-6u\t\t%-10u\t%-10u\t%-10u\r\n",
-                       p->task_id, p->prio, p->state, p->delta_time,
-                       ThreadMaxStackUsed(p), p->priv_stack,
-                       ThreadNowStackUsed(p));
+                // get the thread's stack sizes
+                size_t alloc = p->priv_stack;
+                size_t now = ThreadNowStackUsed(p);
+                size_t max_used = ThreadMaxStackUsed(p);
+                const char* state_now = thread_states[p->state];
+
+                // compute max and current utilization percentages
+                float util_now = static_cast<float>(now) / alloc;
+                float util_max = static_cast<float>(max_used) / alloc;
+
+                printf(
+                    "%-4u\t  %-3u\t %s\t%-6u\t   %-7u  %-7u  "
+                    "%-7u (%.0f%%|%-.0f%%)\r\n",
+                    p->task_id, p->prio, state_now, p->delta_time,
+                    max_used, alloc, now, util_now * 100, util_max * 100);
 
                 num_threads++;
             }
@@ -863,12 +896,12 @@ int cmd_radio(cmd_args_t& args) {
 
     if (args.size() == 1 || args.size() == 2) {
         rtp::packet pck("LINK TEST PAYLOAD");
-        unsigned int portNbr = rtp::port::DISCOVER;
+        rtp::Port portNbr = rtp::Port::LINK;
 
-        if (args.size() > 1) portNbr = atoi(args[1].c_str());
+        if (args.size() > 1) portNbr = (rtp::Port)atoi(args[1].c_str());
 
-        pck.port(portNbr);
-        pck.address(BASE_STATION_ADDR);
+        pck.header.port = portNbr;
+        pck.header.address = rtp::BASE_STATION_ADDRESS;
 
         if (args[0] == "show") {
             commModule->printInfo();
@@ -884,16 +917,16 @@ int cmd_radio(cmd_args_t& args) {
             commModule->receive(pck);
 
         } else if (args[0] == "loopback") {
-            pck.port(rtp::port::LINK);
+            pck.header.port = rtp::Port::LINK;
 
             unsigned int i = 1;
             if (args.size() > 1) {
                 i = atoi(args[1].c_str());
-                portNbr = rtp::port::LINK;
+                portNbr = rtp::Port::LINK;
             }
 
-            pck.port(portNbr);
-            pck.address(LOOPBACK_ADDR);
+            pck.header.port = portNbr;
+            pck.header.address = rtp::LOOPBACK_ADDRESS;
 
             printf(
                 "Placing %u, %u byte packet(s) in TX buffer with ACK set.\r\n",
@@ -951,8 +984,8 @@ int cmd_radio(cmd_args_t& args) {
             unsigned int pck_size = atoi(args[3].c_str());
             rtp::packet pck(std::string(pck_size - 2, '~') + ".");
 
-            pck.port(rtp::port::LINK);
-            pck.address(LOOPBACK_ADDR);
+            pck.header.port = rtp::Port::LINK;
+            pck.header.address = rtp::LOOPBACK_ADDRESS;
 
             printf(
                 "Beginning radio stress test with %u %u byte "
@@ -978,13 +1011,13 @@ int cmd_radio(cmd_args_t& args) {
 
 int cmd_pong(cmd_args_t& args) {
     CommModule::Instance->setTxHandler((CommLink*)global_radio,
-                                       &CommLink::sendPacket, rtp::port::PING);
+                                       &CommLink::sendPacket, rtp::Port::PING);
 
     // Any packets received on the PING port are placed in a queue.
     Queue<rtp::packet, 2> pings;
     CommModule::Instance->setRxHandler([&pings](rtp::packet* pkt) {
         pings.put(new rtp::packet(*pkt));
-    }, rtp::port::PING);
+    }, rtp::Port::PING);
 
     while (true) {
         // Check for a ping packet.  If we got one, print a message and reply
@@ -999,7 +1032,7 @@ int cmd_pong(cmd_args_t& args) {
             printf("Got ping %d\r\n", pingNbr);
 
             // reply with ack
-            CommModule::Instance->send(rtp::packet({pingNbr}, rtp::port::PING));
+            CommModule::Instance->send(rtp::packet({pingNbr}, rtp::Port::PING));
             printf("  Sent ack %d\r\n", pingNbr);
         }
 
@@ -1008,20 +1041,20 @@ int cmd_pong(cmd_args_t& args) {
     }
 
     // remove handlers, close port
-    CommModule::Instance->close(rtp::port::PING);
+    CommModule::Instance->close(rtp::Port::PING);
 
     return 0;
 }
 
 int cmd_ping(cmd_args_t& args) {
     CommModule::Instance->setTxHandler((CommLink*)global_radio,
-                                       &CommLink::sendPacket, rtp::port::PING);
+                                       &CommLink::sendPacket, rtp::Port::PING);
 
     // Any packets received on the PING port are placed in a queue
     Queue<rtp::packet, 2> acks;
     CommModule::Instance->setRxHandler([&acks](rtp::packet* pkt) {
         acks.put(new rtp::packet(*pkt));
-    }, rtp::port::PING);
+    }, rtp::Port::PING);
 
     uint8_t pingCount = 0;
     int lastPingTime = 0;
@@ -1033,7 +1066,7 @@ int cmd_ping(cmd_args_t& args) {
             lastPingTime = clock();
 
             CommModule::Instance->send(
-                rtp::packet({pingCount}, rtp::port::PING));
+                rtp::packet({pingCount}, rtp::Port::PING));
 
             printf("Sent ping %d\r\n", pingCount);
 
@@ -1054,7 +1087,7 @@ int cmd_ping(cmd_args_t& args) {
     }
 
     // remove handlers, close port
-    CommModule::Instance->close(rtp::port::PING);
+    CommModule::Instance->close(rtp::Port::PING);
 
     return 0;
 }

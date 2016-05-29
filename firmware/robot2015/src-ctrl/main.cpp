@@ -1,28 +1,29 @@
 // ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
+#include <array>
 #include <ctime>
 #include <string>
-#include <array>
 
 #include <rtos.h>
 
-#include <helper-funcs.hpp>
-#include <watchdog.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <helper-funcs.hpp>
+#include <logger.hpp>
+#include <watchdog.hpp>
 
-#include "robot-devices.hpp"
-#include "task-signals.hpp"
+#include "BallSense.hpp"
+#include "CC1201.cpp"
+#include "KickerBoard.hpp"
+#include "RadioProtocol.hpp"
+#include "RotarySelector.hpp"
+#include "RtosTimerHelper.hpp"
+#include "SharedSPI.hpp"
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "neostrip.hpp"
-#include "CC1201.cpp"
-#include "BallSense.hpp"
-#include "SharedSPI.hpp"
-#include "KickerBoard.hpp"
-#include "RtosTimerHelper.hpp"
 #include "io-expander.hpp"
-#include "RotarySelector.hpp"
+#include "neostrip.hpp"
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 
 using namespace std;
 
@@ -174,6 +175,22 @@ int main() {
 
     // Make sure all of the motors are enabled
     motors_Init();
+
+    // Setup radio protocol handling
+    const uint8_t robotID = 2;  // TODO: remove
+    RadioProtocol radioProtocol(CommModule::Instance, global_radio);
+    radioProtocol.setUID(robotID);
+    radioProtocol.start();
+    radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
+        rtp::RobotStatusMessage reply;
+        reply.uid = robotID;
+        reply.battVoltage = 5;  // TODO
+        reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
+
+        vector<uint8_t> replyBuf;
+        rtp::SerializeToVector(reply, &replyBuf);
+        return replyBuf;
+    };
 
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
