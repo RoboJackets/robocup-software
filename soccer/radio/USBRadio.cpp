@@ -277,7 +277,7 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // Unit conversions
     //
     // theoretical
-    //static const float Batt_VConv_2015 = 0.100546875f;
+    // static const float Batt_VConv_2015 = 0.100546875f;
     //
     // real world tested
     static const float Batt_VConv_2015 = 0.09884f;
