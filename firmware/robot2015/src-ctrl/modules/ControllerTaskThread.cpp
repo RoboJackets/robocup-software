@@ -1,16 +1,18 @@
-#include <rtos.h>
 #include <RPCVariable.h>
+#include <rtos.h>
 
 #include <Console.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <logger.hpp>
 
+#include "PidMotionController.hpp"
+#include "VelocityEstimator.hpp"
+#include "fpga.hpp"
+#include "io-expander.hpp"
+#include "motors.hpp"
+#include "mpu-6050.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "motors.hpp"
-#include "fpga.hpp"
-#include "mpu-6050.hpp"
-#include "io-expander.hpp"
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
@@ -87,11 +89,28 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
+    VelocityEstimator velEstimator;
+    PidMotionController motionController;
+
     std::vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 150);
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
+
+        // write previously-calculated duty cycles and estimate current velocity
+        std::array<uint16_t, 4> encoderTicks;
+        FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
+                                         encoderTicks.data(),
+                                         encoderTicks.size());
+        array<float, 3> currVel =
+            velEstimator.update(encoderTicks, CONTROL_LOOP_WAIT_MS);
+
+        // run controller to calculate new duty cycles for drive motors
+        array<uint16_t, 4> driveDutyCycles = motionController.run(currVel);
+        for (size_t i = 0; i < 4; i++) {
+            duty_cycles[i] = driveDutyCycles[i];
+        }
 
         // printf(
         //     "\r\n\033[K"

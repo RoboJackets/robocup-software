@@ -32,9 +32,9 @@ public:
     }
 
     /** Run the controller and return duty cycle values for each of the 4 drive
-     * motors.
+     * motors given the robot's estimated current velocity.
      */
-    virtual std::array<uint16_t, 4> run() = 0;
+    virtual std::array<uint16_t, 4> run(std::array<float, 3> currVel) = 0;
 
 protected:
     /* This is called when the timeout timer fires, indicating that the target
