@@ -32,7 +32,7 @@ run-sim2play: all
 	cd run; ./soccer -sim -y & ./soccer -sim -b
 
 debug: all
-ifeq ($(uname),"Linux")
+ifeq ($(shell uname), Linux)
 	gdb ./run/soccer
 else
 	lldb ./run/soccer.app
@@ -41,7 +41,7 @@ endif
 debug-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
-ifeq ($(uname),"Linux")
+ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else
 	lldb -- ./run/soccer.app -sim
