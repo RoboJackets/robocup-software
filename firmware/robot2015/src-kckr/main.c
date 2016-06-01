@@ -2,11 +2,14 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 // TODO: Make this path less explicit!
-#include "../../common2015/drivers/kicker-board/kicker_commands.h"
+#include "kicker_commands.h"
 #include "pins.h"
 
 #define NO_COMMAND 0
 #define IGNORE_CS 0
+
+#define TIMING_CONSTANT 125
+#define VOLTAGE_READ_DELAY_MS 100
 
 // State of the ATTINY kicking/chipping
 typedef enum { OFF, ON, ACTING } state_type;
@@ -62,7 +65,7 @@ void main() {
     // OCR0A is max val of timer before reset
     // we need 1000 clocks at 1 Mhz to get 1 millisecond
     // if we prescale by 8, then we need 125 on timer to get 1 ms exactly
-    OCR0A = 125;  // reset every millisecond
+    OCR0A = TIMING_CONSTANT;  // reset every millisecond
     // ADC Initialization
     PRR &= ~_BV(PRADC);    // disable power reduction Pg. 133
     ADCSRA |= _BV(ADEN);   // enable the ADC - Pg. 133
@@ -74,7 +77,7 @@ void main() {
     // We handle voltage readings here
     while (1) {
         last_voltage_ = get_voltage();
-        _delay_ms(100);
+        _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
 }
 

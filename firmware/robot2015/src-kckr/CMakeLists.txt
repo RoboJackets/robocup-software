@@ -3,6 +3,8 @@
 set(CMAKE_TOOLCHAIN_FILE attiny_toolchain.cmake)
 include(attiny_toolchain.cmake)
 
+include_directories(${PROJECT_SOURCE_DIR}/firmware/common2015/drivers/kicker-board)
+
 set(CMAKE_C_COMPILER    ${AVR_C_COMPILER})
 set(CMAKE_CXX_COMPILER  ${AVR_CXX_COMPILER})
 
