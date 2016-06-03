@@ -77,6 +77,9 @@ void main() {
     // We handle voltage readings here
     while (1) {
         last_voltage_ = get_voltage();
+
+        if (last_voltage_ > 100) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
 }
