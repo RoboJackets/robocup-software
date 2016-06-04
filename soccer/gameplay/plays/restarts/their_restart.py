@@ -1,21 +1,17 @@
-import play
+import standard_play
 import behavior
 import tactics.positions.defender
 import skills.mark
 import main
 
 
-class TheirRestart(play.Play):
+class TheirRestart(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
-
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False, )
 
         self.marks = []
         for i in range(3):
@@ -38,11 +34,8 @@ class TheirRestart(play.Play):
     def is_restart(cls):
         return True
 
-    @classmethod
-    def handles_goalie(cls):
-        return True
-
     def execute_running(self):
+        super().execute_running()
         # abort if we can't see the ball
         if not main.ball().valid:
             return
@@ -91,9 +84,3 @@ class TheirRestart(play.Play):
                     # mark_i.face(ball_pos)
 
                     # tell the marking robots to avoid eachother more than normal
-        for i, mark_i in enumerate(self.marks):
-            for j, mark_j in enumerate(self.marks):
-                if i == j: continue
-                if mark_i.robot != None and mark_j.robot != None:
-                    mark_i.robot.set_avoid_teammate_radius(
-                        mark_j.robot.shell_id(), 0.5)

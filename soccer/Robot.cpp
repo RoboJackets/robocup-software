@@ -145,13 +145,15 @@ void OurRobot::resetForNextIteration() {
     control->set_song(Packet::Control::STOP);
 
     isPenaltyKicker = false;
+    isBallPlacer = false;
 }
 
 void OurRobot::resetMotionConstraints() {
-    _rotationConstraints = RotationConstraints();
-    _motionConstraints = MotionConstraints();
+    _robotConstraints.rot = RotationConstraints();
+    _robotConstraints.mot = MotionConstraints();
     _motionCommand = std::make_unique<Planning::EmptyCommand>();
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
+    _planningPriority = 0;
 }
 
 void OurRobot::stop() {
@@ -165,8 +167,8 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
 
     // sets flags for future movement
     if (verbose)
-        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x
-             << ", " << goal.y << ")" << endl;
+        cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x()
+             << ", " << goal.y() << ")" << endl;
 
     _motionCommand = std::make_unique<Planning::DirectPathTargetCommand>(
         MotionInstant(goal, (goal - pos).normalized() * endSpeed));
@@ -180,20 +182,21 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 
     // sets flags for future movement
     if (verbose)
-        cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", "
-             << goal.y << ")" << std::endl;
+        cout << " in OurRobot::move(goal): adding a goal (" << goal.x() << ", "
+             << goal.y() << ")" << std::endl;
 
     _motionCommand = std::make_unique<Planning::PathTargetCommand>(
         MotionInstant(goal, endVelocity));
 
-    *_cmdText << "move(" << goal.x << ", " << goal.y << ")" << endl;
-    *_cmdText << "endVelocity(" << endVelocity.x << ", " << endVelocity.y << ")"
-              << endl;
+    *_cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
+    *_cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
+              << ")" << endl;
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
     _motionCommand = std::make_unique<Planning::WorldVelTargetCommand>(v);
-    *_cmdText << "worldVel(" << v.x << ", " << v.y << ")" << endl;
+    setPath(nullptr);
+    *_cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
@@ -205,7 +208,7 @@ void OurRobot::pivot(Geometry2d::Point pivotTarget) {
     // reset other conflicting motion commands
     _motionCommand = std::make_unique<Planning::PivotCommand>(pivotPoint, pivotTarget, radius);
 
-    *_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")"
+    *_cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
               << endl;
 }
 
@@ -226,7 +229,7 @@ const Geometry2d::Segment OurRobot::kickerBar() const {
 
 bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
     Point ballTransformed = pointInRobotSpace(ballPos);
-    return ballTransformed.x < -Robot_Radius;
+    return ballTransformed.x() < -Robot_Radius;
 }
 
 float OurRobot::kickTimer() const {
@@ -245,7 +248,7 @@ void OurRobot::dribble(uint8_t speed) {
 void OurRobot::face(Geometry2d::Point pt) {
     _rotationCommand = std::make_unique<Planning::FacePointCommand>(pt);
 
-    *_cmdText << "face(" << pt.x << ", " << pt.y << ")" << endl;
+    *_cmdText << "face(" << pt.x() << ", " << pt.y() << ")" << endl;
 }
 
 void OurRobot::faceNone() {
@@ -313,7 +316,6 @@ void OurRobot::kickImmediately() {
 
 void OurRobot::resetAvoidRobotRadii() {
     for (size_t i = 0; i < Num_Shells; ++i) {
-        _self_avoid_mask[i] = (i != (size_t)shell()) ? *_selfAvoidRadius : -1.0;
         _opp_avoid_mask[i] = (i == state()->gameState.TheirInfo.goalie)
                                  ? *_oppGoalieAvoidRadius
                                  : *_oppAvoidRadius;
@@ -363,34 +365,6 @@ void OurRobot::avoidAllOpponentRadius(float radius) {
     for (float& ar : _opp_avoid_mask) ar = radius;
 }
 
-void OurRobot::avoidAllTeammates(bool enable) {
-    for (size_t i = 0; i < Num_Shells; ++i) avoidTeammate(i, enable);
-}
-void OurRobot::avoidTeammate(unsigned shell_id, bool enable) {
-    if (shell_id != shell())
-        _self_avoid_mask[shell_id] = (enable) ? Robot_Radius : -1.0;
-}
-
-void OurRobot::avoidTeammateRadius(unsigned shell_id, float radius) {
-    if (shell_id != shell()) _self_avoid_mask[shell_id] = radius;
-}
-
-bool OurRobot::avoidTeammate(unsigned shell_id) const {
-    return _self_avoid_mask[shell_id] < Robot_Radius;
-}
-
-float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
-    return _self_avoid_mask[shell_id];
-}
-
-void OurRobot::shieldFromTeammates(float radius) {
-    for (OurRobot* teammate : state()->self) {
-        if (teammate) {
-            teammate->avoidTeammateRadius(shell(), radius);
-        }
-    }
-}
-
 #pragma mark Ball Avoidance
 
 void OurRobot::disableAvoidBall() { avoidBallRadius(-1); }
@@ -405,21 +379,21 @@ float OurRobot::avoidBallRadius() const { return _avoidBallRadius; }
 
 void OurRobot::resetAvoidBall() { avoidBallRadius(Ball_Avoid_Small); }
 
-std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
+std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
     // if game is stopped, large obstacle regardless of flags
     if (_state->gameState.state != GameState::Playing &&
         !(_state->gameState.ourRestart || _state->gameState.theirPenalty())) {
-        return std::shared_ptr<Geometry2d::Shape>(
-            new Circle(_state->ball.pos,
-                       Field_Dimensions::Current_Dimensions.CenterRadius()));
+        return std::make_shared<Geometry2d::Circle>(
+            _state->ball.pos,
+            Field_Dimensions::Current_Dimensions.CenterRadius());
     }
 
     // create an obstacle if necessary
     if (_avoidBallRadius > 0.0) {
-        return std::shared_ptr<Geometry2d::Shape>(
-            new Circle(_state->ball.pos, _avoidBallRadius));
+        return std::make_shared<Geometry2d::Circle>(_state->ball.pos,
+                                                    _avoidBallRadius);
     } else {
-        return std::shared_ptr<Geometry2d::Shape>();
+        return nullptr;
     }
 }
 
@@ -429,13 +403,45 @@ void OurRobot::setPath(unique_ptr<Planning::Path> path) {
     angleFunctionPath.path = std::move(path);
 }
 
+std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
+    vector<Planning::DynamicObstacle> obstacles;
+
+    // Add Opponent Robots
+    auto& mask = _opp_avoid_mask;
+    auto& robots = _state->opp;
+    for (size_t i = 0; i < mask.size(); ++i)
+        if (mask[i] > 0 && robots[i] && robots[i]->visible)
+            obstacles.push_back(
+                Planning::DynamicObstacle(robots[i]->pos, mask[i]));
+
+    // Add ball
+    if (_state->ball.valid) {
+        auto ballObs = createBallObstacle();
+        if (ballObs) obstacles.emplace_back(*ballObs);
+    }
+
+    return obstacles;
+}
+
+Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
+    const Geometry2d::ShapeSet& globalObstacles) {
+    Geometry2d::ShapeSet fullObstacles(_local_obstacles);
+
+    fullObstacles.add(globalObstacles);
+
+    return fullObstacles;
+}
+
 Geometry2d::ShapeSet OurRobot::collectAllObstacles(
     const Geometry2d::ShapeSet& globalObstacles) {
     Geometry2d::ShapeSet fullObstacles(_local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
+    RobotMask self_avoid_mask;
+    std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
+              *_selfAvoidRadius);
     const Geometry2d::ShapeSet selfObs = createRobotObstacles(
-        _state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag());
+        _state->self, self_avoid_mask, this->pos, 0.6 + this->vel.mag());
     const Geometry2d::ShapeSet oppObs =
         createRobotObstacles(_state->opp, _opp_avoid_mask);
 

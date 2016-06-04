@@ -1,20 +1,20 @@
 #include <rtos.h>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
+#include <CC1201Radio.hpp>
 #include <CommModule.hpp>
 #include <CommPort.hpp>
-#include <CC1201Radio.hpp>
+#include <assert.hpp>
 #include <helper-funcs.hpp>
 #include <logger.hpp>
-#include <assert.hpp>
 
+#include "TimeoutLED.hpp"
+#include "fpga.hpp"
+#include "io-expander.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "io-expander.hpp"
-#include "fpga.hpp"
-#include "TimeoutLED.hpp"
 
 using namespace std;
 
@@ -87,8 +87,8 @@ void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     // Open a socket for running tests across the link layer
     // The LINK port handlers are always active, regardless of whether or not a
     // working radio is connected.
-    commModule->setRxHandler(&loopback_rx_cb, rtp::port::LINK);
-    commModule->setTxHandler(&loopback_tx_cb, rtp::port::LINK);
+    commModule->setRxHandler(&loopback_rx_cb, rtp::Port::LINK);
+    commModule->setTxHandler(&loopback_tx_cb, rtp::Port::LINK);
 
     /*
      * Ports are always displayed in ascending (lowest -> highest) order
@@ -97,21 +97,10 @@ void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     if (global_radio->isConnected() == true) {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
-        // The usual way of opening a port.
-        commModule->setRxHandler(&loopback_rx_cb, rtp::port::DISCOVER);
-        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::port::DISCOVER);
-
-        // This port won't open since there's no RX callback to invoke. The
-        // packets are simply dropped.
-        commModule->setRxHandler(&loopback_rx_cb, rtp::port::LOGGER);
-        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::port::LOGGER);
-
         // Legacy port
         commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::port::LEGACY);
-        commModule->setRxHandler(&legacy_rx_cb, rtp::port::LEGACY);
+                                 rtp::Port::LEGACY);
+        commModule->setRxHandler(&legacy_rx_cb, rtp::Port::LEGACY);
 
         LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 

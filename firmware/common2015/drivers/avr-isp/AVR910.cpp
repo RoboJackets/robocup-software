@@ -80,6 +80,7 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
     int c = 0;
     int highLow = 0;
 
+    fseek(binary, 0, SEEK_SET);
     // We're dealing with paged memory.
     if (numPages > 1) {
         while ((c = getc(binary)) != EOF) {
@@ -269,7 +270,7 @@ char AVR910::readProgramMemory(int highLow, char pageNumber, char pageOffset) {
     return response;
 }
 
-bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
+bool AVR910::checkMemory(int pageSize, int numPages, FILE* binary,
                          bool verbose) {
     bool success = true;
 
@@ -282,6 +283,7 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
             char c = getc(binary);
             // Read program memory low byte.
             response = readProgramMemory(READ_LOW_BYTE, page, offset);
+
             if (c != response) {
                 if (verbose) {
                     printf("Page %i low byte %i: 0x%02x\r\n", page, offset,

@@ -4,6 +4,7 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
+#include "planning/DynamicObstacle.hpp"
 
 #include <map>
 #include <memory>
@@ -15,12 +16,14 @@ namespace Planning {
 struct PlanRequest {
     PlanRequest(MotionInstant start, std::unique_ptr<MotionCommand> command,
                 MotionConstraints constraints, std::unique_ptr<Path> prevPath,
-                std::shared_ptr<const Geometry2d::ShapeSet> obs)
+                Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
+                int8_t priority = 0)
         : start(start),
           motionCommand(std::move(command)),
           constraints(constraints),
           prevPath(std::move(prevPath)),
-          obstacles(obs) {}
+          obstacles(obs),
+          dynamicObstacles(dObs) {}
 
     PlanRequest() {}
 
@@ -28,7 +31,11 @@ struct PlanRequest {
     std::unique_ptr<MotionCommand> motionCommand;
     MotionConstraints constraints;
     std::unique_ptr<Path> prevPath;
-    std::shared_ptr<const Geometry2d::ShapeSet> obstacles;
+    Geometry2d::ShapeSet obstacles;
+    std::vector<DynamicObstacle> dynamicObstacles;
+
+    // Higher Priorities are planned first
+    int8_t priority;
 };
 
 /**

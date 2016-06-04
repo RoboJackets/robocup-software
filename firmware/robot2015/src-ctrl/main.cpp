@@ -1,28 +1,29 @@
 // ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
+#include <array>
 #include <ctime>
 #include <string>
-#include <array>
 
 #include <rtos.h>
 
-#include <helper-funcs.hpp>
-#include <watchdog.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <helper-funcs.hpp>
+#include <logger.hpp>
+#include <watchdog.hpp>
 
-#include "robot-devices.hpp"
-#include "task-signals.hpp"
+#include "BallSense.hpp"
+#include "CC1201.cpp"
+#include "KickerBoard.hpp"
+#include "RadioProtocol.hpp"
+#include "RotarySelector.hpp"
+#include "RtosTimerHelper.hpp"
+#include "SharedSPI.hpp"
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "neostrip.hpp"
-#include "CC1201.cpp"
-#include "BallSense.hpp"
-#include "SharedSPI.hpp"
-#include "KickerBoard.hpp"
-#include "RtosTimerHelper.hpp"
 #include "io-expander.hpp"
-#include "RotarySelector.hpp"
+#include "neostrip.hpp"
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 
 using namespace std;
 
@@ -111,15 +112,23 @@ int main() {
     // Initialize and configure the fpga with the given bitfile
     FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
                               RJ_FPGA_PROG_B, RJ_FPGA_DONE);
-    bool fpga_ready = FPGA::Instance->configure("/local/rj-fpga.nib");
+    bool fpgaReady = FPGA::Instance->configure("/local/rj-fpga.nib");
 
-    if (fpga_ready) {
+    if (fpgaReady) {
+        rgbLED.brightness(3 * defaultBrightness);
+        rgbLED.setPixel(1, NeoColorGreen);
+
         LOG(INIT, "FPGA Configuration Successful!");
+
     } else {
+        rgbLED.brightness(4 * defaultBrightness);
+        rgbLED.setPixel(1, NeoColorOrange);
+
         LOG(FATAL, "FPGA Configuration Failed!");
     }
+    rgbLED.write();
 
-    DigitalOut rdy_led(RJ_RDY_LED, !fpga_ready);
+    DigitalOut rdy_led(RJ_RDY_LED, !fpgaReady);
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
@@ -167,6 +176,22 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
+    // Setup radio protocol handling
+    const uint8_t robotID = 2;  // TODO: remove
+    RadioProtocol radioProtocol(CommModule::Instance, global_radio);
+    radioProtocol.setUID(robotID);
+    radioProtocol.start();
+    radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
+        rtp::RobotStatusMessage reply;
+        reply.uid = robotID;
+        reply.battVoltage = 5;  // TODO
+        reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
+
+        vector<uint8_t> replyBuf;
+        rtp::SerializeToVector(reply, &replyBuf);
+        return replyBuf;
+    };
+
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
@@ -178,6 +203,17 @@ int main() {
     ASSERT(tState == osOK);
 
     unsigned int ll = 0;
+    uint16_t errorBitmask = 0;
+    bool errorFlash = false;
+
+    if (!fpgaReady) {
+        // assume all motors have errors if FPGA does not work
+        errorBitmask |= (1 << RJ_ERR_LED_M1);
+        errorBitmask |= (1 << RJ_ERR_LED_M2);
+        errorBitmask |= (1 << RJ_ERR_LED_M3);
+        errorBitmask |= (1 << RJ_ERR_LED_M4);
+        errorBitmask |= (1 << RJ_ERR_LED_DRIB);
+    }
 
     while (true) {
         // make sure we can always reach back to main by
@@ -197,8 +233,7 @@ int main() {
         ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
-        uint16_t errorBitmask = !global_radio->isConnected()
-                                << RJ_ERR_LED_RADIO;
+        errorBitmask |= !global_radio->isConnected() << RJ_ERR_LED_RADIO;
 
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
@@ -213,34 +248,24 @@ int main() {
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
-        // Set error indicators
-        if (!fpga_ready) {
+        if (errorBitmask || !fpgaReady) {
             // orange - error
-            rgbLED.brightness(4 * defaultBrightness);
+            rgbLED.brightness(6 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorOrange);
+
+            if (!fpgaReady) {
+                errorFlash = !errorFlash;
+                // bright as hell to make sure they know
+                rgbLED.brightness(10 * defaultBrightness * errorFlash);
+                // well, damn. everything is broke as hell
+                rgbLED.setPixel(0, NeoColorRed);
+            }
         } else {
-            // green - no error...yet
-            rgbLED.brightness(defaultBrightness);
+            // no errors, yay!
+            rgbLED.brightness(3 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorGreen);
         }
-
-        if (errorBitmask & RJ_ERR_LED_RADIO) {
-            // orange - error
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, NeoColorOrange);
-        } else {
-            // green - no error...yet
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(1, NeoColorGreen);
-        }
-
-        if ((errorBitmask & RJ_ERR_LED_RADIO) && !fpga_ready) {
-            // bright as hell to make sure they know
-            rgbLED.brightness(10 * defaultBrightness);
-            // well, damn. everything is broke as hell
-            rgbLED.setPixel(0, NeoColorRed);
-            rgbLED.setPixel(1, NeoColorRed);
-        }
+        rgbLED.write();
     }
 }
 

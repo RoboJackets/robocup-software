@@ -10,13 +10,13 @@ namespace Geometry2d {
 
 vector<Point> Arc::intersects(const Line& line) const {
     // http://mathworld.wolfram.com/Circle2d-LineIntersection.html
-    float cx = _center.x;
-    float cy = _center.y;
+    float cx = _center.x();
+    float cy = _center.y();
 
-    float x1 = line.pt[0].x - cx;
-    float y1 = line.pt[0].y - cy;
-    float x2 = line.pt[1].x - cx;
-    float y2 = line.pt[1].y - cy;
+    float x1 = line.pt[0].x() - cx;
+    float y1 = line.pt[0].y() - cy;
+    float x2 = line.pt[1].x() - cx;
+    float y2 = line.pt[1].y() - cy;
 
     float dx = x2 - x1;
     float dy = y2 - y1;

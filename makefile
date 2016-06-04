@@ -1,6 +1,6 @@
 MAKE_FLAGS = --no-print-directory
 TESTS = *
-FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led
+FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
@@ -31,11 +31,26 @@ run-sim2play: all
 	cd run; ./simulator --headless &
 	cd run; ./soccer -sim -y & ./soccer -sim -b
 
+debug: all
+ifeq ($(shell uname), Linux)
+	gdb ./run/soccer
+else
+	lldb ./run/soccer.app
+endif
+
+debug-sim: all
+	-pkill -f './simulator --headless'
+	cd run; ./simulator --headless &
+ifeq ($(shell uname), Linux)
+	gdb --args ./run/soccer -sim
+else
+	lldb -- ./run/soccer.app -sim
+endif
+
 # Run both C++ and python unit tests
 tests: test-cpp test-python
 test-cpp: test-soccer test-firmware
 test-soccer:
-
 	$(call cmake_build_target, test-soccer)
 	run/test-soccer --gtest_filter=$(TESTS)
 test-firmware:
@@ -132,7 +147,7 @@ fpga2015:
 	$(call cmake_build_target_fw, fpga2015)
 fpga2015-prog:
 	$(call cmake_build_target_fw, fpga2015-prog)
-	
+
 # Base station 2015 firmware
 base2015:
 	$(call cmake_build_target_fw, base2015)

@@ -18,11 +18,11 @@
         </Register>
         <Register>
             <Name>AGC_REF</Name>
-            <Value>0x42</Value>
+            <Value>0x40</Value>
         </Register>
         <Register>
             <Name>CHAN_BW</Name>
-            <Value>0x41</Value>
+            <Value>0x03</Value>
         </Register>
         <Register>
             <Name>DCFILT_CFG</Name>
@@ -33,12 +33,16 @@
             <Value>0x9a</Value>
         </Register>
         <Register>
-            <Name>FIFO_CFG</Name>
-            <Value>0x00</Value>
+            <Name>FREQ0</Name>
+            <Value>0x66</Value>
+        </Register>
+        <Register>
+            <Name>FREQ1</Name>
+            <Value>0x66</Value>
         </Register>
         <Register>
             <Name>FREQ2</Name>
-            <Value>0x5c</Value>
+            <Value>0x5a</Value>
         </Register>
         <Register>
             <Name>FREQOFF_CFG</Name>
@@ -113,6 +117,10 @@
             <Value>0x1c</Value>
         </Register>
         <Register>
+            <Name>IOCFG2</Name>
+            <Value>0x13</Value>
+        </Register>
+        <Register>
             <Name>IQIC</Name>
             <Value>0x4b</Value>
         </Register>
@@ -122,27 +130,15 @@
         </Register>
         <Register>
             <Name>MDMCFG2</Name>
-            <Value>0x00</Value>
+            <Value>0x02</Value>
         </Register>
         <Register>
             <Name>MODCFG_DEV_E</Name>
             <Value>0x0d</Value>
         </Register>
         <Register>
-            <Name>MODEM_STATUS1</Name>
-            <Value>0x10</Value>
-        </Register>
-        <Register>
-            <Name>PARTNUMBER</Name>
-            <Value>0x21</Value>
-        </Register>
-        <Register>
-            <Name>PARTVERSION</Name>
-            <Value>0x11</Value>
-        </Register>
-        <Register>
             <Name>PA_CFG0</Name>
-            <Value>0x50</Value>
+            <Value>0x51</Value>
         </Register>
         <Register>
             <Name>PA_CFG1</Name>
@@ -151,10 +147,6 @@
         <Register>
             <Name>PKT_CFG0</Name>
             <Value>0x20</Value>
-        </Register>
-        <Register>
-            <Name>PKT_CFG1</Name>
-            <Value>0x43</Value>
         </Register>
         <Register>
             <Name>PKT_CFG2</Name>
@@ -169,16 +161,24 @@
             <Value>0x8a</Value>
         </Register>
         <Register>
+            <Name>RFEND_CFG0</Name>
+            <Value>0x30</Value>
+        </Register>
+        <Register>
+            <Name>RFEND_CFG1</Name>
+            <Value>0x3f</Value>
+        </Register>
+        <Register>
             <Name>SYMBOL_RATE0</Name>
-            <Value>0xe1</Value>
+            <Value>0x9a</Value>
         </Register>
         <Register>
             <Name>SYMBOL_RATE1</Name>
-            <Value>0x7a</Value>
+            <Value>0x99</Value>
         </Register>
         <Register>
             <Name>SYMBOL_RATE2</Name>
-            <Value>0xc4</Value>
+            <Value>0xb9</Value>
         </Register>
         <Register>
             <Name>SYNC0</Name>
@@ -239,7 +239,7 @@
         <Property name="m_edtPacketCount" role="42">100</Property>
         <Property name="m_edtPacketCountEsy" role="42">100</Property>
         <Property name="m_edtFixedPktLength" role="42">255</Property>
-        <Property name="m_edtPacketData" role="42">e8 ac 96 64 cb d7 dc 7d fd 09 2d 12 e4 a1 bf 94 fd b7 96 00 21 53 ef b4 07 dc df 81 </Property>
+        <Property name="m_edtPacketData" role="42">78 14 16 be 2d 5d 45 52 53 87 35 7c 1e 87 52 0f e8 df 66 b9 76 d0 02 d9 7d cb 20 90 </Property>
         <Property name="m_edtAccessAddress" role="42"></Property>
         <Property name="m_chkAddSeqNbr" role="44">2</Property>
         <Property name="m_chkInfinite" role="44">0</Property>
@@ -272,7 +272,7 @@
         <Property name="m_chkInfinite" role="44">2</Property>
         <Property name="m_chkInfiniteEsy" role="44">2</Property>
         <Property name="m_cmbViewFormat" role="46">0</Property>
-        <Property name="m_chkSeqNbrIncluded" role="44">0</Property>
+        <Property name="m_chkSeqNbrIncluded" role="44">2</Property>
         <Property name="m_edtDumpFile" role="42"></Property>
         <Property name="m_chkAdvanced" role="44">0</Property>
         <Property name="m_chk802154gMode" role="44">0</Property>

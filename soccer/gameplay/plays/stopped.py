@@ -1,4 +1,4 @@
-import play
+import standard_play
 import behavior
 import tactics.defense
 import tactics.stopped.circle_near_ball
@@ -11,7 +11,7 @@ import constants
 
 ## When we get the Stopped command from the referee, we run this play.
 # See the rules to see what we're allowed to do while the game is stopped
-class Stopped(play.Play):
+class Stopped(standard_play.StandardPlay):
     class State(enum.Enum):
         normal = 1  # Normal
         center = 2  # Ball is in the center
@@ -50,16 +50,11 @@ class Stopped(play.Play):
 
     def on_enter_normal(self):
         self.remove_all_subbehaviors()
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
         idle = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
     def on_enter_center(self):
         self.remove_all_subbehaviors()
-        self.add_subbehavior(tactics.defense.Defense(),
-                             'defense',
-                             required=False)
+
         idle = tactics.stopped.circle_on_center.CircleOnCenter()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)

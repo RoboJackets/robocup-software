@@ -12,10 +12,13 @@ namespace Planning {
 /// possible.  Avoids obstacles.
 class PivotPathPlanner : public SingleRobotPathPlanner {
 public:
+    PivotPathPlanner() : SingleRobotPathPlanner(false){};
     virtual std::unique_ptr<Path> run(
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles,
+        Geometry2d::ShapeSet& obstacles,
+        const std::vector<DynamicObstacle>&
+            dynamicObstacles = std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) override;
 
     virtual MotionCommand::CommandType commandType() const override {
@@ -27,7 +30,7 @@ public:
 private:
     bool shouldReplan(MotionInstant startInstant, PivotCommand command,
                       const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet* obstacles,
+                      const Geometry2d::ShapeSet& obstacles,
                       const Path* prevPath);
 
     static ConfigDouble* _pivotRadius;

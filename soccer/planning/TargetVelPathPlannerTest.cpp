@@ -16,7 +16,7 @@ TEST(TargetVelPathPlannerTest, run) {
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
 
     TargetVelPathPlanner planner;
-    auto path = planner.run(startInstant, &cmd, motionConstraints, &obstacles);
+    auto path = planner.run(startInstant, &cmd, motionConstraints, obstacles);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 
@@ -29,8 +29,8 @@ TEST(TargetVelPathPlannerTest, run) {
     // (positive y-axis)
     boost::optional<RobotInstant> instant = path->evaluate(0.1);
     ASSERT_TRUE(instant);
-    EXPECT_FLOAT_EQ(0, instant->motion.pos.x);
-    EXPECT_GT(instant->motion.pos.y, 0);
+    EXPECT_FLOAT_EQ(0, instant->motion.pos.x());
+    EXPECT_GT(instant->motion.pos.y(), 0);
 }
 
 }  // namespace Planning
