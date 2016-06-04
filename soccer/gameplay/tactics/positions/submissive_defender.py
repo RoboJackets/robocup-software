@@ -6,6 +6,7 @@ import robocup
 import main
 from enum import Enum
 import math
+import planning_priority
 
 
 ## Defender behavior meant to be coordinated in a defense tactic
@@ -106,6 +107,7 @@ class SubmissiveDefender(
 
     def execute_running(self):
         self.robot.set_avoid_opponents(False)
+        self.robot.set_planning_priority(planning_priority.DEFENDER)
 
     ## move to a position to block the 'block_line'
     # if no block_line is specified, blocks the ball

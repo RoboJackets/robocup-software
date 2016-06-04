@@ -4,10 +4,11 @@
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
-#include <planning/MotionConstraints.hpp>
-#include <planning/RotationConstraints.hpp>
+#include <planning/RobotConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
 #include "planning/RotationCommand.hpp"
+#include "planning/DynamicObstacle.hpp"
+
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/Control.pb.h>
@@ -168,10 +169,10 @@ public:
     // Commands
 
     const MotionConstraints& motionConstraints() const {
-        return _motionConstraints;
+        return _robotConstraints.mot;
     }
 
-    MotionConstraints& motionConstraints() { return _motionConstraints; }
+    MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
 
     const Planning::RotationCommand& rotationCommand() const {
         return *_rotationCommand;
@@ -320,6 +321,11 @@ public:
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
 
+    std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
+
+    Geometry2d::ShapeSet collectStaticObstacles(
+        const Geometry2d::ShapeSet& globalObstacles);
+
     Geometry2d::ShapeSet collectAllObstacles(
         const Geometry2d::ShapeSet& globalObstacles);
 
@@ -350,24 +356,6 @@ public:
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
     /**
-     * determines whether a robot will avoid another robot when it plans - use
-     * for priority
-     */
-
-    void avoidAllTeammates(bool enable = true);
-    void avoidTeammate(unsigned shell_id, bool enable = true);
-    void avoidTeammateRadius(unsigned shell_id, float radius);
-    bool avoidTeammate(unsigned shell_id) const;
-    float avoidTeammateRadius(unsigned shell_id) const;
-
-    /**
-     * Sets the avoid radius of all teammates to @radius for this robot.
-     * This is useful to easily keep our teammates from bumping the ball
-     * carrier.
-     */
-    void shieldFromTeammates(float radius);
-
-    /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
      */
@@ -393,10 +381,10 @@ public:
     }
 
     const RotationConstraints& rotationConstraints() const {
-        return _rotationConstraints;
+        return _robotConstraints.rot;
     }
 
-    RotationConstraints& rotationConstraints() { return _rotationConstraints; }
+    RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
 
     MotionControl* motionControl() const { return _motionControl; }
 
@@ -417,6 +405,7 @@ public:
     }
 
     bool isPenaltyKicker = false;
+    bool isBallPlacer = false;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -424,6 +413,18 @@ public:
     uint8_t chipPowerForDistance(double distance);
 
     void setPath(std::unique_ptr<Planning::Path> path);
+
+    /**
+     * Sets the priority which paths are planned.
+     * Higher priority values are planned first.
+     */
+    void setPlanningPriority(int8_t priority) { _planningPriority = priority; }
+
+    /**
+     * Gets the priority which paths are planned.
+     * Higher priority values are planned first.
+     */
+    int8_t getPlanningPriority() { return _planningPriority; }
 
 protected:
     MotionControl* _motionControl;
@@ -434,13 +435,12 @@ protected:
     Geometry2d::ShapeSet _local_obstacles;
 
     /// masks for obstacle avoidance
-    RobotMask _self_avoid_mask, _opp_avoid_mask;
+    RobotMask _opp_avoid_mask;
     float _avoidBallRadius;  /// radius of ball obstacle
 
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    MotionConstraints _motionConstraints;
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
-    RotationConstraints _rotationConstraints;
+    RobotConstraints _robotConstraints;
 
     Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 
@@ -495,16 +495,14 @@ protected:
     /**
      * Creates an obstacle for the ball if necessary
      */
-    std::shared_ptr<Geometry2d::Shape> createBallObstacle() const;
+    std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
 
-protected:
     friend class Processor;
 
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
 
-protected:
     friend class MotionControl;
 
 private:
@@ -533,6 +531,8 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
+
+    int8_t _planningPriority;
 };
 
 /**

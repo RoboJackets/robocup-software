@@ -22,14 +22,15 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints, const ShapeSet* obstacles,
+    const MotionConstraints& motionConstraints, ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles,
     std::unique_ptr<Path> prevPath) {
     assert(cmd->getCommandType() == MotionCommand::None);
 
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
     const Point unblocked =
-        findNonBlockedGoal(startInstant.pos, optPrevPt, *obstacles);
+        findNonBlockedGoal(startInstant.pos, optPrevPt, obstacles);
 
     // reuse path if there's not a significantly better spot to target
     if (prevPath && unblocked == prevPath->end().motion.pos) {

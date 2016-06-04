@@ -19,7 +19,7 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
 bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
                                     const PivotCommand command,
                                     const MotionConstraints& motionConstraints,
-                                    const Geometry2d::ShapeSet* obstacles,
+                                    const Geometry2d::ShapeSet& obstacles,
                                     const Path* prevPath) {
 
     if (!prevPath) {
@@ -39,10 +39,9 @@ bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
     return false;
 }
 
-std::unique_ptr<Path> PivotPathPlanner::run(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, std::unique_ptr<Path> prevPath) {
+std::unique_ptr<Path> PivotPathPlanner::run(MotionInstant startInstant, const MotionCommand* cmd,
+    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles, std::unique_ptr<Path> prevPath) {
 
     PivotCommand command = *dynamic_cast<const PivotCommand*>(cmd);
 
@@ -68,7 +67,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(
             Point point = Point::direction(angle).normalized(radius) + pivotPoint;
             points.push_back(point);
         }
-        unique_ptr<Path> path = RRTPlanner::generatePath(points, *obstacles, motionConstraints, startInstant.vel, Point(0,0));
+        unique_ptr<Path> path = RRTPlanner::generatePath(points, obstacles, motionConstraints, startInstant.vel, Point(0,0));
         std::function<AngleInstant(MotionInstant)> function =
                 [pivotPoint](MotionInstant instant) {
                     return AngleInstant(instant.pos.angleTo(pivotPoint));
