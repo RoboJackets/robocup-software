@@ -69,7 +69,13 @@ struct ControlMessage {
 
 struct RobotStatusMessage {
     uint8_t uid;  // robot id
+
+    /// @battVoltage is a direct reading from the mbed's ADC and is sent over
+    /// the air as-is.  Soccer must convert this reading into an actual voltage
+    /// value by multiplying it by the scale factor.
+    const float BATTERY_READING_SCALE_FACTOR = 0.09884;
     uint8_t battVoltage;
+
     uint8_t ballSenseStatus : 2;
 };
 

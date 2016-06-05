@@ -176,6 +176,11 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
+    // setup analog in on battery sense pin
+    // the value is updated in the main loop below
+    AnalogIn batt(RJ_BATT_SENSE);
+    uint8_t battVoltage = 0;
+
     // Setup radio protocol handling
     const uint8_t robotID = 2;  // TODO: remove
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
@@ -184,7 +189,7 @@ int main() {
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
-        reply.battVoltage = 5;  // TODO
+        reply.battVoltage = battVoltage;
         reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
         vector<uint8_t> replyBuf;
@@ -246,12 +251,7 @@ int main() {
         }
 
         // get the battery voltage
-        AnalogIn batt(RJ_BATT_SENSE);
-
-        uint8_t batt_vol = (batt.read_u16() >> 8);
-
-        const float batt_vol_in_soccer = batt_vol * 0.09884f;
-        printf("battery voltage: %.5fV\r\n", batt_vol_in_soccer);
+        battVoltage = (batt.read_u16() >> 8);
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
