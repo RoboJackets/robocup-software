@@ -12,14 +12,21 @@
 namespace Planning {
 
 struct SinglePlanRequest {
-    SinglePlanRequest (const MotionInstant &startInstant, const MotionCommand &cmd,
-                       const RobotConstraints& robotConstraints, Geometry2d::ShapeSet& obstacles,
-                       const std::vector<DynamicObstacle>& dynamicObstacles, std::unique_ptr<Path> prevPath)
-                        : startInstant(startInstant), cmd(cmd), robotConstraints(robotConstraints),
-                          obstacles(obstacles), dynamicObstacles(dynamicObstacles), prevPath(std::move(prevPath)) {};
+    SinglePlanRequest(const MotionInstant& startInstant,
+                      const MotionCommand& cmd,
+                      const RobotConstraints& robotConstraints,
+                      Geometry2d::ShapeSet& obstacles,
+                      const std::vector<DynamicObstacle>& dynamicObstacles,
+                      std::unique_ptr<Path> prevPath)
+        : startInstant(startInstant),
+          cmd(cmd),
+          robotConstraints(robotConstraints),
+          obstacles(obstacles),
+          dynamicObstacles(dynamicObstacles),
+          prevPath(std::move(prevPath)){};
 
-    const MotionInstant &startInstant;
-    const MotionCommand &cmd;
+    const MotionInstant& startInstant;
+    const MotionCommand& cmd;
     const RobotConstraints& robotConstraints;
     Geometry2d::ShapeSet& obstacles;
     const std::vector<DynamicObstacle>& dynamicObstacles;
@@ -34,7 +41,7 @@ public:
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
-    virtual std::unique_ptr<Path> run(SinglePlanRequest &planRequest) = 0;
+    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) = 0;
 
     /// The MotionCommand type that this planner handles
     virtual MotionCommand::CommandType commandType() const = 0;
@@ -63,7 +70,7 @@ public:
     ///
     /// Subclasses will generally use this method in addition to their own
     /// planner-specific checks to determine if a replan is necessary.
-    static bool shouldReplan(const SinglePlanRequest &planRequest);
+    static bool shouldReplan(const SinglePlanRequest& planRequest);
 
     virtual bool canHandleDynamic() { return handlesDynamic; }
 

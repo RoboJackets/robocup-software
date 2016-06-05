@@ -12,7 +12,7 @@ class EscapeObstaclesPathPlanner : public SingleRobotPathPlanner {
 public:
     EscapeObstaclesPathPlanner() : SingleRobotPathPlanner(false){};
 
-    virtual std::unique_ptr<Path> run(SinglePlanRequest &planRequest) override;
+    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
     /// The MotionCommand type that this planner handles
     virtual MotionCommand::CommandType commandType() const override {

@@ -5,9 +5,9 @@
 
 struct RobotConstraints {
 public:
-    RobotConstraints() {};
+    RobotConstraints(){};
     RobotConstraints(MotionConstraints mot, RotationConstraints rot)
-        : rot(rot), mot(mot) {};
+        : rot(rot), mot(mot){};
     RotationConstraints rot;
     MotionConstraints mot;
 };

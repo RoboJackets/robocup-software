@@ -3,13 +3,14 @@
 
 namespace Planning {
 
-std::unique_ptr<Path> DirectTargetPathPlanner::run(SinglePlanRequest &planRequest) {
-    const MotionInstant &startInstant = planRequest.startInstant;
-    const auto &motionConstraints = planRequest.robotConstraints.mot;
+std::unique_ptr<Path> DirectTargetPathPlanner::run(
+    SinglePlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.startInstant;
+    const auto& motionConstraints = planRequest.robotConstraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-    std::unique_ptr<Path> &prevPath = planRequest.prevPath;
+    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
-    const Planning::DirectPathTargetCommand &command =
+    const Planning::DirectPathTargetCommand& command =
         dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
 
     if (shouldReplan(planRequest)) {
@@ -25,13 +26,15 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(SinglePlanRequest &planReques
     }
 }
 
-bool DirectTargetPathPlanner::shouldReplan(const SinglePlanRequest &planRequest) const {
-    const MotionConstraints& motionConstraints = planRequest.robotConstraints.mot;
+bool DirectTargetPathPlanner::shouldReplan(
+    const SinglePlanRequest& planRequest) const {
+    const MotionConstraints& motionConstraints =
+        planRequest.robotConstraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
-    const Planning::DirectPathTargetCommand &command =
-            dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
+    const Planning::DirectPathTargetCommand& command =
+        dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
 
     if (!prevPath) {
         return true;

@@ -202,11 +202,12 @@ void OurRobot::worldVelocity(Geometry2d::Point v) {
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
 
-    const float radius = Robot_Radius*1;
+    const float radius = Robot_Radius * 1;
     Geometry2d::Point pivotPoint = _state->ball.pos;
 
     // reset other conflicting motion commands
-    _motionCommand = std::make_unique<Planning::PivotCommand>(pivotPoint, pivotTarget, radius);
+    _motionCommand = std::make_unique<Planning::PivotCommand>(
+        pivotPoint, pivotTarget, radius);
 
     *_cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
               << endl;
