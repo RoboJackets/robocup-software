@@ -166,7 +166,12 @@ public:
     // available.
     boost::optional<Eigen::Quaternionf> quaternion() const;
 
-    // Commands
+    // Constraints
+    const RobotConstraints& robotConstraints() const {
+        return _robotConstraints;
+    }
+
+    RobotConstraints& robotConstraints() { return _robotConstraints; }
 
     const MotionConstraints& motionConstraints() const {
         return _robotConstraints.mot;

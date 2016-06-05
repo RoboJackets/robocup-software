@@ -15,18 +15,9 @@ public:
         return MotionCommand::CommandType::DirectPathTarget;
     }
 
-    virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, const MotionCommand* cmd,
-        const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>&
-            dynamicObstacles = std::vector<DynamicObstacle>(),
-        std::unique_ptr<Path> prevPath = nullptr) override;
+    virtual std::unique_ptr<Path> run(SinglePlanRequest &planRequest) override;
 
-    bool shouldReplan(MotionInstant startInstant, const MotionCommand* cmd,
-                      const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet& obstacles,
-                      const Path* prevPath) const;
+    bool shouldReplan(const SinglePlanRequest &planRequest) const;
 };
 
 }  // namespace Planning

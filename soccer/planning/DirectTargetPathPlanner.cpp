@@ -3,17 +3,16 @@
 
 namespace Planning {
 
-std::unique_ptr<Path> DirectTargetPathPlanner::run(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles,
-    std::unique_ptr<Path> prevPath) {
-    assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
-    Planning::DirectPathTargetCommand command =
-        *static_cast<const Planning::DirectPathTargetCommand*>(cmd);
+std::unique_ptr<Path> DirectTargetPathPlanner::run(SinglePlanRequest &planRequest) {
+    const MotionInstant &startInstant = planRequest.startInstant;
+    const auto &motionConstraints = planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    std::unique_ptr<Path> &prevPath = planRequest.prevPath;
 
-    if (shouldReplan(startInstant, cmd, motionConstraints, obstacles,
-                     prevPath.get())) {
+    const Planning::DirectPathTargetCommand &command =
+        dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
+
+    if (shouldReplan(planRequest)) {
         Geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         auto path = std::unique_ptr<Path>(
@@ -26,13 +25,13 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
     }
 }
 
-bool DirectTargetPathPlanner::shouldReplan(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet& obstacles, const Path* prevPath) const {
-    assert(cmd->getCommandType() == Planning::MotionCommand::DirectPathTarget);
-    Planning::DirectPathTargetCommand command =
-        *static_cast<const Planning::DirectPathTargetCommand*>(cmd);
+bool DirectTargetPathPlanner::shouldReplan(const SinglePlanRequest &planRequest) const {
+    const MotionConstraints& motionConstraints = planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const Path* prevPath = planRequest.prevPath.get();
+
+    const Planning::DirectPathTargetCommand &command =
+            dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
 
     if (!prevPath) {
         return true;

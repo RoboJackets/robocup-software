@@ -16,11 +16,12 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
     _pivotRadius = new ConfigDouble(cfg, "Pivot/radius", 1.0);
 }
 
-bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
-                                    const PivotCommand command,
-                                    const MotionConstraints& motionConstraints,
-                                    const Geometry2d::ShapeSet& obstacles,
-                                    const Path* prevPath) {
+bool PivotPathPlanner::shouldReplan(const SinglePlanRequest &planRequest) const {
+    const MotionConstraints& motionConstraints = planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const Path* prevPath = planRequest.prevPath.get();
+
+    const auto &command = dynamic_cast<const PivotCommand&>(planRequest.cmd);
 
     if (!prevPath) {
         return true;
@@ -39,13 +40,15 @@ bool PivotPathPlanner::shouldReplan(MotionInstant startInstant,
     return false;
 }
 
-std::unique_ptr<Path> PivotPathPlanner::run(MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles, std::unique_ptr<Path> prevPath) {
+std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest &planRequest) {
+    const MotionInstant &startInstant = planRequest.startInstant;
+    const auto &motionConstraints = planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    std::unique_ptr<Path> &prevPath = planRequest.prevPath;
 
-    PivotCommand command = *dynamic_cast<const PivotCommand*>(cmd);
+    const auto &command = dynamic_cast<const PivotCommand&>(planRequest.cmd);
 
-    if (shouldReplan(startInstant, command, motionConstraints, obstacles, prevPath.get())) {
+    if (shouldReplan(planRequest)) {
 
         //float radius = command.radius;
         float radius = (float)_pivotRadius->value() * Robot_Radius;
