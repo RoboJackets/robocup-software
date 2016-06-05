@@ -33,17 +33,18 @@ ClkDivide #(
 reg [1:0] STARTr;  always @(posedge clk) STARTr <= {STARTr[0], START};
 wire begin_transfer   =   ( STARTr == 2'b01 );
 
-reg [DATA_BIT_COUNTER_WIDTH:0] bitcnt;
+reg [DATA_BIT_COUNTER_WIDTH:0] bitcnt = 0;
 reg [DATA_BIT_WIDTH-1:0] byte_data_received,
                     byte_data_sent,
                     byte_rec_;
 
-reg [DATA_BIT_WIDTH-1:0] data_incoming_l;
-reg [DATA_BIT_WIDTH-1:0] data_sending_l;
-reg [DATA_BIT_WIDTH-1:0] data_recv;
+reg [DATA_BIT_WIDTH-1:0] data_incoming_l = 0;
+reg [DATA_BIT_WIDTH-1:0] data_sending_l = 0;
+reg [DATA_BIT_WIDTH-1:0] data_recv = 0;
 
 wire end_transfer = ( transfer_active && ( bitcnt == DATA_BIT_WIDTH ) );
-reg valid_q, miso_q;
+reg valid_q,
+    miso_q;
 
 assign VALID = valid_q;
 assign BUSY = transfer_active;

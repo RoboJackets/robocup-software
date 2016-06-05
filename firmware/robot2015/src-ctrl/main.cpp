@@ -204,8 +204,6 @@ int main() {
 
     unsigned int ll = 0;
     uint16_t errorBitmask = 0;
-    bool errorFlash = false;
-
     if (!fpgaReady) {
         // assume all motors have errors if FPGA does not work
         errorBitmask |= (1 << RJ_ERR_LED_M1);
@@ -222,7 +220,7 @@ int main() {
 
         // periodically reset the console text's format
         ll++;
-        if ((ll % 4) == 0) {
+        if ((ll % 8) == 0) {
             printf("\033[m");
             fflush(stdout);
         }
@@ -235,14 +233,20 @@ int main() {
         // Pack errors into bitmask
         errorBitmask |= !global_radio->isConnected() << RJ_ERR_LED_RADIO;
 
+        motors_refresh();
+
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
             make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
             make_pair(2, RJ_ERR_LED_M3), make_pair(3, RJ_ERR_LED_M4),
             make_pair(4, RJ_ERR_LED_DRIB)};
+
         for (auto& pair : motorErrLedMapping) {
             const motorErr_t& status = global_motors[pair.first].status;
-            errorBitmask |= !status.hallOK << pair.second;
+            // clear the bit
+            errorBitmask &= ~(1 << pair.second);
+            // set the bit to whatever hasError is set to
+            errorBitmask |= (status.hasError << pair.second);
         }
 
         // Set error-indicating leds on the control board
@@ -252,14 +256,6 @@ int main() {
             // orange - error
             rgbLED.brightness(6 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorOrange);
-
-            if (!fpgaReady) {
-                errorFlash = !errorFlash;
-                // bright as hell to make sure they know
-                rgbLED.brightness(10 * defaultBrightness * errorFlash);
-                // well, damn. everything is broke as hell
-                rgbLED.setPixel(0, NeoColorRed);
-            }
         } else {
             // no errors, yay!
             rgbLED.brightness(3 * defaultBrightness);
