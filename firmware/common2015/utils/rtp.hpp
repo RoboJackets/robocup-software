@@ -76,7 +76,7 @@ struct RobotStatusMessage {
      * is 0.100546875, but this has been adjusted after testing to the value
      * below.
      */
-    const float BATTERY_READING_SCALE_FACTOR = 0.09884;
+    static constexpr float BATTERY_READING_SCALE_FACTOR = 0.09884;
     uint8_t battVoltage;
 
     uint8_t ballSenseStatus : 2;
