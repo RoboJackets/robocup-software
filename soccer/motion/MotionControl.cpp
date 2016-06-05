@@ -84,8 +84,9 @@ void MotionControl::run() {
     const auto& motionCommand = _robot->motionCommand();
 
     float targetAngleFinal = 0;
-    //if (motionCommand->getCommandType() == MotionCommand::Pivot) {
-    //    PivotCommand command = *static_cast<PivotCommand*>(motionCommand.get());
+    // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
+    //    PivotCommand command =
+    //    *static_cast<PivotCommand*>(motionCommand.get());
     //    targetPt = command.pivotTarget;
     //} else {
     if (optTarget) {

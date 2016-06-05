@@ -58,16 +58,18 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     return start + dir * nonblockedPathLen;
 }
 
-bool TargetVelPathPlanner::shouldReplan(const SinglePlanRequest &planRequest) const {
+bool TargetVelPathPlanner::shouldReplan(
+    const SinglePlanRequest& planRequest) const {
     const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints = planRequest.robotConstraints.mot;
+    const MotionConstraints& motionConstraints =
+        planRequest.robotConstraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
-    const WorldVelTargetCommand &command = static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
+    const WorldVelTargetCommand& command =
+        static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
 
-    if (SingleRobotPathPlanner::shouldReplan(planRequest))
-        return true;
+    if (SingleRobotPathPlanner::shouldReplan(planRequest)) return true;
 
     // See if obstacles have changed such that the end point is significantly
     // different
@@ -82,7 +84,7 @@ bool TargetVelPathPlanner::shouldReplan(const SinglePlanRequest &planRequest) co
     // command velocity
     if (auto trapezoidalPath = dynamic_cast<const TrapezoidalPath*>(prevPath)) {
         const float velChange =
-                command.worldVel.mag() - trapezoidalPath->maxSpeed();
+            command.worldVel.mag() - trapezoidalPath->maxSpeed();
         if (velChange > *_targetVelChangeReplanThreshold) {
             return true;
         }
@@ -96,12 +98,13 @@ bool TargetVelPathPlanner::shouldReplan(const SinglePlanRequest &planRequest) co
 
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
-std::unique_ptr<Path> TargetVelPathPlanner::run(SinglePlanRequest &planRequest) {
-    const MotionInstant &startInstant = planRequest.startInstant;
-    const MotionCommand &cmd = planRequest.cmd;
-    const auto &motionConstraints = planRequest.robotConstraints.mot;
+std::unique_ptr<Path> TargetVelPathPlanner::run(
+    SinglePlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.startInstant;
+    const MotionCommand& cmd = planRequest.cmd;
+    const auto& motionConstraints = planRequest.robotConstraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-    std::unique_ptr<Path> &prevPath = planRequest.prevPath;
+    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // If the start point is in an obstacle, escape from it
     if (obstacles.hit(startInstant.pos)) {
@@ -111,7 +114,8 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(SinglePlanRequest &planRequest) 
     }
 
     // TODO Undo this hack to use TargetVelPlanner to do Pivot
-    const WorldVelTargetCommand &command = static_cast<const WorldVelTargetCommand&>(cmd);
+    const WorldVelTargetCommand& command =
+        static_cast<const WorldVelTargetCommand&>(cmd);
 
     if (shouldReplan(planRequest)) {
         // Choose the furthest endpoint we can that doesn't hit obstacles

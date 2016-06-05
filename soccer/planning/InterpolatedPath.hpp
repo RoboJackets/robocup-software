@@ -32,8 +32,6 @@ public:
 
         Geometry2d::Point& vel() { return instant.vel; }
         const Geometry2d::Point& vel() const { return instant.vel; }
-
-
     };
 
     // Set of points in the path - used as waypoints
