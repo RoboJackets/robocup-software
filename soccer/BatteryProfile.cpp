@@ -14,7 +14,6 @@ const BatteryProfile RJ2008BatteryProfile({{14.20, 0.20},
                                            {15.10, 0.50},
                                            {16.00, 1.00}});
 
-#warning Battery profile for 2015 robot is untested, actual battery charge may be different than what is seen in soccer
 const BatteryProfile RJ2015BatteryProfile({{17.75, 0.20},
                                            {18.87, 0.50},
                                            {20.00, 1.00}});
