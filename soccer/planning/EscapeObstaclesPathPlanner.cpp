@@ -20,12 +20,11 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
         cfg, "EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
 }
 
-std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints, ShapeSet& obstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles,
-    std::unique_ptr<Path> prevPath) {
-    assert(cmd->getCommandType() == MotionCommand::None);
+std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(SinglePlanRequest &planRequest) {
+    const MotionInstant &startInstant = planRequest.startInstant;
+    const auto &motionConstraints = planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    std::unique_ptr<Path> &prevPath = planRequest.prevPath;
 
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
