@@ -61,9 +61,10 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
             pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
         vector<Point> points;
 
-        //maxSpeed = maxRadians * radius
+        // maxSpeed = maxRadians * radius
         MotionConstraints newConstraints = planRequest.robotConstraints.mot;
-        newConstraints.maxSpeed = std::min(newConstraints.maxSpeed, rotationConstraints.maxSpeed*radius);
+        newConstraints.maxSpeed = std::min(
+            newConstraints.maxSpeed, rotationConstraints.maxSpeed * radius);
 
         float startAngle = pivotPoint.angleTo(startInstant.pos);
         float targetAngle = pivotPoint.angleTo(endTarget);
@@ -79,13 +80,12 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
                 Point::direction(angle).normalized(radius) + pivotPoint;
             points.push_back(point);
         }
-        unique_ptr<Path> path =
-            RRTPlanner::generatePath(points, obstacles, newConstraints,
-                                     startInstant.vel, Point(0, 0));
-        std::function<AngleInstant(MotionInstant)> function = [pivotPoint](
-            MotionInstant instant) {
-            return AngleInstant(instant.pos.angleTo(pivotPoint));
-        };
+        unique_ptr<Path> path = RRTPlanner::generatePath(
+            points, obstacles, newConstraints, startInstant.vel, Point(0, 0));
+        std::function<AngleInstant(MotionInstant)> function =
+            [pivotPoint](MotionInstant instant) {
+                return AngleInstant(instant.pos.angleTo(pivotPoint));
+            };
         return make_unique<AngleFunctionPath>(move(path), function);
         ;
     } else {
