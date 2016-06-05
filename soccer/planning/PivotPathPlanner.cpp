@@ -46,6 +46,7 @@ bool PivotPathPlanner::shouldReplan(
 std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.startInstant;
     const auto& motionConstraints = planRequest.robotConstraints.mot;
+    const auto& rotationConstraints = planRequest.robotConstraints.rot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
@@ -59,6 +60,10 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
         auto endTarget =
             pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
         vector<Point> points;
+
+        //maxSpeed = maxRadians * radius
+        MotionConstraints newConstraints = planRequest.robotConstraints.mot;
+        newConstraints.maxSpeed = std::min(newConstraints.maxSpeed, rotationConstraints.maxSpeed*radius);
 
         float startAngle = pivotPoint.angleTo(startInstant.pos);
         float targetAngle = pivotPoint.angleTo(endTarget);
@@ -75,7 +80,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
             points.push_back(point);
         }
         unique_ptr<Path> path =
-            RRTPlanner::generatePath(points, obstacles, motionConstraints,
+            RRTPlanner::generatePath(points, obstacles, newConstraints,
                                      startInstant.vel, Point(0, 0));
         std::function<AngleInstant(MotionInstant)> function = [pivotPoint](
             MotionInstant instant) {

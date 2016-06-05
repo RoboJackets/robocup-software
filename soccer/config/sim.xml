@@ -210,7 +210,7 @@
   <goalChangeThreshold value="0.09"/>
  </EscapeObstaclesPathPlanner>
  <RotationConstraints>
-  <Max_Rotation_Speed value="5"/>
+  <Max_Rotation_Speed value="2"/>
   <Max_Rotation_Acceleration value="2"/>
  </RotationConstraints>
  <Pivot>
