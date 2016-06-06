@@ -37,7 +37,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
 
     // Sorts descending so that higher priorities are first
     auto comparator = [&](int& lhs, int& rhs) {
-        return requests[lhs].priority > requests[rhs].priority;
+        return requests.at(lhs).priority > requests.at(rhs).priority;
     };
 
     std::sort(std::begin(staticRequests), std::end(staticRequests), comparator);
@@ -54,7 +54,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
 
     vector<DynamicObstacle> ourRobotsObstacles;
     for (int shell : inOrderRequests) {
-        PlanRequest& request = requests[shell];
+        PlanRequest& request = requests.at(shell);
 
         if (_planners[shell]->canHandleDynamic()) {
             std::copy(std::begin(ourRobotsObstacles),
