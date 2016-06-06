@@ -65,7 +65,7 @@ bool TargetVelPathPlanner::shouldReplan(
         planRequest.robotConstraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
-    // TODO Undo this hack to use TargetVelPlanner to do Pivot
+
     const WorldVelTargetCommand& command =
         static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
 
@@ -113,7 +113,6 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
         return escapePlanner.run(planRequest);
     }
 
-    // TODO Undo this hack to use TargetVelPlanner to do Pivot
     const WorldVelTargetCommand& command =
         static_cast<const WorldVelTargetCommand&>(cmd);
 

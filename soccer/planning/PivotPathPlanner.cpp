@@ -10,10 +10,10 @@ namespace Planning {
 
 REGISTER_CONFIGURABLE(PivotPathPlanner);
 
-ConfigDouble* PivotPathPlanner::_pivotRadius;
+ConfigDouble* PivotPathPlanner::_pivotRadiusMultiplier;
 
 void PivotPathPlanner::createConfiguration(Configuration* cfg) {
-    _pivotRadius = new ConfigDouble(cfg, "Pivot/radius", 1.0);
+    _pivotRadiusMultiplier = new ConfigDouble(cfg, "Pivot/radius", 1.0, "Multiplier for the pivotRadius. PivotRadius = RobotRadius * multiplier");
 }
 
 bool PivotPathPlanner::shouldReplan(
@@ -54,7 +54,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
 
     if (shouldReplan(planRequest)) {
         // float radius = command.radius;
-        float radius = (float)_pivotRadius->value() * Robot_Radius;
+        float radius = (float) _pivotRadiusMultiplier->value() * Robot_Radius;
         auto pivotPoint = command.pivotPoint;
         auto pivotTarget = command.pivotTarget;
         auto endTarget =
