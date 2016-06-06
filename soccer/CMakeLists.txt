@@ -33,6 +33,7 @@ set(ROBOCUP_LIB_SRC
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
     "planning/PivotPathPlanner.cpp"
+    "planning/LineKickPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
     "planning/TrapezoidalPath.cpp"
