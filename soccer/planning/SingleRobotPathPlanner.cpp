@@ -5,6 +5,7 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "PivotPathPlanner.hpp"
+#include "LineKickPlanner.hpp"
 
 namespace Planning {
 
@@ -35,6 +36,9 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
+            break;
+        case MotionCommand::LineKick:
+            planner = new LineKickPlanner();
             break;
         case MotionCommand::None:
             planner = new EscapeObstaclesPathPlanner();
