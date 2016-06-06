@@ -13,7 +13,7 @@ int main() {
         make_shared<SharedSPI>(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
     sharedSPI->format(
         8, 0);  // 8 bits per transferrintf("About to flash kicker\r\n");
-    KickerBoard kickerBoard(sharedSPI, p9, p8,
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
                             "/local/rj-kickr.nib");  // nCs, nReset
     bool kickerReady = kickerBoard.flash(true, true);
     printf("Flashed kicker, success = %s\r\n", kickerReady ? "TRUE" : "FALSE");
