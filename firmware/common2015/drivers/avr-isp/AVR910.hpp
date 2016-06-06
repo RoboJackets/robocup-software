@@ -130,7 +130,7 @@ protected:
      * @return boolean indicating success
      */
     bool checkMemory(int numPages, int pageSize, FILE* binary,
-                     bool verbose = true);
+                     bool verbose = false);
 
     /**
      * Brings the reset line high to exit programming mode.  The program()
