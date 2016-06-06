@@ -3,6 +3,8 @@
 #include "pins-ctrl-2015.hpp"
 #include "SharedSPI.hpp"
 
+LocalFileSystem fs("local");
+
 // DigitalOut cs(p8);
 Serial pc(USBTX, USBRX);  // tx and rx
 // DigitalOut n_kick(p9);
