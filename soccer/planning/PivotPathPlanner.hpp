@@ -24,7 +24,7 @@ public:
 private:
     bool shouldReplan(const SinglePlanRequest& planRequest) const;
 
-    static ConfigDouble*_pivotRadiusMultiplier;
+    static ConfigDouble* _pivotRadiusMultiplier;
 };
 
 }  // namespace Planning
