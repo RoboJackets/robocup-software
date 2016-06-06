@@ -65,12 +65,7 @@ public:
         return MotionCommand::PathTarget;
     }
 
-    std::unique_ptr<Path> run(
-        MotionInstant start, const MotionCommand* cmd,
-        const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>& dynamicObstacles,
-        std::unique_ptr<Path> prevPath = nullptr) override;
+    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
     int reusePathTries = 0;
 
@@ -81,11 +76,8 @@ protected:
 
     /// Check to see if the previous path (if any) should be discarded and
     /// replaced with a newly-planned one
-    bool shouldReplan(MotionInstant start, MotionInstant goal,
-                      const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet& obstacles,
-                      const std::vector<const Path*> dynamicObs,
-                      const Path* prevPath) const;
+    bool shouldReplan(const SinglePlanRequest& planRequest,
+                      const std::vector<const Path*> dynamicObs) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     std::vector<Geometry2d::Point> runRRT(

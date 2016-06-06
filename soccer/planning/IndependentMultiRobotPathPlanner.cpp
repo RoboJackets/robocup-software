@@ -1,4 +1,5 @@
 #include "IndependentMultiRobotPathPlanner.hpp"
+#include "RobotConstraints.hpp"
 
 using namespace std;
 namespace Planning {
@@ -70,10 +71,11 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.dynamicObstacles = std::vector<DynamicObstacle>();
         }
 
-        paths[shell] = _planners[shell]->run(
-            request.start, request.motionCommand.get(), request.constraints,
+        SinglePlanRequest singlePlanRequest(
+            request.start, *request.motionCommand, request.constraints,
             request.obstacles, request.dynamicObstacles,
             std::move(request.prevPath));
+        paths[shell] = _planners[shell]->run(singlePlanRequest);
 
         // Add our generated path to our list of our Robot Obstacles
         ourRobotsObstacles.push_back(

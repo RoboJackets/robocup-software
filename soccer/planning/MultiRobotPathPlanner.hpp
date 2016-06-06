@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include "RobotConstraints.hpp"
 
 namespace Planning {
 
@@ -15,7 +16,7 @@ namespace Planning {
 /// about an individual robot in order to generate a path for it.
 struct PlanRequest {
     PlanRequest(MotionInstant start, std::unique_ptr<MotionCommand> command,
-                MotionConstraints constraints, std::unique_ptr<Path> prevPath,
+                RobotConstraints constraints, std::unique_ptr<Path> prevPath,
                 Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
                 int8_t priority = 0)
         : start(start),
@@ -29,7 +30,7 @@ struct PlanRequest {
 
     MotionInstant start;
     std::unique_ptr<MotionCommand> motionCommand;
-    MotionConstraints constraints;
+    RobotConstraints constraints;
     std::unique_ptr<Path> prevPath;
     Geometry2d::ShapeSet obstacles;
     std::vector<DynamicObstacle> dynamicObstacles;
