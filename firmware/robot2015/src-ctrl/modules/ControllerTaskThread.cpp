@@ -14,8 +14,6 @@
 #include "io-expander.hpp"
 #include "Pid.hpp"
 
-#include "main.hpp"
-
 const float kpi = 3.14159265358979f;
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
@@ -106,6 +104,14 @@ void Task_Controller(void const* args) {
 
     uint16_t duty_cycle_all = kduty_cycle;
 
+    // Init IO Expander and turn all LEDs on.  The first parameter to config()
+    // sets the first 8 lines to input and the last 8 to output.  The pullup
+    // resistors and polarity swap are enabled for the 4 rotary selector lines.
+    MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
+    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
+    ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
+                         IOExpanderErrorLEDMask);
+
     // rotary selector for setting motor velocities without needing a computer
     RotarySelector<IOExpanderDigitalInOut> rotarySelector(
         {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
@@ -116,6 +122,8 @@ void Task_Controller(void const* args) {
                                 MCP23017::DIR_INPUT),
          IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
                                 MCP23017::DIR_INPUT)});
+
+    size_t ii = 0;
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -179,7 +187,7 @@ void Task_Controller(void const* args) {
         // fixup the duty cycle to be centered around 0 and
         // increasing from 0 for both CW & CCW spins of the
         // rotary selector
-        const uint8_t duty_cycle_multiplier = 8 - abs(8 - rotary_vel);
+        const uint8_t duty_cycle_multiplier = 0x07 & (8 - abs(8 - rotary_vel));
 
         // calculate a duty cycle in steps of 73
         duty_cycle_all = duty_cycle_multiplier * 73;
@@ -188,6 +196,9 @@ void Task_Controller(void const* args) {
         duty_cycle_all |= (spin_rev << 9);
 
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
+
+        ii++;
+        if (ii % 100 == 0) printf("%02X\r\n", duty_cycle_all);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }

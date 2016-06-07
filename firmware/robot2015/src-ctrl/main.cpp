@@ -19,12 +19,9 @@
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-
-#include "main.hpp"
 
 using namespace std;
 
@@ -42,11 +39,6 @@ void statusLights(bool state) {
     // the state is inverted because the leds are wired active-low
     for (DigitalOut& led : init_leds) led = !state;
 }
-
-// Init IO Expander and turn all LEDs on.  The first parameter to config()
-// sets the first 8 lines to input and the last 8 to output.  The pullup
-// resistors and polarity swap are enabled for the 4 rotary selector lines.
-MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
 
 /**
  * The entry point of the system where each submodule's thread is started.
@@ -142,6 +134,10 @@ int main() {
                             "/local/rj-kickr.nib");
     bool kickerReady = kickerBoard.flash(true, true);
 
+    // Init IO Expander and turn all LEDs on.  The first parameter to config()
+    // sets the first 8 lines to input and the last 8 to output.  The pullup
+    // resistors and polarity swap are enabled for the 4 rotary selector lines.
+    MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
     ioExpander.config(0x00FF, 0x00f0, 0x00f0);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
