@@ -100,8 +100,6 @@ void Task_Controller(void const* args) {
     const uint16_t kduty_cycle = 225;
     duty_cycles.assign(5, kduty_cycle);
 
-    bool spin_rev = true;
-
     uint16_t duty_cycle_all = kduty_cycle;
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
@@ -122,8 +120,6 @@ void Task_Controller(void const* args) {
                                 MCP23017::DIR_INPUT),
          IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
                                 MCP23017::DIR_INPUT)});
-
-    size_t ii = 0;
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -181,24 +177,20 @@ void Task_Controller(void const* args) {
         // get a reading from the rotary selector
         const uint8_t rotary_vel = rotarySelector.read();
 
-        // set the motor's direction
-        spin_rev = (1 << 8) & rotary_vel;
-
         // fixup the duty cycle to be centered around 0 and
         // increasing from 0 for both CW & CCW spins of the
         // rotary selector
-        const uint8_t duty_cycle_multiplier = 0x07 & (8 - abs(8 - rotary_vel));
+        const uint8_t duty_cycle_multiplier = 0x07 & static_cast<uint8_t>(8 - abs(8 - static_cast<int>(rotary_vel)));
 
-        // calculate a duty cycle in steps of 73
+        // calculate a duty cycle in steps of 73, this means max is 73 * 7 = 511
         duty_cycle_all = duty_cycle_multiplier * 73;
 
-        // set the direction
-        duty_cycle_all |= (spin_rev << 9);
+        // set the direction, the bit shifting should be self explanatory here
+        // (that was a joke guys...calm down)
+        duty_cycle_all |= (((rotary_vel & (1 << 3)) >> 3) << 9);
 
+        // set the duty cycle values all to our determined value according to the rotary selector
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
-
-        ii++;
-        if (ii % 100 == 0) printf("%02X\r\n", duty_cycle_all);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
