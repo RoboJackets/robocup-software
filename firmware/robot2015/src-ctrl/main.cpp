@@ -154,8 +154,8 @@ int main() {
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Start the thread task for the serial console
-    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    // Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
     // Initialize the CommModule and CC1201 radio
     InitializeCommModule(sharedSPI);
@@ -189,7 +189,7 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
-    console_task.signal_set(SUB_TASK_CONTINUE);
+    // console_task.signal_set(SUB_TASK_CONTINUE);
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
