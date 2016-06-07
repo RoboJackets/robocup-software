@@ -18,6 +18,7 @@ set(MODULES commands motors)
 
 # generate a list of directories that we need to include from the values set above
 set(ROBOT2015_ELF_INCLUDES ${CONFIG_ROOT_NAME} ${MODULES_ROOT_NAME})
+list(APPEND ROBOT2015_ELF_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
 foreach(module_subdir ${MODULES})
     list(APPEND ROBOT2015_ELF_INCLUDES ${MODULES_ROOT_NAME}/${module_subdir})
 endforeach()

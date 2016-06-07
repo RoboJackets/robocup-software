@@ -6,12 +6,15 @@
 #include <assert.hpp>
 
 #include "robot-devices.hpp"
+#include "RotarySelector.hpp"
 #include "task-signals.hpp"
 #include "motors.hpp"
 #include "fpga.hpp"
 #include "mpu-6050.hpp"
 #include "io-expander.hpp"
 #include "Pid.hpp"
+
+#include "main.hpp"
 
 const float kpi = 3.14159265358979f;
 
@@ -99,10 +102,20 @@ void Task_Controller(void const* args) {
     const uint16_t kduty_cycle = 225;
     duty_cycles.assign(5, kduty_cycle);
 
-    size_t ii = 0;
     bool spin_rev = true;
 
     uint16_t duty_cycle_all = kduty_cycle;
+
+    // rotary selector for setting motor velocities without needing a computer
+    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
+        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
+                                MCP23017::DIR_INPUT)});
 
     while (true) {
         imu.getGyro(gyroVals);
@@ -157,16 +170,19 @@ void Task_Controller(void const* args) {
         // duty cycle values range: 0 -> 511, the 9th bit is direction
         dc = std::min(dc, static_cast<uint16_t>(511));
 
-        ii++;
-        // if (ii < 20) {
-        //     duty_cycle_all = kduty_cycle;
-        // } else {
-        //     duty_cycle_all = 0;
-        //     spin_rev = !spin_rev;
-        //     ii = 0;
-        // }
+        // get a reading from the rotary selector
+        const uint8_t rotary_vel = rotarySelector.read();
 
-        // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
+        // set the motor's direction
+        spin_rev = (1 << 8) & rotary_vel;
+
+        // fixup the duty cycle to be centered around 0 and
+        // increasing from 0 for both CW & CCW spins of the
+        // rotary selector
+        const uint8_t duty_cycle_multiplier = 8 - abs(8 - rotary_vel);
+
+        // calculate a duty cycle in steps of 73
+        duty_cycle_all = duty_cycle_multiplier * 73;
 
         // set the direction
         duty_cycle_all |= (spin_rev << 9);

@@ -14,7 +14,6 @@
 #include "CC1201.cpp"
 #include "KickerBoard.hpp"
 #include "RadioProtocol.hpp"
-#include "RotarySelector.hpp"
 #include "RtosTimerHelper.hpp"
 #include "SharedSPI.hpp"
 #include "commands.hpp"
@@ -24,6 +23,8 @@
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+
+#include "main.hpp"
 
 using namespace std;
 
@@ -41,6 +42,11 @@ void statusLights(bool state) {
     // the state is inverted because the leds are wired active-low
     for (DigitalOut& led : init_leds) led = !state;
 }
+
+// Init IO Expander and turn all LEDs on.  The first parameter to config()
+// sets the first 8 lines to input and the last 8 to output.  The pullup
+// resistors and polarity swap are enabled for the 4 rotary selector lines.
+MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
 
 /**
  * The entry point of the system where each submodule's thread is started.
@@ -136,24 +142,9 @@ int main() {
                             "/local/rj-kickr.nib");
     bool kickerReady = kickerBoard.flash(true, true);
 
-    // Init IO Expander and turn all LEDs on.  The first parameter to config()
-    // sets the first 8 lines to input and the last 8 to output.  The pullup
-    // resistors and polarity swap are enabled for the 4 rotary selector lines.
-    MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
     ioExpander.config(0x00FF, 0x00f0, 0x00f0);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
-
-    // rotary selector for shell id
-    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
-        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
-                                MCP23017::DIR_INPUT)});
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
