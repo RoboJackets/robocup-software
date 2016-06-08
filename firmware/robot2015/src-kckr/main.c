@@ -9,8 +9,8 @@
 #define NO_COMMAND 0
 #define IGNORE_CS 0
 
-#define TIMING_CONSTANT 75
-#define VOLTAGE_READ_DELAY_MS 100
+#define TIMING_CONSTANT 125
+#define VOLTAGE_READ_DELAY_MS 50
 
 // State of the ATtiny kicking/chipping
 typedef enum { OFF, ON, ACTING } state_t;
