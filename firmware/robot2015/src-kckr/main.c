@@ -12,7 +12,7 @@
 #define IGNORE_CS 0
 
 #define TIMING_CONSTANT 125
-#define VOLTAGE_READ_DELAY_MS 50
+#define VOLTAGE_READ_DELAY_MS 100
 
 // State of the ATtiny kicking/chipping
 typedef enum { OFF, ON, ACTING } state_t;
@@ -27,7 +27,11 @@ volatile int kick_db_held_down_ = 0;
 volatile int chip_db_down_ = 0;
 volatile int charge_db_down_ = 0;
 
+volatile uint8_t byte_cnt = 0;
+
 uint8_t cur_command_ = NO_COMMAND;
+
+volatile int was_chip_selected = 0;
 
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 uint8_t last_voltage_ = 0;
@@ -88,7 +92,8 @@ void main() {
     // Enable interrupts for PCINT8-PCINT11
     GIMSK |= _BV(PCIE1);
 
-    // Enable on N_KICK_CS
+    // Only have the N_KICK_CS interrupt enabled
+    PCMSK0 = 0;
     PCMSK0 |= _BV(INT_N_KICK_CS);
 
     // Enable interrupts on debug buttons
@@ -122,6 +127,8 @@ void main() {
 
     const uint8_t kalpha = 32;
 
+    // PORTA &= ~_BV(CHIP_PIN);  // unset CHIP pin
+
     // We handle voltage readings here
     while (1) {
         // get a voltage reading by weighing in a new reading, same concept as
@@ -131,7 +138,7 @@ void main() {
         last_voltage_ = voltage_accum / 255;
 
         // stop charging if we're at or above 250V
-        if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+        // if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
@@ -147,8 +154,17 @@ void main() {
  *
  * ISR for the USI
  */
-ISR(USI_STR_vect, ISR_BLOCK) {
-    // Wait for overflow flag to become 1
+ISR(USI_STR_vect) {
+    // disable global interrupts
+    cli();
+
+    // ensure we're driving as output
+    DDRA |= _BV(MISO_PIN);
+
+    // set the selected checking variable for other ISRs
+    was_chip_selected = !(PINA & _BV(N_KICK_CS_PIN));
+
+    // // Wait for overflow flag to become 1
     while (!(USISR & _BV(USIOIF)))
         ;
 
@@ -159,22 +175,24 @@ ISR(USI_STR_vect, ISR_BLOCK) {
     USISR |= _BV(USIOIF) |  // Clear the overflow flag
              _BV(USISIF);   // Clear the SPI start flag
 
-    if (state_ == ON) {
-        if (cur_command_ == NO_COMMAND) {
-            // we don't have a command already, set the response
-            // buffer to the command we received to let the
-            // master confirm the given command if desired, top
-            // bit is set if currently charging
-            cur_command_ = recv_data;
-            USIDR = (is_charging() << 7) | (0x7F & cur_command_);
-        } else {
-            // execute the currently set command with
-            // the newly given argument, set the response
-            // buffer to our return value
-            USIDR = execute_cmd(cur_command_, recv_data);
-            cur_command_ = NO_COMMAND;
-        }
+    byte_cnt++;
+    if (byte_cnt == 1) {
+        // we don't have a command already, set the response
+        // buffer to the command we received to let the
+        // master confirm the given command if desired, top
+        // bit is set if currently charging
+        cur_command_ = recv_data;
+        USIDR = (is_charging() << 7) | (0x7F & cur_command_);
+    } else {
+        // execute the currently set command with
+        // the newly given argument, set the response
+        // buffer to our return value
+        USIDR = execute_cmd(cur_command_, recv_data);
+        cur_command_ = NO_COMMAND;
     }
+
+    // enable global interrupts back
+    sei();
 }
 
 /*
@@ -183,18 +201,20 @@ ISR(USI_STR_vect, ISR_BLOCK) {
  * ISR for PCINT0 - PCINT7
  */
 ISR(PCINT0_vect) {
-    // check if selected
-    int is_chip_selected = !(PINA & _BV(N_KICK_CS_PIN));
+    PORTA |= _BV(CHIP_PIN);  // set CHIP pin
 
-    if (is_chip_selected) {
+    int is_chip_selected_now = !(PINA & _BV(N_KICK_CS_PIN));
+
+    if (is_chip_selected_now) {
         // set the slave data out pin as an output
         DDRA |= _BV(MISO_PIN);
-        state_ = ON;
     } else {
         // set the slave data out pin as an input
-        DDRA &= ~_BV(MISO_PIN);
-        state_ = OFF;
+        // DDRA &= ~_BV(MISO_PIN);
+        byte_cnt = 0;
     }
+
+    PORTA &= ~_BV(CHIP_PIN);  // set CHIP pin
 }
 
 /*
