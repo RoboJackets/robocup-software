@@ -9,7 +9,7 @@
 #define NO_COMMAND 0
 #define IGNORE_CS 0
 
-#define TIMING_CONSTANT 125
+#define TIMING_CONSTANT 75
 #define VOLTAGE_READ_DELAY_MS 100
 
 // State of the ATtiny kicking/chipping
@@ -27,6 +27,9 @@ volatile int charge_db_down_ = 0;
 
 uint8_t cur_command_ = NO_COMMAND;
 
+// used for averaging multiple voltage readings
+unsigned int voltage_accum = 0;
+
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 uint8_t last_voltage_ = 0;
 
@@ -34,7 +37,7 @@ uint8_t last_voltage_ = 0;
 uint8_t get_voltage();
 
 // executes a command coming from SPI
-void execute_cmd(uint8_t, uint8_t);
+uint8_t execute_cmd(uint8_t, uint8_t);
 
 void main() {
     /* Port direction - setting outputs */
@@ -51,14 +54,19 @@ void main() {
     PORTB |= _BV(DB_KICK_PIN) | _BV(DB_CHIP_PIN) | _BV(DB_CHG_PIN);
 
     // Chip Select Interrupt
-    if (IGNORE_CS)
+    if (IGNORE_CS) {
         // Because we aren't using CS here, MISO must be manually set as an
         // output instead of being managed by the interrupt
         DDRA |= _BV(MISO_PIN);
-    else
-        GIMSK |= _BV(PCIE0);  // Enable interrupts for PCINT0-PCINT7
+    } else {
+        // ensure MISO is an input
+        DDRA &= ~_BV(MISO_PIN);
 
-    // Debug Button Interrupts
+        // Enable interrupts for PCINT0-PCINT7
+        GIMSK |= _BV(PCIE0);
+    }
+
+    // == Debug Button Interrupts ==
     // Enable interrupts for PCINT8-PCINT11
     GIMSK |= _BV(PCIE1);
 
@@ -85,20 +93,27 @@ void main() {
     OCR0A = TIMING_CONSTANT;  // reset every millisecond
 
     // ADC Initialization
-    PRR &= ~_BV(PRADC);    // disable power reduction Pg. 133
+    PRR &= ~_BV(PRADC);    // disable power reduction - Pg. 133
     ADCSRA |= _BV(ADEN);   // enable the ADC - Pg. 133
     ADCSRB |= _BV(ADLAR);  // present left adjusted
-    // because we left adjusted and only need
-    // 8 bit precision, we can now read ADCH directly
+                           // because we left adjusted and only need
+                           // 8 bit precision, we can now read ADCH directly
 
     // Enable Global Interrupts
     sei();
 
     // We handle voltage readings here
     while (1) {
-        last_voltage_ = get_voltage();
+        // get a voltage reading by averaging multiple readings
+        uint8_t adc_readings = 5;
+        for (size_t i = 0; i < adc_readings; ++i) {
+            voltage_accum += get_voltage();
+        }
+        voltage_accum /= adc_readings;
+        last_voltage_ = voltage_accum
 
-        if (last_voltage_ > 100) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+        // stop charging if we're at or above 250V
+        if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
@@ -120,22 +135,24 @@ ISR(USI_STR_vect) {
         ;
 
     // Get data from USIDR
-    uint8_t data = USIDR;
+    uint8_t recv_data = USIDR;
 
-    // Clear the overflow flag - setting the bit actually clears it
-    USISR |= _BV(USIOIF);
-
-    // Clear the SPI start flag
-    USISR |= _BV(USISIF);
+    // Setting these bits actually clears them
+    USISR |= _BV(USIOIF) |  // Clear the overflow flag
+             _BV(USISIF);   // Clear the SPI start flag
 
     if (state_ == ON) {
-        USIDR = 0;
         if (cur_command_ == NO_COMMAND) {
-            // we don't have a command already
-            cur_command_ = data;
+            // we don't have a command already, set the response
+            // buffer to the command we received to let the
+            // master confirm the given command if desired
+            cur_command_ = recv_data;
+            USIDR = cur_command_;
         } else {
-            // now get argument and execute command
-            execute_cmd(cur_command_, data);
+            // execute the currently set command with
+            // the newly given argument, set the response
+            // buffer to our return value
+            USIDR = execute_cmd(cur_command_, recv_data);
             cur_command_ = NO_COMMAND;
         }
     }
@@ -151,9 +168,11 @@ ISR(PCINT0_vect) {
     int is_chip_selected = !(PINA & _BV(N_KICK_CS_PIN));
 
     if (is_chip_selected) {
+        // set the slave data out pin as an output
         DDRA |= _BV(MISO_PIN);
         state_ = ON;
     } else {
+        // set the slave data out pin as an input
         DDRA &= ~_BV(MISO_PIN);
         state_ = OFF;
     }
@@ -215,12 +234,15 @@ ISR(TIM0_COMPA_vect) {
 /*
  * Executes a command that can come from SPI or a debug button
  *
- * WARNING: This will be called from an interrupt service routines, keep it short!
+ * WARNING: This will be called from an interrupt service routines, keep it
+ *short!
  */
-void execute_cmd(uint8_t cmd, uint8_t arg) {
-    switch (cur_command_) {
+uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
+    uint8_t ret_val = 0;
+
+    switch (cmd) {
         case KICK_CMD:
-            USIDR = KICK_ACK;
+            ret_val = KICK_ACK;
             state_ = ACTING;
             PORTA |= _BV(KICK_PIN);  // set KICK pin
             millis_left_ = arg;
@@ -228,7 +250,7 @@ void execute_cmd(uint8_t cmd, uint8_t arg) {
             break;
 
         case CHIP_CMD:
-            USIDR = CHIP_ACK;
+            ret_val = CHIP_ACK;
             state_ = ACTING;
             PORTA |= _BV(CHIP_PIN);  // set CHIP pin
             millis_left_ = arg;
@@ -236,48 +258,49 @@ void execute_cmd(uint8_t cmd, uint8_t arg) {
             break;
 
         case SET_CHARGE_CMD:
-            USIDR = SET_CHARGE_ACK;
+            ret_val = SET_CHARGE_ACK;
             if (arg == ON_ARG) {
                 PORTA |= _BV(CHARGE_PIN);
-            }
-            else if (arg == OFF_ARG) {
+            } else if (arg == OFF_ARG) {
                 PORTA &= ~_BV(CHARGE_PIN);
             }
             break;
 
         case GET_VOLTAGE_CMD:
-            USIDR = last_voltage_;
+            ret_val = last_voltage_;
             break;
 
         case PING_CMD:
-            USIDR = PING_ACK;
+            ret_val = PING_ACK;
             break;
 
         case GET_BUTTON_STATE_CMD:
             switch (arg) {
                 case DB_KICK_STATE:
-                    USIDR = (PINB & _BV(DB_KICK_PIN)) != 0;
+                    ret_val = (PINB & _BV(DB_KICK_PIN)) != 0;
                     break;
 
                 case DB_CHIP_STATE:
-                    USIDR = (PINB & _BV(DB_CHIP_PIN)) != 0;
+                    ret_val = (PINB & _BV(DB_CHIP_PIN)) != 0;
                     break;
 
                 case DB_CHARGE_STATE:
-                    USIDR = (PINB & _BV(DB_CHG_PIN)) != 0;
+                    ret_val = (PINB & _BV(DB_CHG_PIN)) != 0;
                     break;
 
                 default:
-                    USIDR = 0xF;  // return a weird value to show arg wasn't
-                                  // recognized
+                    ret_val = 0xAA;  // return a weird value to show arg wasn't
+                                     // recognized
                     break;
             }
             break;
 
         default:
-            USIDR = 0xF;  // return a weird value to show arg wasn't recognized
+            ret_val = 0xCC;  // return a weird value to show arg wasn't recognized
             break;
     }
+
+    return ret_val;
 }
 
 /* Voltage Function */
