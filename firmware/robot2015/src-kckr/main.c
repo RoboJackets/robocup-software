@@ -33,11 +33,25 @@ unsigned int voltage_accum = 0;
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 uint8_t last_voltage_ = 0;
 
-// function that does a voltage reading
-uint8_t get_voltage();
-
 // executes a command coming from SPI
 uint8_t execute_cmd(uint8_t, uint8_t);
+
+/* Voltage Function */
+uint8_t get_voltage() {
+    // Hard-coded for PA1, check datasheet before changing
+    // Set lower three bits to value of pin we read from
+    ADMUX |= V_MONITOR_PIN;
+
+    // Start conversation by writing to start bit
+    ADCSRA |= _BV(ADSC);
+
+    // Wait for ADSC bit to clear
+    while (ADCSRA & _BV(ADSC))
+        ;
+
+    // ADHC will go from 0 to 255 corresponding to 0 through VCC
+    return ADCH;
+}
 
 void main() {
     /* Port direction - setting outputs */
@@ -302,21 +316,4 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
     }
 
     return ret_val;
-}
-
-/* Voltage Function */
-uint8_t get_voltage() {
-    // Hard-coded for PA1, check datasheet before changing
-    // Set lower three bits to value of pin we read from
-    ADMUX |= V_MONITOR_PIN;
-
-    // Start conversation by writing to start bit
-    ADCSRA |= _BV(ADSC);
-
-    // Wait for ADSC bit to clear
-    while (ADCSRA & _BV(ADSC))
-        ;
-
-    // ADHC will go from 0 to 255 corresponding to 0 through VCC
-    return ADCH;
 }
