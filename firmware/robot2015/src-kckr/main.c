@@ -102,18 +102,18 @@ void main() {
     // Enable Global Interrupts
     sei();
 
+    const uint8_t kalpha = 32;
+
     // We handle voltage readings here
     while (1) {
-        // get a voltage reading by averaging multiple readings
-        uint8_t adc_readings = 5;
-        for (int i = 0; i < adc_readings; ++i) {
-            voltage_accum += get_voltage();
-        }
-        voltage_accum /= adc_readings;
-        last_voltage_ = voltage_accum;
+        // get a voltage reading by weighing in a new reading, same concept as
+        // TCP RTT estimates
+        int voltage_accum =
+            (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
+        last_voltage_ = voltage_accum / 255;
 
-            // stop charging if we're at or above 250V
-            if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+        // stop charging if we're at or above 250V
+        if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
