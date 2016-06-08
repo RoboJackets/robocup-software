@@ -164,8 +164,7 @@ ISR(PCINT1_vect) {  // interrupt service routine for PCINT8-PCINT11
     if (!kick_db_held_down_ && kick_db_pressed)
         execute_cmd(KICK_CMD, DB_KICK_TIME);
 
-    if (!chip_db_down_ && chip_db_pressed)
-        execute_cmd(CHIP_CMD, DB_CHIP_TIME);
+    if (!chip_db_down_ && chip_db_pressed) execute_cmd(CHIP_CMD, DB_CHIP_TIME);
 
     if (!charge_db_down_ && charge_db_pressed) {  // toggle charge
         if (PINA & _BV(CHARGE_PIN))               // check if charge is on
