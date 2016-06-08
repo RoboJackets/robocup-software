@@ -112,8 +112,8 @@ void main() {
         voltage_accum /= adc_readings;
         last_voltage_ = voltage_accum
 
-        // stop charging if we're at or above 250V
-        if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+            // stop charging if we're at or above 250V
+            if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
@@ -296,7 +296,8 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
             break;
 
         default:
-            ret_val = 0xCC;  // return a weird value to show arg wasn't recognized
+            ret_val =
+                0xCC;  // return a weird value to show arg wasn't recognized
             break;
     }
 

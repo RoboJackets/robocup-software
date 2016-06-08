@@ -5,7 +5,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-
 /*
  * buffer that holds RGB values for an LED string
  */
