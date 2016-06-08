@@ -129,7 +129,7 @@ void main() {
  *
  * ISR for the USI
  */
-ISR(USI_STR_vect) {
+ISR(USI_STR_vect, ISR_BLOCK) {
     // Wait for overflow flag to become 1
     while (!(USISR & _BV(USIOIF)))
         ;
