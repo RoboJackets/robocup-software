@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -49,6 +51,11 @@ uint8_t get_voltage() {
     // ADHC will go from 0 to 255 corresponding to 0 through VCC
     return ADCH;
 }
+
+/*
+ * Returns true if charging is currently active
+ */
+bool is_charging() { return PORTA & _BV(CHARGE_PIN); }
 
 void main() {
     /* Port direction - setting outputs */
@@ -156,9 +163,10 @@ ISR(USI_STR_vect, ISR_BLOCK) {
         if (cur_command_ == NO_COMMAND) {
             // we don't have a command already, set the response
             // buffer to the command we received to let the
-            // master confirm the given command if desired
+            // master confirm the given command if desired, top
+            // bit is set if currently charging
             cur_command_ = recv_data;
-            USIDR = cur_command_;
+            USIDR = (is_charging() << 7) | (0x7F & cur_command_);
         } else {
             // execute the currently set command with
             // the newly given argument, set the response

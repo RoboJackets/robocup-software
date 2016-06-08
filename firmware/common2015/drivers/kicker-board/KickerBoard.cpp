@@ -94,11 +94,14 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
 /* this function enforces the design choice that each cmd must have an arg
  * and return a value */
 uint8_t KickerBoard::send_to_kicker(const uint8_t cmd, const uint8_t arg) {
+    uint8_t ret = 0;
+
     chipSelect();
     _spi->write(cmd);
     _spi->write(arg);
-    uint8_t ret = _spi->write(NOP_ARG);
+    ret = _spi->write(NOP_ARG);
     chipDeselect();
+
     return ret;
 }
 
@@ -111,9 +114,7 @@ uint8_t KickerBoard::chip(uint8_t time) {
 }
 
 uint8_t KickerBoard::read_voltage() {
-    uint8_t volts =
-        send_to_kicker(GET_VOLTAGE_CMD, NOP_ARG);  // send our request
-    return volts;
+    return send_to_kicker(GET_VOLTAGE_CMD, NOP_ARG);
 }
 
 uint8_t KickerBoard::charge() {
@@ -138,4 +139,17 @@ uint8_t KickerBoard::is_chip_debug_pressed() {
 
 uint8_t KickerBoard::is_charge_debug_pressed() {
     return send_to_kicker(GET_BUTTON_STATE_CMD, DB_CHARGE_STATE);
+}
+
+bool KickerBoard::is_charge_enabled() {
+    uint8_t ret = 0;
+
+    chipSelect();
+    _spi->write(PING_CMD);
+    ret = _spi->write(NOP_ARG);
+    _spi->write(NOP_ARG);
+    chipDeselect();
+
+    // boolean determined by MSB of 2nd byte
+    return ret & (1 << 7);
 }

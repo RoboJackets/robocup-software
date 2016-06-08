@@ -22,7 +22,7 @@ int main() {
 
     char getCmd = 'k';
 
-    while (1) {
+    while (true) {
         //    n_kick = !n_kick;
         //    wait(1);
         if (pc.readable()) {
@@ -65,8 +65,9 @@ int main() {
                 default:
                     break;
             }
-            pc.printf("\r\n");
-            // wait_ms(500);
+
+            pc.printf("\t[charging %s]\r\n",
+                      kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
         }
     }
 }

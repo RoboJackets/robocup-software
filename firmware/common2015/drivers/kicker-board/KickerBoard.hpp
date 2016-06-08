@@ -98,6 +98,12 @@ public:
      */
     uint8_t is_charge_debug_pressed();
 
+    /**
+     * @brief Gets the current charging state
+     * @return True if charging is enabled, otherwise false
+     */
+    bool is_charge_enabled();
+
 protected:
     /**
      * @brief Uses the given function to check if it's return value equals the
