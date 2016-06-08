@@ -170,4 +170,4 @@ fi
 echo "-- Updating submodules"
 chown -R $SETUP_USER:$SETUP_USER $BASE/external
 su $SETUP_USER -c 'git submodule sync'
-su $SETUP_USER -c 'git submodule update --init'
+su $SETUP_USER -c 'git submodule update --init --recursive'
