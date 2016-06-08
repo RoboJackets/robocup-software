@@ -27,9 +27,6 @@ volatile int charge_db_down_ = 0;
 
 uint8_t cur_command_ = NO_COMMAND;
 
-// used for averaging multiple voltage readings
-unsigned int voltage_accum = 0;
-
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 uint8_t last_voltage_ = 0;
 
