@@ -181,4 +181,4 @@ pip2 install -r $BASE/util/requirements2.txt
 echo "-- Updating submodules"
 chown -R $(whoami):$(whoami) $BASE/external
 su $(whoami) -c 'git submodule sync'
-su $(whoami) -c 'git submodule update --init'
+su $(whoami) -c 'git submodule update --init --recursive'
