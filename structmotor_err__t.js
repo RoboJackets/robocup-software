@@ -1,5 +1,5 @@
 var structmotor_err__t =
 [
     [ "drvStatus", "structmotor_err__t.html#a550e8c16303c56595b47bfd65475d83e", null ],
-    [ "hallOK", "structmotor_err__t.html#a175cf6f59b8339cc28541a2b65f2a1e9", null ]
+    [ "hasError", "structmotor_err__t.html#a2e102f4ed0997c6b5e80dd89c63e2a9a", null ]
 ];

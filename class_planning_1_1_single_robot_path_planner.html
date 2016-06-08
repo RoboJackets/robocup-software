@@ -122,10 +122,10 @@ $(document).ready(function(){initNavTree('class_planning_1_1_single_robot_path_p
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a742020187bad4d41add62d24097a3db1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a742020187bad4d41add62d24097a3db1"></a>
-virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a742020187bad4d41add62d24097a3db1">run</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> startInstant, const <a class="el" href="class_planning_1_1_motion_command.html">MotionCommand</a> *cmd, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;dynamicObstacles=std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt;(), std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt; prevPath=nullptr)=0</td></tr>
-<tr class="memdesc:a742020187bad4d41add62d24097a3db1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br/></td></tr>
-<tr class="separator:a742020187bad4d41add62d24097a3db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a209ec8cf27bff85f25316af7d4e129ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a209ec8cf27bff85f25316af7d4e129ac"></a>
+virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a209ec8cf27bff85f25316af7d4e129ac">run</a> (<a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest)=0</td></tr>
+<tr class="memdesc:a209ec8cf27bff85f25316af7d4e129ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br/></td></tr>
+<tr class="separator:a209ec8cf27bff85f25316af7d4e129ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4639ec1ebd831d32d15a878419f33f3f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4639ec1ebd831d32d15a878419f33f3f"></a>
 virtual MotionCommand::CommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a4639ec1ebd831d32d15a878419f33f3f">commandType</a> () const =0</td></tr>
 <tr class="memdesc:a4639ec1ebd831d32d15a878419f33f3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The MotionCommand type that this planner handles. <br/></td></tr>
@@ -151,9 +151,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>allDynamicToSt
 <tr class="memitem:a21f0689f18fd7026b2ea1a081ac5c521"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21f0689f18fd7026b2ea1a081ac5c521"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>splitDynamic</b> (<a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, std::vector&lt; const <a class="el" href="class_planning_1_1_path.html">Path</a> * &gt; &amp;dynamicOut, const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;dynamicObstacles)</td></tr>
 <tr class="separator:a21f0689f18fd7026b2ea1a081ac5c521"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a618c1379ba0238f4290067b16c78280a"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a618c1379ba0238f4290067b16c78280a">shouldReplan</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> currentInstant, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, const <a class="el" href="class_planning_1_1_path.html">Path</a> *prevPath)</td></tr>
-<tr class="memdesc:a618c1379ba0238f4290067b16c78280a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#a618c1379ba0238f4290067b16c78280a">More...</a><br/></td></tr>
-<tr class="separator:a618c1379ba0238f4290067b16c78280a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ee15a6d8f0b15362a496453a981d61c"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a1ee15a6d8f0b15362a496453a981d61c">shouldReplan</a> (const <a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest)</td></tr>
+<tr class="memdesc:a1ee15a6d8f0b15362a496453a981d61c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#a1ee15a6d8f0b15362a496453a981d61c">More...</a><br/></td></tr>
+<tr class="separator:a1ee15a6d8f0b15362a496453a981d61c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -173,7 +173,7 @@ Protected Member Functions</h2></td></tr>
 <area shape="rect" id="node2" href="class_planning_1_1_direct_target_path_planner.html" title="Simple path planner that generates a straight&#45;line path from the start instant to the goal..." alt="" coords="255,5,444,46"/><area shape="rect" id="node3" href="class_planning_1_1_escape_obstacles_path_planner.html" title="This planner finds a path to quickly get out of an obstacle. " alt="" coords="253,70,446,111"/><area shape="rect" id="node4" href="class_planning_1_1_pivot_path_planner.html" title="Plans a path that brings the robot to the given velocity as fast as possible. " alt="" coords="254,136,445,163"/><area shape="rect" id="node5" href="class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="272,187,427,213"/><area shape="rect" id="node6" href="class_planning_1_1_target_vel_path_planner.html" title="Plans a path that brings the robot to the given velocity as fast as possible. " alt="" coords="240,237,459,264"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a618c1379ba0238f4290067b16c78280a"></a>
+<a class="anchor" id="a1ee15a6d8f0b15362a496453a981d61c"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -183,31 +183,9 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">bool Planning::SingleRobotPathPlanner::shouldReplan </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&#160;</td>
-          <td class="paramname"><em>currentInstant</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;&#160;</td>
+          <td class="paramname"><em>planRequest</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;&#160;</td>
-          <td class="paramname"><em>motionConstraints</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;&#160;</td>
-          <td class="paramname"><em>obstacles</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_planning_1_1_path.html">Path</a> *&#160;</td>
-          <td class="paramname"><em>prevPath</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -239,7 +217,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_single_robot_path_planner.html">SingleRobotPathPlanner</a></li>
-    <li class="footer">Generated on Wed Jun 1 2016 02:59:47 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jun 8 2016 10:14:50 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

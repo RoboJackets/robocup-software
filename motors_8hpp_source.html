@@ -136,7 +136,7 @@ $(document).ready(function(){initNavTree('motors_8hpp_source.html','');});
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">    FETHB_OC, FETLB_OC</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">    FETHC_OC, FETLC_OC</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">    */</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">bool</span> hallOK;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">bool</span> hasError;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    std::array&lt;uint16_t, 2&gt; drvStatus;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;};</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
@@ -152,9 +152,10 @@ $(document).ready(function(){initNavTree('motors_8hpp_source.html','');});
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">extern</span> std::vector&lt;motor_t&gt; global_motors;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keywordtype">void</span> motors_Init();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">void</span> motors_show();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">int</span> cmd_motors(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp;);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">int</span> cmd_motors_scroll(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp;);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">void</span> motors_refresh();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">void</span> motors_show();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">int</span> cmd_motors(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp;);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keywordtype">int</span> cmd_motors_scroll(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp;);</div>
 <div class="ttc" id="structmotor__t_html"><div class="ttname"><a href="structmotor__t.html">motor_t</a></div><div class="ttdef"><b>Definition:</b> motors.hpp:33</div></div>
 <div class="ttc" id="structmotor_err__t_html"><div class="ttname"><a href="structmotor_err__t.html">motorErr_t</a></div><div class="ttdef"><b>Definition:</b> motors.hpp:20</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -163,7 +164,7 @@ $(document).ready(function(){initNavTree('motors_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_081079849da51869e7ffd8e108d45510.html">src-ctrl</a></li><li class="navelem"><a class="el" href="dir_bb139609278048406308a47332543a72.html">modules</a></li><li class="navelem"><a class="el" href="dir_470836fa1e5b7ba4737c900d40421911.html">motors</a></li><li class="navelem"><b>motors.hpp</b></li>
-    <li class="footer">Generated on Wed Jun 1 2016 02:59:45 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jun 8 2016 10:14:49 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -1,0 +1,16 @@
+<map id="Planning::SinglePlanRequest" name="Planning::SinglePlanRequest">
+<area shape="rect" id="node2" href="$struct_planning_1_1_motion_instant.html" title="This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity..." alt="" coords="1231,21,1401,48"/>
+<area shape="rect" id="node3" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="934,21,1077,48"/>
+<area shape="rect" id="node5" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="949,76,1061,103"/>
+<area shape="rect" id="node6" href="$struct_robot_constraints.html" title="RobotConstraints" alt="" coords="1251,139,1381,165"/>
+<area shape="rect" id="node7" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="936,127,1075,153"/>
+<area shape="rect" id="node8" href="$class_config_double.html" title="ConfigDouble" alt="" coords="573,152,680,179"/>
+<area shape="rect" id="node14" href="$struct_rotation_constraints.html" title="RotationConstraints" alt="" coords="932,177,1079,204"/>
+<area shape="rect" id="node9" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="432,152,523,179"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="205,121,291,148"/>
+<area shape="rect" id="node11" title="STL class. " alt="" coords="6,113,143,154"/>
+<area shape="rect" id="node12" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="195,177,301,204"/>
+<area shape="rect" id="node16" href="$class_planning_1_1_dynamic_obstacle.html" title="Planning::DynamicObstacle" alt="" coords="907,228,1103,255"/>
+<area shape="rect" id="node17" href="$class_geometry2d_1_1_shape_set.html" title="This class maintains a collection of Shape objects. " alt="" coords="1229,256,1403,283"/>
+<area shape="rect" id="node18" href="$class_planning_1_1_motion_command.html" title="Planning::MotionCommand" alt="" coords="1219,307,1413,333"/>
+</map>

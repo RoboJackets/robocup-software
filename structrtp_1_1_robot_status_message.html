@@ -109,6 +109,7 @@ $(document).ready(function(){initNavTree('structrtp_1_1_robot_status_message.htm
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structrtp_1_1_robot_status_message-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">rtp::RobotStatusMessage Struct Reference</div>  </div>
@@ -126,7 +127,37 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>battVoltage</b></t
 <tr class="memitem:ac09b7adb74d0d434d1127e6de22c3ff9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac09b7adb74d0d434d1127e6de22c3ff9"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>ballSenseStatus</b>: 2</td></tr>
 <tr class="separator:ac09b7adb74d0d434d1127e6de22c3ff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:afbbaccd80b44d3015fded0f05487bc06"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structrtp_1_1_robot_status_message.html#afbbaccd80b44d3015fded0f05487bc06">BATTERY_READING_SCALE_FACTOR</a> = 0.09884</td></tr>
+<tr class="memdesc:afbbaccd80b44d3015fded0f05487bc06"><td class="mdescLeft">&#160;</td><td class="mdescRight">is a direct reading from the mbed's ADC and is sent over the air as-is.  <a href="#afbbaccd80b44d3015fded0f05487bc06">More...</a><br/></td></tr>
+<tr class="separator:afbbaccd80b44d3015fded0f05487bc06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="afbbaccd80b44d3015fded0f05487bc06"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr float rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR = 0.09884</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>is a direct reading from the mbed's ADC and is sent over the air as-is. </p>
+<p>Soccer must convert this reading into an actual voltage value by multiplying it by the scale factor. The theoretical scale factor is 0.100546875, but this has been adjusted after testing to the value below. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>firmware/common2015/utils/<a class="el" href="rtp_8hpp_source.html">rtp.hpp</a></li>
 </ul>
@@ -136,7 +167,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>ballSenseStatus</b
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>rtp</b></li><li class="navelem"><a class="el" href="structrtp_1_1_robot_status_message.html">RobotStatusMessage</a></li>
-    <li class="footer">Generated on Wed Jun 1 2016 02:59:47 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jun 8 2016 10:14:50 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

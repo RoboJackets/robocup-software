@@ -163,23 +163,31 @@ $(document).ready(function(){initNavTree('_motion_command_8hpp_source.html','');
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> worldVel;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;};</div>
 <div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="struct_planning_1_1_pivot_command.html">   55</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_planning_1_1_pivot_command.html">PivotCommand</a> : <span class="keyword">public</span> <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a> {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="struct_planning_1_1_pivot_command.html">PivotCommand</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> target)</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        : <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a>(MotionCommand::Pivot), pivotTarget(target){};</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">virtual</span> std::unique_ptr&lt;Planning::MotionCommand&gt; clone()<span class="keyword"> const override </span>{</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordflow">return</span> std::make_unique&lt;PivotCommand&gt;(*this);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pivotTarget;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;};</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="struct_planning_1_1_direct_path_target_command.html">   64</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_planning_1_1_direct_path_target_command.html">DirectPathTargetCommand</a> : <span class="keyword">public</span> <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a> {</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">virtual</span> std::unique_ptr&lt;Planning::MotionCommand&gt; clone()<span class="keyword"> const override </span>{</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keywordflow">return</span> std::make_unique&lt;DirectPathTargetCommand&gt;(*this);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="struct_planning_1_1_direct_path_target_command.html">DirectPathTargetCommand</a>(<span class="keyword">const</span> <a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&amp; goal)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        : <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a>(MotionCommand::DirectPathTarget), pathGoal(goal){};</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> pathGoal;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;};</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}  <span class="comment">// namespace Planning</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="struct_planning_1_1_pivot_command.html">PivotCommand</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pivotPoint,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                          <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> target, <span class="keywordtype">float</span> radius)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        : <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a>(MotionCommand::Pivot),</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;          pivotPoint(pivotPoint),</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          pivotTarget(target),</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          radius(radius) {}</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">virtual</span> std::unique_ptr&lt;Planning::MotionCommand&gt; clone()<span class="keyword"> const override </span>{</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">return</span> std::make_unique&lt;PivotCommand&gt;(*this);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pivotTarget;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pivotPoint;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">float</span> radius;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;};</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="struct_planning_1_1_direct_path_target_command.html">   72</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_planning_1_1_direct_path_target_command.html">DirectPathTargetCommand</a> : <span class="keyword">public</span> <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a> {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">virtual</span> std::unique_ptr&lt;Planning::MotionCommand&gt; clone()<span class="keyword"> const override </span>{</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">return</span> std::make_unique&lt;DirectPathTargetCommand&gt;(*this);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="struct_planning_1_1_direct_path_target_command.html">DirectPathTargetCommand</a>(<span class="keyword">const</span> <a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a>&amp; goal)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        : <a class="code" href="class_planning_1_1_motion_command.html">MotionCommand</a>(MotionCommand::DirectPathTarget), pathGoal(goal){};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <a class="code" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> pathGoal;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;};</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;}  <span class="comment">// namespace Planning</span></div>
 <div class="ttc" id="struct_planning_1_1_motion_instant_html"><div class="ttname"><a href="struct_planning_1_1_motion_instant.html">Planning::MotionInstant</a></div><div class="ttdoc">This class represents a robot&#39;s motion &quot;state&quot; at a given time, including position and velocity...</div><div class="ttdef"><b>Definition:</b> MotionInstant.hpp:11</div></div>
 <div class="ttc" id="class_planning_1_1_motion_command_html"><div class="ttname"><a href="class_planning_1_1_motion_command.html">Planning::MotionCommand</a></div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:14</div></div>
 <div class="ttc" id="struct_planning_1_1_world_vel_target_command_html"><div class="ttname"><a href="struct_planning_1_1_world_vel_target_command.html">Planning::WorldVelTargetCommand</a></div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:47</div></div>
@@ -187,14 +195,14 @@ $(document).ready(function(){initNavTree('_motion_command_8hpp_source.html','');
 <div class="ttc" id="struct_planning_1_1_empty_command_html"><div class="ttname"><a href="struct_planning_1_1_empty_command.html">Planning::EmptyCommand</a></div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:30</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:13</div></div>
 <div class="ttc" id="struct_planning_1_1_pivot_command_html"><div class="ttname"><a href="struct_planning_1_1_pivot_command.html">Planning::PivotCommand</a></div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:55</div></div>
-<div class="ttc" id="struct_planning_1_1_direct_path_target_command_html"><div class="ttname"><a href="struct_planning_1_1_direct_path_target_command.html">Planning::DirectPathTargetCommand</a></div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:64</div></div>
+<div class="ttc" id="struct_planning_1_1_direct_path_target_command_html"><div class="ttname"><a href="struct_planning_1_1_direct_path_target_command.html">Planning::DirectPathTargetCommand</a></div><div class="ttdef"><b>Definition:</b> MotionCommand.hpp:72</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><a class="el" href="dir_28df16f06401fa4b261f014c0f6bda1e.html">planning</a></li><li class="navelem"><b>MotionCommand.hpp</b></li>
-    <li class="footer">Generated on Wed Jun 1 2016 02:59:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jun 8 2016 10:14:49 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -13,6 +13,7 @@ var searchData=
   ['balltracker',['BallTracker',['../class_ball_tracker.html',1,'']]],
   ['baseid',['baseID',['../class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9',1,'RobotStatusWidget']]],
   ['basic122',['Basic122',['../classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html',1,'gameplay::plays::offense::basic_122']]],
+  ['battery_5freading_5fscale_5ffactor',['BATTERY_READING_SCALE_FACTOR',['../structrtp_1_1_robot_status_message.html#afbbaccd80b44d3015fded0f05487bc06',1,'rtp::RobotStatusMessage']]],
   ['batterylevel',['batteryLevel',['../class_battery_widget.html#a85f7badb6e5e2e17856f8636cf5a6783',1,'BatteryWidget']]],
   ['batteryprofile',['BatteryProfile',['../class_battery_profile.html',1,'BatteryProfile'],['../class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137',1,'BatteryProfile::BatteryProfile()']]],
   ['batterywidget',['BatteryWidget',['../class_battery_widget.html',1,'']]],

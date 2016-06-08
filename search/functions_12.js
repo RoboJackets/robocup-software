@@ -28,7 +28,7 @@ var searchData=
   ['sharedspidevice',['SharedSPIDevice',['../class_shared_s_p_i_device.html#a6213cd1a7917762f310dc2abe66d3897',1,'SharedSPIDevice']]],
   ['shell',['shell',['../class_robot.html#a8ed316247241fadd6d59fc197df25e3e',1,'Robot']]],
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#ac7ecf05e72f3229814b6bc2055f3ad68',1,'gameplay::skills::_kick::_Kick']]],
-  ['shouldreplan',['shouldReplan',['../class_planning_1_1_r_r_t_planner.html#a388a6fad90ff3a2baaa3ad1eb3dcb7ac',1,'Planning::RRTPlanner::shouldReplan()'],['../class_planning_1_1_single_robot_path_planner.html#a618c1379ba0238f4290067b16c78280a',1,'Planning::SingleRobotPathPlanner::shouldReplan()']]],
+  ['shouldreplan',['shouldReplan',['../class_planning_1_1_r_r_t_planner.html#ad8c4007b45a920aef992b0a358075e89',1,'Planning::RRTPlanner::shouldReplan()'],['../class_planning_1_1_single_robot_path_planner.html#a1ee15a6d8f0b15362a496453a981d61c',1,'Planning::SingleRobotPathPlanner::shouldReplan()']]],
   ['sing',['sing',['../class_our_robot.html#a7304077bd824b4d8ccb57144692095a5',1,'OurRobot']]],
   ['size',['size',['../class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542',1,'Planning::InterpolatedPath']]],
   ['softwarespi',['SoftwareSPI',['../class_software_s_p_i.html#a0fcfd3817236c348ed837a2d62b30aa7',1,'SoftwareSPI']]],

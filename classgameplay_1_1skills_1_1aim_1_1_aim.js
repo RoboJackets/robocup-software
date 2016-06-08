@@ -30,5 +30,6 @@ var classgameplay_1_1skills_1_1aim_1_1_aim =
     [ "last_ball_time", "classgameplay_1_1skills_1_1aim_1_1_aim.html#af8dfd7784da1f66014791f4b00c0f7b4", null ],
     [ "max_steady_ang_vel", "classgameplay_1_1skills_1_1aim_1_1_aim.html#ae988523eb18b2303e280d2ebb60c10a8", null ],
     [ "min_steady_duration", "classgameplay_1_1skills_1_1aim_1_1_aim.html#ad09a479caba653c2fb0b9504cb95be55", null ],
+    [ "startBallLocation", "classgameplay_1_1skills_1_1aim_1_1_aim.html#a4b0d026aaaf323ca93de976027427766", null ],
     [ "target_point", "classgameplay_1_1skills_1_1aim_1_1_aim.html#a99d143645dd7edc7cce5479c5d118837", null ]
 ];
