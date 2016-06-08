@@ -1,3 +1,5 @@
+#if 0
+
 #include "neopixel.h"
 
 #include <stdlib.h>
@@ -253,3 +255,5 @@ void writeNeopixels(void) {
     // function return times on the ATtiny @9.6MHz)
     _delay_us(50);
 }
+
+#endif

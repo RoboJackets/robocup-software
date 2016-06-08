@@ -106,11 +106,11 @@ void main() {
     while (1) {
         // get a voltage reading by averaging multiple readings
         uint8_t adc_readings = 5;
-        for (size_t i = 0; i < adc_readings; ++i) {
+        for (int i = 0; i < adc_readings; ++i) {
             voltage_accum += get_voltage();
         }
         voltage_accum /= adc_readings;
-        last_voltage_ = voltage_accum
+        last_voltage_ = voltage_accum;
 
             // stop charging if we're at or above 250V
             if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
