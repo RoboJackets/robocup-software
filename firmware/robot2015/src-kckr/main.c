@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+
 // TODO: Make this path less explicit!
 #include "kicker_commands.h"
 #include "pins.h"
@@ -11,12 +12,12 @@
 #define TIMING_CONSTANT 125
 #define VOLTAGE_READ_DELAY_MS 100
 
-// State of the ATTINY kicking/chipping
-typedef enum { OFF, ON, ACTING } state_type;
+// State of the ATtiny kicking/chipping
+typedef enum { OFF, ON, ACTING } state_t;
 
-volatile state_type state_ = ON;
+volatile state_t state_ = ON;
 
-// Used to time kicks and chips
+// Used to time kick and chip durations
 volatile unsigned millis_left_ = 0;
 
 // Used to keep track of current button state
@@ -105,37 +106,47 @@ void main() {
 
 /*
  * SPI Starting Interrupt
+ *
  * NOTE: This is intentionally not done with an overflow interrupt,
  * as the software chip select interrupt will be triggered almost at
  * the same time as an SPI overflow, causing the SPI interrupt to not be
  * handled.
+ *
+ * ISR for the USI
  */
-ISR(USI_STR_vect) {  // interrupt service routine for the USI
+ISR(USI_STR_vect) {
     // Wait for overflow flag to become 1
     while (!(USISR & _BV(USIOIF)))
         ;
-    // // Get data from USIDR
+
+    // Get data from USIDR
     uint8_t data = USIDR;
 
-    // // Clear the overflow flag
-    USISR |= _BV(USIOIF);  // setting the bit actually clears it
-                           //
+    // Clear the overflow flag - setting the bit actually clears it
+    USISR |= _BV(USIOIF);
+
     // Clear the SPI start flag
     USISR |= _BV(USISIF);
 
     if (state_ == ON) {
         USIDR = 0;
-        if (cur_command_ == NO_COMMAND) {  // we don't have a command already
+        if (cur_command_ == NO_COMMAND) {
+            // we don't have a command already
             cur_command_ = data;
-        } else {  // now get argument and execute command
+        } else {
+            // now get argument and execute command
             execute_cmd(cur_command_, data);
             cur_command_ = NO_COMMAND;
         }
     }
 }
 
-/* Chip Select Interrupt */
-ISR(PCINT0_vect) {  // interrupt service routine for PCINT0-PCINT7
+/*
+ * Chip Select Interrupt
+ *
+ * ISR for PCINT0 - PCINT7
+ */
+ISR(PCINT0_vect) {
     // check if selected
     int is_chip_selected = !(PINA & _BV(N_KICK_CS_PIN));
 
@@ -151,8 +162,10 @@ ISR(PCINT0_vect) {  // interrupt service routine for PCINT0-PCINT7
 /*
  * Interrupt if the state of any button has changed
  * Every time a button goes from LOW to HIGH, we will execute a command
+ *
+ * ISR for PCINT8 - PCINT11
  */
-ISR(PCINT1_vect) {  // interrupt service routine for PCINT8-PCINT11
+ISR(PCINT1_vect) {
     // First we get the current state of each button
     int kick_db_pressed = PINB & _BV(DB_KICK_PIN);
     int chip_db_pressed = PINB & _BV(DB_CHIP_PIN);
@@ -166,11 +179,14 @@ ISR(PCINT1_vect) {  // interrupt service routine for PCINT8-PCINT11
 
     if (!chip_db_down_ && chip_db_pressed) execute_cmd(CHIP_CMD, DB_CHIP_TIME);
 
-    if (!charge_db_down_ && charge_db_pressed) {  // toggle charge
-        if (PINA & _BV(CHARGE_PIN))               // check if charge is on
+    // toggle charge
+    if (!charge_db_down_ && charge_db_pressed) {
+        // check if charge is on
+        if (PINA & _BV(CHARGE_PIN)) {
             execute_cmd(SET_CHARGE_CMD, OFF_ARG);
-        else
+        } else {
             execute_cmd(SET_CHARGE_CMD, ON_ARG);
+        }
     }
 
     // Now our last state becomes the current state of the buttons
@@ -180,22 +196,26 @@ ISR(PCINT1_vect) {  // interrupt service routine for PCINT8-PCINT11
 }
 
 /*
- * Timer interrupt for chipping / kicking
- * Gets called once per millisecond
+ * Timer interrupt for chipping/kicking - called every millisecond by timer
+ *
+ * ISR for TIMER 0
  */
 ISR(TIM0_COMPA_vect) {
-    if (--millis_left_ <= 0) {
+    millis_left_--;
+    if (!millis_left_) {
         // could be kicking or chipping, clear both
-        PORTA &= ~_BV(KICK_PIN);
-        PORTA &= ~_BV(CHIP_PIN);
-        TCCR0B &= ~_BV(CS01);  /// stop prescaled timer
+        PORTA &= ~(_BV(KICK_PIN) | _BV(CHIP_PIN));
+
+        // stop prescaled timer
+        TCCR0B &= ~_BV(CS01);
         state_ = ON;
     }
 }
 
 /*
  * Executes a command that can come from SPI or a debug button
- * WARNING: This will be called from a service routines, keep it short!
+ *
+ * WARNING: This will be called from an interrupt service routines, keep it short!
  */
 void execute_cmd(uint8_t cmd, uint8_t arg) {
     switch (cur_command_) {
@@ -217,10 +237,12 @@ void execute_cmd(uint8_t cmd, uint8_t arg) {
 
         case SET_CHARGE_CMD:
             USIDR = SET_CHARGE_ACK;
-            if (arg == ON_ARG)
+            if (arg == ON_ARG) {
                 PORTA |= _BV(CHARGE_PIN);
-            else if (arg == OFF_ARG)
+            }
+            else if (arg == OFF_ARG) {
                 PORTA &= ~_BV(CHARGE_PIN);
+            }
             break;
 
         case GET_VOLTAGE_CMD:

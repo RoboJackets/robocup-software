@@ -1,3 +1,5 @@
+#pragma once
+
 /*
  * In order to command the KickerBoard, a command byte must be sent,
  * followed by an argument byte. The command byte will not be executed without
