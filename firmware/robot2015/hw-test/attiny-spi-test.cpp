@@ -30,6 +30,7 @@ int main() {
             // if (getCmd == 'k') getCmd = 'c';
             // else if (getCmd == 'c') getCmd = 'r';
             // else if (getCmd == 'r') getCmd = 'k';
+            bool invalid = false;
             pc.printf("%c: ", getCmd);
             switch (getCmd) {
                 case 'k':
@@ -63,11 +64,17 @@ int main() {
                               kickerBoard.is_charge_debug_pressed());
                     break;
                 default:
+                    invalid = true;
+                    pc.printf("Invalid command");
                     break;
             }
 
-            pc.printf("\t[charging %s]\r\n",
+            if (!invalid) {
+               pc.printf("\t[charging %s]",
                       kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
+            }
+            pc.printf("\r\n");
+            fflush(stdout);
         }
     }
 }
