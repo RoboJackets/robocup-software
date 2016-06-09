@@ -1,9 +1,9 @@
 #include "TargetVelPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <cmath>
 #include <boost/range/irange.hpp>
+#include <cmath>
+#include "EscapeObstaclesPathPlanner.hpp"
+#include "TrapezoidalPath.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -22,7 +22,7 @@ void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
-    Point start, Point dir, shared_ptr<const Geometry2d::ShapeSet> obstacles) {
+    Point start, Point dir, const Geometry2d::ShapeSet& obstacles) const {
     dir = dir.normalized();
 
     // TODO(justbuchanan): handle dynamic obstacles (robots)
@@ -59,20 +59,11 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 }
 
 bool TargetVelPathPlanner::shouldReplan(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints,
-    shared_ptr<const Geometry2d::ShapeSet> obstacles, const Path* prevPath) {
-    // TODO Undo this hack to use TargetVelPlanner to do Pivot
-    WorldVelTargetCommand command = [&]() -> WorldVelTargetCommand {
-        if (cmd->getCommandType() == MotionCommand::WorldVel) {
-            return *static_cast<const WorldVelTargetCommand*>(cmd);
-        } else if (cmd->getCommandType() == MotionCommand::Pivot) {
-            return WorldVelTargetCommand(
-                static_cast<const PivotCommand*>(cmd)->pivotTarget);
-        }
-        throw("That Command is not support by the TargetVelPathPlanner");
-    }();
+    const SinglePlanRequest& planRequest) const {
+    const std::unique_ptr<Path>& prevPath = planRequest.prevPath;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
 
+    // TODO Undo this hack to use TargetVelPlanner to do Pivot
     const WorldVelTargetCommand& command =
         static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
 
@@ -89,7 +80,9 @@ bool TargetVelPathPlanner::shouldReplan(
 
     // Replan if the maxSpeed of the previous path differs too much from the
     // command velocity
-    if (auto trapezoidalPath = dynamic_cast<const TrapezoidalPath*>(prevPath)) {
+    const TrapezoidalPath* trapezoidalPath =
+        dynamic_cast<const TrapezoidalPath*>(prevPath.get());
+    if (trapezoidalPath) {
         const float velChange =
             command.worldVel.mag() - trapezoidalPath->maxSpeed();
         if (velChange > *_targetVelChangeReplanThreshold) {

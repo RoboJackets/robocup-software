@@ -1,18 +1,18 @@
 #include "RRTPlanner.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
+#include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
 #include <Utils.hpp>
-#include <protobuf/LogFrame.pb.h>
-#include "motion/TrapezoidalMotion.hpp"
-#include "Util.hpp"
 #include <rrt/BiRRT.hpp>
+#include "EscapeObstaclesPathPlanner.hpp"
 #include "RoboCupStateSpace.hpp"
+#include "Util.hpp"
+#include "motion/TrapezoidalMotion.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
-#include <algorithm>
 #include <Eigen/Dense>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
 using namespace Eigen;
@@ -244,7 +244,7 @@ float getTime(InterpolatedPath& path, int index,
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generatePath(
     const std::vector<Geometry2d::Point>& points,
-    shared_ptr<const Geometry2d::ShapeSet> obstacles,
+    const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
     Geometry2d::Point vf) {
     return generateCubicBezier(points, obstacles, motionConstraints, vi, vf);
@@ -273,12 +273,14 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         startDirections.push_back(difference.normalized(
             (points[i] - points[i + 1]).mag() * directionDistance));
     }
-    Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight);
-    endDirections.push_back((vf + endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    Point endPathDirection =
+        (points[points.size() - 1] - points[points.size() - 2])
+            .normalized(pathWeight);
+    endDirections.push_back(
+        (vf + endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 
@@ -543,7 +545,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
 std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     const std::vector<Geometry2d::Point>& points,
-    shared_ptr<const Geometry2d::ShapeSet> obstacles,
+    const Geometry2d::ShapeSet& obstacles,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
     Geometry2d::Point vf) {
     const int interpolations = 40;
