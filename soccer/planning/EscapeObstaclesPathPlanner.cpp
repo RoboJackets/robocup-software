@@ -21,15 +21,16 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
-    MotionInstant startInstant, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints, const ShapeSet* obstacles,
-    std::unique_ptr<Path> prevPath) {
-    assert(cmd->getCommandType() == MotionCommand::None);
+    SinglePlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.startInstant;
+    const auto& motionConstraints = planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
     const Point unblocked =
-        findNonBlockedGoal(startInstant.pos, optPrevPt, *obstacles);
+        findNonBlockedGoal(startInstant.pos, optPrevPt, obstacles);
 
     // reuse path if there's not a significantly better spot to target
     if (prevPath && unblocked == prevPath->end().motion.pos) {

@@ -30,11 +30,8 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             planner = new DirectTargetPathPlanner();
             break;
 
-        // TODO Undo this hack to use TargetVelPlanner to do Pivot
         case MotionCommand::Pivot:
-            // TODO(ashaw37) Use PivotPlanner
-            // planner = new PivotPathPlanner();
-            planner = new TargetVelPathPlanner();
+            planner = new PivotPathPlanner();
             break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
@@ -49,6 +46,26 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
     }
 
     return std::unique_ptr<SingleRobotPathPlanner>(planner);
+}
+
+void SingleRobotPathPlanner::allDynamicToStatic(
+    Geometry2d::ShapeSet& obstacles,
+    const std::vector<DynamicObstacle>& dynamicObstacles) {
+    for (auto& dynObs : dynamicObstacles) {
+        obstacles.add(dynObs.getStaticObstacle());
+    }
+}
+
+void SingleRobotPathPlanner::splitDynamic(
+    Geometry2d::ShapeSet& obstacles, std::vector<const Path*>& dynamicOut,
+    const std::vector<DynamicObstacle>& dynamicObstacles) {
+    for (auto& dynObs : dynamicObstacles) {
+        if (dynObs.hasPath()) {
+            dynamicOut.push_back(dynObs.getPath());
+        } else {
+            obstacles.add(dynObs.getStaticObstacle());
+        }
+    }
 }
 
 boost::optional<std::function<AngleInstant(MotionInstant)>>
@@ -80,8 +97,13 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
 }
 
 bool SingleRobotPathPlanner::shouldReplan(
-    MotionInstant currentInstant, const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet* obstacles, const Path* prevPath) {
+    const SinglePlanRequest& planRequest) {
+    const auto currentInstant = planRequest.startInstant;
+    const MotionConstraints& motionConstraints =
+        planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const Path* prevPath = planRequest.prevPath.get();
+
     if (!prevPath) return true;
 
     // if this number of microseconds passes since our last path plan, we
@@ -112,11 +134,10 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     // Replan if we enter new obstacles
     float hitTime = 0;
-    if (prevPath->hit(*obstacles, hitTime, timeIntoPath)) {
+    if (prevPath->hit(obstacles, hitTime, timeIntoPath)) {
         return true;
     }
 
     return false;
 }
-
 }  // namespace Planning

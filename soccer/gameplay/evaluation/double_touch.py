@@ -39,7 +39,7 @@ class DoubleTouchTracker(fsm.StateMachine):
         self.add_transition(
             DoubleTouchTracker.State.restart_play_began,
             DoubleTouchTracker.State.kicking,
-            lambda: any(bot.has_ball() for bot in main.our_robots()),
+            lambda: (any(bot.has_ball() for bot in main.our_robots())) and not main.game_state().is_placement(),
             'one of our bots has the ball')
 
         self.add_transition(DoubleTouchTracker.State.kicking,

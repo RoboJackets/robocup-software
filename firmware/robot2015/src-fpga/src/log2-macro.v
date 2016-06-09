@@ -1,8 +1,8 @@
 // Always include
 
-`ifdef ICARUS_VERILOG
+`ifdef __ICARUS__
    `define  LOG2( x )   $clog2( x )
-   
+
 `else
 function integer log2;
     input integer value;
@@ -12,6 +12,6 @@ function integer log2;
                 value = value >> 1;
         end
 endfunction
-    
+
     `define  LOG2( x )   log2( x )
-`endif 
+`endif

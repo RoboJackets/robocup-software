@@ -2,6 +2,10 @@
 
 `include "robocup.vh"
 
+`ifndef DRIBBLER_MOTOR_DISABLE
+`include "BLDC_Motor_No_Encoder.v"
+`endif
+
 `include "BLDC_Motor.v"
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
@@ -37,7 +41,7 @@ module robocup #(
 
     // SPI Slave pins
     input                               spi_slave_sck,          spi_slave_mosi,         spi_slave_ncs,
-    output                              spi_slave_miso,
+    inout                               spi_slave_miso,
 
     // SPI Master pins
     input                               spi_master_miso,
@@ -62,7 +66,9 @@ localparam STARTUP_DELAY_WIDTH          =   (  5 );
 // (1/<freq-of-sysclk>) * (2^WATCHDOG_TIMER_CLK_WIDTH) * (2^WATCHDOG_TIMER_WIDTH)
 // `<freq-of-sysclk>` will usually be: (18.432*10^6)
 // When WATCHDOG_TIMER_CLK_WIDTH = 5, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~114ms
-localparam WATCHDOG_TIMER_CLK_WIDTH     =   (  5 );
+// When WATCHDOG_TIMER_CLK_WIDTH = 4, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~57ms
+// When WATCHDOG_TIMER_CLK_WIDTH = 3, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~28ms
+localparam WATCHDOG_TIMER_CLK_WIDTH     =   (  6 );
 localparam WATCHDOG_TIMER_WIDTH         =   ( 16 );     // KEEP THIS AT 16 to make things easy for the SPI_Slave
 
 reg sys_rdy = 0;
@@ -144,7 +150,7 @@ reg  [ WATCHDOG_TIMER_WIDTH - 1:0 ] watchdog_timer   [1:0];
 reg watchdog_trigger = 0;
 // Watchdog timer clock
 wire wdt_clk;
-reg [1:0] wdt_clk_sr = 0; always @(posedge sysclk) wdt_clk_sr <= {wdt_clk_sr[0], wdt_clk};
+reg [1:0] wdt_clk_sr = 0; always @(posedge sysclk) wdt_clk_sr <= { wdt_clk_sr[0], wdt_clk };
 wire wdt_clk_rising_edge = ( wdt_clk_sr == 2'b01 );
 
 // Watchdog timer divided clock
@@ -199,9 +205,10 @@ wire                                    spi_master_busy,
                                         spi_master_valid;
 wire [ SPI_MASTER_DATA_WIDTH - 1:0 ]    spi_master_d0,
                                         spi_master_di;
+wire                                    spi_master_sel_num_i = ( spi_master_sel_num < NUM_MOTORS ) ? spi_master_sel_num : 0;
 
 // shift register for detecting falling edge of spi_master_busy signal
-reg [1:0] spi_master_busy_sr = 0;  always @(posedge sysclk) spi_master_busy_sr <= {spi_master_busy_sr[0], spi_master_busy};
+reg [1:0] spi_master_busy_sr = 0;  always @(posedge sysclk) spi_master_busy_sr <= { spi_master_busy_sr[0], spi_master_busy };
 wire spi_master_trxfr_done_flag   =   ( spi_master_busy_sr == 2'b10 );
 
 // select an SPI slave device according to the spi_master_sel_num index of the signal array
@@ -238,7 +245,7 @@ assign spi_master_di = spi_master_data_array_out[spi_master_recv_index];
 //   0 = 1.7A
 //   1 = 0.7A
 //   2 = 0.25A
-localparam DRV8303_GATE_CURRENT = 0;
+localparam DRV8303_GATE_CURRENT = 2;
 
 // This is a strobe bit that resets the gate outputs
 //   0 = Normal mode
@@ -250,6 +257,7 @@ localparam DRV8303_GATE_RESET = 1;
 //   1 = over-current protection latch mode
 //   2 = report only
 //   3 = over-current protection disabled
+//  THIS SHOULD ALWAYS BE SET SO CURRENT LIMITING IS ENABLED!
 localparam DRV8303_OCP_MODE = 0;
 
 // When this is set, only the 3 high side PWM signals should be sent!
@@ -257,7 +265,7 @@ localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
 // DON'T SET THIS PAST 14! Ever!
-localparam DRV8303_OC_ADJ_VAL = 13;
+localparam DRV8303_OC_ADJ_VAL = 5;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature
@@ -273,12 +281,12 @@ localparam DRV8303_OC_REPORT = 0;
 //   1 = 20V/V
 //   2 = 40V/V
 //   3 = 80V/V
-localparam DRV8303_AMP_GAIN = 1;
+localparam DRV8303_AMP_GAIN = 2;
 
 // This sets how the over-current protection is handled once triggered
 //   0 = cycle-by-cycle control
 //   1 = timed control
-localparam DRV8303_OC_TOFF = 1;
+localparam DRV8303_OC_TOFF = 0;
 
 wire sys_begin_startup = ( start_delay_done == 1 ) && ( sys_rdy == 0 );
 wire gate_drivers_set_config;
@@ -318,30 +326,34 @@ begin : SPI_MASTER_COMM
             // start the next transfer out
             spi_master_start <= 1;
 
-            if ( spi_master_recv_index == 2 ) begin
-                // store only bit-7 from address 0x01 since it's the only one with useful information
-                spi_master_data_array_in[spi_master_sel_num][11] <= spi_master_d0[7];
-                // reset the rx buffer to the beginning
-                spi_master_recv_index <= 0;
+            if ( spi_master_recv_index >= 2 ) begin
+                if ( spi_master_recv_index == 3 ) begin
+                    // reset the rx buffer to the beginning
+                    spi_master_recv_index <= 0;
+                    // store only bit-7 from address 0x01 since it's the only one with useful information
+                    spi_master_data_array_in[spi_master_sel_num_i][11] <= spi_master_d0[7];
 
-                if ( spi_master_sel_num >= (NUM_MOTORS - 1) ) begin
-                    // reset the selected SPI slave to the first one
-                    spi_master_sel_num <= 0;
+                    if ( spi_master_sel_num >= (NUM_MOTORS - 1) ) begin
+                        // reset the selected SPI slave to the first one
+                        spi_master_sel_num <= 0;
 
-                    if ( spi_master_config_state == 1 ) begin
-                        // store the transactions for reading the status registers, then switch states
-                        spi_master_data_array_out[0] <= (1 << 15) | (0 << 11);
-                        spi_master_data_array_out[1] <= (1 << 15) | (1 << 11);
-                        // disable & exit the config state
-                        spi_master_config_state <= 0;
+                        if ( spi_master_config_state == 1 ) begin
+                            // store the transactions for reading the status registers, then switch states
+                            spi_master_data_array_out[0] <= (1 << 15) | (0 << 11);
+                            spi_master_data_array_out[1] <= (1 << 15) | (1 << 11);
+                            // disable & exit the config state
+                            spi_master_config_state <= 0;
+                        end
+                    end else begin
+                        // select the next in line SPI device we will communicate with
+                        spi_master_sel_num <= spi_master_sel_num + 1;
                     end
                 end else begin
-                    // select the next in line SPI device we will communicate with
-                    spi_master_sel_num <= spi_master_sel_num + 1;
+                    spi_master_recv_index <= spi_master_recv_index + 1;
+                    spi_master_data_array_in[spi_master_sel_num_i][10:0] <= spi_master_d0[10:0];
                 end
             end else if ( spi_master_recv_index == 1 ) begin
                 // store the 11 LSB from address 0x00 since that's where the core of what we want is located
-                spi_master_data_array_in[spi_master_sel_num][10:0] <= spi_master_d0[10:0];
                 spi_master_recv_index <= spi_master_recv_index + 1;
             end else begin
                 // increment the rx buffer index on each received set of bytes
@@ -414,7 +426,7 @@ assign gate_drivers_set_config = ( sys_begin_startup == 1 ) || ( motor_update_fl
 always @( negedge sysclk )
 begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
     // Always place the first response byte for an SPI transfer into the zero index of the response buffer
-    spi_slave_res_buf[0] <= {sys_rdy, watchdog_trigger, motors_en, hall_conns};
+    spi_slave_res_buf[0] <= { sys_rdy, watchdog_trigger, motors_en, hall_conns };
     watchdog_timer[1] <= watchdog_timer[0];
 
     // If the flag is set to load the response buffer, reset the flag & do just that. We know that the 'command_byte' is valid if this flag is set.
@@ -494,7 +506,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                     for (j = 0; j < NUM_MOTORS; j = j + 1)
                     begin : LATCH_GATE_DRV_STATUS
                         spi_slave_res_buf[2*j+1]    <=  spi_master_data_array_in[j][7:0];
-                        spi_slave_res_buf[2*j+2]    <=  {4'h0, spi_master_data_array_in[j][11:8]};
+                        spi_slave_res_buf[2*j+2]    <=  { 4'b0, spi_master_data_array_in[j][11:8] };
                     end
                 end
 
@@ -578,7 +590,7 @@ begin : SPI_SORT_REQUEST_BUFFER
 end     // SPI_SORT_REQUEST_BUFFER
 
 // Signal that is active when the watchdog timer should be reset
-reg [1:0] motors_en_sr = 0; always @(posedge sysclk) motors_en_sr <= {motors_en_sr[0], motors_en};
+reg [1:0] motors_en_sr = 0; always @(posedge sysclk) motors_en_sr <= { motors_en_sr[0], motors_en };
 // Toggle the motors on/off, off/on, or set the motor_update_flag to reset the watchdog timer
 wire watchdog_timer_reset_flag = (( motors_en_sr == 2'b01 ) && ( motors_en_sr == 2'b10 ) ) || ( motor_update_flag == 1 );
 
@@ -607,8 +619,7 @@ end
 
 // This is where all of the motors modules are instantiated
 generate
-    // for (i = 0; i < NUM_ENCODERS; i = i + 1)
-    for (i = 0; i < 3; i = i + 1)
+    for (i = 0; i < NUM_ENCODERS; i = i + 1)
     begin : BLDC_MOTOR_INST
         BLDC_Motor #(
             .MAX_DUTY_CYCLE         ( (1 << DUTY_CYCLE_WIDTH) - 1   ) ,

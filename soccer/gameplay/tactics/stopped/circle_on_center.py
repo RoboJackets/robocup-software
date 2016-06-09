@@ -68,7 +68,6 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
             if b.robot is not None:
                 b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
                 b.robot.face(main.ball().pos)
-                b.robot.avoid_all_teammates(True)
 
     def execute_completed(self):
         self.goto_center()
