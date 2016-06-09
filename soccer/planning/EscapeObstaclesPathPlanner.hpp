@@ -1,5 +1,5 @@
-#include "SingleRobotPathPlanner.hpp"
 #include <Geometry2d/Point.hpp>
+#include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -24,8 +24,7 @@ public:
     /// by a configurable threshold.
     static Geometry2d::Point findNonBlockedGoal(
         Geometry2d::Point pt, boost::optional<Geometry2d::Point> prevPt,
-        std::shared_ptr<const Geometry2d::ShapeSet> obstacles,
-        int maxItr = 300);
+        const Geometry2d::ShapeSet& obstacles, int maxItr = 300);
 
     static void createConfiguration(Configuration* cfg);
 

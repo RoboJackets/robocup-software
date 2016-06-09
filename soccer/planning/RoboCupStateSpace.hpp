@@ -1,7 +1,7 @@
 #pragma once
 
-#include <rrt/2dplane/PlaneStateSpace.hpp>
 #include <Geometry2d/Point.hpp>
+#include <rrt/2dplane/PlaneStateSpace.hpp>
 
 namespace Planning {
 
