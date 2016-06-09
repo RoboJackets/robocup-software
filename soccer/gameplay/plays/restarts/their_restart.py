@@ -84,9 +84,3 @@ class TheirRestart(standard_play.StandardPlay):
                     # mark_i.face(ball_pos)
 
                     # tell the marking robots to avoid eachother more than normal
-        for i, mark_i in enumerate(self.marks):
-            for j, mark_j in enumerate(self.marks):
-                if i == j: continue
-                if mark_i.robot != None and mark_j.robot != None:
-                    mark_i.robot.set_avoid_teammate_radius(
-                        mark_j.robot.shell_id(), 0.5)

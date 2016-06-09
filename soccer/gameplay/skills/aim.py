@@ -61,6 +61,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self._start_time = 0
         self.desperate_timeout = float("inf")
 
+        self.startBallLocation = main.ball().pos
+
     # The target Point that we're aiming at
     # Default: the center of the opponent's goal segment
     @property
@@ -130,8 +132,9 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         ) - self._last_unsteady_time > self.min_steady_duration
 
     def fumbled(self):
-        return not self.robot.has_ball() and time.time(
-        ) - self.last_ball_time > 0.3
+        return (self.startBallLocation -
+                main.ball().pos).mag() > 0.05 and not self.robot.has_ball(
+                ) and time.time() - self.last_ball_time > 0.3
 
     def current_shot_point(self):
         return self._shot_point
@@ -201,16 +204,13 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         return time.time() - self._start_time > self.desperate_timeout
 
     def execute_running(self):
-        # make sure teammates don't bump into us
-        self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
-
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 
         self.recalculate()
 
         # slowly pivot toward the target
-        self.robot.set_max_angle_speed(4)
+        #self.robot.set_max_angle_speed(4)
         self.robot.pivot(self._face_target)
         self.robot.set_dribble_speed(self.dribbler_speed)
 

@@ -118,11 +118,6 @@ void OurRobot_set_avoid_ball_radius(OurRobot* self, float radius) {
     self->avoidBallRadius(radius);
 }
 
-void OurRobot_set_avoid_teammate_radius(OurRobot* self, unsigned shellID,
-                                        float radius) {
-    self->avoidTeammateRadius(shellID, radius);
-}
-
 void OurRobot_set_max_angle_speed(OurRobot* self, float maxAngleSpeed) {
     self->rotationConstraints().maxSpeed = maxAngleSpeed;
 }
@@ -579,6 +574,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_playing", &GameState::playing)
         .def("is_kickoff", &GameState::kickoff)
         .def("is_penalty", &GameState::penalty)
+        .def("is_placement", &GameState::placement)
         .def("is_direct", &GameState::direct)
         .def("is_indirect", &GameState::indirect)
         .def("is_our_kickoff", &GameState::ourKickoff)
@@ -586,18 +582,21 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_our_direct", &GameState::ourDirect)
         .def("is_our_indirect", &GameState::ourIndirect)
         .def("is_our_free_kick", &GameState::ourFreeKick)
+        .def("is_our_placement", &GameState::ourPlacement)
         .def("is_their_kickoff", &GameState::theirKickoff)
         .def("is_their_penalty", &GameState::theirPenalty)
         .def("is_their_direct", &GameState::theirDirect)
         .def("is_their_indirect", &GameState::theirIndirect)
         .def("is_their_free_kick", &GameState::theirFreeKick)
+        .def("is_their_placement", &GameState::theirPlacement)
         .def("is_setup_state", &GameState::inSetupState)
         .def("is_ready_state", &GameState::inReadyState)
         .def("can_kick", &GameState::canKick)
         .def("stay_away_from_ball", &GameState::stayAwayFromBall)
         .def("stay_on_side", &GameState::stayOnSide)
         .def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
-        .def("is_our_restart", &GameState::isOurRestart);
+        .def("is_our_restart", &GameState::isOurRestart)
+        .def("get_ball_placement_point", &GameState::getBallPlacementPoint);
 
     class_<Robot>("Robot", init<int, bool>())
         .def("shell_id", &Robot::shell)
@@ -623,13 +622,11 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)
+        .def("set_planning_priority", &OurRobot::setPlanningPriority)
         .def("set_max_angle_speed", OurRobot_set_max_angle_speed)
         .def("set_max_speed", OurRobot_set_max_speed)
         .def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
-        .def("shield_from_teammates", &OurRobot::shieldFromTeammates)
-        .def("set_avoid_teammate_radius", OurRobot_set_avoid_teammate_radius)
         .def("disable_avoid_ball", &OurRobot::disableAvoidBall)
-        .def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
         .def("add_text", &OurRobot_add_text)
         .def("approach_opponent", &OurRobot_approach_opponent)
         .def("set_avoid_opponents", &OurRobot_set_avoid_opponents)
@@ -651,7 +648,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("ball_sense_works", &OurRobot::ballSenseWorks)
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
-        .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker);
+        .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
+        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
     register_ptr_to_python<OurRobot*>();
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,

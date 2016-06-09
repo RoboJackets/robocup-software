@@ -14,7 +14,7 @@ const int NUM_MOTORS = 5;
 motor_t mtrEx = {.vel = 0x4D,
                  .hall = 0x0A,
                  .enc = {0x23, 0x18},
-                 .status = {.hallOK = true, .drvStatus = {0x26, 0x0F}},
+                 .status = {.hasError = false, .drvStatus = {0x26, 0x0F}},
                  .desc = "Motor"};
 }
 
@@ -29,6 +29,15 @@ void motors_Init() {
     global_motors[2].desc += "3";
     global_motors[3].desc += "4";
     global_motors[4].desc = "Dribb.";
+}
+
+void motors_refresh() {
+    std::array<uint16_t, NUM_MOTORS> enc_deltas = {0};
+    uint8_t status_byte =
+        FPGA::Instance->read_encs(enc_deltas.data(), enc_deltas.size());
+
+    for (size_t i = 0; i < global_motors.size(); i++)
+        global_motors[i].status.hasError = !(status_byte & (1 << i));
 }
 
 void motors_show() {
@@ -50,9 +59,10 @@ void motors_show() {
 
     printf("\033[?25l\033[25mStatus:\033[K\t\t\t%s\033E",
            status_byte & 0x20 ? "ENABLED" : "DISABLED");
-    printf("\033[KLast Update:\t\t%-6.2fms\t%s\033E",
-           (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 63) / 1000,
-           status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
+    printf(
+        "\033[KLast Update:\t\t%-6.2fms\t%s\033E",
+        (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 2 * 64) / 1000,
+        status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\t\tFAULTS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
         printf("\033[K    %s\t%-3u\t%-3u\t%-5u\t%s\t%s\t0x%03X\033E",
@@ -77,7 +87,7 @@ int cmd_motors_scroll(const std::vector<std::string>& args) {
     printf("\033[%uA", 8);
     Console::Instance()->Flush();
 
-    Thread::wait(350);
+    Thread::wait(300);
     return 0;
 }
 

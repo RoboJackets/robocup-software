@@ -9,7 +9,10 @@
 /**
  * Enable/Disable the module for the dribbler motor.
  */
-`define DRIBBLER_MOTOR_DISABLE
+// `define DRIBBLER_MOTOR_DISABLE
 
+`ifdef __ICARUS__
+`undef DRIBBLER_MOTOR_DISABLE
+`endif
 
 `endif  // _ROBOCUP_HEADER_
