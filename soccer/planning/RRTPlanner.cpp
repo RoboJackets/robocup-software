@@ -196,28 +196,34 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
                 RJ::Time prevPathStartTime = prevPath->startTime();
                 float prevPathTimeInto = RJ::TimestampToSecs(startTime - prevPathStartTime);
                 if (prevPathTimeInto < *timeToReplan - keepLength) {
-                    auto subPath = prevPath->subPath(prevPathTimeInto, prevPathTimeInto + keepLength);
+                    unique_ptr<Path> path = nullptr;
+                    if (keepLength == 0) {
+                        path = generateRRTPath(start, goal, motionConstraints, obstacles,
+                                               actualDynamic);
+                    } else {
+                        auto subPath = prevPath->subPath(prevPathTimeInto, prevPathTimeInto + keepLength);
 
-                    RobotInstant newStart = subPath->end();
-                    auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,
-                                                      actualDynamic);
-                    if (newSubPath) {
+                        RobotInstant newStart = subPath->end();
+                        auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,
+                                                          actualDynamic);
+                        if (newSubPath) {
+                            path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
+                            path->setStartTime(startTime);
+                        }
+                    }
 
-                        auto path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
-                        path->setStartTime(startTime);
-
+                    if (path) {
                         if (prevPathInval) {
                             printf("Partial Replan %f\n\n", *timeToReplan - prevPathTimeInto);
                             return std::move(path);
                         } else {
-                            float remaining = prevPath->getDuration() - RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime());
+                            float remaining = prevPath->getDuration() -
+                                              RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime());
                             if (remaining > path->getDuration()) {
                                 printf("Found better path\n");
                                 return std::move(path);
                             }
                         }
-                    } else {
-                        fullReplan = true;
                     }
                 } else {
                     fullReplan = prevPathInval;
@@ -227,9 +233,10 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
         }
     } else {
         fullReplan = true;
+        prevPathInval = true;
     }
 
-    if (fullReplan) {
+    if (fullReplan || prevPathInval) {
         printf("shouldFullReplan\n");
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                     actualDynamic);
