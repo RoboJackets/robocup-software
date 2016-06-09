@@ -56,10 +56,10 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     if (obstacles.hit(goal)) {
         auto stateSpace = make_shared<RoboCupStateSpace>(
             Field_Dimensions::Current_Dimensions, obstacles);
-        // TODO(justin): set obstacles
         RRT::Tree<Geometry2d::Point> rrt(stateSpace);
         rrt.setStartState(goal);
-        // TODO: rrt.setGoalState();
+        // note: we don't set goal state because we're not looking for a
+        // particular point, just something that isn't blocked
         rrt.setStepSize(stepSize());
 
         // The starting point is in an obstacle, extend the tree until we find
