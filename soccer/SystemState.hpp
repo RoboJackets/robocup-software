@@ -18,6 +18,7 @@
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include <Geometry2d/Arc.hpp>
+#include "planning/MotionInstant.hpp"
 
 class RobotConfig;
 class OurRobot;
@@ -43,6 +44,8 @@ public:
 
     /// Time at which this estimate is valid
     RJ::Time time;
+
+    Planning::MotionInstant predict(RJ::Time time) const;
 };
 
 /**

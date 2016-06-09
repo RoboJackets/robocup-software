@@ -14,7 +14,7 @@ public:
     virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
-        return MotionCommand::Pivot;
+        return MotionCommand::LineKick;
     }
 
 private:

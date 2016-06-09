@@ -73,7 +73,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
 
         SinglePlanRequest singlePlanRequest(
             request.start, *request.motionCommand, request.constraints,
-            request.obstacles, request.dynamicObstacles,
+            request.obstacles, request.dynamicObstacles, request.systemState,
             std::move(request.prevPath));
         paths[shell] = _planners[shell]->run(singlePlanRequest);
 
