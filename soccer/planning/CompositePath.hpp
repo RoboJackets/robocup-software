@@ -37,9 +37,6 @@ public:
         append(std::move(path), std::forward<Args>(args)...);
     }
 
-    // CompositePath(std::unique_ptr<Path> path1, std::unique_ptr<Path> path2)
-    //        : paths({std::move(path1), std::move(path2)}) {}
-
     /**
      * Append the path to the end of the CompositePath
      */
