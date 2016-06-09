@@ -506,7 +506,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                     for (j = 0; j < NUM_MOTORS; j = j + 1)
                     begin : LATCH_GATE_DRV_STATUS
                         spi_slave_res_buf[2*j+1]    <=  spi_master_data_array_in[j][7:0];
-                        spi_slave_res_buf[2*j+2]    <=  { 0, spi_master_data_array_in[j][11:8] };
+                        spi_slave_res_buf[2*j+2]    <=  { 4'b0, spi_master_data_array_in[j][11:8] };
                     end
                 end
 
@@ -645,7 +645,7 @@ endgenerate
 
 `ifndef DRIBBLER_MOTOR_DISABLE
 BLDC_Motor_No_Encoder #(
-    .MAX_DUTY_CYCLE         ( (1 << (DUTY_CYCLE_WIDTH - 1)) - 1     ) ,
+    .MAX_DUTY_CYCLE         ( (1 << DUTY_CYCLE_WIDTH) - 1           ) ,
     .HALL_COUNT_WIDTH       ( HALL_COUNT_WIDTH                      )
     ) dribbler_motor (
     .clk                    ( sysclk                                ) ,
