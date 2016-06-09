@@ -6,6 +6,34 @@
 #include <Geometry2d/Polygon.hpp>
 
 using namespace Packet;
+using namespace std;
+using Planning::MotionInstant;
+
+Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
+    if (estimateTime < time) {
+        debugThrow("Estimated Time can't be before observation time.");
+        return MotionInstant();
+    }
+
+    if (!valid) {
+        debugThrow("Ball doesn't have a valid location at the moment");
+        return MotionInstant();
+    }
+
+    MotionInstant instant;
+    float t = RJ::TimestampToSecs(estimateTime - time);
+
+    const auto s0 = vel.mag();
+
+    // Based on sim ball
+    // v = v0 * e^-0.2913t
+    // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
+    auto part = std::exp(-0.2913f*t);
+    auto speed = s0 * part;
+    auto distance = s0 *-3.43289f * (part - 1.0f);
+
+    return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
+}
 
 SystemState::SystemState() {
     timestamp = 0;

@@ -36,15 +36,19 @@ bool LineKickPlanner::shouldReplan(
 }
 
 std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
-    const auto& rotationConstraints = planRequest.robotConstraints.rot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     const auto& command = dynamic_cast<const PivotCommand&>(planRequest.cmd);
 
     if (shouldReplan(planRequest)) {
+        const MotionInstant& startInstant = planRequest.startInstant;
+        const auto& motionConstraints = planRequest.robotConstraints.mot;
+        const auto& rotationConstraints = planRequest.robotConstraints.rot;
+        const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+        const auto& systemState = planRequest.systemState;
+        systemState.ball;
+
         return nullptr;
     } else {
         return std::move(prevPath);
