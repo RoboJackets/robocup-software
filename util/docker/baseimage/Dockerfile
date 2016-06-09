@@ -1,6 +1,6 @@
 # Use phusion/baseimage if problems arise
-FROM jgkamat/locale:14.04.2
-MAINTAINER Jay Kamat github@jgkamat.33mail.com
+FROM jgkamat/locale:16.04
+MAINTAINER Jay Kamat jaygkamat@gmail.com
 
 # This dockerimage will serve as a 'static' base for the robocup dockerimage to reduce build time
 
