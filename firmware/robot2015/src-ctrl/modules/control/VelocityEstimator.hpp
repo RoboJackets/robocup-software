@@ -19,26 +19,25 @@ public:
     virtual std::array<float, 3> update(
         const std::array<uint16_t, 4>& encoderDeltas, uint16_t dt) {
 
-        // convert encoder ticks to rad/s
-        std::array<float, 4> wheelRadPerSec;
-        for (int i = 0; i < 4; ++i) {
-            uint16_t encDelta = encoderDeltas[i];
-            wheelRadPerSec[i] = encDelta / ENC_TICKS_PER_TURN * 2 * PI / dt;
-        }
+        // TODO: how are negative encoder values formatted?
 
         // TODO: get legit values for these
         // TODO: move to its own class to be shared with MotionController?
         const std::array<float, 4> wheel_angles = {PI / 4, 2*PI/4, 3*PI/4, 4*PI/4};
 
-        // calculate robot velocity from wheel velocities and wheel angles
-        std::array<float, 3> vel = {0, 0, 0};
-        for (int i = 0; i < 4; i++) {
-            vel[0] += wheelRadPerSec[i] * cosf(wheel_angles[i]); // x vel
-            vel[1] += wheelRadPerSec[i] * sinf(wheel_angles[i]); // y vel
-            vel[2] += wheelRadPerSec[i]; // w vel
+        std::array<float, 3> botVel = {0, 0, 0};
+
+        for (int i = 0; i < 4; ++i) {
+            // convert encoder ticks to rad/s
+            const float wheelVel = encoderDeltas[i] / ENC_TICKS_PER_TURN * 2 * PI / dt;
+
+            // calculate robot velocity from wheel velocities and wheel angles
+            botVel[0] += wheelVel * cosf(wheel_angles[i]); // x vel
+            botVel[1] += wheelVel * sinf(wheel_angles[i]); // y vel
+            botVel[2] += wheelVel; // w vel
         }
 
-        return vel;
+        return botVel;
     }
 
     static const uint16_t ENC_TICKS_PER_TURN = 2048;
