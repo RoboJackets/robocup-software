@@ -22,15 +22,7 @@ RUN export uid=1000 gid=1000 && \
     echo "developer:x:${uid}:" >> /etc/group && \
     echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
     chmod 0440 /etc/sudoers.d/developer && \
-    chown ${uid}:${gid} -R /home/developer
-
-# Install a later version of ccache.
-RUN wget http://launchpadlibrarian.net/214662189/ccache_3.2.3-1_amd64.deb -P /root \
-        && dpkg -i /root/ccache_3.2.3-1_amd64.deb \
-        && rm /root/ccache_3.2.3-1_amd64.deb
-
-# Set max cache size to 3gb
-RUN ccache -M 3G
+    chown ${uid}:${gid} -R /home/developer && mkdir -p /etc/udev/rules.d/
 
 USER developer
 ENV HOME /home/developer
