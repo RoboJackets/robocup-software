@@ -5,7 +5,6 @@
 #include <rrt/BiRRT.hpp>
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RoboCupStateSpace.hpp"
-#include "Util.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 
 #include <stdio.h>
@@ -159,8 +158,8 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
-    auto stateSpace =
-        make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions);
+    auto stateSpace = make_shared<RoboCupStateSpace>(
+        Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);

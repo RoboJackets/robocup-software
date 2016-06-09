@@ -1,8 +1,6 @@
 #include "DirectTargetPathPlanner.hpp"
 #include "MotionCommand.hpp"
 
-using namespace std;
-
 namespace Planning {
 
 std::unique_ptr<Path> DirectTargetPathPlanner::run(
