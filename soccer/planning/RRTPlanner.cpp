@@ -219,6 +219,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
                         if (prevPathInval) {
                             printf("Partial Replan %f\n\n",
                                    *timeToReplan - prevPathTimeInto);
+                            reusePathTries = 0;
                             return std::move(path);
                         } else {
                             float remaining =
@@ -227,6 +228,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
                                                     prevPath->startTime());
                             if (remaining > path->getDuration()) {
                                 printf("Found better path\n");
+                                reusePathTries = 0;
                                 return std::move(path);
                             }
                         }
