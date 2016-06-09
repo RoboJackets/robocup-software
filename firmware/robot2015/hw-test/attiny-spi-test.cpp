@@ -24,7 +24,7 @@ int main() {
 
     while (true) {
         //    n_kick = !n_kick;
-        //    wait(1);
+        // wait(50);
         if (pc.readable()) {
             getCmd = pc.getc();
             // if (getCmd == 'k') getCmd = 'c';
@@ -34,10 +34,10 @@ int main() {
             pc.printf("%c: ", getCmd);
             switch (getCmd) {
                 case 'k':
-                    pc.printf("Resp: 0x%02X", kickerBoard.kick(20));
+                    pc.printf("Resp: 0x%02X", kickerBoard.kick(40));
                     break;
                 case 'c':
-                    pc.printf("Resp: 0x%02X", kickerBoard.chip(20));
+                    pc.printf("Resp: 0x%02X", kickerBoard.chip(40));
                     break;
                 case 'r':
                     pc.printf("Volts: %d", kickerBoard.read_voltage());
@@ -68,6 +68,8 @@ int main() {
                     pc.printf("Invalid command");
                     break;
             }
+
+            wait_ms(5);
 
             if (!invalid) {
                pc.printf("\t[charging %s]",

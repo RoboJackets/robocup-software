@@ -14,11 +14,6 @@
 #define TIMING_CONSTANT 125
 #define VOLTAGE_READ_DELAY_MS 100
 
-// State of the ATtiny kicking/chipping
-typedef enum { OFF, ON, ACTING } state_t;
-
-volatile state_t state_ = ON;
-
 // Used to time kick and chip durations
 volatile unsigned millis_left_ = 0;
 
@@ -30,8 +25,6 @@ volatile int charge_db_down_ = 0;
 volatile uint8_t byte_cnt = 0;
 
 uint8_t cur_command_ = NO_COMMAND;
-
-volatile int was_chip_selected = 0;
 
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 uint8_t last_voltage_ = 0;
@@ -59,7 +52,7 @@ uint8_t get_voltage() {
 /*
  * Returns true if charging is currently active
  */
-bool is_charging() { return PORTA & _BV(CHARGE_PIN); }
+bool is_charging() { return false; }//PORTA & _BV(CHARGE_PIN); }
 
 void main() {
     /* Port direction - setting outputs */
@@ -122,20 +115,23 @@ void main() {
                            // because we left adjusted and only need
                            // 8 bit precision, we can now read ADCH directly
 
+    // make sure we're not kicking/chipping right off the start
+    PORTA &= ~(_BV(KICK_PIN) | _BV(CHIP_PIN));
+
     // Enable Global Interrupts
     sei();
 
     const uint8_t kalpha = 32;
 
-    // PORTA &= ~_BV(CHIP_PIN);  // unset CHIP pin
-
     // We handle voltage readings here
-    while (1) {
+    while (true) {
         // get a voltage reading by weighing in a new reading, same concept as
         // TCP RTT estimates
-        int voltage_accum =
-            (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
-        last_voltage_ = voltage_accum / 255;
+        // int voltage_accum =
+        //     (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
+        // last_voltage_ = voltage_accum / 255;
+
+        last_voltage_ = get_voltage();
 
         // stop charging if we're at or above 250V
         // if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
@@ -161,9 +157,6 @@ ISR(USI_STR_vect) {
     // ensure we're driving as output
     DDRA |= _BV(MISO_PIN);
 
-    // set the selected checking variable for other ISRs
-    was_chip_selected = !(PINA & _BV(N_KICK_CS_PIN));
-
     // // Wait for overflow flag to become 1
     while (!(USISR & _BV(USIOIF)))
         ;
@@ -188,7 +181,6 @@ ISR(USI_STR_vect) {
         // the newly given argument, set the response
         // buffer to our return value
         USIDR = execute_cmd(cur_command_, recv_data);
-        cur_command_ = NO_COMMAND;
     }
 
     // enable global interrupts back
@@ -201,7 +193,8 @@ ISR(USI_STR_vect) {
  * ISR for PCINT0 - PCINT7
  */
 ISR(PCINT0_vect) {
-    PORTA |= _BV(CHIP_PIN);  // set CHIP pin
+    // disable global interrupts
+    cli();
 
     int is_chip_selected_now = !(PINA & _BV(N_KICK_CS_PIN));
 
@@ -211,10 +204,18 @@ ISR(PCINT0_vect) {
     } else {
         // set the slave data out pin as an input
         // DDRA &= ~_BV(MISO_PIN);
+        // cur_command_ = NO_COMMAND;
         byte_cnt = 0;
+        USIDR = 0;
     }
 
-    PORTA &= ~_BV(CHIP_PIN);  // set CHIP pin
+    if (byte_cnt > 2) {
+        byte_cnt = 0;
+        USIDR = 0;
+    }
+
+    // enable global interrupts back
+    sei();
 }
 
 /*
@@ -223,35 +224,35 @@ ISR(PCINT0_vect) {
  *
  * ISR for PCINT8 - PCINT11
  */
-ISR(PCINT1_vect) {
-    // First we get the current state of each button
-    int kick_db_pressed = PINB & _BV(DB_KICK_PIN);
-    int chip_db_pressed = PINB & _BV(DB_CHIP_PIN);
-    int charge_db_pressed = PINB & _BV(DB_CHG_PIN);
+// ISR(PCINT1_vect) {
+//     // First we get the current state of each button
+//     int kick_db_pressed = PINB & _BV(DB_KICK_PIN);
+//     int chip_db_pressed = PINB & _BV(DB_CHIP_PIN);
+//     int charge_db_pressed = PINB & _BV(DB_CHG_PIN);
 
-    // We only will execute commands when the user initially presses the button
-    // So the old button state needs to be LOW and the new button state needs
-    // to be HIGH
-    if (!kick_db_held_down_ && kick_db_pressed)
-        execute_cmd(KICK_CMD, DB_KICK_TIME);
+//     // We only will execute commands when the user initially presses the button
+//     // So the old button state needs to be LOW and the new button state needs
+//     // to be HIGH
+//     if (!kick_db_held_down_ && kick_db_pressed)
+//         execute_cmd(KICK_CMD, DB_KICK_TIME);
 
-    if (!chip_db_down_ && chip_db_pressed) execute_cmd(CHIP_CMD, DB_CHIP_TIME);
+//     if (!chip_db_down_ && chip_db_pressed) execute_cmd(CHIP_CMD, DB_CHIP_TIME);
 
-    // toggle charge
-    if (!charge_db_down_ && charge_db_pressed) {
-        // check if charge is on
-        if (PINA & _BV(CHARGE_PIN)) {
-            execute_cmd(SET_CHARGE_CMD, OFF_ARG);
-        } else {
-            execute_cmd(SET_CHARGE_CMD, ON_ARG);
-        }
-    }
+//     // toggle charge
+//     if (!charge_db_down_ && charge_db_pressed) {
+//         // check if charge is on
+//         if (PINA & _BV(CHARGE_PIN)) {
+//             execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+//         } else {
+//             execute_cmd(SET_CHARGE_CMD, ON_ARG);
+//         }
+//     }
 
-    // Now our last state becomes the current state of the buttons
-    kick_db_held_down_ = kick_db_pressed;
-    chip_db_down_ = chip_db_pressed;
-    charge_db_down_ = charge_db_pressed;
-}
+//     // Now our last state becomes the current state of the buttons
+//     kick_db_held_down_ = kick_db_pressed;
+//     chip_db_down_ = chip_db_pressed;
+//     charge_db_down_ = charge_db_pressed;
+// }
 
 /*
  * Timer interrupt for chipping/kicking - called every millisecond by timer
@@ -266,7 +267,6 @@ ISR(TIM0_COMPA_vect) {
 
         // stop prescaled timer
         TCCR0B &= ~_BV(CS01);
-        state_ = ON;
     }
 }
 
@@ -282,7 +282,6 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
     switch (cmd) {
         case KICK_CMD:
             ret_val = KICK_ACK;
-            state_ = ACTING;
             PORTA |= _BV(KICK_PIN);  // set KICK pin
             millis_left_ = arg;
             TCCR0B |= _BV(CS01);  // start timer /8 prescale
@@ -290,7 +289,6 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
 
         case CHIP_CMD:
             ret_val = CHIP_ACK;
-            state_ = ACTING;
             PORTA |= _BV(CHIP_PIN);  // set CHIP pin
             millis_left_ = arg;
             TCCR0B |= _BV(CS01);  // start timer /8 prescale
@@ -310,7 +308,10 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
             break;
 
         case PING_CMD:
+
+            PORTA &= ~_BV(CHARGE_PIN);
             ret_val = PING_ACK;
+            PORTA &= ~_BV(CHARGE_PIN);
             break;
 
         case GET_BUTTON_STATE_CMD:
