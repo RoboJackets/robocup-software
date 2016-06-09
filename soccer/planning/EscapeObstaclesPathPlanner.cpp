@@ -3,7 +3,6 @@
 #include <rrt/Tree.hpp>
 #include "RoboCupStateSpace.hpp"
 #include "TrapezoidalPath.hpp"
-#include "Util.hpp"
 
 using namespace Geometry2d;
 using namespace std;
@@ -56,7 +55,7 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     int maxItr) {
     if (obstacles.hit(goal)) {
         auto stateSpace = make_shared<RoboCupStateSpace>(
-            Field_Dimensions::Current_Dimensions);
+            Field_Dimensions::Current_Dimensions, obstacles);
         // TODO(justin): set obstacles
         RRT::Tree<Geometry2d::Point> rrt(stateSpace);
         rrt.setStartState(goal);
