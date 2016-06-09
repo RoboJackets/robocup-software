@@ -46,7 +46,6 @@ message RadioRx
 	repeated int32 encoders = 8;
 	
 	optional uint32 kicker_status = 9;
-	optional uint32 sequence = 10;
 	
 	optional uint32 kicker_voltage = 11;
 	

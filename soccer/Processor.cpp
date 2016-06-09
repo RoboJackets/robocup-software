@@ -448,7 +448,7 @@ void Processor::run() {
 
                 requests[r->shell()] = Planning::PlanRequest(
                     Planning::MotionInstant(r->pos, r->vel),
-                    r->motionCommand()->clone(), r->motionConstraints(),
+                    r->motionCommand()->clone(), r->robotConstraints(),
                     std::move(r->angleFunctionPath.path),
                     std::move(staticObstacles), std::move(dynamicObstacles),
                     r->getPlanningPriority());

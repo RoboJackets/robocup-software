@@ -13,28 +13,18 @@ namespace Planning {
 class PivotPathPlanner : public SingleRobotPathPlanner {
 public:
     PivotPathPlanner() : SingleRobotPathPlanner(false){};
-    virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, const MotionCommand* cmd,
-        const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>&
-            dynamicObstacles = std::vector<DynamicObstacle>(),
-        std::unique_ptr<Path> prevPath = nullptr) override;
+    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
-        return MotionCommand::WorldVel;
+        return MotionCommand::Pivot;
     }
 
     static void createConfiguration(Configuration* cfg);
 
 private:
-    bool shouldReplan(MotionInstant startInstant, const MotionCommand* cmd,
-                      const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet& obstacles,
-                      const Path* prevPath);
-    Geometry2d::Point calculateNonblockedPathEndpoint(
-        Geometry2d::Point start, Geometry2d::Point dir,
-        const Geometry2d::ShapeSet* obstacles);
+    bool shouldReplan(const SinglePlanRequest& planRequest) const;
+
+    static ConfigDouble* _pivotRadiusMultiplier;
 };
 
 }  // namespace Planning

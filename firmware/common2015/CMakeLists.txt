@@ -25,6 +25,7 @@ list(APPEND common2015_SRC ${MBED_ASSEC_LIBS_SRCS})
 set(DRIVERS_ROOT_NAME   drivers)
 set(MODULES_ROOT_NAME   modules)
 set(UTILS_ROOT_NAME     utils)
+
 # subdirectories
 set(DRIVERS
     avr-isp
@@ -43,15 +44,30 @@ set(DRIVERS
     software-spi
     ws2811
 )
-set(MODULES             CommModule CommLink Console)
-set(UTILS               assert logger numparser rtos-mgmt)
+
+set(MODULES
+    CommModule
+    CommLink
+    Console
+)
+
+set(UTILS
+    assert
+    logger
+    numparser
+    rtos-mgmt
+)
 
 # generate a list of directories that we need to include from the values set above
-set(common2015_INCLUDE_DIRS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/${DRIVERS_ROOT_NAME} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/${MODULES_ROOT_NAME} 
+set(common2015_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/${DRIVERS_ROOT_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/${MODULES_ROOT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/${UTILS_ROOT_NAME}
 )
+
+# TODO(justin): do better
+list(APPEND common2015_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/common)
+list(APPEND common2015_SRC ${PROJECT_SOURCE_DIR}/common/Pid.cpp)
 
 # append all of the common2015 subdirectories listed in the variables above
 foreach(driver_subdir ${DRIVERS})
@@ -80,13 +96,18 @@ add_library(common2015 ${common2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.
 
 # CC1201 Register settings
 # Automatically generate a C header with the register values from a chosen smartrf xml file
-set(CC1201_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/cc1101-compatible.xml)
+if(DEFINED ENV{CC1201_CONFIG_NAME})
+    set(CC1201_CONFIG_NAME $ENV{CC1201_CONFIG_NAME})
+else()
+    set(CC1201_CONFIG_NAME cc1101-compatible)
+endif()
+set(CC1201_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/${CC1201_CONFIG_NAME}.xml)
 add_custom_target(cc1201_register_export
     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/cc1201/cfg/smartrf_exporter.py
         ${CC1201_CONFIG}
         ${CMAKE_CURRENT_BINARY_DIR}/cc1201_register_export.h
     DEPENDS ${CC1201_CONFIG}
-    COMMENT "Generating C header file for cc1201 registers from smartrf xml file"
+    COMMENT "Generating C header file for cc1201 registers from '${CC1201_CONFIG_NAME}' smartrf xml file"
 )
 set_target_properties(cc1201_register_export PROPERTIES EXCLUDE_FROM_ALL TRUE)
 add_dependencies(common2015 cc1201_register_export)

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "CommLink.hpp"
 #include "mbed.h"
 #include "rtos.h"
-#include "CommLink.hpp"
 #include "ti/defines.hpp"
 
 // The config file exported from RF Studio contains an array consisting of these
@@ -85,6 +85,8 @@ public:
     /// Enable or disable logging of all strobe() commands
     void setDebugEnabled(bool enabled = true) { _debugEnabled = enabled; }
     bool isDebugEnabled() const { return _debugEnabled; }
+
+    void printDebugInfo();
 
 protected:
     void flush_tx();
