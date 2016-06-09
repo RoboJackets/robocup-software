@@ -22,7 +22,7 @@ void TargetVelPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
-    Point start, Point dir, const Geometry2d::ShapeSet& obstacles) const {
+    Point start, Point dir, const ShapeSet& obstacles) const {
     dir = dir.normalized();
 
     // TODO(justbuchanan): handle dynamic obstacles (robots)
@@ -46,9 +46,9 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     auto val = std::lower_bound(
         scaledDistRange.begin(), scaledDistRange.end(), obstacles,
         [start, dir, rangeScaleFactor](int scaledDist,
-                                       const Geometry2d::ShapeSet& obstacles) {
-            Geometry2d::Segment pathSegment(
-                start, start + dir * (scaledDist / rangeScaleFactor));
+                                       const ShapeSet& obstacles) {
+            Segment pathSegment(start,
+                                start + dir * (scaledDist / rangeScaleFactor));
             // Returns true if a path of the given distance doesn't hit
             // obstacles
             return !obstacles.hit(pathSegment);
@@ -61,9 +61,8 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 bool TargetVelPathPlanner::shouldReplan(
     const SinglePlanRequest& planRequest) const {
     const std::unique_ptr<Path>& prevPath = planRequest.prevPath;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const ShapeSet& obstacles = planRequest.obstacles;
 
-    // TODO Undo this hack to use TargetVelPlanner to do Pivot
     const WorldVelTargetCommand& command =
         static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
 
@@ -103,7 +102,7 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
     const MotionInstant& startInstant = planRequest.startInstant;
     const MotionCommand& cmd = planRequest.cmd;
     const auto& motionConstraints = planRequest.robotConstraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // If the start point is in an obstacle, escape from it
