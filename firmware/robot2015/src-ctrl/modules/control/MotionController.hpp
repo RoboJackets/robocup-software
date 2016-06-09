@@ -43,9 +43,14 @@ protected:
      */
     void commandTimeout() { _targetVel = {0, 0, 0}; }
 
-private:
     // The current target velocity in [x, y, w] format.
     std::array<int16_t, 3> _targetVel;
 
+    // steady-state gains.
+    // TODO: explain
+    // TODO: add accessors
+    std::array<float, 3> _ssGains;
+
+private:
     RtosTimerHelper _commandTimeout;
 };

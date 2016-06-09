@@ -1,7 +1,6 @@
 #pragma once
 
-// TODO: can this be included from somewhere?
-const float PI = 3.14159265358979f;
+#include "const-math.hpp"
 
 /**
  * Estimate robot velocity (x, y, w) from encoder readings
@@ -23,13 +22,15 @@ public:
 
         // TODO: get legit values for these
         // TODO: move to its own class to be shared with MotionController?
-        const std::array<float, 4> wheel_angles = {PI / 4, 2*PI/4, 3*PI/4, 4*PI/4};
+        const std::array<float, 4> wheel_angles = {M_PI / 4, 2*M_PI/4, 3*M_PI/4, 4*M_PI/4};
+
+        // TODO: figure out wheel numbering
 
         std::array<float, 3> botVel = {0, 0, 0};
 
         for (int i = 0; i < 4; ++i) {
             // convert encoder ticks to rad/s
-            const float wheelVel = encoderDeltas[i] / ENC_TICKS_PER_TURN * 2 * PI / dt;
+            const float wheelVel = encoderDeltas[i] / ENC_TICKS_PER_TURN * 2 * M_PI / dt;
 
             // calculate robot velocity from wheel velocities and wheel angles
             botVel[0] += wheelVel * cosf(wheel_angles[i]); // x vel
