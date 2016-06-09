@@ -149,8 +149,8 @@ bool KickerBoard::is_charge_enabled() {
     uint8_t ret = 0;
 
     chipSelect();
-    _spi->write(PING_CMD);
-    ret = _spi->write(NOP_ARG);
+    ret = _spi->write(PING_CMD);
+    _spi->write(NOP_ARG);
     _spi->write(NOP_ARG);
     chipDeselect();
 

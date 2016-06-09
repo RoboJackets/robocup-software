@@ -24,7 +24,7 @@ int main() {
 
     while (true) {
         //    n_kick = !n_kick;
-        // wait(50);
+        wait_ms(10);
         if (pc.readable()) {
             getCmd = pc.getc();
             // if (getCmd == 'k') getCmd = 'c';
@@ -34,10 +34,10 @@ int main() {
             pc.printf("%c: ", getCmd);
             switch (getCmd) {
                 case 'k':
-                    pc.printf("Resp: 0x%02X", kickerBoard.kick(40));
+                    pc.printf("Resp: 0x%02X", kickerBoard.kick(20));
                     break;
                 case 'c':
-                    pc.printf("Resp: 0x%02X", kickerBoard.chip(40));
+                    pc.printf("Resp: 0x%02X", kickerBoard.chip(20));
                     break;
                 case 'r':
                     pc.printf("Volts: %d", kickerBoard.read_voltage());
@@ -69,14 +69,16 @@ int main() {
                     break;
             }
 
-            wait_ms(5);
+            // wait_ms(2);
 
-            if (!invalid) {
-               pc.printf("\t[charging %s]",
-                      kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
-            }
+            // if (!invalid) {
+            //    pc.printf("\t[charging %s]",
+            //           kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
+            // }
             pc.printf("\r\n");
             fflush(stdout);
+
+            wait_ms(2);
         }
     }
 }

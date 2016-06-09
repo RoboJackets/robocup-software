@@ -24,10 +24,10 @@ volatile int charge_db_down_ = 0;
 
 volatile uint8_t byte_cnt = 0;
 
-uint8_t cur_command_ = NO_COMMAND;
+volatile uint8_t cur_command_ = NO_COMMAND;
 
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
-uint8_t last_voltage_ = 0;
+volatile uint8_t last_voltage_ = 0;
 
 // executes a command coming from SPI
 uint8_t execute_cmd(uint8_t, uint8_t);
@@ -52,7 +52,8 @@ uint8_t get_voltage() {
 /*
  * Returns true if charging is currently active
  */
-bool is_charging() { return false; }//PORTA & _BV(CHARGE_PIN); }
+bool is_charging() { return PORTA & _BV(CHARGE_PIN); }
+// bool is_charging() { return true; }
 
 void main() {
     /* Port direction - setting outputs */
@@ -135,6 +136,7 @@ void main() {
 
         // stop charging if we're at or above 250V
         // if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
+        // execute_cmd(SET_CHARGE_CMD, ON_ARG);
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
@@ -169,18 +171,21 @@ ISR(USI_STR_vect) {
              _BV(USISIF);   // Clear the SPI start flag
 
     byte_cnt++;
+    USIDR = 0;
     if (byte_cnt == 1) {
         // we don't have a command already, set the response
         // buffer to the command we received to let the
         // master confirm the given command if desired, top
         // bit is set if currently charging
         cur_command_ = recv_data;
-        USIDR = (is_charging() << 7) | (0x7F & cur_command_);
-    } else {
+        USIDR = cur_command_;
+    } else if (byte_cnt == 2) {
         // execute the currently set command with
         // the newly given argument, set the response
         // buffer to our return value
-        USIDR = execute_cmd(cur_command_, recv_data);
+        USIDR = execute_chmd(cur_command_, recv_data);
+    } else {
+        USIDR = 0; 
     }
 
     // enable global interrupts back
@@ -200,19 +205,19 @@ ISR(PCINT0_vect) {
 
     if (is_chip_selected_now) {
         // set the slave data out pin as an output
-        DDRA |= _BV(MISO_PIN);
+        // DDRA |= _BV(MISO_PIN);
     } else {
         // set the slave data out pin as an input
         // DDRA &= ~_BV(MISO_PIN);
         // cur_command_ = NO_COMMAND;
         byte_cnt = 0;
-        USIDR = 0;
+        USIDR = is_charging() << 7;
     }
 
-    if (byte_cnt > 2) {
-        byte_cnt = 0;
-        USIDR = 0;
-    }
+    // if (byte_cnt > 2) {
+    //     byte_cnt = 0;
+    //     USIDR = 0;
+    // }
 
     // enable global interrupts back
     sei();
@@ -296,11 +301,8 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
 
         case SET_CHARGE_CMD:
             ret_val = SET_CHARGE_ACK;
-            if (arg == ON_ARG) {
-                PORTA |= _BV(CHARGE_PIN);
-            } else if (arg == OFF_ARG) {
-                PORTA &= ~_BV(CHARGE_PIN);
-            }
+            // toggle charge state
+            PORTA ^= _BV(CHARGE_PIN);
             break;
 
         case GET_VOLTAGE_CMD:
@@ -308,10 +310,7 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
             break;
 
         case PING_CMD:
-
-            PORTA &= ~_BV(CHARGE_PIN);
             ret_val = PING_ACK;
-            PORTA &= ~_BV(CHARGE_PIN);
             break;
 
         case GET_BUTTON_STATE_CMD:
