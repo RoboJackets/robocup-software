@@ -5,6 +5,8 @@
 #include "Pid.hpp"
 #include "const-math.hpp"
 
+#include "RobotModel.hpp"
+
 class PidMotionController : public MotionController {
 public:
     PidMotionController() {
@@ -40,11 +42,6 @@ public:
             float err = _targetVel[i] - currVel[i];
             adjustedTargets[i] += _controllers[i].run(err);
         }
-
-        // TODO: get legit values for these
-        // TODO: move to its own class to be shared with MotionController?
-        const std::array<float, 4> wheel_angles = {M_PI / 4, 2*M_PI/4, 3*M_PI/4, 4*M_PI/4};
-
 
         std::array<uint16_t, 4> dutyCycles = {0, 0, 0, 0};
         for (int i = 0; i < 4; i++) {

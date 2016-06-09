@@ -1,6 +1,6 @@
 #pragma once
 
-#include "const-math.hpp"
+#include "RobotModel.hpp"
 
 /**
  * Estimate robot velocity (x, y, w) from encoder readings
@@ -20,12 +20,6 @@ public:
 
         // TODO: how are negative encoder values formatted?
 
-        // TODO: get legit values for these
-        // TODO: move to its own class to be shared with MotionController?
-        const std::array<float, 4> wheel_angles = {M_PI / 4, 2*M_PI/4, 3*M_PI/4, 4*M_PI/4};
-
-        // TODO: figure out wheel numbering
-
         std::array<float, 3> botVel = {0, 0, 0};
 
         for (int i = 0; i < 4; ++i) {
@@ -33,8 +27,8 @@ public:
             const float wheelVel = encoderDeltas[i] / ENC_TICKS_PER_TURN * 2 * M_PI / dt;
 
             // calculate robot velocity from wheel velocities and wheel angles
-            botVel[0] += wheelVel * cosf(wheel_angles[i]); // x vel
-            botVel[1] += wheelVel * sinf(wheel_angles[i]); // y vel
+            botVel[0] += wheelVel * cosf(RobotModel2015.wheelAngles[i]); // x vel
+            botVel[1] += wheelVel * sinf(RobotModel2015.wheelAngles[i]); // y vel
             botVel[2] += wheelVel; // w vel
         }
 
