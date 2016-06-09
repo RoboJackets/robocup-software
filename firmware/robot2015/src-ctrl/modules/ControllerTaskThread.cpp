@@ -180,7 +180,9 @@ void Task_Controller(void const* args) {
         // fixup the duty cycle to be centered around 0 and
         // increasing from 0 for both CW & CCW spins of the
         // rotary selector
-        const uint8_t duty_cycle_multiplier = 0x07 & static_cast<uint8_t>(8 - abs(8 - static_cast<int>(rotary_vel)));
+        const uint8_t duty_cycle_multiplier =
+            0x07 &
+            static_cast<uint8_t>(8 - abs(8 - static_cast<int>(rotary_vel)));
 
         // calculate a duty cycle in steps of 73, this means max is 73 * 7 = 511
         duty_cycle_all = duty_cycle_multiplier * 73;
@@ -189,7 +191,8 @@ void Task_Controller(void const* args) {
         // (that was a joke guys...calm down)
         duty_cycle_all |= (((rotary_vel & (1 << 3)) >> 3) << 9);
 
-        // set the duty cycle values all to our determined value according to the rotary selector
+        // set the duty cycle values all to our determined value according to
+        // the rotary selector
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
