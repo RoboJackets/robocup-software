@@ -35,6 +35,11 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
         SYSTEM="ubuntu-15.04"
         ADD_REPOS=false
         FIRMWARE=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*16.04'; then # Using Ubuntu 16.04
+        echo "Ubuntu 16.04 Detected..."
+        SYSTEM="ubuntu-16.04"
+        ADD_REPOS=false
+        FIRMWARE=false
     else
         echo "$DISTRO_STR" >&2
         exit 1
@@ -125,10 +130,6 @@ if $ADD_REPOS; then
 
     # for newer compilers
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
-fi
-
-if $FIRMWARE; then
-    add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 fi
 
 apt-get update
