@@ -231,7 +231,7 @@ public:
 
 class EmptyPath : public Path {
 public:
-    EmptyPath(const RobotInstant &instant): instant(instant) {}
+    EmptyPath(const RobotInstant& instant) : instant(instant) {}
 
     const RobotInstant instant;
 
@@ -270,7 +270,7 @@ public:
      * @return The time from start to path completion or infinity if it never
      * stops
      */
-    virtual float getDuration() const override { return 0;}
+    virtual float getDuration() const override { return 0; }
 
     /**
      * Returns a subPath
@@ -283,20 +283,16 @@ public:
      * @return A unique_ptr to the new subPath
      */
     virtual std::unique_ptr<Path> subPath(
-            float startTime = 0,
-            float endTime = std::numeric_limits<float>::infinity()) const override {
+        float startTime = 0,
+        float endTime = std::numeric_limits<float>::infinity()) const override {
         debugThrow("not implemented");
         return clone();
     }
 
     /// Start instant of the path
-    virtual RobotInstant start() const override {
-        return instant;
-    }
+    virtual RobotInstant start() const override { return instant; }
     /// Destination instant of the path
-    virtual RobotInstant end() const override {
-        return instant;
-    }
+    virtual RobotInstant end() const override { return instant; }
 
     /**
      * Returns a deep copy of the Path

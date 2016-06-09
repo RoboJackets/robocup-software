@@ -67,11 +67,10 @@ public:
 
     virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
-    std::unique_ptr<Path> plan(
-            const MotionInstant start, const MotionInstant goal,
-            const MotionConstraints& motionConstraints,
-            const Geometry2d::ShapeSet& obstacles);
-
+    std::unique_ptr<Path> plan(const MotionInstant start,
+                               const MotionInstant goal,
+                               const MotionConstraints& motionConstraints,
+                               const Geometry2d::ShapeSet& obstacles);
 
     static void createConfiguration(Configuration* cfg);
 

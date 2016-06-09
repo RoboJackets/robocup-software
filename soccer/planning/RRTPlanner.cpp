@@ -18,8 +18,6 @@ using namespace std;
 using namespace Eigen;
 using namespace Geometry2d;
 
-
-
 namespace Planning {
 REGISTER_CONFIGURABLE(RRTPlanner);
 
@@ -27,35 +25,36 @@ ConfigDouble* RRTPlanner::_partialReplanLeadTime;
 
 void RRTPlanner::createConfiguration(Configuration* cfg) {
     _partialReplanLeadTime = new ConfigDouble(
-            cfg, "RRTPlanner/partialReplanLeadTime", 0.2,
-            "partialReplanLeadTime");
+        cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
 }
 
-RRTPlanner::RRTPlanner(int maxIterations) : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
+RRTPlanner::RRTPlanner(int maxIterations)
+    : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
-bool shouldFullReplan(float timeIntoPath, MotionInstant current, MotionInstant goal,
+bool shouldFullReplan(float timeIntoPath, MotionInstant current,
+                      MotionInstant goal,
                       const MotionConstraints& motionConstraints,
                       const Geometry2d::ShapeSet& obstacles,
                       const Path* prevPath) {
-
     boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
-    MotionInstant targetInstant = optTarget ? optTarget->motion : prevPath->end().motion;
+    MotionInstant targetInstant =
+        optTarget ? optTarget->motion : prevPath->end().motion;
     float pathError = current.pos.distTo(targetInstant.pos);
-    float replanThreshold = (float) *motionConstraints._replan_threshold;
+    float replanThreshold = (float)*motionConstraints._replan_threshold;
 
-    if (*motionConstraints._replan_threshold != 0 && pathError > replanThreshold) {
+    if (*motionConstraints._replan_threshold != 0 &&
+        pathError > replanThreshold) {
         return true;
     }
 
     return false;
 }
 
-boost::optional<float> shouldPartialReplan(float timeIntoPath, MotionInstant current, MotionInstant goal,
-                                           const MotionConstraints& motionConstraints,
-                                           const Geometry2d::ShapeSet& obstacles,
-                                           const Path* prevPath) {
-
+boost::optional<float> shouldPartialReplan(
+    float timeIntoPath, MotionInstant current, MotionInstant goal,
+    const MotionConstraints& motionConstraints,
+    const Geometry2d::ShapeSet& obstacles, const Path* prevPath) {
     // Replan if we enter new obstacles
     float hitTime = 0;
     if (prevPath->hit(obstacles, hitTime, timeIntoPath)) {
@@ -109,10 +108,9 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
 }
 
 std::unique_ptr<Path> RRTPlanner::plan(
-            const MotionInstant start, const MotionInstant goal,
-            const MotionConstraints& motionConstraints,
-            const Geometry2d::ShapeSet& obstacles) {
-
+    const MotionInstant start, const MotionInstant goal,
+    const MotionConstraints& motionConstraints,
+    const Geometry2d::ShapeSet& obstacles) {
     // Run bi-directional RRT to generate a path.
     auto points = runRRT(start, goal, motionConstraints, obstacles);
 
@@ -126,9 +124,8 @@ std::unique_ptr<Path> RRTPlanner::plan(
     }
 
     // Generate and return a cubic bezier path using the waypoints
-    return generateCubicBezier(points, obstacles, motionConstraints,
-                               start.vel, goal.vel);
-
+    return generateCubicBezier(points, obstacles, motionConstraints, start.vel,
+                               goal.vel);
 }
 
 const int maxContinue = 60;
@@ -165,18 +162,20 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, obstacles);
 
-
     bool fullReplan = false;
     bool prevPathInval = false;
     if (prevPath) {
-        float timeIntoPath = RJ::TimestampToSecs((RJ::timestamp() - prevPath->startTime()));
+        float timeIntoPath =
+            RJ::TimestampToSecs((RJ::timestamp() - prevPath->startTime()));
 
-        if (shouldFullReplan(timeIntoPath, start, goal, motionConstraints, obstacles, prevPath.get())) {
+        if (shouldFullReplan(timeIntoPath, start, goal, motionConstraints,
+                             obstacles, prevPath.get())) {
             fullReplan = true;
             prevPathInval = true;
         } else {
-            boost::optional<float> timeToReplan =
-                    shouldPartialReplan(timeIntoPath, start, goal, motionConstraints, obstacles, prevPath.get());
+            boost::optional<float> timeToReplan = shouldPartialReplan(
+                timeIntoPath, start, goal, motionConstraints, obstacles,
+                prevPath.get());
 
             if (!timeToReplan) {
                 if (reusePathTries >= maxContinue) {
@@ -190,35 +189,42 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
             }
 
             if (timeToReplan) {
-                float keepLength = (float) *_partialReplanLeadTime;
+                float keepLength = (float)*_partialReplanLeadTime;
 
                 RJ::Time startTime = RJ::timestamp();
                 RJ::Time prevPathStartTime = prevPath->startTime();
-                float prevPathTimeInto = RJ::TimestampToSecs(startTime - prevPathStartTime);
+                float prevPathTimeInto =
+                    RJ::TimestampToSecs(startTime - prevPathStartTime);
                 if (prevPathTimeInto < *timeToReplan - keepLength) {
                     unique_ptr<Path> path = nullptr;
                     if (keepLength == 0) {
-                        path = generateRRTPath(start, goal, motionConstraints, obstacles,
-                                               actualDynamic);
+                        path = generateRRTPath(start, goal, motionConstraints,
+                                               obstacles, actualDynamic);
                     } else {
-                        auto subPath = prevPath->subPath(prevPathTimeInto, prevPathTimeInto + keepLength);
+                        auto subPath = prevPath->subPath(
+                            prevPathTimeInto, prevPathTimeInto + keepLength);
 
                         RobotInstant newStart = subPath->end();
-                        auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,
-                                                          actualDynamic);
+                        auto newSubPath = generateRRTPath(
+                            newStart.motion, goal, motionConstraints, obstacles,
+                            actualDynamic);
                         if (newSubPath) {
-                            path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
+                            path = make_unique<CompositePath>(
+                                std::move(subPath), std::move(newSubPath));
                             path->setStartTime(startTime);
                         }
                     }
 
                     if (path) {
                         if (prevPathInval) {
-                            printf("Partial Replan %f\n\n", *timeToReplan - prevPathTimeInto);
+                            printf("Partial Replan %f\n\n",
+                                   *timeToReplan - prevPathTimeInto);
                             return std::move(path);
                         } else {
-                            float remaining = prevPath->getDuration() -
-                                              RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime());
+                            float remaining =
+                                prevPath->getDuration() -
+                                RJ::TimestampToSecs(RJ::timestamp() -
+                                                    prevPath->startTime());
                             if (remaining > path->getDuration()) {
                                 printf("Found better path\n");
                                 return std::move(path);

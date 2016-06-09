@@ -460,7 +460,7 @@ void Processor::run() {
         for (auto& entry : pathsById) {
             OurRobot* r = _state.self[entry.first];
             auto& path = entry.second;
-            //path->draw(&_state, Qt::magenta, "Planning");
+            // path->draw(&_state, Qt::magenta, "Planning");
             r->setPath(std::move(path));
 
             r->path().draw(&_state, Qt::magenta, "Planning");

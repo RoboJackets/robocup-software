@@ -29,24 +29,23 @@ public:
     /** constructors with one path */
     CompositePath(std::unique_ptr<Path> path);
 
-    CompositePath(std::vector<std::unique_ptr<Path>> paths) : paths(std::move(paths)) {}
+    CompositePath(std::vector<std::unique_ptr<Path>> paths)
+        : paths(std::move(paths)) {}
 
-    template<typename... Args>
+    template <typename... Args>
     CompositePath(std::unique_ptr<Path> path, Args... args) {
         append(std::move(path), std::forward<Args>(args)...);
     }
 
-
-    //CompositePath(std::unique_ptr<Path> path1, std::unique_ptr<Path> path2)
+    // CompositePath(std::unique_ptr<Path> path1, std::unique_ptr<Path> path2)
     //        : paths({std::move(path1), std::move(path2)}) {}
-
 
     /**
      * Append the path to the end of the CompositePath
      */
     void append(std::unique_ptr<Path> path);
 
-    template<typename... Args>
+    template <typename... Args>
     void append(std::unique_ptr<Path> path, Args... args) {
         append(std::move(path));
         append(std::forward<Args>(args)...);
