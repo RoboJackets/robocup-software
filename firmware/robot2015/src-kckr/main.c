@@ -183,7 +183,7 @@ ISR(USI_STR_vect) {
         // execute the currently set command with
         // the newly given argument, set the response
         // buffer to our return value
-        USIDR = execute_chmd(cur_command_, recv_data);
+        USIDR = execute_cmd(cur_command_, recv_data);
     } else {
         USIDR = 0; 
     }
@@ -286,14 +286,16 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
 
     switch (cmd) {
         case KICK_CMD:
-            ret_val = KICK_ACK;
+            // ret_val = KICK_ACK;
+            ret_val = arg;
             PORTA |= _BV(KICK_PIN);  // set KICK pin
             millis_left_ = arg;
             TCCR0B |= _BV(CS01);  // start timer /8 prescale
             break;
 
         case CHIP_CMD:
-            ret_val = CHIP_ACK;
+            // ret_val = CHIP_ACK;
+            ret_val = arg;
             PORTA |= _BV(CHIP_PIN);  // set CHIP pin
             millis_left_ = arg;
             TCCR0B |= _BV(CS01);  // start timer /8 prescale

@@ -34,10 +34,10 @@ int main() {
             pc.printf("%c: ", getCmd);
             switch (getCmd) {
                 case 'k':
-                    pc.printf("Resp: 0x%02X", kickerBoard.kick(20));
+                    pc.printf("Resp: 0x%02X", kickerBoard.kick(240));
                     break;
                 case 'c':
-                    pc.printf("Resp: 0x%02X", kickerBoard.chip(20));
+                    pc.printf("Resp: 0x%02X", kickerBoard.chip(240));
                     break;
                 case 'r':
                     pc.printf("Volts: %d", kickerBoard.read_voltage());
