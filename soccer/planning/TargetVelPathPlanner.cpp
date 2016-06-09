@@ -60,7 +60,7 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 
 bool TargetVelPathPlanner::shouldReplan(
     const SinglePlanRequest& planRequest) const {
-    const std::unique_ptr<Path>& prevPath = planRequest.prevPath;
+    const Path* prevPath = planRequest.prevPath.get();
     const ShapeSet& obstacles = planRequest.obstacles;
 
     const WorldVelTargetCommand& command =
@@ -79,9 +79,8 @@ bool TargetVelPathPlanner::shouldReplan(
 
     // Replan if the maxSpeed of the previous path differs too much from the
     // command velocity
-    const TrapezoidalPath* trapezoidalPath =
-        dynamic_cast<const TrapezoidalPath*>(prevPath.get());
-    if (trapezoidalPath) {
+
+    if (auto trapezoidalPath = dynamic_cast<const TrapezoidalPath*>(prevPath)) {
         const float velChange =
             command.worldVel.mag() - trapezoidalPath->maxSpeed();
         if (velChange > *_targetVelChangeReplanThreshold) {

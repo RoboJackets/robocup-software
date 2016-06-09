@@ -5,7 +5,6 @@
 #include "LineKickPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 
 using namespace std;
 

@@ -182,16 +182,14 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const ShapeSet& obstacles) {
     // unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
-    // Initialize two RRT trees
+    // Initialize bi-directional RRT
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
-    // TODO: set state space obstacles
     biRRT.setStepSize(0.15);
     biRRT.setMaxIterations(_maxIterations);
-    // TODO: remove _maxIterations ivar?
 
     // TODO: what happens if it fails?
     biRRT.run();
