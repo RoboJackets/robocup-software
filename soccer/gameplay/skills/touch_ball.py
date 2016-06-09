@@ -49,7 +49,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
                             lambda: self.robot.has_ball(), 'has ball')
 
         self.add_transition(
-            TouchBall.State.fine_approach, TouchBall.State.course_approach,
+            TouchBall.State.fine_approach, behavior.Behavior.State.failed,
             lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(TouchBall.CourseApproachDist)) and (not self.bot_near_ball(TouchBall.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
 
