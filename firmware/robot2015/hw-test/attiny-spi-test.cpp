@@ -70,8 +70,9 @@ int main() {
             }
 
             if (!invalid) {
-               pc.printf("\t[charging %s]",
-                      kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
+                pc.printf("\t[charging %s]", kickerBoard.is_charge_enabled()
+                                                 ? "ACTIVE"
+                                                 : "inactive");
             }
             pc.printf("\r\n");
             fflush(stdout);
