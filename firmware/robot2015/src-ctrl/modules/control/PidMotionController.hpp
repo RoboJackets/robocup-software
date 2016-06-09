@@ -16,5 +16,5 @@ public:
     }
 
 private:
-    // Pid _xPid, _yPid, _wPid;
+    Pid _xPid, _yPid, _wPid;
 };

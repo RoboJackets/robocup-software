@@ -67,6 +67,10 @@ endforeach()
 # append all of the accessory library include directories
 list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
 
+# include PID from common
+list(APPEND common2015_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/common/)
+list(APPEND common2015_SRC ${CMAKE_SOURCE_DIR}/common/Pid.cpp)
+
 # tell cmake that all of the source files aren't here yet
 set_source_files_properties(
     ${MBED_ASSEC_LIBS_SRCS} PROPERTIES
