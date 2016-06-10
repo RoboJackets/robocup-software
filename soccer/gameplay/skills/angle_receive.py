@@ -19,7 +19,7 @@ import skills.pass_receive
 # Kick is a single_robot_behavior, so no need to import both
 class AngleReceive(skills.pass_receive.PassReceive):
     def __init__(self):
-        super().__init__()
+        super().__init__(captureFunction=(lambda: skills.touch_ball.TouchBall()))
         self._target_point = None
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
@@ -135,17 +135,6 @@ class AngleReceive(skills.pass_receive.PassReceive):
         if self._kick_line != None:
             main.system_state().draw_line(self._kick_line,
                                           constants.Colors.Red, "Shot")
-
-    # This depends on the superclasse's implementation somewhat
-    # If we stop using capture in pass_receive, this needs to be modified.
-    def on_enter_receiving(self):
-        super().on_enter_receiving()
-
-        self.remove_subbehavior('capture')
-
-        capture = skills.touch_ball.TouchBall()
-        capture.dribbler_power = skills.pass_receive.PassReceive.DribbleSpeed
-        self.add_subbehavior(capture, 'capture', required=True)
 
     def execute_receiving(self):
         super().execute_receiving()
