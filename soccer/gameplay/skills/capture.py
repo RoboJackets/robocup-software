@@ -53,7 +53,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             'ball went into goal')
 
         self.lastApproachTarget = None
-
         self.faceBall = faceBall
 
     def bot_to_ball(self):
