@@ -149,8 +149,7 @@ void OurRobot::resetForNextIteration() {
 }
 
 void OurRobot::resetMotionConstraints() {
-    _robotConstraints.rot = RotationConstraints();
-    _robotConstraints.mot = MotionConstraints();
+    _robotConstraints = RobotConstraints();
     _motionCommand = std::make_unique<Planning::EmptyCommand>();
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
     _planningPriority = 0;
@@ -191,6 +190,13 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
     *_cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
     *_cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
               << ")" << endl;
+}
+
+void OurRobot::lineKick(Point target) {
+    if (!visible) return;
+
+    disableAvoidBall();
+    _motionCommand = std::make_unique<Planning::LineKickCommand>(std::move(target));
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
