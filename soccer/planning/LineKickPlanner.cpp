@@ -1,7 +1,10 @@
 #include "LineKickPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
+#include <motion/TrapezoidalMotion.hpp>
+#include <Geometry2d/Util.hpp>
 #include "RRTPlanner.hpp"
+#include "motion/TrapezoidalMotion.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -37,21 +40,56 @@ bool LineKickPlanner::shouldReplan(
 
 std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
 
-    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
+    const float ballAvoidDistance = 0.1;
 
-    const auto& command = dynamic_cast<const PivotCommand&>(planRequest.cmd);
+    auto prevAnglePath = dynamic_cast<AngleFunctionPath*>(planRequest.prevPath.get());
 
-    if (shouldReplan(planRequest)) {
-        const MotionInstant& startInstant = planRequest.startInstant;
-        const auto& motionConstraints = planRequest.robotConstraints.mot;
-        const auto& rotationConstraints = planRequest.robotConstraints.rot;
-        const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-        const auto& systemState = planRequest.systemState;
-        systemState.ball;
+    const auto& command = dynamic_cast<const LineKickCommand&>(planRequest.cmd);
 
-        return nullptr;
+    const MotionInstant& startInstant = planRequest.startInstant;
+    const auto& motionConstraints = planRequest.robotConstraints.mot;
+    const auto& rotationConstraints = planRequest.robotConstraints.rot;
+    auto& obstacles = planRequest.obstacles;
+    const auto& systemState = planRequest.systemState;
+    const auto& ball = systemState.ball;
+    const auto& robotConstraints = planRequest.robotConstraints;
+
+    float timeEstimate;
+    if (prevAnglePath) {
+        float timeIntoPath = RJ::TimestampToSecs(RJ::timestamp() - prevAnglePath->startTime());
+        timeEstimate = planRequest.prevPath->getDuration() - timeIntoPath;
     } else {
-        return std::move(prevPath);
+        timeEstimate = Trapezoidal::getTime(0, ball.pos.distTo(startInstant.pos),
+                                            robotConstraints.mot.maxSpeed, robotConstraints.mot.maxAcceleration,
+                                            startInstant.vel.mag(), 0.5);
     }
+
+    if (timeEstimate<0) {
+        debugLog("timeEstimate<0");
+        timeEstimate = 0;
+    }
+
+    MotionInstant target = ball.predict(RJ::SecsToTimestamp(timeEstimate) + RJ::timestamp());
+    //target.pos = ball.pos;
+    target.vel = (command.target - target.pos).normalized(1.0);
+    if(std::abs(target.vel.angleBetween((target.pos - startInstant.pos)))>DegreesToRadians(30)) {
+        obstacles.add(make_shared<Circle>(target.pos, ballAvoidDistance));
+        obstacles.add(make_shared<Circle>(ball.pos, ballAvoidDistance));
+        target.pos -= target.vel.normalized(ballAvoidDistance);
+        //printf("wrongSide");
+    }
+    unique_ptr<Path> prevPath;
+    if (prevAnglePath) {
+        prevPath = std::move(prevAnglePath->path);
+    } else {
+        prevPath = nullptr;
+    }
+    auto request = SinglePlanRequest(startInstant, PathTargetCommand(target),
+        robotConstraints, obstacles, planRequest.dynamicObstacles, systemState, std::move(prevPath));
+    auto path = rrtPlanner.run(request);
+
+    return make_unique<AngleFunctionPath>(std::move(path), angleFunctionForCommandType(FacePointCommand(command.target)));
+
+    return path;
 }
 }
