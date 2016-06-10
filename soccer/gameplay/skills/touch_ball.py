@@ -14,9 +14,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachDist = 0.4
-    CourseApproachAvoidBall = 0.10
     DribbleSpeed = 0
-    FineApproachSpeed = 0.2
     # The amount of seconds to look in the future when
     # trying to actualy hit the eball. TODO: use maxaccel to find this.
     HitAdjust = 1
@@ -25,7 +23,8 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
         course_approach = 1
         hit_ball = 2
 
-    # Move back so we hit the mouth, not the side
+    # Move back so we hit the mouth, not the side. This is needed
+    # as the robot will oscilate a bit, giving a 50% chance of failure.
     AdjDist = constants.Robot.Radius * 2
 
     ## TouchBall Constructor
@@ -110,7 +109,6 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
     def execute_course_approach(self):
         # don't hit the ball on accident
-        self.robot.set_avoid_ball_radius(TouchBall.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
 
 
