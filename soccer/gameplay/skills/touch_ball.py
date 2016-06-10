@@ -15,12 +15,15 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
     # tunable config values
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
-    DribbleSpeed = 100
+    DribbleSpeed = 0
     FineApproachSpeed = 0.2
+    # The amount of seconds to look in the future when
+    # trying to actualy hit the eball. TODO: use maxaccel to find this.
+    HitAdjust = 1
 
     class State(Enum):
         course_approach = 1
-        fine_approach = 2
+        hit_ball = 2
 
     # Move back so we hit the mouth, not the side
     AdjDist = constants.Robot.Radius * 2
@@ -32,7 +35,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
         self.add_state(TouchBall.State.course_approach,
                        behavior.Behavior.State.running)
-        self.add_state(TouchBall.State.fine_approach,
+        self.add_state(TouchBall.State.hit_ball,
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
@@ -40,34 +43,26 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
                             'immediately')
 
         self.add_transition(
-            TouchBall.State.course_approach, TouchBall.State.fine_approach,
-            lambda: (self.bot_in_front_of_ball() or self.bot_near_ball(TouchBall.CourseApproachDist)) and main.ball().valid,
+            TouchBall.State.course_approach, TouchBall.State.hit_ball,
+            lambda: (self.ball_in_front_of_bot()) and main.ball().valid,
             'dist to ball < threshold')
 
-        self.add_transition(TouchBall.State.fine_approach,
+        self.add_transition(TouchBall.State.hit_ball,
                             behavior.Behavior.State.completed,
                             lambda: self.robot.has_ball(), 'has ball')
 
         self.add_transition(
-            TouchBall.State.fine_approach, behavior.Behavior.State.failed,
-            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(TouchBall.CourseApproachDist)) and (not self.bot_near_ball(TouchBall.CourseApproachDist * 1.5) or not main.ball().pos),
+            TouchBall.State.hit_ball, behavior.Behavior.State.failed,
+            lambda: not (self.ball_in_front_of_bot()) and not main.ball().pos,
             'ball went into goal')
 
         self.lastApproachTarget = None
 
 
-    def bot_to_ball(self):
-        return main.ball().pos - self.robot.pos
-
-    def bot_near_ball(self, distance):
-        return (self.bot_to_ball().mag() < distance)
-
-
     ## Override this to detect if the ball is directly in front of us
-    def bot_in_front_of_ball(self):
-        adjFactor = robocup.Point(
-            math.cos(self.robot.angle) * -TouchBall.AdjDist,
-            math.sin(self.robot.angle) * -TouchBall.AdjDist)
+    def ball_in_front_of_bot(self):
+        adjFactor = robocup.Point.direction(self.robot.angle) \
+                    *  -TouchBall.AdjDist
         return (self.robot.pos - adjFactor).dist_to(main.ball().pos) \
             < TouchBall.AdjDist + constants.Robot.Radius
 
@@ -88,7 +83,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
     #
     # In addition, lets try to keep this point stable by choosing the closest
     # point, instead of the point that we can reach in time closest to the ball
-    def find_intercept_point(self):
+    def find_intercept_point(self, adjusted=True):
         approach_vec = self.approach_vector()
 
         adjFactor = robocup.Point.direction(self.robot.angle) \
@@ -100,7 +95,9 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
                                      approach_vec * constants.Field.Length)
         pos = approach_line.nearest_point(robotPos)
 
-        pos += adjFactor
+        if adjusted:
+            pos += adjFactor
+
         return pos
 
 
@@ -132,19 +129,11 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
     def on_exit_course_approach(self):
         self.lastApproachTarget == None
 
-    def execute_fine_approach(self):
+    def execute_hit_ball(self):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(TouchBall.DribbleSpeed)
-
-        # TODO(ashaw596): explain this math a bit
-        bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        multiplier = 1.5
-        aproach = self.bot_to_ball(
-        ) * multiplier + bot2ball * TouchBall.FineApproachSpeed / 4 + main.ball(
-        ).vel
-        if (aproach.mag() > 1):
-            aproach = aproach.normalized() * 1
-        self.robot.set_world_vel(aproach)
+        self.robot.move_to_direct(main.ball().pos +
+                                  (main.ball().vel * (1 / TouchBall.HitAdjust)))
 
     def role_requirements(self):
         reqs = super().role_requirements()
