@@ -29,7 +29,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
     ## TouchBall Constructor
     # useful for reflecting/bouncing moving ballls.
-    def __init__(self ):
+    def __init__(self):
         super().__init__(continuous=False)
 
         self.add_state(TouchBall.State.course_approach,
@@ -57,7 +57,6 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
         self.lastApproachTarget = None
 
-
     ## Override this to detect if the ball is directly in front of us
     def ball_in_front_of_bot(self):
         adjFactor = robocup.Point.direction(self.robot.angle) \
@@ -74,7 +73,6 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
         else:
             return (self.robot.pos - main.ball().pos).normalized()
 
-
     ## A touch is different from a capture in that we should try to keep our
     # distance from the ball if possible, and move forward to hit the ball at
     # the last minute.
@@ -90,15 +88,15 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
         robotPos = self.robot.pos - adjFactor
 
         # multiply by a large enough value to cover the field.
-        approach_line = robocup.Line(main.ball().pos, main.ball().pos +
-                                     approach_vec * constants.Field.Length)
+        approach_line = robocup.Line(
+            main.ball().pos,
+            main.ball().pos + approach_vec * constants.Field.Length)
         pos = approach_line.nearest_point(robotPos)
 
         if adjusted:
             pos += adjFactor
 
         return pos
-
 
     def execute_running(self):
         # make sure teammates don't bump into us
@@ -111,16 +109,16 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
         # don't hit the ball on accident
         pos = self.find_intercept_point()
 
-
         if (self.lastApproachTarget != None and
             (pos - self.lastApproachTarget).mag() < 0.1):
             self.robot.move_to(self.lastApproachTarget)
-            main.system_state().draw_circle(self.lastApproachTarget,
-                                            constants.Ball.Radius,
-                                            constants.Colors.White, "TouchBall")
+            main.system_state().draw_circle(
+                self.lastApproachTarget, constants.Ball.Radius,
+                constants.Colors.White, "TouchBall")
         else:
             main.system_state().draw_circle(pos, constants.Ball.Radius,
-                                            constants.Colors.White, "TouchBall")
+                                            constants.Colors.White,
+                                            "TouchBall")
             self.robot.move_to(pos)
             self.lastApproachTarget = pos
 
@@ -130,8 +128,8 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
     def execute_hit_ball(self):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(TouchBall.DribbleSpeed)
-        self.robot.move_to_direct(main.ball().pos +
-                                  (main.ball().vel * (1 / TouchBall.HitAdjust)))
+        self.robot.move_to_direct(main.ball().pos + (main.ball().vel * (
+            1 / TouchBall.HitAdjust)))
 
     def role_requirements(self):
         reqs = super().role_requirements()

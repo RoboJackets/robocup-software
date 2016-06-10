@@ -60,7 +60,6 @@ class PassReceive(
         self.kicked_time = 0
         self.captureFunction = captureFunction
 
-
         for state in PassReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
 
