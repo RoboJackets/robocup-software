@@ -47,7 +47,7 @@ class PassReceive(
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
 
-    def __init__(self):
+    def __init__(self, captureFunction=(lambda: skills.capture.Capture())):
         super().__init__(continuous=False)
 
         self.ball_kicked = False
@@ -58,6 +58,7 @@ class PassReceive(
         self.kicked_vel = None
         self.stable_frame = 0
         self.kicked_time = 0
+        self.captureFunction = captureFunction
 
         for state in PassReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -193,7 +194,7 @@ class PassReceive(
         self.kicked_vel = main.ball().vel
 
     def on_enter_receiving(self):
-        capture = skills.capture.Capture()
+        capture = self.captureFunction()
         capture.dribbler_power = PassReceive.DribbleSpeed
         self.add_subbehavior(capture, 'capture', required=True)
 
