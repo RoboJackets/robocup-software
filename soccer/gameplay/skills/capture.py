@@ -98,6 +98,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # make sure teammates don't bump into us
         self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
 
+        if (self.faceBall):
+            self.robot.face(main.ball().pos)
+
     def on_enter_course_approach(self):
         self.lastApproachTarget == None
 
@@ -105,9 +108,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
-
-        if (self.faceBall):
-            self.robot.face(main.ball().pos)
 
         if (self.lastApproachTarget != None and
             (pos - self.lastApproachTarget).mag() < 0.1):
@@ -127,9 +127,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_fine_approach(self):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
-
-        if (self.faceBall):
-            self.robot.face(main.ball().pos)
 
         # TODO(ashaw596): explain this math a bit
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
