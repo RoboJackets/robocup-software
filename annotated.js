@@ -209,6 +209,9 @@ var annotated =
         ] ],
         [ "pivot_kick", null, [
           [ "PivotKick", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick" ]
+        ] ],
+        [ "touch_ball", null, [
+          [ "TouchBall", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball" ]
         ] ]
       ] ],
       [ "standard_play", null, [

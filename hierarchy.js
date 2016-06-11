@@ -329,6 +329,7 @@ var hierarchy =
           [ "gameplay.skills.mark.Mark", "classgameplay_1_1skills_1_1mark_1_1_mark.html", null ],
           [ "gameplay.skills.move.Move", "classgameplay_1_1skills_1_1move_1_1_move.html", null ],
           [ "gameplay.skills.move_direct.MoveDirect", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html", null ],
+          [ "gameplay.skills.touch_ball.TouchBall", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html", null ],
           [ "gameplay.tactics.positions.defender.Defender", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html", null ]
         ] ],
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
@@ -365,6 +366,7 @@ var hierarchy =
       [ "gameplay.behavior.Behavior.State", "classgameplay_1_1behavior_1_1_behavior_1_1_state.html", null ],
       [ "gameplay.skills.capture.Capture.State", "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html", null ],
       [ "gameplay.skills.pivot_kick.PivotKick.State", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick_1_1_state.html", null ],
+      [ "gameplay.skills.touch_ball.TouchBall.State", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball_1_1_state.html", null ],
       [ "gameplay.tactics.positions.defender.Defender.Side", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_side.html", null ],
       [ "gameplay.tactics.positions.defender.Defender.State", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_defender.SubmissiveDefender.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html", null ],

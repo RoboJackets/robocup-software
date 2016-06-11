@@ -5,6 +5,7 @@ var searchData=
   ['backspace_5freply_5fchar',['BACKSPACE_REPLY_CHAR',['../class_console.html#ac16c7721fed16085a036317ac2f7e77e',1,'Console']]],
   ['ball',['Ball',['../class_ball.html',1,'']]],
   ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
+  ['ball_5fin_5ffront_5fof_5fbot',['ball_in_front_of_bot',['../classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#a1ec762781267759361b4a92dc96e9a4a',1,'gameplay::skills::touch_ball::TouchBall']]],
   ['ball_5fkicked',['ball_kicked',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ab134fec61f3cf70d14df09c0b8b9cf17',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
   ['ballmatrix',['ballMatrix',['../group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a',1,'Gameplay::GameplayModule']]],

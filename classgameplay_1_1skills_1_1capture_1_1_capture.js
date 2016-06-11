@@ -13,5 +13,6 @@ var classgameplay_1_1skills_1_1capture_1_1_capture =
     [ "on_enter_course_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a74a310e19e880deecff7bbafa5f9eadc", null ],
     [ "on_exit_course_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#ac16fb8016a920910c1ca36e2419ed2e0", null ],
     [ "role_requirements", "classgameplay_1_1skills_1_1capture_1_1_capture.html#aa9d2ef21744be50d70978bbece8db42a", null ],
+    [ "faceBall", "classgameplay_1_1skills_1_1capture_1_1_capture.html#af4f40fc49fcc4557e8747df83b5ed43e", null ],
     [ "lastApproachTarget", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a46990c0ab70ae4c7dbe9618748dabebe", null ]
 ];

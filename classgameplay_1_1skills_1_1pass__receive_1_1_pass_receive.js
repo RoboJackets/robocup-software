@@ -20,6 +20,7 @@ var classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive =
     [ "reset_correct_location", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ac311620586e19e181f3b3761c1d96f7f", null ],
     [ "role_requirements", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#aad045fd5eabbd199e7933f96e4918324", null ],
     [ "ball_kicked", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ada588f26484d363dc026f918fc168e3b", null ],
+    [ "captureFunction", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a5f942444b90e189b9cc74e33a75a0569", null ],
     [ "kicked_from", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a9b9bec876b5485b04744e08d3191d044", null ],
     [ "kicked_time", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ac1e17de9b9ddc5fef271ee9b95156743", null ],
     [ "kicked_vel", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#af7f437683bac8a9a3b80190211e38c55", null ],

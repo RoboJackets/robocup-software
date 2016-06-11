@@ -1,12 +1,12 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="node2" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="1171,5,1277,32"/>
 <area shape="rect" id="node3" href="$classgameplay_1_1root__play_1_1_root_play.html" title="The RootPlay is basically the python&#45;side of the c++ GameplayModule it coordinates the selection of t..." alt="" coords="1123,56,1325,83"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,2293,208,2320"/>
-<area shape="rect" id="node5" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,2264,458,2291"/>
-<area shape="rect" id="node73" href="$classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html" title="A state machine that tracks the double touch rule. " alt="" coords="257,2315,457,2357"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,2323,208,2349"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="257,2293,458,2320"/>
+<area shape="rect" id="node74" href="$classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html" title="A state machine that tracks the double touch rule. " alt="" coords="257,2345,457,2386"/>
 <area shape="rect" id="node6" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="510,1758,722,1799"/>
-<area shape="rect" id="node59" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="507,2257,725,2298"/>
-<area shape="rect" id="node72" href="$classgameplay_1_1timed__behavior_1_1_timed_behavior.html" title="TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it. " alt="" coords="521,2322,711,2363"/>
+<area shape="rect" id="node59" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="507,2286,725,2327"/>
+<area shape="rect" id="node73" href="$classgameplay_1_1timed__behavior_1_1_timed_behavior.html" title="TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it. " alt="" coords="521,2351,711,2393"/>
 <area shape="rect" id="node7" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="831,815,972,841"/>
 <area shape="rect" id="node42" href="$classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="783,1920,1019,1976"/>
 <area shape="rect" id="node54" href="$classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html" title="gameplay.tactics.behavior\l_sequence.BehaviorSequence" alt="" coords="794,1594,1009,1635"/>
@@ -69,6 +69,7 @@
 <area shape="rect" id="node68" href="$classgameplay_1_1skills_1_1mark_1_1_mark.html" title="gameplay.skills.mark.Mark" alt="" coords="807,2447,996,2473"/>
 <area shape="rect" id="node69" href="$classgameplay_1_1skills_1_1move_1_1_move.html" title="Behavior that moves a robot to a specified location wraps up OurRobot.move() into a Skill so we can u..." alt="" coords="804,2497,999,2524"/>
 <area shape="rect" id="node70" href="$classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html" title="Behavior that moves a robot to a specified location, circumventing the path planner. " alt="" coords="823,2549,980,2590"/>
-<area shape="rect" id="node71" href="$classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html" title="The Defender behavior positions a robot on a certain area of the field and defends it..." alt="" coords="774,2614,1029,2655"/>
+<area shape="rect" id="node71" href="$classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html" title="gameplay.skills.touch\l_ball.TouchBall" alt="" coords="823,2614,980,2655"/>
+<area shape="rect" id="node72" href="$classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html" title="The Defender behavior positions a robot on a certain area of the field and defends it..." alt="" coords="774,2679,1029,2721"/>
 <area shape="rect" id="node63" href="$classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html" title="lines up with the ball and the target, then drives up and kicks this differs from PivotKick which get..." alt="" coords="1153,2254,1295,2295"/>
 </map>

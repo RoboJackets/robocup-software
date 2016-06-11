@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_our_robot.html#a01c72bd8809afb005fdf53564f6dbf31":[12,0,68,10],
 "class_our_robot.html#a02faabdbe05e3d34856ff7043dc40d58":[12,0,68,48],
 "class_our_robot.html#a0523f8aed70b617b92529ae94cf4ba2d":[12,0,68,42],
 "class_our_robot.html#a08041f75636852ac9c9eecf9cad3b543":[12,0,68,44],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "class_planning_1_1_trapezoidal_path.html#a0dfd2e7deaf4a8052be39c89752d8728":[12,0,8,30,2],
 "class_planning_1_1_trapezoidal_path.html#a3f54db3f8540655fae33e6489efbce7d":[12,0,8,30,5],
 "class_planning_1_1_trapezoidal_path.html#a44af1da8fbdf33fc2e50f78e1cae6dd2":[12,0,8,30,3],
-"class_planning_1_1_trapezoidal_path.html#a558fcae4d2777c9d12251fc5a687e459":[12,0,8,30,4],
-"class_planning_1_1_trapezoidal_path.html#a7acfc7210aa23cf5ec1a185975c8f8bd":[12,0,8,30,7]
+"class_planning_1_1_trapezoidal_path.html#a558fcae4d2777c9d12251fc5a687e459":[12,0,8,30,4]
 };
