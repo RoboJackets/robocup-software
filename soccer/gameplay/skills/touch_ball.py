@@ -123,7 +123,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
             self.lastApproachTarget = pos
 
     def on_exit_course_approach(self):
-        self.lastApproachTarget == None
+        self.lastApproachTarget = None
 
     def execute_hit_ball(self):
         self.robot.disable_avoid_ball()
