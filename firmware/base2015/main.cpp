@@ -1,14 +1,14 @@
-#include <mbed.h>
 #include <cmsis_os.h>
+#include <mbed.h>
 #include <memory>
 
-#include "SharedSPI.hpp"
 #include "CC1201Radio.hpp"
+#include "RJBaseUSBDevice.hpp"
+#include "SharedSPI.hpp"
 #include "logger.hpp"
 #include "pins.hpp"
 #include "usb-interface.hpp"
 #include "watchdog.hpp"
-#include "RJBaseUSBDevice.hpp"
 
 #define RJ_WATCHDOG_TIMER_VALUE 2  // seconds
 
@@ -41,13 +41,19 @@ bool initRadio() {
 
 void radioRxHandler(rtp::packet* pkt) {
     LOG(INF3, "radioRxHandler()");
-    // write packet content out to EPBULK_IN
-    // TODO(justin): use pkt.pack() and include header info once packet
-    // structure changes
-    bool success = usbLink.writeNB(EPBULK_IN, pkt->payload.data(),
-                                   pkt->payload.size(), MAX_PACKET_SIZE_EPBULK);
+    // write packet content (including header) out to EPBULK_IN
+    vector<uint8_t> buf;
+    pkt->pack(&buf);
+    bool success = usbLink.writeNB(EPBULK_IN, buf.data(), buf.size(),
+                                   MAX_PACKET_SIZE_EPBULK);
 
-    if (!success) LOG(WARN, "Failed to transfer received packet over usb");
+    // TODO(justin): add this message back in. For some reason, the usb system
+    // reports failure *unless* I add a print statement inside
+    // USBDevice.writeNB() after result = endpointWrite().  No idea why this is
+    // the case
+    //
+    // if (!success) LOG(WARN, "Failed to transfer received %u byte packet over
+    // usb", pkt->payload.size());
 }
 
 int main() {
@@ -66,8 +72,8 @@ int main() {
         LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
         // register handlers for any ports we might use
-        for (rtp::port port :
-             {rtp::port::CONTROL, rtp::port::PING, rtp::port::LEGACY}) {
+        for (rtp::Port port :
+             {rtp::Port::CONTROL, rtp::Port::PING, rtp::Port::LEGACY}) {
             CommModule::Instance->setRxHandler(&radioRxHandler, port);
             CommModule::Instance->setTxHandler((CommLink*)global_radio,
                                                &CommLink::sendPacket, port);
@@ -106,16 +112,13 @@ int main() {
 
         // attempt to read data from EPBULK_OUT
         // if data is available, write it into @pkt and send it
-        if (usbLink.readEP_NB(EPBULK_OUT, buf, &bufSize, sizeof(buf))) {
+        if (usbLink.readEP_NB(EPBULK_OUT, buf, &bufSize,
+                              MAX_PACKET_SIZE_EPBULK)) {
             LOG(INF3, "Read %d bytes from BULK IN", bufSize);
+
             // construct packet from buffer received over USB
             rtp::packet pkt;
-            pkt.payload.insert(pkt.payload.end(), buf, &buf[bufSize]);
-
-            // TODO(justin): remove this, the buffer should contain this
-            pkt.header.port = rtp::port::CONTROL;
-            pkt.header.address = rtp::BROADCAST_ADDRESS;
-            pkt.header.type = rtp::header_data::Control;
+            pkt.recv(buf, bufSize);
 
             // transmit!
             CommModule::Instance->send(pkt);

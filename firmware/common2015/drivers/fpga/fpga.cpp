@@ -1,9 +1,12 @@
 #include "fpga.hpp"
 
-#include <rtos.h>
-#include <logger.hpp>
-#include <software-spi.hpp>
 #include <algorithm>
+
+#include <rtos.h>
+
+#include "logger.hpp"
+#include "software-spi.hpp"
+#include "rj-macros.hpp"
 
 FPGA* FPGA::Instance = nullptr;
 
@@ -24,8 +27,8 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
            PinName progB, PinName done)
     : SharedSPIDevice(sharedSPI, nCs, true),
       _initB(initB),
-      _progB(progB, PIN_OUTPUT, OpenDrain, 1),
-      _done(done) {
+      _done(done),
+      _progB(progB, PIN_OUTPUT, OpenDrain, 1) {
     setSPIFrequency(1000000);
 }
 
@@ -43,7 +46,6 @@ bool FPGA::configure(const std::string& filepath) {
     _progB = 0;
     Thread::wait(1);
     _progB = 1;
-    Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
     bool fpgaReady = false;
@@ -93,7 +95,7 @@ bool FPGA::configure(const std::string& filepath) {
     return false;
 }
 
-// TODO(justin): remove this hack once GitHub issue #590 is fixed
+TODO(remove this hack once issue number 590 is closed)
 #include "../../robot2015/src-ctrl/config/pins-ctrl-2015.hpp"
 
 bool FPGA::send_config(const std::string& filepath) {
@@ -109,8 +111,9 @@ bool FPGA::send_config(const std::string& filepath) {
 
         chipSelect();
 
-        // MISO & MOSI are intentionally switched here
-        // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
+// MISO & MOSI are intentionally switched here
+// defaults to 8 bit field size with CPOL = 0 & CPHA = 0
+#warning FPGA configuration pins currently flipped due to PCB design errors, the final revision requires firmware updates.
         SoftwareSPI softSpi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
 
         fseek(fp, 0, SEEK_END);
@@ -137,6 +140,8 @@ bool FPGA::send_config(const std::string& filepath) {
 
             if (breakOut) break;
         }
+
+        SPI dummySPI(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
 
         chipDeselect();
         fclose(fp);
@@ -269,9 +274,10 @@ void FPGA::gate_drivers(std::vector<uint16_t>& v) {
 
     _spi->write(CMD_CHECK_DRV);
 
-    // each halfword is structured as follows:
-    // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC |
-    // FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
+    // each halfword is structured as follows (MSB -> LSB):
+    // | nibble 2: | GVDD_OV  | FAULT    | GVDD_UV  | PVDD_UV  |
+    // | nibble 1: | OTSD     | OTW      | FETHA_OC | FETLA_OC |
+    // | nibble 0: | FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC |
     for (size_t i = 0; i < 10; i++) {
         uint16_t tmp = _spi->write(0x00);
         tmp |= (_spi->write(0x00) << 8);

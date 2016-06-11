@@ -140,7 +140,6 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             if b.robot is not None:
                 b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
                 b.robot.face(main.ball().pos)
-                b.robot.avoid_all_teammates(True)
 
     # Makes an angle > 0, < pi * 2
     def normalize_angle(self, angle):
@@ -167,4 +166,3 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             if b.robot is not None:
                 b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
                 b.robot.face(main.ball().pos)
-                b.robot.avoid_all_teammates(True)

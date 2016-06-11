@@ -1,5 +1,8 @@
 #pragma once
 #include "TeamInfo.hpp"
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
+#include "Constants.hpp"
 
 /**
  * @brief Holds the state of the game according to the referee
@@ -30,7 +33,7 @@ public:
     };
 
     // Types of restarts
-    enum Restart { None, Kickoff, Direct, Indirect, Penalty };
+    enum Restart { None, Kickoff, Direct, Indirect, Penalty, Placement };
 
     Period period;
     State state;
@@ -48,6 +51,8 @@ public:
 
     TeamInfo OurInfo;
     TeamInfo TheirInfo;
+
+    Geometry2d::Point ballPlacementPoint;
 
     GameState() {
         period = FirstHalf;
@@ -72,6 +77,8 @@ public:
 
     bool penalty() const { return restart == Penalty; }
 
+    bool placement() const { return restart == Placement; }
+
     bool isOurRestart() const { return ourRestart; }
 
     bool direct() const { return restart == Direct; }
@@ -88,6 +95,8 @@ public:
 
     bool ourFreeKick() const { return ourDirect() || ourIndirect(); }
 
+    bool ourPlacement() const { return placement() && ourRestart; }
+
     bool theirKickoff() const { return kickoff() && !ourRestart; }
 
     bool theirPenalty() const { return penalty() && !ourRestart; }
@@ -97,6 +106,8 @@ public:
     bool theirIndirect() const { return indirect() && !ourRestart; }
 
     bool theirFreeKick() const { return theirDirect() || theirIndirect(); }
+
+    bool theirPlacement() const { return placement() && !ourRestart; }
 
     // Robots must be in position for a restart
     bool setupRestart() const { return state == Setup || state == Ready; }
@@ -119,4 +130,17 @@ public:
     // Our robots (except the penalty kicker) must stay 400mm behind the penalty
     // line
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
+
+    void setBallPlacementPoint(float x, float y) {
+        Geometry2d::TransformMatrix _worldToTeam =
+            Geometry2d::TransformMatrix();
+        _worldToTeam *= Geometry2d::TransformMatrix::translate(
+            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+        ballPlacementPoint =
+            _worldToTeam * Geometry2d::Point(x / 1000, y / 1000);
+    }
+
+    Geometry2d::Point getBallPlacementPoint() const {
+        return ballPlacementPoint;
+    }
 };

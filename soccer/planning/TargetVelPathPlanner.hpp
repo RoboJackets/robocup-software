@@ -12,11 +12,9 @@ namespace Planning {
 /// possible.  Avoids obstacles.
 class TargetVelPathPlanner : public SingleRobotPathPlanner {
 public:
-    virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, const MotionCommand* cmd,
-        const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet* obstacles,
-        std::unique_ptr<Path> prevPath = nullptr) override;
+    TargetVelPathPlanner() : SingleRobotPathPlanner(false){};
+
+    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
         return MotionCommand::WorldVel;
@@ -25,13 +23,11 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    bool shouldReplan(MotionInstant startInstant, const MotionCommand* cmd,
-                      const MotionConstraints& motionConstraints,
-                      const Geometry2d::ShapeSet* obstacles,
-                      const Path* prevPath);
+    bool shouldReplan(const SinglePlanRequest& planRequest) const;
+
     Geometry2d::Point calculateNonblockedPathEndpoint(
         Geometry2d::Point start, Geometry2d::Point dir,
-        const Geometry2d::ShapeSet* obstacles);
+        const Geometry2d::ShapeSet& obstacles) const;
 
     /// If the desired target velocity changes by this much, the path is
     /// replanned

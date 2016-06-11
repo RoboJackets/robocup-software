@@ -78,6 +78,10 @@ std::string stringFromCommand(Command c) {
             return "Goal Yellow";
         case GOAL_BLUE:
             return "Goal Blue";
+        case BALL_PLACEMENT_YELLOW:
+            return "Ball Placement Yellow";
+        case BALL_PLACEMENT_BLUE:
+            return "Ball Placement Blue";
         default:
             return "";
     }
@@ -169,6 +173,8 @@ void NewRefereeModule::run() {
         command_timestamp = packet->wrapper.command_timestamp();
         yellow_info.ParseRefboxPacket(packet->wrapper.yellow());
         blue_info.ParseRefboxPacket(packet->wrapper.blue());
+        ballPlacementx = packet->wrapper.designated_position().x();
+        ballPlacementy = packet->wrapper.designated_position().y();
 
         _mutex.unlock();
     }
@@ -327,6 +333,20 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
         case Command::GOAL_YELLOW:
             break;
         case Command::GOAL_BLUE:
+            break;
+        case Command::BALL_PLACEMENT_YELLOW:
+            _state.gameState.state = GameState::Stop;
+            _state.gameState.restart = GameState::Placement;
+            _state.gameState.ourRestart = !blueTeam;
+            _state.gameState.setBallPlacementPoint(ballPlacementx,
+                                                   ballPlacementy);
+            break;
+        case Command::BALL_PLACEMENT_BLUE:
+            _state.gameState.state = GameState::Stop;
+            _state.gameState.restart = GameState::Placement;
+            _state.gameState.ourRestart = blueTeam;
+            _state.gameState.setBallPlacementPoint(ballPlacementx,
+                                                   ballPlacementy);
             break;
     }
 

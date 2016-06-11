@@ -69,12 +69,20 @@ int main() {
                     break;
             }
 
+
             // wait_ms(2);
 
             // if (!invalid) {
             //    pc.printf("\t[charging %s]",
             //           kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
             // }
+
+            if (!invalid) {
+                pc.printf("\t[charging %s]", kickerBoard.is_charge_enabled()
+                                                 ? "ACTIVE"
+                                                 : "inactive");
+            }
+
             pc.printf("\r\n");
             fflush(stdout);
 

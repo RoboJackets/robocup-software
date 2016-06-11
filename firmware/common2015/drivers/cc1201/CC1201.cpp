@@ -1,7 +1,20 @@
 #include "CC1201.hpp"
 
-#include "logger.hpp"
 #include "assert.hpp"
+#include "logger.hpp"
+
+// clang-format off
+const char* CC1201_STATE_NAMES[] = {
+    "IDLE",
+    "RX",
+    "TX",
+    "FSTXON",
+    "CALIB",
+    "SETTLE",
+    "RX_FIFO_ERR",
+    "TX_FIFO_ERR"
+};
+// clang-format on
 
 // check that the address byte doesn't have any non-address bits set
 // see "3.2 Access Types" in User Guide
@@ -37,17 +50,7 @@ CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
 int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
-    if (!_isInit) return -1;
-
-    if (size != (buf[0] + 1)) {
-        LOG(SEVERE,
-            "Packet size is inconsistent with expected number of "
-            "bytes! %u bytes expected, %u bytes found in buffer.",
-            size, buf[0]);
-        return COMM_FUNC_BUF_ERR;
-    }
-
-    strobe(CC1201_STROBE_SFTX);
+    if (!_isInit) return COMM_FAILURE;
 
     // In order for radio transmission to work, the cc1201 must be first strobed
     // into IDLE, then into TX.  We're not sure why this is the case, but it
@@ -61,19 +64,16 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     chipSelect();
     uint8_t device_state =
         _spi->write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
+    _spi->write(size);  // write size byte first
     for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
     chipDeselect();
 
     // Enter the TX state.
     if ((device_state & CC1201_STATE_TXFIFO_ERROR) ==
         CC1201_STATE_TXFIFO_ERROR) {
-        LOG(WARN, "STATE AT TX ERROR: 0x%02X", device_state);
         // flush the TX buffer & return if the FIFO is in a corrupt state
-        flush_tx();
-
-        // set in IDLE mode and strobe back into RX to ensure the states will
-        // fall through calibration then return
-        idle();
+        strobe(CC1201_STROBE_SIDLE);
+        strobe(CC1201_STROBE_SFTX);
         strobe(CC1201_STROBE_SRX);
 
         return COMM_DEV_BUF_ERR;
@@ -83,11 +83,11 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     strobe(CC1201_STROBE_STX);
 
     // Wait until radio's TX buffer is emptied
-    uint8_t bts = 1;
-    do {
-        bts = readReg(CC1201_NUM_TXBYTES);
-        Thread::wait(2);
-    } while (bts != 0);
+    // uint8_t bts = 1;
+    // do {
+    //     bts = readReg(CC1201_NUM_TXBYTES);
+    //     Thread::wait(2);
+    // } while (bts != 0);
 
     // send a NOP to read and log the radio's state
     if (_debugEnabled) strobe(CC1201_STROBE_SNOP);
@@ -96,12 +96,8 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
 }
 
 int32_t CC1201::getData(std::vector<uint8_t>* buf) {
-    // TODO(justin): justify this delay.  It doesn't work without it, but why?
-    Thread::wait(5);
-
-    // update frequency offset estimate and get the current state while at it
-    uint8_t device_state = freqUpdate();
     uint8_t num_rx_bytes = readReg(CC1201_NUM_RXBYTES);
+    uint8_t device_state = strobe(CC1201_STROBE_SNOP);
 
     if ((device_state & CC1201_STATE_RXFIFO_ERROR) ==
         CC1201_STATE_RXFIFO_ERROR) {
@@ -114,14 +110,32 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     if (num_rx_bytes > 0) {
         chipSelect();
         _spi->write(CC1201_RXFIFO | CC1201_READ | CC1201_BURST);
-        for (int i = 0; i < num_rx_bytes; i++) {
+        size_t size_byte = _spi->write(CC1201_STROBE_SNOP);
+
+        if (size_byte > num_rx_bytes) {
+            // the size byte isn't right
+            chipDeselect();
+            LOG(WARN, "Invalid size byte: %u, rx byte count reg: %u", size_byte,
+                num_rx_bytes);
+            strobe(CC1201_STROBE_SIDLE);
+            strobe(CC1201_STROBE_SFRX);
+            strobe(CC1201_STROBE_SRX);
+            return COMM_DEV_BUF_ERR;
+        }
+        for (int i = 0; i < size_byte; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
+        strobe(CC1201_STROBE_SFRX);
 
-        LOG(INF3, "Bytes in RX buffer: %u\r\nPayload bytes: %u", num_rx_bytes,
-            (*buf)[0]);
+        LOG(INF3, "Bytes in RX buffer: %u, size_byte: %u", num_rx_bytes,
+            size_byte);
     } else {
+        // flush rx
+        strobe(CC1201_STROBE_SIDLE);
+        strobe(CC1201_STROBE_SFRX);
+        strobe(CC1201_STROBE_SRX);
+
         return COMM_NO_DATA;
     }
 
@@ -208,6 +222,15 @@ uint8_t CC1201::writeReg(uint16_t addr, const uint8_t* buffer, uint8_t len) {
     return status_byte;
 }
 
+void CC1201::printDebugInfo() {
+    uint8_t stateByte = strobe(CC1201_STROBE_SNOP);
+    bool ready = !(stateByte & 0x80);
+    uint8_t state = (stateByte >> 4) & 7;
+
+    printf("Radio Status:\r\n  ready: %u, state: %s, int pin: %u\r\n", ready,
+           CC1201_STATE_NAMES[state], _int_in == 1);
+}
+
 uint8_t CC1201::strobe(uint8_t addr) {
     if (addr > 0x3d || addr < 0x30) {
         LOG(WARN, "Invalid address: %02X", addr);
@@ -247,10 +270,6 @@ uint8_t CC1201::strobe(uint8_t addr) {
             "NOP"      // 0x3d
         };
 
-        const char* state_names[] = {"IDLE",        "RX",         "TX",
-                                     "FSTXON",      "CALIB",      "SETTLE",
-                                     "RX_FIFO_ERR", "TX_FIFO_ERR"};
-
         // The status byte returned from strobe() contains from (msb to lsb):
         // * 1 bit - chip ready (0 indicates xosc is stable)
         // * 3 bits - state
@@ -262,8 +281,8 @@ uint8_t CC1201::strobe(uint8_t addr) {
         LOG(INF2,
             "strobe '%s' sent, status = {rdy_n: %d, state: %s}, "
             "after %dms = {rdy_n: %d, state: %s}",
-            strobe_names[addr - 0x30], rdy_n, state_names[state], delay, rdy2_n,
-            state_names[state2]);
+            strobe_names[addr - 0x30], rdy_n, CC1201_STATE_NAMES[state], delay,
+            rdy2_n, CC1201_STATE_NAMES[state2]);
     }
 
     return ret;
@@ -333,10 +352,6 @@ void CC1201::update_rssi() {
     // Only use the top MSB for simplicity. 1 dBm resolution.
     uint8_t offset = readReg(CC1201_RSSI1);
     _rssi = static_cast<float>((int8_t)twos_compliment(offset));
-
-    LOG(INF3, "RSSI is from device.");
-
-    LOG(INF3, "RSSI Register Val: 0x%02X", _rssi);
 }
 
 float CC1201::rssi() { return _rssi; }
@@ -357,10 +372,12 @@ uint8_t CC1201::idle() {
     return status_byte;
 }
 
+// TODO: make this method strobe into IDLE first?
 uint8_t CC1201::freqUpdate() { return strobe(CC1201_STROBE_SAFC); }
 
 float CC1201::freq() {
-    freqUpdate();
+    // TODO: should freqUpdate() be called here?
+    // freqUpdate();
 
     // read the 5 frequency-related bytes in order:
     // [FREQOFF1, FREQOFF0, FREQ2, FREQ1, FREQ0]
