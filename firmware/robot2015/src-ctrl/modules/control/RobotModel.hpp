@@ -1,9 +1,10 @@
 #pragma once
 
 #include <array>
-#include "const-math.hpp"
 #include <Eigen/Dense>
 #include "Geometry2d/Util.hpp"
+#undef M_PI
+#include "const-math.hpp"
 
 /// Model parameters for a robot.  Used by the controls system.
 class RobotModel {
@@ -17,10 +18,14 @@ public:
     /// Wheel angles (in radians) measured between +x axis and wheel axle
     std::array<float, 4> WheelAngles;
 
-    /// V_bot = wheelToBot * wheelSpeeds;
-    mutable Eigen::Matrix<float, 3, 4> WheelToBot;
+    /// V_bot = WheelToBot * wheelSpeeds;
+    Eigen::Matrix<float, 3, 4> WheelToBot;
 
-    void regenerateDerivedMatrices() const {
+    /// wheelSpeeds = BotToWheel * V_bot
+    /// BotToWheel = pseudoinverse(WheelToBot)
+    Eigen::Matrix<float, 4, 3> BotToWheel;
+
+    void regenerateDerivedMatrices() {
         const float pi2r = 2 * M_PI * WheelRadius;
         // clang-format off
         WheelToBot << -pi2r*sinf(WheelAngles[0]), -pi2r*sinf(WheelAngles[1]),
@@ -30,7 +35,13 @@ public:
                       pi2r/WheelDist, pi2r/WheelDist, pi2r/WheelDist, pi2r/WheelDist;
         // TODO: remove pi2 from bottom row?
         // clang-format on
+
+        // TODO: compute BotToWheel!
     }
+
+    /// (wheel rad/s desired) * DutyCycleMultiplier = duty cycle
+    /// Note that this is an approximation, as the relationship isn't exactly linear
+    float DutyCycleMultiplier;
 };
 
 // Model parameters for 2015 robot
@@ -45,6 +56,7 @@ static const RobotModel RobotModel2015 = []() {
         DegreesToRadians(142),
     };
     model.WheelDist = 0.0798576;
+    model.DutyCycleMultiplier = 10; // TODO: this value is garbage
     model.regenerateDerivedMatrices();
     return model;
 }();

@@ -6,7 +6,6 @@
 #include <logger.hpp>
 
 #include "PidMotionController.hpp"
-#include "VelocityEstimator.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "motors.hpp"
@@ -89,7 +88,6 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    VelocityEstimator velEstimator;
     PidMotionController motionController;
 
     std::vector<uint16_t> duty_cycles;
@@ -103,11 +101,9 @@ void Task_Controller(void const* args) {
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
                                          encoderTicks.data(),
                                          encoderTicks.size());
-        array<float, 3> currVel =
-            velEstimator.update(encoderTicks, CONTROL_LOOP_WAIT_MS);
-
+        
         // run controller to calculate new duty cycles for drive motors
-        array<uint16_t, 4> driveDutyCycles = motionController.run(currVel);
+        array<uint16_t, 4> driveDutyCycles = motionController.run(encoderTicks, CONTROL_LOOP_WAIT_MS);
         for (size_t i = 0; i < 4; i++) {
             duty_cycles[i] = driveDutyCycles[i];
         }

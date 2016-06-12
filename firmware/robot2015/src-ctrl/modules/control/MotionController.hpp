@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <Eigen/Dense>
 #include "RtosTimerHelper.hpp"
 
 /** Abstract superclass for a robot motion controller.  Its main job is to turn
@@ -24,17 +25,17 @@ public:
     /** Set target velocity. This is typically called whenever a new radio
      * packet is received that contains velocity commands.
      * */
-    virtual void setTargetVel(int16_t x, int16_t y, int16_t w) {
+    virtual void setTargetVel(Eigen::Vector3f target) {
         // reset timeout timer
         _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
 
-        _targetVel = {x, y, w};
+        _targetVel = target;
     }
 
     /** Run the controller and return duty cycle values for each of the 4 drive
-     * motors given the robot's estimated current velocity.
+     * motors.
      */
-    virtual std::array<uint16_t, 4> run(std::array<float, 3> currVel) = 0;
+    virtual std::array<uint16_t, 4> run(const std::array<uint16_t, 4>& encoderDeltas, float dt) = 0;
 
 protected:
     /* This is called when the timeout timer fires, indicating that the target
@@ -44,7 +45,7 @@ protected:
     void commandTimeout() { _targetVel = {0, 0, 0}; }
 
     // The current target velocity in [x, y, w] format.
-    std::array<int16_t, 3> _targetVel;
+    Eigen::Vector3f _targetVel;
 
     // steady-state gains.
     // TODO: explain
