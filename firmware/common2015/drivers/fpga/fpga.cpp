@@ -5,8 +5,22 @@
 #include <rtos.h>
 
 #include "logger.hpp"
-#include "software-spi.hpp"
 #include "rj-macros.hpp"
+#include "software-spi.hpp"
+
+template <size_t SIGN_INDEX>
+int16_t toSignMag(int16_t val) {
+    return (val < 0) ? ((-val) | 1 << SIGN_INDEX) : val;
+}
+
+template <size_t SIGN_INDEX>
+int16_t fromSignMag(int16_t val) {
+    if (val & 1 << SIGN_INDEX) {
+        val ^= 1 << SIGN_INDEX;  // unset sign bit
+        val *= -1;               // negate
+    }
+    return val;
+}
 
 FPGA* FPGA::Instance = nullptr;
 
@@ -168,15 +182,16 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     return status;
 }
 
-uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
+uint8_t FPGA::read_encs(int16_t* enc_counts, size_t size) {
     uint8_t status;
 
     chipSelect();
     status = _spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
-        enc_counts[i] = (_spi->write(0x00) << 8);
-        enc_counts[i] |= _spi->write(0x00);
+        int16_t enc = (_spi->write(0x00) << 8);
+        enc |= _spi->write(0x00);
+        enc_counts[i] = fromSignMag<15>(enc);
     }
 
     chipDeselect();
@@ -184,15 +199,16 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     return status;
 }
 
-uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
+uint8_t FPGA::read_duty_cycles(int16_t* duty_cycles, size_t size) {
     uint8_t status;
 
     chipSelect();
     status = _spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
-        duty_cycles[i] = (_spi->write(0x00) << 8);
-        duty_cycles[i] |= _spi->write(0x00);
+        int16_t dc = (_spi->write(0x00) << 8);
+        dc |= _spi->write(0x00);
+        duty_cycles[i] = fromSignMag<9>(dc);
     }
 
     chipDeselect();
@@ -200,19 +216,20 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     return status;
 }
 
-uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
+uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
     uint8_t status;
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size; i++)
-        if (duty_cycles[i] > 0x3FF) return 0x7F;
+        if (abs(duty_cycles[i]) > 255) return 0x7F;
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
-        _spi->write(duty_cycles[i] & 0xFF);
-        _spi->write(duty_cycles[i] >> 8);
+        int16_t dc = toSignMag<9>(duty_cycles[i]);
+        _spi->write(dc & 0xFF);
+        _spi->write(dc >> 8);
     }
 
     chipDeselect();
@@ -220,20 +237,23 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
     return status;
 }
 
-uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
-                               uint16_t* enc_deltas, size_t size_enc) {
+uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
+                               int16_t* enc_deltas, size_t size_enc) {
     uint8_t status;
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size_dut; i++)
-        if (duty_cycles[i] > 0x3FF) return 0x7F;
+        if (abs(duty_cycles[i]) > 255) return 0x7F;
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size_enc; i++) {
-        enc_deltas[i] = (_spi->write(duty_cycles[i] & 0xFF) << 8);
-        enc_deltas[i] |= _spi->write(duty_cycles[i] >> 8);
+        int16_t dc = toSignMag<9>(duty_cycles[i]);
+
+        int16_t enc = (_spi->write(dc & 0xFF) << 8);
+        enc |= _spi->write(dc >> 8);
+        enc_deltas[i] = fromSignMag<15>(enc);
     }
 
     chipDeselect();
