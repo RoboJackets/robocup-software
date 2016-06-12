@@ -2,6 +2,8 @@
 
 #include "RobotModel.hpp"
 
+#include <Eigen/Dense>
+
 /**
  * Estimate robot velocity (x, y, w) from encoder readings
  */
@@ -27,8 +29,8 @@ public:
             const float wheelVel = encoderDeltas[i] / ENC_TICKS_PER_TURN * 2 * M_PI / dt;
 
             // calculate robot velocity from wheel velocities and wheel angles
-            botVel[0] += wheelVel * cosf(RobotModel2015.wheelAngles[i]); // x vel
-            botVel[1] += wheelVel * sinf(RobotModel2015.wheelAngles[i]); // y vel
+            botVel[0] += wheelVel * cosf(RobotModel2015.WheelAngles[i]); // x vel
+            botVel[1] += wheelVel * sinf(RobotModel2015.WheelAngles[i]); // y vel
             botVel[2] += wheelVel; // w vel
         }
 
