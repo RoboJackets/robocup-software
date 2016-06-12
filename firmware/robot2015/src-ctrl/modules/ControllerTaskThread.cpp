@@ -1,17 +1,17 @@
-#include <rtos.h>
 #include <RPCVariable.h>
+#include <rtos.h>
 
 #include <Console.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <logger.hpp>
 
+#include "Pid.hpp"
+#include "fpga.hpp"
+#include "io-expander.hpp"
+#include "motors.hpp"
+#include "mpu-6050.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "motors.hpp"
-#include "fpga.hpp"
-#include "mpu-6050.hpp"
-#include "io-expander.hpp"
-#include "Pid.hpp"
 
 const float kpi = 3.14159265358979f;
 
@@ -94,21 +94,21 @@ void Task_Controller(void const* args) {
 
     Pid motor2pid(0.0, 0.0, 0.0);
 
-    std::vector<uint16_t> duty_cycles;
+    std::vector<int16_t> duty_cycles;
 
-    const uint16_t kduty_cycle = 400;
+    const int16_t kduty_cycle = 400;
     duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
     bool spin_rev = true;
 
-    uint16_t duty_cycle_all = kduty_cycle;
+    int16_t duty_cycle_all = kduty_cycle;
 
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        std::vector<uint16_t> enc_deltas(5);
+        std::vector<int16_t> enc_deltas(5);
 
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
                                          enc_deltas.data(),
@@ -152,10 +152,10 @@ void Task_Controller(void const* args) {
 
         const float vel_err = ktarget_vel - kvel;
 
-        uint16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
+        int16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
 
         // duty cycle values range: 0 -> 511, the 9th bit is direction
-        dc = std::min(dc, static_cast<uint16_t>(511));
+        dc = std::min(dc, static_cast<int16_t>(511));
 
         ii++;
         // if (ii < 20) {
@@ -169,7 +169,7 @@ void Task_Controller(void const* args) {
         // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
 
         // set the direction
-        duty_cycle_all |= (spin_rev << 9);
+        if (spin_rev) duty_cycle_all *= -1;
 
         std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 
