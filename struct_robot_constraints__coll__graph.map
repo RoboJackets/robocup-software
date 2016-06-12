@@ -1,9 +1,9 @@
 <map id="RobotConstraints" name="RobotConstraints">
-<area shape="rect" id="node2" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="5,400,144,427"/>
-<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="101,267,208,293"/>
-<area shape="rect" id="node9" href="$struct_rotation_constraints.html" title="RotationConstraints" alt="" coords="168,400,315,427"/>
-<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="109,189,200,216"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="47,99,133,125"/>
-<area shape="rect" id="node6" title="STL class. " alt="" coords="19,6,156,47"/>
-<area shape="rect" id="node7" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="163,99,269,125"/>
+<area shape="rect" id="node2" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="5,395,144,421"/>
+<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="101,261,208,288"/>
+<area shape="rect" id="node9" href="$struct_rotation_constraints.html" title="RotationConstraints" alt="" coords="169,395,317,421"/>
+<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="109,185,200,212"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="47,96,134,123"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="19,5,157,47"/>
+<area shape="rect" id="node7" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="163,96,269,123"/>
 </map>

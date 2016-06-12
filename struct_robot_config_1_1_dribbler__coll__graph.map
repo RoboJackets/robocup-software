@@ -1,7 +1,7 @@
 <map id="RobotConfig::Dribbler" name="RobotConfig::Dribbler">
-<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="87,267,193,293"/>
-<area shape="rect" id="node3" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="95,189,185,216"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="33,99,119,125"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="5,6,141,47"/>
-<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="148,99,255,125"/>
+<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="87,261,194,288"/>
+<area shape="rect" id="node3" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="95,185,186,212"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="33,96,120,123"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="5,5,143,47"/>
+<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="149,96,255,123"/>
 </map>

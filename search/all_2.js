@@ -5,8 +5,8 @@ var searchData=
   ['backspace_5freply_5fchar',['BACKSPACE_REPLY_CHAR',['../class_console.html#ac16c7721fed16085a036317ac2f7e77e',1,'Console']]],
   ['ball',['Ball',['../class_ball.html',1,'']]],
   ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
-  ['ball_5fin_5ffront_5fof_5fbot',['ball_in_front_of_bot',['../classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#a1ec762781267759361b4a92dc96e9a4a',1,'gameplay::skills::touch_ball::TouchBall']]],
-  ['ball_5fkicked',['ball_kicked',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ab134fec61f3cf70d14df09c0b8b9cf17',1,'gameplay::skills::pass_receive::PassReceive']]],
+  ['ball_5fin_5ffront_5fof_5fbot',['ball_in_front_of_bot',['../classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#a87eefaca9f951b78c49be3f6c11d6b33',1,'gameplay::skills::touch_ball::TouchBall']]],
+  ['ball_5fkicked',['ball_kicked',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a99ec67224eb5573dffc4eb021d781aae',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
   ['ballmatrix',['ballMatrix',['../group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a',1,'Gameplay::GameplayModule']]],
   ['ballobservation',['BallObservation',['../class_ball_observation.html',1,'']]],
@@ -19,11 +19,11 @@ var searchData=
   ['batteryprofile',['BatteryProfile',['../class_battery_profile.html',1,'BatteryProfile'],['../class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137',1,'BatteryProfile::BatteryProfile()']]],
   ['batterywidget',['BatteryWidget',['../class_battery_widget.html',1,'']]],
   ['behavior',['Behavior',['../classgameplay_1_1behavior_1_1_behavior.html',1,'gameplay::behavior']]],
-  ['behavior_5fstate',['behavior_state',['../classgameplay_1_1behavior_1_1_behavior.html#aba945da7913e6d9f8a198850fa6ff0a8',1,'gameplay::behavior::Behavior']]],
+  ['behavior_5fstate',['behavior_state',['../classgameplay_1_1behavior_1_1_behavior.html#ab425b90aad3c453104397e36297f0123',1,'gameplay::behavior::Behavior']]],
   ['behaviorsequence',['BehaviorSequence',['../classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html',1,'gameplay::tactics::behavior_sequence']]],
   ['behindball',['behindBall',['../class_our_robot.html#a2677e7d0dd80a11974f74af69116e74e',1,'OurRobot']]],
   ['block',['block',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#ac4bcbecb074ea7bd0034a0f310f163c9',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
-  ['block_5fline',['block_line',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a259449158bce2f0d6f3100d050d7b528',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
+  ['block_5fline',['block_line',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab62a9a800364e65adf07eb279c6e81a9',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
   ['blueteam',['blueTeam',['../class_processor.html#a1a61818c88b94200bba7f56a5cc7de76',1,'Processor']]],
   ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]],
   ['border',['Border',['../struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd',1,'Field_Dimensions']]],
@@ -31,5 +31,5 @@ var searchData=
   ['brightness',['brightness',['../class_neo_strip.html#a59bb97cced13cdf49e6ef4b5db0ca480',1,'NeoStrip']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]],
   ['buzzer',['Buzzer',['../class_buzzer.html',1,'']]],
-  ['build_20systems',['Build Systems',['../md_doc__build_systems.html',1,'']]]
+  ['build_20systems',['Build Systems',['../md_doc_BuildSystems.html',1,'']]]
 ];

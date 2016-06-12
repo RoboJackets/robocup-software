@@ -5,8 +5,8 @@ var searchData=
   ['generatenormalcubicbezierpath',['generateNormalCubicBezierPath',['../class_planning_1_1_r_r_t_planner.html#a42ae71f5642011edb7c2f390f30979ef',1,'Planning::RRTPlanner']]],
   ['generatepath',['generatePath',['../class_planning_1_1_r_r_t_planner.html#a7a822b3b99c2337f249a7d9fe4281732',1,'Planning::RRTPlanner']]],
   ['generatevelocitypath',['generateVelocityPath',['../class_planning_1_1_r_r_t_planner.html#ac682c63ea72a9a9d83188634b3690bd0',1,'Planning::RRTPlanner']]],
-  ['get_5fenabled_5fplays_5fand_5fscores',['get_enabled_plays_and_scores',['../classgameplay_1_1play__registry_1_1_play_registry.html#a748df0fd9e6e6f960f7203fadfb1eb79',1,'gameplay::play_registry::PlayRegistry']]],
-  ['get_5fenabled_5fplays_5fpaths',['get_enabled_plays_paths',['../classgameplay_1_1play__registry_1_1_play_registry.html#a7da61dba8e62a06cc28eeae6b24aa589',1,'gameplay::play_registry::PlayRegistry']]],
+  ['get_5fenabled_5fplays_5fand_5fscores',['get_enabled_plays_and_scores',['../classgameplay_1_1play__registry_1_1_play_registry.html#a9dcbd997d576bbf15908828c8683f102',1,'gameplay::play_registry::PlayRegistry']]],
+  ['get_5fenabled_5fplays_5fpaths',['get_enabled_plays_paths',['../classgameplay_1_1play__registry_1_1_play_registry.html#a74e14c7443c1defce03185c9dcb9ad28',1,'gameplay::play_registry::PlayRegistry']]],
   ['getaccelero',['getAccelero',['../class_m_p_u6050.html#a7b2281753b756c54f031aaf996429188',1,'MPU6050']]],
   ['getacceleroraw',['getAcceleroRaw',['../class_m_p_u6050.html#a89e1638b13fbe516c85954a2a1307443',1,'MPU6050']]],
   ['getaccelerorawx',['getAcceleroRawX',['../class_m_p_u6050.html#aac2dcc9dba780798c09e1d068c146cb3',1,'MPU6050']]],
@@ -30,7 +30,7 @@ var searchData=
   ['gettime',['getTime',['../class_planning_1_1_interpolated_path.html#ae63a3df5106a5334019156bcbf8f7c45',1,'Planning::InterpolatedPath']]],
   ['globalobstacles',['globalObstacles',['../class_gameplay_1_1_gameplay_module.html#ab44fd1cc3e855fd5cad3cd4c7d35ea02',1,'Gameplay::GameplayModule']]],
   ['goalflat',['GoalFlat',['../struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d',1,'Field_Dimensions']]],
-  ['goalie_5fid',['goalie_id',['../classgameplay_1_1root__play_1_1_root_play.html#a0f638b2eca1af3828225a6137e5d90e8',1,'gameplay::root_play::RootPlay']]],
+  ['goalie_5fid',['goalie_id',['../classgameplay_1_1root__play_1_1_root_play.html#a1293ba83389065d52afe862f875d8361',1,'gameplay::root_play::RootPlay']]],
   ['goalieid',['goalieID',['../class_processor.html#ab1368e6f2ef701e106ef0f9128bcafc2',1,'Processor::goalieID(int value)'],['../class_processor.html#ac6e2aff5a345fa71b0847bb91bb815c7',1,'Processor::goalieID()']]],
   ['goalzoneobstacles',['goalZoneObstacles',['../class_gameplay_1_1_gameplay_module.html#a6373b2da0b7d86f6a524f0d2bdb936fa',1,'Gameplay::GameplayModule']]]
 ];

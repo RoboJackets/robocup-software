@@ -1,7 +1,7 @@
 var searchData=
 [
   ['d',['d',['../struct_robot_config_1_1_p_i_d.html#a491a7263592924e116223e8becd22a70',1,'RobotConfig::PID']]],
-  ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a17465304b544fbc51bbde5276d862635',1,'gameplay.tactics.defense.Defense.debug()']]],
+  ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24',1,'gameplay.tactics.defense.Defense.debug()']]],
   ['debugqmutex',['DebugQMutex',['../class_debug_q_mutex.html',1,'']]],
   ['debugwindowevaluator',['DebugWindowEvaluator',['../classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html',1,'gameplay::plays::testing::debug_window_evaluator']]],
   ['defaultdrivearounddist',['DefaultDriveAroundDist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a4c97c3189cd666f532c1cfb06eb3baef',1,'gameplay::skills::line_kick::LineKick']]],
@@ -25,8 +25,8 @@ var searchData=
   ['dribble',['Dribble',['../classgameplay_1_1skills_1_1dribble_1_1_dribble.html',1,'gameplay::skills::dribble']]],
   ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
   ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
-  ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a1247845051783e5eda54f7da8c8cfd1f',1,'gameplay::skills::line_kick::LineKick']]],
+  ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a24e40c55bffb3315555dee2b20597bbd',1,'gameplay::skills::line_kick::LineKick']]],
   ['ds2411_5ft',['DS2411_t',['../struct_d_s2411__t.html',1,'']]],
   ['dynamicobstacle',['DynamicObstacle',['../class_planning_1_1_dynamic_obstacle.html',1,'Planning']]],
-  ['documentation',['Documentation',['../md_doc__documentation.html',1,'']]]
+  ['documentation',['Documentation',['../md_doc_Documentation.html',1,'']]]
 ];
