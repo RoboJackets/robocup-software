@@ -195,7 +195,12 @@ int main() {
     // TODO: these values are made up
     int16_t bodyX = msg->bodyX * 200 / 140.24;
     int16_t bodyY = msg->bodyY * 200 / 140.24;
-    int16_t bodyW = msg->bodyW * 10 / 16;
+    int16_t bodyW = msg->bodyW;
+
+    int16_t tmp = bodyX;
+    bodyX = bodyY;
+    bodyY = tmp;
+    bodyW = -bodyW;
 
     // wheel numberings differ from old robots to new robots
     // 0, 1, 2, 3 // old
