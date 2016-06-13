@@ -132,9 +132,9 @@ int main() {
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
-    // KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
-    //                         "/local/rj-kickr.nib");
-    // bool kickerReady = kickerBoard.flash(true, true);
+    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+                            "/local/rj-kickr.nib");
+    bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -233,6 +233,20 @@ int main() {
         // printf("dribbler:\t%u (%u)\r\n", uintDutyCycles[4], msg->dribbler);
         FPGA::Instance->set_duty_cycles(uintDutyCycles.data(),
                                         uintDutyCycles.size());
+
+
+        // kick/chip
+        //
+        // note: it should handle immediate and break-beam trigger
+        // modes separately
+        if (msg->triggerMode != 0) {
+            if (msg->shootMode == 0) {
+                kickerBoard.kick(msg->kickStrength);
+            } else {
+                kickerBoard.chip(msg->kickStrength);
+            }
+        }
+
 
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
