@@ -1,10 +1,10 @@
 #include "PivotPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <cmath>
 #include <boost/range/irange.hpp>
+#include <cmath>
+#include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
+#include "TrapezoidalPath.hpp"
 
 using namespace std;
 using namespace Geometry2d;

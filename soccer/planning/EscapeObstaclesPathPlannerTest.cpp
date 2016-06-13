@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include "EscapeObstaclesPathPlanner.hpp"
-#include <Geometry2d/Point.hpp>
+#include <gtest/gtest.h>
 #include <Geometry2d/Circle.hpp>
+#include <Geometry2d/Point.hpp>
 
 using namespace Geometry2d;
 

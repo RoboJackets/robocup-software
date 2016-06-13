@@ -1,20 +1,20 @@
-#include <Robot.hpp>
+#include <protobuf/LogFrame.pb.h>
 #include <LogUtils.hpp>
+#include <Robot.hpp>
+#include <RobotConfig.hpp>
+#include <SystemState.hpp>
+#include <Utils.hpp>
 #include <modeling/RobotFilter.hpp>
 #include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
-#include <protobuf/LogFrame.pb.h>
-#include <RobotConfig.hpp>
-#include <SystemState.hpp>
-#include <Utils.hpp>
 
-#include <cmath>
 #include <execinfo.h>
-#include <iostream>
-#include <QString>
-#include <stdexcept>
 #include <stdio.h>
+#include <QString>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
 #include <utility>
 
 using namespace std;

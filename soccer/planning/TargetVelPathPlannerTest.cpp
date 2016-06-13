@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
 #include "TargetVelPathPlanner.hpp"
-#include "planning/MotionCommand.hpp"
+#include <gtest/gtest.h>
 #include <Geometry2d/Point.hpp>
+#include "planning/MotionCommand.hpp"
 
 using namespace Geometry2d;
 

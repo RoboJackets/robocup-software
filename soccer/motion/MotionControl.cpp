@@ -1,15 +1,15 @@
 #include "MotionControl.hpp"
-#include <SystemState.hpp>
-#include <RobotConfig.hpp>
-#include <Robot.hpp>
-#include <Utils.hpp>
-#include "TrapezoidalMotion.hpp"
 #include <Geometry2d/Util.hpp>
+#include <Robot.hpp>
+#include <RobotConfig.hpp>
+#include <SystemState.hpp>
+#include <Utils.hpp>
 #include <planning/MotionInstant.hpp>
+#include "TrapezoidalMotion.hpp"
 
-#include <cmath>
 #include <stdio.h>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;

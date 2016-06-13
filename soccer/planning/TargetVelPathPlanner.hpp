@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SingleRobotPathPlanner.hpp"
 #include <Geometry2d/Point.hpp>
+#include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -18,8 +18,8 @@ public:
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>&
-            dynamicObstacles = std::vector<DynamicObstacle>(),
+        const std::vector<DynamicObstacle>& dynamicObstacles =
+            std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) override;
 
     virtual MotionCommand::CommandType commandType() const override {

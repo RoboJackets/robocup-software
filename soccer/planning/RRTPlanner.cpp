@@ -1,16 +1,16 @@
 #include "RRTPlanner.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
+#include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
 #include <Utils.hpp>
-#include <protobuf/LogFrame.pb.h>
-#include "motion/TrapezoidalMotion.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include "Util.hpp"
+#include "motion/TrapezoidalMotion.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
-#include <algorithm>
 #include <Eigen/Dense>
+#include <algorithm>
+#include <iostream>
 
 using namespace std;
 using namespace Eigen;
@@ -293,12 +293,14 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         startDirections.push_back(difference.normalized(
             (points[i] - points[i + 1]).mag() * directionDistance));
     }
-    Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight);
-    endDirections.push_back((vf + endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    Point endPathDirection =
+        (points[points.size() - 1] - points[points.size() - 2])
+            .normalized(pathWeight);
+    endDirections.push_back(
+        (vf + endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 

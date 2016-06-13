@@ -5,23 +5,23 @@
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
-#include <planning/RotationConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
-#include "planning/RotationCommand.hpp"
+#include <planning/RotationConstraints.hpp>
 #include "planning/DynamicObstacle.hpp"
+#include "planning/RotationCommand.hpp"
 
+#include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
-#include <protobuf/Control.pb.h>
 #include <Utils.hpp>
 
+#include <stdint.h>
+#include <Eigen/Dense>
+#include <QColor>
 #include <array>
 #include <boost/circular_buffer.hpp>
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <Eigen/Dense>
-#include <QColor>
-#include <stdint.h>
 #include <vector>
 
 class SystemState;

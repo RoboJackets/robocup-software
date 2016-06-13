@@ -2,8 +2,8 @@
 
 #include <Geometry2d/Point.hpp>
 #include <boost/optional.hpp>
-#include "planning/MotionInstant.hpp"
 #include "Utils.hpp"
+#include "planning/MotionInstant.hpp"
 
 namespace Planning {
 

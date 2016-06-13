@@ -1,16 +1,16 @@
 #pragma once
 
-#include "SingleRobotPathPlanner.hpp"
-#include "Tree.hpp"
-#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
+#include "SingleRobotPathPlanner.hpp"
+#include "Tree.hpp"
 
-#include <boost/optional.hpp>
 #include <Eigen/Dense>
+#include <boost/optional.hpp>
 #include <list>
 
 namespace Planning {

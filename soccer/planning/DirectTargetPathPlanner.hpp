@@ -19,8 +19,8 @@ public:
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>&
-            dynamicObstacles = std::vector<DynamicObstacle>(),
+        const std::vector<DynamicObstacle>& dynamicObstacles =
+            std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) override;
 
     bool shouldReplan(MotionInstant startInstant, const MotionCommand* cmd,

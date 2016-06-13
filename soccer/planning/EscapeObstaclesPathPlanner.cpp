@@ -1,8 +1,8 @@
 #include "EscapeObstaclesPathPlanner.hpp"
+#include <Configuration.hpp>
 #include "TrapezoidalPath.hpp"
 #include "Tree.hpp"
 #include "Util.hpp"
-#include <Configuration.hpp>
 
 using namespace Geometry2d;
 

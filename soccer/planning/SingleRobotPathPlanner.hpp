@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Configuration.hpp>
-#include <planning/MotionConstraints.hpp>
 #include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
-#include "planning/RotationCommand.hpp"
 #include "planning/DynamicObstacle.hpp"
+#include "planning/RotationCommand.hpp"
 
 namespace Planning {
 
@@ -22,8 +22,8 @@ public:
         MotionInstant startInstant, const MotionCommand* cmd,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>&
-            dynamicObstacles = std::vector<DynamicObstacle>(),
+        const std::vector<DynamicObstacle>& dynamicObstacles =
+            std::vector<DynamicObstacle>(),
         std::unique_ptr<Path> prevPath = nullptr) = 0;
 
     /// The MotionCommand type that this planner handles
