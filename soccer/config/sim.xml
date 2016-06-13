@@ -9,7 +9,7 @@
    <accelMultiplier value="8.4"/>
   </translation>
   <rotation>
-   <p value="0.2"/>
+   <p value="1.0"/>
    <i value="0.002"/>
    <i_windup value="0"/>
    <d value="0.15"/>
@@ -186,4 +186,8 @@
   <Max_Velocity value="2.2"/>
   <Max_Angle_Speed value="0.436"/>
  </MotionConstraints>
+ <RotationConstraints>
+  <Max_Rotation_Speed value="2"/>
+  <Max_Rotation_Acceleration value="2"/>
+ </RotationConstraints>
 </config>
