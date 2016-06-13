@@ -199,9 +199,9 @@ int main() {
 
         // update target velocity from packet
         Task_Controller_UpdateTarget({
-            msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
-            msg->bodyY / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
-            msg->bodyW / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyY / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyW / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
         });
 
         return replyBuf;
