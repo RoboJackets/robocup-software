@@ -41,33 +41,33 @@ AVR910::AVR910(shared_ptr<SharedSPI> spi, PinName nCs, PinName nReset)
     : SharedSPIDevice(spi, nCs, true), nReset_(nReset) {
     // Slow frequency as default to ensure no errors from
     // trying to run it too fast. Increase as appropriate.
-    setSPIFrequency(16000);
+    // setSPIFrequency(16000);
 
-    // Enter serial programming mode by pulling reset line low.
-    nReset_ = 0;
+    // // Enter serial programming mode by pulling reset line low.
+    // nReset_ = 0;
 
-    // Wait 20ms before issuing first command.
-    wait_ms(20);
+    // // Wait 20ms before issuing first command.
+    // wait_ms(20);
 
-    // Enable programming mode on the chip
-    // It's possible for it to fail, so try it a few times.
-    bool enabled = false;
-    for (int i = 0; i < 10; i++) {
-        enabled = enableProgramming();
-        if (enabled) break;
+    // // Enable programming mode on the chip
+    // // It's possible for it to fail, so try it a few times.
+    // bool enabled = false;
+    // for (int i = 0; i < 10; i++) {
+    //     enabled = enableProgramming();
+    //     if (enabled) break;
 
-        // Give nReset a positive pulse.
-        nReset_ = 1;
-        wait_ms(20);
-        nReset_ = 0;
-        wait_ms(20);
-    }
+    //     // Give nReset a positive pulse.
+    //     nReset_ = 1;
+    //     wait_ms(20);
+    //     nReset_ = 0;
+    //     wait_ms(20);
+    // }
 
-    if (!enabled) {
-        printf(
-            "ERROR: AVR910 unable to enable programming mode for chip.  "
-            "Further commands will fail\r\n");
-    }
+    // if (!enabled) {
+    //     printf(
+    //         "ERROR: AVR910 unable to enable programming mode for chip.  "
+    //         "Further commands will fail\r\n");
+    // }
 }
 
 bool AVR910::program(FILE* binary, int pageSize, int numPages) {

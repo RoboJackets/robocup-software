@@ -25,6 +25,10 @@
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
 
+DigitalOut kickerNCs(RJ_KICKER_nCS, 1);
+DigitalOut kickerNReset(RJ_KICKER_nRESET, 1);
+DigitalOut radioNCS(RJ_RADIO_nCS, 1);
+
 using namespace std;
 
 void Task_Controller(void const* args);
@@ -130,11 +134,6 @@ int main() {
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpgaReady);
 
-    // Initialize kicker board
-    // TODO: clarify between kicker nCs and nReset
-    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
-                            "/local/rj-kickr.nib");
-    bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -183,6 +182,16 @@ int main() {
     // the value is updated in the main loop below
     AnalogIn batt(RJ_BATT_SENSE);
     uint8_t battVoltage = 0;
+
+    // Release each thread into its operations in a structured manner
+    controller_task.signal_set(SUB_TASK_CONTINUE);
+    // console_task.signal_set(SUB_TASK_CONTINUE);
+
+    // Initialize kicker board
+    // TODO: clarify between kicker nCs and nReset
+    // KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+    //                         "/local/rj-kickr.nib");
+
 
     // Setup radio protocol handling
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
@@ -241,9 +250,9 @@ int main() {
         // modes separately
         if (msg->triggerMode != 0) {
             if (msg->shootMode == 0) {
-                kickerBoard.kick(msg->kickStrength);
+                // kickerBoard.kick(msg->kickStrength);
             } else {
-                kickerBoard.chip(msg->kickStrength);
+                // kickerBoard.chip(msg->kickStrength);
             }
         }
 
@@ -258,12 +267,10 @@ int main() {
         return replyBuf;
     };
 
-    // Set the watdog timer's initial config
-    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
-    // Release each thread into its operations in a structured manner
-    controller_task.signal_set(SUB_TASK_CONTINUE);
-    // console_task.signal_set(SUB_TASK_CONTINUE);
+    // bool kickerReady = kickerBoard.flash(true, true);
+    // for (int i = 0; i < 10; i++)
+    //     kickerBoard.charge();
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
@@ -278,6 +285,11 @@ int main() {
         errorBitmask |= (1 << RJ_ERR_LED_M4);
         errorBitmask |= (1 << RJ_ERR_LED_DRIB);
     }
+
+    // Set the watdog timer's initial config
+    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
+
+    printf("main\r\n");
 
     while (true) {
         // make sure we can always reach back to main by
