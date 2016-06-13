@@ -84,11 +84,11 @@ endforeach()
 list(APPEND common2015_INCLUDE_DIRS ${MBED_ASSEC_LIBS_INCLUDES})
 
 # tell cmake that all of the source files aren't here yet
-set_source_files_properties(
-    ${MBED_ASSEC_LIBS_SRCS} PROPERTIES
-    GENERATED               TRUE
-    DEPENDS                 ${MBED_ASSEC_LIBS_DEPENDS}
-)
+# set_source_files_properties(
+#     ${MBED_ASSEC_LIBS_SRCS} PROPERTIES
+#     GENERATED               TRUE
+#     DEPENDS                 ${MBED_ASSEC_LIBS_DEPENDS}
+# )
 
 # build the 'common2015' library that contains all the MBED stuff needed for
 # both the base station and robot firmware
