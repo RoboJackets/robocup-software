@@ -2,6 +2,10 @@
 
 `include "robocup.vh"
 
+`ifndef DRIBBLER_MOTOR_DISABLE
+`include "BLDC_Motor_No_Encoder.v"
+`endif
+
 `include "BLDC_Motor.v"
 `include "SPI_Slave.v"
 `include "SPI_Master.v"
@@ -502,7 +506,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                     for (j = 0; j < NUM_MOTORS; j = j + 1)
                     begin : LATCH_GATE_DRV_STATUS
                         spi_slave_res_buf[2*j+1]    <=  spi_master_data_array_in[j][7:0];
-                        spi_slave_res_buf[2*j+2]    <=  { 0, spi_master_data_array_in[j][11:8] };
+                        spi_slave_res_buf[2*j+2]    <=  { 4'b0, spi_master_data_array_in[j][11:8] };
                     end
                 end
 

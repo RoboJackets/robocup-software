@@ -21,13 +21,17 @@ namespace Planning {
 RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
-bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
-                              const MotionConstraints& motionConstraints,
-                              const Geometry2d::ShapeSet& obstacles,
-                              const vector<const Path*> dynamicObs,
-                              const Path* prevPath) const {
-    if (SingleRobotPathPlanner::shouldReplan(start, motionConstraints,
-                                             obstacles, prevPath)) {
+bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
+                              const vector<const Path*> dynamicObs) const {
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const Path* prevPath = planRequest.prevPath.get();
+
+    const Planning::PathTargetCommand& command =
+        dynamic_cast<const Planning::PathTargetCommand&>(planRequest.cmd);
+
+    const auto& goal = command.pathGoal;
+
+    if (SingleRobotPathPlanner::shouldReplan(planRequest)) {
         return true;
     }
 
@@ -53,15 +57,18 @@ bool RRTPlanner::shouldReplan(MotionInstant start, MotionInstant goal,
 
 const int maxContinue = 10;
 
-std::unique_ptr<Path> RRTPlanner::run(
-    MotionInstant start, const MotionCommand* cmd,
-    const MotionConstraints& motionConstraints, Geometry2d::ShapeSet& obstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles,
-    std::unique_ptr<Path> prevPath) {
+std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
+    const MotionInstant& start = planRequest.startInstant;
+    const auto& motionConstraints = planRequest.robotConstraints.mot;
+    Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
+    const auto& dynamicObstacles = planRequest.dynamicObstacles;
+
     // This planner only works with commands of type 'PathTarget'
-    assert(cmd->getCommandType() == Planning::MotionCommand::PathTarget);
-    Planning::PathTargetCommand target =
-        *static_cast<const Planning::PathTargetCommand*>(cmd);
+    assert(planRequest.cmd.getCommandType() ==
+           Planning::MotionCommand::PathTarget);
+    const Planning::PathTargetCommand& target =
+        dynamic_cast<const Planning::PathTargetCommand&>(planRequest.cmd);
 
     MotionInstant goal = target.pathGoal;
     vector<const Path*> actualDynamic;
@@ -83,8 +90,7 @@ std::unique_ptr<Path> RRTPlanner::run(
         goal.pos, prevGoal, obstacles);
 
     // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(start, goal, motionConstraints, obstacles, actualDynamic,
-                     prevPath.get())) {
+    if (shouldReplan(planRequest, actualDynamic)) {
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                     actualDynamic);
 
@@ -109,7 +115,7 @@ std::unique_ptr<Path> RRTPlanner::run(
             }
         }
         reusePathTries++;
-        return prevPath;
+        return std::move(prevPath);
     }
 }
 
@@ -422,6 +428,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
     float totalDistance = 0;
     const float maxAceleration = motionConstraints.maxAcceleration;
+    const float& maxSpeed = motionConstraints.maxSpeed;
 
     for (const CubicBezierControlPoints& controlPoint : controlPoints) {
         Point p0 = controlPoint.p0;
@@ -476,7 +483,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             // vmax = sqrt(acceleartion/abs(Curvature))
 
             float constantMaxSpeed = std::sqrt(maxAceleration / curvature);
-            newPointsSpeed.push_back(constantMaxSpeed);
+            newPointsSpeed.push_back(std::min(constantMaxSpeed, maxSpeed));
         }
     }
     // Get last point in Path

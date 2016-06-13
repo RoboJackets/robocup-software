@@ -280,10 +280,12 @@ void USBRadio::handleRxData(uint8_t* buf) {
 
     packet.set_timestamp(rx_time);
     packet.set_robot_id(msg->uid);
-    packet.set_battery(msg->battVoltage);
 
     // Hardware version
     packet.set_hardware_version(RJ2015);
+
+    // battery voltage
+    packet.set_battery(msg->battVoltage * rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR);
 
     // ball sense
     packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));

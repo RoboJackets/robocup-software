@@ -16,7 +16,10 @@ TEST(TargetVelPathPlannerTest, run) {
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
 
     TargetVelPathPlanner planner;
-    auto path = planner.run(startInstant, &cmd, motionConstraints, obstacles);
+    std::vector<DynamicObstacle> dynamicObstacles;
+    SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
+                              dynamicObstacles, nullptr);
+    auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 

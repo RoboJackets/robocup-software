@@ -5,6 +5,7 @@
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
+#include <planning/RobotConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <planning/RotationConstraints.hpp>
 #include "planning/DynamicObstacle.hpp"
@@ -167,13 +168,18 @@ public:
     // available.
     boost::optional<Eigen::Quaternionf> quaternion() const;
 
-    // Commands
-
-    const MotionConstraints& motionConstraints() const {
-        return _motionConstraints;
+    // Constraints
+    const RobotConstraints& robotConstraints() const {
+        return _robotConstraints;
     }
 
-    MotionConstraints& motionConstraints() { return _motionConstraints; }
+    RobotConstraints& robotConstraints() { return _robotConstraints; }
+
+    const MotionConstraints& motionConstraints() const {
+        return _robotConstraints.mot;
+    }
+
+    MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
 
     const Planning::RotationCommand& rotationCommand() const {
         return *_rotationCommand;
@@ -382,10 +388,10 @@ public:
     }
 
     const RotationConstraints& rotationConstraints() const {
-        return _rotationConstraints;
+        return _robotConstraints.rot;
     }
 
-    RotationConstraints& rotationConstraints() { return _rotationConstraints; }
+    RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
 
     MotionControl* motionControl() const { return _motionControl; }
 
@@ -440,9 +446,8 @@ protected:
     float _avoidBallRadius;  /// radius of ball obstacle
 
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    MotionConstraints _motionConstraints;
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
-    RotationConstraints _rotationConstraints;
+    RobotConstraints _robotConstraints;
 
     Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 

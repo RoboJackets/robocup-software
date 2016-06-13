@@ -21,6 +21,12 @@ if(HW_TEST_UNIT AND NOT(HW_TEST_UNIT MATCHES "default"))
     # specify that we depend on the common2015 library and link to it
     target_link_libraries(robot2015_test_ELF common2015)
 
+    # link mbed rtos/rtx libraries
+    # without these we get "undefined reference to 'rtos_idle_loop'"
+    # note: in theory these should be included as part of the common2015 library and shouldn't need to be linked again here...
+    target_link_libraries(robot2015_test_ELF "${MBED_REPO_DIR}/build/rtos/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librtos.a")
+    target_link_libraries(robot2015_test_ELF "${MBED_REPO_DIR}/build/rtos/TARGET_${MBED_PLATFORM_UPPERC}/TOOLCHAIN_${MBED_TOOLCHAIN}/librtx.a")
+
     # include the file at test
     target_include_directories(robot2015_test_ELF PUBLIC ${ROBOT2015_HW_TEST_INCLUDES})
 

@@ -25,6 +25,7 @@ public:
 
         MotionInstant instant;
         float time;
+        boost::optional<AngleInstant> angle;
 
         Geometry2d::Point& pos() { return instant.pos; }
         const Geometry2d::Point& pos() const { return instant.pos; }

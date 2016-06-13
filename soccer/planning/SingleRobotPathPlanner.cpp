@@ -30,11 +30,8 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             planner = new DirectTargetPathPlanner();
             break;
 
-        // TODO Undo this hack to use TargetVelPlanner to do Pivot
         case MotionCommand::Pivot:
-            // TODO(ashaw37) Use PivotPlanner
-            // planner = new PivotPathPlanner();
-            planner = new TargetVelPathPlanner();
+            planner = new PivotPathPlanner();
             break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
@@ -101,8 +98,13 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
 }
 
 bool SingleRobotPathPlanner::shouldReplan(
-    MotionInstant currentInstant, const MotionConstraints& motionConstraints,
-    const Geometry2d::ShapeSet& obstacles, const Path* prevPath) {
+    const SinglePlanRequest& planRequest) {
+    const auto currentInstant = planRequest.startInstant;
+    const MotionConstraints& motionConstraints =
+        planRequest.robotConstraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const Path* prevPath = planRequest.prevPath.get();
+
     if (!prevPath) return true;
 
     // if this number of microseconds passes since our last path plan, we

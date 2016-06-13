@@ -3,6 +3,8 @@
 set(CMAKE_TOOLCHAIN_FILE attiny_toolchain.cmake)
 include(attiny_toolchain.cmake)
 
+include_directories(${PROJECT_SOURCE_DIR}/firmware/common2015/drivers/kicker-board)
+
 set(CMAKE_C_COMPILER    ${AVR_C_COMPILER})
 set(CMAKE_CXX_COMPILER  ${AVR_CXX_COMPILER})
 
@@ -11,7 +13,7 @@ set(CMAKE_CXX_COMPILER  ${AVR_CXX_COMPILER})
 # change above to match ATTINY84A =====================================================================
 # to keep timing for neopixel
 # The -O2 turns on optimizations, which are required to use the delay_*() functions
-list(APPEND CMAKE_C_FLAGS "-O2 -mmcu=attiny84a -DF_CPU=1000000")
+list(APPEND CMAKE_C_FLAGS "-std=c11 -O2 -mmcu=attiny84a -DF_CPU=1000000")
 
 # Select the C source files
 file(GLOB kicker_SRC "*.c")

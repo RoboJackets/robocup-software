@@ -7,8 +7,31 @@
 #include <planning/Path.hpp>
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
+#include "RobotConstraints.hpp"
 
 namespace Planning {
+
+struct SinglePlanRequest {
+    SinglePlanRequest(const MotionInstant& startInstant,
+                      const MotionCommand& cmd,
+                      const RobotConstraints& robotConstraints,
+                      Geometry2d::ShapeSet& obstacles,
+                      const std::vector<DynamicObstacle>& dynamicObstacles,
+                      std::unique_ptr<Path> prevPath)
+        : startInstant(startInstant),
+          cmd(cmd),
+          robotConstraints(robotConstraints),
+          obstacles(obstacles),
+          dynamicObstacles(dynamicObstacles),
+          prevPath(std::move(prevPath)){};
+
+    const MotionInstant& startInstant;
+    const MotionCommand& cmd;
+    const RobotConstraints& robotConstraints;
+    Geometry2d::ShapeSet& obstacles;
+    const std::vector<DynamicObstacle>& dynamicObstacles;
+    std::unique_ptr<Path> prevPath = nullptr;
+};
 
 /**
  * @brief Interface for Path Planners
@@ -18,13 +41,7 @@ public:
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
-    virtual std::unique_ptr<Path> run(
-        MotionInstant startInstant, const MotionCommand* cmd,
-        const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle>& dynamicObstacles =
-            std::vector<DynamicObstacle>(),
-        std::unique_ptr<Path> prevPath = nullptr) = 0;
+    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) = 0;
 
     /// The MotionCommand type that this planner handles
     virtual MotionCommand::CommandType commandType() const = 0;
@@ -53,10 +70,7 @@ public:
     ///
     /// Subclasses will generally use this method in addition to their own
     /// planner-specific checks to determine if a replan is necessary.
-    static bool shouldReplan(MotionInstant currentInstant,
-                             const MotionConstraints& motionConstraints,
-                             const Geometry2d::ShapeSet& obstacles,
-                             const Path* prevPath);
+    static bool shouldReplan(const SinglePlanRequest& planRequest);
 
     virtual bool canHandleDynamic() { return handlesDynamic; }
 

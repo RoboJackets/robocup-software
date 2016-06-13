@@ -41,7 +41,7 @@ AVR910::AVR910(shared_ptr<SharedSPI> spi, PinName nCs, PinName nReset)
     : SharedSPIDevice(spi, nCs, true), nReset_(nReset) {
     // Slow frequency as default to ensure no errors from
     // trying to run it too fast. Increase as appropriate.
-    setSPIFrequency(32000);
+    setSPIFrequency(16000);
 
     // Enter serial programming mode by pulling reset line low.
     nReset_ = 0;
@@ -80,6 +80,7 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
     int c = 0;
     int highLow = 0;
 
+    fseek(binary, 0, SEEK_SET);
     // We're dealing with paged memory.
     if (numPages > 1) {
         while ((c = getc(binary)) != EOF) {
@@ -143,9 +144,7 @@ bool AVR910::program(FILE* binary, int pageSize, int numPages) {
     bool success = checkMemory(pageNumber, pageSize, binary);
 
     // Leave serial programming mode by toggling reset
-    nReset_ = 0;
-    wait_ms(20);
-    nReset_ = 1;
+    exitProgramming();
 
     return success;
 }
@@ -269,7 +268,7 @@ char AVR910::readProgramMemory(int highLow, char pageNumber, char pageOffset) {
     return response;
 }
 
-bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
+bool AVR910::checkMemory(int pageSize, int numPages, FILE* binary,
                          bool verbose) {
     bool success = true;
 
@@ -282,6 +281,7 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
             char c = getc(binary);
             // Read program memory low byte.
             response = readProgramMemory(READ_LOW_BYTE, page, offset);
+
             if (c != response) {
                 if (verbose) {
                     printf("Page %i low byte %i: 0x%02x\r\n", page, offset,
@@ -309,4 +309,10 @@ bool AVR910::checkMemory(int numPages, int pageSize, FILE* binary,
     }
 
     return success;
+}
+
+void AVR910::exitProgramming() {
+    nReset_ = 0;
+    wait_ms(20);
+    nReset_ = 1;
 }

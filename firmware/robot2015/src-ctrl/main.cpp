@@ -176,11 +176,13 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
-    // The battery voltage is set every cycle of main
-    uint8_t battVoltage = 0;
-
     // This is changed according to what the selector is set to
     uint8_t robotID = rotarySelector.read();
+
+    // setup analog in on battery sense pin
+    // the value is updated in the main loop below
+    AnalogIn batt(RJ_BATT_SENSE);
+    uint8_t battVoltage = 0;
 
     // Setup radio protocol handling
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
@@ -298,6 +300,9 @@ int main() {
             // set the bit to whatever hasError is set to
             errorBitmask |= (status.hasError << pair.second);
         }
+
+        // get the battery voltage
+        battVoltage = (batt.read_u16() >> 8);
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
