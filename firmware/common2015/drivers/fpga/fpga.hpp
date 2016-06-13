@@ -35,6 +35,8 @@ public:
     void gate_drivers(std::vector<uint16_t>&);
     bool send_config(const std::string& filepath);
 
+    static const int16_t MAX_DUTY_CYCLE = 511;
+
 private:
     bool _isInit = false;
 
