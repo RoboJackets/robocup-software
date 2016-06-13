@@ -1,19 +1,19 @@
-#include <rtos.h>
 #include <RPCVariable.h>
+#include <rtos.h>
 
 #include <Console.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <logger.hpp>
 
+#include "PidMotionController.hpp"
+#include "fpga.hpp"
+#include "io-expander.hpp"
+#include "motors.hpp"
+#include "mpu-6050.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "motors.hpp"
-#include "fpga.hpp"
-#include "mpu-6050.hpp"
-#include "io-expander.hpp"
-#include "Pid.hpp"
 
-const float kpi = 3.14159265358979f;
+using namespace std;
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
@@ -90,29 +90,24 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    const uint16_t ENC_TICKS_PER_TURN = 2048;
+    array<int16_t, 5> duty_cycles;
+    duty_cycles.fill(0);
 
-    Pid motor2pid(0.0, 0.0, 0.0);
-
-    std::vector<uint16_t> duty_cycles;
-
-    const uint16_t kduty_cycle = 400;
-    duty_cycles.assign(5, kduty_cycle);
-
-    size_t ii = 0;
-    bool spin_rev = true;
-
-    uint16_t duty_cycle_all = kduty_cycle;
+    // initialize PID controller
+    // TODO: tune pid values
+    PidMotionController pidController;
+    // pidController.setPidValues();
 
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        std::vector<uint16_t> enc_deltas(5);
+        // note: the 4th value is not an encoder value.  See the large comment
+        // below for an explanation.
+        array<int16_t, 5> enc_deltas;
 
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-                                         enc_deltas.data(),
-                                         enc_deltas.capacity());
+                                         enc_deltas.data(), enc_deltas.size());
 
         /*
          * The time since the last update is derived with the value of
@@ -136,42 +131,17 @@ void Task_Controller(void const* args) {
          *     time_precision = 6.94us
          *
          */
-        const float kdt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
+        const float dt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
 
-        // the target rev/s
-        const float ktarget_rps = 5;
+        // take first 4 encoder deltas
+        array<int16_t, 4> driveMotorEnc;
+        for (int i = 0; i < 4; i++) driveMotorEnc[i] = enc_deltas[i];
 
-        // angular velocity of motor 3 in rad/s
-        const float kvel = 2 * kpi * (enc_deltas[2] / ENC_TICKS_PER_TURN) / kdt;
-
-        const float ktarget_vel = (2 * kpi) * ktarget_rps;
-
-        // @125 duty cycle, 1260rpm @ no load
-        TODO(remeasure the duty cycle and rad / s relationship of the motor)
-        const float kmultiplier = 125.0f / (1260.0f * 2 * kpi / 60);
-
-        const float vel_err = ktarget_vel - kvel;
-
-        uint16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
-
-        // duty cycle values range: 0 -> 511, the 9th bit is direction
-        dc = std::min(dc, static_cast<uint16_t>(511));
-
-        ii++;
-        // if (ii < 20) {
-        //     duty_cycle_all = kduty_cycle;
-        // } else {
-        //     duty_cycle_all = 0;
-        //     spin_rev = !spin_rev;
-        //     ii = 0;
-        // }
-
-        // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
-
-        // set the direction
-        duty_cycle_all |= (spin_rev << 9);
-
-        std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
+        // run PID controller to determine what duty cycles to use to drive the
+        // motor.
+        array<int16_t, 4> driveMotorDutyCycles =
+            pidController.run(driveMotorEnc, dt);
+        for (int i = 0; i < 4; i++) duty_cycles[i] = driveMotorDutyCycles[i];
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }

@@ -56,7 +56,10 @@ static const RobotModel RobotModel2015 = []() {
         DegreesToRadians(142),
     };
     model.WheelDist = 0.0798576;
-    model.DutyCycleMultiplier = 10;  // TODO: this value is garbage
+
+    // @125 duty cycle, 1260rpm @ no load
+    TODO(remeasure the duty cycle and rad / s relationship of the motor)
+    model.DutyCycleMultiplier = 125.0f / (1260.0f * 2 * M_PI / 60);
 
     // Both of these matrices were calculated in Octave and pasted here
 

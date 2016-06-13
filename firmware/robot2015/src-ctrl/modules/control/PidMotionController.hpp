@@ -32,10 +32,8 @@ public:
      *
      * @return x, y, w velocity in m/s
      */
-    std::array<uint16_t, 4> run(const std::array<uint16_t, 4>& encoderDeltas,
-                                float dt) {
-        // TODO: how are negative encoder values formatted?
-
+    std::array<int16_t, 4> run(const std::array<int16_t, 4>& encoderDeltas,
+                               float dt) {
         // convert encoder ticks to rad/s
         Eigen::Vector4f wheelVels;
         wheelVels << encoderDeltas[0], encoderDeltas[1], encoderDeltas[2],
@@ -51,23 +49,17 @@ public:
 
         Eigen::Vector4f wheelVelErr = targetWheelVels - wheelVels;
 
-        std::array<uint16_t, 4> dutyCycles;
+        std::array<int16_t, 4> dutyCycles;
         for (int i = 0; i < 4; i++) {
             int16_t dc =
                 targetWheelVels[i] * RobotModel2015.DutyCycleMultiplier;
             dc += _controllers[i].run(wheelVelErr[i]);
 
             // limit duty cycle, while keeping sign (+ or -)
-            const uint16_t DUTY_CYCLE_MAX = 250;
+            const uint16_t DUTY_CYCLE_MAX = 511;
+            // TODO: double-check duty cycle max
             if (std::abs(dc) > DUTY_CYCLE_MAX) {
                 dc = std::copysign(DUTY_CYCLE_MAX, dc);
-            }
-
-            // handle negative values - fpga expects them in sign-magnitude form
-            if (dc < 0) {
-                // TODO: double-check this
-                dc = std::abs(dc);
-                dc |= 1 << 16;
             }
 
             dutyCycles[i] = dc;

@@ -35,8 +35,8 @@ public:
     /** Run the controller and return duty cycle values for each of the 4 drive
      * motors.
      */
-    virtual std::array<uint16_t, 4> run(
-        const std::array<uint16_t, 4>& encoderDeltas, float dt) = 0;
+    virtual std::array<int16_t, 4> run(
+        const std::array<int16_t, 4>& encoderDeltas, float dt) = 0;
 
 protected:
     /* This is called when the timeout timer fires, indicating that the target
