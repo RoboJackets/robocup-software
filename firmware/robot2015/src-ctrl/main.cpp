@@ -195,11 +195,13 @@ int main() {
     // TODO: these values are made up
     int16_t bodyX = msg->bodyX * 200 / 140.24;
     int16_t bodyY = msg->bodyY * 200 / 140.24;
-    int16_t bodyW = msg->bodyW * 1 / 16;
+    int16_t bodyW = msg->bodyW * 10 / 16;
 
     std::array<int, 5> dutyCycles = {
-        -bodyX - bodyY + bodyW, -bodyX + bodyY + bodyW,
-        bodyX + bodyY + bodyW,  bodyX - bodyY + bodyW,
+        bodyX + bodyY + bodyW,
+        -bodyX + bodyY + bodyW,
+        -bodyX - bodyY + bodyW,
+        bodyX - bodyY + bodyW,
         // dribbler
         msg->dribbler,
     };
