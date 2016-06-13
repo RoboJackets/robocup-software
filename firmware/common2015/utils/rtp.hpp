@@ -57,6 +57,14 @@ struct header_data {
 // binary-packed version of Control.proto
 struct ControlMessage {
     uint8_t uid;  // robot id
+
+    /** body{X,Y,W} are multiplied by this value before being sent over the
+     * radio and must be then divided by this value on the receiving side. This
+     * is to avoid loss of precision when sending float velocity values across
+     * the air as ints.
+     */
+    static const uint16_t VELOCITY_SCALE_FACTOR = 1000;
+
     int16_t bodyX;
     int16_t bodyY;
     int16_t bodyW;
@@ -97,8 +105,7 @@ public:
     }
 
     template <class T>
-    packet(const std::vector<T>& v, Port p = SINK)
-        : header(p) {
+    packet(const std::vector<T>& v, Port p = SINK) : header(p) {
         for (T val : v) payload.push_back(val);
     }
 
