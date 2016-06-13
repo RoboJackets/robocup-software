@@ -40,6 +40,16 @@ float accelVals[3] = {0};
 // RPCVariable<int> test_var(&testVar, "var1");
 }
 
+
+// initialize PID controller
+// TODO: tune pid values
+PidMotionController pidController;
+// pidController.setPidValues();
+
+void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel) {
+    pidController.setTargetVel(targetVel);
+}
+
 /**
  * initializes the motion controller thread
  */
@@ -92,11 +102,6 @@ void Task_Controller(void const* args) {
 
     array<int16_t, 5> duty_cycles;
     duty_cycles.fill(0);
-
-    // initialize PID controller
-    // TODO: tune pid values
-    PidMotionController pidController;
-    // pidController.setPidValues();
 
     while (true) {
         imu.getGyro(gyroVals);
