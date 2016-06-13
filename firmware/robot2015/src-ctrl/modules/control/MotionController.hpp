@@ -19,6 +19,7 @@ public:
     MotionController()
         : _commandTimeout(this, &MotionController::commandTimeout,
                           osTimerOnce) {
+        commandTimeout(); // reset
         _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
     }
 
