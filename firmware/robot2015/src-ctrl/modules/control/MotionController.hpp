@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Eigen/Dense>
 #include <array>
 #include "RtosTimerHelper.hpp"
+#include "RobotModel.hpp"
 
 /** Abstract superclass for a robot motion controller.  Its main job is to turn
  * velocity commands into duty cycle values to be sent to the fpga.

@@ -5,8 +5,6 @@
 
 #include <rtos.h>
 
-#include <Eigen/Dense>
-
 #include <assert.hpp>
 #include <helper-funcs.hpp>
 #include <logger.hpp>
@@ -26,6 +24,7 @@
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+#include "RobotModel.hpp"
 
 using namespace std;
 

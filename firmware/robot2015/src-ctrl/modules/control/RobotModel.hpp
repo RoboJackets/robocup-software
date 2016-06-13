@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <Eigen/Dense>
 #include <array>
 #include "Geometry2d/Util.hpp"
