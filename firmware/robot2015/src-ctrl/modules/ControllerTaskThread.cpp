@@ -40,7 +40,6 @@ float accelVals[3] = {0};
 // RPCVariable<int> test_var(&testVar, "var1");
 }
 
-
 // initialize PID controller
 // TODO: tune pid values
 PidMotionController pidController;
