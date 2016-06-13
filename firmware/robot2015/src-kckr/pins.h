@@ -4,7 +4,7 @@
 
 /* Inputs */
 #define N_KICK_CS_PIN (PA7)  // pin 6
-#define MOSI_PIN        (PA6)   // pin 7, not actually used in code; already
+#define MOSI_PIN (PA6)       // pin 7, not actually used in code; already
 // defined in iotn84a.h
 #define V_MONITOR_PIN (PA2)  // pin 11
 // active low buttons
@@ -19,7 +19,7 @@
 #define KICK_PIN (PA0)    // pin 13
 
 /* Tri-State */
-#define MISO_PIN        (PA5)   // pin 8; already defined in iotn84a.h
+#define MISO_PIN (PA5)  // pin 8; already defined in iotn84a.h
 
 /* Interrupts for PCMASK0 or PCMASK1 */
 #define INT_N_KICK_CS (PCINT7)

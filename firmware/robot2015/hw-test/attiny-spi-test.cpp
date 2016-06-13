@@ -1,7 +1,7 @@
-#include "mbed.h"
 #include "KickerBoard.hpp"
-#include "pins-ctrl-2015.hpp"
 #include "SharedSPI.hpp"
+#include "mbed.h"
+#include "pins-ctrl-2015.hpp"
 
 LocalFileSystem fs("local");
 
@@ -69,12 +69,12 @@ int main() {
                     break;
             }
 
-
             // wait_ms(2);
 
             // if (!invalid) {
             //    pc.printf("\t[charging %s]",
-            //           kickerBoard.is_charge_enabled() ? "ACTIVE" : "inactive");
+            //           kickerBoard.is_charge_enabled() ? "ACTIVE" :
+            //           "inactive");
             // }
 
             if (!invalid) {

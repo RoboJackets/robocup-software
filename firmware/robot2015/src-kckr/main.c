@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/io.h>
 #include <util/delay.h>
 
 // TODO: Make this path less explicit!
@@ -185,7 +185,7 @@ ISR(USI_STR_vect) {
         // buffer to our return value
         USIDR = execute_cmd(cur_command_, recv_data);
     } else {
-        USIDR = 0; 
+        USIDR = 0;
     }
 
     // enable global interrupts back
@@ -235,13 +235,15 @@ ISR(PCINT0_vect) {
 //     int chip_db_pressed = PINB & _BV(DB_CHIP_PIN);
 //     int charge_db_pressed = PINB & _BV(DB_CHG_PIN);
 
-//     // We only will execute commands when the user initially presses the button
+//     // We only will execute commands when the user initially presses the
+//     button
 //     // So the old button state needs to be LOW and the new button state needs
 //     // to be HIGH
 //     if (!kick_db_held_down_ && kick_db_pressed)
 //         execute_cmd(KICK_CMD, DB_KICK_TIME);
 
-//     if (!chip_db_down_ && chip_db_pressed) execute_cmd(CHIP_CMD, DB_CHIP_TIME);
+//     if (!chip_db_down_ && chip_db_pressed) execute_cmd(CHIP_CMD,
+//     DB_CHIP_TIME);
 
 //     // toggle charge
 //     if (!charge_db_down_ && charge_db_pressed) {

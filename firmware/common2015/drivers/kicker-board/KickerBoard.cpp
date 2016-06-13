@@ -1,6 +1,6 @@
 #include "KickerBoard.hpp"
-#include "kicker_commands.h"
 #include <tuple>
+#include "kicker_commands.h"
 
 using namespace std;
 
@@ -94,7 +94,7 @@ bool KickerBoard::flash(bool onlyIfDifferent, bool verbose) {
 /* this function enforces the design choice that each cmd must have an arg
  * and return a value */
 uint8_t KickerBoard::send_to_kicker(const uint8_t cmd, const uint8_t arg) {
-    uint8_t val[2] = { 0 };
+    uint8_t val[2] = {0};
     uint8_t ret = 0;
 
     chipSelect();
