@@ -147,6 +147,13 @@ void Task_Controller(void const* args) {
             pidController.run(driveMotorEnc, dt);
         for (int i = 0; i < 4; i++) duty_cycles[i] = driveMotorDutyCycles[i];
 
+        // limit duty cycle values, while keeping sign (+ or -)
+        for (int16_t& dc : duty_cycles) {
+            if (std::abs(dc) > FPGA::MAX_DUTY_CYCLE) {
+                dc = copysign(FPGA::MAX_DUTY_CYCLE, dc);
+            }
+        }
+
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }
 }

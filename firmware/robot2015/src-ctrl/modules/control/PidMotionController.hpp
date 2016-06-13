@@ -11,7 +11,6 @@
 class PidMotionController : public MotionController {
 public:
     PidMotionController() {
-        // TODO: set initial pid values to something more reasonable
         setPidValues(1, 0, 0);
     }
 
@@ -30,7 +29,7 @@ public:
      * @param encoderDeltas Encoder deltas for the four drive motors
      * @param dt Time in ms since the last calll to run()
      *
-     * @return x, y, w velocity in m/s
+     * @return Duty cycle values for each of the 4 motors
      */
     std::array<int16_t, 4> run(const std::array<int16_t, 4>& encoderDeltas,
                                float dt) {
@@ -39,10 +38,6 @@ public:
         wheelVels << encoderDeltas[0], encoderDeltas[1], encoderDeltas[2],
             encoderDeltas[3];
         wheelVels *= ENC_TICKS_PER_TURN * 2 * M_PI / dt;
-
-        // Use @WheelToBot matrix to convert from wheel speeds to bot velocity
-        // Eigen::Vector3f currentBotVel = RobotModel2015.WheelToBot *
-        // wheelVels;
 
         Eigen::Vector4f targetWheelVels =
             RobotModel2015.BotToWheel * _targetVel;
@@ -54,13 +49,6 @@ public:
             int16_t dc =
                 targetWheelVels[i] * RobotModel2015.DutyCycleMultiplier;
             dc += _controllers[i].run(wheelVelErr[i]);
-
-            // limit duty cycle, while keeping sign (+ or -)
-            const uint16_t DUTY_CYCLE_MAX = 511;
-            // TODO: double-check duty cycle max
-            if (std::abs(dc) > DUTY_CYCLE_MAX) {
-                dc = copysign(DUTY_CYCLE_MAX, dc);
-            }
 
             dutyCycles[i] = dc;
         }
