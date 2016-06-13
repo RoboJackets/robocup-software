@@ -197,11 +197,14 @@ int main() {
     int16_t bodyY = msg->bodyY * 200 / 140.24;
     int16_t bodyW = msg->bodyW * 10 / 16;
 
+    // wheel numberings differ from old robots to new robots
+    // 0, 1, 2, 3 // old
+    // 3, 0, 1, 2 // new
     std::array<int, 5> dutyCycles = {
-        bodyX + bodyY + bodyW,
-        -bodyX + bodyY + bodyW,
-        -bodyX - bodyY + bodyW,
-        bodyX - bodyY + bodyW,
+        -bodyX + bodyY + bodyW, // Old 1, new 0
+        bodyX + bodyY + bodyW,  // Old 2, new 1
+        bodyX - bodyY + bodyW,  // Old 3, new 2
+        -bodyX - bodyY + bodyW, // 0ld 0, new 3
         // dribbler
         msg->dribbler,
     };
