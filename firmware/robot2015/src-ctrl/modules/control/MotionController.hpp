@@ -48,11 +48,6 @@ protected:
     // The current target velocity in [x, y, w] format.
     Eigen::Vector3f _targetVel;
 
-    // steady-state gains.
-    // TODO: explain
-    // TODO: add accessors
-    std::array<float, 3> _ssGains;
-
 private:
     RtosTimerHelper _commandTimeout;
 };
