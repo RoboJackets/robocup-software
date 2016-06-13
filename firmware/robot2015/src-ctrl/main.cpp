@@ -176,6 +176,11 @@ int main() {
     // Make sure all of the motors are enabled
     motors_Init();
 
+    // setup analog in on battery sense pin
+    // the value is updated in the main loop below
+    AnalogIn batt(RJ_BATT_SENSE);
+    uint8_t battVoltage = 0;
+
     // Setup radio protocol handling
     const uint8_t robotID = 2;  // TODO: remove
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
@@ -184,7 +189,7 @@ int main() {
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         rtp::RobotStatusMessage reply;
         reply.uid = robotID;
-        reply.battVoltage = 5;  // TODO
+        reply.battVoltage = battVoltage;
         reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
         vector<uint8_t> replyBuf;
@@ -204,8 +209,6 @@ int main() {
 
     unsigned int ll = 0;
     uint16_t errorBitmask = 0;
-    bool errorFlash = false;
-
     if (!fpgaReady) {
         // assume all motors have errors if FPGA does not work
         errorBitmask |= (1 << RJ_ERR_LED_M1);
@@ -222,7 +225,7 @@ int main() {
 
         // periodically reset the console text's format
         ll++;
-        if ((ll % 4) == 0) {
+        if ((ll % 8) == 0) {
             printf("\033[m");
             fflush(stdout);
         }
@@ -235,15 +238,24 @@ int main() {
         // Pack errors into bitmask
         errorBitmask |= !global_radio->isConnected() << RJ_ERR_LED_RADIO;
 
+        motors_refresh();
+
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
             make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
             make_pair(2, RJ_ERR_LED_M3), make_pair(3, RJ_ERR_LED_M4),
             make_pair(4, RJ_ERR_LED_DRIB)};
+
         for (auto& pair : motorErrLedMapping) {
             const motorErr_t& status = global_motors[pair.first].status;
-            errorBitmask |= !status.hallOK << pair.second;
+            // clear the bit
+            errorBitmask &= ~(1 << pair.second);
+            // set the bit to whatever hasError is set to
+            errorBitmask |= (status.hasError << pair.second);
         }
+
+        // get the battery voltage
+        battVoltage = (batt.read_u16() >> 8);
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
@@ -252,14 +264,6 @@ int main() {
             // orange - error
             rgbLED.brightness(6 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorOrange);
-
-            if (!fpgaReady) {
-                errorFlash = !errorFlash;
-                // bright as hell to make sure they know
-                rgbLED.brightness(10 * defaultBrightness * errorFlash);
-                // well, damn. everything is broke as hell
-                rgbLED.setPixel(0, NeoColorRed);
-            }
         } else {
             // no errors, yay!
             rgbLED.brightness(3 * defaultBrightness);

@@ -11,3 +11,6 @@
 // These assist in making enums & strings with iterative pre-processor calls
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
+
+#define DO_PRAGMA(x) _Pragma(#x)
+#define TODO(x) DO_PRAGMA(message("TODO: " #x))

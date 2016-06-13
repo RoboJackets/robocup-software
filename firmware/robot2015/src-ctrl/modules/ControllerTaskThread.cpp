@@ -1,17 +1,19 @@
-#include <RPCVariable.h>
 #include <rtos.h>
+#include <RPCVariable.h>
 
 #include <Console.hpp>
-#include <assert.hpp>
 #include <logger.hpp>
+#include <assert.hpp>
 
-#include "PidMotionController.hpp"
-#include "fpga.hpp"
-#include "io-expander.hpp"
-#include "motors.hpp"
-#include "mpu-6050.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+#include "motors.hpp"
+#include "fpga.hpp"
+#include "mpu-6050.hpp"
+#include "io-expander.hpp"
+#include "Pid.hpp"
+
+const float kpi = 3.14159265358979f;
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
@@ -88,70 +90,90 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    PidMotionController motionController;
+    const uint16_t ENC_TICKS_PER_TURN = 2048;
+
+    Pid motor2pid(0.0, 0.0, 0.0);
 
     std::vector<uint16_t> duty_cycles;
-    duty_cycles.assign(5, 150);
+
+    const uint16_t kduty_cycle = 400;
+    duty_cycles.assign(5, kduty_cycle);
+
+    size_t ii = 0;
+    bool spin_rev = true;
+
+    uint16_t duty_cycle_all = kduty_cycle;
+
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        // write previously-calculated duty cycles and estimate current velocity
-        std::array<uint16_t, 4> encoderTicks;
+        std::vector<uint16_t> enc_deltas(5);
+
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-                                         encoderTicks.data(),
-                                         encoderTicks.size());
-        
-        // run controller to calculate new duty cycles for drive motors
-        array<uint16_t, 4> driveDutyCycles = motionController.run(encoderTicks, CONTROL_LOOP_WAIT_MS);
-        for (size_t i = 0; i < 4; i++) {
-            duty_cycles[i] = driveDutyCycles[i];
-        }
+                                         enc_deltas.data(),
+                                         enc_deltas.capacity());
 
-        // printf(
-        //     "\r\n\033[K"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\ r\n"
-        //     "\t(% 1.2f, % 1.2f, % 1.2f)\033[F\033[F",
-        //     gyroVals[0], gyroVals[1], gyroVals[2], accelVals[0],
-        //     accelVals[1],
-        //     accelVals[2]);
-        // Console::Flush();
+        /*
+         * The time since the last update is derived with the value of
+         * WATCHDOG_TIMER_CLK_WIDTH in robocup.v
+         *
+         * The last encoder reading (5th one) from the FPGA is the watchdog
+         * timer's tick since the last SPI transfer.
+         *
+         * Multiply the received tick count by:
+         *     (1/18.432) * 2 * (2^WATCHDOG_TIMER_CLK_WIDTH)
+         *
+         * This will give you the duration since the last SPI transfer in
+         * microseconds (us).
+         *
+         * For example, if WATCHDOG_TIMER_CLK_WIDTH = 6, here's how you would
+         * convert into time assuming the fpga returned a reading of 1265 ticks:
+         *     time_in_us = [ 1265 * (1/18.432) * 2 * (2^6) ] = 8784.7us
+         *
+         * The precision would be in increments of the multiplier. For
+         * this example, that is:
+         *     time_precision = 6.94us
+         *
+         */
+        const float kdt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
 
-        // write all duty cycles
-        FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+        // the target rev/s
+        const float ktarget_rps = 5;
+
+        // angular velocity of motor 3 in rad/s
+        const float kvel = 2 * kpi * (enc_deltas[2] / ENC_TICKS_PER_TURN) / kdt;
+
+        const float ktarget_vel = (2 * kpi) * ktarget_rps;
+
+        // @125 duty cycle, 1260rpm @ no load
+        TODO(remeasure the duty cycle and rad / s relationship of the motor)
+        const float kmultiplier = 125.0f / (1260.0f * 2 * kpi / 60);
+
+        const float vel_err = ktarget_vel - kvel;
+
+        uint16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
+
+        // duty cycle values range: 0 -> 511, the 9th bit is direction
+        dc = std::min(dc, static_cast<uint16_t>(511));
+
+        ii++;
+        // if (ii < 20) {
+        //     duty_cycle_all = kduty_cycle;
+        // } else {
+        //     duty_cycle_all = 0;
+        //     spin_rev = !spin_rev;
+        //     ii = 0;
+        // }
+
+        // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
+
+        // set the direction
+        duty_cycle_all |= (spin_rev << 9);
+
+        std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
-
-        /**
-        for (int i=50; i<200; i+=2) {
-            duty_cycles.at(0) = i;
-            duty_cycles.at(1) = i;
-            // write all duty cycles
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
-
-                Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }
-        for (int i=0; i<200; i++) {
-            duty_cycles.at(0) = 200;
-            duty_cycles.at(1) = 200;
-
-            // write all duty cycles
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
-
-                Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }
-        for (int i=0; i<200; i++) {
-            duty_cycles.at(0) = 0;
-            duty_cycles.at(1) = 0;
-
-            // write all duty cycles
-                FPGA::Instance()->set_duty_cycles(duty_cycles.data(),
-                                              duty_cycles.size());
-
-                Thread::wait(CONTROL_LOOP_WAIT_MS);
-        }*/
     }
 }
 

@@ -1,9 +1,26 @@
 #include "fpga.hpp"
 
-#include <rtos.h>
-#include <logger.hpp>
-#include <software-spi.hpp>
 #include <algorithm>
+
+#include <rtos.h>
+
+#include "logger.hpp"
+#include "rj-macros.hpp"
+#include "software-spi.hpp"
+
+template <size_t SIGN_INDEX>
+int16_t toSignMag(int16_t val) {
+    return (val < 0) ? ((-val) | 1 << SIGN_INDEX) : val;
+}
+
+template <size_t SIGN_INDEX>
+int16_t fromSignMag(int16_t val) {
+    if (val & 1 << SIGN_INDEX) {
+        val ^= 1 << SIGN_INDEX;  // unset sign bit
+        val *= -1;               // negate
+    }
+    return val;
+}
 
 FPGA* FPGA::Instance = nullptr;
 
@@ -24,8 +41,8 @@ FPGA::FPGA(std::shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName initB,
            PinName progB, PinName done)
     : SharedSPIDevice(sharedSPI, nCs, true),
       _initB(initB),
-      _progB(progB, PIN_OUTPUT, OpenDrain, 1),
-      _done(done) {
+      _done(done),
+      _progB(progB, PIN_OUTPUT, OpenDrain, 1) {
     setSPIFrequency(1000000);
 }
 
@@ -43,7 +60,6 @@ bool FPGA::configure(const std::string& filepath) {
     _progB = 0;
     Thread::wait(1);
     _progB = 1;
-    Thread::wait(1);
 
     // wait for the FPGA to tell us it's ready for the bitstream
     bool fpgaReady = false;
@@ -93,7 +109,7 @@ bool FPGA::configure(const std::string& filepath) {
     return false;
 }
 
-// TODO(justin): remove this hack once GitHub issue #590 is fixed
+TODO(remove this hack once issue number 590 is closed)
 #include "../../robot2015/src-ctrl/config/pins-ctrl-2015.hpp"
 
 bool FPGA::send_config(const std::string& filepath) {
@@ -109,8 +125,9 @@ bool FPGA::send_config(const std::string& filepath) {
 
         chipSelect();
 
-        // MISO & MOSI are intentionally switched here
-        // defaults to 8 bit field size with CPOL = 0 & CPHA = 0
+// MISO & MOSI are intentionally switched here
+// defaults to 8 bit field size with CPOL = 0 & CPHA = 0
+#warning FPGA configuration pins currently flipped due to PCB design errors, the final revision requires firmware updates.
         SoftwareSPI softSpi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
 
         fseek(fp, 0, SEEK_END);
@@ -138,6 +155,8 @@ bool FPGA::send_config(const std::string& filepath) {
             if (breakOut) break;
         }
 
+        SPI dummySPI(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
+
         chipDeselect();
         fclose(fp);
 
@@ -163,15 +182,16 @@ uint8_t FPGA::read_halls(uint8_t* halls, size_t size) {
     return status;
 }
 
-uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
+uint8_t FPGA::read_encs(int16_t* enc_counts, size_t size) {
     uint8_t status;
 
     chipSelect();
     status = _spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
-        enc_counts[i] = (_spi->write(0x00) << 8);
-        enc_counts[i] |= _spi->write(0x00);
+        int16_t enc = (_spi->write(0x00) << 8);
+        enc |= _spi->write(0x00);
+        enc_counts[i] = fromSignMag<15>(enc);
     }
 
     chipDeselect();
@@ -179,15 +199,16 @@ uint8_t FPGA::read_encs(uint16_t* enc_counts, size_t size) {
     return status;
 }
 
-uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
+uint8_t FPGA::read_duty_cycles(int16_t* duty_cycles, size_t size) {
     uint8_t status;
 
     chipSelect();
     status = _spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
-        duty_cycles[i] = (_spi->write(0x00) << 8);
-        duty_cycles[i] |= _spi->write(0x00);
+        int16_t dc = (_spi->write(0x00) << 8);
+        dc |= _spi->write(0x00);
+        duty_cycles[i] = fromSignMag<9>(dc);
     }
 
     chipDeselect();
@@ -195,19 +216,20 @@ uint8_t FPGA::read_duty_cycles(uint16_t* duty_cycles, size_t size) {
     return status;
 }
 
-uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
+uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
     uint8_t status;
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size; i++)
-        if (duty_cycles[i] > 0x3FF) return 0x7F;
+        if (abs(duty_cycles[i]) > 255) return 0x7F;
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
-        _spi->write(duty_cycles[i] & 0xFF);
-        _spi->write(duty_cycles[i] >> 8);
+        int16_t dc = toSignMag<9>(duty_cycles[i]);
+        _spi->write(dc & 0xFF);
+        _spi->write(dc >> 8);
     }
 
     chipDeselect();
@@ -215,20 +237,23 @@ uint8_t FPGA::set_duty_cycles(uint16_t* duty_cycles, size_t size) {
     return status;
 }
 
-uint8_t FPGA::set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
-                               uint16_t* enc_deltas, size_t size_enc) {
+uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
+                               int16_t* enc_deltas, size_t size_enc) {
     uint8_t status;
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size_dut; i++)
-        if (duty_cycles[i] > 0x3FF) return 0x7F;
+        if (abs(duty_cycles[i]) > 255) return 0x7F;
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size_enc; i++) {
-        enc_deltas[i] = (_spi->write(duty_cycles[i] & 0xFF) << 8);
-        enc_deltas[i] |= _spi->write(duty_cycles[i] >> 8);
+        int16_t dc = toSignMag<9>(duty_cycles[i]);
+
+        int16_t enc = (_spi->write(dc & 0xFF) << 8);
+        enc |= _spi->write(dc >> 8);
+        enc_deltas[i] = fromSignMag<15>(enc);
     }
 
     chipDeselect();
@@ -269,9 +294,10 @@ void FPGA::gate_drivers(std::vector<uint16_t>& v) {
 
     _spi->write(CMD_CHECK_DRV);
 
-    // each halfword is structured as follows:
-    // GVDD_OV | FAULT | GVDD_UV | PVDD_UV | OTSD | OTW | FETHA_OC | FETLA_OC |
-    // FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC
+    // each halfword is structured as follows (MSB -> LSB):
+    // | nibble 2: | GVDD_OV  | FAULT    | GVDD_UV  | PVDD_UV  |
+    // | nibble 1: | OTSD     | OTW      | FETHA_OC | FETLA_OC |
+    // | nibble 0: | FETHB_OC | FETLB_OC | FETHC_OC | FETLC_OC |
     for (size_t i = 0; i < 10; i++) {
         uint16_t tmp = _spi->write(0x00);
         tmp |= (_spi->write(0x00) << 8);

@@ -5,8 +5,8 @@
 #include <Console.hpp>
 #include <numparser.hpp>
 
-#include "fpga.hpp"
 #include "commands.hpp"
+#include "fpga.hpp"
 
 namespace {
 const int NUM_MOTORS = 5;
@@ -14,7 +14,7 @@ const int NUM_MOTORS = 5;
 motor_t mtrEx = {.vel = 0x4D,
                  .hall = 0x0A,
                  .enc = {0x23, 0x18},
-                 .status = {.hallOK = true, .drvStatus = {0x26, 0x0F}},
+                 .status = {.hasError = false, .drvStatus = {0x26, 0x0F}},
                  .desc = "Motor"};
 }
 
@@ -31,10 +31,19 @@ void motors_Init() {
     global_motors[4].desc = "Dribb.";
 }
 
+void motors_refresh() {
+    std::array<int16_t, NUM_MOTORS> enc_deltas = {0};
+    uint8_t status_byte =
+        FPGA::Instance->read_encs(enc_deltas.data(), enc_deltas.size());
+
+    for (size_t i = 0; i < global_motors.size(); i++)
+        global_motors[i].status.hasError = !(status_byte & (1 << i));
+}
+
 void motors_show() {
-    std::array<uint16_t, NUM_MOTORS> duty_cycles = {0};
+    std::array<int16_t, NUM_MOTORS> duty_cycles = {0};
     std::array<uint8_t, NUM_MOTORS> halls = {0};
-    std::array<uint16_t, NUM_MOTORS> enc_deltas = {0};
+    std::array<int16_t, NUM_MOTORS> enc_deltas = {0};
 
     FPGA::Instance->read_duty_cycles(duty_cycles.data(), duty_cycles.size());
     FPGA::Instance->read_halls(halls.data(), halls.size());
@@ -50,21 +59,22 @@ void motors_show() {
 
     printf("\033[?25l\033[25mStatus:\033[K\t\t\t%s\033E",
            status_byte & 0x20 ? "ENABLED" : "DISABLED");
-    printf("\033[KLast Update:\t\t%-6.2fms\t%s\033E",
-           (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 63) / 1000,
-           status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
+    printf(
+        "\033[KLast Update:\t\t%-6.2fms\t%s\033E",
+        (static_cast<float>(enc_deltas.back()) * (1 / 18.432) * 2 * 64) / 1000,
+        status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\t\tFAULTS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
         printf("\033[K    %s\t%-3u\t%-3u\t%-5u\t%s\t%s\t0x%03X\033E",
                global_motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF,
                halls.at(i), enc_deltas.at(i),
-               duty_cycles.at(i) & (1 << 9) ? "CW" : "CCW",
+               duty_cycles.at(i) < 0 ? "CW" : "CCW",
                (status_byte & (1 << i)) ? "[OK]    " : "[UNCONN]",
                driver_regs.at(i));
     }
     printf("\033[K    %s\t%-3u\t%-3u\tN/A\t%s\t%s\t0x%03X\033E",
            global_motors.back().desc.c_str(), duty_cycles.back() & 0x1FF,
-           halls.back(), duty_cycles.back() & (1 << 9) ? "CW" : "CCW",
+           halls.back(), duty_cycles.back() < 0 ? "CW" : "CCW",
            (status_byte & (1 << (enc_deltas.size() - 1))) ? "[OK]    "
                                                           : "[UNCONN]",
            driver_regs.back());
@@ -77,7 +87,7 @@ int cmd_motors_scroll(const std::vector<std::string>& args) {
     printf("\033[%uA", 8);
     Console::Instance()->Flush();
 
-    Thread::wait(350);
+    Thread::wait(300);
     return 0;
 }
 
@@ -104,9 +114,9 @@ int cmd_motors(const std::vector<std::string>& args) {
 
     else if (strcmp(args.front().c_str(), "set") == 0) {
         if (args.size() == 3) {
-            std::array<uint16_t, NUM_MOTORS> duty_cycles;
+            std::array<int16_t, NUM_MOTORS> duty_cycles;
             uint8_t motor_id = static_cast<uint8_t>(atoi(args.at(1).c_str()));
-            uint16_t new_vel = static_cast<uint16_t>(atoi(args.at(2).c_str()));
+            int16_t new_vel = static_cast<int16_t>(atoi(args.at(2).c_str()));
             // return error if motor id doesn't exist
             if (motor_id > 4) return 2;
             // get the current duty cycles for all motors
@@ -120,7 +130,7 @@ int cmd_motors(const std::vector<std::string>& args) {
                                                 duty_cycles.size());
                 printf("%s velocity set to %u (%s)\r\n",
                        global_motors.at(motor_id).desc.c_str(), new_vel & 0x1FF,
-                       new_vel & (1 << 9) ? "CW" : "CCW");
+                       new_vel < 0 ? "CW" : "CCW");
             } else {
                 // return an error if an invalid duty cycle was given
                 printf("Motor %u does not exist", motor_id);

@@ -149,8 +149,8 @@ void OurRobot::resetForNextIteration() {
 }
 
 void OurRobot::resetMotionConstraints() {
-    _rotationConstraints = RotationConstraints();
-    _motionConstraints = MotionConstraints();
+    _robotConstraints.rot = RotationConstraints();
+    _robotConstraints.mot = MotionConstraints();
     _motionCommand = std::make_unique<Planning::EmptyCommand>();
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
     _planningPriority = 0;
@@ -202,9 +202,12 @@ void OurRobot::worldVelocity(Geometry2d::Point v) {
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
 
+    const float radius = Robot_Radius * 1;
+    Geometry2d::Point pivotPoint = _state->ball.pos;
+
     // reset other conflicting motion commands
-    _motionCommand = std::make_unique<Planning::PivotCommand>(pivotTarget);
-    setPath(nullptr);
+    _motionCommand = std::make_unique<Planning::PivotCommand>(
+        pivotPoint, pivotTarget, radius);
 
     *_cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
               << endl;

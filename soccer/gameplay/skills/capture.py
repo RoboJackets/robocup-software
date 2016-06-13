@@ -24,7 +24,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         course_approach = 1
         fine_approach = 2
 
-    def __init__(self):
+    ## Capture Constructor
+    # faceBall - If false, any turning functions are turned off,
+    # useful for using capture to reflect/bounce moving ballls.
+    def __init__(self, faceBall=True):
         super().__init__(continuous=False)
 
         self.add_state(Capture.State.course_approach,
@@ -51,6 +54,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             'ball went into goal')
 
         self.lastApproachTarget = None
+        self.faceBall = faceBall
 
     def bot_to_ball(self):
         return main.ball().pos - self.robot.pos
@@ -65,8 +69,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
-        if main.ball().vel.mag() > 0.25 and self.robot.pos.dist_to(main.ball(
-        ).pos) > 0.2:
+        if main.ball().vel.mag() > 0.25 \
+            and self.robot.pos.dist_to(main.ball().pos) > 0.2:
             # ball's moving, get on the side it's moving towards
             return main.ball().vel.normalized()
         else:
@@ -94,6 +98,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         self.robot.set_planning_priority(planning_priority.CAPTURE)
 
+        if (self.faceBall):
+            self.robot.face(main.ball().pos)
+
     def on_enter_course_approach(self):
         self.lastApproachTarget == None
 
@@ -101,11 +108,13 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
-        self.robot.face(main.ball().pos)
 
         if (self.lastApproachTarget != None and
             (pos - self.lastApproachTarget).mag() < 0.1):
             self.robot.move_to(self.lastApproachTarget)
+            main.system_state().draw_circle(self.lastApproachTarget,
+                                            constants.Ball.Radius,
+                                            constants.Colors.White, "Capture")
         else:
             main.system_state().draw_circle(pos, constants.Ball.Radius,
                                             constants.Colors.White, "Capture")
@@ -118,7 +127,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_fine_approach(self):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
-        self.robot.face(main.ball().pos)
 
         # TODO(ashaw596): explain this math a bit
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
