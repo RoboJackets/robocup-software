@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cmath>
+#define EIGEN_HAS_CXX11_MATH 0
 #include <Eigen/Dense>
 #include <array>
 #include "Geometry2d/Util.hpp"
