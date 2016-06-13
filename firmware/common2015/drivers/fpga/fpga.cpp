@@ -221,7 +221,7 @@ uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size; i++)
-        if (abs(duty_cycles[i]) > 255) return 0x7F;
+        if (abs(duty_cycles[i]) > MAX_DUTY_CYCLE) return 0x7F;
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
@@ -243,7 +243,7 @@ uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size_dut; i++)
-        if (abs(duty_cycles[i]) > 255) return 0x7F;
+        if (abs(duty_cycles[i]) > MAX_DUTY_CYCLE) return 0x7F;
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
