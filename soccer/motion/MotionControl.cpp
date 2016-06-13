@@ -173,7 +173,8 @@ void MotionControl::run() {
                               "MotionControl");
 
     // convert from world to body coordinates
-    target.vel = target.vel.rotated(-_robot->angle);
+    // the +y axis of the robot points forwards
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
 
     this->_targetBodyVel(target.vel);
 }
