@@ -59,7 +59,7 @@ public:
             const uint16_t DUTY_CYCLE_MAX = 511;
             // TODO: double-check duty cycle max
             if (std::abs(dc) > DUTY_CYCLE_MAX) {
-                dc = std::copysign(DUTY_CYCLE_MAX, dc);
+                dc = copysign(DUTY_CYCLE_MAX, dc);
             }
 
             dutyCycles[i] = dc;
