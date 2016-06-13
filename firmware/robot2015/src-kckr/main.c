@@ -29,6 +29,9 @@ volatile uint8_t cur_command_ = NO_COMMAND;
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 volatile uint8_t last_voltage_ = 0;
 
+// the chip-select interrupt sets this value appropriately
+int is_chip_selected_now = 0;
+
 // executes a command coming from SPI
 uint8_t execute_cmd(uint8_t, uint8_t);
 
@@ -156,7 +159,14 @@ ISR(USI_STR_vect) {
     // disable global interrupts
     cli();
 
+    // only respond if we're being addressed
+    if (!is_chip_selected_now) {
+        sei();
+        return;
+    }
+
     // ensure we're driving as output
+    // TODO: we should be able to remove this
     DDRA |= _BV(MISO_PIN);
 
     // // Wait for overflow flag to become 1
@@ -201,14 +211,14 @@ ISR(PCINT0_vect) {
     // disable global interrupts
     cli();
 
-    int is_chip_selected_now = !(PINA & _BV(N_KICK_CS_PIN));
+    is_chip_selected_now = !(PINA & _BV(N_KICK_CS_PIN));
 
     if (is_chip_selected_now) {
         // set the slave data out pin as an output
-        // DDRA |= _BV(MISO_PIN);
+        DDRA |= _BV(MISO_PIN);
     } else {
         // set the slave data out pin as an input
-        // DDRA &= ~_BV(MISO_PIN);
+        DDRA &= ~_BV(MISO_PIN);
         // cur_command_ = NO_COMMAND;
         byte_cnt = 0;
         USIDR = is_charging() << 7;
