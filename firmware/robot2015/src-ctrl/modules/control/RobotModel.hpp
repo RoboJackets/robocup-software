@@ -46,7 +46,15 @@ public:
     float DutyCycleMultiplier;
 };
 
-// Model parameters for 2015 robot
+/** Model parameters for 2015 robot
+ *
+ * NOTE: if any relevant parameters here are changed, the WheelToBot and
+ * BotToWheel matrices must be re-generated manually.  The BotToWheel matrix is
+ * the pseudo-inverse of WheelToBot and unfortunately Eigen doesn't have support
+ * for this.  The workaround is to use matlab or octave (the open-source version
+ * of matlab).  Run the RobotModel.m script to print out the values of the two
+ * matrices and copy their contents below.
+ */
 static const RobotModel RobotModel2015 = []() {
     RobotModel model;
     model.WheelRadius = 0.02856;
@@ -63,15 +71,17 @@ static const RobotModel RobotModel2015 = []() {
 
     // Both of these matrices were calculated in Octave and pasted here
 
-    model.WheelToBot << 4.22028328654595e-15, -5.28090784300132e-15,
-        1.3714365635525e-14, -1.40913068903804e-15, 0.179447772373049,
-        0.179447772373049, 0.179447772373049, 0.179447772373049,
-        0.0894091482839454, 0.0894091482839454, 0.0894091482839454,
-        0.0894091482839454;
-
-    model.BotToWheel << 6.8950e+12, -1.5450e+09, 3.1008e+09, -3.9595e+13,
-        8.8722e+09, -1.7807e+10, 5.3350e+13, -1.1954e+10, 2.3993e+10,
+    // clang-format off
+    model.WheelToBot <<
+        4.22028328654595e-15, -5.28090784300132e-15, 1.3714365635525e-14, -1.40913068903804e-15,
+        0.179447772373049, 0.179447772373049, 0.179447772373049, 0.179447772373049,
+        0.0894091482839454, 0.0894091482839454, 0.0894091482839454, 0.0894091482839454;
+    model.BotToWheel <<
+        6.8950e+12, -1.5450e+09, 3.1008e+09,
+        -3.9595e+13, 8.8722e+09, -1.7807e+10,
+        5.3350e+13, -1.1954e+10, 2.3993e+10,
         -2.0650e+13, 4.6272e+09, -9.2869e+09;
+    // clang-format on
 
     return model;
 }();
