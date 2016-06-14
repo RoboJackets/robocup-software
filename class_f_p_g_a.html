@@ -129,18 +129,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3a19d0de422731d1686bf8b6d3b0a800"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a19d0de422731d1686bf8b6d3b0a800"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isReady</b> ()</td></tr>
 <tr class="separator:a3a19d0de422731d1686bf8b6d3b0a800"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0466d782dabb98ced2346527796c4c3f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0466d782dabb98ced2346527796c4c3f"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>set_duty_get_enc</b> (uint16_t *duty_cycles, size_t size_dut, uint16_t *enc_deltas, size_t size_enc)</td></tr>
-<tr class="separator:a0466d782dabb98ced2346527796c4c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01b00afa49a94a8a8277b96c2ce6cac2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01b00afa49a94a8a8277b96c2ce6cac2"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>set_duty_cycles</b> (uint16_t *duty_cycles, size_t size)</td></tr>
-<tr class="separator:a01b00afa49a94a8a8277b96c2ce6cac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb0a4f04c1872fad0b110242bc1094ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb0a4f04c1872fad0b110242bc1094ae"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>read_duty_cycles</b> (uint16_t *duty_cycles, size_t size)</td></tr>
-<tr class="separator:acb0a4f04c1872fad0b110242bc1094ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4df6a2cdb9f12749605116c6f572e9ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4df6a2cdb9f12749605116c6f572e9ab"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>read_encs</b> (uint16_t *enc_counts, size_t size)</td></tr>
-<tr class="separator:a4df6a2cdb9f12749605116c6f572e9ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0c136e99ee9117b264291ea7390a7ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0c136e99ee9117b264291ea7390a7ed"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>set_duty_get_enc</b> (int16_t *duty_cycles, size_t size_dut, int16_t *enc_deltas, size_t size_enc)</td></tr>
+<tr class="separator:af0c136e99ee9117b264291ea7390a7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4daf6e0acbe3eac9db30a5b0aa39cfad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4daf6e0acbe3eac9db30a5b0aa39cfad"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>set_duty_cycles</b> (int16_t *duty_cycles, size_t size)</td></tr>
+<tr class="separator:a4daf6e0acbe3eac9db30a5b0aa39cfad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f7976dddd569c0b75a94c004ecfe478"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f7976dddd569c0b75a94c004ecfe478"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>read_duty_cycles</b> (int16_t *duty_cycles, size_t size)</td></tr>
+<tr class="separator:a6f7976dddd569c0b75a94c004ecfe478"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e2b0841e4e0eca35b463ccc8f70a26e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e2b0841e4e0eca35b463ccc8f70a26e"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>read_encs</b> (int16_t *enc_counts, size_t size)</td></tr>
+<tr class="separator:a6e2b0841e4e0eca35b463ccc8f70a26e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a767569caa2aa4d2e9423b6f3a6d2a7a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a767569caa2aa4d2e9423b6f3a6d2a7a8"></a>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>read_halls</b> (uint8_t *halls, size_t size)</td></tr>
 <tr class="separator:a767569caa2aa4d2e9423b6f3a6d2a7a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,6 +178,9 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:aa00e96a8fdefd9517ca69385e726b333"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa00e96a8fdefd9517ca69385e726b333"></a>
 static <a class="el" href="class_f_p_g_a.html">FPGA</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>Instance</b> = nullptr</td></tr>
 <tr class="separator:aa00e96a8fdefd9517ca69385e726b333"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1af8cb7f992ab5a18d7a48296493199c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1af8cb7f992ab5a18d7a48296493199c"></a>
+static const int16_t&#160;</td><td class="memItemRight" valign="bottom"><b>MAX_DUTY_CYCLE</b> = 511</td></tr>
+<tr class="separator:a1af8cb7f992ab5a18d7a48296493199c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -239,7 +242,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_f_p_g_a.html">FPGA</a></li>
-    <li class="footer">Generated on Tue Jun 14 2016 02:54:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Jun 14 2016 06:40:51 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>
