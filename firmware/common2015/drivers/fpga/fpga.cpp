@@ -219,6 +219,10 @@ uint8_t FPGA::read_duty_cycles(int16_t* duty_cycles, size_t size) {
 uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
     uint8_t status;
 
+    if (size != 5) {
+        LOG(WARN, "set_duty_cycles() requires input buffer to be of size 5");
+    }
+
     // Check for valid duty cycles values
     for (size_t i = 0; i < size; i++)
         if (abs(duty_cycles[i]) > MAX_DUTY_CYCLE) return 0x7F;
@@ -240,6 +244,10 @@ uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
 uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
                                int16_t* enc_deltas, size_t size_enc) {
     uint8_t status;
+
+    if (size_dut != 5 || size_enc != 5) {
+        LOG(WARN, "set_duty_get_enc() requires input buffers to be of size 5");
+    }
 
     // Check for valid duty cycles values
     for (size_t i = 0; i < size_dut; i++)
