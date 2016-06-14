@@ -14,7 +14,7 @@ uint16_t toSignMag(int16_t val) {
 }
 
 template <size_t SIGN_INDEX>
-int16_t fromSignMag(int16_t val) {
+int16_t fromSignMag(uint16_t val) {
     if (val & 1 << SIGN_INDEX) {
         val ^= 1 << SIGN_INDEX;  // unset sign bit
         val *= -1;               // negate
@@ -206,7 +206,7 @@ uint8_t FPGA::read_duty_cycles(int16_t* duty_cycles, size_t size) {
     status = _spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
-        int16_t dc = (_spi->write(0x00) << 8);
+        uint16_t dc = _spi->write(0x00) << 8;
         dc |= _spi->write(0x00);
         duty_cycles[i] = fromSignMag<9>(dc);
     }
@@ -251,7 +251,7 @@ uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
     for (size_t i = 0; i < size_enc; i++) {
         uint16_t dc = toSignMag<9>(duty_cycles[i]);
 
-        int16_t enc = (_spi->write(dc & 0xFF) << 8);
+        uint16_t enc = _spi->write(dc & 0xFF) << 8;
         enc |= _spi->write(dc >> 8);
         enc_deltas[i] = fromSignMag<15>(enc);
     }
