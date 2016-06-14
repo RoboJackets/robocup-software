@@ -1,37 +1,74 @@
 #include <LogViewer.hpp>
+#include <ProtobufTree.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <protobuf/LogFrame.pb.h>
 
 #include <QApplication>
 #include <QFile>
+#include <QTextStream>
 
 #include <algorithm>
 #include <fcntl.h>
-#include <stdio.h>
+
+#include <iostream>
 
 using namespace std;
 using namespace boost;
 using namespace Packet;
 using namespace google::protobuf::io;
+using namespace google::protobuf;
 
 void usage(const char* prog) {
-    fprintf(stderr, "Usage: %s <filename.log>\n", prog);
+    fprintf(stderr, "Usage: %s [options] <filename.log>\n", prog);
+    fprintf(stderr,
+            "\t-bsv <Filename.bsv>: Exports the log file to a BSV of the same "
+            "name and Prevents launch of GUI\n");
+    fprintf(stderr, "\t-help:       Displays this help text\n");
     exit(1);
 }
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
-    if (argc != 2) {
+    bool bsv = false;
+    char* bsvFilename;
+    char* logFilename;
+
+    // initial check for number of args
+    if (argc < 2 || argc > 4) {
         usage(argv[0]);
+    }
+
+    // Process args
+    for (int i = 1; i < argc; ++i) {
+        const char* var = argv[i];
+
+        if (strcmp(var, "-bsv") == 0) {
+            bsv = true;
+            ++i;
+            bsvFilename = argv[i];
+        } else if (strcmp(var, "-help") == 0) {
+            usage(argv[0]);
+        } else {
+            logFilename = argv[i];
+        }
     }
 
     LogViewer win;
 
-    win.readFrames(argv[1]);
-    win.showMaximized();
+    if (bsv) {
+        // Export BSV. Runs log_viewer in headless mode
+        if (win.exportBSV(logFilename, bsvFilename) == false) {
+            return 0;
+        }
+    } else {
+        // Views the log in the log_view GUI
+        win.launchGUI(logFilename);
+        return app.exec();
+    }
 
-    return app.exec();
+    return 1;
 }
 
 LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
@@ -61,11 +98,159 @@ LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
     _updateTimer.start(30);
 }
 
-bool LogViewer::readFrames(const char* filename) {
+// Parses log File & exports a BSV file containing the data of the log file
+bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
+    fprintf(stderr, "Exporting BSV file to %s\n", bsvFilename);
+
+    string bsvBase(bsvFilename);
+
+    string robotFilename = bsvBase + "-robot.bsv";
+    QFile fileRobot(robotFilename.c_str());
+    if (!fileRobot.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+    QTextStream outRobot(&fileRobot);
+
+    string frameFilename = bsvBase + "-frame.bsv";
+    QFile fileFrame(frameFilename.c_str());
+    if (!fileFrame.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+    QTextStream outFrame(&fileFrame);
+
+    // Read in data from log file
+    this->readFrames(logFilename);
+
+    char matchID[MATCH_ID_LENGTH + 1];
+
+    generateMatchID(matchID);
+
+    fprintf(stderr, "matchID: %s\n", matchID);
+
+    // Print Headers
+    outRobot << "match_id" << BAR << "timestamp" << BAR << "team" << BAR
+             << "shell_id" << BAR << "x_position" << BAR << "y_position" << BAR
+             << "angle" << endl;
+    outFrame << "match_id" << BAR << "timestamp" << BAR << "ball_x_position"
+             << BAR << "ball_y_posiiton" << endl;
+
+    for (int i = 0; i < frames.size(); i++) {
+        const Message* m_logFrame = frames[i].get();
+        const Descriptor* d_logFrame = m_logFrame->GetDescriptor();
+        const Reflection* r_logFrame = m_logFrame->GetReflection();
+
+        const FieldDescriptor* f_timestamp =
+            d_logFrame->FindFieldByName("timestamp");
+        const uint64 timestamp =
+            r_logFrame->GetUInt64(*m_logFrame, f_timestamp);
+
+        const FieldDescriptor* f_blue_team =
+            d_logFrame->FindFieldByName("blue_team");
+        const bool blue_team = r_logFrame->GetBool(*m_logFrame, f_blue_team);
+        const char* selfTeam = blue_team ? "blue" : "yellow";
+        const char* oppTeam = !blue_team ? "blue" : "yellow";
+
+        const FieldDescriptor* f_self = d_logFrame->FindFieldByName("self");
+        const int numSelf = r_logFrame->FieldSize(*m_logFrame, f_self);
+
+        // loop over repeated self value
+        for (int i = 0; i < numSelf; i++) {
+            const Message* m_self =
+                &r_logFrame->GetRepeatedMessage(*m_logFrame, f_self, i);
+            const Descriptor* d_self = m_self->GetDescriptor();
+            const Reflection* r_self = m_self->GetReflection();
+
+            const FieldDescriptor* f_angle = d_self->FindFieldByName("angle");
+            const float angle = r_self->GetFloat(*m_self, f_angle);
+
+            const FieldDescriptor* f_shell = d_self->FindFieldByName("shell");
+            const int32 shell = r_self->GetInt32(*m_self, f_shell);
+
+            const FieldDescriptor* f_pos = d_self->FindFieldByName("pos");
+            const Message* m_pos = &r_self->GetMessage(*m_self, f_pos);
+            const Descriptor* d_pos = m_pos->GetDescriptor();
+            const Reflection* r_pos = m_pos->GetReflection();
+
+            const FieldDescriptor* f_xPos = d_pos->FindFieldByName("x");
+            const float xPos = r_pos->GetFloat(*m_pos, f_xPos);
+
+            const FieldDescriptor* f_yPos = d_pos->FindFieldByName("y");
+            const float yPos = r_pos->GetFloat(*m_pos, f_yPos);
+
+            // Construct a row of data and print to file
+            outRobot << matchID << BAR << timestamp << BAR << selfTeam << BAR
+                     << shell << BAR << xPos << BAR << yPos << BAR << angle
+                     << endl;
+        }
+
+        const FieldDescriptor* f_opp = d_logFrame->FindFieldByName("opp");
+        const int numOpp = r_logFrame->FieldSize(*m_logFrame, f_opp);
+
+        for (int i = 0; i < numOpp; i++) {
+            const Message* m_opp =
+                &r_logFrame->GetRepeatedMessage(*m_logFrame, f_opp, i);
+            const Descriptor* d_opp = m_opp->GetDescriptor();
+            const Reflection* r_opp = m_opp->GetReflection();
+
+            const FieldDescriptor* f_angle = d_opp->FindFieldByName("angle");
+            const float angle = r_opp->GetFloat(*m_opp, f_angle);
+
+            const FieldDescriptor* f_shell = d_opp->FindFieldByName("shell");
+            const int32 shell = r_opp->GetInt32(*m_opp, f_shell);
+
+            const FieldDescriptor* f_pos = d_opp->FindFieldByName("pos");
+            const Message* m_pos = &r_opp->GetMessage(*m_opp, f_pos);
+            const Descriptor* d_pos = m_pos->GetDescriptor();
+            const Reflection* r_pos = m_pos->GetReflection();
+
+            const FieldDescriptor* f_xPos = d_pos->FindFieldByName("x");
+            const float xPos = r_pos->GetFloat(*m_pos, f_xPos);
+
+            const FieldDescriptor* f_yPos = d_pos->FindFieldByName("y");
+            const float yPos = r_pos->GetFloat(*m_pos, f_yPos);
+
+            // Construct a row of data and print to file
+            outRobot << matchID << BAR << timestamp << BAR << oppTeam << BAR
+                     << shell << BAR << xPos << BAR << yPos << BAR << angle
+                     << endl;
+        }
+
+        const FieldDescriptor* f_ball = d_logFrame->FindFieldByName("ball");
+        const Message* m_ball = &r_logFrame->GetMessage(*m_logFrame, f_ball);
+        const Descriptor* d_ball = m_ball->GetDescriptor();
+        const Reflection* r_ball = m_ball->GetReflection();
+
+        const FieldDescriptor* f_pos = d_ball->FindFieldByName("pos");
+        const Message* m_pos = &r_ball->GetMessage(*m_ball, f_pos);
+        const Descriptor* d_pos = m_pos->GetDescriptor();
+        const Reflection* r_pos = m_pos->GetReflection();
+
+        const FieldDescriptor* f_xPos = d_pos->FindFieldByName("x");
+        const float xBallPos = r_pos->GetFloat(*m_pos, f_xPos);
+
+        const FieldDescriptor* f_yPos = d_pos->FindFieldByName("y");
+        const float yBallPos = r_pos->GetFloat(*m_pos, f_yPos);
+
+        outFrame << matchID << BAR << timestamp << BAR << xBallPos << BAR
+                 << yBallPos << endl;
+    }
+
+    return true;
+}
+
+// Prepare program for GUI launch
+bool LogViewer::launchGUI(const char* logFilename) {
     frames.clear();
     ui.timeSlider->setMaximum(0);
 
+    bool read = this->readFrames(logFilename);
+
+    ui.timeSlider->setMaximum(frames.size());
+
+    this->showMaximized();
+    return read;
+}
+
+// Read frames of logged data from specified file
+bool LogViewer::readFrames(const char* filename) {
     QFile file(filename);
+
     if (!file.open(QFile::ReadOnly)) {
         fprintf(stderr, "Can't open %s: %s\n", filename,
                 (const char*)file.errorString().toLatin1());
@@ -98,7 +283,6 @@ bool LogViewer::readFrames(const char* filename) {
         ++n;
     }
 
-    ui.timeSlider->setMaximum(frames.size());
     return true;
 }
 
@@ -145,6 +329,21 @@ void LogViewer::updateViews() {
     }
 
     ui.fieldView->update();
+}
+
+// Generates random alphanumeric strings
+void LogViewer::generateMatchID(char* id) {
+    string chars(
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
+
+    // Avoid using time based srand init
+    srand(getpid());
+
+    for (int i = 0; i < MATCH_ID_LENGTH; ++i) {
+        id[i] = chars[rand() % chars.length()];
+    }
+
+    id[MATCH_ID_LENGTH] = '\0';
 }
 
 void LogViewer::on_action0_triggered() { ui.fieldView->rotate(0); }
