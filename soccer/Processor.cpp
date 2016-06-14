@@ -1,6 +1,7 @@
 
+#include <gameplay/GameplayModule.hpp>
+
 #include <poll.h>
-#include <QMutexLocker>
 
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
@@ -12,7 +13,6 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <gameplay/GameplayModule.hpp>
 #include <git_version.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
@@ -24,6 +24,7 @@
 #include "modeling/BallTracker.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
+#include <QMutexLocker>
 
 REGISTER_CONFIGURABLE(Processor)
 
