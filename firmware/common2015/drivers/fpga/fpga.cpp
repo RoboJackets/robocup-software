@@ -189,9 +189,9 @@ uint8_t FPGA::read_encs(int16_t* enc_counts, size_t size) {
     status = _spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
-        int16_t enc = (_spi->write(0x00) << 8);
+        uint16_t enc = _spi->write(0x00) << 8;
         enc |= _spi->write(0x00);
-        enc_counts[i] = fromSignMag<15>(enc);
+        enc_counts[i] = static_cast<int16_t>(enc);
     }
 
     chipDeselect();
@@ -262,7 +262,7 @@ uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
 
         uint16_t enc = _spi->write(dc & 0xFF) << 8;
         enc |= _spi->write(dc >> 8);
-        enc_deltas[i] = fromSignMag<15>(enc);
+        enc_deltas[i] = static_cast<int16_t>(enc);
     }
 
     chipDeselect();
