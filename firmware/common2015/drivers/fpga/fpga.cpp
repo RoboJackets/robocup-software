@@ -250,13 +250,14 @@ uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
     }
 
     // Check for valid duty cycles values
-    for (size_t i = 0; i < size_dut; i++)
+    for (size_t i = 0; i < size_dut; i++) {
         if (abs(duty_cycles[i]) > MAX_DUTY_CYCLE) return 0x7F;
+    }
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
-    for (size_t i = 0; i < size_enc; i++) {
+    for (size_t i = 0; i < 5; i++) {
         uint16_t dc = toSignMag<9>(duty_cycles[i]);
 
         uint16_t enc = _spi->write(dc & 0xFF) << 8;
