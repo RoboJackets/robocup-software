@@ -96,7 +96,7 @@ void Task_Controller(void const* args) {
 
     std::vector<uint16_t> duty_cycles;
 
-    const uint16_t kduty_cycle = 400;
+    const uint16_t kduty_cycle = 0;
     duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
