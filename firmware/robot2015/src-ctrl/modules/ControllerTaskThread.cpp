@@ -43,7 +43,6 @@ float accelVals[3] = {0};
 // initialize PID controller
 // TODO: tune pid values
 PidMotionController pidController;
-// pidController.setPidValues();
 
 void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel) {
     pidController.setTargetVel(targetVel);
@@ -102,6 +101,9 @@ void Task_Controller(void const* args) {
     array<int16_t, 5> duty_cycles;
     duty_cycles.fill(0);
 
+    pidController.setTargetVel({1, 0, 0}); // TODO: rm
+    pidController.setPidValues(0.3, 0, 0.1);
+
     while (true) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
@@ -147,12 +149,26 @@ void Task_Controller(void const* args) {
             pidController.run(driveMotorEnc, dt);
         for (int i = 0; i < 4; i++) duty_cycles[i] = driveMotorDutyCycles[i];
 
+
         // limit duty cycle values, while keeping sign (+ or -)
-        for (int16_t& dc : duty_cycles) {
+        for (int i = 0; i < 4; i++) {
+            int16_t dc = duty_cycles[i];
+            // dc *= 7;
             if (std::abs(dc) > FPGA::MAX_DUTY_CYCLE) {
                 dc = copysign(FPGA::MAX_DUTY_CYCLE, dc);
             }
+            duty_cycles[i] = dc;
         }
+
+        // printf("dc[0] = %d\r\n", duty_cycles[0]);
+        printf("duty cycles:\r\n  ");
+        for (int i = 0; i < 4; i++) {
+            printf("%d, ", duty_cycles[i]);
+        }
+        printf("\r\n");
+
+
+        // duty_cycles.fill(0);
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
     }

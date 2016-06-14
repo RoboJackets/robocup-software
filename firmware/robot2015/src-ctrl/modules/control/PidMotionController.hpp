@@ -12,6 +12,10 @@ class PidMotionController : public MotionController {
 public:
     PidMotionController() {
         setPidValues(1, 0, 0);
+
+        for (auto& ctrl : _controllers) {
+            ctrl.setWindup(5);
+        }
     }
 
     void setPidValues(float p, float i, float d) {
@@ -37,12 +41,22 @@ public:
         Eigen::Vector4f wheelVels;
         wheelVels << encoderDeltas[0], encoderDeltas[1], encoderDeltas[2],
             encoderDeltas[3];
-        wheelVels *= ENC_TICKS_PER_TURN * 2 * M_PI / dt;
+        wheelVels *= 2 * M_PI / ENC_TICKS_PER_TURN / dt;
 
         Eigen::Vector4f targetWheelVels =
             RobotModel2015.BotToWheel * _targetVel;
 
+        // printf("wheelVels[0] = %f\r\n", wheelVels[0]);
+
+        // printf("targetWheelVels: %f, %f, %f, %f\r\n", targetWheelVels[0], targetWheelVels[1], targetWheelVels[2], targetWheelVels[3]);
+
         Eigen::Vector4f wheelVelErr = targetWheelVels - wheelVels;
+
+        // printf("wheelVelErr:\r\n  ");
+        // for (int i = 0; i < 4; i++) {
+        //     printf("%f, ", wheelVelErr[i]);
+        // }
+        // printf("\r\n");
 
         std::array<int16_t, 4> dutyCycles;
         for (int i = 0; i < 4; i++) {
@@ -53,6 +67,8 @@ public:
             dutyCycles[i] = dc;
         }
 
+        // printf("pid.run(), target.x = %f\r\n", _targetVel[0]);
+
         return dutyCycles;
     }
 
@@ -62,3 +78,9 @@ private:
     /// controllers for each wheel
     Pid _controllers[4];
 };
+
+
+
+
+
+

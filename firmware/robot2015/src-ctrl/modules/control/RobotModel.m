@@ -1,6 +1,6 @@
 
 function rad = DegreesToRadians(deg)
-rad = deg * 2 * pi;
+rad = deg * pi / 180;
 end
 
 WheelDist = 0.0798576;
@@ -12,15 +12,23 @@ WheelAngles = [
     DegreesToRadians(142)
 ];
 
-pi2r = 2 * pi * WheelRadius;
-WheelToBot = [
-    -pi2r*sin(WheelAngles(1)), -pi2r*sin(WheelAngles(2)), -pi2r*sin(WheelAngles(3)), -pi2r*sin(WheelAngles(4));
-    pi2r*cos(WheelAngles(1)), pi2r*cos(WheelAngles(2)), pi2r*cos(WheelAngles(3)), pi2r*cos(WheelAngles(4));
-    WheelRadius/WheelDist/4, WheelRadius/WheelDist/4, WheelRadius/WheelDist/4, WheelRadius/WheelDist/4;
-];
+circ = 2 * pi * WheelRadius; % wheel circumference
 
-BotToWheel = pinv(WheelToBot);
+% See this paper for more info on how this matrix is derived:
+% http://people.idsia.ch/~foerster/2006/1/omnidrive_kiart_preprint.pdf
+BotToWheel = [
+    -sin(WheelAngles(1)), cos(WheelAngles(1)), 1;
+    -sin(WheelAngles(2)), cos(WheelAngles(2)), 1;
+    -sin(WheelAngles(3)), cos(WheelAngles(3)), 1;
+    -sin(WheelAngles(4)), cos(WheelAngles(4)), 1;
+] / circ;
 
-% print results
+WheelToBot = pinv(BotToWheel);
+
+% print matrices
 WheelToBot
 BotToWheel
+
+% Example
+targetVel = [1, 1, 0]'
+targetWheels = BotToWheel * targetVel
