@@ -9,8 +9,8 @@
 #include "software-spi.hpp"
 
 template <size_t SIGN_INDEX>
-int16_t toSignMag(int16_t val) {
-    return (val < 0) ? ((-val) | 1 << SIGN_INDEX) : val;
+uint16_t toSignMag(int16_t val) {
+    return static_cast<uint16_t>((val < 0) ? ((-val) | 1 << SIGN_INDEX) : val);
 }
 
 template <size_t SIGN_INDEX>
@@ -227,7 +227,7 @@ uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
-        int16_t dc = toSignMag<9>(duty_cycles[i]);
+        uint16_t dc = toSignMag<9>(duty_cycles[i]);
         _spi->write(dc & 0xFF);
         _spi->write(dc >> 8);
     }
@@ -249,7 +249,7 @@ uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size_enc; i++) {
-        int16_t dc = toSignMag<9>(duty_cycles[i]);
+        uint16_t dc = toSignMag<9>(duty_cycles[i]);
 
         int16_t enc = (_spi->write(dc & 0xFF) << 8);
         enc |= _spi->write(dc >> 8);
