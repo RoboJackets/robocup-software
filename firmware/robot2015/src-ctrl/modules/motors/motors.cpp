@@ -65,12 +65,11 @@ void motors_show() {
         status_byte & 0x40 ? "[EXPIRED]" : "[OK]     ");
     printf("\033[K    ID\t\tVEL\tHALL\tENC\tDIR\tSTATUS\t\tFAULTS\033E");
     for (size_t i = 0; i < duty_cycles.size() - 1; i++) {
-        printf("\033[K    %s\t%-3u\t%-3u\t%-5u\t%s\t%s\t0x%03X\033E",
-               global_motors.at(i).desc.c_str(), duty_cycles.at(i) & 0x1FF,
-               halls.at(i), enc_deltas.at(i),
-               duty_cycles.at(i) < 0 ? "CW" : "CCW",
+        printf("\033[K    %s\t%-3d\t%-3u\t%-5d\t%s\t%s\t0x%03X\033E",
+               global_motors[i].desc.c_str(), duty_cycles[i], halls[i],
+               enc_deltas[i], duty_cycles[i] < 0 ? "CW" : "CCW",
                (status_byte & (1 << i)) ? "[OK]    " : "[UNCONN]",
-               driver_regs.at(i));
+               driver_regs[i]);
     }
     printf("\033[K    %s\t%-3u\t%-3u\tN/A\t%s\t%s\t0x%03X\033E",
            global_motors.back().desc.c_str(), duty_cycles.back() & 0x1FF,

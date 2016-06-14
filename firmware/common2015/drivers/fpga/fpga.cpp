@@ -9,12 +9,12 @@
 #include "software-spi.hpp"
 
 template <size_t SIGN_INDEX>
-int16_t toSignMag(int16_t val) {
-    return (val < 0) ? ((-val) | 1 << SIGN_INDEX) : val;
+uint16_t toSignMag(int16_t val) {
+    return static_cast<uint16_t>((val < 0) ? ((-val) | 1 << SIGN_INDEX) : val);
 }
 
 template <size_t SIGN_INDEX>
-int16_t fromSignMag(int16_t val) {
+int16_t fromSignMag(uint16_t val) {
     if (val & 1 << SIGN_INDEX) {
         val ^= 1 << SIGN_INDEX;  // unset sign bit
         val *= -1;               // negate
@@ -189,9 +189,9 @@ uint8_t FPGA::read_encs(int16_t* enc_counts, size_t size) {
     status = _spi->write(CMD_READ_ENC);
 
     for (size_t i = 0; i < size; i++) {
-        int16_t enc = (_spi->write(0x00) << 8);
+        uint16_t enc = _spi->write(0x00) << 8;
         enc |= _spi->write(0x00);
-        enc_counts[i] = fromSignMag<15>(enc);
+        enc_counts[i] = static_cast<int16_t>(enc);
     }
 
     chipDeselect();
@@ -206,7 +206,7 @@ uint8_t FPGA::read_duty_cycles(int16_t* duty_cycles, size_t size) {
     status = _spi->write(CMD_READ_DUTY);
 
     for (size_t i = 0; i < size; i++) {
-        int16_t dc = (_spi->write(0x00) << 8);
+        uint16_t dc = _spi->write(0x00) << 8;
         dc |= _spi->write(0x00);
         duty_cycles[i] = fromSignMag<9>(dc);
     }
@@ -219,6 +219,10 @@ uint8_t FPGA::read_duty_cycles(int16_t* duty_cycles, size_t size) {
 uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
     uint8_t status;
 
+    if (size != 5) {
+        LOG(WARN, "set_duty_cycles() requires input buffer to be of size 5");
+    }
+
     // Check for valid duty cycles values
     for (size_t i = 0; i < size; i++)
         if (abs(duty_cycles[i]) > MAX_DUTY_CYCLE) return 0x7F;
@@ -227,7 +231,7 @@ uint8_t FPGA::set_duty_cycles(int16_t* duty_cycles, size_t size) {
     status = _spi->write(CMD_R_ENC_W_VEL);
 
     for (size_t i = 0; i < size; i++) {
-        int16_t dc = toSignMag<9>(duty_cycles[i]);
+        uint16_t dc = toSignMag<9>(duty_cycles[i]);
         _spi->write(dc & 0xFF);
         _spi->write(dc >> 8);
     }
@@ -241,19 +245,24 @@ uint8_t FPGA::set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
                                int16_t* enc_deltas, size_t size_enc) {
     uint8_t status;
 
+    if (size_dut != 5 || size_enc != 5) {
+        LOG(WARN, "set_duty_get_enc() requires input buffers to be of size 5");
+    }
+
     // Check for valid duty cycles values
-    for (size_t i = 0; i < size_dut; i++)
+    for (size_t i = 0; i < size_dut; i++) {
         if (abs(duty_cycles[i]) > MAX_DUTY_CYCLE) return 0x7F;
+    }
 
     chipSelect();
     status = _spi->write(CMD_R_ENC_W_VEL);
 
-    for (size_t i = 0; i < size_enc; i++) {
-        int16_t dc = toSignMag<9>(duty_cycles[i]);
+    for (size_t i = 0; i < 5; i++) {
+        uint16_t dc = toSignMag<9>(duty_cycles[i]);
 
-        int16_t enc = (_spi->write(dc & 0xFF) << 8);
+        uint16_t enc = _spi->write(dc & 0xFF) << 8;
         enc |= _spi->write(dc >> 8);
-        enc_deltas[i] = fromSignMag<15>(enc);
+        enc_deltas[i] = static_cast<int16_t>(enc);
     }
 
     chipDeselect();
