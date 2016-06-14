@@ -122,7 +122,7 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
             strobe(CC1201_STROBE_SRX);
             return COMM_DEV_BUF_ERR;
         }
-        for (int i = 0; i < size_byte; i++) {
+        for (uint8_t i = 0; i < size_byte; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
