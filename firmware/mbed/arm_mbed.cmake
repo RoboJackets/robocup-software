@@ -177,6 +177,8 @@ ExternalProject_Add(mbed_libraries
     BUILD_COMMAND       ${MBED_REPO_DIR}/workspace_tools/build.py
                                 --mcu=${MBED_PLATFORM_UPPERC}
                                 --tool=${MBED_TOOLCHAIN}
+                                -DOS_MAINSTKSIZE=1500 # default is 2048
+                                -DOS_TIMERSTKSZ=400 # default is 512
                                 ${MBED_OPT_LIBS}
     INSTALL_COMMAND     ""
     UPDATE_COMMAND      ""
