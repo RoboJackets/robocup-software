@@ -7,6 +7,9 @@
 #include <QTimer>
 #include <vector>
 
+#define BAR "|"
+#define MATCH_ID_LENGTH 32
+
 class LogViewer : public QMainWindow {
     Q_OBJECT;
 
@@ -17,6 +20,8 @@ public:
 
     void frameNumber(int value) { _doubleFrameNumber = value; }
 
+    bool exportBSV(char* logFilename, char* bsvFilename);
+    bool launchGUI(const char* logFilename);
     // This is called when
     bool readFrames(const char* filename);
 
@@ -57,4 +62,6 @@ private:
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem;
     QTreeWidgetItem* _elapsedTimeItem;
+
+    void generateMatchID(char* id);
 };
