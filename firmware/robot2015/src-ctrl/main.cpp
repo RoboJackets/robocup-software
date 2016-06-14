@@ -236,7 +236,8 @@ int main() {
         ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
-        errorBitmask |= (!global_radio || !global_radio->isConnected()) << RJ_ERR_LED_RADIO;
+        errorBitmask |= (!global_radio || !global_radio->isConnected())
+                        << RJ_ERR_LED_RADIO;
 
         motors_refresh();
 
