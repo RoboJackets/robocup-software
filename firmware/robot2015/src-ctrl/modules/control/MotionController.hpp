@@ -16,19 +16,19 @@ public:
      */
     static const uint32_t COMMAND_TIMEOUT_INTERVAL = 250;
 
-    MotionController()
-        : _commandTimeout(this, &MotionController::commandTimeout,
-                          osTimerOnce) {
-        commandTimeout(); // reset
-        _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
-    }
+    MotionController() {}
+        // : _commandTimeout(this, &MotionController::commandTimeout,
+                          // osTimerOnce) {
+        // commandTimeout(); // reset
+        // _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
+    // }
 
     /** Set target velocity. This is typically called whenever a new radio
      * packet is received that contains velocity commands.
      * */
     virtual void setTargetVel(Eigen::Vector3f target) {
         // reset timeout timer
-        _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
+        // _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
 
         _targetVel = target;
     }
@@ -50,5 +50,5 @@ protected:
     Eigen::Vector3f _targetVel;
 
 private:
-    RtosTimerHelper _commandTimeout;
+    // RtosTimerHelper _commandTimeout;
 };
