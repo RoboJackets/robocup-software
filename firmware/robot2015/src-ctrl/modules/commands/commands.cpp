@@ -144,6 +144,8 @@ static const vector<command_t> commands = {
 
     {{"ps"}, false, cmd_ps, "list the active threads.", "ps"},
 
+    {{"heapfill"}, false, cmd_heapfill, "Check how large of a block is available on the heap", "heapfill"},
+
     {{"radio"},
      false,
      cmd_radio,
@@ -868,6 +870,29 @@ int cmd_ps(cmd_args_t& args) {
         }
 
         printf("==============\r\nTotal Threads:\t%u\r\n", num_threads);
+    }
+
+    return 0;
+}
+
+int cmd_heapfill(cmd_args_t& args) {
+    if (!args.empty()) {
+        show_invalid_args(args);
+        return 1;
+    }
+
+    printf("Testing heap size...\r\n");
+    int count = 1;
+    while (true) {
+        void* buf = malloc(count);
+        if (!buf){
+            printf("failed to allocate %d bytes\r\n", count);
+            break;
+        } else {
+            printf("allocated %d bytes\r\n", count);
+        }
+        count++;
+        free(buf);
     }
 
     return 0;
