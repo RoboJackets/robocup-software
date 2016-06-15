@@ -12,8 +12,6 @@
 #include <algorithm>
 #include <fcntl.h>
 
-#include <iostream>
-
 using namespace std;
 using namespace boost;
 using namespace Packet;
