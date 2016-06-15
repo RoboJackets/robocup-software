@@ -15,10 +15,10 @@ WheelAngles = [
 % See this paper for more info on how this matrix is derived:
 % http://people.idsia.ch/~foerster/2006/1/omnidrive_kiart_preprint.pdf
 BotToWheel = [
-    -sin(WheelAngles(1)), cos(WheelAngles(1)), 1;
-    -sin(WheelAngles(2)), cos(WheelAngles(2)), 1;
-    -sin(WheelAngles(3)), cos(WheelAngles(3)), 1;
-    -sin(WheelAngles(4)), cos(WheelAngles(4)), 1;
+    -sin(WheelAngles(1)), cos(WheelAngles(1)), WheelDist;
+    -sin(WheelAngles(2)), cos(WheelAngles(2)), WheelDist;
+    -sin(WheelAngles(3)), cos(WheelAngles(3)), WheelDist;
+    -sin(WheelAngles(4)), cos(WheelAngles(4)), WheelDist;
 ] / WheelRadius;
 
 WheelToBot = pinv(BotToWheel);

@@ -73,7 +73,7 @@ static const RobotModel RobotModel2015 = []() {
 
     // @125 duty cycle, 1260rpm @ no load
     TODO(remeasure the duty cycle and rad / s relationship of the motor)
-    model.DutyCycleMultiplier = 125.0f / (1260.0f * 2 * M_PI / 60);
+    model.DutyCycleMultiplier = 6;
 
     // Both of these matrices were calculated in Octave and pasted here
 
@@ -81,12 +81,12 @@ static const RobotModel RobotModel2015 = []() {
     model.WheelToBot <<
       -0.0107955,   0.0107955,   0.0107955,  -0.0107955,
        0.0100385,   0.0090079,  -0.0090079,  -0.0100385,
-       0.0076336,   0.0066464,   0.0066464,   0.0076336;
+       0.0955902,   0.0832281,   0.0832281,   0.0955902;
     model.BotToWheel <<
-      -21.557,   27.591,   35.014,
-       24.759,   24.759,   35.014,
-       24.759,  -24.759,   35.014,
-      -21.557,  -27.591,   35.014;
+      -21.5568,   27.5914,    2.7961,
+       24.7586,   24.7586,    2.7961,
+       24.7586,  -24.7586,    2.7961,
+      -21.5568,  -27.5914,    2.7961;
     // clang-format on
 
     return model;
