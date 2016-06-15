@@ -1,5 +1,4 @@
 #include <LogViewer.hpp>
-#include <ProtobufTree.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <protobuf/LogFrame.pb.h>
