@@ -3,6 +3,7 @@
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <protobuf/LogFrame.pb.h>
+#include <protobuf/referee.pb.h>
 
 #include <QApplication>
 #include <QFile>
@@ -127,51 +128,29 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
     outRobot << "match_id" << BAR << "timestamp" << BAR << "team" << BAR
              << "shell_id" << BAR << "x_position" << BAR << "y_position" << BAR
              << "angle" << endl;
-    outFrame << "match_id" << BAR << "timestamp" << BAR << "ball_x_position"
-             << BAR << "ball_y_posiiton" << endl;
+    outFrame << "match_id" << BAR << "timestamp" << BAR << "stage" << BAR
+             << "command" << BAR << "ball_x_position" << BAR
+             << "ball_y_posiiton" << endl;
 
     for (int i = 0; i < frames.size(); i++) {
-        const Message* m_logFrame = frames[i].get();
-        const Descriptor* d_logFrame = m_logFrame->GetDescriptor();
-        const Reflection* r_logFrame = m_logFrame->GetReflection();
+        LogFrame* currentFrame = frames[i].get();
 
-        const FieldDescriptor* f_timestamp =
-            d_logFrame->FindFieldByName("timestamp");
-        const uint64 timestamp =
-            r_logFrame->GetUInt64(*m_logFrame, f_timestamp);
+        const uint64 timestamp = currentFrame->timestamp();
 
-        const FieldDescriptor* f_blue_team =
-            d_logFrame->FindFieldByName("blue_team");
-        const bool blue_team = r_logFrame->GetBool(*m_logFrame, f_blue_team);
+        const bool blue_team = currentFrame->blue_team();
         const char* selfTeam = blue_team ? "blue" : "yellow";
         const char* oppTeam = !blue_team ? "blue" : "yellow";
 
-        const FieldDescriptor* f_self = d_logFrame->FindFieldByName("self");
-        const int numSelf = r_logFrame->FieldSize(*m_logFrame, f_self);
-
         // loop over repeated self value
-        for (int i = 0; i < numSelf; i++) {
-            const Message* m_self =
-                &r_logFrame->GetRepeatedMessage(*m_logFrame, f_self, i);
-            const Descriptor* d_self = m_self->GetDescriptor();
-            const Reflection* r_self = m_self->GetReflection();
+        for (int i = 0; i < currentFrame->self_size(); i++) {
+            LogFrame_Robot currentRobot = currentFrame->self(i);
 
-            const FieldDescriptor* f_angle = d_self->FindFieldByName("angle");
-            const float angle = r_self->GetFloat(*m_self, f_angle);
+            const float angle = currentRobot.angle();
+            const int32 shell = currentRobot.shell();
 
-            const FieldDescriptor* f_shell = d_self->FindFieldByName("shell");
-            const int32 shell = r_self->GetInt32(*m_self, f_shell);
-
-            const FieldDescriptor* f_pos = d_self->FindFieldByName("pos");
-            const Message* m_pos = &r_self->GetMessage(*m_self, f_pos);
-            const Descriptor* d_pos = m_pos->GetDescriptor();
-            const Reflection* r_pos = m_pos->GetReflection();
-
-            const FieldDescriptor* f_xPos = d_pos->FindFieldByName("x");
-            const float xPos = r_pos->GetFloat(*m_pos, f_xPos);
-
-            const FieldDescriptor* f_yPos = d_pos->FindFieldByName("y");
-            const float yPos = r_pos->GetFloat(*m_pos, f_yPos);
+            Point position = currentRobot.pos();
+            const float xPos = position.x();
+            const float yPos = position.y();
 
             // Construct a row of data and print to file
             outRobot << matchID << BAR << timestamp << BAR << selfTeam << BAR
@@ -179,31 +158,15 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
                      << endl;
         }
 
-        const FieldDescriptor* f_opp = d_logFrame->FindFieldByName("opp");
-        const int numOpp = r_logFrame->FieldSize(*m_logFrame, f_opp);
+        for (int i = 0; i < currentFrame->opp_size(); i++) {
+            LogFrame_Robot currentRobot = currentFrame->opp(i);
 
-        for (int i = 0; i < numOpp; i++) {
-            const Message* m_opp =
-                &r_logFrame->GetRepeatedMessage(*m_logFrame, f_opp, i);
-            const Descriptor* d_opp = m_opp->GetDescriptor();
-            const Reflection* r_opp = m_opp->GetReflection();
+            const float angle = currentRobot.angle();
+            const int32 shell = currentRobot.shell();
 
-            const FieldDescriptor* f_angle = d_opp->FindFieldByName("angle");
-            const float angle = r_opp->GetFloat(*m_opp, f_angle);
-
-            const FieldDescriptor* f_shell = d_opp->FindFieldByName("shell");
-            const int32 shell = r_opp->GetInt32(*m_opp, f_shell);
-
-            const FieldDescriptor* f_pos = d_opp->FindFieldByName("pos");
-            const Message* m_pos = &r_opp->GetMessage(*m_opp, f_pos);
-            const Descriptor* d_pos = m_pos->GetDescriptor();
-            const Reflection* r_pos = m_pos->GetReflection();
-
-            const FieldDescriptor* f_xPos = d_pos->FindFieldByName("x");
-            const float xPos = r_pos->GetFloat(*m_pos, f_xPos);
-
-            const FieldDescriptor* f_yPos = d_pos->FindFieldByName("y");
-            const float yPos = r_pos->GetFloat(*m_pos, f_yPos);
+            Point position = currentRobot.pos();
+            const float xPos = position.x();
+            const float yPos = position.y();
 
             // Construct a row of data and print to file
             outRobot << matchID << BAR << timestamp << BAR << oppTeam << BAR
@@ -211,24 +174,29 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
                      << endl;
         }
 
-        const FieldDescriptor* f_ball = d_logFrame->FindFieldByName("ball");
-        const Message* m_ball = &r_logFrame->GetMessage(*m_logFrame, f_ball);
-        const Descriptor* d_ball = m_ball->GetDescriptor();
-        const Reflection* r_ball = m_ball->GetReflection();
+        // Get information on the ball
+        LogFrame_Ball ball = currentFrame->ball();
+        Point ballPosition = ball.pos();
 
-        const FieldDescriptor* f_pos = d_ball->FindFieldByName("pos");
-        const Message* m_pos = &r_ball->GetMessage(*m_ball, f_pos);
-        const Descriptor* d_pos = m_pos->GetDescriptor();
-        const Reflection* r_pos = m_pos->GetReflection();
+        const float xBallPos = ballPosition.x();
+        const float yBallPos = ballPosition.y();
 
-        const FieldDescriptor* f_xPos = d_pos->FindFieldByName("x");
-        const float xBallPos = r_pos->GetFloat(*m_pos, f_xPos);
+        // Get Referee data
+        SSL_Referee_Stage stage;
+        SSL_Referee_Command command;
 
-        const FieldDescriptor* f_yPos = d_pos->FindFieldByName("y");
-        const float yBallPos = r_pos->GetFloat(*m_pos, f_yPos);
+        if (currentFrame->raw_referee_size() > 0) {
+            const string raw_referee = currentFrame->raw_referee(0);
 
-        outFrame << matchID << BAR << timestamp << BAR << xBallPos << BAR
-                 << yBallPos << endl;
+            SSL_Referee referee;
+            referee.ParsePartialFromString(raw_referee);
+
+            stage = referee.stage();
+            command = referee.command();
+        }
+
+        outFrame << matchID << BAR << timestamp << BAR << stage << BAR
+                 << command << BAR << xBallPos << BAR << yBallPos << endl;
     }
 
     return true;
