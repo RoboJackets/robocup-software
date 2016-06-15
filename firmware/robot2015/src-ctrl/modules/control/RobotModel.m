@@ -12,8 +12,6 @@ WheelAngles = [
     DegreesToRadians(142)
 ];
 
-circ = 2 * pi * WheelRadius; % wheel circumference
-
 % See this paper for more info on how this matrix is derived:
 % http://people.idsia.ch/~foerster/2006/1/omnidrive_kiart_preprint.pdf
 BotToWheel = [
@@ -21,7 +19,7 @@ BotToWheel = [
     -sin(WheelAngles(2)), cos(WheelAngles(2)), 1;
     -sin(WheelAngles(3)), cos(WheelAngles(3)), 1;
     -sin(WheelAngles(4)), cos(WheelAngles(4)), 1;
-] / circ;
+] / WheelRadius;
 
 WheelToBot = pinv(BotToWheel);
 
@@ -30,5 +28,5 @@ WheelToBot
 BotToWheel
 
 % Example
-targetVel = [1, 1, 0]'
+targetVel = [0, 1, 0]'
 targetWheels = BotToWheel * targetVel
