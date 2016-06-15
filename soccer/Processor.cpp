@@ -720,10 +720,6 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
         translation.rotate(-robot->angle);
-    } else {
-        // adjust for robot coordinate system (x axis points forward through
-        // the mouth of the bot)
-        translation.rotate(-M_PI / 2.0f);
     }
 
     // translation
