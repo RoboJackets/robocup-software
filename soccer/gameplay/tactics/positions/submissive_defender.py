@@ -17,7 +17,9 @@ class SubmissiveDefender(
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         marking = 1
-        # TODO: add clear state to get and kick a free ball
+        clearing = 2
+
+    go_clear=False
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -29,10 +31,68 @@ class SubmissiveDefender(
 
         self.add_state(SubmissiveDefender.State.marking,
                        behavior.Behavior.State.running)
+        self.add_state(SubmissiveDefender.State.clearing,
+                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             SubmissiveDefender.State.marking, lambda: True,
                             "immediately")
+        self.add_transition(SubmissiveDefender.State.marking,
+                            SubmissiveDefender.State.clearing, lambda: self.go_clear,
+                            "when it is safe to clear the ball")
+        self.add_transition(SubmissiveDefender.State.clearing,
+                            SubmissiveDefender.State.marking, lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed,
+                            "done clearing")
+
+    def time_to_ball(self):
+        max_vel=3.5
+        max_accel=1.8
+        delay=.1 #tune this better
+        rpos=self.robot.pos
+        bpos=main.ball().pos
+        dist_to_ball=self.robot.pos.dist_to(main.ball().pos)
+
+        t1=(max_vel-self.robot.vel.mag())/max_accel #time to accelerate to max speed
+        x1=self.robot.vel.mag()*t1 + .5*max_accel*(t1**2) #distance covered while accelerating
+        x2=dist_to_ball-x1 #distance remaining
+        t2=x2/max_vel #time to cover remaining distance
+        #our_time_to_ball=t1+t2+delay TESTING WITHOUT USING ACCELERATION
+        return (dist_to_ball/max_vel) + delay
+
+
+    def should_clear_ball(self,our_time_to_ball):
+        print("start")
+        safe_to_clear=True
+
+        #calculate time for self to reach ball based on reasonable accel/vel/pos data + a slight delay for capture
+        #change this to use the config system when we figure out how to do that
+        max_vel=3.5
+        max_accel=1.8
+        print("Our time", our_time_to_ball)
+
+        min_time=100
+        for robot in main.system_state().their_robots:
+            their_dist_to_ball= robot.pos.dist_to(main.ball().pos)
+            #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
+            if robot.vel.mag()>max_vel:
+                their_max_vel=robot.vel.mag()
+            else:
+                their_max_vel=max_vel
+
+            #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
+            their_time_to_ball=(their_dist_to_ball/max_vel)*.9
+            
+            #debugging
+            if their_time_to_ball<min_time:
+                min_time=their_time_to_ball
+
+            if their_time_to_ball<=our_time_to_ball:
+                safe_to_clear=False
+
+        print("Their time", min_time)
+        return safe_to_clear
+
+
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
@@ -150,6 +210,29 @@ class SubmissiveDefender(
 
     def on_exit_marking(self):
         self.remove_subbehavior('move')
+
+    def on_enter_clearing(self):
+        print("CLEARING BALL")
+        #copied from submissivegoalie
+        kick = skills.pivot_kick.PivotKick()
+
+        kick.aim_params['error_threshold'] = 1.0
+        kick.aim_params['max_steady_ang_vel'] = 12
+
+        # chip
+        kick.chip_power = 1.0
+        kick.use_chipper = True
+
+        kick.target = robocup.Segment(
+            robocup.Point(-constants.Field.Width / 2, constants.Field.Length),
+            robocup.Point(constants.Field.Width / 2, constants.Field.Length))
+
+        self.add_subbehavior(kick, 'kick-clear', required=True)
+
+    def on_exit_clearing(self):
+        print("DONE CLEARING BALL")
+        self.remove_subbehavior('kick-clear')
+        self.go_clear=False
 
     def role_requirements(self):
         reqs = super().role_requirements()
