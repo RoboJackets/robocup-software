@@ -21,8 +21,7 @@ public:
     void frameNumber(int value) { _doubleFrameNumber = value; }
 
     bool exportBSV(char* logFilename, char* bsvFilename);
-    bool launchGUI(const char* logFilename);
-    // This is called when
+    bool prepGUI(const char* logFilename);
     bool readFrames(const char* filename);
 
     std::vector<std::shared_ptr<Packet::LogFrame> > frames;
@@ -63,5 +62,5 @@ private:
     QTreeWidgetItem* _frameNumberItem;
     QTreeWidgetItem* _elapsedTimeItem;
 
-    void generateMatchID(char* id);
+    void generateMatchID(char* id, int length);
 };

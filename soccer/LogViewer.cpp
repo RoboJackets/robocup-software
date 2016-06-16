@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <fcntl.h>
+#include <time.h>
 
 using namespace std;
 using namespace boost;
@@ -17,12 +18,18 @@ using namespace Packet;
 using namespace google::protobuf::io;
 using namespace google::protobuf;
 
+/**
+ * Defines usage information for launching the Log-Viewer application
+ * @param prog The name of the program
+ */
 void usage(const char* prog) {
     fprintf(stderr, "Usage: %s [options] <filename.log>\n", prog);
-    fprintf(stderr,
-            "\t-bsv <Filename.bsv>: Exports the log file to a BSV of the same "
-            "name and Prevents launch of GUI\n");
-    fprintf(stderr, "\t-help:       Displays this help text\n");
+    fprintf(
+        stderr,
+        "\t-bsv: \t<Filename Base>: Exports the log to two files named "
+        "<Filename Base>-robot.bsv and\n\t\t\t<Filename Base>-frame.bsv and "
+        "Prevents launch of GUI\n");
+    fprintf(stderr, "\t-help: \tDisplays this help text\n");
     exit(1);
 }
 
@@ -61,8 +68,8 @@ int main(int argc, char* argv[]) {
             return 0;
         }
     } else {
-        // Views the log in the log_view GUI
-        win.launchGUI(logFilename);
+        // Views the log in the log-viewer GUI
+        win.prepGUI(logFilename);
         return app.exec();
     }
 
@@ -96,7 +103,12 @@ LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
     _updateTimer.start(30);
 }
 
-// Parses log File & exports a BSV file containing the data of the log file
+/**
+ * Parses log File & exports a BSV file containing the data of the log file
+ * @param logFilename The filename of the RoboJackets protobuf log file
+ * @param bsvFilename The base filename that the output filenames will be
+ * generated from
+ */
 bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
     fprintf(stderr, "Exporting BSV file to %s\n", bsvFilename);
 
@@ -117,7 +129,7 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
 
     char matchID[MATCH_ID_LENGTH + 1];
 
-    generateMatchID(matchID);
+    generateMatchID(matchID, MATCH_ID_LENGTH);
 
     fprintf(stderr, "matchID: %s\n", matchID);
 
@@ -198,9 +210,12 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
 
     return true;
 }
-
-// Prepare program for GUI launch
-bool LogViewer::launchGUI(const char* logFilename) {
+/**
+ * Performs the steps required before starting the QT GUI
+ * @param logFilename Filename of a RoboJackets protobuf log file
+ * @return Whether reading the file was successful
+ */
+bool LogViewer::prepGUI(const char* logFilename) {
     frames.clear();
     ui.timeSlider->setMaximum(0);
 
@@ -212,7 +227,12 @@ bool LogViewer::launchGUI(const char* logFilename) {
     return read;
 }
 
-// Read frames of logged data from specified file
+/**
+ * Read frames and parse protobuf from specified file
+ * @param filename Filename of a RoboJackets protobuf log file
+ * @return true If reading and parsing was flawless
+ * @return false If there was any errors or warnings while parsing
+ */
 bool LogViewer::readFrames(const char* filename) {
     QFile file(filename);
 
@@ -296,19 +316,25 @@ void LogViewer::updateViews() {
     ui.fieldView->update();
 }
 
-// Generates random alphanumeric strings
-void LogViewer::generateMatchID(char* id) {
+/**
+ * Generates random alphanumeric strings using PID and time as the random seed.
+ * A Null terminator is added after the ID
+ * @param id A pointer to a character array that can hold at least length + 1
+ * chars
+ * @param length Length of the ID to be generated.
+ */
+void LogViewer::generateMatchID(char* id, int length) {
     string chars(
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
 
     // Avoid using time based srand init
-    srand(getpid());
+    srand(getpid() * time(NULL));
 
-    for (int i = 0; i < MATCH_ID_LENGTH; ++i) {
+    for (int i = 0; i < length; ++i) {
         id[i] = chars[rand() % chars.length()];
     }
 
-    id[MATCH_ID_LENGTH] = '\0';
+    id[length] = '\0';
 }
 
 void LogViewer::on_action0_triggered() { ui.fieldView->rotate(0); }
