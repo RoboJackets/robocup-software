@@ -12,6 +12,8 @@ class OurFreeKick(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=True)
 
+        self.indirect = main.game_state().is_indirect()
+
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
