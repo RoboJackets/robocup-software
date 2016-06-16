@@ -4,7 +4,6 @@
 #include <Eigen/Dense>
 #include <array>
 #include "Geometry2d/Util.hpp"
-#undef M_PI  // FIXME: this is a gross hack
 #include "const-math.hpp"
 
 /// Model parameters for a robot.  Used by the controls system.
