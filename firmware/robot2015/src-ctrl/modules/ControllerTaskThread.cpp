@@ -19,29 +19,8 @@ using namespace std;
 // builds. Hopefully that'll be possible without the console
 static const int CONTROL_LOOP_WAIT_MS = 5;
 
-// Declaration for an alternative control loop thread for when the accel/gyro
-// can't be used for whatever reason
-void Task_Controller_Sensorless(const osThreadId mainThreadId);
-
-namespace {
-// The gyro/accel values are given RPC read/write access here
-float gyroVals[3] = {0};
-float accelVals[3] = {0};
-
-// RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
-// RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
-// RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
-// RPCVariable<float> accelx(&accelVals[0], "accel-x");
-// RPCVariable<float> accely(&accelVals[1], "accel-y");
-// RPCVariable<float> accelz(&accelVals[2], "accel-z");
-
-// Making a temporary variable to test out the writing side of RPC variables
-// int testVar;
-// RPCVariable<int> test_var(&testVar, "var1");
-}
 
 // initialize PID controller
-// TODO: tune pid values
 PidMotionController pidController;
 
 void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel) {
@@ -86,12 +65,6 @@ void Task_Controller(void const* args) {
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
             "sensorless control loop.",
             testResp);
-
-        // Start a thread that can function without the IMU, terminate us if it
-        // ever returns
-        Task_Controller_Sensorless(mainID);
-
-        return;
     }
 
     // signal back to main and wait until we're signaled to continue
@@ -101,12 +74,11 @@ void Task_Controller(void const* args) {
     array<int16_t, 5> duty_cycles;
     duty_cycles.fill(0);
 
-    pidController.setTargetVel({1, 0, 0}); // TODO: rm
-    pidController.setPidValues(0.3, 0, 0.1);
+    pidController.setPidValues(0.9, 0, 0);  // TODO: tune pid values
 
     while (true) {
-        imu.getGyro(gyroVals);
-        imu.getAccelero(accelVals);
+        // imu.getGyro(gyroVals);
+        // imu.getAccelero(accelVals);
 
         // note: the 4th value is not an encoder value.  See the large comment
         // below for an explanation.
@@ -144,54 +116,27 @@ void Task_Controller(void const* args) {
         for (int i = 0; i < 4; i++) driveMotorEnc[i] = enc_deltas[i];
 
         // run PID controller to determine what duty cycles to use to drive the
-        // motor.
+        // motors.
         array<int16_t, 4> driveMotorDutyCycles =
             pidController.run(driveMotorEnc, dt);
         for (int i = 0; i < 4; i++) duty_cycles[i] = driveMotorDutyCycles[i];
 
-
         // limit duty cycle values, while keeping sign (+ or -)
-        for (int i = 0; i < 4; i++) {
-            int16_t dc = duty_cycles[i];
-            // dc *= 7;
+        for (int16_t& dc : duty_cycles) {
             if (std::abs(dc) > FPGA::MAX_DUTY_CYCLE) {
                 dc = copysign(FPGA::MAX_DUTY_CYCLE, dc);
             }
-            duty_cycles[i] = dc;
         }
 
-        // printf("dc[0] = %d\r\n", duty_cycles[0]);
-        printf("duty cycles:\r\n  ");
+#if 0
+        // log duty cycle values
+        printf("duty cycles: ");
         for (int i = 0; i < 4; i++) {
             printf("%d, ", duty_cycles[i]);
         }
         printf("\r\n");
-
-
-        // duty_cycles.fill(0);
+#endif
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
-    }
-}
-
-void Task_Controller_Sensorless(const osThreadId mainID) {
-    // Store the thread's ID
-    osThreadId threadID = Thread::gettid();
-    ASSERT(threadID != nullptr);
-
-    // Store our priority so we know what to reset it to after running a command
-    osPriority threadPriority = osThreadGetPriority(threadID);
-
-    LOG(INIT,
-        "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
-        ((P_TCB)threadID)->task_id, threadPriority);
-
-    // signal back to main and wait until we're signaled to continue
-    osSignalSet(mainID, MAIN_TASK_CONTINUE);
-    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
-
-    while (true) {
-        Thread::wait(CONTROL_LOOP_WAIT_MS);
-        Thread::yield();
     }
 }

@@ -62,7 +62,7 @@ public:
         for (int i = 0; i < 4; i++) {
             int16_t dc =
                 targetWheelVels[i] * RobotModel2015.DutyCycleMultiplier;
-            // dc += _controllers[i].run(wheelVelErr[i]);
+            dc += _controllers[i].run(wheelVelErr[i]);
 
             dutyCycles[i] = dc;
         }
