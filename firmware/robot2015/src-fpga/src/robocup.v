@@ -444,7 +444,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                         spi_slave_res_buf[2*j+2]    <=  enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
                     end
                     // The latched watchdog timer count
-                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1 : (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH + 1)];
+                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1 : (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH )];
                     spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer[1][(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : 0];
                     motor_update_flag <= 1;
                 end
@@ -458,7 +458,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                         spi_slave_res_buf[2*j+2]    <=  enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
                     end
                     // The latched watchdog timer count
-                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH + 1)];
+                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH )];
                     spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer[1][(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : 0];
                 end
 
