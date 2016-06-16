@@ -187,6 +187,8 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
 
             stage = referee.stage();
             command = referee.command();
+        } else {
+            fprintf(stderr, "No Ref Data\n");
         }
 
         outFrame << matchID << BAR << timestamp << BAR << stage << BAR
