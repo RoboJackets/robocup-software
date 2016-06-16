@@ -165,9 +165,6 @@ void NewRefereeModule::run() {
         _mutex.lock();
         _packets.push_back(packet);
 
-        // SSL_Referee* ref = _state.logFrame->add_raw_refbox();
-        // ref->CopyFrom(packet->wrapper);
-
         stage = (Stage)packet->wrapper.stage();
         command = (Command)packet->wrapper.command();
         sent_time = packet->wrapper.packet_timestamp();
