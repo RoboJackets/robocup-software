@@ -183,10 +183,7 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
         SSL_Referee_Command command;
 
         if (currentFrame->raw_referee_size() > 0) {
-            const string raw_referee = currentFrame->raw_referee(0);
-
-            SSL_Referee referee;
-            referee.ParsePartialFromString(raw_referee);
+            SSL_Referee referee = currentFrame->raw_refbox(0);
 
             stage = referee.stage();
             command = referee.command();
