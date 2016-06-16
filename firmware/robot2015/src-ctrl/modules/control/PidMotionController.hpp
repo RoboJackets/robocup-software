@@ -39,24 +39,17 @@ public:
                                float dt) {
         // convert encoder ticks to rad/s
         Eigen::Vector4f wheelVels;
-        wheelVels << encoderDeltas[0], encoderDeltas[1], encoderDeltas[2],
+        wheelVels <<
+            encoderDeltas[0],
+            encoderDeltas[1],
+            encoderDeltas[2],
             encoderDeltas[3];
         wheelVels *= 2 * M_PI / ENC_TICKS_PER_TURN / dt;
 
         Eigen::Vector4f targetWheelVels =
             RobotModel2015.BotToWheel * _targetVel;
 
-        // printf("wheelVels[0] = %f\r\n", wheelVels[0]);
-
-        // printf("targetWheelVels: %f, %f, %f, %f\r\n", targetWheelVels[0], targetWheelVels[1], targetWheelVels[2], targetWheelVels[3]);
-
         Eigen::Vector4f wheelVelErr = targetWheelVels - wheelVels;
-
-        // printf("wheelVelErr:\r\n  ");
-        // for (int i = 0; i < 4; i++) {
-        //     printf("%f, ", wheelVelErr[i]);
-        // }
-        // printf("\r\n");
 
         std::array<int16_t, 4> dutyCycles;
         for (int i = 0; i < 4; i++) {
@@ -67,7 +60,17 @@ public:
             dutyCycles[i] = dc;
         }
 
-        // printf("pid.run(), target.x = %f\r\n", _targetVel[0]);
+        // enable these printouts to get a python-formatted data set than can be
+        // graphed to visualize pid control and debug problems
+#if 0
+        printf("{\r\n");
+        printf("'encDelt': [%d, %d, %d, %d],\r\n", encoderDeltas[0], encoderDeltas[1], encoderDeltas[2], encoderDeltas[3]);
+        printf("'dt': %f,\r\n", dt);
+        printf("'wheelVels': [%f, %f, %f, %f],\r\n", wheelVels[0], wheelVels[1], wheelVels[2], wheelVels[3]);
+        printf("'targetWheelVels': [%f, %f, %f, %f],\r\n", targetWheelVels[0], targetWheelVels[1], targetWheelVels[2], targetWheelVels[3]);
+        printf("'duty': [%d, %d, %d, %d],\r\n", dutyCycles[0], dutyCycles[1], dutyCycles[2], dutyCycles[3]);
+        printf("},\r\n");
+#endif
 
         return dutyCycles;
     }
