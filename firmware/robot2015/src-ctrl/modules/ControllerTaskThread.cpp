@@ -74,7 +74,7 @@ void Task_Controller(void const* args) {
     array<int16_t, 5> duty_cycles;
     duty_cycles.fill(0);
 
-    pidController.setPidValues(0.9, 0, 0);  // TODO: tune pid values
+    pidController.setPidValues(0.75, 0.2, 0);  // TODO: tune pid values
 
     while (true) {
         // imu.getGyro(gyroVals);
