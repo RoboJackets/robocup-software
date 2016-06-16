@@ -71,6 +71,19 @@ class Defense(composite_behavior.CompositeBehavior):
             # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
             # TODO: move a lot of this code into modules in the evaluation folder
+        defender1 = self.subbehavior_with_name('defender1')
+        defender2 = self.subbehavior_with_name('defender2')
+        close_defender=defender1
+
+        if(defender1!=None and defender2!= None):
+            if(defender1.robot!=None and defender2.robot!=None):
+                if(not defender1.go_clear and not defender2.go_clear):
+                    if(defender1.time_to_ball()>defender2.time_to_ball()):
+                        close_defender=defender2
+                    if close_defender.should_clear_ball(close_defender.time_to_ball()):
+                        close_defender.go_clear=True
+
+
     def recalculate(self):
         goalie = self.subbehavior_with_name('goalie')
         defender1 = self.subbehavior_with_name('defender1')
