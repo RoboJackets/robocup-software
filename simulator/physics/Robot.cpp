@@ -209,7 +209,7 @@ void Robot::position(float x, float y) {
 }
 
 void Robot::velocity(float x, float y, float w) {
-    _targetVel = btVector3(y, 0, x) * scaling;
+    _targetVel = btVector3(-x, 0, y) * scaling;
     _targetRot = w;
 }
 
