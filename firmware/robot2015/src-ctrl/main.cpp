@@ -97,8 +97,7 @@ int main() {
 
     // Start a periodic blinking LED to show system activity
     // This is set to never timeout, so it will only stop if the system halts
-    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
-                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
+    FlashingTimeoutLED liveLight(LED1, 500, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
