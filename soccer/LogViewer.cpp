@@ -194,18 +194,23 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
         SSL_Referee_Stage stage;
         SSL_Referee_Command command;
 
-        if (currentFrame->raw_referee_size() > 0) {
-            const string raw_referee = currentFrame->raw_referee(0);
 
-            SSL_Referee referee;
-            referee.ParsePartialFromString(raw_referee);
+        if (currentFrame->raw_refbox_size() > 0) {
+            fprintf(stderr, "Ref Data Read\n");
+            SSL_Referee referee = currentFrame->raw_refbox(0);
 
             stage = referee.stage();
             command = referee.command();
+
+            blueScore = referee.blue().score();
+            yellowScore = referee.yellow().score();
+
+            blueGoalie = referee.blue().goalie();
+            yellowGoalie = referee.yellow().goalie();
         }
 
-        outFrame << matchID << BAR << timestamp << BAR << stage << BAR
-                 << command << BAR << xBallPos << BAR << yBallPos << endl;
+        outFrame << matchID << BAR << timestamp << BAR << xBallPos << BAR << yBallPos << BAR BAR << stage << BAR
+                 << command << BAR BAR << yellowScore << BAR << blueScore << BAR BAR << yellowGoalie << BAR << blueGoalie << endl;
     }
 
     return true;
