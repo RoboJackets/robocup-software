@@ -155,6 +155,8 @@ int main() {
                                 MCP23017::DIR_INPUT),
          IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
                                 MCP23017::DIR_INPUT)});
+    // this value is continuously updated in the main loop
+    uint8_t robotShellID = rotarySelector.read();
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -185,13 +187,12 @@ int main() {
     uint8_t battVoltage = 0;
 
     // Setup radio protocol handling
-    const uint8_t robotID = 2;  // TODO: remove
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
-    radioProtocol.setUID(robotID);
+    radioProtocol.setUID(robotShellID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         rtp::RobotStatusMessage reply;
-        reply.uid = robotID;
+        reply.uid = robotShellID;
         reply.battVoltage = battVoltage;
         reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
@@ -262,6 +263,10 @@ int main() {
 
         // get the battery voltage
         battVoltage = (batt.read_u16() >> 8);
+
+        // update shell id
+        robotShellID = rotarySelector.read();
+        radioProtocol.setUID(robotShellID);
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
