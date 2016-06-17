@@ -21,18 +21,36 @@ import role_assignment
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
 
+    class State(Enum):
+        ## gets between a particular opponent and the goal.  stays closer to the goal
+        defending = 1
+        clearing = 2
+
+    go_clear=False
+
     # defender_priorities should have a length of two and contains the priorities for the two defender
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
-
+ 
         # we could make the Defense tactic have more or less defenders, but right now we only support two
         if len(defender_priorities) != 2:
             raise RuntimeError(
                 "defender_priorities should have a length of two")
 
+        self.add_state(Defense.State.defending,
+                       behavior.Behavior.State.running)
+        self.add_state(Defense.State.clearing,
+                        behavior.Behavior.State.running)
+
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running, lambda: True,
+                            Defense.State.defending, lambda: True,
                             "immediately")
+        self.add_transition(Defense.State.defending,
+                            Defense.State.clearing, lambda: self.go_clear,
+                            "when it is safe to clear the ball")
+        self.add_transition(Defense.State.clearing,
+                            Defense.State.defending, lambda: not self.go_clear,
+                            "done clearing")
 
         goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -61,7 +79,7 @@ class Defense(composite_behavior.CompositeBehavior):
     def debug(self, value):
         self._debug = value
 
-    def execute_running(self):
+    def execute_defending(self):
         self.recalculate()
 
         goalie = self.subbehavior_with_name("goalie")
@@ -75,13 +93,26 @@ class Defense(composite_behavior.CompositeBehavior):
         defender2 = self.subbehavior_with_name('defender2')
         close_defender=defender1
 
+        main.system_state().draw_circle(robocup.Point(0,0), constants.Field.ArcRadius*2, constants.Colors.Red,"Clear Ball")
+        if(main.ball().pos.mag()<constants.Field.ArcRadius*2):
+            if(defender1!=None and defender2!= None):
+                if(defender1.robot!=None and defender2.robot!=None):
+                    if(not defender1.go_clear and not defender2.go_clear):
+                        if(defender1.time_to_ball()>defender2.time_to_ball()): #removing this technically makes things work
+                            close_defender=defender2
+                        if close_defender.should_clear_ball(close_defender.time_to_ball()):
+                            close_defender.go_clear=True
+                            self.go_clear=True
+        
+    def execute_clearing(self):
+        defender1 = self.subbehavior_with_name('defender1')
+        defender2 = self.subbehavior_with_name('defender2')
         if(defender1!=None and defender2!= None):
-            if(defender1.robot!=None and defender2.robot!=None):
-                if(not defender1.go_clear and not defender2.go_clear):
-                    if(defender1.time_to_ball()>defender2.time_to_ball()):
-                        close_defender=defender2
-                    if close_defender.should_clear_ball(close_defender.time_to_ball()):
-                        close_defender.go_clear=True
+                if(defender1.robot!=None and defender2.robot!=None):
+                    if(not defender1.go_clear and not defender2.go_clear):
+                        self.go_clear=False
+
+        main.system_state().draw_circle(robocup.Point(0,0), constants.Field.ArcRadius*2, constants.Colors.Red,"Clear Ball")
 
 
     def recalculate(self):

@@ -61,14 +61,14 @@ class SubmissiveDefender(
 
 
     def should_clear_ball(self,our_time_to_ball):
-        print("start")
+        #print("start")
         safe_to_clear=True
 
         #calculate time for self to reach ball based on reasonable accel/vel/pos data + a slight delay for capture
         #change this to use the config system when we figure out how to do that
         max_vel=3.5
         max_accel=1.8
-        print("Our time", our_time_to_ball)
+        #print("Our time", our_time_to_ball)
 
         min_time=100
         for robot in main.system_state().their_robots:
@@ -89,7 +89,7 @@ class SubmissiveDefender(
             if their_time_to_ball<=our_time_to_ball:
                 safe_to_clear=False
 
-        print("Their time", min_time)
+        #print("Their time", min_time)
         return safe_to_clear
 
 
