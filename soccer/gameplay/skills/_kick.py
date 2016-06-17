@@ -173,3 +173,9 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         self.add_shot_obstacle(self.shot_obstacle_ignoring_robots)
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        reqs.PositionCostMultiplier=5
+
+        return reqs
