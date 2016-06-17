@@ -172,5 +172,6 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             if self.use_chipper:
                 r.chipper_preference_weight = role_assignment.PreferChipper
             r.require_kicking = True
+            r.PositionCostMultiplier = 1.5
 
         return reqs

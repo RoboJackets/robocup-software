@@ -13,13 +13,13 @@ import planning_priority
 # The regular defender does a lot of calculations and figures out where it should be
 # This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
 class SubmissiveDefender(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
+    single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         marking = 1
         clearing = 2
 
-    go_clear=False
+    go_clear = False
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -32,61 +32,55 @@ class SubmissiveDefender(
         self.add_state(SubmissiveDefender.State.marking,
                        behavior.Behavior.State.running)
         self.add_state(SubmissiveDefender.State.clearing,
-                        behavior.Behavior.State.running)
+                       behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             SubmissiveDefender.State.marking, lambda: True,
                             "immediately")
         self.add_transition(SubmissiveDefender.State.marking,
-                            SubmissiveDefender.State.clearing, lambda: self.go_clear,
+                            SubmissiveDefender.State.clearing,
+                            lambda: self.go_clear,
                             "when it is safe to clear the ball")
-        self.add_transition(SubmissiveDefender.State.clearing,
-                            SubmissiveDefender.State.marking, lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed,
-                            "done clearing")
+        self.add_transition(
+            SubmissiveDefender.State.clearing,
+            SubmissiveDefender.State.marking,
+            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.should_clear_ball(self.time_to_ball()),
+            "done clearing")
 
     def time_to_ball(self):
-        max_vel=3.5
-        max_accel=1.8
-        delay=.1 #tune this better
-        rpos=self.robot.pos
-        bpos=main.ball().pos
-        dist_to_ball=self.robot.pos.dist_to(main.ball().pos)
-        return (dist_to_ball/max_vel) + delay
+        max_vel = 3.5
+        max_accel = 1.8
+        delay = .1  #tune this better
+        rpos = self.robot.pos
+        bpos = main.ball().pos
+        #calculate time for self to reach ball using max_vel + a slight delay for capture
+        dist_to_ball = self.robot.pos.dist_to(main.ball().pos)
+        return (dist_to_ball / max_vel) + delay
 
+    def should_clear_ball(self, our_time_to_ball):
+        if main.ball().pos.mag() < constants.Field.ArcRadius * 2:
+            safe_to_clear = True
+            #change this to use the config system when we figure out how to do that
+            max_vel = 3.5
+            max_accel = 1.8
 
-    def should_clear_ball(self,our_time_to_ball):
-        #print("start")
-        safe_to_clear=True
+            for robot in main.system_state().their_robots:
+                their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
+                #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
+                if robot.vel.mag() > max_vel:
+                    their_max_vel = robot.vel.mag()
+                else:
+                    their_max_vel = max_vel
 
-        #calculate time for self to reach ball based on reasonable accel/vel/pos data + a slight delay for capture
-        #change this to use the config system when we figure out how to do that
-        max_vel=3.5
-        max_accel=1.8
-        #print("Our time", our_time_to_ball)
+                #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
+                their_time_to_ball = (their_dist_to_ball / max_vel) * .9
 
-        min_time=100
-        for robot in main.system_state().their_robots:
-            their_dist_to_ball= robot.pos.dist_to(main.ball().pos)
-            #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
-            if robot.vel.mag()>max_vel:
-                their_max_vel=robot.vel.mag()
-            else:
-                their_max_vel=max_vel
+                if their_time_to_ball <= our_time_to_ball:
+                    safe_to_clear = False
+        else:
+            safe_to_clear = False
 
-            #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
-            their_time_to_ball=(their_dist_to_ball/max_vel)*.9
-            
-            #debugging
-            if their_time_to_ball<min_time:
-                min_time=their_time_to_ball
-
-            if their_time_to_ball<=our_time_to_ball:
-                safe_to_clear=False
-
-        #print("Their time", min_time)
         return safe_to_clear
-
-
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
@@ -226,7 +220,7 @@ class SubmissiveDefender(
     def on_exit_clearing(self):
         print("DONE CLEARING BALL")
         self.remove_subbehavior('kick-clear')
-        self.go_clear=False
+        self.go_clear = False
 
     def role_requirements(self):
         reqs = super().role_requirements()

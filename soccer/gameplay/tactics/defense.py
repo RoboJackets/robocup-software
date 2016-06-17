@@ -20,18 +20,17 @@ import role_assignment
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
-
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         defending = 1
         clearing = 2
 
-    go_clear=False
+    go_clear = False
 
     # defender_priorities should have a length of two and contains the priorities for the two defender
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
- 
+
         # we could make the Defense tactic have more or less defenders, but right now we only support two
         if len(defender_priorities) != 2:
             raise RuntimeError(
@@ -39,18 +38,16 @@ class Defense(composite_behavior.CompositeBehavior):
 
         self.add_state(Defense.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(Defense.State.clearing,
-                        behavior.Behavior.State.running)
+        self.add_state(Defense.State.clearing, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             Defense.State.defending, lambda: True,
                             "immediately")
-        self.add_transition(Defense.State.defending,
-                            Defense.State.clearing, lambda: self.go_clear,
+        self.add_transition(Defense.State.defending, Defense.State.clearing,
+                            lambda: self.go_clear,
                             "when it is safe to clear the ball")
-        self.add_transition(Defense.State.clearing,
-                            Defense.State.defending, lambda: not self.go_clear,
-                            "done clearing")
+        self.add_transition(Defense.State.clearing, Defense.State.defending,
+                            lambda: not self.go_clear, "done clearing")
 
         goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -80,19 +77,20 @@ class Defense(composite_behavior.CompositeBehavior):
         self._debug = value
 
     def execute_defending(self):
-        
+
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
-        close_defender=defender1
-        if(main.ball().pos.mag()<constants.Field.ArcRadius*2):
-            if(defender1!=None and defender2!= None):
-                if(defender1.robot!=None and defender2.robot!=None):
-                    if(not defender1.go_clear and not defender2.go_clear):
+        close_defender = defender1
+        if (main.ball().pos.mag() < constants.Field.ArcRadius * 2):
+            if (defender1 != None and defender2 != None):
+                if (defender1.robot != None and defender2.robot != None):
+                    if (not defender1.go_clear and not defender2.go_clear):
                         #if(defender1.time_to_ball()>defender2.time_to_ball()): #removing this technically makes things work
-                            #close_defender=defender2
-                        if close_defender.should_clear_ball(close_defender.time_to_ball()):
-                            close_defender.go_clear=True
-                            self.go_clear=True
+                        #close_defender=defender2
+                        if close_defender.should_clear_ball(
+                                close_defender.time_to_ball()):
+                            close_defender.go_clear = True
+                            self.go_clear = True
         self.recalculate()
 
         goalie = self.subbehavior_with_name("goalie")
@@ -103,19 +101,21 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # TODO: move a lot of this code into modules in the evaluation folder
 
+        main.system_state().draw_circle(
+            robocup.Point(0, 0), constants.Field.ArcRadius * 2,
+            constants.Colors.Red, "Clear Ball")
 
-        main.system_state().draw_circle(robocup.Point(0,0), constants.Field.ArcRadius*2, constants.Colors.Red,"Clear Ball")
-        
     def execute_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
-        if(defender1!=None and defender2!= None):
-                if(defender1.robot!=None and defender2.robot!=None):
-                    if(not defender1.go_clear and not defender2.go_clear):
-                        self.go_clear=False
+        if (defender1 != None and defender2 != None):
+            if (defender1.robot != None and defender2.robot != None):
+                if (not defender1.go_clear and not defender2.go_clear):
+                    self.go_clear = False
 
-        main.system_state().draw_circle(robocup.Point(0,0), constants.Field.ArcRadius*2, constants.Colors.Red,"Clear Ball")
-
+        main.system_state().draw_circle(
+            robocup.Point(0, 0), constants.Field.ArcRadius * 2,
+            constants.Colors.Red, "Clear Ball")
 
     def recalculate(self):
         goalie = self.subbehavior_with_name('goalie')
@@ -234,8 +234,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(
-                threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
+            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
                                                         1) * spacing
             start_vec = center_line.delta().normalized()
@@ -499,7 +498,7 @@ class Defense(composite_behavior.CompositeBehavior):
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
-                        subbehavior_req_tree):
+                    subbehavior_req_tree):
                     r.previous_shell_id = None
 
         return reqs
