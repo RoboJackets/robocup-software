@@ -17,7 +17,7 @@ class RoleRequirements:
         self.required = False
         self.priority = 0
         self.require_kicking = False
-        
+
         # multiply this by the distance between two points to get the cost
         self.PositionCostMultiplier = 1.0
 
@@ -54,10 +54,10 @@ class RoleRequirements:
     @property
     def PositionCostMultiplier(self):
         return self._PositionCostMultiplier
-    
+
     @PositionCostMultiplier.setter
     def PositionCostMultiplier(self, value):
-        self._PositionCostMultiplier=value
+        self._PositionCostMultiplier = value
 
     @property
     def has_ball(self):
@@ -245,8 +245,6 @@ def assign_roles(robots, role_reqs):
                 if req.destination_shape != None:
                     cost += req.PositionCostMultiplier * req.destination_shape.dist_to(
                         robot.pos)
-                    if req.PositionCostMultiplier>1:
-                        print(req.PositionCostMultiplier)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id(
                 ):
                     cost += RobotChangeCost
