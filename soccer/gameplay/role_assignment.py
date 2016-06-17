@@ -19,7 +19,7 @@ class RoleRequirements:
         self.require_kicking = False
 
         # multiply this by the distance between two points to get the cost
-        self.PositionCostMultiplier = 1.0
+        self.position_cost_multiplier = 1.0
 
     def __str__(self):
         props = []
@@ -52,12 +52,12 @@ class RoleRequirements:
         self._destination_shape = value
 
     @property
-    def PositionCostMultiplier(self):
-        return self._PositionCostMultiplier
+    def position_cost_multiplier(self):
+        return self._position_cost_multiplier
 
-    @PositionCostMultiplier.setter
-    def PositionCostMultiplier(self, value):
-        self._PositionCostMultiplier = value
+    @position_cost_multiplier.setter
+    def position_cost_multiplier(self, value):
+        self._position_cost_multiplier = value
 
     @property
     def has_ball(self):
@@ -243,7 +243,7 @@ def assign_roles(robots, role_reqs):
                 cost = MaxWeight
             else:
                 if req.destination_shape != None:
-                    cost += req.PositionCostMultiplier * req.destination_shape.dist_to(
+                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(
                         robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id(
                 ):

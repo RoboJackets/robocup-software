@@ -7,6 +7,7 @@ import main
 from enum import Enum
 import math
 import planning_priority
+import evaluation
 
 
 ## Defender behavior meant to be coordinated in a defense tactic
@@ -41,23 +42,11 @@ class SubmissiveDefender(
                             SubmissiveDefender.State.clearing,
                             lambda: self.go_clear,
                             "when it is safe to clear the ball")
-        self.add_transition(
-            SubmissiveDefender.State.clearing,
-            SubmissiveDefender.State.marking,
-            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.should_clear_ball(self.time_to_ball()),
-            "done clearing")
+        self.add_transition(SubmissiveDefender.State.clearing,SubmissiveDefender.State.marking,lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.should_clear_ball(evaluation.ball.time_to_ball(self.robot)),"done clearing")
 
-    def time_to_ball(self):
-        max_vel = 3.5
-        max_accel = 1.8
-        delay = .1  #tune this better
-        rpos = self.robot.pos
-        bpos = main.ball().pos
-        #calculate time for self to reach ball using max_vel + a slight delay for capture
-        dist_to_ball = self.robot.pos.dist_to(main.ball().pos)
-        return (dist_to_ball / max_vel) + delay
 
     def should_clear_ball(self, our_time_to_ball):
+        #Returns true if our robot can reach the ball sooner than the closest opponent
         if main.ball().pos.mag() < constants.Field.ArcRadius * 2:
             safe_to_clear = True
             #change this to use the config system when we figure out how to do that
@@ -67,13 +56,10 @@ class SubmissiveDefender(
             for robot in main.system_state().their_robots:
                 their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
                 #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
-                if robot.vel.mag() > max_vel:
-                    their_max_vel = robot.vel.mag()
-                else:
-                    their_max_vel = max_vel
+                their_max_vel=max(max_vel,robot.vel.mag());
 
                 #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
-                their_time_to_ball = (their_dist_to_ball / max_vel) * .9
+                their_time_to_ball = (their_dist_to_ball / their_max_vel) * .9
 
                 if their_time_to_ball <= our_time_to_ball:
                     safe_to_clear = False
@@ -200,7 +186,6 @@ class SubmissiveDefender(
         self.remove_subbehavior('move')
 
     def on_enter_clearing(self):
-        print("CLEARING BALL")
         #copied from submissivegoalie
         kick = skills.pivot_kick.PivotKick()
 
@@ -212,13 +197,12 @@ class SubmissiveDefender(
         kick.use_chipper = True
 
         kick.target = robocup.Segment(
-            robocup.Point(-constants.Field.Width / 2, constants.Field.Length),
-            robocup.Point(constants.Field.Width / 2, constants.Field.Length))
+            robocup.Point(-constants.Field.Width / 4, constants.Field.Length),
+            robocup.Point(constants.Field.Width / 4, constants.Field.Length))
 
-        self.add_subbehavior(kick, 'kick-clear', required=True)
+        self.add_subbehavior(kick, 'kick-clear', required=False)
 
     def on_exit_clearing(self):
-        print("DONE CLEARING BALL")
         self.remove_subbehavior('kick-clear')
         self.go_clear = False
 
