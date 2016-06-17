@@ -182,7 +182,7 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
         SSL_Referee_Stage stage;
         SSL_Referee_Command command;
 
-        if (currentFrame->raw_referee_size() > 0) {
+        if (currentFrame->raw_refbox_size() > 0) {
             SSL_Referee referee = currentFrame->raw_refbox(0);
 
             stage = referee.stage();
