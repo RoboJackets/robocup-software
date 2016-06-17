@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
 
-        if (strcmp(var, "-bsv") == 0) {
+        if (strcmp(var, "-bsv") == 0 && (i + 1 < argc)) {
             bsv = true;
             ++i;
             bsvFilename = argv[i];
