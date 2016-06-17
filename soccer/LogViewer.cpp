@@ -1,4 +1,5 @@
 #include <LogViewer.hpp>
+#include <NewRefereeModule.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <protobuf/LogFrame.pb.h>
@@ -11,6 +12,8 @@
 #include <algorithm>
 #include <fcntl.h>
 #include <time.h>
+
+#include <iostream>
 
 using namespace std;
 using namespace boost;
@@ -190,16 +193,21 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
         const float xBallPos = ballPosition.x();
         const float yBallPos = ballPosition.y();
 
-        // Get Referee data
-        SSL_Referee_Stage stage;
-        SSL_Referee_Command command;
+        string stage;
+        string command;
 
+        int blueScore;
+        int yellowScore;
+
+        int blueGoalie;
+        int yellowGoalie;
 
         if (currentFrame->raw_refbox_size() > 0) {
             SSL_Referee referee = currentFrame->raw_refbox(0);
 
-            stage = referee.stage();
-            command = referee.command();
+            using namespace NewRefereeModuleEnums;
+            stage = stringFromStage((Stage)referee.stage());
+            command = stringFromCommand((Command)referee.command());
 
             blueScore = referee.blue().score();
             yellowScore = referee.yellow().score();
@@ -208,8 +216,10 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
             yellowGoalie = referee.yellow().goalie();
         }
 
-        outFrame << matchID << BAR << timestamp << BAR << xBallPos << BAR << yBallPos << BAR BAR << stage << BAR
-                 << command << BAR BAR << yellowScore << BAR << blueScore << BAR BAR << yellowGoalie << BAR << blueGoalie << endl;
+        outFrame << matchID << BAR << timestamp << BAR << xBallPos << BAR
+                 << yBallPos << BAR << stage.c_str() << BAR << command.c_str()
+                 << BAR << yellowScore << BAR << blueScore << BAR
+                 << yellowGoalie << BAR << blueGoalie << endl;
     }
 
     return true;
