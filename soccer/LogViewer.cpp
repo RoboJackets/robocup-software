@@ -140,9 +140,10 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
     outRobot << "match_id" << BAR << "timestamp" << BAR << "team" << BAR
              << "shell_id" << BAR << "x_position" << BAR << "y_position" << BAR
              << "angle" << endl;
-    outFrame << "match_id" << BAR << "timestamp" << BAR << "stage" << BAR
-             << "command" << BAR << "ball_x_position" << BAR
-             << "ball_y_posiiton" << endl;
+    outFrame << "match_id" << BAR << "timestamp" << BAR << "ball_x_position"
+             << BAR << "ball_y_position" << BAR << "stage" << BAR << "command"
+             << BAR << "yellow_score" << BAR << "blue_score" << BAR
+             << "yellow_goalie" << BAR << "blue_goalie" << endl;
 
     for (int i = 0; i < frames.size(); i++) {
         LogFrame* currentFrame = frames[i].get();
@@ -216,10 +217,13 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
             yellowGoalie = referee.yellow().goalie();
         }
 
+        const char* c_stage = stage.c_str();
+        const char* c_command = command.c_str();
+
         outFrame << matchID << BAR << timestamp << BAR << xBallPos << BAR
-                 << yBallPos << BAR << stage.c_str() << BAR << command.c_str()
-                 << BAR << yellowScore << BAR << blueScore << BAR
-                 << yellowGoalie << BAR << blueGoalie << endl;
+                 << yBallPos << BAR << c_stage << BAR << c_command << BAR
+                 << yellowScore << BAR << blueScore << BAR << yellowGoalie
+                 << BAR << blueGoalie << endl;
     }
 
     return true;
