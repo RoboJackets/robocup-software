@@ -1,5 +1,6 @@
 package Packet;
 
+import "referee.proto";
 import "Point.proto";
 import "messages_robocup_ssl_wrapper.proto";
 import "RadioTx.proto";
@@ -88,8 +89,11 @@ message LogFrame
 	
 	// Network packets received since the last iteration
 	repeated SSL_WrapperPacket raw_vision = 1;
-	repeated bytes raw_referee = 2;
+	repeated SSL_Referee raw_refbox = 27;
 	repeated RadioRx radio_rx = 3;
+
+	// Deprecated field kept for compatability with old logs
+	repeated bytes raw_referee = 2;
 
 	// Which team are we playing as?
 	optional bool blue_team = 4;

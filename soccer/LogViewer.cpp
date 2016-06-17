@@ -1,37 +1,72 @@
 #include <LogViewer.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <protobuf/LogFrame.pb.h>
+#include <protobuf/referee.pb.h>
 
 #include <QApplication>
 #include <QFile>
+#include <QTextStream>
 
 #include <algorithm>
 #include <fcntl.h>
-#include <stdio.h>
 
 using namespace std;
 using namespace boost;
 using namespace Packet;
 using namespace google::protobuf::io;
+using namespace google::protobuf;
 
 void usage(const char* prog) {
-    fprintf(stderr, "Usage: %s <filename.log>\n", prog);
+    fprintf(stderr, "Usage: %s [options] <filename.log>\n", prog);
+    fprintf(stderr,
+            "\t-bsv <Filename.bsv>: Exports the log file to a BSV of the same "
+            "name and Prevents launch of GUI\n");
+    fprintf(stderr, "\t-help:       Displays this help text\n");
     exit(1);
 }
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
-    if (argc != 2) {
+    bool bsv = false;
+    char* bsvFilename;
+    char* logFilename;
+
+    // initial check for number of args
+    if (argc < 2 || argc > 4) {
         usage(argv[0]);
+    }
+
+    // Process args
+    for (int i = 1; i < argc; ++i) {
+        const char* var = argv[i];
+
+        if (strcmp(var, "-bsv") == 0) {
+            bsv = true;
+            ++i;
+            bsvFilename = argv[i];
+        } else if (strcmp(var, "-help") == 0) {
+            usage(argv[0]);
+        } else {
+            logFilename = argv[i];
+        }
     }
 
     LogViewer win;
 
-    win.readFrames(argv[1]);
-    win.showMaximized();
+    if (bsv) {
+        // Export BSV. Runs log_viewer in headless mode
+        if (win.exportBSV(logFilename, bsvFilename) == false) {
+            return 0;
+        }
+    } else {
+        // Views the log in the log_view GUI
+        win.launchGUI(logFilename);
+        return app.exec();
+    }
 
-    return app.exec();
+    return 1;
 }
 
 LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
@@ -61,11 +96,125 @@ LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
     _updateTimer.start(30);
 }
 
-bool LogViewer::readFrames(const char* filename) {
+// Parses log File & exports a BSV file containing the data of the log file
+bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
+    fprintf(stderr, "Exporting BSV file to %s\n", bsvFilename);
+
+    string bsvBase(bsvFilename);
+
+    string robotFilename = bsvBase + "-robot.bsv";
+    QFile fileRobot(robotFilename.c_str());
+    if (!fileRobot.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+    QTextStream outRobot(&fileRobot);
+
+    string frameFilename = bsvBase + "-frame.bsv";
+    QFile fileFrame(frameFilename.c_str());
+    if (!fileFrame.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+    QTextStream outFrame(&fileFrame);
+
+    // Read in data from log file
+    this->readFrames(logFilename);
+
+    char matchID[MATCH_ID_LENGTH + 1];
+
+    generateMatchID(matchID);
+
+    fprintf(stderr, "matchID: %s\n", matchID);
+
+    // Print Headers
+    outRobot << "match_id" << BAR << "timestamp" << BAR << "team" << BAR
+             << "shell_id" << BAR << "x_position" << BAR << "y_position" << BAR
+             << "angle" << endl;
+    outFrame << "match_id" << BAR << "timestamp" << BAR << "stage" << BAR
+             << "command" << BAR << "ball_x_position" << BAR
+             << "ball_y_posiiton" << endl;
+
+    for (int i = 0; i < frames.size(); i++) {
+        LogFrame* currentFrame = frames[i].get();
+
+        const uint64 timestamp = currentFrame->timestamp();
+
+        const bool blue_team = currentFrame->blue_team();
+        const char* selfTeam = blue_team ? "blue" : "yellow";
+        const char* oppTeam = !blue_team ? "blue" : "yellow";
+
+        // loop over repeated self value
+        for (int i = 0; i < currentFrame->self_size(); i++) {
+            LogFrame_Robot currentRobot = currentFrame->self(i);
+
+            const float angle = currentRobot.angle();
+            const int32 shell = currentRobot.shell();
+
+            Point position = currentRobot.pos();
+            const float xPos = position.x();
+            const float yPos = position.y();
+
+            // Construct a row of data and print to file
+            outRobot << matchID << BAR << timestamp << BAR << selfTeam << BAR
+                     << shell << BAR << xPos << BAR << yPos << BAR << angle
+                     << endl;
+        }
+
+        for (int i = 0; i < currentFrame->opp_size(); i++) {
+            LogFrame_Robot currentRobot = currentFrame->opp(i);
+
+            const float angle = currentRobot.angle();
+            const int32 shell = currentRobot.shell();
+
+            Point position = currentRobot.pos();
+            const float xPos = position.x();
+            const float yPos = position.y();
+
+            // Construct a row of data and print to file
+            outRobot << matchID << BAR << timestamp << BAR << oppTeam << BAR
+                     << shell << BAR << xPos << BAR << yPos << BAR << angle
+                     << endl;
+        }
+
+        // Get information on the ball
+        LogFrame_Ball ball = currentFrame->ball();
+        Point ballPosition = ball.pos();
+
+        const float xBallPos = ballPosition.x();
+        const float yBallPos = ballPosition.y();
+
+        // Get Referee data
+        SSL_Referee_Stage stage;
+        SSL_Referee_Command command;
+
+        if (currentFrame->raw_refbox_size() > 0) {
+            SSL_Referee referee = currentFrame->raw_refbox(0);
+
+            stage = referee.stage();
+            command = referee.command();
+        } else {
+            fprintf(stderr, "No Ref Data\n");
+        }
+
+        outFrame << matchID << BAR << timestamp << BAR << stage << BAR
+                 << command << BAR << xBallPos << BAR << yBallPos << endl;
+    }
+
+    return true;
+}
+
+// Prepare program for GUI launch
+bool LogViewer::launchGUI(const char* logFilename) {
     frames.clear();
     ui.timeSlider->setMaximum(0);
 
+    bool read = this->readFrames(logFilename);
+
+    ui.timeSlider->setMaximum(frames.size());
+
+    this->showMaximized();
+    return read;
+}
+
+// Read frames of logged data from specified file
+bool LogViewer::readFrames(const char* filename) {
     QFile file(filename);
+
     if (!file.open(QFile::ReadOnly)) {
         fprintf(stderr, "Can't open %s: %s\n", filename,
                 (const char*)file.errorString().toLatin1());
@@ -98,7 +247,6 @@ bool LogViewer::readFrames(const char* filename) {
         ++n;
     }
 
-    ui.timeSlider->setMaximum(frames.size());
     return true;
 }
 
@@ -145,6 +293,21 @@ void LogViewer::updateViews() {
     }
 
     ui.fieldView->update();
+}
+
+// Generates random alphanumeric strings
+void LogViewer::generateMatchID(char* id) {
+    string chars(
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
+
+    // Avoid using time based srand init
+    srand(getpid());
+
+    for (int i = 0; i < MATCH_ID_LENGTH; ++i) {
+        id[i] = chars[rand() % chars.length()];
+    }
+
+    id[MATCH_ID_LENGTH] = '\0';
 }
 
 void LogViewer::on_action0_triggered() { ui.fieldView->rotate(0); }
