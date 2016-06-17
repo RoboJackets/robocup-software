@@ -386,11 +386,11 @@ void Processor::run() {
             delete packet;
         }
 
-
         // Log referee data
         vector<NewRefereePacket*> refereePackets;
         _refereeModule.get()->getPackets(refereePackets);
-        fprintf(stderr, "Ref packets received this loop:%lu\n", refereePackets.size());
+        fprintf(stderr, "Ref packets received this loop:%lu\n",
+                refereePackets.size());
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
@@ -399,8 +399,6 @@ void Processor::run() {
         // Update gamestate w/ referee data
         _refereeModule->updateGameState(blueTeam());
         _refereeModule->spinKickWatcher();
-
-
 
         string yellowname, bluename;
 
