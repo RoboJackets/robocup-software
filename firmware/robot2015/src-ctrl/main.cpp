@@ -25,6 +25,8 @@
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
 
+#define RJ_ENABLE_ROBOT_CONSOLE
+
 using namespace std;
 
 void Task_Controller(void const* args);
@@ -165,9 +167,11 @@ int main() {
                            DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
+#ifdef RJ_ENABLE_ROBOT_CONSOLE
     // Start the thread task for the serial console
     Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+#endif
 
     // Initialize the CommModule and CC1201 radio
     InitializeCommModule(sharedSPI);
@@ -201,7 +205,9 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
+#ifdef RJ_ENABLE_ROBOT_CONSOLE
     console_task.signal_set(SUB_TASK_CONTINUE);
+#endif
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
