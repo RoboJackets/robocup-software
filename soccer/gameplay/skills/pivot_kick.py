@@ -172,6 +172,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             if self.use_chipper:
                 r.chipper_preference_weight = role_assignment.PreferChipper
             r.require_kicking = True
-            r.PositionCostMultiplier = 1.5
+
+            #Increase the importance of Position to make robots closer to the ball clear it during defense
+            r.position_cost_multiplier = 1.5
 
         return reqs
