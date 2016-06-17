@@ -51,12 +51,6 @@ class SubmissiveDefender(
         rpos=self.robot.pos
         bpos=main.ball().pos
         dist_to_ball=self.robot.pos.dist_to(main.ball().pos)
-
-        t1=(max_vel-self.robot.vel.mag())/max_accel #time to accelerate to max speed
-        x1=self.robot.vel.mag()*t1 + .5*max_accel*(t1**2) #distance covered while accelerating
-        x2=dist_to_ball-x1 #distance remaining
-        t2=x2/max_vel #time to cover remaining distance
-        #our_time_to_ball=t1+t2+delay TESTING WITHOUT USING ACCELERATION
         return (dist_to_ball/max_vel) + delay
 
 
