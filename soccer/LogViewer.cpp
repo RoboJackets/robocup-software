@@ -196,7 +196,6 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
 
 
         if (currentFrame->raw_refbox_size() > 0) {
-            fprintf(stderr, "Ref Data Read\n");
             SSL_Referee referee = currentFrame->raw_refbox(0);
 
             stage = referee.stage();
