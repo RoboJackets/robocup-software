@@ -40,7 +40,7 @@ bool LineKickPlanner::shouldReplan(
 
 std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
 
-    const float ballAvoidDistance = 0.1;
+    const float ballAvoidDistance = 0.05;
 
     auto prevAnglePath = dynamic_cast<AngleFunctionPath*>(planRequest.prevPath.get());
 
@@ -53,6 +53,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     const auto& systemState = planRequest.systemState;
     const auto& ball = systemState.ball;
     const auto& robotConstraints = planRequest.robotConstraints;
+    auto& dynamicObstacles = planRequest.dynamicObstacles;
 
     float timeEstimate;
     if (prevAnglePath) {
@@ -64,19 +65,23 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
                                             startInstant.vel.mag(), 0.5);
     }
 
-    if (timeEstimate<0) {
+    if (timeEstimate<0.3) {
         debugLog("timeEstimate<0");
         timeEstimate = 0;
     }
 
     MotionInstant target = ball.predict(RJ::SecsToTimestamp(timeEstimate) + RJ::timestamp());
     //target.pos = ball.pos;
-    target.vel = (command.target - target.pos).normalized(1.0);
-    if(std::abs(target.vel.angleBetween((target.pos - startInstant.pos)))>DegreesToRadians(30)) {
-        obstacles.add(make_shared<Circle>(target.pos, ballAvoidDistance));
-        obstacles.add(make_shared<Circle>(ball.pos, ballAvoidDistance));
-        target.pos -= target.vel.normalized(ballAvoidDistance);
+    target.vel = (command.target - target.pos).normalized(0.5);
+    auto ballPath = ball.path(RJ::timestamp());
+    if(std::abs(target.vel.angleBetween((target.pos - startInstant.pos)))>DegreesToRadians(50)) {
+        //obstacles.add(make_shared<Circle>(target.pos, ballAvoidDistance));
+        //obstacles.add(make_shared<Circle>(ball.pos, ballAvoidDistance));
+        dynamicObstacles.emplace_back(ballPath.get(), ballAvoidDistance);
+        target.pos -= target.vel.normalized(ballAvoidDistance*3.0f + Robot_Radius*2.0f);
         //printf("wrongSide");
+    } else {
+        //target.pos = ball.pos;
     }
     unique_ptr<Path> prevPath;
     if (prevAnglePath) {
@@ -85,7 +90,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
         prevPath = nullptr;
     }
     auto request = SinglePlanRequest(startInstant, PathTargetCommand(target),
-        robotConstraints, obstacles, planRequest.dynamicObstacles, systemState, std::move(prevPath));
+        robotConstraints, obstacles, dynamicObstacles, systemState, std::move(prevPath));
     auto path = rrtPlanner.run(request);
 
     return make_unique<AngleFunctionPath>(std::move(path), angleFunctionForCommandType(FacePointCommand(command.target)));

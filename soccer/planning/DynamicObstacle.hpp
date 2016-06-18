@@ -9,6 +9,8 @@
 
 namespace Planning {
 
+class Path;
+
 /*
  * This is a superclass for different MotionCommands.
  * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget, None
@@ -35,16 +37,11 @@ public:
           radius(circle.radius()),
           staticObstacle(std::make_shared<Geometry2d::Circle>(circle)) {}
 
-    DynamicObstacle(const Path* path, float radius)
-        : staticPoint(path->start().motion.pos),
-          path(path),
-          radius(radius),
-          staticObstacle(std::make_shared<Geometry2d::Circle>(
-              path->start().motion.pos, radius)) {}
+    DynamicObstacle(const Path* path, float radius);
 
     virtual ~DynamicObstacle() = default;
 
-    bool hasPath() const { return path; }
+    bool hasPath() const { return path != nullptr; }
 
     const Path* getPath() const { return path; }
 

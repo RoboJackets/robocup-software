@@ -4,10 +4,61 @@
 #include <RobotConfig.hpp>
 #include <Robot.hpp>
 #include <Geometry2d/Polygon.hpp>
+#include "planning/Path.hpp"
 
 using namespace Packet;
 using namespace std;
+using namespace Planning;
+
 using Planning::MotionInstant;
+
+class BallPath : public Planning::Path {
+public:
+    BallPath(const Ball &ball) : ball(ball) {};
+    virtual boost::optional<RobotInstant> evaluate(float t) const {
+        return RobotInstant(ball.predict(startTime() + RJ::SecsToTimestamp(t)));
+    }
+
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
+                     float startTime) const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
+                      const QString& layer = "Motion") const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual float getDuration() const {
+        return std::numeric_limits<float>::infinity();
+    }
+
+    virtual std::unique_ptr<Path> subPath(
+            float startTime = 0,
+            float endTime = std::numeric_limits<float>::infinity()) const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual RobotInstant start() const {
+        return RobotInstant(ball.predict(startTime()));
+    }
+    virtual RobotInstant end() const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual std::unique_ptr<Path> clone() const {
+        return std::make_unique<BallPath>(*this);
+    }
+private:
+    const Ball &ball;
+};
+
+
+std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
+    auto path = std::make_unique<BallPath>(*this);
+    path->setStartTime(startTime);
+    return std::move(path);
+}
 
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     if (estimateTime < time) {

@@ -2,6 +2,7 @@
 #include "LogUtils.hpp"
 #include "Utils.hpp"
 #include <protobuf/LogFrame.pb.h>
+#include "SystemState.hpp"
 
 #include <stdexcept>
 
