@@ -37,7 +37,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     # @param receive_point The point that will be kicked too. (Target point)
     # @param skillkicker A tuple of this form (kicking_class, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed).
     # The lambda equation is called (passed with the state of your class) to see if your class is ready. Simple implementations will just compare it to your ready state.
-    def __init__(self, receive_point=None, skillreceiver=None, skillkicker=None):
+    def __init__(self,
+                 receive_point=None,
+                 skillreceiver=None,
+                 skillkicker=None):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -46,7 +49,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             skillreceiver = skills.pass_receive.PassReceive()
 
         if skillkicker == None:
-            skillkicker = (skills.pivot_kick.PivotKick(), lambda x: x == skills.pivot_kick.PivotKick.State.aimed)
+            skillkicker = (
+                skills.pivot_kick.PivotKick(),
+                lambda x: x == skills.pivot_kick.PivotKick.State.aimed)
 
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
@@ -161,8 +166,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         # we set the receive point to the point the kicker is currently aiming at
         if kicker.current_shot_point(
         ) != None and not self._has_renegotiated_receive_point:
-            if (not kicker.is_steady() and
-                    self.skillkicker[1](kicker.state)):
+            if (not kicker.is_steady() and self.skillkicker[1](kicker.state)):
                 self._last_unsteady_time = time.time()
 
             if (self._last_unsteady_time != None and
