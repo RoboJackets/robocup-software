@@ -44,7 +44,7 @@ class LineKick(skills._kick._Kick):
 
         self.add_transition(
             LineKick.State.setup, LineKick.State.charge,
-            lambda: (not self.robot_is_between_ball_and_target()) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh and not self.robot.just_kicked(),
+            lambda: self.enable_kick and (not self.robot_is_between_ball_and_target()) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh and not self.robot.just_kicked(),
             "robot on line")
 
         self.add_transition(
