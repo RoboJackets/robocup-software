@@ -10,7 +10,7 @@ import enum
 import logging
 
 
-# This handles passing from one bot to another
+## This handles passing from one bot to another
 # Simply run it and set it's receive point, the rest is handled for you
 # It starts out by assigning a kicker and a receiver and instructing them to lineup for the pass
 # Once they're aligned, the kicker kicks and the receiver adjusts itself based on the ball's movement
@@ -30,8 +30,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicking = 2  # waiting for the kicker to kick
         receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
 
-    ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
+    ## Init method for CoordinatedPass
+    # @param skillreceiver a class that will handle the receiving robot. See pass_receive and angle_receive for examples.
     # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
+    # Subclasses of pass_receive are preferred, but check the usage of this variable to be sure.
+    # @param receive_point The point that will be kicked too. (Target point)
     def __init__(self, receive_point=None, skillreceiver=None):
         super().__init__(continuous=False)
 
