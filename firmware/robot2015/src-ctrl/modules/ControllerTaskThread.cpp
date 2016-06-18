@@ -5,16 +5,16 @@
 #include <assert.hpp>
 #include <logger.hpp>
 
-#include "robot-devices.hpp"
-#include "RotarySelector.hpp"
-#include "task-signals.hpp"
-#include "motors.hpp"
 #include "Pid.hpp"
+#include "RotarySelector.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "motors.hpp"
+#include "motors.hpp"
 #include "mpu-6050.hpp"
 #include "robot-devices.hpp"
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 #include "task-signals.hpp"
 
 const float kpi = 3.14159265358979f;

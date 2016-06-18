@@ -2,10 +2,10 @@
 
 #include <logger.hpp>
 
-#include "robot-devices.hpp"
+#include "RotarySelector.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "RotarySelector.hpp"
+#include "robot-devices.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
