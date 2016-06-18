@@ -17,11 +17,13 @@ void BallSense::update_ball_sensor() {
         emitter_pin.write(0);
 
         // Possible break in beam
-        if (sense_light - sense_dark > sense_threshold) {
+        if (std::abs(sense_light - sense_dark) < sense_threshold) {
             consec_ctr++;
         } else {
             consec_ctr = 0;
         }
+        // printf("{'light': %d, 'dark': %d, 'ball': %s},\r\n", sense_light,
+        // sense_dark, have_ball() ? "True" : "False");
     } else  // Emitter off
     {
         // Update value

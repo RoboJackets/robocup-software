@@ -19,9 +19,12 @@
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
+#include "RotarySelector.hpp"
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+
+#define RJ_ENABLE_ROBOT_CONSOLE
 
 using namespace std;
 
@@ -78,7 +81,7 @@ int main() {
 
     // Initialize and start ball sensor
     BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
-    ballSense.start(100);  // TODO(justin): choose smarter update frequency
+    ballSense.start(10);
     DigitalOut ballSenseStatusLED(RJ_BALL_LED, 1);
 
     // Force off since the neopixel's hardware is stateless from previous
@@ -95,8 +98,7 @@ int main() {
 
     // Start a periodic blinking LED to show system activity
     // This is set to never timeout, so it will only stop if the system halts
-    StrobingTimeoutLEDs<4> liveLight({LED1, LED2, LED3, LED4},
-                                     RJ_LIFELIGHT_TIMEOUT_MS, osWaitForever);
+    FlashingTimeoutLED liveLight(LED1, 500, osWaitForever);
 
     // Flip off the startup LEDs after a timeout period
     RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
@@ -130,9 +132,9 @@ int main() {
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
-    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
-                            "/local/rj-kickr.nib");
-    bool kickerReady = kickerBoard.flash(true, true);
+    // KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+    //                        "/local/rj-kickr.nib");
+    // bool kickerReady = kickerBoard.flash(true, true);
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -141,6 +143,19 @@ int main() {
     ioExpander.config(0x00FF, 0x00f0, 0x00f0);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
+
+    // rotary selector for shell id
+    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
+        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+                                MCP23017::DIR_INPUT),
+         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
+                                MCP23017::DIR_INPUT)});
+    // this value is continuously updated in the main loop
+    uint8_t robotShellID = rotarySelector.read();
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -153,9 +168,11 @@ int main() {
                            DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
 
+#ifdef RJ_ENABLE_ROBOT_CONSOLE
     // Start the thread task for the serial console
-    // Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
-    // Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
+    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
+#endif
 
     // Initialize the CommModule and CC1201 radio
     InitializeCommModule(sharedSPI);
@@ -169,13 +186,12 @@ int main() {
     uint8_t battVoltage = 0;
 
     // Setup radio protocol handling
-    const uint8_t robotID = 2;  // TODO: remove
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
-    radioProtocol.setUID(robotID);
+    radioProtocol.setUID(robotShellID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
         rtp::RobotStatusMessage reply;
-        reply.uid = robotID;
+        reply.uid = robotShellID;
         reply.battVoltage = battVoltage;
         reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
@@ -189,7 +205,9 @@ int main() {
 
     // Release each thread into its operations in a structured manner
     controller_task.signal_set(SUB_TASK_CONTINUE);
-    // console_task.signal_set(SUB_TASK_CONTINUE);
+#ifdef RJ_ENABLE_ROBOT_CONSOLE
+    console_task.signal_set(SUB_TASK_CONTINUE);
+#endif
 
     osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
     ASSERT(tState == osOK);
@@ -223,7 +241,8 @@ int main() {
         ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
-        errorBitmask |= !global_radio->isConnected() << RJ_ERR_LED_RADIO;
+        errorBitmask |= (!global_radio || !global_radio->isConnected())
+                        << RJ_ERR_LED_RADIO;
 
         motors_refresh();
 
@@ -243,6 +262,10 @@ int main() {
 
         // get the battery voltage
         battVoltage = (batt.read_u16() >> 8);
+
+        // update shell id
+        robotShellID = rotarySelector.read();
+        radioProtocol.setUID(robotShellID);
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);

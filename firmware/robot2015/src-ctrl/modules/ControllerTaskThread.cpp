@@ -1,18 +1,21 @@
-#include <rtos.h>
 #include <RPCVariable.h>
+#include <rtos.h>
 
 #include <Console.hpp>
-#include <logger.hpp>
 #include <assert.hpp>
+#include <logger.hpp>
 
 #include "robot-devices.hpp"
 #include "RotarySelector.hpp"
 #include "task-signals.hpp"
 #include "motors.hpp"
-#include "fpga.hpp"
-#include "mpu-6050.hpp"
-#include "io-expander.hpp"
 #include "Pid.hpp"
+#include "fpga.hpp"
+#include "io-expander.hpp"
+#include "motors.hpp"
+#include "mpu-6050.hpp"
+#include "robot-devices.hpp"
+#include "task-signals.hpp"
 
 const float kpi = 3.14159265358979f;
 
@@ -95,12 +98,15 @@ void Task_Controller(void const* args) {
 
     Pid motor2pid(0.0, 0.0, 0.0);
 
-    std::vector<uint16_t> duty_cycles;
+    std::vector<int16_t> duty_cycles;
 
-    const uint16_t kduty_cycle = 225;
+    const uint16_t kduty_cycle = 0;
     duty_cycles.assign(5, kduty_cycle);
 
-    uint16_t duty_cycle_all = kduty_cycle;
+    size_t ii = 0;
+    bool spin_rev = true;
+
+    int16_t duty_cycle_all = kduty_cycle;
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -125,7 +131,7 @@ void Task_Controller(void const* args) {
         imu.getGyro(gyroVals);
         imu.getAccelero(accelVals);
 
-        std::vector<uint16_t> enc_deltas(5);
+        std::vector<int16_t> enc_deltas(5);
 
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
                                          enc_deltas.data(),
@@ -169,10 +175,10 @@ void Task_Controller(void const* args) {
 
         const float vel_err = ktarget_vel - kvel;
 
-        uint16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
+        int16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
 
         // duty cycle values range: 0 -> 511, the 9th bit is direction
-        dc = std::min(dc, static_cast<uint16_t>(511));
+        dc = std::min(dc, static_cast<int16_t>(511));
 
         // get a reading from the rotary selector
         const uint8_t rotary_vel = rotarySelector.read();
@@ -187,9 +193,8 @@ void Task_Controller(void const* args) {
         // calculate a duty cycle in steps of 73, this means max is 73 * 7 = 511
         duty_cycle_all = duty_cycle_multiplier * 73;
 
-        // set the direction, the bit shifting should be self explanatory here
-        // (that was a joke guys...calm down)
-        duty_cycle_all |= (((rotary_vel & (1 << 3)) >> 3) << 9);
+        // set the direction
+        if (spin_rev) duty_cycle_all *= -1;
 
         // set the duty cycle values all to our determined value according to
         // the rotary selector
