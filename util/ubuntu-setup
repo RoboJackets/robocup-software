@@ -7,7 +7,7 @@ HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber]
 \tclobber:\t\tInstall 3rd party repositories
 \tfirmware:\t\tInstall firmware repository
 \tnofirmware:\t\tPrevents installation of firmware deps firmware repository
-\toverwrite-sources-list:\tOverwrites the sources.list with gatech mirrors for faster ubuntu-setup at gatech. Works only on Ubuntu 14.04
+\toverwrite-sources-list:\tOverwrites the sources.list with gatech mirrors for faster ubuntu-setup. Only works on ubuntu > precise.
 \thelp:\t\t\tprint this message!
 
 This script will need root privileges"
@@ -96,7 +96,7 @@ if [ $UID -ne 0 ]; then
 fi
 
 if $OVERWRITE_SOURCES; then
-    read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON UBUNTU 14.04 [yN]: " yn
+    read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON STOCK UBUNTU [yN]: " yn
     case $yn in
         [Yy]* ) ;;
         [Nn]* ) exit;;
@@ -105,20 +105,14 @@ if $OVERWRITE_SOURCES; then
 
     # Copy sources.list to sources.list.old if sources.list.old is empty
     if [ -f "/etc/apt/sources.list" ]; then
-        mv -n /etc/apt/sources.list /etc/apt/sources.list.old
+        cp -n /etc/apt/sources.list /etc/apt/sources.list.old
     else
         echo "A prior /etc/apt/sources.list was not found! This probably means you are on a non-debian based system! To force override, run: touch /etc/apt/sources.list" 1>&2
         exit 1
     fi
 
-    # BE CAREFUL HERE...
-    cat <<EOF >/etc/apt/sources.list
-deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty main restricted universe
-deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty main restricted universe
-deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-security main restricted universe
-deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-security main restricted universe
-deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-updates main restricted universe
-deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-updates main restricted universe
+    # Cross our fingers...
+    sed -i 's%^\s*\([^#]\S\+\)\s\+\S\+%\1 mirror://mirrors.ubuntu.com/mirrors.txt%' /etc/apt/sources.list
 EOF
 
 fi
