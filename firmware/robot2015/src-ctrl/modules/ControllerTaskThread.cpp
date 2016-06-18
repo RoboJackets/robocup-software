@@ -100,7 +100,7 @@ void Task_Controller(void const* args) {
 
     std::vector<int16_t> duty_cycles;
 
-    const uint16_t kduty_cycle = 0;
+    const int16_t kduty_cycle = 0;
     duty_cycles.assign(5, kduty_cycle);
 
     size_t ii = 0;
@@ -186,15 +186,18 @@ void Task_Controller(void const* args) {
         // fixup the duty cycle to be centered around 0 and
         // increasing from 0 for both CW & CCW spins of the
         // rotary selector
-        const uint8_t duty_cycle_multiplier =
-            0x07 &
-            static_cast<uint8_t>(8 - abs(8 - static_cast<int>(rotary_vel)));
+        const int8_t duty_cycle_multiplier = 8 - static_cast<int>(rotary_vel);
 
         // calculate a duty cycle in steps of 73, this means max is 73 * 7 = 511
         duty_cycle_all = duty_cycle_multiplier * 73;
 
+        duty_cycle_all = std::max(std::min(duty_cycle_all, static_cast<int16_t>(511)), static_cast<int16_t>(-511));
+
+        if (rotary_vel == 0)
+            duty_cycle_all = 0;
+
         // set the direction
-        if (spin_rev) duty_cycle_all *= -1;
+        // if (spin_rev) duty_cycle_all *= -1;
 
         // set the duty cycle values all to our determined value according to
         // the rotary selector

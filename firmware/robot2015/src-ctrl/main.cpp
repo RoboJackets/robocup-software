@@ -14,7 +14,7 @@
 #include "CC1201.cpp"
 #include "KickerBoard.hpp"
 #include "RadioProtocol.hpp"
-#include "RotarySelector.hpp"
+// #include "RotarySelector.hpp"
 #include "RtosTimerHelper.hpp"
 #include "SharedSPI.hpp"
 #include "commands.hpp"
@@ -145,17 +145,18 @@ int main() {
                          IOExpanderErrorLEDMask);
 
     // rotary selector for shell id
-    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
-        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
-                                MCP23017::DIR_INPUT)});
+    //RotarySelector<IOExpanderDigitalInOut> rotarySelector(
+    //    {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
+    //                            MCP23017::DIR_INPUT),
+    //     IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
+    //                            MCP23017::DIR_INPUT),
+    //     IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
+    //                            MCP23017::DIR_INPUT),
+    //     IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
+    //                            MCP23017::DIR_INPUT)});
     // this value is continuously updated in the main loop
-    uint8_t robotShellID = rotarySelector.read();
+    // uint8_t robotShellID = rotarySelector.read();
+    uint8_t robotShellID = 2;
 
     // Startup the 3 separate threads, being sure that we wait for it
     // to signal back to us that we can startup the next thread. Not doing
@@ -264,7 +265,7 @@ int main() {
         battVoltage = (batt.read_u16() >> 8);
 
         // update shell id
-        robotShellID = rotarySelector.read();
+        // robotShellID = rotarySelector.read();
         radioProtocol.setUID(robotShellID);
 
         // Set error-indicating leds on the control board
