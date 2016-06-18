@@ -1,7 +1,11 @@
 #include "Path.hpp"
 #include <protobuf/LogFrame.pb.h>
+#include "SystemState.hpp"
+#include "DynamicObstacle.hpp"
+#include "Geometry2d/ShapeSet.hpp"
 
 using namespace std;
+using namespace Geometry2d;
 namespace Planning {
 
 class ConstPathIterator;
@@ -43,29 +47,47 @@ std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
         std::make_unique<ConstPathIterator>(this, startTime, deltaT));
 }
 
-bool Path::pathsIntersect(const std::vector<const Path*>& paths, float* hitTime,
+bool Path::pathsIntersect(const std::vector<DynamicObstacle>&obstacles, float* hitTime,
                           Geometry2d::Point* hitLocation,
                           RJ::Time startTime) const {
     const float deltaT = 0.05;
-    const float hitRadius = Robot_Radius * 2.5f;
+    //const float hitRadius = Robot_Radius * 2.5f;
 
     auto thisPathIterator = iterator(startTime, deltaT);
-    vector<unique_ptr<ConstPathIterator>> pathIterators(paths.size());
-    std::transform(
-        std::begin(paths), std::end(paths), std::begin(pathIterators),
-        [&](auto path) { return path->iterator(startTime, deltaT); });
+    vector<std::pair<unique_ptr<ConstPathIterator>,float>> pathIterators;
+    for (const auto &obs: obstacles) {
+        if (obs.hasPath()) {
+            pathIterators.emplace_back(obs.getPath()->iterator(startTime, deltaT), obs.getRadius());
+        } else {
+            ShapeSet set;
+            set.add(obs.getStaticObstacle());
+            if (hitTime != nullptr) {
+                if(hit(set, *hitTime, startTime)) {
+                    return true;
+                }
+            } else {
+                float time;
+                if(hit(set, time, startTime)) {
+                    return true;
+                }
+            }
+        }
+    }
 
     float time = RJ::SecsToTimestamp(startTime - this->startTime());
     for (; time < getDuration(); time += deltaT) {
         auto current = **thisPathIterator;
-        for (auto& it : pathIterators) {
-            auto temp = (**it);
-            if (current.motion.pos.distTo(temp.motion.pos) < hitRadius) {
+        for (auto& pair : pathIterators) {
+            auto &it = pair.first;
+            assert(it != nullptr);
+            auto hitRadius = pair.second + Robot_Radius;
+            auto robotInstant = (**it);
+            if (current.motion.pos.distTo(robotInstant.motion.pos) < hitRadius) {
                 if (hitTime) {
                     *hitTime = time;
                 }
                 if (hitLocation) {
-                    *hitLocation = std::move(temp.motion.pos);
+                    *hitLocation = std::move(robotInstant.motion.pos);
                 }
                 return true;
             }

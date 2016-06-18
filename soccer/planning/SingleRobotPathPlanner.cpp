@@ -61,11 +61,11 @@ void SingleRobotPathPlanner::allDynamicToStatic(
 }
 
 void SingleRobotPathPlanner::splitDynamic(
-    Geometry2d::ShapeSet& obstacles, std::vector<const Path*>& dynamicOut,
+    Geometry2d::ShapeSet& obstacles, std::vector<DynamicObstacle>& dynamicOut,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     for (auto& dynObs : dynamicObstacles) {
         if (dynObs.hasPath()) {
-            dynamicOut.push_back(dynObs.getPath());
+            dynamicOut.push_back(dynObs);
         } else {
             obstacles.add(dynObs.getStaticObstacle());
         }

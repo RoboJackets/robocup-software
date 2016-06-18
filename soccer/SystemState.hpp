@@ -19,6 +19,7 @@
 #include <Utils.hpp>
 #include <Geometry2d/Arc.hpp>
 #include "planning/MotionInstant.hpp"
+#include "planning/Path.hpp"
 
 class RobotConfig;
 class OurRobot;
@@ -46,6 +47,7 @@ public:
     RJ::Time time;
 
     Planning::MotionInstant predict(RJ::Time time) const;
+    std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
 };
 
 /**

@@ -24,6 +24,7 @@ set(ROBOCUP_LIB_SRC
     "motion/TrapezoidalMotion.cpp"
     "NewRefereeModule.cpp"
     "planning/CompositePath.cpp"
+    "planning/DynamicObstacle.cpp"
     "planning/DirectTargetPathPlanner.cpp"
     "planning/EscapeObstaclesPathPlanner.cpp"
     "planning/InterpolatedPath.cpp"
