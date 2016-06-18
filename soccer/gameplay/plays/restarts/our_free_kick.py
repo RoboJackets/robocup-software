@@ -42,12 +42,17 @@ class OurFreeKick(standard_play.StandardPlay):
 
         lastKicker = kicker
         if self.indirect:
-            receive_pt, target_point, probability = OurFreeKick.tpass.eval_best_receive_point(main.ball().pos)
-            pass_behavior = tactics.coordinated_pass.CoordinatedPass(receive_pt, None, (kicker, lambda x: True))
+            receive_pt, target_point, probability = OurFreeKick.tpass.eval_best_receive_point(
+                main.ball().pos)
+            pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+                receive_pt, None, (kicker, lambda x: True))
             # We don't need to manage this anymore
             self.remove_subbehavior('kicker')
 
-            self.add_subbehavior(pass_behavior, 'receiver', required=False, priority=5)
+            self.add_subbehavior(pass_behavior,
+                                 'receiver',
+                                 required=False,
+                                 priority=5)
             kicker.target = receive_pt
             lastKicker = pass_behavior
 
@@ -55,12 +60,11 @@ class OurFreeKick(standard_play.StandardPlay):
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
             lambda: lastKicker.is_done_running(), 'kicker completes')
 
-
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if OurFreeKick.running or (gs.is_ready_state() and gs.is_our_free_kick()) else float(
-            "inf")
+        return 0 if OurFreeKick.running or (
+            gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def on_enter_running(self):
         OurFreeKick.running = True

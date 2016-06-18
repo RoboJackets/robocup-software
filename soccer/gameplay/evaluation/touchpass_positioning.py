@@ -61,7 +61,7 @@ def get_segments_from_rect(rect, threshold=0.75):
                 currentx, rect.min_y())):
             continue
         while constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
-                currentx, currenty)):
+            currentx, currenty)):
             currenty = currenty - threshold
 
         candiate = robocup.Segment(
