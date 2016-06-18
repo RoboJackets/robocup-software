@@ -123,6 +123,10 @@ EOF
 
 fi
 
+if $FIRMWARE; then
+    sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa
+fi
+
 if $ADD_REPOS; then
     # add repo for backport of cmake3 from debian testing
     # TODO remove this once ubuntu ships cmake3
@@ -151,14 +155,17 @@ if $YES; then
     ARGS="-y"
 fi
 
+PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
+
 if $FIRMWARE; then
     # This is kind of hacky and could produce unwanted side effects
     # If the firmware switch does more things, it may be better to make a firmware-deps file!
-    ARGS="$ARGS gcc-arm-none-eabi"
+    PACKAGES="$PACKAGES gcc-arm-embedded"
+    PACKAGES="$(sed 's/gcc-arm-none-eabi//' <<< "$PACKAGES")"
 fi
 
 # install all of the packages listed in required_packages.txt
-apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
+apt-get install $ARGS $PACKAGES
 
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub
