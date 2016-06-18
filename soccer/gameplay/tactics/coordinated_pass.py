@@ -35,7 +35,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
     # Subclasses of pass_receive are preferred, but check the usage of this variable to be sure.
     # @param receive_point The point that will be kicked too. (Target point)
-    def __init__(self, receive_point=None, skillreceiver=None):
+    # @param skillkicker A tuple of this form (kicking_class, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed).
+    # The lambda equation is called (passed with the state of your class) to see if your class is ready. Simple implementations will just compare it to your ready state.
+    def __init__(self, receive_point=None, skillreceiver=None, skillkicker=None):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -43,8 +45,12 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if skillreceiver == None:
             skillreceiver = skills.pass_receive.PassReceive()
 
+        if skillkicker == None:
+            skillkicker = (skills.pivot_kick.PivotKick(), lambda x: x == skills.pivot_kick.PivotKick.State.aimed)
+
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
+        self.skillkicker = skillkicker
 
         for state in CoordinatedPass.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -55,7 +61,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
-            lambda: (self.subbehavior_with_name('kicker').state == skills.pivot_kick.PivotKick.State.aimed and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
+            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state) and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
 
         self.add_transition(
@@ -103,7 +109,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
-        kicker = skills.pivot_kick.PivotKick()
+        kicker = self.skillkicker[0]
         kicker.target = self.receive_point
         kickpower = (main.ball().pos - self.receive_point).mag() / 8
         if (kickpower < 0.2):
@@ -156,7 +162,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if kicker.current_shot_point(
         ) != None and not self._has_renegotiated_receive_point:
             if (not kicker.is_steady() and
-                    kicker.state == skills.pivot_kick.PivotKick.State.aiming):
+                    self.skillkicker[1](kicker.state)):
                 self._last_unsteady_time = time.time()
 
             if (self._last_unsteady_time != None and
