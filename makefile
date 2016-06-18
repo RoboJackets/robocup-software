@@ -22,6 +22,7 @@ all:
 
 run: all
 	cd run; ./soccer
+rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
