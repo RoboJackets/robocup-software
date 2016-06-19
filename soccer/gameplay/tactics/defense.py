@@ -23,8 +23,7 @@ class Defense(composite_behavior.CompositeBehavior):
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         defending = 1
-        clearing = 2 #Kick the ball away from the goalzone if it is safe to do so
-
+        clearing = 2  #Kick the ball away from the goalzone if it is safe to do so
 
     # defender_priorities should have a length of two and contains the priorities for the two defender
     def __init__(self, defender_priorities=[20, 19]):
@@ -86,7 +85,8 @@ class Defense(composite_behavior.CompositeBehavior):
             if (defender1.robot != None and defender2.robot != None):
                 if (not defender1.go_clear and not defender2.go_clear):
                     if close_defender.should_clear_ball(
-                            evaluation.ball.time_to_ball(close_defender.robot)):
+                            evaluation.ball.time_to_ball(
+                                close_defender.robot)):
                         close_defender.go_clear = True
                         self.go_clear = True
 
@@ -100,7 +100,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # TODO: move a lot of this code into modules in the evaluation folder
 
-        #main.system_state().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
+            #main.system_state().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
 
     def execute_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
@@ -441,7 +441,9 @@ class Defense(composite_behavior.CompositeBehavior):
             if self.debug:
                 for handler in threat.assigned_handlers:
                     # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
-                    main.system_state().draw_circle(handler.move_target, 0.02,constants.Colors.Blue,"Defense")
+                    main.system_state().draw_circle(handler.move_target, 0.02,
+                                                    constants.Colors.Blue,
+                                                    "Defense")
 
                 # draw some debug stuff
                 if threat.best_shot_window != None:

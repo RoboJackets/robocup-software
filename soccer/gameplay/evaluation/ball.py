@@ -99,6 +99,7 @@ def robot_has_ball(robot):
 
     return robot.pos.near_point(main.ball().pos, max_radius)
 
+
 def time_to_ball(robot):
     max_vel = 3.5
     max_accel = 1.8
@@ -108,4 +109,3 @@ def time_to_ball(robot):
     #calculate time for self to reach ball using max_vel + a slight delay for capture
     dist_to_ball = robot.pos.dist_to(main.ball().pos)
     return (dist_to_ball / max_vel) + delay
-

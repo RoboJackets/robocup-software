@@ -20,10 +20,12 @@ class SubmissiveDefender(
         marking = 1
         clearing = 2
 
-    go_clear = False
-
     def __init__(self):
         super().__init__(continuous=True)
+
+        self.go_clear = False
+        self.safety_multiplier = 0.9
+
         self._block_object = None
         # self._opponent_avoid_threshold = 2.0
         self._defend_goal_radius = 1.4
@@ -42,8 +44,11 @@ class SubmissiveDefender(
                             SubmissiveDefender.State.clearing,
                             lambda: self.go_clear,
                             "when it is safe to clear the ball")
-        self.add_transition(SubmissiveDefender.State.clearing,SubmissiveDefender.State.marking,lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.should_clear_ball(evaluation.ball.time_to_ball(self.robot)),"done clearing")
-
+        self.add_transition(
+            SubmissiveDefender.State.clearing,
+            SubmissiveDefender.State.marking,
+            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.should_clear_ball(evaluation.ball.time_to_ball(self.robot)),
+            "done clearing")
 
     def should_clear_ball(self, our_time_to_ball):
         #Returns true if our robot can reach the ball sooner than the closest opponent
@@ -56,10 +61,11 @@ class SubmissiveDefender(
             for robot in main.system_state().their_robots:
                 their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
                 #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
-                their_max_vel=max(max_vel,robot.vel.mag());
+                their_max_vel = max(max_vel, robot.vel.mag())
 
                 #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
-                their_time_to_ball = (their_dist_to_ball / their_max_vel) * .9
+                their_time_to_ball = (their_dist_to_ball /
+                                      their_max_vel) * self.safety_multiplier
 
                 if their_time_to_ball <= our_time_to_ball:
                     safe_to_clear = False
