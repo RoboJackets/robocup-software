@@ -4,6 +4,7 @@
 
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/LogFrame.pb.h>
+#include <protobuf/referee.pb.h>
 #include <git_version.hpp>
 
 #include <multicast.hpp>
@@ -49,10 +50,10 @@ int main(int argc, char* argv[]) {
 
     // Create referee socket
     QUdpSocket refereeSocket;
-    if (!refereeSocket.bind(LegacyRefereePort, QUdpSocket::ShareAddress)) {
-        printf("Can't bind to referee port");
-        return 1;
+    if (!refereeSocket.bind(ProtobufRefereePort, QUdpSocket::ShareAddress)) {
+        throw runtime_error("Can't bind to shared referee port");
     }
+
     multicast_add(&refereeSocket, RefereeAddress);
 
     // Create log file
@@ -99,17 +100,16 @@ int main(int argc, char* argv[]) {
 
         // Read referee data
         while (refereeSocket.hasPendingDatagrams()) {
+            string buf;
             unsigned int n = refereeSocket.pendingDatagramSize();
-            string str(6, 0);
-            refereeSocket.readDatagram(&str[0], str.size());
+            buf.resize(n);
+            refereeSocket.readDatagram(&buf[0], n);
 
-            // Check the size after receiving to discard bad packets
-            if (n != str.size()) {
+            SSL_Referee* packet = logFrame.add_raw_refbox();
+            if (!packet->ParseFromString(buf)) {
                 printf("Bad referee packet of %d bytes\n", n);
                 continue;
             }
-
-            logFrame.add_raw_referee(str);
         }
 
         if (first) {
