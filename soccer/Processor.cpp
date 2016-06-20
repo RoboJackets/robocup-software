@@ -389,8 +389,6 @@ void Processor::run() {
         // Log referee data
         vector<NewRefereePacket*> refereePackets;
         _refereeModule.get()->getPackets(refereePackets);
-        fprintf(stderr, "Ref packets received this loop:%lu\n",
-                refereePackets.size());
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
