@@ -23,7 +23,9 @@ class SubmissiveDefender(
     def __init__(self):
         super().__init__(continuous=True)
 
+        #this value is used by external behaviors to tell SubmissiveDefender to clear the ball
         self.go_clear = False
+        #this value multiplies the time it takes the opponent to get to the ball, a value under 1 makes our robots play safer by assuming their robots can move more quickly
         self.safety_multiplier = 0.9
 
         self._block_object = None
@@ -54,7 +56,7 @@ class SubmissiveDefender(
         #Returns true if our robot can reach the ball sooner than the closest opponent
         if main.ball().pos.mag() < constants.Field.ArcRadius * 2:
             safe_to_clear = True
-            #change this to use the config system when we figure out how to do that
+            #TODO: change this to use the config system when we figure out how to do that
             max_vel = 3.5
             max_accel = 1.8
 
