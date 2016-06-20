@@ -292,20 +292,22 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
     vector<Point> endDirections;
 
     const float pathWeight = 0.1;
-    Point pathDirection = (vi + (points[1] - points[0]).normalized(pathWeight)).normalized();
-    //Point pathDirection = (points[1] - points[0]).normalized(pathWeight);
+    Point pathDirection =
+        (vi + (points[1] - points[0]).normalized(pathWeight)).normalized();
+    // Point pathDirection = (points[1] - points[0]).normalized(pathWeight);
     startDirections.push_back(
-        (pathDirection)
-            .normalized((points[1] - points[0]).mag() * 0.1));
-    for (int i = 1; i < length-1; i++) {
+        (pathDirection).normalized((points[1] - points[0]).mag() * 0.1));
+    for (int i = 1; i < length - 1; i++) {
         const Point difference = points[i + 1] - points[i - 1];
         endDirections.push_back(difference.normalized(
             (points[i] - points[i - 1]).mag() * directionDistance));
         startDirections.push_back(difference.normalized(
-            (points[i+1] - points[i]).mag() * directionDistance));
+            (points[i + 1] - points[i]).mag() * directionDistance));
     }
-    Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight) + vf;
+    Point endPathDirection =
+        (points[points.size() - 1] - points[points.size() - 2])
+            .normalized(pathWeight) +
+        vf;
     endDirections.push_back((endPathDirection)
                                 .normalized((points[points.size() - 1] -
                                              points[points.size() - 2]).mag() *

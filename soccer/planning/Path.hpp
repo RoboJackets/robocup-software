@@ -94,7 +94,8 @@ public:
         _debugText = std::move(string);
     }
 
-    virtual void drawDebugText(SystemState* state, const QColor& color = Qt::darkCyan,
+    virtual void drawDebugText(SystemState* state,
+                               const QColor& color = Qt::darkCyan,
                                const QString& layer = "PathDebugText") const {
         if (_debugText) {
             state->drawText(_debugText.get(), end().motion.pos, color, layer);
@@ -243,8 +244,9 @@ public:
         path->setDebugText(std::move(string));
     }
 
-    virtual void drawDebugText(SystemState* state, const QColor& color = Qt::darkCyan,
-                               const QString& layer = "PathDebugText") const override {
+    virtual void drawDebugText(
+        SystemState* state, const QColor& color = Qt::darkCyan,
+        const QString& layer = "PathDebugText") const override {
         path->drawDebugText(state, color, layer);
     }
 };
