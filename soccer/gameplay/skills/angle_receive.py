@@ -6,6 +6,7 @@ import main
 import math
 import enum
 import time
+import skills.touch_ball
 import skills._kick
 import skills.pass_receive
 
@@ -18,7 +19,8 @@ import skills.pass_receive
 # Kick is a single_robot_behavior, so no need to import both
 class AngleReceive(skills.pass_receive.PassReceive):
     def __init__(self):
-        super().__init__()
+        super().__init__(
+            captureFunction=(lambda: skills.touch_ball.TouchBall()))
         self._target_point = None
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
