@@ -25,13 +25,7 @@ vector<std::shared_ptr<Packet::LogFrame> > frames;
  * @param prog The name of the program
  */
 void usage(const char* prog) {
-    fprintf(stderr, "Usage: %s [options] <filename.log>\n", prog);
-    fprintf(
-        stderr,
-        "\t-bsv: \t<Filename Base>: Exports the log to two files named "
-        "<Filename Base>-robot.bsv and\n\t\t\t<Filename Base>-frame.bsv and "
-        "Prevents launch of GUI\n");
-    fprintf(stderr, "\t-help: \tDisplays this help text\n");
+    fprintf(stderr, "Usage: %s <filename.log> <output base filename>\n", prog);
     exit(1);
 }
 
@@ -101,12 +95,11 @@ bool readFrames(const char* filename) {
 }
 
 int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        usage(argv[0]);
+    }
 
-	if (argc != 3) {
-		usage(argv[0]);
-	}
-
-	const char* logFilename = argv[1];
+    const char* logFilename = argv[1];
 
     fprintf(stderr, "Exporting BSV file to %s\n", argv[2]);
 
@@ -222,5 +215,4 @@ int main(int argc, char* argv[]) {
                  << yellowScore << BAR << blueScore << BAR << yellowGoalie
                  << BAR << blueGoalie << endl;
     }
-
 };
