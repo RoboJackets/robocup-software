@@ -111,6 +111,7 @@ LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
  * @param logFilename The filename of the RoboJackets protobuf log file
  * @param bsvFilename The base filename that the output filenames will be
  * generated from
+ * @return Whether reading the file was sucessful. Specifically, it is the output from readFrames.
  */
 bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
     fprintf(stderr, "Exporting BSV file to %s\n", bsvFilename);
@@ -128,7 +129,9 @@ bool LogViewer::exportBSV(char* logFilename, char* bsvFilename) {
     QTextStream outFrame(&fileFrame);
 
     // Read in data from log file
-    this->readFrames(logFilename);
+    if (this->readFrames(logFilename) == false) {
+        return false;
+    }
 
     char matchID[MATCH_ID_LENGTH + 1];
 
