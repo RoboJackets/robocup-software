@@ -80,6 +80,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
         path->setStartTime(RJ::timestamp());
         path->waypoints.emplace_back(
             MotionInstant(start.pos, Geometry2d::Point()), 0);
+        path->setDebugText("Invalid Basic Path");
         return unique_ptr<Path>(path);
     }
 
@@ -99,6 +100,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
         }
+        path->setDebugText("new Path");
         return std::move(path);
     } else {
         if (reusePathTries >= maxContinue) {
@@ -110,11 +112,13 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
                                   RJ::TimestampToSecs(RJ::timestamp() -
                                                       prevPath->startTime());
                 if (remaining > path->getDuration()) {
+                    path->setDebugText("Found better path");
                     return std::move(path);
                 }
             }
         }
         reusePathTries++;
+        prevPath->setDebugText("reusing");
         return std::move(prevPath);
     }
 }
@@ -283,25 +287,26 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
     size_t length = points.size();
     size_t curvesNum = length - 1;
 
-    const float directionDistance = 0.3;
+    const float directionDistance = 0.4;
     vector<Point> startDirections;
     vector<Point> endDirections;
 
-    const float pathWeight = 1.0;
-    Point pathDirection = (points[1] - points[0]).normalized(pathWeight);
+    const float pathWeight = 0.1;
+    Point pathDirection = (vi + (points[1] - points[0]).normalized(pathWeight)).normalized();
+    //Point pathDirection = (points[1] - points[0]).normalized(pathWeight);
     startDirections.push_back(
-        (vi + pathDirection)
-            .normalized((points[1] - points[0]).mag() * directionDistance));
-    for (int i = 1; i < curvesNum - 1; i++) {
+        (pathDirection)
+            .normalized((points[1] - points[0]).mag() * 0.1));
+    for (int i = 1; i < length-1; i++) {
         const Point difference = points[i + 1] - points[i - 1];
         endDirections.push_back(difference.normalized(
             (points[i] - points[i - 1]).mag() * directionDistance));
         startDirections.push_back(difference.normalized(
-            (points[i] - points[i + 1]).mag() * directionDistance));
+            (points[i+1] - points[i]).mag() * directionDistance));
     }
     Point endPathDirection = (points[points.size() - 1] -
-                              points[points.size() - 2]).normalized(pathWeight);
-    endDirections.push_back((vf + endPathDirection)
+                              points[points.size() - 2]).normalized(pathWeight) + vf;
+    endDirections.push_back((endPathDirection)
                                 .normalized((points[points.size() - 1] -
                                              points[points.size() - 2]).mag() *
                                             directionDistance));
@@ -582,7 +587,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     }
 
     vector<CubicBezierControlPoints> controlPoints =
-        generateCubicBezierPath(points, motionConstraints, vi, vf);
+        generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
 
     vector<InterpolatedPath::Entry> entries = generateVelocityPath(
         controlPoints, motionConstraints, vi, vf, interpolations);

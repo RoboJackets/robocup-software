@@ -90,6 +90,17 @@ public:
      */
     virtual std::unique_ptr<Path> clone() const = 0;
 
+    virtual void setDebugText(QString string) {
+        _debugText = std::move(string);
+    }
+
+    virtual void drawDebugText(SystemState* state, const QColor& color = Qt::darkCyan,
+                               const QString& layer = "PathDebugText") const {
+        if (_debugText) {
+            state->drawText(_debugText.get(), end().motion.pos, color, layer);
+        }
+    }
+
     /// The time the path starts at
     virtual RJ::Time startTime() const { return _startTime; }
     virtual void setStartTime(RJ::Time t) { _startTime = t; }
@@ -103,6 +114,7 @@ public:
 
 protected:
     RJ::Time _startTime;
+    boost::optional<QString> _debugText;
 };
 
 /**
@@ -227,6 +239,14 @@ public:
 
     virtual RJ::Time startTime() const override { return path->startTime(); }
     virtual void setStartTime(RJ::Time t) override { path->setStartTime(t); }
+    virtual void setDebugText(QString string) override {
+        path->setDebugText(std::move(string));
+    }
+
+    virtual void drawDebugText(SystemState* state, const QColor& color = Qt::darkCyan,
+                               const QString& layer = "PathDebugText") const override {
+        path->drawDebugText(state, color, layer);
+    }
 };
 
 class ConstPathIterator {
