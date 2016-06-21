@@ -41,7 +41,7 @@ GamepadController::GamepadController()
 
                     SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
 
-                    char gui_str[33];
+                    char guid_str[33];
                     SDL_JoystickGetGUIDString(guid, guid_str, 33);
 
                     string joy_name(SDL_JoystickName(joy));
