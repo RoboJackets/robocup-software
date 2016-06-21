@@ -41,15 +41,17 @@ GamepadController::GamepadController()
 
                     SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
 
-                    string guid_str(' ', 34);
-                    SDL_JoystickGetGUIDString(guid, guid_str.data(), guid_str.length());
+                    char gui_str[33];
+                    SDL_JoystickGetGUIDString(guid, guid_str, 33);
+
+                    string joy_name(SDL_JoystickName(joy));
                     
                     // "GUID,name,mapping"
                     // Example: "341a3608000000000000504944564944,
                     //           Afterglow PS3 Controller,
                     //           a:b1,b:b2,y:b3,x:b0,start:b9,guide:b12,back:b8,dpup:h0.1,dpleft:h0.8,dpdown:h0.4,dpright:h0.2,leftshoulder:b4,rightshoulder:b5,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:b6,righttrigger:b7"
                     string map_str(guid_str);
-                    map_str += "," + SDL_JoystickName(joy);
+                    map_str += "," + joy_name;
                     map_str += ",a:b1";
                     map_str += ",b:b2";
                     map_str += ",y:b3";
