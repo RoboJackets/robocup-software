@@ -8,6 +8,7 @@ soccer.app
 soccer_tests
 simple_logger
 log_viewer
+log_converter
 radio
 convert_tcpdump
 sslrefbox
