@@ -29,8 +29,6 @@ class Defense(composite_behavior.CompositeBehavior):
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
 
-        self.go_clear = False
-
         # we could make the Defense tactic have more or less defenders, but right now we only support two
         if len(defender_priorities) != 2:
             raise RuntimeError(
@@ -44,10 +42,11 @@ class Defense(composite_behavior.CompositeBehavior):
                             Defense.State.defending, lambda: True,
                             "immediately")
         self.add_transition(Defense.State.defending, Defense.State.clearing,
-                            lambda: self.go_clear,
+                            lambda: self.should_clear_ball(),
                             "when it is safe to clear the ball")
         self.add_transition(Defense.State.clearing, Defense.State.defending,
-                            lambda: not self.go_clear, "done clearing")
+                            lambda: not self.should_clear_ball(),
+                            "done clearing")
 
         goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -76,20 +75,35 @@ class Defense(composite_behavior.CompositeBehavior):
     def debug(self, value):
         self._debug = value
 
-    def execute_defending(self):
+    def should_clear_ball(self):
+        #Returns true if our robot can reach the ball sooner than the closest opponent
+        safe_to_clear = False
+        if main.ball().pos.mag() < constants.Field.ArcRadius * 2:
 
-        defender1 = self.subbehavior_with_name('defender1')
-        defender2 = self.subbehavior_with_name('defender2')
-        close_defender = defender1
-        if (main.ball().pos.mag() < constants.Field.ArcRadius * 2):
+            defender1 = self.subbehavior_with_name('defender1')
+            defender2 = self.subbehavior_with_name('defender2')
             if (defender1.robot != None and defender2.robot != None):
-                if (not defender1.go_clear and not defender2.go_clear):
-                    if close_defender.should_clear_ball(
-                            evaluation.ball.time_to_ball(
-                                close_defender.robot)):
-                        close_defender.go_clear = True
-                        self.go_clear = True
+                #TODO: change this to use the config system when we figure out how to do that
+                max_vel = 3.5
+                max_accel = 1.8
 
+                for robot in main.system_state().their_robots:
+                    their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
+                    #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
+                    their_max_vel = max(max_vel, robot.vel.mag())
+
+                #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
+                their_time_to_ball = (
+                    their_dist_to_ball /
+                    their_max_vel) * defender1.safety_multiplier
+                if their_time_to_ball > evaluation.ball.time_to_ball(
+                        defender1.robot) or their_time_to_ball > evaluation.ball.time_to_ball(
+                            defender2.robot):
+                    safe_to_clear = True
+
+        return safe_to_clear
+
+    def execute_running(self):
         self.recalculate()
 
         goalie = self.subbehavior_with_name("goalie")
@@ -105,11 +119,14 @@ class Defense(composite_behavior.CompositeBehavior):
     def execute_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
-        if (defender1.robot != None and defender2.robot != None):
-            if (not defender1.go_clear and not defender2.go_clear):
-                self.go_clear = False
+        defender1.go_clear = True
+        defender2.go_clear = False
 
-        #main.system_state().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
+    def on_exit_clearing(self):
+        defender1 = self.subbehavior_with_name('defender1')
+        defender2 = self.subbehavior_with_name('defender2')
+        defender1.go_clear = False
+        defender2.go_clear = False
 
     def recalculate(self):
         goalie = self.subbehavior_with_name('goalie')

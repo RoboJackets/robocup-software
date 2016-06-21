@@ -49,32 +49,8 @@ class SubmissiveDefender(
         self.add_transition(
             SubmissiveDefender.State.clearing,
             SubmissiveDefender.State.marking,
-            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.should_clear_ball(evaluation.ball.time_to_ball(self.robot)),
+            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.go_clear,
             "done clearing")
-
-    def should_clear_ball(self, our_time_to_ball):
-        #Returns true if our robot can reach the ball sooner than the closest opponent
-        if main.ball().pos.mag() < constants.Field.ArcRadius * 2:
-            safe_to_clear = True
-            #TODO: change this to use the config system when we figure out how to do that
-            max_vel = 3.5
-            max_accel = 1.8
-
-            for robot in main.system_state().their_robots:
-                their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
-                #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
-                their_max_vel = max(max_vel, robot.vel.mag())
-
-                #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
-                their_time_to_ball = (their_dist_to_ball /
-                                      their_max_vel) * self.safety_multiplier
-
-                if their_time_to_ball <= our_time_to_ball:
-                    safe_to_clear = False
-        else:
-            safe_to_clear = False
-
-        return safe_to_clear
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
@@ -212,7 +188,6 @@ class SubmissiveDefender(
 
     def on_exit_clearing(self):
         self.remove_subbehavior('kick-clear')
-        self.go_clear = False
 
     def role_requirements(self):
         reqs = super().role_requirements()
