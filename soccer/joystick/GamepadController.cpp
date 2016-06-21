@@ -21,6 +21,8 @@ GamepadController::GamepadController()
         // Open the first available controller
         for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
             if (SDL_IsGameController(i)) {
+                SDL_GameController* controller;
+
                 cerr << "controller '" << i << "' is compatible, named '" << SDL_GameControllerNameForIndex(i) << "'" << endl;
                 controller = SDL_GameControllerOpen(i);
 
@@ -30,19 +32,18 @@ GamepadController::GamepadController()
                 cerr << "controller " << i << " is mapped as '" << mapping << "'" << endl;
                 SDL_free(mapping);
 
-                if (controller) {
+                if (controller != nullptr) {
                     _controller = controller;
                     cout << "Controller connected to " << SDL_GameControllerName(_controller) << endl;
 
                     SDL_Joystick* joy;
                     joy = SDL_GameControllerGetJoystick(_controller);
 
+                    SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
+
                     string guid_str(' ', 34);
                     SDL_JoystickGetGUIDString(guid, guid_str.data(), guid_str.length());
-                    // guidstring = str(guidstrarray.value)
-
-                    SDL_JoystickGetGUIDString(joy);
-
+                    
                     // "GUID,name,mapping"
                     // Example: "341a3608000000000000504944564944,
                     //           Afterglow PS3 Controller,
