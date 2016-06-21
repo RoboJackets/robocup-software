@@ -98,7 +98,7 @@ include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 find_package(libusb-1.0 REQUIRED)
 
 # SDL
-find_package(SDL REQUIRED)
+find_package(SDL2 REQUIRED)
 
 # Several things depend on the headers in the 'common' directory
 include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
