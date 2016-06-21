@@ -2,7 +2,7 @@
 
 #include "Joystick.hpp"
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 /**
  * @brief Logitecch Gamepad/Joystick used to control robots
@@ -19,7 +19,7 @@ public:
     bool valid() const override;
 
 private:
-    SDL_GameController* controller;
+    SDL_GameController* _controller;
 
     JoystickControlValues _controls;
 

@@ -9,7 +9,7 @@ const float AXIS_MAX = 32768.0f;
 }
 
 GamepadController::GamepadController()
-    : _joystick(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
+    : _controller(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
 
     if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
         cerr << "ERROR: SDL could not initialize! SDL Error: " << SDL_GetError()
