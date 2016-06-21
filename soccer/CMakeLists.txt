@@ -111,7 +111,7 @@ target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
-target_link_libraries(robocup ${SDL2_LIBRARY})
+target_link_libraries(robocup ${SDL2_LIBRARIES})
 
 # python
 # note: these are set in the root CMakeLists.txt file
