@@ -13,7 +13,7 @@ set(ROBOCUP_LIB_SRC
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
     "joystick/Joystick.cpp"
-    "joystick/GamepadJoystick.cpp"
+    "joystick/GamepadController.cpp"
     "joystick/SpaceNavJoystick.cpp"
     "Logger.cpp"
     "MainWindow.cpp"
@@ -96,7 +96,7 @@ endif()
 include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
 # SDL
-include_directories(SYSTEM ${SDL_INCLUDE_DIRS})
+include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
@@ -111,7 +111,7 @@ target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
-target_link_libraries(robocup ${SDL_LIBRARY})
+target_link_libraries(robocup ${SDL2_LIBRARY})
 
 # python
 # note: these are set in the root CMakeLists.txt file
