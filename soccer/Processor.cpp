@@ -752,9 +752,9 @@ JoystickControlValues Processor::getJoystickControlValues() {
         if (joy->valid()) {
             JoystickControlValues newVals = joy->getJoystickControlValues();
 
-            if (newVals.dribble) vals.dribble = true;
-            if (newVals.kick) vals.kick = true;
-            if (newVals.chip) vals.chip = true;
+            vals.dribble |= newVals.dribble;
+            vals.kick |= newVals.kick;
+            vals.chip |= newVals.chip;
 
             vals.rotation += newVals.rotation;
             vals.translation += newVals.translation;
