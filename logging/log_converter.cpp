@@ -15,8 +15,8 @@
 using namespace Packet;
 using namespace std;
 
-#define BAR "|"
-#define MATCH_ID_LENGTH 32
+const char BAR = '|';
+const int MATCH_ID_LENGTH = 32;
 
 vector<std::shared_ptr<Packet::LogFrame> > frames;
 
@@ -65,7 +65,6 @@ bool readFrames(const char* filename) {
         return false;
     }
 
-    int n = 0;
     while (!file.atEnd()) {
         uint32_t size = 0;
         if (file.read((char*)&size, sizeof(size)) != sizeof(size)) {
@@ -88,7 +87,6 @@ bool readFrames(const char* filename) {
             printf("Failed: %s\n", frame->InitializationErrorString().c_str());
             return false;
         }
-        ++n;
     }
 
     return true;
