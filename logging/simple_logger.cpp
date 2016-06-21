@@ -19,14 +19,26 @@
 using namespace std;
 using namespace Packet;
 
+void usage(const char* prog) {
+    fprintf(stderr, "Usage: %s[-sim] <filename.log>\n", prog);
+    fprintf(stderr, "-sim:\t Connect to the simulator for vision packets.\n");
+    exit(1);
+}
+
 int main(int argc, char* argv[]) {
     int framePeriod = 1000000 / 60;
 
+    bool simulation = false;
     QString logFile;
 
-    // Determine log file name
-    if (argc == 2) {
+    // Process args
+    if (argc == 3 && strcmp(argv[1], "-sim") == 0) {
+        logFile = argv[2];
+        simulation = true;
+    } else if (argc == 2) {
         logFile = argv[1];
+    } else {
+        usage(argv[0]);
     }
 
     if (logFile.isNull()) {
@@ -41,10 +53,22 @@ int main(int argc, char* argv[]) {
 
     // Create vision socket
     QUdpSocket visionSocket;
-    if (!visionSocket.bind(SharedVisionPortDoubleNew,
-                           QUdpSocket::ShareAddress)) {
-        printf("Can't bind to shared vision port");
-        return 1;
+    if (simulation) {
+        // The simulator doesn't multicast its vision.  Instead, it sends to two
+        // different ports.
+        // Try to bind to the first one and, if that fails, use the second one.
+        if (!visionSocket.bind(SimVisionPort)) {
+            if (!visionSocket.bind(SimVisionPort + 1)) {
+                throw runtime_error(
+                    "Can't bind to either simulated vision port");
+            }
+        }
+    } else {
+        if (!visionSocket.bind(SharedVisionPortDoubleNew,
+                               QUdpSocket::ShareAddress)) {
+            printf("Can't bind to shared vision port");
+            return 1;
+        }
     }
     multicast_add(&visionSocket, SharedVisionAddress);
 
