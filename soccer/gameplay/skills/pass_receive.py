@@ -15,8 +15,8 @@ import skills
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class PassReceive(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
+                  ):
 
     ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
@@ -189,8 +189,7 @@ class PassReceive(
 
     def reset_correct_location(self):
         # Extrapolate center of robot location from kick velocity
-        self.kicked_from = main.ball(
-        ).pos  #- (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
+        self.kicked_from = main.ball().pos  #- (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
         self.kicked_vel = main.ball().vel
 
     def on_enter_receiving(self):
