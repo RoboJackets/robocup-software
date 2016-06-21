@@ -11,7 +11,7 @@
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include <joystick/Joystick.hpp>
-#include <joystick/GamepadJoystick.hpp>
+#include <joystick/GamepadController.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
@@ -69,7 +69,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _radio = nullptr;
 
     // joysticks
-    _joysticks.push_back(new GamepadJoystick());
+    _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
