@@ -78,7 +78,9 @@ class Defense(composite_behavior.CompositeBehavior):
     def should_clear_ball(self):
         #Returns true if our robot can reach the ball sooner than the closest opponent
         safe_to_clear = False
-        if main.ball().pos.mag() < constants.Field.ArcRadius * 2:
+        if main.ball().pos.mag(
+        ) < constants.Field.ArcRadius * 2 and not evaluation.ball.is_in_our_goalie_zone(
+        ):
 
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
@@ -116,17 +118,15 @@ class Defense(composite_behavior.CompositeBehavior):
 
             #main.system_state().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
 
-    def execute_clearing(self):
+    def on_enter_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
         defender1.go_clear = True
-        defender2.go_clear = False
 
     def on_exit_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
         defender1.go_clear = False
-        defender2.go_clear = False
 
     def recalculate(self):
         goalie = self.subbehavior_with_name('goalie')
