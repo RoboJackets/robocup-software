@@ -1,6 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f":[12,0,0,2,1],
 "struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[12,0,0,2,0],
 "struct_d_s2411__t.html":[12,0,39],
 "struct_d_s2411__t.html#a56781b569b897cec1de87bedda9d9f09":[12,0,39,1],

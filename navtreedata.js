@@ -45,8 +45,8 @@ var NAVTREEINDEX =
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#a17954c9dae195259661da177af4d3102",
 "classgameplay_1_1role__assignment_1_1_role_requirements.html",
 "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a2977abd3906e70abc63c8e19478681cb",
-"classmbed_1_1_i2_c_driver.html#adbe58aea77dff35781d5ca1bda4b0de3",
-"struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f"
+"classmbed_1_1_i2_c_master_rtos.html",
+"struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
