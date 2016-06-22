@@ -34,7 +34,12 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
         echo "Ubuntu 15.04 Detected..."
         SYSTEM="ubuntu-15.04"
         ADD_REPOS=false
-        FIRMWARE=false
+        FIRMWARE=true
+    elif cat /etc/os-release | grep -iq '^VERSION=.*15.10'; then # Using Ubuntu 15.10
+        echo "Ubuntu 15.10 Detected..."
+        SYSTEM="ubuntu-15.10"
+        ADD_REPOS=false
+        FIRMWARE=true
     elif cat /etc/os-release | grep -iq '^VERSION=.*16.04'; then # Using Ubuntu 16.04
         echo "Ubuntu 16.04 Detected..."
         SYSTEM="ubuntu-16.04"
