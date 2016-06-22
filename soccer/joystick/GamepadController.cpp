@@ -180,7 +180,7 @@ void GamepadController::update() {
      *  VELOCITY ROTATION
      */
     // Logitech F310 Controller
-    _controls.rotation = SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) / AXIS_MAX;
+    _controls.rotation = -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) / AXIS_MAX;
 
     /*
      *  VELOCITY TRANSLATION
