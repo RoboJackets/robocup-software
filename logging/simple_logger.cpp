@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
         simulation = true;
     } else if (argc == 2) {
         logFile = argv[1];
-    } else {
+    } else if (argc != 1) {
         usage(argv[0]);
     }
 
@@ -87,7 +87,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    printf("Writing to %s\n", (const char*)logFile.toLatin1());
+    fprintf(stderr, "Writing to %s\n", (const char*)logFile.toLatin1());
+    fprintf(stderr, "Press any key and press ENTER to exit\n");
 
     // Main loop
     LogFrame logFrame;
@@ -98,6 +99,7 @@ int main(int argc, char* argv[]) {
         logFrame.Clear();
         logFrame.set_command_time(startTime);
         logFrame.set_timestamp(startTime);
+        logFrame.set_blue_team(false); //Always assume self is Yellow for logs
 
         // Check for user input (to exit)
         struct pollfd pfd;
@@ -120,9 +122,13 @@ int main(int argc, char* argv[]) {
                 printf("Bad vision packet of %d bytes\n", n);
                 continue;
             }
+
+            //LogFrame_Robot* robot = logFrame
+
         }
 
         // Read referee data
+        bool firstRefpacket = true;
         while (refereeSocket.hasPendingDatagrams()) {
             string buf;
             unsigned int n = refereeSocket.pendingDatagramSize();
@@ -134,6 +140,14 @@ int main(int argc, char* argv[]) {
                 printf("Bad referee packet of %d bytes\n", n);
                 continue;
             }
+
+            // Copy team names into LogFrame
+            if (firstRefpacket) {
+                firstRefpacket = false;
+
+                logFrame.set_team_name_yellow(packet->yellow().name());
+                logFrame.set_team_name_blue(packet->blue().name());
+            }
         }
 
         if (first) {
@@ -143,6 +157,7 @@ int main(int argc, char* argv[]) {
             logConfig->set_generator("simple_logger");
             logConfig->set_git_version_hash(git_version_hash);
             logConfig->set_git_version_dirty(git_version_dirty);
+            logConfig->set_simulation(simulation);
         }
 
         uint32_t size = logFrame.ByteSize();
