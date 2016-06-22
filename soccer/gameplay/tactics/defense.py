@@ -120,12 +120,10 @@ class Defense(composite_behavior.CompositeBehavior):
 
     def on_enter_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
-        defender2 = self.subbehavior_with_name('defender2')
         defender1.go_clear = True
 
     def on_exit_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
-        defender2 = self.subbehavior_with_name('defender2')
         defender1.go_clear = False
 
     def recalculate(self):
