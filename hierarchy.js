@@ -149,8 +149,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
+    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -367,6 +367,7 @@ var hierarchy =
       [ "gameplay.skills.capture.Capture.State", "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html", null ],
       [ "gameplay.skills.pivot_kick.PivotKick.State", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick_1_1_state.html", null ],
       [ "gameplay.skills.touch_ball.TouchBall.State", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball_1_1_state.html", null ],
+      [ "gameplay.tactics.defense.Defense.State", "classgameplay_1_1tactics_1_1defense_1_1_defense_1_1_state.html", null ],
       [ "gameplay.tactics.positions.defender.Defender.Side", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_side.html", null ],
       [ "gameplay.tactics.positions.defender.Defender.State", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_defender.SubmissiveDefender.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html", null ],
