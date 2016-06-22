@@ -11,53 +11,90 @@ const float AXIS_MAX = 32768.0f;
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
 
+    // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
-        cerr << "ERROR: SDL could not initialize! SDL Error: " << SDL_GetError()
+        cerr << "ERROR: SDL could not initialize game controller system! SDL Error: " << SDL_GetError()
              << endl;
         return;
     }
 
     if (SDL_NumJoysticks()) {
         // Open the first available controller
-        for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
+        for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {    
+            // // open joystick, print out info about it, then close it back
+            // SDL_Joystick *joy;
+            // joy = SDL_JoystickOpen(i);
+            // if (joy) {
+            //     cerr << "Joystick " << i << ":" << endl;
+            //     cerr << "  Name:\t\t\t" << SDL_JoystickNameForIndex(i) << endl;
+            //     cerr << "  Number of Axes:\t" << SDL_JoystickNumAxes(joy) << endl;
+            //     cerr << "  Number of Btns:\t" << SDL_JoystickNumButtons(joy) << endl;
+            //     cerr << "  Number of Balls:\t" << SDL_JoystickNumBalls(joy) << endl;
+            //     cerr << "  Game Controller:\t" << static_cast<bool>(SDL_IsGameController(i)) << endl;
+            // } else {
+            //     cerr << "Unable to open joystick number " << i << endl;
+            // }
+
+            // // close the joystick back
+            // if (SDL_JoystickGetAttached(joy)) {
+            //     SDL_JoystickClose(joy);
+            // }
+
+            // setup the joystick as a game controller if available
             if (SDL_IsGameController(i)) {
                 SDL_GameController* controller;
-
-                cerr << "controller '" << i << "' is compatible, named '" << SDL_GameControllerNameForIndex(i) << "'" << endl;
                 controller = SDL_GameControllerOpen(i);
-
-                char* mapping;
-                mapping = SDL_GameControllerMapping(controller);
-
-                cerr << "controller " << i << " is mapped as '" << mapping << "'" << endl;
-                SDL_free(mapping);
 
                 if (controller != nullptr) {
                     _controller = controller;
-                    cout << "Controller connected to " << SDL_GameControllerName(_controller) << endl;
+                    cout << "Using " << SDL_GameControllerName(_controller) << " game controller" << endl;
 
-                    SDL_Joystick* joy;
-                    joy = SDL_GameControllerGetJoystick(_controller);
+                    // SDL_Joystick* joyst;
+                    // joyst = SDL_GameControllerGetJoystick(_controller);
 
-                    SDL_JoystickGUID guid = SDL_JoystickGetGUID(joy);
+                    // SDL_JoystickGUID guid = SDL_JoystickGetGUID(joyst);
 
-                    char guid_str[33];
-                    SDL_JoystickGetGUIDString(guid, guid_str, 33);
+                    // char guid_str[33];
+                    // SDL_JoystickGetGUIDString(guid, guid_str, 33);
 
-                    string joy_name(SDL_JoystickName(joy));
+                    // string joy_name(SDL_JoystickName(joyst));
+                    // string map_str(guid_str);                    
+
+                    // map_str += "," + joy_name;
+
+                    // map_str += ",a:b0";
+                    // map_str += ",b:b1";
+                    // map_str += ",x:b2";
+                    // map_str += ",y:b3";
+
+                    // map_str += ",dpdown:h0.4";
+                    // map_str += ",dpleft:h0.8";
+                    // map_str += ",dpright:h0.2";
+                    // map_str += ",dpup:h0.1";
                     
-                    // "GUID,name,mapping"
-                    // Example: "341a3608000000000000504944564944,
-                    //           Afterglow PS3 Controller,
-                    //           a:b1,b:b2,y:b3,x:b0,start:b9,guide:b12,back:b8,dpup:h0.1,dpleft:h0.8,dpdown:h0.4,dpright:h0.2,leftshoulder:b4,rightshoulder:b5,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:b6,righttrigger:b7"
-                    string map_str(guid_str);
-                    map_str += "," + joy_name;
-                    map_str += ",a:b1";
-                    map_str += ",b:b2";
-                    map_str += ",y:b3";
-                    map_str += ",x:b0";
-                    map_str += ",start:b9";
-                    SDL_GameControllerAddMapping(map_str.c_str());
+                    // map_str += ",leftstick:b9";
+                    // map_str += ",leftx:a0";
+                    // map_str += ",lefty:a1";
+                    // map_str += ",leftshoulder:b4";
+                    // map_str += ",lefttrigger:a2";
+
+                    // map_str += ",rightx:a3";
+                    // map_str += ",righty:a4";
+                    // map_str += ",rightstick:b10";
+                    // map_str += ",rightshoulder:b5";
+                    // map_str += ",righttrigger:a5";
+
+                    // map_str += ",start:b7";
+                    // map_str += ",back:b6";
+                    // map_str += ",guide:b8";
+                    
+                    // SDL_GameControllerAddMapping(map_str.c_str());
+
+                    // char* mapping;
+                    // mapping = SDL_GameControllerMapping(controller);
+
+                    // cerr << "Controller " << i << " is mapped as:'" << endl << "\t'" << mapping << "'" << endl;
+                    // SDL_free(mapping);
 
                     break;
                 } else {
@@ -87,13 +124,6 @@ void GamepadController::update() {
     RJ::Time now = RJ::timestamp();
 
     /*
-     *  DRIBBLER ON/OFF
-     */
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_Y)) {
-        _controls.dribble = !_controls.dribble;
-    }
-
-    /*
      *  DRIBBLER POWER
      */
     if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_LEFTSTICK)) {
@@ -104,6 +134,14 @@ void GamepadController::update() {
     } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
+            _lastDribblerTime = now;
+        }
+    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_Y)) {
+        /*
+         *  DRIBBLER ON/OFF
+         */
+        if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
+            _controls.dribble = !_controls.dribble;
             _lastDribblerTime = now;
         }
     } else {
@@ -136,13 +174,13 @@ void GamepadController::update() {
     /*
      *  CHIP TRUE/FALSE
      */
-    _controls.chip = SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_B);
+    _controls.chip = SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X);
 
     /*
      *  VELOCITY ROTATION
      */
     // Logitech F310 Controller
-    _controls.rotation = -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) / AXIS_MAX;
+    _controls.rotation = SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) / AXIS_MAX;
 
     /*
      *  VELOCITY TRANSLATION
@@ -153,20 +191,26 @@ void GamepadController::update() {
     Geometry2d::Point input(rightX, rightY);
 
     // Align along an axis using the DPAD as modifier buttons
-    auto mVal = fabs(rightY);
     if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        input.y() = mVal;
+        input.y() = -fabs(rightY);
         input.x() = 0;
     } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        input.y() = -mVal;
+        input.y() = fabs(rightY);
         input.x() = 0;
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        input.y() = 0;
-        input.x() = mVal;
     } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         input.y() = 0;
-        input.x() = -mVal;
+        input.x() = -fabs(rightX);
+    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
+        input.y() = 0;
+        input.x() = fabs(rightX);
     }
+
+    // Floating point precision error rounding
+    if (_controls.kickPower < 1e-1) _controls.kickPower = 0;
+    if (_controls.dribblerPower < 1e-1) _controls.dribblerPower = 0;
+    if (fabs(_controls.rotation) < 5e-2) _controls.rotation = 0;
+    if (fabs(input.y()) < 5e-2) input.y() = 0;
+    if (fabs(input.x()) < 5e-2) input.x() = 0;
 
     _controls.translation = Geometry2d::Point(input.x(), input.y());
 }
