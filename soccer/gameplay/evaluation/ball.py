@@ -101,9 +101,9 @@ def robot_has_ball(robot):
 
 
 def time_to_ball(robot):
-    max_vel = 3.5
-    max_accel = 1.8
-    delay = .1  #tune this better
+    max_vel = robocup.MotionConstraints.MaxRobotSpeed.value
+    max_accel = robocup.MotionConstraints.MaxRobotAccel.value
+    delay = .1  #TODO: tune this better
     rpos = robot.pos
     bpos = main.ball().pos
     #calculate time for self to reach ball using max_vel + a slight delay for capture
