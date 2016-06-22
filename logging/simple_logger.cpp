@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
         logFrame.Clear();
         logFrame.set_command_time(startTime);
         logFrame.set_timestamp(startTime);
-        logFrame.set_blue_team(false); //Always assume self is Yellow for logs
+        logFrame.set_blue_team(false);  // Always assume self is Yellow for logs
 
         // Check for user input (to exit)
         struct pollfd pfd;
@@ -123,8 +123,7 @@ int main(int argc, char* argv[]) {
                 continue;
             }
 
-            //LogFrame_Robot* robot = logFrame
-
+            // LogFrame_Robot* robot = logFrame
         }
 
         // Read referee data

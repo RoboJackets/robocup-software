@@ -188,8 +188,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(
-                threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
+            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
                                                         1) * spacing
             start_vec = center_line.delta().normalized()
@@ -453,7 +452,7 @@ class Defense(composite_behavior.CompositeBehavior):
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
-                        subbehavior_req_tree):
+                    subbehavior_req_tree):
                     r.previous_shell_id = None
 
         return reqs
