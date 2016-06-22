@@ -20,6 +20,10 @@ import role_assignment
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
+    class State(Enum):
+        ## gets between a particular opponent and the goal.  stays closer to the goal
+        defending = 1
+        clearing = 2  #Kick the ball away from the goalzone if it is safe to do so
 
     # defender_priorities should have a length of two and contains the priorities for the two defender
     def __init__(self, defender_priorities=[20, 19]):
@@ -30,9 +34,19 @@ class Defense(composite_behavior.CompositeBehavior):
             raise RuntimeError(
                 "defender_priorities should have a length of two")
 
+        self.add_state(Defense.State.defending,
+                       behavior.Behavior.State.running)
+        self.add_state(Defense.State.clearing, behavior.Behavior.State.running)
+
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running, lambda: True,
+                            Defense.State.defending, lambda: True,
                             "immediately")
+        self.add_transition(Defense.State.defending, Defense.State.clearing,
+                            lambda: self.should_clear_ball(),
+                            "when it is safe to clear the ball")
+        self.add_transition(Defense.State.clearing, Defense.State.defending,
+                            lambda: not self.should_clear_ball(),
+                            "done clearing")
 
         goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -61,6 +75,36 @@ class Defense(composite_behavior.CompositeBehavior):
     def debug(self, value):
         self._debug = value
 
+    def should_clear_ball(self):
+        #Returns true if our robot can reach the ball sooner than the closest opponent
+        safe_to_clear = False
+        if main.ball().pos.mag(
+        ) < constants.Field.ArcRadius * 2 and not evaluation.ball.is_in_our_goalie_zone(
+        ):
+
+            defender1 = self.subbehavior_with_name('defender1')
+            defender2 = self.subbehavior_with_name('defender2')
+            if (defender1.robot != None and defender2.robot != None):
+                max_vel = robocup.MotionConstraints.MaxRobotSpeed.value
+                max_accel = robocup.MotionConstraints.MaxRobotAccel.value
+
+                for robot in main.system_state().their_robots:
+                    their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
+                    #if their robot is moving faster than ours, assume it is at its maximum speed, otherwise assume its max speed is the same as ours
+                    their_max_vel = max(max_vel, robot.vel.mag())
+
+                #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
+                their_time_to_ball = (
+                    their_dist_to_ball /
+                    their_max_vel) * defender1.safety_multiplier
+
+                if their_time_to_ball > evaluation.ball.time_to_ball(
+                        defender1.robot) or their_time_to_ball > evaluation.ball.time_to_ball(
+                            defender2.robot):
+                    safe_to_clear = True
+
+        return safe_to_clear
+
     def execute_running(self):
         self.recalculate()
 
@@ -71,6 +115,17 @@ class Defense(composite_behavior.CompositeBehavior):
             # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
             # TODO: move a lot of this code into modules in the evaluation folder
+
+            #main.system_state().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
+
+    def on_enter_clearing(self):
+        defender1 = self.subbehavior_with_name('defender1')
+        defender1.go_clear = True
+
+    def on_exit_clearing(self):
+        defender1 = self.subbehavior_with_name('defender1')
+        defender1.go_clear = False
+
     def recalculate(self):
         goalie = self.subbehavior_with_name('goalie')
         defender1 = self.subbehavior_with_name('defender1')
@@ -188,8 +243,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(
-                threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
+            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
                                                         1) * spacing
             start_vec = center_line.delta().normalized()
@@ -453,7 +507,7 @@ class Defense(composite_behavior.CompositeBehavior):
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
-                        subbehavior_req_tree):
+                    subbehavior_req_tree):
                     r.previous_shell_id = None
 
         return reqs
