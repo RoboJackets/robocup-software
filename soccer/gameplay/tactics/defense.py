@@ -83,9 +83,8 @@ class Defense(composite_behavior.CompositeBehavior):
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
             if (defender1.robot != None and defender2.robot != None):
-                #TODO: change this to use the config system when we figure out how to do that
-                max_vel = 3.5
-                max_accel = 1.8
+                max_vel = robocup.MotionConstraints.MaxRobotSpeed.value
+                max_accel = robocup.MotionConstraints.MaxRobotAccel.value
 
                 for robot in main.system_state().their_robots:
                     their_dist_to_ball = robot.pos.dist_to(main.ball().pos)
@@ -96,6 +95,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 their_time_to_ball = (
                     their_dist_to_ball /
                     their_max_vel) * defender1.safety_multiplier
+
                 if their_time_to_ball > evaluation.ball.time_to_ball(
                         defender1.robot) or their_time_to_ball > evaluation.ball.time_to_ball(
                             defender2.robot):
