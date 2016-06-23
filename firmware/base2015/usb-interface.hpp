@@ -11,4 +11,5 @@ enum Base2015ControlCommand {
     RadioWriteRegister = 1,
     RadioReadRegister,
     RadioStrobe,
+    RadioSetChannel,
 };
