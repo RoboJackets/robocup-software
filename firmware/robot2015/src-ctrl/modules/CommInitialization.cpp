@@ -69,10 +69,10 @@ void loopback_tx_cb(rtp::packet* p) {
 
 void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
     // leds that flash if tx/rx have happened recently
-    auto rxTimeoutLED =
-        make_shared<FlashingTimeoutLED>(DigitalOut(RJ_RX_LED, OpenDrain));
-    auto txTimeoutLED =
-        make_shared<FlashingTimeoutLED>(DigitalOut(RJ_TX_LED, OpenDrain));
+    auto rxTimeoutLED = make_shared<FlashingTimeoutLED>(
+        DigitalOut(RJ_RX_LED, OpenDrain), 160, 400);
+    auto txTimeoutLED = make_shared<FlashingTimeoutLED>(
+        DigitalOut(RJ_TX_LED, OpenDrain), 160, 400);
 
     // Startup the CommModule interface
     CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
