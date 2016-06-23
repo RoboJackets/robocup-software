@@ -68,7 +68,7 @@ localparam STARTUP_DELAY_WIDTH          =   (  5 );
 // When WATCHDOG_TIMER_CLK_WIDTH = 5, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~114ms
 // When WATCHDOG_TIMER_CLK_WIDTH = 4, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~57ms
 // When WATCHDOG_TIMER_CLK_WIDTH = 3, and WATCHDOG_TIMER_WIDTH = 16, the expire time is ~28ms
-localparam WATCHDOG_TIMER_CLK_WIDTH     =   (  6 );
+localparam WATCHDOG_TIMER_CLK_WIDTH     =   (  8 );
 localparam WATCHDOG_TIMER_WIDTH         =   ( 16 );     // KEEP THIS AT 16 to make things easy for the SPI_Slave
 
 reg sys_rdy = 0;
@@ -245,7 +245,7 @@ assign spi_master_di = spi_master_data_array_out[spi_master_recv_index];
 //   0 = 1.7A
 //   1 = 0.7A
 //   2 = 0.25A
-localparam DRV8303_GATE_CURRENT = 2;
+localparam DRV8303_GATE_CURRENT = 1;
 
 // This is a strobe bit that resets the gate outputs
 //   0 = Normal mode
@@ -265,7 +265,7 @@ localparam DRV8303_3_INPUTS = 0;
 
 // This sets the over-current protection threshold
 // DON'T SET THIS PAST 14! Ever!
-localparam DRV8303_OC_ADJ_VAL = 5;
+localparam DRV8303_OC_ADJ_VAL = 7;
 
 // This sets if over-current and/or over-temperature are reported.
 //   0 = over-current & over-temperature
@@ -444,7 +444,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                         spi_slave_res_buf[2*j+2]    <=  enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
                     end
                     // The latched watchdog timer count
-                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1 : (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH + 1)];
+                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1 : (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH )];
                     spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer[1][(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : 0];
                     motor_update_flag <= 1;
                 end
@@ -458,7 +458,7 @@ begin : SPI_SLAVE_LOAD_RESPONSE_BUFFER
                         spi_slave_res_buf[2*j+2]    <=  enc_count[j][SPI_SLAVE_DATA_WIDTH-1:0];
                     end
                     // The latched watchdog timer count
-                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH + 1)];
+                    spi_slave_res_buf[2*NUM_ENCODERS+1] <= watchdog_timer[1][WATCHDOG_TIMER_WIDTH - 1: (WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH )];
                     spi_slave_res_buf[2*NUM_ENCODERS+2] <= watchdog_timer[1][(WATCHDOG_TIMER_WIDTH - SPI_SLAVE_DATA_WIDTH - 1) : 0];
                 end
 

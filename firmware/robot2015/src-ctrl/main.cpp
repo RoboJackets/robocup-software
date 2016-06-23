@@ -99,10 +99,6 @@ int main() {
     rgbLED.setPixel(1, NeoColorBlue);
     rgbLED.write();
 
-    // Start a periodic blinking LED to show system activity
-    // This is set to never timeout, so it will only stop if the system halts
-    FlashingTimeoutLED liveLight(LED1, 500, osWaitForever);
-
     // Flip off the startup LEDs after a timeout period
     RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
     init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);

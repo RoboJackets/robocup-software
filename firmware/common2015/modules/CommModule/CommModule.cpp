@@ -73,12 +73,12 @@ void CommModule::txThread() {
                 _ports[p->header.port].txCallback()(p);
                 _ports[p->header.port].txCount++;
 
-                LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->header.port);
+                // LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            if (p->header.address != 127) {
+            if (p->header.address != rtp::LOOPBACK_ADDRESS) {
                 _txTimeoutLED->renew();
             }
 
@@ -125,12 +125,12 @@ void CommModule::rxThread() {
                 _ports[p->header.port].rxCallback()(p);
                 _ports[p->header.port].rxCount++;
 
-                LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
+                // LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // this renews a countdown for turning off the strobing thread once
             // it expires
-            if (p->header.address != 127) {
+            if (p->header.address != rtp::LOOPBACK_ADDRESS) {
                 _rxTimeoutLED->renew();
             }
 
@@ -171,6 +171,10 @@ void CommModule::send(const rtp::packet& packet) {
         _ports[packet.header.port].txCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_txQueue, osWaitForever);
+        if (!p) {
+            LOG(FATAL, "Unable to allocate packet onto mail queue");
+            return;
+        }
 
         // Copy the contents into the allocated memory block
         // TODO: use move semantics
@@ -193,6 +197,10 @@ void CommModule::receive(const rtp::packet& packet) {
         _ports[packet.header.port].rxCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_rxQueue, osWaitForever);
+        if (!p) {
+            LOG(FATAL, "Unable to allocate packet onto mail queue");
+            return;
+        }
 
         // Copy the contents into the allocated memory block
         // TODO: move semantics

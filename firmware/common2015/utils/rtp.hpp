@@ -9,8 +9,9 @@ namespace rtp {
 /// Max packet size.  This is limited by the CC1201 buffer size.
 static const unsigned int MAX_DATA_SZ = 120;
 
-const uint8_t BROADCAST_ADDRESS = 0;
-const uint8_t BASE_STATION_ADDRESS = 1;
+const uint8_t BROADCAST_ADDRESS = 0x00;  // configured by the PKT_CFG1 register
+const uint8_t BASE_STATION_ADDRESS = 0xFF - 1;
+const uint8_t ROBOT_ADDRESS = 0x01;  // All robots have the same address
 const uint8_t LOOPBACK_ADDRESS = 2;
 
 // The value 0 is a valid robot id, so we have to choose something else to
