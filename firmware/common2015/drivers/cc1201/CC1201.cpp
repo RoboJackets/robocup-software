@@ -147,6 +147,10 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     return COMM_SUCCESS;
 }
 
+uint8_t CC1201::setAddress(uint8_t addr) {
+    return writeReg(CC1201_DEV_ADDR, addr);
+}
+
 uint8_t CC1201::readReg(uint16_t addr) {
     ASSERT_IS_ADDR(addr);
 
