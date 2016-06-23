@@ -40,13 +40,13 @@ var NAVTREEINDEX =
 "class_game_state.html#a64b2c6b8f5b13b9b0eaaeed92150819d",
 "class_geometry2d_1_1_shape.html#acf902863336b26eb2de2d9e03182913f",
 "class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27",
-"class_planning_1_1_trapezoidal_path.html#a558fcae4d2777c9d12251fc5a687e459",
-"class_sim_field_view.html#a987951cd0f45a2c40959d766441a19e3",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#a0493ad25b91d8a6f7506facae8fe5889",
-"classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html",
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a23b79cf298b6a7f554717a3aebe14bc3",
-"classmbed_1_1_i2_c_driver.html#adbe58aea77dff35781d5ca1bda4b0de3",
-"struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f"
+"class_planning_1_1_trapezoidal_path.html#a04425cbf8bfd7e54754272d88be99735",
+"class_shared_s_p_i_device.html#af4a7a211ca0d7c6b28fb9148fdf218f2",
+"classgameplay_1_1play__registry_1_1_play_registry.html#abe54e56a92593301aa4147493022ffc9",
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75",
+"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aaa068536aaa3a5ebce8ffc568752a117",
+"classmbed_1_1_i2_c_driver.html#aa118c20ca912a4ee74a5768c4a444336",
+"struct_chart_1_1_function.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

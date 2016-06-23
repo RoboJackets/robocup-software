@@ -153,6 +153,12 @@ virtual <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76">clone</a> () const =0</td></tr>
 <tr class="memdesc:a05ea5649bd6ce649ca974e50983dbc76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a deep copy of the Path. <br /></td></tr>
 <tr class="separator:a05ea5649bd6ce649ca974e50983dbc76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae067538136c94fedea43533c8bf0a2eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae067538136c94fedea43533c8bf0a2eb"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setDebugText</b> (QString string)</td></tr>
+<tr class="separator:ae067538136c94fedea43533c8bf0a2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7674cc1d75fc4fc0adabd8e4f3165a5a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7674cc1d75fc4fc0adabd8e4f3165a5a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawDebugText</b> (<a class="el" href="class_system_state.html">SystemState</a> *state, const QColor &amp;color=Qt::darkCyan, const QString &amp;layer=&quot;PathDebugText&quot;) const </td></tr>
+<tr class="separator:a7674cc1d75fc4fc0adabd8e4f3165a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b6503873b1ff9e945625ce2088de2c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b6503873b1ff9e945625ce2088de2c7"></a>
 virtual RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a> () const </td></tr>
 <tr class="memdesc:a8b6503873b1ff9e945625ce2088de2c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br /></td></tr>
@@ -172,6 +178,9 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a6ffd94762a6360f53b152ed0c0af241c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ffd94762a6360f53b152ed0c0af241c"></a>
 RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
 <tr class="separator:a6ffd94762a6360f53b152ed0c0af241c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adec308e50c05ed419e9c459495d4f3ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adec308e50c05ed419e9c459495d4f3ee"></a>
+boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_debugText</b></td></tr>
+<tr class="separator:adec308e50c05ed419e9c459495d4f3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract class representing a motion path. </p>
@@ -414,7 +423,7 @@ RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Thu Jun 23 2016 04:59:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jun 23 2016 06:08:06 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

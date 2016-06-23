@@ -1,5 +1,10 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75":[12,0,5,8,4,2,0,1],
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[12,0,5,8,4,2,0,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[12,0,5,8,4,2,1],
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc":[12,0,5,8,4,2,1,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[12,0,5,8,4,2,1,1],
 "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[12,0,5,9,0],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html":[12,0,5,9,1],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a088d7688857a55b3d45b1f150f753829":[12,0,5,9,1,18],
@@ -244,10 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a7441c79ebbf35b4499f22f84c97a1bd7":[12,0,5,13,11,0,8],
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a7627095cd8f62d635542cf47b007587b":[12,0,5,13,11,0,6],
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a77f6a7635f36ec6c1fbe1980dae2a361":[12,0,5,13,11,0,1],
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a8add3ceb1e39da961c4f0c7c1a2cd5d8":[12,0,5,13,11,0,3],
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aaa068536aaa3a5ebce8ffc568752a117":[12,0,5,13,11,0,0],
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#af112c60da99b2ddfcd714118594cfb47":[12,0,5,13,11,0,4],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html":[12,0,5,13,12,0],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a02e234d4eb75819c1786c3c8d788b3a0":[12,0,5,13,12,0,1],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a0e38588e56142ee5f33c30c680c9da1e":[12,0,5,13,12,0,2]
+"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a8add3ceb1e39da961c4f0c7c1a2cd5d8":[12,0,5,13,11,0,3]
 };

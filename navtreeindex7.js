@@ -1,5 +1,10 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1play__registry_1_1_play_registry.html#abe54e56a92593301aa4147493022ffc9":[12,0,5,7,0,14],
+"classgameplay_1_1play__registry_1_1_play_registry.html#ac42cba751fbbf185e3b576773e9a4669":[12,0,5,7,0,8],
+"classgameplay_1_1play__registry_1_1_play_registry.html#ae2a38e98d0087466e1ae55dce646d47f":[12,0,5,7,0,9],
+"classgameplay_1_1play__registry_1_1_play_registry.html#af79cb50dbd358f733e73c52816861cf5":[12,0,5,7,0,6],
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html":[12,0,5,7,0,0],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#a0493ad25b91d8a6f7506facae8fe5889":[12,0,5,7,0,0,0],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#a17954c9dae195259661da177af4d3102":[12,0,5,7,0,0,4],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#a5bfce29dc8158a34f3c43098251c16b4":[12,0,5,7,0,0,5],
@@ -244,10 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html#a84164e3897a9784032e0ff6b876bc455":[12,0,5,8,4,1,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html":[12,0,5,8,4,2,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a029f6e451a15ab85b1941b9618c051d7":[12,0,5,8,4,2,0,3],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af":[12,0,5,8,4,2,0,2],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75":[12,0,5,8,4,2,0,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[12,0,5,8,4,2,0,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[12,0,5,8,4,2,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc":[12,0,5,8,4,2,1,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[12,0,5,8,4,2,1,1]
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af":[12,0,5,8,4,2,0,2]
 };
