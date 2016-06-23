@@ -141,6 +141,11 @@ int main() {
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
 
+    // DIP Switch 1 controls the radio channel.
+    uint8_t currentRadioChannel = 0;
+    IOExpanderDigitalInOut radioChannelSwitch(&ioExpander, RJ_DIP_SWITCH_1,
+                                              MCP23017::DIR_INPUT);
+
     // rotary selector for shell id
     RotarySelector<IOExpanderDigitalInOut> rotarySelector(
         {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
@@ -263,6 +268,14 @@ int main() {
         // update shell id
         robotShellID = rotarySelector.read();
         radioProtocol.setUID(robotShellID);
+
+        // update radio channel
+        uint8_t newRadioChannel = radioChannelSwitch.read();
+        if (newRadioChannel != currentRadioChannel) {
+            global_radio->setChannel(newRadioChannel);
+            currentRadioChannel = newRadioChannel;
+            LOG(INIT, "Changed radio channel to %u", newRadioChannel);
+        }
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
