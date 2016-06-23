@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 
+"""
+This script can plot data from the robot's pid controller in order to visualize
+the relationship between command velocity, actual velocity, and pid control
+values.
+
+In order to gather this data, you must enable the printouts in the
+PidMotionController's run() method.  This prints a python dict of values every
+time the run() method is called.  You can capture these from the robot's log and
+paste them into a new python file in an array called "data". Then use this
+script to plot the data.
+"""
+
 import matplotlib.pyplot as plt
 import sys
 
 if len(sys.argv) != 2:
-    print('Usage: graph_data <module>')
+    print('Usage: graph_data <module>\n\tnote: dont include the ".py"')
     exit(1)
 
 mod = __import__(sys.argv[1])
