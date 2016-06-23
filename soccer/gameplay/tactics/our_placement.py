@@ -47,7 +47,6 @@ class OurPlacement(
 
     def execute_dribble(self):
         self.robot.is_ball_placer = True
-        self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
         self.robot.set_max_speed(5)
 
     def on_exit_dribble(self):
