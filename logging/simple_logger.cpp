@@ -122,8 +122,6 @@ int main(int argc, char* argv[]) {
                 printf("Bad vision packet of %d bytes\n", n);
                 continue;
             }
-
-            // LogFrame_Robot* robot = logFrame
         }
 
         // Read referee data
