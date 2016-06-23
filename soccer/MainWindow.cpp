@@ -871,7 +871,7 @@ void MainWindow::on_action904MHz_triggered() {
 }
 
 void MainWindow::on_action906MHz_triggered() {
-    channel(10);
+    channel(1);
     _ui.action904MHz->setChecked(false);
     _ui.action906MHz->setChecked(true);
 }
