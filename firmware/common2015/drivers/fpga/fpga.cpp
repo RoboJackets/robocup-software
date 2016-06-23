@@ -123,13 +123,7 @@ bool FPGA::send_config(const std::string& filepath) {
         size_t filesize;
         char buf[bufSize];
 
-        chipSelect();
-
-// MISO & MOSI are intentionally switched here
-// defaults to 8 bit field size with CPOL = 0 & CPHA = 0
-#warning FPGA configuration pins currently flipped due to PCB design errors, the final revision requires firmware updates.
-        SoftwareSPI softSpi(RJ_SPI_MISO, RJ_SPI_MOSI, RJ_SPI_SCK);
-
+        // determine bitfile's size
         fseek(fp, 0, SEEK_END);
         filesize = ftell(fp);
         fseek(fp, 0, SEEK_SET);
@@ -137,6 +131,8 @@ bool FPGA::send_config(const std::string& filepath) {
         LOG(INF1, "Sending %s (%u bytes) out to the FPGA", filepath.c_str(),
             filesize);
 
+        // select device & send bitfile
+        chipSelect();
         for (size_t i = 0; i < filesize; i++) {
             bool breakOut = false;
             size_t readSize = fread(buf, 1, bufSize, fp);
@@ -149,15 +145,13 @@ bool FPGA::send_config(const std::string& filepath) {
                     break;
                 }
 
-                softSpi.write(buf[j]);
+                _spi->write(buf[j]);
             }
 
             if (breakOut) break;
         }
-
-        SPI dummySPI(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
-
         chipDeselect();
+
         fclose(fp);
 
         return true;
