@@ -11,8 +11,8 @@ import skills.move
 import time
 
 
-class OurPlacement(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior
+                   ):
     class State(enum.Enum):
         dribble = 1
         pause = 2
