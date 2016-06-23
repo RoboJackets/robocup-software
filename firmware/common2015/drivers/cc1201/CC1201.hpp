@@ -45,12 +45,9 @@ public:
     /**
      * Transmit data
      *
-     * @param buf A buffer containing the data to send
-     * @param size The length, in bytes, of @buf
-     *
      * @return A status value indicating success/error. See CommLink for info.
      */
-    int32_t sendData(const uint8_t* buf, uint8_t size);
+    int32_t sendPacket(const rtp::packet* pkt);
 
     /**
      * Read data from the radio's RX buffer.  This should be called after

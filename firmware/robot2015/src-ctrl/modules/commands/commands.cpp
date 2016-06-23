@@ -930,7 +930,7 @@ int cmd_radio(cmd_args_t& args) {
         } else if (args[0] == "test-tx") {
             printf("Placing %u byte packet in TX buffer.\r\n",
                    pck.payload.size());
-            commModule->send(pck);
+            commModule->send(std::move(pck));
 
         } else if (args[0] == "test-rx") {
             printf("Placing %u byte packet in RX buffer.\r\n",
@@ -956,7 +956,7 @@ int cmd_radio(cmd_args_t& args) {
             for (size_t j = 0; j < i; ++j) {
                 rtp::packet pck2;
                 pck2 = pck;
-                commModule->send(pck2);
+                commModule->send(std::move(pck2));
                 Thread::wait(50);
             }
 
@@ -1016,7 +1016,7 @@ int cmd_radio(cmd_args_t& args) {
             int start_tick = clock();
             for (size_t i = 0; i < packet_cnt; ++i) {
                 Thread::wait(ms_delay);
-                commModule->send(pck);
+                commModule->send(std::move(pck));
             }
             printf("Stress test finished in %.1fms.\r\n",
                    (clock() - start_tick) /
@@ -1036,9 +1036,11 @@ int cmd_pong(cmd_args_t& args) {
 
     // Any packets received on the PING port are placed in a queue.
     Queue<rtp::packet, 2> pings;
-    CommModule::Instance->setRxHandler([&pings](rtp::packet* pkt) {
-        pings.put(new rtp::packet(*pkt));
-    }, rtp::Port::PING);
+    CommModule::Instance->setRxHandler(
+        [&pings](rtp::packet pkt) {
+            pings.put(new rtp::packet(std::move(pkt)));
+        },
+        rtp::Port::PING);
 
     while (true) {
         // Check for a ping packet.  If we got one, print a message and reply
@@ -1073,9 +1075,9 @@ int cmd_ping(cmd_args_t& args) {
 
     // Any packets received on the PING port are placed in a queue
     Queue<rtp::packet, 2> acks;
-    CommModule::Instance->setRxHandler([&acks](rtp::packet* pkt) {
-        acks.put(new rtp::packet(*pkt));
-    }, rtp::Port::PING);
+    CommModule::Instance->setRxHandler(
+        [&acks](rtp::packet pkt) { acks.put(new rtp::packet(std::move(pkt))); },
+        rtp::Port::PING);
 
     uint8_t pingCount = 0;
     int lastPingTime = 0;

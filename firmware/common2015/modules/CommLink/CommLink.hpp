@@ -3,12 +3,12 @@
 #include <mbed.h>
 #include <rtos.h>
 
-#include "rj-macros.hpp"
-#include "rtp.hpp"
-#include "helper-funcs.hpp"
-#include "rtos-mgmt/mail-helper.hpp"
 #include "CommModule.hpp"
 #include "SharedSPI.hpp"
+#include "helper-funcs.hpp"
+#include "rj-macros.hpp"
+#include "rtos-mgmt/mail-helper.hpp"
+#include "rtp.hpp"
 
 #define FOREACH_COMM_ERR(ERR) \
     ERR(COMM_SUCCESS)         \
@@ -51,12 +51,9 @@ public:
     virtual bool isConnected() const = 0;
 
     /// Send & Receive through the rtp structure
-    void sendPacket(rtp::packet*);
+    virtual int32_t sendPacket(const rtp::packet* pkt) = 0;
 
 protected:
-    // write data out to the radio device using SPI
-    virtual int32_t sendData(const uint8_t* buf, uint8_t len) = 0;
-
     /**
      * @brief Read data from the radio's RX buffer
      *

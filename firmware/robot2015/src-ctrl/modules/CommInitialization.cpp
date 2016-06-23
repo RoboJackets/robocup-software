@@ -22,39 +22,39 @@ using namespace std;
  * Information about the radio protocol can be found at:
  * https://www.overleaf.com/2187548nsfdps
  */
-void loopback_ack_pck(rtp::packet* p) {
-    rtp::packet ack_pck = *p;
-    CommModule::Instance->send(ack_pck);
+
+void loopback_ack_pck(rtp::packet p) {
+    CommModule::Instance->send(std::move(p));
 }
 
-void legacy_rx_cb(rtp::packet* p) {
-    if (p->payload.size()) {
+void legacy_rx_cb(rtp::packet p) {
+    if (p.payload.size()) {
         LOG(OK,
             "Legacy rx successful!\r\n"
             "    Received: %u bytes\r\n",
-            p->payload.size());
+            p.payload.size());
     } else {
         LOG(WARN, "Received empty packet on Legacy interface");
     }
 }
 
-void loopback_rx_cb(rtp::packet* p) {
+void loopback_rx_cb(rtp::packet p) {
     vector<uint16_t> duty_cycles;
     duty_cycles.assign(5, 100);
     for (size_t i = 0; i < duty_cycles.size(); ++i)
         duty_cycles.at(i) = 100 + 206 * i;
 
-    if (p->payload.size()) {
+    if (p.payload.size()) {
         LOG(OK,
             "Loopback rx successful!\r\n"
             "    Received: %u bytes",
-            p->payload.size());
+            p.payload.size());
     } else {
         LOG(WARN, "Received empty packet on loopback interface");
     }
 }
 
-void loopback_tx_cb(rtp::packet* p) {
+int32_t loopback_tx_cb(const rtp::packet* p) {
     if (p->payload.size()) {
         LOG(OK,
             "Loopback tx successful!\r\n"
@@ -65,6 +65,8 @@ void loopback_tx_cb(rtp::packet* p) {
     }
 
     CommModule::Instance->receive(*p);
+
+    return COMM_SUCCESS;
 }
 
 void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {

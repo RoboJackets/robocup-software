@@ -39,11 +39,11 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-void radioRxHandler(rtp::packet* pkt) {
+void radioRxHandler(rtp::packet pkt) {
     LOG(INF3, "radioRxHandler()");
     // write packet content (including header) out to EPBULK_IN
     vector<uint8_t> buf;
-    pkt->pack(&buf);
+    pkt.pack(&buf);
     bool success = usbLink.writeNB(EPBULK_IN, buf.data(), buf.size(),
                                    MAX_PACKET_SIZE_EPBULK);
 
@@ -53,7 +53,7 @@ void radioRxHandler(rtp::packet* pkt) {
     // the case
     //
     // if (!success) LOG(WARN, "Failed to transfer received %u byte packet over
-    // usb", pkt->payload.size());
+    // usb", pkt.payload.size());
 }
 
 int main() {
@@ -130,7 +130,7 @@ int main() {
             pkt.header.address = rtp::ROBOT_ADDRESS;
 
             // transmit!
-            CommModule::Instance->send(pkt);
+            CommModule::Instance->send(std::move(pkt));
         }
     }
 }
