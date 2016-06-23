@@ -18,6 +18,9 @@
 
 using namespace std;
 
+// Comment/uncomment this line to control whether or not the rx/tx leds are used
+// #define ENABLE_RX_TX_LEDS
+
 /*
  * Information about the radio protocol can be found at:
  * https://www.overleaf.com/2187548nsfdps
@@ -70,11 +73,16 @@ int32_t loopback_tx_cb(const rtp::packet* p) {
 }
 
 void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
-    // leds that flash if tx/rx have happened recently
+// leds that flash if tx/rx have happened recently
+#ifdef ENABLE_RX_TX_LEDS
     auto rxTimeoutLED = make_shared<FlashingTimeoutLED>(
         DigitalOut(RJ_RX_LED, OpenDrain), 160, 400);
     auto txTimeoutLED = make_shared<FlashingTimeoutLED>(
         DigitalOut(RJ_TX_LED, OpenDrain), 160, 400);
+#else
+    auto rxTimeoutLED = nullptr;
+    auto txTimeoutLED = nullptr;
+#endif
 
     // Startup the CommModule interface
     CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);

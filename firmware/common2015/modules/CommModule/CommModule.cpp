@@ -69,7 +69,7 @@ void CommModule::txThread() {
 
             // this renews a countdown for turning off the
             // strobing thread once it expires
-            if (p->header.address != rtp::LOOPBACK_ADDRESS) {
+            if (p->header.address != rtp::LOOPBACK_ADDRESS && _txTimeoutLED) {
                 _txTimeoutLED->renew();
             }
 
@@ -122,7 +122,7 @@ void CommModule::rxThread() {
 
             // this renews a countdown for turning off the strobing thread once
             // it expires
-            if (p->header.address != rtp::LOOPBACK_ADDRESS) {
+            if (p->header.address != rtp::LOOPBACK_ADDRESS && _rxTimeoutLED) {
                 _rxTimeoutLED->renew();
             }
 
