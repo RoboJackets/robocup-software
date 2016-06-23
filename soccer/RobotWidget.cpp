@@ -98,7 +98,7 @@ void RobotWidget::paintEvent(QPaintEvent* event) {
         painter.setBrush(QBrush(Dot_Pattern_Colors[_shellID][i]));
         QPointF dotCenter;
         dotCenter.setX((i >= 2) ? Dots_Small_Offset : Dots_Large_Offset);
-        dotCenter.setX(dotCenter.x() * ((i == 1 || i == 2) ? -1 : 1));
+        dotCenter.setX(dotCenter.x() * ((i == 1 || i == 2) ? 1 : -1));
         dotCenter.setY((i <= 1) ? Dots_Small_Offset : Dots_Large_Offset);
         dotCenter.setY(dotCenter.y() * ((i <= 1) ? -1 : 1));
 
