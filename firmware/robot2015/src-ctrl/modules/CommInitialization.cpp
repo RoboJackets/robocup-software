@@ -10,6 +10,8 @@
 #include <helper-funcs.hpp>
 #include <logger.hpp>
 
+#include <deca_device_api.h>
+
 #include "TimeoutLED.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
@@ -18,104 +20,122 @@
 
 using namespace std;
 
+/* Default communication configuration. We use here EVK1000's default mode (mode
+ * 3). */
+namespace {
+dwt_config_t config = {
+    2,               /* Channel number. */
+    DWT_PRF_64M,     /* Pulse repetition frequency. */
+    DWT_PLEN_1024,   /* Preamble length. */
+    DWT_PAC32,       /* Preamble acquisition chunk size. Used in RX only. */
+    9,               /* TX preamble code. Used in TX only. */
+    9,               /* RX preamble code. Used in RX only. */
+    1,               /* Use non-standard SFD (Boolean) */
+    DWT_BR_110K,     /* Data rate. */
+    DWT_PHRMODE_STD, /* PHY header mode. */
+    (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC
+                        size). Used in RX only. */
+};
+}
+
 /*
  * Information about the radio protocol can be found at:
  * https://www.overleaf.com/2187548nsfdps
  */
-void loopback_ack_pck(rtp::packet* p) {
-    rtp::packet ack_pck = *p;
-    CommModule::Instance->send(ack_pck);
+void loopback_ack_pck(rtp::packet *p) {
+  rtp::packet ack_pck = *p;
+  CommModule::Instance->send(ack_pck);
 }
 
-void legacy_rx_cb(rtp::packet* p) {
-    if (p->payload.size()) {
-        LOG(OK,
-            "Legacy rx successful!\r\n"
+void legacy_rx_cb(rtp::packet *p) {
+  if (p->payload.size()) {
+    LOG(OK, "Legacy rx successful!\r\n"
             "    Received: %u bytes\r\n",
-            p->payload.size());
-    } else {
-        LOG(WARN, "Received empty packet on Legacy interface");
-    }
+        p->payload.size());
+  } else {
+    LOG(WARN, "Received empty packet on Legacy interface");
+  }
 }
 
-void loopback_rx_cb(rtp::packet* p) {
-    vector<uint16_t> duty_cycles;
-    duty_cycles.assign(5, 100);
-    for (size_t i = 0; i < duty_cycles.size(); ++i)
-        duty_cycles.at(i) = 100 + 206 * i;
+void loopback_rx_cb(rtp::packet *p) {
+  vector<uint16_t> duty_cycles;
+  duty_cycles.assign(5, 100);
+  for (size_t i = 0; i < duty_cycles.size(); ++i)
+    duty_cycles.at(i) = 100 + 206 * i;
 
-    if (p->payload.size()) {
-        LOG(OK,
-            "Loopback rx successful!\r\n"
+  if (p->payload.size()) {
+    LOG(OK, "Loopback rx successful!\r\n"
             "    Received: %u bytes",
-            p->payload.size());
-    } else {
-        LOG(WARN, "Received empty packet on loopback interface");
-    }
+        p->payload.size());
+  } else {
+    LOG(WARN, "Received empty packet on loopback interface");
+  }
 }
 
-void loopback_tx_cb(rtp::packet* p) {
-    if (p->payload.size()) {
-        LOG(OK,
-            "Loopback tx successful!\r\n"
+void loopback_tx_cb(rtp::packet *p) {
+  if (p->payload.size()) {
+    LOG(OK, "Loopback tx successful!\r\n"
             "    Sent: %u bytes\r\n",
-            p->payload.size());
-    } else {
-        LOG(WARN, "Sent empty packet on loopback interface");
-    }
+        p->payload.size());
+  } else {
+    LOG(WARN, "Sent empty packet on loopback interface");
+  }
 
-    CommModule::Instance->receive(*p);
+  CommModule::Instance->receive(*p);
 }
 
 void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
-    // leds that flash if tx/rx have happened recently
-    auto rxTimeoutLED = make_shared<FlashingTimeoutLED>(
-        DigitalOut(RJ_RX_LED, OpenDrain), 160, 400);
-    auto txTimeoutLED = make_shared<FlashingTimeoutLED>(
-        DigitalOut(RJ_TX_LED, OpenDrain), 160, 400);
+  // leds that flash if tx/rx have happened recently
+  auto rxTimeoutLED = make_shared<FlashingTimeoutLED>(
+      DigitalOut(RJ_RX_LED, OpenDrain), 160, 400);
+  auto txTimeoutLED = make_shared<FlashingTimeoutLED>(
+      DigitalOut(RJ_TX_LED, OpenDrain), 160, 400);
 
-    // Startup the CommModule interface
-    CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
-    shared_ptr<CommModule> commModule = CommModule::Instance;
+  // Startup the CommModule interface
+  CommModule::Instance = make_shared<CommModule>(rxTimeoutLED, txTimeoutLED);
+  shared_ptr<CommModule> commModule = CommModule::Instance;
 
-    // TODO(justin): make this non-global
-    // Create a new physical hardware communication link
-    global_radio =
-        new CC1201(sharedSPI, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
-                   sizeof(preferredSettings) / sizeof(registerSetting_t));
+  // configure the dw1000 radio transceiver
+  dwt_configure(&config);
 
-    // Open a socket for running tests across the link layer
-    // The LINK port handlers are always active, regardless of whether or not a
-    // working radio is connected.
-    commModule->setRxHandler(&loopback_rx_cb, rtp::Port::LINK);
-    commModule->setTxHandler(&loopback_tx_cb, rtp::Port::LINK);
+  // TODO(justin): make this non-global
+  // Create a new physical hardware communication link
+  global_radio =
+      new CC1201(sharedSPI, RJ_RADIO_nCS, RJ_RADIO_INT, preferredSettings,
+                 sizeof(preferredSettings) / sizeof(registerSetting_t));
 
-    /*
-     * Ports are always displayed in ascending (lowest -> highest) order
-     * according to its port number when using the console.
-     */
-    if (global_radio->isConnected() == true) {
-        LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
+  // Open a socket for running tests across the link layer
+  // The LINK port handlers are always active, regardless of whether or not a
+  // working radio is connected.
+  commModule->setRxHandler(&loopback_rx_cb, rtp::Port::LINK);
+  commModule->setTxHandler(&loopback_tx_cb, rtp::Port::LINK);
 
-        // Legacy port
-        commModule->setTxHandler((CommLink*)global_radio, &CommLink::sendPacket,
-                                 rtp::Port::LEGACY);
-        commModule->setRxHandler(&legacy_rx_cb, rtp::Port::LEGACY);
+  /*
+   * Ports are always displayed in ascending (lowest -> highest) order
+   * according to its port number when using the console.
+   */
+  if (global_radio->isConnected() == true) {
+    LOG(INIT, "Radio interface ready on %3.2fMHz!", global_radio->freq());
 
-        LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
+    // Legacy port
+    commModule->setTxHandler((CommLink *)global_radio, &CommLink::sendPacket,
+                             rtp::Port::LEGACY);
+    commModule->setRxHandler(&legacy_rx_cb, rtp::Port::LEGACY);
 
-        // Wait until the threads with the commModule are all started up
-        // and ready
-        while (!commModule->isReady()) {
-            Thread::wait(50);
-        }
-    } else {
-        LOG(FATAL, "No radio interface found!\r\n");
+    LOG(INIT, "%u sockets opened", commModule->numOpenSockets());
 
-        // Wait until the threads with the commModule are all started up
-        // and ready
-        while (!commModule->isReady()) {
-            Thread::wait(50);
-        }
+    // Wait until the threads with the commModule are all started up
+    // and ready
+    while (!commModule->isReady()) {
+      Thread::wait(50);
     }
+  } else {
+    LOG(FATAL, "No radio interface found!\r\n");
+
+    // Wait until the threads with the commModule are all started up
+    // and ready
+    while (!commModule->isReady()) {
+      Thread::wait(50);
+    }
+  }
 }

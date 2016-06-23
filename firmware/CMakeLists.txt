@@ -53,6 +53,7 @@ set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # build robot and base station firmware and the library that they depend on
 add_subdirectory(mbed)
+add_subdirectory(decadriver)
 add_subdirectory(common2015)
 add_subdirectory(base2015)
 add_subdirectory(robot2015)
