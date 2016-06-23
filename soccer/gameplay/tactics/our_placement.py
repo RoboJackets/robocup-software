@@ -15,13 +15,13 @@ class OurPlacement(
         single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
         dribble = 1
-        pause=2
+        pause = 2
         avoid = 3
 
     def __init__(self):
         super().__init__(continuous=False)
 
-        self.pause_time=0
+        self.pause_time = 0
 
         for substate in OurPlacement.State:
             self.add_state(substate, behavior.Behavior.State.running)
@@ -36,9 +36,9 @@ class OurPlacement(
             lambda: self.subbehavior_with_name('dribble').state == behavior.Behavior.State.completed,
             'finished dribbling')
 
-        self.add_transition(
-            OurPlacement.State.pause, OurPlacement.State.avoid,
-            lambda: time.time()-self.pause_time>=.5, 'paused for .5 seconds')
+        self.add_transition(OurPlacement.State.pause, OurPlacement.State.avoid,
+                            lambda: time.time() - self.pause_time >= .5,
+                            'paused for .5 seconds')
 
         #if the ball comes out of the target area, put it back
         self.add_transition(
@@ -62,7 +62,7 @@ class OurPlacement(
         self.remove_subbehavior('dribble')
 
     def on_enter_pause(self):
-        self.pause_time=time.time()
+        self.pause_time = time.time()
 
     def execute_avoid(self):
         self.robot.is_ball_placer = True
