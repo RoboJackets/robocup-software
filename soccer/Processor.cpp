@@ -470,6 +470,7 @@ void Processor::run() {
             OurRobot* r = _state.self[entry.first];
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");
+            path->drawDebugText(&_state);
             r->setPath(std::move(path));
 
             r->angleFunctionPath.angleFunction =
