@@ -185,11 +185,11 @@ int main(int argc, char* argv[]) {
         string stage;
         string command;
 
-        int blueScore;
-        int yellowScore;
+        int blueScore = 0;
+        int yellowScore = 0;
 
-        int blueGoalie;
-        int yellowGoalie;
+        int blueGoalie = 0;
+        int yellowGoalie = 0;
 
         if (currentFrame->raw_refbox_size() > 0) {
             SSL_Referee referee = currentFrame->raw_refbox(0);
