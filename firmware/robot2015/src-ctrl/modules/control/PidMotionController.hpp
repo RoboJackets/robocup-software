@@ -39,10 +39,7 @@ public:
                                float dt) {
         // convert encoder ticks to rad/s
         Eigen::Vector4f wheelVels;
-        wheelVels <<
-            encoderDeltas[0],
-            encoderDeltas[1],
-            encoderDeltas[2],
+        wheelVels << encoderDeltas[0], encoderDeltas[1], encoderDeltas[2],
             encoderDeltas[3];
         wheelVels *= 2 * M_PI / ENC_TICKS_PER_TURN / dt;
 
@@ -60,8 +57,8 @@ public:
             dutyCycles[i] = dc;
         }
 
-        // enable these printouts to get a python-formatted data set than can be
-        // graphed to visualize pid control and debug problems
+// enable these printouts to get a python-formatted data set than can be
+// graphed to visualize pid control and debug problems
 #if 0
         printf("{\r\n");
         printf("'encDelt': [%d, %d, %d, %d],\r\n", encoderDeltas[0], encoderDeltas[1], encoderDeltas[2], encoderDeltas[3]);
@@ -81,9 +78,3 @@ private:
     /// controllers for each wheel
     Pid _controllers[4];
 };
-
-
-
-
-
-

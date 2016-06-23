@@ -14,6 +14,7 @@
 #include "CC1201.cpp"
 #include "KickerBoard.hpp"
 #include "RadioProtocol.hpp"
+#include "RobotModel.hpp"
 #include "RotarySelector.hpp"
 #include "RtosTimerHelper.hpp"
 #include "SharedSPI.hpp"
@@ -24,7 +25,6 @@
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
-#include "RobotModel.hpp"
 
 #define RJ_ENABLE_ROBOT_CONSOLE
 

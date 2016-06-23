@@ -1,8 +1,8 @@
 #pragma once
 
 #include <array>
-#include "RtosTimerHelper.hpp"
 #include "RobotModel.hpp"
+#include "RtosTimerHelper.hpp"
 
 /** Abstract superclass for a robot motion controller.  Its main job is to turn
  * velocity commands into duty cycle values to be sent to the fpga.
@@ -17,10 +17,10 @@ public:
     static const uint32_t COMMAND_TIMEOUT_INTERVAL = 250;
 
     MotionController() {}
-        // : _commandTimeout(this, &MotionController::commandTimeout,
-                          // osTimerOnce) {
-        // commandTimeout(); // reset
-        // _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
+    // : _commandTimeout(this, &MotionController::commandTimeout,
+    // osTimerOnce) {
+    // commandTimeout(); // reset
+    // _commandTimeout.start(COMMAND_TIMEOUT_INTERVAL);
     // }
 
     /** Set target velocity. This is typically called whenever a new radio

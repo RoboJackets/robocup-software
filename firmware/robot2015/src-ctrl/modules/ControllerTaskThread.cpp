@@ -19,7 +19,6 @@ using namespace std;
 // builds. Hopefully that'll be possible without the console
 static const int CONTROL_LOOP_WAIT_MS = 5;
 
-
 // initialize PID controller
 PidMotionController pidController;
 

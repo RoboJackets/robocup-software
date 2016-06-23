@@ -1,29 +1,29 @@
 
-#include <QMutexLocker>
 #include <poll.h>
+#include <QMutexLocker>
 
-#include <gameplay/GameplayModule.hpp>
-#include "Processor.hpp"
-#include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
-#include "modeling/BallTracker.hpp"
-#include <multicast.hpp>
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Constants.hpp>
-#include <Utils.hpp>
-#include <joystick/Joystick.hpp>
-#include <joystick/GamepadJoystick.hpp>
-#include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
-#include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
-#include <planning/IndependentMultiRobotPathPlanner.hpp>
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/RadioRx.pb.h>
+#include <Utils.hpp>
+#include <gameplay/GameplayModule.hpp>
 #include <git_version.hpp>
+#include <joystick/GamepadJoystick.hpp>
+#include <joystick/Joystick.hpp>
+#include <joystick/SpaceNavJoystick.hpp>
+#include <motion/MotionControl.hpp>
+#include <multicast.hpp>
+#include <planning/IndependentMultiRobotPathPlanner.hpp>
+#include "Processor.hpp"
+#include "modeling/BallTracker.hpp"
+#include "radio/SimRadio.hpp"
+#include "radio/USBRadio.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -673,7 +673,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field." << endl;
+                "field."
+             << endl;
     }
 }
 
