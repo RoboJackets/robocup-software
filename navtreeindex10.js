@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"classmbed_1_1_i2_c_driver.html#adbe58aea77dff35781d5ca1bda4b0de3":[12,0,7,0,19],
 "classmbed_1_1_i2_c_master_rtos.html":[12,0,7,1],
 "classmbed_1_1_i2_c_master_rtos.html#a0e7596767401feda26a77b2779059bda":[12,0,7,1,4],
 "classmbed_1_1_i2_c_master_rtos.html#a37d7f0abd46b29924ae64834db037bb8":[12,0,7,1,6],
@@ -198,8 +199,8 @@ var NAVTREEINDEX10 =
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,4,0,2],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
 "helper-funcs_8hpp_source.html":[13,0,1,0,3,3,0],
 "hierarchy.html":[12,2],
 "i2c_rtos__api_8hpp_source.html":[13,0,1,0,0,10,2],
@@ -224,8 +225,8 @@ var NAVTREEINDEX10 =
 "mpu-6050-defines_8hpp_source.html":[13,0,1,0,0,8,0],
 "mpu-6050_8hpp_source.html":[13,0,1,0,0,8,1],
 "multicast_8hpp_source.html":[13,0,0,5],
-"namespace_gameplay.html":[12,0,4],
 "namespace_gameplay.html":[11,0,1],
+"namespace_gameplay.html":[12,0,4],
 "namespacefake__mbed.html":[12,0,3],
 "namespacefake__mbed.html":[11,0,0],
 "namespaces.html":[11,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "struct_chart_1_1_numeric_field.html":[12,0,0,1],
 "struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[12,0,0,1,1],
 "struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[12,0,0,1,0],
-"struct_chart_1_1_point_magnitude.html":[12,0,0,2],
-"struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f":[12,0,0,2,1]
+"struct_chart_1_1_point_magnitude.html":[12,0,0,2]
 };

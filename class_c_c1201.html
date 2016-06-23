@@ -133,6 +133,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7">getData</a> (std::vector&lt; uint8_t &gt; *buf)</td></tr>
 <tr class="memdesc:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from the radio's RX buffer.  <a href="#a6e42d30f3a52028101f724fd9d3ac3a7">More...</a><br /></td></tr>
 <tr class="separator:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d69e8ba33208dde9b42b86c68ee5d0b"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b">setAddress</a> (uint8_t addr)</td></tr>
+<tr class="memdesc:a4d69e8ba33208dde9b42b86c68ee5d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the address of the device.  <a href="#a4d69e8ba33208dde9b42b86c68ee5d0b">More...</a><br /></td></tr>
+<tr class="separator:a4d69e8ba33208dde9b42b86c68ee5d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5035f4001c6424cc5a283e75a3d8ce52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5035f4001c6424cc5a283e75a3d8ce52"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">reset</a> ()</td></tr>
 <tr class="memdesc:a5035f4001c6424cc5a283e75a3d8ce52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a soft reset for a communication link's hardware device. <br /></td></tr>
@@ -443,6 +446,26 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 
 </div>
 </div>
+<a class="anchor" id="a4d69e8ba33208dde9b42b86c68ee5d0b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t CC1201::setAddress </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>addr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the address of the device. </p>
+<p>Any packet not addressed to this address is filtered out. Packets addressed to the broadcast address 0x00 are always received.</p>
+<dl class="section return"><dt>Returns</dt><dd>status byte (same as writeReg()) </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a758e241be6292a2e28837fa11f20754d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -490,7 +513,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_c_c1201.html">CC1201</a></li>
-    <li class="footer">Generated on Thu Jun 23 2016 02:26:07 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jun 23 2016 03:00:44 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

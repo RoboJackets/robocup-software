@@ -20,6 +20,7 @@ var class_c_c1201 =
     [ "rssi", "class_c_c1201.html#a11dd1ac821d125a8e975af87f7880970", null ],
     [ "selfTest", "class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c", null ],
     [ "sendData", "class_c_c1201.html#a1ea010ffd0b9be2f176eeaf396450745", null ],
+    [ "setAddress", "class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b", null ],
     [ "setConfig", "class_c_c1201.html#a758e241be6292a2e28837fa11f20754d", null ],
     [ "setDebugEnabled", "class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df", null ],
     [ "strobe", "class_c_c1201.html#a4a121cbe57b0681371014e7af26c68cf", null ],
