@@ -49,7 +49,7 @@ CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
     }
 }
 
-int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
+int32_t CC1201::sendPacket(const rtp::packet* pkt) {
     // Return if there's no functional radio transceiver - the system will
     // lockup otherwise
     if (!_isInit) return COMM_FAILURE;
@@ -66,8 +66,10 @@ int32_t CC1201::sendData(const uint8_t* buf, uint8_t size) {
     chipSelect();
     uint8_t device_state =
         _spi->write(CC1201_TXFIFO | CC1201_BURST | CC1201_WRITE);
-    _spi->write(size);  // write size byte first
-    for (uint8_t i = 0; i < size; i++) _spi->write(buf[i]);
+    _spi->write(pkt->size());  // write size byte first
+    uint8_t* headerData = (uint8_t*)&pkt->header;
+    for (size_t i = 0; i < sizeof(pkt->header); ++i) _spi->write(headerData[i]);
+    for (uint8_t byte : pkt->payload) _spi->write(byte);
     chipDeselect();
 
     // Enter the TX state.

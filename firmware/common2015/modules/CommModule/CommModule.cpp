@@ -67,19 +67,20 @@ void CommModule::txThread() {
             osStatus tState = _txThread.set_priority(osPriorityRealtime);
             ASSERT(tState == osOK);
 
+            // this renews a countdown for turning off the
+            // strobing thread once it expires
+            if (p->header.address != rtp::LOOPBACK_ADDRESS) {
+                _txTimeoutLED->renew();
+            }
+
             // Call the user callback function
             if (_ports.find(p->header.port) != _ports.end() &&
                 _ports[p->header.port].txCallback() != nullptr) {
                 _ports[p->header.port].txCallback()(p);
                 _ports[p->header.port].txCount++;
 
-                // LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n", p->header.port);
-            }
-
-            // this renews a countdown for turning off the
-            // strobing thread once it expires
-            if (p->header.address != rtp::LOOPBACK_ADDRESS) {
-                _txTimeoutLED->renew();
+                // LOG(INF2, "Transmission:\r\n    Port:\t%u\r\n",
+                // p->header.port);
             }
 
             // Release the allocated memory once data is sent
@@ -119,19 +120,19 @@ void CommModule::rxThread() {
             osStatus tState = _rxThread.set_priority(osPriorityRealtime);
             ASSERT(tState == osOK);
 
-            // Call the user callback function (if set)
-            if (_ports.find(p->header.port) != _ports.end() &&
-                _ports[p->header.port].rxCallback() != nullptr) {
-                _ports[p->header.port].rxCallback()(p);
-                _ports[p->header.port].rxCount++;
-
-                // LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
-            }
-
             // this renews a countdown for turning off the strobing thread once
             // it expires
             if (p->header.address != rtp::LOOPBACK_ADDRESS) {
                 _rxTimeoutLED->renew();
+            }
+
+            // Call the user callback function (if set)
+            if (_ports.find(p->header.port) != _ports.end() &&
+                _ports[p->header.port].rxCallback() != nullptr) {
+                _ports[p->header.port].rxCallback()(std::move(*p));
+                _ports[p->header.port].rxCount++;
+
+                // LOG(INF2, "Reception:\r\n    Port:\t%u\r\n", p->header.port);
             }
 
             // free memory allocated for mail
@@ -143,14 +144,14 @@ void CommModule::rxThread() {
     }
 }
 
-void CommModule::setRxHandler(std::function<CommCallback> callback,
+void CommModule::setRxHandler(std::function<CommRxCallback> callback,
                               uint8_t portNbr) {
     _ports[portNbr].rxCallback() = std::bind(callback, std::placeholders::_1);
 
     ready();
 }
 
-void CommModule::setTxHandler(std::function<CommCallback> callback,
+void CommModule::setTxHandler(std::function<CommTxCallback> callback,
                               uint8_t portNbr) {
     _ports[portNbr].txCallback() = std::bind(callback, std::placeholders::_1);
 
@@ -165,7 +166,7 @@ void CommModule::ready() {
     _txThread.signal_set(COMM_MODULE_SIGNAL_START_THREAD);
 }
 
-void CommModule::send(const rtp::packet& packet) {
+void CommModule::send(rtp::packet packet) {
     // Check to make sure a socket for the port exists
     if (_ports.find(packet.header.port) != _ports.end() &&
         _ports[packet.header.port].txCallback() != nullptr) {
@@ -177,8 +178,7 @@ void CommModule::send(const rtp::packet& packet) {
         }
 
         // Copy the contents into the allocated memory block
-        // TODO: use move semantics
-        *p = packet;
+        *p = std::move(packet);
 
         // Place the passed packet into the txQueue.
         osMailPut(_txQueue, p);
@@ -191,7 +191,7 @@ void CommModule::send(const rtp::packet& packet) {
     }
 }
 
-void CommModule::receive(const rtp::packet& packet) {
+void CommModule::receive(rtp::packet packet) {
     // Check to make sure a socket for the port exists
     if (_ports.find(packet.header.port) != _ports.end() &&
         _ports[packet.header.port].rxCallback() != nullptr) {
@@ -204,7 +204,7 @@ void CommModule::receive(const rtp::packet& packet) {
 
         // Copy the contents into the allocated memory block
         // TODO: move semantics
-        *p = packet;
+        *p = std::move(packet);
 
         // Place the passed packet into the rxQueue.
         osMailPut(_rxQueue, p);

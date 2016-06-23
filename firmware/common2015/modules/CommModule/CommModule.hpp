@@ -3,24 +3,24 @@
 #include <mbed.h>
 #include <rtos.h>
 
-#include "rtp.hpp"
+#include "CommPort.hpp"
+#include "Console.hpp"
+#include "TimeoutLED.hpp"
 #include "helper-funcs.hpp"
 #include "rtos-mgmt/mail-helper.hpp"
-#include "Console.hpp"
-#include "CommPort.hpp"
-#include "TimeoutLED.hpp"
+#include "rtp.hpp"
 
 #include <algorithm>
-#include <vector>
 #include <functional>
 #include <memory>
-
+#include <vector>
 
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */
-typedef void(CommCallback)(rtp::packet*);
-typedef CommPort<CommCallback> CommPort_t;
+typedef void(CommRxCallback)(rtp::packet);
+typedef int32_t(CommTxCallback)(const rtp::packet*);
+typedef CommPort<CommRxCallback, CommTxCallback> CommPort_t;
 
 /**
  * @brief A high-level firmware class for packet handling & routing
@@ -56,26 +56,27 @@ public:
 
     // Set a TX callback function on an object
     template <typename B>
-    void setTxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
+    void setTxHandler(B* obj, int32_t (B::*mptr)(const rtp::packet*),
+                      uint8_t portNbr) {
         setTxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);
     }
 
     // Set an RX callback function on an object
     template <typename B>
-    void setRxHandler(B* obj, void (B::*mptr)(rtp::packet*), uint8_t portNbr) {
+    void setRxHandler(B* obj, void (B::*mptr)(rtp::packet), uint8_t portNbr) {
         setRxHandler(std::bind(mptr, obj, std::placeholders::_1), portNbr);
     }
 
     // Set a normal RX callback function without an object
-    void setRxHandler(std::function<CommCallback> callback, uint8_t portNbr);
-    void setTxHandler(std::function<CommCallback> callback, uint8_t portNbr);
+    void setRxHandler(std::function<CommRxCallback> callback, uint8_t portNbr);
+    void setTxHandler(std::function<CommTxCallback> callback, uint8_t portNbr);
 
     // Send a rtp::packet. The details of exactly how the packet will be sent
-    // are determined from the rtp::packet's port and subclass values
-    void send(const rtp::packet& pkt);
+    // are determined from the rtp::packet's port
+    void send(rtp::packet packet);
 
     /// Called by CommLink instances whenever a packet is received via radio
-    void receive(const rtp::packet& pkt);
+    void receive(rtp::packet pkt);
 
     unsigned int numRxPackets() const;
     unsigned int numTxPackets() const;
