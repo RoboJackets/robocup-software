@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af":[12,0,5,8,4,2,0,2],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75":[12,0,5,8,4,2,0,1],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[12,0,5,8,4,2,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[12,0,5,8,4,2,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a5e234d3dfb28e6b87c0e7fea114894cd":[12,0,5,13,11,0,5],
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a7441c79ebbf35b4499f22f84c97a1bd7":[12,0,5,13,11,0,8],
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a7627095cd8f62d635542cf47b007587b":[12,0,5,13,11,0,6],
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a77f6a7635f36ec6c1fbe1980dae2a361":[12,0,5,13,11,0,1],
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a8add3ceb1e39da961c4f0c7c1a2cd5d8":[12,0,5,13,11,0,3]
+"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a77f6a7635f36ec6c1fbe1980dae2a361":[12,0,5,13,11,0,1]
 };

@@ -11,6 +11,7 @@ var searchData=
   ['setaccelerorange',['setAcceleroRange',['../class_m_p_u6050.html#a3811859c76080d0faea7ed0d43c34525',1,'MPU6050']]],
   ['setaddress',['setAddress',['../class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b',1,'CC1201']]],
   ['setbw',['setBW',['../class_m_p_u6050.html#af27690c55a7da6fc19a69390ccd86e06',1,'MPU6050']]],
+  ['setchannel',['setChannel',['../class_c_c1201.html#acfab857a3c0302d38d619020f752cb72',1,'CC1201']]],
   ['setcoeffs',['setCoeffs',['../class_f_i_r_filter.html#ac3ce994b4706cbe70027320275e5f4dc',1,'FIRFilter']]],
   ['setconfig',['setConfig',['../class_c_c1201.html#a758e241be6292a2e28837fa11f20754d',1,'CC1201']]],
   ['setdebugenabled',['setDebugEnabled',['../class_c_c1201.html#a0c856be77f27c823533eb8d7adef04df',1,'CC1201']]],

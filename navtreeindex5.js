@@ -1,5 +1,6 @@
 var NAVTREEINDEX5 =
 {
+"class_planning_1_1_trapezoidal_path.html#a0171be9c4ed3118e658362bde7a8e571":[12,0,8,30,8],
 "class_planning_1_1_trapezoidal_path.html#a04425cbf8bfd7e54754272d88be99735":[12,0,8,30,0],
 "class_planning_1_1_trapezoidal_path.html#a0990ef6bf9c81e1cb75b77e3dc2567e6":[12,0,8,30,6],
 "class_planning_1_1_trapezoidal_path.html#a0dfd2e7deaf4a8052be39c89752d8728":[12,0,8,30,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "class_shared_s_p_i_device.html#a6213cd1a7917762f310dc2abe66d3897":[12,0,90,0],
 "class_shared_s_p_i_device.html#a642aeaf9cc0ff39a56ef13cb85eba40b":[12,0,90,1],
 "class_shared_s_p_i_device.html#a72b94604822101722a63b2f873e4e38c":[12,0,90,3],
-"class_shared_s_p_i_device.html#a8519100bec4c669ed791ef69c87ffffc":[12,0,90,5],
-"class_shared_s_p_i_device.html#a9f86eefe59ee13189c867424f017965e":[12,0,90,2]
+"class_shared_s_p_i_device.html#a8519100bec4c669ed791ef69c87ffffc":[12,0,90,5]
 };

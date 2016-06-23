@@ -136,6 +136,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4d69e8ba33208dde9b42b86c68ee5d0b"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b">setAddress</a> (uint8_t addr)</td></tr>
 <tr class="memdesc:a4d69e8ba33208dde9b42b86c68ee5d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the address of the device.  <a href="#a4d69e8ba33208dde9b42b86c68ee5d0b">More...</a><br /></td></tr>
 <tr class="separator:a4d69e8ba33208dde9b42b86c68ee5d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfab857a3c0302d38d619020f752cb72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#acfab857a3c0302d38d619020f752cb72">setChannel</a> (uint8_t chanNumber)</td></tr>
+<tr class="memdesc:acfab857a3c0302d38d619020f752cb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the radio channel, which corresponds to a certain frequency.  <a href="#acfab857a3c0302d38d619020f752cb72">More...</a><br /></td></tr>
+<tr class="separator:acfab857a3c0302d38d619020f752cb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5035f4001c6424cc5a283e75a3d8ce52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5035f4001c6424cc5a283e75a3d8ce52"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52">reset</a> ()</td></tr>
 <tr class="memdesc:a5035f4001c6424cc5a283e75a3d8ce52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a soft reset for a communication link's hardware device. <br /></td></tr>
@@ -466,6 +469,26 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 
 </div>
 </div>
+<a class="anchor" id="acfab857a3c0302d38d619020f752cb72"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CC1201::setChannel </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramname"><em>chanNumber</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets the radio channel, which corresponds to a certain frequency. </p>
+<p>The default value is channel 0.</p>
+<p>Channel 0 is 904MHz and subsequent channels are increments of 2MHz above it. For example, channel 1 is 906MHz. For now, we're only using channels 0 and 1. </p>
+
+</div>
+</div>
 <a class="anchor" id="a758e241be6292a2e28837fa11f20754d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -513,7 +536,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_c_c1201.html">CC1201</a></li>
-    <li class="footer">Generated on Thu Jun 23 2016 17:44:32 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jun 23 2016 20:07:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>
