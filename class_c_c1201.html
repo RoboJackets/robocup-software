@@ -127,9 +127,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8381abed7da4e387921dae94c198b620"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a8381abed7da4e387921dae94c198b620">CC1201</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; sharedSPI, PinName nCs, PinName intPin, const <a class="el" href="structregister_setting__t.html">registerSetting_t</a> *regs, size_t len, int rssiOffset=DEFAULT_RSSI_OFFSET)</td></tr>
 <tr class="memdesc:a8381abed7da4e387921dae94c198b620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the CC1201 with the given SPI, chip select (inverted), and interrupt line pins.  <a href="#a8381abed7da4e387921dae94c198b620">More...</a><br /></td></tr>
 <tr class="separator:a8381abed7da4e387921dae94c198b620"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ea010ffd0b9be2f176eeaf396450745"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a1ea010ffd0b9be2f176eeaf396450745">sendData</a> (const uint8_t *buf, uint8_t size)</td></tr>
-<tr class="memdesc:a1ea010ffd0b9be2f176eeaf396450745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmit data.  <a href="#a1ea010ffd0b9be2f176eeaf396450745">More...</a><br /></td></tr>
-<tr class="separator:a1ea010ffd0b9be2f176eeaf396450745"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a321a031a3da161a4ec641b69e86a70a4"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a321a031a3da161a4ec641b69e86a70a4">sendPacket</a> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *pkt)</td></tr>
+<tr class="memdesc:a321a031a3da161a4ec641b69e86a70a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transmit data.  <a href="#a321a031a3da161a4ec641b69e86a70a4">More...</a><br /></td></tr>
+<tr class="separator:a321a031a3da161a4ec641b69e86a70a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7">getData</a> (std::vector&lt; uint8_t &gt; *buf)</td></tr>
 <tr class="memdesc:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from the radio's RX buffer.  <a href="#a6e42d30f3a52028101f724fd9d3ac3a7">More...</a><br /></td></tr>
 <tr class="separator:a6e42d30f3a52028101f724fd9d3ac3a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,10 +194,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>printDebugInfo</b> ()
 <tr class="memitem:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#acff1290e199689fac1f2f995303ad6bf">~CommLink</a> ()</td></tr>
 <tr class="memdesc:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual deconstructor Kills any threads and frees the allocated stack.  <a href="#acff1290e199689fac1f2f995303ad6bf">More...</a><br /></td></tr>
 <tr class="separator:acff1290e199689fac1f2f995303ad6bf inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa051240d07d3e320ca5ab45f9213082b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">sendPacket</a> (<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *)</td></tr>
-<tr class="memdesc:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send &amp; Receive through the rtp structure. <br /></td></tr>
-<tr class="separator:aa051240d07d3e320ca5ab45f9213082b inherit pub_methods_class_comm_link"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_shared_s_p_i_device"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_shared_s_p_i_device')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a></td></tr>
 <tr class="memitem:a6213cd1a7917762f310dc2abe66d3897 inherit pub_methods_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared_s_p_i_device.html#a6213cd1a7917762f310dc2abe66d3897">SharedSPIDevice</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; spi, mbed::DigitalOutcs, bool csInverted=true)</td></tr>
 <tr class="separator:a6213cd1a7917762f310dc2abe66d3897 inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -403,7 +399,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 
 </div>
 </div>
-<a class="anchor" id="a1ea010ffd0b9be2f176eeaf396450745"></a>
+<a class="anchor" id="a321a031a3da161a4ec641b69e86a70a4"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -411,21 +407,11 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int32_t CC1201::sendData </td>
+          <td class="memname">int32_t CC1201::sendPacket </td>
           <td>(</td>
-          <td class="paramtype">const uint8_t *&#160;</td>
-          <td class="paramname"><em>buf</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *&#160;</td>
+          <td class="paramname"><em>pkt</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -436,16 +422,9 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 </div><div class="memdoc">
 
 <p>Transmit data. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">buf</td><td>A buffer containing the data to send </td></tr>
-    <tr><td class="paramname">size</td><td>The length, in bytes, of </td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>A status value indicating success/error. See CommLink for info. </dd></dl>
 
-<p>Implements <a class="el" href="class_comm_link.html">CommLink</a>.</p>
+<p>Implements <a class="el" href="class_comm_link.html#ae9ec315271e66d405ef55c91cbc19ca7">CommLink</a>.</p>
 
 </div>
 </div>
@@ -536,7 +515,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_c_c1201.html">CC1201</a></li>
-    <li class="footer">Generated on Thu Jun 23 2016 20:07:36 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jun 23 2016 21:52:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

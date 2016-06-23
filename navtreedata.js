@@ -37,16 +37,16 @@ var NAVTREEINDEX =
 [
 ".html",
 "class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7",
-"class_game_state.html#a63fd0f3e2c38c05e261c520bede9c18e",
-"class_geometry2d_1_1_shape.html#ac791f35db4e0efa1a6f07a619100d700",
-"class_our_robot.html#a019e094bf9347690e54572334f9c0a0b",
-"class_planning_1_1_trapezoidal_path.html#a0171be9c4ed3118e658362bde7a8e571",
-"class_shared_s_p_i_device.html#a9f86eefe59ee13189c867424f017965e",
-"classgameplay_1_1play__registry_1_1_play_registry.html#ab3e68913d7dd58501b97a277ff242d26",
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af",
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a8add3ceb1e39da961c4f0c7c1a2cd5d8",
-"classmbed_1_1_i2_c_driver.html#a9b69b9bef095f7d99c2a1987c0c16998",
-"software-spi_8hpp_source.html"
+"class_game_state.html#a64b2c6b8f5b13b9b0eaaeed92150819d",
+"class_geometry2d_1_1_shape.html#acf902863336b26eb2de2d9e03182913f",
+"class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27",
+"class_planning_1_1_trapezoidal_path.html#a04425cbf8bfd7e54754272d88be99735",
+"class_shared_s_p_i_device.html#af4a7a211ca0d7c6b28fb9148fdf218f2",
+"classgameplay_1_1play__registry_1_1_play_registry.html#abe54e56a92593301aa4147493022ffc9",
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75",
+"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aaa068536aaa3a5ebce8ffc568752a117",
+"classmbed_1_1_i2_c_driver.html#aa118c20ca912a4ee74a5768c4a444336",
+"struct_chart_1_1_function.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

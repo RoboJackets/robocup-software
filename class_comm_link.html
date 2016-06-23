@@ -144,10 +144,10 @@ virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el"
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a518b5e89a19177696fd1f037ac37e99f">isConnected</a> () const =0</td></tr>
 <tr class="memdesc:a518b5e89a19177696fd1f037ac37e99f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine if communication can occur with another device. <br /></td></tr>
 <tr class="separator:a518b5e89a19177696fd1f037ac37e99f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa051240d07d3e320ca5ab45f9213082b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa051240d07d3e320ca5ab45f9213082b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#aa051240d07d3e320ca5ab45f9213082b">sendPacket</a> (<a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *)</td></tr>
-<tr class="memdesc:aa051240d07d3e320ca5ab45f9213082b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send &amp; Receive through the rtp structure. <br /></td></tr>
-<tr class="separator:aa051240d07d3e320ca5ab45f9213082b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9ec315271e66d405ef55c91cbc19ca7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9ec315271e66d405ef55c91cbc19ca7"></a>
+virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#ae9ec315271e66d405ef55c91cbc19ca7">sendPacket</a> (const <a class="el" href="classrtp_1_1packet.html">rtp::packet</a> *pkt)=0</td></tr>
+<tr class="memdesc:ae9ec315271e66d405ef55c91cbc19ca7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send &amp; Receive through the rtp structure. <br /></td></tr>
+<tr class="separator:ae9ec315271e66d405ef55c91cbc19ca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_shared_s_p_i_device"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_shared_s_p_i_device')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_shared_s_p_i_device.html">SharedSPIDevice&lt;&gt;</a></td></tr>
 <tr class="memitem:a6213cd1a7917762f310dc2abe66d3897 inherit pub_methods_class_shared_s_p_i_device"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared_s_p_i_device.html#a6213cd1a7917762f310dc2abe66d3897">SharedSPIDevice</a> (std::shared_ptr&lt; <a class="el" href="class_shared_s_p_i.html">SharedSPI</a> &gt; spi, mbed::DigitalOutcs, bool csInverted=true)</td></tr>
 <tr class="separator:a6213cd1a7917762f310dc2abe66d3897 inherit pub_methods_class_shared_s_p_i_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,9 +170,6 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>RX_QUE
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a114ee23c970d2cf498879549a86867a7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a114ee23c970d2cf498879549a86867a7"></a>
-virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><b>sendData</b> (const uint8_t *buf, uint8_t len)=0</td></tr>
-<tr class="separator:a114ee23c970d2cf498879549a86867a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a9d3575f72afa2c61d215aa6708993e"><td class="memItemLeft" align="right" valign="top">virtual int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_link.html#a9a9d3575f72afa2c61d215aa6708993e">getData</a> (std::vector&lt; uint8_t &gt; *buffer)=0</td></tr>
 <tr class="memdesc:a9a9d3575f72afa2c61d215aa6708993e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read data from the radio's RX buffer.  <a href="#a9a9d3575f72afa2c61d215aa6708993e">More...</a><br /></td></tr>
 <tr class="separator:a9a9d3575f72afa2c61d215aa6708993e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -298,7 +295,7 @@ mbed::DigitalOut&#160;</td><td class="memItemRight" valign="bottom"><b>_cs</b></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_comm_link.html">CommLink</a></li>
-    <li class="footer">Generated on Thu Jun 23 2016 20:07:36 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jun 23 2016 21:52:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

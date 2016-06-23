@@ -19,7 +19,7 @@ var class_c_c1201 =
     [ "reset", "class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52", null ],
     [ "rssi", "class_c_c1201.html#a11dd1ac821d125a8e975af87f7880970", null ],
     [ "selfTest", "class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c", null ],
-    [ "sendData", "class_c_c1201.html#a1ea010ffd0b9be2f176eeaf396450745", null ],
+    [ "sendPacket", "class_c_c1201.html#a321a031a3da161a4ec641b69e86a70a4", null ],
     [ "setAddress", "class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b", null ],
     [ "setChannel", "class_c_c1201.html#acfab857a3c0302d38d619020f752cb72", null ],
     [ "setConfig", "class_c_c1201.html#a758e241be6292a2e28837fa11f20754d", null ],

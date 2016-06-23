@@ -19,7 +19,7 @@ var hierarchy =
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
     [ "command_t", "structcommand__t.html", null ],
     [ "CommModule", "class_comm_module.html", null ],
-    [ "CommPort< T >", "class_comm_port.html", null ],
+    [ "CommPort< RX_CALLBACK, TX_CALLBACK >", "class_comm_port.html", null ],
     [ "CompositeBehavior", null, [
       [ "circle_near_ball.CircleNearBall", "classcircle__near__ball_1_1_circle_near_ball.html", null ],
       [ "circle_on_center.CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", null ]
