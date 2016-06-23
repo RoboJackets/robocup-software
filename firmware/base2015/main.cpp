@@ -82,15 +82,20 @@ int main() {
         LOG(FATAL, "No radio interface found!");
     }
 
+    global_radio->setAddress(rtp::BASE_STATION_ADDRESS);
+
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
     // set callbacks for usb control transfers
-    usbLink.writeRegisterCallback =
-        [](uint8_t reg, uint8_t val) { global_radio->writeReg(reg, val); };
-    usbLink.readRegisterCallback =
-        [](uint8_t reg) { return global_radio->readReg(reg); };
-    usbLink.strobeCallback =
-        [](uint8_t strobe) { global_radio->strobe(strobe); };
+    usbLink.writeRegisterCallback = [](uint8_t reg, uint8_t val) {
+        global_radio->writeReg(reg, val);
+    };
+    usbLink.readRegisterCallback = [](uint8_t reg) {
+        return global_radio->readReg(reg);
+    };
+    usbLink.strobeCallback = [](uint8_t strobe) {
+        global_radio->strobe(strobe);
+    };
 
     LOG(INIT, "Initializing USB interface...");
     usbLink.connect();  // note: this blocks until the link is connected
@@ -119,6 +124,9 @@ int main() {
             // construct packet from buffer received over USB
             rtp::packet pkt;
             pkt.recv(buf, bufSize);
+
+            // send to the broadcast address so all robots receive it.
+            pkt.header.address = rtp::BROADCAST_ADDRESS;
 
             // transmit!
             CommModule::Instance->send(pkt);

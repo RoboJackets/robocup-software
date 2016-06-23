@@ -31,8 +31,18 @@ public:
 
     ~RadioProtocol() { stop(); }
 
-    /// robot unique id
-    void setUID(uint8_t uid) { _uid = uid; }
+    /** The value 0x00 is a valid uid, but we can't use it as an address because
+     * it's the broadcast address.  Adding 1 to uids to get addresses solves the
+     * problem.
+     */
+    static uint8_t addr2uid(uint8_t addr) { return addr - 1; }
+    static uint8_t uid2addr(uint8_t uid) { return uid + 1; }
+
+    /// Set robot unique id.  Also update address.
+    void setUID(uint8_t uid) {
+        _uid = uid;
+        _radio->setAddress(uid2addr(uid));
+    }
 
     /**
      * Callback that is called whenever a packet is received.  Set this in
