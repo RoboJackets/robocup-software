@@ -111,11 +111,5 @@ void InitializeCommModule(shared_ptr<SharedSPI> sharedSPI) {
         }
     } else {
         LOG(FATAL, "No radio interface found!\r\n");
-
-        // Wait until the threads with the commModule are all started up
-        // and ready
-        while (!commModule->isReady()) {
-            Thread::wait(50);
-        }
     }
 }
