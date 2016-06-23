@@ -2,11 +2,11 @@
 #include "Ball.hpp"
 #include "Environment.hpp"
 #include "GL_ShapeDrawer.h"
-#include "RobotMotionState.hpp"
 #include "RobotBallController.hpp"
+#include "RobotMotionState.hpp"
 
-#include <Utils.hpp>
 #include <stdio.h>
+#include <Utils.hpp>
 #include <cmath>
 
 #include <Geometry2d/TransformMatrix.hpp>
