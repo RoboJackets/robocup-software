@@ -751,8 +751,8 @@ void MainWindow::updateStatus() {
             // There is a separate status for non-simulation with internal
             // referee.
             status("NO REFEREE", Status_Fail);
+            return;
         }
-        return;
     }
 
     if (sim) {
