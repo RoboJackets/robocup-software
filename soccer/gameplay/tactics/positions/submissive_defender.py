@@ -7,20 +7,27 @@ import main
 from enum import Enum
 import math
 import planning_priority
+import evaluation
 
 
 ## Defender behavior meant to be coordinated in a defense tactic
 # The regular defender does a lot of calculations and figures out where it should be
 # This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
 class SubmissiveDefender(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
+    single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         marking = 1
-        # TODO: add clear state to get and kick a free ball
+        clearing = 2
 
     def __init__(self):
         super().__init__(continuous=True)
+
+        #this value is used by external behaviors to tell SubmissiveDefender to clear the ball
+        self.go_clear = False
+        #this value multiplies the time it takes the opponent to get to the ball, a value under 1 makes our robots play safer by assuming their robots can move more quickly
+        self.safety_multiplier = 0.9
+
         self._block_object = None
         # self._opponent_avoid_threshold = 2.0
         self._defend_goal_radius = 1.4
@@ -29,10 +36,21 @@ class SubmissiveDefender(
 
         self.add_state(SubmissiveDefender.State.marking,
                        behavior.Behavior.State.running)
+        self.add_state(SubmissiveDefender.State.clearing,
+                       behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             SubmissiveDefender.State.marking, lambda: True,
                             "immediately")
+        self.add_transition(SubmissiveDefender.State.marking,
+                            SubmissiveDefender.State.clearing,
+                            lambda: self.go_clear,
+                            "when it is safe to clear the ball")
+        self.add_transition(
+            SubmissiveDefender.State.clearing,
+            SubmissiveDefender.State.marking,
+            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.go_clear,
+            "done clearing")
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
@@ -150,6 +168,26 @@ class SubmissiveDefender(
 
     def on_exit_marking(self):
         self.remove_subbehavior('move')
+
+    def on_enter_clearing(self):
+        #copied from submissivegoalie
+        kick = skills.pivot_kick.PivotKick()
+
+        kick.aim_params['error_threshold'] = 1.0
+        kick.aim_params['max_steady_ang_vel'] = 12
+
+        # chip
+        kick.chip_power = 1.0
+        kick.use_chipper = True
+
+        kick.target = robocup.Segment(
+            robocup.Point(-constants.Field.Width / 4, constants.Field.Length),
+            robocup.Point(constants.Field.Width / 4, constants.Field.Length))
+
+        self.add_subbehavior(kick, 'kick-clear', required=False)
+
+    def on_exit_clearing(self):
+        self.remove_subbehavior('kick-clear')
 
     def role_requirements(self):
         reqs = super().role_requirements()
