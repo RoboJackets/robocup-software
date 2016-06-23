@@ -29,8 +29,8 @@ void Task_Controller_Sensorless(const osThreadId mainThreadId);
 
 namespace {
 // The gyro/accel values are given RPC read/write access here
-float gyroVals[3] = {0};
-float accelVals[3] = {0};
+// float gyroVals[3] = {0};
+// float accelVals[3] = {0};
 
 // RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
 // RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
@@ -85,9 +85,9 @@ void Task_Controller(void const* args) {
 
         // Start a thread that can function without the IMU, terminate us if it
         // ever returns
-        Task_Controller_Sensorless(mainID);
+        // Task_Controller_Sensorless(mainID);
 
-        return;
+        // return;
     }
 
     // signal back to main and wait until we're signaled to continue
@@ -128,8 +128,8 @@ void Task_Controller(void const* args) {
                                 MCP23017::DIR_INPUT)});
 
     while (true) {
-        imu.getGyro(gyroVals);
-        imu.getAccelero(accelVals);
+        // imu.getGyro(gyroVals);
+        // imu.getAccelero(accelVals);
 
         std::vector<int16_t> enc_deltas(5);
 
