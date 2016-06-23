@@ -15,6 +15,7 @@
 #include <functional>
 #include <memory>
 
+
 /* These define the function pointer type that's used for every callback
  * function type set through the CommModule class.
  */
