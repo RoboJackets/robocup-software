@@ -171,6 +171,10 @@ void CommModule::send(const rtp::packet& packet) {
         _ports[packet.header.port].txCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_txQueue, osWaitForever);
+        if (!p) {
+            LOG(FATAL, "Unable to allocate packet onto mail queue");
+            return;
+        }
 
         // Copy the contents into the allocated memory block
         // TODO: use move semantics
@@ -193,6 +197,10 @@ void CommModule::receive(const rtp::packet& packet) {
         _ports[packet.header.port].rxCallback() != nullptr) {
         // Allocate a block of memory for the data.
         rtp::packet* p = (rtp::packet*)osMailAlloc(_rxQueue, osWaitForever);
+        if (!p) {
+            LOG(FATAL, "Unable to allocate packet onto mail queue");
+            return;
+        }
 
         // Copy the contents into the allocated memory block
         // TODO: move semantics
