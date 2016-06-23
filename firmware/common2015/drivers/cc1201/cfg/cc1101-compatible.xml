@@ -149,6 +149,10 @@
             <Value>0x20</Value>
         </Register>
         <Register>
+            <Name>PKT_CFG1</Name>
+            <Value>0x13</Value>
+        </Register>
+        <Register>
             <Name>PKT_CFG2</Name>
             <Value>0x00</Value>
         </Register>
