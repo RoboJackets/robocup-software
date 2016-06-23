@@ -105,7 +105,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.lastApproachTarget == None
 
     def execute_course_approach(self):
-        # don't hit the ball on accident
         pos = self.find_intercept_point()
 
         if (self.lastApproachTarget != None and
@@ -114,7 +113,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.lastApproachTarget = pos
 
-        if (pos-main.ball().pos).mag() < Capture.CourseApproachAvoidBall + constants.Robot.Radius:
+        # don't hit the ball on accident
+        if pos.dist_to(main.ball().pos) < Capture.CourseApproachAvoidBall + constants.Robot.Radius:
             self.robot.disable_avoid_ball()
         else:
             self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
