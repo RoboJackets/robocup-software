@@ -231,13 +231,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    // TODO(justin): remove this. skip every other packet because the system
-    // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
-    // definitely needs to be invesitgated.  If this rate-limit is removed and
-    // we try to send at 60Hz, we get TX buffer overflows in the base station.
-    static int pktCount = 0;
-    if (pktCount++ % 2 == 0) return;
-
     // Send the forward packet
     int sent = 0;
     int transferRetCode =
