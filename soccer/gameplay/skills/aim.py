@@ -153,8 +153,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         else:
             ball2target = self.target_point - main.ball().pos
             target_line = robocup.Line(
-                self.target_point, self.target_point + ball2target.perp_ccw()
-            )  # line perpendicular to aim_line that passes through the target
+                self.target_point, self.target_point + ball2target.perp_ccw())  # line perpendicular to aim_line that passes through the target
 
             # ideally the angle we're aiming at would be the angle of the robot, but the bot doesn't kick straight
             # it tends to kick in the direction of the side of the mouth that the ball is in
@@ -194,8 +193,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             self._error = (
                 self.target_point -
                 self._shot_point).mag() if self._shot_point != None else float(
-                    "inf"
-                )  # distance in meters off that we'll be if we shoot right now
+                    "inf")  # distance in meters off that we'll be if we shoot right now
         else:
             self._error = float("inf")
 
