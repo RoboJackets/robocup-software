@@ -34,11 +34,11 @@
         </Register>
         <Register>
             <Name>FREQ0</Name>
-            <Value>0x66</Value>
+            <Value>0x99</Value>
         </Register>
         <Register>
             <Name>FREQ1</Name>
-            <Value>0x66</Value>
+            <Value>0x99</Value>
         </Register>
         <Register>
             <Name>FREQ2</Name>
