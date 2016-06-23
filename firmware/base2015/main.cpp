@@ -125,8 +125,8 @@ int main() {
             rtp::packet pkt;
             pkt.recv(buf, bufSize);
 
-            // send to the broadcast address so all robots receive it.
-            pkt.header.address = rtp::BROADCAST_ADDRESS;
+            // send to all robots
+            pkt.header.address = rtp::ROBOT_ADDRESS;
 
             // transmit!
             CommModule::Instance->send(pkt);
