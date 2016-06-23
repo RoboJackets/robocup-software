@@ -8,16 +8,20 @@ import robocup
 import skills
 import skills.dribble
 import skills.move
+import time
 
 
 class OurPlacement(
         single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
         dribble = 1
-        avoid = 2
+        pause=2
+        avoid = 3
 
     def __init__(self):
         super().__init__(continuous=False)
+
+        self.pause_time=0
 
         for substate in OurPlacement.State:
             self.add_state(substate, behavior.Behavior.State.running)
@@ -28,9 +32,13 @@ class OurPlacement(
 
         #place the ball in the target area
         self.add_transition(
-            OurPlacement.State.dribble, OurPlacement.State.avoid,
+            OurPlacement.State.dribble, OurPlacement.State.pause,
             lambda: self.subbehavior_with_name('dribble').state == behavior.Behavior.State.completed,
             'finished dribbling')
+
+        self.add_transition(
+            OurPlacement.State.pause, OurPlacement.State.avoid,
+            lambda: time.time()-self.pause_time>=.5, 'paused for .5 seconds')
 
         #if the ball comes out of the target area, put it back
         self.add_transition(
@@ -53,9 +61,13 @@ class OurPlacement(
         self.robot.set_dribble_speed(0)
         self.remove_subbehavior('dribble')
 
+    def on_enter_pause(self):
+        self.pause_time=time.time()
+
     def execute_avoid(self):
         self.robot.is_ball_placer = True
         #the avoid radius is 6cm larger than the area we need to stay out of plus the radius of the robot just for safety
+        self.robot.face(main.ball().pos)
         self.robot.move_to(main.ball().pos + ((self.robot.pos - main.ball().pos
                                                ).normalized() * .65))
 

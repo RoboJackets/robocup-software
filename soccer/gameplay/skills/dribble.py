@@ -97,7 +97,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.remove_subbehavior('capture')
 
     def execute_aim(self):
-        self.robot.set_max_angle_speed(3)
+        self.robot.set_max_angle_speed(2)
         self.robot.pivot(self._pos)
         self.robot.set_dribble_speed(self._dribble_speed)
         if self.robot.has_ball():
@@ -105,10 +105,13 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def execute_drive(self):
         self.robot.set_dribble_speed(self._dribble_speed)
-        self.robot.face(self._pos)
+        self.robot.face(self.pos)
+
+        #self.robot.set_max_speed(.5)
 
         #offset by the size of the robot so the ball is on the target position when it stops
-        self.robot.move_to_direct(self._pos - (
+        self.robot.disable_avoid_ball()
+        self.robot.move_to(self._pos - (
             self._pos - self.robot.pos).normalized(constants.Robot.Radius))
         if self.robot.has_ball():
             self.last_ball_time = time.time()
