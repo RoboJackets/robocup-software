@@ -6,6 +6,7 @@
 #include <logger.hpp>
 
 #include "PidMotionController.hpp"
+#include "RtosTimerHelper.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "motors.hpp"
@@ -22,8 +23,22 @@ static const int CONTROL_LOOP_WAIT_MS = 5;
 // initialize PID controller
 PidMotionController pidController;
 
+/** If this amount of time (in ms) elapses without
+ * Task_Controller_UpdateTarget() being called, the target velocity is reset to
+ * zero.  This is a safety feature to prevent robots from doing unwanted things
+ * when they lose radio communication.
+ */
+static const uint32_t COMMAND_TIMEOUT_INTERVAL = 250;
+unique_ptr<RtosTimerHelper> commandTimeoutTimer = nullptr;
+bool commandTimedOut = true;
+
 void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel) {
     pidController.setTargetVel(targetVel);
+
+    // reset timeout
+    commandTimedOut = false;
+    if (commandTimeoutTimer)
+        commandTimeoutTimer->start(COMMAND_TIMEOUT_INTERVAL);
 }
 
 /**
@@ -75,6 +90,10 @@ void Task_Controller(void const* args) {
 
     pidController.setPidValues(0.75, 0.2, 0);  // TODO: tune pid values
 
+    // initialize timeout timer
+    commandTimeoutTimer = make_unique<RtosTimerHelper>(
+        [&]() { commandTimedOut = true; }, osTimerPeriodic);
+
     while (true) {
         // imu.getGyro(gyroVals);
         // imu.getAccelero(accelVals);
@@ -82,6 +101,9 @@ void Task_Controller(void const* args) {
         // note: the 4th value is not an encoder value.  See the large comment
         // below for an explanation.
         array<int16_t, 5> enc_deltas;
+
+        // zero out command if we haven't gotten an updated target in a while
+        if (commandTimedOut) duty_cycles = {0, 0, 0, 0, 0};
 
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
                                          enc_deltas.data(), enc_deltas.size());

@@ -1,14 +1,13 @@
 #pragma once
 
 #include <array>
-#include "MotionController.hpp"
 #include "Pid.hpp"
 #include "RobotModel.hpp"
 
 /**
  * Robot controller that runs a PID loop on each of the four wheels.
  */
-class PidMotionController : public MotionController {
+class PidMotionController {
 public:
     PidMotionController() {
         setPidValues(1, 0, 0);
@@ -25,6 +24,8 @@ public:
             ctl.kd = d;
         }
     }
+
+    void setTargetVel(Eigen::Vector3f target) { _targetVel = target; }
 
     /**
      * Return the duty cycle values for the motors to drive at the target
@@ -77,4 +78,6 @@ public:
 private:
     /// controllers for each wheel
     Pid _controllers[4];
+
+    Eigen::Vector3f _targetVel;
 };
