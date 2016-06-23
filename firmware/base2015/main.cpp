@@ -82,6 +82,8 @@ int main() {
         LOG(FATAL, "No radio interface found!");
     }
 
+    global_radio->setAddress(rtp::BASE_STATION_ADDRESS);
+
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
     // set callbacks for usb control transfers
@@ -122,6 +124,9 @@ int main() {
             // construct packet from buffer received over USB
             rtp::packet pkt;
             pkt.recv(buf, bufSize);
+
+            // send to all robots
+            pkt.header.address = rtp::ROBOT_ADDRESS;
 
             // transmit!
             CommModule::Instance->send(pkt);

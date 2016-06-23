@@ -386,6 +386,15 @@ void Processor::run() {
             delete packet;
         }
 
+        // Log referee data
+        vector<NewRefereePacket*> refereePackets;
+        _refereeModule.get()->getPackets(refereePackets);
+        for (NewRefereePacket* packet : refereePackets) {
+            SSL_Referee* log = _state.logFrame->add_raw_refbox();
+            log->CopyFrom(packet->wrapper);
+            delete packet;
+        }
+
         // Update gamestate w/ referee data
         _refereeModule->updateGameState(blueTeam());
         _refereeModule->spinKickWatcher();
