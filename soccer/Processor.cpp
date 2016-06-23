@@ -470,6 +470,7 @@ void Processor::run() {
             OurRobot* r = _state.self[entry.first];
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");
+            path->drawDebugText(&_state);
             r->setPath(std::move(path));
 
             r->angleFunctionPath.angleFunction =
@@ -673,7 +674,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field." << endl;
+                "field."
+             << endl;
     }
 }
 
