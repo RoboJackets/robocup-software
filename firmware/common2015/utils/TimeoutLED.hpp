@@ -49,7 +49,9 @@ private:
  */
 class FlashingTimeoutLED : public TimeoutLED {
 public:
-    FlashingTimeoutLED(DigitalOut led) : _led(led) {}
+    FlashingTimeoutLED(DigitalOut led, uint32_t updateInterval = 80,
+                       uint32_t timeoutInterval = 275)
+        : TimeoutLED(updateInterval, timeoutInterval), _led(led) {}
 
     /// Flash the LED on for a small duration, then back off
     virtual void update() {
