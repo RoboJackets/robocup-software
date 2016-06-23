@@ -1,3 +1,4 @@
+#include <gameplay/GameplayModule.hpp>
 
 #include <poll.h>
 #include <QMutexLocker>
@@ -12,7 +13,6 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <gameplay/GameplayModule.hpp>
 #include <git_version.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
