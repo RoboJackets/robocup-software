@@ -39,6 +39,8 @@ CC1201::CC1201(shared_ptr<SharedSPI> sharedSPI, PinName nCs, PinName intPin,
 
         writeReg(CC1201_AGC_GAIN_ADJUST, twos_compliment(rssiOffset));
 
+        setChannel(0);
+
         // start out in RX mode
         strobe(CC1201_STROBE_SRX);
 
@@ -149,6 +151,31 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
 
 uint8_t CC1201::setAddress(uint8_t addr) {
     return writeReg(CC1201_DEV_ADDR, addr);
+}
+
+void CC1201::setChannel(uint8_t chanNumber) {
+    // note: the values for @base and @spacing came from changing the frequency
+    // in SmartRF studio and seeing how the FREQ{0,1,2} registers changed. If
+    // other frequency-related config values are changed, these values will need
+    // to be changed.
+    const uint32_t base = 5924454;
+    const uint32_t spacing = 13107;
+    uint32_t freq = base + spacing * chanNumber;
+
+    if (freq > 0xFFFFFF) {
+        LOG(SEVERE,
+            "Attempt to set radio to invalid channel, setting back to channel "
+            "0");
+        freq = base;
+    }
+
+    writeReg(CC1201_FREQ2, (freq >> 16) & 0xFF);
+    writeReg(CC1201_FREQ1, (freq >> 8) & 0xFF);
+    writeReg(CC1201_FREQ0, freq & 0xFF);
+
+    // reset so changes take effect
+    strobe(CC1201_STROBE_SIDLE);
+    strobe(CC1201_STROBE_SRX);
 }
 
 uint8_t CC1201::readReg(uint16_t addr) {
