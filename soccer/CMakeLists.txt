@@ -83,7 +83,7 @@ find_package(Boost COMPONENTS system REQUIRED)
 # find boost python
 # This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
 set(FOUND_A_BOOST_PYTHON FALSE)
-foreach(possible_name python3 python-py32 python-py33 python-py34 python)
+foreach(possible_name python3 python-py32 python-py33 python-py34 python-py35 python)
     find_package(Boost COMPONENTS ${possible_name})
     if (Boost_FOUND)
         set(FOUND_A_BOOST_PYTHON TRUE)

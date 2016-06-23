@@ -122,7 +122,7 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
             strobe(CC1201_STROBE_SRX);
             return COMM_DEV_BUF_ERR;
         }
-        for (int i = 0; i < size_byte; i++) {
+        for (uint8_t i = 0; i < size_byte; i++) {
             buf->push_back(_spi->write(CC1201_STROBE_SNOP));
         }
         chipDeselect();
@@ -145,6 +145,10 @@ int32_t CC1201::getData(std::vector<uint8_t>* buf) {
     // so there's no need to explicitly strobe it into RX here.
 
     return COMM_SUCCESS;
+}
+
+uint8_t CC1201::setAddress(uint8_t addr) {
+    return writeReg(CC1201_DEV_ADDR, addr);
 }
 
 uint8_t CC1201::readReg(uint16_t addr) {

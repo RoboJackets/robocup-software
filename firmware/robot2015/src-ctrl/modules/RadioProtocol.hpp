@@ -27,11 +27,12 @@ public:
           _timeoutTimer(this, &RadioProtocol::_timeout, osTimerOnce) {
         ASSERT(commModule != nullptr);
         ASSERT(radio != nullptr);
+        _radio->setAddress(rtp::ROBOT_ADDRESS);
     }
 
     ~RadioProtocol() { stop(); }
 
-    /// robot unique id
+    /// Set robot unique id.  Also update address.
     void setUID(uint8_t uid) { _uid = uid; }
 
     /**

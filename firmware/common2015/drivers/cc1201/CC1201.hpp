@@ -61,6 +61,15 @@ public:
      */
     int32_t getData(std::vector<uint8_t>* buf);
 
+    /**
+     * Sets the address of the device. Any packet not addressed to this address
+     * is filtered out. Packets addressed to the broadcast address 0x00 are
+     * always received.
+     *
+     * @return status byte (same as writeReg())
+     */
+    uint8_t setAddress(uint8_t addr);
+
     void reset();
 
     int32_t selfTest();
