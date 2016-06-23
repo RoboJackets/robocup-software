@@ -85,8 +85,7 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    array<int16_t, 5> duty_cycles;
-    duty_cycles.fill(0);
+    array<int16_t, 5> duty_cycles{};
 
     pidController.setPidValues(0.75, 0.2, 0);  // TODO: tune pid values
 
@@ -100,7 +99,7 @@ void Task_Controller(void const* args) {
 
         // note: the 4th value is not an encoder value.  See the large comment
         // below for an explanation.
-        array<int16_t, 5> enc_deltas;
+        array<int16_t, 5> enc_deltas{};
 
         // zero out command if we haven't gotten an updated target in a while
         if (commandTimedOut) duty_cycles = {0, 0, 0, 0, 0};

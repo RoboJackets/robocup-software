@@ -77,7 +77,7 @@ public:
 
 private:
     /// controllers for each wheel
-    Pid _controllers[4];
+    std::array<Pid, 4> _controllers;
 
     Eigen::Vector3f _targetVel;
 };
