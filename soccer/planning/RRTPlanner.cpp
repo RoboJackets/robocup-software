@@ -137,7 +137,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
 
         // Check if Planning or optimization failed
         if (points.size() < 2) {
-            continue;
+            break;
         }
 
         // Generate and return a cubic bezier path using the waypoints
