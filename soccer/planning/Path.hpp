@@ -99,11 +99,7 @@ public:
 
     virtual void drawDebugText(SystemState* state,
                                const QColor& color = Qt::darkCyan,
-                               const QString& layer = "PathDebugText") const {
-        if (_debugText) {
-            state->drawText(_debugText.get(), end().motion.pos, color, layer);
-        }
-    }
+                               const QString& layer = "PathDebugText") const;
 
     /// The time the path starts at
     virtual RJ::Time startTime() const { return _startTime; }

@@ -41,6 +41,13 @@ void Path::draw(SystemState* const state, const QColor& color,
     addPoint(end().motion);
 }
 
+void Path::drawDebugText(SystemState* state,
+                           const QColor& color,
+                           const QString& layer) const {
+    if (_debugText) {
+        state->drawText(_debugText.get(), end().motion.pos, color, layer);
+    }
+}
 std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
                                                   float deltaT) const {
     return std::move(
