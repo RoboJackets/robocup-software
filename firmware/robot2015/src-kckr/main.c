@@ -198,6 +198,8 @@ ISR(PCINT0_vect) {
     // disable global interrupts
     // cli();
 
+    cur_command_ = NO_COMMAND;
+
     if (is_chip_selected()) {
         // set the slave data out pin as an output
         DDRA |= _BV(MISO_PIN);
@@ -206,6 +208,7 @@ ISR(PCINT0_vect) {
         DDRA &= ~_BV(MISO_PIN);
         byte_cnt = 0;
         USIDR = is_charging() << 7;
+
     }
 
     // enable global interrupts back
