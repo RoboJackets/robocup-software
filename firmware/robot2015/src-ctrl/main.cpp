@@ -139,9 +139,14 @@ int main() {
     // sets the first 8 lines to input and the last 8 to output.  The pullup
     // resistors and polarity swap are enabled for the 4 rotary selector lines.
     MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
+    ioExpander.config(0x00FF, 0x00ff, 0x00ff);
     ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
                          IOExpanderErrorLEDMask);
+
+    // DIP Switch 1 controls the radio channel.
+    uint8_t currentRadioChannel = 0;
+    IOExpanderDigitalInOut radioChannelSwitch(&ioExpander, RJ_DIP_SWITCH_1,
+                                              MCP23017::DIR_INPUT);
 
     // rotary selector for shell id
     RotarySelector<IOExpanderDigitalInOut> rotarySelector(
@@ -273,6 +278,14 @@ int main() {
         // update shell id
         robotShellID = rotarySelector.read();
         radioProtocol.setUID(robotShellID);
+
+        // update radio channel
+        uint8_t newRadioChannel = radioChannelSwitch.read();
+        if (newRadioChannel != currentRadioChannel) {
+            global_radio->setChannel(newRadioChannel);
+            currentRadioChannel = newRadioChannel;
+            LOG(INIT, "Changed radio channel to %u", newRadioChannel);
+        }
 
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
