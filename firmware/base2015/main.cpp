@@ -39,11 +39,11 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-void radioRxHandler(rtp::packet* pkt) {
+void radioRxHandler(rtp::packet pkt) {
     LOG(INF3, "radioRxHandler()");
     // write packet content (including header) out to EPBULK_IN
     vector<uint8_t> buf;
-    pkt->pack(&buf);
+    pkt.pack(&buf);
     bool success = usbLink.writeNB(EPBULK_IN, buf.data(), buf.size(),
                                    MAX_PACKET_SIZE_EPBULK);
 
@@ -53,7 +53,7 @@ void radioRxHandler(rtp::packet* pkt) {
     // the case
     //
     // if (!success) LOG(WARN, "Failed to transfer received %u byte packet over
-    // usb", pkt->payload.size());
+    // usb", pkt.payload.size());
 }
 
 int main() {
@@ -82,6 +82,8 @@ int main() {
         LOG(FATAL, "No radio interface found!");
     }
 
+    global_radio->setAddress(rtp::BASE_STATION_ADDRESS);
+
     DigitalOut radioStatusLed(LED4, global_radio->isConnected());
 
     // set callbacks for usb control transfers
@@ -91,6 +93,10 @@ int main() {
         [](uint8_t reg) { return global_radio->readReg(reg); };
     usbLink.strobeCallback =
         [](uint8_t strobe) { global_radio->strobe(strobe); };
+    usbLink.setRadioChannelCallback = [](uint8_t chanNumber) {
+        global_radio->setChannel(chanNumber);
+        LOG(INIT, "Set radio channel to %u", chanNumber);
+    };
 
     LOG(INIT, "Initializing USB interface...");
     usbLink.connect();  // note: this blocks until the link is connected
@@ -120,8 +126,11 @@ int main() {
             rtp::packet pkt;
             pkt.recv(buf, bufSize);
 
+            // send to all robots
+            pkt.header.address = rtp::ROBOT_ADDRESS;
+
             // transmit!
-            CommModule::Instance->send(pkt);
+            CommModule::Instance->send(std::move(pkt));
         }
     }
 }

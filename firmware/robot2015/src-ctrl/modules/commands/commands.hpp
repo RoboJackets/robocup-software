@@ -93,6 +93,7 @@ int cmd_log_level(cmd_args_t&);
 int cmd_ls(cmd_args_t&);
 int cmd_ping(cmd_args_t&);
 int cmd_ps(cmd_args_t&);
+int cmd_heapfill(cmd_args_t& args);
 int cmd_radio(cmd_args_t&);
 int cmd_ping(cmd_args_t&);
 int cmd_pong(cmd_args_t&);

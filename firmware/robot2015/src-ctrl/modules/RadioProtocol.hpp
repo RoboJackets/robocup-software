@@ -27,11 +27,12 @@ public:
           _timeoutTimer(this, &RadioProtocol::_timeout, osTimerOnce) {
         ASSERT(commModule != nullptr);
         ASSERT(radio != nullptr);
+        _radio->setAddress(rtp::ROBOT_ADDRESS);
     }
 
     ~RadioProtocol() { stop(); }
 
-    /// robot unique id
+    /// Set robot unique id.  Also update address.
     void setUID(uint8_t uid) { _uid = uid; }
 
     /**
@@ -69,7 +70,7 @@ public:
 
     State state() const { return _state; }
 
-    void rxHandler(rtp::packet* pkt) {
+    void rxHandler(rtp::packet pkt) {
         // LOG(INIT, "got pkt!");
         // TODO: check packet size before parsing
         bool addressed = false;
@@ -77,7 +78,7 @@ public:
         size_t slot;
         for (slot = 0; slot < 6; slot++) {
             size_t offset = slot * sizeof(rtp::ControlMessage);
-            msg = (const rtp::ControlMessage*)(pkt->payload.data() + offset);
+            msg = (const rtp::ControlMessage*)(pkt.payload.data() + offset);
 
             if (msg->uid == _uid) {
                 addressed = true;
@@ -117,7 +118,7 @@ private:
 
         pkt.payload = std::move(_reply);
 
-        _commModule->send(pkt);
+        _commModule->send(std::move(pkt));
     }
 
     void _timeout() { _state = DISCONNECTED; }

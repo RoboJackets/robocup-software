@@ -58,7 +58,7 @@ always @( posedge clk ) begin : ENCODER_COUNTER
         if ( count_up == 1 ) begin
             count <= count + 1;
         end else if ( count_down == 1 ) begin
-            count <= count + 1;
+            count <= count - 1;
         end
     end
 

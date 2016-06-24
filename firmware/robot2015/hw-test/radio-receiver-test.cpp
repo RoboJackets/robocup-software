@@ -41,14 +41,14 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-void radioRxHandler(rtp::packet* pkt) {
+void radioRxHandler(rtp::packet pkt) {
     static int rxCount = 0;
     rxCount++;
     printf("<-- %d\r\n", rxCount);
 
     rtp::ControlMessage controlMsg;
-    bool success = rtp::DeserializeFromBuffer(&controlMsg, pkt->payload.data(),
-                                              pkt->payload.size());
+    bool success = rtp::DeserializeFromBuffer(&controlMsg, pkt.payload.data(),
+                                              pkt.payload.size());
     if (!success) {
         printf("bad rx\r\n");
         return;
@@ -71,7 +71,7 @@ void radioRxHandler(rtp::packet* pkt) {
     rtp::SerializeToVector(msg, &replyPkt.payload);
 
     // transmit!
-    CommModule::Instance->send(replyPkt);
+    CommModule::Instance->send(std::move(replyPkt));
     static int txCount = 0;
     txCount++;
     printf("--> %d\r\n", txCount);

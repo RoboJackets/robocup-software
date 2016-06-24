@@ -29,15 +29,14 @@ private:
     // Holds the light sensed when
     //  emitter is lit (sense_light) and
     //  dark (sense_dark)
-    int sense_dark = 0;
+    uint16_t sense_dark = 0;
 
     // Emitter state (Light or dark)
     bool emitter_on = false;
 
-    // Difference between the light and dark
-    //  values before the sensor is considered
-    //  broken
-    const int sense_threshold = 8000;
+    // If the light reading and dark reading are closer than this value, the
+    // beam is considered broken
+    const int sense_threshold = 5;
 
     // Number of consecative "broken" senses
     //  before we are confident the beam is broken

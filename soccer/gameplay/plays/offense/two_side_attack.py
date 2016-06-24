@@ -46,17 +46,13 @@ class TwoSideAttack(standard_play.StandardPlay):
 
         self.add_transition(
             TwoSideAttack.State.passing, TwoSideAttack.State.kicking,
-            lambda: self.kick_directly == True or self.temporary_behaviors_completed(),
-            'all subbehaviors completed')
+            lambda: not 'pass' in [self.subbehaviors_by_name] or self.self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
+            'Pass completed')
 
         self.add_transition(
             TwoSideAttack.State.kicking, behavior.Behavior.State.completed,
-            lambda: self.kick_directly == True, 'all subbehaviors completed')
-
-        self.add_transition(TwoSideAttack.State.kicking,
-                            behavior.Behavior.State.completed,
-                            lambda: self.temporary_behaviors_completed(),
-                            'all subbehaviors completed')
+            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed,
+            'Kick completed')
 
         self.robot_points = [
             robocup.Point(-constants.Field.Width / 4.0,
@@ -64,7 +60,6 @@ class TwoSideAttack(standard_play.StandardPlay):
                           4.0), robocup.Point(constants.Field.Width / 4.0,
                                               3 * constants.Field.Length / 4.0)
         ]
-        self.kick_directly = False
         self.passRobot1 = None
         self.passRobot2 = None
         self.captureRobot = None
@@ -93,7 +88,7 @@ class TwoSideAttack(standard_play.StandardPlay):
         self.passRobot2 = self.subbehavior_with_name('moveB').robot
         self.captureRobot = self.subbehavior_with_name('capture').robot
         self.to_exclude = [self.passRobot1, self.passRobot2, self.captureRobot]
-        self.remove_temporary_subbehaviors()
+        self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
         # Do shot evaluation here
@@ -126,7 +121,6 @@ class TwoSideAttack(standard_play.StandardPlay):
 
             if (direct_shot and direct_success > rob_1_chance and
                     direct_success > rob_2_chance):
-                self.kick_directly = True
                 return
 
         if rob_1_chance > rob_2_chance:
@@ -138,19 +132,8 @@ class TwoSideAttack(standard_play.StandardPlay):
                 tactics.coordinated_pass.CoordinatedPass(self.passRobot2.pos),
                 'pass')
 
-    def remove_temporary_subbehaviors(self):
-        for (key, value) in self.subbehaviors_by_name().items():
-            self.remove_subbehavior(key)
-
-    def temporary_behaviors_completed(self):
-        for (key, value) in self.subbehaviors_by_name().items():
-            if not value.is_done_running():
-                return False
-        return True
-
     def on_exit_passing(self):
-        self.kick_directly = False
-        self.remove_temporary_subbehaviors()
+        self.remove_all_subbehaviors()
 
     def on_enter_kicking(self):
         kick = skills.pivot_kick.PivotKick()
@@ -159,4 +142,4 @@ class TwoSideAttack(standard_play.StandardPlay):
         self.add_subbehavior(kick, 'kick', required=False)
 
     def on_exit_kicking(self):
-        self.remove_temporary_subbehaviors()
+        self.remove_all_subbehaviors()
