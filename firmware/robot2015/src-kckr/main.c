@@ -134,7 +134,7 @@ void main() {
             (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
         last_voltage_ = voltage_accum / 255;
 
-        last_voltage_ = get_voltage();
+        // last_voltage_ = get_voltage();
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
