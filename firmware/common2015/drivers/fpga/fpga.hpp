@@ -3,10 +3,10 @@
 #include <mbed.h>
 #include <rtos.h>
 
-#include <string>
 #include <array>
-#include <vector>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "SharedSPI.hpp"
 
@@ -23,17 +23,19 @@ public:
     bool configure(const std::string& filepath);
 
     bool isReady();
-    uint8_t set_duty_get_enc(uint16_t* duty_cycles, size_t size_dut,
-                             uint16_t* enc_deltas, size_t size_enc);
-    uint8_t set_duty_cycles(uint16_t* duty_cycles, size_t size);
-    uint8_t read_duty_cycles(uint16_t* duty_cycles, size_t size);
-    uint8_t read_encs(uint16_t* enc_counts, size_t size);
+    uint8_t set_duty_get_enc(int16_t* duty_cycles, size_t size_dut,
+                             int16_t* enc_deltas, size_t size_enc);
+    uint8_t set_duty_cycles(int16_t* duty_cycles, size_t size);
+    uint8_t read_duty_cycles(int16_t* duty_cycles, size_t size);
+    uint8_t read_encs(int16_t* enc_counts, size_t size);
     uint8_t read_halls(uint8_t* halls, size_t size);
     uint8_t motors_en(bool state);
     uint8_t watchdog_reset();
     bool git_hash(std::vector<uint8_t>&);
     void gate_drivers(std::vector<uint16_t>&);
     bool send_config(const std::string& filepath);
+
+    static const int16_t MAX_DUTY_CYCLE = 511;
 
 private:
     bool _isInit = false;

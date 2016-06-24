@@ -7,7 +7,7 @@ HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber]
 \tclobber:\t\tInstall 3rd party repositories
 \tfirmware:\t\tInstall firmware repository
 \tnofirmware:\t\tPrevents installation of firmware deps firmware repository
-\toverwrite-sources-list:\tOverwrites the sources.list with gatech mirrors for faster ubuntu-setup at gatech. Works only on Ubuntu 14.04
+\toverwrite-sources-list:\tOverwrites the sources.list with gatech mirrors for faster ubuntu-setup. Only works on ubuntu > precise.
 \thelp:\t\t\tprint this message!
 
 This script will need root privileges"
@@ -33,6 +33,11 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
     elif cat /etc/os-release | grep -iq '^VERSION=.*15.04'; then # Using Ubuntu 15.04
         echo "Ubuntu 15.04 Detected..."
         SYSTEM="ubuntu-15.04"
+        ADD_REPOS=false
+        FIRMWARE=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*16.04'; then # Using Ubuntu 16.04
+        echo "Ubuntu 16.04 Detected..."
+        SYSTEM="ubuntu-16.04"
         ADD_REPOS=false
         FIRMWARE=false
     else
@@ -91,7 +96,7 @@ if [ $UID -ne 0 ]; then
 fi
 
 if $OVERWRITE_SOURCES; then
-    read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON UBUNTU 14.04 [yN]: " yn
+    read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON STOCK UBUNTU [yN]: " yn
     case $yn in
         [Yy]* ) ;;
         [Nn]* ) exit;;
@@ -100,22 +105,20 @@ if $OVERWRITE_SOURCES; then
 
     # Copy sources.list to sources.list.old if sources.list.old is empty
     if [ -f "/etc/apt/sources.list" ]; then
-        mv -n /etc/apt/sources.list /etc/apt/sources.list.old
+        cp -n /etc/apt/sources.list /etc/apt/sources.list.old
     else
         echo "A prior /etc/apt/sources.list was not found! This probably means you are on a non-debian based system! To force override, run: touch /etc/apt/sources.list" 1>&2
         exit 1
     fi
 
-    # BE CAREFUL HERE...
-    cat <<EOF >/etc/apt/sources.list
-deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty main restricted universe
-deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty main restricted universe
-deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-security main restricted universe
-deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-security main restricted universe
-deb http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-updates main restricted universe
-deb-src http://www.gtlib.gatech.edu/pub/ubuntu/ trusty-updates main restricted universe
+    # Cross our fingers...
+    sed -i 's%^\s*\([^#]\S\+\)\s\+\S\+%\1 mirror://mirrors.ubuntu.com/mirrors.txt%' /etc/apt/sources.list
 EOF
 
+fi
+
+if $FIRMWARE; then
+    sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa
 fi
 
 if $ADD_REPOS; then
@@ -125,10 +128,6 @@ if $ADD_REPOS; then
 
     # for newer compilers
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
-fi
-
-if $FIRMWARE; then
-    add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 fi
 
 apt-get update
@@ -150,14 +149,17 @@ if $YES; then
     ARGS="-y"
 fi
 
+PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
+
 if $FIRMWARE; then
     # This is kind of hacky and could produce unwanted side effects
     # If the firmware switch does more things, it may be better to make a firmware-deps file!
-    ARGS="$ARGS gcc-arm-none-eabi"
+    PACKAGES="$PACKAGES gcc-arm-embedded"
+    PACKAGES="$(sed 's/gcc-arm-none-eabi//' <<< "$PACKAGES")"
 fi
 
 # install all of the packages listed in required_packages.txt
-apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
+apt-get install $ARGS $PACKAGES
 
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub

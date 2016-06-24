@@ -18,6 +18,9 @@ class RoleRequirements:
         self.priority = 0
         self.require_kicking = False
 
+        # multiply this by the distance between two points to get the cost
+        self.position_cost_multiplier = 1.0
+
     def __str__(self):
         props = []
         props.append("has_ball=" + str(self.has_ball))
@@ -47,6 +50,14 @@ class RoleRequirements:
             raise TypeError("Unexpected type for destination_shape: " + str(
                 value))
         self._destination_shape = value
+
+    @property
+    def position_cost_multiplier(self):
+        return self._position_cost_multiplier
+
+    @position_cost_multiplier.setter
+    def position_cost_multiplier(self, value):
+        self._position_cost_multiplier = value
 
     @property
     def has_ball(self):
@@ -140,9 +151,6 @@ class ImpossibleAssignmentError(RuntimeError):
 # the munkres library doesn't like infinity, so we use this instead
 MaxWeight = 10000000
 
-# multiply this by the distance between two points to get the cost
-PositionCostMultiplier = 1.0
-
 # how much penalty is there for switching robots mid-play
 RobotChangeCost = 1.0
 
@@ -235,7 +243,7 @@ def assign_roles(robots, role_reqs):
                 cost = MaxWeight
             else:
                 if req.destination_shape != None:
-                    cost += PositionCostMultiplier * req.destination_shape.dist_to(
+                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(
                         robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id(
                 ):

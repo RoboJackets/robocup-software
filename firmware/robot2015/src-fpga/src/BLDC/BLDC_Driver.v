@@ -18,10 +18,10 @@
 *  the desired duty cycle. When not defined, the state machine will exit `STATE_STARTUP`
 *  when the duty cycle is equal to `STARTUP_END_DUTY_CYCLE`.
 */
-`define STARTUP_INCREMENT_COMPLETELY
+// `define STARTUP_INCREMENT_COMPLETELY
 
 // Use a fixed time startup period vs a duty cycle thereshold for exiting the startup state
-`define STARTUP_FIXED_TIME_RAMPING
+// `define STARTUP_FIXED_TIME_RAMPING
 
 
 // BLDC_Driver module
@@ -53,10 +53,9 @@ output reg fault = 0;
 localparam NUM_PHASES =                  3;  // This will always be constant
 localparam HALL_STATE_STEADY_COUNT =   125;  // Threshold value in determining when the hall effect sensor is locked into an error state
 
-localparam STARTUP_COUNTER_WIDTH =      12;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
-localparam STARTUP_STEP_COUNTER_WIDTH =  7;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
+localparam STARTUP_COUNTER_WIDTH =       13;  // Counter for ticking the startup pwm duty_cycle changes. Time expires when register overflows to 0
+localparam STARTUP_STEP_COUNTER_WIDTH =  8;  // The counter that tracks the number of startup cycle periods. ie. how many times the duty cycle has been updated
 // The startup time is equal to (1/18.432) * 2^(STARTUP_COUNTER_WIDTH + STARTUP_STEP_COUNTER_WIDTH)
-// For now, we're shooting for somewhere in the range of 25ms to 30ms.
 
 // Derived local parameters
 // ===============================================
@@ -66,7 +65,7 @@ localparam STARTUP_PERIOD_CLOCK_CYCLES =    ( 1 << (DUTY_CYCLE_WIDTH + 3) );    
                                                                                             // set to a value that evenly divides into the PWM period from 'Phase_Driver.v'
 localparam HALL_CHECK_COUNTER_WIDTH =       `LOG2( HALL_STATE_STEADY_COUNT );               // Counter used for reduced sampling of the hall effect sensor
 localparam PHASE_DRIVER_COUNTER_WIDTH =     `LOG2( PHASE_DRIVER_MAX_COUNTER );
-localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 1 / 100 );                   // 1% of the max
+localparam MIN_DUTY_CYCLE =                 ( 1 );
 
 
 // State machine declarations for readability
@@ -74,8 +73,10 @@ localparam MIN_DUTY_CYCLE =                 ( MAX_DUTY_CYCLE * 1 / 100 );       
 localparam STATE_STOP           = 0;
 localparam STATE_STARTUP        = 1;
 localparam STATE_RUN            = 2;
-localparam STATE_POLL_HALL      = 3;
-localparam STATE_ERR            = 4;
+localparam STATE_SPINDOWN       = 3;
+localparam STATE_SPINUP         = 4;
+localparam STATE_POLL_HALL      = 5;
+localparam STATE_ERR            = 6;
 
 
 // Register and Wire declarations
@@ -235,7 +236,8 @@ begin : MOTOR_STATES
     `ifdef STARTUP_INCREMENT_COMPLETELY
                         if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) | ( duty_cycle_s < duty_cycle ) ) begin
     `else
-                        if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) & ( duty_cycle_s < duty_cycle ) ) begin
+                        // if ( ( duty_cycle_s < STARTUP_END_DUTY_CYCLE ) & ( duty_cycle_s < duty_cycle ) ) begin
+                        if ( duty_cycle_s < duty_cycle ) begin
     `endif
 `endif
                             if ( startup_counter == 0 ) begin
@@ -254,19 +256,55 @@ begin : MOTOR_STATES
                 end    // STATE_STARTUP
 
                 STATE_RUN: begin
-                    // Stay in the running state as long as the given duty cycle can be used to spin the motor
-                    duty_cycle_s <= duty_cycle;
-
-                    if ( duty_cycle <= MIN_DUTY_CYCLE ) begin
-                        // Stop the motor if below the minimum required duty cycle
-                        state <= STATE_STOP;
+                    if ( duty_cycle_s > duty_cycle ) begin
+                        startup_counter <= 1;
+                        state <= STATE_SPINDOWN;
+                    end else if ( duty_cycle_s < duty_cycle ) begin
+                        startup_counter <= 1;
+                        state <= STATE_SPINUP;
+                    end else begin
+                        duty_cycle_s <= duty_cycle;
                     end
                 end    // STATE_RUN
+
+                STATE_SPINUP: begin
+                    // Ramp the motor spinning down
+                    startup_counter <= startup_counter + 1;
+
+                    if ( startup_counter == 0 ) begin
+                        if ( duty_cycle_s > duty_cycle ) begin
+                            startup_counter <= 1;
+                            state <= STATE_SPINDOWN;
+                        end
+                        duty_cycle_s <= duty_cycle_s + startup_duty_cycle_step;
+                    end
+
+                    if ( duty_cycle_s == duty_cycle ) begin
+                        state <= STATE_RUN;
+                    end
+                end  // STATE_SPINUP
+
+                STATE_SPINDOWN: begin
+                    // Ramp the motor spinning down
+                    startup_counter <= startup_counter + 1;
+
+                    if ( startup_counter == 0 ) begin
+                        if ( duty_cycle_s < duty_cycle ) begin
+                            startup_counter <= 1;
+                            state <= STATE_SPINUP;
+                        end
+                        duty_cycle_s <= duty_cycle_s - startup_duty_cycle_step;
+                    end
+
+                    if ( duty_cycle_s == 0 ) begin
+                        state <= STATE_STOP;
+                    end
+                end     // STATE_SPINDOWN
 
                 STATE_POLL_HALL: begin
                     // Wait in this state until a hall sensor is connected and is giving a valid input
                     if ( disconnect_fault_latched == 0 ) begin
-                        state <= STATE_STOP;
+                        state <= STATE_SPINDOWN;
                     end
                 end    // STATE_POLL_HALL
 
@@ -289,7 +327,7 @@ begin : MOTOR_STATES
                 end    // STATE_ERR
 
                 default: begin
-                    state <= STATE_STOP;
+                    state <= STATE_SPINDOWN;
                 end    // default
 
             endcase

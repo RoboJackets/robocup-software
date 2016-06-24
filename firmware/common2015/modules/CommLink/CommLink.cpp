@@ -27,7 +27,6 @@ void CommLink::rxThread() {
     // Set the function to call on an interrupt trigger
     _int_in.fall(this, &CommLink::ISR);
 
-    rtp::packet p;
     std::vector<uint8_t> buf;
     buf.reserve(rtp::MAX_DATA_SZ);
 
@@ -50,20 +49,14 @@ void CommLink::rxThread() {
 
         if (response == COMM_SUCCESS) {
             // Write the data to the CommModule object's rxQueue
+            rtp::packet p;
             p.recv(buf);
-            CommModule::Instance->receive(p);
+            CommModule::Instance->receive(std::move(p));
         }
     }
 }
 
 // Called by the derived class to begin thread operations
 void CommLink::ready() { _rxThread.signal_set(COMM_LINK_SIGNAL_START_THREAD); }
-
-void CommLink::sendPacket(rtp::packet* p) {
-    std::vector<uint8_t> buffer;
-    p->pack(&buffer);
-    if (sendData(buffer.data(), buffer.size()) != COMM_SUCCESS)
-        LOG(WARN, "CC1201 send not successful");
-}
 
 void CommLink::ISR() { _rxThread.signal_set(COMM_LINK_SIGNAL_RX_TRIGGER); }

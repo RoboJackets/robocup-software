@@ -98,3 +98,14 @@ def robot_has_ball(robot):
     max_radius = constants.Robot.Radius * (2.0 + 2.0 * math.cos(theta))
 
     return robot.pos.near_point(main.ball().pos, max_radius)
+
+
+def time_to_ball(robot):
+    max_vel = robocup.MotionConstraints.MaxRobotSpeed.value
+    max_accel = robocup.MotionConstraints.MaxRobotAccel.value
+    delay = .1  #TODO: tune this better
+    rpos = robot.pos
+    bpos = main.ball().pos
+    #calculate time for self to reach ball using max_vel + a slight delay for capture
+    dist_to_ball = robot.pos.dist_to(main.ball().pos)
+    return (dist_to_ball / max_vel) + delay
