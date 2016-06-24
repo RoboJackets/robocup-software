@@ -9,7 +9,6 @@
 #include "pins.h"
 
 #define NO_COMMAND 0
-#define IGNORE_CS 0
 
 #define TIMING_CONSTANT 125
 #define VOLTAGE_READ_DELAY_MS 100
@@ -28,9 +27,6 @@ volatile uint8_t cur_command_ = NO_COMMAND;
 
 // always up-to-date voltage so we don't have to get_voltage() inside interupts
 volatile uint8_t last_voltage_ = 0;
-
-// the chip-select interrupt sets this value appropriately
-int is_chip_selected_now = 0;
 
 // executes a command coming from SPI
 uint8_t execute_cmd(uint8_t, uint8_t);
@@ -56,13 +52,20 @@ uint8_t get_voltage() {
  * Returns true if charging is currently active
  */
 bool is_charging() { return PORTA & _BV(CHARGE_PIN); }
-// bool is_charging() { return true; }
+
+/*
+ * Returns true if the chip's SPI slave interface is currently
+ * being selected by a master device.
+ */
+ bool is_chip_selected() {
+    return !(PINA & _BV(N_KICK_CS_PIN));
+ }
 
 void main() {
     /* Port direction - setting outputs */
     DDRA |= _BV(KICK_PIN) | _BV(CHIP_PIN) |
             _BV(CHARGE_PIN);  // MISO is handled by CS interrupt
-                              //
+
     // ensure N_KICK_CS is input
     DDRA &= ~_BV(N_KICK_CS_PIN);
 
@@ -72,18 +75,11 @@ void main() {
     // Which DDRB = 0 and PORTB = 1, these are configured as pull-up inputs
     PORTB |= _BV(DB_KICK_PIN) | _BV(DB_CHIP_PIN) | _BV(DB_CHG_PIN);
 
-    // Chip Select Interrupt
-    if (IGNORE_CS) {
-        // Because we aren't using CS here, MISO must be manually set as an
-        // output instead of being managed by the interrupt
-        DDRA |= _BV(MISO_PIN);
-    } else {
-        // ensure MISO is an input
-        DDRA &= ~_BV(MISO_PIN);
+    // ensure MISO is an input
+    DDRA &= ~_BV(MISO_PIN);
 
-        // Enable interrupts for PCINT0-PCINT7
-        GIMSK |= _BV(PCIE0);
-    }
+    // Enable interrupts for PCINT0-PCINT7
+    GIMSK |= _BV(PCIE0);
 
     // == Debug Button Interrupts ==
     // Enable interrupts for PCINT8-PCINT11
@@ -137,10 +133,6 @@ void main() {
 
         last_voltage_ = get_voltage();
 
-        // stop charging if we're at or above 250V
-        // if (last_voltage_ > 204) execute_cmd(SET_CHARGE_CMD, OFF_ARG);
-        // execute_cmd(SET_CHARGE_CMD, ON_ARG);
-
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
 }
@@ -156,18 +148,16 @@ void main() {
  * ISR for the USI
  */
 ISR(USI_STR_vect) {
-    // disable global interrupts
-    cli();
+    // clear the SPI start flag
+    USISR |= _BV(USISIF);
 
     // only respond if we're being addressed
-    if (!is_chip_selected_now) {
-        sei();
+    if (!is_chip_selected()) {
         return;
     }
 
-    // ensure we're driving as output
-    // TODO: we should be able to remove this
-    DDRA |= _BV(MISO_PIN);
+    // disable global interrupts
+    cli();
 
     // // Wait for overflow flag to become 1
     while (!(USISR & _BV(USIOIF)))
@@ -176,12 +166,11 @@ ISR(USI_STR_vect) {
     // Get data from USIDR
     uint8_t recv_data = USIDR;
 
-    // Setting these bits actually clears them
-    USISR |= _BV(USIOIF) |  // Clear the overflow flag
-             _BV(USISIF);   // Clear the SPI start flag
+    // Clear the overflow flag
+    USISR |= _BV(USIOIF);
 
+    // increment our received byte count and take appropiate action
     byte_cnt++;
-    USIDR = 0;
     if (byte_cnt == 1) {
         // we don't have a command already, set the response
         // buffer to the command we received to let the
@@ -209,28 +198,25 @@ ISR(USI_STR_vect) {
  */
 ISR(PCINT0_vect) {
     // disable global interrupts
-    cli();
+    // cli();
 
-    is_chip_selected_now = !(PINA & _BV(N_KICK_CS_PIN));
-
-    if (is_chip_selected_now) {
+    if (is_chip_selected()) {
         // set the slave data out pin as an output
         DDRA |= _BV(MISO_PIN);
     } else {
         // set the slave data out pin as an input
         DDRA &= ~_BV(MISO_PIN);
-        // cur_command_ = NO_COMMAND;
         byte_cnt = 0;
         USIDR = is_charging() << 7;
     }
 
-    // if (byte_cnt > 2) {
-    //     byte_cnt = 0;
-    //     USIDR = 0;
-    // }
+    if (byte_cnt) {
+        byte_cnt = 0;
+        USIDR = 0;
+    }
 
     // enable global interrupts back
-    sei();
+    // sei();
 }
 
 /*
@@ -277,11 +263,13 @@ ISR(PCINT0_vect) {
  * ISR for TIMER 0
  */
 ISR(TIM0_COMPA_vect) {
+    // decrement ms counter
     millis_left_--;
+
+    // if the counter hits 0, clear the kick/chip pin state
     if (!millis_left_) {
         // could be kicking or chipping, clear both
         PORTA &= ~(_BV(KICK_PIN) | _BV(CHIP_PIN));
-
         // stop prescaled timer
         TCCR0B &= ~_BV(CS01);
     }
@@ -298,25 +286,23 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
 
     switch (cmd) {
         case KICK_CMD:
-            // ret_val = KICK_ACK;
-            ret_val = arg;
-            PORTA |= _BV(KICK_PIN);  // set KICK pin
             millis_left_ = arg;
+            PORTA |= _BV(KICK_PIN);  // set KICK pin
             TCCR0B |= _BV(CS01);  // start timer /8 prescale
+            ret_val = KICK_ACK;
             break;
 
         case CHIP_CMD:
-            // ret_val = CHIP_ACK;
-            ret_val = arg;
-            PORTA |= _BV(CHIP_PIN);  // set CHIP pin
             millis_left_ = arg;
+            PORTA |= _BV(CHIP_PIN);  // set CHIP pin
             TCCR0B |= _BV(CS01);  // start timer /8 prescale
+            ret_val = CHIP_ACK;
             break;
 
         case SET_CHARGE_CMD:
-            ret_val = SET_CHARGE_ACK;
             // toggle charge state
             PORTA ^= _BV(CHARGE_PIN);
+            ret_val = SET_CHARGE_ACK;
             break;
 
         case GET_VOLTAGE_CMD:
