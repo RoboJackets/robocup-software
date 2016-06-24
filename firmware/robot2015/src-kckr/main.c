@@ -148,45 +148,48 @@ void main() {
  * ISR for the USI
  */
 ISR(USI_STR_vect) {
-    // clear the SPI start flag
-    USISR |= _BV(USISIF);
+    // check if the start condition interrupt is set
+    if ((USISR & _BV(USISIF))) {
+        // clear the SPI start flag
+        USISR |= _BV(USISIF);
 
-    // only respond if we're being addressed
-    if (!is_chip_selected()) return;
+        // only respond if we're being addressed
+        if (!is_chip_selected()) return;
+ 
+        // disable global interrupts
+        cli();
 
-    // disable global interrupts
-    cli();
+        // // Wait for overflow flag to become 1
+        while (!(USISR & _BV(USIOIF)))
+            ;
 
-    // // Wait for overflow flag to become 1
-    while (!(USISR & _BV(USIOIF)))
-        ;
+        // Get data from USIDR
+        uint8_t recv_data = USIDR;
 
-    // Get data from USIDR
-    uint8_t recv_data = USIDR;
+        // increment our received byte count and take appropiate action
+        byte_cnt++;
+        if (byte_cnt == 1) {
+            // we don't have a command already, set the response
+            // buffer to the command we received to let the
+            // master confirm the given command if desired, top
+            // bit is set if currently charging
+            cur_command_ = recv_data;
+            USIDR = cur_command_;
+        } else if (byte_cnt == 2) {
+            // execute the currently set command with
+            // the newly given argument, set the response
+            // buffer to our return value
+            USIDR = execute_cmd(cur_command_, recv_data);
+        } else {
+            USIDR = 0x11;
+        }
 
-    // increment our received byte count and take appropiate action
-    byte_cnt++;
-    if (byte_cnt == 1) {
-        // we don't have a command already, set the response
-        // buffer to the command we received to let the
-        // master confirm the given command if desired, top
-        // bit is set if currently charging
-        cur_command_ = recv_data;
-        USIDR = cur_command_;
-    } else if (byte_cnt == 2) {
-        // execute the currently set command with
-        // the newly given argument, set the response
-        // buffer to our return value
-        USIDR = execute_cmd(cur_command_, recv_data);
-    } else {
-        USIDR = 0;
+        // Clear the overflow flagS
+        USISR |= _BV(USIOIF) | _BV(USISIF);
+
+        // enable global interrupts back
+        sei();
     }
-
-    // Clear the overflow flagS
-    USISR |= _BV(USIOIF) | _BV(USISIF);
-
-    // enable global interrupts back
-    sei();
 }
 
 /*
@@ -196,9 +199,10 @@ ISR(USI_STR_vect) {
  */
 ISR(PCINT0_vect) {
     // disable global interrupts
-    // cli();
+    cli();
 
     cur_command_ = NO_COMMAND;
+    byte_cnt = 0;
 
     if (is_chip_selected()) {
         // set the slave data out pin as an output
@@ -206,13 +210,11 @@ ISR(PCINT0_vect) {
     } else {
         // set the slave data out pin as an input
         DDRA &= ~_BV(MISO_PIN);
-        byte_cnt = 0;
         USIDR = is_charging() << 7;
-
     }
 
     // enable global interrupts back
-    // sei();
+    sei();
 }
 
 /*
