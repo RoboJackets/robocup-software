@@ -4,6 +4,7 @@
 
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/LogFrame.pb.h>
+#include <protobuf/referee.pb.h>
 #include <git_version.hpp>
 
 #include <multicast.hpp>
@@ -18,14 +19,26 @@
 using namespace std;
 using namespace Packet;
 
+void usage(const char* prog) {
+    fprintf(stderr, "Usage: %s[-sim] <filename.log>\n", prog);
+    fprintf(stderr, "-sim:\t Connect to the simulator for vision packets.\n");
+    exit(1);
+}
+
 int main(int argc, char* argv[]) {
     int framePeriod = 1000000 / 60;
 
+    bool simulation = false;
     QString logFile;
 
-    // Determine log file name
-    if (argc == 2) {
+    // Process args
+    if (argc == 3 && strcmp(argv[1], "-sim") == 0) {
+        logFile = argv[2];
+        simulation = true;
+    } else if (argc == 2) {
         logFile = argv[1];
+    } else if (argc != 1) {
+        usage(argv[0]);
     }
 
     if (logFile.isNull()) {
@@ -40,19 +53,31 @@ int main(int argc, char* argv[]) {
 
     // Create vision socket
     QUdpSocket visionSocket;
-    if (!visionSocket.bind(SharedVisionPortDoubleNew,
-                           QUdpSocket::ShareAddress)) {
-        printf("Can't bind to shared vision port");
-        return 1;
+    if (simulation) {
+        // The simulator doesn't multicast its vision.  Instead, it sends to two
+        // different ports.
+        // Try to bind to the first one and, if that fails, use the second one.
+        if (!visionSocket.bind(SimVisionPort)) {
+            if (!visionSocket.bind(SimVisionPort + 1)) {
+                throw runtime_error(
+                    "Can't bind to either simulated vision port");
+            }
+        }
+    } else {
+        if (!visionSocket.bind(SharedVisionPortDoubleNew,
+                               QUdpSocket::ShareAddress)) {
+            printf("Can't bind to shared vision port");
+            return 1;
+        }
     }
     multicast_add(&visionSocket, SharedVisionAddress);
 
     // Create referee socket
     QUdpSocket refereeSocket;
-    if (!refereeSocket.bind(LegacyRefereePort, QUdpSocket::ShareAddress)) {
-        printf("Can't bind to referee port");
-        return 1;
+    if (!refereeSocket.bind(ProtobufRefereePort, QUdpSocket::ShareAddress)) {
+        throw runtime_error("Can't bind to shared referee port");
     }
+
     multicast_add(&refereeSocket, RefereeAddress);
 
     // Create log file
@@ -62,7 +87,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    printf("Writing to %s\n", (const char*)logFile.toLatin1());
+    fprintf(stderr, "Writing to %s\n", (const char*)logFile.toLatin1());
+    fprintf(stderr, "Press any key and press ENTER to exit\n");
 
     // Main loop
     LogFrame logFrame;
@@ -73,6 +99,7 @@ int main(int argc, char* argv[]) {
         logFrame.Clear();
         logFrame.set_command_time(startTime);
         logFrame.set_timestamp(startTime);
+        logFrame.set_blue_team(false);  // Always assume self is Yellow for logs
 
         // Check for user input (to exit)
         struct pollfd pfd;
@@ -98,18 +125,26 @@ int main(int argc, char* argv[]) {
         }
 
         // Read referee data
+        bool firstRefpacket = true;
         while (refereeSocket.hasPendingDatagrams()) {
+            string buf;
             unsigned int n = refereeSocket.pendingDatagramSize();
-            string str(6, 0);
-            refereeSocket.readDatagram(&str[0], str.size());
+            buf.resize(n);
+            refereeSocket.readDatagram(&buf[0], n);
 
-            // Check the size after receiving to discard bad packets
-            if (n != str.size()) {
+            SSL_Referee* packet = logFrame.add_raw_refbox();
+            if (!packet->ParseFromString(buf)) {
                 printf("Bad referee packet of %d bytes\n", n);
                 continue;
             }
 
-            logFrame.add_raw_referee(str);
+            // Copy team names into LogFrame
+            if (firstRefpacket) {
+                firstRefpacket = false;
+
+                logFrame.set_team_name_yellow(packet->yellow().name());
+                logFrame.set_team_name_blue(packet->blue().name());
+            }
         }
 
         if (first) {
@@ -119,6 +154,7 @@ int main(int argc, char* argv[]) {
             logConfig->set_generator("simple_logger");
             logConfig->set_git_version_hash(git_version_hash);
             logConfig->set_git_version_dirty(git_version_dirty);
+            logConfig->set_simulation(simulation);
         }
 
         uint32_t size = logFrame.ByteSize();

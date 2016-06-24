@@ -41,7 +41,7 @@ bool initRadio() {
     return global_radio->isConnected();
 }
 
-void radioRxHandler(rtp::packet* pkt) {
+void radioRxHandler(rtp::packet pkt) {
     static int rxCount = 0;
     rxCount++;
     printf("<-- %d\r\n", rxCount);
@@ -93,7 +93,7 @@ int main() {
         rtp::SerializeToVector(msg, &pkt.payload);
 
         // transmit!
-        CommModule::Instance->send(pkt);
+        CommModule::Instance->send(std::move(pkt));
         txCount++;
         printf("--> %d\r\n", txCount);
 

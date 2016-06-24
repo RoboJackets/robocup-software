@@ -1,8 +1,8 @@
 #pragma once
 
-#include <mbed.h>
 #include <USBDevice.h>
 #include <USBEndpoints.h>
+#include <mbed.h>
 #include <functional>
 
 /** Subclass of USBDevice to customize usb descriptors and setup two bulk
@@ -23,6 +23,7 @@ public:
         nullptr;
     std::function<void(uint8_t strobe)> strobeCallback = nullptr;
     std::function<uint8_t(uint8_t reg)> readRegisterCallback = nullptr;
+    std::function<void(uint8_t chanNumber)> setRadioChannelCallback = nullptr;
 
     /**
     * Called for control transfers.  If it's a VENDOR request, we handle it. The
