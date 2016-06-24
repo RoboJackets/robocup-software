@@ -22,7 +22,7 @@ RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
-                              const vector<DynamicObstacle> dynamicObs) const {
+                              const vector<DynamicObstacle> dynamicObs, string *debugOut) const {
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
@@ -32,6 +32,9 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
     const auto& goal = command.pathGoal;
 
     if (SingleRobotPathPlanner::shouldReplan(planRequest)) {
+        if (debugOut) {
+            *debugOut = "SingleRobotPathInvalidate";
+        }
         return true;
     }
 
@@ -44,11 +47,17 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
         // is above
+        if (debugOut) {
+            *debugOut = "GoalChanged";
+        }
         return true;
     }
 
     if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr,
                                  RJ::timestamp())) {
+        if (debugOut) {
+            *debugOut = "DynamicIntersect";
+        }
         return true;
     }
 
@@ -90,8 +99,9 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, obstacles);
 
+    string debugOut;
     // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(planRequest, actualDynamic)) {
+    if (shouldReplan(planRequest, actualDynamic, &debugOut)) {
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                     actualDynamic);
 
@@ -100,7 +110,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
         }
-        path->setDebugText("new Path");
+        path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
     } else {
         if (reusePathTries >= maxContinue) {

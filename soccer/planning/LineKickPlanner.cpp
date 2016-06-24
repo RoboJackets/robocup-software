@@ -78,7 +78,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
         //obstacles.add(make_shared<Circle>(target.pos, ballAvoidDistance));
         //obstacles.add(make_shared<Circle>(ball.pos, ballAvoidDistance));
         dynamicObstacles.emplace_back(ballPath.get(), ballAvoidDistance);
-        target.pos -= target.vel.normalized(ballAvoidDistance*3.0f + Robot_Radius*2.0f);
+        target.pos -= target.vel.normalized(ballAvoidDistance*3.0f + Robot_Radius);
         //printf("wrongSide");
     } else {
         //target.pos = ball.pos;
