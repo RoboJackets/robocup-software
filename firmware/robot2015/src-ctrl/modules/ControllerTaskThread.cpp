@@ -87,7 +87,7 @@ void Task_Controller(void const* args) {
 
     array<int16_t, 5> duty_cycles{};
 
-    pidController.setPidValues(0.75, 0.2, 0);  // TODO: tune pid values
+    pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
 
     // initialize timeout timer
     commandTimeoutTimer = make_unique<RtosTimerHelper>(
