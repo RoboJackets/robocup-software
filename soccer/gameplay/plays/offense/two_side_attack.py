@@ -46,13 +46,13 @@ class TwoSideAttack(standard_play.StandardPlay):
 
         self.add_transition(
             TwoSideAttack.State.passing, TwoSideAttack.State.kicking,
-            lambda: self.all_subbehaviors_completed(),
-            'all subbehaviors completed')
+            lambda: not 'pass' in [self.subbehaviors_by_name] or self.self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
+            'Pass completed')
 
         self.add_transition(TwoSideAttack.State.kicking,
                             behavior.Behavior.State.completed,
-                            lambda: self.all_subbehaviors_completed(),
-                            'all subbehaviors completed')
+                            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed,
+                            'Kick completed')
 
         self.robot_points = [
             robocup.Point(-constants.Field.Width / 4.0,
