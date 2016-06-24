@@ -13,7 +13,9 @@ set(ROBOCUP_LIB_SRC
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
     "joystick/Joystick.cpp"
+    "joystick/GamepadJoystick.cpp"
     "joystick/GamepadController.cpp"
+    "joystick/GamepadXbox.cpp"
     "joystick/SpaceNavJoystick.cpp"
     "Logger.cpp"
     "MainWindow.cpp"
@@ -54,6 +56,9 @@ set(ROBOCUP_LIB_SRC
     "WindowEvaluator.cpp"
 )
 
+# throw in the gamepad library for xbox 360 wireless controller usage
+set(GAMEPAD_LIB_SRC         "${PROJECT_SOURCE_DIR}/external/gamepad/gamepad.c")
+set(GAMEPAD_INCLUDE_DIRS    "${PROJECT_SOURCE_DIR}/external/gamepad")
 
 if(APPLE)
     # help CMake find gl.h, glu.h, etc on OS X
@@ -64,7 +69,7 @@ if(APPLE)
 endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 file(GLOB SOCCER_UIS "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.ui")
 qt5_wrap_ui(SOCCER_UIS ${SOCCER_UIS})
@@ -100,7 +105,7 @@ include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
-add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
+add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC} ${GAMEPAD_LIB_SRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
@@ -118,6 +123,9 @@ target_link_libraries(robocup ${SDL2_LIBRARIES})
 include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 link_directories(${PYTHON_LINK_DIRS})
 target_link_libraries(robocup ${PYTHON_LIBRARIES})
+
+# include the directory where the headers for the gamepad library are
+target_include_directories(robocup PUBLIC ${GAMEPAD_INCLUDE_DIRS})
 
 # 'soccer' program
 if(APPLE)
