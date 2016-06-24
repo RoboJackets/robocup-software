@@ -57,9 +57,7 @@ bool is_charging() { return PORTA & _BV(CHARGE_PIN); }
  * Returns true if the chip's SPI slave interface is currently
  * being selected by a master device.
  */
- bool is_chip_selected() {
-    return !(PINA & _BV(N_KICK_CS_PIN));
- }
+bool is_chip_selected() { return !(PINA & _BV(N_KICK_CS_PIN)); }
 
 void main() {
     // disable global interrupts
@@ -89,11 +87,10 @@ void main() {
     GIMSK |= _BV(PCIE1);
 
     // Only have the N_KICK_CS interrupt enabled
-    PCMSK0 = 0;
-    PCMSK0 |= _BV(INT_N_KICK_CS);
+    PCMSK0 = _BV(INT_N_KICK_CS);
 
     // Enable interrupts on debug buttons
-    PCMSK1 |= _BV(INT_DB_KICK) | _BV(INT_DB_CHIP) | _BV(INT_DB_CHG);
+    PCMSK1 = _BV(INT_DB_KICK) | _BV(INT_DB_CHIP) | _BV(INT_DB_CHG);
 
     // SPI init - Pg. 120
     USICR |= _BV(USIWM0)     // 3 Wire Mode MISO, DI, USCK - Pg. 124
@@ -155,9 +152,7 @@ ISR(USI_STR_vect) {
     USISR |= _BV(USISIF);
 
     // only respond if we're being addressed
-    if (!is_chip_selected()) {
-        return;
-    }
+    if (!is_chip_selected()) return;
 
     // disable global interrupts
     cli();
@@ -168,9 +163,6 @@ ISR(USI_STR_vect) {
 
     // Get data from USIDR
     uint8_t recv_data = USIDR;
-
-    // Clear the overflow flag
-    USISR |= _BV(USIOIF);
 
     // increment our received byte count and take appropiate action
     byte_cnt++;
@@ -189,6 +181,9 @@ ISR(USI_STR_vect) {
     } else {
         USIDR = 0;
     }
+
+    // Clear the overflow flagS
+    USISR |= _BV(USIOIF) | _BV(USISIF);
 
     // enable global interrupts back
     sei();
@@ -211,11 +206,6 @@ ISR(PCINT0_vect) {
         DDRA &= ~_BV(MISO_PIN);
         byte_cnt = 0;
         USIDR = is_charging() << 7;
-    }
-
-    if (byte_cnt) {
-        byte_cnt = 0;
-        USIDR = 0;
     }
 
     // enable global interrupts back
@@ -291,14 +281,14 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
         case KICK_CMD:
             millis_left_ = arg;
             PORTA |= _BV(KICK_PIN);  // set KICK pin
-            TCCR0B |= _BV(CS01);  // start timer /8 prescale
+            TCCR0B |= _BV(CS01);     // start timer /8 prescale
             ret_val = KICK_ACK;
             break;
 
         case CHIP_CMD:
             millis_left_ = arg;
             PORTA |= _BV(CHIP_PIN);  // set CHIP pin
-            TCCR0B |= _BV(CS01);  // start timer /8 prescale
+            TCCR0B |= _BV(CS01);     // start timer /8 prescale
             ret_val = CHIP_ACK;
             break;
 
@@ -309,7 +299,7 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
             } else if (arg == OFF_ARG) {
                 PORTA &= ~(_BV(CHARGE_PIN));
             }
-            
+
             ret_val = SET_CHARGE_ACK;
             break;
 
