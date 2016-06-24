@@ -11,7 +11,7 @@
 #define NO_COMMAND 0
 
 #define TIMING_CONSTANT 125
-#define VOLTAGE_READ_DELAY_MS 100
+#define VOLTAGE_READ_DELAY_MS 40
 
 // Used to time kick and chip durations
 volatile unsigned millis_left_ = 0;
@@ -33,10 +33,6 @@ uint8_t execute_cmd(uint8_t, uint8_t);
 
 /* Voltage Function */
 uint8_t get_voltage() {
-    // Hard-coded for PA1, check datasheet before changing
-    // Set lower three bits to value of pin we read from
-    ADMUX |= V_MONITOR_PIN;
-
     // Start conversation by writing to start bit
     ADCSRA |= _BV(ADSC);
 
@@ -63,21 +59,27 @@ void main() {
     // disable global interrupts
     cli();
 
+    // make sure we're not kicking/chipping right off the start
+    PORTA &= ~(_BV(KICK_PIN) | _BV(CHIP_PIN));
+
     /* Port direction - setting outputs */
     DDRA |= _BV(KICK_PIN) | _BV(CHIP_PIN) |
             _BV(CHARGE_PIN);  // MISO is handled by CS interrupt
 
-    // ensure N_KICK_CS is input
-    DDRA &= ~_BV(N_KICK_CS_PIN);
+    // ensure N_KICK_CS & MISO are inputs
+    DDRA &= ~(_BV(N_KICK_CS_PIN) | _BV(MISO_PIN));
 
-    // ensure debug buttons are inputs
-    DDRB &= ~_BV(DB_KICK_PIN) & ~_BV(DB_CHIP_PIN) & ~_BV(DB_CHG_PIN);
+    // nop to sync things up
+    _NOP();
 
     // Which DDRB = 0 and PORTB = 1, these are configured as pull-up inputs
     PORTB |= _BV(DB_KICK_PIN) | _BV(DB_CHIP_PIN) | _BV(DB_CHG_PIN);
 
-    // ensure MISO is an input
-    DDRA &= ~_BV(MISO_PIN);
+    // ensure debug buttons are inputs
+    DDRB &= ~_BV(DB_KICK_PIN) & ~_BV(DB_CHIP_PIN) & ~_BV(DB_CHG_PIN);
+
+    // nop to sync things up
+    _NOP();
 
     // Enable interrupts for PCINT0-PCINT7
     GIMSK |= _BV(PCIE0);
@@ -91,6 +93,10 @@ void main() {
 
     // Enable interrupts on debug buttons
     PCMSK1 = _BV(INT_DB_KICK) | _BV(INT_DB_CHIP) | _BV(INT_DB_CHG);
+
+    // Hard-coded for PA1, check datasheet before changing
+    // Set lower three bits to value of pin we read from
+    ADMUX |= V_MONITOR_PIN;
 
     // SPI init - Pg. 120
     USICR |= _BV(USIWM0)     // 3 Wire Mode MISO, DI, USCK - Pg. 124
@@ -115,9 +121,6 @@ void main() {
                            // because we left adjusted and only need
                            // 8 bit precision, we can now read ADCH directly
 
-    // make sure we're not kicking/chipping right off the start
-    PORTA &= ~(_BV(KICK_PIN) | _BV(CHIP_PIN));
-
     // Enable Global Interrupts
     sei();
 
@@ -130,8 +133,6 @@ void main() {
         int voltage_accum =
             (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
         last_voltage_ = voltage_accum / 255;
-
-        // last_voltage_ = get_voltage();
 
         _delay_ms(VOLTAGE_READ_DELAY_MS);
     }
@@ -166,6 +167,9 @@ ISR(USI_STR_vect) {
         // Get data from USIDR
         uint8_t recv_data = USIDR;
 
+        // Clear the overflow flagS
+        USISR |= _BV(USIOIF);
+
         // increment our received byte count and take appropiate action
         byte_cnt++;
         if (byte_cnt == 1) {
@@ -183,9 +187,6 @@ ISR(USI_STR_vect) {
         } else {
             USIDR = 0x11;
         }
-
-        // Clear the overflow flagS
-        USISR |= _BV(USIOIF) | _BV(USISIF);
 
         // enable global interrupts back
         sei();
