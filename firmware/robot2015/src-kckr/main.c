@@ -70,7 +70,7 @@ void main() {
     DDRA &= ~(_BV(N_KICK_CS_PIN) | _BV(MISO_PIN));
 
     // nop to sync things up
-    _NOP();
+    // _NOP();
 
     // Which DDRB = 0 and PORTB = 1, these are configured as pull-up inputs
     PORTB |= _BV(DB_KICK_PIN) | _BV(DB_CHIP_PIN) | _BV(DB_CHG_PIN);
@@ -79,7 +79,7 @@ void main() {
     DDRB &= ~_BV(DB_KICK_PIN) & ~_BV(DB_CHIP_PIN) & ~_BV(DB_CHG_PIN);
 
     // nop to sync things up
-    _NOP();
+    // _NOP();
 
     // Enable interrupts for PCINT0-PCINT7
     GIMSK |= _BV(PCIE0);
