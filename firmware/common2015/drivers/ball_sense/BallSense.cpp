@@ -22,8 +22,8 @@ void BallSense::update_ball_sensor() {
         } else {
             consec_ctr = 0;
         }
-        // printf("{'light': %d, 'dark': %d, 'ball': %s},\r\n", sense_light,
-        // sense_dark, have_ball() ? "True" : "False");
+        printf("{'light': %d, 'dark': %d, 'diff': %d, 'ball': %s},\r\n", sense_light,
+        sense_dark, std::abs(sense_light - sense_dark), have_ball() ? "True" : "False");
     } else  // Emitter off
     {
         // Update value
@@ -35,4 +35,4 @@ void BallSense::update_ball_sensor() {
     }
 }
 
-bool BallSense::have_ball() { return consec_ctr >= consec_num; }
+bool BallSense::have_ball() { return consec_ctr < consec_num; }
