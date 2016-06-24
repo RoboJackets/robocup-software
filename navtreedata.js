@@ -43,10 +43,10 @@ var NAVTREEINDEX =
 "class_planning_1_1_trapezoidal_path.html#a04425cbf8bfd7e54754272d88be99735",
 "class_shared_s_p_i_device.html#af4a7a211ca0d7c6b28fb9148fdf218f2",
 "classgameplay_1_1play__registry_1_1_play_registry.html#abe54e56a92593301aa4147493022ffc9",
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75",
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aaa068536aaa3a5ebce8ffc568752a117",
-"classmbed_1_1_i2_c_driver.html#aa118c20ca912a4ee74a5768c4a444336",
-"struct_chart_1_1_function.html"
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc",
+"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a02e234d4eb75819c1786c3c8d788b3a0",
+"classmbed_1_1_i2_c_driver.html#ab2711321ef746b170b5dfb408c4e01be",
+"struct_chart_1_1_numeric_field.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
