@@ -62,6 +62,9 @@ bool is_charging() { return PORTA & _BV(CHARGE_PIN); }
  }
 
 void main() {
+    // disable global interrupts
+    cli();
+
     /* Port direction - setting outputs */
     DDRA |= _BV(KICK_PIN) | _BV(CHIP_PIN) |
             _BV(CHARGE_PIN);  // MISO is handled by CS interrupt
@@ -127,9 +130,9 @@ void main() {
     while (true) {
         // get a voltage reading by weighing in a new reading, same concept as
         // TCP RTT estimates
-        // int voltage_accum =
-        //     (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
-        // last_voltage_ = voltage_accum / 255;
+        int voltage_accum =
+            (255 - kalpha) * last_voltage_ + kalpha * get_voltage();
+        last_voltage_ = voltage_accum / 255;
 
         last_voltage_ = get_voltage();
 
@@ -300,8 +303,13 @@ uint8_t execute_cmd(uint8_t cmd, uint8_t arg) {
             break;
 
         case SET_CHARGE_CMD:
-            // toggle charge state
-            PORTA ^= _BV(CHARGE_PIN);
+            // set state based on argument
+            if (arg == ON_ARG) {
+                PORTA |= _BV(CHARGE_PIN);
+            } else if (arg == OFF_ARG) {
+                PORTA &= ~(_BV(CHARGE_PIN));
+            }
+            
             ret_val = SET_CHARGE_ACK;
             break;
 

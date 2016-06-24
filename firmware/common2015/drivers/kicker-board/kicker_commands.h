@@ -26,8 +26,8 @@
 #define MAX_TIME_ARG 0xFF  // Used if we want to wait max time
 #define DB_KICK_TIME 0x08
 #define DB_CHIP_TIME 0x08
-#define ON_ARG 0x01   // Used for setting a wire high
-#define OFF_ARG 0x00  // Used for setting a wire low, same as NOP_ARG
+#define ON_ARG 0x38   // Used for setting a wire high
+#define OFF_ARG 0x1A  // Used for setting a wire low, same as NOP_ARG
 // GET_BUTTON_STATE_CMD args
 #define DB_CHIP_STATE 0x01
 #define DB_KICK_STATE 0x02
