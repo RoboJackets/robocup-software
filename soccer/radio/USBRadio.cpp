@@ -226,13 +226,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    // TODO(justin): remove this. skip every other packet because the system
-    // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
-    // definitely needs to be invesitgated.  If this rate-limit is removed and
-    // we try to send at 60Hz, we get TX buffer overflows in the base station.
-    static int pktCount = 0;
-    if (pktCount++ % 2 == 0) return;
-
     // Send the forward packet
     int sent = 0;
     int transferRetCode =
@@ -304,13 +297,12 @@ void USBRadio::channel(int n) {
     QMutexLocker lock(&_mutex);
 
     if (_device) {
-        // TODO(justin): fix
-        // write(CHANNR, n);
-        // throw std::runtime_error("Channel-setting not implemented for
-        // cc1201");
-
-        command(CC1201_STROBE_SIDLE);
-        command(CC1201_STROBE_SRX);
+        if (libusb_control_transfer(
+                _device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
+                Base2015ControlCommand::RadioSetChannel, n, 0, nullptr, 0,
+                Control_Timeout)) {
+            throw runtime_error("USBRadio::channel control write failed");
+        }
     }
 
     Radio::channel(n);
