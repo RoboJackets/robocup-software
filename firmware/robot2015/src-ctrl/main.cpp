@@ -116,9 +116,11 @@ int main() {
     // Initialize and configure the fpga with the given bitfile
     FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
                               RJ_FPGA_PROG_B, RJ_FPGA_DONE);
-    bool fpgaReady = FPGA::Instance->configure("/local/rj-fpga.nib");
+    const bool fpgaInitialized = FPGA::Instance->configure("/local/rj-fpga.nib");
+    uint8_t fpgaLastStatus = 0;
+    bool fpgaError = false; // set based on status byte reading in main loop
 
-    if (fpgaReady) {
+    if (fpgaInitialized) {
         rgbLED.brightness(3 * defaultBrightness);
         rgbLED.setPixel(1, NeoColorGreen);
 
@@ -132,7 +134,7 @@ int main() {
     }
     rgbLED.write();
 
-    DigitalOut rdy_led(RJ_RDY_LED, !fpgaReady);
+    DigitalOut rdy_led(RJ_RDY_LED, !fpgaInitialized);
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
@@ -234,6 +236,15 @@ int main() {
             if (err) reply.motorErrors |= (1 << i);
         }
 
+        // fpga status
+        if (!fpgaInitialized) {
+            reply.fpgaStatus = 1;
+        } else if (fpgaError) {
+            reply.fpgaStatus = 2;
+        } else {
+            reply.fpgaStatus = 0; // good
+        }
+
         vector<uint8_t> replyBuf;
         rtp::SerializeToVector(reply, &replyBuf);
 
@@ -254,7 +265,7 @@ int main() {
 
     unsigned int ll = 0;
     uint16_t errorBitmask = 0;
-    if (!fpgaReady) {
+    if (!fpgaInitialized) {
         // assume all motors have errors if FPGA does not work
         errorBitmask |= (1 << RJ_ERR_LED_M1);
         errorBitmask |= (1 << RJ_ERR_LED_M2);
@@ -281,7 +292,9 @@ int main() {
         errorBitmask |= (!global_radio || !global_radio->isConnected())
                         << RJ_ERR_LED_RADIO;
 
-        motors_refresh();
+        fpgaLastStatus = motors_refresh();
+        // top bit of fpga status should be 1 to indicate no errors
+        fpgaError = (fpgaLastStatus & (1 << 7)) == 0;
 
         // add motor errors to bitmask
         static const auto motorErrLedMapping = {
@@ -315,7 +328,7 @@ int main() {
         // Set error-indicating leds on the control board
         ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
 
-        if (errorBitmask || !fpgaReady) {
+        if (errorBitmask || !fpgaInitialized || fpgaError) {
             // orange - error
             rgbLED.brightness(6 * defaultBrightness);
             rgbLED.setPixel(0, NeoColorOrange);

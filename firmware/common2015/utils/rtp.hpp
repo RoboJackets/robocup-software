@@ -92,6 +92,9 @@ struct RobotStatusMessage {
 
     // 1 bit for each motor - 1 = error, 0 = good
     uint8_t motorErrors:5;
+
+    // 0 = good, 1 = not initialized, 2 = error
+    uint8_t fpgaStatus:2;
 };
 
 /**
