@@ -89,6 +89,9 @@ struct RobotStatusMessage {
     uint8_t battVoltage;
 
     uint8_t ballSenseStatus : 2;
+
+    // 1 bit for each motor - 1 = error, 0 = good
+    uint8_t motorErrors:5;
 };
 
 /**

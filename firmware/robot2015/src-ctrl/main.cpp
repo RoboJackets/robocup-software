@@ -203,6 +203,13 @@ int main() {
         reply.battVoltage = battVoltage;
         reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
 
+        // report any motor errors
+        reply.motorErrors = 0;
+        for (size_t i = 0; i < 5; i++) {
+            bool err = global_motors[i].status.hasError;
+            if (err) reply.motorErrors |= (1 << i);
+        }
+
         vector<uint8_t> replyBuf;
         rtp::SerializeToVector(reply, &replyBuf);
 
