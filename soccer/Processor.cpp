@@ -731,7 +731,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-robot->angle);
+        translation.rotate(-M_PI/2 - robot->angle);
     }
 
     // translation
