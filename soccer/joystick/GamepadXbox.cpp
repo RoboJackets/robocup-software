@@ -3,8 +3,8 @@
 using namespace std;
 
 namespace {
-constexpr RJ::Time Dribble_Step_Time = 175 * 1000;
-constexpr RJ::Time Kicker_Step_Time = 100 * 1000;
+constexpr RJ::Time Dribble_Step_Time = 85 * 1000;
+constexpr RJ::Time Kicker_Step_Time = 85 * 1000;
 }
 
 GamepadXbox::GamepadXbox()
@@ -120,12 +120,13 @@ void GamepadXbox::update() {
     float vel_x = 0.0, vel_y = 0.0;
     GamepadStickNormXY(_id, STICK_LEFT, &vel_x, &vel_y);
 
-    // use the left and right triggers to ack as a supressor for the y velocity component
+    // use the left and right triggers to be used as an added
+    // x velocity component
     float right_trigger = GamepadTriggerLength(_id, TRIGGER_LEFT);
     float left_trigger = GamepadTriggerLength(_id, TRIGGER_RIGHT);
-    float x_vel_skew = left_trigger - right_trigger;
+    float x_vel_skew = left_trigger + right_trigger;
 
-    vel_y = (vel_y * fabs(1 - x_vel_skew));
+    vel_x = vel_x + x_vel_skew;
 
     Geometry2d::Point input(vel_x, vel_y);
 
