@@ -627,6 +627,17 @@ void MainWindow::updateViews() {
             if (ballSenseFault) errorList << "Ball Sense Fault";
             statusWidget->setBallSenseFault(ballSenseFault);
 
+            // check fpga status
+            bool fpgaWorking = true;
+            if (rx.has_fpga_status() && rx.fpga_status() != Packet::FpgaGood) {
+                if (rx.fpga_status() == Packet::FpgaNotInitialized) {
+                    errorList << "FPGA not initialized";
+                } else {
+                    errorList << "FPGA error";
+                }
+                fpgaWorking = false;
+            }
+
             // display error text
             statusWidget->setErrorText(errorList.join(", "));
 
@@ -660,7 +671,7 @@ void MainWindow::updateViews() {
             // "showstopper"
             bool showstopper = !hasVision || !hasRadio || hasMotorFault ||
                                kickerFault || ballSenseFault ||
-                               (batteryLevel < 0.25);
+                               (batteryLevel < 0.25) || !fpgaWorking;
             statusWidget->setShowstopper(showstopper);
 
 #endif

@@ -294,6 +294,9 @@ void USBRadio::handleRxData(uint8_t* buf) {
         packet.add_motor_status(err ? MotorStatus::Hall_Failure : MotorStatus::Good);
     }
 
+    // fpga status
+    packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
+
     // TODO(justin): add back missing fields
     // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
     // packet.set_kicker_status(buf[3]);
