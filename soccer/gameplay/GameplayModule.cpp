@@ -437,3 +437,12 @@ boost::python::object Gameplay::GameplayModule::getRootPlay() {
 boost::python::object Gameplay::GameplayModule::getMainModule() {
     return _mainPyNamespace["main"];
 }
+
+void Gameplay::GameplayModule::updateFieldDimensions() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        _mainPyNamespace["constants"].attr("Field") =
+            &Field_Dimensions::Current_Dimensions;
+    }
+    PyGILState_Release(state);
+}

@@ -2,11 +2,11 @@
 #include "Ball.hpp"
 #include "Environment.hpp"
 #include "GL_ShapeDrawer.h"
-#include "RobotMotionState.hpp"
 #include "RobotBallController.hpp"
+#include "RobotMotionState.hpp"
 
-#include <Utils.hpp>
 #include <stdio.h>
+#include <Utils.hpp>
 #include <cmath>
 
 #include <Geometry2d/TransformMatrix.hpp>
@@ -209,7 +209,7 @@ void Robot::position(float x, float y) {
 }
 
 void Robot::velocity(float x, float y, float w) {
-    _targetVel = btVector3(y, 0, x) * scaling;
+    _targetVel = btVector3(-x, 0, y) * scaling;
     _targetRot = w;
 }
 

@@ -1,29 +1,29 @@
-
-#include <QMutexLocker>
-#include <poll.h>
-
 #include <gameplay/GameplayModule.hpp>
-#include "Processor.hpp"
-#include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
-#include "modeling/BallTracker.hpp"
-#include <multicast.hpp>
+
+#include <poll.h>
+#include <QMutexLocker>
+
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Constants.hpp>
-#include <Utils.hpp>
-#include <joystick/Joystick.hpp>
-#include <joystick/GamepadJoystick.hpp>
-#include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
-#include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
-#include <planning/IndependentMultiRobotPathPlanner.hpp>
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/RadioRx.pb.h>
+#include <Utils.hpp>
 #include <git_version.hpp>
+#include <joystick/GamepadJoystick.hpp>
+#include <joystick/Joystick.hpp>
+#include <joystick/SpaceNavJoystick.hpp>
+#include <motion/MotionControl.hpp>
+#include <multicast.hpp>
+#include <planning/IndependentMultiRobotPathPlanner.hpp>
+#include "Processor.hpp"
+#include "modeling/BallTracker.hpp"
+#include "radio/SimRadio.hpp"
+#include "radio/USBRadio.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -276,6 +276,7 @@ void Processor::run() {
                     break;
                 case Packet::RJ2015:
                     robot->config = robotConfig2015;
+                    break;
                 case Packet::Unknown:
                     robot->config =
                         robotConfig2011;  // FIXME: defaults to 2011 robots
@@ -731,10 +732,6 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
         translation.rotate(-robot->angle);
-    } else {
-        // adjust for robot coordinate system (x axis points forward through
-        // the mouth of the bot)
-        translation.rotate(-M_PI / 2.0f);
     }
 
     // translation
@@ -836,6 +833,7 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
+    _gameplayModule->updateFieldDimensions();
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }

@@ -2,6 +2,8 @@
 # Qt
 set(CMAKE_AUTOMOC ON)
 
+# include Eigen3 for linear algebra
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific

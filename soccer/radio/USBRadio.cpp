@@ -203,19 +203,14 @@ void USBRadio::send(Packet::RadioTx& packet) {
         if (slot < packet.robots_size()) {
             const Packet::Control& robot = packet.robots(slot).control();
 
-            // TODO: clarify units/resolution
-            float bodyVelX = robot.xvelocity() * Seconds_Per_Cycle /
-                             Meters_Per_Tick / sqrtf(2);
-            float bodyVelY = robot.yvelocity() * Seconds_Per_Cycle /
-                             Meters_Per_Tick / sqrtf(2);
-            float bodyVelW =
-                robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
-
             msg->uid = packet.robots(slot).uid();
 
-            msg->bodyX = clamp((int)roundf(bodyVelX), -511, 511);
-            msg->bodyY = clamp((int)roundf(bodyVelY), -511, 511);
-            msg->bodyW = clamp((int)roundf(bodyVelW), -511, 511);
+            msg->bodyX =
+                robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
+            msg->bodyY =
+                robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
+            msg->bodyW =
+                robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
 
             msg->dribbler =
                 max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));

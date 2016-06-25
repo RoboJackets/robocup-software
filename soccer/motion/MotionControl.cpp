@@ -1,15 +1,15 @@
 #include "MotionControl.hpp"
-#include <SystemState.hpp>
-#include <RobotConfig.hpp>
-#include <Robot.hpp>
-#include <Utils.hpp>
-#include "TrapezoidalMotion.hpp"
 #include <Geometry2d/Util.hpp>
+#include <Robot.hpp>
+#include <RobotConfig.hpp>
+#include <SystemState.hpp>
+#include <Utils.hpp>
 #include <planning/MotionInstant.hpp>
+#include "TrapezoidalMotion.hpp"
 
-#include <cmath>
 #include <stdio.h>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
@@ -173,7 +173,8 @@ void MotionControl::run() {
                               "MotionControl");
 
     // convert from world to body coordinates
-    target.vel = target.vel.rotated(-_robot->angle);
+    // the +y axis of the robot points forwards
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
 
     this->_targetBodyVel(target.vel);
 }
@@ -184,20 +185,15 @@ void MotionControl::stopped() {
 }
 
 void MotionControl::_targetAngleVel(float angleVel) {
-    // velocity multiplier
-    angleVel *= *_robot->config->angleVelMultiplier;
-
-    // convert units
-    angleVel = RadiansToDegrees(angleVel);
-
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
-    float minEffectiveAngularSpeed = *_robot->config->minEffectiveAngularSpeed;
-    if (std::abs(angleVel) < minEffectiveAngularSpeed &&
-        std::abs(angleVel) > 0.2) {
-        angleVel =
-            angleVel > 0 ? minEffectiveAngularSpeed : -minEffectiveAngularSpeed;
-    }
+    // float minEffectiveAngularSpeed =
+    // *_robot->config->minEffectiveAngularSpeed;
+    // if (std::abs(angleVel) < minEffectiveAngularSpeed) {
+    //     angleVel =
+    //         angleVel > 0 ? minEffectiveAngularSpeed :
+    //         -minEffectiveAngularSpeed;
+    // }
 
     // the robot firmware still speaks degrees, so that's how we send it over
     _robot->control->set_avelocity(angleVel);
@@ -226,9 +222,6 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     // track these values so we can limit acceleration
     _lastVelCmd = targetVel;
     _lastCmdTime = RJ::timestamp();
-
-    // velocity multiplier
-    targetVel *= *_robot->config->velMultiplier;
 
     // if the velocity is nonzero, make sure it's not so small that the robot
     // doesn't even move

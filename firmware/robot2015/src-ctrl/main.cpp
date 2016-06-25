@@ -14,6 +14,7 @@
 #include "CC1201.cpp"
 #include "KickerBoard.hpp"
 #include "RadioProtocol.hpp"
+#include "RobotModel.hpp"
 #include "RotarySelector.hpp"
 #include "RtosTimerHelper.hpp"
 #include "SharedSPI.hpp"
@@ -30,6 +31,7 @@
 using namespace std;
 
 void Task_Controller(void const* args);
+void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel);
 
 /**
  * @brief Sets the hardware configurations for the status LEDs & places
@@ -199,6 +201,14 @@ int main() {
 
         vector<uint8_t> replyBuf;
         rtp::SerializeToVector(reply, &replyBuf);
+
+        // update target velocity from packet
+        Task_Controller_UpdateTarget({
+            (float)msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyY / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyW / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+        });
+
         return replyBuf;
     };
 
