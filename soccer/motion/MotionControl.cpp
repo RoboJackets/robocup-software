@@ -223,9 +223,6 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     _lastVelCmd = targetVel;
     _lastCmdTime = RJ::timestamp();
 
-    // velocity multiplier
-    targetVel *= *_robot->config->velMultiplier;
-
     // if the velocity is nonzero, make sure it's not so small that the robot
     // doesn't even move
     float minEffectiveVelocity = *_robot->config->minEffectiveVelocity;
