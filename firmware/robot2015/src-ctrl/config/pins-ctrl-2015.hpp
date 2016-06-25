@@ -57,6 +57,7 @@ const PinName RJ_FPGA_INIT_B = p19;
 const PinName RJ_KICKER_nRESET = p20;
 
 // This defines the pin used for communicating with the Mechanical Base's ID#.
+// TODO: this pin is currently fused with the ball_emit pin
 const PinName RJ_BASE_ID = p21;
 
 // This defines the radio's `TX` LED for transmitting packets. This should
