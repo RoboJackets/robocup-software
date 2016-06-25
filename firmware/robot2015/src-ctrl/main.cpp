@@ -145,7 +145,7 @@ int main() {
 
     // Hacked kicker board - using this since we replaced the attiny with two
     // wires...
-    HackedKickerBoard kickerBoard(RJ_KICKER_nCS);
+    HackedKickerBoard kickerBoard(RJ_KICKER_nRESET);
     bool kickerReady = true;
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
