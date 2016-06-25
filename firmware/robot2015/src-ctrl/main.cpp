@@ -25,6 +25,7 @@
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
+#include "HackedKickerBoard.hpp"
 
 #define RJ_ENABLE_ROBOT_CONSOLE
 
@@ -135,9 +136,14 @@ int main() {
 
     // Initialize kicker board
     // TODO: clarify between kicker nCs and nReset
-    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
-                            "/local/rj-kickr.nib");
-    bool kickerReady = kickerBoard.flash(true, true);
+    // KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+    //                         "/local/rj-kickr.nib");
+    // bool kickerReady = kickerBoard.flash(true, true);
+
+    // Hacked kicker board - using this since we replaced the attiny with two
+    // wires...
+    HackedKickerBoard kickerBoard(RJ_KICKER_nCS);
+    bool kickerReady = true;
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -198,6 +204,24 @@ int main() {
     radioProtocol.setUID(robotShellID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
+        // update target velocity from packet
+        Task_Controller_UpdateTarget({
+            (float)msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyY / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+            (float)msg->bodyW / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
+        });
+
+        // kick!
+        if (msg->triggerMode == 1) {
+            // kick immediate
+            kickerBoard.kick(msg->kickStrength);
+        } else if (msg->triggerMode == 2) {
+            // kick on break beam
+            // TODO: wait for break beam
+            kickerBoard.kick(msg->kickStrength);
+        }
+
+
         rtp::RobotStatusMessage reply;
         reply.uid = robotShellID;
         reply.battVoltage = battVoltage;
@@ -212,13 +236,6 @@ int main() {
 
         vector<uint8_t> replyBuf;
         rtp::SerializeToVector(reply, &replyBuf);
-
-        // update target velocity from packet
-        Task_Controller_UpdateTarget({
-            (float)msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
-            (float)msg->bodyY / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
-            (float)msg->bodyW / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
-        });
 
         return replyBuf;
     };
