@@ -10,8 +10,7 @@ const RobotModel RobotModel2015 = []() {
     };
     model.WheelDist = 0.0798576;
 
-    // @125 duty cycle, 1260rpm @ no load
-    model.DutyCycleMultiplier = 10;  // TODO: tune this value
+    model.DutyCycleMultiplier = 12;  // TODO: tune this value
 
     model.recalculateBotToWheel();
 
