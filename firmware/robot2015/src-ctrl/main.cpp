@@ -85,7 +85,11 @@ int main() {
     // Initialize and start ball sensor
     BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
     ballSense.start(10);
-    DigitalOut ballSenseStatusLED(RJ_BALL_LED, 1);
+    DigitalOut ballStatusPin(RJ_BALL_LED);
+    ballSense.senseChangeCallback = [&](bool haveBall) {
+        // invert value due to active-low wiring of led
+        ballStatusPin = !haveBall;
+    };
 
     // Force off since the neopixel's hardware is stateless from previous
     // settings
@@ -248,9 +252,6 @@ int main() {
         }
 
         Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
-
-        // the value is inverted because this led is wired active-low
-        ballSenseStatusLED = !ballSense.have_ball();
 
         // Pack errors into bitmask
         errorBitmask |= (!global_radio || !global_radio->isConnected())

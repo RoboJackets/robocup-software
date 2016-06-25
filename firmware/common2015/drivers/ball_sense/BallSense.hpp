@@ -19,6 +19,9 @@ public:
     /// Stop updates
     void stop() { _updateTimer.stop(); }
 
+    /// Set the callback to be called whenever the value of have_ball() changes
+    std::function<void(bool haveBall)> senseChangeCallback = nullptr;
+
 private:
     // Call periodically when the update timer fires
     void update_ball_sensor();
@@ -36,7 +39,7 @@ private:
 
     // If the light reading and dark reading are closer than this value, the
     // beam is considered broken
-    const int sense_threshold = 5;
+    const int sense_threshold = 500;
 
     // Number of consecative "broken" senses
     //  before we are confident the beam is broken
