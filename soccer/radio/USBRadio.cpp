@@ -279,6 +279,11 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // ball sense
     packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
 
+    // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
+    // Report that everything is good b/c the bot currently has no way of
+    // detecting kicker issues
+    packet.set_kicker_status(Kicker_Charged | Kicker_Enabled Kicker_I2C_OK);
+
     // TODO(justin): add back missing fields
     // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
     // packet.set_kicker_status(buf[3]);
