@@ -28,6 +28,7 @@ var searchData=
   ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
   ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a24e40c55bffb3315555dee2b20597bbd',1,'gameplay::skills::line_kick::LineKick']]],
   ['ds2411_5ft',['DS2411_t',['../struct_d_s2411__t.html',1,'']]],
+  ['dutycyclemultiplier',['DutyCycleMultiplier',['../class_robot_model.html#a4fc8de2fc6bd506d4d35642b8b60c983',1,'RobotModel']]],
   ['dynamicobstacle',['DynamicObstacle',['../class_planning_1_1_dynamic_obstacle.html',1,'Planning']]],
   ['documentation',['Documentation',['../md_doc_Documentation.html',1,'']]]
 ];

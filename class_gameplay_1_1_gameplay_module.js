@@ -19,5 +19,6 @@ var class_gameplay_1_1_gameplay_module =
     [ "savePlaybook", "class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96", null ],
     [ "sendFieldDimensionsToPython", "class_gameplay_1_1_gameplay_module.html#a33399a813ba047378703a512451330c9", null ],
     [ "setupUI", "class_gameplay_1_1_gameplay_module.html#a0cd9f6f095d43b1896e073e0f1d9bf20", null ],
-    [ "state", "class_gameplay_1_1_gameplay_module.html#ab3143bba8c5e2243bb0e5fe72ee89eba", null ]
+    [ "state", "class_gameplay_1_1_gameplay_module.html#ab3143bba8c5e2243bb0e5fe72ee89eba", null ],
+    [ "updateFieldDimensions", "class_gameplay_1_1_gameplay_module.html#a48fad281eb14a3bc30c2553f978d5fe8", null ]
 ];

@@ -27,6 +27,7 @@ var searchData=
   ['blueteam',['blueTeam',['../class_processor.html#a1a61818c88b94200bba7f56a5cc7de76',1,'Processor']]],
   ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]],
   ['border',['Border',['../struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd',1,'Field_Dimensions']]],
+  ['bottowheel',['BotToWheel',['../class_robot_model.html#a7466b454bf9eca5de94394664ca1eb24',1,'RobotModel']]],
   ['break_5fchar',['BREAK_CHAR',['../class_console.html#a3a41cb91e38aa1b537867cec5c303672',1,'Console']]],
   ['brightness',['brightness',['../class_neo_strip.html#a59bb97cced13cdf49e6ef4b5db0ca480',1,'NeoStrip']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]],

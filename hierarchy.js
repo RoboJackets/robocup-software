@@ -151,6 +151,7 @@ var hierarchy =
     ] ],
     [ "Pid", "class_pid.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
+    [ "PidMotionController", "class_pid_motion_controller.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -200,6 +201,7 @@ var hierarchy =
     [ "RobotConstraints", "struct_robot_constraints.html", null ],
     [ "RobotFilter", "class_robot_filter.html", null ],
     [ "Planning::RobotInstant", "struct_planning_1_1_robot_instant.html", null ],
+    [ "RobotModel", "class_robot_model.html", null ],
     [ "RobotObservation", "class_robot_observation.html", null ],
     [ "RobotPose", "class_robot_pose.html", [
       [ "Robot", "class_robot.html", [

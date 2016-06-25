@@ -111,6 +111,7 @@ $(document).ready(function(){initNavTree('structrtp_1_1_control_message.html',''
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structrtp_1_1_control_message-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">rtp::ControlMessage Struct Reference</div>  </div>
@@ -146,7 +147,37 @@ unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>triggerMode</b>: 
 <tr class="memitem:a38ae3dd1443d2d071fd756b86c396784"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38ae3dd1443d2d071fd756b86c396784"></a>
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>song</b>: 2</td></tr>
 <tr class="separator:a38ae3dd1443d2d071fd756b86c396784"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a4459729ab618f2b1b53d911fe3764ccd"><td class="memItemLeft" align="right" valign="top">static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structrtp_1_1_control_message.html#a4459729ab618f2b1b53d911fe3764ccd">VELOCITY_SCALE_FACTOR</a> = 1000</td></tr>
+<tr class="memdesc:a4459729ab618f2b1b53d911fe3764ccd"><td class="mdescLeft">&#160;</td><td class="mdescRight">body{X,Y,W} are multiplied by this value before being sent over the radio and must be then divided by this value on the receiving side.  <a href="#a4459729ab618f2b1b53d911fe3764ccd">More...</a><br /></td></tr>
+<tr class="separator:a4459729ab618f2b1b53d911fe3764ccd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a4459729ab618f2b1b53d911fe3764ccd"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint16_t rtp::ControlMessage::VELOCITY_SCALE_FACTOR = 1000</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>body{X,Y,W} are multiplied by this value before being sent over the radio and must be then divided by this value on the receiving side. </p>
+<p>This is to avoid loss of precision when sending float velocity values across the air as ints. </p>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>firmware/common2015/utils/<a class="el" href="rtp_8hpp_source.html">rtp.hpp</a></li>
 </ul>
@@ -156,7 +187,7 @@ unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>song</b>: 2</td><
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>rtp</b></li><li class="navelem"><a class="el" href="structrtp_1_1_control_message.html">ControlMessage</a></li>
-    <li class="footer">Generated on Fri Jun 24 2016 02:39:28 for GT RoboCup SSL by
+    <li class="footer">Generated on Sat Jun 25 2016 06:05:35 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

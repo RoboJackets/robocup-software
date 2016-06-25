@@ -36,17 +36,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_c_c1201.html#a6e42d30f3a52028101f724fd9d3ac3a7",
-"class_game_state.html#a64b2c6b8f5b13b9b0eaaeed92150819d",
-"class_geometry2d_1_1_shape.html#acf902863336b26eb2de2d9e03182913f",
-"class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27",
-"class_planning_1_1_trapezoidal_path.html#a04425cbf8bfd7e54754272d88be99735",
-"class_shared_s_p_i_device.html#af4a7a211ca0d7c6b28fb9148fdf218f2",
-"classgameplay_1_1play__registry_1_1_play_registry.html#abe54e56a92593301aa4147493022ffc9",
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc",
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a02e234d4eb75819c1786c3c8d788b3a0",
-"classmbed_1_1_i2_c_driver.html#ab2711321ef746b170b5dfb408c4e01be",
-"struct_chart_1_1_numeric_field.html"
+"class_c_c1201.html#a64668f41e835da9ea1f9cd7f82635a6c",
+"class_game_state.html#a616b52e126a8825fc58572900373ffe6",
+"class_geometry2d_1_1_shape.html#a88ca9ec6f597d020faa0953c9ed05a82",
+"class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1",
+"class_planning_1_1_single_robot_path_planner.html#a4639ec1ebd831d32d15a878419f33f3f",
+"class_rotary_selector.html#a0052ef9ea13399b1525df0bfbbf96111",
+"classgameplay_1_1play__registry_1_1_play_registry.html#a24e08a8aad6baa809817e4cc2dc9b5f4",
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a96ada07e2b53dca0d76e9276ec54025f",
+"classgameplay_1_1skills_1_1move_1_1_move.html#ab9f132549ba8d7013a63a2b3972853a1",
+"classmbed_1_1_i2_c_driver.html#a295a8ac4bd9e60c9e51d6065e8d7d399",
+"neopixel_8h_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -1,5 +1,8 @@
 var NAVTREEINDEX3 =
 {
+"class_geometry2d_1_1_shape.html#a88ca9ec6f597d020faa0953c9ed05a82":[12,0,6,8,4],
+"class_geometry2d_1_1_shape.html#a8d2cf7aae8d92b04ab7e2e2f558b4937":[12,0,6,8,5],
+"class_geometry2d_1_1_shape.html#ac791f35db4e0efa1a6f07a619100d700":[12,0,6,8,0],
 "class_geometry2d_1_1_shape.html#acf902863336b26eb2de2d9e03182913f":[12,0,6,8,1],
 "class_geometry2d_1_1_shape.html#aea5443fe39c94f1f5fd91d2432969815":[12,0,6,8,7],
 "class_geometry2d_1_1_shape_set.html":[12,0,6,9],
@@ -246,8 +249,5 @@ var NAVTREEINDEX3 =
 "class_new_referee_packet.html":[12,0,66],
 "class_new_referee_packet.html#a485e1b6a00f69aea2151ba496ebac6d0":[12,0,66,1],
 "class_new_referee_packet.html#acf78573f58b10fd8d08e1f896acbcb75":[12,0,66,0],
-"class_opponent_robot.html":[12,0,67],
-"class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1":[12,0,67,0],
-"class_our_robot.html":[12,0,68],
-"class_our_robot.html#a019e094bf9347690e54572334f9c0a0b":[12,0,68,93]
+"class_opponent_robot.html":[12,0,67]
 };

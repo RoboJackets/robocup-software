@@ -5,5 +5,6 @@ var searchData=
   ['defaultdrivearounddist',['DefaultDriveAroundDist',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a4c97c3189cd666f532c1cfb06eb3baef',1,'gameplay::skills::line_kick::LineKick']]],
   ['defend',['defend',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#a918218a0009ff4c2850183e2a8940ba3',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
   ['defending',['defending',['../classgameplay_1_1tactics_1_1defense_1_1_defense_1_1_state.html#aefe6c8c74aa82cbcc9df4bd2258ea418',1,'gameplay::tactics::defense::Defense::State']]],
-  ['description',['description',['../structcommand__t.html#a94ed95e8cfafc8f0003c9068648adeb9',1,'command_t']]]
+  ['description',['description',['../structcommand__t.html#a94ed95e8cfafc8f0003c9068648adeb9',1,'command_t']]],
+  ['dutycyclemultiplier',['DutyCycleMultiplier',['../class_robot_model.html#a4fc8de2fc6bd506d4d35642b8b60c983',1,'RobotModel']]]
 ];

@@ -1,6 +1,9 @@
 var searchData=
 [
   ['watchdog',['Watchdog',['../class_watchdog.html',1,'']]],
+  ['wheelangles',['WheelAngles',['../class_robot_model.html#aa179c8e2dcff4f821cb076ff96a4f805',1,'RobotModel']]],
+  ['wheeldist',['WheelDist',['../class_robot_model.html#ae62e5c0642ce8ffff188a697f87900dc',1,'RobotModel']]],
+  ['wheelradius',['WheelRadius',['../class_robot_model.html#a2009a91f6292b84884459b011b751e38',1,'RobotModel']]],
   ['win_5feval_5fparams',['win_eval_params',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#ae5517c1cdb027306bd27b8541cb0d822',1,'gameplay::skills::_kick::_Kick']]],
   ['window',['Window',['../class_window.html',1,'']]],
   ['windowevaluator',['WindowEvaluator',['../class_window_evaluator.html',1,'WindowEvaluator'],['../class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e',1,'WindowEvaluator::WindowEvaluator()']]],

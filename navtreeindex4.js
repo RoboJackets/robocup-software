@@ -1,5 +1,8 @@
 var NAVTREEINDEX4 =
 {
+"class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1":[12,0,67,0],
+"class_our_robot.html":[12,0,68],
+"class_our_robot.html#a019e094bf9347690e54572334f9c0a0b":[12,0,68,93],
 "class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27":[12,0,68,33],
 "class_our_robot.html#a01c72bd8809afb005fdf53564f6dbf31":[12,0,68,10],
 "class_our_robot.html#a02faabdbe05e3d34856ff7043dc40d58":[12,0,68,48],
@@ -111,6 +114,11 @@ var NAVTREEINDEX4 =
 "class_pid.html#a7feaf4b3444c9d3d40415f8479e65e4b":[12,0,69,0],
 "class_pid.html#ab9a0346cf62b277d56bfbfcf12d78389":[12,0,69,4],
 "class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9":[12,0,69,2],
+"class_pid_motion_controller.html":[12,0,70],
+"class_pid_motion_controller.html#a154603280daca4697fafcfd973cd3f40":[12,0,70,1],
+"class_pid_motion_controller.html#a2e7a6b3fbd02af7bb0ab3a9ce655f8f6":[12,0,70,3],
+"class_pid_motion_controller.html#aa71a1ebb46ac2679efb78126467821f1":[12,0,70,0],
+"class_pid_motion_controller.html#ab9f3d455f297700c4ef8c226a5586647":[12,0,70,2],
 "class_planning_1_1_angle_function_path.html":[12,0,8,0],
 "class_planning_1_1_angle_function_path.html#a0f23ee4c601538694168dcd830fce76c":[12,0,8,0,7],
 "class_planning_1_1_angle_function_path.html#a23f1a22d7864fc43d29d61d32fde5ab2":[12,0,8,0,11],
@@ -241,13 +249,5 @@ var NAVTREEINDEX4 =
 "class_planning_1_1_r_r_t_planner.html#af3b4fb2c8d3af6d34fbb0173ae0b621c":[12,0,8,26,1],
 "class_planning_1_1_single_robot_path_planner.html":[12,0,8,28],
 "class_planning_1_1_single_robot_path_planner.html#a209ec8cf27bff85f25316af7d4e129ac":[12,0,8,28,3],
-"class_planning_1_1_single_robot_path_planner.html#a3437797e2370d171b19842e49980285a":[12,0,8,28,1],
-"class_planning_1_1_single_robot_path_planner.html#a4639ec1ebd831d32d15a878419f33f3f":[12,0,8,28,2],
-"class_planning_1_1_single_robot_path_planner.html#aba692b5e765ed86e4300f34f50d8a561":[12,0,8,28,0],
-"class_planning_1_1_target_vel_path_planner.html":[12,0,8,29],
-"class_planning_1_1_target_vel_path_planner.html#a560a37fe174f0933495c90491178ab03":[12,0,8,29,2],
-"class_planning_1_1_target_vel_path_planner.html#aae1185aba167a50e37043c87e3c740bc":[12,0,8,29,1],
-"class_planning_1_1_target_vel_path_planner.html#ab970426a0ae69f59eaf9ab6dec59dd1b":[12,0,8,29,0],
-"class_planning_1_1_trapezoidal_path.html":[12,0,8,30],
-"class_planning_1_1_trapezoidal_path.html#a0171be9c4ed3118e658362bde7a8e571":[12,0,8,30,8]
+"class_planning_1_1_single_robot_path_planner.html#a3437797e2370d171b19842e49980285a":[12,0,8,28,1]
 };
