@@ -33,6 +33,7 @@ using namespace std;
 
 void Task_Controller(void const* args);
 void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel);
+void Task_Controller_UpdateDribbler(uint8_t dribbler);
 
 /**
  * @brief Sets the hardware configurations for the status LEDs & places
@@ -212,6 +213,9 @@ int main() {
             (float)msg->bodyY / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
             (float)msg->bodyW / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
         });
+
+        // dribbler
+        Task_Controller_UpdateDribbler(msg->dribbler);
 
         // kick!
         if (msg->triggerMode == 1) {

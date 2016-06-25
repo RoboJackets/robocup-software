@@ -41,6 +41,11 @@ void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel) {
         commandTimeoutTimer->start(COMMAND_TIMEOUT_INTERVAL);
 }
 
+uint8_t dribblerSpeed = 0;
+void Task_Controller_UpdateDribbler(uint8_t dribbler) {
+    dribblerSpeed = dribbler;
+}
+
 /**
  * initializes the motion controller thread
  */
@@ -148,6 +153,9 @@ void Task_Controller(void const* args) {
                 dc = copysign(FPGA::MAX_DUTY_CYCLE, dc);
             }
         }
+
+        // dribbler duty cycle
+        duty_cycles[4] = dribblerSpeed;
 
 #if 0
         // log duty cycle values
