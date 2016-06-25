@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_opponent_robot.html":[12,0,67],
 "class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1":[12,0,67,0],
 "class_our_robot.html":[12,0,68],
 "class_our_robot.html#a019e094bf9347690e54572334f9c0a0b":[12,0,68,93],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "class_planning_1_1_r_r_t_planner.html#aec34e9fd75c51d4fb2e2cdfcd45f382e":[12,0,8,26,9],
 "class_planning_1_1_r_r_t_planner.html#af3b4fb2c8d3af6d34fbb0173ae0b621c":[12,0,8,26,1],
 "class_planning_1_1_single_robot_path_planner.html":[12,0,8,28],
-"class_planning_1_1_single_robot_path_planner.html#a209ec8cf27bff85f25316af7d4e129ac":[12,0,8,28,3],
-"class_planning_1_1_single_robot_path_planner.html#a3437797e2370d171b19842e49980285a":[12,0,8,28,1]
+"class_planning_1_1_single_robot_path_planner.html#a209ec8cf27bff85f25316af7d4e129ac":[12,0,8,28,3]
 };
