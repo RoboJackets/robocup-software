@@ -10,6 +10,10 @@
 // Include this file for base station usb vendor/product ids
 #include "../firmware/base2015/usb-interface.hpp"
 
+// included for kicer status enum
+#include "../firmware/robot2011/cpu/status.h"
+
+
 using namespace std;
 using namespace Packet;
 
@@ -282,7 +286,13 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
     // Report that everything is good b/c the bot currently has no way of
     // detecting kicker issues
-    packet.set_kicker_status(Kicker_Charged | Kicker_Enabled Kicker_I2C_OK);
+    packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+
+    // motor errors
+    for (int i = 0; i < 5; i++) {
+        bool err = msg->motorErrors & (1 << i);
+        packet.add_motor_status(err ? MotorStatus::Hall_Failure : MotorStatus::Good);
+    }
 
     // TODO(justin): add back missing fields
     // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);

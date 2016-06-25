@@ -115,8 +115,9 @@ void RobotWidget::paintEvent(QPaintEvent* event) {
     const float wheelWidth = 0.015;
     const float wheelRadius = 0.03;
     const float wheelDist = Robot_Radius + wheelWidth / 2;
-    const float wheelAngles[] = {-M_PI * 0.2, -M_PI * (1 - 0.2),
-                                 -M_PI * (1 + 0.2), -M_PI * (-0.2)};
+    const float wheelAngles[] = {-M_PI * (1 - 0.2), -M_PI * 0.2,
+                                 -M_PI * (-0.2), -M_PI * (1 + 0.2)};
+
     for (int i = 0; i < 4; i++) {
         painter.save();
         {
@@ -129,11 +130,8 @@ void RobotWidget::paintEvent(QPaintEvent* event) {
             if (_wheelFaults[i]) {
                 painter.save();
                 {
-                    bool right = i == 0 || i == 3;
-                    bool front = i == 0 || i == 1;
                     float dist = RedXSize / 2;
-                    painter.translate(dist * (right ? 1 : -1),
-                                      dist * (front ? -1 : 1));
+                    painter.translate(cosf(angle) * dist, sinf(angle) * dist);
                     drawRedX(painter, QPointF(0, 0), RedXSize);
                 }
                 painter.restore();
