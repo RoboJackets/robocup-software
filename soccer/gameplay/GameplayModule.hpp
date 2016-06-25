@@ -114,6 +114,10 @@ public:
     /// Returns a ShapeSet containing both goal zones
     Geometry2d::ShapeSet goalZoneObstacles() const;
 
+    /// Resends the current field dimensions to python. This should be called
+    /// whenever the current field dimensions change
+    void updateFieldDimensions();
+
 protected:
     boost::python::object getRootPlay();
 
