@@ -584,7 +584,7 @@ void MainWindow::updateViews() {
             // well as being drawn as a red X on the graphic of a robot
             bool hasMotorFault = false;
             if (rx.motor_status().size() == 5) {
-                const char* motorNames[] = {"FR", "FL", "BL", "BR", "Dribbler"};
+                const char* motorNames[] = {"FL", "BL", "BR", "FR", "Dribbler"};
 
                 // examine status of each motor (including the dribbler)
                 for (int i = 0; i < 5; ++i) {
