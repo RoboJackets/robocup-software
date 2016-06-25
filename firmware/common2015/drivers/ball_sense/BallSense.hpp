@@ -8,8 +8,7 @@
 ///  ambiant light.
 class BallSense {
 public:
-    BallSense(DigitalOut emitter, AnalogIn detector,
-              DigitalOut ballSenseStatusLED);
+    BallSense(DigitalOut emitter, AnalogIn detector);
 
     /// Returns true if beam is broken (Ball is contained)
     bool have_ball();
@@ -20,14 +19,15 @@ public:
     /// Stop updates
     void stop() { _updateTimer.stop(); }
 
+    /// Set the callback to be called whenever the value of have_ball() changes
+    std::function<void(bool haveBall)> senseChangeCallback = nullptr;
+
 private:
     // Call periodically when the update timer fires
     void update_ball_sensor();
 
     DigitalOut emitter_pin;
     AnalogIn detector_pin;
-
-    DigitalOut ball_status_pin;
 
     // Holds the light sensed when
     //  emitter is lit (sense_light) and

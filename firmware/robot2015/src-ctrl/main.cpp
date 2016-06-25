@@ -81,8 +81,13 @@ int main() {
     setISRPriorities();
 
     // Initialize and start ball sensor
-    BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR, RJ_BALL_LED);
+    BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
     ballSense.start(10);
+    DigitalOut ballStatusPin(RJ_BALL_LED);
+    ballSense.senseChangeCallback = [&](bool haveBall) {
+        // invert value due to active-low wiring of led
+        ballStatusPin = !haveBall;
+    };
 
     // Force off since the neopixel's hardware is stateless from previous
     // settings
