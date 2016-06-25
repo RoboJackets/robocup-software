@@ -36,17 +36,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_c_c1201.html#a6463819e64582f1f6e74e26bcc0e440c",
-"class_game_state.html#a5e068080dea33a3053f540047937fdac",
-"class_geometry2d_1_1_shape.html#a5d32d0f890625fa0b3202edddec6efff",
-"class_opponent_robot.html",
-"class_planning_1_1_single_robot_path_planner.html#a3437797e2370d171b19842e49980285a",
-"class_rotary_selector.html",
-"classgameplay_1_1play__registry_1_1_play_registry.html#a21b6744bb9bda7dacaeaeca8e848b08f",
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a8daf7c7cb675e6160efeb6bd4f3a78f0",
-"classgameplay_1_1skills_1_1move_1_1_move.html#aa6ad2fa4c2dff543afee3e9a4c10505d",
-"classmbed_1_1_i2_c_driver.html#a2005bc05c57dde5248a2a494f8b4e00faf96d27dba41bd3d444ae3b4ae60bb396",
-"namespacesmartrf__exporter.html"
+"class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52",
+"class_game_state.html#a57ff21fd6e98cc983be56169ea941520",
+"class_geometry2d_1_1_shape.html#a4e811fff528953ccbd931fb477cc3854",
+"class_new_referee_module.html#af8f23bb5c7a4f051f6925bdeb1c43eb0",
+"class_planning_1_1_r_r_t_planner.html#ad8c4007b45a920aef992b0a358075e89",
+"class_robot_widget.html#a9304273605e4203e7d7cac20de593092",
+"classgameplay_1_1play_1_1_play.html#ac200a9a39e0e0d5720d525469775814e",
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a393aa7800438b3ab3e56e0b2bd8274fc",
+"classgameplay_1_1skills_1_1move_1_1_move.html#a129500170120d1a15c3a2c58b2b1bcf2",
+"classmbed_1_1_i2_c_driver.html#a164d275e113843b3d21b2e74d3183386",
+"namespace_gameplay.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -78,6 +78,7 @@ var hierarchy =
     ] ],
     [ "Gameplay::GameplayModule", "class_gameplay_1_1_gameplay_module.html", null ],
     [ "GameState", "class_game_state.html", null ],
+    [ "HackedKickerBoard", "class_hacked_kicker_board.html", null ],
     [ "rtp::header_data", "structrtp_1_1header__data.html", null ],
     [ "mbed::I2CDriver", "classmbed_1_1_i2_c_driver.html", null ],
     [ "mbed::I2CMasterRtos", "classmbed_1_1_i2_c_master_rtos.html", null ],
@@ -149,8 +150,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "Pid", "class_pid.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
+    [ "Pid", "class_pid.html", null ],
     [ "PidMotionController", "class_pid_motion_controller.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
@@ -255,9 +256,6 @@ var hierarchy =
     [ "SPI", null, [
       [ "SharedSPI", "class_shared_s_p_i.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -340,6 +338,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

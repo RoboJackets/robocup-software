@@ -366,6 +366,7 @@ var annotated_dup =
     [ "FPGA", "class_f_p_g_a.html", "class_f_p_g_a" ],
     [ "GamepadJoystick", "class_gamepad_joystick.html", "class_gamepad_joystick" ],
     [ "GameState", "class_game_state.html", "class_game_state" ],
+    [ "HackedKickerBoard", "class_hacked_kicker_board.html", "class_hacked_kicker_board" ],
     [ "IOExpanderDigitalInOut", "class_i_o_expander_digital_in_out.html", "class_i_o_expander_digital_in_out" ],
     [ "Joystick", "class_joystick.html", "class_joystick" ],
     [ "JoystickControlValues", "struct_joystick_control_values.html", "struct_joystick_control_values" ],

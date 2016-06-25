@@ -123,13 +123,14 @@ var NAVTREEINDEX0 =
 "_game_state_8hpp_source.html":[13,0,2,10],
 "_gamepad_joystick_8hpp_source.html":[13,0,2,1,0],
 "_gameplay_module_8hpp_source.html":[13,0,2,0,0],
+"_hacked_kicker_board_8hpp_source.html":[13,0,1,0,0,6,0],
 "_i2_c_driver_8hpp_source.html":[13,0,1,0,0,10,0],
 "_i2_c_master_rtos_8hpp_source.html":[13,0,1,0,0,10,1],
 "_i2_c_slave_rtos_8hpp_source.html":[13,0,1,0,0,10,3],
 "_independent_multi_robot_path_planner_8hpp_source.html":[13,0,2,4,4],
 "_interpolated_path_8hpp_source.html":[13,0,2,4,5],
 "_joystick_8hpp_source.html":[13,0,2,1,1],
-"_kicker_board_8hpp_source.html":[13,0,1,0,0,6,0],
+"_kicker_board_8hpp_source.html":[13,0,1,0,0,6,1],
 "_line_8hpp_source.html":[13,0,0,0,3],
 "_log_utils_8hpp_source.html":[13,0,2,12],
 "_log_viewer_8hpp_source.html":[13,0,2,13],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "class_c_c1201.html#a321a031a3da161a4ec641b69e86a70a4":[12,0,25,19],
 "class_c_c1201.html#a34e7b96b51a1e611440515ef926fbe64":[12,0,25,12],
 "class_c_c1201.html#a4a121cbe57b0681371014e7af26c68cf":[12,0,25,24],
-"class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b":[12,0,25,20],
-"class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52":[12,0,25,16]
+"class_c_c1201.html#a4d69e8ba33208dde9b42b86c68ee5d0b":[12,0,25,20]
 };
