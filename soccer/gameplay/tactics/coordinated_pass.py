@@ -31,12 +31,12 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
 
     ## Init method for CoordinatedPass
-    # @param skillreceiver a class that will handle the receiving robot. See pass_receive and angle_receive for examples.
+    # @param skillreceiver an instance of a class that will handle the receiving robot. See pass_receive and angle_receive for examples.
     # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
     # Subclasses of pass_receive are preferred, but check the usage of this variable to be sure.
     # @param receive_point The point that will be kicked too. (Target point)
-    # @param skillkicker A tuple of this form (kicking_class, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed).
-    # The lambda equation is called (passed with the state of your class) to see if your class is ready. Simple implementations will just compare it to your ready state.
+    # @param skillkicker A tuple of this form (kicking_class instance, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed).
+    # The lambda equation is called (passed with the state of your class instance) to see if your class is ready. Simple implementations will just compare it to your ready state.
     def __init__(self,
                  receive_point=None,
                  skillreceiver=None,
