@@ -11,7 +11,6 @@ import evaluation.touchpass_positioning
 
 class OurFreeKick(standard_play.StandardPlay):
 
-    tpass = evaluation.touchpass_positioning
     running = False
 
     def __init__(self):
@@ -42,7 +41,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
         lastKicker = kicker
         if self.indirect:
-            receive_pt, target_point, probability = OurFreeKick.tpass.eval_best_receive_point(
+            receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
                 main.ball().pos)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                 receive_pt, None, (kicker, lambda x: True))
