@@ -185,6 +185,9 @@ void MotionControl::stopped() {
 }
 
 void MotionControl::_targetAngleVel(float angleVel) {
+    // velocity multiplier
+    angleVel *= *_robot->config->angleVelMultiplier;
+  
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
      float minEffectiveAngularSpeed =
