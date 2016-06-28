@@ -45,12 +45,9 @@ public:
     /**
      * Transmit data
      *
-     * @param buf A buffer containing the data to send
-     * @param size The length, in bytes, of @buf
-     *
      * @return A status value indicating success/error. See CommLink for info.
      */
-    int32_t sendData(const uint8_t* buf, uint8_t size);
+    int32_t sendPacket(const rtp::packet* pkt);
 
     /**
      * Read data from the radio's RX buffer.  This should be called after
@@ -69,6 +66,17 @@ public:
      * @return status byte (same as writeReg())
      */
     uint8_t setAddress(uint8_t addr);
+
+    /**
+     * Sets the radio channel, which corresponds to a certain frequency
+     *
+     * The default value is channel 0.
+     *
+     * Channel 0 is 904MHz and subsequent channels are increments of 2MHz above
+     * it. For example, channel 1 is 906MHz.  For now, we're only using
+     * channels 0 and 1.
+     */
+    void setChannel(uint8_t chanNumber);
 
     void reset();
 

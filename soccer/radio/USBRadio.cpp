@@ -10,6 +10,10 @@
 // Include this file for base station usb vendor/product ids
 #include "../firmware/base2015/usb-interface.hpp"
 
+// included for kicer status enum
+#include "../firmware/robot2011/cpu/status.h"
+
+
 using namespace std;
 using namespace Packet;
 
@@ -203,19 +207,14 @@ void USBRadio::send(Packet::RadioTx& packet) {
         if (slot < packet.robots_size()) {
             const Packet::Control& robot = packet.robots(slot).control();
 
-            // TODO: clarify units/resolution
-            float bodyVelX = robot.xvelocity() * Seconds_Per_Cycle /
-                             Meters_Per_Tick / sqrtf(2);
-            float bodyVelY = robot.yvelocity() * Seconds_Per_Cycle /
-                             Meters_Per_Tick / sqrtf(2);
-            float bodyVelW =
-                robot.avelocity() * Seconds_Per_Cycle / Radians_Per_Tick;
-
             msg->uid = packet.robots(slot).uid();
 
-            msg->bodyX = clamp((int)roundf(bodyVelX), -511, 511);
-            msg->bodyY = clamp((int)roundf(bodyVelY), -511, 511);
-            msg->bodyW = clamp((int)roundf(bodyVelW), -511, 511);
+            msg->bodyX =
+                robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
+            msg->bodyY =
+                robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
+            msg->bodyW =
+                robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
 
             msg->dribbler =
                 max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));
@@ -230,13 +229,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->uid = rtp::INVALID_ROBOT_UID;
         }
     }
-
-    // TODO(justin): remove this. skip every other packet because the system
-    // can't handle 60Hz.  Not sure exactly where the bottleneck is - this
-    // definitely needs to be invesitgated.  If this rate-limit is removed and
-    // we try to send at 60Hz, we get TX buffer overflows in the base station.
-    static int pktCount = 0;
-    if (pktCount++ % 2 == 0) return;
 
     // Send the forward packet
     int sent = 0;
@@ -285,10 +277,25 @@ void USBRadio::handleRxData(uint8_t* buf) {
     packet.set_hardware_version(RJ2015);
 
     // battery voltage
-    packet.set_battery(msg->battVoltage * rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR);
+    packet.set_battery(msg->battVoltage *
+                       rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR);
 
     // ball sense
     packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+
+    // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
+    // Report that everything is good b/c the bot currently has no way of
+    // detecting kicker issues
+    packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+
+    // motor errors
+    for (int i = 0; i < 5; i++) {
+        bool err = msg->motorErrors & (1 << i);
+        packet.add_motor_status(err ? MotorStatus::Hall_Failure : MotorStatus::Good);
+    }
+
+    // fpga status
+    packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
 
     // TODO(justin): add back missing fields
     // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
@@ -308,13 +315,12 @@ void USBRadio::channel(int n) {
     QMutexLocker lock(&_mutex);
 
     if (_device) {
-        // TODO(justin): fix
-        // write(CHANNR, n);
-        // throw std::runtime_error("Channel-setting not implemented for
-        // cc1201");
-
-        command(CC1201_STROBE_SIDLE);
-        command(CC1201_STROBE_SRX);
+        if (libusb_control_transfer(
+                _device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
+                Base2015ControlCommand::RadioSetChannel, n, 0, nullptr, 0,
+                Control_Timeout)) {
+            throw runtime_error("USBRadio::channel control write failed");
+        }
     }
 
     Radio::channel(n);

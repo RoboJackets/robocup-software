@@ -16,14 +16,23 @@ void BallSense::update_ball_sensor() {
         emitter_on = false;
         emitter_pin.write(0);
 
+        bool hadBall = have_ball();
+
         // Possible break in beam
         if (std::abs(sense_light - sense_dark) < sense_threshold) {
             consec_ctr++;
         } else {
             consec_ctr = 0;
         }
-        // printf("{'light': %d, 'dark': %d, 'ball': %s},\r\n", sense_light,
-        // sense_dark, have_ball() ? "True" : "False");
+
+        // callback
+        if (have_ball() != hadBall && senseChangeCallback) {
+            senseChangeCallback(have_ball());
+        }
+
+        // printf("{'light': %d, 'dark': %d, 'diff': %d, 'ball': %s},\r\n",
+        //        sense_light, sense_dark, std::abs(sense_light - sense_dark),
+        //        have_ball() ? "True" : "False");
     } else  // Emitter off
     {
         // Update value
@@ -35,4 +44,4 @@ void BallSense::update_ball_sensor() {
     }
 }
 
-bool BallSense::have_ball() { return consec_ctr >= consec_num; }
+bool BallSense::have_ball() { return consec_ctr > consec_num; }

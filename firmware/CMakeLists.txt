@@ -2,6 +2,9 @@
 # firmware, which depend on the MBED libs
 include(RemoveFlags)
 
+# include Eigen3 for linear algebra
+include_directories(${EIGEN_INCLUDE_DIR})
+
 # remove the color flag since it will get set on anything with clang assert
 # the default compiler (mostly apple computers). The arm compilers know
 # nothing about this flag however.

@@ -58,6 +58,14 @@ struct header_data {
 // binary-packed version of Control.proto
 struct ControlMessage {
     uint8_t uid;  // robot id
+
+    /** body{X,Y,W} are multiplied by this value before being sent over the
+     * radio and must be then divided by this value on the receiving side. This
+     * is to avoid loss of precision when sending float velocity values across
+     * the air as ints.
+     */
+    static const uint16_t VELOCITY_SCALE_FACTOR = 1000;
+
     int16_t bodyX;
     int16_t bodyY;
     int16_t bodyW;
@@ -81,6 +89,12 @@ struct RobotStatusMessage {
     uint8_t battVoltage;
 
     uint8_t ballSenseStatus : 2;
+
+    // 1 bit for each motor - 1 = error, 0 = good
+    uint8_t motorErrors:5;
+
+    // 0 = good, 1 = not initialized, 2 = error
+    uint8_t fpgaStatus:2;
 };
 
 /**

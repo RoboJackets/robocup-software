@@ -5,7 +5,8 @@
 #include <assert.hpp>
 #include <logger.hpp>
 
-#include "Pid.hpp"
+#include "PidMotionController.hpp"
+#include "RtosTimerHelper.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
 #include "motors.hpp"
@@ -13,31 +14,36 @@
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
 
-const float kpi = 3.14159265358979f;
+using namespace std;
 
 // Keep this pretty high for now. Ideally, drop it down to ~3 for production
 // builds. Hopefully that'll be possible without the console
 static const int CONTROL_LOOP_WAIT_MS = 5;
 
-// Declaration for an alternative control loop thread for when the accel/gyro
-// can't be used for whatever reason
-void Task_Controller_Sensorless(const osThreadId mainThreadId);
+// initialize PID controller
+PidMotionController pidController;
 
-namespace {
-// The gyro/accel values are given RPC read/write access here
-float gyroVals[3] = {0};
-float accelVals[3] = {0};
+/** If this amount of time (in ms) elapses without
+ * Task_Controller_UpdateTarget() being called, the target velocity is reset to
+ * zero.  This is a safety feature to prevent robots from doing unwanted things
+ * when they lose radio communication.
+ */
+static const uint32_t COMMAND_TIMEOUT_INTERVAL = 250;
+unique_ptr<RtosTimerHelper> commandTimeoutTimer = nullptr;
+bool commandTimedOut = true;
 
-// RPCVariable<float> gyrox(&gyroVals[0], "gyro-x");
-// RPCVariable<float> gyroy(&gyroVals[1], "gyro-y");
-// RPCVariable<float> gyroz(&gyroVals[2], "gyro-z");
-// RPCVariable<float> accelx(&accelVals[0], "accel-x");
-// RPCVariable<float> accely(&accelVals[1], "accel-y");
-// RPCVariable<float> accelz(&accelVals[2], "accel-z");
+void Task_Controller_UpdateTarget(Eigen::Vector3f targetVel) {
+    pidController.setTargetVel(targetVel);
 
-// Making a temporary variable to test out the writing side of RPC variables
-// int testVar;
-// RPCVariable<int> test_var(&testVar, "var1");
+    // reset timeout
+    commandTimedOut = false;
+    if (commandTimeoutTimer)
+        commandTimeoutTimer->start(COMMAND_TIMEOUT_INTERVAL);
+}
+
+uint8_t dribblerSpeed = 0;
+void Task_Controller_UpdateDribbler(uint8_t dribbler) {
+    dribblerSpeed = dribbler;
 }
 
 /**
@@ -78,41 +84,34 @@ void Task_Controller(void const* args) {
             "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
             "sensorless control loop.",
             testResp);
-
-        // Start a thread that can function without the IMU, terminate us if it
-        // ever returns
-        Task_Controller_Sensorless(mainID);
-
-        return;
     }
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    const uint16_t ENC_TICKS_PER_TURN = 2048;
+    array<int16_t, 5> duty_cycles{};
 
-    Pid motor2pid(0.0, 0.0, 0.0);
+    // pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
+    pidController.setPidValues(0.8, 0.05, 0);
 
-    std::vector<int16_t> duty_cycles;
-
-    const uint16_t kduty_cycle = 0;
-    duty_cycles.assign(5, kduty_cycle);
-
-    size_t ii = 0;
-    bool spin_rev = true;
-
-    int16_t duty_cycle_all = kduty_cycle;
+    // initialize timeout timer
+    commandTimeoutTimer = make_unique<RtosTimerHelper>(
+        [&]() { commandTimedOut = true; }, osTimerPeriodic);
 
     while (true) {
-        imu.getGyro(gyroVals);
-        imu.getAccelero(accelVals);
+        // imu.getGyro(gyroVals);
+        // imu.getAccelero(accelVals);
 
-        std::vector<int16_t> enc_deltas(5);
+        // note: the 4th value is not an encoder value.  See the large comment
+        // below for an explanation.
+        array<int16_t, 5> enc_deltas{};
+
+        // zero out command if we haven't gotten an updated target in a while
+        if (commandTimedOut) duty_cycles = {0, 0, 0, 0, 0};
 
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
-                                         enc_deltas.data(),
-                                         enc_deltas.capacity());
+                                         enc_deltas.data(), enc_deltas.size());
 
         /*
          * The time since the last update is derived with the value of
@@ -136,65 +135,37 @@ void Task_Controller(void const* args) {
          *     time_precision = 6.94us
          *
          */
-        const float kdt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
+        const float dt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
 
-        // the target rev/s
-        const float ktarget_rps = 5;
+        // take first 4 encoder deltas
+        array<int16_t, 4> driveMotorEnc;
+        for (int i = 0; i < 4; i++) driveMotorEnc[i] = enc_deltas[i];
 
-        // angular velocity of motor 3 in rad/s
-        const float kvel = 2 * kpi * (enc_deltas[2] / ENC_TICKS_PER_TURN) / kdt;
+        // run PID controller to determine what duty cycles to use to drive the
+        // motors.
+        array<int16_t, 4> driveMotorDutyCycles =
+            pidController.run(driveMotorEnc, dt);
+        for (int i = 0; i < 4; i++) duty_cycles[i] = driveMotorDutyCycles[i];
 
-        const float ktarget_vel = (2 * kpi) * ktarget_rps;
+        // limit duty cycle values, while keeping sign (+ or -)
+        for (int16_t& dc : duty_cycles) {
+            if (std::abs(dc) > FPGA::MAX_DUTY_CYCLE) {
+                dc = copysign(FPGA::MAX_DUTY_CYCLE, dc);
+            }
+        }
 
-        // @125 duty cycle, 1260rpm @ no load
-        TODO(remeasure the duty cycle and rad / s relationship of the motor)
-        const float kmultiplier = 125.0f / (1260.0f * 2 * kpi / 60);
+        // dribbler duty cycle
+        duty_cycles[4] = dribblerSpeed;
 
-        const float vel_err = ktarget_vel - kvel;
-
-        int16_t dc = ktarget_vel * kmultiplier + motor2pid.run(vel_err);
-
-        // duty cycle values range: 0 -> 511, the 9th bit is direction
-        dc = std::min(dc, static_cast<int16_t>(511));
-
-        ii++;
-        // if (ii < 20) {
-        //     duty_cycle_all = kduty_cycle;
-        // } else {
-        //     duty_cycle_all = 0;
-        //     spin_rev = !spin_rev;
-        //     ii = 0;
-        // }
-
-        // if ((ii % 100) == 0) printf("dc: %u, dt: %f\r\n", dc, kdt);
-
-        // set the direction
-        if (spin_rev) duty_cycle_all *= -1;
-
-        std::fill(duty_cycles.begin(), duty_cycles.end(), duty_cycle_all);
+#if 0
+        // log duty cycle values
+        printf("duty cycles: ");
+        for (int i = 0; i < 4; i++) {
+            printf("%d, ", duty_cycles[i]);
+        }
+        printf("\r\n");
+#endif
 
         Thread::wait(CONTROL_LOOP_WAIT_MS);
-    }
-}
-
-void Task_Controller_Sensorless(const osThreadId mainID) {
-    // Store the thread's ID
-    osThreadId threadID = Thread::gettid();
-    ASSERT(threadID != nullptr);
-
-    // Store our priority so we know what to reset it to after running a command
-    osPriority threadPriority = osThreadGetPriority(threadID);
-
-    LOG(INIT,
-        "Sensorless control loop ready!\r\n    Thread ID: %u, Priority: %d",
-        ((P_TCB)threadID)->task_id, threadPriority);
-
-    // signal back to main and wait until we're signaled to continue
-    osSignalSet(mainID, MAIN_TASK_CONTINUE);
-    Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
-
-    while (true) {
-        Thread::wait(CONTROL_LOOP_WAIT_MS);
-        Thread::yield();
     }
 }
