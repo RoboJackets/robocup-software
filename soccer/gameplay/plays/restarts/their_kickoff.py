@@ -6,6 +6,7 @@ import skills.mark
 import main
 import robocup
 import constants
+import planning_priority
 
 
 class TheirKickoff(standard_play.StandardPlay):
@@ -26,18 +27,17 @@ class TheirKickoff(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
-        self.circle_up_func = lambda: tactics.stopped.circle_on_center.CircleOnCenter(min_robots=1)
-        self.add_subbehavior(self.circle_up_func(), 'circle_up', priority=15, required=True)
+        self.add_subbehavior(
+            tactics.stopped.circle_on_center.CircleOnCenter(
+                min_robots=1 if len(main.our_robots()) > 3 else 0), 'circle_up', priority=15, required=True)
 
-        their_robots = main.their_robots()
+
         mark_one = None
         mark_two = None
-        if (len(their_robots) > 2):
-            mark_one = skills.mark.Mark()
-            self.add_subbehavior(mark_one, 'mark_one', priority=11, required=False)
-        if (len(their_robots) > 3):
-            mark_two = skills.mark.Mark()
-            self.add_subbehavior(mark_two, 'mark_two', priority=10, required=False)
+        mark_one = skills.mark.Mark()
+        self.add_subbehavior(mark_one, 'mark_one', priority=planning_priority.PIVOT_KICK + 1, required=False)
+        mark_two = skills.mark.Mark()
+        self.add_subbehavior(mark_two, 'mark_two', priority=planning_priority.PIVOT_KICK, required=False)
 
     def absmin(self, value, floor_val):
         if value <= 0:
