@@ -23,18 +23,18 @@ class TheirKickoff(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
+        self.circle_up_func = lambda: tactics.stopped.circle_on_center.CircleOnCenter(min_robots=1)
+        self.add_subbehavior(self.circle_up_func(), 'circle_up', priority=15, required=True)
+
         their_robots = main.their_robots()
         mark_one = None
         mark_two = None
         if (len(their_robots) > 2):
             mark_one = skills.mark.Mark()
-            self.add_subbehavior(mark_one, 'mark_one', priority=20)
+            self.add_subbehavior(mark_one, 'mark_one', priority=10, required=False)
         if (len(their_robots) > 3):
             mark_two = skills.mark.Mark()
-            self.add_subbehavior(mark_two, 'mark_two', priority=20)
-
-        self.circle_up_func = lambda: tactics.stopped.circle_on_center.CircleOnCenter()
-        self.add_subbehavior(self.circle_up_func(), 'circle_up', priority=1)
+            self.add_subbehavior(mark_two, 'mark_two', priority=10, required=False)
 
     def execute_running(self):
         their_robots = main.their_robots()
