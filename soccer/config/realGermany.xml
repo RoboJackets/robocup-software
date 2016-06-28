@@ -214,7 +214,7 @@
    <i_windup value="0"/>
    <accelMultiplier value="16"/>
    <d value="0.2"/>
-   <velMultiplier value="1.2"/>
+   <velMultiplier value="1"/>
    <minEffectiveVelocity value="0.35"/>
   </translation>
   <rotation>
@@ -222,7 +222,7 @@
    <i value="0.0025"/>
    <i_windup value="0"/>
    <d value="0.05"/>
-   <velMultiplier value="0.1"/>
+   <velMultiplier value="1"/>
    <minEffectiveAngularSpeed value="1.6"/>
   </rotation>
   <kicker>
