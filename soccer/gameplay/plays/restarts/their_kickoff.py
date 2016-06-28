@@ -77,8 +77,8 @@ class TheirKickoff(standard_play.StandardPlay):
             mark_robot_right = None
         elif len(mark_robot_left) + len(mark_robot_right) == 1:
             if len(mark_robot_left) == 1:
-                mark_robot_left = mark_robot_left[0]
-                mark_robot_right = None
+                mark_robot_right = mark_robot_left[0]
+                mark_robot_left = None
             else:
                 mark_robot_right = mark_robot_right[0]
                 mark_robot_left = None
