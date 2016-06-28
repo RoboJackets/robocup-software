@@ -78,7 +78,7 @@ class Defense(composite_behavior.CompositeBehavior):
     def should_clear_ball(self):
         #Returns true if our robot can reach the ball sooner than the closest opponent
         safe_to_clear = False
-        if main.ball().pos.mag(
+        if main.ball().pos.mag and main.ball().vel.mag <.75
         ) < constants.Field.ArcRadius * 2 and not evaluation.ball.is_in_our_goalie_zone(
         ):
 
