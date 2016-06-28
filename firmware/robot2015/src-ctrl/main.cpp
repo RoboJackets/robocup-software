@@ -27,7 +27,7 @@
 #include "task-signals.hpp"
 #include "HackedKickerBoard.hpp"
 
-#define RJ_ENABLE_ROBOT_CONSOLE
+// #define RJ_ENABLE_ROBOT_CONSOLE
 
 using namespace std;
 
