@@ -69,7 +69,7 @@ else()
 endif()
 
 
-
+include_directories(${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(simulator common)
 qt5_use_modules(simulator Widgets Xml Core OpenGL Network)
 
