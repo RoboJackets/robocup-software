@@ -13,6 +13,9 @@ class TheirKickoff(standard_play.StandardPlay):
     # Distance from the center line we should mark from (the mark target distance from the line)
     Line_Buffer = constants.Robot.Radius * 3
 
+    # Distance from center to mark if no robot is found
+    DefaultDist = constants.Field.CenterDiameter
+
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -43,14 +46,14 @@ class TheirKickoff(standard_play.StandardPlay):
         # Don't select robots that are
         # 1. Not on our side of the field
         # 2. behind or inside the goal circle
-        mark_robot_right = list(filter(lambda robot: robot.pos.x >= (constants.Field.CenterRadius + constants.Robot.Radius * 2)
+        mark_robot_right = list(filter(lambda robot: robot.pos.x >= 0
                                        and not centerCircle.contains_point(robot.pos), their_robots))
 
         # Don't select robots that are
         # 1. Not on our side of the field
         # 2. behind or inside the goal circle
         # 3. Not the robot selected before
-        mark_robot_left = list(filter(lambda robot: robot.pos.x <= - (constants.Field.CenterRadius + constants.Robot.Radius * 2)
+        mark_robot_left = list(filter(lambda robot: robot.pos.x <= 0
                                       and not centerCircle.contains_point(robot.pos)
                                       and robot != mark_one.mark_robot, their_robots))
 
@@ -60,19 +63,18 @@ class TheirKickoff(standard_play.StandardPlay):
             mark_robot_left = None
             mark_robot_right = None
         elif len(mark_robot_left) + len(mark_robot_right) == 1:
-            mark_robot_left.extend(mark_robot_right)
             if len(mark_robot_left) == 1:
                 mark_robot_left = mark_robot_left[0]
+                mark_robot_right = None
             else:
+                mark_robot_right = mark_robot_right[0]
                 mark_robot_left = None
-            mark_robot_right = None
         elif len(mark_robot_left) == 0:
             mark_robot_left = mark_robot_right[1]
             mark_robot_right = mark_robot_right[0]
         elif len(mark_robot_right) == 0:
             mark_robot_right = mark_robot_left[0]
             mark_robot_left = mark_robot_left[1]
-
         # Else, everything can proceed as normal (pick best one from each side)
 
         # Make every element a list to normalize for the next step
@@ -83,19 +85,21 @@ class TheirKickoff(standard_play.StandardPlay):
 
         if mark_robot_right is not None:
             mark_robot_right = min(mark_robot_right, key=lambda robot: robot.pos.y).pos
-            mark_robot_right.y = min(constants.Field.Length / 2 - TheirKickoff.Line_Buffer,
-                                        mark_robot_right.y)
-            mark_one.mark_point = mark_robot_right
         else:
-            mark_one.mark_point = None
+            mark_robot_right = robocup.Point(TheirKickoff.DefaultDist, constants.Field.Length / 2)
+        mark_robot_right.y = min(constants.Field.Length / 2 - TheirKickoff.Line_Buffer,
+                                    mark_robot_right.y)
+        mark_robot_right.x = max(mark_robot_right.x, TheirKickoff.DefaultDist)
+        mark_one.mark_point = mark_robot_right
 
         if mark_robot_left is not None:
             mark_robot_left = min(mark_robot_left, key=lambda robot: robot.pos.y).pos
-            mark_robot_left.y = min(constants.Field.Length / 2 - TheirKickoff.Line_Buffer,
-                                    mark_robot_left.y)
-            mark_two.mark_point = mark_robot_left
         else:
-            mark_two.mark_point = None
+            mark_robot_left = robocup.Point(-TheirKickoff.DefaultDist, constants.Field.Length / 2)
+        mark_robot_left.y = min(constants.Field.Length / 2 - TheirKickoff.Line_Buffer,
+                                mark_robot_left.y)
+        mark_robot_left.x = min(mark_robot_left.x, -TheirKickoff.DefaultDist)
+        mark_two.mark_point = mark_robot_left
 
 
     @classmethod
