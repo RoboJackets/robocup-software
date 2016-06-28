@@ -118,7 +118,7 @@ class LineKick(skills._kick._Kick):
                                       "LineKick")
         for edge in [left_field_edge, right_field_edge]:
             if edge.near_point(main.ball().pos, field_edge_thresh):
-                intersection = behind_line.line_intersection(edge)
+                intersection = behind_line.segment_intersection(edge)
                 if intersection != None:
                     move_goal = intersection
 
