@@ -87,9 +87,9 @@ int main() {
     // Initialize and start ball sensor
     BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
     ballSense.start(10);
-    DigitalOut ballStatusPin(RJ_BALL_LED);
     ballSense.senseChangeCallback = [&](bool haveBall) {
         // invert value due to active-low wiring of led
+        static DigitalOut ballStatusPin(RJ_BALL_LED);
         ballStatusPin = !haveBall;
     };
 
