@@ -34,9 +34,9 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
       pivotVelMultiplier(new ConfigDouble(
           config, QString("%1/pivot/velMultiplier").arg(prefix))),
       velMultiplier(new ConfigDouble(
-          config, QString("%1/translation/velMultiplier").arg(prefix))),
+          config, QString("%1/translation/velMultiplier").arg(prefix), 1.0)),
       angleVelMultiplier(new ConfigDouble(
-          config, QString("%1/rotation/velMultiplier").arg(prefix))),
+          config, QString("%1/rotation/velMultiplier").arg(prefix), 1.0)),
       accelerationMultiplier(new ConfigDouble(
           config, QString("%1/translation/accelMultiplier").arg(prefix))),
       minEffectiveVelocity(new ConfigDouble(
@@ -44,7 +44,7 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
           0.3)),
       minEffectiveAngularSpeed(new ConfigDouble(
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
-          0.7)) {}
+          0.0)) {}
 
 RobotConfig::~RobotConfig() {}
 

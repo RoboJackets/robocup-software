@@ -1,29 +1,30 @@
-
-#include <QMutexLocker>
-#include <poll.h>
-
 #include <gameplay/GameplayModule.hpp>
-#include "Processor.hpp"
-#include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
-#include "modeling/BallTracker.hpp"
-#include <multicast.hpp>
+
+#include <poll.h>
+#include <QMutexLocker>
+
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Constants.hpp>
-#include <Utils.hpp>
-#include <joystick/Joystick.hpp>
-#include <joystick/GamepadJoystick.hpp>
-#include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
-#include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
-#include <planning/IndependentMultiRobotPathPlanner.hpp>
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/RadioRx.pb.h>
+#include <Utils.hpp>
 #include <git_version.hpp>
+// #include <joystick/GamepadJoystick.hpp>
+#include <joystick/Joystick.hpp>
+#include <joystick/GamepadController.hpp>
+#include <joystick/SpaceNavJoystick.hpp>
+#include <motion/MotionControl.hpp>
+#include <multicast.hpp>
+#include <planning/IndependentMultiRobotPathPlanner.hpp>
+#include "Processor.hpp"
+#include "modeling/BallTracker.hpp"
+#include "radio/SimRadio.hpp"
+#include "radio/USBRadio.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -69,7 +70,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _radio = nullptr;
 
     // joysticks
-    _joysticks.push_back(new GamepadJoystick());
+    _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
@@ -276,6 +277,7 @@ void Processor::run() {
                     break;
                 case Packet::RJ2015:
                     robot->config = robotConfig2015;
+                    break;
                 case Packet::Unknown:
                     robot->config =
                         robotConfig2011;  // FIXME: defaults to 2011 robots
@@ -405,8 +407,8 @@ void Processor::run() {
             bluename = _state.gameState.OurInfo.name;
             yellowname = _state.gameState.TheirInfo.name;
         } else {
-            yellowname = _state.gameState.OurInfo.name;
-            bluename = _state.gameState.TheirInfo.name;
+        yellowname = _state.gameState.OurInfo.name;
+          bluename = _state.gameState.TheirInfo.name;
         }
 
         _state.logFrame->set_team_name_blue(bluename);
@@ -730,11 +732,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-robot->angle);
-    } else {
-        // adjust for robot coordinate system (x axis points forward through
-        // the mouth of the bot)
-        translation.rotate(-M_PI / 2.0f);
+        translation.rotate(-M_PI/2 - robot->angle);
     }
 
     // translation
@@ -763,9 +761,9 @@ JoystickControlValues Processor::getJoystickControlValues() {
         if (joy->valid()) {
             JoystickControlValues newVals = joy->getJoystickControlValues();
 
-            if (newVals.dribble) vals.dribble = true;
-            if (newVals.kick) vals.kick = true;
-            if (newVals.chip) vals.chip = true;
+            vals.dribble |= newVals.dribble;
+            vals.kick |= newVals.kick;
+            vals.chip |= newVals.chip;
 
             vals.rotation += newVals.rotation;
             vals.translation += newVals.translation;
@@ -836,6 +834,7 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
+    _gameplayModule->updateFieldDimensions();
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }
