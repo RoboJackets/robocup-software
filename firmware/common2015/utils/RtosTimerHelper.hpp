@@ -26,6 +26,12 @@ public:
         _callback = callback;
     }
 
+    virtual ~RtosTimerHelper() {
+        stop();
+    }
+
+    RtosTimerHelper(const RtosTimerHelper& other) = delete;
+
 private:
     static void _timerFired(const void* instance) {
         RtosTimerHelper* thiss = const_cast<RtosTimerHelper*>(
