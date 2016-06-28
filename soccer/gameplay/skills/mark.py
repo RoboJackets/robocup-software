@@ -11,19 +11,22 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
         self._ratio = 0.9
         self._mark_line_thresh = 0.9
         self._mark_robot = None
+        self._mark_point = None
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             "immediately")
 
     def execute_running(self):
-        if self.mark_robot is None or not main.ball(
-        ).valid or not self.mark_robot.visible:
+        if self.mark_point is None and \
+           (self.mark_robot is None or
+            not main.ball().valid or
+            not self.mark_robot.visible):
             return
 
         ball_pos = main.ball().pos
         pos = self.robot.pos
-        mark_pos = self.mark_robot.pos
+        mark_pos = self.mark_point if self.mark_point is not None else self.mark_robot.pos
 
         mark_line_dir = (ball_pos - mark_pos).normalized()
         ball_mark_line = robocup.Segment(
@@ -41,11 +44,12 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
                 mark_pos -
                 ball_pos).normalized() * self.ratio * ball_mark_line.length()
 
-        main.system_state().draw_circle(self._mark_robot.pos,
+        main.system_state().draw_circle(mark_pos,
                                         constants.Robot.Radius * 1.2,
                                         (0, 127, 255), "Mark")
 
-        self.robot.approach_opponent(self.mark_robot.shell_id(), True)
+        if self.mark_robot is not None:
+            self.robot.approach_opponent(self.mark_robot.shell_id(), True)
         self.robot.move_to(target_point)
         self.robot.face(ball_pos)
 
@@ -64,6 +68,16 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
     @mark_line_thresh.setter
     def mark_line_thresh(self, value):
         self._mark_line_thresh = value
+
+
+    # Overrides mark_robot with a static point
+    @property
+    def mark_point(self):
+        return self._mark_point
+
+    @mark_point.setter
+    def mark_point(self, value):
+        self._mark_point = value
 
     @property
     def mark_robot(self):
