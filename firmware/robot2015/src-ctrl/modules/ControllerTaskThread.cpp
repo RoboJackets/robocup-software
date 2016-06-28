@@ -93,11 +93,11 @@ void Task_Controller(void const* args) {
     array<int16_t, 5> duty_cycles{};
 
     // pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
-    pidController.setPidValues(0.8, 0, 0);
+    pidController.setPidValues(0.2, 0, 0);
 
     // initialize timeout timer
     commandTimeoutTimer = make_unique<RtosTimerHelper>(
-        [&]() { commandTimedOut = true; }, osTimerPeriodic);
+        [&]() { commandTimedOut = true; }, osTimerOnce);
 
     while (true) {
         // imu.getGyro(gyroVals);
