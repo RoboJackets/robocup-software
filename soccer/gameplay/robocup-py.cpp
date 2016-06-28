@@ -496,6 +496,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("near_point", &Geometry2d::Point::nearPoint)
         .def("dist_to", &Geometry2d::Point::distTo)
         .def("direction", &Geometry2d::Point::direction)
+        .def("nearly_equals", &Geometry2d::Point::nearlyEquals)
         .staticmethod("direction");
 
     class_<Geometry2d::Line, Geometry2d::Line*>(
