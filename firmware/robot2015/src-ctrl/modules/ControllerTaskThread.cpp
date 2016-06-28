@@ -59,32 +59,32 @@ void Task_Controller(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-    MPU6050 imu(RJ_I2C_SDA, RJ_I2C_SCL);
+    // MPU6050 imu(RJ_I2C_SDA, RJ_I2C_SCL);
 
-    imu.setBW(MPU6050_BW_256);
-    imu.setGyroRange(MPU6050_GYRO_RANGE_250);
-    imu.setAcceleroRange(MPU6050_ACCELERO_RANGE_2G);
-    imu.setSleepMode(false);
+    // imu.setBW(MPU6050_BW_256);
+    // imu.setGyroRange(MPU6050_GYRO_RANGE_250);
+    // imu.setAcceleroRange(MPU6050_ACCELERO_RANGE_2G);
+    // imu.setSleepMode(false);
 
-    char testResp;
-    if ((testResp = imu.testConnection())) {
-        float resultRatio[6];
-        imu.selfTest(resultRatio);
-        LOG(INIT,
-            "IMU self test results:\r\n"
-            "    Accel (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)\r\n"
-            "    Gyro  (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)",
-            resultRatio[0], resultRatio[1], resultRatio[2], resultRatio[3],
-            resultRatio[4], resultRatio[5]);
-
-        LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
-            ((P_TCB)threadID)->task_id, threadPriority);
-    } else {
-        LOG(SEVERE,
-            "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
-            "sensorless control loop.",
-            testResp);
-    }
+    // char testResp;
+    // if ((testResp = imu.testConnection())) {
+    //     float resultRatio[6];
+    //     imu.selfTest(resultRatio);
+    //     LOG(INIT,
+    //         "IMU self test results:\r\n"
+    //         "    Accel (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)\r\n"
+    //         "    Gyro  (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)",
+    //         resultRatio[0], resultRatio[1], resultRatio[2], resultRatio[3],
+    //         resultRatio[4], resultRatio[5]);
+    //
+    //     LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
+    //         ((P_TCB)threadID)->task_id, threadPriority);
+    // } else {
+    //     LOG(SEVERE,
+    //         "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
+    //         "sensorless control loop.",
+    //         testResp);
+    // }
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
