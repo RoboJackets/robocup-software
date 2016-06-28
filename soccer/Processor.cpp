@@ -14,8 +14,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <git_version.hpp>
-#include <joystick/GamepadJoystick.hpp>
+// #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
+#include <joystick/GamepadController.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -69,7 +70,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _radio = nullptr;
 
     // joysticks
-    _joysticks.push_back(new GamepadJoystick());
+    _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
@@ -406,8 +407,8 @@ void Processor::run() {
             bluename = _state.gameState.OurInfo.name;
             yellowname = _state.gameState.TheirInfo.name;
         } else {
-            yellowname = _state.gameState.OurInfo.name;
-            bluename = _state.gameState.TheirInfo.name;
+        yellowname = _state.gameState.OurInfo.name;
+          bluename = _state.gameState.TheirInfo.name;
         }
 
         _state.logFrame->set_team_name_blue(bluename);
@@ -760,9 +761,9 @@ JoystickControlValues Processor::getJoystickControlValues() {
         if (joy->valid()) {
             JoystickControlValues newVals = joy->getJoystickControlValues();
 
-            if (newVals.dribble) vals.dribble = true;
-            if (newVals.kick) vals.kick = true;
-            if (newVals.chip) vals.chip = true;
+            vals.dribble |= newVals.dribble;
+            vals.kick |= newVals.kick;
+            vals.chip |= newVals.chip;
 
             vals.rotation += newVals.rotation;
             vals.translation += newVals.translation;
