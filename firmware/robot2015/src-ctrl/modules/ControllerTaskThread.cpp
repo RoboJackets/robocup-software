@@ -103,6 +103,7 @@ void Task_Controller(void const* args) {
 
     FPGA::Instance->motors_en(true);
 
+    duty_cycles[0] = 1;
     while (true) {
         // imu.getGyro(gyroVals);
         // imu.getAccelero(accelVals);
