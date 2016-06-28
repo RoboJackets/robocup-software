@@ -10,7 +10,7 @@ import main
 
 ## Robots position themselves along a portion of the circle centered at the ball
 class CircleOnCenter(composite_behavior.CompositeBehavior):
-    def __init__(self):
+    def __init__(self, min_robots=0):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
@@ -25,6 +25,9 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
                             lambda: not self.all_subbehaviors_completed(),
                             "robots aren't lined up")
 
+        self.min_robots = min_robots
+
+
         # Define circle to circle up on
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
 
@@ -35,11 +38,14 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         dirvec = (robocup.Point(0, 0) - ball_pos).normalized() * radius
 
         for i in range(6):
+            req = False
+            if i < min_robots:
+                req = True
             pt = ball_pos + dirvec
             self.add_subbehavior(
                 skills.move.Move(pt),
                 name="robot" + str(i),
-                required=False,
+                required=req,
                 priority=6 - i)
             dirvec.rotate(robocup.Point(0, 0), perRobot)
 
@@ -48,6 +54,8 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         for b in self.all_subbehaviors():
             if b.robot is not None:
                 num_robots += 1
+
+        num_robots = max(self.min_robots, num_robots)
 
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
 
