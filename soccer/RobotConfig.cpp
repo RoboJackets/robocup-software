@@ -40,7 +40,7 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
           0.3)),
       minEffectiveAngularSpeed(new ConfigDouble(
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
-          0.7)) {}
+          0.0)) {}
 
 RobotConfig::~RobotConfig() {}
 
