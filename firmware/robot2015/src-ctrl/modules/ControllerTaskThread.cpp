@@ -90,8 +90,6 @@ void Task_Controller(void const* args) {
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
     Thread::signal_wait(SUB_TASK_CONTINUE, osWaitForever);
 
-    FPGA::Instance->motors_en(true);
-
     array<int16_t, 5> duty_cycles{};
 
     // pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
@@ -101,7 +99,14 @@ void Task_Controller(void const* args) {
     commandTimeoutTimer = make_unique<RtosTimerHelper>(
         [&]() { commandTimedOut = true; }, osTimerOnce);
 
+    // initialize, reset watchdog
     FPGA::Instance->motors_en(true);
+    duty_cycles = {0,0,0,0,0};
+    FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+    duty_cycles = {1,1,1,1,1};
+    FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
+    duty_cycles = {0,0,0,0,0};
+    FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
 
     while (true) {
         // imu.getGyro(gyroVals);
@@ -110,14 +115,10 @@ void Task_Controller(void const* args) {
         // note: the 4th value is not an encoder value.  See the large comment
         // below for an explanation.
         array<int16_t, 5> enc_deltas{};
-        FPGA::Instance->motors_en(true);
 
         // zero out command if we haven't gotten an updated target in a while
         if (commandTimedOut) duty_cycles = {0, 0, 0, 0, 0};
 
-        FPGA::Instance->motors_en(true);
-
-        FPGA::Instance->motors_en(true);
         FPGA::Instance->set_duty_get_enc(duty_cycles.data(), duty_cycles.size(),
                                          enc_deltas.data(), enc_deltas.size());
 
