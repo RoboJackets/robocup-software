@@ -21,7 +21,6 @@
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
@@ -203,16 +202,18 @@ int main() {
     uint8_t battVoltage = 0;
 
     // Radio timeout timer
-    const uint32_t RADIO_TIMEOUT = 1000;
+    const uint32_t RADIO_TIMEOUT = 100;
     RtosTimerHelper radioTimeoutTimer([&]() {
-      // reset radio
-      global_radio->strobe(CC1201_STROBE_SIDLE);
-      global_radio->strobe(CC1201_STROBE_SFRX);
-      global_radio->strobe(CC1201_STROBE_SRX);
+        // reset radio
+        global_radio->strobe(CC1201_STROBE_SIDLE);
+        global_radio->strobe(CC1201_STROBE_SFRX);
+        global_radio->strobe(CC1201_STROBE_SRX);
 
-      radioTimeoutTimer.start(RADIO_TIMEOUT);
+        radioTimeoutTimer.start(RADIO_TIMEOUT);
+
+        printf("radio reset\r\n");
     }, osTimerOnce);
-
+    radioTimeoutTimer.start(RADIO_TIMEOUT);
 
     // Setup radio protocol handling
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
