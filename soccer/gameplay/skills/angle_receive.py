@@ -1,11 +1,7 @@
-import single_robot_behavior
-import behavior
 import robocup
 import constants
 import main
 import math
-import enum
-import time
 import skills.touch_ball
 import skills._kick
 import skills.pass_receive
@@ -18,12 +14,20 @@ import skills.pass_receive
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
 # Kick is a single_robot_behavior, so no need to import both
 class AngleReceive(skills.pass_receive.PassReceive):
+
+    # This is an adjuster to compensate for the fact that our max kick speed is not what we kick at at
+    # 100% kick power. MaxKickSpeed * KickPercentage = Actual KickSpeed at 100%
+
+    # This KickPercentage is foe the receiving robot
+    ToucherKickPercentage = 1.3
+
     def __init__(self):
         super().__init__(
             captureFunction=(lambda: skills.touch_ball.TouchBall()))
         self._target_point = None
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
+        self.ball_kicked = False
 
     ## The point that the receiver should expect the ball to hit it's mouth
     # Default: constants.Field.TheirGoalSegment.center()
@@ -77,7 +81,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
 
             # After kicking, apply angle calculations
             target_angle_rad = self.adjust_angle((self.target_point -
-                                                  self.robot.pos).angle())
+                                                    self.robot.pos).angle())
             # Removes angle adjustment
             # target_angle_rad = (self.target_point - self.robot.pos).angle()
 
@@ -98,7 +102,8 @@ class AngleReceive(skills.pass_receive.PassReceive):
                 (self.target_point - self.robot.pos).angle()) / 2
 
             self._kick_line = robocup.Line(self.receive_point,
-                                           self.target_point)
+                                            self.target_point)
+
 
         self._angle_facing = target_angle_rad
         angle_rad = self.robot.angle
@@ -121,15 +126,12 @@ class AngleReceive(skills.pass_receive.PassReceive):
         # self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
 
         # vector pointing down the pass line toward the kicker
-        pass_dir = (
-            self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
-
-        pos_error = self._target_pos - self.robot.pos
         self._x_error = self._target_pos.x - self.robot.pos.x
         self._y_error = self._target_pos.y - self.robot.pos.y
 
     def execute_running(self):
         super().execute_running()
+        self.recalculate()
 
         self.robot.face(self.robot.pos + robocup.Point(
             math.cos(self._angle_facing), math.sin(self._angle_facing)))
@@ -140,6 +142,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
     def execute_receiving(self):
         super().execute_receiving()
 
+        self.ball_kicked = True
         # Kick the ball!
         self.robot.kick(self.kick_power)
 
