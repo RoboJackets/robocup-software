@@ -160,7 +160,7 @@ void CC1201::setChannel(uint8_t chanNumber) {
     // in SmartRF studio and seeing how the FREQ{0,1,2} registers changed. If
     // other frequency-related config values are changed, these values will need
     // to be changed.
-    const uint32_t base = 5924454;
+    const uint32_t base = 6003096; // 916MHz
     const uint32_t spacing = 13107;
     uint32_t freq = base + spacing * chanNumber;
 
