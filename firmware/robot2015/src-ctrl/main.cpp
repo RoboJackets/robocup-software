@@ -202,11 +202,26 @@ int main() {
     AnalogIn batt(RJ_BATT_SENSE);
     uint8_t battVoltage = 0;
 
+    // Radio timeout timer
+    const uint32_t RADIO_TIMEOUT = 1000;
+    RtosTimerHelper radioTimeoutTimer([&]() {
+      // reset radio
+      global_radio->strobe(CC1201_STROBE_SIDLE);
+      global_radio->strobe(CC1201_STROBE_SFRX);
+      global_radio->strobe(CC1201_STROBE_SRX);
+
+      radioTimeoutTimer.start(RADIO_TIMEOUT);
+    }, osTimerOnce);
+
+
     // Setup radio protocol handling
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.setUID(robotShellID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
+      // reset timeout
+      radioTimeoutTimer.start(RADIO_TIMEOUT);
+
         // update target velocity from packet
         Task_Controller_UpdateTarget({
             (float)msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
