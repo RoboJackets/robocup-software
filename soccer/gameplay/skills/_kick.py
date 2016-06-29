@@ -24,6 +24,8 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
         self.shot_obstacle_ignoring_robots = []
 
+        self.aim_params = {}
+
     ## if True, uses the window evaluator to choose the best place to aim at target_segment
     # Default: True
     @property
@@ -75,6 +77,16 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     @property
     def aim_target_point(self):
         return self._aim_target_point
+
+    ## Generic compatibility with pivot_kick
+    # This method should be overriden if possible
+    def current_shot_point(self):
+        return self.aim_target_point
+
+    ## Generic compatibilty with pivot_kick
+    # This method should be overriden if possible
+    def is_steady(self):
+        return True
 
     ## we're aiming at a particular point on our target segment, what is this point?
     def recalculate_aim_target_point(self):
