@@ -21,13 +21,12 @@
 #include "commands.hpp"
 #include "fpga.hpp"
 #include "io-expander.hpp"
-#include "io-expander.hpp"
 #include "neostrip.hpp"
 #include "robot-devices.hpp"
 #include "task-signals.hpp"
 #include "HackedKickerBoard.hpp"
 
-// #define RJ_ENABLE_ROBOT_CONSOLE
+#define RJ_ENABLE_ROBOT_CONSOLE
 
 using namespace std;
 
@@ -118,7 +117,6 @@ int main() {
     FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
                               RJ_FPGA_PROG_B, RJ_FPGA_DONE);
     const bool fpgaInitialized = FPGA::Instance->configure("/local/rj-fpga.nib");
-    Thread::wait(100);
     uint8_t fpgaLastStatus = 0;
     bool fpgaError = false; // set based on status byte reading in main loop
 
@@ -182,7 +180,6 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread::wait(100);
     Thread controller_task(Task_Controller, mainID, osPriorityHigh,
                            DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
@@ -204,11 +201,26 @@ int main() {
     AnalogIn batt(RJ_BATT_SENSE);
     uint8_t battVoltage = 0;
 
+    // Radio timeout timer
+    const uint32_t RADIO_TIMEOUT = 100;
+    RtosTimerHelper radioTimeoutTimer([&]() {
+        // reset radio
+        global_radio->strobe(CC1201_STROBE_SIDLE);
+        global_radio->strobe(CC1201_STROBE_SFRX);
+        global_radio->strobe(CC1201_STROBE_SRX);
+
+        radioTimeoutTimer.start(RADIO_TIMEOUT);
+    }, osTimerOnce);
+    radioTimeoutTimer.start(RADIO_TIMEOUT);
+
     // Setup radio protocol handling
     RadioProtocol radioProtocol(CommModule::Instance, global_radio);
     radioProtocol.setUID(robotShellID);
     radioProtocol.start();
     radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
+      // reset timeout
+      radioTimeoutTimer.start(RADIO_TIMEOUT);
+
         // update target velocity from packet
         Task_Controller_UpdateTarget({
             (float)msg->bodyX / rtp::ControlMessage::VELOCITY_SCALE_FACTOR,
