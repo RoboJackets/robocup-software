@@ -18,9 +18,6 @@ class AngleReceive(skills.pass_receive.PassReceive):
     # This is an adjuster to compensate for the fact that our max kick speed is not what we kick at at
     # 100% kick power. MaxKickSpeed * KickPercentage = Actual KickSpeed at 100%
 
-    # This KickPercentage is foe the receiving robot
-    ToucherKickPercentage = 1.3
-
     def __init__(self):
         super().__init__(
             captureFunction=(lambda: skills.touch_ball.TouchBall()))
@@ -28,6 +25,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
         self.ball_kicked = False
+        self.target_angle = 0
 
     ## The point that the receiver should expect the ball to hit it's mouth
     # Default: constants.Field.TheirGoalSegment.center()
@@ -106,6 +104,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
 
 
         self._angle_facing = target_angle_rad
+        self.target_angle = target_angle_rad
         angle_rad = self.robot.angle
         self._angle_error = target_angle_rad - angle_rad
 
