@@ -93,7 +93,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
                 if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(30)) {
                     return AngleInstant(angleToPivotTarget);
                 } else {
-                    return AngleInstant(instant.pos.angleTo(pivotPoint));
+                    return AngleInstant(angleToPivotTarget);
                 }
             };
         return make_unique<AngleFunctionPath>(move(path), function);

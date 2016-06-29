@@ -136,7 +136,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
         #multiplier = 1.5
         #aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(\).vel
-        approach = bot2ball * Capture.FineApproachSpeed
+        approach = bot2ball * Capture.FineApproachSpeed + main.ball().vel
         #if (aproach.mag() > 1):
         #    aproach = aproach.normalized() * 1
         self.robot.set_world_vel(approach)
