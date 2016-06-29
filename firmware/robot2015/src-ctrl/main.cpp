@@ -210,8 +210,6 @@ int main() {
         global_radio->strobe(CC1201_STROBE_SRX);
 
         radioTimeoutTimer.start(RADIO_TIMEOUT);
-
-        printf("radio reset\r\n");
     }, osTimerOnce);
     radioTimeoutTimer.start(RADIO_TIMEOUT);
 
