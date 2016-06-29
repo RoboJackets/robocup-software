@@ -45,12 +45,7 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
-        if main.ball().vel.mag() > 0.25 \
-            and self.robot.pos.dist_to(main.ball().pos) > 0.2:
-            # ball's moving, get on the side it's moving towards
-            return main.ball().vel.normalized()
-        else:
-            return (self.robot.pos - main.ball().pos).normalized()
+        return main.ball().vel.normalized()
 
     ## A touch is different from a capture in that we should try to keep our
     # distance from the ball if possible, and move forward to hit the ball at
