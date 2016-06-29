@@ -2,8 +2,13 @@
 
 #include <cmath>
 
-#define DegreesToRadians(x) (float)((x)*M_PI / 180.f)
-#define RadiansToDegrees(x) (float)((x)*180.f / M_PI)
+constexpr float DegreesToRadians(float x) {
+    return (x)*M_PI / 180.f;
+}
+
+constexpr float RadiansToDegrees(float x) {
+    return (x)*180.f / M_PI;
+}
 
 template <typename T>
 static inline T sign(T f) {

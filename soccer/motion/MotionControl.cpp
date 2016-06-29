@@ -185,15 +185,18 @@ void MotionControl::stopped() {
 }
 
 void MotionControl::_targetAngleVel(float angleVel) {
+    // velocity multiplier
+    angleVel *= *_robot->config->angleVelMultiplier;
+  
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
-    // float minEffectiveAngularSpeed =
-    // *_robot->config->minEffectiveAngularSpeed;
-    // if (std::abs(angleVel) < minEffectiveAngularSpeed) {
-    //     angleVel =
-    //         angleVel > 0 ? minEffectiveAngularSpeed :
-    //         -minEffectiveAngularSpeed;
-    // }
+     float minEffectiveAngularSpeed =
+     *_robot->config->minEffectiveAngularSpeed;
+     if (std::abs(angleVel) < minEffectiveAngularSpeed) {
+         angleVel =
+             angleVel > 0 ? minEffectiveAngularSpeed :
+             -minEffectiveAngularSpeed;
+     }
 
     // the robot firmware still speaks degrees, so that's how we send it over
     _robot->control->set_avelocity(angleVel);
@@ -222,6 +225,9 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     // track these values so we can limit acceleration
     _lastVelCmd = targetVel;
     _lastCmdTime = RJ::timestamp();
+
+    // velocity multiplier
+    targetVel *= *_robot->config->velMultiplier;
 
     // if the velocity is nonzero, make sure it's not so small that the robot
     // doesn't even move
