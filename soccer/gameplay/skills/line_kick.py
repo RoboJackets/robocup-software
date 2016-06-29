@@ -11,7 +11,7 @@ import role_assignment
 # this differs from PivotKick which gets the ball first, then aims
 # Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes
 class LineKick(skills._kick._Kick):
-    ClosenessThreshold = constants.Robot.Radius + 0.04
+    ClosenessThreshold = constants.Robot.Radius*3 + 0.04
 
     class State(enum.Enum):
         setup = 1
@@ -36,6 +36,7 @@ class LineKick(skills._kick._Kick):
 
     def execute_running(self):
         super().execute_running()
+        self.robot.disable_avoid_ball()
         self.robot.line_kick(self.aim_target_point)
 
         if main.ball().pos.dist_to(
