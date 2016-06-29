@@ -194,7 +194,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 self._has_renegotiated_receive_point = True
 
     def preparing_timeout_exceeded(self):
-        if self._preparing_start == None or self._preparing_start <= 0:
+        if self._preparing_start == None or self.preparing_timeout == None or self.preparing_timeout <= 0:
             return False
         if time.time() - self._preparing_start > self.preparing_timeout:
             return True
