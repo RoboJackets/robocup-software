@@ -34,7 +34,7 @@ void usage(const char* prog) {
             "'soccer/gameplay/playbooks/'\n");
     fprintf(stderr, "\t-ng:         no goalie\n");
     fprintf(stderr, "\t-sim:        use simulator\n");
-    fprintf(stderr, "\t-freq:       specify radio frequency (906 or 904)\n");
+    fprintf(stderr, "\t-freq:       specify radio frequency (918 or 916)\n");
     fprintf(stderr, "\t-nolog:      don't write log files\n");
     fprintf(stderr, "\t-noref:      don't use external referee commands\n");
     exit(1);
@@ -168,10 +168,10 @@ int main(int argc, char* argv[]) {
     }
 
     if (!radioFreq.isEmpty()) {
-        if (radioFreq == "904")
-            win->setRadioChannel(RadioChannels::MHz_904);
-        else if (radioFreq == "906")
-            win->setRadioChannel(RadioChannels::MHz_906);
+        if (radioFreq == "916")
+            win->setRadioChannel(RadioChannels::MHz_916);
+        else if (radioFreq == "918")
+            win->setRadioChannel(RadioChannels::MHz_918);
         else
             printf("Cannot recognize radio frequency : %s\n",
                    radioFreq.toStdString().c_str());
