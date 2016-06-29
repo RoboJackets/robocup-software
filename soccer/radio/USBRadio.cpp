@@ -236,13 +236,17 @@ void USBRadio::send(Packet::RadioTx& packet) {
         libusb_bulk_transfer(_device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
                              sizeof(forward_packet), &sent, Control_Timeout);
     if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet)) {
-        fprintf(stderr, "USBRadio: Bulk write failed\n");
+        fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %d\n", sent, sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
             fprintf(stderr, "  Error: '%s'\n",
                     libusb_error_name(transferRetCode));
 
-        libusb_close(_device);
-        _device = nullptr;
+        int ret = libusb_clear_halt(_device, LIBUSB_ENDPOINT_OUT | 2);
+        if (ret != 0) {
+            printf("tried to clear halt, error = %s\n. closing device", libusb_error_name(ret));
+            libusb_close(_device);
+            _device = nullptr;
+        }
     }
 }
 
