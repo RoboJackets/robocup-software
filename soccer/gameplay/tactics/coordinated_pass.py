@@ -29,6 +29,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         preparing = 1  # the kicker is aiming and the receiver is getting ready
         kicking = 2  # waiting for the kicker to kick
         receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
+        timeout = 4
 
     ## Init method for CoordinatedPass
     # @param skillreceiver an instance of a class that will handle the receiving robot. See pass_receive and angle_receive for examples.
@@ -40,7 +41,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def __init__(self,
                  receive_point=None,
                  skillreceiver=None,
-                 skillkicker=None):
+                 skillkicker=None,
+                 preparing_timeout=None):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -56,9 +58,16 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
         self.skillkicker = skillkicker
+        self.preparing_timeout = preparing_timeout
 
-        for state in CoordinatedPass.State:
-            self.add_state(state, behavior.Behavior.State.running)
+        self.add_state(CoordinatedPass.State.preparing,
+                       behavior.Behavior.State.running)
+        self.add_state(CoordinatedPass.State.kicking,
+                       behavior.Behavior.State.running)
+        self.add_state(CoordinatedPass.State.receiving,
+                       behavior.Behavior.State.running)
+        self.add_state(CoordinatedPass.State.timeout,
+                       behavior.Behavior.State.failed)
 
         self.add_transition(behavior.Behavior.State.start,
                             CoordinatedPass.State.preparing, lambda: True,
@@ -68,6 +77,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
             lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state) and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
+
+        self.add_transition(
+            CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
+            lambda: self.preparing_timeout_exceeded(), 'Timed out on prepare')
 
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.receiving,
@@ -136,6 +149,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self._last_unsteady_time = None
         self._has_renegotiated_receive_point = False
 
+        self._preparing_start = time.time()
+
     def execute_running(self):
         # The shot obstacle doesn't apply to the receiver
         if self.has_subbehavior_with_name('kicker'):
@@ -177,6 +192,13 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 logging.info("Pass renegotiated RCV PT")
                 self.receive_point = kicker.current_shot_point()
                 self._has_renegotiated_receive_point = True
+
+    def preparing_timeout_exceeded(self):
+        if self._preparing_start == None or self._preparing_start <= 0:
+            return False
+        if time.time() - self._preparing_start > self.preparing_timeout:
+            return True
+        return False
 
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
