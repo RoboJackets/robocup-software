@@ -4,12 +4,13 @@
 #include <RobotConfig.hpp>
 #include <Robot.hpp>
 #include <Geometry2d/Polygon.hpp>
+#include <Geometry2d/Line.hpp>
 #include "planning/Path.hpp"
 
 using namespace Packet;
 using namespace std;
 using namespace Planning;
-
+using namespace Geometry2d;
 using Planning::MotionInstant;
 
 class BallPath : public Planning::Path {
@@ -84,6 +85,19 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     auto distance = s0 *-3.43289f * (part - 1.0f);
 
     return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
+}
+
+RJ::Time Ball::estimateTimeTo(const Geometry2d::Point &point, Geometry2d::Point *nearPointOut) const {
+    Line line(pos, pos + vel);
+    auto nearPoint = line.nearestPoint(point);
+    if (nearPointOut) {
+        *nearPointOut = nearPoint;
+    }
+    auto dist = nearPoint.distTo(pos);
+    // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
+    // (d + v0 * -3.43289) / (v0 * -3.43289)= e^(-0.2913 t))
+    auto part = vel.mag() * -3.43289;
+    return time + RJ::SecsToTimestamp(std::log((dist + part)/part)/-0.2913);
 }
 
 SystemState::SystemState() {

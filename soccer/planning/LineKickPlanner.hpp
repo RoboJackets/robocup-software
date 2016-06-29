@@ -21,6 +21,10 @@ private:
     bool shouldReplan(const SinglePlanRequest& planRequest) const;
     RRTPlanner rrtPlanner;
 
+    //boost::optional<std::vector<CubicBezierControlPoints>> approachBezier;
+    //std::unique_ptr<InterpolatedPath> approachPath;
+    bool finalApproach=false;
+    boost::optional<Geometry2d::Point>  targetKickPos;
 };
 
 }  // namespace Planning
