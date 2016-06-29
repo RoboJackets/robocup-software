@@ -81,9 +81,9 @@ class LineKickReceive(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             behavior.Behavior.State.completed,
                             lambda: self.robot.has_ball(), 'ball received!')
 
-        self.add_transition(
-            LineKickReceive.State.receiving, behavior.Behavior.State.failed,
-            lambda: self.check_failure(), 'ball missed :(')
+        #self.add_transition(
+        #    LineKickReceive.State.receiving, behavior.Behavior.State.failed,
+        #    lambda: self.check_failure(), 'ball missed :(')
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
     # Default: False
