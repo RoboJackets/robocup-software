@@ -99,15 +99,6 @@ void Task_Controller(void const* args) {
     commandTimeoutTimer = make_unique<RtosTimerHelper>(
         [&]() { commandTimedOut = true; }, osTimerOnce);
 
-    // initialize, reset watchdog
-    FPGA::Instance->motors_en(true);
-    duty_cycles = {0,0,0,0,0};
-    FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-    duty_cycles = {1,1,1,1,1};
-    FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-    duty_cycles = {0,0,0,0,0};
-    FPGA::Instance->set_duty_cycles(duty_cycles.data(), duty_cycles.size());
-
     duty_cycles[0] = 1;
     while (true) {
         // imu.getGyro(gyroVals);

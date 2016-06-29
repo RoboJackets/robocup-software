@@ -118,7 +118,6 @@ int main() {
     FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
                               RJ_FPGA_PROG_B, RJ_FPGA_DONE);
     const bool fpgaInitialized = FPGA::Instance->configure("/local/rj-fpga.nib");
-    Thread::wait(100);
     uint8_t fpgaLastStatus = 0;
     bool fpgaError = false; // set based on status byte reading in main loop
 
@@ -182,7 +181,6 @@ int main() {
     // a multi-core system.
 
     // Start the thread task for the on-board control loop
-    Thread::wait(100);
     Thread controller_task(Task_Controller, mainID, osPriorityHigh,
                            DEFAULT_STACK_SIZE / 2);
     Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
