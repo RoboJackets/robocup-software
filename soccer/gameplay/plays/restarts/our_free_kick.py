@@ -22,8 +22,10 @@ class OurFreeKick(standard_play.StandardPlay):
 
         if indirect != None:
             self.indirect = indirect
-        else:
+        elif main.ball().pos.y > constants.Field.Length / 2.0:
             self.indirect = gs.is_indirect()
+        else:
+            self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
