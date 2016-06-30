@@ -457,12 +457,12 @@ void Processor::run() {
                 std::vector<Planning::DynamicObstacle> dynamicObstacles =
                     r->collectDynamicObstacles();
 
-                requests[r->shell()] = Planning::PlanRequest(
-                    Planning::MotionInstant(r->pos, r->vel),
+                requests.emplace(r->shell(),
+                    Planning::PlanRequest(_state, Planning::MotionInstant(r->pos, r->vel),
                     r->motionCommand()->clone(), r->robotConstraints(),
                     std::move(r->angleFunctionPath.path),
                     std::move(staticObstacles), std::move(dynamicObstacles),
-                    r->getPlanningPriority());
+                    r->getPlanningPriority()));
             }
         }
 

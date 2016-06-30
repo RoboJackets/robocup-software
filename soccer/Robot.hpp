@@ -203,6 +203,10 @@ public:
     void stop();
 
     /**
+     * Line Kick
+     */
+    void lineKick(Geometry2d::Point target);
+    /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
