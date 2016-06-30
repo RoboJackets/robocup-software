@@ -452,7 +452,8 @@ void Processor::run() {
 
                 // create and visualize obstacles
                 Geometry2d::ShapeSet staticObstacles =
-                    r->collectStaticObstacles(globalObstaclesForBot);
+                    r->collectStaticObstacles(globalObstaclesForBot,
+                                              !(r->shell() == _gameplayModule->goalieID() || r->isPenaltyKicker || r->isBallPlacer));
 
                 std::vector<Planning::DynamicObstacle> dynamicObstacles =
                     r->collectDynamicObstacles();

@@ -431,8 +431,11 @@ std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
 }
 
 Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
-    const Geometry2d::ShapeSet& globalObstacles) {
-    Geometry2d::ShapeSet fullObstacles(_local_obstacles);
+    const Geometry2d::ShapeSet& globalObstacles, bool localObstacles) {
+    Geometry2d::ShapeSet fullObstacles{};
+    if (localObstacles) {
+        fullObstacles=_local_obstacles;
+    }
 
     fullObstacles.add(globalObstacles);
 
