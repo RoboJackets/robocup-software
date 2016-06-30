@@ -92,8 +92,8 @@ void Task_Controller(void const* args) {
 
     array<int16_t, 5> duty_cycles{};
 
-    // pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
-    pidController.setPidValues(0.2, 0, 0);
+    pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
+    //pidController.setPidValues(0.2, 0, 0);
 
     // initialize timeout timer
     commandTimeoutTimer = make_unique<RtosTimerHelper>(
@@ -136,7 +136,7 @@ void Task_Controller(void const* args) {
          *     time_precision = 6.94us
          *
          */
-        const float dt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
+        const float dt = enc_deltas.back() * 256 * (1 / 18.432e6f);
 
         // take first 4 encoder deltas
         array<int16_t, 4> driveMotorEnc;
