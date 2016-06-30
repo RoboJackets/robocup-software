@@ -1893,8 +1893,8 @@ p, li { white-space: pre-wrap; }
      <property name="title">
       <string>&amp;Radio channel</string>
      </property>
-     <addaction name="action916MHz"/>
-     <addaction name="action918MHz"/>
+     <addaction name="action904MHz"/>
+     <addaction name="action906MHz"/>
     </widget>
     <widget class="QMenu" name="menuVision_Channel">
      <property name="title">
@@ -2143,7 +2143,7 @@ p, li { white-space: pre-wrap; }
     <string>&amp;Stop Robots</string>
    </property>
   </action>
-  <action name="action916MHz">
+  <action name="action904MHz">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -2151,15 +2151,15 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>916MHz</string>
+    <string>904MHz</string>
    </property>
   </action>
-  <action name="action918MHz">
+  <action name="action906MHz">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>918MHz</string>
+    <string>906MHz</string>
    </property>
   </action>
   <action name="actionDampedRotation">

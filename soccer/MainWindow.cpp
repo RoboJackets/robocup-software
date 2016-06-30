@@ -875,23 +875,23 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
     _processor->useOpponentHalf(value);
 }
 
-void MainWindow::on_action916MHz_triggered() {
+void MainWindow::on_action904MHz_triggered() {
     channel(0);
-    _ui.action916MHz->setChecked(true);
-    _ui.action918MHz->setChecked(false);
+    _ui.action904MHz->setChecked(true);
+    _ui.action906MHz->setChecked(false);
 }
 
-void MainWindow::on_action918MHz_triggered() {
+void MainWindow::on_action906MHz_triggered() {
     channel(1);
-    _ui.action916MHz->setChecked(false);
-    _ui.action918MHz->setChecked(true);
+    _ui.action904MHz->setChecked(false);
+    _ui.action906MHz->setChecked(true);
 }
 
 void MainWindow::channel(int n) {
     if (_processor && _processor->radio()) {
         _processor->radio()->channel(n);
     }
-    _ui.radioLabel->setText(QString("%1MHz").arg(916.0 + 0.2 * n, 0, 'f', 1));
+    _ui.radioLabel->setText(QString("%1MHz").arg(904.0 + 0.2 * n, 0, 'f', 1));
 }
 
 // Simulator commands
@@ -1251,11 +1251,11 @@ void MainWindow::on_savePlaybook_clicked() {
 
 void MainWindow::setRadioChannel(RadioChannels channel) {
     switch (channel) {
-        case RadioChannels::MHz_916:
-            this->on_action916MHz_triggered();
+        case RadioChannels::MHz_904:
+            this->on_action904MHz_triggered();
             break;
-        case RadioChannels::MHz_918:
-            this->on_action918MHz_triggered();
+        case RadioChannels::MHz_906:
+            this->on_action906MHz_triggered();
             break;
     }
 }
