@@ -90,7 +90,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
                 auto angleToPivot = instant.pos.angleTo(pivotPoint);
                 auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
 
-                if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(30)) {
+                if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(10)) {
                     return AngleInstant(angleToPivotTarget);
                 } else {
                     return AngleInstant(angleToPivotTarget);
