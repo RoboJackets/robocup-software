@@ -192,7 +192,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     path->setDebugText("Gives ups");
 
 
-    return make_unique<AngleFunctionPath>(std::move(path), angleFunctionForCommandType(FacePointCommand(command.target)));
     targetKickPos = boost::none;
+    return make_unique<AngleFunctionPath>(std::move(path), angleFunctionForCommandType(FacePointCommand(command.target)));
 }
 }
