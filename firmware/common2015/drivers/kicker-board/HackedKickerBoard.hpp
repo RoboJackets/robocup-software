@@ -12,8 +12,9 @@ public:
           }
 
     void kick(uint8_t power) {
-        // TODO: convert from power to kick duration better
-        _kickTimer.start(power);
+        // power = 255 corresponds to 8ms kick time.  Everything lower is linearly scaled
+        uint8_t time = (float)power / 255.0f * 8.0f;
+        _kickTimer.start(time);
 
         _kickLine = 1;
     }
