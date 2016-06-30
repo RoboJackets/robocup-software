@@ -6,6 +6,7 @@
    <i_windup value="5"/>
    <d value="3"/>
    <velMultiplier value="1.42"/>
+   <minEffectiveVelocity value="0.0"/>
    <accelMultiplier value="8.4"/>
   </translation>
   <rotation>

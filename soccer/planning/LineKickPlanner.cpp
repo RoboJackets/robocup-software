@@ -100,12 +100,14 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
         unique_ptr<Path> path;
         if (std::abs(target.vel.angleBetween((target.pos - startInstant.pos))) > DegreesToRadians(50)) {
             target.pos -= target.vel.normalized(ballAvoidDistance * 3.0f + Robot_Radius);
-            auto request = SinglePlanRequest(startInstant, PathTargetCommand(target),
+            auto command = PathTargetCommand(target);
+            auto request = SinglePlanRequest(startInstant, command,
                                             robotConstraints, ballObstacles, dynamicObstacles, systemState,
                                             std::move(prevPath));
             path = rrtPlanner.run(request);
         } else {
-            auto request = SinglePlanRequest(startInstant, PathTargetCommand(target),
+            auto command = PathTargetCommand(target);
+            auto request = SinglePlanRequest(startInstant, command,
                                             robotConstraints, obstacles, dynamicObstacles, systemState,
                                             std::move(prevPath));
             path = rrtPlanner.run(request);
@@ -185,7 +187,8 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     //obstacles.add(make_shared<Circle>(target.pos, ballAvoidDistance));
     auto ballPath = ball.path(RJ::timestamp());
     dynamicObstacles.push_back(DynamicObstacle(ballPath.get(), Ball_Radius));
-    auto request = SinglePlanRequest(startInstant, PathTargetCommand(target),
+    auto rrtCommand = PathTargetCommand(target);
+    auto request = SinglePlanRequest(startInstant, rrtCommand,
                                      robotConstraints, obstacles, dynamicObstacles, systemState,
                                      std::move(prevPath));
     auto path = rrtPlanner.run(request);
