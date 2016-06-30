@@ -19,7 +19,7 @@ class TestPivotKick(play.Play):
 
         kick = skills.pivot_kick.PivotKick()
         kick.target = constants.Field.OurGoalSegment
-        kick.aim_params['desperate_timeout'] = 3
+        kick.aim_params['desperate_timeout'] = 5
         self.add_subbehavior(kick, 'kick', required=False)
 
     def execute_running(self):

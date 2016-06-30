@@ -154,6 +154,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
     def execute_kicking(self):
         self.set_aim_params()
+        vel = (self.aim_target_point - self.robot.pos).normalized(0.5);
+        self.robot.set_world_vel(vel);
         if self.use_chipper and self.robot.has_chipper():
             self.robot.chip(self.chip_power)
         else:

@@ -2,6 +2,7 @@
 #include "LogUtils.hpp"
 #include "Utils.hpp"
 #include <protobuf/LogFrame.pb.h>
+#include "SystemState.hpp"
 
 #include <stdexcept>
 
@@ -177,6 +178,10 @@ void InterpolatedPath::draw(SystemState* const state,
                             const QString& layer = "Motion") const {
     Packet::DebugRobotPath* dbg = state->logFrame->add_debug_robot_paths();
     dbg->set_layer(state->findDebugLayer(layer));
+
+    if (waypoints.size() <= 1) {
+        return;
+    }
 
     for (const Entry& entry : waypoints) {
         Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg->add_points();
@@ -358,4 +363,13 @@ unique_ptr<Path> InterpolatedPath::clone() const {
     return std::unique_ptr<Path>(cp);
 }
 
+void InterpolatedPath::slow(float multiplier, float timeInto) {
+    for (auto &waypoint: waypoints) {
+        waypoint.vel() /= multiplier;
+        waypoint.time *= multiplier;
+    }
+    float newTimeInto = timeInto * multiplier;
+    RJ::Time now = startTime() + RJ::SecsToTimestamp(timeInto);
+    setStartTime(now - RJ::SecsToTimestamp(newTimeInto));
+}
 }  // namespace Planning

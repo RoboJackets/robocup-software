@@ -186,7 +186,7 @@
  </ChipCalibration>
  <MotionControl>
   <Max_Acceleration value="1.5"/>
-  <Max_Velocity value="3"/>
+  <Max_Velocity value="1"/>
   <PathJitterCompensationFactor value="2"/>
   <PathChangeBoost value="50"/>
  </MotionControl>
@@ -201,8 +201,8 @@
   <Field_Edge_Obstacle value="0.33"/>
  </PathPlanner>
  <MotionConstraints>
-  <Max_Acceleration value="1"/>
-  <Max_Velocity value="2"/>
+  <Max_Acceleration value="0.5"/>
+  <Max_Velocity value="1.5"/>
   <Max_Angle_Speed value="0.436"/>
   <Replan_Threshold value="0.2"/>
   <Replan_Lead_Time value="0"/>
@@ -214,16 +214,16 @@
    <i_windup value="0"/>
    <accelMultiplier value="0"/>
    <d value="0"/>
-   <velMultiplier value="0.4"/>
-   <minEffectiveVelocity value="0.05"/>
+   <velMultiplier value="1.5"/>
+   <minEffectiveVelocity value="0.1"/>
   </translation>
   <rotation>
-   <p value="0.1"/>
+   <p value="2"/>
    <i value="0"/>
    <i_windup value="0"/>
    <d value="0.05"/>
    <velMultiplier value="1"/>
-   <minEffectiveAngularSpeed value="0.05"/>
+   <minEffectiveAngularSpeed value="0.1"/>
   </rotation>
   <kicker>
    <maxKick value="255"/>
@@ -265,7 +265,7 @@
   <goalChangeThreshold value="0.09"/>
  </EscapeObstaclesPathPlanner>
  <RotationConstraints>
-  <Max_Rotation_Speed value="2"/>
+  <Max_Rotation_Speed value="1"/>
   <Max_Rotation_Acceleration value="2"/>
  </RotationConstraints>
  <Pivot>

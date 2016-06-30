@@ -13,10 +13,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.4
+    CourseApproachDist = 0.3
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
-    FineApproachSpeed = 0.2
+    FineApproachSpeed = 0.15
 
     InFrontOfBallCosOfAngleThreshold = 0.95
 
@@ -134,13 +134,12 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         # TODO(ashaw596): explain this math a bit
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        multiplier = 1.5
-        aproach = self.bot_to_ball(
-        ) * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(
-        ).vel
-        if (aproach.mag() > 1):
-            aproach = aproach.normalized() * 1
-        self.robot.set_world_vel(aproach)
+        #multiplier = 1.5
+        #aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(\).vel
+        approach = bot2ball * Capture.FineApproachSpeed + main.ball().vel + self.bot_to_ball()
+        #if (aproach.mag() > 1):
+        #    aproach = aproach.normalized() * 1
+        self.robot.set_world_vel(approach)
 
     def role_requirements(self):
         reqs = super().role_requirements()

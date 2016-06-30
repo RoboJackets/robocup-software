@@ -1,9 +1,25 @@
+
 #pragma once
 
 #include <cmath>
 
-#define DegreesToRadians(x) (float)((x)*M_PI / 180.f)
-#define RadiansToDegrees(x) (float)((x)*180.f / M_PI)
+#ifndef M_PI
+#define M_PI 3.141592653589793
+#endif
+#ifndef M_PI_2
+#define M_PI_2 1.570796326794897
+#endif
+#ifndef M_E
+#define M_E 2.718281828459045
+#endif
+
+constexpr float DegreesToRadians(float x) {
+    return (x)*M_PI / 180.f;
+}
+
+constexpr float RadiansToDegrees(float x) {
+    return (x)*180.f / M_PI;
+}
 
 template <typename T>
 static inline T sign(T f) {

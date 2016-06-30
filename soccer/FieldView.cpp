@@ -513,7 +513,7 @@ void FieldView::drawText(QPainter& p, QPointF pos, QString text, bool center) {
     p.save();
     p.translate(pos);
     p.rotate(_textRotation);
-    p.scale(0.008, -0.008);
+    p.scale(0.016, -0.016);
 
     if (center) {
         int flags = Qt::AlignHCenter | Qt::AlignVCenter;

@@ -20,7 +20,7 @@ TEST(EscapeObstaclesPathPlanner, run) {
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
     SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, nullptr);
+                              dynamicObstacles, SystemState(), nullptr);
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
