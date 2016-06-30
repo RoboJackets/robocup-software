@@ -203,6 +203,10 @@ public:
     void stop();
 
     /**
+     * Line Kick
+     */
+    void lineKick(Geometry2d::Point target);
+    /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
@@ -329,7 +333,7 @@ public:
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
     Geometry2d::ShapeSet collectStaticObstacles(
-        const Geometry2d::ShapeSet& globalObstacles);
+        const Geometry2d::ShapeSet& globalObstacles, bool localObstacles = true);
 
     Geometry2d::ShapeSet collectAllObstacles(
         const Geometry2d::ShapeSet& globalObstacles);
@@ -431,6 +435,8 @@ public:
      */
     int8_t getPlanningPriority() { return _planningPriority; }
 
+
+    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 protected:
     MotionControl* _motionControl;
 
@@ -447,7 +453,6 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RobotConstraints _robotConstraints;
 
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 
     /**
      * Creates a set of obstacles from a given robot team mask,

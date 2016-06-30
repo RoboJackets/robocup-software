@@ -2,13 +2,16 @@
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <SystemState.hpp>
 #include "MotionInstant.hpp"
+#include "Utils.hpp"
 
 #include <boost/optional.hpp>
 #include <QColor>
 #include <QString>
 
+#include "DynamicObstacle.hpp"
+
+class SystemState;
 namespace Planning {
 
 class ConstPathIterator;
@@ -90,11 +93,19 @@ public:
      */
     virtual std::unique_ptr<Path> clone() const = 0;
 
+    virtual void setDebugText(QString string) {
+        _debugText = std::move(string);
+    }
+
+    virtual void drawDebugText(SystemState* state,
+                               const QColor& color = Qt::darkCyan,
+                               const QString& layer = "PathDebugText") const;
+
     /// The time the path starts at
     virtual RJ::Time startTime() const { return _startTime; }
     virtual void setStartTime(RJ::Time t) { _startTime = t; }
 
-    virtual bool pathsIntersect(const std::vector<const Path*>& paths,
+    virtual bool pathsIntersect(const std::vector<DynamicObstacle>& paths,
                                 float* hitTime, Geometry2d::Point* hitLocation,
                                 RJ::Time startTime) const;
 
@@ -103,6 +114,7 @@ public:
 
 protected:
     RJ::Time _startTime;
+    boost::optional<QString> _debugText;
 };
 
 /**
@@ -225,8 +237,20 @@ public:
                                                    angleFunction);
     }
 
-    virtual RJ::Time startTime() const override { return path->startTime(); }
+    virtual RJ::Time startTime() const override {
+        assert(path != nullptr);
+        return path->startTime();
+    }
     virtual void setStartTime(RJ::Time t) override { path->setStartTime(t); }
+    virtual void setDebugText(QString string) override {
+        path->setDebugText(std::move(string));
+    }
+
+    virtual void drawDebugText(
+        SystemState* state, const QColor& color = Qt::darkCyan,
+        const QString& layer = "PathDebugText") const override {
+        path->drawDebugText(state, color, layer);
+    }
 };
 
 class EmptyPath : public Path {

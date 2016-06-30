@@ -1,7 +1,7 @@
 #include "RJBaseUSBDevice.hpp"
-#include "logger.hpp"
 #include <USBDescriptor.h>
 #include <USBDevice_Types.h>
+#include "logger.hpp"
 #include "usb-interface.hpp"
 
 bool RJBaseUSBDevice::USBCallback_setConfiguration(uint8_t configuration) {
@@ -53,6 +53,12 @@ bool RJBaseUSBDevice::USBCallback_request() {
             case Base2015ControlCommand::RadioStrobe:
                 LOG(INF3, "strobe request");
                 if (strobeCallback) strobeCallback(transfer->setup.wIndex);
+                return true;
+
+            case Base2015ControlCommand::RadioSetChannel:
+                LOG(INF3, "set channel request");
+                if (setRadioChannelCallback)
+                    setRadioChannelCallback(transfer->setup.wValue);
                 return true;
 
             default:

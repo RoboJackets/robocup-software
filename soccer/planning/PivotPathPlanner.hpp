@@ -8,8 +8,7 @@ class ConfigDouble;
 
 namespace Planning {
 
-/// Plans a path that brings the robot to the given velocity as fast as
-/// possible.  Avoids obstacles.
+/// Plans a path that pivots around and kicks a stationary ball.
 class PivotPathPlanner : public SingleRobotPathPlanner {
 public:
     PivotPathPlanner() : SingleRobotPathPlanner(false){};
@@ -26,5 +25,4 @@ private:
 
     static ConfigDouble* _pivotRadiusMultiplier;
 };
-
 }  // namespace Planning

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <protobuf/referee.pb.h>
+#include <protobuf/LogFrame.pb.h>
 #include "TeamInfo.hpp"
 #include "GameState.hpp"
 #include "SystemState.hpp"

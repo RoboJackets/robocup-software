@@ -16,6 +16,13 @@ enum BallSenseStatus
 	Failed = 3;
 }
 
+enum FpgaStatus
+{
+	FpgaGood = 0;
+	FpgaNotInitialized = 1;
+	FpgaError = 2;
+}
+
 enum HardwareVersion
 {
 	Unknown = 0;
@@ -49,6 +56,8 @@ message RadioRx
 	
 	optional uint32 kicker_voltage = 11;
 	
+	optional FpgaStatus fpga_status = 14 [default = FpgaGood];
+
 	optional HardwareVersion hardware_version = 12 [default = Unknown];
 	
 	optional Quaternion quaternion = 13;

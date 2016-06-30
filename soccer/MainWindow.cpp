@@ -584,7 +584,7 @@ void MainWindow::updateViews() {
             // well as being drawn as a red X on the graphic of a robot
             bool hasMotorFault = false;
             if (rx.motor_status().size() == 5) {
-                const char* motorNames[] = {"FR", "FL", "BL", "BR", "Dribbler"};
+                const char* motorNames[] = {"FL", "BL", "BR", "FR", "Dribbler"};
 
                 // examine status of each motor (including the dribbler)
                 for (int i = 0; i < 5; ++i) {
@@ -627,6 +627,17 @@ void MainWindow::updateViews() {
             if (ballSenseFault) errorList << "Ball Sense Fault";
             statusWidget->setBallSenseFault(ballSenseFault);
 
+            // check fpga status
+            bool fpgaWorking = true;
+            if (rx.has_fpga_status() && rx.fpga_status() != Packet::FpgaGood) {
+                if (rx.fpga_status() == Packet::FpgaNotInitialized) {
+                    errorList << "FPGA not initialized";
+                } else {
+                    errorList << "FPGA error";
+                }
+                fpgaWorking = false;
+            }
+
             // display error text
             statusWidget->setErrorText(errorList.join(", "));
 
@@ -660,7 +671,7 @@ void MainWindow::updateViews() {
             // "showstopper"
             bool showstopper = !hasVision || !hasRadio || hasMotorFault ||
                                kickerFault || ballSenseFault ||
-                               (batteryLevel < 0.25);
+                               (batteryLevel < 0.25) || !fpgaWorking;
             statusWidget->setShowstopper(showstopper);
 
 #endif
@@ -751,8 +762,8 @@ void MainWindow::updateStatus() {
             // There is a separate status for non-simulation with internal
             // referee.
             status("NO REFEREE", Status_Fail);
+            return;
         }
-        return;
     }
 
     if (sim) {
@@ -864,23 +875,23 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
     _processor->useOpponentHalf(value);
 }
 
-void MainWindow::on_action904MHz_triggered() {
+void MainWindow::on_action916MHz_triggered() {
     channel(0);
-    _ui.action904MHz->setChecked(true);
-    _ui.action906MHz->setChecked(false);
+    _ui.action916MHz->setChecked(true);
+    _ui.action918MHz->setChecked(false);
 }
 
-void MainWindow::on_action906MHz_triggered() {
-    channel(10);
-    _ui.action904MHz->setChecked(false);
-    _ui.action906MHz->setChecked(true);
+void MainWindow::on_action918MHz_triggered() {
+    channel(1);
+    _ui.action916MHz->setChecked(false);
+    _ui.action918MHz->setChecked(true);
 }
 
 void MainWindow::channel(int n) {
     if (_processor && _processor->radio()) {
         _processor->radio()->channel(n);
     }
-    _ui.radioLabel->setText(QString("%1MHz").arg(904.0 + 0.2 * n, 0, 'f', 1));
+    _ui.radioLabel->setText(QString("%1MHz").arg(916.0 + 0.2 * n, 0, 'f', 1));
 }
 
 // Simulator commands
@@ -1240,11 +1251,11 @@ void MainWindow::on_savePlaybook_clicked() {
 
 void MainWindow::setRadioChannel(RadioChannels channel) {
     switch (channel) {
-        case RadioChannels::MHz_904:
-            this->on_action904MHz_triggered();
+        case RadioChannels::MHz_916:
+            this->on_action916MHz_triggered();
             break;
-        case RadioChannels::MHz_906:
-            this->on_action906MHz_triggered();
+        case RadioChannels::MHz_918:
+            this->on_action918MHz_triggered();
             break;
     }
 }

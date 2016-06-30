@@ -135,6 +135,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         return (self.startBallLocation -
                 main.ball().pos).mag() > 0.05 and not self.robot.has_ball(
                 ) and time.time() - self.last_ball_time > 0.3
+        #return not self.robot.has_ball() and time.time(
+        #) - self.last_ball_time > 0.3
 
     def current_shot_point(self):
         return self._shot_point

@@ -2,7 +2,7 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
 #include "RRTPlanner.hpp"
-
+#include "Geometry2d/Util.hpp"
 using namespace std;
 using namespace Geometry2d;
 
@@ -86,8 +86,15 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
         unique_ptr<Path> path = RRTPlanner::generatePath(
             points, obstacles, newConstraints, startInstant.vel, Point(0, 0));
         std::function<AngleInstant(MotionInstant)> function =
-            [pivotPoint](MotionInstant instant) {
-                return AngleInstant(instant.pos.angleTo(pivotPoint));
+            [pivotPoint, pivotTarget](MotionInstant instant) {
+                auto angleToPivot = instant.pos.angleTo(pivotPoint);
+                auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
+
+                if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(30)) {
+                    return AngleInstant(angleToPivotTarget);
+                } else {
+                    return AngleInstant(angleToPivotTarget);
+                }
             };
         return make_unique<AngleFunctionPath>(move(path), function);
         ;
