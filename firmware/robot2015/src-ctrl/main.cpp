@@ -82,14 +82,36 @@ int main() {
     // Setup the interrupt priorities before launching each subsystem's task
     // thread.
     setISRPriorities();
+    
+    // Initialize kicker board
+    // TODO: clarify between kicker nCs and nReset
+    // KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
+    //                         "/local/rj-kickr.nib");
+    // bool kickerReady = kickerBoard.flash(true, true);
+
+    // Hacked kicker board - using this since we replaced the attiny with two
+    // wires...
+    HackedKickerBoard kickerBoard(RJ_KICKER_nRESET);
+    bool kickerReady = true;
+
+
+    // flag fro kicking when the ball sense triggers
+    bool kickOnBreakBeam = false;
+    uint8_t kickStrength = 0;
 
     // Initialize and start ball sensor
     BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
     ballSense.start(10);
     ballSense.senseChangeCallback = [&](bool haveBall) {
         // invert value due to active-low wiring of led
+        // set ball indicator led.
         static DigitalOut ballStatusPin(RJ_BALL_LED);
         ballStatusPin = !haveBall;
+
+        // kick!
+        if (haveBall && kickOnBreakBeam) {
+            kickerBoard.kick(kickStrength);
+        }
     };
 
     // Force off since the neopixel's hardware is stateless from previous
@@ -135,17 +157,6 @@ int main() {
     rgbLED.write();
 
     DigitalOut rdy_led(RJ_RDY_LED, !fpgaInitialized);
-
-    // Initialize kicker board
-    // TODO: clarify between kicker nCs and nReset
-    // KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
-    //                         "/local/rj-kickr.nib");
-    // bool kickerReady = kickerBoard.flash(true, true);
-
-    // Hacked kicker board - using this since we replaced the attiny with two
-    // wires...
-    HackedKickerBoard kickerBoard(RJ_KICKER_nRESET);
-    bool kickerReady = true;
 
     // Init IO Expander and turn all LEDs on.  The first parameter to config()
     // sets the first 8 lines to input and the last 8 to output.  The pullup
@@ -232,13 +243,19 @@ int main() {
         Task_Controller_UpdateDribbler(msg->dribbler);
 
         // kick!
+        kickStrength = msg->kickStrength;
         if (msg->triggerMode == 1) {
             // kick immediate
-            kickerBoard.kick(msg->kickStrength);
+            kickerBoard.kick(kickStrength);
         } else if (msg->triggerMode == 2) {
             // kick on break beam
-            // TODO: wait for break beam
-            kickerBoard.kick(msg->kickStrength);
+            if (ballSense.have_ball()) {
+                kickerBoard.kick(kickStrength);
+                kickOnBreakBeam = false;
+            } else {
+                // set flag so that next break beam triggers a kick
+                kickOnBreakBeam = true;
+            }
         }
 
 
