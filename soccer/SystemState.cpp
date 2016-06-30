@@ -4,8 +4,101 @@
 #include <RobotConfig.hpp>
 #include <Robot.hpp>
 #include <Geometry2d/Polygon.hpp>
+#include <Geometry2d/Line.hpp>
+#include "planning/Path.hpp"
 
 using namespace Packet;
+using namespace std;
+using namespace Planning;
+using namespace Geometry2d;
+using Planning::MotionInstant;
+
+class BallPath : public Planning::Path {
+public:
+    BallPath(const Ball &ball) : ball(ball) {};
+    virtual boost::optional<RobotInstant> evaluate(float t) const {
+        return RobotInstant(ball.predict(startTime() + RJ::SecsToTimestamp(t)));
+    }
+
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
+                     float startTime) const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
+                      const QString& layer = "Motion") const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual float getDuration() const {
+        return std::numeric_limits<float>::infinity();
+    }
+
+    virtual std::unique_ptr<Path> subPath(
+            float startTime = 0,
+            float endTime = std::numeric_limits<float>::infinity()) const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual RobotInstant start() const {
+        return RobotInstant(ball.predict(startTime()));
+    }
+    virtual RobotInstant end() const {
+        throw new std::runtime_error("Unsupported Opperation");
+    }
+
+    virtual std::unique_ptr<Path> clone() const {
+        return std::make_unique<BallPath>(*this);
+    }
+private:
+    const Ball &ball;
+};
+
+
+std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
+    auto path = std::make_unique<BallPath>(*this);
+    path->setStartTime(startTime);
+    return std::move(path);
+}
+
+Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
+    if (estimateTime < time) {
+        debugThrow("Estimated Time can't be before observation time.");
+        return MotionInstant();
+    }
+
+    //if (!valid) {
+    //    debugThrow("Ball doesn't have a valid location at the moment");
+    //    return MotionInstant();
+    //}
+
+    MotionInstant instant;
+    float t = RJ::TimestampToSecs(estimateTime - time);
+
+    const auto s0 = vel.mag();
+
+    // Based on sim ball
+    // v = v0 * e^-0.2913t
+    // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
+    auto part = std::exp(-0.2913f*t);
+    auto speed = s0 * part;
+    auto distance = s0 *-3.43289f * (part - 1.0f);
+
+    return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
+}
+
+RJ::Time Ball::estimateTimeTo(const Geometry2d::Point &point, Geometry2d::Point *nearPointOut) const {
+    Line line(pos, pos + vel);
+    auto nearPoint = line.nearestPoint(point);
+    if (nearPointOut) {
+        *nearPointOut = nearPoint;
+    }
+    auto dist = nearPoint.distTo(pos);
+    // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
+    // (d + v0 * -3.43289) / (v0 * -3.43289)= e^(-0.2913 t))
+    auto part = vel.mag() * -3.43289;
+    return time + RJ::SecsToTimestamp(std::log((dist + part)/part)/-0.2913);
+}
 
 SystemState::SystemState() {
     timestamp = 0;

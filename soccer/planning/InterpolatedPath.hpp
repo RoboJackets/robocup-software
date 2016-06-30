@@ -118,6 +118,8 @@ public:
      *     path starting from the start of the path
      */
     float getTime(int index) const;
+
+    void slow(float multiplier, float timeInto = 0);
 };
 
 }  // namespace Planning
