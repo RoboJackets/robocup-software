@@ -565,7 +565,9 @@ void MainWindow::updateViews() {
             // We make a copy of the robot's RadioRx package b/c the original
             // might change during the course of this method b/c radio comm
             // happens on a different thread.
+            _processor->loopMutex().lock();
             RadioRx rx(robot->radioRx());
+            _processor->loopMutex().unlock();
 
 #ifndef DEMO_ROBOT_STATUS
             // radio status
