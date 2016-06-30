@@ -1,11 +1,7 @@
 import composite_behavior
 import behavior
-import constants
-import robocup
 import time
-import main
 import enum
-import logging
 
 class TimeoutBehavior(composite_behavior.CompositeBehavior):
 
@@ -47,3 +43,10 @@ class TimeoutBehavior(composite_behavior.CompositeBehavior):
 
     def on_enter_failed(self):
         self.remove_all_subbehaviors()
+
+    def restart_timer(self):
+        self.start_time = time.time()
+
+    def restart(self):
+        self.subbehavior_with_name('toTimeout').restart()
+        super.restart()
