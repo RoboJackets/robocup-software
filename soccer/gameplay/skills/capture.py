@@ -13,7 +13,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.2
+    CourseApproachDist = 0.3
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 60
     FineApproachSpeed = 0.2
@@ -136,7 +136,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
         #multiplier = 1.5
         #aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(\).vel
-        approach = bot2ball * Capture.FineApproachSpeed + main.ball().vel
+        approach = bot2ball * Capture.FineApproachSpeed + main.ball().vel + self.bot_to_ball()
         #if (aproach.mag() > 1):
         #    aproach = aproach.normalized() * 1
         self.robot.set_world_vel(approach)
