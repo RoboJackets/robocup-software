@@ -285,7 +285,9 @@ void USBRadio::handleRxData(uint8_t* buf) {
                        rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR);
 
     // ball sense
-    packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+    if (BallSenseStatus_IsValid(msg->ballSenseStatus)) {
+        packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+    }
 
     // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
     // Report that everything is good b/c the bot currently has no way of
@@ -299,18 +301,9 @@ void USBRadio::handleRxData(uint8_t* buf) {
     }
 
     // fpga status
-    packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
-
-    // TODO(justin): add back missing fields
-    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
-    // packet.set_kicker_status(buf[3]);
-    // // Drive motor status
-    // for (int i = 0; i < 4; ++i) {
-    //     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
-    // }
-    // Dribbler status
-    // packet.add_motor_status(MotorStatus(buf[5] & 3));
-    // packet.set_kicker_voltage(buf[6]);
+    if (FpgaStatus_IsValid(msg->fpgaStatus)) {
+        packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
+    }
 
     _reversePackets.push_back(packet);
 }

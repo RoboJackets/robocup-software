@@ -192,7 +192,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     // we make sure it's above a threshold value
      float minEffectiveAngularSpeed =
      *_robot->config->minEffectiveAngularSpeed;
-     if (std::abs(angleVel) < minEffectiveAngularSpeed) {
+     if (std::abs(angleVel) < minEffectiveAngularSpeed && std::abs(angleVel) > .05) {
          angleVel =
              angleVel > 0 ? minEffectiveAngularSpeed :
              -minEffectiveAngularSpeed;
@@ -232,7 +232,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     // if the velocity is nonzero, make sure it's not so small that the robot
     // doesn't even move
     float minEffectiveVelocity = *_robot->config->minEffectiveVelocity;
-    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.05) {
+    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.02) {
         targetVel = targetVel.normalized() * minEffectiveVelocity;
     }
 

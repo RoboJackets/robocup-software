@@ -72,8 +72,8 @@ public:
      *
      * The default value is channel 0.
      *
-     * Channel 0 is 904MHz and subsequent channels are increments of 2MHz above
-     * it. For example, channel 1 is 906MHz.  For now, we're only using
+     * Channel 0 is 916MHz and subsequent channels are increments of 2MHz above
+     * it. For example, channel 1 is 918MHz.  For now, we're only using
      * channels 0 and 1.
      */
     void setChannel(uint8_t chanNumber);

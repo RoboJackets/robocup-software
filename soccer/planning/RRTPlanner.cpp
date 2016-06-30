@@ -22,7 +22,7 @@ RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
-                              const vector<const Path*> dynamicObs) const {
+                              const vector<DynamicObstacle> dynamicObs, string *debugOut) const {
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
@@ -32,6 +32,9 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
     const auto& goal = command.pathGoal;
 
     if (SingleRobotPathPlanner::shouldReplan(planRequest)) {
+        if (debugOut) {
+            *debugOut = "SingleRobotPathInvalidate";
+        }
         return true;
     }
 
@@ -44,11 +47,17 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
         // is above
+        if (debugOut) {
+            *debugOut = "GoalChanged";
+        }
         return true;
     }
 
     if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr,
                                  RJ::timestamp())) {
+        if (debugOut) {
+            *debugOut = "DynamicIntersect";
+        }
         return true;
     }
 
@@ -71,7 +80,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
         dynamic_cast<const Planning::PathTargetCommand&>(planRequest.cmd);
 
     MotionInstant goal = target.pathGoal;
-    vector<const Path*> actualDynamic;
+    vector<DynamicObstacle> actualDynamic;
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
     // Simple case: no path
@@ -90,8 +99,9 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, obstacles);
 
+    string debugOut;
     // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(planRequest, actualDynamic)) {
+    if (shouldReplan(planRequest, actualDynamic, &debugOut)) {
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                     actualDynamic);
 
@@ -100,7 +110,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
             path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
         }
-        path->setDebugText("new Path");
+        path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
     } else {
         if (reusePathTries >= maxContinue) {
@@ -125,9 +135,11 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
-    const MotionConstraints& motionConstraints, ShapeSet& obstacles,
-    const std::vector<const Path*> paths) {
+    const MotionConstraints& motionConstraints, ShapeSet& origional,
+    const std::vector<DynamicObstacle> dyObs) {
     const int tries = 10;
+    ShapeSet obstacles = origional;
+    unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
         auto points = runRRT(start, goal, motionConstraints, obstacles);
@@ -137,6 +149,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
 
         // Check if Planning or optimization failed
         if (points.size() < 2) {
+            debugLog("RRTPlanning Failed");
             break;
         }
 
@@ -145,21 +158,26 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
                                         start.vel, goal.vel);
         float hitTime;
         Point hitLocation;
-        bool hit = path->pathsIntersect(paths, &hitTime, &hitLocation,
+        bool hit = path->pathsIntersect(dyObs, &hitTime, &hitLocation,
                                         path->startTime());
         if (hit) {
-            obstacles.add(make_shared<Circle>(hitLocation, Robot_Radius * 1.5));
+            //float dist = std::min(goal.pos.distTo(hitLocation)-0.1f, Robot_Radius);
+            //if (dist>0) {
+            obstacles.add(make_shared<Circle>(hitLocation, Robot_Radius*1.5f));
+            lastPath = std::move(path);
+            //}
         } else {
             return std::move(path);
         }
     }
-    return nullptr;
+    //debugLog("Generate Failed 10 times");
+    return lastPath;
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles) {
-    unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
+    //unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
     FixedStepTree startTree;
