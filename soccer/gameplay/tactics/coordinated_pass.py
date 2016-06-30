@@ -42,7 +42,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  receive_point=None,
                  skillreceiver=None,
                  skillkicker=None,
-                 preparing_timeout=None):
+                 prekick_timeout=None):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -58,7 +58,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
         self.skillkicker = skillkicker
-        self.preparing_timeout = preparing_timeout
+        self.prekick_timeout = prekick_timeout
 
         self.add_state(CoordinatedPass.State.preparing,
                        behavior.Behavior.State.running)
@@ -80,7 +80,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
-            lambda: self.preparing_timeout_exceeded(), 'Timed out on prepare')
+            lambda: self.prekick_timeout_exceeded(), 'Timed out on prepare')
+
+        self.add_transition(
+            CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
+            lambda: self.prekick_timeout_exceeded(), 'Timed out on prepare')
 
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
@@ -197,10 +201,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 self.receive_point = kicker.current_shot_point()
                 self._has_renegotiated_receive_point = True
 
-    def preparing_timeout_exceeded(self):
-        if self._preparing_start == None or self.preparing_timeout == None or self.preparing_timeout <= 0:
+    def prekick_timeout_exceeded(self):
+        if self._preparing_start == None or self.prekick_timeout == None or self.prekick_timeout <= 0:
             return False
-        if time.time() - self._preparing_start > self.preparing_timeout:
+        if time.time() - self._preparing_start > self.prekick_timeout:
             return True
         return False
 
