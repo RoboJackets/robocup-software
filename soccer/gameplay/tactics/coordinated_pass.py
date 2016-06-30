@@ -83,6 +83,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             lambda: self.preparing_timeout_exceeded(), 'Timed out on prepare')
 
         self.add_transition(
+            CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
+            lambda: self.preparing_timeout_exceeded(), 'Timed out on kick')
+
+        self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.receiving,
             lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.completed,
             'kicker kicked')
