@@ -129,6 +129,7 @@ class LineKick(skills._kick._Kick):
         self.robot.unkick()
 
     def execute_charge(self):
+        self.robot.disable_avoid_ball()
         main.system_state().draw_line(
             robocup.Line(self.robot.pos, self.aim_target_point),
             constants.Colors.White, "LineKick")
