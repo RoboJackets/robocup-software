@@ -46,7 +46,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.fine_approach,
                             behavior.Behavior.State.completed,
-                            lambda: self.robot.has_ball(), 'has ball')
+                            lambda: self.bot_near_ball(constants.Robot.Radius+ constants.Ball.Radius), 'has ball')
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach,
@@ -145,7 +145,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_world_vel(approach)
         """
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        multiplier = 1
+        multiplier = 0.5
         aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball().vel
         if (aproach.mag() > 1):
             aproach = aproach.normalized() * 1
