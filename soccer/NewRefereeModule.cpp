@@ -283,6 +283,8 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
             break;
         case Command::FORCE_START:
             _state.gameState.state = GameState::Playing;
+            _state.gameState.ourRestart = false;
+            _state.gameState.restart = GameState::None;
             break;
         case Command::PREPARE_KICKOFF_YELLOW:
             _state.gameState.state = GameState::Setup;
