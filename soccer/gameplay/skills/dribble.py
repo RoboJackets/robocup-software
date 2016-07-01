@@ -26,7 +26,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._threshold = 0.1  #default value matches the required accuracy for a placement command
         self._pos = pos
 
-        self._dribble_speed = 100
+        self._dribble_speed = 70
 
         self.add_transition(behavior.Behavior.State.start,
                             Dribble.State.capture, lambda: True, 'immediately')
@@ -107,12 +107,13 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.set_dribble_speed(self._dribble_speed)
         self.robot.face(self.pos)
 
-        #self.robot.set_max_speed(.5)
+        #self.robot.set_max_speed(1.0)
+        self.robot.set_max_speed(.25)
 
         #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.disable_avoid_ball()
         self.robot.move_to(self.pos - (self.pos - self.robot.pos).normalized(
-            constants.Robot.Radius))
+            constants.Robot.Radius+0.08))
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 

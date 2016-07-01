@@ -24,6 +24,7 @@ class OurFreeKick(standard_play.StandardPlay):
             self.indirect = indirect
         else:
             self.indirect = gs.is_indirect()
+        self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
