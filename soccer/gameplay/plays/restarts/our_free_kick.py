@@ -82,6 +82,10 @@ class OurFreeKick(standard_play.StandardPlay):
             passState = self.subbehavior_with_name('kicker').behavior.state
             OurFreeKick.running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
                                   passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
+    def on_enter_running(self):
+        OurFreeKick.running = False
+    def on_exit_running(self):
+        OurFreeKick.running = False
 
     @classmethod
     def is_restart(cls):
