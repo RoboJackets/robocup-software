@@ -22,8 +22,10 @@ class OurFreeKick(standard_play.StandardPlay):
 
         if indirect != None:
             self.indirect = indirect
-        else:
+        elif main.ball().pos.y > constants.Field.Length / 2.0:
             self.indirect = gs.is_indirect()
+        else:
+            self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -67,9 +69,6 @@ class OurFreeKick(standard_play.StandardPlay):
         return 0 if OurFreeKick.running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
-    def on_enter_running(self):
-        OurFreeKick.running = True
-
     def execute_running(self):
         if self.indirect \
            and self.subbehavior_with_name('kicker').state == timeout_behavior.TimeoutBehavior.State.timeout:
@@ -79,6 +78,12 @@ class OurFreeKick(standard_play.StandardPlay):
             kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
+        if self.indirect:
+            passState = self.subbehavior_with_name('kicker').behavior.state
+            OurFreeKick.running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
+                                  passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
+    def on_enter_running(self):
+        OurFreeKick.running = False
     def on_exit_running(self):
         OurFreeKick.running = False
 
