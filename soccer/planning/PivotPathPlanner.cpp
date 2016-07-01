@@ -39,8 +39,11 @@ bool PivotPathPlanner::shouldReplan(
             pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
         float targetChange = (prevPath->end().motion.pos - endTarget).mag();
 
-        if (targetChange > SingleRobotPathPlanner::goalChangeThreshold()) {
-            // return true;
+        if (targetChange > 0.1) {
+            return true;
+        }
+        if (prevPath->getDuration() - RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime()) < -0.5) {
+            return true;
         }
     }
     return false;
@@ -67,7 +70,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
         // maxSpeed = maxRadians * radius
         MotionConstraints newConstraints = planRequest.robotConstraints.mot;
         newConstraints.maxSpeed = std::min(
-            newConstraints.maxSpeed, rotationConstraints.maxSpeed * radius);
+            newConstraints.maxSpeed, rotationConstraints.maxSpeed/2 * radius);
 
         float startAngle = pivotPoint.angleTo(startInstant.pos);
         float targetAngle = pivotPoint.angleTo(endTarget);
@@ -83,17 +86,20 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
                 Point::direction(angle).normalized(radius) + pivotPoint;
             points.push_back(point);
         }
-        unique_ptr<Path> path = RRTPlanner::generatePath(
+        unique_ptr<InterpolatedPath> path = RRTPlanner::generatePath(
             points, obstacles, newConstraints, startInstant.vel, Point(0, 0));
+        //for (auto &waypoint: path->waypoints) {
+            //waypoint.angle = AngleInstant::
+        //}
         std::function<AngleInstant(MotionInstant)> function =
             [pivotPoint, pivotTarget](MotionInstant instant) {
                 auto angleToPivot = instant.pos.angleTo(pivotPoint);
                 auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
 
-                if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(30)) {
+                if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(10)) {
                     return AngleInstant(angleToPivotTarget);
                 } else {
-                    return AngleInstant(angleToPivotTarget);
+                    return AngleInstant(angleToPivot);
                 }
             };
         return make_unique<AngleFunctionPath>(move(path), function);
