@@ -83,7 +83,7 @@ void MotionControl::run() {
     boost::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
 
-    float targetAngleFinal = 0;
+    boost::optional<float> targetAngleFinal;
     // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
     //    PivotCommand command =
     //    *static_cast<PivotCommand*>(motionCommand.get());
@@ -104,26 +104,31 @@ void MotionControl::run() {
         targetAngleFinal = (*targetPt - _robot->pos).angle();
     }
 
-    float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
+    if (!targetAngleFinal) {
+        _targetAngleVel(0);
+    } else {
 
-    targetW = _angleController.run(angleError);
+        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
 
-    // limit W
-    if (abs(targetW) > (rotationConstraints.maxSpeed)) {
-        if (targetW > 0) {
-            targetW = (rotationConstraints.maxSpeed);
-        } else {
-            targetW = -(rotationConstraints.maxSpeed);
+        targetW = _angleController.run(angleError);
+
+        // limit W
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+            if (targetW > 0) {
+                targetW = (rotationConstraints.maxSpeed);
+            } else {
+                targetW = -(rotationConstraints.maxSpeed);
+            }
         }
-    }
 
-    /*
-    _robot->addText(QString("targetW: %1").arg(targetW));
-    _robot->addText(QString("angleError: %1").arg(angleError));
-    _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-    _robot->addText(QString("angle: %1").arg(_robot->angle));
-    */
-    _targetAngleVel(targetW);
+        /*
+        _robot->addText(QString("targetW: %1").arg(targetW));
+        _robot->addText(QString("angleError: %1").arg(angleError));
+        _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
+        _robot->addText(QString("angle: %1").arg(_robot->angle));
+        */
+        _targetAngleVel(targetW);
+    }
 
     // handle body velocity for pivot command
     /*
