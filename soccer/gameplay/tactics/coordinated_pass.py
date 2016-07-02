@@ -10,7 +10,7 @@ import enum
 import logging
 
 
-# This handles passing from one bot to another
+## This handles passing from one bot to another
 # Simply run it and set it's receive point, the rest is handled for you
 # It starts out by assigning a kicker and a receiver and instructing them to lineup for the pass
 # Once they're aligned, the kicker kicks and the receiver adjusts itself based on the ball's movement
@@ -30,9 +30,17 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicking = 2  # waiting for the kicker to kick
         receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
 
-    ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
+    ## Init method for CoordinatedPass
+    # @param skillreceiver an instance of a class that will handle the receiving robot. See pass_receive and angle_receive for examples.
     # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
-    def __init__(self, receive_point=None, skillreceiver=None):
+    # Subclasses of pass_receive are preferred, but check the usage of this variable to be sure.
+    # @param receive_point The point that will be kicked too. (Target point)
+    # @param skillkicker A tuple of this form (kicking_class instance, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed).
+    # The lambda equation is called (passed with the state of your class instance) to see if your class is ready. Simple implementations will just compare it to your ready state.
+    def __init__(self,
+                 receive_point=None,
+                 skillreceiver=None,
+                 skillkicker=None):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -40,8 +48,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if skillreceiver == None:
             skillreceiver = skills.pass_receive.PassReceive()
 
+        if skillkicker == None:
+            skillkicker = (
+                skills.pivot_kick.PivotKick(),
+                lambda x: x == skills.pivot_kick.PivotKick.State.aimed)
+
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
+        self.skillkicker = skillkicker
 
         for state in CoordinatedPass.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -52,7 +66,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
-            lambda: (self.subbehavior_with_name('kicker').state == skills.pivot_kick.PivotKick.State.aimed and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
+            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state) and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
 
         self.add_transition(
@@ -100,7 +114,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
-        kicker = skills.pivot_kick.PivotKick()
+        kicker = self.skillkicker[0]
         kicker.target = self.receive_point
         kickpower = (main.ball().pos - self.receive_point).mag() / 8
         if (kickpower < 0.2):
@@ -152,8 +166,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         # we set the receive point to the point the kicker is currently aiming at
         if kicker.current_shot_point(
         ) != None and not self._has_renegotiated_receive_point:
-            if (not kicker.is_steady() and
-                    kicker.state == skills.pivot_kick.PivotKick.State.aiming):
+            if (not kicker.is_steady() and self.skillkicker[1](kicker.state)):
                 self._last_unsteady_time = time.time()
 
             if (self._last_unsteady_time != None and
