@@ -75,6 +75,7 @@ libboost-python-dev
 
 # for joystick
 libsdl1.2-dev
+libsdl2-dev
 
 # everything else...
 build-essential
