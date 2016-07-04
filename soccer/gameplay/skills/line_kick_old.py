@@ -44,7 +44,7 @@ class LineKick(skills._kick._Kick):
 
         self.add_transition(
             LineKick.State.setup, LineKick.State.charge,
-            lambda: (not self.robot_is_between_ball_and_target()) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh and not self.robot.just_kicked(),
+            lambda: self.enable_kick and (not self.robot_is_between_ball_and_target()) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh and not self.robot.just_kicked(),
             "robot on line")
 
         self.add_transition(
@@ -118,7 +118,7 @@ class LineKick(skills._kick._Kick):
                                       "LineKick")
         for edge in [left_field_edge, right_field_edge]:
             if edge.near_point(main.ball().pos, field_edge_thresh):
-                intersection = behind_line.line_intersection(edge)
+                intersection = behind_line.segment_intersection(edge)
                 if intersection != None:
                     move_goal = intersection
 
@@ -129,6 +129,7 @@ class LineKick(skills._kick._Kick):
         self.robot.unkick()
 
     def execute_charge(self):
+        self.robot.disable_avoid_ball()
         main.system_state().draw_line(
             robocup.Line(self.robot.pos, self.aim_target_point),
             constants.Colors.White, "LineKick")
@@ -149,7 +150,7 @@ class LineKick(skills._kick._Kick):
                 self.robot.pos) < LineKick.ClosenessThreshold:
             self._got_close = True
 
-        if self._got_close:
+        if self.robot.has_ball():
             if self.use_chipper:
                 self.robot.chip(self.chip_power)
             else:
