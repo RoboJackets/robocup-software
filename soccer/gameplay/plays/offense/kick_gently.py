@@ -81,12 +81,16 @@ class KickGently(play.Play):
     def execute_running(self):
         main.system_state().draw_circle(self.target,constants.Robot.Radius, constants.Colors.Green,"target")
 
-    @classmethod
-    def is_restart(cls):
-        return True
+    #@classmethod
+    #def is_restart(cls):
+    #    return True
 
     @classmethod
     def score(cls):
         gs = main.game_state()
         # readd and len(main.system_state().their_robots)==0
         return 0 
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
