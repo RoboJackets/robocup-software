@@ -16,7 +16,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
-    FineApproachSpeed = 0.2
+    FineApproachSpeed = 0.1
 
     InFrontOfBallCosOfAngleThreshold = 0.95
 
@@ -50,7 +50,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach,
-            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
+            lambda: not self.robot.has_ball() and not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
 
         self.lastApproachTarget = None
@@ -145,7 +145,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_world_vel(approach)
         """
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        multiplier = 0.5
+        multiplier = 0.1
         aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball().vel
         if (aproach.mag() > 1):
             aproach = aproach.normalized() * 1

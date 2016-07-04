@@ -6,7 +6,7 @@ class HackedKickerBoard {
 public:
 
     // time to wait between kicks, in microseconds
-    const uint32_t MIN_CHARGE_TIME = 1.5 * 1e6;
+    const uint32_t MIN_CHARGE_TIME = 2.5 * 1e6;
 
     HackedKickerBoard(DigitalOut kickLine)
         : _kickLine(kickLine),
