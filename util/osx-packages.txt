@@ -6,7 +6,7 @@
 qt5
 pyqt5
 python3
-sdl
+sdl2
 libspnav
 boost
 boost-build
