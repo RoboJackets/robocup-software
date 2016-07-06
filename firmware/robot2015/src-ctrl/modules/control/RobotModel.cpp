@@ -7,7 +7,7 @@ const RobotModel RobotModel2015 = []() {
     // TODO(ashaw596): Check angles.
     model.WheelAngles = {
         DegreesToRadians(38), DegreesToRadians(315), DegreesToRadians(225),
-        DegreesToRadians(42),
+        DegreesToRadians(142),
     };
     model.WheelDist = 0.0798576;
 
