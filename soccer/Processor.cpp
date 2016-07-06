@@ -407,8 +407,8 @@ void Processor::run() {
             bluename = _state.gameState.OurInfo.name;
             yellowname = _state.gameState.TheirInfo.name;
         } else {
-        yellowname = _state.gameState.OurInfo.name;
-          bluename = _state.gameState.TheirInfo.name;
+            yellowname = _state.gameState.OurInfo.name;
+            bluename = _state.gameState.TheirInfo.name;
         }
 
         _state.logFrame->set_team_name_blue(bluename);
