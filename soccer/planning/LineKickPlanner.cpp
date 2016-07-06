@@ -139,7 +139,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     }
 
     QString debug = "";
-    for (float t=0; t< 4; t+= 0.1) {
+    for (float t=0; t< 6; t+= 0.1) {
         MotionInstant ballNow = ball.predict(RJ::SecsToTimestamp(t) + RJ::timestamp());
         MotionInstant target(ballNow.pos);
         targetKickPos = target.pos;
@@ -156,7 +156,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
         }
         if (Geometry2d::Segment(ball.pos, target.pos).distTo(startInstant.pos) < Robot_Radius) {
             debug = "meh";
-            break;
+            //break;
         }
         auto path = RRTPlanner::generatePath(points, obstacles, motionConstraints, startInstant.vel, target.vel);
         float hitTime;

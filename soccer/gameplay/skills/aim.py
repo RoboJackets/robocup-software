@@ -166,7 +166,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             # if we detect this big of an error, we just default to using bot_angle_rad
             if abs(ball_angle_rad - bot_angle_rad) > math.pi / 3.0:
                 ball_angle_rad = bot_angle_rad
-            ball_angle_bias = 0  # NOTE: THIS IS TUNABLE
+            #TODO: TUNE THIS
+            ball_angle_bias = 0.4  # NOTE: THIS IS TUNABLE
             aim_angle = ball_angle_rad * ball_angle_bias + (
                 1.0 - ball_angle_bias) * bot_angle_rad
 
