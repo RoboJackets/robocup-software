@@ -1,0 +1,16 @@
+syntax = "proto2";
+package Packet;
+
+import "Robot.proto";
+
+message RadioTx
+{
+	enum TxMode
+	{
+		UNICAST   = 1;
+		MULTICAST = 2;
+	}
+
+	required TxMode txMode = 1;
+	repeated Robot robots = 2;
+}

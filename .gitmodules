@@ -10,6 +10,3 @@
 [submodule "external/DoCIF"]
 	path = external/DoCIF
 	url = https://github.com/jgkamat/DoCIF.git
-[submodule "common"]
-	path = common
-	url = https://github.com/RoboJackets/robocup-common.git

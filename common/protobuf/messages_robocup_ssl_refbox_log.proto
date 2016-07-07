@@ -1,0 +1,12 @@
+import "messages_robocup_ssl_detection.proto";
+
+message Log_Frame
+{
+    required SSL_DetectionFrame frame = 1;
+    required string refbox_cmd = 2;
+}
+
+message Refbox_Log
+{
+    repeated Log_Frame log = 1;
+}
