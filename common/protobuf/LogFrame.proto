@@ -1,0 +1,180 @@
+package Packet;
+
+import "referee.proto";
+import "Point.proto";
+import "messages_robocup_ssl_wrapper.proto";
+import "RadioTx.proto";
+import "RadioRx.proto";
+
+message DebugRobotPath
+{
+	message DebugRobotPathPoint {
+		required Point pos = 2;
+		required Point vel = 3;
+	}
+
+	optional sint32 layer = 1 [default = -1];
+	repeated DebugRobotPathPoint points = 3;
+}
+
+message DebugPath
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	repeated Point points = 3;
+}
+
+message DebugCircle
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	required Point center = 3;
+	required float radius = 4;
+}
+
+message DebugArc
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	required Point center = 3;
+	required float radius = 4;
+	required float start = 5;
+	required float end = 6;
+}
+
+message DebugText
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	optional Point pos = 3;		// Not present for robot text, otherwise required
+	required string text = 4;
+	optional bool center = 5;
+}
+
+message TestResult 
+{
+	enum TestState 
+	{
+		INCOMPLETE = 0;
+		PASSED = 1;
+		FAILED = 2;
+	}
+	optional TestState result = 1;
+	optional string name = 2;
+	optional string group = 3;
+}
+
+// Only the first LogFrame in a log file contains this. It contains unchanging
+// information about the soccer build and invocation.
+message LogConfig
+{
+	// Name of the program which generated this log
+	optional string generator = 1;
+	
+	// git commit hash that the generating program was built from
+	optional string git_version_hash = 2;
+	
+	// If true, there were uncommitted changes to the code
+	optional bool git_version_dirty = 3;
+	
+	// If true, we are running in a simulation.
+	// The standalone loggers don't set this field because they don't know for sure.
+	optional bool simulation = 4;
+}
+
+message LogFrame
+{
+	// Only present in the first LogFrame, and not guaranteed even then.
+	optional LogConfig log_config = 2047;
+	
+	// Network packets received since the last iteration
+	repeated SSL_WrapperPacket raw_vision = 1;
+	repeated SSL_Referee raw_refbox = 27;
+	repeated RadioRx radio_rx = 3;
+
+	// Deprecated field kept for compatability with old logs
+	repeated bytes raw_referee = 2;
+
+	// Which team are we playing as?
+	optional bool blue_team = 4;
+
+	// Time when robot commands are expected to take effect
+	optional uint64 command_time = 5;
+
+	// Debug graphics
+	repeated DebugRobotPath debug_robot_paths = 26;
+	repeated DebugPath debug_paths = 6;
+	repeated DebugPath debug_polygons = 7;
+	repeated DebugCircle debug_circles = 8;
+	repeated DebugArc debug_arcs = 9;
+	repeated DebugText debug_texts = 10;
+	repeated string debug_layers = 11;
+
+	// Filtered world state and commands
+	message Robot
+	{
+		required Point pos = 1;
+		required Point world_vel = 7;
+		optional Point body_vel= 16;
+		required int32 shell = 2;
+		required float angle = 3;
+		optional BallSenseStatus ball_sense_status = 4;
+		
+		repeated DebugText text = 6;
+		
+		// only during commands
+		optional Point cmd_vel = 8;
+		optional float cmd_w = 9;
+		
+		optional bool charged = 10;
+		optional float kicker_voltage = 11;
+		
+		repeated MotorStatus motor_status = 12;
+		
+		optional bool kicker_works = 13 [default = true];
+		optional float battery_voltage = 14;
+		
+		optional Quaternion quaternion = 15;
+	}
+
+	message Ball
+	{
+		required Point pos = 1;
+		required Point vel = 2;
+	}
+
+	repeated Robot self = 12;
+	repeated Robot opp = 13;
+	optional Ball ball = 14;
+
+	// Data sent to the radio
+	optional RadioTx radio_tx = 15;
+
+	// Which robot is under manual control
+	optional sint32 manual_id = 16 [default = -1];
+
+	// True if our goal is on the +X side of vision
+	optional bool defend_plus_x = 17;
+
+	// Name of the current play
+	// NOTE: with the transition to a python-based gameplay system, we no longer log this.
+	//       Instead, we log the "Behavior Tree", which has the play name and all subbehavior names.
+	optional string play = 18;
+	
+	// True if using each half of the field
+	optional bool use_our_half = 19 [default = true];
+	optional bool use_opponent_half = 20 [default = true];
+	
+	// results from testing
+	repeated TestResult testResults = 21;
+
+	// the description of the behavior tree
+	// should show the hierarchy of behaviors and each behavior's state
+	optional string behavior_tree = 22;
+
+	optional string team_name_yellow = 23;
+	optional string team_name_blue = 24;
+	
+	// timestamp in microseconds since epoch
+    required uint64 timestamp = 25;
+}

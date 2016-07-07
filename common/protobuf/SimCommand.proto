@@ -1,0 +1,25 @@
+package Packet;
+
+import "Point.proto";
+
+message SimCommand
+{
+	message Robot
+	{
+		required int32 shell = 1;
+		required bool blue_team = 2;
+
+		optional bool visible = 3;
+
+		optional Point pos = 4;
+		optional Point vel = 5;
+
+		// Angular velocity
+		optional float w = 6;
+	}
+
+	optional Point ball_pos = 1;
+	optional Point ball_vel = 2;
+	repeated Robot robots = 3;
+	optional bool reset = 4; // performs a full reset back to simulator config initialization
+}
