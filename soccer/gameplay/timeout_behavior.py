@@ -8,7 +8,7 @@ import enum
 # The way this works is by wrapping your desired behavior in this one.
 # To use, simply add the behavior you want to timeout like this:
 #
-# self.add_subbihavior(timeout_behavior.TimeoutBehavior. timeout),
+# self.add_subbihavior(timeout_behavior.TimeoutBehavior(instance_of_your_behavior). timeout),
 # instead of normal timeouts
 class TimeoutBehavior(composite_behavior.CompositeBehavior):
 

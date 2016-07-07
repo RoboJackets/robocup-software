@@ -15,9 +15,6 @@ import skills.pass_receive
 # Kick is a single_robot_behavior, so no need to import both
 class AngleReceive(skills.pass_receive.PassReceive):
 
-    # This is an adjuster to compensate for the fact that our max kick speed is not what we kick at at
-    # 100% kick power. MaxKickSpeed * KickPercentage = Actual KickSpeed at 100%
-
     def __init__(self):
         super().__init__(
             captureFunction=(lambda: skills.touch_ball.TouchBall()))

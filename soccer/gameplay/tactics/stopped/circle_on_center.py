@@ -38,9 +38,8 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         dirvec = (robocup.Point(0, 0) - ball_pos).normalized() * radius
 
         for i in range(6):
-            req = False
-            if i < min_robots:
-                req = True
+            req = i < min_robots
+
             pt = ball_pos + dirvec
             self.add_subbehavior(
                 skills.move.Move(pt),
