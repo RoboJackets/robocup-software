@@ -1,0 +1,33 @@
+#!/usr/bin/env python
+
+import io
+import sys
+import find_tty
+
+devices = find_tty.find(0x03eb, 0x6119)
+if not devices:
+	print >> sys.stderr, 'USB device not found'
+	sys.exit(1)
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, 'Usage: %s <file>' % sys.argv[0]
+	sys.exit(1)
+
+def read_exactly(f, n):
+	data = ''
+	while len(data) < n:
+		data += f.read(n - len(data))
+	return data
+
+addr = 0
+length = 131072
+
+f = io.open(devices[0], 'w+b', 0)
+cmd = 'spi_read 0x%x 0x%x\r' % (addr, length)
+f.write(cmd)
+echo = read_exactly(f, len(cmd) + 1)
+assert echo == cmd + '\n'
+data = read_exactly(f, length)
+
+out = file(sys.argv[1], 'wb')
+out.write(data)

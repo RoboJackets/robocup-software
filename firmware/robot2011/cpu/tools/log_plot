@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+
+from matplotlib.pyplot import *
+from numpy import *
+import sys
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, 'Usage: %s <input>' % sys.argv[0]
+	raise SystemExit
+
+data = loadtxt(sys.argv[1])
+x = data[:,0]
+y0 = abs(data[:,1])
+y1 = abs(data[:,2])
+y2 = abs(data[:,3])
+y3 = abs(data[:,4])
+lines = plot(x, y0, 'r', x, y1, 'c', x, y2, 'b', x, y3, 'm')
+figlegend(lines, ('BL', 'FL', 'FR', 'BR'), 'lower right')
+show()

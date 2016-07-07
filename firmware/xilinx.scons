@@ -1,0 +1,68 @@
+Import('*')
+
+# This script tries to find the Xilinx tools in likely places and
+# creates an environment with the path set to use the highest
+# available version.
+#
+# This does not use Xilinx's settings*.sh because it does very little
+# good except for the path to binaries and the license file,
+# and sometimes system libraries are shipped from Xilinx that are
+# incompatible with programs on your system.
+#
+# If you upgrade the Xilinx tools and get an error saying that
+# xflow is not found in the old directory, then you must run
+# scons with --implicit-deps-changed to get rid of the out-of-date
+# implicit dependency on the xflow binary.
+# To make things faster, we tell scons (in the top-level SConstruct)
+# to cache such dependencies, but once in a while this is a problem.
+
+# Find all installed verions of the Xilinx tools
+import os
+from os.path import *
+home = os.getenv('HOME')
+xilinx_versions = {}
+paths = ['/opt', home]
+for start in paths:
+	# Look for a Xilinx directory
+	path = join(start, 'Xilinx')
+	if isdir(path):
+		# Find all versions installed in this directory
+		for entry in os.listdir(path):
+			try:
+				ver = float(entry)
+			except ValueError:
+				continue
+			ver_path = join(path, entry)
+			xpath = join(ver_path, 'ISE_DS')
+			if isdir(ver_path) and isdir(xpath):
+				xilinx_versions[xpath] = ver
+
+xilinx = env_base.Clone()
+if xilinx_versions:
+	# Find the highest of all installed versions
+	xilinx_path = max(xilinx_versions, key=xilinx_versions.get)
+
+	import platform
+	machine = platform.machine()
+	if machine == 'x86_64':
+		platform_dir = 'lin64'
+	elif machine == 'x86':
+		platform_dir = 'lin'
+	else:
+		raise NotImplementedError('Xilinx tools only supported for 32/64-bit x86 Linux')
+
+	xilinx.AppendENVPath('PATH', join(xilinx_path, 'ISE/bin/', platform_dir))
+	xilinx.AppendENVPath('XILINXD_LICENSE_FILE', join(home, '.Xilinx/Xilinx.lic'))
+
+# Scanner to find Verilog includes
+import re
+include_re = re.compile(r'^`include\s+"(\S+)"', re.M)
+
+def vfile_scan (node, env, path):
+	contents = node.get_contents()
+	return include_re.findall(contents)
+
+xilinx.Append(SCANNERS=Scanner(function=vfile_scan, skeys=['.v'], recursive=True))
+
+Export('xilinx')
+
