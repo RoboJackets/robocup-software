@@ -4,12 +4,10 @@
 #include <QMutexLocker>
 
 #include <Utils.hpp>
-#include "../common/firmware/common2015/drivers/cc1201/ti/defines.hpp"
 #include "USBRadio.hpp"
 
 // Include this file for base station usb vendor/product ids
 #include "../common/firmware/base2015/usb-interface.hpp"
-
 // included for kicer status enum
 #include "../common/firmware/robot2015/cpu/status.h"
 
