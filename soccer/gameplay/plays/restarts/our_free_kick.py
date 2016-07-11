@@ -26,7 +26,6 @@ class OurFreeKick(standard_play.StandardPlay):
             self.indirect = gs.is_indirect()
         else:
             self.indirect = False
-        self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -49,7 +48,7 @@ class OurFreeKick(standard_play.StandardPlay):
         if self.indirect:
             receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
                 main.ball().pos)
-            pass_behavior = timeout_behavior.TimeoutBehavior(tactics.coordinated_pass.CoordinatedPass(receive_pt, None, (kicker, lambda x: True)), 9)
+            pass_behavior = timeout_behavior.TimeoutBehavior(tactics.coordinated_pass.CoordinatedPass(receive_pt, None, (kicker, lambda x: True), receiver_required=False, kicker_required=False), 9)
             # We don't need to manage this anymore
             self.add_subbehavior(pass_behavior, 'kicker')
 

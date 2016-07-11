@@ -37,12 +37,16 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     # Subclasses of pass_receive are preferred, but check the usage of this variable to be sure.
     # @param receive_point The point that will be kicked too. (Target point)
     # @param skillkicker A tuple of this form (kicking_class instance, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed).
+    # @param receiver_required Whether the receiver subbehavior should be required or not
+    # @param kicker_required Whether the kicker subbehavior should be required or not
     # The lambda equation is called (passed with the state of your class instance) to see if your class is ready. Simple implementations will just compare it to your ready state.
     def __init__(self,
                  receive_point=None,
                  skillreceiver=None,
                  skillkicker=None,
-                 prekick_timeout=None):
+                 prekick_timeout=None,
+                 receiver_required=True,
+                 kicker_required=True):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -59,6 +63,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.skillreceiver = skillreceiver
         self.skillkicker = skillkicker
         self.prekick_timeout = prekick_timeout
+        self.receiver_required = receiver_required
+        self.kicker_required = kicker_required
 
         self.add_state(CoordinatedPass.State.preparing,
                        behavior.Behavior.State.running)
@@ -126,7 +132,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiver = self.skillreceiver
         receiver.restart()
         receiver.receive_point = self.receive_point
-        self.add_subbehavior(receiver, 'receiver', required=True)
+        self.add_subbehavior(receiver, 'receiver', required=self.receiver_required)
 
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
@@ -151,7 +157,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicker.aim_params['max_steady_ang_vel'] = 3.0
         kicker.aim_params['min_steady_duration'] = 0.15
         kicker.aim_params['desperate_timeout'] = 3.0
-        self.add_subbehavior(kicker, 'kicker', required=True)
+        self.add_subbehavior(kicker, 'kicker', required=self.kicker_required)
 
         # receive point renegotiation
         self._last_unsteady_time = None
