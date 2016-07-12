@@ -1460,7 +1460,7 @@ p, li { white-space: pre-wrap; }
           <enum>QTabWidget::East</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="playsBehaviorsTab">
           <property name="sizePolicy">
@@ -1643,6 +1643,12 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QTreeWidget" name="configTree">
+             <attribute name="headerDefaultSectionSize">
+              <number>175</number>
+             </attribute>
+             <attribute name="headerMinimumSectionSize">
+              <number>175</number>
+             </attribute>
              <column>
               <property name="text">
                <string>Name</string>
