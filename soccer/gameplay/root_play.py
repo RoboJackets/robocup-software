@@ -192,7 +192,7 @@ class RootPlay(Play, QtCore.QObject):
 
     @goalie_id.setter
     def goalie_id(self, value):
-        self._goalie_id = None if value == -1 else value
+        self._goalie_id = value
         self.setup_goalie_if_needed()
         logging.info("goalie_id set to: " + str(self._goalie_id))
 

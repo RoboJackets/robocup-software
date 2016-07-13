@@ -80,6 +80,7 @@ int main(int argc, char* argv[]) {
             blueTeam = true;
         } else if (strcmp(var, "-sim") == 0) {
             sim = true;
+            noref=true;
         } else if (strcmp(var, "-nolog") == 0) {
             log = false;
         } else if (strcmp(var, "-freq") == 0) {
@@ -137,7 +138,7 @@ int main(int argc, char* argv[]) {
 
     Processor* processor = new Processor(sim);
     processor->blueTeam(blueTeam);
-    processor->refereeModule()->useExternalReferee(!noref);
+    processor->externalReferee(!noref);
 
     // Load config file
     QString error;
