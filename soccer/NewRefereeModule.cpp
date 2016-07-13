@@ -352,17 +352,20 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
             break;
     }
 
-    if (command != prev_command)
-        std::cout << "REFEREE: Command = " << stringFromCommand(command)
-                  << std::endl;
-    prev_command = command;
-    if (stage != prev_stage)
+    if (command != prev_command){
+        std::cout << "REFEREE: Command = " << stringFromCommand(command)<< std::endl;
+        prev_command = command;
+    }
+
+    if (stage != prev_stage){
         std::cout << "REFEREE: Stage = " << stringFromStage(stage) << std::endl;
-    prev_stage = stage;
+        prev_stage = stage;
+    }
 
     if (_state.gameState.state == GameState::Ready && kicked()) {
         _state.gameState.state = GameState::Playing;
     }
+    
     _state.gameState.OurInfo = blueTeam ? blue_info : yellow_info;
     _state.gameState.TheirInfo = blueTeam ? yellow_info : blue_info;
 }
