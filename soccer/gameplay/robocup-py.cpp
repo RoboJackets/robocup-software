@@ -597,7 +597,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("stay_on_side", &GameState::stayOnSide)
         .def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
         .def("is_our_restart", &GameState::isOurRestart)
-        .def("get_ball_placement_point", &GameState::getBallPlacementPoint);
+        .def("get_ball_placement_point", &GameState::getBallPlacementPoint)
+        .def("get_goalie_id", &GameState::getGoalieId);
 
     class_<Robot>("Robot", init<int, bool>())
         .def("shell_id", &Robot::shell)

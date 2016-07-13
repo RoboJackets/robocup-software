@@ -177,6 +177,9 @@ void MainWindow::processor(Processor* value) {
                                          _processor->logger().filename());
         _ui.actionStart_Logging->setEnabled(false);
     }
+
+    _autoExternalReferee = _processor->externalReferee();
+    _ui.goalieID->setEnabled(not _autoExternalReferee);
 }
 
 void MainWindow::logFileChanged() {
@@ -450,6 +453,17 @@ void MainWindow::updateViews() {
 
     _ui.actionUse_External_Referee->setChecked(
         _processor->refereeModule()->useExternalReferee());
+
+    if(_autoExternalReferee and RJ::timestamp() - _processor->status().lastRefereeTime < 500 * 1000){
+        //Actually using external ref
+        _ui.goalieID->setEnabled(false);
+        //this function changes the index which is 1 higher than the actual id
+        if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1)
+        _ui.goalieID->setCurrentIndex(_processor->state()->gameState.getGoalieId()+1);
+    }
+    else{
+        _ui.goalieID->setEnabled(true);
+    }
 
     // update robot status list
     for (const OurRobot* robot : _processor->state()->self) {
@@ -1149,7 +1163,8 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
-    _processor->refereeModule()->useExternalReferee(value);
+    _autoExternalReferee=value;
+    _processor->externalReferee(value);
 }
 
 ////////

@@ -143,4 +143,8 @@ public:
     Geometry2d::Point getBallPlacementPoint() const {
         return ballPlacementPoint;
     }
+
+    uint getGoalieId() const {
+        return OurInfo.goalie;
+    }
 };
