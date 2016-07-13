@@ -46,12 +46,10 @@ class LineUp(composite_behavior.CompositeBehavior):
         for i in range(6):
             pt = self._line.get_pt(0) + (self.diff * float(i))
             self.subbehavior_with_name("robot" + str(i)).pos = pt
-            subbehavior = self.subbehavior_with_name("robot" + str(i))
-         
 
         for bhvr in self.all_subbehaviors():
             if (bhvr.robot != None):
-                bhvr.robot.face(robocup.Point(0,0))
+                bhvr.robot.face(robocup.Point(0, 0))
 
 
     @property
