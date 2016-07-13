@@ -10,6 +10,7 @@ class RJLog {
 public:
     RJLog();
     RJLog(string filename);
+    vector<shared_ptr<Packet::LogFrame>> getFrames();
 
 private:
     vector<shared_ptr<Packet::LogFrame>> frames;

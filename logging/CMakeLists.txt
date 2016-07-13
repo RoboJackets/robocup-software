@@ -12,6 +12,7 @@ set (LOG_CONVERTER_SRC
 	"BSVLog.cpp"
 	"RJLog.cpp"
 	"SSLLog.cpp"
+	"../soccer/NewRefereeModule.cpp"
 )
 add_executable(log_converter ${LOG_CONVERTER_SRC} logConverter.cpp)
 target_link_libraries(log_converter common)

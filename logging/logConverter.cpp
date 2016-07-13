@@ -1,4 +1,3 @@
-#include <NewRefereeModule.cpp>
 #include <RJLog.hpp>
 #include <SSLLog.hpp>
 #include <BSVLog.hpp>
@@ -81,5 +80,19 @@ int main(int argc, char* argv[]) {
     } else {
         cerr << "Input log format not supported" << endl;
         usage(argv[0]);
+    }
+
+    if (outputType.compare("bsv") == 0) {
+        cout << "Writing BSV Log" << endl;
+        BSVLog bsv(intermediate);
+
+        string robotPath = "-robot.bsv";
+        string framePath = "-frame.bsv";
+        robotPath.insert(0,outputPath);
+        framePath.insert(0,outputPath);
+
+        cout << "writing output to " << robotPath << " and " << framePath << endl;
+
+        bsv.write(robotPath, framePath);
     }
 };
