@@ -48,9 +48,11 @@ class Defense(composite_behavior.CompositeBehavior):
                             lambda: not self.should_clear_ball(),
                             "done clearing")
 
-        goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
-        goalie.shell_id = main.root_play().goalie_id
-        self.add_subbehavior(goalie, "goalie", required=False)
+        valid_shells = [bot.shell_id for bot in main.our_robots()]
+        if main.root_play().goalie_id in valid_shells:
+            goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
+            goalie.shell_id = main.root_play().goalie_id
+            self.add_subbehavior(goalie, "goalie", required=False)
 
         # add defenders at the specified priority levels
         for num, priority in enumerate(defender_priorities):
@@ -78,9 +80,8 @@ class Defense(composite_behavior.CompositeBehavior):
     def should_clear_ball(self):
         #Returns true if our robot can reach the ball sooner than the closest opponent
         safe_to_clear = False
-        if main.ball().pos.mag(
-        ) < constants.Field.ArcRadius * 2 and not evaluation.ball.is_in_our_goalie_zone(
-        ):
+        if main.ball().pos.mag() < constants.Field.ArcRadius * 2 and main.ball(
+        ).vel.mag() < .75 and not evaluation.ball.is_in_our_goalie_zone():
 
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
@@ -108,10 +109,10 @@ class Defense(composite_behavior.CompositeBehavior):
     def execute_running(self):
         self.recalculate()
 
-        goalie = self.subbehavior_with_name("goalie")
-        goalie.shell_id = main.root_play().goalie_id
-        if goalie.shell_id == None:
-            print("WARNING: No Goalie Selected")
+        if self.has_subbehavior_with_name("goalie"):
+            goalie = self.subbehavior_with_name("goalie")
+            goalie.shell_id = main.root_play().goalie_id
+
             # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
             # TODO: move a lot of this code into modules in the evaluation folder
@@ -127,10 +128,12 @@ class Defense(composite_behavior.CompositeBehavior):
         defender1.go_clear = False
 
     def recalculate(self):
-        goalie = self.subbehavior_with_name('goalie')
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
-        behaviors = [goalie, defender1, defender2]
+        behaviors = [defender1, defender2]
+        if self.has_subbehavior_with_name('goalie'):
+            goalie = self.subbehavior_with_name('goalie')
+            behaviors = [goalie, defender1, defender2]
 
         # if we don't have any bots to work with, don't waste time calculating
         if all(bhvr.robot == None for bhvr in behaviors):
@@ -212,7 +215,7 @@ class Defense(composite_behavior.CompositeBehavior):
             # as we handle threats, we remove the handlers from this list
 
         unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot != None,
-                                             [goalie, defender1, defender2]))
+                                             behaviors))
 
         def set_block_lines_for_threat_handlers(threat):
             if len(threat.assigned_handlers) == 0:
@@ -220,7 +223,8 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # make sure goalie is in the middle
             if len(threat.assigned_handlers) > 1:
-                if goalie in threat.assigned_handlers:
+                if self.has_subbehavior_with_name(
+                        "goalie") and goalie in threat.assigned_handlers:
                     idx = threat.assigned_handlers.index(goalie)
                     if idx != 1:
                         del threat.assigned_handlers[idx]

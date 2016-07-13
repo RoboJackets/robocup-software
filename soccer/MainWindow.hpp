@@ -17,7 +17,7 @@ class StripChart;
 class ConfigBool;
 class QuaternionDemo;
 
-enum RadioChannels { MHz_904, MHz_906 };
+enum RadioChannels { MHz_916, MHz_918 };
 
 /**
  * main gui thread class
@@ -89,8 +89,8 @@ private Q_SLOTS:
     void on_action270_triggered();
 
     /// Radio channels
-    void on_action904MHz_triggered();
-    void on_action906MHz_triggered();
+    void on_action916MHz_triggered();
+    void on_action918MHz_triggered();
 
     /// Vision port
     void on_actionVisionPrimary_Half_triggered();

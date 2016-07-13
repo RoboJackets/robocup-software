@@ -9,6 +9,7 @@
 #include "pins.hpp"
 #include "usb-interface.hpp"
 #include "watchdog.hpp"
+#include "logger.hpp"
 
 #define RJ_WATCHDOG_TIMER_VALUE 2  // seconds
 
@@ -44,6 +45,13 @@ void radioRxHandler(rtp::packet pkt) {
     // write packet content (including header) out to EPBULK_IN
     vector<uint8_t> buf;
     pkt.pack(&buf);
+
+    // drop the packet if it's the wrong size. Thsi will need to be changed if we have variable-sized reply packets
+    if (buf.size() != rtp::Reverse_Size) {
+        LOG(WARN, "Dropping packet, wrong size '%u', should be '%u'", buf.size(), rtp::Reverse_Size);
+        return;
+    }
+
     bool success = usbLink.writeNB(EPBULK_IN, buf.data(), buf.size(),
                                    MAX_PACKET_SIZE_EPBULK);
 

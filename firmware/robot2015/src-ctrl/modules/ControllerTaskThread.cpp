@@ -59,32 +59,32 @@ void Task_Controller(void const* args) {
     // Store our priority so we know what to reset it to after running a command
     osPriority threadPriority = osThreadGetPriority(threadID);
 
-    MPU6050 imu(RJ_I2C_SDA, RJ_I2C_SCL);
+    // MPU6050 imu(RJ_I2C_SDA, RJ_I2C_SCL);
 
-    imu.setBW(MPU6050_BW_256);
-    imu.setGyroRange(MPU6050_GYRO_RANGE_250);
-    imu.setAcceleroRange(MPU6050_ACCELERO_RANGE_2G);
-    imu.setSleepMode(false);
+    // imu.setBW(MPU6050_BW_256);
+    // imu.setGyroRange(MPU6050_GYRO_RANGE_250);
+    // imu.setAcceleroRange(MPU6050_ACCELERO_RANGE_2G);
+    // imu.setSleepMode(false);
 
-    char testResp;
-    if ((testResp = imu.testConnection())) {
-        float resultRatio[6];
-        imu.selfTest(resultRatio);
-        LOG(INIT,
-            "IMU self test results:\r\n"
-            "    Accel (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)\r\n"
-            "    Gyro  (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)",
-            resultRatio[0], resultRatio[1], resultRatio[2], resultRatio[3],
-            resultRatio[4], resultRatio[5]);
-
-        LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
-            ((P_TCB)threadID)->task_id, threadPriority);
-    } else {
-        LOG(SEVERE,
-            "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
-            "sensorless control loop.",
-            testResp);
-    }
+    // char testResp;
+    // if ((testResp = imu.testConnection())) {
+    //     float resultRatio[6];
+    //     imu.selfTest(resultRatio);
+    //     LOG(INIT,
+    //         "IMU self test results:\r\n"
+    //         "    Accel (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)\r\n"
+    //         "    Gyro  (X,Y,Z):\t(%2.2f%%, %2.2f%%, %2.2f%%)",
+    //         resultRatio[0], resultRatio[1], resultRatio[2], resultRatio[3],
+    //         resultRatio[4], resultRatio[5]);
+    //
+    //     LOG(INIT, "Control loop ready!\r\n    Thread ID: %u, Priority: %d",
+    //         ((P_TCB)threadID)->task_id, threadPriority);
+    // } else {
+    //     LOG(SEVERE,
+    //         "MPU6050 not found!\t(response: 0x%02X)\r\n    Falling back to "
+    //         "sensorless control loop.",
+    //         testResp);
+    // }
 
     // signal back to main and wait until we're signaled to continue
     osSignalSet(mainID, MAIN_TASK_CONTINUE);
@@ -92,13 +92,14 @@ void Task_Controller(void const* args) {
 
     array<int16_t, 5> duty_cycles{};
 
-    // pidController.setPidValues(1.5, 0.05, 0);  // TODO: tune pid values
-    pidController.setPidValues(0.8, 0.05, 0);
+    pidController.setPidValues(2.0, 0.05, .1);  // TODO: tune pid values
+    //pidController.setPidValues(0.2, 0, 0);
 
     // initialize timeout timer
     commandTimeoutTimer = make_unique<RtosTimerHelper>(
-        [&]() { commandTimedOut = true; }, osTimerPeriodic);
+        [&]() { commandTimedOut = true; }, osTimerOnce);
 
+    duty_cycles[0] = 1;
     while (true) {
         // imu.getGyro(gyroVals);
         // imu.getAccelero(accelVals);
@@ -135,7 +136,7 @@ void Task_Controller(void const* args) {
          *     time_precision = 6.94us
          *
          */
-        const float dt = enc_deltas.back() * (1 / 18.432e6) * 2 * 64;
+        const float dt = enc_deltas.back() * 256 * (1 / 18.432e6f);
 
         // take first 4 encoder deltas
         array<int16_t, 4> driveMotorEnc;

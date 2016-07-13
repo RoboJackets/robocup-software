@@ -203,6 +203,13 @@ public:
     void stop();
 
     /**
+     * Makes this robot execute a lineKick
+     *
+     * @param target - The target to kick towards (aiming point)
+     */
+    void lineKick(Geometry2d::Point target);
+
+    /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
@@ -329,7 +336,7 @@ public:
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
     Geometry2d::ShapeSet collectStaticObstacles(
-        const Geometry2d::ShapeSet& globalObstacles);
+        const Geometry2d::ShapeSet& globalObstacles, bool localObstacles = true);
 
     Geometry2d::ShapeSet collectAllObstacles(
         const Geometry2d::ShapeSet& globalObstacles);
