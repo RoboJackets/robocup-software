@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import serial
+import sys
+import struct
+import find_tty
+
+devices = find_tty.find(0x03eb, 0x6119)
+if not devices:
+	print >> sys.stderr, 'USB device not found'
+	sys.exit(1)
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, 'Usage: %s <file>' % sys.argv[0]
+	sys.exit(1)
+
+dev = serial.Serial(devices[0])
+
+# Make sure we're talking to the firmware
+dev.write('\x03')
+expect = 'Stop\r\n> '
+i = 0
+while i < len(expect):
+	ch = dev.read(1)
+	if ch != expect[i]:
+		i = 0
+	else:
+		i += 1
+
+# Read data to be programmed
+f = file(sys.argv[1])
+data = f.read()
+f.close()
+
+# Pad data to page boundary
+#FIXME - 128 bytes for the '321 and '64 parts
+Page_Size = 256
+extra = len(data) % Page_Size
+if extra:
+	data += '\xff' * (Page_Size - extra)
+
+# Start programming
+def read_exactly(f, n):
+	data = ''
+	while len(data) < n:
+		data += f.read(n - len(data))
+	return data
+
+cmd = 'reflash 0x%x\r' % len(data)
+dev.write(cmd)
+result = read_exactly(dev, len(cmd) + 14)
+if result != cmd + '\nGO %08x\r\n' % len(data):
+	print 'Bad echo: %s' % result
+	print '*** Reset board now!'
+	sys.exit(1)
+
+print 'Writing %d bytes...' % len(data)
+dev.write(data)
+
+print 'Verifying...'
+v = read_exactly(dev, len(data))
+
+if v == data:
+	print 'OK'
+else:
+	f = file('verify.bad', 'wb')
+	f.write(v)
+	f.close()
+	print 'Verification failed!'
+	print 'Returned data written to verify.bad'
+	print '*** Reset board now - you will probably need to recover with SAM-BA'
+

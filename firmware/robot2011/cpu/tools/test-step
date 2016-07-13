@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import io
+import sys
+import find_tty
+
+devices = find_tty.find(0x03eb, 0x6119)
+if not devices:
+	print >> sys.stderr, 'USB device not found'
+	sys.exit(1)
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, 'Usage: %s <0..127>' % sys.argv[0]
+	sys.exit(1)
+
+level = int(sys.argv[1])
+assert level >= 0 and level <= 127
+
+dev = io.open(devices[0], 'w+b', 0)
+
+# Make sure we're talking to the firmware
+dev.write('\x03')
+expect = 'Stop\r\n> '
+i = 0
+while i < len(expect):
+	ch = dev.read(1)
+	if ch != expect[i]:
+		i = 0
+	else:
+		i += 1
+
+def read_exactly(f, n):
+	data = ''
+	while len(data) < n:
+		data += f.read(n - len(data))
+	return data
+
+cmd = 'run step %d\r' % level
+dev.write(cmd)
+assert read_exactly(dev, len(cmd) + 3) == cmd + '\n> '
+
+for i in range(100):
+	fields = dev.readline().strip().split()
+	supply = float(fields[0])
+	speed = int(fields[1])
+	print supply, speed
+
+dev.write('\x03')
+dev.readline()
