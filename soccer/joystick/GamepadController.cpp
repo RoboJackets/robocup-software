@@ -20,7 +20,7 @@ GamepadController::GamepadController()
 
     if (SDL_NumJoysticks()) {
         // Open the first available controller
-        for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {    
+        for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
             // // open joystick, print out info about it, then close it back
             // SDL_Joystick *joy;
             // joy = SDL_JoystickOpen(i);
@@ -48,54 +48,6 @@ GamepadController::GamepadController()
                 if (controller != nullptr) {
                     _controller = controller;
                     cout << "Using " << SDL_GameControllerName(_controller) << " game controller" << endl;
-
-                    // SDL_Joystick* joyst;
-                    // joyst = SDL_GameControllerGetJoystick(_controller);
-
-                    // SDL_JoystickGUID guid = SDL_JoystickGetGUID(joyst);
-
-                    // char guid_str[33];
-                    // SDL_JoystickGetGUIDString(guid, guid_str, 33);
-
-                    // string joy_name(SDL_JoystickName(joyst));
-                    // string map_str(guid_str);                    
-
-                    // map_str += "," + joy_name;
-
-                    // map_str += ",a:b0";
-                    // map_str += ",b:b1";
-                    // map_str += ",x:b2";
-                    // map_str += ",y:b3";
-
-                    // map_str += ",dpdown:h0.4";
-                    // map_str += ",dpleft:h0.8";
-                    // map_str += ",dpright:h0.2";
-                    // map_str += ",dpup:h0.1";
-                    
-                    // map_str += ",leftstick:b9";
-                    // map_str += ",leftx:a0";
-                    // map_str += ",lefty:a1";
-                    // map_str += ",leftshoulder:b4";
-                    // map_str += ",lefttrigger:a2";
-
-                    // map_str += ",rightx:a3";
-                    // map_str += ",righty:a4";
-                    // map_str += ",rightstick:b10";
-                    // map_str += ",rightshoulder:b5";
-                    // map_str += ",righttrigger:a5";
-
-                    // map_str += ",start:b7";
-                    // map_str += ",back:b6";
-                    // map_str += ",guide:b8";
-                    
-                    // SDL_GameControllerAddMapping(map_str.c_str());
-
-                    // char* mapping;
-                    // mapping = SDL_GameControllerMapping(controller);
-
-                    // cerr << "Controller " << i << " is mapped as:'" << endl << "\t'" << mapping << "'" << endl;
-                    // SDL_free(mapping);
-
                     break;
                 } else {
                     cerr << "ERROR: Could not open controller! SDL Error: " << SDL_GetError()

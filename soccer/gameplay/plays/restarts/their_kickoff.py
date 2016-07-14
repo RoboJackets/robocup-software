@@ -32,8 +32,6 @@ class TheirKickoff(standard_play.StandardPlay):
                 min_robots=1 if len(main.our_robots()) > 3 else 0), 'circle_up', priority=15, required=True)
 
 
-        mark_one = None
-        mark_two = None
         mark_one = skills.mark.Mark()
         self.add_subbehavior(mark_one, 'mark_one', priority=planning_priority.PIVOT_KICK + 1, required=False)
         mark_two = skills.mark.Mark()
