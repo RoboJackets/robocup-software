@@ -80,7 +80,6 @@ int main(int argc, char* argv[]) {
             blueTeam = true;
         } else if (strcmp(var, "-sim") == 0) {
             sim = true;
-            noref=true;
         } else if (strcmp(var, "-nolog") == 0) {
             log = false;
         } else if (strcmp(var, "-freq") == 0) {
