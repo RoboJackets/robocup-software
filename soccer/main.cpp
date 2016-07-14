@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
 
     Processor* processor = new Processor(sim);
     processor->blueTeam(blueTeam);
-    processor->refereeModule()->useExternalReferee(!noref);
+    processor->externalReferee(!noref);
 
     // Load config file
     QString error;
