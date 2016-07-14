@@ -145,6 +145,8 @@ public:
     /// Returns the number of a debug layer given its name
     int findDebugLayer(QString layer);
 
+    std::vector<int> ourValidIds();
+
 private:
     /// Map from debug layer name to ID
     QMap<QString, int> _debugLayerMap;
