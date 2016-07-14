@@ -80,19 +80,22 @@ class RootPlay(Play, QtCore.QObject):
             if self.play != None:
                 if self.play.__class__ not in map(lambda tup: tup[0],
                                                   enabled_plays_and_scores):
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' no longer enabled, aborting")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' no longer enabled, aborting")
                     self.play.terminate()
                     self.play = None
                 elif self.play.is_done_running():
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' finished running")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' finished running")
                     if self.play.is_restart:
                         self._currently_restarting = False
                     self.play = None
                 elif self.play.__class__.score() == float("inf"):
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' no longer applicable, ending")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' no longer applicable, ending")
                     self.play.terminate()
                     self.play = None
 

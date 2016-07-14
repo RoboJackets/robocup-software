@@ -99,7 +99,7 @@ public:
     bool joystickValid();
     JoystickControlValues getJoystickControlValues();
 
-    void externalReferee(bool value) { 
+    void externalReferee(bool value) {
         _externalReferee = value;
         _refereeModule->useExternalReferee(value);
     }

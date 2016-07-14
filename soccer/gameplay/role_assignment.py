@@ -186,7 +186,7 @@ def assign_roles(robots, role_reqs):
             if isinstance(subtree, dict):
                 flatten_tree(subtree, path_prefix + [key])
             elif isinstance(subtree, RoleRequirements):
-                if subtree.required_shell_id==None or subtree.required_shell_id in valid_shell_ids:
+                if subtree.required_shell_id == None or subtree.required_shell_id in valid_shell_ids:
                     role_reqs_list.append(subtree)
                 tree_mapping[subtree] = path_prefix + [key]
             else:
