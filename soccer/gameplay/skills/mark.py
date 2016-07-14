@@ -71,6 +71,8 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
 
 
     # Overrides mark_robot with a static point
+    # If mark_point is set, we will still need a mark robot
+    # (for the approach_opponent function above)
     @property
     def mark_point(self):
         return self._mark_point
