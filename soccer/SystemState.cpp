@@ -67,11 +67,6 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
         return MotionInstant();
     }
 
-    //if (!valid) {
-    //    debugThrow("Ball doesn't have a valid location at the moment");
-    //    return MotionInstant();
-    //}
-
     MotionInstant instant;
     float t = RJ::TimestampToSecs(estimateTime - time);
 

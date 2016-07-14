@@ -10,6 +10,8 @@ import role_assignment
 ## lines up with the ball and the target, then drives up and kicks
 # this differs from PivotKick which gets the ball first, then aims
 # Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes
+#
+# See Also: LineKickOld is the old, python-only implementation of line_kick
 class LineKick(skills._kick._Kick):
     ClosenessThreshold = constants.Robot.Radius * 3 + 0.04
 

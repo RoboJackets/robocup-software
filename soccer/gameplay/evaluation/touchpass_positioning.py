@@ -98,7 +98,7 @@ def eval_single_point(kick_point, receive_point, ignore_robots=[]):
 # @param evaluation_zone the zone that will be evaluated to try to find points.
 # If none, it will try to guess a good receive area.
 # This is a robocup.Rect
-# @ignore_robots a list of robots to be ignored when trying to find the best receive point.
+# @param ignore_robots a list of robots to be ignored when trying to find the best receive point.
 def eval_best_receive_point(kick_point,
                             evaluation_zone=None,
                             ignore_robots=[]):

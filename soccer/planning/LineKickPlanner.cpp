@@ -31,9 +31,9 @@ bool LineKickPlanner::shouldReplan(
             pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
         float targetChange = (prevPath->end().motion.pos - endTarget).mag();
 
-        if (targetChange > SingleRobotPathPlanner::goalChangeThreshold()) {
-            // return true;
-        }
+        // if (targetChange > SingleRobotPathPlanner::goalChangeThreshold()) {
+        //     return true;
+        // }
     }
     return false;
 }
