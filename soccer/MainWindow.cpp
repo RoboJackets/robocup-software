@@ -454,8 +454,9 @@ void MainWindow::updateViews() {
     _ui.actionUse_External_Referee->setChecked(
         _processor->refereeModule()->useExternalReferee());
 
-    if(_autoExternalReferee and RJ::timestamp() - _processor->status().lastRefereeTime < 500 * 1000){
-        //Actually using external ref
+    std::vector<int> validIds = _processor->state()->ourValidIds();
+    if(_autoExternalReferee and std::find(validIds.begin(), validIds.end(), _processor->state()->gameState.getGoalieId())!=validIds.end() and RJ::timestamp() - _processor->status().lastRefereeTime < 500 * 1000){
+        //External Ref is connected and transmitting a valid goalie id
         _ui.goalieID->setEnabled(false);
         //this function changes the index which is 1 higher than the actual id
         if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1)
