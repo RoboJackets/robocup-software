@@ -214,6 +214,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             return True
         return False
 
+    def time_remaining(self):
+        if self._preparing_start == None or self.prekick_timeout == None or self.prekick_timeout <= 0:
+            return 0
+        return self.prekick_timeout - (time.time() - self._preparing_start)
+
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
         self.subbehavior_with_name('receiver').ball_kicked = True
@@ -222,4 +227,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def __str__(self):
         desc = super().__str__()
         desc += "\n    rcv_pt=" + str(self.receive_point)
+        if not (self._preparing_start == None or self.prekick_timeout == None or self.prekick_timeout <= 0):
+            desc += "\n    timeout=" + str(round(self.time_remaining(), 2))
         return desc
