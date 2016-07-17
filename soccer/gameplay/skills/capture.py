@@ -7,7 +7,7 @@ import constants
 import role_assignment
 import robocup
 import planning_priority
-import constants
+
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
 
@@ -50,7 +50,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach,
-            lambda: not self.robot.has_ball() and not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
+            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
 
         self.lastApproachTarget = None
@@ -133,24 +133,14 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
 
         # TODO(ashaw596): explain this math a bit
-        """
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        #multiplier = 1.5
-        #aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(\).vel
-        vel = Capture.FineApproachSpeed
-        #if (main.ball().pos - self.robot.pos).mag() > 0.2
-        approach = bot2ball * vel + main.ball().vel
-        #if (aproach.mag() > 1):
-        #    aproach = aproach.normalized() * 1
-        self.robot.set_world_vel(approach)
-        """
-        bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        multiplier = 0.1
-        aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball().vel
+        multiplier = 1.5
+        aproach = self.bot_to_ball(
+        ) * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(
+        ).vel
         if (aproach.mag() > 1):
             aproach = aproach.normalized() * 1
         self.robot.set_world_vel(aproach)
-
 
     def role_requirements(self):
         reqs = super().role_requirements()
