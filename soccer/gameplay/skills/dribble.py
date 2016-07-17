@@ -26,7 +26,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._threshold = 0.1  #default value matches the required accuracy for a placement command
         self._pos = pos
 
-        self._dribble_speed = 70
+        self._dribble_speed = constants.Robot.Dribbler.MaxPower
 
         self.add_transition(behavior.Behavior.State.start,
                             Dribble.State.capture, lambda: True, 'immediately')
