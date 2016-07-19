@@ -77,7 +77,7 @@ def get_segments_from_rect(rect, threshold=0.75):
 #
 # The value returned is the probability that a pass from the kick_point to the receive_point will make it,
 # multiplied by the probability that a goal can be scored from receive_point. This probablity will be between 0 and 1.
-def eval_single_point(kick_point, receive_point, ignore_robots=[]):
+def eval_single_point(kick_point, receive_point, targetPoint=None, ignore_robots=[]):
     if kick_point is None:
         if main.ball().valid:
             kick_point = main.ball().pos
@@ -87,7 +87,8 @@ def eval_single_point(kick_point, receive_point, ignore_robots=[]):
     currentChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                                  ignore_robots)
     # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
-    targetPoint = constants.Field.TheirGoalSegment.center()
+    if targetPoint == None:
+        targetPoint = constants.Field.TheirGoalSegment.center()
     currentChance = currentChance * evaluation.passing.eval_pass(
         receive_point, targetPoint, ignore_robots)
     return currentChance

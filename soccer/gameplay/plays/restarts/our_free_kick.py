@@ -5,7 +5,6 @@ import skills.pivot_kick
 import constants
 import robocup
 import main
-import timeout_behavior
 import tactics.coordinated_pass
 import evaluation.touchpass_positioning
 
@@ -48,7 +47,7 @@ class OurFreeKick(standard_play.StandardPlay):
         if self.indirect:
             receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
                 main.ball().pos)
-            pass_behavior = timeout_behavior.TimeoutBehavior(tactics.coordinated_pass.CoordinatedPass(receive_pt, None, (kicker, lambda x: True), receiver_required=False, kicker_required=False), 9)
+            pass_behavior = tactics.coordinated_pass.CoordinatedPass(receive_pt, None, (kicker, lambda x: True), receiver_required=False, kicker_required=False, prekick_timeout=9)
             # We don't need to manage this anymore
             self.add_subbehavior(pass_behavior, 'kicker')
 
@@ -61,7 +60,7 @@ class OurFreeKick(standard_play.StandardPlay):
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
             lambda: self.subbehavior_with_name('kicker').is_done_running()
-            and self.subbehavior_with_name('kicker').state != timeout_behavior.TimeoutBehavior.State.timeout, 'kicker completes')
+            and self.subbehavior_with_name('kicker').state != tactics.coordinated_pass.CoordinatedPass.State.timeout, 'kicker completes')
 
     @classmethod
     def score(cls):
@@ -71,7 +70,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
     def execute_running(self):
         if self.indirect \
-           and self.subbehavior_with_name('kicker').state == timeout_behavior.TimeoutBehavior.State.timeout:
+           and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
             self.indirect = False
             self.remove_subbehavior('kicker')
             kicker = skills.line_kick.LineKick()
@@ -79,7 +78,7 @@ class OurFreeKick(standard_play.StandardPlay):
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         if self.indirect:
-            passState = self.subbehavior_with_name('kicker').behavior.state
+            passState = self.subbehavior_with_name('kicker').state
             OurFreeKick.running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
                                   passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
     def on_enter_running(self):

@@ -91,7 +91,7 @@ class ForwardPass(composite_behavior.CompositeBehavior):
     def on_enter_running(self):
         receiver = self.skillreceiver
         receiver.restart()
-        receiver.receive_point = self.receive_point + robocup.Point(-1.0,-3.0)
+        receiver.receive_point = self.receive_point + robocup.Point(-1.0, -3.0)
         self.add_subbehavior(receiver, 'receiver', required=True)
 
     def on_exit_running(self):
@@ -104,12 +104,6 @@ class ForwardPass(composite_behavior.CompositeBehavior):
         kicker = skills.pivot_kick.PivotKick()
         kicker.target = self.receive_point
         kickpower = ForwardPass.KickPower
-        #kickpower = (main.ball().pos - self.receive_point).mag() / 8
-        #if (kickpower < 0.2):
-        #    kickpower = 0.2
-
-        #if (kickpower > 1.0):
-        #    kickpower = 1.0
         kicker.kick_power = kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
@@ -145,29 +139,6 @@ class ForwardPass(composite_behavior.CompositeBehavior):
         if kicker != None and kicker.robot != None:
             toReturn.extend([kicker.robot])
         return toReturn
-
-    def execute_preparing(self):
-        """
-        kicker = self.subbehavior_with_name('kicker')
-
-        # receive point renegotiation
-        # if the kicker sits there aiming close to target and gets stuck,
-        # we set the receive point to the point the kicker is currently aiming at
-        if kicker.current_shot_point(
-        ) != None and not self._has_renegotiated_receive_point:
-            if (not kicker.is_steady() and
-                    kicker.state == skills.pivot_kick.PivotKick.State.aiming):
-                self._last_unsteady_time = time.time()
-
-            if (self._last_unsteady_time != None and
-                    time.time() - self._last_unsteady_time > 0.75 and
-                    kicker.current_shot_point().dist_to(self.receive_point) <
-                    0.1):
-                # renegotiate receive_point
-                logging.info("Pass renegotiated RCV PT")
-                self.receive_point = kicker.current_shot_point()
-                self._has_renegotiated_receive_point = True
-        """
 
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
