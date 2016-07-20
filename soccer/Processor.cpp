@@ -16,6 +16,7 @@
 #include <git_version.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
+#include <joystick/GamepadJoystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -71,6 +72,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     // joysticks
     _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
+    _joysticks.push_back(new GamepadJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
 
