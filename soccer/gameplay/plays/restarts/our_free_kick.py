@@ -11,7 +11,7 @@ import evaluation.touchpass_positioning
 
 class OurFreeKick(standard_play.StandardPlay):
 
-    running = False
+    Running = False
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -65,7 +65,7 @@ class OurFreeKick(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if OurFreeKick.running or (
+        return 0 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def execute_running(self):
@@ -79,12 +79,12 @@ class OurFreeKick(standard_play.StandardPlay):
 
         if self.indirect:
             passState = self.subbehavior_with_name('kicker').state
-            OurFreeKick.running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
+            OurFreeKick.Running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
                                   passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
     def on_enter_running(self):
-        OurFreeKick.running = False
+        OurFreeKick.Running = False
     def on_exit_running(self):
-        OurFreeKick.running = False
+        OurFreeKick.Running = False
 
     @classmethod
     def is_restart(cls):
