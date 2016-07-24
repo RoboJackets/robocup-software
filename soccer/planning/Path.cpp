@@ -48,6 +48,7 @@ void Path::drawDebugText(SystemState* state,
         state->drawText(_debugText.get(), end().motion.pos, color, layer);
     }
 }
+
 std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
                                                   float deltaT) const {
     return std::move(
@@ -58,7 +59,6 @@ bool Path::pathsIntersect(const std::vector<DynamicObstacle>&obstacles, float* h
                           Geometry2d::Point* hitLocation,
                           RJ::Time startTime) const {
     const float deltaT = 0.05;
-    //const float hitRadius = Robot_Radius * 2.5f;
 
     auto thisPathIterator = iterator(startTime, deltaT);
     vector<std::pair<unique_ptr<ConstPathIterator>,float>> pathIterators;
