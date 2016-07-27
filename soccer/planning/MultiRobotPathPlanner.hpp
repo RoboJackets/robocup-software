@@ -28,9 +28,6 @@ struct PlanRequest {
           obstacles(obs),
           dynamicObstacles(dObs) {}
 
-    //PlanRequest() {}
-
-
     const SystemState& systemState;
     MotionInstant start;
     std::unique_ptr<MotionCommand> motionCommand;
