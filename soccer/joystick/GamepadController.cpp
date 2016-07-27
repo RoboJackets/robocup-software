@@ -21,25 +21,6 @@ GamepadController::GamepadController()
     if (SDL_NumJoysticks()) {
         // Open the first available controller
         for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
-            // // open joystick, print out info about it, then close it back
-            // SDL_Joystick *joy;
-            // joy = SDL_JoystickOpen(i);
-            // if (joy) {
-            //     cerr << "Joystick " << i << ":" << endl;
-            //     cerr << "  Name:\t\t\t" << SDL_JoystickNameForIndex(i) << endl;
-            //     cerr << "  Number of Axes:\t" << SDL_JoystickNumAxes(joy) << endl;
-            //     cerr << "  Number of Btns:\t" << SDL_JoystickNumButtons(joy) << endl;
-            //     cerr << "  Number of Balls:\t" << SDL_JoystickNumBalls(joy) << endl;
-            //     cerr << "  Game Controller:\t" << static_cast<bool>(SDL_IsGameController(i)) << endl;
-            // } else {
-            //     cerr << "Unable to open joystick number " << i << endl;
-            // }
-
-            // // close the joystick back
-            // if (SDL_JoystickGetAttached(joy)) {
-            //     SDL_JoystickClose(joy);
-            // }
-
             // setup the joystick as a game controller if available
             if (SDL_IsGameController(i)) {
                 SDL_GameController* controller;
