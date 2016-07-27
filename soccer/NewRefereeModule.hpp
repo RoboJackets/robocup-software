@@ -214,7 +214,7 @@ protected:
     NewRefereeModuleEnums::Command prev_command;
     NewRefereeModuleEnums::Stage prev_stage;
 
-    bool _useExternalRef = true;
+    bool _useExternalRef = false;
 
     float ballPlacementx;
     float ballPlacementy;
