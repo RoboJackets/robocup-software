@@ -1,353 +1,175 @@
-// ** DON'T INCLUDE <iostream>! THINGS WILL BREAK! **
-#include <array>
-#include <ctime>
-#include <string>
+#include "mbed.h"
+#include "deca_device_api.h"
+#include "deca_regs.h"
 
-#include <rtos.h>
+Serial pc(USBTX,USBRX);
+DigitalOut myled(LED1);
 
-#include <assert.hpp>
-#include <helper-funcs.hpp>
-#include <logger.hpp>
-#include <watchdog.hpp>
+/* Default communication configuration. We use here EVK1000's default mode (mode 3). */
+static dwt_config_t config = {
+    2,               /* Channel number. */
+    DWT_PRF_64M,     /* Pulse repetition frequency. */
+    DWT_PLEN_1024,   /* Preamble length. Used in TX only. */
+    DWT_PAC32,       /* Preamble acquisition chunk size. Used in RX only. */
+    9,               /* TX preamble code. Used in TX only. */
+    9,               /* RX preamble code. Used in RX only. */
+    1,               /* 0 to use standard SFD, 1 to use non-standard SFD. */
+    DWT_BR_110K,     /* Data rate. */
+    DWT_PHRMODE_STD, /* PHY header mode. */
+    (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+};
 
-#include "BallSense.hpp"
-#include "CC1201.cpp"
-#include "KickerBoard.hpp"
-#include "RadioProtocol.hpp"
-#include "RotarySelector.hpp"
-#include "RtosTimerHelper.hpp"
-#include "SharedSPI.hpp"
-#include "commands.hpp"
-#include "fpga.hpp"
-#include "io-expander.hpp"
-#include "io-expander.hpp"
-#include "neostrip.hpp"
-#include "robot-devices.hpp"
-#include "task-signals.hpp"
+/* The frame sent in this example is an 802.15.4e standard blink. It is a 12-byte frame composed of the following fields:
+ *     - byte 0: frame type (0xC5 for a blink).
+ *     - byte 1: sequence number, incremented for each new frame.
+ *     - byte 2 -> 9: device ID, see NOTE 1 below.
+ *     - byte 10/11: frame check-sum, automatically set by DW1000.  */
+static uint8 tx_msg[] = {0xC5, 0, 'D', 'E', 'C', 'A', 'W', 'A', 'V', 'E', 0, 0};
+/* Index to access to sequence number of the blink frame in the tx_msg array. */
+#define BLINK_FRAME_SN_IDX 1
 
-#define RJ_ENABLE_ROBOT_CONSOLE
+/* Inter-frame delay period, in milliseconds. */
+#define TX_DELAY_MS 1000
 
-using namespace std;
 
-void Task_Controller(void const* args);
+/* Buffer to store received frame. See NOTE 1 below. */
+#define FRAME_LEN_MAX 127
+static uint8 rx_buffer[FRAME_LEN_MAX];
 
-/**
- * @brief Sets the hardware configurations for the status LEDs & places
- * into the given state
- *
- * @param[in] state The next state of the LEDs
- */
-void statusLights(bool state) {
-    DigitalOut init_leds[] = {
-        {RJ_BALL_LED}, {RJ_RX_LED}, {RJ_TX_LED}, {RJ_RDY_LED}};
-    // the state is inverted because the leds are wired active-low
-    for (DigitalOut& led : init_leds) led = !state;
+/* Hold copy of status register state here for reference so that it can be examined at a debug breakpoint. */
+static uint32 status_reg = 0;
+
+/* Hold copy of frame length of frame received (if good) so that it can be examined at a debug breakpoint. */
+static uint16 frame_len = 0;
+
+int tx(void) {
+    /* Reset and initialise DW1000. See NOTE 2 below.
+     * For initialisation, DW1000 clocks must be temporarily set to crystal speed. After initialisation SPI rate can be increased for optimum
+     * performance. */
+    //reset_DW1000(); /* Target specific drive of RSTn line into DW1000 low for a period. */
+    //spi_set_rate_low();
+
+    int temp_init = dwt_initialise(DWT_LOADNONE);
+    pc.printf("%d\n",temp_init);
+    if (temp_init == DWT_ERROR)
+    {
+        pc.printf("INIT FAILED\n");
+        while (1)
+        { };
+    }
+    //spi_set_rate_high();
+
+    /* Configure DW1000. See NOTE 3 below. */
+    dwt_configure(&config);
+
+    pc.printf("Configured TX\n");
+
+    /* Loop forever sending frames periodically. */
+    while(1)
+    {
+        /* Write frame data to DW1000 and prepare transmission. See NOTE 4 below.*/
+        dwt_writetxdata(sizeof(tx_msg), tx_msg, 0); /* Zero offset in TX buffer. */
+        dwt_writetxfctrl(sizeof(tx_msg), 0); /* Zero offset in TX buffer, no ranging. */
+
+        /* Start transmission. */
+        dwt_starttx(DWT_START_TX_IMMEDIATE);
+
+        /* Poll DW1000 until TX frame sent event set. See NOTE 5 below.
+         * STATUS register is 5 bytes long but, as the event we are looking at is in the first byte of the register, we can use this simplest API
+         * function to access it.*/
+        myled = 1;
+        while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS))
+        { };
+        wait(0.1);
+        myled = 0;
+        //pc.printf("%d\n",dwt_read32bitreg(SYS_STATUS_ID));
+
+        /* Clear TX frame sent event. */
+        dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS);
+
+        /* Execute a delay between transmissions. */
+        wait_ms(TX_DELAY_MS);
+
+        /* Increment the blink frame sequence number (modulo 256). */
+        tx_msg[BLINK_FRAME_SN_IDX]++;
+    }
 }
 
-/**
- * The entry point of the system where each submodule's thread is started.
- */
-int main() {
-    // Store the thread's ID
-    const osThreadId mainID = Thread::gettid();
-    ASSERT(mainID != nullptr);
+int rx(void) {
+  int temp_init = dwt_initialise(DWT_LOADNONE);
+  pc.printf("%d\n",temp_init);
+  if (temp_init == DWT_ERROR)
+  {
+      pc.printf("INIT FAILED\n");
+      while (1)
+      { };
+  }
 
-    // clear any extraneous rx serial bytes
-    Serial s(RJ_SERIAL_RXTX);
-    while (s.readable()) s.getc();
+  dwt_configure(&config);
 
-    // set baud rate to higher value than the default for faster terminal
-    s.baud(57600);
+  pc.printf("Configured RX\n");
 
-    // Turn on some startup LEDs to show they're working, they are turned off
-    // before we hit the while loop
-    statusLights(true);
+  while(1)
+  {
+    int i;
 
-    // Set the default logging configurations
-    isLogging = RJ_LOGGING_EN;
-    rjLogLevel = INIT;
+        /* TESTING BREAKPOINT LOCATION #1 */
 
-    /* Always send out an empty line at startup for keeping the console
-     * clean on after a 'reboot' command is called;
-     */
-    if (isLogging) {
-        // reset the console's default settings and enable the cursor
-        printf("\033[m");
-        fflush(stdout);
-    }
-
-    // Setup the interrupt priorities before launching each subsystem's task
-    // thread.
-    setISRPriorities();
-
-    // Initialize and start ball sensor
-    BallSense ballSense(RJ_BALL_EMIT, RJ_BALL_DETECTOR);
-    ballSense.start(10);
-    DigitalOut ballSenseStatusLED(RJ_BALL_LED, 1);
-
-    // Force off since the neopixel's hardware is stateless from previous
-    // settings
-    NeoStrip rgbLED(RJ_NEOPIXEL, 2);
-    rgbLED.clear();
-
-    // Set the RGB LEDs to a medium blue while the threads are started up
-    float defaultBrightness = 0.02f;
-    rgbLED.brightness(3 * defaultBrightness);
-    rgbLED.setPixel(0, NeoColorBlue);
-    rgbLED.setPixel(1, NeoColorBlue);
-    rgbLED.write();
-
-    // Flip off the startup LEDs after a timeout period
-    RtosTimerHelper init_leds_off([]() { statusLights(false); }, osTimerOnce);
-    init_leds_off.start(RJ_STARTUP_LED_TIMEOUT_MS);
-
-    /// A shared spi bus used for the fpga and cc1201 radio
-    shared_ptr<SharedSPI> sharedSPI =
-        make_shared<SharedSPI>(RJ_SPI_MOSI, RJ_SPI_MISO, RJ_SPI_SCK);
-    sharedSPI->format(8, 0);  // 8 bits per transfer
-
-    // Initialize and configure the fpga with the given bitfile
-    FPGA::Instance = new FPGA(sharedSPI, RJ_FPGA_nCS, RJ_FPGA_INIT_B,
-                              RJ_FPGA_PROG_B, RJ_FPGA_DONE);
-    bool fpgaReady = FPGA::Instance->configure("/local/rj-fpga.nib");
-
-    if (fpgaReady) {
-        rgbLED.brightness(3 * defaultBrightness);
-        rgbLED.setPixel(1, NeoColorGreen);
-
-        LOG(INIT, "FPGA Configuration Successful!");
-
-    } else {
-        rgbLED.brightness(4 * defaultBrightness);
-        rgbLED.setPixel(1, NeoColorOrange);
-
-        LOG(FATAL, "FPGA Configuration Failed!");
-    }
-    rgbLED.write();
-
-    DigitalOut rdy_led(RJ_RDY_LED, !fpgaReady);
-
-    // Initialize kicker board
-    // TODO: clarify between kicker nCs and nReset
-    KickerBoard kickerBoard(sharedSPI, RJ_KICKER_nCS, RJ_KICKER_nRESET,
-                            "/local/rj-kickr.nib");
-    bool kickerReady = kickerBoard.flash(true, true);
-
-    // Init IO Expander and turn all LEDs on.  The first parameter to config()
-    // sets the first 8 lines to input and the last 8 to output.  The pullup
-    // resistors and polarity swap are enabled for the 4 rotary selector lines.
-    MCP23017 ioExpander(RJ_I2C_SDA, RJ_I2C_SCL, RJ_IO_EXPANDER_I2C_ADDRESS);
-    ioExpander.config(0x00FF, 0x00f0, 0x00f0);
-    ioExpander.writeMask((uint16_t)~IOExpanderErrorLEDMask,
-                         IOExpanderErrorLEDMask);
-
-    // rotary selector for shell id
-    RotarySelector<IOExpanderDigitalInOut> rotarySelector(
-        {IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT0,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT1,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT2,
-                                MCP23017::DIR_INPUT),
-         IOExpanderDigitalInOut(&ioExpander, RJ_HEX_SWITCH_BIT3,
-                                MCP23017::DIR_INPUT)});
-    // this value is continuously updated in the main loop
-    uint8_t robotShellID = rotarySelector.read();
-
-    // Startup the 3 separate threads, being sure that we wait for it
-    // to signal back to us that we can startup the next thread. Not doing
-    // so results in weird wierd things that are really hard to debug. Even
-    // though this is multi-threaded code, that dosen't mean it's
-    // a multi-core system.
-
-    // Start the thread task for the on-board control loop
-    Thread controller_task(Task_Controller, mainID, osPriorityHigh,
-                           DEFAULT_STACK_SIZE / 2);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-
-#ifdef RJ_ENABLE_ROBOT_CONSOLE
-    // Start the thread task for the serial console
-    Thread console_task(Task_SerialConsole, mainID, osPriorityBelowNormal);
-    Thread::signal_wait(MAIN_TASK_CONTINUE, osWaitForever);
-#endif
-
-    // Initialize the CommModule and CC1201 radio
-    InitializeCommModule(sharedSPI);
-
-    // Make sure all of the motors are enabled
-    motors_Init();
-
-    // setup analog in on battery sense pin
-    // the value is updated in the main loop below
-    AnalogIn batt(RJ_BATT_SENSE);
-    uint8_t battVoltage = 0;
-
-    // Setup radio protocol handling
-    RadioProtocol radioProtocol(CommModule::Instance, global_radio);
-    radioProtocol.setUID(robotShellID);
-    radioProtocol.start();
-    radioProtocol.rxCallback = [&](const rtp::ControlMessage* msg) {
-        rtp::RobotStatusMessage reply;
-        reply.uid = robotShellID;
-        reply.battVoltage = battVoltage;
-        reply.ballSenseStatus = ballSense.have_ball() ? 1 : 0;
-
-        vector<uint8_t> replyBuf;
-        rtp::SerializeToVector(reply, &replyBuf);
-        return replyBuf;
-    };
-
-    // Set the watdog timer's initial config
-    Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
-
-    // Release each thread into its operations in a structured manner
-    controller_task.signal_set(SUB_TASK_CONTINUE);
-#ifdef RJ_ENABLE_ROBOT_CONSOLE
-    console_task.signal_set(SUB_TASK_CONTINUE);
-#endif
-
-    osStatus tState = osThreadSetPriority(mainID, osPriorityNormal);
-    ASSERT(tState == osOK);
-
-    unsigned int ll = 0;
-    uint16_t errorBitmask = 0;
-    if (!fpgaReady) {
-        // assume all motors have errors if FPGA does not work
-        errorBitmask |= (1 << RJ_ERR_LED_M1);
-        errorBitmask |= (1 << RJ_ERR_LED_M2);
-        errorBitmask |= (1 << RJ_ERR_LED_M3);
-        errorBitmask |= (1 << RJ_ERR_LED_M4);
-        errorBitmask |= (1 << RJ_ERR_LED_DRIB);
-    }
-
-    while (true) {
-        // make sure we can always reach back to main by
-        // renewing the watchdog timer periodicly
-        Watchdog::Renew();
-
-        // periodically reset the console text's format
-        ll++;
-        if ((ll % 8) == 0) {
-            printf("\033[m");
-            fflush(stdout);
+        /* Clear local RX buffer to avoid having leftovers from previous receptions  This is not necessary but is included here to aid reading
+         * the RX buffer.
+         * This is a good place to put a breakpoint. Here (after first time through the loop) the local status register will be set for last event
+         * and if a good receive has happened the data buffer will have the data in it, and frame_len will be set to the length of the RX frame. */
+        for (i = 0 ; i < FRAME_LEN_MAX; i++ )
+        {
+            rx_buffer[i] = 0;
         }
 
-        Thread::wait(RJ_WATCHDOG_TIMER_VALUE * 250);
+        pc.printf("%i\n\n",dwt_read32bitreg(SYS_STATUS_ID));
 
-        // the value is inverted because this led is wired active-low
-        ballSenseStatusLED = !ballSense.have_ball();
+        /* Activate reception immediately. See NOTE 3 below. */
+        dwt_rxenable(DWT_START_RX_IMMEDIATE);
 
-        // Pack errors into bitmask
-        errorBitmask |= (!global_radio || !global_radio->isConnected())
-                        << RJ_ERR_LED_RADIO;
+        /* Poll until a frame is properly received or an error/timeout occurs. See NOTE 4 below.
+         * STATUS register is 5 bytes long but, as the event we are looking at is in the first byte of the register, we can use this simplest API
+         * function to access it. */
+        while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
+        {};// pc.printf("%i\n",status_reg);};
 
-        motors_refresh();
+        pc.printf("out of loop\n");
 
-        // add motor errors to bitmask
-        static const auto motorErrLedMapping = {
-            make_pair(0, RJ_ERR_LED_M1), make_pair(1, RJ_ERR_LED_M2),
-            make_pair(2, RJ_ERR_LED_M3), make_pair(3, RJ_ERR_LED_M4),
-            make_pair(4, RJ_ERR_LED_DRIB)};
+        if (status_reg & SYS_STATUS_RXFCG)
+        {
+            /* A frame has been received, copy it to our local buffer. */
+            myled = 1;
+            frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFL_MASK_1023;
+            if (frame_len <= FRAME_LEN_MAX)
+            {
+                dwt_readrxdata(rx_buffer, frame_len, 0);
+            }
 
-        for (auto& pair : motorErrLedMapping) {
-            const motorErr_t& status = global_motors[pair.first].status;
-            // clear the bit
-            errorBitmask &= ~(1 << pair.second);
-            // set the bit to whatever hasError is set to
-            errorBitmask |= (status.hasError << pair.second);
+            /* Clear good RX frame event in the DW1000 status register. */
+            dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG);
+        }
+        else
+        {
+            /* Clear RX error events in the DW1000 status register. */
+            dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
+        }
+        wait(0.1);
+        myled = 0;
+        /*for (i = 0; i < frame_len; i++) {
+          pc.printf("%x ",rx_buffer[i]);
         }
 
-        // get the battery voltage
-        battVoltage = (batt.read_u16() >> 8);
-
-        // update shell id
-        robotShellID = rotarySelector.read();
-        radioProtocol.setUID(robotShellID);
-
-        // Set error-indicating leds on the control board
-        ioExpander.writeMask(~errorBitmask, IOExpanderErrorLEDMask);
-
-        if (errorBitmask || !fpgaReady) {
-            // orange - error
-            rgbLED.brightness(6 * defaultBrightness);
-            rgbLED.setPixel(0, NeoColorOrange);
-        } else {
-            // no errors, yay!
-            rgbLED.brightness(3 * defaultBrightness);
-            rgbLED.setPixel(0, NeoColorGreen);
+        pc.printf("\n");
+        for (i = 2; i <= 9; i++) {
+          pc.printf("%x ",tx_msg[i]);
         }
-        rgbLED.write();
-    }
+        pc.printf("\n");
+        */
+  }
 }
 
-#define _EXTERN extern "C"
-
-_EXTERN void HardFault_Handler() {
-    __asm volatile(
-        " tst lr, #4                                                \n"
-        " ite eq                                                    \n"
-        " mrseq r0, msp                                             \n"
-        " mrsne r0, psp                                             \n"
-        " ldr r1, [r0, #24]                                         \n"
-        " ldr r2, hard_fault_handler_2_const                        \n"
-        " bx r2                                                     \n"
-        " hard_fault_handler_2_const: .word HARD_FAULT_HANDLER    	\n");
+int main(void) {
+  rx();
 }
-
-_EXTERN void HARD_FAULT_HANDLER(uint32_t* stackAddr) {
-    /* These are volatile to try and prevent the compiler/linker optimising them
-     * away as the variables never actually get used.  If the debugger won't
-     * show the values of the variables, make them global my moving their
-     * declaration outside of this function. */
-    volatile uint32_t r0;
-    volatile uint32_t r1;
-    volatile uint32_t r2;
-    volatile uint32_t r3;
-    volatile uint32_t r12;
-    volatile uint32_t lr;  /* Link register. */
-    volatile uint32_t pc;  /* Program counter. */
-    volatile uint32_t psr; /* Program status register. */
-
-    r0 = stackAddr[0];
-    r1 = stackAddr[1];
-    r2 = stackAddr[2];
-    r3 = stackAddr[3];
-    r12 = stackAddr[4];
-    lr = stackAddr[5];
-    pc = stackAddr[6];
-    psr = stackAddr[7];
-
-    LOG(FATAL,
-        "\r\n"
-        "================================\r\n"
-        "========== HARD FAULT ==========\r\n"
-        "\r\n"
-        "  MSP:\t0x%08X\r\n"
-        "  HFSR:\t0x%08X\r\n"
-        "  CFSR:\t0x%08X\r\n"
-        "\r\n"
-        "  r0:\t0x%08X\r\n"
-        "  r1:\t0x%08X\r\n"
-        "  r2:\t0x%08X\r\n"
-        "  r3:\t0x%08X\r\n"
-        "  r12:\t0x%08X\r\n"
-        "  lr:\t0x%08X\r\n"
-        "  pc:\t0x%08X\r\n"
-        "  psr:\t0x%08X\r\n"
-        "\r\n"
-        "========== HARD FAULT ==========\r\n"
-        "================================",
-        __get_MSP, SCB->HFSR, SCB->CFSR, r0, r1, r2, r3, r12, lr, pc, psr);
-
-    // do nothing so everything remains unchanged for debugging
-    while (true) {
-    }
-}
-
-_EXTERN void NMI_Handler() { std::printf("NMI Fault!\n"); }
-
-_EXTERN void MemManage_Handler() { std::printf("MemManage Fault!\n"); }
-
-_EXTERN void BusFault_Handler() { std::printf("BusFault Fault!\n"); }
-
-_EXTERN void UsageFault_Handler() { std::printf("UsageFault Fault!\n"); }

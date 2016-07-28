@@ -133,6 +133,13 @@ typedef signed long int32;
 #define DWT_START_TX_DELAYED 1
 #define DWT_RESPONSE_EXPECTED 2
 
+#define DWT_START_RX_IMMEDIATE  0
+#define DWT_START_RX_DELAYED    1    // Set up delayed RX, if "late" error triggers, then the RX will be enabled immediately
+#define DWT_IDLE_ON_DLY_ERR     2    // If delayed RX failed due to "late" error then if this
+                                     // flag is set the RX will not be re-enabled immediately, and device will be in IDLE when function exits
+#define DWT_NO_SYNC_PTRS        4    // Do not try to sync IC side and Host side buffer pointers when enabling RX. This is used to perform manual RX
+                                     // re-enabling when receiving a frame in double buffer mode.
+
 // frame filtering configuration options
 #define DWT_FF_NOTYPE_EN 0x000 // no frame types allowed (FF disabled)
 #define DWT_FF_COORD_EN                                                        \
@@ -516,9 +523,9 @@ void dwt_setsmarttxpower(int enable);
  *                         if > 127 is programmed, DWT_PHRMODE_EXT needs to be
  *set in the phrMode configuration
  *                         see dwt_configure function
- * @param txFrameBytes   - Pointer to the user’s buffer containing the data to
+ * @param txFrameBytes   - Pointer to the userï¿½s buffer containing the data to
  *send.
- * @param txBufferOffset - This specifies an offset in the DW1000’s TX Buffer at
+ * @param txBufferOffset - This specifies an offset in the DW1000ï¿½s TX Buffer at
  *which to start writing data.
  *
  * output parameters

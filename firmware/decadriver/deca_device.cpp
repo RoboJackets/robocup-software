@@ -10,7 +10,7 @@
  * All rights reserved.
  *
  */
-
+#include "mbed.h"
 #include "deca_types.h"
 #include "deca_param_types.h"
 #include "deca_regs.h"
@@ -134,11 +134,17 @@ int dwt_initialise(uint16 config) {
 
   // Read and validate device ID return -1 if not recognised
   dw1000local.deviceID = dwt_readdevid();
+  //Serial pc(USBTX,USBRX);
+  //pc.printf("%x\n", dw1000local.deviceID);
+  //pc.printf("%x\n", DWT_DEVICE_ID);
+
   if (DWT_DEVICE_ID !=
       dw1000local.deviceID) // MP IC ONLY (i.e. DW1000) FOR THIS CODE
   {
     return DWT_ERROR;
   }
+
+  //return -2;
 
   _dwt_enableclocks(FORCE_SYS_XTI); // NOTE: set system clock to XTI - this is
                                     // necessary to make sure the values read by
@@ -594,9 +600,9 @@ void dwt_settxantennadelay(uint16 txDelay) {
  *                         if > 127 is programmed, DWT_PHRMODE_EXT needs to be
  *set in the phrMode configuration
  *                         see dwt_configure function
- * @param txFrameBytes   - Pointer to the user’s buffer containing the data to
+ * @param txFrameBytes   - Pointer to the users buffer containing the data to
  *send.
- * @param txBufferOffset - This specifies an offset in the DW1000’s TX Buffer at
+ * @param txBufferOffset - This specifies an offset in the DW1000s TX Buffer at
  *which to start writing data.
  *
  * output parameters
