@@ -1,10 +1,10 @@
 /*! ----------------------------------------------------------------------------
- *  @file 	deca_types.h
- *  @brief 	DecaWave general type definitions
+ *  @file   deca_types.h
+ *  @brief  Decawave general type definitions
  *
  * @attention
  *
- * Copyright 2013 (c) DecaWave Ltd, Dublin, Ireland.
+ * Copyright 2013 (c) Decawave Ltd, Dublin, Ireland.
  *
  * All rights reserved.
  *
@@ -68,3 +68,5 @@ typedef signed long int32;
 #endif
 
 #endif /* DECA_TYPES_H_ */
+
+

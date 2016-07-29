@@ -18,10 +18,10 @@
 
 #include "mbed.h"
 
-int writetospi_serial(uint16 headerLength, const uint8 *headerBuffer,
+int writetospi(uint16 headerLength, const uint8 *headerBuffer,
                       uint32 bodylength, const uint8 *bodyBuffer);
 
-int readfromspi_serial(uint16 headerLength, const uint8 *headerBuffer,
+int readfromspi(uint16 headerLength, const uint8 *headerBuffer,
                        uint32 readlength, uint8 *readBuffer);
 /*!
  *------------------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ int closespi(void) {
  * returns 0 for success, or -1 for error
  */
 #pragma GCC optimize("O3")
-int writetospi_serial(uint16 headerLength, const uint8 *headerBuffer,
+int writetospi(uint16 headerLength, const uint8 *headerBuffer,
                       uint32 bodylength, const uint8 *bodyBuffer) {
   SPI _spi(p5, p6, p7);
   //_spi.format(8,0);
@@ -94,7 +94,7 @@ int writetospi_serial(uint16 headerLength, const uint8 *headerBuffer,
  * or returns -1 if there was an error
  */
 #pragma GCC optimize("O3")
-int readfromspi_serial(uint16 headerLength, const uint8 *headerBuffer,
+int readfromspi(uint16 headerLength, const uint8 *headerBuffer,
                        uint32 readlength, uint8 *readBuffer) {
   SPI _spi(p5, p6, p7);
   //_spi.format(8,0);
