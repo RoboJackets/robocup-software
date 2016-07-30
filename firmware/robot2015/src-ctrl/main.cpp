@@ -7,7 +7,7 @@ BusOut LEDs(LED1, LED2, LED3, LED4);
 
 /* Default communication configuration. We use here EVK1000's default mode (mode 3). */
 static dwt_config_t config = {
-    5,               /* Channel number. */
+    7,               /* Channel number. */
     DWT_PRF_64M,     /* Pulse repetition frequency. */
     DWT_PLEN_1024,   /* Preamble length. Used in TX only. */
     DWT_PAC32,       /* Preamble acquisition chunk size. Used in RX only. */
@@ -18,6 +18,12 @@ static dwt_config_t config = {
     DWT_PHRMODE_STD, /* PHY header mode. */
     (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
+
+static dwt_txconfig_t txconfig = {
+    0x93,            /* PG delay. */
+    0xD1D1D1D1,      /* TX power. */
+};
+
 //
 // /* The frame sent in this example is an 802.15.4e standard blink. It is a 12-byte frame composed of the following fields:
 //  *     - byte 0: frame type (0xC5 for a blink).
@@ -59,7 +65,7 @@ static uint8 tx_msg_rx[] = {0x41, 0x8C, 0, 0x9A, 0x60, 0, 0, 0, 0, 0, 0, 0, 0, '
 #define BLINK_FRAME_SRC_IDX 2
 
 /* Inter-frame delay period, in milliseconds. */
-#define TX_DELAY_MS 1000
+#define TX_DELAY_MS 100
 
 /* Delay from end of transmission to activation of reception, expressed in UWB microseconds (1 uus is 512/499.2 microseconds). See NOTE 2 below. */
 #define TX_TO_RX_DELAY_UUS 60
@@ -88,6 +94,7 @@ void tx(void) {
 
   /* Configure DW1000. See NOTE 6 below. */
   dwt_configure(&config);
+  dwt_configuretxrf(&txconfig);
 
   /* Set delay to turn reception on after transmission of the frame. See NOTE 2 below. */
   dwt_setrxaftertxdelay(TX_TO_RX_DELAY_UUS);
@@ -95,7 +102,8 @@ void tx(void) {
   /* Set response frame timeout. */
   dwt_setrxtimeout(RX_RESP_TO_UUS);
   while(1) {
-    LEDs[tx_msg_tx[BLINK_FRAME_SN_IDX] % 4] = 1;
+    LEDs[abs(tx_msg_tx[BLINK_FRAME_SN_IDX] % 6 - 3)] = 1;
+    // LEDs[tx_msg_tx[BLINK_FRAME_SN_IDX] % 4] = 1;
     dwt_writetxdata(sizeof(tx_msg_tx), tx_msg_tx, 0); /* Zero offset in TX buffer. */
     dwt_writetxfctrl(sizeof(tx_msg_tx), 0, 0); /* Zero offset in TX buffer, no ranging. */
 
@@ -107,7 +115,7 @@ void tx(void) {
 
       if (status_reg & SYS_STATUS_RXFCG) {
       int i;
-        LEDs[tx_msg_tx[BLINK_FRAME_SN_IDX] % 4] = 1;
+        // LEDs[tx_msg_tx[BLINK_FRAME_SN_IDX] % 4] = 1;
         /* Clear local RX buffer to avoid having leftovers from previous receptions. This is not necessary but is included here to aid reading
         * the RX buffer. */
         for (i = 0 ; i < FRAME_LEN_MAX; i++ ) {
@@ -128,6 +136,7 @@ void tx(void) {
 
         /* Clear good RX frame event in the DW1000 status register. */
         dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG);
+        tx_msg_tx[BLINK_FRAME_SN_IDX] = rx_buffer[DATA_FRAME_SN_IDX] + 1;
      }
      else
      {
@@ -143,7 +152,7 @@ void tx(void) {
      LEDs = 0;
      /* Increment the blink frame sequence number (modulo 256). */
      //tx_msg_tx[BLINK_FRAME_SN_IDX] = tx_msg_rx[DATA_FRAME_SN_IDX] + 1;
-     tx_msg_tx[BLINK_FRAME_SN_IDX] = rx_buffer[DATA_FRAME_SN_IDX];
+     //tx_msg_tx[BLINK_FRAME_SN_IDX] = rx_buffer[DATA_FRAME_SN_IDX];
   }
 }
 
@@ -155,13 +164,14 @@ void rx(void) {
 
   /* Configure DW1000. See NOTE 3 below. */
   dwt_configure(&config);
+  dwt_configuretxrf(&txconfig);
   while(1) {
     dwt_rxenable(DWT_START_RX_IMMEDIATE);
 
     while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR))) { };
 
     if (status_reg & SYS_STATUS_RXFCG) {
-      LEDs[(tx_msg_rx[DATA_FRAME_SN_IDX] + 3) % 4] = 1;
+      LEDs[abs((tx_msg_rx[DATA_FRAME_SN_IDX]+1) % 6 - 3)] = 1;
       /* A frame has been received, read it into the local buffer. */
       frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFL_MASK_1023;
       if (frame_len <= FRAME_LEN_MAX) {
@@ -176,6 +186,7 @@ void rx(void) {
       /* Validate the frame is the one expected as sent by "TX then wait for a response" example. */
       if ((frame_len == 14) && (rx_buffer[0] == 0xC5) && (rx_buffer[10] == 0x43) && (rx_buffer[11] == 0x2)) {
         // LEDs[3] = 1;
+        tx_msg_rx[DATA_FRAME_SN_IDX] = rx_buffer[BLINK_FRAME_SN_IDX];
         int i;
 
         /* Copy source address of blink in response destination address. */
@@ -198,7 +209,8 @@ void rx(void) {
 
         /* Increment the data frame sequence number (modulo 256). */
 
-        tx_msg_rx[DATA_FRAME_SN_IDX]++;
+        // tx_msg_rx[DATA_FRAME_SN_IDX]++;
+
       }
     }
     else {
@@ -210,7 +222,7 @@ void rx(void) {
 }
 
 int main(void) {
-  tx();
+  rx();
 
   // if (dwt_initialise(DWT_LOADNONE) == DWT_ERROR) {
   //   lcd_display_str("INIT FAILED");
