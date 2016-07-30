@@ -69,6 +69,7 @@ int main() {
 
     // Set the default logging configurations
     isLogging = RJ_LOGGING_EN;
+    isFileLogging = RJ_FILE_LOGGING_EN;
     rjLogLevel = INIT;
 
     /* Always send out an empty line at startup for keeping the console

@@ -54,8 +54,13 @@ add_custom_target(robot2015
 )
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/rj-robot.bin)
 
+# deletes log file on mbed
+file(WRITE ${PROJECT_SOURCE_DIR}/run/LOG.TXT "")
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/LOG.TXT)
+
 add_custom_target(robot2015-prog
     COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/rj-robot.bin
+    COMMAND ${MBED_COPY_SCRIPT} ${PROJECT_SOURCE_DIR}/run/LOG.TXT
     DEPENDS robot2015
     COMMENT "Copying the robot's binary over to the mbed"
 )
