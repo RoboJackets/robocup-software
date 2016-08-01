@@ -44,8 +44,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
                 mark_pos -
                 ball_pos).normalized() * self.ratio * ball_mark_line.length()
 
-        main.system_state().draw_circle(mark_pos,
-                                        constants.Robot.Radius * 1.2,
+        main.system_state().draw_circle(mark_pos, constants.Robot.Radius * 1.2,
                                         (0, 127, 255), "Mark")
 
         if self.mark_robot is not None:
@@ -68,7 +67,6 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
     @mark_line_thresh.setter
     def mark_line_thresh(self, value):
         self._mark_line_thresh = value
-
 
     # Overrides mark_robot with a static point
     # If mark_point is set, we will still need a mark robot

@@ -46,9 +46,11 @@ void radioRxHandler(rtp::packet pkt) {
     vector<uint8_t> buf;
     pkt.pack(&buf);
 
-    // drop the packet if it's the wrong size. Thsi will need to be changed if we have variable-sized reply packets
+    // drop the packet if it's the wrong size. Thsi will need to be changed if
+    // we have variable-sized reply packets
     if (buf.size() != rtp::Reverse_Size) {
-        LOG(WARN, "Dropping packet, wrong size '%u', should be '%u'", buf.size(), rtp::Reverse_Size);
+        LOG(WARN, "Dropping packet, wrong size '%u', should be '%u'",
+            buf.size(), rtp::Reverse_Size);
         return;
     }
 

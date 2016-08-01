@@ -10,11 +10,10 @@ const float AXIS_MAX = 32768.0f;
 
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
-
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
-        cerr << "ERROR: SDL could not initialize game controller system! SDL Error: " << SDL_GetError()
-             << endl;
+        cerr << "ERROR: SDL could not initialize game controller system! SDL "
+                "Error: " << SDL_GetError() << endl;
         return;
     }
 
@@ -28,11 +27,12 @@ GamepadController::GamepadController()
 
                 if (controller != nullptr) {
                     _controller = controller;
-                    cout << "Using " << SDL_GameControllerName(_controller) << " game controller" << endl;
+                    cout << "Using " << SDL_GameControllerName(_controller)
+                         << " game controller" << endl;
                     break;
                 } else {
-                    cerr << "ERROR: Could not open controller! SDL Error: " << SDL_GetError()
-                     << endl;
+                    cerr << "ERROR: Could not open controller! SDL Error: "
+                         << SDL_GetError() << endl;
                 }
             }
         }
@@ -59,17 +59,20 @@ void GamepadController::update() {
     /*
      *  DRIBBLER POWER
      */
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_LEFTSTICK)) {
+    if (SDL_GameControllerGetButton(_controller,
+                                    SDL_CONTROLLER_BUTTON_LEFTSTICK)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
         }
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_RIGHTSTICK)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_RIGHTSTICK)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
             _lastDribblerTime = now;
         }
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_Y)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_Y)) {
         /*
          *  DRIBBLER ON/OFF
          */
@@ -85,12 +88,14 @@ void GamepadController::update() {
     /*
      *  KICKER POWER
      */
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
+    if (SDL_GameControllerGetButton(_controller,
+                                    SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
+    } else if (SDL_GameControllerGetButton(
+                   _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;
@@ -102,38 +107,50 @@ void GamepadController::update() {
     /*
      *  KICK TRUE/FALSE
      */
-    _controls.kick = SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A);
+    _controls.kick =
+        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A);
 
     /*
      *  CHIP TRUE/FALSE
      */
-    _controls.chip = SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X);
+    _controls.chip =
+        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X);
 
     /*
      *  VELOCITY ROTATION
      */
     // Logitech F310 Controller
-    _controls.rotation = -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) / AXIS_MAX;
+    _controls.rotation =
+        -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) /
+        AXIS_MAX;
 
     /*
      *  VELOCITY TRANSLATION
      */
-    auto rightX = SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTX) / AXIS_MAX;
-    auto rightY = -SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTY) / AXIS_MAX;
+    auto rightX =
+        SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTX) /
+        AXIS_MAX;
+    auto rightY =
+        -SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTY) /
+        AXIS_MAX;
 
     Geometry2d::Point input(rightX, rightY);
 
     // Align along an axis using the DPAD as modifier buttons
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
+    if (SDL_GameControllerGetButton(_controller,
+                                    SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
         input.y() = -fabs(rightY);
         input.x() = 0;
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_UP)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_DPAD_UP)) {
         input.y() = fabs(rightY);
         input.x() = 0;
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         input.y() = 0;
         input.x() = -fabs(rightX);
-    } else if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         input.y() = 0;
         input.x() = fabs(rightX);
     }

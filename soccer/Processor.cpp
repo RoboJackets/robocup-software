@@ -453,18 +453,22 @@ void Processor::run() {
 
                 // create and visualize obstacles
                 Geometry2d::ShapeSet staticObstacles =
-                    r->collectStaticObstacles(globalObstaclesForBot,
-                                              !(r->shell() == _gameplayModule->goalieID() || r->isPenaltyKicker || r->isBallPlacer));
+                    r->collectStaticObstacles(
+                        globalObstaclesForBot,
+                        !(r->shell() == _gameplayModule->goalieID() ||
+                          r->isPenaltyKicker || r->isBallPlacer));
 
                 std::vector<Planning::DynamicObstacle> dynamicObstacles =
                     r->collectDynamicObstacles();
 
-                requests.emplace(r->shell(),
-                    Planning::PlanRequest(_state, Planning::MotionInstant(r->pos, r->vel),
-                    r->motionCommand()->clone(), r->robotConstraints(),
-                    std::move(r->angleFunctionPath.path),
-                    std::move(staticObstacles), std::move(dynamicObstacles),
-                    r->getPlanningPriority()));
+                requests.emplace(
+                    r->shell(),
+                    Planning::PlanRequest(
+                        _state, Planning::MotionInstant(r->pos, r->vel),
+                        r->motionCommand()->clone(), r->robotConstraints(),
+                        std::move(r->angleFunctionPath.path),
+                        std::move(staticObstacles), std::move(dynamicObstacles),
+                        r->getPlanningPriority()));
             }
         }
 
@@ -678,8 +682,7 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field."
-             << endl;
+                "field." << endl;
     }
 }
 
@@ -734,7 +737,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-M_PI/2 - robot->angle);
+        translation.rotate(-M_PI / 2 - robot->angle);
     }
 
     // translation

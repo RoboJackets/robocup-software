@@ -26,9 +26,7 @@ public:
         _callback = callback;
     }
 
-    virtual ~RtosTimerHelper() {
-        stop();
-    }
+    virtual ~RtosTimerHelper() { stop(); }
 
     RtosTimerHelper(const RtosTimerHelper& other) = delete;
 

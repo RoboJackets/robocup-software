@@ -16,7 +16,7 @@ class LineKick(skills._kick._Kick):
     ClosenessThreshold = constants.Robot.Radius * 3 + 0.04
 
     class State(enum.Enum):
-        waiting = 1 # waiting state does nothing
+        waiting = 1  # waiting state does nothing
         kick = 2
 
     def __init__(self):
@@ -24,21 +24,19 @@ class LineKick(skills._kick._Kick):
 
         self._got_close = False
 
-        self.add_state(LineKick.State.waiting,
-                       behavior.Behavior.State.running)
-        self.add_state(LineKick.State.kick,
-                       behavior.Behavior.State.running)
+        self.add_state(LineKick.State.waiting, behavior.Behavior.State.running)
+        self.add_state(LineKick.State.kick, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            LineKick.State.waiting, lambda: True, 'immediately')
-        self.add_transition(LineKick.State.waiting,
-                            LineKick.State.kick, lambda: self.enable_kick, 'kicker is enabled')
+                            LineKick.State.waiting, lambda: True,
+                            'immediately')
+        self.add_transition(LineKick.State.waiting, LineKick.State.kick,
+                            lambda: self.enable_kick, 'kicker is enabled')
 
         self.add_transition(
             LineKick.State.kick, behavior.Behavior.State.completed,
             lambda: self.robot is not None and self._got_close and self.robot.just_kicked(),
             "robot kicked")
-
 
     def on_enter_running(self):
         super().recalculate_aim_target_point()

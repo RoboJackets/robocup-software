@@ -132,7 +132,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiver = self.skillreceiver
         receiver.restart()
         receiver.receive_point = self.receive_point
-        self.add_subbehavior(receiver, 'receiver', required=self.receiver_required)
+        self.add_subbehavior(receiver,
+                             'receiver',
+                             required=self.receiver_required)
 
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
@@ -227,6 +229,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def __str__(self):
         desc = super().__str__()
         desc += "\n    rcv_pt=" + str(self.receive_point)
-        if not (self._preparing_start == None or self.prekick_timeout == None or self.prekick_timeout <= 0):
+        if not (self._preparing_start == None or self.prekick_timeout == None
+                or self.prekick_timeout <= 0):
             desc += "\n    timeout=" + str(round(self.time_remaining(), 2))
         return desc
