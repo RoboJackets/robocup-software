@@ -196,7 +196,8 @@ void OurRobot::lineKick(Point target) {
     if (!visible) return;
 
     disableAvoidBall();
-    _motionCommand = std::make_unique<Planning::LineKickCommand>(std::move(target));
+    _motionCommand =
+        std::make_unique<Planning::LineKickCommand>(std::move(target));
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
@@ -434,7 +435,7 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
     const Geometry2d::ShapeSet& globalObstacles, bool localObstacles) {
     Geometry2d::ShapeSet fullObstacles{};
     if (localObstacles) {
-        fullObstacles=_local_obstacles;
+        fullObstacles = _local_obstacles;
     }
 
     fullObstacles.add(globalObstacles);

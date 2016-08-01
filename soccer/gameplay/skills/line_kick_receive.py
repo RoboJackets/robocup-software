@@ -14,7 +14,8 @@ import main
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class LineKickReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class LineKickReceive(
+    single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     ## how much we're allowed to be off in the direction of the pass line
     PositionErrorThreshold = 0.1
@@ -54,7 +55,8 @@ class LineKickReceive(single_robot_composite_behavior.SingleRobotCompositeBehavi
             lambda: not self.errors_below_thresholds() and not self.ball_kicked,
             'not in receive position')
 
-        for state in [LineKickReceive.State.aligning, LineKickReceive.State.aligned]:
+        for state in [LineKickReceive.State.aligning,
+                      LineKickReceive.State.aligned]:
             self.add_transition(state, LineKickReceive.State.receiving,
                                 lambda: self.ball_kicked, 'ball kicked')
 
@@ -67,8 +69,8 @@ class LineKickReceive(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #    LineKickReceive.State.receiving, behavior.Behavior.State.failed,
         #    lambda: self.check_failure(), 'ball missed :(')
 
-    ## set this to True to let the receiver know that the pass has started and the ball's in motion
-    # Default: False
+        ## set this to True to let the receiver know that the pass has started and the ball's in motion
+        # Default: False
     @property
     def ball_kicked(self):
         return self._ball_kicked
@@ -94,8 +96,8 @@ class LineKickReceive(single_robot_composite_behavior.SingleRobotCompositeBehavi
         if self.receive_point == None:
             return False
 
-        return (
-            self.robot.pos.dist_to(self.receive_point) < LineKickReceive.PositionErrorThreshold)
+        return (self.robot.pos.dist_to(self.receive_point) <
+                LineKickReceive.PositionErrorThreshold)
 
     def on_exit_start(self):
         # reset

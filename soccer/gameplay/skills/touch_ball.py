@@ -5,6 +5,7 @@ import main
 import constants
 import robocup
 
+
 ## Touchball Class
 # A touchball is a simplified capture behavior, that simply lets the ball
 # roll towards the robot until it hits it in the mouth
@@ -38,11 +39,10 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
                             behavior.Behavior.State.completed,
                             lambda: self.robot.has_ball(), 'Ball got hit!')
 
-        self.add_transition(
-            TouchBall.State.course_approach, behavior.Behavior.State.failed,
-            lambda: not main.ball().valid, # TODO fail properly
-            'ball was lost')
-
+        self.add_transition(TouchBall.State.course_approach,
+                            behavior.Behavior.State.failed,
+                            lambda: not main.ball().valid,  # TODO fail properly
+                            'ball was lost')
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):

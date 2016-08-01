@@ -248,7 +248,8 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const {
 }
 
 void Robot::radioTx(const Packet::Control* data) {
-    velocity(data->xvelocity(), data->yvelocity(), RadiansToDegrees(data->avelocity()));
+    velocity(data->xvelocity(), data->yvelocity(),
+             RadiansToDegrees(data->avelocity()));
     _controller->prepareKick(data->triggermode() != Packet::Control::STAND_DOWN
                                  ? data->kcstrength()
                                  : 0,

@@ -14,7 +14,7 @@ namespace Planning {
  * and predict its Path. It chooses the closest intersection point
  * with the ball Path it can reach in time and plans a Path so the
  * ball and robot intersect at the same time.
- * 
+ *
  * TODO(ashaw596): Fix bug with replanning on real robots.
  */
 class LineKickPlanner : public SingleRobotPathPlanner {
@@ -28,10 +28,10 @@ public:
 
 private:
     bool shouldReplan(const SinglePlanRequest& planRequest) const;
-    
+
     RRTPlanner rrtPlanner;
-    bool finalApproach=false;
-    boost::optional<Geometry2d::Point>  targetKickPos;
+    bool finalApproach = false;
+    boost::optional<Geometry2d::Point> targetKickPos;
 };
 
 }  // namespace Planning

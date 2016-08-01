@@ -27,7 +27,6 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
 
         self.min_robots = min_robots
 
-
         # Define circle to circle up on
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
 

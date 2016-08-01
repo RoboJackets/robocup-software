@@ -14,7 +14,6 @@ import skills.pass_receive
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
 # Kick is a single_robot_behavior, so no need to import both
 class AngleReceive(skills.pass_receive.PassReceive):
-
     def __init__(self):
         super().__init__(
             captureFunction=(lambda: skills.touch_ball.TouchBall()))
@@ -76,7 +75,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
 
             # After kicking, apply angle calculations
             target_angle_rad = self.adjust_angle((self.target_point -
-                                                    self.robot.pos).angle())
+                                                  self.robot.pos).angle())
             # Removes angle adjustment
             # target_angle_rad = (self.target_point - self.robot.pos).angle()
 
@@ -97,8 +96,7 @@ class AngleReceive(skills.pass_receive.PassReceive):
                 (self.target_point - self.robot.pos).angle()) / 2
 
             self._kick_line = robocup.Line(self.receive_point,
-                                            self.target_point)
-
+                                           self.target_point)
 
         self._angle_facing = target_angle_rad
         self.target_angle = target_angle_rad
