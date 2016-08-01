@@ -3,6 +3,7 @@ import behavior
 import tactics.one_touch_pass
 import tactics.behavior_sequence
 
+
 ## Continually runs a one_touch_pass pass tactic
 class TestOneTouchPass(play.Play):
     def __init__(self):

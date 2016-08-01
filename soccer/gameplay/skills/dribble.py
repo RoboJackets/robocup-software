@@ -113,7 +113,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.disable_avoid_ball()
         self.robot.move_to(self.pos - (self.pos - self.robot.pos).normalized(
-            constants.Robot.Radius+0.08))
+            constants.Robot.Radius + 0.08))
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 

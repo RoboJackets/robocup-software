@@ -13,7 +13,14 @@ namespace Planning {
  */
 class MotionCommand {
 public:
-    enum CommandType { PathTarget, WorldVel, Pivot, DirectPathTarget, LineKick, None };
+    enum CommandType {
+        PathTarget,
+        WorldVel,
+        Pivot,
+        DirectPathTarget,
+        LineKick,
+        None
+    };
     virtual ~MotionCommand() = default;
     CommandType getCommandType() const { return commandType; }
     virtual std::unique_ptr<Planning::MotionCommand> clone() const = 0;
@@ -80,7 +87,7 @@ struct DirectPathTargetCommand : public MotionCommand {
 
 struct LineKickCommand : public MotionCommand {
     explicit LineKickCommand(Geometry2d::Point target)
-            : MotionCommand(MotionCommand::LineKick), target(target) {};
+        : MotionCommand(MotionCommand::LineKick), target(target){};
 
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<LineKickCommand>(*this);

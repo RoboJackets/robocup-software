@@ -47,7 +47,8 @@ class LineKickOld(skills._kick._Kick):
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            LineKickOld.State.setup, lambda: True, 'immediately')
+                            LineKickOld.State.setup, lambda: True,
+                            'immediately')
 
         self.add_transition(
             LineKickOld.State.setup, LineKickOld.State.charge,

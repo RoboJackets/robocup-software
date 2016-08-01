@@ -10,7 +10,6 @@ import role_assignment
 
 
 class OffensivePivotKick(play.Play):
-
     def __init__(self):
         super().__init__(continuous=False)
 
@@ -23,17 +22,17 @@ class OffensivePivotKick(play.Play):
             lambda: self.has_subbehavior_with_name('kicker') and self.subbehavior_with_name('kicker').is_done_running(),
             "kicker finished")
 
-
     def on_enter_running(self):
-        kicker=skills.pivot_kick.PivotKick()
-        kicker.target=constants.Field.TheirGoalSegment
+        kicker = skills.pivot_kick.PivotKick()
+        kicker.target = constants.Field.TheirGoalSegment
 
-        kicker.aim_params={'error_threshold':.01,'desperate_timeout': 10,'max_steady_ang_vel':4}
-        self.add_subbehavior(kicker,'kicker',required=True,priority=100)
+        kicker.aim_params = {'error_threshold': .01,
+                             'desperate_timeout': 10,
+                             'max_steady_ang_vel': 4}
+        self.add_subbehavior(kicker, 'kicker', required=True, priority=100)
 
     def on_exit_running(self):
         self.remove_subbehavior('kicker')
-
 
     @classmethod
     def score(cls):

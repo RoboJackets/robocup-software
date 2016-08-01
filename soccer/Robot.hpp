@@ -336,7 +336,8 @@ public:
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
     Geometry2d::ShapeSet collectStaticObstacles(
-        const Geometry2d::ShapeSet& globalObstacles, bool localObstacles = true);
+        const Geometry2d::ShapeSet& globalObstacles,
+        bool localObstacles = true);
 
     Geometry2d::ShapeSet collectAllObstacles(
         const Geometry2d::ShapeSet& globalObstacles);

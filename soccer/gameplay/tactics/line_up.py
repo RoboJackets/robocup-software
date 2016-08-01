@@ -51,7 +51,6 @@ class LineUp(composite_behavior.CompositeBehavior):
             if (bhvr.robot != None):
                 bhvr.robot.face(robocup.Point(0, 0))
 
-
     @property
     def line(self):
         return self._line
@@ -62,7 +61,6 @@ class LineUp(composite_behavior.CompositeBehavior):
         self.diff = (
             self._line.get_pt(1) - self._line.get_pt(0)).normalized() * (
                 self._line.length() / 6.0)
-
 
         # add subbehaviors for all robots, instructing them to line up
         self.remove_all_subbehaviors()

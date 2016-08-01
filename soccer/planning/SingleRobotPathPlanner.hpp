@@ -63,7 +63,8 @@ public:
         const std::vector<DynamicObstacle>& dynamicObstacles);
 
     static void splitDynamic(
-        Geometry2d::ShapeSet& obstacles, std::vector<DynamicObstacle>& dynamicOut,
+        Geometry2d::ShapeSet& obstacles,
+        std::vector<DynamicObstacle>& dynamicOut,
         const std::vector<DynamicObstacle>& dynamicObstacles);
     /// Checks if the previous path is no longer valid and needs to be
     /// re-planned.  This method does the following checks:
