@@ -85,8 +85,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
         self.add_transition(
             PassReceive.State.receiving, behavior.Behavior.State.failed,
-            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed
-            or self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
+            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
@@ -256,7 +255,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
         # Alignment will be handled by capture
 
-    ## prefer a robot that's already near the receive position
+        ## prefer a robot that's already near the receive position
     def role_requirements(self):
         reqs = super().role_requirements()
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):

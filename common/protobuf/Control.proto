@@ -1,0 +1,33 @@
+package Packet;
+
+message Control
+{
+    enum ShootMode
+    {
+        KICK = 0;
+        CHIP = 1;
+    }
+
+    enum TriggerMode
+    {
+        STAND_DOWN = 0;
+        IMMEDIATE = 1;
+        ON_BREAK_BEAM = 2;
+    }
+
+    enum Song
+    {
+        STOP = 0;
+        CONTINUE = 1;
+        FIGHT_SONG = 2;
+    }
+
+    required float xVelocity = 1         [default = 0];
+    required float yVelocity = 2         [default = 0];
+    required float aVelocity = 3         [default = 0];
+    required float dVelocity = 4         [default = 0];
+    required uint32 kcStrength = 5       [default = 255];
+    required ShootMode shootMode = 6     [default = KICK];
+    required TriggerMode triggerMode = 7 [default = STAND_DOWN];
+    required Song song = 9               [default = CONTINUE];
+}

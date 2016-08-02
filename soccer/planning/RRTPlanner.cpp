@@ -22,7 +22,8 @@ RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
-                              const vector<DynamicObstacle> dynamicObs, string *debugOut) const {
+                              const vector<DynamicObstacle> dynamicObs,
+                              string* debugOut) const {
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
@@ -161,23 +162,25 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         bool hit = path->pathsIntersect(dyObs, &hitTime, &hitLocation,
                                         path->startTime());
         if (hit) {
-            //float dist = std::min(goal.pos.distTo(hitLocation)-0.1f, Robot_Radius);
-            //if (dist>0) {
-            obstacles.add(make_shared<Circle>(hitLocation, Robot_Radius*1.5f));
+            // float dist = std::min(goal.pos.distTo(hitLocation)-0.1f,
+            // Robot_Radius);
+            // if (dist>0) {
+            obstacles.add(
+                make_shared<Circle>(hitLocation, Robot_Radius * 1.5f));
             lastPath = std::move(path);
             //}
         } else {
             return std::move(path);
         }
     }
-    //debugLog("Generate Failed 10 times");
+    // debugLog("Generate Failed 10 times");
     return lastPath;
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles) {
-    //unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
+    // unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize two RRT trees
     FixedStepTree startTree;
@@ -326,11 +329,10 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         (points[points.size() - 1] - points[points.size() - 2])
             .normalized(pathWeight) +
         vf;
-    endDirections.push_back(
-        (endPathDirection)
-            .normalized(
-                (points[points.size() - 1] - points[points.size() - 2]).mag() *
-                directionDistance));
+    endDirections.push_back((endPathDirection)
+                                .normalized((points[points.size() - 1] -
+                                             points[points.size() - 2]).mag() *
+                                            directionDistance));
 
     vector<CubicBezierControlPoints> path;
 
