@@ -119,6 +119,9 @@ $(document).ready(function(){initNavTree('classgameplay_1_1tactics_1_1coordinate
 <div class="title">gameplay.tactics.coordinated_pass.CoordinatedPass Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This handles passing from one bot to another Simply run it and set it's receive point, the rest is handled for you It starts out by assigning a kicker and a receiver and instructing them to lineup for the pass Once they're aligned, the kicker kicks and the receiver adjusts itself based on the ball's movement Note: due to mechanical limitations, a kicker often gets stuck trying to adjust its angle while it's just outside of it's aim error threshold.  
+ <a href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -127,9 +130,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab03231d0593d8d98a6e7aae44f35ab13"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#ab03231d0593d8d98a6e7aae44f35ab13">__init__</a> (self, receive_point=None, skillreceiver=None)</td></tr>
-<tr class="memdesc:ab03231d0593d8d98a6e7aae44f35ab13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Skillreceiver is a class that will handle the receiving robot.  <a href="#ab03231d0593d8d98a6e7aae44f35ab13">More...</a><br /></td></tr>
-<tr class="separator:ab03231d0593d8d98a6e7aae44f35ab13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeff9dd28bed62defb5dc2fe14f2657bb"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#aeff9dd28bed62defb5dc2fe14f2657bb">__init__</a> (self, receive_point=None, skillreceiver=None, skillkicker=None, prekick_timeout=None, receiver_required=True, kicker_required=True)</td></tr>
+<tr class="memdesc:aeff9dd28bed62defb5dc2fe14f2657bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Init method for CoordinatedPass.  <a href="#aeff9dd28bed62defb5dc2fe14f2657bb">More...</a><br /></td></tr>
+<tr class="separator:aeff9dd28bed62defb5dc2fe14f2657bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8ec0a06ee49fed0bf1a0fea2c604f24"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8ec0a06ee49fed0bf1a0fea2c604f24"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>receive_point</b> (self)</td></tr>
 <tr class="separator:ad8ec0a06ee49fed0bf1a0fea2c604f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,6 +160,12 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>get_robots</b> (self)<
 <tr class="memitem:a180da2b2fbf120b49b430250b25b9a3a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a180da2b2fbf120b49b430250b25b9a3a"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_preparing</b> (self)</td></tr>
 <tr class="separator:a180da2b2fbf120b49b430250b25b9a3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdfb5dd4463e9c492e919220e075a2d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abdfb5dd4463e9c492e919220e075a2d4"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>prekick_timeout_exceeded</b> (self)</td></tr>
+<tr class="separator:abdfb5dd4463e9c492e919220e075a2d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc7e6bdd42d3979ba28da9d7bcbc2e8f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc7e6bdd42d3979ba28da9d7bcbc2e8f"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>time_remaining</b> (self)</td></tr>
+<tr class="separator:abc7e6bdd42d3979ba28da9d7bcbc2e8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cf45ad0c910d72ae8aa22ba78cc227d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cf45ad0c910d72ae8aa22ba78cc227d"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_receiving</b> (self)</td></tr>
 <tr class="separator:a0cf45ad0c910d72ae8aa22ba78cc227d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -301,6 +310,18 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a765fa2cfd2b90737c2199ed412e63a49"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a765fa2cfd2b90737c2199ed412e63a49"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>skillreceiver</b></td></tr>
 <tr class="separator:a765fa2cfd2b90737c2199ed412e63a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d12a1fc982280dac68921b0beeae800"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d12a1fc982280dac68921b0beeae800"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>skillkicker</b></td></tr>
+<tr class="separator:a1d12a1fc982280dac68921b0beeae800"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadb0569b31fdffc5e80497f564985a24"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aadb0569b31fdffc5e80497f564985a24"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>prekick_timeout</b></td></tr>
+<tr class="separator:aadb0569b31fdffc5e80497f564985a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1594fa786b42ecc98143156db5e7d04"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1594fa786b42ecc98143156db5e7d04"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>receiver_required</b></td></tr>
+<tr class="separator:ac1594fa786b42ecc98143156db5e7d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f5739cf489a4f0ed68ceb414df44c62"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f5739cf489a4f0ed68ceb414df44c62"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>kicker_required</b></td></tr>
+<tr class="separator:a9f5739cf489a4f0ed68ceb414df44c62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classgameplay_1_1fsm_1_1_state_machine"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgameplay_1_1fsm_1_1_state_machine')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classgameplay_1_1fsm_1_1_state_machine.html">gameplay.fsm.StateMachine</a></td></tr>
 <tr class="memitem:a202d07d517f2720dbd46b1214daa336a inherit pub_attribs_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a202d07d517f2720dbd46b1214daa336a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
@@ -312,7 +333,10 @@ Static Public Attributes</h2></td></tr>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6</td></tr>
 <tr class="separator:a9fb6df66783dc55efbc1d20a0091a5ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This handles passing from one bot to another Simply run it and set it's receive point, the rest is handled for you It starts out by assigning a kicker and a receiver and instructing them to lineup for the pass Once they're aligned, the kicker kicks and the receiver adjusts itself based on the ball's movement Note: due to mechanical limitations, a kicker often gets stuck trying to adjust its angle while it's just outside of it's aim error threshold. </p>
+<p>If this happens, the CoordinatedPass will adjust the receive point slightly because it's easier to move the receiver over a bit than have the kicker adjust its angle. This solves the problem of having a pass get stuck indefinitely while the kicker sits there not moving. TODO: # If an opponent blocks the pass channel, it will wait until it moves - you can cancel it at this point if you wish As soon as the kicker kicks, it is no longer and is released by this behavior so other behaviors can be assigned to it If the receiver gets the ball, CoordinatedPass transitions to the completed state, otherwise it goes to the failed state </p>
+</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for gameplay.tactics.coordinated_pass.CoordinatedPass:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
@@ -337,7 +361,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6<
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ab03231d0593d8d98a6e7aae44f35ab13"></a>
+<a class="anchor" id="aeff9dd28bed62defb5dc2fe14f2657bb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -357,7 +381,31 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6<
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>skillreceiver</em> = <code>None</code>&#160;</td>
+          <td class="paramname"><em>skillreceiver</em> = <code>None</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>skillkicker</em> = <code>None</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>prekick_timeout</em> = <code>None</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>receiver_required</em> = <code>True</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>kicker_required</em> = <code>True</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -367,8 +415,17 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6<
       </table>
 </div><div class="memdoc">
 
-<p>Skillreceiver is a class that will handle the receiving robot. </p>
-<p>See pass_receive and angle_receive. Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it). </p>
+<p>Init method for CoordinatedPass. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">skillreceiver</td><td>an instance of a class that will handle the receiving robot. See pass_receive and angle_receive for examples. Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it). Subclasses of pass_receive are preferred, but check the usage of this variable to be sure. </td></tr>
+    <tr><td class="paramname">receive_point</td><td>The point that will be kicked too. (Target point) </td></tr>
+    <tr><td class="paramname">skillkicker</td><td>A tuple of this form (kicking_class instance, ready_lambda). If none, it will use (pivot_kick lambda x: x == pivot_kick.State.aimed). </td></tr>
+    <tr><td class="paramname">receiver_required</td><td>Whether the receiver subbehavior should be required or not </td></tr>
+    <tr><td class="paramname">kicker_required</td><td>Whether the kicker subbehavior should be required or not The lambda equation is called (passed with the state of your class instance) to see if your class is ready. Simple implementations will just compare it to your ready state. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -381,7 +438,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>tactics</b></li><li class="navelem"><b>coordinated_pass</b></li><li class="navelem"><a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html">CoordinatedPass</a></li>
-    <li class="footer">Generated on Tue Aug 2 2016 07:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Aug 2 2016 08:53:11 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

@@ -6,8 +6,7 @@ var searchData=
   ['end',['end',['../class_planning_1_1_composite_path.html#ad0f58fd77d04e78e88445231bfe5d3ee',1,'Planning::CompositePath::end()'],['../class_planning_1_1_interpolated_path.html#ada4e9ef68db8dc49b8f0b2d99ed8f320',1,'Planning::InterpolatedPath::end()'],['../class_planning_1_1_path.html#a34b4d2491a77bfe9079a664d2201594b',1,'Planning::Path::end()'],['../class_planning_1_1_angle_function_path.html#a67dd9a6bce9136927aa19a18efb725b5',1,'Planning::AngleFunctionPath::end()'],['../class_planning_1_1_trapezoidal_path.html#a0dfd2e7deaf4a8052be39c89752d8728',1,'Planning::TrapezoidalPath::end()']]],
   ['entry',['Entry',['../class_battery_profile.html#a959daafc29caf952e00c445dba350163',1,'BatteryProfile']]],
   ['entry',['Entry',['../struct_planning_1_1_interpolated_path_1_1_entry.html',1,'Planning::InterpolatedPath']]],
-  ['errors_5fbelow_5fthresholds',['errors_below_thresholds',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a987e4d2cc813543836c34b5266cb721a',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['escape_5fseq_5fone',['ESCAPE_SEQ_ONE',['../class_console.html#a88ac566a85fe725564744034b909a778',1,'Console']]],
+  ['errors_5fbelow_5fthresholds',['errors_below_thresholds',['../classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4dfcf7e05241277f601ea2ed60d7c573',1,'gameplay.skills.line_kick_receive.LineKickReceive.errors_below_thresholds()'],['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a987e4d2cc813543836c34b5266cb721a',1,'gameplay.skills.pass_receive.PassReceive.errors_below_thresholds()']]],
   ['escapeobstaclespathplanner',['EscapeObstaclesPathPlanner',['../class_planning_1_1_escape_obstacles_path_planner.html',1,'Planning']]],
   ['eval_5fpt_5fto_5fopp_5fgoal',['eval_pt_to_opp_goal',['../class_window_evaluator.html#a71232e59601b090acd8716f17647c788',1,'WindowEvaluator']]],
   ['eval_5fpt_5fto_5four_5fgoal',['eval_pt_to_our_goal',['../class_window_evaluator.html#a9adcbf8fb8f9a7bcd868bac2de612aab',1,'WindowEvaluator']]],
@@ -18,6 +17,5 @@ var searchData=
   ['exceptioniterator',['ExceptionIterator',['../class_exception_iterator.html',1,'']]],
   ['excluded_5frobots',['excluded_robots',['../class_window_evaluator.html#a6ed16a6a51ee35a49ae29759b4290d84',1,'WindowEvaluator']]],
   ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
-  ['exitprogramming',['exitProgramming',['../class_a_v_r910.html#a6390cd4b442aa6267d934357ebdb42b9',1,'AVR910']]],
   ['extend',['extend',['../class_planning_1_1_tree.html#ae18f323a55ea3b91251b697f9176f646',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#aae4e5be14b801ad75e26dbd78bb061d2',1,'Planning::FixedStepTree::extend()']]]
 ];

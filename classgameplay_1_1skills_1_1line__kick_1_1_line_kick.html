@@ -112,7 +112,6 @@ $(document).ready(function(){initNavTree('classgameplay_1_1skills_1_1line__kick_
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -120,7 +119,7 @@ $(document).ready(function(){initNavTree('classgameplay_1_1skills_1_1line__kick_
 </div><!--header-->
 <div class="contents">
 
-<p>lines up with the ball and the target, then drives up and kicks this differs from PivotKick which gets the ball first, then aims Note: LineKick recalculates the target_aim_point ONLY when the target point/segment changes  
+<p>lines up with the ball and the target, then drives up and kicks this differs from PivotKick which gets the ball first, then aims Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes  
  <a href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
@@ -133,38 +132,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a48b4f61f9ce64c242f624da18546f36d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48b4f61f9ce64c242f624da18546f36d"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self)</td></tr>
 <tr class="separator:a48b4f61f9ce64c242f624da18546f36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24e40c55bffb3315555dee2b20597bbd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24e40c55bffb3315555dee2b20597bbd"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a24e40c55bffb3315555dee2b20597bbd">drive_around_dist</a> (self)</td></tr>
-<tr class="memdesc:a24e40c55bffb3315555dee2b20597bbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">We use the path planner to move to a point this distance away from the ball and on the opposite side of where we're aiming. <br /></td></tr>
-<tr class="separator:a24e40c55bffb3315555dee2b20597bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a722ed1ddaa812f66bf5f93c95747d862"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a722ed1ddaa812f66bf5f93c95747d862"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>drive_around_dist</b> (self, value)</td></tr>
-<tr class="separator:a722ed1ddaa812f66bf5f93c95747d862"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cb0930f6d54bc30cba51a9eebc83648"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8cb0930f6d54bc30cba51a9eebc83648"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a8cb0930f6d54bc30cba51a9eebc83648">setup_ball_avoid</a> (self)</td></tr>
-<tr class="memdesc:a8cb0930f6d54bc30cba51a9eebc83648"><td class="mdescLeft">&#160;</td><td class="mdescRight">The avoid ball radius for while we're getting to the setup point. <br /></td></tr>
-<tr class="separator:a8cb0930f6d54bc30cba51a9eebc83648"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3826e2c872d7ad7d40ef0baace089d43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3826e2c872d7ad7d40ef0baace089d43"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>setup_ball_avoid</b> (self, value)</td></tr>
-<tr class="separator:a3826e2c872d7ad7d40ef0baace089d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7e240960157d262716fb516c30798a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7e240960157d262716fb516c30798a2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>robot_is_between_ball_and_target</b> (self)</td></tr>
-<tr class="separator:ac7e240960157d262716fb516c30798a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af90c0e6d1179f9d13c368020dec4a139"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af90c0e6d1179f9d13c368020dec4a139"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate</b> (self)</td></tr>
-<tr class="separator:af90c0e6d1179f9d13c368020dec4a139"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd7c48fb2d5a4bf3b6d9619af985853d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd7c48fb2d5a4bf3b6d9619af985853d"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>on_exit_start</b> (self)</td></tr>
-<tr class="separator:afd7c48fb2d5a4bf3b6d9619af985853d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8131fd46a82e7f7d3cc64e189046f46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8131fd46a82e7f7d3cc64e189046f46"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b> (self)</td></tr>
-<tr class="separator:ae8131fd46a82e7f7d3cc64e189046f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a398d16c33ec52ce54de618c1c315f51f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a398d16c33ec52ce54de618c1c315f51f"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_setup</b> (self)</td></tr>
-<tr class="separator:a398d16c33ec52ce54de618c1c315f51f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad762cfb730d409168d382169d8960a35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad762cfb730d409168d382169d8960a35"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_charge</b> (self)</td></tr>
-<tr class="separator:ad762cfb730d409168d382169d8960a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74ddba24d7b1adb8e3f837fa3a0c318b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a74ddba24d7b1adb8e3f837fa3a0c318b"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_running</b> (self)</td></tr>
+<tr class="separator:a74ddba24d7b1adb8e3f837fa3a0c318b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2781ca33508fdfff4489326dc6c5174"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa2781ca33508fdfff4489326dc6c5174"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_kick</b> (self)</td></tr>
+<tr class="separator:aa2781ca33508fdfff4489326dc6c5174"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa569c0ca74eb55fb10acc7bd578b1d4a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa569c0ca74eb55fb10acc7bd578b1d4a"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b> (self)</td></tr>
 <tr class="separator:aa569c0ca74eb55fb10acc7bd578b1d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,6 +177,14 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>shot_obstacle_ignoring
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html#acd42ab0dd8c1b4145b379448a3ac7c20">aim_target_point</a> (self)</td></tr>
 <tr class="memdesc:acd42ab0dd8c1b4145b379448a3ac7c20 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="mdescLeft">&#160;</td><td class="mdescRight">We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters This is that point. <br /></td></tr>
 <tr class="separator:acd42ab0dd8c1b4145b379448a3ac7c20 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a194a7a031681829ee152147af9508125 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a194a7a031681829ee152147af9508125"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html#a194a7a031681829ee152147af9508125">current_shot_point</a> (self)</td></tr>
+<tr class="memdesc:a194a7a031681829ee152147af9508125 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic compatibility with pivot_kick This method should be overriden if possible. <br /></td></tr>
+<tr class="separator:a194a7a031681829ee152147af9508125 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cb3368494bf57d1fe42a062a8345a7d inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cb3368494bf57d1fe42a062a8345a7d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html#a0cb3368494bf57d1fe42a062a8345a7d">is_steady</a> (self)</td></tr>
+<tr class="memdesc:a0cb3368494bf57d1fe42a062a8345a7d inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic compatibilty with pivot_kick This method should be overriden if possible. <br /></td></tr>
+<tr class="separator:a0cb3368494bf57d1fe42a062a8345a7d inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39508641624c2c4a9d206be19303de65 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39508641624c2c4a9d206be19303de65"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65">recalculate_aim_target_point</a> (self)</td></tr>
 <tr class="memdesc:a39508641624c2c4a9d206be19303de65 inherit pub_methods_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="mdescLeft">&#160;</td><td class="mdescRight">we're aiming at a particular point on our target segment, what is this point? <br /></td></tr>
@@ -343,14 +324,14 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b> 
 def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
 <tr class="separator:a26580b6c91b9b04fea7347c43896017a inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:af40cd210a9017905ec46628a7a36f520"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af40cd210a9017905ec46628a7a36f520"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>setup_ball_avoid</b></td></tr>
-<tr class="separator:af40cd210a9017905ec46628a7a36f520"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13628bb2f20a5883db87b6ae28cc03d0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13628bb2f20a5883db87b6ae28cc03d0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>drive_around_dist</b></td></tr>
-<tr class="separator:a13628bb2f20a5883db87b6ae28cc03d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aa563d474a2f87b1f50af89184b8adad4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa563d474a2f87b1f50af89184b8adad4"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ClosenessThreshold</b> = constants.Robot.Radius*3</td></tr>
+<tr class="separator:aa563d474a2f87b1f50af89184b8adad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html">gameplay.skills._kick._Kick</a></td></tr>
 <tr class="memitem:a41aaf1cb840c3cf9c6cc601ac55c3ced inherit pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41aaf1cb840c3cf9c6cc601ac55c3ced"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>enable_kick</b></td></tr>
@@ -376,6 +357,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a5b0bb5990a74037d18326262d48b876b inherit pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b0bb5990a74037d18326262d48b876b"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>shot_obstacle_ignoring_robots</b></td></tr>
 <tr class="separator:a5b0bb5990a74037d18326262d48b876b inherit pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae72906842cffeb35d09b2a2d20e824c3 inherit pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae72906842cffeb35d09b2a2d20e824c3"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>aim_params</b></td></tr>
+<tr class="separator:ae72906842cffeb35d09b2a2d20e824c3 inherit pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html">gameplay.single_robot_behavior.SingleRobotBehavior</a></td></tr>
 <tr class="memitem:a75c25cbdeae25db1caac4723240db715 inherit pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75c25cbdeae25db1caac4723240db715"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
@@ -384,43 +368,10 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a202d07d517f2720dbd46b1214daa336a inherit pub_attribs_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a202d07d517f2720dbd46b1214daa336a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
 <tr class="separator:a202d07d517f2720dbd46b1214daa336a inherit pub_attribs_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a4c97c3189cd666f532c1cfb06eb3baef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c97c3189cd666f532c1cfb06eb3baef"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#a4c97c3189cd666f532c1cfb06eb3baef">DefaultDriveAroundDist</a> = 0.15</td></tr>
-<tr class="memdesc:a4c97c3189cd666f532c1cfb06eb3baef"><td class="mdescLeft">&#160;</td><td class="mdescRight">tuneable constants <br /></td></tr>
-<tr class="separator:a4c97c3189cd666f532c1cfb06eb3baef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46ea9fa4ff6dd9efb9f307e068151ba6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46ea9fa4ff6dd9efb9f307e068151ba6"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>ChargeThresh</b> = 0.1</td></tr>
-<tr class="separator:a46ea9fa4ff6dd9efb9f307e068151ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a816ebe3d766ad82fe95b03f4932fd627"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a816ebe3d766ad82fe95b03f4932fd627"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>EscapeChargeThresh</b> = 0.1</td></tr>
-<tr class="separator:a816ebe3d766ad82fe95b03f4932fd627"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec44ca52f6f2c136e51eb8d321e09da9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec44ca52f6f2c136e51eb8d321e09da9"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>DefaultSetupBallAvoid</b> = 0.15</td></tr>
-<tr class="separator:aec44ca52f6f2c136e51eb8d321e09da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d367f45468ebc2b24d09de4f15ff707"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d367f45468ebc2b24d09de4f15ff707"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>AccelBias</b> = 0.2</td></tr>
-<tr class="separator:a1d367f45468ebc2b24d09de4f15ff707"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15a7ac0877b517b1c5a37b98613beadb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15a7ac0877b517b1c5a37b98613beadb"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>FacingThresh</b> = 10</td></tr>
-<tr class="separator:a15a7ac0877b517b1c5a37b98613beadb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4de5210743863ca84e137af33138c867"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4de5210743863ca84e137af33138c867"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>MaxChargeSpeed</b> = 1.5</td></tr>
-<tr class="separator:a4de5210743863ca84e137af33138c867"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dbd1f177389a61c23919b3fed0ee20d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3dbd1f177389a61c23919b3fed0ee20d"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>BallProjectTime</b> = 0.4</td></tr>
-<tr class="separator:a3dbd1f177389a61c23919b3fed0ee20d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b14dae3f5a2cbb8705c32d922fcd0c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b14dae3f5a2cbb8705c32d922fcd0c9"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>DoneStateThresh</b> = 0.11</td></tr>
-<tr class="separator:a5b14dae3f5a2cbb8705c32d922fcd0c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36df2ead66f0dca86521358133004751"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36df2ead66f0dca86521358133004751"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>ClosenessThreshold</b> = constants.Robot.Radius+0.04</td></tr>
-<tr class="separator:a36df2ead66f0dca86521358133004751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>lines up with the ball and the target, then drives up and kicks this differs from PivotKick which gets the ball first, then aims Note: LineKick recalculates the target_aim_point ONLY when the target point/segment changes </p>
+<div class="textblock"><p>lines up with the ball and the target, then drives up and kicks this differs from PivotKick which gets the ball first, then aims Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes </p>
+<p>See Also: LineKickOld is the old, python-only implementation of line_kick </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for gameplay.skills.line_kick.LineKick:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -456,7 +407,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>ClosenessThreshold</
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>skills</b></li><li class="navelem"><b>line_kick</b></li><li class="navelem"><a class="el" href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html">LineKick</a></li>
-    <li class="footer">Generated on Tue Aug 2 2016 07:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Aug 2 2016 08:53:11 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

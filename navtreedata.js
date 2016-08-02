@@ -23,8 +23,7 @@ var NAVTREE =
         [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ],
-        [ "Typedefs", "functions_type.html", null ],
-        [ "Enumerations", "functions_enum.html", null ]
+        [ "Typedefs", "functions_type.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -36,17 +35,16 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_c_c1201.html#a5035f4001c6424cc5a283e75a3d8ce52",
-"class_game_state.html#a57ff21fd6e98cc983be56169ea941520",
-"class_geometry2d_1_1_shape.html#a4e811fff528953ccbd931fb477cc3854",
-"class_new_referee_module.html#af8f23bb5c7a4f051f6925bdeb1c43eb0",
-"class_planning_1_1_r_r_t_planner.html#ad8c4007b45a920aef992b0a358075e89",
-"class_robot_widget.html#a9304273605e4203e7d7cac20de593092",
-"classgameplay_1_1play_1_1_play.html#ac200a9a39e0e0d5720d525469775814e",
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a393aa7800438b3ab3e56e0b2bd8274fc",
-"classgameplay_1_1skills_1_1move_1_1_move.html#a129500170120d1a15c3a2c58b2b1bcf2",
-"classmbed_1_1_i2_c_driver.html#a164d275e113843b3d21b2e74d3183386",
-"namespace_gameplay.html"
+"class_config_item.html#a8ebeafa9a6183b55e0413e08c3902ad0",
+"class_geometry2d_1_1_point.html",
+"class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a8ca37eee1d7aa2599f02a45f77c97838",
+"class_planning_1_1_r_r_t_planner.html#a3e333063b05159149291fd2defff89ac",
+"class_sim_field_view.html#aeb705028a38e92e2fb74836e36395de3",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aabb80a984575fee2371f1cb0cddc7122",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4484d4097cee6c2e5237c4e79cc5f0a3",
+"classgameplay_1_1skills_1_1move_1_1_move.html#a0c7170c0b5e41b6ffae7f5b454778865",
+"classgameplay_1_1timed__behavior_1_1_timed_behavior.html",
+"struct_planning_1_1_angle_instant.html#a1b97e79900b7ac54236e6e9333adaf99"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

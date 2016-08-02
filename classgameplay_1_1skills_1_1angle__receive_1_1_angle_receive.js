@@ -7,8 +7,10 @@ var classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive =
     [ "recalculate", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#abb5f76f4f5aa3933f3884daa59794c32", null ],
     [ "target_point", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a97757a611bcf1fb2de7e43b951754237", null ],
     [ "target_point", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#ae7d74789d49a000a84bbc293878c04bf", null ],
+    [ "ball_kicked", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a02fb87b7f4785e79aae67e25088d308b", null ],
     [ "kick_power", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#adee09c9adc573333932d034065161824", null ],
     [ "receive_point", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#ad35399045e7b8316c1ddacf75cac95e6", null ],
     [ "robot", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#afd6866389e6020a76e7976132cb4894f", null ],
+    [ "target_angle", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a1a025e8abfee127a0d8da06923abf27f", null ],
     [ "target_point", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#aaab5481614f9ee5e3159e8d8ab187668", null ]
 ];

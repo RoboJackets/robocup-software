@@ -5,6 +5,7 @@ var class_planning_1_1_motion_command =
       [ "WorldVel", "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72a3bfbd6674460d776f64c3e821f98c675", null ],
       [ "Pivot", "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72abdaed1d1d031d9d33d7294ff5918aa7d", null ],
       [ "DirectPathTarget", "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72ad234c039ecef14845f60899d36419b51", null ],
+      [ "LineKick", "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72abbae76c335a56d58d81f8af774afa03e", null ],
       [ "None", "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72a61e17ddb2ebc24e29ecea463b7810a6f", null ]
     ] ],
     [ "~MotionCommand", "class_planning_1_1_motion_command.html#af082096a60fc527598d0d82a25b0fd14", null ],

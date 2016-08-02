@@ -6,6 +6,7 @@ var dir_28df16f06401fa4b261f014c0f6bda1e =
     [ "EscapeObstaclesPathPlanner.hpp", "_escape_obstacles_path_planner_8hpp_source.html", null ],
     [ "IndependentMultiRobotPathPlanner.hpp", "_independent_multi_robot_path_planner_8hpp_source.html", null ],
     [ "InterpolatedPath.hpp", "_interpolated_path_8hpp_source.html", null ],
+    [ "LineKickPlanner.hpp", "_line_kick_planner_8hpp_source.html", null ],
     [ "MotionCommand.hpp", "_motion_command_8hpp_source.html", null ],
     [ "MotionConstraints.hpp", "_motion_constraints_8hpp_source.html", null ],
     [ "MotionInstant.hpp", "_motion_instant_8hpp_source.html", null ],

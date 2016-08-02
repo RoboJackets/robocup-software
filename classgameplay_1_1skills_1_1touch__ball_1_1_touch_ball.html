@@ -112,13 +112,15 @@ $(document).ready(function(){initNavTree('classgameplay_1_1skills_1_1touch__ball
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">gameplay.skills.touch_ball.TouchBall Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Touchball Class A touchball is a simplified capture behavior, that simply lets the ball roll towards the robot until it hits it in the mouth.  
+ <a href="classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -130,28 +132,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7622349028483d059996f0ba9f80559f"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#a7622349028483d059996f0ba9f80559f">__init__</a> (self)</td></tr>
 <tr class="memdesc:a7622349028483d059996f0ba9f80559f"><td class="mdescLeft">&#160;</td><td class="mdescRight">TouchBall Constructor useful for reflecting/bouncing moving ballls.  <a href="#a7622349028483d059996f0ba9f80559f">More...</a><br /></td></tr>
 <tr class="separator:a7622349028483d059996f0ba9f80559f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87eefaca9f951b78c49be3f6c11d6b33"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87eefaca9f951b78c49be3f6c11d6b33"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#a87eefaca9f951b78c49be3f6c11d6b33">ball_in_front_of_bot</a> (self)</td></tr>
-<tr class="memdesc:a87eefaca9f951b78c49be3f6c11d6b33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override this to detect if the ball is directly in front of us. <br /></td></tr>
-<tr class="separator:a87eefaca9f951b78c49be3f6c11d6b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0144fe4c8814b536d6962cafc242fa92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0144fe4c8814b536d6962cafc242fa92"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>approach_vector</b> (self)</td></tr>
 <tr class="separator:a0144fe4c8814b536d6962cafc242fa92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49de36b253dba10c19a0423cf77fb27e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html#a49de36b253dba10c19a0423cf77fb27e">find_intercept_point</a> (self, adjusted=True)</td></tr>
-<tr class="memdesc:a49de36b253dba10c19a0423cf77fb27e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A touch is different from a capture in that we should try to keep our distance from the ball if possible, and move forward to hit the ball at the last minute.  <a href="#a49de36b253dba10c19a0423cf77fb27e">More...</a><br /></td></tr>
+<tr class="memitem:a49de36b253dba10c19a0423cf77fb27e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49de36b253dba10c19a0423cf77fb27e"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>find_intercept_point</b> (self, adjusted=True)</td></tr>
 <tr class="separator:a49de36b253dba10c19a0423cf77fb27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fe16e510aee55ce01db4f90c890ebc1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6fe16e510aee55ce01db4f90c890ebc1"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_course_approach</b> (self)</td></tr>
-<tr class="separator:a6fe16e510aee55ce01db4f90c890ebc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91cfdf6e89cfc7f136a7f0f6de8b94b3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91cfdf6e89cfc7f136a7f0f6de8b94b3"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_course_approach</b> (self)</td></tr>
 <tr class="separator:a91cfdf6e89cfc7f136a7f0f6de8b94b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9547d01529275370c04b778d22af7a9a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9547d01529275370c04b778d22af7a9a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>on_exit_course_approach</b> (self)</td></tr>
-<tr class="separator:a9547d01529275370c04b778d22af7a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5fc90c648903bb71fbeaef478ac431c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5fc90c648903bb71fbeaef478ac431c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_hit_ball</b> (self)</td></tr>
-<tr class="separator:ac5fc90c648903bb71fbeaef478ac431c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c1c13aa4b60e010a7ff863fa1558eee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c1c13aa4b60e010a7ff863fa1558eee"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b> (self)</td></tr>
 <tr class="separator:a9c1c13aa4b60e010a7ff863fa1558eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -257,11 +246,17 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b> 
 def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
 <tr class="separator:a26580b6c91b9b04fea7347c43896017a inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:ab8bd8983ba258e75b3bf909320dcdfd1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8bd8983ba258e75b3bf909320dcdfd1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lastApproachTarget</b></td></tr>
-<tr class="separator:ab8bd8983ba258e75b3bf909320dcdfd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aee9943816649714d144366dbeff54248"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee9943816649714d144366dbeff54248"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>DribbleSpeed</b> = 0</td></tr>
+<tr class="separator:aee9943816649714d144366dbeff54248"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc1a492fb89f34cf2ab32886e964bdeb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc1a492fb89f34cf2ab32886e964bdeb"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>AdjDist</b> = constants.Robot.Radius</td></tr>
+<tr class="separator:adc1a492fb89f34cf2ab32886e964bdeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html">gameplay.single_robot_behavior.SingleRobotBehavior</a></td></tr>
 <tr class="memitem:a75c25cbdeae25db1caac4723240db715 inherit pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75c25cbdeae25db1caac4723240db715"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
@@ -270,23 +265,11 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a202d07d517f2720dbd46b1214daa336a inherit pub_attribs_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a202d07d517f2720dbd46b1214daa336a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
 <tr class="separator:a202d07d517f2720dbd46b1214daa336a inherit pub_attribs_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a1cfb9f337c7e71b9fc54fba13044333c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1cfb9f337c7e71b9fc54fba13044333c"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>CourseApproachDist</b> = 0.4</td></tr>
-<tr class="separator:a1cfb9f337c7e71b9fc54fba13044333c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee9943816649714d144366dbeff54248"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee9943816649714d144366dbeff54248"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>DribbleSpeed</b> = 0</td></tr>
-<tr class="separator:aee9943816649714d144366dbeff54248"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43a57ea40c0e58308099dd09199bab28"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43a57ea40c0e58308099dd09199bab28"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>HitAdjust</b> = 1</td></tr>
-<tr class="separator:a43a57ea40c0e58308099dd09199bab28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1a3b7cc4872b7aca92fd77af3409f4e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1a3b7cc4872b7aca92fd77af3409f4e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>AdjDist</b> = constants.Robot.Radius*2</td></tr>
-<tr class="separator:ab1a3b7cc4872b7aca92fd77af3409f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Touchball Class A touchball is a simplified capture behavior, that simply lets the ball roll towards the robot until it hits it in the mouth. </p>
+<p>This class does NOT handle turning towards the ball, as it is designed to be used with a class that will try to shoot it at a target. </p>
+</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for gameplay.skills.touch_ball.TouchBall:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
@@ -329,37 +312,6 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>AdjDist</b> = constant
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a49de36b253dba10c19a0423cf77fb27e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def gameplay.skills.touch_ball.TouchBall.find_intercept_point </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>self</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>adjusted</em> = <code>True</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A touch is different from a capture in that we should try to keep our distance from the ball if possible, and move forward to hit the ball at the last minute. </p>
-<p>To do this, let's move the intercept point capture found back a bit.</p>
-<p>In addition, lets try to keep this point stable by choosing the closest point, instead of the point that we can reach in time closest to the ball </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/gameplay/skills/touch_ball.py</li>
 </ul>
@@ -369,7 +321,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>AdjDist</b> = constant
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>skills</b></li><li class="navelem"><b>touch_ball</b></li><li class="navelem"><a class="el" href="classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html">TouchBall</a></li>
-    <li class="footer">Generated on Tue Aug 2 2016 07:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Aug 2 2016 08:53:11 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

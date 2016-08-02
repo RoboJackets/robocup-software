@@ -1,8 +1,5 @@
 var hierarchy =
 [
-    [ "AnalogOut", null, [
-      [ "Buzzer", "class_buzzer.html", null ]
-    ] ],
     [ "Planning::AngleInstant", "struct_planning_1_1_angle_instant.html", null ],
     [ "Geometry2d::Arc", "class_geometry2d_1_1_arc.html", null ],
     [ "AutoName", "class_auto_name.html", null ],
@@ -10,16 +7,11 @@ var hierarchy =
     [ "Ball", "class_ball.html", null ],
     [ "BallFilter", "class_ball_filter.html", null ],
     [ "BallObservation", "class_ball_observation.html", null ],
-    [ "BallSense", "class_ball_sense.html", null ],
     [ "BallTracker", "class_ball_tracker.html", null ],
     [ "BatteryProfile", "class_battery_profile.html", null ],
     [ "gameplay.play_registry.PlayRegistry.Category", "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html", null ],
-    [ "mbed::I2CDriver::Channel", "structmbed_1_1_i2_c_driver_1_1_channel.html", null ],
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
-    [ "command_t", "structcommand__t.html", null ],
-    [ "CommModule", "class_comm_module.html", null ],
-    [ "CommPort< RX_CALLBACK, TX_CALLBACK >", "class_comm_port.html", null ],
     [ "CompositeBehavior", null, [
       [ "circle_near_ball.CircleNearBall", "classcircle__near__ball_1_1_circle_near_ball.html", null ],
       [ "circle_on_center.CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", null ]
@@ -32,14 +24,11 @@ var hierarchy =
     [ "Configurable", "class_configurable.html", [
       [ "ConfigurableImpl< T >", "class_configurable_impl.html", null ]
     ] ],
-    [ "Console", "class_console.html", null ],
     [ "Planning::ConstPathIterator", "class_planning_1_1_const_path_iterator.html", null ],
     [ "rtp::ControlMessage", "structrtp_1_1_control_message.html", null ],
     [ "Planning::CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", null ],
-    [ "fake_mbed::DigitalIn", "classfake__mbed_1_1_digital_in.html", null ],
     [ "gameplay.constants.Robot.Dribbler", "classgameplay_1_1constants_1_1_robot_1_1_dribbler.html", null ],
     [ "RobotConfig::Dribbler", "struct_robot_config_1_1_dribbler.html", null ],
-    [ "DS2411_t", "struct_d_s2411__t.html", null ],
     [ "Planning::DynamicObstacle", "class_planning_1_1_dynamic_obstacle.html", null ],
     [ "Planning::InterpolatedPath::Entry", "struct_planning_1_1_interpolated_path_1_1_entry.html", null ],
     [ "Enum", null, [
@@ -57,13 +46,18 @@ var hierarchy =
       [ "gameplay.skills.bump.Bump.State", "classgameplay_1_1skills_1_1bump_1_1_bump_1_1_state.html", null ],
       [ "gameplay.skills.dribble.Dribble.State", "classgameplay_1_1skills_1_1dribble_1_1_dribble_1_1_state.html", null ],
       [ "gameplay.skills.line_kick.LineKick.State", "classgameplay_1_1skills_1_1line__kick_1_1_line_kick_1_1_state.html", null ],
+      [ "gameplay.skills.line_kick_old.LineKickOld.State", "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html", null ],
+      [ "gameplay.skills.line_kick_receive.LineKickReceive.State", "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive_1_1_state.html", null ],
       [ "gameplay.skills.pass_receive.PassReceive.State", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html", null ],
       [ "gameplay.tactics.coordinated_pass.CoordinatedPass.State", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html", null ],
+      [ "gameplay.tactics.forward_pass.ForwardPass.State", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass_1_1_state.html", null ],
       [ "gameplay.tactics.one_touch_pass.OneTouchPass.State", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html", null ],
       [ "gameplay.tactics.our_placement.OurPlacement.State", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement_1_1_state.html", null ],
       [ "gameplay.tactics.penalty.Penalty.State", "classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html", null ],
       [ "gameplay.tactics.positions.goalie.Goalie.State", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
+      [ "gameplay.timeout_behavior.TimeoutBehavior.State", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html", null ],
+      [ "kick_gently.KickGently.State", "classkick__gently_1_1_kick_gently_1_1_state.html", null ],
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
       [ "test_fsm.MyFsm.SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ]
     ] ],
@@ -78,28 +72,7 @@ var hierarchy =
     ] ],
     [ "Gameplay::GameplayModule", "class_gameplay_1_1_gameplay_module.html", null ],
     [ "GameState", "class_game_state.html", null ],
-    [ "HackedKickerBoard", "class_hacked_kicker_board.html", null ],
     [ "rtp::header_data", "structrtp_1_1header__data.html", null ],
-    [ "mbed::I2CDriver", "classmbed_1_1_i2_c_driver.html", null ],
-    [ "mbed::I2CMasterRtos", "classmbed_1_1_i2_c_master_rtos.html", null ],
-    [ "mbed::I2CSlaveRtos", "classmbed_1_1_i2_c_slave_rtos.html", null ],
-    [ "IOExpanderDigitalInOut", "class_i_o_expander_digital_in_out.html", null ],
-    [ "std::ios_base", null, [
-      [ "std::basic_ios< Char >", null, [
-        [ "std::basic_istream< Char >", null, [
-          [ "std::basic_iostream< Char >", null, [
-            [ "std::basic_stringstream< Char >", null, [
-              [ "std::stringstream", null, [
-                [ "LogHelper", "class_log_helper.html", null ]
-              ] ]
-            ] ]
-          ] ]
-        ] ],
-        [ "std::basic_ostream< Char >", null, [
-          [ "std::basic_iostream< Char >", null, null ]
-        ] ]
-      ] ]
-    ] ],
     [ "iterator", null, [
       [ "ExceptionIterator< T >", "class_exception_iterator.html", null ]
     ] ],
@@ -107,13 +80,10 @@ var hierarchy =
     [ "RobotConfig::Kicker", "struct_robot_config_1_1_kicker.html", null ],
     [ "Geometry2d::Line", "class_geometry2d_1_1_line.html", null ],
     [ "Logger", "class_logger.html", null ],
-    [ "MailHelper< T, size >", "class_mail_helper.html", null ],
-    [ "MailHelper< rtp::packet, RX_QUEUE_SIZE >", "class_mail_helper.html", null ],
-    [ "MailHelper< rtp::packet, TX_QUEUE_SIZE >", "class_mail_helper.html", null ],
-    [ "MCP23017", "class_m_c_p23017.html", null ],
     [ "Planning::MotionCommand", "class_planning_1_1_motion_command.html", [
       [ "Planning::DirectPathTargetCommand", "struct_planning_1_1_direct_path_target_command.html", null ],
       [ "Planning::EmptyCommand", "struct_planning_1_1_empty_command.html", null ],
+      [ "Planning::LineKickCommand", "struct_planning_1_1_line_kick_command.html", null ],
       [ "Planning::PathTargetCommand", "struct_planning_1_1_path_target_command.html", null ],
       [ "Planning::PivotCommand", "struct_planning_1_1_pivot_command.html", null ],
       [ "Planning::WorldVelTargetCommand", "struct_planning_1_1_world_vel_target_command.html", null ]
@@ -121,21 +91,14 @@ var hierarchy =
     [ "MotionConstraints", "struct_motion_constraints.html", null ],
     [ "MotionControl", "class_motion_control.html", null ],
     [ "Planning::MotionInstant", "struct_planning_1_1_motion_instant.html", null ],
-    [ "motor_t", "structmotor__t.html", null ],
-    [ "motorErr_t", "structmotor_err__t.html", null ],
-    [ "MPU6050", "class_m_p_u6050.html", null ],
     [ "Planning::MultiRobotPathPlanner", "class_planning_1_1_multi_robot_path_planner.html", [
       [ "Planning::IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", null ]
     ] ],
-    [ "Mutex", null, [
-      [ "SharedSPI", "class_shared_s_p_i.html", null ]
-    ] ],
-    [ "NeoColor", "struct_neo_color.html", null ],
-    [ "NeoStrip", "class_neo_strip.html", null ],
     [ "NewRefereePacket", "class_new_referee_packet.html", null ],
     [ "gameplay.play_registry.PlayRegistry.Node", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html", null ],
     [ "noncopyable", null, [
       [ "Joystick", "class_joystick.html", [
+        [ "GamepadController", "class_gamepad_controller.html", null ],
         [ "GamepadJoystick", "class_gamepad_joystick.html", null ],
         [ "SpaceNavJoystick", "class_space_nav_joystick.html", null ]
       ] ]
@@ -152,8 +115,11 @@ var hierarchy =
     ] ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
-    [ "PidMotionController", "class_pid_motion_controller.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
+    [ "Play", null, [
+      [ "kick_gently.KickGently", "classkick__gently_1_1_kick_gently.html", null ],
+      [ "offensive_pivot_kick.OffensivePivotKick", "classoffensive__pivot__kick_1_1_offensive_pivot_kick.html", null ]
+    ] ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
     [ "QAbstractItemModel", null, [
@@ -195,14 +161,11 @@ var hierarchy =
       [ "SimRadio", "class_sim_radio.html", null ],
       [ "USBRadio", "class_u_s_b_radio.html", null ]
     ] ],
-    [ "RadioProtocol", "class_radio_protocol.html", null ],
-    [ "registerSetting_t", "structregister_setting__t.html", null ],
     [ "gameplay.constants.Robot", "classgameplay_1_1constants_1_1_robot.html", null ],
     [ "RobotConfig", "class_robot_config.html", null ],
     [ "RobotConstraints", "struct_robot_constraints.html", null ],
     [ "RobotFilter", "class_robot_filter.html", null ],
     [ "Planning::RobotInstant", "struct_planning_1_1_robot_instant.html", null ],
-    [ "RobotModel", "class_robot_model.html", null ],
     [ "RobotObservation", "class_robot_observation.html", null ],
     [ "RobotPose", "class_robot_pose.html", [
       [ "Robot", "class_robot.html", [
@@ -213,16 +176,12 @@ var hierarchy =
     [ "RobotStatus", "class_robot_status.html", null ],
     [ "rtp::RobotStatusMessage", "structrtp_1_1_robot_status_message.html", null ],
     [ "gameplay.role_assignment.RoleRequirements", "classgameplay_1_1role__assignment_1_1_role_requirements.html", null ],
-    [ "RotarySelector< DIGITAL_IN >", "class_rotary_selector.html", null ],
     [ "Planning::RotationCommand", "struct_planning_1_1_rotation_command.html", [
       [ "Planning::EmptyAngleCommand", "struct_planning_1_1_empty_angle_command.html", null ],
       [ "Planning::FaceAngleCommand", "struct_planning_1_1_face_angle_command.html", null ],
       [ "Planning::FacePointCommand", "struct_planning_1_1_face_point_command.html", null ]
     ] ],
     [ "RotationConstraints", "struct_rotation_constraints.html", null ],
-    [ "RtosTimer", null, [
-      [ "RtosTimerHelper", "class_rtos_timer_helper.html", null ]
-    ] ],
     [ "RuntimeError", null, [
       [ "gameplay.role_assignment.ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ]
     ] ],
@@ -234,27 +193,14 @@ var hierarchy =
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
     ] ],
     [ "Geometry2d::ShapeSet", "class_geometry2d_1_1_shape_set.html", null ],
-    [ "SharedSPIDevice< DIGITAL_OUT >", "class_shared_s_p_i_device.html", null ],
-    [ "SharedSPIDevice<>", "class_shared_s_p_i_device.html", [
-      [ "AVR910", "class_a_v_r910.html", [
-        [ "KickerBoard", "class_kicker_board.html", null ]
-      ] ],
-      [ "CommLink", "class_comm_link.html", [
-        [ "CC1201", "class_c_c1201.html", null ]
-      ] ],
-      [ "FPGA", "class_f_p_g_a.html", null ]
-    ] ],
     [ "Planning::SinglePlanRequest", "struct_planning_1_1_single_plan_request.html", null ],
     [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
       [ "Planning::DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", null ],
       [ "Planning::EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", null ],
+      [ "Planning::LineKickPlanner", "class_planning_1_1_line_kick_planner.html", null ],
       [ "Planning::PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
-    ] ],
-    [ "SoftwareSPI", "class_software_s_p_i.html", null ],
-    [ "SPI", null, [
-      [ "SharedSPI", "class_shared_s_p_i.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -270,6 +216,7 @@ var hierarchy =
             [ "gameplay.plays.testing.test_coordinated_pass.TestCoordinatedPass", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html", null ],
             [ "gameplay.plays.testing.test_defense.TestDefense", "classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense.html", null ],
             [ "gameplay.plays.testing.test_defense_and_kicker.TestDefenseAndKicker", "classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker.html", null ],
+            [ "gameplay.plays.testing.test_forward_pass.TestForwardPass", "classgameplay_1_1plays_1_1testing_1_1test__forward__pass_1_1_test_forward_pass.html", null ],
             [ "gameplay.plays.testing.test_fullback.TestDefender", "classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender.html", null ],
             [ "gameplay.plays.testing.test_idle.TestIdle", "classgameplay_1_1plays_1_1testing_1_1test__idle_1_1_test_idle.html", null ],
             [ "gameplay.plays.testing.test_intercept.TestIntercept", "classgameplay_1_1plays_1_1testing_1_1test__intercept_1_1_test_intercept.html", null ],
@@ -301,6 +248,7 @@ var hierarchy =
             [ "gameplay.plays.tuning.tune_facing.Facer", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html", null ],
             [ "gameplay.skills.dribble.Dribble", "classgameplay_1_1skills_1_1dribble_1_1_dribble.html", null ],
             [ "gameplay.skills.face.Face", "classgameplay_1_1skills_1_1face_1_1_face.html", null ],
+            [ "gameplay.skills.line_kick_receive.LineKickReceive", "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html", null ],
             [ "gameplay.skills.pass_receive.PassReceive", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html", [
               [ "gameplay.skills.angle_receive.AngleReceive", "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html", null ]
             ] ],
@@ -314,8 +262,10 @@ var hierarchy =
           [ "gameplay.tactics.behavior_sequence.BehaviorSequence", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html", null ],
           [ "gameplay.tactics.coordinated_pass.CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", null ],
           [ "gameplay.tactics.defense.Defense", "classgameplay_1_1tactics_1_1defense_1_1_defense.html", null ],
+          [ "gameplay.tactics.forward_pass.ForwardPass", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html", null ],
           [ "gameplay.tactics.line_up.LineUp", "classgameplay_1_1tactics_1_1line__up_1_1_line_up.html", null ],
-          [ "gameplay.tactics.one_touch_pass.OneTouchPass", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html", null ]
+          [ "gameplay.tactics.one_touch_pass.OneTouchPass", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html", null ],
+          [ "gameplay.timeout_behavior.TimeoutBehavior", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html", null ]
         ] ],
         [ "gameplay.single_robot_behavior.SingleRobotBehavior", "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html", [
           [ "gameplay.plays.tuning.test_jittery_motion.Jitterer", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html", null ],
@@ -323,6 +273,7 @@ var hierarchy =
           [ "gameplay.single_robot_composite_behavior.SingleRobotCompositeBehavior", "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html", null ],
           [ "gameplay.skills._kick._Kick", "classgameplay_1_1skills_1_1__kick_1_1___kick.html", [
             [ "gameplay.skills.line_kick.LineKick", "classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html", null ],
+            [ "gameplay.skills.line_kick_old.LineKickOld", "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html", null ],
             [ "gameplay.skills.pivot_kick.PivotKick", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html", null ]
           ] ],
           [ "gameplay.skills.aim.Aim", "classgameplay_1_1skills_1_1aim_1_1_aim.html", null ],
@@ -353,16 +304,11 @@ var hierarchy =
       [ "test_role_assignment.TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", null ]
     ] ],
     [ "Timeout", "class_timeout.html", null ],
-    [ "TimeoutLED", "class_timeout_l_e_d.html", [
-      [ "FlashingTimeoutLED", "class_flashing_timeout_l_e_d.html", null ],
-      [ "StrobingTimeoutLEDs< NUM_LEDS >", "class_strobing_timeout_l_e_ds.html", null ]
-    ] ],
     [ "Geometry2d::TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", null ],
     [ "Planning::Tree", "class_planning_1_1_tree.html", [
       [ "Planning::FixedStepTree", "class_planning_1_1_fixed_step_tree.html", null ]
     ] ],
     [ "VisionPacket", "class_vision_packet.html", null ],
-    [ "Watchdog", "class_watchdog.html", null ],
     [ "Window", "class_window.html", null ],
     [ "WindowEvaluator", "class_window_evaluator.html", null ],
     [ "Enum", null, [

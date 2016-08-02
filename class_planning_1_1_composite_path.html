@@ -168,9 +168,9 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 <tr class="memitem:ae067538136c94fedea43533c8bf0a2eb inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae067538136c94fedea43533c8bf0a2eb"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setDebugText</b> (QString string)</td></tr>
 <tr class="separator:ae067538136c94fedea43533c8bf0a2eb inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7674cc1d75fc4fc0adabd8e4f3165a5a inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7674cc1d75fc4fc0adabd8e4f3165a5a"></a>
+<tr class="memitem:af1c18882247fc1f6bb0de7f59cec3ff5 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1c18882247fc1f6bb0de7f59cec3ff5"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawDebugText</b> (<a class="el" href="class_system_state.html">SystemState</a> *state, const QColor &amp;color=Qt::darkCyan, const QString &amp;layer=&quot;PathDebugText&quot;) const </td></tr>
-<tr class="separator:a7674cc1d75fc4fc0adabd8e4f3165a5a inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:af1c18882247fc1f6bb0de7f59cec3ff5 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b6503873b1ff9e945625ce2088de2c7 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b6503873b1ff9e945625ce2088de2c7"></a>
 virtual RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a> () const </td></tr>
 <tr class="memdesc:a8b6503873b1ff9e945625ce2088de2c7 inherit pub_methods_class_planning_1_1_path"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br /></td></tr>
@@ -178,9 +178,9 @@ virtual RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="memitem:a65b4b6f44f1b57976824479d3bf5c2c0 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65b4b6f44f1b57976824479d3bf5c2c0"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setStartTime</b> (RJ::Time t)</td></tr>
 <tr class="separator:a65b4b6f44f1b57976824479d3bf5c2c0 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fbbd374db41029e6af7c48913e5efc3 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1fbbd374db41029e6af7c48913e5efc3"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>pathsIntersect</b> (const std::vector&lt; const <a class="el" href="class_planning_1_1_path.html">Path</a> * &gt; &amp;paths, float *hitTime, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *hitLocation, RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>) const </td></tr>
-<tr class="separator:a1fbbd374db41029e6af7c48913e5efc3 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfba03e1cdb320a2ffa218c2e68ad8f3 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abfba03e1cdb320a2ffa218c2e68ad8f3"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>pathsIntersect</b> (const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;paths, float *hitTime, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *hitLocation, RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>) const </td></tr>
+<tr class="separator:abfba03e1cdb320a2ffa218c2e68ad8f3 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ca1fe547e0ee9391ec66ce925c2aba6 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ca1fe547e0ee9391ec66ce925c2aba6"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_const_path_iterator.html">ConstPathIterator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>, float deltaT) const </td></tr>
 <tr class="separator:a5ca1fe547e0ee9391ec66ce925c2aba6 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -444,7 +444,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_composite_path.html">CompositePath</a></li>
-    <li class="footer">Generated on Tue Aug 2 2016 07:33:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Aug 2 2016 08:53:12 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

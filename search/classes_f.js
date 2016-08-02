@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['offensivepivotkick',['OffensivePivotKick',['../classoffensive__pivot__kick_1_1_offensive_pivot_kick.html',1,'offensive_pivot_kick']]],
   ['onetouchpass',['OneTouchPass',['../classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html',1,'gameplay::tactics::one_touch_pass']]],
   ['opponentrobot',['OpponentRobot',['../class_opponent_robot.html',1,'']]],
   ['ourcornerkick',['OurCornerKick',['../classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html',1,'gameplay::plays::restarts::our_corner_kick']]],

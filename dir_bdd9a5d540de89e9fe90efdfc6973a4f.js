@@ -1,5 +1,6 @@
 var dir_bdd9a5d540de89e9fe90efdfc6973a4f =
 [
+    [ "firmware-common", "dir_1d24a8c14368582c9cb652f52a2034e8.html", "dir_1d24a8c14368582c9cb652f52a2034e8" ],
     [ "Geometry2d", "dir_40506df144da4b42abe7ffe21204d9b9.html", "dir_40506df144da4b42abe7ffe21204d9b9" ],
     [ "AutoName.hpp", "_auto_name_8hpp_source.html", null ],
     [ "Constants.hpp", "_constants_8hpp_source.html", null ],
