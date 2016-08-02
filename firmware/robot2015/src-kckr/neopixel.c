@@ -1,7 +1,11 @@
+#if 0
+
+#include "neopixel.h"
+
 #include <stdlib.h>
 
-#include "kicker.h"
-#include "neopixel.h"
+#include <avr/io.h>
+#include <util/delay.h>
 
 /*
  * buffer that holds RGB values for an LED string
@@ -251,3 +255,5 @@ void writeNeopixels(void) {
     // function return times on the ATtiny @9.6MHz)
     _delay_us(50);
 }
+
+#endif

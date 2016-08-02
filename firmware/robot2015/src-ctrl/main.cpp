@@ -255,6 +255,11 @@ int main() {
         return replyBuf;
     };
 
+
+    kickerBoard.charge();
+    LOG(INIT, "Starged charging kicker board");
+    uint8_t kickerVoltage = 0;
+
     // Set the watdog timer's initial config
     Watchdog::Set(RJ_WATCHDOG_TIMER_VALUE);
 
@@ -316,6 +321,10 @@ int main() {
 
         // get the battery voltage
         battVoltage = (batt.read_u16() >> 8);
+
+        // get kicker voltage
+        kickerVoltage = kickerBoard.read_voltage();
+        LOG(INIT, "Kicker voltage: %u", kickerVoltage);
 
         // update shell id
         robotShellID = rotarySelector.read();
