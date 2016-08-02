@@ -10,7 +10,6 @@ const float AXIS_MAX = 32768.0f;
 
 GamepadJoystick::GamepadJoystick()
     : _joystick(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
-
     if (SDL_Init(SDL_INIT_JOYSTICK) != 0) {
         cerr << "ERROR: SDL could not initialize! SDL Error: " << SDL_GetError()
              << endl;
@@ -23,8 +22,8 @@ GamepadJoystick::GamepadJoystick()
         if (_joystick != nullptr) {
             cout << "Joystick connected to " << SDL_JoystickName(0) << endl;
         } else {
-            cerr << "ERROR: Could not open joystick! SDL Error: " << SDL_GetError()
-                 << endl;
+            cerr << "ERROR: Could not open joystick! SDL Error: "
+                 << SDL_GetError() << endl;
         }
     } else {
         cout << "WARNING: No joysticks connected!" << endl;
@@ -61,15 +60,14 @@ void GamepadJoystick::update() {
     //
     // Logitech F310 Controller & Xbox 360 Controller
     if (SDL_JoystickGetButton(_joystick, 0)) {
-
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
         }
 
-    // Logitech F310 Controller & Logitech_Dual_Action Controller & Xbox 360 Controller
+        // Logitech F310 Controller & Logitech_Dual_Action Controller & Xbox 360
+        // Controller
     } else if (SDL_JoystickGetButton(_joystick, 3)) {
-
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
             _lastDribblerTime = now;
@@ -87,17 +85,15 @@ void GamepadJoystick::update() {
     //
     // Logitech F310 Controller & Xbox 360 Controller
     if (SDL_JoystickGetButton(_joystick, 2)) {
-
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
-    // Logitech_Dual_Action Controller
-    // } else if (SDL_JoystickGetButton(_joystick, 2)) {
-    //
-    // Logitech F310 Controller & Xbox 360 Controller
+        // Logitech_Dual_Action Controller
+        // } else if (SDL_JoystickGetButton(_joystick, 2)) {
+        //
+        // Logitech F310 Controller & Xbox 360 Controller
     } else if (SDL_JoystickGetButton(_joystick, 1)) {
-
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;

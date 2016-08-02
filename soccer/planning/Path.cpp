@@ -41,40 +41,40 @@ void Path::draw(SystemState* const state, const QColor& color,
     addPoint(end().motion);
 }
 
-void Path::drawDebugText(SystemState* state,
-                           const QColor& color,
-                           const QString& layer) const {
+void Path::drawDebugText(SystemState* state, const QColor& color,
+                         const QString& layer) const {
     if (_debugText) {
         state->drawText(_debugText.get(), end().motion.pos, color, layer);
     }
 }
+
 std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
                                                   float deltaT) const {
     return std::move(
         std::make_unique<ConstPathIterator>(this, startTime, deltaT));
 }
 
-bool Path::pathsIntersect(const std::vector<DynamicObstacle>&obstacles, float* hitTime,
-                          Geometry2d::Point* hitLocation,
+bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
+                          float* hitTime, Geometry2d::Point* hitLocation,
                           RJ::Time startTime) const {
     const float deltaT = 0.05;
-    //const float hitRadius = Robot_Radius * 2.5f;
 
     auto thisPathIterator = iterator(startTime, deltaT);
-    vector<std::pair<unique_ptr<ConstPathIterator>,float>> pathIterators;
-    for (const auto &obs: obstacles) {
+    vector<std::pair<unique_ptr<ConstPathIterator>, float>> pathIterators;
+    for (const auto& obs : obstacles) {
         if (obs.hasPath()) {
-            pathIterators.emplace_back(obs.getPath()->iterator(startTime, deltaT), obs.getRadius());
+            pathIterators.emplace_back(
+                obs.getPath()->iterator(startTime, deltaT), obs.getRadius());
         } else {
             ShapeSet set;
             set.add(obs.getStaticObstacle());
             if (hitTime != nullptr) {
-                if(hit(set, *hitTime, startTime)) {
+                if (hit(set, *hitTime, startTime)) {
                     return true;
                 }
             } else {
                 float time;
-                if(hit(set, time, startTime)) {
+                if (hit(set, time, startTime)) {
                     return true;
                 }
             }
@@ -85,11 +85,12 @@ bool Path::pathsIntersect(const std::vector<DynamicObstacle>&obstacles, float* h
     for (; time < getDuration(); time += deltaT) {
         auto current = **thisPathIterator;
         for (auto& pair : pathIterators) {
-            auto &it = pair.first;
+            auto& it = pair.first;
             assert(it != nullptr);
             auto hitRadius = pair.second + Robot_Radius;
             auto robotInstant = (**it);
-            if (current.motion.pos.distTo(robotInstant.motion.pos) < hitRadius) {
+            if (current.motion.pos.distTo(robotInstant.motion.pos) <
+                hitRadius) {
                 if (hitTime) {
                     *hitTime = time;
                 }

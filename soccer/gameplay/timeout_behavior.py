@@ -3,16 +3,15 @@ import behavior
 import time
 import enum
 
+
 ## This class adds a timeout to any subbehavior
 #
 # The way this works is by wrapping your desired behavior in this one.
 # To use, simply add the behavior you want to timeout like this:
 #
-# self.add_subbihavior(timeout_behavior.TimeoutBehavior. timeout),
+# self.add_subbihavior(timeout_behavior.TimeoutBehavior(instance_of_your_behavior). timeout),
 # instead of normal timeouts
 class TimeoutBehavior(composite_behavior.CompositeBehavior):
-
-
     class State(enum.Enum):
         timeout = 1
 
@@ -50,6 +49,7 @@ class TimeoutBehavior(composite_behavior.CompositeBehavior):
         self.start_time = time.time()
 
     @property
+
     ## Use this to access the wrapped behavior's variables and methods
     def behavior(self):
         return self._behavior
@@ -85,5 +85,6 @@ class TimeoutBehavior(composite_behavior.CompositeBehavior):
 
     def __str__(self):
         desc = super().__str__()
-        desc += "\n    time_remaining=" + str(round(self.time_remaining(), 2)) + "s"
+        desc += "\n    time_remaining=" + str(round(self.time_remaining(),
+                                                    2)) + "s"
         return desc

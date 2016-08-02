@@ -364,7 +364,7 @@ unique_ptr<Path> InterpolatedPath::clone() const {
 }
 
 void InterpolatedPath::slow(float multiplier, float timeInto) {
-    for (auto &waypoint: waypoints) {
+    for (auto& waypoint : waypoints) {
         waypoint.vel() /= multiplier;
         waypoint.time *= multiplier;
     }
