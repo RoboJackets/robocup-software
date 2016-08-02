@@ -2,9 +2,6 @@ import play
 import behavior
 import tactics.one_touch_pass
 import tactics.behavior_sequence
-import robocup
-import constants
-import main
 
 
 ## Continually runs a one_touch_pass pass tactic

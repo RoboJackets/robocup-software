@@ -7,7 +7,7 @@
 #include "Radio.hpp"
 
 // Included for packet layout
-#include "../firmware/common2015/utils/rtp.hpp"
+#include "firmware-common/common2015/utils/rtp.hpp"
 
 /**
  * @brief Radio IO with real robots

@@ -27,8 +27,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     ## how much we're allowed to be off side-to-side from the pass line
     PositionXErrorThreshold = 0.03
 
-    DribbleSpeed = 70
-
     ## we have to be going slower than this to be considered 'steady'
     SteadyMaxVel = 0.04
     SteadyMaxAngleVel = 3  # degrees / second
@@ -87,7 +85,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
         self.add_transition(
             PassReceive.State.receiving, behavior.Behavior.State.failed,
-            lambda: self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
+            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
@@ -194,7 +192,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
     def on_enter_receiving(self):
         capture = self.captureFunction()
-        capture.dribbler_power = PassReceive.DribbleSpeed
         self.add_subbehavior(capture, 'capture', required=True)
 
         self.reset_correct_location()
@@ -256,14 +253,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
             self.stable_frame = self.stable_frame + 1
             self.reset_correct_location()
 
-        self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
+        # Alignment will be handled by capture
 
-        # don't use the move_to() command here, we need more precision, less obstacle avoidance
-        pos_error = self._target_pos - self.robot.pos
-        vel = pos_error * 3.5
-        self.robot.set_world_vel(vel)
-
-    ## prefer a robot that's already near the receive position
+        ## prefer a robot that's already near the receive position
     def role_requirements(self):
         reqs = super().role_requirements()
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):

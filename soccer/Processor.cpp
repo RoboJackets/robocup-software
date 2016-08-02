@@ -14,8 +14,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <git_version.hpp>
-#include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
+#include <joystick/GamepadController.hpp>
+#include <joystick/GamepadJoystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -69,8 +70,9 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _radio = nullptr;
 
     // joysticks
-    _joysticks.push_back(new GamepadJoystick());
+    _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
+    _joysticks.push_back(new GamepadJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
 
@@ -451,17 +453,22 @@ void Processor::run() {
 
                 // create and visualize obstacles
                 Geometry2d::ShapeSet staticObstacles =
-                    r->collectStaticObstacles(globalObstaclesForBot);
+                    r->collectStaticObstacles(
+                        globalObstaclesForBot,
+                        !(r->shell() == _gameplayModule->goalieID() ||
+                          r->isPenaltyKicker || r->isBallPlacer));
 
                 std::vector<Planning::DynamicObstacle> dynamicObstacles =
                     r->collectDynamicObstacles();
 
-                requests[r->shell()] = Planning::PlanRequest(
-                    Planning::MotionInstant(r->pos, r->vel),
-                    r->motionCommand()->clone(), r->robotConstraints(),
-                    std::move(r->angleFunctionPath.path),
-                    std::move(staticObstacles), std::move(dynamicObstacles),
-                    r->getPlanningPriority());
+                requests.emplace(
+                    r->shell(),
+                    Planning::PlanRequest(
+                        _state, Planning::MotionInstant(r->pos, r->vel),
+                        r->motionCommand()->clone(), r->robotConstraints(),
+                        std::move(r->angleFunctionPath.path),
+                        std::move(staticObstacles), std::move(dynamicObstacles),
+                        r->getPlanningPriority()));
             }
         }
 
@@ -675,8 +682,7 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field."
-             << endl;
+                "field." << endl;
     }
 }
 
@@ -731,7 +737,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-M_PI/2 - robot->angle);
+        translation.rotate(-M_PI / 2 - robot->angle);
     }
 
     // translation
@@ -760,9 +766,9 @@ JoystickControlValues Processor::getJoystickControlValues() {
         if (joy->valid()) {
             JoystickControlValues newVals = joy->getJoystickControlValues();
 
-            if (newVals.dribble) vals.dribble = true;
-            if (newVals.kick) vals.kick = true;
-            if (newVals.chip) vals.chip = true;
+            vals.dribble |= newVals.dribble;
+            vals.kick |= newVals.kick;
+            vals.chip |= newVals.chip;
 
             vals.rotation += newVals.rotation;
             vals.translation += newVals.translation;

@@ -41,7 +41,7 @@ void drawX(SystemState* state, Point center, const QColor& color = Qt::red) {
 }
 
 void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
-    unsigned int n = obs.size();
+    auto n = obs.size();
 
     vector<const BallObservation*> goodObs;
     goodObs.resize(obs.size());

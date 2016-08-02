@@ -4,15 +4,12 @@
 #include <QMutexLocker>
 
 #include <Utils.hpp>
-#include "../firmware/common2015/drivers/cc1201/ti/defines.hpp"
 #include "USBRadio.hpp"
 
 // Include this file for base station usb vendor/product ids
-#include "../firmware/base2015/usb-interface.hpp"
-
+#include "firmware-common/base2015/usb-interface.hpp"
 // included for kicer status enum
-#include "../firmware/robot2011/cpu/status.h"
-
+#include "firmware-common/robot2015/cpu/status.h"
 
 using namespace std;
 using namespace Packet;
@@ -236,13 +233,19 @@ void USBRadio::send(Packet::RadioTx& packet) {
         libusb_bulk_transfer(_device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
                              sizeof(forward_packet), &sent, Control_Timeout);
     if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet)) {
-        fprintf(stderr, "USBRadio: Bulk write failed\n");
+        fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %d\n",
+                sent, sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
             fprintf(stderr, "  Error: '%s'\n",
                     libusb_error_name(transferRetCode));
 
-        libusb_close(_device);
-        _device = nullptr;
+        int ret = libusb_clear_halt(_device, LIBUSB_ENDPOINT_OUT | 2);
+        if (ret != 0) {
+            printf("tried to clear halt, error = %s\n. closing device",
+                   libusb_error_name(ret));
+            libusb_close(_device);
+            _device = nullptr;
+        }
     }
 }
 
@@ -281,7 +284,9 @@ void USBRadio::handleRxData(uint8_t* buf) {
                        rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR);
 
     // ball sense
-    packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+    if (BallSenseStatus_IsValid(msg->ballSenseStatus)) {
+        packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
+    }
 
     // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
     // Report that everything is good b/c the bot currently has no way of
@@ -291,22 +296,14 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // motor errors
     for (int i = 0; i < 5; i++) {
         bool err = msg->motorErrors & (1 << i);
-        packet.add_motor_status(err ? MotorStatus::Hall_Failure : MotorStatus::Good);
+        packet.add_motor_status(err ? MotorStatus::Hall_Failure
+                                    : MotorStatus::Good);
     }
 
     // fpga status
-    packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
-
-    // TODO(justin): add back missing fields
-    // packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
-    // packet.set_kicker_status(buf[3]);
-    // // Drive motor status
-    // for (int i = 0; i < 4; ++i) {
-    //     packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
-    // }
-    // Dribbler status
-    // packet.add_motor_status(MotorStatus(buf[5] & 3));
-    // packet.set_kicker_voltage(buf[6]);
+    if (FpgaStatus_IsValid(msg->fpgaStatus)) {
+        packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
+    }
 
     _reversePackets.push_back(packet);
 }
