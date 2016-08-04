@@ -1,15 +1,15 @@
 #include "MotionControl.hpp"
-#include <SystemState.hpp>
-#include <RobotConfig.hpp>
-#include <Robot.hpp>
-#include <Utils.hpp>
-#include "TrapezoidalMotion.hpp"
 #include <Geometry2d/Util.hpp>
+#include <Robot.hpp>
+#include <RobotConfig.hpp>
+#include <SystemState.hpp>
+#include <Utils.hpp>
 #include <planning/MotionInstant.hpp>
+#include "TrapezoidalMotion.hpp"
 
-#include <cmath>
 #include <stdio.h>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
@@ -83,7 +83,7 @@ void MotionControl::run() {
     boost::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
 
-    float targetAngleFinal = 0;
+    boost::optional<float> targetAngleFinal;
     // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
     //    PivotCommand command =
     //    *static_cast<PivotCommand*>(motionCommand.get());
@@ -104,26 +104,30 @@ void MotionControl::run() {
         targetAngleFinal = (*targetPt - _robot->pos).angle();
     }
 
-    float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
+    if (!targetAngleFinal) {
+        _targetAngleVel(0);
+    } else {
+        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
 
-    targetW = _angleController.run(angleError);
+        targetW = _angleController.run(angleError);
 
-    // limit W
-    if (abs(targetW) > (rotationConstraints.maxSpeed)) {
-        if (targetW > 0) {
-            targetW = (rotationConstraints.maxSpeed);
-        } else {
-            targetW = -(rotationConstraints.maxSpeed);
+        // limit W
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+            if (targetW > 0) {
+                targetW = (rotationConstraints.maxSpeed);
+            } else {
+                targetW = -(rotationConstraints.maxSpeed);
+            }
         }
-    }
 
-    /*
-    _robot->addText(QString("targetW: %1").arg(targetW));
-    _robot->addText(QString("angleError: %1").arg(angleError));
-    _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-    _robot->addText(QString("angle: %1").arg(_robot->angle));
-    */
-    _targetAngleVel(targetW);
+        /*
+        _robot->addText(QString("targetW: %1").arg(targetW));
+        _robot->addText(QString("angleError: %1").arg(angleError));
+        _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
+        _robot->addText(QString("angle: %1").arg(_robot->angle));
+        */
+        _targetAngleVel(targetW);
+    }
 
     // handle body velocity for pivot command
     /*
@@ -173,7 +177,8 @@ void MotionControl::run() {
                               "MotionControl");
 
     // convert from world to body coordinates
-    target.vel = target.vel.rotated(-_robot->angle);
+    // the +y axis of the robot points forwards
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
 
     this->_targetBodyVel(target.vel);
 }
@@ -187,14 +192,11 @@ void MotionControl::_targetAngleVel(float angleVel) {
     // velocity multiplier
     angleVel *= *_robot->config->angleVelMultiplier;
 
-    // convert units
-    angleVel = RadiansToDegrees(angleVel);
-
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
     float minEffectiveAngularSpeed = *_robot->config->minEffectiveAngularSpeed;
     if (std::abs(angleVel) < minEffectiveAngularSpeed &&
-        std::abs(angleVel) > 0.2) {
+        std::abs(angleVel) > .05) {
         angleVel =
             angleVel > 0 ? minEffectiveAngularSpeed : -minEffectiveAngularSpeed;
     }
@@ -233,7 +235,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     // if the velocity is nonzero, make sure it's not so small that the robot
     // doesn't even move
     float minEffectiveVelocity = *_robot->config->minEffectiveVelocity;
-    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.05) {
+    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.02) {
         targetVel = targetVel.normalized() * minEffectiveVelocity;
     }
 

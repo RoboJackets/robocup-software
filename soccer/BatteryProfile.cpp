@@ -14,9 +14,9 @@ const BatteryProfile RJ2008BatteryProfile({{14.20, 0.20},
                                            {15.10, 0.50},
                                            {16.00, 1.00}});
 
-const BatteryProfile RJ2015BatteryProfile({{17.75, 0.20},
-                                           {18.87, 0.50},
-                                           {20.00, 1.00}});
+const BatteryProfile RJ2015BatteryProfile({{17.75, 0},
+                                           {18.5, 0.50},
+                                           {21.00, 1.00}});
 
 BatteryProfile::BatteryProfile(std::vector<BatteryProfile::Entry> dataPoints) {
     _dataPoints = std::move(dataPoints);

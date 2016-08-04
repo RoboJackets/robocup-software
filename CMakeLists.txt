@@ -92,13 +92,13 @@ endif()
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # libusb
 find_package(libusb-1.0 REQUIRED)
 
-# SDL
-find_package(SDL REQUIRED)
+# SDL2
+include(FindPkgConfig)
+pkg_search_module(SDL2 REQUIRED sdl2)
 
 # Several things depend on the headers in the 'common' directory
 include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
@@ -117,4 +117,4 @@ add_subdirectory(common)
 add_subdirectory(soccer)
 add_subdirectory(simulator)
 add_subdirectory(logging)
-add_subdirectory(firmware)
+# add_subdirectory(firmware)

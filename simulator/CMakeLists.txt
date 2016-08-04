@@ -2,6 +2,9 @@
 # Qt
 set(CMAKE_AUTOMOC ON)
 
+# include Eigen3 for linear algebra
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
+
 set(simulator_SRC
     "bullet_opengl/DemoApplication.cpp"
     "bullet_opengl/GL_DialogDynamicsWorld.cpp"
@@ -66,7 +69,7 @@ else()
 endif()
 
 
-
+include_directories(${CMAKE_SOURCE_DIR}/common)
 target_link_libraries(simulator common)
 qt5_use_modules(simulator Widgets Xml Core OpenGL Network)
 

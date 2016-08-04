@@ -2,6 +2,8 @@
 # Qt
 set(CMAKE_AUTOMOC ON)
 
+# include Eigen3 for linear algebra
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
@@ -13,6 +15,7 @@ set(ROBOCUP_LIB_SRC
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
     "joystick/Joystick.cpp"
+    "joystick/GamepadController.cpp"
     "joystick/GamepadJoystick.cpp"
     "joystick/SpaceNavJoystick.cpp"
     "Logger.cpp"
@@ -24,6 +27,7 @@ set(ROBOCUP_LIB_SRC
     "motion/TrapezoidalMotion.cpp"
     "NewRefereeModule.cpp"
     "planning/CompositePath.cpp"
+    "planning/DynamicObstacle.cpp"
     "planning/DirectTargetPathPlanner.cpp"
     "planning/EscapeObstaclesPathPlanner.cpp"
     "planning/InterpolatedPath.cpp"
@@ -33,6 +37,7 @@ set(ROBOCUP_LIB_SRC
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
     "planning/PivotPathPlanner.cpp"
+    "planning/LineKickPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
     "planning/TrapezoidalPath.cpp"
@@ -96,7 +101,7 @@ endif()
 include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
 # SDL
-include_directories(SYSTEM ${SDL_INCLUDE_DIRS})
+include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
@@ -111,7 +116,7 @@ target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
-target_link_libraries(robocup ${SDL_LIBRARY})
+target_link_libraries(robocup ${SDL2_LIBRARIES})
 
 # python
 # note: these are set in the root CMakeLists.txt file

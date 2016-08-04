@@ -74,6 +74,7 @@ spacenavd
 libboost-python-dev
 
 # for joystick
+libsdl2-dev
 libsdl1.2-dev
 
 # everything else...
