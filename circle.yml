@@ -39,3 +39,9 @@ deployment:
     branch: master
     commands:
       - ./external/DoCIF/commands/deploy.sh # This will run DEPLOY_COMMAND as well
+
+experimental:
+  notify:
+    branches:
+      only:
+        - master
