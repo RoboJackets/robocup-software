@@ -145,8 +145,7 @@ apt-get install $ARGS $PACKAGES
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub
 if [ "$SYSTEM" = "ubuntu-14.04" ]; then
-    update-alternatives --install /usr/bin/g++ g++ $(command -v g++-4.9) 40
-    update-alternatives --set g++ $(command -v g++-4.9)
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 fi
 
 if [ "$(clang --version | grep -Eo '[0-9]+\.[0-9]+' | head -n1)" \< "3.5" ]; then
