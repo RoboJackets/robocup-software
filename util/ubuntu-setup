@@ -23,28 +23,23 @@ if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # dont add repositories
     echo "[WARN] You are using a flavor of debian. This configuration is not officially supported..." >&2
     SYSTEM="debian"
     ADD_REPOS=false
-    FIRMWARE=false
 elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
     if cat /etc/os-release | grep -iq '^VERSION=.*14.04'; then # Using Ubuntu 14.04
         echo "Ubuntu 14.04 Detected..."
         SYSTEM="ubuntu-14.04"
         ADD_REPOS=true
-        FIRMWARE=true
     elif cat /etc/os-release | grep -iq '^VERSION=.*15.04'; then # Using Ubuntu 15.04
         echo "Ubuntu 15.04 Detected..."
         SYSTEM="ubuntu-15.04"
         ADD_REPOS=false
-        FIRMWARE=true
     elif cat /etc/os-release | grep -iq '^VERSION=.*15.10'; then # Using Ubuntu 15.10
         echo "Ubuntu 15.10 Detected..."
         SYSTEM="ubuntu-15.10"
         ADD_REPOS=false
-        FIRMWARE=true
     elif cat /etc/os-release | grep -iq '^VERSION=.*16.04'; then # Using Ubuntu 16.04
         echo "Ubuntu 16.04 Detected..."
         SYSTEM="ubuntu-16.04"
         ADD_REPOS=false
-        FIRMWARE=false
     else
         echo "$DISTRO_STR" >&2
         exit 1
@@ -68,14 +63,6 @@ do
         -c|--clobber)
             # This option forces addition of the custom repos
             ADD_REPOS=true
-            ;;
-        -f|--firmware)
-            # This option forces the addition of the firmware repositories
-            FIRMWARE=true
-            ;;
-        -nf|--nofirmware)
-            # This option turns off the addition of the firmware repositories
-            FIRMWARE=false
             ;;
         -osl|--overwrite-sources-list)
             # This option overwrites the sources list for faster downloads
@@ -122,10 +109,6 @@ EOF
 
 fi
 
-if $FIRMWARE; then
-    sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa
-fi
-
 if $ADD_REPOS; then
     # add repo for backport of cmake3 from debian testing
     # TODO remove this once ubuntu ships cmake3
@@ -155,13 +138,6 @@ if $YES; then
 fi
 
 PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
-
-if $FIRMWARE; then
-    # This is kind of hacky and could produce unwanted side effects
-    # If the firmware switch does more things, it may be better to make a firmware-deps file!
-    PACKAGES="$PACKAGES gcc-arm-embedded"
-    PACKAGES="$(sed 's/gcc-arm-none-eabi//' <<< "$PACKAGES")"
-fi
 
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $PACKAGES

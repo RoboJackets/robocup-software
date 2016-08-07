@@ -4,6 +4,5 @@ graphviz>=0.4.2 # make pretty graphs/diagrams
 watchdog # file-system event notifications
 munkres	# provides the 'hungarian algorithm', which we use for robot role assignment
 pylint #static checker for python
-pyserial
 
 stylize>=0.3.0 # code reformatting and checkstyling
