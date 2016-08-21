@@ -19,7 +19,7 @@ import evaluation.passing
 # This rectangle will only include points with a lower y value that the ball's current location, and will be on the side of the field
 # opposite to the ball.
 #
-# Takes a current ball position/initial kick position (robocup.Point)
+# @param kick_point current ball position/initial kick position (robocup.Point)
 def generate_default_rectangle(kick_point):
     offset_from_edge = 0.25
     offset_from_ball = 0.4
@@ -61,7 +61,7 @@ def get_segments_from_rect(rect, threshold=0.75):
                 currentx, rect.min_y())):
             continue
         while constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
-                currentx, currenty)):
+            currentx, currenty)):
             currenty = currenty - threshold
 
         candiate = robocup.Segment(
@@ -77,7 +77,10 @@ def get_segments_from_rect(rect, threshold=0.75):
 #
 # The value returned is the probability that a pass from the kick_point to the receive_point will make it,
 # multiplied by the probability that a goal can be scored from receive_point. This probablity will be between 0 and 1.
-def eval_single_point(kick_point, receive_point, ignore_robots=[]):
+def eval_single_point(kick_point,
+                      receive_point,
+                      targetPoint=None,
+                      ignore_robots=[]):
     if kick_point is None:
         if main.ball().valid:
             kick_point = main.ball().pos
@@ -87,15 +90,19 @@ def eval_single_point(kick_point, receive_point, ignore_robots=[]):
     currentChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                                  ignore_robots)
     # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
-    targetPoint = constants.Field.TheirGoalSegment.center()
+    if targetPoint == None:
+        targetPoint = constants.Field.TheirGoalSegment.center()
     currentChance = currentChance * evaluation.passing.eval_pass(
         receive_point, targetPoint, ignore_robots)
     return currentChance
 
 
 ## Finds the best receive point for a bounce-pass.
-#
-# Takes in an initial kick point and an optional evaluation zone.
+# @param kick_point the point we will kick from (robocup.Point)
+# @param evaluation_zone the zone that will be evaluated to try to find points.
+# If none, it will try to guess a good receive area.
+# This is a robocup.Rect
+# @param ignore_robots a list of robots to be ignored when trying to find the best receive point.
 def eval_best_receive_point(kick_point,
                             evaluation_zone=None,
                             ignore_robots=[]):

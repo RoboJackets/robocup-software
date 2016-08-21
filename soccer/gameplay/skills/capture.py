@@ -16,7 +16,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
-    FineApproachSpeed = 0.2
+    FineApproachSpeed = 0.1
 
     InFrontOfBallCosOfAngleThreshold = 0.95
 
@@ -44,9 +44,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             lambda: (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
             'dist to ball < threshold')
 
-        self.add_transition(Capture.State.fine_approach,
-                            behavior.Behavior.State.completed,
-                            lambda: self.robot.has_ball(), 'has ball')
+        self.add_transition(
+            Capture.State.fine_approach, behavior.Behavior.State.completed,
+            lambda: self.bot_near_ball(constants.Robot.Radius + constants.Ball.Radius),
+            'has ball')
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach,

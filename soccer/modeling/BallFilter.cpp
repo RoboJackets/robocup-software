@@ -7,7 +7,7 @@
 
 using namespace Geometry2d;
 
-static const float Velocity_Alpha = 0.2;
+static const float Velocity_Alpha = 0.05;
 
 BallFilter::BallFilter() {}
 
@@ -32,9 +32,22 @@ void BallFilter::predict(RJ::Time time, Ball* out, float* velocityUncertainty) {
     }
 
     if (out) {
-        out->pos = _estimate.pos +
-                   _estimate.vel * (time - _estimate.time) / 1000000.0f;
-        out->vel = _estimate.vel;
+        float t = RJ::TimestampToSecs(time - _estimate.time);
+
+        const auto& vel = _estimate.vel;
+        const auto& pos = _estimate.pos;
+        const auto s0 = vel.mag();
+        auto part = std::exp(-0.2913f * t);
+        auto speed = s0 * part;
+        auto distance = s0 * -3.43289f * (part - 1.0f);
+
+        out->pos = pos + vel.normalized(distance);
+        out->vel = vel.normalized(speed);
+        // return MotionInstant(pos + vel.normalized(distance),
+        // vel.normalized(speed));
+        // out->pos = _estimate.pos +
+        //           _estimate.vel * (time - _estimate.time) / 1000000.0f;
+        // out->vel = _estimate.vel;
         out->time = time;
         out->valid = true;
     }

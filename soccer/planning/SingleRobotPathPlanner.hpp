@@ -8,6 +8,8 @@
 #include "planning/RotationCommand.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "RobotConstraints.hpp"
+#include "SystemState.hpp"
+#include "Utils.hpp"
 
 namespace Planning {
 
@@ -16,20 +18,23 @@ struct SinglePlanRequest {
                       const MotionCommand& cmd,
                       const RobotConstraints& robotConstraints,
                       Geometry2d::ShapeSet& obstacles,
-                      const std::vector<DynamicObstacle>& dynamicObstacles,
+                      std::vector<DynamicObstacle>& dynamicObstacles,
+                      const SystemState& systemState,
                       std::unique_ptr<Path> prevPath)
         : startInstant(startInstant),
           cmd(cmd),
           robotConstraints(robotConstraints),
           obstacles(obstacles),
           dynamicObstacles(dynamicObstacles),
+          systemState(systemState),
           prevPath(std::move(prevPath)){};
 
     const MotionInstant& startInstant;
     const MotionCommand& cmd;
     const RobotConstraints& robotConstraints;
     Geometry2d::ShapeSet& obstacles;
-    const std::vector<DynamicObstacle>& dynamicObstacles;
+    std::vector<DynamicObstacle>& dynamicObstacles;
+    const SystemState& systemState;
     std::unique_ptr<Path> prevPath = nullptr;
 };
 
@@ -58,7 +63,8 @@ public:
         const std::vector<DynamicObstacle>& dynamicObstacles);
 
     static void splitDynamic(
-        Geometry2d::ShapeSet& obstacles, std::vector<const Path*>& dynamicOut,
+        Geometry2d::ShapeSet& obstacles,
+        std::vector<DynamicObstacle>& dynamicOut,
         const std::vector<DynamicObstacle>& dynamicObstacles);
     /// Checks if the previous path is no longer valid and needs to be
     /// re-planned.  This method does the following checks:

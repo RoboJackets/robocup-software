@@ -1,5 +1,5 @@
 # GT RoboJackets RoboCup SSL
-[![Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![OSX Build Status](https://travis-ci.org/RoboJackets/robocup-software.svg?branch=master)](https://travis-ci.org/RoboJackets/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
+[![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![14.04 Build Status](https://semaphoreci.com/api/v1/jgkamat/robocup-software/branches/master/shields_badge.svg)](https://semaphoreci.com/jgkamat/robocup-software) [![OSX Build Status](https://travis-ci.org/RoboJackets/robocup-software.svg?branch=master)](https://travis-ci.org/RoboJackets/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
 
 [![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -20,6 +20,8 @@ The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more informatio
 
 ## Project Layout
 
+`robocup-software` is split into 3 parts, [software](https://github.com/RoboJackets/robocup-software), [firmware](https://github.com/RoboJackets/robocup-firmware), and a [common](https://github.com/RoboJackets/robocup-common) part, used by both software and firmware. This repository contains the software portion of our codebase, the part that runs on our laptops, running high level plays.
+
 ### soccer/
 
 The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.
@@ -30,14 +32,9 @@ The soccer folder contains the code to build the 'soccer' program, which is the 
 Code for the RoboCup simulator is located here.  This allows us to quickly test our soccer strategy on the computer.  Keep in mind though that just because something works well in the simulator doesn't mean it'll be the same in real life.
 
 
-### firmware/
-
-The firmware folder contains the code that runs on the robot (soccer/robot) and on the radio base station.  See the firmware/robot [README](firmware/robot/README.md) for more info.
-
-
 ### common/
 
-Code that's shared between the different programs in our project is stored here.
+Code that's shared between the software and firmware sections of our codebase is stored here, as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 
 ### run/
@@ -51,7 +48,7 @@ Here's a quick guide to getting this RoboCup project setup on your computer.  We
 
 1) Clone the repository
 
-```
+```sh
 git clone git://github.com/RoboJackets/robocup-software
 ```
 
@@ -60,14 +57,14 @@ git clone git://github.com/RoboJackets/robocup-software
 
 There are a few setup scripts in the util directory for installing required packages, setting up udev rules, etc.  See `ubuntu-setup`, `arch-setup`, and `osx-setup` for more info.
 
-```
+```sh
 $ cd robocup-software
 $ util/<SYSTEM>-setup
 ```
 
 3) Build the project
 
-```
+```sh
 $ make
 ```
 
@@ -78,7 +75,7 @@ After running `make`, several programs will be placed in the **run** folder.  Se
 
 ## Documentation
 
-We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert specially-formatted comments within code files into a nifty website that lets us easily see how things are laid out.  Our compiled doxygen documentation can be found here:
+We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert specially-formatted comments within code files into a nifty website that lets us easily see how things are laid out.  Our compiled doxygen documentation for software can be found here:
 
 http://robojackets.github.io/robocup-software/
 
@@ -93,4 +90,3 @@ The TESTS name filter to run only certain tests. For example `make test-soccer T
 ## License
 
 This project is licensed under the Apache License v2.0.  See the [LICENSE](LICENSE) file for more information.
-

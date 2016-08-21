@@ -53,6 +53,10 @@ public:
     Dribbler dribbler;
     Chipper chipper;
 
+    /// convert from real units to bot "units"
+    ConfigDouble* velMultiplier;
+    ConfigDouble* angleVelMultiplier;
+
     // If a command velocity we're about to send is below this value in
     // magniude, but greater than zero, we scale the velocity up to this
     // magnitude.
