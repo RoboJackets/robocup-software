@@ -100,11 +100,12 @@ public:
     JoystickControlValues getJoystickControlValues();
 
     void externalReferee(bool value) {
-        _externalReferee = value;
         _refereeModule->useExternalReferee(value);
     }
 
-    bool externalReferee() const { return _externalReferee; }
+    bool externalReferee() const {
+        return _refereeModule->useExternalReferee();
+    }
 
     void manualID(int value);
     int manualID() {
@@ -252,9 +253,6 @@ private:
 
     // Processing period in microseconds
     int _framePeriod;
-
-    // True if we are using external referee packets
-    bool _externalReferee;
 
     /// Measured framerate
     float _framerate;

@@ -59,7 +59,6 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _framePeriod = 1000000 / 60;
     _manualID = -1;
     _defendPlusX = false;
-    _externalReferee = true;
     _framerate = 0;
     firstLogTime = 0;
     _useOurHalf = true;

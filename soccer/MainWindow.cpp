@@ -396,7 +396,8 @@ void MainWindow::updateViews() {
             QString::fromStdString(currentFrame->behavior_tree()));
     }
 
-    if (RJ::timestamp() - _processor->status().lastRefereeTime > 100000 and !_autoExternalReferee){
+    if (RJ::timestamp() - _processor->status().lastRefereeTime > 100000 and
+        !_autoExternalReferee) {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
         _ui.fastReady->setEnabled(true);
