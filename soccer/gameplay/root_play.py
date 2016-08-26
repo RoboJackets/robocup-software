@@ -200,7 +200,7 @@ class RootPlay(Play, QtCore.QObject):
         logging.info("goalie_id set to: " + str(self._goalie_id))
 
     def setup_goalie_if_needed(self):
-        if self.goalie_id == None:
+        if self.goalie_id == -1:
             if self.has_subbehavior_with_name('goalie'):
                 self.remove_subbehavior('goalie')
         else:
