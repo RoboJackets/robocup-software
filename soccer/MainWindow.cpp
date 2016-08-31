@@ -396,7 +396,7 @@ void MainWindow::updateViews() {
             QString::fromStdString(currentFrame->behavior_tree()));
     }
 
-    if (RJ::timestamp() - _processor->status().lastRefereeTime > 100000 and
+    if (RJ::timestamp() - _processor->status().lastRefereeTime > 100000 &&
         !_autoExternalReferee) {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
@@ -454,10 +454,10 @@ void MainWindow::updateViews() {
         _processor->refereeModule()->useExternalReferee());
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
-    if (_autoExternalReferee and
+    if (_autoExternalReferee &&
         std::find(validIds.begin(), validIds.end(),
                   _processor->state()->gameState.getGoalieId()) !=
-            validIds.end() and
+            validIds.end() &&
         RJ::timestamp() - _processor->status().lastRefereeTime < 500 * 1000) {
         // External Ref is connected and transmitting a valid goalie id
         _ui.goalieID->setEnabled(false);
