@@ -248,8 +248,7 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const {
 }
 
 void Robot::radioTx(const Packet::Control* data) {
-    velocity(data->xvelocity(), data->yvelocity(),
-             data->avelocity());
+    velocity(data->xvelocity(), data->yvelocity(), data->avelocity());
     _controller->prepareKick(data->triggermode() != Packet::Control::STAND_DOWN
                                  ? data->kcstrength()
                                  : 0,
@@ -332,12 +331,12 @@ void Robot::applyEngineForces(float deltaTime) {
         // need to drive at max engine force to achieve target velocity
 
         float rotVel = (_targetRot - robotRot) *
-                       (Sim_Robot_Radius/(
-                        Sim_Wheel_Width / 2.f));  // move to actual wheel loc
+                       (Sim_Robot_Radius /
+                        (Sim_Wheel_Width / 2.f));  // move to actual wheel loc
 
-        //printf("current = %5.3f\n", robotRot);
-        //printf("target rot = %5.3f\n", _targetRot);
-        //printf("diff = %5.3f\n", (_targetRot - robotRot));
+        // printf("current = %5.3f\n", robotRot);
+        // printf("target rot = %5.3f\n", _targetRot);
+        // printf("diff = %5.3f\n", (_targetRot - robotRot));
 
         float angVel = rotVel / Sim_Wheel_Radius;
 

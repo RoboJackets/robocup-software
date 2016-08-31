@@ -30,21 +30,25 @@ class RepeatedTurningLineUp(play.Play):
                             'immediately')
 
         self.add_transition(
-            RepeatedTurningLineUp.State.left, RepeatedTurningLineUp.State.pause,
+            RepeatedTurningLineUp.State.left,
+            RepeatedTurningLineUp.State.pause,
             lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and time.time() - self.side_start > 1,
             'made it to left')
 
         self.add_transition(
-            RepeatedTurningLineUp.State.right, RepeatedTurningLineUp.State.pause,
+            RepeatedTurningLineUp.State.right,
+            RepeatedTurningLineUp.State.pause,
             lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and time.time() - self.side_start > 1,
             'made it to right')
 
         self.add_transition(
-            RepeatedTurningLineUp.State.pause, RepeatedTurningLineUp.State.right,
+            RepeatedTurningLineUp.State.pause,
+            RepeatedTurningLineUp.State.right,
             lambda: (time.time() - self.pause_start_time) > RepeatedTurningLineUp.Pause and self.prev_side == RepeatedTurningLineUp.State.left,
             'pause over')
         self.add_transition(
-            RepeatedTurningLineUp.State.pause, RepeatedTurningLineUp.State.left,
+            RepeatedTurningLineUp.State.pause,
+            RepeatedTurningLineUp.State.left,
             lambda: (time.time() - self.pause_start_time) > RepeatedTurningLineUp.Pause and self.prev_side == RepeatedTurningLineUp.State.right,
             'pause over')
 
