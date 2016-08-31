@@ -15,7 +15,7 @@
    <i_windup value="0"/>
    <d value="12"/>
    <minEffectiveAngularSpeed value="0.1"/>
-   <velMultiplier value="0.5"/>
+   <velMultiplier value="1.0"/>
   </rotation>
   <kicker>
    <maxKick value="255"/>
