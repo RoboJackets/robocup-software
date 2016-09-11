@@ -95,6 +95,9 @@ var annotated_dup =
           [ "repeated_line_up", null, [
             [ "RepeatedLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up" ]
           ] ],
+          [ "repeated_turning_line_up", null, [
+            [ "RepeatedTurningLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up.html", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up" ]
+          ] ],
           [ "stress_test", null, [
             [ "StressTest", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test" ]
           ] ],
