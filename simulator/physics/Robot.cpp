@@ -330,17 +330,17 @@ void Robot::applyEngineForces(float deltaTime) {
 
         // need to drive at max engine force to achieve target velocity
 
-        float rotVel = (_targetRot - robotRot) *
-                       (Sim_Robot_Radius /
-                        (Sim_Wheel_Width / 2.f));  // move to actual wheel loc
+        float wheelMultiplier = (Sim_Robot_Radius - (Sim_Wheel_Width / 2.f)) / Sim_Wheel_Radius;  // move to actual wheel loc
 
-        // printf("current = %5.3f\n", robotRot);
-        // printf("target rot = %5.3f\n", _targetRot);
-        // printf("diff = %5.3f\n", (_targetRot - robotRot));
+        //printf("current = %5.3f\n", robotRot);
+        //printf("target rot = %5.3f\n", _targetRot);
+        //printf("diff = %5.3f\n", (_targetRot - robotRot));
 
-        float angVel = rotVel / Sim_Wheel_Radius;
+        float angVel = (_targetRot - robotRot) * wheelMultiplier;
 
-        float forceRot = angVel * 4;  // 4 is magical P constant
+        const float angularPConstant = 40;
+
+        float forceRot = angVel * angularPConstant;
 
         // assign translational forces
         // extremely quirky: all wheels turn counterclockwise w/ axis towards
