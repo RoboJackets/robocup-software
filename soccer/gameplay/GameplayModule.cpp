@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
-#include <boost/make_shared.hpp>
 
 // for python stuff
 #include "robocup-py.hpp"
@@ -122,61 +121,61 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     const float y1 = dimensions.Length() / 2;
     const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
     const float r = dimensions.CenterRadius();
-    _sideObstacle = std::make_shared<Polygon>(
+    _sideObstacle = make_shared<Polygon>(
         vector<Point>{Point(-x, y1), Point(-r, y1), Point(0, y1 + r),
                       Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
 
     float y = -(float)_fieldEdgeInset->value();
     float deadspace = (float)_fieldEdgeInset->value();
     x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
-    _nonFloor[0] = std::make_shared<Polygon>(vector<Point>{
+    _nonFloor[0] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
 
     y = dimensions.Length() + (float)_fieldEdgeInset->value();
-    _nonFloor[1] = std::make_shared<Polygon>(vector<Point>{
+    _nonFloor[1] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
 
     y = dimensions.FloorLength();
-    _nonFloor[2] = std::make_shared<Polygon>(vector<Point>{
+    _nonFloor[2] = make_shared<Polygon>(vector<Point>{
         Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
         Point(-x - 1000, y), Point(-x, y)});
 
-    _nonFloor[3] = std::make_shared<Polygon>(
+    _nonFloor[3] = make_shared<Polygon>(
         vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
                       Point(x + 1000, y), Point(x, y)});
 
     const float halfFlat = dimensions.GoalFlat() / 2.0;
     const float radius = dimensions.ArcRadius();
-    auto ourGoalArea = std::make_shared<Polygon>(
+    auto ourGoalArea = make_shared<Polygon>(
         vector<Point>{Point(-halfFlat, 0), Point(-halfFlat, radius),
                       Point(halfFlat, radius), Point(halfFlat, 0)});
-    _ourGoalArea = std::make_shared<CompositeShape>();
+    _ourGoalArea = make_shared<CompositeShape>();
     _ourGoalArea->add(ourGoalArea);
     _ourGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        std::make_shared<Circle>(Point(-halfFlat, 0), radius)));
+        make_shared<Circle>(Point(-halfFlat, 0), radius)));
     _ourGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        std::make_shared<Circle>(Point(halfFlat, 0), radius)));
+        make_shared<Circle>(Point(halfFlat, 0), radius)));
 
-    auto theirGoalArea = std::make_shared<Polygon>(
+    auto theirGoalArea = make_shared<Polygon>(
         vector<Point>{Point(-halfFlat, dimensions.Length()),
                       Point(-halfFlat, dimensions.Length() - radius),
                       Point(halfFlat, dimensions.Length() - radius),
                       Point(halfFlat, dimensions.Length())});
-    _theirGoalArea = std::make_shared<CompositeShape>();
+    _theirGoalArea = make_shared<CompositeShape>();
     _theirGoalArea->add(theirGoalArea);
     _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        std::make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
+        make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
     _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        std::make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
+        make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
 
-    _ourHalf = std::make_shared<Polygon>(
+    _ourHalf = make_shared<Polygon>(
         vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),
                       Point(x, y1), Point(x, -dimensions.Border())});
 
-    _opponentHalf = std::make_shared<Polygon>(vector<Point>{
+    _opponentHalf = make_shared<Polygon>(vector<Point>{
         Point(-x, y1), Point(-x, y2), Point(x, y2), Point(x, y1)});
 
-    _ourGoal = std::make_shared<Polygon>(vector<Point>{
+    _ourGoal = make_shared<Polygon>(vector<Point>{
         Point(-dimensions.GoalWidth() / 2, 0),
         Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
         Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
@@ -188,7 +187,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
         Point(dimensions.GoalWidth() / 2, -dimensions.GoalDepth()),
         Point(-dimensions.GoalWidth() / 2, -dimensions.GoalDepth())});
 
-    _theirGoal = std::make_shared<Polygon>(vector<Point>{
+    _theirGoal = make_shared<Polygon>(vector<Point>{
         Point(-dimensions.GoalWidth() / 2, dimensions.Length()),
         Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
               dimensions.Length()),
@@ -342,27 +341,32 @@ void Gameplay::GameplayModule::run() {
     {
         try {
             // vector of shared pointers to pass to python
-            vector<OurRobot*> botVector;
-            for (auto  ourBot : _playRobots) {
+            vector<OurRobot*>* botVector = new vector<OurRobot*>();
+            for (auto itr = _playRobots.begin(); itr != _playRobots.end();
+                 itr++) {
+                OurRobot* ourBot = *itr;
                 // don't attempt to drive the robot that's joystick-controlled
                 // FIXME: exclude manual id robot
                 // if (ourBot->shell() != MANUAL_ID) {
-                botVector.push_back(ourBot);
+                botVector->push_back(ourBot);
                 // }
             }
             getMainModule().attr("set_our_robots")(botVector);
 
-            vector<OpponentRobot*> theirBotVector;
-            for (auto bot: _state->opp) {
+            vector<OpponentRobot*>* theirBotVector =
+                new vector<OpponentRobot*>();
+            for (auto itr = _state->opp.begin(); itr != _state->opp.end();
+                 itr++) {
+                OpponentRobot* bot = *itr;
                 if (bot && bot->visible) {
-                    theirBotVector.push_back(bot);
+                    theirBotVector->push_back(bot);
                 }
             }
             getMainModule().attr("set_their_robots")(theirBotVector);
 
             getMainModule().attr("set_game_state")(_state->gameState);
 
-            getMainModule().attr("set_system_state")(_state);
+            getMainModule().attr("set_system_state")(&_state);
 
             getMainModule().attr("set_ball")(_state->ball);
 
