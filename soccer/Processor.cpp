@@ -361,7 +361,7 @@ void Processor::run() {
 
         // Read radio reverse packets
         _radio->receive();
-        
+
         _loopMutex.lock();
         for (const Packet::RadioRx& rx : _radio->reversePackets()) {
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
