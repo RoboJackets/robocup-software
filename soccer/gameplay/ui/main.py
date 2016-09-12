@@ -3,6 +3,7 @@ from PyQt5 import QtCore, QtWidgets
 import main
 import sys
 
+
 def getMainWindow():
     win = None
     for widget in QtWidgets.QApplication.topLevelWidgets():
@@ -16,6 +17,7 @@ def getMainWindow():
 _has_setup_ui = False
 
 _defense_checkbox = None
+
 
 def defenseEnabled():
     global _defense_checkbox
@@ -45,7 +47,8 @@ def setup():
 
     # bind the play label in the ui to the name of the current play
     play_name_label = win.findChild(QtWidgets.QLabel, 'current_play_name')
-    _defense_checkbox = win.findChild(QtWidgets.QCheckBox, 'useDefenseCheckBox')
+    _defense_checkbox = win.findChild(QtWidgets.QCheckBox,
+                                      'useDefenseCheckBox')
 
     main.root_play().play_changed.connect(play_name_label.setText)
 

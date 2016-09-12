@@ -342,7 +342,7 @@ void Gameplay::GameplayModule::run() {
         try {
             // vector of shared pointers to pass to python
             vector<OurRobot*> botVector;
-            for (auto  ourBot : _playRobots) {
+            for (auto ourBot : _playRobots) {
                 // don't attempt to drive the robot that's joystick-controlled
                 // FIXME: exclude manual id robot
                 // if (ourBot->shell() != MANUAL_ID) {
@@ -352,7 +352,7 @@ void Gameplay::GameplayModule::run() {
             getMainModule().attr("set_our_robots")(botVector);
 
             vector<OpponentRobot*> theirBotVector;
-            for (auto bot: _state->opp) {
+            for (auto bot : _state->opp) {
                 if (bot && bot->visible) {
                     theirBotVector.push_back(bot);
                 }
