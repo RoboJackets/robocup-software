@@ -6,9 +6,8 @@ var NAVTREE =
     [ "Documentation", "md_doc_Documentation.html", null ],
     [ "Gameplay", "md_doc_Gameplay.html", null ],
     [ "Motion Control", "md_doc_MotionControl.html", null ],
-    [ "Robot Firmware 2008, 2011", "md_doc_RobotFirmware.html", null ],
-    [ "Robot Firmware 2015", "md_doc_RobotFirmware2015.html", null ],
     [ "Soccer", "md_doc_Soccer.html", null ],
+    [ "Training 2016", "md_doc_training2016_training_2016.html", "md_doc_training2016_training_2016" ],
     [ "Testing & Continuous Integration", "md_doc_UnitTestsAndCI.html", null ],
     [ "Vision", "md_doc_Vision.html", null ],
     [ "Modules", "modules.html", "modules" ],
@@ -44,7 +43,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc",
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ae488c317d760b4dfdd317ec10373a3a6",
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a1ec074d1ebb8c373a528843249ffaa11",
-"struct_joystick_control_values.html"
+"struct_joystick_control_values.html#a0d4176e84cee5ce1219e85b499667402"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

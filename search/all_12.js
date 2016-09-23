@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['robot_20firmware_202008_2c_202011',['Robot Firmware 2008, 2011',['../md_doc_RobotFirmware.html',1,'']]],
-  ['robot_20firmware_202015',['Robot Firmware 2015',['../md_doc_RobotFirmware2015.html',1,'']]],
   ['radio',['Radio',['../class_radio.html',1,'']]],
   ['radiorxupdated',['radioRxUpdated',['../class_our_robot.html#a78613ea6958affaf11afaf152aceaf60',1,'OurRobot']]],
   ['recalculate_5faim_5ftarget_5fpoint',['recalculate_aim_target_point',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65',1,'gameplay::skills::_kick::_Kick']]],
