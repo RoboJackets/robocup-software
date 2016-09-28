@@ -60,7 +60,8 @@ var hierarchy =
       [ "gameplay.timeout_behavior.TimeoutBehavior.State", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html", null ],
       [ "kick_gently.KickGently.State", "classkick__gently_1_1_kick_gently_1_1_state.html", null ],
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
-      [ "test_fsm.MyFsm.SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ]
+      [ "test_fsm.MyFsm.SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ],
+      [ "which_half.WhichHalf.State", "classwhich__half_1_1_which_half_1_1_state.html", null ]
     ] ],
     [ "Field_Dimensions", "struct_field___dimensions.html", null ],
     [ "FileSystemEventHandler", null, [
@@ -119,7 +120,8 @@ var hierarchy =
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "kick_gently.KickGently", "classkick__gently_1_1_kick_gently.html", null ],
-      [ "offensive_pivot_kick.OffensivePivotKick", "classoffensive__pivot__kick_1_1_offensive_pivot_kick.html", null ]
+      [ "offensive_pivot_kick.OffensivePivotKick", "classoffensive__pivot__kick_1_1_offensive_pivot_kick.html", null ],
+      [ "which_half.WhichHalf", "classwhich__half_1_1_which_half.html", null ]
     ] ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -202,9 +204,6 @@ var hierarchy =
       [ "Planning::PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -294,6 +293,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

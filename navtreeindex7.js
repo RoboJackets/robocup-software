@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[11,0,4,8,4,2,1],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc":[11,0,4,8,4,2,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[11,0,4,8,4,2,1,1],
 "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[11,0,4,9,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ab2d0327a2249af3897f28250884bd19f":[11,0,4,13,10,0,13],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ab6999a391a7e7436aa7a8e2c9a806e20":[11,0,4,13,10,0,15],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ace6a70fef0c41a8e5d366738f9eadaa5":[11,0,4,13,10,0,1],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ad73153c33b7872009c919582686af22a":[11,0,4,13,10,0,2],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ad7a5bf8f9c54f90209e03e8194339288":[11,0,4,13,10,0,18]
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ad73153c33b7872009c919582686af22a":[11,0,4,13,10,0,2]
 };

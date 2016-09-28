@@ -34,16 +34,16 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_config_item.html#a88145202b527f56bcc17ea88e44350a4",
-"class_geometry2d_1_1_line.html#af002292e57ee189a57f39684a3d0318a",
-"class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a7ee5f470b36327c9ae55ff385f824b8f",
-"class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c",
-"class_sim_field_view.html#a9d1d1ca4fe1b044d31697a7364f33c94",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a582d3ae01112a0e4b200a161fdf92ab5",
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc",
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ae488c317d760b4dfdd317ec10373a3a6",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a1ec074d1ebb8c373a528843249ffaa11",
-"struct_joystick_control_values.html#a0d4176e84cee5ce1219e85b499667402"
+"class_config_item.html#a82be6a96bda766e3a0d0819738a07c2f",
+"class_geometry2d_1_1_line.html#ac29b1e4459a993ef862382415d656237",
+"class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a3bc527710f3b87ca4da1a5c6adfd4776",
+"class_planning_1_1_r_r_t_planner.html",
+"class_sim_field_view.html#a9912216ea68b82c7303d7e794d0a9be9",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a56763364fbc289daeb6c43cb8ae7af82",
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html",
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ad7a5bf8f9c54f90209e03e8194339288",
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a18beed1cd717086d9c2da4740cdd40b1",
+"struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -353,6 +353,9 @@ var annotated_dup =
     [ "test_role_assignment", null, [
       [ "TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", "classtest__role__assignment_1_1_test_role_assignment" ]
     ] ],
+    [ "which_half", null, [
+      [ "WhichHalf", "classwhich__half_1_1_which_half.html", "classwhich__half_1_1_which_half" ]
+    ] ],
     [ "AutoName", "class_auto_name.html", "class_auto_name" ],
     [ "Ball", "class_ball.html", "class_ball" ],
     [ "BallFilter", "class_ball_filter.html", "class_ball_filter" ],
