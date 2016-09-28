@@ -389,8 +389,10 @@ void MainWindow::updateViews() {
         }
 
         // update the behavior tree view
-        _ui.behaviorTree->setPlainText(
-            QString::fromStdString(currentFrame->behavior_tree()));
+        QString behaviorStr = QString::fromStdString(currentFrame->behavior_tree());
+        if (_ui.behaviorTree->toPlainText() != behaviorStr) {
+            _ui.behaviorTree->setPlainText(behaviorStr);
+        }
     }
 
     if (std::time(nullptr) -
