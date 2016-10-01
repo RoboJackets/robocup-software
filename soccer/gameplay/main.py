@@ -63,7 +63,7 @@ def init():
                     try:
                         module = importlib.import_module('.'.join(module_path))
                     except:
-                        logging.error("Error reloading module '" + '.'.join(
+                        logging.error("Error creating module '" + '.'.join(
                             module_path) + "': e")
                         traceback.print_exc()
                         return
@@ -85,17 +85,21 @@ def init():
                     containing_dict = sys.modules
                     for modname in module_path[:-1]:
                         containing_dict = containing_dict[modname].__dict__
+                    if module_path[-1] not in containing_dict:
+                        logging.error("failed reloading module '"
+                                    + '.'.join(module_path) + "'")
+                        return
                     module = containing_dict[module_path[-1]]
                     try:
                         module = imp.reload(module)
                     except:
                         logging.error("Error reloading module '" + '.'.join(
-                            module_path) + "': e")
+                            module_path) + "'")
                         traceback.print_exc()
                         return
 
-                    logging.info("reloaded module '" + '.'.join(module_path) +
-                                 "'")
+                    logging.info("reloaded module '"
+                                 + '.'.join(module_path) + "'")
 
                     if is_play:
                         # re-register the new play class
@@ -121,6 +125,10 @@ def init():
             elif event_type == 'deleted':
                 if is_play:
                     node = _play_registry.node_for_module_path(module_path[1:])
+                    if node is None:
+                        logging.error("Error removing module '"
+                                      + '.'.join(module_path) + "'")
+                        return
                     if _root_play.play != None and _root_play.play.__class__.__name__ == node.play_class.__name__:
                         _root_play.drop_current_play()
 
