@@ -51,7 +51,8 @@ def init():
         # the top-level folders we care about watching
         autoloadables = ['plays', 'skills', 'tactics', 'evaluation']
 
-        if module_path[0] in autoloadables:
+        # Don't load if we aren't a special module or if the filename is hidden
+        if module_path[0] in autoloadables and module_path[-1][0] != '.':
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
