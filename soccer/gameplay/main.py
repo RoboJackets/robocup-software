@@ -65,7 +65,7 @@ def init():
                         module = importlib.import_module('.'.join(module_path))
                     except:
                         logging.error("Error creating module '" + '.'.join(
-                            module_path) + "': e")
+                            module_path) + "':")
                         traceback.print_exc()
                         return
 
@@ -95,7 +95,7 @@ def init():
                         module = imp.reload(module)
                     except:
                         logging.error("Error reloading module '" + '.'.join(
-                            module_path) + "'")
+                            module_path) + "':")
                         traceback.print_exc()
                         return
 
@@ -119,8 +119,8 @@ def init():
                         _root_play.drop_current_play()
 
                 except Exception as e:
-                    logging.error("EXCEPTION in file modified event: " + repr(
-                        e))
+                    logging.error("EXCEPTION in file modified event: "
+                                  + repr(e))
                     traceback.print_exc()
                     raise e
             elif event_type == 'deleted':
