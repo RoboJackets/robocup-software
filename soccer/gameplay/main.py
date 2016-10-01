@@ -72,9 +72,7 @@ def init():
                     try:
                         play_class = class_import.find_subclasses(module,
                                                                   play.Play)[0]
-                        _play_registry.insert(
-                            module_path[1:], play_class
-                        )  # note: skipping index zero of module_path cuts off the 'plays' part
+                        _play_registry.insert(module_path[1:], play_class)  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
                         # FIXME: instead, we should unload the module and just log a warning
@@ -87,8 +85,8 @@ def init():
                     for modname in module_path[:-1]:
                         containing_dict = containing_dict[modname].__dict__
                     if module_path[-1] not in containing_dict:
-                        logging.error("failed reloading module '"
-                                    + '.'.join(module_path) + "'")
+                        logging.error("failed reloading module '" + '.'.join(
+                            module_path) + "'")
                         return
                     module = containing_dict[module_path[-1]]
                     try:
@@ -99,8 +97,8 @@ def init():
                         traceback.print_exc()
                         return
 
-                    logging.info("reloaded module '"
-                                 + '.'.join(module_path) + "'")
+                    logging.info("reloaded module '" + '.'.join(module_path) +
+                                 "'")
 
                     if is_play:
                         # re-register the new play class
@@ -119,16 +117,16 @@ def init():
                         _root_play.drop_current_play()
 
                 except Exception as e:
-                    logging.error("EXCEPTION in file modified event: "
-                                  + repr(e))
+                    logging.error("EXCEPTION in file modified event: " + repr(
+                        e))
                     traceback.print_exc()
                     raise e
             elif event_type == 'deleted':
                 if is_play:
                     node = _play_registry.node_for_module_path(module_path[1:])
                     if node is None:
-                        logging.error("Error removing module '"
-                                      + '.'.join(module_path) + "'")
+                        logging.error("Error removing module '" + '.'.join(
+                            module_path) + "'")
                         return
                     if _root_play.play != None and _root_play.play.__class__.__name__ == node.play_class.__name__:
                         _root_play.drop_current_play()

@@ -10,7 +10,6 @@ import evaluation.touchpass_positioning
 import enum
 
 
-
 ## A tactic that causes a robot to pass to another one,
 # who scores on the goal as fast as possible.
 #
