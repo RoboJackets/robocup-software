@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>GT RoboCup SSL: Member List</title>
+<title>GT RoboCup SSL: Style</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -48,10 +48,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
-      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -71,14 +71,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-  <div id="navrow2" class="tabs2">
-    <ul class="tablist">
-      <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
-      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
-    </ul>
-  </div>
 </div><!-- top -->
 <div id="side-nav" class="ui-resizable side-nav-resizable">
   <div id="nav-tree">
@@ -91,7 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('structrtp_1_1_robot_status_message.html','');});
+$(document).ready(function(){initNavTree('md_doc_Style.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -110,24 +102,32 @@ $(document).ready(function(){initNavTree('structrtp_1_1_robot_status_message.htm
 
 <div class="header">
   <div class="headertitle">
-<div class="title">rtp::RobotStatusMessage Member List</div>  </div>
+<div class="title">Style </div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>This is the complete list of members for <a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a>, including all inherited members.</p>
-<table class="directory">
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>ballSenseStatus</b> (defined in <a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a>)</td><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html#afbbaccd80b44d3015fded0f05487bc06">BATTERY_READING_SCALE_FACTOR</a></td><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>battVoltage</b> (defined in <a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a>)</td><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>fpgaStatus</b> (defined in <a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a>)</td><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>motorErrors</b> (defined in <a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a>)</td><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>uid</b> (defined in <a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a>)</td><td class="entry"><a class="el" href="structrtp_1_1_robot_status_message.html">rtp::RobotStatusMessage</a></td><td class="entry"></td></tr>
-</table></div><!-- contents -->
+<div class="textblock"><p>RoboCup Software uses Google Style guides for the most part, which can be found <a href="https://google.github.io/styleguide/cppguide.html">at this website for c++</a>, and <a href="https://google.github.io/styleguide/pyguide.html">at this website for python</a>. This docs page will cover a basic overview of these rules, as well as some of the differences between google and our style guides.</p>
+<p>This guide is currently under construction.</p>
+<h1>Overview</h1>
+<ol type="1">
+<li>Wrap lines at 80 characters</li>
+<li>Use 4 Spaces for Indentation</li>
+<li>Comment your code, try to provide comments for every method.</li>
+<li>Place spaces between operators<ul>
+<li>Ex: <code>4 + 3</code>, <code>(int) i</code></li>
+</ul>
+</li>
+<li>Write readable code</li>
+</ol>
+<h1>Autoformatting</h1>
+<p>We have two make targets dealing with formatting.</p>
+<p><code>make checkstyle</code> will check to see if your changes are up to style.</p>
+<p><code>make pretty</code> will use an autoformater to try and format your code. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 4 2016 19:49:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 4 2016 19:49:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>
