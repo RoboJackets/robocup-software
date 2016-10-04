@@ -13,3 +13,11 @@ This guide is currently under construction.
 4. Place spaces between operators
    - Ex: `4 + 3`, `(int) i`
 5. Write readable code
+
+# Autoformatting
+
+We have two make targets dealing with formatting.
+
+`make checkstyle` will check to see if your changes are up to style.
+
+`make pretty` will use an autoformater to try and format your code.
