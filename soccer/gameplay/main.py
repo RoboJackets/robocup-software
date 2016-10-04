@@ -51,7 +51,8 @@ def init():
         # the top-level folders we care about watching
         autoloadables = ['plays', 'skills', 'tactics', 'evaluation']
 
-        if module_path[0] in autoloadables:
+        # Don't load if we aren't a special module or if the filename is hidden
+        if module_path[0] in autoloadables and module_path[-1][0] != '.':
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
@@ -63,17 +64,15 @@ def init():
                     try:
                         module = importlib.import_module('.'.join(module_path))
                     except:
-                        logging.error("Error reloading module '" + '.'.join(
-                            module_path) + "': e")
+                        logging.error("Error creating module '" + '.'.join(
+                            module_path) + "':")
                         traceback.print_exc()
                         return
 
                     try:
                         play_class = class_import.find_subclasses(module,
                                                                   play.Play)[0]
-                        _play_registry.insert(
-                            module_path[1:], play_class
-                        )  # note: skipping index zero of module_path cuts off the 'plays' part
+                        _play_registry.insert(module_path[1:], play_class)  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
                         # FIXME: instead, we should unload the module and just log a warning
@@ -85,12 +84,16 @@ def init():
                     containing_dict = sys.modules
                     for modname in module_path[:-1]:
                         containing_dict = containing_dict[modname].__dict__
+                    if module_path[-1] not in containing_dict:
+                        logging.error("failed reloading module '" + '.'.join(
+                            module_path) + "'")
+                        return
                     module = containing_dict[module_path[-1]]
                     try:
                         module = imp.reload(module)
                     except:
                         logging.error("Error reloading module '" + '.'.join(
-                            module_path) + "': e")
+                            module_path) + "':")
                         traceback.print_exc()
                         return
 
@@ -121,6 +124,10 @@ def init():
             elif event_type == 'deleted':
                 if is_play:
                     node = _play_registry.node_for_module_path(module_path[1:])
+                    if node is None:
+                        logging.error("Error removing module '" + '.'.join(
+                            module_path) + "'")
+                        return
                     if _root_play.play != None and _root_play.play.__class__.__name__ == node.play_class.__name__:
                         _root_play.drop_current_play()
 
