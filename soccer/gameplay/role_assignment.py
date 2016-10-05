@@ -39,6 +39,10 @@ class RoleRequirements:
     def __repr__(self):
         return str(self)
 
+    ## A generic object for determining cost from a point
+    # This can be either a robocup.Point or a robocup.Segment
+    # The distance from this point will be evaluated linearly into the cost function
+    # for role assignments.
     @property
     def destination_shape(self):
         return self._destination_shape
