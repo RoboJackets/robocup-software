@@ -142,9 +142,11 @@ var annotated_dup =
           ] ],
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
-          ] ],
+          ] ]
+        ] ],
+        [ "training", null, [
           [ "which_half", null, [
-            [ "WhichHalf", "classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html", "classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half" ]
+            [ "WhichHalf", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half.html", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half" ]
           ] ]
         ] ],
         [ "tuning", null, [

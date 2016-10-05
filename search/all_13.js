@@ -37,7 +37,7 @@ var searchData=
   ['starttime',['startTime',['../class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7',1,'Planning::Path::startTime()'],['../class_planning_1_1_angle_function_path.html#a23f1a22d7864fc43d29d61d32fde5ab2',1,'Planning::AngleFunctionPath::startTime()']]],
   ['state',['State',['../classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html',1,'gameplay::plays::restarts::our_kickoff::OurKickoff']]],
   ['state',['State',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html',1,'gameplay::tactics::positions::goalie::Goalie']]],
-  ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half_1_1_state.html',1,'gameplay::plays::testing::which_half::WhichHalf']]],
+  ['state',['State',['../classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half_1_1_state.html',1,'gameplay::plays::training::which_half::WhichHalf']]],
   ['state',['State',['../classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass_1_1_state.html',1,'gameplay::tactics::forward_pass::ForwardPass']]],
   ['state',['State',['../classwhich__half_1_1_which_half_1_1_state.html',1,'which_half::WhichHalf']]],
   ['state',['State',['../classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball_1_1_state.html',1,'gameplay::skills::touch_ball::TouchBall']]],

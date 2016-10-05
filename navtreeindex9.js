@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab62a9a800364e65adf07eb279c6e81a9":[12,0,4,15,8,2,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#adc3fa408e515edb60ec235d6bfddf4d6":[12,0,4,15,8,2,0,12],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae82b98638e761114f7a6a4d27ca632d6":[12,0,4,15,8,2,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae900f7aee36a758ba629667f6eff8554":[12,0,4,15,8,2,0,6],
@@ -194,12 +195,12 @@ var NAVTREEINDEX9 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[12,0,69,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[12,0,69,8],
 "group__matrices.html":[10,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,3,0,2],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,3,0,4],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,3,0,13],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
 "hierarchy.html":[12,2],
 "index.html":[],
 "md_doc_BuildSystems.html":[0],
@@ -214,8 +215,8 @@ var NAVTREEINDEX9 =
 "md_doc_training2016_training_2016.html":[7],
 "modules.html":[10],
 "multicast_8hpp_source.html":[13,0,0,6],
-"namespace_gameplay.html":[12,0,3],
 "namespace_gameplay.html":[11,0,0],
+"namespace_gameplay.html":[12,0,3],
 "namespaces.html":[11,0],
 "pages.html":[],
 "robocup-py_8hpp_source.html":[13,0,1,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "struct_field___dimensions.html#a9a93b32bd3e10095e0326694d93c9258":[12,0,32,4],
 "struct_field___dimensions.html#a9f76b1196c562c93b2dc3fba6def4f27":[12,0,32,11],
 "struct_field___dimensions.html#aa8bd7847433aa1f6c85bfd81058eca39":[12,0,32,13],
-"struct_field___dimensions.html#aae23a60c8be6430b040e82a733a10d08":[12,0,32,17],
-"struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd":[12,0,32,3]
+"struct_field___dimensions.html#aae23a60c8be6430b040e82a733a10d08":[12,0,32,17]
 };

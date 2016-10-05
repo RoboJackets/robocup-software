@@ -21,7 +21,7 @@ var searchData=
   ['state',['State',['../classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement_1_1_state.html',1,'gameplay::plays::restarts::placement::Placement']]],
   ['state',['State',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture_1_1_state.html',1,'gameplay::plays::testing::test_capture::TestCapture']]],
-  ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half_1_1_state.html',1,'gameplay::plays::testing::which_half::WhichHalf']]],
+  ['state',['State',['../classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half_1_1_state.html',1,'gameplay::plays::training::which_half::WhichHalf']]],
   ['state',['State',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html',1,'gameplay::tactics::positions::goalie::Goalie']]],
   ['state',['State',['../classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html',1,'gameplay::plays::tuning::tune_facing::Facer']]],
   ['state',['State',['../classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html',1,'gameplay::tactics::positions::submissive_goalie::SubmissiveGoalie']]],
