@@ -11,6 +11,7 @@ var searchData=
   ['defending',['defending',['../classgameplay_1_1tactics_1_1defense_1_1_defense_1_1_state.html#aefe6c8c74aa82cbcc9df4bd2258ea418',1,'gameplay::tactics::defense::Defense::State']]],
   ['defendpenalty',['DefendPenalty',['../classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html',1,'gameplay::plays::restarts::defend_penalty']]],
   ['defense',['Defense',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html',1,'gameplay::tactics::defense']]],
+  ['destination_5fshape',['destination_shape',['../classgameplay_1_1role__assignment_1_1_role_requirements.html#a0c144cebd3faf01d4d746beab154a8ec',1,'gameplay::role_assignment::RoleRequirements']]],
   ['direction',['direction',['../class_geometry2d_1_1_point.html#a7ddcff0925ffe9f7405e8db84710d3a3',1,'Geometry2d::Point']]],
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],
