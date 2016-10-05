@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4cbd0dab1b3d072ed40c93e95a2054e5":[12,0,4,7,0,1,5],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a56763364fbc289daeb6c43cb8ae7af82":[12,0,4,7,0,1,7],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a582d3ae01112a0e4b200a161fdf92ab5":[12,0,4,7,0,1,6],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aabb80a984575fee2371f1cb0cddc7122":[12,0,4,7,0,1,11],
@@ -221,6 +222,13 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#ac2403c024f0fc7545e583884631ac86a":[12,0,4,8,3,18,0,6],
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#af5ec5ac4b479e0d22e8cce4e526ba213":[12,0,4,8,3,18,0,2],
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html":[12,0,4,8,3,18,0,0],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html":[12,0,4,8,3,19,0],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html#a017ba2e2b886b53b8898736551173f81":[12,0,4,8,3,19,0,5],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html#a091f047043e9b520bc772ede0ee4d7f6":[12,0,4,8,3,19,0,3],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html#a2547368a230ad2decca388c4772b1d01":[12,0,4,8,3,19,0,2],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html#aa4bcfd4eabc56b28d4b197139eceb651":[12,0,4,8,3,19,0,1],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half.html#afab53fd2688e5fe3f5fd176fc4b7656c":[12,0,4,8,3,19,0,4],
+"classgameplay_1_1plays_1_1testing_1_1which__half_1_1_which_half_1_1_state.html":[12,0,4,8,3,19,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html":[12,0,4,8,4,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#a06be27999c1772573c0f3b5fbbd6a887":[12,0,4,8,4,0,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#a64386b90df368522ae728711f826a722":[12,0,4,8,4,0,0,2],
@@ -241,13 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a96ada07e2b53dca0d76e9276ec54025f":[12,0,4,8,4,1,0,9],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#ab2b7e2b67393491270a6d9fc0fcfe82b":[12,0,4,8,4,1,0,13],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#ab2c77139eb9b9caf976343e0fb5d2980":[12,0,4,8,4,1,0,10],
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#abe1a7b720c7a832d8cf180d9eed190d7":[12,0,4,8,4,1,0,5],
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html":[12,0,4,8,4,1,0,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html":[12,0,4,8,4,1,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html#a84164e3897a9784032e0ff6b876bc455":[12,0,4,8,4,1,1,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html":[12,0,4,8,4,2,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a029f6e451a15ab85b1941b9618c051d7":[12,0,4,8,4,2,0,3],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af":[12,0,4,8,4,2,0,2],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75":[12,0,4,8,4,2,0,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[12,0,4,8,4,2,0,0]
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#abe1a7b720c7a832d8cf180d9eed190d7":[12,0,4,8,4,1,0,5]
 };
