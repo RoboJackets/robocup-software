@@ -1,5 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_chart_1_1_function.html" title="Chart::Function" alt="" coords="5,31,124,57"/>
-<area shape="rect" id="node2" href="$struct_chart_1_1_numeric_field.html" title="Chart::NumericField" alt="" coords="180,5,328,32"/>
-<area shape="rect" id="node3" href="$struct_chart_1_1_point_magnitude.html" title="Chart::PointMagnitude" alt="" coords="172,56,336,83"/>
+<area shape="rect" id="node2" href="$classbinary__clock_1_1_binary_clock.html" title="binary_clock.BinaryClock" alt="" coords="117,5,296,32"/>
+<area shape="rect" id="node3" href="$classkick__gently_1_1_kick_gently.html" title="kick_gently.KickGently" alt="" coords="125,56,288,83"/>
+<area shape="rect" id="node4" href="$classoffensive__pivot__kick_1_1_offensive_pivot_kick.html" title="offensive_pivot_kick.Offensive\lPivotKick" alt="" coords="101,107,312,149"/>
+<area shape="rect" id="node5" href="$classwhich__half_1_1_which_half.html" title="which_half.WhichHalf" alt="" coords="130,173,283,200"/>
 </map>

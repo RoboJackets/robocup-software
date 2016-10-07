@@ -10,5 +10,6 @@ var searchData=
   ['batterywidget',['BatteryWidget',['../class_battery_widget.html',1,'']]],
   ['behavior',['Behavior',['../classgameplay_1_1behavior_1_1_behavior.html',1,'gameplay::behavior']]],
   ['behaviorsequence',['BehaviorSequence',['../classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html',1,'gameplay::tactics::behavior_sequence']]],
+  ['binaryclock',['BinaryClock',['../classbinary__clock_1_1_binary_clock.html',1,'binary_clock']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]]
 ];

@@ -1,5 +1,8 @@
 var annotated_dup =
 [
+    [ "binary_clock", null, [
+      [ "BinaryClock", "classbinary__clock_1_1_binary_clock.html", "classbinary__clock_1_1_binary_clock" ]
+    ] ],
     [ "Chart", null, [
       [ "Function", "struct_chart_1_1_function.html", "struct_chart_1_1_function" ],
       [ "NumericField", "struct_chart_1_1_numeric_field.html", "struct_chart_1_1_numeric_field" ],
@@ -139,9 +142,6 @@ var annotated_dup =
           ] ],
           [ "test_pivot_kick", null, [
             [ "TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick" ]
-          ] ],
-          [ "triangle_pass", null, [
-            [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
           ] ]
         ] ],
         [ "training", null, [
