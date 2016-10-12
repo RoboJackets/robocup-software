@@ -10,7 +10,6 @@ define cmake_build_target
 endef
 
 all:
-	git log -n 1 --format=format:"#define GIT_COMMIT \"%h\"%n" HEAD > soccer/version.hpp
 	$(call cmake_build_target, all)
 
 run: all

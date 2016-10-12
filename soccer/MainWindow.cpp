@@ -9,7 +9,7 @@
 #include "RobotStatusWidget.hpp"
 #include "BatteryProfile.hpp"
 #include <Network.hpp>
-#include "version.hpp"
+#include "git_version.hpp"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -147,7 +147,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
                   SLOT(on_actionQuicksaveRobotLocations_triggered()));
     new QShortcut(QKeySequence(Qt::Key_E), this,
                   SLOT(on_actionQuickloadRobotLocations_triggered()));
-    setWindowTitle(windowTitle() + " @ " + GIT_COMMIT);
+
+    // Append short Git hash to the main window title
+    setWindowTitle(windowTitle() + " @ " + git_version_short_hash);
 }
 
 void MainWindow::configuration(Configuration* config) {
