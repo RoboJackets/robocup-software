@@ -281,6 +281,7 @@ void MainWindow::updateViews() {
             _doubleFrameNumber = minFrame;
         } else if (_doubleFrameNumber > maxFrame) {
             _doubleFrameNumber = maxFrame;
+            live(true);
         }
     }
 
@@ -299,11 +300,11 @@ void MainWindow::updateViews() {
         playbackBtn->setEnabled(true);
     if (_live)
         _ui.logPlaybackLive->setEnabled(false);
-    else if (_playbackRate < -0.1)
-        _ui.logPlaybackRewind->setEnabled(false);
+    // Reverse rewind is never disabled.
     else if (abs<float>(_playbackRate) < 0.01)
         _ui.logPlaybackPause->setEnabled(false);
-    if (_playbackRate > 0.1 || _live) _ui.logPlaybackPlay->setEnabled(false);
+    if (_live)
+        _ui.logPlaybackPlay->setEnabled(false);
 
     //  enable previous frame button based on position in the log
     _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
@@ -1092,7 +1093,7 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
 
 void MainWindow::on_logPlaybackRewind_clicked() {
     live(false);
-    _playbackRate = -1;
+    _playbackRate += -0.5;
 }
 
 void MainWindow::on_logPlaybackPrevFrame_clicked() {
@@ -1114,7 +1115,7 @@ void MainWindow::on_logPlaybackNextFrame_clicked() {
 
 void MainWindow::on_logPlaybackPlay_clicked() {
     live(false);
-    _playbackRate = 1;
+    _playbackRate += 0.5;
 }
 
 void MainWindow::on_logPlaybackLive_clicked() { live(true); }
