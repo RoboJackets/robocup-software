@@ -148,8 +148,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     new QShortcut(QKeySequence(Qt::Key_E), this,
                   SLOT(on_actionQuickloadRobotLocations_triggered()));
 
-    // Append short Git hash to the main window title with an asterisk if the current Git index is dirty
-    setWindowTitle(windowTitle() + " @ " + git_version_short_hash + (git_version_dirty ? "*" : ""));
+    // Append short Git hash to the main window title with an asterisk if the
+    // current Git index is dirty
+    setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
+                   (git_version_dirty ? "*" : ""));
 }
 
 void MainWindow::configuration(Configuration* config) {
