@@ -298,13 +298,11 @@ void MainWindow::updateViews() {
     // enable playback buttons based on playback rate
     for (QPushButton* playbackBtn : _logPlaybackButtons)
         playbackBtn->setEnabled(true);
-    if (_live)
-        _ui.logPlaybackLive->setEnabled(false);
+    if (_live) _ui.logPlaybackLive->setEnabled(false);
     // Reverse rewind is never disabled.
     else if (abs<float>(_playbackRate) < 0.01)
         _ui.logPlaybackPause->setEnabled(false);
-    if (_live)
-        _ui.logPlaybackPlay->setEnabled(false);
+    if (_live) _ui.logPlaybackPlay->setEnabled(false);
 
     //  enable previous frame button based on position in the log
     _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
