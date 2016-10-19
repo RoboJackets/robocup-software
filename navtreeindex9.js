@@ -1,5 +1,13 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a965e8dc75642f569e3bfc178e3c6b7f8":[12,0,5,15,8,2,0,14],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a972ebd69075c88cf11b827e947520d2d":[12,0,5,15,8,2,0,10],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a9b115b63d4ff6d319ff87d34e88767f4":[12,0,5,15,8,2,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94":[12,0,5,15,8,2,0,4],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa9ad97a852015aaac9dc81905ce8d051":[12,0,5,15,8,2,0,11],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab62a9a800364e65adf07eb279c6e81a9":[12,0,5,15,8,2,0,2],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#adc3fa408e515edb60ec235d6bfddf4d6":[12,0,5,15,8,2,0,12],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae82b98638e761114f7a6a4d27ca632d6":[12,0,5,15,8,2,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae900f7aee36a758ba629667f6eff8554":[12,0,5,15,8,2,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aef463806dab4c1f3e99a87c03b2ed0c9":[12,0,5,15,8,2,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html":[12,0,5,15,8,2,0,0],
@@ -128,8 +136,8 @@ var NAVTREEINDEX9 =
 "dir_cc132907b6047b9805f38c63e061574e.html":[13,0,1,5],
 "dir_cee59dbc20d175ba3d3ad00d9c6ec89c.html":[13,0,0,0,1,0],
 "files.html":[13,0],
-"functions.html":[12,3,0],
 "functions.html":[12,3,0,0],
+"functions.html":[12,3,0],
 "functions_a.html":[12,3,0,1],
 "functions_b.html":[12,3,0,2],
 "functions_c.html":[12,3,0,3],
@@ -196,8 +204,8 @@ var NAVTREEINDEX9 =
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,4,0,2],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
 "hierarchy.html":[12,2],
 "index.html":[],
 "md_doc_BuildSystems.html":[0],
@@ -241,13 +249,5 @@ var NAVTREEINDEX9 =
 "struct_field___dimensions.html#a5e575a58b0ec48d94ba14efe2736d053":[12,0,33,21],
 "struct_field___dimensions.html#a67b1ed80d494d8becb73d25d6258d757":[12,0,33,29],
 "struct_field___dimensions.html#a6af251e08e2355b0df441992722a9ce1":[12,0,33,20],
-"struct_field___dimensions.html#a7d9f84e43ae5f0b34b2d23e6563d6da0":[12,0,33,14],
-"struct_field___dimensions.html#a80107af88643a8687a1a3089d3426b5e":[12,0,33,15],
-"struct_field___dimensions.html#a9a93b32bd3e10095e0326694d93c9258":[12,0,33,4],
-"struct_field___dimensions.html#a9f76b1196c562c93b2dc3fba6def4f27":[12,0,33,11],
-"struct_field___dimensions.html#aa8bd7847433aa1f6c85bfd81058eca39":[12,0,33,13],
-"struct_field___dimensions.html#aae23a60c8be6430b040e82a733a10d08":[12,0,33,17],
-"struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd":[12,0,33,3],
-"struct_field___dimensions.html#ac847bf9ae2f6380d8b304484638a78b2":[12,0,33,5],
-"struct_field___dimensions.html#acb165fd38d1941fd7b978509d6d99227":[12,0,33,28]
+"struct_field___dimensions.html#a7d9f84e43ae5f0b34b2d23e6563d6da0":[12,0,33,14]
 };

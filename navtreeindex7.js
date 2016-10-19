@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a6eb5fcac2b1c8793a347c89e3ae0b0b1":[12,0,5,8,5,1,0,2],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a8daf7c7cb675e6160efeb6bd4f3a78f0":[12,0,5,8,5,1,0,7],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a96ada07e2b53dca0d76e9276ec54025f":[12,0,5,8,5,1,0,9],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#ab2b7e2b67393491270a6d9fc0fcfe82b":[12,0,5,8,5,1,0,13],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#ab2c77139eb9b9caf976343e0fb5d2980":[12,0,5,8,5,1,0,10],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#abe1a7b720c7a832d8cf180d9eed190d7":[12,0,5,8,5,1,0,5],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html":[12,0,5,8,5,1,0,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html":[12,0,5,8,5,1,1],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html#a84164e3897a9784032e0ff6b876bc455":[12,0,5,8,5,1,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html":[12,0,5,8,5,2,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a029f6e451a15ab85b1941b9618c051d7":[12,0,5,8,5,2,0,3],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html":[12,0,5,13,10,0],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0aa997b345c2ec60a1992dc1aafc9c91":[12,0,5,13,10,0,17],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0fbbced2e89aa56ed23ffcd4ba78d927":[12,0,5,13,10,0,7],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a123c1d79fefcf4716bd18898dacc06f0":[12,0,5,13,10,0,16],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a236701c3e8c306c0e8abeedddf820ba3":[12,0,5,13,10,0,8],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a3981308b50a28c6067bc3ca82f143537":[12,0,5,13,10,0,4],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4aacf451dae3ec241678787185e8f0b4":[12,0,5,13,10,0,19],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4c5b32b52b581b86eef0ec172427823a":[12,0,5,13,10,0,12],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4dfcf7e05241277f601ea2ed60d7c573":[12,0,5,13,10,0,6],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a7a1c7f2698aec4866db7c76dd9c585bb":[12,0,5,13,10,0,3],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a920a68121cec20447fcad9a1ebf6dc73":[12,0,5,13,10,0,11],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa62dd4780a99740c5801460c7d2f1d8d":[12,0,5,13,10,0,14]
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a123c1d79fefcf4716bd18898dacc06f0":[12,0,5,13,10,0,16]
 };

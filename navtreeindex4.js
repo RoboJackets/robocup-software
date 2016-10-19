@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_planning_1_1_pivot_path_planner.html#a5489831813a4b82259e68bd93397391b":[12,0,9,24,2],
 "class_planning_1_1_pivot_path_planner.html#a6b92262feae381804f8863128b9b54bf":[12,0,9,24,0],
 "class_planning_1_1_pivot_path_planner.html#a98b8ab1171f3ac171af5cec4a7a3c4c7":[12,0,9,24,1],
 "class_planning_1_1_r_r_t_planner.html":[12,0,9,28],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "class_robot_widget.html#ace9fe4a4a4e481840c2cefa1a28f8123":[12,0,64,0],
 "class_robot_widget.html#af0f0f096d2740bbac593765e13766650":[12,0,64,4],
 "class_sim_field_view.html":[12,0,66],
-"class_sim_field_view.html#a016e53aa048a97b8510ef9c801983424":[12,0,66,5],
-"class_sim_field_view.html#a12bf994390e2107af14ccf5244d0097e":[12,0,66,2]
+"class_sim_field_view.html#a016e53aa048a97b8510ef9c801983424":[12,0,66,5]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"class_geometry2d_1_1_line.html#a673915dcabfebfe18e045b1913e4dfe1":[12,0,6,3,4],
 "class_geometry2d_1_1_line.html#abe5a35bed4d3defd740a4adb9c1154f7":[12,0,6,3,3],
 "class_geometry2d_1_1_line.html#ac0713cad0d6fec4702830adabbc4e25f":[12,0,6,3,1],
 "class_geometry2d_1_1_line.html#ac29b1e4459a993ef862382415d656237":[12,0,6,3,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "class_new_referee_module.html#ac082c7e72387453fec82dca259e3ec4e":[12,0,46,26],
 "class_new_referee_module.html#ac10a86d678709a59b8567a3ea395f498":[12,0,46,20],
 "class_new_referee_module.html#acf78225e9998043f0be3d39363fc80ec":[12,0,46,17],
-"class_new_referee_module.html#ad05f957c9690e837686fed5e7d6d55e2":[12,0,46,27],
-"class_new_referee_module.html#ad37c38b456502c1780f709dfbb7cb677":[12,0,46,22]
+"class_new_referee_module.html#ad05f957c9690e837686fed5e7d6d55e2":[12,0,46,27]
 };
