@@ -42,8 +42,7 @@ class BinaryClock(play.Play):
 
         # EXAMPLE TRANSITION, YOU MAY WANT TO REPLACE THIS
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running,
-                            lambda: True,
+                            behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
     # Define your own 'on_enter' and 'execute' functions here.
@@ -52,7 +51,6 @@ class BinaryClock(play.Play):
     # eg: def execute_<???>(self):
     #         print('Something?')
     # ---------------------------------------------------------
-
 
     # Demo of moving to a point.
     def on_enter_running(self):

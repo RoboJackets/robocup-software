@@ -54,9 +54,10 @@ class BinaryClock(play.Play):
         self.add_transition(behavior.Behavior.State.start, self.State.waiting,
                             lambda: True, 'immediately')
         self.add_transition(self.State.waiting, self.State.dummy,
-                            lambda: self.current_time != self.get_time(), 'Time in minutes changed')
-        self.add_transition(self.State.dummy, self.State.waiting,
-                            lambda: True, 'immediately')
+                            lambda: self.current_time != self.get_time(),
+                            'Time in minutes changed')
+        self.add_transition(self.State.dummy, self.State.waiting, lambda: True,
+                            'immediately')
 
     # Define your own 'on_enter' and 'execute' functions here.
     # eg: def on_enter_<???>(self):
@@ -68,17 +69,19 @@ class BinaryClock(play.Play):
     def get_time(self):
         return time.localtime().tm_min
 
-
     # Demo of moving to a point.
     def on_enter_waiting(self):
         self.current_time = self.get_time()
         binary = format(self.current_time, '06b')
-        move_point = robocup.Point(BinaryClock.LeftPoint, constants.Field.Length / 3)
+        move_point = robocup.Point(BinaryClock.LeftPoint,
+                                   constants.Field.Length / 3)
 
         for i in range(6):
             if (binary[i] == '1'):
-                self.add_subbehavior(skills.move.Move(move_point), 'Robot' + str(i))
-            move_point = robocup.Point(move_point.x + BinaryClock.RobotDist, move_point.y)
+                self.add_subbehavior(
+                    skills.move.Move(move_point), 'Robot' + str(i))
+            move_point = robocup.Point(move_point.x + BinaryClock.RobotDist,
+                                       move_point.y)
 
         # Swallow all unused robots
         self.add_subbehavior(plays.testing.line_up.LineUp(), 'line up')
