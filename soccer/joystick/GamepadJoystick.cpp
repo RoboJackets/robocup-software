@@ -87,7 +87,8 @@ void GamepadJoystick::update() {
         _lastKickerTime = now - Kicker_Step_Time;
     }
 
-    // Kicking is triggered by a chip as well. If you only want a chip, remove 5.
+    // Kicking is triggered by a chip as well. If you only want a chip, remove
+    // 5.
     _controls.kick = SDL_JoystickGetButton(_joystick, 7) |
                      SDL_JoystickGetButton(_joystick, 5);
 
