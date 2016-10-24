@@ -48,12 +48,14 @@ void GamepadJoystick::update() {
     QMutexLocker(&mutex());
     SDL_JoystickUpdate();
 
+    // DRIBBLER CONTROL
     if (SDL_JoystickGetButton(_joystick, 6)) {
         _controls.dribble = false;
     } else if (SDL_JoystickGetButton(_joystick, 4)) {
         _controls.dribble = true;
     }
 
+    // DRIBBLER POWER CONTROL
     RJ::Time now = RJ::timestamp();
     if (SDL_JoystickGetButton(_joystick, 1)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
@@ -70,6 +72,7 @@ void GamepadJoystick::update() {
         _lastDribblerTime = now - Dribble_Step_Time;
     }
 
+    // KICKER POWER CONTROL
     if (SDL_JoystickGetButton(_joystick, 0)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
@@ -84,6 +87,7 @@ void GamepadJoystick::update() {
         _lastKickerTime = now - Kicker_Step_Time;
     }
 
+    // Kicking is triggered by a chip as well. If you only want a chip, remove 5.
     _controls.kick = SDL_JoystickGetButton(_joystick, 7) |
                      SDL_JoystickGetButton(_joystick, 5);
 
@@ -93,8 +97,11 @@ void GamepadJoystick::update() {
     //    cout << static_cast<int>(SDL_JoystickGetButton(_joystick, i));
     // cout << endl;
 
+    // Rotation
     auto leftX = SDL_JoystickGetAxis(_joystick, 0) / AXIS_MAX;
+    // Move L/R
     auto rightX = SDL_JoystickGetAxis(_joystick, 2) / AXIS_MAX;
+    // Move U/D
     auto rightY = -SDL_JoystickGetAxis(_joystick, 3) / AXIS_MAX;
 
     Geometry2d::Point input(rightX, rightY);
