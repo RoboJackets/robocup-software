@@ -26,5 +26,6 @@ var searchData=
   ['boardid',['boardID',['../class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5',1,'RobotStatusWidget']]],
   ['border',['Border',['../struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd',1,'Field_Dimensions']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]],
-  ['build_20systems',['Build Systems',['../md_doc_BuildSystems.html',1,'']]]
+  ['build_20systems',['Build Systems',['../md_doc_BuildSystems.html',1,'']]],
+  ['beginner_20git',['Beginner Git',['../t2016git.html',1,'']]]
 ];

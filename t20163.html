@@ -158,7 +158,7 @@ $(document).ready(function(){initNavTree('t20163.html','');});
 </ul>
 <h1>How do I use subbehaviors?</h1>
 <h2>Adding Subbehaviors</h2>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;self.add_subbehavior(skill_object,</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;             &quot;Name of Subbehavior&quot;,</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;             required=False or True</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;             priority=10) # A lower number is higher priority</div></div><!-- fragment --><h3>Details</h3>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;self.add_subbehavior(skill_object,</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;             &quot;Name of Subbehavior&quot;,</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;             required=False or True</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;             priority=10) # A higher number is higher priority</div></div><!-- fragment --><h3>Details</h3>
 <ul>
 <li>For more docs on this entire section see <a href="https://robojackets.github.io/robocup-software/classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html">this link.</a></li>
 <li>These subbehaviors show up in the behavior tree when you run your program.</li>
@@ -208,13 +208,13 @@ $(document).ready(function(){initNavTree('t20163.html','');});
 <li>Move it to <code>soccer/gameplay/plays/training</code> to begin.</li>
 </ul>
 <h2>Tips</h2>
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;import time</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;mins =  time.localtime().tm_min</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;binary = format(mins, &#39;06b&#39;)</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;print(binary)</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;# Index with binary[0-6]</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;# THIS INDEX IS A CHARACTER VALUE, NOT AN INT</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;# USE == &#39;1&#39;, not == 1</div></div><!-- fragment --> <pre class="fragment">100101</pre> </div></div><!-- contents -->
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;import time</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;mins =  time.localtime().tm_min</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;binary = format(mins, &#39;06b&#39;)</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;print(binary)</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;# Index with binary[0-6]</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;# THIS INDEX IS A CHARACTER VALUE, NOT AN INT</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;# USE == &#39;1&#39;, not == 1</div></div><!-- fragment --> <pre class="fragment">000110</pre> </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="md_doc_training2016_training_2016.html">Training 2016</a></li>
-    <li class="footer">Generated on Wed Oct 26 2016 05:02:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Oct 31 2016 16:45:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

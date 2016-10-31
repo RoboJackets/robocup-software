@@ -3,7 +3,6 @@ var searchData=
   ['training_202016',['Training 2016',['../md_doc_training2016_training_2016.html',1,'']]],
   ['testing_20_26_20continuous_20integration',['Testing &amp; Continuous Integration',['../md_doc_UnitTestsAndCI.html',1,'']]],
   ['training_20summary_201',['Training Summary 1',['../t20161.html',1,'md_doc_training2016_training_2016']]],
-  ['training_20summary_202',['Training Summary 2',['../t20162.html',1,'md_doc_training2016_training_2016']]],
   ['target',['target',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a01825a7bb353613353fed1181518b342',1,'gameplay.skills._kick._Kick.target()'],['../classgameplay_1_1skills_1_1bump_1_1_bump.html#a4d9d541ffd84f40306b808229f7e6cff',1,'gameplay.skills.bump.Bump.target()']]],
   ['target_5fpoint',['target_point',['../classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a97757a611bcf1fb2de7e43b951754237',1,'gameplay::skills::angle_receive::AngleReceive']]],
   ['targetvelpathplanner',['TargetVelPathPlanner',['../class_planning_1_1_target_vel_path_planner.html',1,'Planning']]],
