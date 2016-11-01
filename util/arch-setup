@@ -4,6 +4,8 @@
 # specified in the environment if available, otherwise fallback to a default. To
 # run arch-setup with a different aur helper, do:
 #   AUR_HELPER=myprogram ./util/arch-setup
+# note that this only works with 'pacman-like' aur helpers.  See
+# https://wiki.archlinux.org/index.php/AUR_helpers#Comparison_table for more info
 AUR_HELPER=${AUR_HELPER:-yaourt}
 
 BASE=$(readlink -f $(dirname $0)/..)
