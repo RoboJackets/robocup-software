@@ -50,8 +50,13 @@ public:
 
     bool transitionValid(const Geometry2d::Point& from,
                          const Geometry2d::Point& to) const {
-        // TODO: what if it starts out in an obstacle?
-        if (_obstacles.hit(Geometry2d::Segment(from, to))) return false;
+        // Ensure that @to doesn't hit any obstacles that @from doesn't. This
+        // allows the RRT to start inside an obstacle, but prevents it from
+        // entering a new obstacle.
+        for (const auto& shape : _obstacles.shapes()) {
+            if (shape->hit(Segment(from, to)) && !shape->hit(from))
+                return false;
+        }
         return true;
     }
 
