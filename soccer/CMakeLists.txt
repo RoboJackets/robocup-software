@@ -10,7 +10,7 @@ set(rrt_install_dir ${CMAKE_CURRENT_BINARY_DIR}/rrt)
 set(rrt_lib_path ${rrt_install_dir}/lib/libRRT.a)
 ExternalProject_Add(rrt_project
     URL ${PROJECT_SOURCE_DIR}/external/rrt
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/rrt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${rrt_install_dir}
     BUILD_BYPRODUCTS ${rrt_lib_path}
 )
 set_target_properties(rrt_project PROPERTIES EXCLUDE_FROM_ALL TRUE)

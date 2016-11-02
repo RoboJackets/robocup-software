@@ -58,4 +58,4 @@ private:
     const Field_Dimensions _fieldDimensions;
 };
 
-}  // Planning
+}  // namespace Planning

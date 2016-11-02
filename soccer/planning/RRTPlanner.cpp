@@ -188,11 +188,13 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
-    biRRT.setStepSize(0.15);
+    biRRT.setStepSize(0.15);  // TODO: make this more easily tunable
     biRRT.setMaxIterations(_maxIterations);
 
     // TODO: what happens if it fails?
-    biRRT.run();
+    bool success = biRRT.run();
+    if (!success) return vector<Point>();
+
     vector<Point> points;
     biRRT.getPath(points);
 
@@ -218,7 +220,7 @@ void RRTPlanner::optimize(vector<Point>& pts, const ShapeSet& obstacles,
             const auto newHitSet =
                 obstacles.hitSet(Segment(pts[i], pts[i + span]));
             if (!newHitSet.empty()) {
-                for (std::shared_ptr<Shape> hit : newHitSet) {
+                for (shared_ptr<Shape> hit : newHitSet) {
                     if (startHitSet.find(hit) == startHitSet.end()) {
                         transitionValid = false;
                         break;
@@ -295,10 +297,11 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         (points[points.size() - 1] - points[points.size() - 2])
             .normalized(pathWeight) +
         vf;
-    endDirections.push_back((endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    endDirections.push_back(
+        (endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 

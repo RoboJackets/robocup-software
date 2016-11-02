@@ -1,8 +1,8 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "PivotPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
+#include "PivotPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
 
