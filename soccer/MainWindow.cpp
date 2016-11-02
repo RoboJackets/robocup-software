@@ -1112,8 +1112,6 @@ void MainWindow::on_logHistoryLocation_sliderReleased() {
     on_logHistoryLocation_sliderPressed();
 }
 
-
-
 void MainWindow::on_logPlaybackRewind_clicked() {
     if (live()) {
         _playbackRate = -1;
