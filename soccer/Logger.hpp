@@ -35,55 +35,39 @@
 #include <protobuf/LogFrame.pb.h>
 
 #include <QString>
-#include <QMutexLocker>
-#include <QMutex>
+#include <QReadLocker>
+#include <QWriteLocker>
+#include <QReadWriteLock>
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include "time.hpp"
+#include <boost/circular_buffer.hpp>
 
 class Logger {
 public:
-    Logger();
+    Logger(size_t logSize = 10000);
     ~Logger();
 
     bool open(QString filename);
     void close();
 
-    // Returns the number of available frames
-    int numFrames() const {
-        QMutexLocker locker(&_mutex);
-        return std::min(_nextFrameNumber, (int)_history.size());
-    }
-
     // Returns the size of the circular buffer
-    int maxFrames() const {
-        QMutexLocker locker(&_mutex);
-        return _history.size();
-    }
-
-    // Returns the sequence number of the earliest available frame.
-    // Returns -1 if no frames have been added.
-    int firstFrameNumber() const {
-        QMutexLocker locker(&_mutex);
-        if (_nextFrameNumber == 0) {
-            return -1;
-        } else {
-            return std::max(0, _nextFrameNumber - (int)_history.size());
-        }
+    size_t capacity() const {
+        return _history.capacity();
     }
 
     // Returns the sequence number of the most recently added frame.
     // Returns -1 if no frames have been added.
-    int lastFrameNumber() const {
-        QMutexLocker locker(&_mutex);
-        return _nextFrameNumber - 1;
+    size_t size() const {
+        return _history.size();
     }
 
     std::shared_ptr<Packet::LogFrame> lastFrame() const;
 
     void addFrame(std::shared_ptr<Packet::LogFrame> frame);
 
-    // Gets frames.size() frames starting at <i> and working backwards.
+    // Gets frames.size() frames starting at start and working backwards.
     // Clears any frames that couldn't be populated.
     // Returns the number of frames copied.
     int getFrames(
@@ -92,22 +76,34 @@ public:
 
     // Returns the amount of memory used by all LogFrames in the history.
     int spaceUsed() const {
-        QMutexLocker locker(&_mutex);
         return _spaceUsed;
     }
 
     bool recording() const {
-        QMutexLocker locker(&_mutex);
         return _fd >= 0;
     }
 
     QString filename() const {
-        QMutexLocker locker(&_mutex);
         return _filename;
     }
 
+    int firstFrameNumber() const {
+        return currentFrameNumber() - _history.size() + 1;
+    }
+
+    int currentFrameNumber() const {
+        return _nextFrameNumber-1;
+    }
+
+    int getFrames(int endIndex, int num, std::shared_ptr<Packet::LogFrame> *d_first) const;
+
+    RJ::Time startTime() const {
+        return _startTime;
+    }
+
 private:
-    mutable QMutex _mutex;
+    RJ::Time _startTime;
+    mutable QReadWriteLock _lock;
 
     QString _filename;
 
@@ -120,13 +116,13 @@ private:
      * but after it is copied the copies can be used and destroyed freely in
      * different threads.
      */
-    std::vector<std::shared_ptr<Packet::LogFrame> > _history;
-
-    // Sequence number of the next frame to be written
-    int _nextFrameNumber;
+    boost::circular_buffer<std::shared_ptr<Packet::LogFrame>> _history;
 
     int _spaceUsed;
 
     // File descriptor for log file
     int _fd;
+
+    // Sequence number of the next frame to be written
+    int _nextFrameNumber;
 };
