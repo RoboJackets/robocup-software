@@ -9,12 +9,15 @@
 
 using namespace std;
 
-VisionReceiver::VisionReceiver(bool sim, int port): simulation(sim), _running(false), port(port) {}
+VisionReceiver::VisionReceiver(bool sim, int port)
+    : simulation(sim), _running(false), port(port) {}
 
 void VisionReceiver::stop() {
     if (isRunning()) {
-        // Handle Case where start has been called, but _running has not been set to true yet.
-        while (!_running) {}
+        // Handle Case where start has been called, but _running has not been
+        // set to true yet.
+        while (!_running) {
+        }
         _running = false;
         wait();
     }

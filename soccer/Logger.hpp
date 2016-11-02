@@ -53,15 +53,11 @@ public:
     void close();
 
     // Returns the size of the circular buffer
-    size_t capacity() const {
-        return _history.capacity();
-    }
+    size_t capacity() const { return _history.capacity(); }
 
     // Returns the sequence number of the most recently added frame.
     // Returns -1 if no frames have been added.
-    size_t size() const {
-        return _history.size();
-    }
+    size_t size() const { return _history.size(); }
 
     std::shared_ptr<Packet::LogFrame> lastFrame() const;
 
@@ -70,36 +66,26 @@ public:
     // Gets frames.size() frames starting at start and working backwards.
     // Clears any frames that couldn't be populated.
     // Returns the number of frames copied.
-    int getFrames(
-        int start,
-        std::vector<std::shared_ptr<Packet::LogFrame> >& frames) const;
+    int getFrames(int start,
+                  std::vector<std::shared_ptr<Packet::LogFrame>>& frames) const;
 
     // Returns the amount of memory used by all LogFrames in the history.
-    int spaceUsed() const {
-        return _spaceUsed;
-    }
+    int spaceUsed() const { return _spaceUsed; }
 
-    bool recording() const {
-        return _fd >= 0;
-    }
+    bool recording() const { return _fd >= 0; }
 
-    QString filename() const {
-        return _filename;
-    }
+    QString filename() const { return _filename; }
 
     int firstFrameNumber() const {
         return currentFrameNumber() - _history.size() + 1;
     }
 
-    int currentFrameNumber() const {
-        return _nextFrameNumber-1;
-    }
+    int currentFrameNumber() const { return _nextFrameNumber - 1; }
 
-    int getFrames(int endIndex, int num, std::shared_ptr<Packet::LogFrame> *d_first) const;
+    int getFrames(int endIndex, int num,
+                  std::shared_ptr<Packet::LogFrame>* d_first) const;
 
-    RJ::Time startTime() const {
-        return _startTime;
-    }
+    RJ::Time startTime() const { return _startTime; }
 
 private:
     RJ::Time _startTime;

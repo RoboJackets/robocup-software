@@ -228,8 +228,6 @@ void Processor::runModels(
  * program loop
  */
 void Processor::run() {
-
-
     Status curStatus;
 
     bool first = true;

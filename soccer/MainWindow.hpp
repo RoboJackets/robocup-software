@@ -161,7 +161,7 @@ private:
 
     Ui_MainWindow _ui;
 
-    Processor*  const _processor;
+    Processor* const _processor;
     Configuration* _config;
 
     QuaternionDemo* _quaternion_demo;
