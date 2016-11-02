@@ -27,9 +27,11 @@ public:
     }
 
     bool stateValid(const Geometry2d::Point& state) const {
-        // TODO: check against field bounds
-        if (_obstacles.hit(state)) return false;
-        return true;
+        // note: _obstacles contains obstacles that define the limits of the
+        // field, so we shouldn't have to check separately that the point is
+        // within the field boundaries.
+
+        return !_obstacles.hit(state);
     }
 
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
