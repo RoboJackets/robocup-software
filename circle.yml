@@ -33,7 +33,7 @@ dependencies:
 test:
   override:
     # Also run webhooks
-    - ./external/DoCIF/commands/exit.sh || curl -X POST --data-urlencode 'payload={"channel": "#robocup-status", "username": "Cthulhu", "text": "The Build Failed!\n$CIRCLE_BUILD_URL", "icon_emoji": ":ghost:"}' $SLACK_WEBHOOK
+    - ./external/DoCIF/commands/exit.sh || ./util/docker/notify_fail.sh
 
 deployment:
   github:
