@@ -32,7 +32,8 @@ dependencies:
 # The test phase dosen't actually run tests. We need the caching from the deploy step.
 test:
   override:
-    - ./external/DoCIF/commands/exit.sh
+    # Also run webhooks
+    - ./external/DoCIF/commands/exit.sh || curl -X POST --data-urlencode 'payload={"channel": "#robocup-status", "username": "Cthulhu", "text": "The Build Failed!\n'"$CIRCLE_BUILD_URL"'", "icon_emoji": ":ghost:"}' $SLACK_WEBHOOK
 
 deployment:
   github:
@@ -40,8 +41,9 @@ deployment:
     commands:
       - ./external/DoCIF/commands/deploy.sh # This will run DEPLOY_COMMAND as well
 
-experimental:
-  notify:
-    branches:
-      only:
-        - master
+# experimental:
+#   notify:
+#     branches:
+#       only:
+#         - master
+
