@@ -15,7 +15,8 @@ machine:
 checkout:
   post:
     # This is a hack, but it's the only thing that works at the moment :/
-    - git submodule sync && git submodule update --init --recursive || true && git submodule sync && git submodule update --init --recursive
+    - sudo apt-get update && sudo apt-get install git
+    - git submodule sync && git submodule update --init --recursive
 
 dependencies:
   pre:
