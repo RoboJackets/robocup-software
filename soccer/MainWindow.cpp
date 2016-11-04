@@ -269,11 +269,6 @@ void MainWindow::updateViews() {
     }
 
     auto value = _ui.logHistoryLocation->value();
-    if (static_cast<int>(value) != frameNumber()) {
-        //_doubleFrameNumber = value;
-        //_playbackRate = 0;
-    }
-    //    emit historyLocationChanged(_doubleFrameNumber);
 
     // Advance log history
     int liveFrameNumber = _processor->logger().currentFrameNumber();
