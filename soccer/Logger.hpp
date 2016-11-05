@@ -82,9 +82,8 @@ public:
 
     int currentFrameNumber() const { return _nextFrameNumber - 1; }
 
-    template<typename OutputIterator>
-    int getFrames(int endIndex, int num,
-                  OutputIterator result) const {
+    template <typename OutputIterator>
+    int getFrames(int endIndex, int num, OutputIterator result) const {
         QReadLocker locker(&_lock);
         auto end = _history.rbegin();
         endIndex = std::min(_nextFrameNumber, endIndex);
