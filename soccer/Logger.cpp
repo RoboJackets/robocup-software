@@ -85,20 +85,3 @@ shared_ptr<LogFrame> Logger::lastFrame() const {
     QReadLocker locker(&_lock);
     return _history.back();
 }
-
-int Logger::getFrames(int endIndex, int num,
-                      shared_ptr<Packet::LogFrame>* d_first) const {
-    QReadLocker locker(&_lock);
-    auto end = _history.rbegin();
-    endIndex = min(_nextFrameNumber, endIndex);
-    int numFromBack = _nextFrameNumber - endIndex;
-    if (numFromBack >= _history.size()) {
-        return 0;
-    } else {
-        advance(end, numFromBack);
-        int startFrame = _nextFrameNumber - _history.size();
-        int numToCopy = min(endIndex - 1 - startFrame, num);
-        copy_n(end, numToCopy, d_first);
-        return max(numToCopy, 0);
-    }
-}

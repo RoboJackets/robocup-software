@@ -82,8 +82,23 @@ public:
 
     int currentFrameNumber() const { return _nextFrameNumber - 1; }
 
+    template<typename OutputIterator>
     int getFrames(int endIndex, int num,
-                  std::shared_ptr<Packet::LogFrame>* d_first) const;
+                  OutputIterator result) const {
+        QReadLocker locker(&_lock);
+        auto end = _history.rbegin();
+        endIndex = std::min(_nextFrameNumber, endIndex);
+        int numFromBack = _nextFrameNumber - endIndex;
+        if (numFromBack >= _history.size()) {
+            return 0;
+        } else {
+            advance(end, numFromBack);
+            int startFrame = _nextFrameNumber - _history.size();
+            int numToCopy = std::min(endIndex - 1 - startFrame, num);
+            copy_n(end, numToCopy, result);
+            return std::max(numToCopy, 0);
+        }
+    }
 
     RJ::Time startTime() const { return _startTime; }
 

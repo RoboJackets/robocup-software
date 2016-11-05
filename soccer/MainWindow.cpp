@@ -299,7 +299,7 @@ void MainWindow::updateViews() {
 
     // Read recent history from the log
     _processor->logger().getFrames(frameNumber(), _history.size(),
-                                   &_history[0]);
+                                   _history.begin());
 
     // Update field view
     _ui.fieldView->update();
