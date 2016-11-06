@@ -213,9 +213,9 @@
    <i value="0"/>
    <i_windup value="10"/>
    <accelMultiplier value="0"/>
-   <d value="0.05"/>
+   <d value="0.4"/>
    <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0.1"/>
+   <minEffectiveVelocity value="0.2"/>
   </translation>
   <rotation>
    <p value="7"/>
