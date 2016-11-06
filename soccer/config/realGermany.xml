@@ -252,7 +252,7 @@
  </WindowEvaluator>
  <Joystick>
   <Max_Rotation_Speed value="12.5664"/>
-  <Max_Damped_Rotation_Speed value="1"/>
+  <Max_Damped_Rotation_Speed value="5"/>
   <Max_Translation_Speed value="3"/>
   <Max_Damped_Translation_Speed value="1"/>
  </Joystick>
