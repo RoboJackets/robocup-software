@@ -196,7 +196,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
         for robot in main.system_state().their_robots:
             self._win_eval.excluded_robots.append(robot)
 
-        if main.root_play().goalie_id is not None:
+        if main.root_play().goalie_id != -1:
             self._win_eval.excluded_robots.append(main.our_robot_with_id(
                 main.root_play().goalie_id))
 
