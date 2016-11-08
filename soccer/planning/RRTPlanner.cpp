@@ -1,5 +1,4 @@
 #include "RRTPlanner.hpp"
-#include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include <rrt/BiRRT.hpp>
