@@ -17,13 +17,38 @@ GamepadController::GamepadController()
         return;
     }
 
+
+    // Load controller mappings
+    // TODO fix this path
+    SDL_GameControllerAddMapping("030000006d04000016c2000011010000,Logitech Logitech Dual Action,platform:Linux,x:b0,a:b1,b:b2,y:b3,back:b8,start:b9,dpleft:h0.8,dpdown:h0.0,dpdown:h0.4,dpright:h0.0,dpright:h0.2,dpup:h0.0,dpup:h0.1,leftshoulder:h0.0,dpup:h0.1,leftshoulder:h0.0,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+    // int ret = SDL_GameControllerAddMappingsFromFile("/home/jay/Code/robocup-software/run/gamecontrollerdb.txt");
+    // if (ret = -1) {
+    //     cout << "Loading gamecontroller mappings FAILED: " << SDL_GetError() << endl;
+    // } else {
+    //     cout << "Added " << ret << " mappings!" << endl;
+    // }
+
+    // Controllers will be detected later if needed.
+    connected = false;
+    openJoystick();
+}
+
+GamepadController::~GamepadController() {
+    QMutexLocker(&mutex());
+    SDL_GameControllerClose(_controller);
+    _controller = nullptr;
+    SDL_Quit();
+}
+
+void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
         for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
-            if (SDL_IsGameController(i)) {
+            // if (SDL_IsGameController(i)) {
                 SDL_GameController* controller;
                 controller = SDL_GameControllerOpen(i);
+                connected = true;
 
                 if (controller != nullptr) {
                     _controller = controller;
@@ -34,18 +59,19 @@ GamepadController::GamepadController()
                     cerr << "ERROR: Could not open controller! SDL Error: "
                          << SDL_GetError() << endl;
                 }
-            }
+            // }
         }
-    } else {
-        cout << "WARNING: No manual controllers connected" << endl;
     }
+
+    // _controller = SDL_GameControllerOpen(device);
+    // SDL_Joystick* j = SDL_GameControllerGetJoystick(_controller);
+    // SDL_JoystickID m_instance_id = SDL_JoystickInstanceID(j);
 }
 
-GamepadController::~GamepadController() {
-    QMutexLocker(&mutex());
+void GamepadController::closeJoystick() {
     SDL_GameControllerClose(_controller);
-    _controller = nullptr;
-    SDL_Quit();
+    cout << "Gamepad Controller Disconnected" << endl;
+    connected = false;
 }
 
 bool GamepadController::valid() const { return _controller != nullptr; }
@@ -55,6 +81,20 @@ void GamepadController::update() {
     SDL_GameControllerUpdate();
 
     RJ::Time now = RJ::timestamp();
+
+    if (connected) {
+        // Check if dc
+        if (!SDL_GameControllerGetAttached(_controller)) {
+            closeJoystick();
+            return;
+        }
+    } else {
+        // Check if new controller found
+        openJoystick();
+        if (!connected) {
+            return;
+        }
+    }
 
     /*
      *  DRIBBLER POWER

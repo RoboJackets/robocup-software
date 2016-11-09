@@ -8,12 +8,12 @@ static constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
 
 static constexpr float AXIS_MAX = 32768.0f;
 
-static const char* devices[] = {
-    "/dev/input/by-id/usb-Logitech_Logitech_Cordless_RumblePad_2-joystick",
-    "/dev/input/by-id/usb-Logitech_Logitech_Dual_Action-joystick",
-
-    // End of list
-    nullptr};
+// static const char* devices[] = {
+//     "/dev/input/by-id/usb-Logitech_Logitech_Cordless_RumblePad_2-joystick",
+//     "/dev/input/by-id/usb-Logitech_Logitech_Dual_Action-joystick",
+//
+//     // End of list
+//     nullptr};
 
 GamepadJoystick::GamepadJoystick()
     : _joystick(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
