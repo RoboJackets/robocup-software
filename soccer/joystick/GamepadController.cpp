@@ -94,27 +94,27 @@ void GamepadController::update() {
     }
 
     /*
+     *  DRIBBLER ON/OFF
+     */
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
+        _controls.dribble = false;
+    } else if (SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT)) {
+        _controls.dribble = true;
+    }
+
+    /*
      *  DRIBBLER POWER
      */
     if (SDL_GameControllerGetButton(_controller,
-                                    SDL_CONTROLLER_BUTTON_LEFTSTICK)) {
+                                    SDL_CONTROLLER_BUTTON_A)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
         }
     } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_RIGHTSTICK)) {
+                                           SDL_CONTROLLER_BUTTON_Y)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
-            _lastDribblerTime = now;
-        }
-    } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_Y)) {
-        /*
-         *  DRIBBLER ON/OFF
-         */
-        if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
-            _controls.dribble = !_controls.dribble;
             _lastDribblerTime = now;
         }
     } else {
@@ -126,13 +126,13 @@ void GamepadController::update() {
      *  KICKER POWER
      */
     if (SDL_GameControllerGetButton(_controller,
-                                    SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
+                                    SDL_CONTROLLER_BUTTON_X)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
     } else if (SDL_GameControllerGetButton(
-                   _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
+                   _controller, SDL_CONTROLLER_BUTTON_B)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;
@@ -145,18 +145,17 @@ void GamepadController::update() {
      *  KICK TRUE/FALSE
      */
     _controls.kick =
-        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A);
+        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
 
     /*
      *  CHIP TRUE/FALSE
      */
     _controls.chip =
-        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X);
+        SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
 
     /*
      *  VELOCITY ROTATION
      */
-    // Logitech F310 Controller
     _controls.rotation =
         -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) /
         AXIS_MAX;
