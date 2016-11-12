@@ -19,14 +19,14 @@ public:
     void reset() { _startTime = RJ::timestamp(); }
 
     void setIntervalInSeconds(float seconds) {
-        _interval = (RJ::Time)(seconds * 1000.0f);
+        _interval = (RJ::Timestamp)(seconds * 1000.0f);
     }
 
-    void setIntervalInMilliseconds(RJ::Time ms) { _interval = ms; }
+    void setIntervalInMilliseconds(RJ::Timestamp ms) { _interval = ms; }
 
     bool isTimedOut() { return RJ::timestamp() - _startTime > _interval; }
 
 private:
-    RJ::Time _interval;
-    RJ::Time _startTime;
+    RJ::Timestamp _interval;
+    RJ::Timestamp _startTime;
 };

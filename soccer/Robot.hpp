@@ -65,7 +65,7 @@ public:
     float angleVel;  /// angular velocity in radians/sec
 
     // Time at which this estimate is valid
-    RJ::Time time;
+    RJ::Timestamp time;
     int visionFrame;
 };
 
@@ -288,7 +288,7 @@ public:
      */
     void unkick();
 
-    RJ::Time lastKickTime() const;
+    RJ::Timestamp lastKickTime() const;
 
     /// checks if the bot has kicked/chipped very recently.
     bool justKicked() {
@@ -406,7 +406,7 @@ public:
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool rxIsFresh(RJ::Time age = 500000) const;
+    bool rxIsFresh(RJ::Timestamp age = 500000) const;
 
     /**
      * @brief start the robot playing a song
@@ -524,8 +524,8 @@ private:
     void _unkick();
 
     uint32_t _lastKickerStatus;
-    RJ::Time _lastKickTime;
-    RJ::Time _lastChargedTime;
+    RJ::Timestamp _lastKickTime;
+    RJ::Timestamp _lastChargedTime;
 
     Packet::RadioRx _radioRx;
 

@@ -77,7 +77,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
             RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime());
 
         MotionInstant target = prevPath->end().motion;
-        RJ::Time time = ball.estimateTimeTo(*targetKickPos);
+        RJ::Timestamp time = ball.estimateTimeTo(*targetKickPos);
         float timeLeft = prevPath->getDuration() - timeIntoPath;
 
         if (timeLeft < -0.3 || timeLeft > 5.0) {
@@ -131,7 +131,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
 
     if (prevPath && targetKickPos && prevPath->getDuration() < 1.0) {
         MotionInstant target;
-        RJ::Time time = ball.estimateTimeTo(*targetKickPos, &target.pos);
+        RJ::Timestamp time = ball.estimateTimeTo(*targetKickPos, &target.pos);
 
         targetKickPos = target.pos;
         target.vel = (command.target - target.pos).normalized(ApproachSpeed);

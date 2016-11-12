@@ -265,7 +265,7 @@ void USBRadio::receive() {
 
 // Note: this method assumes that sizeof(buf) == rtp::Reverse_Size
 void USBRadio::handleRxData(uint8_t* buf) {
-    RJ::Time rx_time = RJ::timestamp();
+    RJ::Timestamp rx_time = RJ::timestamp();
 
     RadioRx packet = RadioRx();
 

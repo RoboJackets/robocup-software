@@ -55,13 +55,13 @@ private:
     const Ball& ball;
 };
 
-std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
+std::unique_ptr<Planning::Path> Ball::path(RJ::Timestamp startTime) const {
     auto path = std::make_unique<BallPath>(*this);
     path->setStartTime(startTime);
     return std::move(path);
 }
 
-Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
+Planning::MotionInstant Ball::predict(RJ::Timestamp estimateTime) const {
     if (estimateTime < time) {
         debugThrow("Estimated Time can't be before observation time.");
         return MotionInstant();
@@ -82,7 +82,7 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
 }
 
-RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
+RJ::Timestamp Ball::estimateTimeTo(const Geometry2d::Point& point,
                               Geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
     auto nearPoint = line.nearestPoint(point);
