@@ -19,15 +19,13 @@ GamepadController::GamepadController()
         return;
     }
 
-
-    // Load controller mappings
-    // TODO fix this path
-    SDL_GameControllerAddMapping("030000006d04000016c2000011010000,Logitech Logitech Dual Action (D Input)\
-,platform:Linux,x:b0,a:b1,b:b2,y:b3,back:b8,start:b9,dpleft:h0.8,dpdown:h0.0,\
-dpdown:h0.4,dpright:h0.0,dpright:h0.2,dpup:h0.0,dpup:h0.1,leftshoulder:h0.0,\
-dpup:h0.1,leftshoulder:h0.0,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,\
-righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
-    SDL_GameControllerAddMapping("0300000057696920552047616d654300,Wii U GameCube Adapter Port 1,platform:Linux,x:b3,a:b0,b:b1,y:b2,start:b7,dpleft:b10,dpdown:b9,dpright:b11,dpup:b8,lefttrigger:a2,rightshoulder:b6,righttrigger:a5,leftx:a0,lefty:a1,rightx:a3,righty:a4,");
+    // Load extra controller mappings
+//     SDL_GameControllerAddMapping("030000006d04000016c2000011010000,Logitech Logitech Dual Action (D Input)\
+// ,platform:Linux,x:b0,a:b1,b:b2,y:b3,back:b8,start:b9,dpleft:h0.8,dpdown:h0.0,\
+// dpdown:h0.4,dpright:h0.0,dpright:h0.2,dpup:h0.0,dpup:h0.1,leftshoulder:h0.0,\
+// dpup:h0.1,leftshoulder:h0.0,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,\
+// righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
+    // SDL_GameControllerAddMapping("0300000057696920552047616d654300,Wii U GameCube Adapter Port 1,platform:Linux,x:b3,a:b0,b:b1,y:b2,start:b7,dpleft:b10,dpdown:b9,dpright:b11,dpup:b8,lefttrigger:a2,rightshoulder:b6,righttrigger:a5,leftx:a0,lefty:a1,rightx:a3,righty:a4,");
 
     // Controllers will be detected later if needed.
     connected = false;
@@ -68,8 +66,8 @@ void GamepadController::openJoystick() {
 }
 
 void GamepadController::closeJoystick() {
+    cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
-    cout << "Gamepad Controller Disconnected" << endl;
     connected = false;
 }
 
