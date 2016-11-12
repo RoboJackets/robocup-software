@@ -71,7 +71,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
 
     // joysticks
     _joysticks.push_back(new GamepadController());
-    // _joysticks.push_back(new GamepadJoystick());
+    _joysticks.push_back(new GamepadJoystick());
     _joysticks.push_back(new SpaceNavJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
