@@ -542,11 +542,11 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
     }
 }
 
-bool OurRobot::rxIsFresh(RJ::Time age) const {
+bool OurRobot::rxIsFresh(RJ::Timestamp age) const {
     return (RJ::timestamp() - _radioRx.timestamp()) < age;
 }
 
-RJ::Time OurRobot::lastKickTime() const { return _lastKickTime; }
+RJ::Timestamp OurRobot::lastKickTime() const { return _lastKickTime; }
 
 void OurRobot::radioRxUpdated() {
     if (_radioRx.kicker_status() < _lastKickerStatus) {

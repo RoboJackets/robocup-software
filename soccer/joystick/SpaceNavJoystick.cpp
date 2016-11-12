@@ -39,8 +39,8 @@ void SpaceNavJoystick::update() {
         if (sev.type == SPNAV_EVENT_MOTION) {
             //  note: spacenav axes range from -350 to 350
 
-            RJ::Time now = RJ::timestamp();
-            const RJ::Time DribbleStepTime = 300000;
+            RJ::Timestamp now = RJ::timestamp();
+            const RJ::Timestamp DribbleStepTime = 300000;
             if ((sev.motion.y >
                  SpaceNavJoystick::DribblerPositiveDeadzone->value()) ||
                 (sev.motion.y <

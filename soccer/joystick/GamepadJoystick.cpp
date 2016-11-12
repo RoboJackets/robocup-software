@@ -3,8 +3,8 @@
 using namespace Packet;
 using namespace std;
 
-static constexpr RJ::Time Dribble_Step_Time = 125 * 1000;
-static constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
+static constexpr RJ::Timestamp Dribble_Step_Time = 125 * 1000;
+static constexpr RJ::Timestamp Kicker_Step_Time = 125 * 1000;
 
 static constexpr float AXIS_MAX = 32768.0f;
 
@@ -56,7 +56,7 @@ void GamepadJoystick::update() {
     }
 
     // DRIBBLER POWER CONTROL
-    RJ::Time now = RJ::timestamp();
+    RJ::Timestamp now = RJ::timestamp();
     if (SDL_JoystickGetButton(_joystick, 1)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);

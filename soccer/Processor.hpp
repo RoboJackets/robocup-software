@@ -82,10 +82,10 @@ public:
             lastRadioRxTime = 0;
         }
 
-        RJ::Time lastLoopTime;
-        RJ::Time lastVisionTime;
-        RJ::Time lastRefereeTime;
-        RJ::Time lastRadioRxTime;
+        RJ::Timestamp lastLoopTime;
+        RJ::Timestamp lastVisionTime;
+        RJ::Timestamp lastRefereeTime;
+        RJ::Timestamp lastRadioRxTime;
     };
 
     static void createConfiguration(Configuration* cfg);
@@ -184,7 +184,7 @@ public:
     ////////
 
     // Time of the first LogFrame
-    RJ::Time firstLogTime;
+    RJ::Timestamp firstLogTime;
 
 protected:
     void run() override;
