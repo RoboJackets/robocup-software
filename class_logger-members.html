@@ -117,25 +117,27 @@ $(document).ready(function(){initNavTree('class_logger.html','');});
 <p>This is the complete list of members for <a class="el" href="class_logger.html">Logger</a>, including all inherited members.</p>
 <table class="directory">
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>addFrame</b>(std::shared_ptr&lt; Packet::LogFrame &gt; frame) (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>close</b>() (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>capacity</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>close</b>() (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>currentFrameNumber</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>filename</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>firstFrameNumber</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>getFrames</b>(int start, std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; &amp;frames) const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>lastFrame</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>lastFrameNumber</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>Logger</b>() (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>maxFrames</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>numFrames</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>getFrames</b>(int start, std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt;&gt; &amp;frames) const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>getFrames</b>(int endIndex, int num, OutputIterator result) const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>lastFrame</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Logger</b>(size_t logSize=10000) (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>open</b>(QString filename) (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>recording</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>spaceUsed</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>size</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>spaceUsed</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>startTime</b>() const  (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>~Logger</b>() (defined in <a class="el" href="class_logger.html">Logger</a>)</td><td class="entry"><a class="el" href="class_logger.html">Logger</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 9 2016 20:42:49 for GT RoboCup SSL by
+    <li class="footer">Generated on Sat Nov 12 2016 22:51:06 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

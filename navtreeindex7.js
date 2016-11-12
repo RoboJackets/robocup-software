@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html":[12,0,5,8,5,0,1],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html#a8b463089d0beefcc882f19c4051927ae":[12,0,5,8,5,0,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html":[12,0,5,8,5,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a1829f61b494b166155ed89af0276007a":[12,0,5,8,5,1,0,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5f5e60e56394bd8d3316a1f0330980ce":[12,0,5,13,9,0,9],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b0094cf85340eb551c4a4a3c5f15878":[12,0,5,13,9,0,6],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b2426b433729c0490eea18ee2e3532c":[12,0,5,13,9,0,12],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a7c86f92caef914775eaed060ccf25054":[12,0,5,13,9,0,7],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274":[12,0,5,13,9,0,3]
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a7c86f92caef914775eaed060ccf25054":[12,0,5,13,9,0,7]
 };

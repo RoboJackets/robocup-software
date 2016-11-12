@@ -122,33 +122,30 @@ $(document).ready(function(){initNavTree('class_logger.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a4602e9fa717e08acafa200cf5c3b7f3c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4602e9fa717e08acafa200cf5c3b7f3c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Logger</b> (size_t logSize=10000)</td></tr>
+<tr class="separator:a4602e9fa717e08acafa200cf5c3b7f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd8efcd5b1115eaf0e2724e227e1083e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd8efcd5b1115eaf0e2724e227e1083e"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>open</b> (QString filename)</td></tr>
 <tr class="separator:afd8efcd5b1115eaf0e2724e227e1083e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afee2bab560c2db0190c980884d33868c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afee2bab560c2db0190c980884d33868c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>close</b> ()</td></tr>
 <tr class="separator:afee2bab560c2db0190c980884d33868c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6cfd89c2b072df63185c641068a091aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6cfd89c2b072df63185c641068a091aa"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>numFrames</b> () const </td></tr>
-<tr class="separator:a6cfd89c2b072df63185c641068a091aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42aa8ea0cfdd5977bf109436e4f8b546"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42aa8ea0cfdd5977bf109436e4f8b546"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>maxFrames</b> () const </td></tr>
-<tr class="separator:a42aa8ea0cfdd5977bf109436e4f8b546"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbbf567f8670e05c0df715a089dd5e2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbbf567f8670e05c0df715a089dd5e2c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>firstFrameNumber</b> () const </td></tr>
-<tr class="separator:abbbf567f8670e05c0df715a089dd5e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8de200e43de6a7f6ca35c4a09e621ab3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8de200e43de6a7f6ca35c4a09e621ab3"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>lastFrameNumber</b> () const </td></tr>
-<tr class="separator:a8de200e43de6a7f6ca35c4a09e621ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d168f11bb29dc9c3fdd7058b817ad55"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d168f11bb29dc9c3fdd7058b817ad55"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>capacity</b> () const </td></tr>
+<tr class="separator:a1d168f11bb29dc9c3fdd7058b817ad55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1b0c938fc6770a6869c39644dd7638f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1b0c938fc6770a6869c39644dd7638f"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const </td></tr>
+<tr class="separator:ab1b0c938fc6770a6869c39644dd7638f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a319bb691923c443e11d0db44188d50cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a319bb691923c443e11d0db44188d50cb"></a>
 std::shared_ptr&lt; Packet::LogFrame &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lastFrame</b> () const </td></tr>
 <tr class="separator:a319bb691923c443e11d0db44188d50cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af08f43c44f0046fcb1b3fb86eb030803"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af08f43c44f0046fcb1b3fb86eb030803"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addFrame</b> (std::shared_ptr&lt; Packet::LogFrame &gt; frame)</td></tr>
 <tr class="separator:af08f43c44f0046fcb1b3fb86eb030803"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86731367eabf48f26cfb155dd4662f67"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86731367eabf48f26cfb155dd4662f67"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>getFrames</b> (int start, std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt; &gt; &amp;frames) const </td></tr>
-<tr class="separator:a86731367eabf48f26cfb155dd4662f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fecdb53ac3a45d35bd71417eb375f8a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7fecdb53ac3a45d35bd71417eb375f8a"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>getFrames</b> (int start, std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt;&gt; &amp;frames) const </td></tr>
+<tr class="separator:a7fecdb53ac3a45d35bd71417eb375f8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae91f9721e83aba0321a0fb52c079b38e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae91f9721e83aba0321a0fb52c079b38e"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>spaceUsed</b> () const </td></tr>
 <tr class="separator:ae91f9721e83aba0321a0fb52c079b38e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -158,6 +155,19 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>recording</b> () cons
 <tr class="memitem:a9930be1c39163aa25374e5a30794cc32"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9930be1c39163aa25374e5a30794cc32"></a>
 QString&#160;</td><td class="memItemRight" valign="bottom"><b>filename</b> () const </td></tr>
 <tr class="separator:a9930be1c39163aa25374e5a30794cc32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbbf567f8670e05c0df715a089dd5e2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abbbf567f8670e05c0df715a089dd5e2c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>firstFrameNumber</b> () const </td></tr>
+<tr class="separator:abbbf567f8670e05c0df715a089dd5e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade4d6a6d6b7d914141f965d66d056bb8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade4d6a6d6b7d914141f965d66d056bb8"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>currentFrameNumber</b> () const </td></tr>
+<tr class="separator:ade4d6a6d6b7d914141f965d66d056bb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e30c6bc915d42387af91dedd7131e50"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1e30c6bc915d42387af91dedd7131e50"></a>
+template&lt;typename OutputIterator &gt; </td></tr>
+<tr class="memitem:a1e30c6bc915d42387af91dedd7131e50"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getFrames</b> (int endIndex, int num, OutputIterator result) const </td></tr>
+<tr class="separator:a1e30c6bc915d42387af91dedd7131e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac83418ea56ce694105b0e702a27893c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac83418ea56ce694105b0e702a27893c7"></a>
+RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>startTime</b> () const </td></tr>
+<tr class="separator:ac83418ea56ce694105b0e702a27893c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The Logger stores and saves the state of the game at each point in time. </p>
@@ -179,7 +189,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><b>filename</b> () co
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_logger.html">Logger</a></li>
-    <li class="footer">Generated on Wed Nov 9 2016 20:42:49 for GT RoboCup SSL by
+    <li class="footer">Generated on Sat Nov 12 2016 22:51:06 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>
