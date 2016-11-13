@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
             auto sleepPeriod = framePeriod - computationTime;
             usleep(RJ::numMicroseconds(sleepPeriod));
         } else {
-            printf("Processor took too long: %lld us\n", RJ::numMicroseconds(computationTime));
+            printf("Processor took too long: %ld us\n", RJ::numMicroseconds(computationTime));
         }
     }
 
