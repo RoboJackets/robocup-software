@@ -26,7 +26,7 @@ void usage(const char* prog) {
 }
 
 int main(int argc, char* argv[]) {
-    auto framePeriod = chrono::microseconds(chrono::seconds(1)) / 60; //60 frames per second
+    int framePeriod = 1000000 / 60;
 
     bool simulation = false;
     QString logFile;
@@ -94,11 +94,11 @@ int main(int argc, char* argv[]) {
     LogFrame logFrame;
     bool first = true;
     while (true) {
-        auto startTime = RJ::now();
+        RJ::Time startTime = RJ::timestamp();
 
         logFrame.Clear();
-        logFrame.set_command_time(RJ::timestamp(startTime));
-        logFrame.set_timestamp(RJ::timestamp(startTime));
+        logFrame.set_command_time(startTime);
+        logFrame.set_timestamp(startTime);
         logFrame.set_blue_team(false);  // Always assume self is Yellow for logs
 
         // Check for user input (to exit)
@@ -166,13 +166,12 @@ int main(int argc, char* argv[]) {
             break;
         }
 
-        auto endTime = RJ::now();
-        auto computationTime = endTime - startTime;
-        if (computationTime < framePeriod) {
-            auto sleepPeriod = framePeriod - computationTime;
-            usleep(RJ::numMicroseconds(sleepPeriod));
+        RJ::Time endTime = RJ::timestamp();
+        int lastFrameTime = endTime - startTime;
+        if (lastFrameTime < framePeriod) {
+            usleep(framePeriod - lastFrameTime);
         } else {
-            printf("Processor took too long: %d us\n", RJ::numMicroseconds(computationTime));
+            printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
 

@@ -48,7 +48,7 @@ void Path::drawDebugText(SystemState* state, const QColor& color,
     }
 }
 
-std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Timestamp startTime,
+std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
                                                   float deltaT) const {
     return std::move(
         std::make_unique<ConstPathIterator>(this, startTime, deltaT));
@@ -56,7 +56,7 @@ std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Timestamp startTime,
 
 bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
                           float* hitTime, Geometry2d::Point* hitLocation,
-                          RJ::Timestamp startTime) const {
+                          RJ::Time startTime) const {
     const float deltaT = 0.05;
 
     auto thisPathIterator = iterator(startTime, deltaT);

@@ -44,12 +44,12 @@ public:
     bool valid;
 
     /// Time at which this estimate is valid
-    RJ::Timestamp time;
+    RJ::Time time;
 
-    Planning::MotionInstant predict(RJ::Timestamp time) const;
-    std::unique_ptr<Planning::Path> path(RJ::Timestamp startTime) const;
+    Planning::MotionInstant predict(RJ::Time time) const;
+    std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
 
-    RJ::Timestamp estimateTimeTo(const Geometry2d::Point& point,
+    RJ::Time estimateTimeTo(const Geometry2d::Point& point,
                             Geometry2d::Point* nearPoint = nullptr) const;
 };
 
@@ -120,7 +120,7 @@ public:
     void drawShapeSet(const Geometry2d::ShapeSet& shapes,
                       const QColor& color = Qt::black,
                       const QString& layer = QString());
-    RJ::Timestamp timestamp;
+    RJ::Time timestamp;
     GameState gameState;
 
     /// All possible robots.

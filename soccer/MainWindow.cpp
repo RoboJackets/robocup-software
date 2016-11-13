@@ -247,7 +247,7 @@ void MainWindow::updateViews() {
     }
 
     // Time since last update
-    RJ::Timestamp time = RJ::timestamp();
+    RJ::Time time = RJ::timestamp();
     int delta_us = time - _lastUpdateTime;
     _lastUpdateTime = time;
     double framerate = 1000000.0 / delta_us;
@@ -730,7 +730,7 @@ void MainWindow::updateStatus() {
 
     // Get processing thread status
     Processor::Status ps = _processor->status();
-    RJ::Timestamp curTime = RJ::timestamp();
+    RJ::Time curTime = RJ::timestamp();
 
     // Determine if we are receiving packets from an external referee
     bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;

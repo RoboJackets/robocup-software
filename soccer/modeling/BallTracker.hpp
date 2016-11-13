@@ -10,11 +10,11 @@ class SystemState;
 class BallObservation {
 public:
     BallObservation(Geometry2d::Point pos = Geometry2d::Point(),
-                    RJ::Timestamp time = 0)
+                    RJ::Time time = 0)
         : pos(pos), time(time) {}
 
     Geometry2d::Point pos;
-    RJ::Timestamp time;
+    RJ::Time time;
 };
 
 class BallTracker {
@@ -25,7 +25,7 @@ public:
 
 private:
     /// Time of the last observation given to the filter
-    RJ::Timestamp _lastTrackTime;
+    RJ::Time _lastTrackTime;
 
     /// Possible balls that were not used on the last frame
     struct PossibleTrack {

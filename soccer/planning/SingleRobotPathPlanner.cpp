@@ -112,7 +112,7 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    const RJ::Timestamp kPathExpirationInterval =
+    const RJ::Time kPathExpirationInterval =
         RJ::SecsToTimestamp(replanTimeout());
     if ((RJ::timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
         return true;

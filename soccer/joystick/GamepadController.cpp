@@ -3,8 +3,8 @@
 using namespace std;
 
 namespace {
-constexpr RJ::Timestamp Dribble_Step_Time = 125 * 1000;
-constexpr RJ::Timestamp Kicker_Step_Time = 125 * 1000;
+constexpr RJ::Time Dribble_Step_Time = 125 * 1000;
+constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
 const float AXIS_MAX = 32768.0f;
 }
 
@@ -54,7 +54,7 @@ void GamepadController::update() {
     QMutexLocker(&mutex());
     SDL_GameControllerUpdate();
 
-    RJ::Timestamp now = RJ::timestamp();
+    RJ::Time now = RJ::timestamp();
 
     /*
      *  DRIBBLER POWER

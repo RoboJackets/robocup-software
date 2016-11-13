@@ -191,7 +191,7 @@ private:
     // rates. To keep rounding consistent, only access this with frameNumber().
     double _doubleFrameNumber;
 
-    RJ::Timestamp _lastUpdateTime;
+    RJ::Time _lastUpdateTime;
 
     QLabel* _currentPlay;
     QLabel* _logFile;

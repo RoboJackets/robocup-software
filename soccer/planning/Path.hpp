@@ -21,7 +21,7 @@ class ConstPathIterator;
  */
 class Path {
 public:
-    Path(RJ::Timestamp startTime = RJ::timestamp()) : _startTime(startTime) {}
+    Path(RJ::Time startTime = RJ::timestamp()) : _startTime(startTime) {}
     virtual ~Path() {}
 
     /**
@@ -102,18 +102,18 @@ public:
                                const QString& layer = "PathDebugText") const;
 
     /// The time the path starts at
-    virtual RJ::Timestamp startTime() const { return _startTime; }
-    virtual void setStartTime(RJ::Timestamp t) { _startTime = t; }
+    virtual RJ::Time startTime() const { return _startTime; }
+    virtual void setStartTime(RJ::Time t) { _startTime = t; }
 
     virtual bool pathsIntersect(const std::vector<DynamicObstacle>& paths,
                                 float* hitTime, Geometry2d::Point* hitLocation,
-                                RJ::Timestamp startTime) const;
+                                RJ::Time startTime) const;
 
-    virtual std::unique_ptr<ConstPathIterator> iterator(RJ::Timestamp startTime,
+    virtual std::unique_ptr<ConstPathIterator> iterator(RJ::Time startTime,
                                                         float deltaT) const;
 
 protected:
-    RJ::Timestamp _startTime;
+    RJ::Time _startTime;
     boost::optional<QString> _debugText;
 };
 
@@ -237,8 +237,8 @@ public:
                                                    angleFunction);
     }
 
-    virtual RJ::Timestamp startTime() const override { return path->startTime(); }
-    virtual void setStartTime(RJ::Timestamp t) override { path->setStartTime(t); }
+    virtual RJ::Time startTime() const override { return path->startTime(); }
+    virtual void setStartTime(RJ::Time t) override { path->setStartTime(t); }
     virtual void setDebugText(QString string) override {
         path->setDebugText(std::move(string));
     }
@@ -252,7 +252,7 @@ public:
 
 class ConstPathIterator {
 public:
-    explicit ConstPathIterator(const Path* path, RJ::Timestamp startTime,
+    explicit ConstPathIterator(const Path* path, RJ::Time startTime,
                                float deltaT)
         : path(path),
           time(RJ::TimestampToSecs(startTime - path->startTime())),
