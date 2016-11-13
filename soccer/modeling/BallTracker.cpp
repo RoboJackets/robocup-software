@@ -17,8 +17,8 @@ static const float Distance_Limit = 0.2;
 static const float Acquisition_Match_Distance = 0.5;
 
 // Age of a track, in microseconds, at which is it dropped
-static const RJ::Timestamp Drop_Possible_Track_Time = 500000;
-static const RJ::Timestamp Drop_Real_Track_Time = 500000;
+static const RJ::Seconds Drop_Possible_Track_Time(0.5);
+static const RJ::Seconds Drop_Real_Track_Time(0.5);
 
 static const float Position_Uncertainty = 0.5;
 
@@ -29,7 +29,7 @@ void fastRemove(T& v, unsigned int i) {
     assert(i < v.size());
     int last = v.size() - 1;
     swap(v[i], v[last]);
-    v.resize(last);
+    v.pop_back();
 }
 
 BallTracker::BallTracker() {}
@@ -89,10 +89,10 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
 	}
 #endif
 
-    RJ::Timestamp now = RJ::timestamp();
+    RJ::Time now = RJ::now();
 
     // FIXME - What time?
-    RJ::Timestamp predictTime = now;
+    RJ::Time predictTime = now;
 
     // Rectangle that defines the boundaries of the field.
     // Note that we are working in team space.
@@ -111,7 +111,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
         Point windowCenter = prediction.pos;
         float windowRadius =
             Position_Uncertainty +
-            velocityUncertainty * (predictTime - _lastTrackTime) / 1000000.0f;
+            velocityUncertainty * RJ::Seconds(predictTime - _lastTrackTime).count();
         state->drawCircle(windowCenter, windowRadius, Qt::white);
 
         // Find the closest new observation to the real ball's predicted
@@ -133,7 +133,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
             _lastTrackTime = goodObs[best]->time;
 
             // Update the real track
-            _ballFilter->predict(state->logFrame->command_time(), &state->ball,
+            _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())), &state->ball,
                                  nullptr);
 
             // Don't use this observation for a possible track since it's the
@@ -204,7 +204,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
                 // First update and prediction
                 _ballFilter->update(&_possibleTracks[i].obs);
                 _lastTrackTime = _possibleTracks[i].obs.time;
-                _ballFilter->predict(state->logFrame->command_time(),
+                _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())),
                                      &state->ball, nullptr);
 
                 fastRemove(_possibleTracks, i);

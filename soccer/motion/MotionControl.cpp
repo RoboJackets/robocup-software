@@ -55,9 +55,7 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
-    float timeIntoPath =
-        RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) +
-        1.0 / 60.0;
+    RJ::Seconds timeIntoPath = (RJ::now() - _robot->path().startTime()) + RJ::Seconds(1.0/60);
 
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
@@ -156,7 +154,7 @@ void MotionControl::run() {
     // acceleration factor
     Point acceleration;
     boost::optional<RobotInstant> nextTarget =
-        _robot->path().evaluate(timeIntoPath + 1.0 / 60.0);
+        _robot->path().evaluate(timeIntoPath + RJ::Seconds(1)/60.0);
     if (nextTarget) {
         acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;
     } else {

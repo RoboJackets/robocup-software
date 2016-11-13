@@ -172,7 +172,7 @@ void Processor::runModels(
     vector<BallObservation> ballObservations;
 
     for (const SSL_DetectionFrame* frame : detectionFrames) {
-        RJ::Timestamp time = RJ::SecsToTimestamp(frame->t_capture());
+        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
         ballObservations.reserve(ballObservations.size() +
@@ -215,11 +215,11 @@ void Processor::runModels(
     _ballTracker->run(ballObservations, &_state);
 
     for (Robot* robot : _state.self) {
-        robot->filter()->predict(_state.logFrame->command_time(), robot);
+        robot->filter()->predict(RJ::Time(chrono::microseconds(_state.logFrame->command_time())), robot);
     }
 
     for (Robot* robot : _state.opp) {
-        robot->filter()->predict(_state.logFrame->command_time(), robot);
+        robot->filter()->predict(RJ::Time(chrono::microseconds(_state.logFrame->command_time())), robot);
     }
 }
 

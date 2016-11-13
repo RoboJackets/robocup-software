@@ -51,7 +51,7 @@ class RRTPlanner;
 class RobotPose {
 public:
     RobotPose()
-        : visible(false), angle(0), angleVel(0), time(0), visionFrame(0) {
+        : visible(false), angle(0), angleVel(0), time(std::chrono::nanoseconds(0)), visionFrame(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }
@@ -65,7 +65,7 @@ public:
     float angleVel;  /// angular velocity in radians/sec
 
     // Time at which this estimate is valid
-    RJ::Timestamp time;
+    RJ::Time time;
     int visionFrame;
 };
 

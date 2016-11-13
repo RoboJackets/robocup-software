@@ -21,7 +21,7 @@ class ConstPathIterator;
  */
 class Path {
 public:
-    Path(RJ::Timestamp startTime = RJ::timestamp()) : _startTime(startTime) {}
+    Path(RJ::Time startTime = RJ::now()) : _startTime(startTime) {}
     virtual ~Path() {}
 
     /**
@@ -36,7 +36,7 @@ public:
      *     time if @t is within the range of the path.  If @t is not within the
      *     time range of this path, this method returns boost::none.
      */
-    virtual boost::optional<RobotInstant> evaluate(float t) const = 0;
+    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const = 0;
 
     /**
      * Returns true if the path hits an obstacle
@@ -44,11 +44,10 @@ public:
      * @param[in]	shape The obstacles on the field
      * @param[out]  hitTime the approximate time when the path hits an obstacle.
      * If no obstacles are hit, behavior is undefined for the final value.
-     * @param[in] 	startTime The time on the path to start checking from
+     * @param[in] 	startTimeIntoPath The time on the path to start checking from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float startTime) const = 0;
+    virtual bool hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const = 0;
 
     /**
      * Draws the path.  The default implementation adds a DebugRobotPath to the
@@ -67,7 +66,7 @@ public:
      * @return The time from start to path completion or infinity if it never
      * stops
      */
-    virtual float getDuration() const = 0;
+    virtual RJ::Seconds getDuration() const = 0;
 
     /**
      * Returns a subPath
@@ -80,8 +79,8 @@ public:
      * @return A unique_ptr to the new subPath
      */
     virtual std::unique_ptr<Path> subPath(
-        float startTime = 0,
-        float endTime = std::numeric_limits<float>::infinity()) const = 0;
+            RJ::Seconds startTime = RJ::Seconds(0),
+            RJ::Seconds endTime = RJ::Seconds::max()) const = 0;
 
     /// Start instant of the path
     virtual RobotInstant start() const = 0;
@@ -102,18 +101,17 @@ public:
                                const QString& layer = "PathDebugText") const;
 
     /// The time the path starts at
-    virtual RJ::Timestamp startTime() const { return _startTime; }
-    virtual void setStartTime(RJ::Timestamp t) { _startTime = t; }
+    virtual RJ::Time startTime() const { return _startTime; }
+    virtual void setStartTime(RJ::Time t) { _startTime = t; }
 
-    virtual bool pathsIntersect(const std::vector<DynamicObstacle>& paths,
-                                float* hitTime, Geometry2d::Point* hitLocation,
-                                RJ::Timestamp startTime) const;
+    virtual bool pathsIntersect(const std::vector<DynamicObstacle> &paths, RJ::Time startTime, Geometry2d::Point *hitLocation,
+                                    RJ::Seconds *hitTime) const;
 
-    virtual std::unique_ptr<ConstPathIterator> iterator(RJ::Timestamp startTime,
-                                                        float deltaT) const;
+    virtual std::unique_ptr<ConstPathIterator> iterator(RJ::Time startTime,
+                                                        RJ::Seconds deltaT) const;
 
 protected:
-    RJ::Timestamp _startTime;
+    RJ::Time _startTime;
     boost::optional<QString> _debugText;
 };
 
@@ -140,7 +138,7 @@ public:
      *     time if @t is within the range of the path.  If @t is not within the
      *     time range of this path, this method returns boost::none.
      */
-    virtual boost::optional<RobotInstant> evaluate(float t) const override {
+    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const override {
         if (!path) {
             return boost::none;
         }
@@ -164,12 +162,11 @@ public:
      * @param[in]	shape The obstacles on the field
      * @param[out]  hitTime the approximate time when the path hits an obstacle.
      * If no obstacles are hit, behavior is undefined for the final value.
-     * @param[in] 	startTime The time on the path to start checking from
+     * @param[in] 	startTimeIntoPath The time on the path to start checking from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float startTime) const override {
-        return path->hit(obstacles, hitTime, startTime);
+    virtual bool hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const override {
+        return path->hit(obstacles, startTimeIntoPath, hitTime);
     }
 
     /**
@@ -191,7 +188,7 @@ public:
      * @return The time from start to path completion or infinity if it never
      * stops
      */
-    virtual float getDuration() const override { return path->getDuration(); }
+    virtual RJ::Seconds getDuration() const override { return path->getDuration(); }
 
     /**
      * Returns a subPath
@@ -204,8 +201,8 @@ public:
      * @return A unique_ptr to the new subPath
      */
     virtual std::unique_ptr<Path> subPath(
-        float startTime = 0,
-        float endTime = std::numeric_limits<float>::infinity()) const override {
+            RJ::Seconds startTime = RJ::Seconds::zero(),
+            RJ::Seconds endTime = RJ::Seconds::max()) const override {
         return std::make_unique<AngleFunctionPath>(
             path->subPath(startTime, endTime), angleFunction);
     }
@@ -237,8 +234,8 @@ public:
                                                    angleFunction);
     }
 
-    virtual RJ::Timestamp startTime() const override { return path->startTime(); }
-    virtual void setStartTime(RJ::Timestamp t) override { path->setStartTime(t); }
+    virtual RJ::Time startTime() const override { return path->startTime(); }
+    virtual void setStartTime(RJ::Time t) override { path->setStartTime(t); }
     virtual void setDebugText(QString string) override {
         path->setDebugText(std::move(string));
     }
@@ -252,10 +249,10 @@ public:
 
 class ConstPathIterator {
 public:
-    explicit ConstPathIterator(const Path* path, RJ::Timestamp startTime,
-                               float deltaT)
+    explicit ConstPathIterator(const Path* path, RJ::Time startTime,
+                               RJ::Seconds deltaT)
         : path(path),
-          time(RJ::TimestampToSecs(startTime - path->startTime())),
+          time(startTime - path->startTime()),
           deltaT(deltaT) {}
 
     virtual RobotInstant operator*() const {
@@ -274,8 +271,8 @@ public:
 
 private:
     const Path* const path;
-    float time;
-    const float deltaT;
+    RJ::Seconds time;
+    const RJ::Seconds deltaT;
 };
 
 }  // namespace Planning

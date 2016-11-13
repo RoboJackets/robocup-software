@@ -36,7 +36,7 @@ class Ball {
 public:
     Ball() {
         valid = false;
-        time = 0;
+//        time();
     }
 
     Geometry2d::Point pos;
@@ -44,13 +44,13 @@ public:
     bool valid;
 
     /// Time at which this estimate is valid
-    RJ::Timestamp time;
+    RJ::Time time;
 
-    Planning::MotionInstant predict(RJ::Timestamp time) const;
-    std::unique_ptr<Planning::Path> path(RJ::Timestamp startTime) const;
+    Planning::MotionInstant predict(RJ::Time time) const;
+    std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
 
-    RJ::Timestamp estimateTimeTo(const Geometry2d::Point& point,
-                            Geometry2d::Point* nearPoint = nullptr) const;
+    RJ::Time estimateTimeTo(const Geometry2d::Point &point,
+                            Geometry2d::Point *nearPoint = nullptr) const;
 };
 
 /**

@@ -25,7 +25,7 @@ TEST(TargetVelPathPlannerTest, run) {
 
     // Ensure that the path is obstacle-free
     float hitTime;
-    EXPECT_FALSE(path->hit(obstacles, hitTime, 0))
+    EXPECT_FALSE(path->hit(obstacles, 0, hitTime))
         << "Returned path hits obstacles";
 
     // Ensure that the path moves in the direction of the target world velocity
