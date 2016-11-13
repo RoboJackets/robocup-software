@@ -17,7 +17,7 @@ class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
     virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
-        return RobotInstant(ball.predict(startTime() + chrono::duration_cast<chrono::microseconds>(t)));
+        return RobotInstant(ball.predict(startTime() + t));
     }
 
     virtual bool hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const {
@@ -92,7 +92,7 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point &point,
     // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
     // (d + v0 * -3.43289) / (v0 * -3.43289)= e^(-0.2913 t))
     auto part = vel.mag() * -3.43289;
-    return time + chrono::duration_cast<chrono::microseconds>(RJ::Seconds(std::log((dist + part) / part) / -0.2913));
+    return time + RJ::Seconds(std::log((dist + part) / part) / -0.2913);
 }
 
 SystemState::SystemState() {

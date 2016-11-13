@@ -157,7 +157,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     QString debug = "";
     for (auto t = RJ::Seconds(0); t < RJ::Seconds(6); t += RJ::Seconds(0.1)) {
         MotionInstant ballNow =
-            ball.predict(curTime + chrono::duration_cast<chrono::microseconds>(t));
+            ball.predict(curTime + t);
         MotionInstant target(ballNow.pos);
         targetKickPos = target.pos;
         target.vel = (command.target - target.pos).normalized(ApproachSpeed);

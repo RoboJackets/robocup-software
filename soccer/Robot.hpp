@@ -51,7 +51,7 @@ class RRTPlanner;
 class RobotPose {
 public:
     RobotPose()
-        : visible(false), angle(0), angleVel(0), time(std::chrono::nanoseconds(0)), visionFrame(0) {
+        : visible(false), angle(0), angleVel(0), time(), visionFrame(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }

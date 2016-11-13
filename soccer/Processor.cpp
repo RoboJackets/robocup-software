@@ -56,7 +56,7 @@ void Processor::createConfiguration(Configuration* cfg) {
 
 Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _running = true;
-    _framePeriod = chrono::microseconds(chrono::seconds(1))/60;
+    _framePeriod = chrono::microseconds(chrono::seconds(1)/60);
     _manualID = -1;
     _defendPlusX = false;
     _externalReferee = true;

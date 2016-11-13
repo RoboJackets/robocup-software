@@ -371,7 +371,7 @@ void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
         waypoint.time *= multiplier;
     }
     RJ::Seconds newTimeInto = timeInto * multiplier;
-    RJ::Time now = startTime() + chrono::duration_cast<chrono::microseconds>(timeInto);
-    setStartTime(now - chrono::duration_cast<chrono::microseconds>(newTimeInto));
+    RJ::Time now = startTime() + timeInto;
+    setStartTime(now - newTimeInto);
 }
 }  // namespace Planning
