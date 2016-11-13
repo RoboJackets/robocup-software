@@ -90,6 +90,12 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
     vision.simulation = _simulation;
+
+    vision.start();
+
+    // Create radio socket
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+                         : static_cast<Radio*>(new USBRadio());
 }
 
 Processor::~Processor() {
@@ -224,12 +230,6 @@ void Processor::runModels(
  * program loop
  */
 void Processor::run() {
-    vision.start();
-
-    // Create radio socket
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
-                         : static_cast<Radio*>(new USBRadio());
-
     Status curStatus;
 
     bool first = true;

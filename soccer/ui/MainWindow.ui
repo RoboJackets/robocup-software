@@ -82,6 +82,9 @@
              <height>24</height>
             </size>
            </property>
+           <property name="shortcut">
+            <string>H</string>
+           </property>
            <property name="flat">
             <bool>true</bool>
            </property>
@@ -120,6 +123,9 @@
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="shortcut">
+            <string>S</string>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -198,6 +204,9 @@
              <width>24</width>
              <height>24</height>
             </size>
+           </property>
+           <property name="shortcut">
+            <string>P</string>
            </property>
            <property name="flat">
             <bool>true</bool>
@@ -299,6 +308,30 @@
        </widget>
       </item>
       <item>
+       <layout class="QVBoxLayout" name="verticalLayout_13">
+        <item>
+         <widget class="QLabel" name="frameNumLabel">
+          <property name="text">
+           <string>00000</string>
+          </property>
+          <property name="font">
+           <string>monospace</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="logTime">
+          <property name="text">
+           <string>00:00</string>
+          </property>
+          <property name="font">
+           <string>monospace</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="QFrame" name="logControls">
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <property name="spacing">
@@ -347,26 +380,6 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="logTime">
-             <property name="text">
-              <string>00:00</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <widget class="QPushButton" name="logPlaybackRewind">
              <property name="toolTip">
               <string>Play log backwards quickly</string>
@@ -380,6 +393,9 @@
                <width>20</width>
                <height>20</height>
               </size>
+             </property>
+             <property name="shortcut">
+              <string>Shift+Left</string>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -414,6 +430,9 @@
                <height>20</height>
               </size>
              </property>
+             <property name="shortcut">
+              <string>Left</string>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -437,6 +456,12 @@
              <property name="toolTip">
               <string>Pause log playback</string>
              </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: red</string>
+             </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
                <normaloff>:/icons/pause.svg</normaloff>:/icons/pause.svg</iconset>
@@ -446,6 +471,9 @@
                <width>20</width>
                <height>20</height>
               </size>
+             </property>
+             <property name="shortcut">
+              <string>Space</string>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -483,6 +511,9 @@
                <height>20</height>
               </size>
              </property>
+             <property name="shortcut">
+              <string>Right</string>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -515,6 +546,9 @@
                <width>20</width>
                <height>20</height>
               </size>
+             </property>
+             <property name="shortcut">
+              <string>Shift+Right</string>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -554,19 +588,6 @@
              </property>
             </widget>
            </item>
-           <item>
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </item>
         </layout>
@@ -586,6 +607,9 @@
         </item>
         <item>
          <widget class="QComboBox" name="goalieID">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
           <item>
            <property name="text">
             <string>None</string>
@@ -2220,7 +2244,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Primary Half</string>
@@ -2239,7 +2263,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Full Field</string>
@@ -2276,6 +2300,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>Quicksave Robot Locations</string>
    </property>
+   <property name="shortcut">
+    <string>Q</string>
+   </property>
   </action>
   <action name="actionQuickloadRobotLocations">
    <property name="enabled">
@@ -2283,6 +2310,9 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Quickload Robot Locations</string>
+   </property>
+   <property name="shortcut">
+    <string>E</string>
    </property>
   </action>
   <action name="actionStart_Logging">
