@@ -269,7 +269,7 @@
   <Max_Rotation_Acceleration value="4"/>
  </RotationConstraints>
  <Pivot>
-  <radius value="1"/>
+  <radius value="1.1"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>

@@ -294,14 +294,14 @@ void OurRobot::_kick(uint8_t strength) {
     uint8_t max = *config->kicker.maxKick;
     control->set_kcstrength(strength > max ? max : strength);
     control->set_shootmode(Packet::Control::KICK);
-    control->set_triggermode(Packet::Control::IMMEDIATE);
+    control->set_triggermode(Packet::Control::ON_BREAK_BEAM);
 }
 
 void OurRobot::_chip(uint8_t strength) {
     uint8_t max = *config->kicker.maxChip;
     control->set_kcstrength(strength > max ? max : strength);
     control->set_shootmode(Packet::Control::CHIP);
-    control->set_triggermode(Packet::Control::IMMEDIATE);
+    control->set_triggermode(Packet::Control::ON_BREAK_BEAM);
 }
 
 void OurRobot::_unkick() {

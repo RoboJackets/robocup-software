@@ -28,8 +28,9 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(behavior.Behavior.State.start, Aim.State.aiming,
                             lambda: True, 'immediately')
 
-        for state in Aim.State:
-            self.add_transition(state, behavior.Behavior.State.failed,
+        #for state in Aim.State:
+        
+        self.add_transition(Aim.State.aiming, behavior.Behavior.State.failed,
                                 lambda: self.fumbled(), 'fumble')
 
         self.add_transition(

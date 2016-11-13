@@ -1039,15 +1039,15 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
 }
 
 void MainWindow::on_actionQuaternion_Demo_toggled(bool value) {
-    if (value) {
-        if (_quaternion_demo) delete _quaternion_demo;
-        cout << "Starting Quaternion Demo" << endl;
-        _quaternion_demo = new QuaternionDemo(this);
-        _quaternion_demo->resize(640, 480);
-    } else {
-        cout << "Stopping Quaternion Demo" << endl;
-        if (_quaternion_demo) delete _quaternion_demo;
-    }
+    //if (value) {
+    //    if (_quaternion_demo) delete _quaternion_demo;
+    //    cout << "Starting Quaternion Demo" << endl;
+    //    _quaternion_demo = new QuaternionDemo(this);
+    //    _quaternion_demo->resize(640, 480);
+    //} else {
+    //    cout << "Stopping Quaternion Demo" << endl;
+    //    if (_quaternion_demo) delete _quaternion_demo;
+    //}
 }
 
 void MainWindow::on_actionStart_Logging_triggered() {
@@ -1151,10 +1151,10 @@ void MainWindow::on_manualID_currentIndexChanged(int value) {
     _processor->manualID(value - 1);
     if (_quaternion_demo) {
         if (value == 0) {
-            _quaternion_demo->hide();
+           // _quaternion_demo->hide();
         } else {
-            _quaternion_demo->show();
-            _quaternion_demo->initialized = false;
+           // _quaternion_demo->show();
+           // _quaternion_demo->initialized = false;
         }
     }
 }
