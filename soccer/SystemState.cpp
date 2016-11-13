@@ -97,7 +97,6 @@ RJ::Timestamp Ball::estimateTimeTo(const Geometry2d::Point& point,
 }
 
 SystemState::SystemState() {
-    timestamp = 0;
     _numDebugLayers = 0;
 
     // FIXME - boost::array?

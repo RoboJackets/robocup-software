@@ -75,17 +75,12 @@ public:
 class Processor : public QThread {
 public:
     struct Status {
-        Status() {
-            lastLoopTime = 0;
-            lastVisionTime = 0;
-            lastRefereeTime = 0;
-            lastRadioRxTime = 0;
-        }
+        Status() {}
 
-        RJ::Timestamp lastLoopTime;
-        RJ::Timestamp lastVisionTime;
-        RJ::Timestamp lastRefereeTime;
-        RJ::Timestamp lastRadioRxTime;
+        RJ::Time lastLoopTime;
+        RJ::Time lastVisionTime;
+        RJ::Time lastRefereeTime;
+        RJ::Time lastRadioRxTime;
     };
 
     static void createConfiguration(Configuration* cfg);
@@ -184,7 +179,7 @@ public:
     ////////
 
     // Time of the first LogFrame
-    RJ::Timestamp firstLogTime;
+    boost::optional<RJ::Time> firstLogTime;
 
 protected:
     void run() override;
@@ -248,7 +243,7 @@ private:
     bool _defendPlusX;
 
     // Processing period in microseconds
-    int _framePeriod;
+    std::chrono::microseconds _framePeriod;
 
     // True if we are using external referee packets
     bool _externalReferee;

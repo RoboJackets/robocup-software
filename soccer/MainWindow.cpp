@@ -390,8 +390,8 @@ void MainWindow::updateViews() {
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                                   frameNumber());
         int elapsedMillis =
-            (currentFrame->command_time() - _processor->firstLogTime + 500) /
-            1000;
+            (currentFrame->command_time() - RJ::timestamp(*_processor->firstLogTime)) / 1000;
+
         QTime elapsedTime = QTime().addMSecs(elapsedMillis);
         _elapsedTimeItem->setText(ProtobufTree::Column_Value,
                                   elapsedTime.toString("hh:mm:ss.zzz"));
@@ -730,10 +730,10 @@ void MainWindow::updateStatus() {
 
     // Get processing thread status
     Processor::Status ps = _processor->status();
-    RJ::Timestamp curTime = RJ::timestamp();
+    RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
+    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
 
     /*if (_autoExternalReferee && haveExternalReferee &&
     !_ui.externalReferee->isChecked())
@@ -742,7 +742,7 @@ void MainWindow::updateStatus() {
     }*/
 
     // Is the processing thread running?
-    if (curTime - ps.lastLoopTime > 100 * 1000) {
+    if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
         // Processing loop hasn't run recently.
         // Likely causes:
         //    Mutex deadlock (need a recursive mutex?)
@@ -752,7 +752,7 @@ void MainWindow::updateStatus() {
     }
 
     // Check network activity
-    if (curTime - ps.lastVisionTime > 100 * 1000) {
+    if (curTime - ps.lastVisionTime > RJ::Seconds(0.1)) {
         // We must always have vision
         status("NO VISION", Status_Fail);
         return;
@@ -766,7 +766,7 @@ void MainWindow::updateStatus() {
 
     // Driving the robots helps isolate radio problems by verifying radio TX,
     // so test this after manual driving.
-    if (curTime - ps.lastRadioRxTime > 1000 * 1000) {
+    if (curTime - ps.lastRadioRxTime > RJ::Seconds(1)) {
         // Allow a long timeout in case of poor radio performance
         status("NO RADIO RX", Status_Fail);
         return;

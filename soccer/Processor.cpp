@@ -33,7 +33,7 @@ using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
 
-static const uint64_t Command_Latency = 0;
+static const auto Command_Latency = chrono::microseconds(0);
 
 RobotConfig* Processor::robotConfig2008;
 RobotConfig* Processor::robotConfig2011;
@@ -56,12 +56,11 @@ void Processor::createConfiguration(Configuration* cfg) {
 
 Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _running = true;
-    _framePeriod = 1000000 / 60;
+    _framePeriod = chrono::microseconds(chrono::seconds(1))/60;
     _manualID = -1;
     _defendPlusX = false;
     _externalReferee = true;
     _framerate = 0;
-    firstLogTime = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
     _initialized = false;
@@ -233,11 +232,11 @@ void Processor::run() {
     bool first = true;
     // main loop
     while (_running) {
-        RJ::Timestamp startTime = RJ::timestamp();
-        int delta_us = startTime - curStatus.lastLoopTime;
-        _framerate = 1000000.0 / delta_us;
+        RJ::Time startTime = RJ::now();
+        auto deltaTime = startTime - curStatus.lastLoopTime;
+        _framerate = RJ::Seconds(1)/deltaTime;
         curStatus.lastLoopTime = startTime;
-        _state.timestamp = startTime;
+        _state.time = startTime;
 
         if (!firstLogTime) {
             firstLogTime = startTime;
@@ -249,7 +248,7 @@ void Processor::run() {
         // Make a new log frame
         _state.logFrame = std::make_shared<Packet::LogFrame>();
         _state.logFrame->set_timestamp(RJ::timestamp());
-        _state.logFrame->set_command_time(startTime + Command_Latency);
+        _state.logFrame->set_command_time(RJ::timestamp(startTime + Command_Latency));
         _state.logFrame->set_use_our_half(_useOurHalf);
         _state.logFrame->set_use_opponent_half(_useOpponentHalf);
         _state.logFrame->set_manual_id(_manualID);
@@ -311,7 +310,8 @@ void Processor::run() {
             if (packet->wrapper.has_detection()) {
                 SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
-                double rt = packet->receivedTime / 1000000.0;
+                double rt = RJ::numSeconds(packet->receivedTime.time_since_epoch());
+//                double rt = RJ::timestamp(packet->receivedTime) / 1000000.0;
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
                 det->set_t_sent(rt);
 
@@ -366,7 +366,7 @@ void Processor::run() {
         for (const Packet::RadioRx& rx : _radio->reversePackets()) {
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
-            curStatus.lastRadioRxTime = rx.timestamp();
+            curStatus.lastRadioRxTime = RJ::Time(chrono::microseconds(rx.timestamp()));
 
             // Store this packet in the appropriate robot
             unsigned int board = rx.robot_id();
@@ -604,15 +604,15 @@ void Processor::run() {
         ////////////////
         // Timing
 
-        RJ::Timestamp endTime = RJ::timestamp();
-        int lastFrameTime = endTime - startTime;
-        if (lastFrameTime < _framePeriod) {
+        auto endTime = RJ::now();
+        auto timeLapse = endTime - startTime;
+        if (timeLapse < _framePeriod) {
             // Use system usleep, not QThread::usleep.
             //
             // QThread::usleep uses pthread_cond_wait which sometimes fails to
             // unblock.
             // This seems to depend on how many threads are blocked.
-            ::usleep(_framePeriod - lastFrameTime);
+            ::usleep(RJ::numMicroseconds(_framePeriod - timeLapse));
         } else {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }

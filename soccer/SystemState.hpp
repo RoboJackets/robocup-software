@@ -120,8 +120,12 @@ public:
     void drawShapeSet(const Geometry2d::ShapeSet& shapes,
                       const QColor& color = Qt::black,
                       const QString& layer = QString());
-    RJ::Timestamp timestamp;
+    RJ::Time time;
     GameState gameState;
+
+    RJ::Timestamp timestamp() const {
+        return RJ::timestamp(time);
+    }
 
     /// All possible robots.
     ///
