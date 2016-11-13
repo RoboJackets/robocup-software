@@ -15,5 +15,5 @@ var class_logger =
     [ "recording", "class_logger.html#ac8f0580d4a2e667cc1e148e437a603c3", null ],
     [ "size", "class_logger.html#ab1b0c938fc6770a6869c39644dd7638f", null ],
     [ "spaceUsed", "class_logger.html#ae91f9721e83aba0321a0fb52c079b38e", null ],
-    [ "startTime", "class_logger.html#ac83418ea56ce694105b0e702a27893c7", null ]
+    [ "startTime", "class_logger.html#a9890a9ffdfcb308a1ec2464aad32b166", null ]
 ];

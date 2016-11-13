@@ -123,13 +123,13 @@ $(document).ready(function(){initNavTree('class_planning_1_1_path.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab38b2c79d259bd542830d97fb91340e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab38b2c79d259bd542830d97fb91340e8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>=RJ::timestamp())</td></tr>
-<tr class="separator:ab38b2c79d259bd542830d97fb91340e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99495c27552b0a808de123a09353070b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99495c27552b0a808de123a09353070b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (RJ::Timestamp <a class="el" href="class_planning_1_1_path.html#a31c0f4f12c77e8569f435b760f38c96a">startTime</a>=RJ::timestamp())</td></tr>
+<tr class="separator:a99495c27552b0a808de123a09353070b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed4a59aa878ef5e55fd0e870eb625054"><td class="memItemLeft" align="right" valign="top">virtual boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#aed4a59aa878ef5e55fd0e870eb625054">evaluate</a> (float t) const =0</td></tr>
 <tr class="memdesc:aed4a59aa878ef5e55fd0e870eb625054"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evaluates the path at a given time and returns the target angle, position, and velocity of the robot.  <a href="#aed4a59aa878ef5e55fd0e870eb625054">More...</a><br /></td></tr>
 <tr class="separator:aed4a59aa878ef5e55fd0e870eb625054"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c437343a10eadfc1b6fec0530d8282d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, float &amp;hitTime, float <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>) const =0</td></tr>
+<tr class="memitem:a6c437343a10eadfc1b6fec0530d8282d"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a6c437343a10eadfc1b6fec0530d8282d">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, float &amp;hitTime, float <a class="el" href="class_planning_1_1_path.html#a31c0f4f12c77e8569f435b760f38c96a">startTime</a>) const =0</td></tr>
 <tr class="memdesc:a6c437343a10eadfc1b6fec0530d8282d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#a6c437343a10eadfc1b6fec0530d8282d">More...</a><br /></td></tr>
 <tr class="separator:a6c437343a10eadfc1b6fec0530d8282d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba1ec0b69ad45b7dca7886dc1aa64e9b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const </td></tr>
@@ -138,7 +138,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4886548615206bd2f95a5b2628889688"><td class="memItemLeft" align="right" valign="top">virtual float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688">getDuration</a> () const =0</td></tr>
 <tr class="memdesc:a4886548615206bd2f95a5b2628889688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how long it would take for the entire path to be traversed.  <a href="#a4886548615206bd2f95a5b2628889688">More...</a><br /></td></tr>
 <tr class="separator:a4886548615206bd2f95a5b2628889688"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addd308038986255e995c00208a1094f5"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#addd308038986255e995c00208a1094f5">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const =0</td></tr>
+<tr class="memitem:addd308038986255e995c00208a1094f5"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#addd308038986255e995c00208a1094f5">subPath</a> (float <a class="el" href="class_planning_1_1_path.html#a31c0f4f12c77e8569f435b760f38c96a">startTime</a>=0, float endTime=std::numeric_limits&lt; float &gt;::infinity()) const =0</td></tr>
 <tr class="memdesc:addd308038986255e995c00208a1094f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a subPath.  <a href="#addd308038986255e995c00208a1094f5">More...</a><br /></td></tr>
 <tr class="separator:addd308038986255e995c00208a1094f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc15fa7dd8d22afb2a2a375d120bd6f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7bc15fa7dd8d22afb2a2a375d120bd6f"></a>
@@ -159,25 +159,25 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setDebugText<
 <tr class="memitem:af1c18882247fc1f6bb0de7f59cec3ff5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1c18882247fc1f6bb0de7f59cec3ff5"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawDebugText</b> (<a class="el" href="class_system_state.html">SystemState</a> *state, const QColor &amp;color=Qt::darkCyan, const QString &amp;layer=&quot;PathDebugText&quot;) const </td></tr>
 <tr class="separator:af1c18882247fc1f6bb0de7f59cec3ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b6503873b1ff9e945625ce2088de2c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b6503873b1ff9e945625ce2088de2c7"></a>
-virtual RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a> () const </td></tr>
-<tr class="memdesc:a8b6503873b1ff9e945625ce2088de2c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br /></td></tr>
-<tr class="separator:a8b6503873b1ff9e945625ce2088de2c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65b4b6f44f1b57976824479d3bf5c2c0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65b4b6f44f1b57976824479d3bf5c2c0"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setStartTime</b> (RJ::Time t)</td></tr>
-<tr class="separator:a65b4b6f44f1b57976824479d3bf5c2c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfba03e1cdb320a2ffa218c2e68ad8f3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abfba03e1cdb320a2ffa218c2e68ad8f3"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>pathsIntersect</b> (const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;paths, float *hitTime, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *hitLocation, RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>) const </td></tr>
-<tr class="separator:abfba03e1cdb320a2ffa218c2e68ad8f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ca1fe547e0ee9391ec66ce925c2aba6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ca1fe547e0ee9391ec66ce925c2aba6"></a>
-virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_const_path_iterator.html">ConstPathIterator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>, float deltaT) const </td></tr>
-<tr class="separator:a5ca1fe547e0ee9391ec66ce925c2aba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31c0f4f12c77e8569f435b760f38c96a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31c0f4f12c77e8569f435b760f38c96a"></a>
+virtual RJ::Timestamp&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a31c0f4f12c77e8569f435b760f38c96a">startTime</a> () const </td></tr>
+<tr class="memdesc:a31c0f4f12c77e8569f435b760f38c96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br /></td></tr>
+<tr class="separator:a31c0f4f12c77e8569f435b760f38c96a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59c28e7b5652a1f6f081641eb0057fe2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59c28e7b5652a1f6f081641eb0057fe2"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setStartTime</b> (RJ::Timestamp t)</td></tr>
+<tr class="separator:a59c28e7b5652a1f6f081641eb0057fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94297e41057912e1de9090710defee1b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94297e41057912e1de9090710defee1b"></a>
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>pathsIntersect</b> (const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;paths, float *hitTime, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *hitLocation, RJ::Timestamp <a class="el" href="class_planning_1_1_path.html#a31c0f4f12c77e8569f435b760f38c96a">startTime</a>) const </td></tr>
+<tr class="separator:a94297e41057912e1de9090710defee1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b08e1683e3003cf555f4a1a3cdfe918"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b08e1683e3003cf555f4a1a3cdfe918"></a>
+virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_const_path_iterator.html">ConstPathIterator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b> (RJ::Timestamp <a class="el" href="class_planning_1_1_path.html#a31c0f4f12c77e8569f435b760f38c96a">startTime</a>, float deltaT) const </td></tr>
+<tr class="separator:a3b08e1683e3003cf555f4a1a3cdfe918"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a6ffd94762a6360f53b152ed0c0af241c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ffd94762a6360f53b152ed0c0af241c"></a>
-RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
-<tr class="separator:a6ffd94762a6360f53b152ed0c0af241c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afea4f0c24855ebb5d90bdcdd45d672bc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afea4f0c24855ebb5d90bdcdd45d672bc"></a>
+RJ::Timestamp&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
+<tr class="separator:afea4f0c24855ebb5d90bdcdd45d672bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adec308e50c05ed419e9c459495d4f3ee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adec308e50c05ed419e9c459495d4f3ee"></a>
 boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_debugText</b></td></tr>
 <tr class="separator:adec308e50c05ed419e9c459495d4f3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -423,7 +423,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Sat Nov 12 2016 22:51:07 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 13 2016 03:13:05 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

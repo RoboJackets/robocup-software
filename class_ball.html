@@ -123,15 +123,15 @@ $(document).ready(function(){initNavTree('class_ball.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae5a3996beecf02b1badf175620f495e1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5a3996beecf02b1badf175620f495e1"></a>
-<a class="el" href="struct_planning_1_1_motion_instant.html">Planning::MotionInstant</a>&#160;</td><td class="memItemRight" valign="bottom"><b>predict</b> (RJ::Time <a class="el" href="class_ball.html#abf88311b4afc4372737653ce004390c2">time</a>) const </td></tr>
-<tr class="separator:ae5a3996beecf02b1badf175620f495e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a130fb3b927d0f9ec1765d0153a64c995"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a130fb3b927d0f9ec1765d0153a64c995"></a>
-std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>path</b> (RJ::Time startTime) const </td></tr>
-<tr class="separator:a130fb3b927d0f9ec1765d0153a64c995"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab546f7fa2b7d4cc20f18ff07e8c63941"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab546f7fa2b7d4cc20f18ff07e8c63941"></a>
-RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>estimateTimeTo</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;point, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *nearPoint=nullptr) const </td></tr>
-<tr class="separator:ab546f7fa2b7d4cc20f18ff07e8c63941"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada094197da2e15f5310743c93c7a6edf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada094197da2e15f5310743c93c7a6edf"></a>
+<a class="el" href="struct_planning_1_1_motion_instant.html">Planning::MotionInstant</a>&#160;</td><td class="memItemRight" valign="bottom"><b>predict</b> (RJ::Timestamp <a class="el" href="class_ball.html#add76674733a189b9c088676469024218">time</a>) const </td></tr>
+<tr class="separator:ada094197da2e15f5310743c93c7a6edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa30c93efc6a1b53a2da669bf43c75534"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa30c93efc6a1b53a2da669bf43c75534"></a>
+std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>path</b> (RJ::Timestamp startTime) const </td></tr>
+<tr class="separator:aa30c93efc6a1b53a2da669bf43c75534"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1244c701502cbf21795f297ac3e2351"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1244c701502cbf21795f297ac3e2351"></a>
+RJ::Timestamp&#160;</td><td class="memItemRight" valign="bottom"><b>estimateTimeTo</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;point, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *nearPoint=nullptr) const </td></tr>
+<tr class="separator:ad1244c701502cbf21795f297ac3e2351"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -144,10 +144,10 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a04194a87d19c65ccb3a91fcd54f90f33"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04194a87d19c65ccb3a91fcd54f90f33"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>valid</b></td></tr>
 <tr class="separator:a04194a87d19c65ccb3a91fcd54f90f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf88311b4afc4372737653ce004390c2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf88311b4afc4372737653ce004390c2"></a>
-RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ball.html#abf88311b4afc4372737653ce004390c2">time</a></td></tr>
-<tr class="memdesc:abf88311b4afc4372737653ce004390c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which this estimate is valid. <br /></td></tr>
-<tr class="separator:abf88311b4afc4372737653ce004390c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add76674733a189b9c088676469024218"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add76674733a189b9c088676469024218"></a>
+RJ::Timestamp&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ball.html#add76674733a189b9c088676469024218">time</a></td></tr>
+<tr class="memdesc:add76674733a189b9c088676469024218"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time at which this estimate is valid. <br /></td></tr>
+<tr class="separator:add76674733a189b9c088676469024218"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Our beliefs about the ball's position and velocity. </p>
@@ -171,7 +171,7 @@ RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_ball.html">Ball</a></li>
-    <li class="footer">Generated on Sat Nov 12 2016 22:51:06 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 13 2016 03:13:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

@@ -243,9 +243,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063">unkick</a> ()</td></tr>
 <tr class="memdesc:ae69f9949b6337a7a97389ff0c6b25063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Undoes any calls to kick() or chip(). <br /></td></tr>
 <tr class="separator:ae69f9949b6337a7a97389ff0c6b25063"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89a1ad3a27acab69d8cf578a1c4cfae9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a89a1ad3a27acab69d8cf578a1c4cfae9"></a>
-RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>lastKickTime</b> () const </td></tr>
-<tr class="separator:a89a1ad3a27acab69d8cf578a1c4cfae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b95ac6e64ac621c6f29ed0607ba7c78"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b95ac6e64ac621c6f29ed0607ba7c78"></a>
+RJ::Timestamp&#160;</td><td class="memItemRight" valign="bottom"><b>lastKickTime</b> () const </td></tr>
+<tr class="separator:a4b95ac6e64ac621c6f29ed0607ba7c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb041522cb8d92a305ecc8e3698c02e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb041522cb8d92a305ecc8e3698c02e4"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#acb041522cb8d92a305ecc8e3698c02e4">justKicked</a> ()</td></tr>
 <tr class="memdesc:acb041522cb8d92a305ecc8e3698c02e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">checks if the bot has kicked/chipped very recently. <br /></td></tr>
@@ -377,8 +377,8 @@ const <a class="el" href="struct_rotation_constraints.html">RotationConstraints<
 <tr class="memitem:a790dab042f6260cda5e1cf215777d8dd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a790dab042f6260cda5e1cf215777d8dd"></a>
 <a class="el" href="class_system_state.html">SystemState</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> () const </td></tr>
 <tr class="separator:a790dab042f6260cda5e1cf215777d8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b0dc40e35e1aaca2e6d8ece9219b81e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1b0dc40e35e1aaca2e6d8ece9219b81e">rxIsFresh</a> (RJ::Time age=500000) const </td></tr>
-<tr class="separator:a1b0dc40e35e1aaca2e6d8ece9219b81e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab47f13f4d73c4b1a1bb9a2117da89f26"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ab47f13f4d73c4b1a1bb9a2117da89f26">rxIsFresh</a> (RJ::Timestamp age=500000) const </td></tr>
+<tr class="separator:ab47f13f4d73c4b1a1bb9a2117da89f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7304077bd824b4d8ccb57144692095a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a7304077bd824b4d8ccb57144692095a5">sing</a> (Packet::Control::Song song=Packet::Control::FIGHT_SONG)</td></tr>
 <tr class="memdesc:a7304077bd824b4d8ccb57144692095a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the robot playing a song  <a href="#a7304077bd824b4d8ccb57144692095a5">More...</a><br /></td></tr>
 <tr class="separator:a7304077bd824b4d8ccb57144692095a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -466,10 +466,10 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memitem:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a685c05ad27d5bcc6ac58130df4219e7e"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>angleVel</b></td></tr>
 <tr class="separator:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea32e946f5835656db3bbcccfdff8a95 inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea32e946f5835656db3bbcccfdff8a95"></a>
-RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#aea32e946f5835656db3bbcccfdff8a95">time</a></td></tr>
-<tr class="memdesc:aea32e946f5835656db3bbcccfdff8a95 inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angular velocity in radians/sec <br /></td></tr>
-<tr class="separator:aea32e946f5835656db3bbcccfdff8a95 inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a529d24e1e4fb8f3a11d04e3b4c3132d3 inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a529d24e1e4fb8f3a11d04e3b4c3132d3"></a>
+RJ::Timestamp&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a529d24e1e4fb8f3a11d04e3b4c3132d3">time</a></td></tr>
+<tr class="memdesc:a529d24e1e4fb8f3a11d04e3b4c3132d3 inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angular velocity in radians/sec <br /></td></tr>
+<tr class="separator:a529d24e1e4fb8f3a11d04e3b4c3132d3 inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4375eb7b0a6cca0784c487bddba1db21 inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4375eb7b0a6cca0784c487bddba1db21"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>visionFrame</b></td></tr>
 <tr class="separator:a4375eb7b0a6cca0784c487bddba1db21 inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -935,14 +935,14 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a1b0dc40e35e1aaca2e6d8ece9219b81e"></a>
+<a class="anchor" id="ab47f13f4d73c4b1a1bb9a2117da89f26"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool OurRobot::rxIsFresh </td>
           <td>(</td>
-          <td class="paramtype">RJ::Time&#160;</td>
+          <td class="paramtype">RJ::Timestamp&#160;</td>
           <td class="paramname"><em>age</em> = <code>500000</code></td><td>)</td>
           <td> const</td>
         </tr>
@@ -1026,7 +1026,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Sat Nov 12 2016 22:51:06 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 13 2016 03:13:04 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>
