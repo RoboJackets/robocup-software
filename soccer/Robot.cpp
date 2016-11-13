@@ -64,9 +64,9 @@ OurRobot::OurRobot(int shell, SystemState* state)
     robotPacket.set_allocated_control(ctl);
     control = ctl;
 
-    _lastChargedTime = 0;
+    //_lastChargedTime = 0;
     _lastKickerStatus = 0;
-    _lastKickTime = 0;
+    //_lastKickTime = 0;
 
     _motionControl = new MotionControl(this);
 
@@ -135,7 +135,7 @@ void OurRobot::resetForNextIteration() {
     robotPacket.set_uid(shell());
 
     if (charged()) {
-        _lastChargedTime = RJ::timestamp();
+        _lastChargedTime = RJ::now();
     }
 
     _local_obstacles.clear();
@@ -243,7 +243,7 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 float OurRobot::kickTimer() const {
     return (charged())
                ? 0.0
-               : RJ::TimestampToSecs((RJ::timestamp() - _lastChargedTime));
+               : RJ::numSeconds(RJ::now() - _lastChargedTime);
 }
 
 void OurRobot::dribble(uint8_t speed) {
@@ -546,11 +546,11 @@ bool OurRobot::rxIsFresh(RJ::Timestamp age) const {
     return (RJ::timestamp() - _radioRx.timestamp()) < age;
 }
 
-RJ::Timestamp OurRobot::lastKickTime() const { return _lastKickTime; }
+RJ::Timestamp OurRobot::lastKickTime() const { return RJ::timestamp(_lastKickTime); }
 
 void OurRobot::radioRxUpdated() {
     if (_radioRx.kicker_status() < _lastKickerStatus) {
-        _lastKickTime = RJ::timestamp();
+        _lastKickTime = RJ::now();
     }
     _lastKickerStatus = _radioRx.kicker_status();
 }

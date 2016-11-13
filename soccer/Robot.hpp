@@ -292,7 +292,7 @@ public:
 
     /// checks if the bot has kicked/chipped very recently.
     bool justKicked() {
-        return RJ::timestamp() - lastKickTime() < RJ::SecsToTimestamp(0.25);
+        return RJ::now() - _lastKickTime < RJ::Seconds(0.25);
     }
 
     /**
@@ -524,8 +524,8 @@ private:
     void _unkick();
 
     uint32_t _lastKickerStatus;
-    RJ::Timestamp _lastKickTime;
-    RJ::Timestamp _lastChargedTime;
+    RJ::Time _lastKickTime;
+    RJ::Time _lastChargedTime;
 
     Packet::RadioRx _radioRx;
 
