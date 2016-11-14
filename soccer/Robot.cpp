@@ -241,9 +241,7 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged())
-               ? 0.0
-               : RJ::numSeconds(RJ::now() - _lastChargedTime);
+    return (charged()) ? 0.0 : RJ::numSeconds(RJ::now() - _lastChargedTime);
 }
 
 void OurRobot::dribble(uint8_t speed) {
@@ -543,10 +541,13 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
 }
 
 bool OurRobot::rxIsFresh(RJ::Seconds age) const {
-    return (RJ::now() - RJ::Time(chrono::microseconds(_radioRx.timestamp()))) < age;
+    return (RJ::now() - RJ::Time(chrono::microseconds(_radioRx.timestamp()))) <
+           age;
 }
 
-RJ::Timestamp OurRobot::lastKickTime() const { return RJ::timestamp(_lastKickTime); }
+RJ::Timestamp OurRobot::lastKickTime() const {
+    return RJ::timestamp(_lastKickTime);
+}
 
 void OurRobot::radioRxUpdated() {
     if (_radioRx.kicker_status() < _lastKickerStatus) {

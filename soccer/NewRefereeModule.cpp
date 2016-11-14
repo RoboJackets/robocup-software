@@ -167,10 +167,10 @@ void NewRefereeModule::run() {
 
         stage = (Stage)packet->wrapper.stage();
         command = (Command)packet->wrapper.command();
-        //sent_time = packet->wrapper.packet_timestamp();
+        // sent_time = packet->wrapper.packet_timestamp();
         stage_time_left = packet->wrapper.stage_time_left();
-        //command_counter = packet->wrapper.command_counter();
-        //command_timestamp = packet->wrapper.command_timestamp();
+        // command_counter = packet->wrapper.command_counter();
+        // command_timestamp = packet->wrapper.command_timestamp();
         yellow_info.ParseRefboxPacket(packet->wrapper.yellow());
         blue_info.ParseRefboxPacket(packet->wrapper.blue());
         ballPlacementx = packet->wrapper.designated_position().x();

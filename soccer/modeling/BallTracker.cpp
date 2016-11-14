@@ -106,12 +106,14 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
         // Get a prediction for this frame from the filter
 
         float velocityUncertainty = 0;
-        Ball prediction = _ballFilter->predict(predictTime, &velocityUncertainty);
+        Ball prediction =
+            _ballFilter->predict(predictTime, &velocityUncertainty);
 
         Point windowCenter = prediction.pos;
         float windowRadius =
             Position_Uncertainty +
-            velocityUncertainty * RJ::Seconds(predictTime - _lastTrackTime).count();
+            velocityUncertainty *
+                RJ::Seconds(predictTime - _lastTrackTime).count();
         state->drawCircle(windowCenter, windowRadius, Qt::white);
 
         // Find the closest new observation to the real ball's predicted
@@ -133,7 +135,9 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
             _lastTrackTime = goodObs[best]->time;
 
             // Update the real track
-            state->ball = _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())), nullptr);
+            state->ball = _ballFilter->predict(
+                RJ::Time(chrono::microseconds(state->logFrame->command_time())),
+                nullptr);
 
             // Don't use this observation for a possible track since it's the
             // real track
@@ -203,7 +207,10 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
                 // First update and prediction
                 _ballFilter->updateEstimate(_possibleTracks[i].obs);
                 _lastTrackTime = _possibleTracks[i].obs.time;
-                state->ball = _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())), nullptr);
+                state->ball = _ballFilter->predict(
+                    RJ::Time(
+                        chrono::microseconds(state->logFrame->command_time())),
+                    nullptr);
 
                 fastRemove(_possibleTracks, i);
                 break;

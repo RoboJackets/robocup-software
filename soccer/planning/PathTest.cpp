@@ -133,7 +133,6 @@ TEST(CompositePath, CompositeSubPath) {
 
     // Compare that the compositePath and origonal path are mostly equal
     for (auto i = 0ms; i <= 10s; i += 1ms) {
-        
         auto org = path.evaluate(i);
         auto sub = compositePath.evaluate(i);
         if (!org && !sub) break;

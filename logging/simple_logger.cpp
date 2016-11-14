@@ -26,7 +26,7 @@ void usage(const char* prog) {
 }
 
 int main(int argc, char* argv[]) {
-    auto framePeriod = RJ::Seconds(1) / 60; //60 frames per second
+    auto framePeriod = RJ::Seconds(1) / 60;  // 60 frames per second
 
     bool simulation = false;
     QString logFile;
@@ -172,7 +172,8 @@ int main(int argc, char* argv[]) {
             auto sleepPeriod = framePeriod - computationTime;
             usleep(RJ::numMicroseconds(sleepPeriod));
         } else {
-            printf("Processor took too long: %ld us\n", RJ::numMicroseconds(computationTime));
+            printf("Processor took too long: %ld us\n",
+                   RJ::numMicroseconds(computationTime));
         }
     }
 

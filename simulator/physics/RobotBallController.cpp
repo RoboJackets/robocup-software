@@ -27,7 +27,6 @@ RobotBallController::RobotBallController(Robot* robot)
     ballSensorWorks = true;
     chargerWorks = true;
 
-
     _kick = false;
     _chip = false;
     _dribble = 0;
@@ -194,8 +193,7 @@ void RobotBallController::dribblerStep() {
 
 void RobotBallController::kickerStep() {
     if (!_ball) return;
-    if (_kick && (RJ::now() - _lastKicked) > RechargeTime &&
-        chargerWorks) {
+    if (_kick && (RJ::now() - _lastKicked) > RechargeTime && chargerWorks) {
         btVector3 dir =
             _parent->getRigidBody()->getWorldTransform().getOrigin();
         dir -= _ghostObject->getWorldTransform().getOrigin();
@@ -257,5 +255,5 @@ void RobotBallController::prepareDribbler(uint64_t dribble) {
 bool RobotBallController::hasBall() { return _ball != nullptr; }
 
 bool RobotBallController::getKickerStatus() {
-    return (RJ::now() - _lastKicked) > RechargeTime ? true: false;
+    return (RJ::now() - _lastKicked) > RechargeTime ? true : false;
 }

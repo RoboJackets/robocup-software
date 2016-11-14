@@ -11,19 +11,18 @@ static const float Velocity_Alpha = 0.05;
 
 BallFilter::BallFilter() {}
 
-void BallFilter::updateEstimate(const BallObservation &obs) {
+void BallFilter::updateEstimate(const BallObservation& obs) {
     RJ::Seconds dtime = (obs.time - _currentEstimate.time);
     Point newVel = (obs.pos - _currentEstimate.pos) / dtime.count();
-    
-    
+
     _currentEstimate.valid = true;
     _currentEstimate.pos = obs.pos;
-    _currentEstimate.vel =
-        newVel * Velocity_Alpha + _currentEstimate.vel * (1.0f - Velocity_Alpha);
+    _currentEstimate.vel = newVel * Velocity_Alpha +
+                           _currentEstimate.vel * (1.0f - Velocity_Alpha);
     _currentEstimate.time = obs.time;
 }
 
-Ball BallFilter::predict(RJ::Time time, float *velocityUncertainty) const {
+Ball BallFilter::predict(RJ::Time time, float* velocityUncertainty) const {
     Ball prediction{};
 
     RJ::Seconds t = time - _currentEstimate.time;
@@ -43,7 +42,8 @@ Ball BallFilter::predict(RJ::Time time, float *velocityUncertainty) const {
     // return MotionInstant(pos + vel.normalized(distance),
     // vel.normalized(speed));
     // out->pos = _currentEstimate.pos +
-    //           _currentEstimate.vel * (time - _currentEstimate.time) / 1000000.0f;
+    //           _currentEstimate.vel * (time - _currentEstimate.time) /
+    //           1000000.0f;
     // out->vel = _currentEstimate.vel;
 
     if (velocityUncertainty) {

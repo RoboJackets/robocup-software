@@ -19,9 +19,10 @@ void RobotFilter::update(const RobotObservation* obs) {
 
     int s = obs->source;
     RJ::Seconds dtime = (obs->time - _estimate[s].time);
-    //bool reset = _currentEstimate[s].time == 0 || (dtime > Coast_Time);
+    // bool reset = _currentEstimate[s].time == 0 || (dtime > Coast_Time);
 
-    bool reset = (dtime > Coast_Time);;
+    bool reset = (dtime > Coast_Time);
+    ;
     if (reset || dtime < Min_Frame_Time) {
         _estimate[s].vel = Point();
         _estimate[s].angleVel = 0;
@@ -30,7 +31,8 @@ void RobotFilter::update(const RobotObservation* obs) {
         _estimate[s].vel = newVel * Velocity_Alpha +
                            _estimate[s].vel * (1.0f - Velocity_Alpha);
 
-        double newW = fixAngleRadians(obs->angle - _estimate[s].angle) / dtime.count();
+        double newW =
+            fixAngleRadians(obs->angle - _estimate[s].angle) / dtime.count();
         _estimate[s].angleVel = newW * Velocity_Alpha +
                                 _estimate[s].angleVel * (1.0f - Velocity_Alpha);
     }
@@ -41,7 +43,7 @@ void RobotFilter::update(const RobotObservation* obs) {
     _estimate[s].visionFrame = obs->frameNumber;
 }
 
-void RobotFilter::predict(RJ::Time time, RobotPose *robot) {
+void RobotFilter::predict(RJ::Time time, RobotPose* robot) {
     int bestSource = -1;
     RJ::Seconds bestDTime = RJ::Seconds::min();
     for (int s = 0; s < Num_Cameras; ++s) {
@@ -57,11 +59,12 @@ void RobotFilter::predict(RJ::Time time, RobotPose *robot) {
         return;
     }
 
-    robot->pos =
-        _estimate[bestSource].pos + _estimate[bestSource].vel * bestDTime.count();
+    robot->pos = _estimate[bestSource].pos +
+                 _estimate[bestSource].vel * bestDTime.count();
     robot->vel = _estimate[bestSource].vel;
-    robot->angle = fixAngleRadians(_estimate[bestSource].angle +
-                                   _estimate[bestSource].angleVel * bestDTime.count());
+    robot->angle =
+        fixAngleRadians(_estimate[bestSource].angle +
+                        _estimate[bestSource].angleVel * bestDTime.count());
     robot->angleVel = _estimate[bestSource].angleVel;
     robot->visible = _estimate[bestSource].visible && bestDTime < Coast_Time;
 }

@@ -20,7 +20,9 @@ public:
         return RobotInstant(ball.predict(startTime() + t));
     }
 
-    virtual bool hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const {
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+                     RJ::Seconds startTimeIntoPath,
+                     RJ::Seconds* hitTime) const {
         throw new std::runtime_error("Unsupported Opperation");
     }
 
@@ -29,13 +31,10 @@ public:
         throw new std::runtime_error("Unsupported Opperation");
     }
 
-    virtual RJ::Seconds getDuration() const {
-        return RJ::Seconds::max();
-    }
+    virtual RJ::Seconds getDuration() const { return RJ::Seconds::max(); }
 
-    virtual std::unique_ptr<Path> subPath(
-            RJ::Seconds startTime,
-            RJ::Seconds endTime) const {
+    virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
+                                          RJ::Seconds endTime) const {
         throw new std::runtime_error("Unsupported Opperation");
     }
 
@@ -81,8 +80,8 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
 }
 
-RJ::Time Ball::estimateTimeTo(const Geometry2d::Point &point,
-                              Geometry2d::Point *nearPointOut) const {
+RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
+                              Geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
     auto nearPoint = line.nearestPoint(point);
     if (nearPointOut) {

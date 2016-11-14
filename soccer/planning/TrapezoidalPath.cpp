@@ -20,24 +20,26 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                                      _maxSpeed, _maxAcc, _startSpeed,
                                      _endSpeed)) {}
 
-boost::optional<RobotInstant> TrapezoidalPath::evaluate(RJ::Seconds time) const {
+boost::optional<RobotInstant> TrapezoidalPath::evaluate(
+    RJ::Seconds time) const {
     float distance;
     float speedOut;
-    bool valid = TrapezoidalMotion(_pathLength,  // PathLength
-                                   _maxSpeed,    // maxSpeed
-                                   _maxAcc,      // maxAcc
-                                   time.count(),         // time
-                                   _startSpeed,  // startSpeed
-                                   _endSpeed,    // endSpeed
-                                   distance,     // posOut
-                                   speedOut);    // speedOut
+    bool valid = TrapezoidalMotion(_pathLength,   // PathLength
+                                   _maxSpeed,     // maxSpeed
+                                   _maxAcc,       // maxAcc
+                                   time.count(),  // time
+                                   _startSpeed,   // startSpeed
+                                   _endSpeed,     // endSpeed
+                                   distance,      // posOut
+                                   speedOut);     // speedOut
     if (!valid) return boost::none;
 
     return RobotInstant(MotionInstant(_pathDirection * distance + _startPos,
                                       _pathDirection * speedOut));
 }
 
-bool TrapezoidalPath::hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds initialTime, RJ::Seconds *hitTime) const {
+bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles,
+                          RJ::Seconds initialTime, RJ::Seconds* hitTime) const {
     std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(_startPos);
     for (RJ::Seconds t = initialTime; t < _duration; t += RJ::Seconds(0.1)) {
         auto instant = evaluate(t);

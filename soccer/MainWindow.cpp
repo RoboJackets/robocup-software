@@ -347,16 +347,20 @@ void MainWindow::updateViews() {
     const std::shared_ptr<LogFrame> currentFrame = _history[0];
 
     if (currentFrame) {
-        auto gametime = (RJ::Time(chrono::microseconds(currentFrame->timestamp())) - _processor->logger().startTime());
+        auto gametime =
+            (RJ::Time(chrono::microseconds(currentFrame->timestamp())) -
+             _processor->logger().startTime());
         auto minutes = chrono::duration_cast<chrono::minutes>(gametime);
         gametime -= minutes;
         auto seconds = chrono::duration_cast<chrono::seconds>(gametime);
         gametime -= seconds;
-        auto deciseconds = chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(gametime);
+        auto deciseconds =
+            chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(
+                gametime);
 
-        _ui.logTime->setText(QString::fromStdString(to_string(minutes.count()) + ":" +
-                                                    to_string(seconds.count()) + "." +
-                                                    to_string(deciseconds.count())));
+        _ui.logTime->setText(QString::fromStdString(
+            to_string(minutes.count()) + ":" + to_string(seconds.count()) +
+            "." + to_string(deciseconds.count())));
 
         auto frameNum = _processor->logger().currentFrameNumber();
 
@@ -390,8 +394,9 @@ void MainWindow::updateViews() {
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                                   frameNumber());
-        int elapsedMillis =
-            (currentFrame->command_time() - RJ::timestamp(*_processor->firstLogTime)) / 1000;
+        int elapsedMillis = (currentFrame->command_time() -
+                             RJ::timestamp(*_processor->firstLogTime)) /
+                            1000;
 
         QTime elapsedTime = QTime().addMSecs(elapsedMillis);
         _elapsedTimeItem->setText(ProtobufTree::Column_Value,
@@ -412,7 +417,8 @@ void MainWindow::updateViews() {
         }
     }
 
-    if (RJ::now() - _processor->refereeModule()->received_time > RJ::Seconds(1)) {
+    if (RJ::now() - _processor->refereeModule()->received_time >
+        RJ::Seconds(1)) {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
         _ui.fastReady->setEnabled(true);
@@ -732,7 +738,8 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
+    bool haveExternalReferee =
+        (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
 
     /*if (_autoExternalReferee && haveExternalReferee &&
     !_ui.externalReferee->isChecked())

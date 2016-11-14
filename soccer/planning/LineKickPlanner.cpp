@@ -58,8 +58,8 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
 
     auto ballObstacles = obstacles;
     const RJ::Time curTime = RJ::now();
-    ballObstacles.add(make_shared<Circle>(ball.predict(curTime).pos,
-                                          ballAvoidDistance));
+    ballObstacles.add(
+        make_shared<Circle>(ball.predict(curTime).pos, ballAvoidDistance));
     unique_ptr<InterpolatedPath> prevPath;
     if (prevAnglePath && prevAnglePath->path) {
         prevPath = std::unique_ptr<InterpolatedPath>(
@@ -129,7 +129,8 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
             angleFunctionForCommandType(FacePointCommand(command.target)));
     }
 
-    if (prevPath && targetKickPos && prevPath->getDuration() < RJ::Seconds(1.0)) {
+    if (prevPath && targetKickPos &&
+        prevPath->getDuration() < RJ::Seconds(1.0)) {
         MotionInstant target;
         RJ::Time time = ball.estimateTimeTo(*targetKickPos, &target.pos);
 
@@ -138,15 +139,17 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
         target.pos -= target.vel.normalized(Robot_Radius + Ball_Radius * 2);
 
         RJ::Seconds timeToHit = time - curTime;
-        if (timeToHit > prevPath->getDuration() && timeToHit < RJ::Seconds(2.0)) {
+        if (timeToHit > prevPath->getDuration() &&
+            timeToHit < RJ::Seconds(2.0)) {
             vector<Point> points{startInstant.pos, target.pos};
             finalApproach = true;
             auto path =
                 RRTPlanner::generatePath(points, obstacles, motionConstraints,
                                          startInstant.vel, target.vel);
             path->setDebugText(
-                "FinalPath" + QString::number(path->getDuration().count()) + " " +
-                QString::number(timeToHit.count()) + " " + QString::number(time.time_since_epoch().count()));
+                "FinalPath" + QString::number(path->getDuration().count()) +
+                " " + QString::number(timeToHit.count()) + " " +
+                QString::number(time.time_since_epoch().count()));
             path->slow(timeToHit / path->getDuration());
             return make_unique<AngleFunctionPath>(
                 std::move(path),
@@ -156,8 +159,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
 
     QString debug = "";
     for (auto t = RJ::Seconds(0); t < RJ::Seconds(6); t += RJ::Seconds(0.1)) {
-        MotionInstant ballNow =
-            ball.predict(curTime + t);
+        MotionInstant ballNow = ball.predict(curTime + t);
         MotionInstant target(ballNow.pos);
         targetKickPos = target.pos;
         target.vel = (command.target - target.pos).normalized(ApproachSpeed);
@@ -192,8 +194,9 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
                     continue;
                 }
                 float multiplier = t / path->getDuration();
-                path->setDebugText("FoundPath" + debug +
-                                   QString::number(path->getDuration().count()));
+                path->setDebugText(
+                    "FoundPath" + debug +
+                    QString::number(path->getDuration().count()));
                 // if (path->getDuration() < 0.7) {
                 //    path->slow(multiplier);
 

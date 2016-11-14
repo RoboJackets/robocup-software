@@ -12,16 +12,11 @@
  */
 class Timeout {
 public:
-    Timeout(RJ::Seconds interval = 0ms)
-            : _interval(seconds) {
-        reset();
-    }
+    Timeout(RJ::Seconds interval = 0ms) : _interval(seconds) { reset(); }
 
     void reset() { _startTime = RJ::now(); }
 
-    void setIntervalInSeconds(RJ::Seconds seconds) {
-        _interval = seconds;
-    }
+    void setIntervalInSeconds(RJ::Seconds seconds) { _interval = seconds; }
 
     bool isTimedOut() { return RJ::now() - _startTime > _interval; }
 

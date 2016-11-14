@@ -58,13 +58,16 @@ public:
     // Overridden Path Methods
     virtual RobotInstant start() const override;
     virtual RobotInstant end() const override;
-    virtual bool hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const override;
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+                     RJ::Seconds startTimeIntoPath,
+                     RJ::Seconds* hitTime) const override;
     virtual std::unique_ptr<Path> subPath(
-            RJ::Seconds startTime = RJ::Seconds::zero(),
-            RJ::Seconds endTime = RJ::Seconds::max()) const override;
+        RJ::Seconds startTime = RJ::Seconds::zero(),
+        RJ::Seconds endTime = RJ::Seconds::max()) const override;
     virtual void draw(SystemState* const state, const QColor& color,
                       const QString& layer) const override;
-    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const override;
+    virtual boost::optional<RobotInstant> evaluate(
+        RJ::Seconds t) const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 

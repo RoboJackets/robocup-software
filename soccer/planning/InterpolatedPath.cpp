@@ -64,8 +64,9 @@ int InterpolatedPath::nearestIndex(Point pt) const {
     return index;
 }
 
-bool
-InterpolatedPath::hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const {
+bool InterpolatedPath::hit(const Geometry2d::ShapeSet& obstacles,
+                           RJ::Seconds startTimeIntoPath,
+                           RJ::Seconds* hitTime) const {
     size_t start = 0;
     for (auto& entry : waypoints) {
         start++;
@@ -310,16 +311,19 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
 
     // Add the first points to the InterpolatedPath
     if (waypoints[start].time == startTime) {
-        subpath->waypoints.emplace_back(waypoints[start].instant, RJ::Seconds::zero());
+        subpath->waypoints.emplace_back(waypoints[start].instant,
+                                        RJ::Seconds::zero());
     } else {
-        RJ::Seconds deltaT = (waypoints[start + 1].time - waypoints[start].time);
+        RJ::Seconds deltaT =
+            (waypoints[start + 1].time - waypoints[start].time);
         float constant = (waypoints[start + 1].time - startTime) / deltaT;
         Point startPos = waypoints[start + 1].pos() * (1 - constant) +
                          waypoints[start].pos() * (constant);
         Point vi = waypoints[start + 1].vel() * (1 - constant) +
                    waypoints[start].vel() * (constant);
 
-        subpath->waypoints.emplace_back(MotionInstant(startPos, vi), RJ::Seconds::zero());
+        subpath->waypoints.emplace_back(MotionInstant(startPos, vi),
+                                        RJ::Seconds::zero());
     }
 
     // Find the last point in the InterpolatedPath

@@ -118,7 +118,8 @@ bool SingleRobotPathPlanner::shouldReplan(
     }
 
     // Evaluate where the path says the robot should be right now
-    RJ::Seconds timeIntoPath = (RJ::now() - prevPath->startTime()) + RJ::Seconds(1)/60;
+    RJ::Seconds timeIntoPath =
+        (RJ::now() - prevPath->startTime()) + RJ::Seconds(1) / 60;
 
     boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.

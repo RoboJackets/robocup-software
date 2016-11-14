@@ -34,14 +34,17 @@ public:
      */
     void append(std::unique_ptr<Path> path);
 
-    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const override;
-    virtual bool hit(const Geometry2d::ShapeSet &shape, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const override;
+    virtual boost::optional<RobotInstant> evaluate(
+        RJ::Seconds t) const override;
+    virtual bool hit(const Geometry2d::ShapeSet& shape,
+                     RJ::Seconds startTimeIntoPath,
+                     RJ::Seconds* hitTime) const override;
     virtual void draw(SystemState* const state, const QColor& color = Qt::black,
                       const QString& layer = "Motion") const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> subPath(
-            RJ::Seconds startTime = 0ms,
-            RJ::Seconds endTime = RJ::Seconds::max()) const override;
+        RJ::Seconds startTime = 0ms,
+        RJ::Seconds endTime = RJ::Seconds::max()) const override;
     virtual RobotInstant start() const override;
     virtual RobotInstant end() const override;
     virtual std::unique_ptr<Path> clone() const override;

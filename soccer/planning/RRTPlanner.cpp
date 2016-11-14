@@ -107,8 +107,10 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
 
         if (!path) {
             path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), RJ::Seconds::zero());
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), RJ::Seconds::zero());
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                         RJ::Seconds::zero());
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                         RJ::Seconds::zero());
         }
         path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
@@ -118,7 +120,8 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
             auto path = generateRRTPath(start, goal, motionConstraints,
                                         obstacles, actualDynamic);
             if (path) {
-                RJ::Seconds remaining = prevPath->getDuration() - (RJ::now() - prevPath->startTime());
+                RJ::Seconds remaining = prevPath->getDuration() -
+                                        (RJ::now() - prevPath->startTime());
                 if (remaining > path->getDuration()) {
                     path->setDebugText("Found better path");
                     return std::move(path);
@@ -156,7 +159,8 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
                                         start.vel, goal.vel);
         RJ::Seconds hitTime;
         Point hitLocation;
-        bool hit = path->pathsIntersect(dyObs, path->startTime(), &hitLocation, &hitTime);
+        bool hit = path->pathsIntersect(dyObs, path->startTime(), &hitLocation,
+                                        &hitTime);
         if (hit) {
             // float dist = std::min(goal.pos.distTo(hitLocation)-0.1f,
             // Robot_Radius);

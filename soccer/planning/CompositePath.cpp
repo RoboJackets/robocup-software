@@ -43,8 +43,9 @@ boost::optional<RobotInstant> CompositePath::evaluate(RJ::Seconds t) const {
     return boost::none;
 }
 
-bool
-CompositePath::hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime) const {
+bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
+                        RJ::Seconds startTimeIntoPath,
+                        RJ::Seconds* hitTime) const {
     if (paths.empty()) {
         return false;
     }
@@ -103,7 +104,8 @@ RobotInstant CompositePath::start() const { return paths.front()->start(); }
 
 RobotInstant CompositePath::end() const { return paths.back()->end(); }
 
-unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime, RJ::Seconds endTime) const {
+unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
+                                        RJ::Seconds endTime) const {
     // Check for valid arguments
     if (startTime < RJ::Seconds::zero()) {
         throw invalid_argument("CompositePath::subPath(): startTime(" +
@@ -175,7 +177,8 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime, RJ::Seconds endTi
                 end++;
             }
             end--;
-            lastPath = paths[end]->subPath(RJ::Seconds(0), endTime - (time - lastTime));
+            lastPath = paths[end]->subPath(RJ::Seconds(0),
+                                           endTime - (time - lastTime));
         }
 
         // Add the ones in the middle

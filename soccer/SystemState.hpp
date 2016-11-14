@@ -36,7 +36,7 @@ class Ball {
 public:
     Ball() {
         valid = false;
-//        time();
+        //        time();
     }
 
     Geometry2d::Point pos;
@@ -49,8 +49,8 @@ public:
     Planning::MotionInstant predict(RJ::Time time) const;
     std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
 
-    RJ::Time estimateTimeTo(const Geometry2d::Point &point,
-                            Geometry2d::Point *nearPoint = nullptr) const;
+    RJ::Time estimateTimeTo(const Geometry2d::Point& point,
+                            Geometry2d::Point* nearPoint = nullptr) const;
 };
 
 /**
@@ -123,9 +123,7 @@ public:
     RJ::Time time;
     GameState gameState;
 
-    RJ::Timestamp timestamp() const {
-        return RJ::timestamp(time);
-    }
+    RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
 
     /// All possible robots.
     ///

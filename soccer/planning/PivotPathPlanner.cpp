@@ -43,7 +43,7 @@ bool PivotPathPlanner::shouldReplan(
             return true;
         }
         if (prevPath->getDuration() - (RJ::now() - prevPath->startTime()) <
-                RJ::Seconds(-0.5)) {
+            RJ::Seconds(-0.5)) {
             return true;
         }
     }

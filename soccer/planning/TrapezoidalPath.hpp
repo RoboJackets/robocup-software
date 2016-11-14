@@ -37,18 +37,20 @@ public:
                     Geometry2d::Point endPos, float endSpeed,
                     const MotionConstraints& constraints);
 
-    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds time) const override;
+    virtual boost::optional<RobotInstant> evaluate(
+        RJ::Seconds time) const override;
 
     // TODO: only return true for *new* obstacles
-    virtual bool hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds initialTime, RJ::Seconds *hitTime) const override;
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+                     RJ::Seconds initialTime,
+                     RJ::Seconds* hitTime) const override;
 
     virtual RJ::Seconds getDuration() const override { return _duration; }
 
     float maxSpeed() const { return _maxSpeed; }
 
-    virtual std::unique_ptr<Path> subPath(
-            RJ::Seconds startTime,
-            RJ::Seconds endTime) const override;
+    virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
+                                          RJ::Seconds endTime) const override;
 
     virtual RobotInstant end() const override {
         return RobotInstant(MotionInstant(_endPos, _pathDirection * _endSpeed));
