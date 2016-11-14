@@ -265,15 +265,13 @@ void USBRadio::receive() {
 
 // Note: this method assumes that sizeof(buf) == rtp::Reverse_Size
 void USBRadio::handleRxData(uint8_t* buf) {
-    RJ::Timestamp rx_time = RJ::timestamp();
-
     RadioRx packet = RadioRx();
 
     rtp::header_data* header = (rtp::header_data*)buf;
     rtp::RobotStatusMessage* msg =
         (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
-    packet.set_timestamp(rx_time);
+    packet.set_timestamp(RJ::timestamp());
     packet.set_robot_id(msg->uid);
 
     // Hardware version

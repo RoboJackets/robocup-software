@@ -40,8 +40,8 @@ public:
                       const QString& layer = "Motion") const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> subPath(
-            RJ::Seconds startTime,
-            RJ::Seconds endTime) const override;
+            RJ::Seconds startTime = RJ::Seconds(0),
+            RJ::Seconds endTime = RJ::Seconds::max()) const override;
     virtual RobotInstant start() const override;
     virtual RobotInstant end() const override;
     virtual std::unique_ptr<Path> clone() const override;
