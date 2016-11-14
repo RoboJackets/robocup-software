@@ -347,15 +347,16 @@ void MainWindow::updateViews() {
     const std::shared_ptr<LogFrame> currentFrame = _history[0];
 
     if (currentFrame) {
-        uint64_t gametime_ms =
-            (currentFrame->timestamp() - _processor->logger().startTime()) /
-            1000;
-        uint64_t minutes = gametime_ms / 60000;
-        uint64_t seconds = (gametime_ms % 60000) / 1000;
-        uint64_t deciseconds = (gametime_ms % 1000) / 100;
-        _ui.logTime->setText(QString::fromStdString(to_string(minutes) + ":" +
-                                                    to_string(seconds) + "." +
-                                                    to_string(deciseconds)));
+        auto gametime = (RJ::Time(chrono::microseconds(currentFrame->timestamp())) - _processor->logger().startTime());
+        auto minutes = chrono::duration_cast<chrono::minutes>(gametime);
+        gametime -= minutes;
+        auto seconds = chrono::duration_cast<chrono::seconds>(gametime);
+        gametime -= seconds;
+        auto deciseconds = chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(gametime);
+
+        _ui.logTime->setText(QString::fromStdString(to_string(minutes.count()) + ":" +
+                                                    to_string(seconds.count()) + "." +
+                                                    to_string(deciseconds.count())));
 
         auto frameNum = _processor->logger().currentFrameNumber();
 

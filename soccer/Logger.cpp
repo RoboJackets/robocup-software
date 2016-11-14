@@ -48,7 +48,7 @@ void Logger::addFrame(shared_ptr<LogFrame> frame) {
     QWriteLocker locker(&_lock);
 
     if (_history.empty()) {
-        _startTime = frame->timestamp();
+        _startTime = RJ::Time(chrono::microseconds(frame->timestamp()));
     }
 
     // Write this from to the file

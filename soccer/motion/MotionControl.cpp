@@ -34,7 +34,6 @@ MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50) {
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
-    _lastCmdTime = -1;
 }
 
 void MotionControl::run() {
@@ -208,24 +207,21 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     targetVel.clamp(*_max_velocity);
 
     // Limit Acceleration
-    if (_lastCmdTime == -1) {
-        targetVel.clamp(*_max_acceleration);
-    } else {
-        float dt = (float)((RJ::timestamp() - _lastCmdTime) / 1000000.0f);
-        Point targetAccel = (targetVel - _lastVelCmd) / dt;
-        targetAccel.clamp(*_max_acceleration);
+    auto dt = RJ::Seconds(RJ::now() - _lastCmdTime);
+    Point targetAccel = (targetVel - _lastVelCmd) / dt.count();
+    targetAccel.clamp(*_max_acceleration);
 
-        targetVel = _lastVelCmd + targetAccel * dt;
-    }
+    targetVel = _lastVelCmd + targetAccel * dt.count();
 
     // make sure we don't send any bad values
     if (isnan(targetVel.x()) || isnan(targetVel.y())) {
         targetVel = Point(0, 0);
+        debugThrow("A bad value was calculated.");
     }
 
     // track these values so we can limit acceleration
     _lastVelCmd = targetVel;
-    _lastCmdTime = RJ::timestamp();
+    _lastCmdTime = RJ::now();
 
     // velocity multiplier
     targetVel *= *_robot->config->velMultiplier;

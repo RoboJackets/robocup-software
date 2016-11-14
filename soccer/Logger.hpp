@@ -99,10 +99,10 @@ public:
         }
     }
 
-    RJ::Timestamp startTime() const { return _startTime; }
+    RJ::Time startTime() const { return _startTime; }
 
 private:
-    RJ::Timestamp _startTime;
+    RJ::Time _startTime;
     mutable QReadWriteLock _lock;
 
     QString _filename;
