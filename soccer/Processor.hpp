@@ -243,7 +243,7 @@ private:
     bool _defendPlusX;
 
     // Processing period in microseconds
-    std::chrono::microseconds _framePeriod;
+    RJ::Seconds _framePeriod;
 
     // True if we are using external referee packets
     bool _externalReferee;
