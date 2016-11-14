@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Utils.hpp>
+#include <time.hpp>
 
 /**
  * This is a simple timeout timer.
@@ -11,22 +12,20 @@
  */
 class Timeout {
 public:
-    Timeout(float seconds = 0) {
-        setIntervalInSeconds(seconds);
+    Timeout(RJ::Seconds interval = RJ::Seconds(0))
+            : _interval(seconds) {
         reset();
     }
 
-    void reset() { _startTime = RJ::timestamp(); }
+    void reset() { _startTime = RJ::now(); }
 
-    void setIntervalInSeconds(float seconds) {
-        _interval = (RJ::Timestamp)(seconds * 1000.0f);
+    void setIntervalInSeconds(RJ::Seconds seconds) {
+        _interval = seconds;
     }
 
-    void setIntervalInMilliseconds(RJ::Timestamp ms) { _interval = ms; }
-
-    bool isTimedOut() { return RJ::timestamp() - _startTime > _interval; }
+    bool isTimedOut() { return RJ::now() - _startTime > _interval; }
 
 private:
-    RJ::Timestamp _interval;
-    RJ::Timestamp _startTime;
+    RJ::Seconds _interval;
+    RJ::Time _startTime;
 };

@@ -3,13 +3,13 @@
 using namespace std;
 
 namespace {
-constexpr RJ::Timestamp Dribble_Step_Time = 125 * 1000;
-constexpr RJ::Timestamp Kicker_Step_Time = 125 * 1000;
+constexpr auto Dribble_Step_Time = RJ::Seconds(0.125);
+constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 const float AXIS_MAX = 32768.0f;
 }
 
 GamepadController::GamepadController()
-    : _controller(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
+    : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
         cerr << "ERROR: SDL could not initialize game controller system! SDL "
@@ -54,7 +54,7 @@ void GamepadController::update() {
     QMutexLocker(&mutex());
     SDL_GameControllerUpdate();
 
-    RJ::Timestamp now = RJ::timestamp();
+    RJ::Time now = RJ::now();
 
     /*
      *  DRIBBLER POWER
