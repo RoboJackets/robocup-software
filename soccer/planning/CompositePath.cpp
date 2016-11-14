@@ -79,7 +79,7 @@ CompositePath::hit(const Geometry2d::ShapeSet &obstacles, RJ::Seconds startTimeI
     }
 
     for (; start < paths.size(); start++) {
-        if (paths[start]->hit(obstacles, RJ::Seconds(0), hitTime)) {
+        if (paths[start]->hit(obstacles, 0ms, hitTime)) {
             if (hitTime) {
                 *hitTime += totalTime;
             }

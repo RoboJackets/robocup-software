@@ -16,8 +16,8 @@ InterpolatedPath::InterpolatedPath(Point p0) {
 }
 
 InterpolatedPath::InterpolatedPath(Point p0, Point p1) {
-    waypoints.emplace_back(MotionInstant(p0, Point()), RJ::Seconds::zero());
-    waypoints.emplace_back(MotionInstant(p1, Point()), RJ::Seconds(1));
+    waypoints.emplace_back(MotionInstant(p0, Point()), 0ms);
+    waypoints.emplace_back(MotionInstant(p1, Point()), 1s);
 }
 
 float InterpolatedPath::length(unsigned int start) const {

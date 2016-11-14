@@ -79,7 +79,7 @@ public:
      * @return A unique_ptr to the new subPath
      */
     virtual std::unique_ptr<Path> subPath(
-            RJ::Seconds startTime = RJ::Seconds(0),
+            RJ::Seconds startTime = 0ms,
             RJ::Seconds endTime = RJ::Seconds::max()) const = 0;
 
     /// Start instant of the path

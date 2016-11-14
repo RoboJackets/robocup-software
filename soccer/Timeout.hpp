@@ -12,7 +12,7 @@
  */
 class Timeout {
 public:
-    Timeout(RJ::Seconds interval = RJ::Seconds(0))
+    Timeout(RJ::Seconds interval = 0ms)
             : _interval(seconds) {
         reset();
     }
