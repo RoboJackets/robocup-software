@@ -51,7 +51,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _updateCount(0),
       _autoExternalReferee(true),
       _doubleFrameNumber(-1),
-      _lastUpdateTime(RJ::timestamp()),
+      _lastUpdateTime(RJ::now()),
       _history(2 * 60),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -247,10 +247,10 @@ void MainWindow::updateViews() {
     }
 
     // Time since last update
-    RJ::Timestamp time = RJ::timestamp();
-    int delta_us = time - _lastUpdateTime;
-    _lastUpdateTime = time;
-    double framerate = 1000000.0 / delta_us;
+    RJ::Time now = RJ::now();
+    auto delta_time = now - _lastUpdateTime;
+    _lastUpdateTime = now;
+    double framerate = RJ::Seconds(1) / delta_time;
 
     ++_updateCount;
     if (_updateCount == 4) {
@@ -412,9 +412,7 @@ void MainWindow::updateViews() {
         }
     }
 
-    if (std::time(nullptr) -
-            (_processor->refereeModule()->received_time / 1000000) >
-        1) {
+    if (RJ::now() - _processor->refereeModule()->received_time > RJ::Seconds(1)) {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
         _ui.fastReady->setEnabled(true);
