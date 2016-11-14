@@ -104,9 +104,9 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
     // Update the real ball
     if (_ballFilter) {
         // Get a prediction for this frame from the filter
-        Ball prediction;
+
         float velocityUncertainty = 0;
-        _ballFilter->predict(predictTime, &prediction, &velocityUncertainty);
+        Ball prediction = _ballFilter->predict(predictTime, &velocityUncertainty);
 
         Point windowCenter = prediction.pos;
         float windowRadius =
@@ -129,12 +129,11 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
 
         if (bestDist >= 0) {
             // Update the filter
-            _ballFilter->update(goodObs[best]);
+            _ballFilter->updateEstimate(*goodObs[best]);
             _lastTrackTime = goodObs[best]->time;
 
             // Update the real track
-            _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())), &state->ball,
-                                 nullptr);
+            state->ball = _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())), nullptr);
 
             // Don't use this observation for a possible track since it's the
             // real track
@@ -202,10 +201,9 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
                 _ballFilter = std::make_shared<BallFilter>();
 
                 // First update and prediction
-                _ballFilter->update(&_possibleTracks[i].obs);
+                _ballFilter->updateEstimate(_possibleTracks[i].obs);
                 _lastTrackTime = _possibleTracks[i].obs.time;
-                _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())),
-                                     &state->ball, nullptr);
+                state->ball = _ballFilter->predict(RJ::Time(chrono::microseconds(state->logFrame->command_time())), nullptr);
 
                 fastRemove(_possibleTracks, i);
                 break;

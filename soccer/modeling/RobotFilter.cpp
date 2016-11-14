@@ -19,7 +19,7 @@ void RobotFilter::update(const RobotObservation* obs) {
 
     int s = obs->source;
     RJ::Seconds dtime = (obs->time - _estimate[s].time);
-    //bool reset = _estimate[s].time == 0 || (dtime > Coast_Time);
+    //bool reset = _currentEstimate[s].time == 0 || (dtime > Coast_Time);
 
     bool reset = (dtime > Coast_Time);;
     if (reset || dtime < Min_Frame_Time) {

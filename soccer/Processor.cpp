@@ -33,7 +33,7 @@ using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
 
-static const auto Command_Latency = chrono::microseconds(0);
+static const auto Command_Latency = RJ::Seconds(0);
 
 RobotConfig* Processor::robotConfig2008;
 RobotConfig* Processor::robotConfig2011;
