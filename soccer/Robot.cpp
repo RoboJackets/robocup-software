@@ -532,7 +532,7 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const {
 }
 
 boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
-    if (_radioRx.has_quaternion() && rxIsFresh(RJ::SecsToTimestamp(0.05))) {
+    if (_radioRx.has_quaternion() && rxIsFresh(RJ::Seconds(0.05))) {
         return Eigen::Quaternionf(_radioRx.quaternion().q0() / 16384.0,
                                   _radioRx.quaternion().q1() / 16384.0,
                                   _radioRx.quaternion().q2() / 16384.0,
@@ -542,8 +542,8 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
     }
 }
 
-bool OurRobot::rxIsFresh(RJ::Timestamp age) const {
-    return (RJ::timestamp() - _radioRx.timestamp()) < age;
+bool OurRobot::rxIsFresh(RJ::Seconds age) const {
+    return (RJ::now() - RJ::Time(chrono::microseconds(_radioRx.timestamp()))) < age;
 }
 
 RJ::Timestamp OurRobot::lastKickTime() const { return RJ::timestamp(_lastKickTime); }

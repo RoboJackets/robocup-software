@@ -406,7 +406,7 @@ public:
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool rxIsFresh(RJ::Timestamp age = 500000) const;
+    bool rxIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
     /**
      * @brief start the robot playing a song
