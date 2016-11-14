@@ -362,7 +362,6 @@ void MainWindow::updateViews() {
                                        .arg(QString::number(frameNumber()))
                                        .arg(QString::number(frameNum)));
 
-
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                                   frameNumber());
