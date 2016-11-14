@@ -18,7 +18,6 @@ var dir_2b77d30d8f9797ab2db09c7c3c70f9b7 =
     [ "NewRefereeModule.hpp", "_new_referee_module_8hpp_source.html", null ],
     [ "Processor.hpp", "_processor_8hpp_source.html", null ],
     [ "ProtobufTree.hpp", "_protobuf_tree_8hpp_source.html", null ],
-    [ "QuaternionDemo.hpp", "_quaternion_demo_8hpp_source.html", null ],
     [ "RefereeTab.hpp", "_referee_tab_8hpp_source.html", null ],
     [ "Robot.hpp", "_robot_8hpp_source.html", null ],
     [ "RobotConfig.hpp", "_robot_config_8hpp_source.html", null ],

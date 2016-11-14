@@ -403,7 +403,6 @@ var annotated_dup =
     [ "Pid", "class_pid.html", "class_pid" ],
     [ "Processor", "class_processor.html", "class_processor" ],
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
-    [ "QuaternionDemo", "class_quaternion_demo.html", "class_quaternion_demo" ],
     [ "Radio", "class_radio.html", "class_radio" ],
     [ "RefereeTab", "class_referee_tab.html", "class_referee_tab" ],
     [ "Robot", "class_robot.html", "class_robot" ],

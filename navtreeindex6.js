@@ -1,12 +1,5 @@
 var NAVTREEINDEX6 =
 {
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#ab8ac12b930e17da6031add2c74fb0578":[12,0,5,7,0,0,10],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#ad42dc3792688ed261e18b360dda1a475":[12,0,5,7,0,0,8],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#adfb922737cb2fe125f59bd24da220d23":[12,0,5,7,0,0,2],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#af23b50d7cd7e93de301b741694bb4839":[12,0,5,7,0,0,7],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#af6c1318bd01890050d8aba638fee3187":[12,0,5,7,0,0,6],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html":[12,0,5,7,0,1],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a1bdc00bb8624b3eae7baba4508695028":[12,0,5,7,0,1,2],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a275994e56ff79392cd237c70a69da526":[12,0,5,7,0,1,10],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a2c7c2d1ae26c1acab6b6bef55ea90add":[12,0,5,7,0,1,4],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a4cbd0dab1b3d072ed40c93e95a2054e5":[12,0,5,7,0,1,5],
@@ -249,5 +242,12 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#a06be27999c1772573c0f3b5fbbd6a887":[12,0,5,8,5,0,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#a64386b90df368522ae728711f826a722":[12,0,5,8,5,0,0,2],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#ac5b8a6c9a73f951a4293437c7f2da548":[12,0,5,8,5,0,0,3],
-"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#acce03ed390a28ee3d87fc3f435a20250":[12,0,5,8,5,0,0,1]
+"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#acce03ed390a28ee3d87fc3f435a20250":[12,0,5,8,5,0,0,1],
+"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html":[12,0,5,8,5,0,1],
+"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html#a8b463089d0beefcc882f19c4051927ae":[12,0,5,8,5,0,1,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html":[12,0,5,8,5,1,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a1829f61b494b166155ed89af0276007a":[12,0,5,8,5,1,0,4],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a224a44289b3619ac798e6d079d8d58f3":[12,0,5,8,5,1,0,12],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a38c3e4eed008c65d4f20a6d233e2c436":[12,0,5,8,5,1,0,11],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a393aa7800438b3ab3e56e0b2bd8274fc":[12,0,5,8,5,1,0,6]
 };
