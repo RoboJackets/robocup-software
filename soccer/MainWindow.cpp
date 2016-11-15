@@ -1,7 +1,6 @@
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 #include "Configuration.hpp"
-#include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <Robot.hpp>
@@ -31,10 +30,6 @@ using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
 using namespace Eigen;
-
-// Style sheets used for live/non-live controls
-QString LiveStyle("border:2px solid transparent");
-QString NonLiveStyle("border:2px solid red");
 
 static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles",
@@ -140,10 +135,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     //    channel(0);
 
-    updateTimer.setSingleShot(true);
-    connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
-    updateTimer.start(30);
-
     // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
     _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
@@ -187,6 +178,10 @@ void MainWindow::initialize() {
     if (_processor->simulation()) {
         _ui.actionVisionFull_Field->trigger();
     }
+
+    updateTimer.setSingleShot(true);
+    connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
+    updateTimer.start(30);
 }
 
 void MainWindow::logFileChanged() {
@@ -239,13 +234,6 @@ void MainWindow::updateViews() {
         _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
     }
 
-    if (live()) {
-        _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
-    } else {
-        _ui.logTree->setStyleSheet(
-            QString("QTreeWidget{%1}").arg(NonLiveStyle));
-    }
-
     // Time since last update
     RJ::Time now = RJ::now();
     auto delta_time = now - _lastUpdateTime;
@@ -282,10 +270,10 @@ void MainWindow::updateViews() {
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
-            _playbackRate = 1;
+            setPlayBackRate(1.0);
         } else if (_doubleFrameNumber > maxFrame) {
             _doubleFrameNumber = maxFrame;
-            _playbackRate = boost::none;
+            setLive();
         }
     }
 
@@ -367,29 +355,6 @@ void MainWindow::updateViews() {
         _ui.frameNumLabel->setText(QString("%1/%2")
                                        .arg(QString::number(frameNumber()))
                                        .arg(QString::number(frameNum)));
-
-        // Update the orientation demo view
-        if (_quaternion_demo && manual >= 0 &&
-            currentFrame->radio_rx().size() &&
-            currentFrame->radio_rx(0).has_quaternion()) {
-            const RadioRx* manualRx = nullptr;
-            for (const RadioRx& rx : currentFrame->radio_rx()) {
-                if ((int)rx.robot_id() == manual) {
-                    manualRx = &rx;
-                    break;
-                }
-            }
-            if (manualRx) {
-                const Packet::Quaternion& q = manualRx->quaternion();
-                _quaternion_demo->q =
-                    Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
-                if (!_quaternion_demo->initialized) {
-                    _quaternion_demo->ref = _quaternion_demo->q;
-                    _quaternion_demo->initialized = true;
-                }
-                _quaternion_demo->update();
-            }
-        }
 
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
@@ -588,9 +553,7 @@ void MainWindow::updateViews() {
             // We make a copy of the robot's RadioRx package b/c the original
             // might change during the course of this method b/c radio comm
             // happens on a different thread.
-            _processor->loopMutex().lock();
-            RadioRx rx(robot->radioRx());
-            _processor->loopMutex().unlock();
+            RadioRx rx = robot->radioRx();
 
 #ifndef DEMO_ROBOT_STATUS
             // radio status
@@ -1044,18 +1007,6 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
     updateTimer.start(30);
 }
 
-void MainWindow::on_actionQuaternion_Demo_toggled(bool value) {
-    if (value) {
-        if (_quaternion_demo) delete _quaternion_demo;
-        cout << "Starting Quaternion Demo" << endl;
-        _quaternion_demo = new QuaternionDemo(this);
-        _quaternion_demo->resize(640, 480);
-    } else {
-        cout << "Stopping Quaternion Demo" << endl;
-        if (_quaternion_demo) delete _quaternion_demo;
-    }
-}
-
 void MainWindow::on_actionStart_Logging_triggered() {
     if (!_processor->logger().recording()) {
         if (!QDir("logs").exists()) {
@@ -1094,7 +1045,7 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
     _doubleFrameNumber = value;
 
     // pause playback
-    _playbackRate = 0;
+    setPlayBackRate(0);
 }
 
 void MainWindow::on_logHistoryLocation_sliderPressed() {
@@ -1107,29 +1058,27 @@ void MainWindow::on_logHistoryLocation_sliderReleased() {
 
 void MainWindow::on_logPlaybackRewind_clicked() {
     if (live()) {
-        _playbackRate = -1;
+        setPlayBackRate(-1);
     } else {
         *_playbackRate += -0.5;
     }
 }
 
 void MainWindow::on_logPlaybackPrevFrame_clicked() {
-    _playbackRate = 0;
+    setPlayBackRate(0);
     _doubleFrameNumber -= 1;
 }
 
 void MainWindow::on_logPlaybackPause_clicked() {
-    if (live()) {
-        _playbackRate = 0;
-    } else if (std::abs(*_playbackRate) < 0.1) {
-        _playbackRate = 1;
+    if (live() || std::abs(*_playbackRate) > 0.1) {
+        setPlayBackRate(0);
     } else {
-        _playbackRate = 0;
+        setPlayBackRate(1);
     }
 }
 
 void MainWindow::on_logPlaybackNextFrame_clicked() {
-    _playbackRate = 0;
+    setPlayBackRate(0);
     _doubleFrameNumber += 1;
 }
 
@@ -1139,7 +1088,7 @@ void MainWindow::on_logPlaybackPlay_clicked() {
     }
 }
 
-void MainWindow::on_logPlaybackLive_clicked() { _playbackRate = boost::none; }
+void MainWindow::on_logPlaybackLive_clicked() { setLive(); }
 
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
@@ -1155,14 +1104,6 @@ void MainWindow::on_actionTeamYellow_triggered() {
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
     _processor->manualID(value - 1);
-    if (_quaternion_demo) {
-        if (value == 0) {
-            _quaternion_demo->hide();
-        } else {
-            _quaternion_demo->show();
-            _quaternion_demo->initialized = false;
-        }
-    }
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {

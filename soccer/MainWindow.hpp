@@ -15,9 +15,14 @@
 class TestResultTab;
 class StripChart;
 class ConfigBool;
-class QuaternionDemo;
 
 enum RadioChannels { MHz_916, MHz_918 };
+
+namespace {
+// Style sheets used for live/non-live controls
+QString LiveStyle("border:2px solid transparent");
+QString NonLiveStyle("border:2px solid red");
+};
 /**
  * main gui thread class
  */
@@ -40,6 +45,22 @@ public:
     void allDebugOn();
 
     bool live();
+
+    void setLive() {
+        if (!live()) {
+            _ui.logTree->setStyleSheet(
+                QString("QTreeWidget{%1}").arg(NonLiveStyle));
+            _playbackRate = boost::none;
+        }
+    }
+
+    void setPlayBackRate(double playbackRate) {
+        if (live()) {
+            _ui.logTree->setStyleSheet(
+                QString("QTreeWidget{%1}").arg(LiveStyle));
+        }
+        _playbackRate = playbackRate;
+    }
 
     int frameNumber() const { return roundf(_doubleFrameNumber); }
 
@@ -108,7 +129,6 @@ private Q_SLOTS:
 
     /// Debug menu commands
     void on_actionRestartUpdateTimer_triggered();
-    void on_actionQuaternion_Demo_toggled(bool value);
     void on_actionStart_Logging_triggered();
 
     /// Gameplay menu
@@ -163,8 +183,6 @@ private:
 
     Processor* const _processor;
     Configuration* _config;
-
-    QuaternionDemo* _quaternion_demo;
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
