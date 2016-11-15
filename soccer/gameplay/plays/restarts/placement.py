@@ -56,8 +56,8 @@ class Placement(play.Play):
                                  required=True,
                                  priority=90)
 
-        line_up = tactics.line_up.LineUp(self.create_lineup())
-        self.add_subbehavior(line_up, 'line_up', required=True, priority=80)
+        #line_up = tactics.line_up.LineUp(self.create_lineup())
+        #self.add_subbehavior(line_up, 'line_up', required=True, priority=80)
 
     def execute_placing(self):
         main.system_state().draw_circle(self._pos, 0.1, constants.Colors.Green,
@@ -66,8 +66,9 @@ class Placement(play.Play):
                                         "Avoid")
 
     def on_exit_placing(self):
-        self.remove_subbehavior('placer')
-        self.remove_subbehavior('line_up')
+        if self._our_restart:
+            self.remove_subbehavior('placer')
+        #self.remove_subbehavior('line_up')
 
     @classmethod
     def score(cls):

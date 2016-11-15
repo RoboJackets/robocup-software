@@ -52,9 +52,10 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         receive_pt, target_point, probability = OneTouchPass.tpass.eval_best_receive_point(
             main.ball().pos, None, pass_bhvr.get_robots())
         # only change if increase of beyond the threshold.
-        if self.force_reevauation == True or pass_bhvr.receive_point == None or pass_bhvr.target_point == None or probability > OneTouchPass.tpass.eval_single_point(
-                main.ball().pos, pass_bhvr.receive_point, pass_bhvr.get_robots(
-                )) + OneTouchPass.receivePointChangeThreshold:
+        if self.force_reevauation == True or pass_bhvr.receive_point == None or pass_bhvr.target_point == None \
+           or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos,
+                                                                 pass_bhvr.receive_point, ignore_robots=pass_bhvr.get_robots()) \
+                                                                 + OneTouchPass.receivePointChangeThreshold:
             pass_bhvr.receive_point = receive_pt
             angle_receive.target_point = target_point
             self.force_reevauation = False

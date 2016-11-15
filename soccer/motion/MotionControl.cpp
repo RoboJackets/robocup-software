@@ -83,7 +83,7 @@ void MotionControl::run() {
     boost::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
 
-    float targetAngleFinal = 0;
+    boost::optional<float> targetAngleFinal;
     // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
     //    PivotCommand command =
     //    *static_cast<PivotCommand*>(motionCommand.get());
@@ -104,26 +104,30 @@ void MotionControl::run() {
         targetAngleFinal = (*targetPt - _robot->pos).angle();
     }
 
-    float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
+    if (!targetAngleFinal) {
+        _targetAngleVel(0);
+    } else {
+        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
 
-    targetW = _angleController.run(angleError);
+        targetW = _angleController.run(angleError);
 
-    // limit W
-    if (abs(targetW) > (rotationConstraints.maxSpeed)) {
-        if (targetW > 0) {
-            targetW = (rotationConstraints.maxSpeed);
-        } else {
-            targetW = -(rotationConstraints.maxSpeed);
+        // limit W
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+            if (targetW > 0) {
+                targetW = (rotationConstraints.maxSpeed);
+            } else {
+                targetW = -(rotationConstraints.maxSpeed);
+            }
         }
-    }
 
-    /*
-    _robot->addText(QString("targetW: %1").arg(targetW));
-    _robot->addText(QString("angleError: %1").arg(angleError));
-    _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-    _robot->addText(QString("angle: %1").arg(_robot->angle));
-    */
-    _targetAngleVel(targetW);
+        /*
+        _robot->addText(QString("targetW: %1").arg(targetW));
+        _robot->addText(QString("angleError: %1").arg(angleError));
+        _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
+        _robot->addText(QString("angle: %1").arg(_robot->angle));
+        */
+        _targetAngleVel(targetW);
+    }
 
     // handle body velocity for pivot command
     /*
@@ -187,16 +191,15 @@ void MotionControl::stopped() {
 void MotionControl::_targetAngleVel(float angleVel) {
     // velocity multiplier
     angleVel *= *_robot->config->angleVelMultiplier;
-  
+
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
-     float minEffectiveAngularSpeed =
-     *_robot->config->minEffectiveAngularSpeed;
-     if (std::abs(angleVel) < minEffectiveAngularSpeed && std::abs(angleVel) > .05) {
-         angleVel =
-             angleVel > 0 ? minEffectiveAngularSpeed :
-             -minEffectiveAngularSpeed;
-     }
+    float minEffectiveAngularSpeed = *_robot->config->minEffectiveAngularSpeed;
+    if (std::abs(angleVel) < minEffectiveAngularSpeed &&
+        std::abs(angleVel) > .05) {
+        angleVel =
+            angleVel > 0 ? minEffectiveAngularSpeed : -minEffectiveAngularSpeed;
+    }
 
     // the robot firmware still speaks degrees, so that's how we send it over
     _robot->control->set_avelocity(angleVel);

@@ -1,6 +1,7 @@
 import logging
 from PyQt5 import QtCore, QtWidgets
 import main
+import sys
 
 
 def getMainWindow():
@@ -15,21 +16,17 @@ def getMainWindow():
 # sets up the PlayConfigTab in the main soccer gui
 _has_setup_ui = False
 
+_defense_checkbox = None
+
 
 def defenseEnabled():
-    win = getMainWindow()
-    if win == None:
-        logging.warn(
-            "At defenseEnabled(), unable to get a reference to the main window")
-        return True
-
-    defenseCheckbox = win.findChild(QtWidgets.QCheckBox, 'useDefenseCheckBox')
-
-    return defenseCheckbox.isChecked()
+    global _defense_checkbox
+    return _defense_checkbox.isChecked()
 
 
 def setup():
     global _has_setup_ui
+    global _defense_checkbox
 
     if _has_setup_ui == True:
         logging.warn("ui setup() function called more than once")
@@ -50,6 +47,9 @@ def setup():
 
     # bind the play label in the ui to the name of the current play
     play_name_label = win.findChild(QtWidgets.QLabel, 'current_play_name')
+    _defense_checkbox = win.findChild(QtWidgets.QCheckBox,
+                                      'useDefenseCheckBox')
+
     main.root_play().play_changed.connect(play_name_label.setText)
 
     _has_setup_ui = True

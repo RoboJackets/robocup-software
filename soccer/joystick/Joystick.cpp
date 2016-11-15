@@ -10,9 +10,9 @@ ConfigDouble* Joystick::JoystickTranslationMaxDampedSpeed;
 
 void Joystick::createConfiguration(Configuration* cfg) {
     JoystickRotationMaxSpeed =
-        new ConfigDouble(cfg, "Joystick/Max Rotation Speed", 4 * M_PI);
+        new ConfigDouble(cfg, "Joystick/Max Rotation Speed", .5);
     JoystickRotationMaxDampedSpeed =
-        new ConfigDouble(cfg, "Joystick/Max Damped Rotation Speed", 1 * M_PI);
+        new ConfigDouble(cfg, "Joystick/Max Damped Rotation Speed", .25);
     JoystickTranslationMaxSpeed =
         new ConfigDouble(cfg, "Joystick/Max Translation Speed", 3.0);
     JoystickTranslationMaxDampedSpeed =

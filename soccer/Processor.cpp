@@ -14,9 +14,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <git_version.hpp>
-// #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
+#include <joystick/GamepadJoystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -72,6 +72,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     // joysticks
     _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
+    _joysticks.push_back(new GamepadJoystick());
     _dampedTranslation = true;
     _dampedRotation = true;
 
@@ -360,6 +361,8 @@ void Processor::run() {
 
         // Read radio reverse packets
         _radio->receive();
+
+        _loopMutex.lock();
         for (const Packet::RadioRx& rx : _radio->reversePackets()) {
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
@@ -376,8 +379,6 @@ void Processor::run() {
             }
         }
         _radio->clear();
-
-        _loopMutex.lock();
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
@@ -407,8 +408,8 @@ void Processor::run() {
             bluename = _state.gameState.OurInfo.name;
             yellowname = _state.gameState.TheirInfo.name;
         } else {
-        yellowname = _state.gameState.OurInfo.name;
-          bluename = _state.gameState.TheirInfo.name;
+            yellowname = _state.gameState.OurInfo.name;
+            bluename = _state.gameState.TheirInfo.name;
         }
 
         _state.logFrame->set_team_name_blue(bluename);
@@ -452,18 +453,22 @@ void Processor::run() {
 
                 // create and visualize obstacles
                 Geometry2d::ShapeSet staticObstacles =
-                    r->collectStaticObstacles(globalObstaclesForBot,
-                                              !(r->shell() == _gameplayModule->goalieID() || r->isPenaltyKicker || r->isBallPlacer));
+                    r->collectStaticObstacles(
+                        globalObstaclesForBot,
+                        !(r->shell() == _gameplayModule->goalieID() ||
+                          r->isPenaltyKicker || r->isBallPlacer));
 
                 std::vector<Planning::DynamicObstacle> dynamicObstacles =
                     r->collectDynamicObstacles();
 
-                requests.emplace(r->shell(),
-                    Planning::PlanRequest(_state, Planning::MotionInstant(r->pos, r->vel),
-                    r->motionCommand()->clone(), r->robotConstraints(),
-                    std::move(r->angleFunctionPath.path),
-                    std::move(staticObstacles), std::move(dynamicObstacles),
-                    r->getPlanningPriority()));
+                requests.emplace(
+                    r->shell(),
+                    Planning::PlanRequest(
+                        _state, Planning::MotionInstant(r->pos, r->vel),
+                        r->motionCommand()->clone(), r->robotConstraints(),
+                        std::move(r->angleFunctionPath.path),
+                        std::move(staticObstacles), std::move(dynamicObstacles),
+                        r->getPlanningPriority()));
             }
         }
 
@@ -680,8 +685,7 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field."
-             << endl;
+                "field." << endl;
     }
 }
 
@@ -736,7 +740,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
     if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-M_PI/2 - robot->angle);
+        translation.rotate(-M_PI / 2 - robot->angle);
     }
 
     // translation

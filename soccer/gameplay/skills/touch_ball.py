@@ -2,14 +2,16 @@ import single_robot_behavior
 import behavior
 from enum import Enum
 import main
-import evaluation
 import constants
-import role_assignment
 import robocup
-import skills.capture
-import math
 
 
+## Touchball Class
+# A touchball is a simplified capture behavior, that simply lets the ball
+# roll towards the robot until it hits it in the mouth
+#
+# This class does NOT handle turning towards the ball, as it is designed to be
+# used with a class that will try to shoot it at a target.
 class TouchBall(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
@@ -37,23 +39,15 @@ class TouchBall(single_robot_behavior.SingleRobotBehavior):
                             behavior.Behavior.State.completed,
                             lambda: self.robot.has_ball(), 'Ball got hit!')
 
-        self.add_transition(
-            TouchBall.State.course_approach, behavior.Behavior.State.failed,
-            lambda: not main.ball().valid, # TODO fail properly
-            'ball was lost')
-
+        self.add_transition(TouchBall.State.course_approach,
+                            behavior.Behavior.State.failed,
+                            lambda: not main.ball().valid,  # TODO fail properly
+                            'ball was lost')
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
         return main.ball().vel.normalized()
 
-    ## A touch is different from a capture in that we should try to keep our
-    # distance from the ball if possible, and move forward to hit the ball at
-    # the last minute.
-    # To do this, let's move the intercept point capture found back a bit.
-    #
-    # In addition, lets try to keep this point stable by choosing the closest
-    # point, instead of the point that we can reach in time closest to the ball
     def find_intercept_point(self, adjusted=True):
         approach_vec = self.approach_vector()
 

@@ -86,7 +86,7 @@ protected:
     /// replaced with a newly-planned one
     bool shouldReplan(const SinglePlanRequest& planRequest,
                       const std::vector<DynamicObstacle> dynamicObs,
-                      std::string *debugOut = nullptr) const;
+                      std::string* debugOut = nullptr) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     std::vector<Geometry2d::Point> runRRT(
@@ -97,7 +97,8 @@ protected:
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& obstacles, const std::vector<DynamicObstacle> paths);
+        Geometry2d::ShapeSet& obstacles,
+        const std::vector<DynamicObstacle> paths);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated

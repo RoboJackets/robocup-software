@@ -341,32 +341,27 @@ void Gameplay::GameplayModule::run() {
     {
         try {
             // vector of shared pointers to pass to python
-            vector<OurRobot*>* botVector = new vector<OurRobot*>();
-            for (auto itr = _playRobots.begin(); itr != _playRobots.end();
-                 itr++) {
-                OurRobot* ourBot = *itr;
+            vector<OurRobot*> botVector;
+            for (auto ourBot : _playRobots) {
                 // don't attempt to drive the robot that's joystick-controlled
                 // FIXME: exclude manual id robot
                 // if (ourBot->shell() != MANUAL_ID) {
-                botVector->push_back(ourBot);
+                botVector.push_back(ourBot);
                 // }
             }
             getMainModule().attr("set_our_robots")(botVector);
 
-            vector<OpponentRobot*>* theirBotVector =
-                new vector<OpponentRobot*>();
-            for (auto itr = _state->opp.begin(); itr != _state->opp.end();
-                 itr++) {
-                OpponentRobot* bot = *itr;
+            vector<OpponentRobot*> theirBotVector;
+            for (auto bot : _state->opp) {
                 if (bot && bot->visible) {
-                    theirBotVector->push_back(bot);
+                    theirBotVector.push_back(bot);
                 }
             }
             getMainModule().attr("set_their_robots")(theirBotVector);
 
             getMainModule().attr("set_game_state")(_state->gameState);
 
-            getMainModule().attr("set_system_state")(&_state);
+            getMainModule().attr("set_system_state")(_state);
 
             getMainModule().attr("set_ball")(_state->ball);
 

@@ -19,9 +19,6 @@ libgmp3-dev
 libmpfr-dev
 libmpc-dev
 
-# arm toolchain for compiling for mbed
-gcc-arm-none-eabi
-
 # program to generate api documentation from comments in code files
 doxygen
 
@@ -74,6 +71,7 @@ spacenavd
 libboost-python-dev
 
 # for joystick
+libsdl2-dev
 libsdl1.2-dev
 
 # everything else...

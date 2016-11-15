@@ -9,6 +9,7 @@
 #include "RobotStatusWidget.hpp"
 #include "BatteryProfile.hpp"
 #include <Network.hpp>
+#include "git_version.hpp"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -146,6 +147,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
                   SLOT(on_actionQuicksaveRobotLocations_triggered()));
     new QShortcut(QKeySequence(Qt::Key_E), this,
                   SLOT(on_actionQuickloadRobotLocations_triggered()));
+
+    // Append short Git hash to the main window title with an asterisk if the
+    // current Git index is dirty
+    setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
+                   (git_version_dirty ? "*" : ""));
 }
 
 void MainWindow::configuration(Configuration* config) {
@@ -281,6 +287,7 @@ void MainWindow::updateViews() {
             _doubleFrameNumber = minFrame;
         } else if (_doubleFrameNumber > maxFrame) {
             _doubleFrameNumber = maxFrame;
+            live(true);
         }
     }
 
@@ -297,13 +304,11 @@ void MainWindow::updateViews() {
     // enable playback buttons based on playback rate
     for (QPushButton* playbackBtn : _logPlaybackButtons)
         playbackBtn->setEnabled(true);
-    if (_live)
-        _ui.logPlaybackLive->setEnabled(false);
-    else if (_playbackRate < -0.1)
-        _ui.logPlaybackRewind->setEnabled(false);
+    if (_live) _ui.logPlaybackLive->setEnabled(false);
+    // Reverse rewind is never disabled.
     else if (abs<float>(_playbackRate) < 0.01)
         _ui.logPlaybackPause->setEnabled(false);
-    if (_playbackRate > 0.1 || _live) _ui.logPlaybackPlay->setEnabled(false);
+    if (_live) _ui.logPlaybackPlay->setEnabled(false);
 
     //  enable previous frame button based on position in the log
     _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
@@ -389,8 +394,11 @@ void MainWindow::updateViews() {
         }
 
         // update the behavior tree view
-        _ui.behaviorTree->setPlainText(
-            QString::fromStdString(currentFrame->behavior_tree()));
+        QString behaviorStr =
+            QString::fromStdString(currentFrame->behavior_tree());
+        if (_ui.behaviorTree->toPlainText() != behaviorStr) {
+            _ui.behaviorTree->setPlainText(behaviorStr);
+        }
     }
 
     if (std::time(nullptr) -
@@ -565,7 +573,9 @@ void MainWindow::updateViews() {
             // We make a copy of the robot's RadioRx package b/c the original
             // might change during the course of this method b/c radio comm
             // happens on a different thread.
+            _processor->loopMutex().lock();
             RadioRx rx(robot->radioRx());
+            _processor->loopMutex().unlock();
 
 #ifndef DEMO_ROBOT_STATUS
             // radio status
@@ -1087,7 +1097,7 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
 
 void MainWindow::on_logPlaybackRewind_clicked() {
     live(false);
-    _playbackRate = -1;
+    _playbackRate += -0.5;
 }
 
 void MainWindow::on_logPlaybackPrevFrame_clicked() {
@@ -1109,7 +1119,7 @@ void MainWindow::on_logPlaybackNextFrame_clicked() {
 
 void MainWindow::on_logPlaybackPlay_clicked() {
     live(false);
-    _playbackRate = 1;
+    _playbackRate += 0.5;
 }
 
 void MainWindow::on_logPlaybackLive_clicked() { live(true); }

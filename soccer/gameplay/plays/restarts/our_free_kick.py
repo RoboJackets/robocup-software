@@ -11,7 +11,7 @@ import evaluation.touchpass_positioning
 
 class OurFreeKick(standard_play.StandardPlay):
 
-    running = False
+    Running = False
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -21,8 +21,10 @@ class OurFreeKick(standard_play.StandardPlay):
 
         if indirect != None:
             self.indirect = indirect
-        else:
+        elif main.ball().pos.y > constants.Field.Length / 2.0:
             self.indirect = gs.is_indirect()
+        else:
+            self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -46,7 +48,12 @@ class OurFreeKick(standard_play.StandardPlay):
             receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
                 main.ball().pos)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                receive_pt, None, (kicker, lambda x: True), preparing_timeout=15)
+                receive_pt,
+                None,
+                (kicker, lambda x: True),
+                receiver_required=False,
+                kicker_required=False,
+                prekick_timeout=9)
             # We don't need to manage this anymore
             self.add_subbehavior(pass_behavior, 'kicker')
 
@@ -58,17 +65,14 @@ class OurFreeKick(standard_play.StandardPlay):
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('kicker').is_done_running()
-            and self.subbehavior_with_name('kicker').state != tactics.coordinated_pass.CoordinatedPass.State.timeout, 'kicker completes')
+            lambda: self.subbehavior_with_name('kicker').is_done_running() and self.subbehavior_with_name('kicker').state != tactics.coordinated_pass.CoordinatedPass.State.timeout,
+            'kicker completes')
 
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if OurFreeKick.running or (
+        return 0 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
-
-    def on_enter_running(self):
-        OurFreeKick.running = True
 
     def execute_running(self):
         if self.indirect \
@@ -79,8 +83,16 @@ class OurFreeKick(standard_play.StandardPlay):
             kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
+        if self.indirect:
+            passState = self.subbehavior_with_name('kicker').state
+            OurFreeKick.Running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
+                                  passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
+
+    def on_enter_running(self):
+        OurFreeKick.Running = False
+
     def on_exit_running(self):
-        OurFreeKick.running = False
+        OurFreeKick.Running = False
 
     @classmethod
     def is_restart(cls):
