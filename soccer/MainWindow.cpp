@@ -135,7 +135,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     //    channel(0);
 
-
     // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
     _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);

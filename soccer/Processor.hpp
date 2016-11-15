@@ -104,9 +104,7 @@ public:
     bool externalReferee() const { return _externalReferee; }
 
     void manualID(int value);
-    int manualID() const {
-        return _manualID;
-    }
+    int manualID() const { return _manualID; }
 
     bool useFieldOrientedManualDrive() const {
         return _useFieldOrientedManualDrive;

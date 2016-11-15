@@ -18,7 +18,6 @@ class ConfigBool;
 
 enum RadioChannels { MHz_916, MHz_918 };
 
-
 namespace {
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
@@ -49,14 +48,16 @@ public:
 
     void setLive() {
         if (!live()) {
-            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
+            _ui.logTree->setStyleSheet(
+                QString("QTreeWidget{%1}").arg(NonLiveStyle));
             _playbackRate = boost::none;
         }
     }
 
     void setPlayBackRate(double playbackRate) {
         if (live()) {
-            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
+            _ui.logTree->setStyleSheet(
+                QString("QTreeWidget{%1}").arg(LiveStyle));
         }
         _playbackRate = playbackRate;
     }

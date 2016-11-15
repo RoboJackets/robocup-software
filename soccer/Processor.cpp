@@ -530,13 +530,11 @@ void Processor::run() {
 
                 if (radioRx.has_kicker_status()) {
                     log->set_charged(radioRx.kicker_status() & 0x01);
-                    log->set_kicker_works(
-                        !(radioRx.kicker_status() & 0x90));
+                    log->set_kicker_works(!(radioRx.kicker_status() & 0x90));
                 }
 
                 if (radioRx.has_ball_sense_status()) {
-                    log->set_ball_sense_status(
-                        radioRx.ball_sense_status());
+                    log->set_ball_sense_status(radioRx.ball_sense_status());
                 }
 
                 if (radioRx.has_battery()) {
@@ -544,8 +542,7 @@ void Processor::run() {
                 }
 
                 log->mutable_motor_status()->Clear();
-                log->mutable_motor_status()->MergeFrom(
-                    radioRx.motor_status());
+                log->mutable_motor_status()->MergeFrom(radioRx.motor_status());
 
                 if (radioRx.has_quaternion()) {
                     log->mutable_quaternion()->Clear();
