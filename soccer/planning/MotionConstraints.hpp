@@ -24,6 +24,7 @@ struct MotionConstraints {
      */
     float maxSpeed;
     float maxAcceleration;
+    float maxCentripetalAcceleration;
 
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +33,7 @@ struct MotionConstraints {
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_acceleration;
+    static ConfigDouble* _max_centripetal_acceleration;
     static ConfigDouble* _max_speed;
     static ConfigDouble* _replan_threshold;
     static ConfigDouble* _replan_lead_time;

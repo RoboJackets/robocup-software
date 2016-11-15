@@ -100,8 +100,14 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
         goal.pos, prevGoal, obstacles);
 
     string debugOut;
+
+    // if the destination of the current path is greater than X m away
+    // from the target destination, we invalidate the path. This
+    // situation could arise if the path destination changed.
+
+
     // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(planRequest, actualDynamic, &debugOut)) {
+    if (!prevPath || SingleRobotPathPlanner::shouldReplan(planRequest) || prevPath->pathsIntersect(actualDynamic, RJ::now(), nullptr, nullptr)) {
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                     actualDynamic);
 
@@ -115,22 +121,47 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
         path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
     } else {
-        if (reusePathTries >= maxContinue) {
-            reusePathTries = 0;
-            auto path = generateRRTPath(start, goal, motionConstraints,
-                                        obstacles, actualDynamic);
-            if (path) {
-                RJ::Seconds remaining = prevPath->getDuration() -
-                                        (RJ::now() - prevPath->startTime());
-                if (remaining > path->getDuration()) {
-                    path->setDebugText("Found better path");
-                    return std::move(path);
+        float goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
+        float goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
+        if (goalPosDiff > goalChangeThreshold() || goalVelDiff > goalChangeThreshold()) {
+            auto now = RJ::now();
+            auto robotInstant = prevPath->evaluate(now - prevPath->startTime());
+            MotionInstant newStart;
+            if (robotInstant) {
+                newStart = robotInstant->motion;
+            } else {
+                newStart = start;
+            }
+            auto path = generateRRTPath(newStart, goal, motionConstraints, obstacles,
+                                        actualDynamic);
+            path->setDebugText("Test Goal Change");
+            if (!path) {
+                path = make_unique<InterpolatedPath>();
+                path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                             RJ::Seconds::zero());
+                path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                             RJ::Seconds::zero());
+            }
+            path->setStartTime(now);
+            return path;
+        } else {
+            if (reusePathTries >= maxContinue) {
+                reusePathTries = 0;
+                auto path = generateRRTPath(start, goal, motionConstraints,
+                                            obstacles, actualDynamic);
+                if (path) {
+                    RJ::Seconds remaining = prevPath->getDuration() -
+                                            (RJ::now() - prevPath->startTime());
+                    if (remaining > path->getDuration()) {
+                        path->setDebugText("Found better path");
+                        return std::move(path);
+                    }
                 }
             }
+            reusePathTries++;
+            prevPath->setDebugText("reusing");
+            return std::move(prevPath);
         }
-        reusePathTries++;
-        prevPath->setDebugText("reusing");
-        return std::move(prevPath);
     }
 }
 
@@ -456,6 +487,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     const float maxAceleration = motionConstraints.maxAcceleration;
     const float& maxSpeed = motionConstraints.maxSpeed;
 
+    int asd =0 ;
     for (const CubicBezierControlPoints& controlPoint : controlPoints) {
         Point p0 = controlPoint.p0;
         Point p1 = controlPoint.p1;
@@ -508,7 +540,11 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             // Curvature = 1/Radius of Curvature
             // vmax = sqrt(acceleartion/abs(Curvature))
 
-            float constantMaxSpeed = std::sqrt(maxAceleration / curvature);
+            const auto maxCentripetalAcceleration = motionConstraints.maxCentripetalAcceleration;
+            float constantMaxSpeed = std::sqrt(maxCentripetalAcceleration / curvature);
+//            constantMaxSpeed =std::max(constantMaxSpeed, 0.5f);
+            cout<<asd<< " " << constantMaxSpeed<<endl;
+            asd++;
             newPointsSpeed.push_back(std::min(constantMaxSpeed, maxSpeed));
         }
     }
@@ -579,9 +615,8 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
     for (int i = 0; i < size; i++) {
         float currentSpeed = newPointsSpeed[i];
-        float distance = newPointsDistance[i];
         if (i != 0) {
-            distance -= newPointsDistance[i - 1];
+            auto distance = newPointsDistance[i] - newPointsDistance[i - 1];
             float averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
             auto deltaT = RJ::Seconds(distance / averageSpeed);
             totalTime += deltaT;
@@ -609,8 +644,11 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         return nullptr;
     }
 
+    //vector<CubicBezierControlPoints> controlPoints =
+    //    generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
+
     vector<CubicBezierControlPoints> controlPoints =
-        generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
+            generateCubicBezierPath(points, motionConstraints, vi, vf);
 
     vector<InterpolatedPath::Entry> entries = generateVelocityPath(
         controlPoints, motionConstraints, vi, vf, interpolations);

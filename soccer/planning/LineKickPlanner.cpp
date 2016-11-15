@@ -123,7 +123,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
             path = rrtPlanner.run(request);
         }
         targetKickPos = boost::none;
-        path->setDebugText("Slow ball");
+        //path->setDebugText("Slow ball");
         return make_unique<AngleFunctionPath>(
             std::move(path),
             angleFunctionForCommandType(FacePointCommand(command.target)));
