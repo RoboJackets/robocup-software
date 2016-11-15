@@ -171,8 +171,8 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
             auto dist = target.pos.distTo(startInstant.pos);
             points = {startInstant.pos,
                       target.pos -
-                          target.vel.normalized(min(
-                              dist / 2, Robot_Radius * 2 + Ball_Radius * 2)),
+                          target.vel.normalized(std::min(
+                              dist / 2, Robot_Radius * 2.0 + Ball_Radius * 2.0)),
                       target.pos};
 
             obstacles.add(

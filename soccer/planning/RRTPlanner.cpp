@@ -42,8 +42,8 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
     // if the destination of the current path is greater than X m away
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
-    float goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
-    float goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
+    double goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
+    double goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
     if (goalPosDiff > goalChangeThreshold() ||
         goalVelDiff > goalChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
@@ -121,8 +121,8 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
         path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
     } else {
-        float goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
-        float goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
+        double goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
+        double goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
         if (goalPosDiff > goalChangeThreshold() || goalVelDiff > goalChangeThreshold()) {
             auto now = RJ::now();
             auto robotInstant = prevPath->evaluate(now - prevPath->startTime());
@@ -143,7 +143,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
                                              RJ::Seconds::zero());
             }
             path->setStartTime(now);
-            return path;
+            return std::move(path);
         } else {
             if (reusePathTries >= maxContinue) {
                 reusePathTries = 0;
@@ -193,7 +193,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         bool hit = path->pathsIntersect(dyObs, path->startTime(), &hitLocation,
                                         &hitTime);
         if (hit) {
-            // float dist = std::min(goal.pos.distTo(hitLocation)-0.1f,
+            // double dist = std::min(goal.pos.distTo(hitLocation)-0.1f,
             // Robot_Radius);
             // if (dist>0) {
             obstacles.add(
@@ -301,11 +301,11 @@ void RRTPlanner::optimize(vector<Geometry2d::Point>& pts,
 
     return;
 }
-float getTime(vector<Point> path, int index,
-              const MotionConstraints& motionConstraints, float startSpeed,
-              float endSpeed) {
-    float length = 0;
-    float startLength = 0;
+double getTime(vector<Point> path, int index,
+              const MotionConstraints& motionConstraints, double startSpeed,
+              double endSpeed) {
+    double length = 0;
+    double startLength = 0;
     for (int i = 1; i < path.size(); i++) {
         length += path[i - 1].distTo(path[i]);
         if (index == i) {
@@ -316,9 +316,9 @@ float getTime(vector<Point> path, int index,
                                 motionConstraints.maxAcceleration, startSpeed,
                                 endSpeed);
 }
-float getTime(InterpolatedPath& path, int index,
-              const MotionConstraints& motionConstraints, float startSpeed,
-              float endSpeed) {
+double getTime(InterpolatedPath& path, int index,
+              const MotionConstraints& motionConstraints, double startSpeed,
+              double endSpeed) {
     return Trapezoidal::getTime(
         path.length(0, index), path.length(), motionConstraints.maxSpeed,
         motionConstraints.maxAcceleration, startSpeed, endSpeed);
@@ -339,11 +339,11 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
     size_t length = points.size();
     size_t curvesNum = length - 1;
 
-    const float directionDistance = 0.4;
+    const double directionDistance = 0.4;
     vector<Point> startDirections;
     vector<Point> endDirections;
 
-    const float pathWeight = 0.1;
+    const double pathWeight = 0.1;
     Point pathDirection =
         (vi + (points[1] - points[0]).normalized(pathWeight)).normalized();
     // Point pathDirection = (points[1] - points[0]).normalized(pathWeight);
@@ -380,7 +380,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
 vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     const vector<Geometry2d::Point>& points,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-    Geometry2d::Point vf, const boost::optional<vector<float>>& times) {
+    Geometry2d::Point vf, const boost::optional<vector<double>>& times) {
     size_t length = points.size();
     size_t curvesNum = length - 1;
     vector<double> pointsX(length);
@@ -392,9 +392,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
         pointsX[i] = points[i].x();
         pointsY[i] = points[i].y();
     }
-    const float startSpeed = vi.mag();
+    const double startSpeed = vi.mag();
 
-    const float endSpeed = vf.mag();
+    const double endSpeed = vf.mag();
 
     if (times) {
         assert(times->size() == points.size());
@@ -442,17 +442,17 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     return path;
 }
 
-float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
-                               float c1, float d2, float v2, float c2) {
-    float d = std::abs(d2 - d1);
-    float deltaSpeed = v2 - v1;
+double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,
+                               double c1, double d2, double v2, double c2) {
+    double d = std::abs(d2 - d1);
+    double deltaSpeed = v2 - v1;
     if (deltaSpeed < 0) {
         return v2;
     }
 
     // Isolated maxSpeed based on Curvature should already be taken care of
-    float c = max(c1, c2);
-    float a = maxAceleration;
+    double c = max(c1, c2);
+    double a = maxAceleration;
 
     // acceleration = (v2-v1)/t;
     // t = distance/((v1+v2)/2)
@@ -463,11 +463,11 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+((b-v)((v%2Bb)%2F2)%2F(d))%5E2+%2B+(v%5E2*c)%5E2
     double part = d * d * (a * a - c * c * pow(v1, 4));
     if (part >= 0) {
-        float possible = sqrt(v1 * v1 + 2 * sqrt(part));
+        double possible = sqrt(v1 * v1 + 2 * sqrt(part));
         return std::min(v2, possible);
     }
 
-    float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
+    double maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
     return std::min(v2, maxSpeed);
 }
 
@@ -481,11 +481,11 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     Geometry2d::Point vf, int interpolations) {
     // Interpolate Through Bezier Path
     vector<Point> newPoints, newPoints1stDerivative, newPoints2ndDerivative;
-    vector<float> newPointsCurvature, newPointsDistance, newPointsSpeed;
+    vector<double> newPointsCurvature, newPointsDistance, newPointsSpeed;
 
-    float totalDistance = 0;
-    const float maxAceleration = motionConstraints.maxAcceleration;
-    const float& maxSpeed = motionConstraints.maxSpeed;
+    double totalDistance = 0;
+    const double maxAceleration = motionConstraints.maxAcceleration;
+    const double& maxSpeed = motionConstraints.maxSpeed;
 
     int asd =0 ;
     for (const CubicBezierControlPoints& controlPoint : controlPoints) {
@@ -494,7 +494,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         Point p2 = controlPoint.p2;
         Point p3 = controlPoint.p3;
         for (int j = 0; j < interpolations; j++) {
-            float t = (((float)j / (float)(interpolations)));
+            double t = (((double)j / (double)(interpolations)));
             Geometry2d::Point pos =
                 pow(1.0 - t, 3) * p0 + 3.0 * pow(1.0 - t, 2) * t * p1 +
                 3 * (1.0 - t) * pow(t, 2) * p2 + pow(t, 3) * p3;
@@ -514,7 +514,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
             // https://en.wikipedia.org/wiki/Curvature#Local_expressions
             // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2)
-            float curvature =
+            double curvature =
                 std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
                 std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
@@ -525,7 +525,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
             assert(curvature >= 0);
             if (!newPoints.empty()) {
-                float distance = pos.distTo(newPoints.back());
+                double distance = pos.distTo(newPoints.back());
                 totalDistance += distance;
             }
             newPointsDistance.push_back(totalDistance);
@@ -541,7 +541,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             // vmax = sqrt(acceleartion/abs(Curvature))
 
             const auto maxCentripetalAcceleration = motionConstraints.maxCentripetalAcceleration;
-            float constantMaxSpeed = std::sqrt(maxCentripetalAcceleration / curvature);
+            double constantMaxSpeed = std::sqrt(maxCentripetalAcceleration / curvature);
 //            constantMaxSpeed =std::max(constantMaxSpeed, 0.5f);
             cout<<asd<< " " << constantMaxSpeed<<endl;
             asd++;
@@ -559,7 +559,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     Point pos = p3;
     Point d1 = vf;
     Geometry2d::Point d2 = 6 * (1) * (p3 - 2 * p2 + p1);
-    float curvature = std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
+    double curvature = std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
                       std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
     // handle 0 velcoity case
@@ -580,7 +580,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
     // Velocity Profile Generation
     // Forward Smoothing
-    const float size = newPoints.size();
+    const double size = newPoints.size();
     assert(size == newPoints.size());
     assert(size == newPoints1stDerivative.size());
     assert(size == newPoints2ndDerivative.size());
@@ -614,10 +614,10 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     vector<InterpolatedPath::Entry> entries;
 
     for (int i = 0; i < size; i++) {
-        float currentSpeed = newPointsSpeed[i];
+        double currentSpeed = newPointsSpeed[i];
         if (i != 0) {
             auto distance = newPointsDistance[i] - newPointsDistance[i - 1];
-            float averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
+            double averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
             auto deltaT = RJ::Seconds(distance / averageSpeed);
             totalTime += deltaT;
         }
@@ -644,8 +644,8 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         return nullptr;
     }
 
-    //vector<CubicBezierControlPoints> controlPoints =
-    //    generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
+//    vector<CubicBezierControlPoints> controlPoints =
+//        generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
 
     vector<CubicBezierControlPoints> controlPoints =
             generateCubicBezierPath(points, motionConstraints, vi, vf);
