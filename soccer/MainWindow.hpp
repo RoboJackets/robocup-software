@@ -15,7 +15,6 @@
 class TestResultTab;
 class StripChart;
 class ConfigBool;
-class QuaternionDemo;
 
 enum RadioChannels { MHz_916, MHz_918 };
 /**
@@ -108,7 +107,6 @@ private Q_SLOTS:
 
     /// Debug menu commands
     void on_actionRestartUpdateTimer_triggered();
-    void on_actionQuaternion_Demo_toggled(bool value);
     void on_actionStart_Logging_triggered();
 
     /// Gameplay menu
@@ -163,8 +161,6 @@ private:
 
     Processor* const _processor;
     Configuration* _config;
-
-    QuaternionDemo* _quaternion_demo;
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
