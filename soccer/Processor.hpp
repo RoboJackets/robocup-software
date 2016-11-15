@@ -96,7 +96,7 @@ public:
     void stop();
 
     bool autonomous();
-    bool joystickValid();
+    bool joystickValid() const;
     JoystickControlValues getJoystickControlValues();
 
     void externalReferee(bool value) { _externalReferee = value; }
@@ -104,8 +104,7 @@ public:
     bool externalReferee() const { return _externalReferee; }
 
     void manualID(int value);
-    int manualID() {
-        QMutexLocker lock(&_loopMutex);
+    int manualID() const {
         return _manualID;
     }
 
@@ -229,7 +228,7 @@ private:
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
     // SystemState, etc.
-    DebugQMutex _loopMutex;
+    QMutex _loopMutex;
 
     /** global system state */
     SystemState _state;

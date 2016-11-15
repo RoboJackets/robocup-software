@@ -54,7 +54,7 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
+Processor::Processor(bool sim) : _loopMutex() {
     _running = true;
     _framePeriod = 1000000 / 60;
     _manualID = -1;
@@ -160,8 +160,7 @@ void Processor::blueTeam(bool value) {
     }
 }
 
-bool Processor::joystickValid() {
-    QMutexLocker lock(&_loopMutex);
+bool Processor::joystickValid() const {
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) return true;
     }
@@ -362,7 +361,6 @@ void Processor::run() {
         // Read radio reverse packets
         _radio->receive();
 
-        _loopMutex.lock();
         for (const Packet::RadioRx& rx : _radio->reversePackets()) {
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
@@ -374,7 +372,7 @@ void Processor::run() {
                 // We have to copy because the RX packet will survive past this
                 // frame but LogFrame will not (the RadioRx in LogFrame will be
                 // reused).
-                _state.self[board]->radioRx().CopyFrom(rx);
+                _state.self[board]->setRadioRx(rx);
                 _state.self[board]->radioRxUpdated();
             }
         }
@@ -525,34 +523,33 @@ void Processor::run() {
                 // log->set_cmd_w(r->cmd_w);
                 log->set_shell(r->shell());
                 log->set_angle(r->angle);
-
-                if (r->radioRx().has_kicker_voltage()) {
-                    log->set_kicker_voltage(r->radioRx().kicker_voltage());
+                auto radioRx = r->radioRx();
+                if (radioRx.has_kicker_voltage()) {
+                    log->set_kicker_voltage(radioRx.kicker_voltage());
                 }
 
-                if (r->radioRx().has_kicker_status()) {
-                    log->set_charged(r->radioRx().kicker_status() & 0x01);
+                if (radioRx.has_kicker_status()) {
+                    log->set_charged(radioRx.kicker_status() & 0x01);
                     log->set_kicker_works(
-                        !(r->radioRx().kicker_status() & 0x90));
+                        !(radioRx.kicker_status() & 0x90));
                 }
 
-                if (r->radioRx().has_ball_sense_status()) {
+                if (radioRx.has_ball_sense_status()) {
                     log->set_ball_sense_status(
-                        r->radioRx().ball_sense_status());
+                        radioRx.ball_sense_status());
                 }
 
-                if (r->radioRx().has_battery()) {
-                    log->set_battery_voltage(r->radioRx().battery());
+                if (radioRx.has_battery()) {
+                    log->set_battery_voltage(radioRx.battery());
                 }
 
                 log->mutable_motor_status()->Clear();
                 log->mutable_motor_status()->MergeFrom(
-                    r->radioRx().motor_status());
+                    radioRx.motor_status());
 
-                if (r->radioRx().has_quaternion()) {
+                if (radioRx.has_quaternion()) {
                     log->mutable_quaternion()->Clear();
-                    log->mutable_quaternion()->MergeFrom(
-                        r->radioRx().quaternion());
+                    log->mutable_quaternion()->MergeFrom(radioRx.quaternion());
                 } else {
                     log->clear_quaternion();
                 }
@@ -590,8 +587,6 @@ void Processor::run() {
 
         // Write to the log
         _logger.addFrame(_state.logFrame);
-
-        _loopMutex.unlock();
 
         // Store processing loop status
         _statusMutex.lock();

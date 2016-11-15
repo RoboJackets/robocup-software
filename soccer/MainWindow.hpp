@@ -17,6 +17,13 @@ class StripChart;
 class ConfigBool;
 
 enum RadioChannels { MHz_916, MHz_918 };
+
+
+namespace {
+// Style sheets used for live/non-live controls
+QString LiveStyle("border:2px solid transparent");
+QString NonLiveStyle("border:2px solid red");
+};
 /**
  * main gui thread class
  */
@@ -39,6 +46,20 @@ public:
     void allDebugOn();
 
     bool live();
+
+    void setLive() {
+        if (!live()) {
+            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
+            _playbackRate = boost::none;
+        }
+    }
+
+    void setPlayBackRate(double playbackRate) {
+        if (live()) {
+            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
+        }
+        _playbackRate = playbackRate;
+    }
 
     int frameNumber() const { return roundf(_doubleFrameNumber); }
 
