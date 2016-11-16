@@ -20,7 +20,7 @@ private:
     std::vector<std::unique_ptr<Path>> paths;
 
     // Saving some variables to speed up computation
-    RJ::Seconds duration;
+    RJ::Seconds duration = 0ms;
 
 public:
     /** default path is empty */

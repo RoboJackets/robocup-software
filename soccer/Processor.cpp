@@ -56,7 +56,6 @@ void Processor::createConfiguration(Configuration* cfg) {
 
 Processor::Processor(bool sim) : _loopMutex() {
     _running = true;
-    _framePeriod = RJ::Seconds(1) / 60;
     _manualID = -1;
     _defendPlusX = false;
     _externalReferee = true;
