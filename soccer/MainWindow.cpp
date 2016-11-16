@@ -1,7 +1,6 @@
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 #include "Configuration.hpp"
-#include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <Robot.hpp>
@@ -46,18 +45,15 @@ void calcMinimumWidth(QWidget* widget, QString text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+MainWindow::MainWindow(Processor* processor, QWidget* parent)
+    : QMainWindow(parent),
+      _updateCount(0),
+      _autoExternalReferee(true),
+      _doubleFrameNumber(-1),
+      _lastUpdateTime(RJ::timestamp()),
+      _history(2 * 60),
+      _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
-
-    _quaternion_demo = nullptr;
-
-    _updateCount = 0;
-    _processor = nullptr;
-    _autoExternalReferee = true;
-    _doubleFrameNumber = -1;
-
-    _lastUpdateTime = RJ::timestamp();
-    _history.resize(2 * 60);
 
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
@@ -67,10 +63,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _ui.logTree->updateTimer = &updateTimer;
 
     // Initialize live/non-live control styles
-    _live = false;
-    live(true);
 
-    _currentPlay = new QLabel();
+    _currentPlay = new QLabel(this);
     _currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _currentPlay->setToolTip("Current Play");
     _currentPlay->setAlignment(Qt::AlignCenter);
@@ -78,24 +72,24 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
     statusBar()->addPermanentWidget(_currentPlay);
 
-    _logFile = new QLabel();
+    _logFile = new QLabel(this);
     _logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _logFile->setToolTip("Log File");
     statusBar()->addPermanentWidget(_logFile);
 
-    _viewFPS = new QLabel();
+    _viewFPS = new QLabel(this);
     _viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _viewFPS->setToolTip("Display Framerate");
     calcMinimumWidth(_viewFPS, "View: 00.0 fps");
     statusBar()->addPermanentWidget(_viewFPS);
 
-    _procFPS = new QLabel();
+    _procFPS = new QLabel(this);
     _procFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _procFPS->setToolTip("Processing Framerate");
     calcMinimumWidth(_procFPS, "Proc: 00.0 fps");
     statusBar()->addPermanentWidget(_procFPS);
 
-    _logMemory = new QLabel();
+    _logMemory = new QLabel(this);
     _logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _logMemory->setToolTip("Log Memory Usage");
     _logMemory->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -115,21 +109,35 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     QActionGroup* teamGroup = new QActionGroup(this);
     teamGroup->addAction(_ui.actionTeamBlue);
     teamGroup->addAction(_ui.actionTeamYellow);
+    qActionGroups.push_back(teamGroup);
 
     QActionGroup* goalGroup = new QActionGroup(this);
     goalGroup->addAction(_ui.actionDefendMinusX);
     goalGroup->addAction(_ui.actionDefendPlusX);
+    qActionGroups.push_back(goalGroup);
 
     QActionGroup* rotateGroup = new QActionGroup(this);
     rotateGroup->addAction(_ui.action0);
     rotateGroup->addAction(_ui.action90);
     rotateGroup->addAction(_ui.action180);
     rotateGroup->addAction(_ui.action270);
+    qActionGroups.push_back(rotateGroup);
+
+    auto visionChannelGroup = new QActionGroup(this);
+    visionChannelGroup->addAction(_ui.actionVisionPrimary_Half);
+    visionChannelGroup->addAction(_ui.actionVisionSecondary_Half);
+    visionChannelGroup->addAction(_ui.actionVisionFull_Field);
+    qActionGroups.push_back(visionChannelGroup);
+
+    auto radioGroup = new QActionGroup(this);
+    radioGroup->addAction(_ui.action916MHz);
+    radioGroup->addAction(_ui.action918MHz);
+    qActionGroups.push_back(radioGroup);
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
 
-    channel(0);
+    //    channel(0);
 
     updateTimer.setSingleShot(true);
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
@@ -143,11 +151,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
-    new QShortcut(QKeySequence(Qt::Key_Q), this,
-                  SLOT(on_actionQuicksaveRobotLocations_triggered()));
-    new QShortcut(QKeySequence(Qt::Key_E), this,
-                  SLOT(on_actionQuickloadRobotLocations_triggered()));
-
     // Append short Git hash to the main window title with an asterisk if the
     // current Git index is dirty
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
@@ -159,15 +162,7 @@ void MainWindow::configuration(Configuration* config) {
     _config->tree(_ui.configTree);
 }
 
-void MainWindow::processor(Processor* value) {
-    // This should only happen once
-    assert(!_processor);
-
-    _processor = value;
-
-    // External referee
-    // on_externalReferee_toggled(_ui.externalReferee->isChecked());
-
+void MainWindow::initialize() {
     // Team
     if (_processor->blueTeam()) {
         _ui.actionTeamBlue->trigger();
@@ -175,13 +170,21 @@ void MainWindow::processor(Processor* value) {
         _ui.actionTeamYellow->trigger();
     }
 
-    _ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
-    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
-
     if (_processor->logger().recording()) {
         _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
                                          _processor->logger().filename());
         _ui.actionStart_Logging->setEnabled(false);
+    }
+
+    // Initialize to ui defaults
+    on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
+    for (const auto& qActionGroup : qActionGroups) {
+        qActionGroup->checkedAction()->trigger();
+    }
+
+    // Default to FullField on Simulator
+    if (_processor->simulation()) {
+        _ui.actionVisionFull_Field->trigger();
     }
 }
 
@@ -193,22 +196,6 @@ void MainWindow::logFileChanged() {
         _ui.actionStart_Logging->setEnabled(false);
     } else {
         _logFile->setText("Not Recording");
-    }
-}
-
-void MainWindow::live(bool value) {
-    if (_live != value) {
-        _live = value;
-
-        // Change styles for controls that can show historical data
-        _ui.fieldView->live = _live;
-        if (_live) {
-            _ui.logTree->setStyleSheet(
-                QString("QTreeWidget{%1}").arg(LiveStyle));
-        } else {
-            _ui.logTree->setStyleSheet(
-                QString("QTreeWidget{%1}").arg(NonLiveStyle));
-        }
     }
 }
 
@@ -251,6 +238,13 @@ void MainWindow::updateViews() {
         _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
     }
 
+    if (live()) {
+        _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
+    } else {
+        _ui.logTree->setStyleSheet(
+            QString("QTreeWidget{%1}").arg(NonLiveStyle));
+    }
+
     // Time since last update
     RJ::Time time = RJ::timestamp();
     int delta_us = time - _lastUpdateTime;
@@ -267,36 +261,44 @@ void MainWindow::updateViews() {
 
         _logMemory->setText(
             QString("Log: %1/%2 %3 kiB")
-                .arg(QString::number(_processor->logger().numFrames()),
-                     QString::number(_processor->logger().maxFrames()),
+                .arg(QString::number(_processor->logger().size()),
+                     QString::number(_processor->logger().capacity()),
                      QString::number((_processor->logger().spaceUsed() + 512) /
                                      1024)));
     }
 
+    auto value = _ui.logHistoryLocation->value();
+
     // Advance log history
-    int liveFrameNumber = _processor->logger().lastFrameNumber();
-    if (_live) {
+    int liveFrameNumber = _processor->logger().currentFrameNumber();
+    if (live()) {
         _doubleFrameNumber = liveFrameNumber;
     } else {
-        _doubleFrameNumber += _playbackRate;
+        _doubleFrameNumber += *_playbackRate;
 
-        int minFrame = _processor->logger().firstFrameNumber();
-        int maxFrame = _processor->logger().lastFrameNumber();
+        int minFrame = _processor->logger().firstFrameNumber() + 10;
+        int maxFrame = _processor->logger().currentFrameNumber();
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
+            _playbackRate = 1;
         } else if (_doubleFrameNumber > maxFrame) {
             _doubleFrameNumber = maxFrame;
-            live(true);
+            _playbackRate = boost::none;
         }
     }
 
+    _ui.logHistoryLocation->setMinimum(_processor->logger().firstFrameNumber());
+    _ui.logHistoryLocation->setMaximum(
+        _processor->logger().currentFrameNumber());
+    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
+    _ui.logHistoryLocation->setValue(_doubleFrameNumber);
+
     // update history slider in ui
-    emit historyLocationChanged(_doubleFrameNumber -
-                                _processor->logger().firstFrameNumber());
 
     // Read recent history from the log
-    _processor->logger().getFrames(frameNumber(), _history);
+    _processor->logger().getFrames(frameNumber(), _history.size(),
+                                   _history.begin());
 
     // Update field view
     _ui.fieldView->update();
@@ -304,15 +306,17 @@ void MainWindow::updateViews() {
     // enable playback buttons based on playback rate
     for (QPushButton* playbackBtn : _logPlaybackButtons)
         playbackBtn->setEnabled(true);
-    if (_live) _ui.logPlaybackLive->setEnabled(false);
-    // Reverse rewind is never disabled.
-    else if (abs<float>(_playbackRate) < 0.01)
-        _ui.logPlaybackPause->setEnabled(false);
-    if (_live) _ui.logPlaybackPlay->setEnabled(false);
+    _ui.logPlaybackLive->setEnabled(!live());
+
+    if (live() || abs<float>(*_playbackRate) > 0.01) {
+        _ui.logPlaybackPause->setAutoFillBackground(false);
+    } else {
+        _ui.logPlaybackPause->setAutoFillBackground(true);
+    }
 
     //  enable previous frame button based on position in the log
     _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
-    _ui.logPlaybackNextFrame->setEnabled(!_live);
+    _ui.logPlaybackNextFrame->setEnabled(!live());
 
     // Update status indicator
     updateStatus();
@@ -342,39 +346,21 @@ void MainWindow::updateViews() {
     const std::shared_ptr<LogFrame> currentFrame = _history[0];
 
     if (currentFrame) {
-        if (_firstLogTimestamp == -1)
-            _firstLogTimestamp = currentFrame->timestamp();
         uint64_t gametime_ms =
-            (currentFrame->timestamp() - _firstLogTimestamp) / 1000;
+            (currentFrame->timestamp() - _processor->logger().startTime()) /
+            1000;
         uint64_t minutes = gametime_ms / 60000;
         uint64_t seconds = (gametime_ms % 60000) / 1000;
         uint64_t deciseconds = (gametime_ms % 1000) / 100;
-        _ui.logTime->setText(QString::fromStdString(to_string(minutes) + " : " +
+        _ui.logTime->setText(QString::fromStdString(to_string(minutes) + ":" +
                                                     to_string(seconds) + "." +
                                                     to_string(deciseconds)));
 
-        // Update the orientation demo view
-        if (_quaternion_demo && manual >= 0 &&
-            currentFrame->radio_rx().size() &&
-            currentFrame->radio_rx(0).has_quaternion()) {
-            const RadioRx* manualRx = nullptr;
-            for (const RadioRx& rx : currentFrame->radio_rx()) {
-                if ((int)rx.robot_id() == manual) {
-                    manualRx = &rx;
-                    break;
-                }
-            }
-            if (manualRx) {
-                const Packet::Quaternion& q = manualRx->quaternion();
-                _quaternion_demo->q =
-                    Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
-                if (!_quaternion_demo->initialized) {
-                    _quaternion_demo->ref = _quaternion_demo->q;
-                    _quaternion_demo->initialized = true;
-                }
-                _quaternion_demo->update();
-            }
-        }
+        auto frameNum = _processor->logger().currentFrameNumber();
+
+        _ui.frameNumLabel->setText(QString("%1/%2")
+                                       .arg(QString::number(frameNumber()))
+                                       .arg(QString::number(frameNum)));
 
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
@@ -483,7 +469,7 @@ void MainWindow::updateViews() {
             statusWidget->setShellID(robot->shell());
 
             // set team
-            statusWidget->setBlueTeam(processor()->blueTeam());
+            statusWidget->setBlueTeam(_processor->blueTeam());
 
             // TODO: set board ID
 
@@ -885,17 +871,9 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
     _processor->useOpponentHalf(value);
 }
 
-void MainWindow::on_action916MHz_triggered() {
-    channel(0);
-    _ui.action916MHz->setChecked(true);
-    _ui.action918MHz->setChecked(false);
-}
+void MainWindow::on_action916MHz_triggered() { channel(0); }
 
-void MainWindow::on_action918MHz_triggered() {
-    channel(1);
-    _ui.action916MHz->setChecked(false);
-    _ui.action918MHz->setChecked(true);
-}
+void MainWindow::on_action918MHz_triggered() { channel(1); }
 
 void MainWindow::channel(int n) {
     if (_processor && _processor->radio()) {
@@ -935,7 +913,7 @@ void MainWindow::on_actionStopRobots_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = cmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(processor()->blueTeam());
+            r->set_blue_team(_processor->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());
@@ -949,7 +927,7 @@ void MainWindow::on_actionStopRobots_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = cmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(!processor()->blueTeam());
+            r->set_blue_team(!_processor->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());
@@ -969,7 +947,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = _quickLoadCmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(processor()->blueTeam());
+            r->set_blue_team(_processor->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());
@@ -983,7 +961,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = _quickLoadCmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(!processor()->blueTeam());
+            r->set_blue_team(!_processor->blueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());
@@ -1036,18 +1014,6 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
     updateTimer.start(30);
 }
 
-void MainWindow::on_actionQuaternion_Demo_toggled(bool value) {
-    if (value) {
-        if (_quaternion_demo) delete _quaternion_demo;
-        cout << "Starting Quaternion Demo" << endl;
-        _quaternion_demo = new QuaternionDemo(this);
-        _quaternion_demo->resize(640, 480);
-    } else {
-        cout << "Stopping Quaternion Demo" << endl;
-        if (_quaternion_demo) delete _quaternion_demo;
-    }
-}
-
 void MainWindow::on_actionStart_Logging_triggered() {
     if (!_processor->logger().recording()) {
         if (!QDir("logs").exists()) {
@@ -1082,47 +1048,56 @@ void MainWindow::on_actionSeed_triggered() {
 
 // Log controls
 void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
-    // update current frame
-    int minFrame = _processor->logger().firstFrameNumber();
-    int maxFrame = _processor->logger().lastFrameNumber();
-    _doubleFrameNumber = value + minFrame;
-    _doubleFrameNumber = min<double>(maxFrame, _doubleFrameNumber);
-
-    emit historyLocationChanged(_doubleFrameNumber - minFrame);
+    // Sync frameNumber with logHistory slider
+    _doubleFrameNumber = value;
 
     // pause playback
-    live(false);
     _playbackRate = 0;
 }
 
+void MainWindow::on_logHistoryLocation_sliderPressed() {
+    on_logHistoryLocation_sliderMoved(_ui.logHistoryLocation->value());
+}
+
+void MainWindow::on_logHistoryLocation_sliderReleased() {
+    on_logHistoryLocation_sliderPressed();
+}
+
 void MainWindow::on_logPlaybackRewind_clicked() {
-    live(false);
-    _playbackRate += -0.5;
+    if (live()) {
+        _playbackRate = -1;
+    } else {
+        *_playbackRate += -0.5;
+    }
 }
 
 void MainWindow::on_logPlaybackPrevFrame_clicked() {
-    live(false);
     _playbackRate = 0;
     _doubleFrameNumber -= 1;
 }
 
 void MainWindow::on_logPlaybackPause_clicked() {
-    live(false);
-    _playbackRate = 0;
+    if (live()) {
+        _playbackRate = 0;
+    } else if (std::abs(*_playbackRate) < 0.1) {
+        _playbackRate = 1;
+    } else {
+        _playbackRate = 0;
+    }
 }
 
 void MainWindow::on_logPlaybackNextFrame_clicked() {
-    live(false);
     _playbackRate = 0;
     _doubleFrameNumber += 1;
 }
 
 void MainWindow::on_logPlaybackPlay_clicked() {
-    live(false);
-    _playbackRate += 0.5;
+    if (!live()) {
+        *_playbackRate += 0.5;
+    }
 }
 
-void MainWindow::on_logPlaybackLive_clicked() { live(true); }
+void MainWindow::on_logPlaybackLive_clicked() { _playbackRate = boost::none; }
 
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
@@ -1138,14 +1113,6 @@ void MainWindow::on_actionTeamYellow_triggered() {
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
     _processor->manualID(value - 1);
-    if (_quaternion_demo) {
-        if (value == 0) {
-            _quaternion_demo->hide();
-        } else {
-            _quaternion_demo->show();
-            _quaternion_demo->initialized = false;
-        }
-    }
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
@@ -1303,23 +1270,16 @@ void MainWindow::on_fastKickoffYellow_clicked() {
 void MainWindow::on_actionVisionPrimary_Half_triggered() {
     _processor->changeVisionChannel(SharedVisionPortSinglePrimary);
     _processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
-    _ui.actionVisionPrimary_Half->setChecked(true);
-    _ui.actionVisionSecondary_Half->setChecked(false);
-    _ui.actionVisionFull_Field->setChecked(false);
 }
 
 void MainWindow::on_actionVisionSecondary_Half_triggered() {
     _processor->changeVisionChannel(SharedVisionPortSingleSecondary);
     _processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
-    _ui.actionVisionPrimary_Half->setChecked(false);
-    _ui.actionVisionSecondary_Half->setChecked(true);
-    _ui.actionVisionFull_Field->setChecked(false);
 }
 
 void MainWindow::on_actionVisionFull_Field_triggered() {
     _processor->changeVisionChannel(SharedVisionPortDoubleNew);
     _processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
-    _ui.actionVisionPrimary_Half->setChecked(false);
-    _ui.actionVisionSecondary_Half->setChecked(false);
-    _ui.actionVisionFull_Field->setChecked(true);
 }
+
+bool MainWindow::live() { return !_playbackRate; }

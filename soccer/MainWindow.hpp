@@ -15,10 +15,8 @@
 class TestResultTab;
 class StripChart;
 class ConfigBool;
-class QuaternionDemo;
 
 enum RadioChannels { MHz_916, MHz_918 };
-
 /**
  * main gui thread class
  */
@@ -26,13 +24,11 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(QWidget* parent = nullptr);
+    MainWindow(Processor* processor, QWidget* parent = nullptr);
 
     void configuration(Configuration* config);
 
-    void processor(Processor* value);
-
-    Processor* processor() { return _processor; }
+    void initialize();
 
     SystemState* state() { return _processor->state(); }
 
@@ -42,7 +38,7 @@ public:
     /// Selects all debug layers
     void allDebugOn();
 
-    void live(bool value);
+    bool live();
 
     int frameNumber() const { return roundf(_doubleFrameNumber); }
 
@@ -111,7 +107,6 @@ private Q_SLOTS:
 
     /// Debug menu commands
     void on_actionRestartUpdateTimer_triggered();
-    void on_actionQuaternion_Demo_toggled(bool value);
     void on_actionStart_Logging_triggered();
 
     /// Gameplay menu
@@ -119,6 +114,8 @@ private Q_SLOTS:
 
     /// Log controls
     void on_logHistoryLocation_sliderMoved(int value);
+    void on_logHistoryLocation_sliderReleased();
+    void on_logHistoryLocation_sliderPressed();
     void on_logPlaybackRewind_clicked();
     void on_logPlaybackPrevFrame_clicked();
     void on_logPlaybackPause_clicked();
@@ -162,10 +159,8 @@ private:
 
     Ui_MainWindow _ui;
 
-    Processor* _processor;
+    Processor* const _processor;
     Configuration* _config;
-
-    QuaternionDemo* _quaternion_demo;
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
@@ -181,10 +176,8 @@ private:
     QTreeWidgetItem* _frameNumberItem;
     QTreeWidgetItem* _elapsedTimeItem;
 
-    bool _live;
-
     /// playback rate of the viewer - a value of 1 means realtime
-    double _playbackRate;
+    boost::optional<double> _playbackRate;
 
     // This is used to update some status items less frequently than the full
     // field view
@@ -202,13 +195,14 @@ private:
     QLabel* _procFPS;
     QLabel* _logMemory;
 
+    // QActionGroups for Radio Menu Actions
+    std::vector<QActionGroup*> qActionGroups;
+
     // maps robot shell IDs to items in the list
     std::map<int, QListWidgetItem*> _robotStatusItemMap;
 
     /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons;
-
-    RJ::Time _firstLogTimestamp = -1;
 
     Packet::SimCommand _quickLoadCmd;
 };

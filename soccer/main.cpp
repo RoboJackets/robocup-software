@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
-    Processor* processor = new Processor(sim);
+    auto processor = std::make_unique<Processor>(sim);
     processor->blueTeam(blueTeam);
     processor->refereeModule()->useExternalReferee(!noref);
 
@@ -148,9 +148,9 @@ int main(int argc, char* argv[]) {
                 .arg(cfgFile, error));
     }
 
-    MainWindow* win = new MainWindow;
+    auto win = std::make_unique<MainWindow>(processor.get());
     win->configuration(config.get());
-    win->processor(processor);
+    win->initialize();
 
     win->setUseRefChecked(!noref);
 
@@ -195,9 +195,6 @@ int main(int argc, char* argv[]) {
 
     int ret = app.exec();
     processor->stop();
-
-    delete win;
-    delete processor;
 
     return ret;
 }
