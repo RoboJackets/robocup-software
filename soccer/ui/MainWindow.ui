@@ -1964,7 +1964,6 @@ p, li { white-space: pre-wrap; }
      <string>&amp;Debug</string>
     </property>
     <addaction name="actionRestartUpdateTimer"/>
-    <addaction name="actionQuaternion_Demo"/>
     <addaction name="actionStart_Logging"/>
    </widget>
    <widget class="QMenu" name="menu_Gameplay">
@@ -2218,14 +2217,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Enables dampening of manual translation control</string>
-   </property>
-  </action>
-  <action name="actionQuaternion_Demo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Quaternion Demo</string>
    </property>
   </action>
   <action name="actionDotPatterns">

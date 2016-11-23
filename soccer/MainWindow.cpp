@@ -1,7 +1,6 @@
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 #include "Configuration.hpp"
-#include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <Robot.hpp>
@@ -362,29 +361,6 @@ void MainWindow::updateViews() {
         _ui.frameNumLabel->setText(QString("%1/%2")
                                        .arg(QString::number(frameNumber()))
                                        .arg(QString::number(frameNum)));
-
-        // Update the orientation demo view
-        if (_quaternion_demo && manual >= 0 &&
-            currentFrame->radio_rx().size() &&
-            currentFrame->radio_rx(0).has_quaternion()) {
-            const RadioRx* manualRx = nullptr;
-            for (const RadioRx& rx : currentFrame->radio_rx()) {
-                if ((int)rx.robot_id() == manual) {
-                    manualRx = &rx;
-                    break;
-                }
-            }
-            if (manualRx) {
-                const Packet::Quaternion& q = manualRx->quaternion();
-                _quaternion_demo->q =
-                    Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
-                if (!_quaternion_demo->initialized) {
-                    _quaternion_demo->ref = _quaternion_demo->q;
-                    _quaternion_demo->initialized = true;
-                }
-                _quaternion_demo->update();
-            }
-        }
 
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
@@ -1038,18 +1014,6 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
     updateTimer.start(30);
 }
 
-void MainWindow::on_actionQuaternion_Demo_toggled(bool value) {
-    if (value) {
-        if (_quaternion_demo) delete _quaternion_demo;
-        cout << "Starting Quaternion Demo" << endl;
-        _quaternion_demo = new QuaternionDemo(this);
-        _quaternion_demo->resize(640, 480);
-    } else {
-        cout << "Stopping Quaternion Demo" << endl;
-        if (_quaternion_demo) delete _quaternion_demo;
-    }
-}
-
 void MainWindow::on_actionStart_Logging_triggered() {
     if (!_processor->logger().recording()) {
         if (!QDir("logs").exists()) {
@@ -1149,14 +1113,6 @@ void MainWindow::on_actionTeamYellow_triggered() {
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
     _processor->manualID(value - 1);
-    if (_quaternion_demo) {
-        if (value == 0) {
-            _quaternion_demo->hide();
-        } else {
-            _quaternion_demo->show();
-            _quaternion_demo->initialized = false;
-        }
-    }
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
