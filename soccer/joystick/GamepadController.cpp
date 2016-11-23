@@ -3,11 +3,11 @@
 using namespace std;
 
 namespace {
-    constexpr RJ::Time Dribble_Step_Time = 125 * 1000;
-    constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
-    const float AXIS_MAX = 32768.0f;
-    // cutoff for counting triggers as 'on'
-    const float TRIGGER_CUTOFF = 0.9;
+constexpr RJ::Time Dribble_Step_Time = 125 * 1000;
+constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
+const float AXIS_MAX = 32768.0f;
+// cutoff for counting triggers as 'on'
+const float TRIGGER_CUTOFF = 0.9;
 }
 
 GamepadController::GamepadController()
@@ -20,14 +20,17 @@ GamepadController::GamepadController()
     }
 
     // Load extra controller mappings
-    SDL_GameControllerAddMapping("030000006d04000016c2000011010000,Logitech F310 Gamepad (DInput)\
+    SDL_GameControllerAddMapping(
+        "030000006d04000016c2000011010000,Logitech F310 Gamepad (DInput)\
 ,platform:Linux,x:b0,a:b1,b:b2,y:b3,back:b8,start:b9,dpleft:h0.8,dpdown:h0.0,\
 dpdown:h0.4,dpright:h0.0,dpright:h0.2,dpup:h0.0,dpup:h0.1,leftshoulder:h0.0,\
 dpup:h0.1,leftshoulder:h0.0,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,\
 righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
     // Attempt to add additional mappings (relative to run)
-    if (SDL_GameControllerAddMappingsFromFile("../external/sdlcontrollerdb/gamecontrollerdb.txt") == -1) {
-        cout << "Failed adding additional SDL Gamecontroller Mappings: " << SDL_GetError() << endl;
+    if (SDL_GameControllerAddMappingsFromFile(
+            "../external/sdlcontrollerdb/gamecontrollerdb.txt") == -1) {
+        cout << "Failed adding additional SDL Gamecontroller Mappings: "
+             << SDL_GetError() << endl;
     }
 
     // Controllers will be detected later if needed.
@@ -90,7 +93,8 @@ void GamepadController::update() {
         }
     } else {
         // Check if new controller found
-        // TODO use the SDL event API to only run this if we receive a connected event.
+        // TODO use the SDL event API to only run this if we receive a connected
+        // event.
         openJoystick();
         if (!connected) {
             return;
@@ -100,17 +104,20 @@ void GamepadController::update() {
     /*
      *  DRIBBLER ON/OFF
      */
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
+    if (SDL_GameControllerGetButton(_controller,
+                                    SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
         _controls.dribble = true;
-    } else if (SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT) / AXIS_MAX > TRIGGER_CUTOFF) {
+    } else if (SDL_GameControllerGetAxis(_controller,
+                                         SDL_CONTROLLER_AXIS_TRIGGERLEFT) /
+                   AXIS_MAX >
+               TRIGGER_CUTOFF) {
         _controls.dribble = false;
     }
 
     /*
      *  DRIBBLER POWER
      */
-    if (SDL_GameControllerGetButton(_controller,
-                                    SDL_CONTROLLER_BUTTON_A)) {
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
@@ -129,14 +136,13 @@ void GamepadController::update() {
     /*
      *  KICKER POWER
      */
-    if (SDL_GameControllerGetButton(_controller,
-                                    SDL_CONTROLLER_BUTTON_X)) {
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
-    } else if (SDL_GameControllerGetButton(
-                   _controller, SDL_CONTROLLER_BUTTON_B)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_B)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;
@@ -148,12 +154,16 @@ void GamepadController::update() {
     /*
      *  KICK TRUE/FALSE
      */
-    _controls.kick = SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+    _controls.kick = SDL_GameControllerGetButton(
+        _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
 
     /*
      *  CHIP TRUE/FALSE
      */
-    _controls.chip = SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) / AXIS_MAX > TRIGGER_CUTOFF;
+    _controls.chip = SDL_GameControllerGetAxis(
+                         _controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) /
+                         AXIS_MAX >
+                     TRIGGER_CUTOFF;
 
     /*
      *  VELOCITY ROTATION

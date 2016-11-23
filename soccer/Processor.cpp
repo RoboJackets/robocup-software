@@ -384,8 +384,7 @@ void Processor::run() {
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
-            if (joystick->valid())
-                break;
+            if (joystick->valid()) break;
         }
 
         runModels(detectionFrames);
