@@ -201,7 +201,7 @@
   <Field_Edge_Obstacle value="0.33"/>
  </PathPlanner>
  <MotionConstraints>
-  <Max_Acceleration value="1.3"/>
+  <Max_Acceleration value="1.5"/>
   <Max_Velocity value="1.5"/>
   <Max_Angle_Speed value="0.436"/>
   <Replan_Threshold value="0.3"/>
@@ -215,7 +215,7 @@
    <accelMultiplier value="0"/>
    <d value="0.5"/>
    <velMultiplier value="1"/>
-   <minEffectiveVelocity value="0.3"/>
+   <minEffectiveVelocity value="0.02"/>
   </translation>
   <rotation>
    <p value="7"/>
