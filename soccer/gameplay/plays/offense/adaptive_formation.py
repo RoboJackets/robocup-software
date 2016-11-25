@@ -8,6 +8,8 @@ import skills.capture
 import enum
 import evaluation
 
+# TODO: Copy-Paste notes document into here
+
 class AdaptiveFormation(standard_play.StandardPlay):
     class State(enum.Enum):
         # Collect the ball / Full court defense
@@ -27,6 +29,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         passCollecting = 7
         # One touch shot
         oneTouch = 8
+
     def __init__(self):
         super().__init__(continuous=False)
 

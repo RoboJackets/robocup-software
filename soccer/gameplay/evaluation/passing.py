@@ -50,6 +50,8 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
 ## Returns a robocup.Rect object that is the default location
 #
 # @param pos: Passing position
+# @return Returns a rectangle of half the field in front of pos
+#  or their half of the field if pos is in their half
 def generate_default_rectangle(pos):
     w = constants.Field.Width
     l = constants.Field.Length
@@ -65,7 +67,7 @@ def generate_default_rectangle(pos):
 #
 # @param rect: Rectangle to search through
 # @param pos: Position to pass from
-# These will be used later to find the best one
+# Returns a list of points in the rectangle to test
 def get_points_from_rect(rect, pos, threshold=0.75):
     outlist = []
     currentx = rect.min_x()
@@ -91,6 +93,8 @@ def get_points_from_rect(rect, pos, threshold=0.75):
     return outlist
 
 ## Evaluates a single point and returns the overall coefficient for the area
+#
+# @return Returns a score between 0 and 1 on how good of pass it is
 def eval_singl_point(kick_point,
                      receive_point,
                      ignore_robots=[]):
@@ -101,7 +105,8 @@ def eval_singl_point(kick_point,
         else:
             return None
 
-
+    # TODO: Figure out shot chance and add it in
+    shotChance = 1
     passChance = eval_pass(kick_point, 
                                               receive_point,
                                               ignore_robots)
@@ -110,13 +115,27 @@ def eval_singl_point(kick_point,
 
     # TODO: Make this more advanced
     # Make sure a robot can get to the position (Distancce from our closet robot?)
-    totalChance = passChance * ( (1-space) + 8*fieldPos )
-
+ 
+    # All of the other scores are based on whether the pass will actually make it to it
+    # Not worth returning a great position if we can even get a pass there
+    spaceCoeff = 1
+    fieldCoeff = 8
+    shotCoeff  = 10
+    totalChance = passChance * ( spaceCoeff*(1-space) + fieldCoeff*fieldPos + shotCoeff*shotChance)
+    totalCahnce /= (spaceCoeff + fieldCoeff + shotCoeff)
     return totalChance
 
+## Finds the best position to pass to
+#
+# @param kick_point: Point that we are passing from
+# @param evaluation_zone: Area to evaluate passes to
+# @param ignore_robots: Robots to ignore when calculating scores
+# @param debug: Displays pass lines and scores onto the field when true
+# @return bestPoint and bestScore in that order
 def eval_best_receive_point(kick_point,
                             evaluation_zone=None,
-                            ignore_robots=[]):
+                            ignore_robots=[], 
+                            debug=False):
     win_eval = robocup.WindowEvaluator(main.system_state())
     for r in ignore_robots:
         win_eval.add_excluded_robot(r)
@@ -133,11 +152,13 @@ def eval_best_receive_point(kick_point,
     bestScore = None
     bestPointt = None
 
+    # Finds best score out of all the points
     for currentPoint in points:
         currentScore = eval_singl_point(kick_point, currentPoint, ignore_robots)
 
-        score_color = (round(currentScore*255/9), 0, round((9-currentScore)*255/9))
-        main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Debug")
+        if (debug):
+            score_color = (round(currentScore*255), 0, round((1-currentScore)*255))
+            main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Debug")
         
         
 
@@ -145,6 +166,7 @@ def eval_best_receive_point(kick_point,
             bestScore = currentScore
             bestPoint = currentPoint
 
+    # Returns None if we can't find anythign
     if bestPoint is None:
         return None
 

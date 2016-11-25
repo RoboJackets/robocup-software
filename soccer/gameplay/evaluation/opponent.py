@@ -9,6 +9,7 @@ def num_on_offense():
 	goal_loc   = robocup.Point(0, constants.Field.Length)
 	corner_loc = robocup.Point(constants.Field.Width / 2, 0)
 	ball_loc   = main.ball().pos
+    
 	max_goal_dis = (goal_loc - corner_loc).mag()
 	ball_to_goal = (goal_loc - ball_loc).mag()
 	offense_ctr = 0
@@ -16,6 +17,7 @@ def num_on_offense():
 	filter_coeff = 0.7
 	cutoff = .3
 
+    # For each of their robots
 	for bot in main.their_robots():
 		if bot.visible:
 			dist_to_ball = (bot.pos - ball_loc).mag()

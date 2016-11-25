@@ -28,15 +28,19 @@ def space_coeff_at_pos(pos, excluded_robots=[]):
 
 ## Field Heuristic based on the position of the robot on the field
 # Weight inputs are normalized
+#
 # @param pos: Position to evalute
 # @param center: How much to weight being close to the center of the field
 # @param dist: How much to weight being close to the opponents goal
 # @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
 # @return Returns a number between 0 and 1 representing how good the position is 
 def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
-    centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2)) # Percent closeness to the center
-    distValue = math.fabs(pos.y / constants.Field.Length) # Pencent closeness to their goal
-    anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) # Angle of pos onto the goal, centerline is 0 degrees
+    # Percent closeness to the center
+    centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2))
+    # Pencent closeness to their goal
+    distValue = math.fabs(pos.y / constants.Field.Length) 
+    # Angle of pos onto the goal, centerline is 0 degrees
+    anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) 
 
     # Normalize inputs
     total = center + dist + angl
