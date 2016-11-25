@@ -15,4 +15,5 @@ class TestSpace(play.Play):
                             'immediately')
 
     def execute_running(self):
-        print(evaluation.field.space_coeff_at_pos(robocup.Point(0, constants.Field.Length/2), main.our_robots()))
+        # Based on ball pos
+        print(evaluation.field.space_coeff_at_pos(main.ball().pos))

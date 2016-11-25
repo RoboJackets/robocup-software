@@ -34,3 +34,45 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     else:
         # the pass is completely blocked
         return 0
+
+
+## Finds the best location wiht a rectangle to pass the ball into
+#
+# By default, this is use the full opponents half as the location
+# The best location is found by multiplying the pass chance by the 
+# openness and field position coefficients
+#
+# Example usage:
+# TODO: Show example usage
+
+## Returns a robocup.Rect object that is the default location
+def generate_default_rectangle():
+    offset_from_edge = 0.25
+
+    w = constants.Field.Width
+    l = constants.Field.Length
+
+    return robocup.Rect(
+        robocup.Point(-1*w/2 + offset_from_edge, l/2),
+        robocup.Point(w/2 - offset_from_edge, l-offset_from_edge))
+
+
+## returns a list of robocup.Segment objects that represent candidate recieve points
+#
+# @param rect: Rectangle to search through
+# @param pos: 
+# These will be used later to find the best one
+# def get_segments_from_rect(rect, pos, threshold=0.75)
+#     outlist = []
+#     currentx = rect.min_x()
+#     currenty = rect.min_y()
+
+#     # Loop through from bottom left to top right, row by row
+#     while currenty <= rect.max_y():
+#         while currentx <= rect.max_x():
+#             if constants.Field.TheirGoalZoneShape.contains_point(
+#                 robocup.Point(currentx, currenty)):
+#                 currentx += threshold
+#                 continue
+
+#             candiate = robocup.

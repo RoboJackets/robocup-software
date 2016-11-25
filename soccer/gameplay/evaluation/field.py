@@ -1,17 +1,19 @@
 import main
 import robocup
 import constants
+import math
 
-# Determines how much "space" there is at a pos
-# Space is the emptiness of robots in a given area
+## Determines how much "space" there is at a pos
+#    "Space" is how open a robot is
+# @param pos: point to evalute
 # @returns Number > 0 representing the closeness of robots
 # The higher the number, the more robots closer to the position
 def space_coeff_at_pos(pos, excluded_robots=[]):
-    max_dist = robocup.Point(pos.x - constants.Field.Width, pos.y - constants.Field.Length).mag()
+    max_dist = robocup.Point(constants.Field.Width/2, constants.Field.Length).mag()
     total = 0
-    sensitivity = 4
+    sensitivity = 8
 
-    for bot in (main.their_robots()):# + main.our_robots()):
+    for bot in (main.their_robots()):
         if bot.visible and bot not in excluded_robots:
             u = sensitivity * (bot.pos - pos).mag() / max_dist;
 
@@ -22,8 +24,20 @@ def space_coeff_at_pos(pos, excluded_robots=[]):
 
 
 
-# Field Heuristic based on the position of the robot on the field
-# Center is how close to the length-wise center of the field
-# Dist is how close to the opponent goal
-# Angle is the angle on the goal (0 is goal line, 90 is center line)
-#def field_pos_coeff_at_pos(pos, center, dist, angl)
+## Field Heuristic based on the position of the robot on the field
+# @param pos: Position to evalute
+# @param center: How much to weight being close to the center of the field
+# @param dist: How much to weight being close to the opponents goal
+# @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
+# @return Returns a number between 0 and 1 representing how good the position is 
+def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
+    centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2)) # Percent closeness to the center
+    distValue = math.fabs(pos.y / constants.Field.Length) # Pencent closeness to their goal
+    anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) # Angle of pos onto the goal, centerline is 0 degrees
+
+    total = center + dist + angl
+    center = center / total
+    dist = dist / total
+    angl = angl / total
+
+    return center*centerValue + dist*distValue + angl*anglValue
