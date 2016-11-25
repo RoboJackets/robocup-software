@@ -6,9 +6,11 @@ import math
 ## Determines how much "space" there is at a pos
 #    "Space" is how open a robot is
 # @param pos: point to evalute
-# @returns Number > 0 representing the closeness of robots
+# @returns Number between 0 and 1 representing the closeness of robots
 # The higher the number, the more robots closer to the position
 def space_coeff_at_pos(pos, excluded_robots=[]):
+    # TODO: Add in velocity prediction
+
     max_dist = robocup.Point(constants.Field.Width/2, constants.Field.Length).mag()
     total = 0
     sensitivity = 8
@@ -20,11 +22,12 @@ def space_coeff_at_pos(pos, excluded_robots=[]):
             # Use Triweight kernal function (Force to be positive)
             total += max((35/32)*pow((1-pow(u,2)), 3), 0)
 
-    return total
+    return min(total, 1)
 
 
 
 ## Field Heuristic based on the position of the robot on the field
+# Weight inputs are normalized
 # @param pos: Position to evalute
 # @param center: How much to weight being close to the center of the field
 # @param dist: How much to weight being close to the opponents goal
@@ -35,6 +38,7 @@ def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
     distValue = math.fabs(pos.y / constants.Field.Length) # Pencent closeness to their goal
     anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) # Angle of pos onto the goal, centerline is 0 degrees
 
+    # Normalize inputs
     total = center + dist + angl
     center = center / total
     dist = dist / total
