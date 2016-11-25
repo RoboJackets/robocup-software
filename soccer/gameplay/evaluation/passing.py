@@ -105,11 +105,14 @@ def eval_singl_point(kick_point,
         else:
             return None
 
-    # TODO: Figure out shot chance and add it in
-    shotChance = 1
-    passChance = eval_pass(kick_point, 
-                                              receive_point,
-                                              ignore_robots)
+    win_eval = robocup.WindowEvaluator(main.system_state())
+    _, bestShot = win_eval.eval_pt_to_opp_goal(receive_point)
+    shotChance = 0
+
+    if (bestShot):
+        shotChance = bestShot.shot_success
+
+    passChance = eval_pass(kick_point, receive_point, ignore_robots)
     space    = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
     fieldPos = evaluation.field.field_pos_coeff_at_pos(receive_point)
 
@@ -122,7 +125,7 @@ def eval_singl_point(kick_point,
     fieldCoeff = 8
     shotCoeff  = 10
     totalChance = passChance * ( spaceCoeff*(1-space) + fieldCoeff*fieldPos + shotCoeff*shotChance)
-    totalCahnce /= (spaceCoeff + fieldCoeff + shotCoeff)
+    totalChance /= (spaceCoeff + fieldCoeff + shotCoeff)
     return totalChance
 
 ## Finds the best position to pass to
