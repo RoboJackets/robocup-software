@@ -2,6 +2,9 @@ import main
 import robocup
 import constants
 
+## Estimates the number of robots on offense on the opposing team
+#
+# @return Num of robots on offense
 def num_on_offense():
 	# Complementary filter on...
 	#	Closeness to their goal
@@ -9,7 +12,7 @@ def num_on_offense():
 	goal_loc   = robocup.Point(0, constants.Field.Length)
 	corner_loc = robocup.Point(constants.Field.Width / 2, 0)
 	ball_loc   = main.ball().pos
-    
+
 	max_goal_dis = (goal_loc - corner_loc).mag()
 	ball_to_goal = (goal_loc - ball_loc).mag()
 	offense_ctr = 0
@@ -33,3 +36,25 @@ def num_on_offense():
 				offense_ctr += 1
 
 	return offense_ctr
+
+
+## Returns the closest opponent to the pos inclusive of the directional weight
+#
+# @param direction_weight: How much to weight the positive y direction
+#     If < 1, then robots in front are weighted higher
+def get_closest_opponent(pos, direction_weight=1,excluded_robots=[]):
+    #TODO: Implement directional weight
+    closest_bot, closest_dist = None, float("inf")
+    for bot in main.their_robots():
+        if bot.visible:
+            dist = (bot.pos - pos).mag()
+
+            if (pos.y <= bot.pos.y):
+                dist *= direction_weight
+            else:
+                dist *= (1 - direction_weight)
+
+            if dist < closest_dist:
+                closest_bot, closest_dist = bot, dist
+
+    return closest_bot

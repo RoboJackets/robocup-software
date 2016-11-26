@@ -114,5 +114,5 @@ def time_to_ball(robot):
 def team_with_possession():
     # Find closest robot to ball on both teams
     # Determine percent error to ball to dictate who has posession
-    # Much better ways could be done
+    
     return 0.5

@@ -6,7 +6,7 @@ import main
 import skills.move
 import skills.capture
 import enum
-import evaluation
+import evaluation.passing_positioning
 
 # TODO: Copy-Paste notes document into here
 
@@ -16,7 +16,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         collecting = 1
         # Dribble for a second and prepare to pass / shoot / clear
         dribbling = 2
-        # Pass when it is better than dribbling
+        # Pass when someone is open
         passing = 3
         # Shoot when chances are high
         shooting = 4
@@ -33,31 +33,21 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=False)
 
-        self.add_state(AdaptiveFormation.State.collecting,
-                       behavior.Behavior.State.running)
-        self.add_state(AdaptiveFormation.State.dribbling,
-                       behavior.Behavior.State.running)
-        self.add_state(AdaptiveFormation.State.shooting,
-                       behavior.Behavior.State.running)
-        self.add_state(AdaptiveFormation.State.clearing,
-                       behavior.Behavior.State.running)
-        self.add_state(AdaptiveFormation.State.passInMotion,
-                       behavior.Behavior.State.running)
-        self.add_state(AdaptiveFormation.State.passCollecting,
-                       behavior.Behavior.State.running)
-        self.add_state(AdaptiveFormation.State.oneTouch,
-                       behavior.Behavior.State.running)
+        for s in AdaptiveFormation.State:
+            self.add_state(s, behavior.Behavior.State.running)
 
-
+        # Min score to pass
         self.dribbleToPassCutoff = 0.5
-        
+        # Min score to shoot
         self.dribbleToShootCutoff = 0.8
 
-        self.clearFieldCutoff = 1
-        self.dribbleToClearCutoff = 0.2
+        # Min field Y to clear
+        self.clearFieldCutoff = constants.Field.Length / 5 # in our 20%
 
+        # Min onetouch score
         self.oneTouchShotCutoff = 0.9
 
+        # Min distance to switch phases
         self.passCollectingDist = 0.5
 
         # Add transitions
@@ -73,17 +63,17 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.add_transition(AdaptiveFormation.State.dribbling,
                             AdaptiveFormation.State.passing, 
-                            lambda: False,
+                            lambda: self.should_pass_from_dribble(),
                             'Passing')
 
         self.add_transition(AdaptiveFormation.State.dribbling,
                             AdaptiveFormation.State.shooting, 
-                            lambda: False,
+                            lambda: self.should_shoot_from_dribble(),
                             'Shooting')
 
         self.add_transition(AdaptiveFormation.State.dribbling,
                             AdaptiveFormation.State.clearing, 
-                            lambda: False,
+                            lambda: self.should_clear_from_dribble(),
                             'Clearing')
 
         # Passing states
@@ -112,39 +102,79 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             AdaptiveFormation.State.collecting, 
                             lambda: False,
                             'Dribble: Ball Lost')
-
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.collecting, 
                             lambda: False,
                             'Passing: Ball Lost')
-
         self.add_transition(AdaptiveFormation.State.shooting,
                             AdaptiveFormation.State.collecting, 
-                            lambda: False,
+                            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed,
                             'Shooting: Ball Lost / Shot')
-
         self.add_transition(AdaptiveFormation.State.clearing,
                             AdaptiveFormation.State.collecting, 
                             lambda: False,
                             'Clearing: Ball Lost')
-
         self.add_transition(AdaptiveFormation.State.passInMotion,
                             AdaptiveFormation.State.collecting, 
                             lambda: False,
                             'PassInMotion: Ball Lost')
-
         self.add_transition(AdaptiveFormation.State.passCollecting,
                             AdaptiveFormation.State.collecting, 
                             lambda: False,
                             'PassCollecting: Ball Lost')
-
         self.add_transition(AdaptiveFormation.State.oneTouch,
                             AdaptiveFormation.State.collecting, 
                             lambda: False,
                             'OneTouch: Ball Lost / Shot')
 
+        self.win_eval = robocup.WindowEvaluator(main.system_state())
         self.dribbler = None
+        
+        # State Transition Variable
+        self.shot_location = None
+        self.pass_pos = None
 
+        # State Deciding Variables
+        self.shot_chance = 0
+        self.pass_score = 0
+        
+        # Prev State Deciding Variables
+        self.prev_shot_chance = 0
+        self.prev_pass_score = 0
+
+    def should_pass_from_dribble(self):
+        # If the pass chances are getting better, hold off
+        if (self.prev_pass_score < self.pass_score):
+            return False
+
+        # If pass is above cutoff
+        if (self.pass_score > self.dribbleToPassCutoff):
+            return True
+
+        # Decreasing and under cutoff
+        return False
+    def should_shoot_from_dribble(self):
+        # If the shot chances are getting better, hold off
+        if (self.prev_shot_chance < self.shot_chance):
+            return False
+
+        # If shot is above cutoff
+        if (self.shot_chance > self.dribbleToShootCutoff):
+            return True
+
+        # Decreasing and under cutoff
+        return False
+    # TODO: See if there is space to dribble
+    def should_clear_from_dribble(self):
+        # If outside zone of goal
+        if (self.dribbler.pos.y > self.clearFieldCutoff):
+            return False
+
+        # If pass chances are getting better, hold off
+        if (self.prev_pass_score < self.pass_score):
+            return False
+
+        return True
 
     def on_enter_collecting(self):
         capture = skills.capture.Capture()
@@ -155,13 +185,46 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_enter_dribbling(self):
         self.dribbler = skills.dribble.Dribble()
+        # TODO: Make the dribble location better
         self.dribbler.pos = robocup.Point(0,constants.Field.Length)
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
     def execute_dribbling(self):
-        # Get distance from nearest opp robot
-        # Figure out where to pass to get best shot
-        #   Grid?
-        # Figure out if we should shoot
-        # Figure out if we should chip
+        # Setup previous values (Basic complementary filter)
+        c = 0.7
+        self.prev_shot_chance = c*self.shot_chance + (1-c)*self.prev_shot_chance
+        self.prev_pass_score = c*self.pass_score + (1-c)*self.prev_pass_score
+
+        # Find closest bot weighting the ones in front higher
+        closest_bot = evaluation.opponent.get_closest_opponent(main.ball().pos, 0.9)
+        
+        # Grab best pass
+        self.pass_pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
+                                                    main.ball().pos, None, main.our_robots())
+
+        # Grab shot chance
+        _, bestShot = self.win_eval.eval_pt_to_opp_goal(main.ball().pos)
+        self.shot_chance = 0
+
+        if (bestShot):
+            self.shot_chance = bestShot.shot_success
+
+    def on_exit_dribbling(self):
+        self.remove_all_subbehaviors()
+
+    def on_enter_shooting(self):
+        kick = skills.pivot_kick.PivotKick()
+        kick.target = constants.Field.TheirGoalSegment
+        kick.aim_params['desperate_timeout'] = 3
+        self.add_subbehavior(kick, 'kick', required=False)
+
+    def on_exit_shooting(self):
+        self.remove_all_subbehaviors()
+
+    def on_enter_passing(self):
+        # Setup passer
+        # Setup reciever
         pass
+
+    def execute_passing(self):
+        # Wait until the reciever will be able to get there in time
