@@ -1,11 +1,9 @@
 var searchData=
 [
-  ['whichhalf',['WhichHalf',['../classwhich__half_1_1_which_half.html',1,'which_half']]],
-  ['whichhalf',['WhichHalf',['../classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half.html',1,'gameplay::plays::training::which_half']]],
-  ['win_5feval_5fparams',['win_eval_params',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#ae5517c1cdb027306bd27b8541cb0d822',1,'gameplay::skills::_kick::_Kick']]],
-  ['window',['Window',['../class_window.html',1,'']]],
-  ['windowevaluator',['WindowEvaluator',['../class_window_evaluator.html',1,'WindowEvaluator'],['../class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e',1,'WindowEvaluator::WindowEvaluator()']]],
-  ['worldvelocity',['worldVelocity',['../class_our_robot.html#a1ae0e2de02a6c6834281a8a6868056f0',1,'OurRobot']]],
-  ['worldveltargetcommand',['WorldVelTargetCommand',['../struct_planning_1_1_world_vel_target_command.html',1,'Planning']]],
-  ['wrapper',['wrapper',['../class_new_referee_packet.html#a485e1b6a00f69aea2151ba496ebac6d0',1,'NewRefereePacket::wrapper()'],['../class_vision_packet.html#a49df3d58429f4ea72f51852cda27b802',1,'VisionPacket::wrapper()']]]
+  ['vision',['Vision',['../md_doc_Vision.html',1,'']]],
+  ['valid',['valid',['../class_gamepad_controller.html#a8846b5b57f90666c24734af76b1fea9a',1,'GamepadController::valid()'],['../class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19',1,'GamepadJoystick::valid()'],['../class_joystick.html#a7e9f7707fd861b7d9e89658d9fadd99e',1,'Joystick::valid()'],['../class_space_nav_joystick.html#acd39b0dedfcd5c6864b02af1360ad229',1,'SpaceNavJoystick::valid()']]],
+  ['velmultiplier',['velMultiplier',['../class_robot_config.html#ae880291b9adb38c7a76f1a5fdbc8482a',1,'RobotConfig']]],
+  ['velocity_5fscale_5ffactor',['VELOCITY_SCALE_FACTOR',['../structrtp_1_1_control_message.html#a4459729ab618f2b1b53d911fe3764ccd',1,'rtp::ControlMessage']]],
+  ['visionpacket',['VisionPacket',['../class_vision_packet.html',1,'']]],
+  ['visionreceiver',['VisionReceiver',['../class_vision_receiver.html',1,'']]]
 ];
