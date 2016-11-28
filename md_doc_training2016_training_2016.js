@@ -6,5 +6,7 @@ var md_doc_training2016_training_2016 =
     [ "Skills, Tactics, Plays - Overview", "t20164.html", null ],
     [ "Beginner Git", "t2016git.html", null ],
     [ "Firmware", "t2016firmware.html", null ],
-    [ "Path Planning", "t20166.html", null ]
+    [ "Path Planning", "t20166.html", null ],
+    [ "QT Introduction", "t20167.html", null ],
+    [ "Contribution Overview", "t20168.html", null ]
 ];

@@ -8,8 +8,6 @@ var NAVTREE =
     [ "Motion Control", "md_doc_MotionControl.html", null ],
     [ "Soccer", "md_doc_Soccer.html", null ],
     [ "Style", "md_doc_Style.html", null ],
-    [ "QT Introduction", "t20167.html", null ],
-    [ "Contribution Overview", "t20168.html", null ],
     [ "Training 2016", "md_doc_training2016_training_2016.html", "md_doc_training2016_training_2016" ],
     [ "Testing & Continuous Integration", "md_doc_UnitTestsAndCI.html", null ],
     [ "Vision", "md_doc_Vision.html", null ],
