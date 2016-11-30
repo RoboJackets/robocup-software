@@ -317,9 +317,6 @@ void Processor::run() {
 
                 double rt =
                     RJ::numSeconds(packet->receivedTime.time_since_epoch());
-                //                double rt =
-                //                RJ::timestamp(packet->receivedTime) /
-                //                1000000.0;
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
                 det->set_t_sent(rt);
 

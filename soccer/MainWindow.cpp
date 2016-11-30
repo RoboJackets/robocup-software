@@ -416,8 +416,7 @@ void MainWindow::updateViews() {
                                 _processor->refereeModule()->command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
-    _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
-        _processor->refereeModule()->stage_time_left / 1000.0f, 'f', 2)));
+    _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(_processor->refereeModule()->stage_time_left.count(), 'f', 2)));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
     _ui.refBlueName->setText(strlen(blueName) == 0 ? "<Blue Team>" : blueName);

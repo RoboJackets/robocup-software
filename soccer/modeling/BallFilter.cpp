@@ -39,13 +39,6 @@ Ball BallFilter::predict(RJ::Time time, float* velocityUncertainty) const {
     prediction.pos = pos + vel.normalized(distance);
     prediction.vel = vel.normalized(speed);
 
-    // return MotionInstant(pos + vel.normalized(distance),
-    // vel.normalized(speed));
-    // out->pos = _currentEstimate.pos +
-    //           _currentEstimate.vel * (time - _currentEstimate.time) /
-    //           1000000.0f;
-    // out->vel = _currentEstimate.vel;
-
     if (velocityUncertainty) {
         *velocityUncertainty = 2.0f + _currentEstimate.vel.mag() * 0.5f;
     }
