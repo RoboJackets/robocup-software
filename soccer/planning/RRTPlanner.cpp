@@ -5,6 +5,8 @@
 #include <protobuf/LogFrame.pb.h>
 #include "motion/TrapezoidalMotion.hpp"
 #include "Util.hpp"
+#include "CompositePath.hpp"
+#include "Configuration.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,12 +19,44 @@ using namespace Eigen;
 using namespace Geometry2d;
 
 namespace Planning {
+REGISTER_CONFIGURABLE(RRTPlanner);
+
+ConfigDouble* RRTPlanner::_partialReplanLeadTime;
+
+void RRTPlanner::createConfiguration(Configuration* cfg) {
+    _partialReplanLeadTime = new ConfigDouble(
+        cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
+}
 
 RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
+bool veeredOffPath(Point currentPos, const Path& path, MotionConstraints motionConstraints) {
+
+    RJ::Seconds timeIntoPath =
+            (RJ::now() - path.startTime()) + RJ::Seconds(1) / 60;
+
+    boost::optional<RobotInstant> optTarget = path.evaluate(timeIntoPath);
+    // If we went off the end of the path, use the end for calculations.
+    MotionInstant target =
+            optTarget ? optTarget->motion : path.end().motion;
+
+    // invalidate path if current position is more than the replanThreshold away
+    // from where it's supposed to be right now
+    auto pathError = (target.pos - currentPos).mag();
+    auto replanThreshold = *motionConstraints._replan_threshold;
+    return replanThreshold != 0 && pathError > replanThreshold;
+}
+
+bool goalChanged(const MotionInstant& goal, const Path& prevPath) {
+    double goalPosDiff = (prevPath.end().motion.pos - goal.pos).mag();
+    double goalVelDiff = (prevPath.end().motion.vel - goal.vel).mag();
+    return goalPosDiff > SingleRobotPathPlanner::goalChangeThreshold() ||
+        goalVelDiff > SingleRobotPathPlanner::goalChangeThreshold();
+}
+
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
-                              const vector<DynamicObstacle> dynamicObs,
+                              const vector<DynamicObstacle>& dynamicObs,
                               string* debugOut) const {
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
@@ -66,6 +100,7 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
 
 const int maxContinue = 10;
 
+
 std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     const MotionInstant& start = planRequest.startInstant;
     const auto& motionConstraints = planRequest.robotConstraints.mot;
@@ -76,10 +111,10 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     // This planner only works with commands of type 'PathTarget'
     assert(planRequest.cmd.getCommandType() ==
            Planning::MotionCommand::PathTarget);
-    const Planning::PathTargetCommand& target =
+    const Planning::PathTargetCommand& pathTargetCommand =
         dynamic_cast<const Planning::PathTargetCommand&>(planRequest.cmd);
 
-    MotionInstant goal = target.pathGoal;
+    MotionInstant goal = pathTargetCommand.pathGoal;
     vector<DynamicObstacle> actualDynamic;
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
@@ -105,63 +140,64 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
 
-
     // Replan if needed, otherwise return the previous path unmodified
-    if (!prevPath || SingleRobotPathPlanner::shouldReplan(planRequest) || prevPath->pathsIntersect(actualDynamic, RJ::now(), nullptr, nullptr)) {
-        auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
+    if (!prevPath || veeredOffPath(start.pos, *prevPath, motionConstraints)) {
+        std::unique_ptr<Path> path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                     actualDynamic);
 
         if (!path) {
-            path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
-                                         RJ::Seconds::zero());
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
-                                         RJ::Seconds::zero());
+            path = InterpolatedPath::emptyPath(start.pos);
         }
         path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
     } else {
-        double goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
-        double goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
-        if (goalPosDiff > goalChangeThreshold() || goalVelDiff > goalChangeThreshold()) {
-            auto now = RJ::now();
-            auto robotInstant = prevPath->evaluate(now - prevPath->startTime());
-            MotionInstant newStart;
-            if (robotInstant) {
-                newStart = robotInstant->motion;
-            } else {
-                newStart = start;
-            }
-            auto path = generateRRTPath(newStart, goal, motionConstraints, obstacles,
-                                        actualDynamic);
-            path->setDebugText("Test Goal Change");
-            if (!path) {
-                path = make_unique<InterpolatedPath>();
-                path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
-                                             RJ::Seconds::zero());
-                path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
-                                             RJ::Seconds::zero());
-            }
-            path->setStartTime(now);
-            return std::move(path);
-        } else {
-            if (reusePathTries >= maxContinue) {
-                reusePathTries = 0;
-                auto path = generateRRTPath(start, goal, motionConstraints,
-                                            obstacles, actualDynamic);
-                if (path) {
-                    RJ::Seconds remaining = prevPath->getDuration() -
-                                            (RJ::now() - prevPath->startTime());
-                    if (remaining > path->getDuration()) {
-                        path->setDebugText("Found better path");
-                        return std::move(path);
-                    }
+        const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
+
+        bool partialReplan = false;
+        RJ::Seconds invalidTime;
+        if(prevPath->hit(obstacles, timeIntoPrevPath, &invalidTime)) {
+            partialReplan = true;
+        } else if (prevPath->pathsIntersect(actualDynamic, RJ::now(), nullptr, &invalidTime)) {
+            partialReplan = true;
+        } else if (goalChanged(goal, *prevPath)) {
+            invalidTime = prevPath->getDuration();
+            partialReplan = true;
+        }
+
+        if (partialReplan) {
+            const auto timeFromInvalid = invalidTime - timeIntoPrevPath;
+            const auto partialReplanTime = RJ::Seconds(*_partialReplanLeadTime);
+            if (timeFromInvalid > partialReplanTime * 2) {
+
+                auto subPath = prevPath->subPath(0ms, timeIntoPrevPath + partialReplanTime);
+                RobotInstant newStart = subPath->end();
+
+                auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,actualDynamic);
+                if (newSubPath) {
+                    auto path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
+                    path->setStartTime(prevPath->startTime());
+                    path->setDebugText("partialReplan");
+                    return std::move(path);
                 }
             }
-            reusePathTries++;
-            prevPath->setDebugText("reusing");
-            return std::move(prevPath);
         }
+
+        if (reusePathTries >= maxContinue) {
+            reusePathTries = 0;
+            auto path = generateRRTPath(start, goal, motionConstraints,
+                                        obstacles, actualDynamic);
+            if (path) {
+                RJ::Seconds remaining = prevPath->getDuration() -
+                                        (RJ::now() - prevPath->startTime());
+                if (remaining > path->getDuration()) {
+                    path->setDebugText("Found better path");
+                    return std::move(path);
+                }
+            }
+        }
+        reusePathTries++;
+        prevPath->setDebugText("reusing");
+        return std::move(prevPath);
     }
 }
 

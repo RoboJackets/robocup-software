@@ -17,7 +17,7 @@ InterpolatedPath::InterpolatedPath(Point p0) {
 
 InterpolatedPath::InterpolatedPath(Point p0, Point p1) {
     waypoints.emplace_back(MotionInstant(p0, Point()), 0ms);
-    waypoints.emplace_back(MotionInstant(p1, Point()), 1s);
+    waypoints.emplace_back(MotionInstant(p1, Point()), 0ms);
 }
 
 float InterpolatedPath::length(unsigned int start) const {
@@ -193,7 +193,7 @@ void InterpolatedPath::draw(SystemState* const state,
     }
 }
 
-boost::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
+boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
@@ -369,13 +369,13 @@ unique_ptr<Path> InterpolatedPath::clone() const {
     return std::unique_ptr<Path>(cp);
 }
 
-void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
-    for (auto& waypoint : waypoints) {
-        waypoint.vel() /= multiplier;
-        waypoint.time *= multiplier;
-    }
-    RJ::Seconds newTimeInto = timeInto * multiplier;
-    RJ::Time now = startTime() + timeInto;
-    setStartTime(now - newTimeInto);
-}
+//void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
+//    for (auto& waypoint : waypoints) {
+//        waypoint.vel() /= multiplier;
+//        waypoint.time *= multiplier;
+//    }
+//    RJ::Seconds newTimeInto = timeInto * multiplier;
+//    RJ::Time now = startTime() + timeInto;
+//    setStartTime(now - newTimeInto);
+//}
 }  // namespace Planning

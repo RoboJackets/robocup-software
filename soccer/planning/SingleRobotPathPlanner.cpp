@@ -112,10 +112,10 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
-    if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
-        return true;
-    }
+    //const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
+    //if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
+    //    return true;
+    //}
 
     // Evaluate where the path says the robot should be right now
     RJ::Seconds timeIntoPath =

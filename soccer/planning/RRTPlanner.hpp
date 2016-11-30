@@ -67,6 +67,9 @@ public:
 
     virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
 
+    static void createConfiguration(Configuration* cfg);
+
+private:
     int reusePathTries = 0;
 
 protected:
@@ -77,7 +80,7 @@ protected:
     /// Check to see if the previous path (if any) should be discarded and
     /// replaced with a newly-planned one
     bool shouldReplan(const SinglePlanRequest& planRequest,
-                      const std::vector<DynamicObstacle> dynamicObs,
+                      const std::vector<DynamicObstacle> &dynamicObs,
                       std::string* debugOut = nullptr) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
@@ -154,5 +157,7 @@ protected:
                                            std::vector<double>& points,
                                            std::vector<double>& ks,
                                            std::vector<double>& ks2);
+
+    static ConfigDouble* _partialReplanLeadTime;
 };
 }  // namespace Planning

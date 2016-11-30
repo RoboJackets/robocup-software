@@ -8,13 +8,14 @@ namespace Planning {
 CompositePath::CompositePath(unique_ptr<Path> path) { append(std::move(path)); }
 
 void CompositePath::append(unique_ptr<Path> path) {
+    cout<<"duration "<<duration<<endl;
     if (duration < RJ::Seconds::max()) {
         auto pathDuration = path->getDuration();
         if (pathDuration > RJ::Seconds::zero()) {
             duration += pathDuration;
             paths.push_back(std::move(path));
         } else {
-            debugThrow(invalid_argument("The path passed is invalid"));
+            debugThrow(invalid_argument("The path passed is invalid" + to_string(duration)));
         }
     } else {
         debugThrow(runtime_error(
@@ -22,7 +23,7 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-boost::optional<RobotInstant> CompositePath::evaluate(RJ::Seconds t) const {
+boost::optional<RobotInstant> CompositePath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
@@ -80,13 +81,13 @@ bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
     }
 
     for (; start < paths.size(); start++) {
-        if (paths[start]->hit(obstacles, 0ms, hitTime)) {
+        if (paths.at(start)->hit(obstacles, 0ms, hitTime)) {
             if (hitTime) {
                 *hitTime += totalTime;
             }
             return true;
         }
-        totalTime += paths[start]->getDuration();
+        totalTime += paths.at(start)->getDuration();
     }
     return false;
 }
@@ -143,7 +144,7 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
     RJ::Seconds time(0);
     RJ::Seconds lastTime(0);
     while (time <= startTime) {
-        lastTime = paths[start]->getDuration();
+        lastTime = paths.at(start)->getDuration();
         time += lastTime;
         start++;
     }
@@ -155,12 +156,12 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
     // If the path will only contain that one Path just return a subPath of that
     // Path
     if (time >= endTime) {
-        return paths[start - 1]->subPath(startTime - firstStartTime,
+        return paths.at(start - 1)->subPath(startTime - firstStartTime,
                                          endTime - firstStartTime);
     } else {
         // Create a CompositePath initialized with only that first path.
         CompositePath* path = new CompositePath(
-            paths[start - 1]->subPath(startTime - firstStartTime));
+            paths.at(start - 1)->subPath(startTime - firstStartTime));
         unique_ptr<Path> lastPath;
         size_t end;
 
@@ -172,23 +173,26 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
         } else {
             end = start;
             while (time < endTime) {
-                lastTime = paths[start]->getDuration();
+                lastTime = paths.at(end)->getDuration();
                 time += lastTime;
                 end++;
             }
             end--;
-            lastPath = paths[end]->subPath(RJ::Seconds(0),
+            lastPath = paths.at(end)->subPath(RJ::Seconds(0),
                                            endTime - (time - lastTime));
         }
 
         // Add the ones in the middle
         while (start < end) {
-            path->append(paths[start]->clone());
+            path->append(paths.at(start)->clone());
             start++;
         }
 
         // Add the last one
         path->append(std::move(lastPath));
+
+        debugThrowIf(to_string(path->getDuration()) + to_string(std::min(getDuration() - startTime, endTime-startTime)),
+                     (path->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.000001);
 
         return unique_ptr<Path>(path);
     }

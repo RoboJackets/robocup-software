@@ -29,13 +29,22 @@ public:
     /** constructors with one path */
     CompositePath(std::unique_ptr<Path> path);
 
+    template <typename... Args>
+    CompositePath(std::unique_ptr<Path> path, Args... args) {
+        append(std::move(path), std::forward<Args>(args)...);
+    }
+
     /**
      * Append the path to the end of the CompositePath
      */
     void append(std::unique_ptr<Path> path);
 
-    virtual boost::optional<RobotInstant> evaluate(
-        RJ::Seconds t) const override;
+    template <typename... Args>
+    void append(std::unique_ptr<Path> path, Args... args) {
+        append(std::move(path));
+        append(std::forward<Args>(args)...);
+    }
+
     virtual bool hit(const Geometry2d::ShapeSet& shape,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override;
@@ -48,6 +57,10 @@ public:
     virtual RobotInstant start() const override;
     virtual RobotInstant end() const override;
     virtual std::unique_ptr<Path> clone() const override;
+
+protected:
+    virtual boost::optional<RobotInstant> eval(
+            RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

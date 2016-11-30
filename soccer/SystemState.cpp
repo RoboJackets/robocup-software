@@ -16,9 +16,6 @@ using Planning::MotionInstant;
 class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
-    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
-        return RobotInstant(ball.predict(startTime() + t));
-    }
 
     virtual bool hit(const Geometry2d::ShapeSet& obstacles,
                      RJ::Seconds startTimeIntoPath,
@@ -47,6 +44,11 @@ public:
 
     virtual std::unique_ptr<Path> clone() const {
         return std::make_unique<BallPath>(*this);
+    }
+
+protected:
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const {
+        return RobotInstant(ball.predict(startTime() + t));
     }
 
 private:
