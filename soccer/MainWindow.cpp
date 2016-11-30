@@ -513,7 +513,7 @@ void MainWindow::updateViews() {
             statusWidget->setHasRadio(radio);
 
             // fake error text
-            QString error = "Kicker Fault, Hall Fault FR, Ball Sense Fault";
+            QString error = "Kicker Fault, Motor Fault FR, Ball Sense Fault";
             statusWidget->setErrorText(error);
 
             // fake ball status
@@ -588,7 +588,7 @@ void MainWindow::updateViews() {
                     switch (rx.motor_status(i)) {
                         case Packet::Hall_Failure:
                             errorList
-                                << QString("Hall Fault %1").arg(motorNames[i]);
+                                << QString("Motor Fault %1").arg(motorNames[i]);
                             break;
                         case Packet::Stalled:
                             errorList << QString("Stall %1").arg(motorNames[i]);
