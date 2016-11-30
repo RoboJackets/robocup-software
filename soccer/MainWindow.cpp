@@ -209,8 +209,7 @@ void MainWindow::addLayer(int i, QString name, bool checked) {
     on_debugLayers_itemChanged(item);
 }
 
-enum Side { Yellow, Blue };
-string formatLabelBold(Side side, string label) {
+string MainWindow::formatLabelBold(Side side, string label) {
     string color;
     // Colors match up with those statically defined in MainWindow.ui
     if (side == Side::Yellow) {
