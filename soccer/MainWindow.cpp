@@ -215,12 +215,11 @@ string formatLabelBold(Side side, string label) {
     // Colors match up with those statically defined in MainWindow.ui
     if (side == Side::Yellow) {
         color = "#ac9f2d";
-    }
-    else if (side == Side::Blue) {
+    } else if (side == Side::Blue) {
         color = "#000064";
     }
-    //return "&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:" + color + "; font-weight: bold;&quot;&gt;" + string + "&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;";
-    return "<html><head/><body><p><span style=\"color:" + color + "; font-weight: bold;\">" + label + "</span></p></body></html>";
+    return "<html><head/><body><p><span style=\"color:" + color +
+           "; font-weight: bold;\">" + label + "</span></p></body></html>";
 }
 
 void MainWindow::updateViews() {
@@ -446,7 +445,8 @@ void MainWindow::updateViews() {
 
     const char* yellowName =
         _processor->refereeModule()->yellow_info.name.c_str();
-    string yellowFormatted = strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
+    string yellowFormatted =
+        strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
     yellowFormatted = formatLabelBold(Side::Yellow, yellowFormatted);
     _ui.refYellowName->setText(QString::fromStdString(yellowFormatted));
     _ui.refYellowScore->setText(
