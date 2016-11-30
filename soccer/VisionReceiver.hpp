@@ -34,7 +34,7 @@ public:
  */
 class VisionReceiver : public QThread {
 public:
-    VisionReceiver(bool sim = false, int port = SharedVisionPortDoubleNew);
+    VisionReceiver(bool sim = false, int port = SharedVisionPortSinglePrimary);
 
     void stop();
 
@@ -53,7 +53,6 @@ protected:
     virtual void run() override;
 
     volatile bool _running;
-
     /// This mutex protects the vector of packets
     QMutex _mutex;
     std::vector<VisionPacket*> _packets;
