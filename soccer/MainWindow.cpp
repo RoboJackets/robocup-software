@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <string>
 
 #include <google/protobuf/descriptor.h>
 
@@ -206,6 +207,18 @@ void MainWindow::addLayer(int i, QString name, bool checked) {
     item->setData(Qt::UserRole, i);
     _ui.debugLayers->addItem(item);
     on_debugLayers_itemChanged(item);
+}
+
+string MainWindow::formatLabelBold(Side side, string label) {
+    string color;
+    // Colors match up with those statically defined in MainWindow.ui
+    if (side == Side::Yellow) {
+        color = "#ac9f2d";
+    } else if (side == Side::Blue) {
+        color = "#000064";
+    }
+    return "<html><head/><body><p><span style=\"color:" + color +
+           "; font-weight: bold;\">" + label + "</span></p></body></html>";
 }
 
 void MainWindow::updateViews() {
@@ -415,7 +428,9 @@ void MainWindow::updateViews() {
         _processor->refereeModule()->stage_time_left / 1000.0f, 'f', 2)));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
-    _ui.refBlueName->setText(strlen(blueName) == 0 ? "<Blue Team>" : blueName);
+    string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
+    blueFormatted = formatLabelBold(Side::Blue, blueFormatted);
+    _ui.refBlueName->setText(QString::fromStdString(blueFormatted));
     _ui.refBlueScore->setText(
         tr("%1").arg(_processor->refereeModule()->blue_info.score));
     _ui.refBlueRedCards->setText(
@@ -429,8 +444,10 @@ void MainWindow::updateViews() {
 
     const char* yellowName =
         _processor->refereeModule()->yellow_info.name.c_str();
-    _ui.refYellowName->setText(strlen(yellowName) == 0 ? "<Yellow Team>"
-                                                       : yellowName);
+    string yellowFormatted =
+        strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
+    yellowFormatted = formatLabelBold(Side::Yellow, yellowFormatted);
+    _ui.refYellowName->setText(QString::fromStdString(yellowFormatted));
     _ui.refYellowScore->setText(
         tr("%1").arg(_processor->refereeModule()->yellow_info.score));
     _ui.refYellowRedCards->setText(
