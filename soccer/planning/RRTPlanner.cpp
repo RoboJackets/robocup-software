@@ -1,7 +1,6 @@
 #include "RRTPlanner.hpp"
 #include <Constants.hpp>
 #include <Utils.hpp>
-#include <rrt/BiRRT.hpp>
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
@@ -20,6 +19,22 @@ namespace Planning {
 
 RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
+
+void RRTPlanner::_drawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
+                          QColor color) {
+    for (auto* node : rrt.allNodes()) {
+        if (node->parent()) {
+            state->drawLine(Segment(node->state(), node->parent()->state()),
+                            color, "RobotRRT");
+        }
+    }
+}
+
+void RRTPlanner::_drawBiRRT(const RRT::BiRRT<Point>& biRRT,
+                            SystemState* state) {
+    _drawRRT(biRRT.startTree(), state, QColor("blue"));
+    _drawRRT(biRRT.goalTree(), state, QColor("green"));
+}
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
                               const vector<DynamicObstacle> dynamicObs,
@@ -296,10 +311,11 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         (points[points.size() - 1] - points[points.size() - 2])
             .normalized(pathWeight) +
         vf;
-    endDirections.push_back((endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    endDirections.push_back(
+        (endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 

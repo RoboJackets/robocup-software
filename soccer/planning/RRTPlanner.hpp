@@ -8,6 +8,10 @@
 #include <planning/MotionInstant.hpp>
 #include "SingleRobotPathPlanner.hpp"
 
+#include <rrt/BiRRT.hpp>
+
+#include "SystemState.hpp"
+
 #include <Eigen/Dense>
 #include <boost/optional.hpp>
 #include <list>
@@ -153,5 +157,10 @@ protected:
                                            std::vector<double>& points,
                                            std::vector<double>& ks,
                                            std::vector<double>& ks2);
+    /// Drawing
+    void _drawRRT(const RRT::Tree<Geometry2d::Point>& rrt, SystemState* state,
+                  QColor color);
+    void _drawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
+                    SystemState* state);
 };
 }  // namespace Planning
