@@ -25,4 +25,8 @@ private:
 
     RJ::Time _lastDribblerTime;
     RJ::Time _lastKickerTime;
+
+    void openJoystick();
+    void closeJoystick();
+    bool connected;
 };

@@ -70,9 +70,11 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _radio = nullptr;
 
     // joysticks
-    _joysticks.push_back(new GamepadJoystick());
     _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
+    // Enable this if you have issues with the new controller.
+    // _joysticks.push_back(new GamepadJoystick());
+
     _dampedTranslation = true;
     _dampedRotation = true;
 
@@ -382,6 +384,7 @@ void Processor::run() {
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
+            if (joystick->valid()) break;
         }
 
         runModels(detectionFrames);
@@ -776,6 +779,7 @@ JoystickControlValues Processor::getJoystickControlValues() {
             vals.dribblerPower =
                 max<double>(vals.dribblerPower, newVals.dribblerPower);
             vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
+            break;
         }
     }
 
