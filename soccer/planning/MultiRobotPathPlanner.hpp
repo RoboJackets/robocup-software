@@ -4,8 +4,8 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
-#include "planning/DynamicObstacle.hpp"
 #include "SystemState.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 #include <map>
 #include <memory>
@@ -16,7 +16,7 @@ namespace Planning {
 /// The PlanRequest encapsulates all information that the planner needs to know
 /// about an individual robot in order to generate a path for it.
 struct PlanRequest {
-    PlanRequest(const SystemState& systemState, MotionInstant start,
+    PlanRequest(SystemState& systemState, MotionInstant start,
                 std::unique_ptr<MotionCommand> command,
                 RobotConstraints constraints, std::unique_ptr<Path> prevPath,
                 Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
@@ -29,7 +29,7 @@ struct PlanRequest {
           obstacles(obs),
           dynamicObstacles(dObs) {}
 
-    const SystemState& systemState;
+    SystemState& systemState;
     MotionInstant start;
     std::unique_ptr<MotionCommand> motionCommand;
     RobotConstraints constraints;

@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <iostream>
 
+// draws rrts to the SystemState so they can be shown in the gui
+const bool ENABLE_EXPENSIVE_RRT_DEBUG_DRAWING = true;
+
 using namespace std;
 using namespace Eigen;
 using namespace Geometry2d;
@@ -118,7 +121,7 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(planRequest, actualDynamic, &debugOut)) {
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
-                                    actualDynamic);
+                                    actualDynamic, &planRequest.systemState);
 
         if (!path) {
             path = make_unique<InterpolatedPath>();
@@ -130,8 +133,9 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     } else {
         if (reusePathTries >= maxContinue) {
             reusePathTries = 0;
-            auto path = generateRRTPath(start, goal, motionConstraints,
-                                        obstacles, actualDynamic);
+            auto path =
+                generateRRTPath(start, goal, motionConstraints, obstacles,
+                                actualDynamic, &planRequest.systemState);
             if (path) {
                 float remaining = prevPath->getDuration() -
                                   RJ::TimestampToSecs(RJ::timestamp() -
@@ -151,13 +155,13 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
-    const std::vector<DynamicObstacle> dyObs) {
+    const std::vector<DynamicObstacle> dyObs, SystemState* state) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
-        auto points = runRRT(start, goal, motionConstraints, obstacles);
+        auto points = runRRT(start, goal, motionConstraints, obstacles, state);
 
         // Optimize out uneccesary waypoints
         optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
@@ -193,7 +197,8 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
-                                 const ShapeSet& obstacles) {
+                                 const ShapeSet& obstacles,
+                                 SystemState* state) {
     // unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize bi-directional RRT
@@ -209,6 +214,10 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     // TODO: what happens if it fails?
     bool success = biRRT.run();
     if (!success) return vector<Point>();
+
+    if (ENABLE_EXPENSIVE_RRT_DEBUG_DRAWING) {
+        _drawBiRRT(biRRT, state);
+    }
 
     vector<Point> points;
     biRRT.getPath(points);

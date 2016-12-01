@@ -87,13 +87,13 @@ protected:
     std::vector<Geometry2d::Point> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles);
+        const Geometry2d::ShapeSet& obstacles, SystemState* state);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> paths);
+        const std::vector<DynamicObstacle> paths, SystemState* state);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated

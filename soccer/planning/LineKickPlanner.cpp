@@ -1,8 +1,8 @@
 #include "LineKickPlanner.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <motion/TrapezoidalMotion.hpp>
 #include <Geometry2d/Util.hpp>
+#include <motion/TrapezoidalMotion.hpp>
+#include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 
@@ -51,7 +51,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     const auto& motionConstraints = planRequest.robotConstraints.mot;
     const auto& rotationConstraints = planRequest.robotConstraints.rot;
     auto& obstacles = planRequest.obstacles;
-    const auto& systemState = planRequest.systemState;
+    auto& systemState = planRequest.systemState;
     const auto& ball = systemState.ball;
     const auto& robotConstraints = planRequest.robotConstraints;
     auto& dynamicObstacles = planRequest.dynamicObstacles;

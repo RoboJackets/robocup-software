@@ -1,15 +1,15 @@
 #pragma once
 
 #include <Configuration.hpp>
-#include <planning/MotionConstraints.hpp>
 #include <planning/MotionCommand.hpp>
+#include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
-#include "planning/RotationCommand.hpp"
-#include "planning/DynamicObstacle.hpp"
 #include "RobotConstraints.hpp"
 #include "SystemState.hpp"
 #include "Utils.hpp"
+#include "planning/DynamicObstacle.hpp"
+#include "planning/RotationCommand.hpp"
 
 namespace Planning {
 
@@ -19,8 +19,7 @@ struct SinglePlanRequest {
                       const RobotConstraints& robotConstraints,
                       Geometry2d::ShapeSet& obstacles,
                       std::vector<DynamicObstacle>& dynamicObstacles,
-                      const SystemState& systemState,
-                      std::unique_ptr<Path> prevPath)
+                      SystemState& systemState, std::unique_ptr<Path> prevPath)
         : startInstant(startInstant),
           cmd(cmd),
           robotConstraints(robotConstraints),
@@ -34,7 +33,7 @@ struct SinglePlanRequest {
     const RobotConstraints& robotConstraints;
     Geometry2d::ShapeSet& obstacles;
     std::vector<DynamicObstacle>& dynamicObstacles;
-    const SystemState& systemState;
+    SystemState& systemState;
     std::unique_ptr<Path> prevPath = nullptr;
 };
 
