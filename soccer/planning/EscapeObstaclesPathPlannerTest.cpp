@@ -17,10 +17,12 @@ TEST(EscapeObstaclesPathPlanner, run) {
     const float circleRadius = 5;
     obstacles.add(std::make_shared<Circle>(Point(0, 0), circleRadius));
 
+    SystemState systemState;
+
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
     SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, SystemState(),
+                              dynamicObstacles, systemState,
                               nullptr,  // previous path
                               0);       // robot shell ID
     auto path = planner.run(request);

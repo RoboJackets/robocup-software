@@ -15,10 +15,12 @@ TEST(TargetVelPathPlannerTest, run) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
 
+    SystemState systemState;
+
     TargetVelPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
     SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, SystemState(),
+                              dynamicObstacles, systemState,
                               nullptr,  // previous path
                               0         // shellID
                               );
