@@ -24,19 +24,19 @@ RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
 void RRTPlanner::_drawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
-                          QColor color) {
+                          unsigned shellID, QColor color) {
     for (auto* node : rrt.allNodes()) {
         if (node->parent()) {
             state->drawLine(Segment(node->state(), node->parent()->state()),
-                            color, "RobotRRT");
+                            color, QString("RobotRRT%1").arg(shellID));
         }
     }
 }
 
-void RRTPlanner::_drawBiRRT(const RRT::BiRRT<Point>& biRRT,
-                            SystemState* state) {
-    _drawRRT(biRRT.startTree(), state, QColor("blue"));
-    _drawRRT(biRRT.goalTree(), state, QColor("green"));
+void RRTPlanner::_drawBiRRT(const RRT::BiRRT<Point>& biRRT, SystemState* state,
+                            unsigned shellID) {
+    _drawRRT(biRRT.startTree(), state, shellID, QColor("blue"));
+    _drawRRT(biRRT.goalTree(), state, shellID, QColor("green"));
 }
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
@@ -121,7 +121,8 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     // Replan if needed, otherwise return the previous path unmodified
     if (shouldReplan(planRequest, actualDynamic, &debugOut)) {
         auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
-                                    actualDynamic, &planRequest.systemState);
+                                    actualDynamic, &planRequest.systemState,
+                                    planRequest.shellID);
 
         if (!path) {
             path = make_unique<InterpolatedPath>();
@@ -133,9 +134,9 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     } else {
         if (reusePathTries >= maxContinue) {
             reusePathTries = 0;
-            auto path =
-                generateRRTPath(start, goal, motionConstraints, obstacles,
-                                actualDynamic, &planRequest.systemState);
+            auto path = generateRRTPath(
+                start, goal, motionConstraints, obstacles, actualDynamic,
+                &planRequest.systemState, planRequest.shellID);
             if (path) {
                 float remaining = prevPath->getDuration() -
                                   RJ::TimestampToSecs(RJ::timestamp() -
@@ -155,13 +156,15 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
-    const std::vector<DynamicObstacle> dyObs, SystemState* state) {
+    const std::vector<DynamicObstacle> dyObs, SystemState* state,
+    unsigned shellID) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
-        auto points = runRRT(start, goal, motionConstraints, obstacles, state);
+        auto points =
+            runRRT(start, goal, motionConstraints, obstacles, state, shellID);
 
         // Optimize out uneccesary waypoints
         optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
@@ -197,8 +200,8 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
-                                 const ShapeSet& obstacles,
-                                 SystemState* state) {
+                                 const ShapeSet& obstacles, SystemState* state,
+                                 unsigned shellID) {
     // unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
 
     // Initialize bi-directional RRT
@@ -216,7 +219,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     if (!success) return vector<Point>();
 
     if (ENABLE_EXPENSIVE_RRT_DEBUG_DRAWING) {
-        _drawBiRRT(biRRT, state);
+        _drawBiRRT(biRRT, state, shellID);
     }
 
     vector<Point> points;

@@ -87,13 +87,15 @@ protected:
     std::vector<Geometry2d::Point> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles, SystemState* state);
+        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        unsigned shellID);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> paths, SystemState* state);
+        const std::vector<DynamicObstacle> paths, SystemState* state,
+        unsigned shellID);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
@@ -159,8 +161,8 @@ protected:
                                            std::vector<double>& ks2);
     /// Drawing
     void _drawRRT(const RRT::Tree<Geometry2d::Point>& rrt, SystemState* state,
-                  QColor color);
+                  unsigned shellID, QColor color);
     void _drawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
-                    SystemState* state);
+                    SystemState* state, unsigned shellID);
 };
 }  // namespace Planning
