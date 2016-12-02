@@ -20,14 +20,16 @@ struct PlanRequest {
                 std::unique_ptr<MotionCommand> command,
                 RobotConstraints constraints, std::unique_ptr<Path> prevPath,
                 Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
-                int8_t priority = 0)
+                unsigned shellID, int8_t priority = 0)
         : systemState(systemState),
           start(start),
           motionCommand(std::move(command)),
           constraints(constraints),
           prevPath(std::move(prevPath)),
           obstacles(obs),
-          dynamicObstacles(dObs) {}
+          dynamicObstacles(dObs),
+          shellID(shellID),
+          priority(priority) {}
 
     SystemState& systemState;
     MotionInstant start;
@@ -36,6 +38,8 @@ struct PlanRequest {
     std::unique_ptr<Path> prevPath;
     Geometry2d::ShapeSet obstacles;
     std::vector<DynamicObstacle> dynamicObstacles;
+
+    unsigned shellID;
 
     // Higher Priorities are planned first
     int8_t priority;

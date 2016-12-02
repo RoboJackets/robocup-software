@@ -19,14 +19,16 @@ struct SinglePlanRequest {
                       const RobotConstraints& robotConstraints,
                       Geometry2d::ShapeSet& obstacles,
                       std::vector<DynamicObstacle>& dynamicObstacles,
-                      SystemState& systemState, std::unique_ptr<Path> prevPath)
+                      SystemState& systemState, std::unique_ptr<Path> prevPath,
+                      unsigned shellID)
         : startInstant(startInstant),
           cmd(cmd),
           robotConstraints(robotConstraints),
           obstacles(obstacles),
           dynamicObstacles(dynamicObstacles),
           systemState(systemState),
-          prevPath(std::move(prevPath)){};
+          prevPath(std::move(prevPath)),
+          shellID(shellID){};
 
     const MotionInstant& startInstant;
     const MotionCommand& cmd;
@@ -35,6 +37,7 @@ struct SinglePlanRequest {
     std::vector<DynamicObstacle>& dynamicObstacles;
     SystemState& systemState;
     std::unique_ptr<Path> prevPath = nullptr;
+    unsigned shellID;
 };
 
 /**

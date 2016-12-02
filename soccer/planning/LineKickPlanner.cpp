@@ -111,15 +111,17 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
             target.pos -=
                 target.vel.normalized(ballAvoidDistance * 3.0f + Robot_Radius);
             auto command = PathTargetCommand(target);
-            auto request = SinglePlanRequest(
-                startInstant, command, robotConstraints, ballObstacles,
-                dynamicObstacles, systemState, std::move(prevPath));
+            auto request =
+                SinglePlanRequest(startInstant, command, robotConstraints,
+                                  ballObstacles, dynamicObstacles, systemState,
+                                  std::move(prevPath), planRequest.shellID);
             path = rrtPlanner.run(request);
         } else {
             auto command = PathTargetCommand(target);
-            auto request = SinglePlanRequest(
-                startInstant, command, robotConstraints, obstacles,
-                dynamicObstacles, systemState, std::move(prevPath));
+            auto request =
+                SinglePlanRequest(startInstant, command, robotConstraints,
+                                  obstacles, dynamicObstacles, systemState,
+                                  std::move(prevPath), planRequest.shellID);
             path = rrtPlanner.run(request);
         }
         targetKickPos = boost::none;
@@ -216,9 +218,9 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     auto ballPath = ball.path(RJ::timestamp());
     dynamicObstacles.push_back(DynamicObstacle(ballPath.get(), Ball_Radius));
     auto rrtCommand = PathTargetCommand(target);
-    auto request =
-        SinglePlanRequest(startInstant, rrtCommand, robotConstraints, obstacles,
-                          dynamicObstacles, systemState, std::move(prevPath));
+    auto request = SinglePlanRequest(startInstant, rrtCommand, robotConstraints,
+                                     obstacles, dynamicObstacles, systemState,
+                                     std::move(prevPath), planRequest.shellID);
     auto path = rrtPlanner.run(request);
     path->setDebugText("Gives ups");
 
