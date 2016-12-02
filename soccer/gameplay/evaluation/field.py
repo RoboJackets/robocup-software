@@ -44,8 +44,5 @@ def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
 
     # Normalize inputs
     total = center + dist + angl
-    center = center / total
-    dist = dist / total
-    angl = angl / total
 
-    return center*centerValue + dist*distValue + angl*anglValue
+    return (center*centerValue + dist*distValue + angl*anglValue) / total

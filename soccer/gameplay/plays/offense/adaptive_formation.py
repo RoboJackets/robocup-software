@@ -7,6 +7,7 @@ import skills.move
 import skills.capture
 import enum
 import evaluation.passing_positioning
+import tactics.coordinated_pass
 
 # TODO: Copy-Paste notes document into here
 
@@ -37,9 +38,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.add_state(s, behavior.Behavior.State.running)
 
         # Min score to pass
-        self.dribbleToPassCutoff = 0.5
+        self.dribbleToPassCutoff = 0.3
         # Min score to shoot
-        self.dribbleToShootCutoff = 0.8
+        self.dribbleToShootCutoff = 0.2
 
         # Min field Y to clear
         self.clearFieldCutoff = constants.Field.Length / 5 # in our 20%
@@ -49,6 +50,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Min distance to switch phases
         self.passCollectingDist = 0.5
+
+        # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
+        self.IncreasingChancesCutoff = 0.001
 
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
@@ -79,12 +83,12 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Passing states
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.passInMotion, 
-                            lambda: False,
+                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
                             'Pass Kicked')
 
         self.add_transition(AdaptiveFormation.State.passInMotion,
                             AdaptiveFormation.State.passCollecting, 
-                            lambda: False,
+                            lambda: True,
                             'Pass About to be Collected')
 
         self.add_transition(AdaptiveFormation.State.passCollecting,
@@ -94,7 +98,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.add_transition(AdaptiveFormation.State.passCollecting,
                             AdaptiveFormation.State.dribbling, 
-                            lambda: False,
+                            lambda: True,
                             'Pass Settled')
 
         # Reset to collecting when ball is lost at any stage
@@ -144,7 +148,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def should_pass_from_dribble(self):
         # If the pass chances are getting better, hold off
-        if (self.prev_pass_score < self.pass_score):
+        if (self.prev_pass_score + self.IncreasingChancesCutoff < self.pass_score):
             return False
 
         # If pass is above cutoff
@@ -155,7 +159,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return False
     def should_shoot_from_dribble(self):
         # If the shot chances are getting better, hold off
-        if (self.prev_shot_chance < self.shot_chance):
+        if (self.prev_shot_chance + self.IncreasingChancesCutoff < self.shot_chance):
             return False
 
         # If shot is above cutoff
@@ -171,7 +175,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return False
 
         # If pass chances are getting better, hold off
-        if (self.prev_pass_score < self.pass_score):
+        if (self.prev_pass_score + IncreasingChancesCutoff < self.pass_score):
             return False
 
         return True
@@ -200,14 +204,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
         
         # Grab best pass
         self.pass_pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-                                                    main.ball().pos, None, main.our_robots())
+                                                    main.ball().pos, None, main.our_robots(),
+                                                    (0.01, 3, 0.02), (2, 2, 15), True)
 
         # Grab shot chance
-        _, bestShot = self.win_eval.eval_pt_to_opp_goal(main.ball().pos)
-        self.shot_chance = 0
+        self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
 
-        if (bestShot):
-            self.shot_chance = bestShot.shot_success
+        # Add some sort of dibble reset for the 1000cm limit in the rules
 
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()
@@ -224,7 +227,23 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def on_enter_passing(self):
         # Setup passer
         # Setup reciever
-        pass
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_pos), 'pass')
 
     def execute_passing(self):
         # Wait until the reciever will be able to get there in time
+        # Then kick the ball
+        pass
+
+    def on_exit_passing(self):
+        self.remove_all_subbehaviors()
+
+    def on_enter_clearing(self):
+        # Line kick with chip
+        # Choose most open area / Best pass, weight forward
+        pass
+
+    def execute_clearing(self):
+        pass
+
+    def on_exit_passing(self):
+        self.remove_all_subbehaviors()
