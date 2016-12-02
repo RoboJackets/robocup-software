@@ -12,6 +12,9 @@ public:
     // if set, enables drawng of rrts to the SystemState so they can be shown in
     // the gui
     static ConfigBool* EnableRRTDebugDrawing;
+
+    static ConfigDouble* StepSize;
+    static ConfigDouble* GoalBias;
 };
 
 /// Drawing

@@ -192,9 +192,9 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
-    biRRT.setStepSize(0.15);  // TODO: make this more easily tunable
+    biRRT.setStepSize(*RRTConfig::StepSize);
     biRRT.setMaxIterations(_maxIterations);
-    biRRT.setGoalBias(0.3);
+    biRRT.setGoalBias(*RRTConfig::StepSize);
 
     // TODO: what happens if it fails?
     bool success = biRRT.run();

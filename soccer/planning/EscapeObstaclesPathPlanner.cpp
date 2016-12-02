@@ -15,8 +15,8 @@ ConfigDouble* EscapeObstaclesPathPlanner::_stepSize;
 ConfigDouble* EscapeObstaclesPathPlanner::_goalChangeThreshold;
 
 void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
-    _stepSize =
-        new ConfigDouble(cfg, "EscapeObstaclesPathPlanner/stepSize", 0.1);
+    _stepSize = new ConfigDouble(
+        cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
     _goalChangeThreshold = new ConfigDouble(
         cfg, "EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
 }

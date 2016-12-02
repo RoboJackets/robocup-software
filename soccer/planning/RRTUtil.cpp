@@ -7,10 +7,17 @@ namespace Planning {
 REGISTER_CONFIGURABLE(RRTConfig)
 
 ConfigBool* RRTConfig::EnableRRTDebugDrawing;
+ConfigDouble* RRTConfig::StepSize;
+ConfigDouble* RRTConfig::GoalBias;
 
 void RRTConfig::createConfiguration(Configuration* cfg) {
     EnableRRTDebugDrawing =
         new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
+    StepSize = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
+    GoalBias = new ConfigDouble(
+        cfg, "PathPlanner/RRT/GoalBias", 0.3,
+        "Value from 0 to 1 that determines what proportion of the time the RRT "
+        "will grow towards the goal rather than towards a random point");
 }
 
 ConfigBool EnableExpensiveRRTDebugDrawing();
