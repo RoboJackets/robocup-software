@@ -19,7 +19,7 @@ public:
 
 /// Drawing
 void DrawRRT(const RRT::Tree<Geometry2d::Point>& rrt, SystemState* state,
-             unsigned shellID, QColor color);
+             unsigned shellID);
 void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT, SystemState* state,
                unsigned shellID);
 }  // Planning

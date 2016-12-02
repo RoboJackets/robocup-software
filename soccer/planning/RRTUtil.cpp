@@ -1,4 +1,5 @@
 #include "RRTUtil.hpp"
+#include <array>
 
 using namespace Geometry2d;
 
@@ -22,8 +23,15 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
 
 ConfigBool EnableExpensiveRRTDebugDrawing();
 
-void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state, unsigned shellID,
-             QColor color) {
+void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
+             unsigned shellID) {
+    // Draw each robot's rrts in a different color
+    // Note: feel free to change these, they're completely arbitrary
+    static const std::array<QColor, 6> colors = {
+        QColor("green"), QColor("blue"),   QColor("yellow"),
+        QColor("red"),   QColor("purple"), QColor("orange")};
+    QColor color = colors[shellID % colors.size()];
+
     for (auto* node : rrt.allNodes()) {
         if (node->parent()) {
             state->drawLine(Segment(node->state(), node->parent()->state()),
@@ -34,7 +42,7 @@ void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state, unsigned shellID,
 
 void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, SystemState* state,
                unsigned shellID) {
-    DrawRRT(biRRT.startTree(), state, shellID, QColor("blue"));
-    DrawRRT(biRRT.goalTree(), state, shellID, QColor("green"));
+    DrawRRT(biRRT.startTree(), state, shellID);
+    DrawRRT(biRRT.goalTree(), state, shellID);
 }
 }
