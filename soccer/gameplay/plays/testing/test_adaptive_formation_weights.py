@@ -57,9 +57,9 @@ class TestAdaptiveFormationWeights(play.Play):
                     continue
 
                 # Uncomment which function we want graphed
-                #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.01, 3, 0.02)
+                val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.01, 3, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
-                val = evaluation.shooting.eval_shot(robocup.Point(x_cent, y_cent))
+                #val = evaluation.shooting.eval_shot(robocup.Point(x_cent, y_cent))
 
                 if (val > max_val):
                     max_val = val

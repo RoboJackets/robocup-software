@@ -38,9 +38,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.add_state(s, behavior.Behavior.State.running)
 
         # Min score to pass
-        self.dribbleToPassCutoff = 0.3
+        self.dribbleToPassCutoff = 0.1
         # Min score to shoot
-        self.dribbleToShootCutoff = 0.2
+        self.dribbleToShootCutoff = 0.1
 
         # Min field Y to clear
         self.clearFieldCutoff = constants.Field.Length / 5 # in our 20%
@@ -52,7 +52,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.passCollectingDist = 0.5
 
         # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
-        self.IncreasingChancesCutoff = 0.001
+        self.IncreasingChancesCutoff = 0.05
 
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
@@ -108,7 +108,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             'Dribble: Ball Lost')
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.collecting, 
-                            lambda: False,
+                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
                             'Passing: Ball Lost')
         self.add_transition(AdaptiveFormation.State.shooting,
                             AdaptiveFormation.State.collecting, 
@@ -147,23 +147,25 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.prev_pass_score = 0
 
     def should_pass_from_dribble(self):
-        # If the pass chances are getting better, hold off
-        if (self.prev_pass_score + self.IncreasingChancesCutoff < self.pass_score):
-            return False
 
-        # If pass is above cutoff
-        if (self.pass_score > self.dribbleToPassCutoff):
+        # If pass is above cutoff and we dont have a good shot
+        if (self.pass_score > self.dribbleToPassCutoff and \
+            self.shot_chance < self.dribbleToShootCutoff):
+            print("Pass : " + str(self.pass_score) + " Shot : " + str(self.shot_chance))
             return True
+
 
         # Decreasing and under cutoff
         return False
     def should_shoot_from_dribble(self):
-        # If the shot chances are getting better, hold off
+
+        # If shot chance is improving significantly, hold off a second
         if (self.prev_shot_chance + self.IncreasingChancesCutoff < self.shot_chance):
             return False
 
         # If shot is above cutoff
         if (self.shot_chance > self.dribbleToShootCutoff):
+            print("Pass : " + str(self.pass_score) + " Shot : " + str(self.shot_chance))
             return True
 
         # Decreasing and under cutoff
@@ -189,13 +191,16 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_enter_dribbling(self):
         self.dribbler = skills.dribble.Dribble()
-        # TODO: Make the dribble location better
-        self.dribbler.pos = robocup.Point(0,constants.Field.Length)
+
+        # Dribbles toward the best receive point
+        self.dribbler.pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
+                                                    main.ball().pos, None, main.our_robots(),
+                                                    (0.01, 3, 0.02), (2, 2, 15), False)
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
     def execute_dribbling(self):
         # Setup previous values (Basic complementary filter)
-        c = 0.7
+        c = .8
         self.prev_shot_chance = c*self.shot_chance + (1-c)*self.prev_shot_chance
         self.prev_pass_score = c*self.pass_score + (1-c)*self.prev_pass_score
 
@@ -205,7 +210,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Grab best pass
         self.pass_pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
-                                                    (0.01, 3, 0.02), (2, 2, 15), True)
+                                                    (0.01, 3, 0.02), (2, 2, 15), False)
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)

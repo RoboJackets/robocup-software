@@ -24,8 +24,7 @@ def eval_shot(from_point, excluded_robots=[]):
 
     pass_dist = to_point.dist_to(from_point)
     pass_dir = to_point - from_point
-    pass_perp = pass_dir.perp_ccw()
-    pass_perp /= pass_perp.mag()
+    pass_perp = pass_dir.perp_ccw().normalized()
     receive_seg_half_len = math.tan(pass_angle/2) * pass_dist
     receive_seg = robocup.Segment(to_point + pass_perp * receive_seg_half_len,
                                   to_point + pass_perp * -receive_seg_half_len)
@@ -35,10 +34,17 @@ def eval_shot(from_point, excluded_robots=[]):
         win_eval.add_excluded_robot(r)
     windows, best = win_eval.eval_pt_to_seg(from_point, receive_seg)
 
+
+    # We should also test a wider angle and check that against our best one
+    # That way we can also get nearby robots
+
+
     # This is our estimate of the likelihood of the shot succeeding
     # Value can range from zero to one
     # Return 0 if shooting from our side of the field
     if best != None and (from_point.y > (constants.Field.Length / 2)):
+        # The constants are chosen through graphing and selectively choosing a good weight for each
+
         # Percent of goal blocked by opponents
         seg_percent = math.pow(best.segment.length() / receive_seg.length(), 2) # ShotWidth / MaxShotWidth
         # Percent of goal visible to us (decreases as we move to the side)

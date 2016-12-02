@@ -42,13 +42,13 @@ def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
     outlist = []
     currentx = rect.min_x()
     currenty = rect.min_y()
-    goal_zone_thresh = 2
+    goal_zone_thresh = .5
 
     # Loop through from bottom left to top right, row by row
     while currenty <= rect.max_y():
         while currentx <= rect.max_x():
             # If within the goalie area 
-            if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty)) or
+            if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty)) or \
                 constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty + goal_zone_thresh)):
                 currentx += threshold
                 continue
@@ -87,7 +87,7 @@ def eval_singl_point(kick_point,
     distance = (kick_point - receive_point).mag()
 
     # Dissallow shooting over midfield
-    if (kick_point.y < constants.Field.Length / 2)
+    if (kick_point.y < constants.Field.Length / 2):
         shotChance = 0
 
     # TODO: Make this more advanced
@@ -116,6 +116,8 @@ def eval_best_receive_point(kick_point,
                             field_weights=(0.1, 3.2, 0.1),
                             weights=(1, 4, 15),
                             debug=False):
+    # TODO: Add motion of travel as an input to improve motion
+
     win_eval = robocup.WindowEvaluator(main.system_state())
     win_eval.debug = True
     #for r in ignore_robots:
