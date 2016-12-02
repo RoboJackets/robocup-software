@@ -159,12 +159,5 @@ protected:
                                            std::vector<double>& points,
                                            std::vector<double>& ks,
                                            std::vector<double>& ks2);
-
-public:
-    /// Drawing
-    static void drawRRT(const RRT::Tree<Geometry2d::Point>& rrt,
-                        SystemState* state, unsigned shellID, QColor color);
-    static void drawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
-                          SystemState* state, unsigned shellID);
 };
 }  // namespace Planning

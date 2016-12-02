@@ -54,6 +54,7 @@ set(ROBOCUP_LIB_SRC
     "planning/RotationConstraints.cpp"
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
+    "planning/RRTUtil.cpp"
     "planning/PivotPathPlanner.cpp"
     "planning/LineKickPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"

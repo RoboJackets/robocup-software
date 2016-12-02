@@ -2,6 +2,7 @@
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include "EscapeObstaclesPathPlanner.hpp"
+#include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 
@@ -11,9 +12,6 @@
 #include <algorithm>
 #include <iostream>
 
-// draws rrts to the SystemState so they can be shown in the gui
-const bool ENABLE_EXPENSIVE_RRT_DEBUG_DRAWING = true;
-
 using namespace std;
 using namespace Eigen;
 using namespace Geometry2d;
@@ -22,22 +20,6 @@ namespace Planning {
 
 RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
-
-void RRTPlanner::drawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
-                         unsigned shellID, QColor color) {
-    for (auto* node : rrt.allNodes()) {
-        if (node->parent()) {
-            state->drawLine(Segment(node->state(), node->parent()->state()),
-                            color, QString("RobotRRT%1").arg(shellID));
-        }
-    }
-}
-
-void RRTPlanner::drawBiRRT(const RRT::BiRRT<Point>& biRRT, SystemState* state,
-                           unsigned shellID) {
-    drawRRT(biRRT.startTree(), state, shellID, QColor("blue"));
-    drawRRT(biRRT.goalTree(), state, shellID, QColor("green"));
-}
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
                               const vector<DynamicObstacle> dynamicObs,
@@ -218,8 +200,8 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     bool success = biRRT.run();
     if (!success) return vector<Point>();
 
-    if (ENABLE_EXPENSIVE_RRT_DEBUG_DRAWING) {
-        drawBiRRT(biRRT, state, shellID);
+    if (*RRTConfig::EnableRRTDebugDrawing) {
+        DrawBiRRT(biRRT, state, shellID);
     }
 
     vector<Point> points;

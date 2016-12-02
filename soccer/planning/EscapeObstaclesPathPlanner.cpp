@@ -1,6 +1,6 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include "RRTPlanner.hpp"
+#include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "TrapezoidalPath.hpp"
 
@@ -30,12 +30,14 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
 
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
-    const Point unblocked = findNonBlockedGoal(
-        startInstant.pos, optPrevPt, obstacles, 300,
-        [&](const RRT::Tree<Point>& rrt) {
-            RRTPlanner::drawRRT(rrt, &planRequest.systemState,
-                                planRequest.shellID, QColor("blue"));
-        });
+    const Point unblocked =
+        findNonBlockedGoal(startInstant.pos, optPrevPt, obstacles, 300,
+                           [&](const RRT::Tree<Point>& rrt) {
+                               if (*RRTConfig::EnableRRTDebugDrawing) {
+                                   DrawRRT(rrt, &planRequest.systemState,
+                                           planRequest.shellID, QColor("blue"));
+                               }
+                           });
 
     // reuse path if there's not a significantly better spot to target
     if (prevPath && unblocked == prevPath->end().motion.pos) {
