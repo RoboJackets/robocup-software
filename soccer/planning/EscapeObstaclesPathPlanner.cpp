@@ -1,6 +1,6 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <rrt/Tree.hpp>
+#include "RRTPlanner.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "TrapezoidalPath.hpp"
 
@@ -30,8 +30,12 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
 
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
-    const Point unblocked =
-        findNonBlockedGoal(startInstant.pos, optPrevPt, obstacles);
+    const Point unblocked = findNonBlockedGoal(
+        startInstant.pos, optPrevPt, obstacles, 300,
+        [&](const RRT::Tree<Point>& rrt) {
+            RRTPlanner::drawRRT(rrt, &planRequest.systemState,
+                                planRequest.shellID, QColor("blue"));
+        });
 
     // reuse path if there's not a significantly better spot to target
     if (prevPath && unblocked == prevPath->end().motion.pos) {
@@ -52,7 +56,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
 
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     Point goal, boost::optional<Point> prevGoal, const ShapeSet& obstacles,
-    int maxItr) {
+    int maxItr, std::function<void(const RRT::Tree<Point>&)> rrtLogger) {
     if (obstacles.hit(goal)) {
         auto stateSpace = make_shared<RoboCupStateSpace>(
             Field_Dimensions::Current_Dimensions, obstacles);
@@ -75,6 +79,8 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
                 break;
             }
         }
+
+        if (rrtLogger) rrtLogger(rrt);
 
         if (!prevGoal || obstacles.hit(*prevGoal)) return newGoal;
 

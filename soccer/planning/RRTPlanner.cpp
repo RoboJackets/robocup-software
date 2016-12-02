@@ -23,8 +23,8 @@ namespace Planning {
 RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
-void RRTPlanner::_drawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
-                          unsigned shellID, QColor color) {
+void RRTPlanner::drawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
+                         unsigned shellID, QColor color) {
     for (auto* node : rrt.allNodes()) {
         if (node->parent()) {
             state->drawLine(Segment(node->state(), node->parent()->state()),
@@ -33,10 +33,10 @@ void RRTPlanner::_drawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
     }
 }
 
-void RRTPlanner::_drawBiRRT(const RRT::BiRRT<Point>& biRRT, SystemState* state,
-                            unsigned shellID) {
-    _drawRRT(biRRT.startTree(), state, shellID, QColor("blue"));
-    _drawRRT(biRRT.goalTree(), state, shellID, QColor("green"));
+void RRTPlanner::drawBiRRT(const RRT::BiRRT<Point>& biRRT, SystemState* state,
+                           unsigned shellID) {
+    drawRRT(biRRT.startTree(), state, shellID, QColor("blue"));
+    drawRRT(biRRT.goalTree(), state, shellID, QColor("green"));
 }
 
 bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
@@ -219,7 +219,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     if (!success) return vector<Point>();
 
     if (ENABLE_EXPENSIVE_RRT_DEBUG_DRAWING) {
-        _drawBiRRT(biRRT, state, shellID);
+        drawBiRRT(biRRT, state, shellID);
     }
 
     vector<Point> points;
