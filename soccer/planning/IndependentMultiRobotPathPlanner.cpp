@@ -71,7 +71,6 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.dynamicObstacles = std::vector<DynamicObstacle>();
         }
 
-        // TODO: can this be replaced by a std::move()?
         SinglePlanRequest singlePlanRequest(
             request.start, *request.motionCommand, request.constraints,
             request.obstacles, request.dynamicObstacles, request.systemState,

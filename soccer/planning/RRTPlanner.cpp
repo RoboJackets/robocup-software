@@ -196,7 +196,6 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     biRRT.setMaxIterations(_maxIterations);
     biRRT.setGoalBias(*RRTConfig::StepSize);
 
-    // TODO: what happens if it fails?
     bool success = biRRT.run();
     if (!success) return vector<Point>();
 
@@ -306,10 +305,11 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         (points[points.size() - 1] - points[points.size() - 2])
             .normalized(pathWeight) +
         vf;
-    endDirections.push_back((endPathDirection)
-                                .normalized((points[points.size() - 1] -
-                                             points[points.size() - 2]).mag() *
-                                            directionDistance));
+    endDirections.push_back(
+        (endPathDirection)
+            .normalized(
+                (points[points.size() - 1] - points[points.size() - 2]).mag() *
+                directionDistance));
 
     vector<CubicBezierControlPoints> path;
 
