@@ -20,27 +20,28 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
                                      _maxSpeed, _maxAcc, _startSpeed,
                                      _endSpeed)) {}
 
-boost::optional<RobotInstant> TrapezoidalPath::evaluate(float time) const {
+boost::optional<RobotInstant> TrapezoidalPath::evaluate(
+    RJ::Seconds time) const {
     float distance;
     float speedOut;
-    bool valid = TrapezoidalMotion(_pathLength,  // PathLength
-                                   _maxSpeed,    // maxSpeed
-                                   _maxAcc,      // maxAcc
-                                   time,         // time
-                                   _startSpeed,  // startSpeed
-                                   _endSpeed,    // endSpeed
-                                   distance,     // posOut
-                                   speedOut);    // speedOut
+    bool valid = TrapezoidalMotion(_pathLength,   // PathLength
+                                   _maxSpeed,     // maxSpeed
+                                   _maxAcc,       // maxAcc
+                                   time.count(),  // time
+                                   _startSpeed,   // startSpeed
+                                   _endSpeed,     // endSpeed
+                                   distance,      // posOut
+                                   speedOut);     // speedOut
     if (!valid) return boost::none;
 
     return RobotInstant(MotionInstant(_pathDirection * distance + _startPos,
                                       _pathDirection * speedOut));
 }
 
-bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                          float initialTime) const {
+bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles,
+                          RJ::Seconds initialTime, RJ::Seconds* hitTime) const {
     std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(_startPos);
-    for (float t = initialTime; t < _duration; t += 0.1) {
+    for (RJ::Seconds t = initialTime; t < _duration; t += RJ::Seconds(0.1)) {
         auto instant = evaluate(t);
         if (instant) {
             for (auto& shape : obstacles.shapes()) {
@@ -50,7 +51,9 @@ bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
                 }
 
                 if (shape->hit(instant->motion.pos)) {
-                    hitTime = t;
+                    if (hitTime) {
+                        *hitTime = t;
+                    }
                     return true;
                 }
             }
@@ -59,8 +62,8 @@ bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
     return false;
 }
 
-std::unique_ptr<Path> TrapezoidalPath::subPath(float startTime,
-                                               float endTime) const {
+std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
+                                               RJ::Seconds endTime) const {
     debugThrow("This function is not implemented");
     return nullptr;
 }

@@ -21,10 +21,10 @@ public:
     /// Each entry in InterpolatedPath is a MotionInstant and the time that the
     /// robot should be at that position and velocity.
     struct Entry {
-        Entry(MotionInstant inst, float t) : instant(inst), time(t) {}
+        Entry(MotionInstant inst, RJ::Seconds t) : instant(inst), time(t) {}
 
         MotionInstant instant;
-        float time;
+        RJ::Seconds time;
         boost::optional<AngleInstant> angle;
 
         Geometry2d::Point& pos() { return instant.pos; }
@@ -48,7 +48,7 @@ public:
 
     /// Adds an instant at the end of the path for the given time.
     /// Time should not bet less than the last time.
-    void addInstant(float time, MotionInstant instant) {
+    void addInstant(RJ::Seconds time, MotionInstant instant) {
         if (!waypoints.empty()) {
             assert(time > waypoints.back().time);
         }
@@ -58,15 +58,17 @@ public:
     // Overridden Path Methods
     virtual RobotInstant start() const override;
     virtual RobotInstant end() const override;
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float startTime) const override;
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+                     RJ::Seconds startTimeIntoPath,
+                     RJ::Seconds* hitTime) const override;
     virtual std::unique_ptr<Path> subPath(
-        float startTime = 0,
-        float endTime = std::numeric_limits<float>::infinity()) const override;
+        RJ::Seconds startTime = RJ::Seconds::zero(),
+        RJ::Seconds endTime = RJ::Seconds::max()) const override;
     virtual void draw(SystemState* const state, const QColor& color,
                       const QString& layer) const override;
-    virtual boost::optional<RobotInstant> evaluate(float t) const override;
-    virtual float getDuration() const override;
+    virtual boost::optional<RobotInstant> evaluate(
+        RJ::Seconds t) const override;
+    virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 
     bool empty() const { return waypoints.empty(); }
@@ -117,9 +119,9 @@ public:
      * @return The estimated time it would take for the robot to a point on the
      *     path starting from the start of the path
      */
-    float getTime(int index) const;
+    RJ::Seconds getTime(int index) const;
 
-    void slow(float multiplier, float timeInto = 0);
+    void slow(float multiplier, RJ::Seconds timeInto = RJ::Seconds::zero());
 };
 
 }  // namespace Planning

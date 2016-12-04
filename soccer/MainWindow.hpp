@@ -17,6 +17,7 @@ class StripChart;
 class ConfigBool;
 
 enum RadioChannels { MHz_916, MHz_918 };
+enum Side { Yellow, Blue };
 /**
  * main gui thread class
  */
@@ -150,6 +151,7 @@ signals:
 
 private:
     void updateStatus();
+    static std::string formatLabelBold(Side side, std::string label);
 
     typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
 
