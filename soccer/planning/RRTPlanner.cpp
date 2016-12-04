@@ -5,6 +5,7 @@
 #include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
+#include <rrt/planning/Path.hpp>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -148,9 +149,6 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         auto points =
             runRRT(start, goal, motionConstraints, obstacles, state, shellID);
 
-        // Optimize out uneccesary waypoints
-        optimize(points, obstacles, motionConstraints, start.vel, goal.vel);
-
         // Check if Planning or optimization failed
         if (points.size() < 2) {
             debugLog("RRTPlanning Failed");
@@ -165,13 +163,9 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         bool hit = path->pathsIntersect(dyObs, &hitTime, &hitLocation,
                                         path->startTime());
         if (hit) {
-            // float dist = std::min(goal.pos.distTo(hitLocation)-0.1f,
-            // Robot_Radius);
-            // if (dist>0) {
             obstacles.add(
                 make_shared<Circle>(hitLocation, Robot_Radius * 1.5f));
             lastPath = std::move(path);
-            //}
         } else {
             return std::move(path);
         }
@@ -184,8 +178,6 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles, SystemState* state,
                                  unsigned shellID) {
-    // unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
-
     // Initialize bi-directional RRT
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
@@ -206,49 +198,12 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     vector<Point> points;
     biRRT.getPath(points);
 
+    // Optimize out uneccesary waypoints
+    RRT::SmoothPath(points, *stateSpace);
+
     return points;
 }
 
-void RRTPlanner::optimize(vector<Point>& pts, const ShapeSet& obstacles,
-                          const MotionConstraints& motionConstraints, Point vi,
-                          Point vf) {
-    unsigned int start = 0;
-
-    if (pts.size() < 2) {
-        return;
-    }
-
-    // The set of obstacles the starting point was inside of
-    const auto startHitSet = obstacles.hitSet(pts[start]);
-    int span = 2;
-    while (span < pts.size()) {
-        bool changed = false;
-        for (int i = 0; i + span < pts.size(); i++) {
-            bool transitionValid = true;
-            const auto newHitSet =
-                obstacles.hitSet(Segment(pts[i], pts[i + span]));
-            if (!newHitSet.empty()) {
-                for (shared_ptr<Shape> hit : newHitSet) {
-                    if (startHitSet.find(hit) == startHitSet.end()) {
-                        transitionValid = false;
-                        break;
-                    }
-                }
-            }
-
-            if (transitionValid) {
-                for (int x = 1; x < span; x++) {
-                    pts.erase(pts.begin() + i + 1);
-                }
-                changed = true;
-            }
-        }
-
-        if (!changed) span++;
-    }
-
-    return;
-}
 float getTime(vector<Point> path, int index,
               const MotionConstraints& motionConstraints, float startSpeed,
               float endSpeed) {
@@ -305,11 +260,10 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
         (points[points.size() - 1] - points[points.size() - 2])
             .normalized(pathWeight) +
         vf;
-    endDirections.push_back(
-        (endPathDirection)
-            .normalized(
-                (points[points.size() - 1] - points[points.size() - 2]).mag() *
-                directionDistance));
+    endDirections.push_back((endPathDirection)
+                                .normalized((points[points.size() - 1] -
+                                             points[points.size() - 2]).mag() *
+                                            directionDistance));
 
     vector<CubicBezierControlPoints> path;
 

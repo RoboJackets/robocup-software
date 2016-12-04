@@ -117,7 +117,6 @@ protected:
      */
     static void optimize(std::vector<Geometry2d::Point>& path,
                          const Geometry2d::ShapeSet& obstacles,
-                         const MotionConstraints& motionConstraints,
                          Geometry2d::Point vi, Geometry2d::Point vf);
 
     /**
