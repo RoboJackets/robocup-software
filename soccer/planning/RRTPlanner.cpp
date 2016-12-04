@@ -55,8 +55,7 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
         return true;
     }
 
-    if (prevPath->pathsIntersect(dynamicObs, nullptr, nullptr,
-                                 RJ::timestamp())) {
+    if (prevPath->pathsIntersect(dynamicObs, RJ::now(), nullptr, nullptr)) {
         if (debugOut) {
             *debugOut = "DynamicIntersect";
         }
@@ -88,8 +87,9 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     // Simple case: no path
     if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
-        path->setStartTime(RJ::timestamp());
-        path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+        path->setStartTime(RJ::now());
+        path->waypoints.emplace_back(
+            MotionInstant(start.pos, Point()), RJ::Seconds::zero());
         path->setDebugText("Invalid Basic Path");
         return unique_ptr<Path>(path);
     }
@@ -109,8 +109,10 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
 
         if (!path) {
             path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()), 0);
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                         RJ::Seconds::zero());
+            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                         RJ::Seconds::zero());
         }
         path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
         return std::move(path);
@@ -121,9 +123,8 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
                 start, goal, motionConstraints, obstacles, actualDynamic,
                 &planRequest.systemState, planRequest.shellID);
             if (path) {
-                float remaining = prevPath->getDuration() -
-                                  RJ::TimestampToSecs(RJ::timestamp() -
-                                                      prevPath->startTime());
+                RJ::Seconds remaining = prevPath->getDuration() -
+                                        (RJ::now() - prevPath->startTime());
                 if (remaining > path->getDuration()) {
                     path->setDebugText("Found better path");
                     return std::move(path);
@@ -158,10 +159,10 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         // Generate and return a cubic bezier path using the waypoints
         auto path = generateCubicBezier(points, obstacles, motionConstraints,
                                         start.vel, goal.vel);
-        float hitTime;
+        RJ::Seconds hitTime;
         Point hitLocation;
-        bool hit = path->pathsIntersect(dyObs, &hitTime, &hitLocation,
-                                        path->startTime());
+        bool hit = path->pathsIntersect(dyObs, path->startTime(), &hitLocation,
+                                        &hitTime);
         if (hit) {
             obstacles.add(
                 make_shared<Circle>(hitLocation, Robot_Radius * 1.5f));
@@ -501,7 +502,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             newPointsCurvature[i2]);
     }
 
-    float totalTime = 0;
+    RJ::Seconds totalTime(0);
     vector<InterpolatedPath::Entry> entries;
 
     for (int i = 0; i < size; i++) {
@@ -510,7 +511,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         if (i != 0) {
             distance -= newPointsDistance[i - 1];
             float averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
-            float deltaT = distance / averageSpeed;
+            auto deltaT = RJ::Seconds(distance / averageSpeed);
             totalTime += deltaT;
         }
 
@@ -542,7 +543,7 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
 
     std::unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
     path->waypoints = entries;
-    path->setStartTime(RJ::timestamp());
+    path->setStartTime(RJ::now());
     return path;
 }
 

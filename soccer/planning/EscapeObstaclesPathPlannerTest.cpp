@@ -30,8 +30,8 @@ TEST(EscapeObstaclesPathPlanner, run) {
     ASSERT_NE(nullptr, path) << "Planner returned null path";
 
     // Ensure that the path escapes the obstacle
-    float hitTime;
-    EXPECT_FALSE(path->hit(obstacles, hitTime, 0))
+    RJ::Seconds hitTime;
+    EXPECT_FALSE(path->hit(obstacles, 0s, &hitTime))
         << "Returned path hits obstacles";
 
     // Make sure the path's endpoint is close to the original point.  It
