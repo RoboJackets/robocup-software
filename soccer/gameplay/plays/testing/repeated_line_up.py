@@ -11,6 +11,7 @@ import time
 class RepeatedLineUp(play.Play):
 
     Pause = 2.0
+    BUFFER = .5
 
     class State(enum.Enum):
         left = 0
@@ -51,7 +52,7 @@ class RepeatedLineUp(play.Play):
     def on_enter_left(self):
         self.side_start = time.time()
         self.add_subbehavior(
-            tactics.line_up.LineUp(self.generate_line(-1)), 'LineUp')
+            tactics.line_up.LineUp(self.generate_line(-RepeatedLineUp.BUFFER)), 'LineUp')
 
     def on_exit_left(self):
         self.remove_subbehavior('LineUp')
@@ -60,7 +61,7 @@ class RepeatedLineUp(play.Play):
     def on_enter_right(self):
         self.side_start = time.time()
         self.add_subbehavior(
-            tactics.line_up.LineUp(self.generate_line(1)), 'LineUp')
+            tactics.line_up.LineUp(self.generate_line(RepeatedLineUp.BUFFER)), 'LineUp')
 
     def on_exit_right(self):
         self.remove_subbehavior('LineUp')
