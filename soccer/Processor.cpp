@@ -283,7 +283,7 @@ void Processor::run() {
                     break;
                 case Packet::Unknown:
                     robot->config =
-                        robotConfig2011;  // FIXME: defaults to 2011 robots
+                        robotConfig2015;  // FIXME: defaults to 2011 robots
                     break;
             }
 
@@ -477,15 +477,16 @@ void Processor::run() {
 
         // Run path planner and set the path for each robot that was planned for
         auto pathsById = _pathPlanner->run(std::move(requests));
+
         for (auto& entry : pathsById) {
             OurRobot* r = _state.self[entry.first];
             auto& path = entry.second;
             path->draw(&_state, Qt::magenta, "Planning");
             path->drawDebugText(&_state);
             r->setPath(std::move(path));
-
             r->angleFunctionPath.angleFunction =
-                angleFunctionForCommandType(r->rotationCommand());
+                    angleFunctionForCommandType(r->rotationCommand());
+            r->path().draw(&_state, Qt::magenta, "Planning");
         }
 
         // Visualize obstacles
@@ -500,6 +501,8 @@ void Processor::run() {
                     _state.gameState.halt()) {
                     robot->motionControl()->stopped();
                 } else {
+                    printf("%d\n", robot->motionCommand()->getCommandType());
+                    assert(robot->angleFunctionPath.path != nullptr);
                     robot->motionControl()->run();
                 }
             }

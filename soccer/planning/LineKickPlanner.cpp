@@ -200,6 +200,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
                 //    path->setDebugText(debug +
                 //    QString::number(path->getDuration()) + " slow");
                 //}
+                assert(path!=nullptr);
                 return make_unique<AngleFunctionPath>(
                     std::move(path), angleFunctionForCommandType(
                                          FacePointCommand(command.target)));
@@ -223,6 +224,7 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
     path->setDebugText("Gives ups");
 
     targetKickPos = boost::none;
+    assert(path!=nullptr);
     return make_unique<AngleFunctionPath>(
         std::move(path),
         angleFunctionForCommandType(FacePointCommand(command.target)));

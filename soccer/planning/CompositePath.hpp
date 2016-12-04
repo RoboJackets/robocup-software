@@ -29,10 +29,24 @@ public:
     /** constructors with one path */
     CompositePath(std::unique_ptr<Path> path);
 
+    CompositePath(std::vector<std::unique_ptr<Path>> paths)
+        : paths(std::move(paths)) {}
+
+    template <typename... Args>
+    CompositePath(std::unique_ptr<Path> path, Args... args) {
+        append(std::move(path), std::forward<Args>(args)...);
+    }
+
     /**
      * Append the path to the end of the CompositePath
      */
     void append(std::unique_ptr<Path> path);
+
+    template <typename... Args>
+    void append(std::unique_ptr<Path> path, Args... args) {
+        append(std::move(path));
+        append(std::forward<Args>(args)...);
+    }
 
     virtual boost::optional<RobotInstant> evaluate(float t) const override;
     virtual bool hit(const Geometry2d::ShapeSet& shape, float& hitTime,

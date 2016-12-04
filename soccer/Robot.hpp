@@ -439,6 +439,8 @@ public:
      */
     int8_t getPlanningPriority() { return _planningPriority; }
 
+
+    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 protected:
     MotionControl* _motionControl;
 
@@ -455,7 +457,6 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RobotConstraints _robotConstraints;
 
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
 
     /**
      * Creates a set of obstacles from a given robot team mask,
