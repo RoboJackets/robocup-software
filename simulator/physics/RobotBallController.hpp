@@ -30,8 +30,7 @@ protected:
     SimEngine* _simEngine;
 
     /// kicker charge status
-    uint64_t _lastKicked;
-    const static uint64_t RechargeTime = 6000000;  // six seconds
+    RJ::Time _lastKicked;
 
     float _kickSpeed;
 
@@ -69,7 +68,7 @@ public:
 
     void syncMotionState(const btTransform& centerOfMassWorldTrans);
 
-    const uint64_t getLastKickTime() { return _lastKicked; }
+    const RJ::Time getLastKickTime() { return _lastKicked; }
 
     /**
      * @brief Prepare to kick the ball as soon as one is detected by the "ball
