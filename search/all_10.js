@@ -24,7 +24,7 @@ var searchData=
   ['playrobots',['playRobots',['../class_gameplay_1_1_gameplay_module.html#a8e9e7aaca1329a5f986a34a582b151f6',1,'Gameplay::GameplayModule']]],
   ['point',['Point',['../class_planning_1_1_tree_1_1_point.html',1,'Planning::Tree']]],
   ['point',['Point',['../class_geometry2d_1_1_point.html',1,'Geometry2d']]],
-  ['point',['Point',['../class_geometry2d_1_1_point.html#a1858cacd8a855169662f065adea1a1f3',1,'Geometry2d::Point::Point(float x=0, float y=0)'],['../class_geometry2d_1_1_point.html#a2aad84e5b971dd66e6baa95309cf9431',1,'Geometry2d::Point::Point(const Packet::Point &amp;other)'],['../class_geometry2d_1_1_point.html#a4b8aa1c6f25b270aafc4af11942d6a0e',1,'Geometry2d::Point::Point(const QPointF &amp;other)'],['../class_geometry2d_1_1_point.html#a54c43beabe2548e7d0c57c66d1849a26',1,'Geometry2d::Point::Point(const QPoint &amp;other)']]],
+  ['point',['Point',['../class_geometry2d_1_1_point.html#a87d42933f86290d4aba9d5dbd341a05a',1,'Geometry2d::Point::Point(double x=0, double y=0)'],['../class_geometry2d_1_1_point.html#a2aad84e5b971dd66e6baa95309cf9431',1,'Geometry2d::Point::Point(const Packet::Point &amp;other)'],['../class_geometry2d_1_1_point.html#a4b8aa1c6f25b270aafc4af11942d6a0e',1,'Geometry2d::Point::Point(const QPointF &amp;other)'],['../class_geometry2d_1_1_point.html#a54c43beabe2548e7d0c57c66d1849a26',1,'Geometry2d::Point::Point(const QPoint &amp;other)']]],
   ['pointinrobotspace',['pointInRobotSpace',['../class_our_robot.html#a1bad1a1649dfdd1f218a60effe2362d3',1,'OurRobot']]],
   ['pointmagnitude',['PointMagnitude',['../struct_chart_1_1_point_magnitude.html',1,'Chart']]],
   ['pointside',['pointSide',['../class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a',1,'Geometry2d::Line']]],

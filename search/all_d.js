@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['mag',['mag',['../class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71',1,'Geometry2d::Point']]],
-  ['magsq',['magsq',['../class_geometry2d_1_1_point.html#aaafa7c842d0f79280fbf1b03bcae411f',1,'Geometry2d::Point']]],
+  ['mag',['mag',['../class_geometry2d_1_1_point.html#a9007ad178dcc9e07dbaf94c275d07304',1,'Geometry2d::Point']]],
+  ['magsq',['magsq',['../class_geometry2d_1_1_point.html#ac7fad9eb73c694f547b14a7bd891d09b',1,'Geometry2d::Point']]],
   ['mainwindow',['MainWindow',['../class_main_window.html',1,'']]],
   ['mark',['Mark',['../classgameplay_1_1skills_1_1mark_1_1_mark.html',1,'gameplay::skills::mark']]],
   ['marking',['marking',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html#af2a35d11f5559f142fbcbde709d15f85',1,'gameplay.tactics.positions.defender.Defender.State.marking()'],['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html#a52acc28e0de41bdfd50f7449da4278f3',1,'gameplay.tactics.positions.submissive_defender.SubmissiveDefender.State.marking()']]],
