@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <algorithm>
-#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
