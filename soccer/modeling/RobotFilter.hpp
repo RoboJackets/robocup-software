@@ -11,8 +11,8 @@
  */
 class RobotObservation {
 public:
-    RobotObservation(Geometry2d::Point pos = Geometry2d::Point(),
-                     float angle = 0, RJ::Time time = 0, int frame = 0)
+    RobotObservation(Geometry2d::Point pos, float angle, RJ::Time time,
+                     int frame)
         : pos(pos), angle(angle), time(time), source(-1), frameNumber(frame) {}
 
     Geometry2d::Point pos;

@@ -124,5 +124,5 @@ private:
     int _fd;
 
     // Sequence number of the next frame to be written
-    int _nextFrameNumber;
+    int _nextFrameNumber = 0;
 };

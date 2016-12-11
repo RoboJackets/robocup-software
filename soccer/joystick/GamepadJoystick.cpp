@@ -3,20 +3,13 @@
 using namespace Packet;
 using namespace std;
 
-static constexpr RJ::Time Dribble_Step_Time = 125 * 1000;
-static constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
+static constexpr auto Dribble_Step_Time = RJ::Seconds(0.125);
+static constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 
 static constexpr float AXIS_MAX = 32768.0f;
 
-static const char* devices[] = {
-    "/dev/input/by-id/usb-Logitech_Logitech_Cordless_RumblePad_2-joystick",
-    "/dev/input/by-id/usb-Logitech_Logitech_Dual_Action-joystick",
-
-    // End of list
-    nullptr};
-
 GamepadJoystick::GamepadJoystick()
-    : _joystick(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
+    : _joystick(nullptr), _lastDribblerTime(), _lastKickerTime() {
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
         cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
              << endl;
@@ -56,7 +49,7 @@ void GamepadJoystick::update() {
     }
 
     // DRIBBLER POWER CONTROL
-    RJ::Time now = RJ::timestamp();
+    const auto now = RJ::now();
     if (SDL_JoystickGetButton(_joystick, 1)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);

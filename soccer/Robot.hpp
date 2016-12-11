@@ -55,7 +55,7 @@ class RRTPlanner;
 class RobotPose {
 public:
     RobotPose()
-        : visible(false), angle(0), angleVel(0), time(0), visionFrame(0) {
+        : visible(false), angle(0), angleVel(0), time(), visionFrame(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }
@@ -292,12 +292,10 @@ public:
      */
     void unkick();
 
-    RJ::Time lastKickTime() const;
+    RJ::Timestamp lastKickTime() const;
 
     /// checks if the bot has kicked/chipped very recently.
-    bool justKicked() {
-        return RJ::timestamp() - lastKickTime() < RJ::SecsToTimestamp(0.25);
-    }
+    bool justKicked() { return RJ::now() - _lastKickTime < RJ::Seconds(0.25); }
 
     /**
      * Gets a string representing the series of commands called on the robot
@@ -417,7 +415,7 @@ public:
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool rxIsFresh(RJ::Time age = 500000) const;
+    bool rxIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
     /**
      * @brief start the robot playing a song

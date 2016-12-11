@@ -13,3 +13,6 @@
 [submodule "common"]
 	path = common
 	url = https://github.com/RoboJackets/robocup-common.git
+[submodule "external/sdlcontrollerdb"]
+	path = external/sdlcontrollerdb
+	url = https://github.com/gabomdq/SDL_GameControllerDB.git

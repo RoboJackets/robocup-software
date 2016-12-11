@@ -42,9 +42,8 @@ bool PivotPathPlanner::shouldReplan(
         if (targetChange > 0.1) {
             return true;
         }
-        if (prevPath->getDuration() -
-                RJ::TimestampToSecs(RJ::timestamp() - prevPath->startTime()) <
-            -0.5) {
+        if (prevPath->getDuration() - (RJ::now() - prevPath->startTime()) <
+            RJ::Seconds(-0.5)) {
             return true;
         }
     }
