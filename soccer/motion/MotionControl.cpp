@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <algorithm>
-#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
@@ -215,7 +214,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     targetVel = _lastVelCmd + targetAccel * dt.count();
 
     // make sure we don't send any bad values
-    if (isnan(targetVel.x()) || isnan(targetVel.y())) {
+    if (std::isnan(targetVel.x()) || std::isnan(targetVel.y())) {
         targetVel = Point(0, 0);
         debugThrow("A bad value was calculated.");
     }
