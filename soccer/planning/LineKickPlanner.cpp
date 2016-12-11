@@ -169,11 +169,12 @@ std::unique_ptr<Path> LineKickPlanner::run(SinglePlanRequest& planRequest) {
         if (std::abs(target.vel.angleBetween((target.pos - startInstant.pos))) >
             DegreesToRadians(60)) {
             auto dist = target.pos.distTo(startInstant.pos);
-            points = {startInstant.pos,
-                      target.pos -
-                          target.vel.normalized(min(
-                              dist / 2, Robot_Radius * 2 + Ball_Radius * 2)),
-                      target.pos};
+            points = {
+                startInstant.pos,
+                target.pos -
+                    target.vel.normalized(min(
+                        dist / 2, (double)Robot_Radius * 2 + Ball_Radius * 2)),
+                target.pos};
 
             obstacles.add(
                 make_shared<Circle>(ballNow.pos, Robot_Radius + Ball_Radius));
