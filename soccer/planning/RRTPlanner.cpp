@@ -88,8 +88,8 @@ std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
     if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
         path->setStartTime(RJ::now());
-        path->waypoints.emplace_back(
-            MotionInstant(start.pos, Point()), RJ::Seconds::zero());
+        path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+                                     RJ::Seconds::zero());
         path->setDebugText("Invalid Basic Path");
         return unique_ptr<Path>(path);
     }
