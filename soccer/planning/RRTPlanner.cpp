@@ -415,7 +415,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
                 std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
             // Handle 0 velocity case
-            if (isnan(curvature)) {
+            if (std::isnan(curvature)) {
                 curvature = 0;
             }
 
@@ -455,7 +455,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
                       std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
     // handle 0 velcoity case
-    if (isnan(curvature)) {
+    if (std::isnan(curvature)) {
         curvature = 0;
     }
 
