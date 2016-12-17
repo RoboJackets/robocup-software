@@ -1,11 +1,11 @@
 #include "SingleRobotPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "RRTPlanner.hpp"
-#include "PivotPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
+#include "PivotPathPlanner.hpp"
+#include "RRTPlanner.hpp"
+#include "TargetVelPathPlanner.hpp"
+#include "TargetVelPathPlanner.hpp"
 
 namespace Planning {
 
@@ -86,8 +86,9 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle = static_cast<const Planning::FaceAngleCommand&>(
-                              command).targetAngle;
+            float angle =
+                static_cast<const Planning::FaceAngleCommand&>(command)
+                    .targetAngle;
             std::function<AngleInstant(MotionInstant)> function =
                 [angle](MotionInstant instant) { return AngleInstant(angle); };
             return function;
@@ -100,11 +101,9 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
     }
 }
 
-bool SingleRobotPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) {
-    const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
+bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
+    const auto currentInstant = planRequest.start;
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 

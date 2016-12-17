@@ -71,11 +71,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.dynamicObstacles = std::vector<DynamicObstacle>();
         }
 
-        SinglePlanRequest singlePlanRequest(
-            request.start, *request.motionCommand, request.constraints,
-            request.obstacles, request.dynamicObstacles, request.systemState,
-            std::move(request.prevPath));
-        paths[shell] = _planners[shell]->run(singlePlanRequest);
+        paths[shell] = _planners[shell]->run(request);
 
         // Add our generated path to our list of our Robot Obstacles
         ourRobotsObstacles.push_back(DynamicObstacle(

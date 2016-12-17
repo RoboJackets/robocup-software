@@ -1,8 +1,8 @@
 #include "EscapeObstaclesPathPlanner.hpp"
+#include <Configuration.hpp>
 #include "TrapezoidalPath.hpp"
 #include "Tree.hpp"
 #include "Util.hpp"
-#include <Configuration.hpp>
 
 using namespace Geometry2d;
 
@@ -21,9 +21,9 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
-    SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
+    PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "EscapeObstaclesPathPlanner.hpp"
-#include <Geometry2d/Point.hpp>
 #include <Geometry2d/Circle.hpp>
+#include <Geometry2d/Point.hpp>
+#include "EscapeObstaclesPathPlanner.hpp"
 
 using namespace Geometry2d;
 
@@ -10,7 +10,9 @@ namespace Planning {
 TEST(EscapeObstaclesPathPlanner, run) {
     // The robot is at the origin
     MotionInstant startInstant({0, 0}, {0, 0});
-    EmptyCommand cmd;  // "None" command
+    // EmptyCommand cmd;  // "None" command
+    std::unique_ptr<MotionCommand> cmd =
+        std::make_unique<EmptyCommand>();  // "None" command
 
     // Add an circle of radius 5 centered at the origin as an obstacle
     ShapeSet obstacles;
@@ -19,8 +21,9 @@ TEST(EscapeObstaclesPathPlanner, run) {
 
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
-    SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, SystemState(), nullptr);
+    PlanRequest request(SystemState(), startInstant, std::move(cmd),
+                        RobotConstraints(), nullptr, obstacles,
+                        dynamicObstacles);
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";

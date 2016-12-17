@@ -1,16 +1,16 @@
 #pragma once
 
-#include "SingleRobotPathPlanner.hpp"
-#include "Tree.hpp"
-#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
+#include "SingleRobotPathPlanner.hpp"
+#include "Tree.hpp"
 
-#include <boost/optional.hpp>
 #include <Eigen/Dense>
+#include <boost/optional.hpp>
 #include <list>
 
 namespace Planning {
@@ -65,7 +65,7 @@ public:
         return MotionCommand::PathTarget;
     }
 
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     int reusePathTries = 0;
 
@@ -76,7 +76,7 @@ protected:
 
     /// Check to see if the previous path (if any) should be discarded and
     /// replaced with a newly-planned one
-    bool shouldReplan(const SinglePlanRequest& planRequest,
+    bool shouldReplan(const PlanRequest& planRequest,
                       const std::vector<DynamicObstacle> dynamicObs,
                       std::string* debugOut = nullptr) const;
 

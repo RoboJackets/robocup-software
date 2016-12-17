@@ -1,9 +1,9 @@
 #include "TargetVelPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <cmath>
 #include <boost/range/irange.hpp>
+#include <cmath>
+#include "EscapeObstaclesPathPlanner.hpp"
+#include "TrapezoidalPath.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -58,16 +58,14 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     return start + dir * nonblockedPathLen;
 }
 
-bool TargetVelPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) const {
-    const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
+bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
+    const auto currentInstant = planRequest.start;
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const WorldVelTargetCommand& command =
-        static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
+        static_cast<const WorldVelTargetCommand&>(*planRequest.motionCommand);
 
     if (SingleRobotPathPlanner::shouldReplan(planRequest)) return true;
 
@@ -98,11 +96,10 @@ bool TargetVelPathPlanner::shouldReplan(
 
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
-std::unique_ptr<Path> TargetVelPathPlanner::run(
-    SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const MotionCommand& cmd = planRequest.cmd;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
+std::unique_ptr<Path> TargetVelPathPlanner::run(PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const MotionCommand& cmd = *planRequest.motionCommand;
+    const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
