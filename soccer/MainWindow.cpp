@@ -32,10 +32,6 @@ using namespace google::protobuf;
 using namespace Packet;
 using namespace Eigen;
 
-// Style sheets used for live/non-live controls
-QString LiveStyle("border:2px solid transparent");
-QString NonLiveStyle("border:2px solid red");
-
 static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles",
     "Planning0",     "Planning1",        "Planning2",
@@ -140,10 +136,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     //    channel(0);
 
-    updateTimer.setSingleShot(true);
-    connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
-    updateTimer.start(30);
-
     // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
     _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
@@ -187,6 +179,10 @@ void MainWindow::initialize() {
     if (_processor->simulation()) {
         _ui.actionVisionFull_Field->trigger();
     }
+
+    updateTimer.setSingleShot(true);
+    connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
+    updateTimer.start(30);
 }
 
 void MainWindow::logFileChanged() {
@@ -251,13 +247,6 @@ void MainWindow::updateViews() {
         _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
     }
 
-    if (live()) {
-        _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
-    } else {
-        _ui.logTree->setStyleSheet(
-            QString("QTreeWidget{%1}").arg(NonLiveStyle));
-    }
-
     // Time since last update
     RJ::Time now = RJ::now();
     auto delta_time = now - _lastUpdateTime;
@@ -294,10 +283,10 @@ void MainWindow::updateViews() {
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
-            _playbackRate = 1;
+            setPlayBackRate(1.0);
         } else if (_doubleFrameNumber > maxFrame) {
             _doubleFrameNumber = maxFrame;
-            _playbackRate = boost::none;
+            setLive();
         }
     }
 
@@ -581,9 +570,7 @@ void MainWindow::updateViews() {
             // We make a copy of the robot's RadioRx package b/c the original
             // might change during the course of this method b/c radio comm
             // happens on a different thread.
-            _processor->loopMutex().lock();
-            RadioRx rx(robot->radioRx());
-            _processor->loopMutex().unlock();
+            RadioRx rx = robot->radioRx();
 
 #ifndef DEMO_ROBOT_STATUS
             // radio status
@@ -1075,7 +1062,7 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
     _doubleFrameNumber = value;
 
     // pause playback
-    _playbackRate = 0;
+    setPlayBackRate(0);
 }
 
 void MainWindow::on_logHistoryLocation_sliderPressed() {
@@ -1088,29 +1075,27 @@ void MainWindow::on_logHistoryLocation_sliderReleased() {
 
 void MainWindow::on_logPlaybackRewind_clicked() {
     if (live()) {
-        _playbackRate = -1;
+        setPlayBackRate(-1);
     } else {
         *_playbackRate += -0.5;
     }
 }
 
 void MainWindow::on_logPlaybackPrevFrame_clicked() {
-    _playbackRate = 0;
+    setPlayBackRate(0);
     _doubleFrameNumber -= 1;
 }
 
 void MainWindow::on_logPlaybackPause_clicked() {
-    if (live()) {
-        _playbackRate = 0;
-    } else if (std::abs(*_playbackRate) < 0.1) {
-        _playbackRate = 1;
+    if (live() || std::abs(*_playbackRate) > 0.1) {
+        setPlayBackRate(0);
     } else {
-        _playbackRate = 0;
+        setPlayBackRate(1);
     }
 }
 
 void MainWindow::on_logPlaybackNextFrame_clicked() {
-    _playbackRate = 0;
+    setPlayBackRate(0);
     _doubleFrameNumber += 1;
 }
 
@@ -1120,7 +1105,7 @@ void MainWindow::on_logPlaybackPlay_clicked() {
     }
 }
 
-void MainWindow::on_logPlaybackLive_clicked() { _playbackRate = boost::none; }
+void MainWindow::on_logPlaybackLive_clicked() { setLive(); }
 
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");

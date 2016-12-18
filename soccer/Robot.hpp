@@ -23,6 +23,10 @@
 #include <stdint.h>
 #include <vector>
 
+#include <QReadWriteLock>
+#include <QReadLocker>
+#include <QWriteLocker>
+
 class SystemState;
 class RobotConfig;
 class RobotStatus;
@@ -384,8 +388,15 @@ public:
     float kickerVoltage() const;
     Packet::HardwareVersion hardwareVersion() const;
 
-    Packet::RadioRx& radioRx() { return _radioRx; }
-    const Packet::RadioRx& radioRx() const { return _radioRx; }
+    void setRadioRx(Packet::RadioRx packet) {
+        QWriteLocker locker(&radioRxMutex);
+        _radioRx = packet;
+    }
+
+    Packet::RadioRx radioRx() const {
+        QReadLocker locker(&radioRxMutex);
+        return _radioRx;
+    }
 
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
         return _motionCommand;
@@ -517,6 +528,7 @@ protected:
     friend class MotionControl;
 
 private:
+    mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
     void _unkick();
