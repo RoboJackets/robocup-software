@@ -10,6 +10,8 @@ var class_main_window =
     [ "initialize", "class_main_window.html#a43f05c4d3f5d840d070829d3291c9ec7", null ],
     [ "live", "class_main_window.html#a3d2295e441ba310263045f6210eeb464", null ],
     [ "logFileChanged", "class_main_window.html#a6197fa99fcda6b9461a3beadd9f7a3c5", null ],
+    [ "setLive", "class_main_window.html#a118ca32bb964051290c5e0116d8a05eb", null ],
+    [ "setPlayBackRate", "class_main_window.html#a3228205cab517b63b2235c20eb4ee458", null ],
     [ "setRadioChannel", "class_main_window.html#a7bb7f8869c30b01e75147215cf607bea", null ],
     [ "setUseRefChecked", "class_main_window.html#a99ee6b77e631a789593c667c1154f249", null ],
     [ "state", "class_main_window.html#aaf10567ea63770d4f67ea5cb1704bdce", null ],

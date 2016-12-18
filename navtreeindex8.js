@@ -1,5 +1,7 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html":[12,0,5,13,9,0,0],
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html":[12,0,5,13,10,0],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0aa997b345c2ec60a1992dc1aafc9c91":[12,0,5,13,10,0,17],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0fbbced2e89aa56ed23ffcd4ba78d927":[12,0,5,13,10,0,7],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a123c1d79fefcf4716bd18898dacc06f0":[12,0,5,13,10,0,16],
@@ -247,7 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668":[12,0,5,15,8,1,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aed8f5d432853ae9530bc075944ee2ed3":[12,0,5,15,8,1,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed5c39b6c8aff6b6dab240e7805c2a5":[12,0,5,15,8,1,0,15],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html":[12,0,5,15,8,1,0,0],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html":[12,0,5,15,8,2,0],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a13c2700f54da2b6add41d332a6f5e8f6":[12,0,5,15,8,2,0,5]
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html":[12,0,5,15,8,1,0,0]
 };

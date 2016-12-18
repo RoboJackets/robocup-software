@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html":[12,0,5,15,8,2,0],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a13c2700f54da2b6add41d332a6f5e8f6":[12,0,5,15,8,2,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a1d470f76752fdf3b4556e11aea6649e7":[12,0,5,15,8,2,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a580c143cf82ef92899613c131cbd7069":[12,0,5,15,8,2,0,1],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a7652fb03c4c1cd0bb9e741c73265736a":[12,0,5,15,8,2,0,3],
@@ -147,8 +149,8 @@ var NAVTREEINDEX9 =
 "functions_d.html":[12,3,0,4],
 "functions_e.html":[12,3,0,5],
 "functions_f.html":[12,3,0,6],
-"functions_func.html":[12,3,1],
 "functions_func.html":[12,3,1,0],
+"functions_func.html":[12,3,1],
 "functions_func_a.html":[12,3,1,1],
 "functions_func_b.html":[12,3,1,2],
 "functions_func_c.html":[12,3,1,3],
@@ -203,12 +205,12 @@ var NAVTREEINDEX9 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[12,0,69,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[12,0,69,8],
 "group__matrices.html":[10,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,4,0,2],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
 "hierarchy.html":[12,2],
 "index.html":[],
 "md_doc_BuildSystems.html":[0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX9 =
 "struct_field___dimensions.html#a2e0de7e35c08e988b9acca952de9f1fe":[12,0,33,8],
 "struct_field___dimensions.html#a39d672431c495c996417a2bc2dfa832e":[12,0,33,27],
 "struct_field___dimensions.html#a4dcfcb15e4c2df67895e241807b7bd8f":[12,0,33,7],
-"struct_field___dimensions.html#a4f7cf02df325fa74f1dfb87783b8eaae":[12,0,33,19],
-"struct_field___dimensions.html#a50b9f1bccb7ece5abe4386478f86194f":[12,0,33,10],
-"struct_field___dimensions.html#a5e575a58b0ec48d94ba14efe2736d053":[12,0,33,21]
+"struct_field___dimensions.html#a4f7cf02df325fa74f1dfb87783b8eaae":[12,0,33,19]
 };

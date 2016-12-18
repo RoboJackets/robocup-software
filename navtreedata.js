@@ -37,14 +37,14 @@ var NAVTREEINDEX =
 ".html",
 "class_config_item.html#a459b091a8b93df071d162c8eae0771fd",
 "class_geometry2d_1_1_line.html#a673915dcabfebfe18e045b1913e4dfe1",
-"class_new_referee_module.html#ad05f957c9690e837686fed5e7d6d55e2",
-"class_planning_1_1_pivot_path_planner.html",
-"class_sim_field_view.html#aeb705028a38e92e2fb74836e36395de3",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a275994e56ff79392cd237c70a69da526",
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a4bb263dc017aba6df5e2a152532b036f",
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0aa997b345c2ec60a1992dc1aafc9c91",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a1d470f76752fdf3b4556e11aea6649e7",
-"struct_field___dimensions.html#a67b1ed80d494d8becb73d25d6258d757"
+"class_new_referee_module.html#ac10a86d678709a59b8567a3ea395f498",
+"class_planning_1_1_path.html#af1c18882247fc1f6bb0de7f59cec3ff5",
+"class_sim_field_view.html#a9912216ea68b82c7303d7e794d0a9be9",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html",
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a38c3e4eed008c65d4f20a6d233e2c436",
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html",
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html",
+"struct_field___dimensions.html#a50b9f1bccb7ece5abe4386478f86194f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
