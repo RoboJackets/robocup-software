@@ -15,15 +15,17 @@ static const float MaxKickVelocity = 8 * scaling;  // m/s
 static const float MaxChipVelocity = 3 * scaling;
 static const float ChipAngle = 0.34906585;  // 20 degree
 
+const auto RechargeTime = std::chrono::seconds(6);  // six seconds
+
 RobotBallController::RobotBallController(Robot* robot)
     : _ghostObject(nullptr),
       _localMouthPos(0, 0, 0),
       _parent(robot),
       _ball(nullptr),
+      _lastKicked(),
       _simEngine(robot->getSimEngine()) {
     ballSensorWorks = true;
     chargerWorks = true;
-    _lastKicked = 0;
 
     _kick = false;
     _chip = false;
@@ -191,8 +193,7 @@ void RobotBallController::dribblerStep() {
 
 void RobotBallController::kickerStep() {
     if (!_ball) return;
-    if (_kick && (RJ::timestamp() - _lastKicked) > RechargeTime &&
-        chargerWorks) {
+    if (_kick && (RJ::now() - _lastKicked) > RechargeTime && chargerWorks) {
         btVector3 dir =
             _parent->getRigidBody()->getWorldTransform().getOrigin();
         dir -= _ghostObject->getWorldTransform().getOrigin();
@@ -214,7 +215,7 @@ void RobotBallController::kickerStep() {
         _kick = 0;
         _chip = false;
 
-        _lastKicked = RJ::timestamp();
+        _lastKicked = RJ::now();
     }
 }
 
@@ -235,7 +236,7 @@ void RobotBallController::prepareKick(uint64_t power, bool chip) {
         _chip = false;
         _kickSpeed = 0;
     }
-    if ((RJ::timestamp() - _lastKicked) > RechargeTime && chargerWorks) {
+    if ((RJ::now() - _lastKicked) > RechargeTime && chargerWorks) {
         _kick = power;
         // determine the kick speed
         _chip = chip;  // && _rev == rev2011;
@@ -254,5 +255,5 @@ void RobotBallController::prepareDribbler(uint64_t dribble) {
 bool RobotBallController::hasBall() { return _ball != nullptr; }
 
 bool RobotBallController::getKickerStatus() {
-    return (RJ::timestamp() - _lastKicked) > RechargeTime ? 1 : 0;
+    return (RJ::now() - _lastKicked) > RechargeTime ? true : false;
 }

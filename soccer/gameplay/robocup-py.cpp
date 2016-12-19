@@ -679,7 +679,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("their_robots", &SystemState::opp)
         .def_readonly("ball", &SystemState::ball)
         .def_readonly("game_state", &SystemState::gameState)
-        .def_readonly("timestamp", &SystemState::timestamp)
+
+        .add_property("timestamp", &SystemState::timestamp)
 
         // debug drawing methods
         .def("draw_circle", &State_draw_circle)

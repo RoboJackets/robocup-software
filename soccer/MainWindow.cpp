@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <string>
 
 #include <google/protobuf/descriptor.h>
 
@@ -30,10 +31,6 @@ using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
 using namespace Eigen;
-
-// Style sheets used for live/non-live controls
-QString LiveStyle("border:2px solid transparent");
-QString NonLiveStyle("border:2px solid red");
 
 static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles",
@@ -50,7 +47,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _updateCount(0),
       _autoExternalReferee(true),
       _doubleFrameNumber(-1),
-      _lastUpdateTime(RJ::timestamp()),
+      _lastUpdateTime(RJ::now()),
       _history(2 * 60),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -139,10 +136,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     //    channel(0);
 
-    updateTimer.setSingleShot(true);
-    connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
-    updateTimer.start(30);
-
     // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
     _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
@@ -186,6 +179,10 @@ void MainWindow::initialize() {
     if (_processor->simulation()) {
         _ui.actionVisionFull_Field->trigger();
     }
+
+    updateTimer.setSingleShot(true);
+    connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
+    updateTimer.start(30);
 }
 
 void MainWindow::logFileChanged() {
@@ -206,6 +203,18 @@ void MainWindow::addLayer(int i, QString name, bool checked) {
     item->setData(Qt::UserRole, i);
     _ui.debugLayers->addItem(item);
     on_debugLayers_itemChanged(item);
+}
+
+string MainWindow::formatLabelBold(Side side, string label) {
+    string color;
+    // Colors match up with those statically defined in MainWindow.ui
+    if (side == Side::Yellow) {
+        color = "#ac9f2d";
+    } else if (side == Side::Blue) {
+        color = "#000064";
+    }
+    return "<html><head/><body><p><span style=\"color:" + color +
+           "; font-weight: bold;\">" + label + "</span></p></body></html>";
 }
 
 void MainWindow::updateViews() {
@@ -238,18 +247,11 @@ void MainWindow::updateViews() {
         _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
     }
 
-    if (live()) {
-        _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
-    } else {
-        _ui.logTree->setStyleSheet(
-            QString("QTreeWidget{%1}").arg(NonLiveStyle));
-    }
-
     // Time since last update
-    RJ::Time time = RJ::timestamp();
-    int delta_us = time - _lastUpdateTime;
-    _lastUpdateTime = time;
-    double framerate = 1000000.0 / delta_us;
+    RJ::Time now = RJ::now();
+    auto delta_time = now - _lastUpdateTime;
+    _lastUpdateTime = now;
+    double framerate = RJ::Seconds(1) / delta_time;
 
     ++_updateCount;
     if (_updateCount == 4) {
@@ -281,10 +283,10 @@ void MainWindow::updateViews() {
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
-            _playbackRate = 1;
+            setPlayBackRate(1.0);
         } else if (_doubleFrameNumber > maxFrame) {
             _doubleFrameNumber = maxFrame;
-            _playbackRate = boost::none;
+            setLive();
         }
     }
 
@@ -346,15 +348,20 @@ void MainWindow::updateViews() {
     const std::shared_ptr<LogFrame> currentFrame = _history[0];
 
     if (currentFrame) {
-        uint64_t gametime_ms =
-            (currentFrame->timestamp() - _processor->logger().startTime()) /
-            1000;
-        uint64_t minutes = gametime_ms / 60000;
-        uint64_t seconds = (gametime_ms % 60000) / 1000;
-        uint64_t deciseconds = (gametime_ms % 1000) / 100;
-        _ui.logTime->setText(QString::fromStdString(to_string(minutes) + ":" +
-                                                    to_string(seconds) + "." +
-                                                    to_string(deciseconds)));
+        auto gametime =
+            (RJ::Time(chrono::microseconds(currentFrame->timestamp())) -
+             _processor->logger().startTime());
+        auto minutes = chrono::duration_cast<chrono::minutes>(gametime);
+        gametime -= minutes;
+        auto seconds = chrono::duration_cast<chrono::seconds>(gametime);
+        gametime -= seconds;
+        auto deciseconds =
+            chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(
+                gametime);
+
+        _ui.logTime->setText(QString::fromStdString(
+            to_string(minutes.count()) + ":" + to_string(seconds.count()) +
+            "." + to_string(deciseconds.count())));
 
         auto frameNum = _processor->logger().currentFrameNumber();
 
@@ -365,9 +372,10 @@ void MainWindow::updateViews() {
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                                   frameNumber());
-        int elapsedMillis =
-            (currentFrame->command_time() - _processor->firstLogTime + 500) /
-            1000;
+        int elapsedMillis = (currentFrame->command_time() -
+                             RJ::timestamp(*_processor->firstLogTime)) /
+                            1000;
+
         QTime elapsedTime = QTime().addMSecs(elapsedMillis);
         _elapsedTimeItem->setText(ProtobufTree::Column_Value,
                                   elapsedTime.toString("hh:mm:ss.zzz"));
@@ -387,9 +395,8 @@ void MainWindow::updateViews() {
         }
     }
 
-    if (std::time(nullptr) -
-            (_processor->refereeModule()->received_time / 1000000) >
-        1) {
+    if (RJ::now() - _processor->refereeModule()->received_time >
+        RJ::Seconds(1)) {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
         _ui.fastReady->setEnabled(true);
@@ -412,10 +419,12 @@ void MainWindow::updateViews() {
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
-        _processor->refereeModule()->stage_time_left / 1000.0f, 'f', 2)));
+        _processor->refereeModule()->stage_time_left.count(), 'f', 2)));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
-    _ui.refBlueName->setText(strlen(blueName) == 0 ? "<Blue Team>" : blueName);
+    string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
+    blueFormatted = formatLabelBold(Side::Blue, blueFormatted);
+    _ui.refBlueName->setText(QString::fromStdString(blueFormatted));
     _ui.refBlueScore->setText(
         tr("%1").arg(_processor->refereeModule()->blue_info.score));
     _ui.refBlueRedCards->setText(
@@ -429,8 +438,10 @@ void MainWindow::updateViews() {
 
     const char* yellowName =
         _processor->refereeModule()->yellow_info.name.c_str();
-    _ui.refYellowName->setText(strlen(yellowName) == 0 ? "<Yellow Team>"
-                                                       : yellowName);
+    string yellowFormatted =
+        strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
+    yellowFormatted = formatLabelBold(Side::Yellow, yellowFormatted);
+    _ui.refYellowName->setText(QString::fromStdString(yellowFormatted));
     _ui.refYellowScore->setText(
         tr("%1").arg(_processor->refereeModule()->yellow_info.score));
     _ui.refYellowRedCards->setText(
@@ -513,7 +524,7 @@ void MainWindow::updateViews() {
             statusWidget->setHasRadio(radio);
 
             // fake error text
-            QString error = "Kicker Fault, Hall Fault FR, Ball Sense Fault";
+            QString error = "Kicker Fault, Motor Fault FR, Ball Sense Fault";
             statusWidget->setErrorText(error);
 
             // fake ball status
@@ -559,9 +570,7 @@ void MainWindow::updateViews() {
             // We make a copy of the robot's RadioRx package b/c the original
             // might change during the course of this method b/c radio comm
             // happens on a different thread.
-            _processor->loopMutex().lock();
-            RadioRx rx(robot->radioRx());
-            _processor->loopMutex().unlock();
+            RadioRx rx = robot->radioRx();
 
 #ifndef DEMO_ROBOT_STATUS
             // radio status
@@ -588,7 +597,7 @@ void MainWindow::updateViews() {
                     switch (rx.motor_status(i)) {
                         case Packet::Hall_Failure:
                             errorList
-                                << QString("Hall Fault %1").arg(motorNames[i]);
+                                << QString("Motor Fault %1").arg(motorNames[i]);
                             break;
                         case Packet::Stalled:
                             errorList << QString("Stall %1").arg(motorNames[i]);
@@ -706,10 +715,11 @@ void MainWindow::updateStatus() {
 
     // Get processing thread status
     Processor::Status ps = _processor->status();
-    RJ::Time curTime = RJ::timestamp();
+    RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
+    bool haveExternalReferee =
+        (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
 
     /*if (_autoExternalReferee && haveExternalReferee &&
     !_ui.externalReferee->isChecked())
@@ -718,7 +728,7 @@ void MainWindow::updateStatus() {
     }*/
 
     // Is the processing thread running?
-    if (curTime - ps.lastLoopTime > 100 * 1000) {
+    if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
         // Processing loop hasn't run recently.
         // Likely causes:
         //    Mutex deadlock (need a recursive mutex?)
@@ -728,7 +738,7 @@ void MainWindow::updateStatus() {
     }
 
     // Check network activity
-    if (curTime - ps.lastVisionTime > 100 * 1000) {
+    if (curTime - ps.lastVisionTime > RJ::Seconds(0.1)) {
         // We must always have vision
         status("NO VISION", Status_Fail);
         return;
@@ -742,7 +752,7 @@ void MainWindow::updateStatus() {
 
     // Driving the robots helps isolate radio problems by verifying radio TX,
     // so test this after manual driving.
-    if (curTime - ps.lastRadioRxTime > 1000 * 1000) {
+    if (curTime - ps.lastRadioRxTime > RJ::Seconds(1)) {
         // Allow a long timeout in case of poor radio performance
         status("NO RADIO RX", Status_Fail);
         return;
@@ -1052,7 +1062,7 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
     _doubleFrameNumber = value;
 
     // pause playback
-    _playbackRate = 0;
+    setPlayBackRate(0);
 }
 
 void MainWindow::on_logHistoryLocation_sliderPressed() {
@@ -1065,29 +1075,27 @@ void MainWindow::on_logHistoryLocation_sliderReleased() {
 
 void MainWindow::on_logPlaybackRewind_clicked() {
     if (live()) {
-        _playbackRate = -1;
+        setPlayBackRate(-1);
     } else {
         *_playbackRate += -0.5;
     }
 }
 
 void MainWindow::on_logPlaybackPrevFrame_clicked() {
-    _playbackRate = 0;
+    setPlayBackRate(0);
     _doubleFrameNumber -= 1;
 }
 
 void MainWindow::on_logPlaybackPause_clicked() {
-    if (live()) {
-        _playbackRate = 0;
-    } else if (std::abs(*_playbackRate) < 0.1) {
-        _playbackRate = 1;
+    if (live() || std::abs(*_playbackRate) > 0.1) {
+        setPlayBackRate(0);
     } else {
-        _playbackRate = 0;
+        setPlayBackRate(1);
     }
 }
 
 void MainWindow::on_logPlaybackNextFrame_clicked() {
-    _playbackRate = 0;
+    setPlayBackRate(0);
     _doubleFrameNumber += 1;
 }
 
@@ -1097,7 +1105,7 @@ void MainWindow::on_logPlaybackPlay_clicked() {
     }
 }
 
-void MainWindow::on_logPlaybackLive_clicked() { _playbackRate = boost::none; }
+void MainWindow::on_logPlaybackLive_clicked() { setLive(); }
 
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");

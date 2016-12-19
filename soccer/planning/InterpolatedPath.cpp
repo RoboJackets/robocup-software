@@ -12,12 +12,12 @@ using namespace Geometry2d;
 namespace Planning {
 
 InterpolatedPath::InterpolatedPath(Point p0) {
-    waypoints.emplace_back(MotionInstant(p0, Point()), 0);
+    waypoints.emplace_back(MotionInstant(p0, Point()), RJ::Seconds::zero());
 }
 
 InterpolatedPath::InterpolatedPath(Point p0, Point p1) {
-    waypoints.emplace_back(MotionInstant(p0, Point()), 0);
-    waypoints.emplace_back(MotionInstant(p1, Point()), 1);
+    waypoints.emplace_back(MotionInstant(p0, Point()), 0ms);
+    waypoints.emplace_back(MotionInstant(p1, Point()), 1s);
 }
 
 float InterpolatedPath::length(unsigned int start) const {
@@ -64,12 +64,13 @@ int InterpolatedPath::nearestIndex(Point pt) const {
     return index;
 }
 
-bool InterpolatedPath::hit(const ShapeSet& obstacles, float& hitTime,
-                           float startTime) const {
+bool InterpolatedPath::hit(const Geometry2d::ShapeSet& obstacles,
+                           RJ::Seconds startTimeIntoPath,
+                           RJ::Seconds* hitTime) const {
     size_t start = 0;
     for (auto& entry : waypoints) {
         start++;
-        if (entry.time > startTime) {
+        if (entry.time > startTimeIntoPath) {
             start--;
             break;
         }
@@ -93,7 +94,9 @@ bool InterpolatedPath::hit(const ShapeSet& obstacles, float& hitTime,
                 // If it hits something, check if the hit was in the original
                 // hitSet
                 if (startHitSet.find(hit) == startHitSet.end()) {
-                    hitTime = waypoints[i].time;
+                    if (hitTime) {
+                        *hitTime = waypoints[i].time;
+                    }
                     return true;
                 }
             }
@@ -190,8 +193,8 @@ void InterpolatedPath::draw(SystemState* const state,
     }
 }
 
-boost::optional<RobotInstant> InterpolatedPath::evaluate(float t) const {
-    if (t < 0) {
+boost::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
+    if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
     }
@@ -234,8 +237,8 @@ boost::optional<RobotInstant> InterpolatedPath::evaluate(float t) const {
             return boost::none;
         }
     }
-    float deltaT = (waypoints[i].time - waypoints[i - 1].time);
-    if (deltaT == 0) {
+    RJ::Seconds deltaT = (waypoints[i].time - waypoints[i - 1].time);
+    if (deltaT == RJ::Seconds::zero()) {
         return RobotInstant(waypoints[i].instant);
     }
     float constant = (t - waypoints[i - 1].time) / deltaT;
@@ -248,28 +251,28 @@ boost::optional<RobotInstant> InterpolatedPath::evaluate(float t) const {
 
 size_t InterpolatedPath::size() const { return waypoints.size(); }
 
-float InterpolatedPath::getTime(int index) const {
+RJ::Seconds InterpolatedPath::getTime(int index) const {
     return waypoints[index].time;
 }
 
-float InterpolatedPath::getDuration() const {
+RJ::Seconds InterpolatedPath::getDuration() const {
     if (waypoints.size() > 0) {
         return waypoints.back().time;
     } else {
-        return 0;
+        return RJ::Seconds::zero();
     }
 }
 
-unique_ptr<Path> InterpolatedPath::subPath(float startTime,
-                                           float endTime) const {
+unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
+                                           RJ::Seconds endTime) const {
     // Check for valid arguments
-    if (startTime < 0) {
+    if (startTime < RJ::Seconds::zero()) {
         throw invalid_argument("InterpolatedPath::subPath(): startTime(" +
                                to_string(startTime) +
                                ") can't be less than zero");
     }
 
-    if (endTime < 0) {
+    if (endTime < RJ::Seconds::zero()) {
         throw invalid_argument("InterpolatedPath::subPath(): endTime(" +
                                to_string(endTime) +
                                ") can't be less than zero");
@@ -289,7 +292,7 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
         return unique_ptr<Path>(new InterpolatedPath());
     }
 
-    if (startTime == 0 && endTime >= getDuration()) {
+    if (startTime == RJ::Seconds::zero() && endTime >= getDuration()) {
         return this->clone();
     }
 
@@ -308,16 +311,19 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
 
     // Add the first points to the InterpolatedPath
     if (waypoints[start].time == startTime) {
-        subpath->waypoints.emplace_back(waypoints[start].instant, 0);
+        subpath->waypoints.emplace_back(waypoints[start].instant,
+                                        RJ::Seconds::zero());
     } else {
-        float deltaT = (waypoints[start + 1].time - waypoints[start].time);
+        RJ::Seconds deltaT =
+            (waypoints[start + 1].time - waypoints[start].time);
         float constant = (waypoints[start + 1].time - startTime) / deltaT;
         Point startPos = waypoints[start + 1].pos() * (1 - constant) +
                          waypoints[start].pos() * (constant);
         Point vi = waypoints[start + 1].vel() * (1 - constant) +
                    waypoints[start].vel() * (constant);
 
-        subpath->waypoints.emplace_back(MotionInstant(startPos, vi), 0);
+        subpath->waypoints.emplace_back(MotionInstant(startPos, vi),
+                                        RJ::Seconds::zero());
     }
 
     // Find the last point in the InterpolatedPath
@@ -333,7 +339,7 @@ unique_ptr<Path> InterpolatedPath::subPath(float startTime,
         while (waypoints[end].time < endTime) {
             end++;
         }
-        float deltaT = (waypoints[end].time - waypoints[end - 1].time);
+        RJ::Seconds deltaT = (waypoints[end].time - waypoints[end - 1].time);
         float constant = (waypoints[end].time - endTime) / deltaT;
         vf = waypoints[end].vel() * (1 - constant) +
              waypoints[end - 1].vel() * (constant);
@@ -363,13 +369,13 @@ unique_ptr<Path> InterpolatedPath::clone() const {
     return std::unique_ptr<Path>(cp);
 }
 
-void InterpolatedPath::slow(float multiplier, float timeInto) {
+void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
     for (auto& waypoint : waypoints) {
         waypoint.vel() /= multiplier;
         waypoint.time *= multiplier;
     }
-    float newTimeInto = timeInto * multiplier;
-    RJ::Time now = startTime() + RJ::SecsToTimestamp(timeInto);
-    setStartTime(now - RJ::SecsToTimestamp(newTimeInto));
+    RJ::Seconds newTimeInto = timeInto * multiplier;
+    RJ::Time now = startTime() + timeInto;
+    setStartTime(now - newTimeInto);
 }
 }  // namespace Planning
