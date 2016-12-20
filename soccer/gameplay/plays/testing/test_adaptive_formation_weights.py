@@ -26,7 +26,7 @@ class TestAdaptiveFormationWeights(play.Play):
         self.add_state(TestAdaptiveFormationWeights.State.testBestPass, behavior.Behavior.State.running)
 
         # Enable which portion we want to test
-        mode = 1
+        mode = 2
         self.add_transition(behavior.Behavior.State.start,
                             TestAdaptiveFormationWeights.State.testPointCoeff, lambda: mode == 1,
                             'immediately')
@@ -57,9 +57,10 @@ class TestAdaptiveFormationWeights(play.Play):
                     continue
 
                 # Uncomment which function we want graphed
-                val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.01, 3, 0.02)
+                #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.01, 3, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
                 #val = evaluation.shooting.eval_shot(robocup.Point(x_cent, y_cent))
+                val = 1-evaluation.field.ball_coeff_at_pos(robocup.Point(x_cent, y_cent))
 
                 if (val > max_val):
                     max_val = val
@@ -94,4 +95,4 @@ class TestAdaptiveFormationWeights(play.Play):
         main.system_state().draw_polygon(rect, val_color, "Debug")
 
     def execute_testBestPass(self):
-        evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, None, [], (0.1, 3.2, 0.1), (1, 4, 15), True)
+        evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, None, [], (0.1, 3.2, 0.1), (1, 4, 15, 1), True)

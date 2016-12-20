@@ -46,3 +46,9 @@ def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
     total = center + dist + angl
 
     return (center*centerValue + dist*distValue + angl*anglValue) / total
+
+def ball_coeff_at_pos(pos):
+    dist = (pos - main.ball().pos).mag()
+
+    # 1 at dist == 0
+    return math.exp(-1*dist)

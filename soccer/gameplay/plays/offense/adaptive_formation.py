@@ -112,7 +112,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             'Passing: Ball Lost')
         self.add_transition(AdaptiveFormation.State.shooting,
                             AdaptiveFormation.State.collecting, 
-                            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed,
+                            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed or \
+                                    self.subbehavior_with_name('kick').state == behavior.Behavior.State.failed,
                             'Shooting: Ball Lost / Shot')
         self.add_transition(AdaptiveFormation.State.clearing,
                             AdaptiveFormation.State.collecting, 
@@ -193,9 +194,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.dribbler = skills.dribble.Dribble()
 
         # Dribbles toward the best receive point
+        # TODO: Change weights so it dribbles to open space more
         self.dribbler.pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
-                                                    (0.01, 3, 0.02), (2, 2, 15), False)
+                                                    (0.01, 3, 0.02), (2, 2, 15, 1), False)
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
     def execute_dribbling(self):
@@ -210,12 +212,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Grab best pass
         self.pass_pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
-                                                    (0.01, 3, 0.02), (2, 2, 15), False)
+                                                    (0.01, 3, 0.02), (2, 2, 15, 1), False)
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
 
         # Add some sort of dibble reset for the 1000cm limit in the rules
+        # TODO: Check open space every once in a while and change dribble direction
 
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()
@@ -227,6 +230,18 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_subbehavior(kick, 'kick', required=False)
 
     def on_exit_shooting(self):
+        self.remove_all_subbehaviors()
+
+    def on_enter_clearing(self):
+        # Line kick with chip
+        # Choose most open area / Best pass, weight forward
+        # Decrease weight on sides of field due to complexity of settling
+        pass
+
+    def execute_clearing(self):
+        pass
+
+    def on_exit_passing(self):
         self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
@@ -242,13 +257,20 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def on_exit_passing(self):
         self.remove_all_subbehaviors()
 
-    def on_enter_clearing(self):
-        # Line kick with chip
-        # Choose most open area / Best pass, weight forward
+    # Move other robots out into position
+    # Check to see what type of reception we should do
+    def on_enter_passInMotion(self):
         pass
 
-    def execute_clearing(self):
-        pass
-
-    def on_exit_passing(self):
+    def on_exit_passInMotion(self):
         self.remove_all_subbehaviors()
+
+    # Final determination on what type of pass to do
+    # Set receiver to execute that command
+    # Setup other robots to be ready for which ever command that was (Especially if one touch)
+    def on_enter_passCollecting(self):
+        pass
+
+    # 
+    def on_enter_oneTouch(self):
+        pass
