@@ -15,7 +15,6 @@ var searchData=
   ['planrequest',['PlanRequest',['../struct_planning_1_1_plan_request.html',1,'Planning']]],
   ['play',['Play',['../classgameplay_1_1play_1_1_play.html',1,'gameplay::play']]],
   ['playregistry',['PlayRegistry',['../classgameplay_1_1play__registry_1_1_play_registry.html',1,'gameplay::play_registry']]],
-  ['point',['Point',['../class_planning_1_1_tree_1_1_point.html',1,'Planning::Tree']]],
   ['point',['Point',['../class_geometry2d_1_1_point.html',1,'Geometry2d']]],
   ['pointmagnitude',['PointMagnitude',['../struct_chart_1_1_point_magnitude.html',1,'Chart']]],
   ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html',1,'Geometry2d']]],

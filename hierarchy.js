@@ -127,7 +127,6 @@ var hierarchy =
       [ "offensive_pivot_kick.OffensivePivotKick", "classoffensive__pivot__kick_1_1_offensive_pivot_kick.html", null ],
       [ "which_half.WhichHalf", "classwhich__half_1_1_which_half.html", null ]
     ] ],
-    [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
@@ -186,6 +185,7 @@ var hierarchy =
       [ "Planning::FacePointCommand", "struct_planning_1_1_face_point_command.html", null ]
     ] ],
     [ "RotationConstraints", "struct_rotation_constraints.html", null ],
+    [ "Planning::RRTConfig", "class_planning_1_1_r_r_t_config.html", null ],
     [ "RuntimeError", null, [
       [ "gameplay.role_assignment.ImpossibleAssignmentError", "classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html", null ]
     ] ],
@@ -205,9 +205,6 @@ var hierarchy =
       [ "Planning::PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -300,6 +297,12 @@ var hierarchy =
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
     ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
+    [ "StateSpace", null, [
+      [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
+    ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],
     [ "TeamInfo", "class_team_info.html", null ],
@@ -312,9 +315,6 @@ var hierarchy =
     ] ],
     [ "Timeout", "class_timeout.html", null ],
     [ "Geometry2d::TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", null ],
-    [ "Planning::Tree", "class_planning_1_1_tree.html", [
-      [ "Planning::FixedStepTree", "class_planning_1_1_fixed_step_tree.html", null ]
-    ] ],
     [ "VisionPacket", "class_vision_packet.html", null ],
     [ "Window", "class_window.html", null ],
     [ "WindowEvaluator", "class_window_evaluator.html", null ],
