@@ -10,12 +10,12 @@ import role_assignment
 import skills
 
 
-## PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
-# It transitions to the 'aligned' state once it's there within its error thresholds and is steady
+## MovingPassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
+# It transitions to the 'aligned' state once it's close enough to the receive location
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class MovingPassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
@@ -29,10 +29,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         closing = 1
 
         # Ready to collect ball (Still moving into recieve point)
-        in_range = 2
+        aligned = 2
 
-        # The ball has been kicked and we are collecting it
-        collecting = 3
+        # The ball has been kicked and we are receiving it
+        receiving = 3
 
     def __init__(self, captureFunction=(lambda: skills.capture.Capture())):
         super().__init__(continuous=False)
@@ -47,34 +47,30 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.kicked_time = 0
         self.captureFunction = captureFunction
 
-        for state in PassReceive.State:
-            self.add_state(state, behavior.Behavior.State.running)
+        for s in MovingPassReceive.State:
+            self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            PassReceive.State.closing, lambda: True,
+                            MovingPassReceive.State.closing, lambda: True,
                             'immediately')
 
         self.add_transition(
-            PassReceive.State.closing, PassReceive.State.in_range,
-            lambda: self.errors_below_thresholds() and not self.ball_kicked,
+            MovingPassReceive.State.closing, MovingPassReceive.State.aligned,
+            lambda: self.within_range() and not self.ball_kicked,
             'in position to receive')
 
-        self.add_transition(
-            PassReceive.State.in_range, PassReceive.State.closing,
-            lambda: (not self.errors_below_thresholds() and not self.ball_kicked,
-            'not in receive position')
+        self.add_transition(MovingPassReceive.State.aligned, MovingPassReceive.State.closing, lambda: (not self.within_range() and not self.ball_kicked), 'not in receive position')
 
-        for state in [PassReceive.State.in_range, PassReceive.State.closing]:
-            self.add_transition(state, PassReceive.State.collecting,
-                                lambda: self.ball_kicked, 'ball kicked')
+        for state in [MovingPassReceive.State.aligned, MovingPassReceive.State.closing]:
+            self.add_transition(state, MovingPassReceive.State.receiving, lambda: self.ball_kicked, 'ball kicked')
 
-        self.add_transition(PassReceive.State.collecting,
+        self.add_transition(MovingPassReceive.State.receiving,
                             behavior.Behavior.State.completed,
                             lambda: self.robot.has_ball(), 'ball received!')
 
         self.add_transition(
-            PassReceive.State.receiving, behavior.Behavior.State.failed,
-            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
+            MovingPassReceive.State.receiving, behavior.Behavior.State.failed,
+            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or time.time() - self.kicked_time > MovingPassReceive.DesperateTimeout,
             'ball missed :(')
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
@@ -101,12 +97,19 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.recalculate()
 
     # Return true if the robot is close enough to collect the ball
-    def errors_below_thresholds(self):
+    def within_range(self):
         if self.receive_point == None:
             return False
 
-        # predict time for robot to reach point
+        # Predict time for robot to reach point
         # Predict time for ball to be fully passed
+        ball_dist = (main.ball().pos - self.receive_point).mag()
+        bot_dist = robocup.Point(self._x_error, self._y_error).mag()
+
+        # Very bad etimate for time to reach receive point
+        if ( bot_dist < ball_dist*0.5 ):
+            return True
+
         return False
 
     # calculates:
@@ -135,13 +138,11 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # TODO: See if this needs to be change, this wont work very well with the motion
         if self.ball_kicked:
-            actual_receive_point = self._pass_line.nearest_point(
-                self.robot.pos)
+            actual_receive_point = self._pass_line.nearest_point(self.robot.pos)
         else:
             actual_receive_point = self.receive_point
 
-        pass_line_dir = (
-            self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
+        pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
 
         # vector pointing down the pass line toward the kicker
@@ -170,20 +171,24 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
+    def execute_aligned(self):
+        if self._target_pos != None:
+            self.robot.move_to(self._target_pos)
+
     def reset_correct_location(self):
         # Extrapolate center of robot location from kick velocity
         self.kicked_from = main.ball().pos  #- (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
         self.kicked_vel = main.ball().vel
 
     #TODO: Create a better capture function (Decide if time to collect or position should be minimized)
-    def on_enter_collecting(self):
+    def on_enter_receiving(self):
         capture = self.captureFunction()
         self.add_subbehavior(capture, 'capture', required=True)
 
         self.reset_correct_location()
         self.kicked_time = time.time()
 
-    def on_exit_collecting(self):
+    def on_exit_receiving(self):
         self.remove_subbehavior('capture')
 
     ## Create a good_area, that determines where a good pass should be,
@@ -193,7 +198,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def check_failure(self):
         # We wait about 3 frames before freezing the velocity and position of the ball
         # as it can be unreliable right after kicking. See execute_receiving.
-        if self.stable_frame < PassReceive.StabilizationFrames:
+        if self.stable_frame < MovingPassReceive.StabilizationFrames:
             return False
         offset = 0.1
         straight_line = robocup.Point(0, 1)
@@ -209,8 +214,8 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         right_recieve = right_kick + straight_line * pass_distance
 
         # Widen the channel to allow for catching the ball.
-        left_recieve.rotate(left_kick, PassReceive.MarginAngle)
-        right_recieve.rotate(right_kick, -PassReceive.MarginAngle)
+        left_recieve.rotate(left_kick, MovingPassReceive.MarginAngle)
+        right_recieve.rotate(right_kick, -MovingPassReceive.MarginAngle)
 
         origin = robocup.Point(0, 0)
 
@@ -233,9 +238,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                                              "Good Pass Area")
         return not good_area.contains_point(main.ball().pos)
 
-    def execute_collecting(self):
+    def execute_receiving(self):
         # Freeze ball position and velocity once Stabilizationframes is up.
-        if self.stable_frame <= PassReceive.StabilizationFrames:
+        if self.stable_frame <= MovingPassReceive.StabilizationFrames:
             self.stable_frame = self.stable_frame + 1
             self.reset_correct_location()
 

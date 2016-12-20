@@ -8,6 +8,7 @@ import skills.capture
 import enum
 import evaluation.passing_positioning
 import tactics.coordinated_pass
+import skills.moving_pass_receive
 
 # TODO: Copy-Paste notes document into here
 
@@ -247,7 +248,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def on_enter_passing(self):
         # Setup passer
         # Setup reciever
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_pos), 'pass')
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_pos, skills.moving_pass_receive.MovingPassReceive()), 'pass')
 
     def execute_passing(self):
         # Wait until the reciever will be able to get there in time
