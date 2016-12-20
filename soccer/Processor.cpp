@@ -14,9 +14,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <git_version.hpp>
-#include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
+#include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -475,7 +475,7 @@ void Processor::run() {
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
-                        r->getPlanningPriority()));
+                        r->shell(), r->getPlanningPriority()));
             }
         }
 

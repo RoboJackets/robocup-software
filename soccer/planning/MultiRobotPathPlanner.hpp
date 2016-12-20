@@ -4,8 +4,8 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
-#include "planning/DynamicObstacle.hpp"
 #include "SystemState.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 #include <map>
 #include <memory>
@@ -16,26 +16,30 @@ namespace Planning {
 /// The PlanRequest encapsulates all information that the planner needs to know
 /// about an individual robot in order to generate a path for it.
 struct PlanRequest {
-    PlanRequest(const SystemState& systemState, MotionInstant start,
+    PlanRequest(SystemState& systemState, MotionInstant start,
                 std::unique_ptr<MotionCommand> command,
                 RobotConstraints constraints, std::unique_ptr<Path> prevPath,
                 Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
-                int8_t priority = 0)
+                unsigned shellID, int8_t priority = 0)
         : systemState(systemState),
           start(start),
           motionCommand(std::move(command)),
           constraints(constraints),
           prevPath(std::move(prevPath)),
           obstacles(obs),
-          dynamicObstacles(dObs) {}
+          dynamicObstacles(dObs),
+          shellID(shellID),
+          priority(priority) {}
 
-    const SystemState& systemState;
+    SystemState& systemState;
     MotionInstant start;
     std::unique_ptr<MotionCommand> motionCommand;
     RobotConstraints constraints;
     std::unique_ptr<Path> prevPath;
     Geometry2d::ShapeSet obstacles;
     std::vector<DynamicObstacle> dynamicObstacles;
+
+    unsigned shellID;
 
     // Higher Priorities are planned first
     int8_t priority;

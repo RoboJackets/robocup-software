@@ -1,11 +1,12 @@
 #include "SingleRobotPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "RRTPlanner.hpp"
-#include "PivotPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
+#include "PivotPathPlanner.hpp"
+#include "RRTPlanner.hpp"
+#include "TargetVelPathPlanner.hpp"
+
+using namespace std;
 
 namespace Planning {
 
