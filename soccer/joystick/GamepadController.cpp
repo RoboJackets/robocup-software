@@ -27,8 +27,11 @@ dpdown:h0.4,dpright:h0.0,dpright:h0.2,dpup:h0.0,dpup:h0.1,leftshoulder:h0.0,\
 dpup:h0.1,leftshoulder:h0.0,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,\
 righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
     // Attempt to add additional mappings (relative to run)
+    ApplicationRunDirectory();
     if (SDL_GameControllerAddMappingsFromFile(
-            "../external/sdlcontrollerdb/gamecontrollerdb.txt") == -1) {
+            ApplicationRunDirectory()
+            .filePath("../external/sdlcontrollerdb/gamecontrollerdb.txt")
+            .toStdString().c_str()) == -1) {
         cout << "Failed adding additional SDL Gamecontroller Mappings: "
              << SDL_GetError() << endl;
     }
