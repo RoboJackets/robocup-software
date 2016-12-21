@@ -1208,7 +1208,7 @@ void MainWindow::on_saveConfig_clicked() {
 
 void MainWindow::on_loadPlaybook_clicked() {
     QString filename = QFileDialog::getOpenFileName(
-        this, "Load Playbook", "../soccer/gameplay/playbooks/");
+        this, "Load Playbook", "./soccer/gameplay/playbooks/");
     if (!filename.isNull()) {
         try {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
@@ -1222,7 +1222,7 @@ void MainWindow::on_loadPlaybook_clicked() {
 
 void MainWindow::on_savePlaybook_clicked() {
     QString filename = QFileDialog::getSaveFileName(
-        this, "Save Playbook", "../soccer/gameplay/playbooks/");
+        this, "Save Playbook", "./soccer/gameplay/playbooks/");
     if (!filename.isNull()) {
         try {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
