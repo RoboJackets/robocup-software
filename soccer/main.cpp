@@ -1,4 +1,3 @@
-
 #include <gameplay/GameplayModule.hpp>
 
 #include <stdio.h>
@@ -154,13 +153,13 @@ int main(int argc, char* argv[]) {
 
     win->setUseRefChecked(!noref);
 
-    if (!QDir("./run/logs").exists()) {
-        fprintf(stderr, "No logs/ directory - not writing log file\n");
+    if (!ApplicationRunDirectory().exists("./logs")) {
+        cerr << "No ./run/logs/ directory - not writing log file" << endl;
     } else if (!log) {
-        fprintf(stderr, "Not writing log file\n");
+        cerr << "Not writing log file" << endl;
     } else {
         QString logFile =
-            QString("./run/logs/") +
+            ApplicationRunDirectory().filePath("./logs/") +
             QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
         if (!processor->openLog(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
