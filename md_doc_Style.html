@@ -106,28 +106,35 @@ $(document).ready(function(){initNavTree('md_doc_Style.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>RoboCup Software uses Google Style guides for the most part, which can be found <a href="https://google.github.io/styleguide/cppguide.html">at this website for c++</a>, and <a href="https://google.github.io/styleguide/pyguide.html">at this website for python</a>. This docs page will cover a basic overview of these rules, as well as some of the differences between google and our style guides.</p>
-<p>This guide is currently under construction.</p>
+<p>Our style configs for the code formatting programs that we use <a href="https://github.com/RoboJackets/style-configs">are located here</a>.</p>
 <h1>Overview</h1>
 <ol type="1">
 <li>Wrap lines at 80 characters</li>
 <li>Use 4 Spaces for Indentation</li>
-<li>Comment your code, try to provide comments for every method.</li>
+<li>Comment your code, try to provide comments for every method.<ul>
+<li>Doxygen has a specific format for comments. More information on commenting via doxygen <a class="el" href="md_doc_Documentation.html">can be found here</a>.</li>
+</ul>
+</li>
 <li>Place spaces between operators<ul>
 <li>Ex: <code>4 + 3</code>, <code>(int) i</code></li>
 </ul>
 </li>
 <li>Write readable code</li>
 </ol>
+<p>Style problems are mostly solved by our formatting scripts, although they can't deal with everything.</p>
 <h1>Autoformatting</h1>
 <p>We have two make targets dealing with formatting.</p>
 <p><code>make checkstyle</code> will check to see if your changes are up to style.</p>
-<p><code>make pretty</code> will use an autoformater to try and format your code. </p>
-</div></div><!-- contents -->
+<p><code>make pretty</code> will use an autoformater to try and format your code.</p>
+<h1>Variable Naming Conventions</h1>
+<h2>C++</h2>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;// File names should be CamelCase</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;MyClass.cpp</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;MyStandaloneHeader.hpp</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;MyHeader.h</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;// Class names are CamelCase</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;MyClassName a;</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;// Variables should be camelCase with a lowercase first letter</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;myVariable;</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;// Private variables should be preceeded with an underscore</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;_privateData;</div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;// Where possible, avoid C syntax, and use C++ replacements.</div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;printf(&quot;Hello world\n&quot;);       // bad!</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;cout &lt;&lt; &quot;Hello World&quot; &lt;&lt; endl; // good.</div></div><!-- fragment --><h2>Python</h2>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;# Filenames (and therefore module names) should be lowercase_and_underscore</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;my_class.py</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;import my_class</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;# Class names should be CamelCase</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;class MyPythonClass():</div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;# object variables should be underscore_seperated</div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;self.my_class_variable = 5</div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;# Class or object variables should be CamelCase</div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;ClassVariable = 5</div></div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Dec 21 2016 01:43:13 for GT RoboCup SSL by
+    <li class="footer">Generated on Sat Dec 24 2016 03:54:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>
