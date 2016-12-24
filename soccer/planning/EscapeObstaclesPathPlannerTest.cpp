@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "EscapeObstaclesPathPlanner.hpp"
-#include <Geometry2d/Point.hpp>
 #include <Geometry2d/Circle.hpp>
+#include <Geometry2d/Point.hpp>
+#include "EscapeObstaclesPathPlanner.hpp"
 
 using namespace Geometry2d;
 
@@ -17,10 +17,14 @@ TEST(EscapeObstaclesPathPlanner, run) {
     const float circleRadius = 5;
     obstacles.add(std::make_shared<Circle>(Point(0, 0), circleRadius));
 
+    SystemState systemState;
+
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
     SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, SystemState(), nullptr);
+                              dynamicObstacles, systemState,
+                              nullptr,  // previous path
+                              0);       // robot shell ID
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";

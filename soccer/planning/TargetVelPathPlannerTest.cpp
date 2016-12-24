@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
+#include <Geometry2d/Point.hpp>
 #include "TargetVelPathPlanner.hpp"
 #include "planning/MotionCommand.hpp"
-#include <Geometry2d/Point.hpp>
 
 using namespace Geometry2d;
 
@@ -15,10 +15,15 @@ TEST(TargetVelPathPlannerTest, run) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
 
+    SystemState systemState;
+
     TargetVelPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
     SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, SystemState(), nullptr);
+                              dynamicObstacles, systemState,
+                              nullptr,  // previous path
+                              0         // shellID
+                              );
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
