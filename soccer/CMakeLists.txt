@@ -103,8 +103,13 @@ find_package(Boost COMPONENTS system REQUIRED)
 # find boost python
 # This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
 set(FOUND_A_BOOST_PYTHON FALSE)
-foreach(possible_name python3 python-py32 python-py33 python-py34 python-py35 python)
-    find_package(Boost COMPONENTS ${possible_name})
+# Find the matching boost python implementation
+set(version ${PYTHONLIBS_VERSION_STRING})
+STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
+# Get first two numbers of python string
+STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version ${boost_py_version} )
+foreach(possible_name python3 python-py${boost_py_version} python)
+    find_package(Boost COMPONENTS ${possible_name} QUIET)
     if (Boost_FOUND)
         set(FOUND_A_BOOST_PYTHON TRUE)
         break()
