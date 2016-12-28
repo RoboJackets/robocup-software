@@ -30,8 +30,9 @@ righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:
     ApplicationRunDirectory();
     if (SDL_GameControllerAddMappingsFromFile(
             ApplicationRunDirectory()
-            .filePath("../external/sdlcontrollerdb/gamecontrollerdb.txt")
-            .toStdString().c_str()) == -1) {
+                .filePath("../external/sdlcontrollerdb/gamecontrollerdb.txt")
+                .toStdString()
+                .c_str()) == -1) {
         cout << "Failed adding additional SDL Gamecontroller Mappings: "
              << SDL_GetError() << endl;
     }
