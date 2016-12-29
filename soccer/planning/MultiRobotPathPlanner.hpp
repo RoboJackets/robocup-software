@@ -3,6 +3,7 @@
 #include <planning/Path.hpp>
 #include <planning/PlanRequest.hpp>
 #include "SystemState.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 #include <map>
 #include <memory>

@@ -7,7 +7,10 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include "SingleRobotPathPlanner.hpp"
-#include "Tree.hpp"
+
+#include <rrt/BiRRT.hpp>
+
+#include "SystemState.hpp"
 
 #include <Eigen/Dense>
 #include <boost/optional.hpp>
@@ -84,13 +87,15 @@ protected:
     std::vector<Geometry2d::Point> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles);
+        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        unsigned shellID);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> paths);
+        const std::vector<DynamicObstacle> paths, SystemState* state,
+        unsigned shellID);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
@@ -112,7 +117,6 @@ protected:
      */
     static void optimize(std::vector<Geometry2d::Point>& path,
                          const Geometry2d::ShapeSet& obstacles,
-                         const MotionConstraints& motionConstraints,
                          Geometry2d::Point vi, Geometry2d::Point vf);
 
     /**

@@ -19,11 +19,13 @@ TEST(EscapeObstaclesPathPlanner, run) {
     const float circleRadius = 5;
     obstacles.add(std::make_shared<Circle>(Point(0, 0), circleRadius));
 
+    SystemState systemState;
+
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
     PlanRequest request(SystemState(), startInstant, std::move(cmd),
                         RobotConstraints(), nullptr, obstacles,
-                        dynamicObstacles);
+                        dynamicObstacles, 0);
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";

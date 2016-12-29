@@ -52,7 +52,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
     const auto& motionConstraints = planRequest.constraints.mot;
     const auto& rotationConstraints = planRequest.constraints.rot;
     auto& obstacles = planRequest.obstacles;
-    const auto& systemState = planRequest.systemState;
+    auto& systemState = planRequest.systemState;
     const auto& ball = systemState.ball;
     const auto& robotConstraints = planRequest.constraints;
     auto& dynamicObstacles = planRequest.dynamicObstacles;
@@ -111,19 +111,22 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             DegreesToRadians(50)) {
             target.pos -=
                 target.vel.normalized(ballAvoidDistance * 3.0f + Robot_Radius);
+
             std::unique_ptr<MotionCommand> command =
                 std::make_unique<PathTargetCommand>(target);
 
-            auto request = PlanRequest(
-                systemState, startInstant, std::move(command), robotConstraints,
-                std::move(prevPath), ballObstacles, dynamicObstacles);
+            auto request = PlanRequest(systemState, startInstant,
+                                       std::move(command), robotConstraints,
+                                       std::move(prevPath), ballObstacles,
+                                       dynamicObstacles, planRequest.shellID);
             path = rrtPlanner.run(request);
         } else {
             std::unique_ptr<MotionCommand> command =
                 std::make_unique<PathTargetCommand>(target);
-            auto request = PlanRequest(
-                systemState, startInstant, std::move(command), robotConstraints,
-                std::move(prevPath), obstacles, dynamicObstacles);
+            auto request =
+                PlanRequest(systemState, startInstant, std::move(command),
+                            robotConstraints, std::move(prevPath), obstacles,
+                            dynamicObstacles, planRequest.shellID);
             path = rrtPlanner.run(request);
         }
         targetKickPos = boost::none;
@@ -228,7 +231,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
 
     auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
                                robotConstraints, std::move(prevPath), obstacles,
-                               dynamicObstacles);
+                               dynamicObstacles, planRequest.shellID);
     auto path = rrtPlanner.run(request);
     path->setDebugText("Gives ups");
 

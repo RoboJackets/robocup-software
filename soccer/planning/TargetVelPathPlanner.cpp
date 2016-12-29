@@ -46,9 +46,9 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     auto val = std::lower_bound(
         scaledDistRange.begin(), scaledDistRange.end(), obstacles,
         [start, dir, rangeScaleFactor](int scaledDist,
-                                       const Geometry2d::ShapeSet& obstacles) {
-            Geometry2d::Segment pathSegment(
-                start, start + dir * (scaledDist / rangeScaleFactor));
+                                       const ShapeSet& obstacles) {
+            Segment pathSegment(start,
+                                start + dir * (scaledDist / rangeScaleFactor));
             // Returns true if a path of the given distance doesn't hit
             // obstacles
             return !obstacles.hit(pathSegment);
@@ -59,10 +59,8 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
 }
 
 bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
-    const auto currentInstant = planRequest.start;
-    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
+    const ShapeSet& obstacles = planRequest.obstacles;
 
     const WorldVelTargetCommand& command =
         static_cast<const WorldVelTargetCommand&>(*planRequest.motionCommand);
@@ -80,6 +78,7 @@ bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
 
     // Replan if the maxSpeed of the previous path differs too much from the
     // command velocity
+
     if (auto trapezoidalPath = dynamic_cast<const TrapezoidalPath*>(prevPath)) {
         const float velChange =
             command.worldVel.mag() - trapezoidalPath->maxSpeed();
