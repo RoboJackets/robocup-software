@@ -9,7 +9,6 @@ namespace Planning {
 
 TEST(TargetVelPathPlannerTest, run) {
     MotionInstant startInstant({0, 0}, {0, 0});
-    // WorldVelTargetCommand cmd(Point(0, 1));
     std::unique_ptr<MotionCommand> cmd =
         std::make_unique<WorldVelTargetCommand>(Point(0, 1));
 

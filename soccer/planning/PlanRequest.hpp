@@ -13,8 +13,12 @@
 
 namespace Planning {
 
-/// The PlanRequest encapsulates all information that the planner needs to know
-/// about an individual robot in order to generate a path for it.
+/**
+ * @brief Encapsulates information needed for planner to make a path
+ *
+ * @details This struct contains ALL information necessary for a single
+ * robot path to be planned.
+ */
 struct PlanRequest {
     PlanRequest(SystemState& systemState, MotionInstant start,
                 std::unique_ptr<MotionCommand> command,
@@ -30,16 +34,15 @@ struct PlanRequest {
           dynamicObstacles(dObs),
           shellID(shellID) {}
 
-    SystemState& systemState;
-    MotionInstant start;
-    std::unique_ptr<MotionCommand> motionCommand;
-    RobotConstraints constraints;
-    std::unique_ptr<Path> prevPath;
-    Geometry2d::ShapeSet obstacles;
-    std::vector<DynamicObstacle> dynamicObstacles;
-    unsigned shellID;
-
-    // Higher Priorities are planned first
-    int8_t priority;
+    SystemState& systemState; /**< Allows debug drawing, position info */
+    MotionInstant start;      /**< Starting state of the robot */
+    std::unique_ptr<MotionCommand>
+        motionCommand;              /**< Specific type of motion desired */
+    RobotConstraints constraints;   /**< Constraint parameters on motion */
+    std::unique_ptr<Path> prevPath; /**< Last path planned or nullptr */
+    Geometry2d::ShapeSet obstacles; /**< Static obstacles */
+    std::vector<DynamicObstacle> dynamicObstacles; /**< Dynamic obstacles */
+    unsigned shellID; /**< Shell ID used for debug drawing */
+    int8_t priority;  /**< Higher priority planned first */
 };
 }
