@@ -91,9 +91,8 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle =
-                static_cast<const Planning::FaceAngleCommand&>(command)
-                    .targetAngle;
+            float angle = static_cast<const Planning::FaceAngleCommand&>(
+                              command).targetAngle;
             std::function<AngleInstant(MotionInstant)> function =
                 [angle](MotionInstant instant) { return AngleInstant(angle); };
             return function;
