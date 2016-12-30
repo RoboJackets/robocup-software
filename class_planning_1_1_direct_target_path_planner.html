@@ -126,13 +126,13 @@ Public Member Functions</h2></td></tr>
 MotionCommand::CommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_direct_target_path_planner.html#ad02e0ab0a766c0642412e7bfda1798d7">commandType</a> () const override</td></tr>
 <tr class="memdesc:ad02e0ab0a766c0642412e7bfda1798d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The MotionCommand type that this planner handles. <br /></td></tr>
 <tr class="separator:ad02e0ab0a766c0642412e7bfda1798d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47dcdc77af42f94298b9f37773ddee62"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47dcdc77af42f94298b9f37773ddee62"></a>
-virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_direct_target_path_planner.html#a47dcdc77af42f94298b9f37773ddee62">run</a> (<a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest) override</td></tr>
-<tr class="memdesc:a47dcdc77af42f94298b9f37773ddee62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br /></td></tr>
-<tr class="separator:a47dcdc77af42f94298b9f37773ddee62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a141794a22622b5114ed117ed4b5e5f15"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a141794a22622b5114ed117ed4b5e5f15"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>shouldReplan</b> (const <a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest) const </td></tr>
-<tr class="separator:a141794a22622b5114ed117ed4b5e5f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c9fa3e0a32898514172d74cfbfa762c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c9fa3e0a32898514172d74cfbfa762c"></a>
+virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_direct_target_path_planner.html#a0c9fa3e0a32898514172d74cfbfa762c">run</a> (<a class="el" href="struct_planning_1_1_plan_request.html">PlanRequest</a> &amp;planRequest) override</td></tr>
+<tr class="memdesc:a0c9fa3e0a32898514172d74cfbfa762c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br /></td></tr>
+<tr class="separator:a0c9fa3e0a32898514172d74cfbfa762c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8821e0b6df95dd01b8de70eece4693cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8821e0b6df95dd01b8de70eece4693cf"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>shouldReplan</b> (const <a class="el" href="struct_planning_1_1_plan_request.html">PlanRequest</a> &amp;planRequest) const </td></tr>
+<tr class="separator:a8821e0b6df95dd01b8de70eece4693cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_planning_1_1_single_robot_path_planner"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_planning_1_1_single_robot_path_planner')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_planning_1_1_single_robot_path_planner.html">Planning::SingleRobotPathPlanner</a></td></tr>
 <tr class="memitem:a3437797e2370d171b19842e49980285a inherit pub_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3437797e2370d171b19842e49980285a"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>canHandleDynamic</b> ()</td></tr>
@@ -156,9 +156,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>allDynamicToSt
 <tr class="memitem:acf49ab2b1a1caba2187cf0640f0df98d inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf49ab2b1a1caba2187cf0640f0df98d"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>splitDynamic</b> (<a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;dynamicOut, const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;dynamicObstacles)</td></tr>
 <tr class="separator:acf49ab2b1a1caba2187cf0640f0df98d inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ee15a6d8f0b15362a496453a981d61c inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a1ee15a6d8f0b15362a496453a981d61c">shouldReplan</a> (const <a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest)</td></tr>
-<tr class="memdesc:a1ee15a6d8f0b15362a496453a981d61c inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#a1ee15a6d8f0b15362a496453a981d61c">More...</a><br /></td></tr>
-<tr class="separator:a1ee15a6d8f0b15362a496453a981d61c inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace0745ec90d5e7c8789d1b24aead2c1f inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#ace0745ec90d5e7c8789d1b24aead2c1f">shouldReplan</a> (const <a class="el" href="struct_planning_1_1_plan_request.html">PlanRequest</a> &amp;planRequest)</td></tr>
+<tr class="memdesc:ace0745ec90d5e7c8789d1b24aead2c1f inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#ace0745ec90d5e7c8789d1b24aead2c1f">More...</a><br /></td></tr>
+<tr class="separator:ace0745ec90d5e7c8789d1b24aead2c1f inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_planning_1_1_single_robot_path_planner"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_planning_1_1_single_robot_path_planner')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_planning_1_1_single_robot_path_planner.html">Planning::SingleRobotPathPlanner</a></td></tr>
 <tr class="memitem:aba692b5e765ed86e4300f34f50d8a561 inherit pro_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba692b5e765ed86e4300f34f50d8a561"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>SingleRobotPathPlanner</b> (bool handlesDynamic)</td></tr>
@@ -197,7 +197,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>splitDynamic</
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_direct_target_path_planner.html">DirectTargetPathPlanner</a></li>
-    <li class="footer">Generated on Sun Dec 25 2016 03:37:24 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Dec 30 2016 02:51:28 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

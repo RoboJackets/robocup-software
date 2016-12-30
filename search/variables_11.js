@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['velocity_5fscale_5ffactor',['VELOCITY_SCALE_FACTOR',['../structrtp_1_1_control_message.html#a4459729ab618f2b1b53d911fe3764ccd',1,'rtp::ControlMessage']]]
+  ['wrapper',['wrapper',['../class_new_referee_packet.html#a485e1b6a00f69aea2151ba496ebac6d0',1,'NewRefereePacket::wrapper()'],['../class_vision_packet.html#a49df3d58429f4ea72f51852cda27b802',1,'VisionPacket::wrapper()']]]
 ];

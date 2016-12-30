@@ -336,7 +336,6 @@ var annotated_dup =
       [ "RotationCommand", "struct_planning_1_1_rotation_command.html", "struct_planning_1_1_rotation_command" ],
       [ "RRTConfig", "class_planning_1_1_r_r_t_config.html", null ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
-      [ "SinglePlanRequest", "struct_planning_1_1_single_plan_request.html", "struct_planning_1_1_single_plan_request" ],
       [ "SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", "class_planning_1_1_single_robot_path_planner" ],
       [ "TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", "class_planning_1_1_target_vel_path_planner" ],
       [ "TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", "class_planning_1_1_trapezoidal_path" ],

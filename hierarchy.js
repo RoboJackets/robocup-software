@@ -197,7 +197,6 @@ var hierarchy =
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
     ] ],
     [ "Geometry2d::ShapeSet", "class_geometry2d_1_1_shape_set.html", null ],
-    [ "Planning::SinglePlanRequest", "struct_planning_1_1_single_plan_request.html", null ],
     [ "Planning::SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", [
       [ "Planning::DirectTargetPathPlanner", "class_planning_1_1_direct_target_path_planner.html", null ],
       [ "Planning::EscapeObstaclesPathPlanner", "class_planning_1_1_escape_obstacles_path_planner.html", null ],

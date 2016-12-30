@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html#a1378f0524bca86a9f57bdc8229c01087":[12,0,5,8,0,0,0,1],
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html#a7987c39c384b9af91ffb08dd44b9c356":[12,0,5,8,0,0,0,0],
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html#afa5896556b2c4c900e5587003d68af23":[12,0,5,8,0,0,0,2],
 "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html":[12,0,5,8,0,1,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#abe1a7b720c7a832d8cf180d9eed190d7":[12,0,5,8,5,1,0,5],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html":[12,0,5,8,5,1,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html":[12,0,5,8,5,1,1],
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html#a84164e3897a9784032e0ff6b876bc455":[12,0,5,8,5,1,1,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html":[12,0,5,8,5,2,0]
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html#a84164e3897a9784032e0ff6b876bc455":[12,0,5,8,5,1,1,0]
 };

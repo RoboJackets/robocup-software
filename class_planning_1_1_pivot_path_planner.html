@@ -123,10 +123,10 @@ $(document).ready(function(){initNavTree('class_planning_1_1_pivot_path_planner.
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5489831813a4b82259e68bd93397391b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5489831813a4b82259e68bd93397391b"></a>
-virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_pivot_path_planner.html#a5489831813a4b82259e68bd93397391b">run</a> (<a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest) override</td></tr>
-<tr class="memdesc:a5489831813a4b82259e68bd93397391b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br /></td></tr>
-<tr class="separator:a5489831813a4b82259e68bd93397391b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4086a4cb4ac6fbe14529f2c0c24b9ded"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4086a4cb4ac6fbe14529f2c0c24b9ded"></a>
+virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_pivot_path_planner.html#a4086a4cb4ac6fbe14529f2c0c24b9ded">run</a> (<a class="el" href="struct_planning_1_1_plan_request.html">PlanRequest</a> &amp;planRequest) override</td></tr>
+<tr class="memdesc:a4086a4cb4ac6fbe14529f2c0c24b9ded"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an obstacle-free Path subject to the specified MotionContraints. <br /></td></tr>
+<tr class="separator:a4086a4cb4ac6fbe14529f2c0c24b9ded"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98b8ab1171f3ac171af5cec4a7a3c4c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98b8ab1171f3ac171af5cec4a7a3c4c7"></a>
 virtual MotionCommand::CommandType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_pivot_path_planner.html#a98b8ab1171f3ac171af5cec4a7a3c4c7">commandType</a> () const override</td></tr>
 <tr class="memdesc:a98b8ab1171f3ac171af5cec4a7a3c4c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The MotionCommand type that this planner handles. <br /></td></tr>
@@ -157,9 +157,9 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>allDynamicToSt
 <tr class="memitem:acf49ab2b1a1caba2187cf0640f0df98d inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf49ab2b1a1caba2187cf0640f0df98d"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>splitDynamic</b> (<a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;dynamicOut, const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; &amp;dynamicObstacles)</td></tr>
 <tr class="separator:acf49ab2b1a1caba2187cf0640f0df98d inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ee15a6d8f0b15362a496453a981d61c inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#a1ee15a6d8f0b15362a496453a981d61c">shouldReplan</a> (const <a class="el" href="struct_planning_1_1_single_plan_request.html">SinglePlanRequest</a> &amp;planRequest)</td></tr>
-<tr class="memdesc:a1ee15a6d8f0b15362a496453a981d61c inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#a1ee15a6d8f0b15362a496453a981d61c">More...</a><br /></td></tr>
-<tr class="separator:a1ee15a6d8f0b15362a496453a981d61c inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace0745ec90d5e7c8789d1b24aead2c1f inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_single_robot_path_planner.html#ace0745ec90d5e7c8789d1b24aead2c1f">shouldReplan</a> (const <a class="el" href="struct_planning_1_1_plan_request.html">PlanRequest</a> &amp;planRequest)</td></tr>
+<tr class="memdesc:ace0745ec90d5e7c8789d1b24aead2c1f inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the previous path is no longer valid and needs to be re-planned.  <a href="#ace0745ec90d5e7c8789d1b24aead2c1f">More...</a><br /></td></tr>
+<tr class="separator:ace0745ec90d5e7c8789d1b24aead2c1f inherit pub_static_methods_class_planning_1_1_single_robot_path_planner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -200,7 +200,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_pivot_path_planner.html">PivotPathPlanner</a></li>
-    <li class="footer">Generated on Sun Dec 25 2016 03:37:24 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Dec 30 2016 02:51:28 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

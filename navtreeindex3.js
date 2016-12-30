@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"class_new_referee_module.html#ab3aecfc78770002322221843a3775a88":[12,0,46,23],
 "class_new_referee_module.html#abbe14b1c6e7a0424f6a99083cbd83986":[12,0,46,11],
 "class_new_referee_module.html#ac082c7e72387453fec82dca259e3ec4e":[12,0,46,26],
 "class_new_referee_module.html#ac10a86d678709a59b8567a3ea395f498":[12,0,46,20],
@@ -168,8 +169,8 @@ var NAVTREEINDEX3 =
 "class_planning_1_1_const_path_iterator.html#ac002de0e84decd3ca8f73b109b098fae":[12,0,9,3,1],
 "class_planning_1_1_const_path_iterator.html#ac7e8e202bb0854e66f425325e4afdc5b":[12,0,9,3,0],
 "class_planning_1_1_direct_target_path_planner.html":[12,0,9,6],
-"class_planning_1_1_direct_target_path_planner.html#a141794a22622b5114ed117ed4b5e5f15":[12,0,9,6,3],
-"class_planning_1_1_direct_target_path_planner.html#a47dcdc77af42f94298b9f37773ddee62":[12,0,9,6,2],
+"class_planning_1_1_direct_target_path_planner.html#a0c9fa3e0a32898514172d74cfbfa762c":[12,0,9,6,2],
+"class_planning_1_1_direct_target_path_planner.html#a8821e0b6df95dd01b8de70eece4693cf":[12,0,9,6,3],
 "class_planning_1_1_direct_target_path_planner.html#ad02e0ab0a766c0642412e7bfda1798d7":[12,0,9,6,1],
 "class_planning_1_1_direct_target_path_planner.html#aef54d06564f659fa2502a29c260d0beb":[12,0,9,6,0],
 "class_planning_1_1_dynamic_obstacle.html":[12,0,9,7],
@@ -182,9 +183,9 @@ var NAVTREEINDEX3 =
 "class_planning_1_1_dynamic_obstacle.html#af2cb73aa6c755febc93435e6329cb0e4":[12,0,9,7,5],
 "class_planning_1_1_dynamic_obstacle.html#af8e42f41b923d515a1e9a51a0081d8d5":[12,0,9,7,7],
 "class_planning_1_1_escape_obstacles_path_planner.html":[12,0,9,10],
-"class_planning_1_1_escape_obstacles_path_planner.html#a088aa6b0724865ebe1c2a77bc47deb9d":[12,0,9,10,2],
 "class_planning_1_1_escape_obstacles_path_planner.html#a1a3886c03c05e5fcffcf374394b867ef":[12,0,9,10,0],
 "class_planning_1_1_escape_obstacles_path_planner.html#a25b5499bdde1f93e5a4b65c17e4e4c04":[12,0,9,10,1],
+"class_planning_1_1_escape_obstacles_path_planner.html#aac06bf941d495789de59aac1f6592aa0":[12,0,9,10,2],
 "class_planning_1_1_independent_multi_robot_path_planner.html":[12,0,9,13],
 "class_planning_1_1_independent_multi_robot_path_planner.html#a1359e208ebfd53c5396a95cab67ee97a":[12,0,9,13,0],
 "class_planning_1_1_interpolated_path.html":[12,0,9,14],
@@ -213,9 +214,9 @@ var NAVTREEINDEX3 =
 "class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb":[12,0,9,14,8],
 "class_planning_1_1_interpolated_path.html#aff2c2f42c17e99f06a7266bc3080a2b6":[12,0,9,14,17],
 "class_planning_1_1_line_kick_planner.html":[12,0,9,16],
-"class_planning_1_1_line_kick_planner.html#a24ab8cb8e753e3c57d4e539bcfccd563":[12,0,9,16,2],
 "class_planning_1_1_line_kick_planner.html#a266918c356e3cf405a9c16913ab30fac":[12,0,9,16,1],
 "class_planning_1_1_line_kick_planner.html#ac1d798da21ffbcd92127ae12c3189a16":[12,0,9,16,0],
+"class_planning_1_1_line_kick_planner.html#afafaa67bdfee161850366a2de9397873":[12,0,9,16,2],
 "class_planning_1_1_motion_command.html":[12,0,9,17],
 "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72":[12,0,9,17,0],
 "class_planning_1_1_motion_command.html#a3bb2aff1e899d547b893f9fb23cd9c72a3bfbd6674460d776f64c3e821f98c675":[12,0,9,17,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "class_planning_1_1_path.html#acfea7c029b477ed6e7525ae07c1768a4":[12,0,9,20,1],
 "class_planning_1_1_path.html#adec308e50c05ed419e9c459495d4f3ee":[12,0,9,20,16],
 "class_planning_1_1_path.html#ae067538136c94fedea43533c8bf0a2eb":[12,0,9,20,11],
-"class_planning_1_1_path.html#af1c18882247fc1f6bb0de7f59cec3ff5":[12,0,9,20,4],
-"class_planning_1_1_path.html#afba42a16d18d244684173fbad98ebb90":[12,0,9,20,15]
+"class_planning_1_1_path.html#af1c18882247fc1f6bb0de7f59cec3ff5":[12,0,9,20,4]
 };

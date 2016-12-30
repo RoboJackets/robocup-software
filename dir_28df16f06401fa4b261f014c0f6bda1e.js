@@ -13,6 +13,7 @@ var dir_28df16f06401fa4b261f014c0f6bda1e =
     [ "MultiRobotPathPlanner.hpp", "_multi_robot_path_planner_8hpp_source.html", null ],
     [ "Path.hpp", "_path_8hpp_source.html", null ],
     [ "PivotPathPlanner.hpp", "_pivot_path_planner_8hpp_source.html", null ],
+    [ "PlanRequest.hpp", "_plan_request_8hpp_source.html", null ],
     [ "RoboCupStateSpace.hpp", "_robo_cup_state_space_8hpp_source.html", null ],
     [ "RobotConstraints.hpp", "_robot_constraints_8hpp_source.html", null ],
     [ "RotationCommand.hpp", "_rotation_command_8hpp_source.html", null ],

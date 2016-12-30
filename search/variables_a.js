@@ -5,5 +5,6 @@ var searchData=
   ['maxkick',['maxKick',['../struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b',1,'RobotConfig::Kicker']]],
   ['maxspeed',['maxSpeed',['../struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220',1,'MotionConstraints']]],
   ['min_5fchip_5frange',['min_chip_range',['../class_window_evaluator.html#a9da2e28d3c3ac1c43f68da26ec56abed',1,'WindowEvaluator']]],
+  ['motioncommand',['motionCommand',['../struct_planning_1_1_plan_request.html#a6354050958f22d98251d8f8ded493960',1,'Planning::PlanRequest']]],
   ['multiplier',['multiplier',['../struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19',1,'RobotConfig::Dribbler']]]
 ];
