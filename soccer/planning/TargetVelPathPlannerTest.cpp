@@ -9,7 +9,8 @@ namespace Planning {
 
 TEST(TargetVelPathPlannerTest, run) {
     MotionInstant startInstant({0, 0}, {0, 0});
-    WorldVelTargetCommand cmd(Point(0, 1));
+    std::unique_ptr<MotionCommand> cmd =
+        std::make_unique<WorldVelTargetCommand>(Point(0, 1));
 
     MotionConstraints motionConstraints;
     ShapeSet obstacles;
@@ -19,11 +20,10 @@ TEST(TargetVelPathPlannerTest, run) {
 
     TargetVelPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
-    SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, systemState,
-                              nullptr,  // previous path
-                              0         // shellID
-                              );
+
+    PlanRequest request(systemState, startInstant, std::move(cmd),
+                        RobotConstraints(), nullptr, obstacles,
+                        dynamicObstacles, 0);
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";

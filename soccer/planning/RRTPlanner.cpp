@@ -1,11 +1,11 @@
 #include "RRTPlanner.hpp"
 #include <Constants.hpp>
 #include <Utils.hpp>
+#include <rrt/planning/Path.hpp>
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
-#include <rrt/planning/Path.hpp>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,14 +22,15 @@ namespace Planning {
 RRTPlanner::RRTPlanner(int maxIterations)
     : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
 
-bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
+bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
                               const vector<DynamicObstacle> dynamicObs,
                               string* debugOut) const {
     const ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const Planning::PathTargetCommand& command =
-        dynamic_cast<const Planning::PathTargetCommand&>(planRequest.cmd);
+        dynamic_cast<const Planning::PathTargetCommand&>(
+            *planRequest.motionCommand);
 
     const auto& goal = command.pathGoal;
 
@@ -67,18 +68,19 @@ bool RRTPlanner::shouldReplan(const SinglePlanRequest& planRequest,
 
 const int maxContinue = 10;
 
-std::unique_ptr<Path> RRTPlanner::run(SinglePlanRequest& planRequest) {
-    const MotionInstant& start = planRequest.startInstant;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
-    ShapeSet& obstacles = planRequest.obstacles;
+std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
+    const MotionInstant& start = planRequest.start;
+    const auto& motionConstraints = planRequest.constraints.mot;
+    Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
     const auto& dynamicObstacles = planRequest.dynamicObstacles;
 
     // This planner only works with commands of type 'PathTarget'
-    assert(planRequest.cmd.getCommandType() ==
+    assert(planRequest.motionCommand->getCommandType() ==
            Planning::MotionCommand::PathTarget);
     const Planning::PathTargetCommand& target =
-        dynamic_cast<const Planning::PathTargetCommand&>(planRequest.cmd);
+        dynamic_cast<const Planning::PathTargetCommand&>(
+            *planRequest.motionCommand);
 
     MotionInstant goal = target.pathGoal;
     vector<DynamicObstacle> actualDynamic;

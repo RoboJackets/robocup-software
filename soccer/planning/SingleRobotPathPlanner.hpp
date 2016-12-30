@@ -5,40 +5,19 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
+//#include "MultiRobotPathPlanner.hpp"
+#include "planning/DynamicObstacle.hpp"
+#include "planning/PlanRequest.hpp"
+#include "planning/RotationCommand.hpp"
+/*
 #include "RobotConstraints.hpp"
 #include "SystemState.hpp"
 #include "Utils.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
+*/
 
 namespace Planning {
-
-struct SinglePlanRequest {
-    SinglePlanRequest(const MotionInstant& startInstant,
-                      const MotionCommand& cmd,
-                      const RobotConstraints& robotConstraints,
-                      Geometry2d::ShapeSet& obstacles,
-                      std::vector<DynamicObstacle>& dynamicObstacles,
-                      SystemState& systemState, std::unique_ptr<Path> prevPath,
-                      unsigned shellID)
-        : startInstant(startInstant),
-          cmd(cmd),
-          robotConstraints(robotConstraints),
-          obstacles(obstacles),
-          dynamicObstacles(dynamicObstacles),
-          systemState(systemState),
-          prevPath(std::move(prevPath)),
-          shellID(shellID){};
-
-    const MotionInstant& startInstant;
-    const MotionCommand& cmd;
-    const RobotConstraints& robotConstraints;
-    Geometry2d::ShapeSet& obstacles;
-    std::vector<DynamicObstacle>& dynamicObstacles;
-    SystemState& systemState;
-    std::unique_ptr<Path> prevPath = nullptr;
-    unsigned shellID;
-};
 
 /**
  * @brief Interface for Path Planners
@@ -48,7 +27,7 @@ public:
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) = 0;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) = 0;
 
     /// The MotionCommand type that this planner handles
     virtual MotionCommand::CommandType commandType() const = 0;
@@ -78,7 +57,7 @@ public:
     ///
     /// Subclasses will generally use this method in addition to their own
     /// planner-specific checks to determine if a replan is necessary.
-    static bool shouldReplan(const SinglePlanRequest& planRequest);
+    static bool shouldReplan(const PlanRequest& planRequest);
 
     virtual bool canHandleDynamic() { return handlesDynamic; }
 
