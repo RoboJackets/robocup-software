@@ -100,18 +100,11 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost COMPONENTS system REQUIRED)
 
-# find boost python
-# This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
-set(FOUND_A_BOOST_PYTHON FALSE)
-foreach(possible_name python3 python-py32 python-py33 python-py34 python-py35 python)
-    find_package(Boost COMPONENTS ${possible_name})
-    if (Boost_FOUND)
-        set(FOUND_A_BOOST_PYTHON TRUE)
-        break()
-    endif()
-endforeach()
-if (NOT FOUND_A_BOOST_PYTHON)
-    message(FATAL_ERROR "Unable to find a suitable version of boost python")
+# find boost python. Should be named 'python' even though it's python3
+if(APPLE AND ${PYTHON_VERSION_MAJOR} EQUAL 3)
+    FIND_PACKAGE(Boost COMPONENTS python3)
+else()
+    FIND_PACKAGE(Boost COMPONENTS python)
 endif()
 
 # libusb
