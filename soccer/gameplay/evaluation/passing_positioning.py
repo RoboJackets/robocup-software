@@ -10,10 +10,10 @@ import evaluation.shooting
 #
 # By default, this is use the half of the field in front of the ball (Or the opponents half)
 # The best location is found by combining the pass chance by the 
-# openness and field position coefficients
+# openness, field position coefficients, and shot chance
 #
 # Example usage:
-# evaluation.passing.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
+# point, score = evaluation.passing.eval_best_receive_point(main.ball().pos)
 #
 # Which finds the best pass from the ball position
 
@@ -35,8 +35,9 @@ def generate_default_rectangle(pos):
 
 ## Returns a list of robocup.Point objects that represent candidate recieve points
 #
-# @param rect: Rectangle to search through
 # @param pos: Position to pass from
+# @param rect: Rectangle to search through
+# @param min_dist: Minimum distance to check around our position
 # Returns a list of points in the rectangle to test
 def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
     outlist = []
@@ -50,6 +51,7 @@ def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
             # Check [X]% distance between this point and the goal line to remove "close" points to their goal zone
             goal_zone_thresh = (constants.Field.Length - currenty) * 0.25
             # If within the goalie area 
+            # TODO: Do a little math to see if the second check can ever fail while the first one succeds
             if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty)) or \
                 constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty + goal_zone_thresh)):
                 currentx += threshold
@@ -69,6 +71,13 @@ def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
 
 ## Evaluates a single point and returns the overall coefficient for the area
 #
+# @param kick_point: Point where we are kicking from
+# @param receive_point: Point to which are kicking to
+# @param ignore_robots: Robots to ignore
+# @param field_weights: A tuple of the 3 difference weights to apply to field position 
+#               (Centerness, Distance to their goal, Angle off their goal)
+# @param weights: A tuple of the 4 different weights to apply to the evaulations overall (Weights are normalized)
+#               (space, field_position, shot_chance, kick_proximty)
 # @return Returns a score between 0 and 1 on how good of pass it is
 def eval_singl_point(kick_point,
                      receive_point,
@@ -82,25 +91,30 @@ def eval_singl_point(kick_point,
         else:
             return None
 
-    shotChance = evaluation.shooting.eval_shot(receive_point)
+    # TODO: Create a caching mechanism so that bad values do not have to be
+    # re-evaluated every single cycle
+
+    shotChance = 0
+    # Dissallow shooting over midfield
+    if (kick_point.y > constants.Field.Length / 2):
+        shotChance = evaluation.shooting.eval_shot(receive_point)
+    
     passChance = evaluation.passing.eval_pass(kick_point, receive_point)
 
     space    = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
     fieldPos = evaluation.field.field_pos_coeff_at_pos(receive_point, field_weights[0], field_weights[1], field_weights[2])
-    distance = (kick_point - receive_point).mag()
-    ballPos  = evaluation.field.ball_coeff_at_pos(receive_point)
-
-    # Dissallow shooting over midfield
-    if (kick_point.y < constants.Field.Length / 2):
-        shotChance = 0
+    distance = math.exp(-1 * (kick_point - receive_point).mag() )
 
     # TODO: Make this more advanced
-    # Make sure a robot can get to the position (Distancce from our closet robot?)
+    # Make sure a robot can get to the position (Distance from our closet robot?)
+    # Use opponents usual movement response to predict open area?
+    # Use direction of ball from kicking robot to weight a certain direction more for quicker kicks
  
     # All of the other scores are based on whether the pass will actually make it to it
     # Not worth returning a great position if we can even get a pass there
-    totalChance = passChance * ( weights[0]*(1-space) + weights[1]*fieldPos + weights[2]*shotChance + weights[3]*(1-ballPos) )
+    totalChance = passChance * ( weights[0]*(1-space) + weights[1]*fieldPos + weights[2]*shotChance + weights[3]*(1-distance) )
     totalChance /= math.fsum(weights)
+    
     return totalChance
 
 ## Finds the best position to pass to
@@ -110,8 +124,8 @@ def eval_singl_point(kick_point,
 # @param ignore_robots: Robots to ignore when calculating scores
 # @param field_weights: A tuple of the 3 difference weights to apply to field position 
 #               (Centerness, Distance to their goal, Angle off their goal)
-# @param weights: A tuple of the 4 different weights to apply to the evaulations
-#               (space, field_position, shot_chance, ball_proximity)
+# @param weights: A tuple of the 4 different weights to apply to the evaulations overall (Weights are normalized)
+#               (space, field_position, shot_chance, kick_proximity)
 # @param debug: Displays pass lines and scores onto the field when true
 # @return bestPoint and bestScore in that order
 def eval_best_receive_point(kick_point,
@@ -136,6 +150,7 @@ def eval_best_receive_point(kick_point,
         # Nothing can be done
         return None
 
+    # TODO: Setup to be a list of the top X points
     bestScore = None
     bestPointt = None
 
@@ -145,9 +160,7 @@ def eval_best_receive_point(kick_point,
 
         if (debug):
             score_color = (round(currentScore*255), 0, round((1-currentScore)*255))
-            main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Debug")
-        
-        
+            main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Debug")        
 
         if bestScore is None or currentScore > bestScore:
             bestScore = currentScore
@@ -157,6 +170,7 @@ def eval_best_receive_point(kick_point,
     if bestPoint is None:
         return None, 0
 
-    main.system_state().draw_line(robocup.Segment(kick_point, bestPoint), constants.Colors.Red, "Debug")
+    if (debug):
+        main.system_state().draw_line(robocup.Segment(kick_point, bestPoint), constants.Colors.Red, "Debug")
 
     return bestPoint, bestScore

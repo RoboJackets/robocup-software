@@ -44,11 +44,13 @@ class TestAdaptiveFormationWeights(play.Play):
         max_x = 0
         max_y = 0
 
+        # 1/2 the Width/Length of the boxes
+        x_half = 0.5 * constants.Field.Width / num_width
+        y_half = 0.5 * constants.Field.Length / num_length
+        
+
         for x in range(-1*round(num_width/2), round(num_width/2)):
             for y in range(0, num_length):
-                # 1/2 the Width/Length of the boxes
-                x_half = 0.5 * constants.Field.Width / num_width
-                y_half = 0.5 * constants.Field.Length / num_length
                 # X/Y for center of the boxes
                 x_cent = x * constants.Field.Width / num_width + x_half
                 y_cent = y * constants.Field.Length / num_length + y_half
@@ -57,11 +59,17 @@ class TestAdaptiveFormationWeights(play.Play):
                     continue
 
                 # Uncomment which function we want graphed
+                # 1: Field Pos Coeff
+                # 2: Space Coeff
+                # 3: Shot Eval %
+                # 4: Ball Coeff
+
                 #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.01, 3, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
                 #val = evaluation.shooting.eval_shot(robocup.Point(x_cent, y_cent))
                 val = 1-evaluation.field.ball_coeff_at_pos(robocup.Point(x_cent, y_cent))
 
+                # Find max
                 if (val > max_val):
                     max_val = val
                     max_x = x_cent
@@ -85,14 +93,15 @@ class TestAdaptiveFormationWeights(play.Play):
         y_cent = max_y
 
         rect = [robocup.Point(x_cent-x_half, y_cent-y_half),
-                        robocup.Point(x_cent+x_half, y_cent-y_half),
-                        robocup.Point(x_cent+x_half, y_cent+y_half),
-                        robocup.Point(x_cent-x_half, y_cent+y_half)]
-        # Linear interpolation between Red and Blue
+                robocup.Point(x_cent+x_half, y_cent-y_half),
+                robocup.Point(x_cent+x_half, y_cent+y_half),
+                robocup.Point(x_cent-x_half, y_cent+y_half)]
+        # Make a white rect at the max value
         val_color = (255, 255, 255)
 
         # Draw onto the Debug layer
         main.system_state().draw_polygon(rect, val_color, "Debug")
 
     def execute_testBestPass(self):
+        # Use as a way to test the pass weights for the best pass position
         evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, None, [], (0.1, 3.2, 0.1), (1, 4, 15, 1), True)

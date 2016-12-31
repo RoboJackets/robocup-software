@@ -4,10 +4,11 @@ import constants
 import math
 
 ## Determines how much "space" there is at a pos
-#    "Space" is how open a robot is
+#    "Space" is how empty an area of the field is
 # @param pos: point to evalute
-# @returns Number between 0 and 1 representing the closeness of robots
+# @returns Number between 0 and ~1.3 representing the closeness of robots
 # The higher the number, the more robots closer to the position
+# A triweight kernal function is used so the max is not quite 1
 def space_coeff_at_pos(pos, excluded_robots=[]):
     # TODO: Add in velocity prediction
 
@@ -20,6 +21,7 @@ def space_coeff_at_pos(pos, excluded_robots=[]):
             u = sensitivity * (bot.pos - pos).mag() / max_dist;
 
             # Use Triweight kernal function (Force to be positive)
+            # Graph looks much like a normal distribution
             total += max((35/32)*pow((1-pow(u,2)), 3), 0)
 
     return min(total, 1)
@@ -30,12 +32,12 @@ def space_coeff_at_pos(pos, excluded_robots=[]):
 # Weight inputs are normalized
 #
 # @param pos: Position to evalute
-# @param center: How much to weight being close to the center of the field
+# @param center: How much to weight being close to the 'center of the field'
 # @param dist: How much to weight being close to the opponents goal
 # @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
 # @return Returns a number between 0 and 1 representing how good the position is 
 def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
-    # Percent closeness to the center
+    # Percent closeness to the center (Line between the two goals is the 'center line')
     centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2))
     # Pencent closeness to their goal
     distValue = math.fabs(pos.y / constants.Field.Length) 
@@ -46,9 +48,3 @@ def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
     total = center + dist + angl
 
     return (center*centerValue + dist*distValue + angl*anglValue) / total
-
-def ball_coeff_at_pos(pos):
-    dist = (pos - main.ball().pos).mag()
-
-    # 1 at dist == 0
-    return math.exp(-1*dist)

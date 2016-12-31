@@ -111,8 +111,27 @@ def time_to_ball(robot):
     return (dist_to_ball / max_vel) + delay
 
 
+# Returns the percent chance we have possesion
+# between 0 and 1
 def team_with_possession():
-    # Find closest robot to ball on both teams
-    # Determine percent error to ball to dictate who has posession
+    # Possible Options:
+
+    # Distance to each of the robots nearby
+    # Pros: Not needed to be constantly polled
+    #       Very quick to update to lost possesion
+    # Cons: Not very accurate with passes, only works with dribbles
+
+    # Time near the ball in last X seconds
+    # Pros: Much more accurate
+    # Cons: Slow to update to lost possesion
+    #       Needs to be constantly polled
+    #       Passing will cause problems
+
+    # Interception type system
+    # Pros: Much more accurate
+    #       Passing will be accounted for
+    #       Not needed to be constantly polled
+    # Cons: Much more advanced and complex
+    #       Relies on accurate ball and robot velocity estimations to predict interceptions
     
     return 0.5

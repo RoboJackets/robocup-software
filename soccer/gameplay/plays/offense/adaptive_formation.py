@@ -25,7 +25,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Clear when pass / dribble is worse and we are in our own zone
         clearing = 5
 
-        # Pass is in motion, move to collect pass
+        # Pass is in motion, move to collect pass, other robots move into position
         passInMotion = 6
         # Check if one touch goal is better than settling
         passCollecting = 7
@@ -156,9 +156,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(self.shot_chance))
             return True
 
-
-        # Decreasing and under cutoff
+        # Under cutoff
         return False
+
     def should_shoot_from_dribble(self):
 
         # If shot chance is improving significantly, hold off a second
@@ -172,9 +172,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Decreasing and under cutoff
         return False
+    
     # TODO: See if there is space to dribble
     def should_clear_from_dribble(self):
-        # If outside zone of goal
+        # If outside clear zone
         if (self.dribbler.pos.y > self.clearFieldCutoff):
             return False
 
@@ -185,6 +186,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def on_enter_collecting(self):
+        # Added defense to all bots
+        # Do more advanced blocking etc
+        # Once ball is contained, move onto next step
+
+        # For testing purposes only:
         capture = skills.capture.Capture()
         self.add_subbehavior(capture, 'capture', required=True)
 
@@ -196,22 +202,21 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Dribbles toward the best receive point
         # TODO: Change weights so it dribbles to open space more
-        self.dribbler.pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
+        # TODO: Further refine the weights and make them class variables
+        self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
                                                     (0.01, 3, 0.02), (2, 2, 15, 1), False)
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
     def execute_dribbling(self):
-        # Setup previous values (Basic complementary filter)
-        c = .8
-        self.prev_shot_chance = c*self.shot_chance + (1-c)*self.prev_shot_chance
-        self.prev_pass_score = c*self.pass_score + (1-c)*self.prev_pass_score
-
         # Find closest bot
+        # Can be used to force a pass when they get too close
+        # Or even just change mouth angle of dribble
         # TODO: Weight the ones in front higher
         closest_bot = evaluation.opponent.get_closest_opponent(main.ball().pos, 0.9)
         
         # Grab best pass
+        # TODO: Further refine the weights and make then class variables
         self.pass_pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
                                                     (0.01, 3, 0.02), (2, 2, 15, 1), False)
@@ -227,11 +232,17 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Offensive positions move onto the ball in the direction of the goal
         # Defensive cover the center of the field
 
+        # Setup previous values (Basic complementary filter)
+        c = .8
+        self.prev_shot_chance = c*self.shot_chance + (1-c)*self.prev_shot_chance
+        self.prev_pass_score = c*self.pass_score + (1-c)*self.prev_pass_score
+
 
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()
 
     def on_enter_shooting(self):
+        # TODO: Use moving kick when completed
         kick = skills.pivot_kick.PivotKick()
         kick.target = constants.Field.TheirGoalSegment
         kick.aim_params['desperate_timeout'] = 3
@@ -260,6 +271,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def execute_passing(self):
         # Wait until the reciever will be able to get there in time
         # Then kick the ball
+
+        # May not even be needed now due to how passing will be set up
         pass
 
     def on_exit_passing(self):
@@ -267,18 +280,18 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     # Move other robots out into position
     # Check to see what type of reception we should do
+    # Begin moving robots who are out of position
+    # Update in real time
     def on_enter_passInMotion(self):
         pass
+
+    def execute_passInMotion(self):
 
     def on_exit_passInMotion(self):
         self.remove_all_subbehaviors()
 
-    # Final determination on what type of pass to do
-    # Set receiver to execute that command
-    # Setup other robots to be ready for which ever command that was (Especially if one touch)
     def on_enter_passCollecting(self):
         pass
 
-    # 
     def on_enter_oneTouch(self):
         pass

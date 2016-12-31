@@ -5,13 +5,14 @@ import main
 import math
 
 ## Find the chance of a shot succeeding by looking at pass distance and what robots are in the way
+#  The total goal angle as well as the  percent covered  is taken into account
 # @param from_point The Point the shot is coming from
 # @param excluded_robots A list of robots that shouldn't be counted as obstacles to this shot
 # @return a value from zero to one that estimates the probability of the shot succeeding
 def eval_shot(from_point, excluded_robots=[]):
-    # we make a pass triangle with the far corner at the ball and the opposing side representing the size of the goal
-    # the side along the goal is the 'receive_seg'
-    # we then use the window evaluator on this scenario to see if the pass is open
+    # Create a triangle between us and the two sides of the goal
+    # Side along the goal is 'receive_seg'
+    # The window evaluator is then used to see how open it is
     to_point = robocup.Point(0, constants.Field.Length)
     left_post = robocup.Point(-0.5*constants.Field.GoalWidth, constants.Field.Length)
     right_post = robocup.Point(0.5*constants.Field.GoalWidth, constants.Field.Length)
@@ -35,15 +36,17 @@ def eval_shot(from_point, excluded_robots=[]):
     windows, best = win_eval.eval_pt_to_seg(from_point, receive_seg)
 
 
-    # We should also test a wider angle and check that against our best one
+    # TODO: We should also test a wider angle and check that against our best one
     # That way we can also get nearby robots
-
 
     # This is our estimate of the likelihood of the shot succeeding
     # Value can range from zero to one
     # Return 0 if shooting from our side of the field
     if best != None and (from_point.y > (constants.Field.Length / 2)):
         # The constants are chosen through graphing and selectively choosing a good weight for each
+        # TODO: Use some more real life metrics to figure better constants
+        # Standard deviation will relate directly with the total_percent
+        # Standard deviation / shot power will relate to the dist_coeff
 
         # Percent of goal blocked by opponents
         seg_percent = math.pow(best.segment.length() / receive_seg.length(), 2) # ShotWidth / MaxShotWidth
@@ -54,5 +57,5 @@ def eval_shot(from_point, excluded_robots=[]):
         
         return seg_percent * total_percent * dist_coeff
     else:
-        # The shot is completely blocked
+        # The shot is invalid
         return 0

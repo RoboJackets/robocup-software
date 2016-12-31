@@ -121,6 +121,9 @@ class MovingPassReceive(single_robot_composite_behavior.SingleRobotCompositeBeha
         # if ( bot_dist < ball_dist*0.5 ):
         #     return True
 
+        # Give the robot a ~42% (1/.7) leway to get there in time
+        # An additional flat rate can be used for more accuracy
+        # TODO: When actual path length is used, this constant below can be increased
         if ( bot_time < ball_time*0.7 ):
             return True
 
