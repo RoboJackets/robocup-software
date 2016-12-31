@@ -207,7 +207,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.prev_shot_chance = c*self.shot_chance + (1-c)*self.prev_shot_chance
         self.prev_pass_score = c*self.pass_score + (1-c)*self.prev_pass_score
 
-        # Find closest bot weighting the ones in front higher
+        # Find closest bot
+        # TODO: Weight the ones in front higher
         closest_bot = evaluation.opponent.get_closest_opponent(main.ball().pos, 0.9)
         
         # Grab best pass
@@ -220,6 +221,12 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Add some sort of dibble reset for the 1000cm limit in the rules
         # TODO: Check open space every once in a while and change dribble direction
+
+        # TODO: Get list of top X pass positions and have robots in good positions to reach them
+        # Good positions can be definied by offensive / defensive costs
+        # Offensive positions move onto the ball in the direction of the goal
+        # Defensive cover the center of the field
+
 
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()

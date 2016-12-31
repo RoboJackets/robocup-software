@@ -8,6 +8,7 @@ import math
 import time
 import role_assignment
 import skills
+import evaluation.ball
 
 
 ## MovingPassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
@@ -70,7 +71,7 @@ class MovingPassReceive(single_robot_composite_behavior.SingleRobotCompositeBeha
 
         self.add_transition(
             MovingPassReceive.State.receiving, behavior.Behavior.State.failed,
-            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or time.time() - self.kicked_time > MovingPassReceive.DesperateTimeout,
+            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or ( time.time() - self.kicked_time ) > MovingPassReceive.DesperateTimeout,
             'ball missed :(')
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
@@ -101,13 +102,26 @@ class MovingPassReceive(single_robot_composite_behavior.SingleRobotCompositeBeha
         if self.receive_point == None:
             return False
 
-        # Predict time for robot to reach point
         # Predict time for ball to be fully passed
         ball_dist = (main.ball().pos - self.receive_point).mag()
-        bot_dist = robocup.Point(self._x_error, self._y_error).mag()
+        ball_time = evaluation.ball.rev_predict(main.ball().vel, ball_dist)
 
-        # Very bad etimate for time to reach receive point
-        if ( bot_dist < ball_dist*0.5 ):
+        # Predict time for robot to reach point
+        # Uses the trapezoidal motion planning to estimate time
+        # TODO: Use the actual path length from the path planner
+        error = robocup.Point(self.receive_point - self.robot.pos)
+        bot_dist = error.mag()
+        # Gets the velocity along the direction of the path
+        path_vel = math.cos((error.normalized()).dot(self.robot.vel.normalized())) * self.robot.vel.mag()
+        
+        motion_constraints = robocup.MotionConstraints()
+        bot_time = robocup.get_trapezoidal_time(0.0, bot_dist*1.2, motion_constraints.MaxRobotSpeed.value, motion_constraints.MaxRobotAccel.value, path_vel, 0.0)
+
+        # # Quick hack to get it working
+        # if ( bot_dist < ball_dist*0.5 ):
+        #     return True
+
+        if ( bot_time < ball_time*0.7 ):
             return True
 
         return False
@@ -202,7 +216,12 @@ class MovingPassReceive(single_robot_composite_behavior.SingleRobotCompositeBeha
             return False
         offset = 0.1
         straight_line = robocup.Point(0, 1)
-        pass_segment = self.robot.pos - self.kicked_from
+
+        if ((self.robot.pos - self.receive_point).mag() < 0.1):
+            pass_segment = self.receive_point - self.kicked_from
+        else:
+            pass_segment = self.robot.pos - self.kicked_from
+
         pass_distance = pass_segment.mag() + 0.5
         pass_dir = pass_segment.normalized()
 
