@@ -286,7 +286,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         pass
 
     def execute_passInMotion(self):
-
+        pass
+        
     def on_exit_passInMotion(self):
         self.remove_all_subbehaviors()
 
