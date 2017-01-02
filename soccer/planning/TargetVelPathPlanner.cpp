@@ -58,13 +58,12 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     return start + dir * nonblockedPathLen;
 }
 
-bool TargetVelPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) const {
+bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const Path* prevPath = planRequest.prevPath.get();
     const ShapeSet& obstacles = planRequest.obstacles;
 
     const WorldVelTargetCommand& command =
-        static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
+        static_cast<const WorldVelTargetCommand&>(*planRequest.motionCommand);
 
     if (SingleRobotPathPlanner::shouldReplan(planRequest)) return true;
 
@@ -96,12 +95,11 @@ bool TargetVelPathPlanner::shouldReplan(
 
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
-std::unique_ptr<Path> TargetVelPathPlanner::run(
-    SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const MotionCommand& cmd = planRequest.cmd;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
-    const ShapeSet& obstacles = planRequest.obstacles;
+std::unique_ptr<Path> TargetVelPathPlanner::run(PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const MotionCommand& cmd = *planRequest.motionCommand;
+    const auto& motionConstraints = planRequest.constraints.mot;
+    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // If the start point is in an obstacle, escape from it

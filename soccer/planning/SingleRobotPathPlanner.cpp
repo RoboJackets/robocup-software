@@ -2,6 +2,10 @@
 #include "DirectTargetPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
+//#include "PivotPathPlanner.hpp"
+//#include "RRTPlanner.hpp"
+//#include "TargetVelPathPlanner.hpp"
+//#include "TargetVelPathPlanner.hpp"
 #include "PivotPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
@@ -101,11 +105,9 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
     }
 }
 
-bool SingleRobotPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) {
-    const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
+bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
+    const auto currentInstant = planRequest.start;
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 

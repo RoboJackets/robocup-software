@@ -10,7 +10,9 @@ namespace Planning {
 TEST(EscapeObstaclesPathPlanner, run) {
     // The robot is at the origin
     MotionInstant startInstant({0, 0}, {0, 0});
-    EmptyCommand cmd;  // "None" command
+    // EmptyCommand cmd;  // "None" command
+    std::unique_ptr<MotionCommand> cmd =
+        std::make_unique<EmptyCommand>();  // "None" command
 
     // Add an circle of radius 5 centered at the origin as an obstacle
     ShapeSet obstacles;
@@ -21,10 +23,9 @@ TEST(EscapeObstaclesPathPlanner, run) {
 
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
-    SinglePlanRequest request(startInstant, cmd, RobotConstraints(), obstacles,
-                              dynamicObstacles, systemState,
-                              nullptr,  // previous path
-                              0);       // robot shell ID
+    PlanRequest request(systemState, startInstant, std::move(cmd),
+                        RobotConstraints(), nullptr, obstacles,
+                        dynamicObstacles, 0);
     auto path = planner.run(request);
 
     ASSERT_NE(nullptr, path) << "Planner returned null path";
