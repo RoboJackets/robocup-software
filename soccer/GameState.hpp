@@ -144,7 +144,5 @@ public:
         return ballPlacementPoint;
     }
 
-    uint getGoalieId() const{
-        return OurInfo.goalie;
-    }
+    uint getGoalieId() const { return OurInfo.goalie; }
 };

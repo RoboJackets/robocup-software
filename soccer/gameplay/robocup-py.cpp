@@ -614,7 +614,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
-    
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
         "OurRobot", init<int, SystemState*>())
@@ -653,17 +652,14 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
-    
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
-  
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
-   
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -694,7 +690,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
-  
 
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
@@ -766,24 +761,20 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("nameLookup", &Configuration::nameLookup,
              return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
-  
 
     // Add wrappers for ConfigItem subclasses
     class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
-  
 
     class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
                                                            no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
-  
 
     class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
- 
 
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)

@@ -184,7 +184,7 @@ void MainWindow::initialize() {
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
 
-    _autoExternalReferee=_processor->externalReferee();
+    _autoExternalReferee = _processor->externalReferee();
 }
 
 void MainWindow::logFileChanged() {
@@ -703,14 +703,12 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee =
-        (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
+    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
 
-
     if (haveExternalReferee && _autoExternalReferee) {
-        //External Ref is connected and should be used
+        // External Ref is connected and should be used
         _ui.fastHalt->setEnabled(false);
         _ui.fastStop->setEnabled(false);
         _ui.fastReady->setEnabled(false);
@@ -726,16 +724,20 @@ void MainWindow::updateStatus() {
         _ui.fastKickoffYellow->setEnabled(true);
     }
 
-    if(std::find(validIds.begin(), validIds.end(), _processor->state()->gameState.getGoalieId()) != validIds.end() && haveExternalReferee){
-        //The External Ref is connected and transmitting a valid goalie ID
+    if (std::find(validIds.begin(), validIds.end(),
+                  _processor->state()->gameState.getGoalieId()) !=
+            validIds.end() &&
+        haveExternalReferee) {
+        // The External Ref is connected and transmitting a valid goalie ID
         _ui.goalieID->setEnabled(false);
 
-        //Changes the goalie INDEX which is 1 higher than the goalie ID
-        if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1){
-            _ui.goalieID->setCurrentIndex(_processor->state()->gameState.getGoalieId()+1);
+        // Changes the goalie INDEX which is 1 higher than the goalie ID
+        if (_ui.goalieID->currentIndex() !=
+            _processor->state()->gameState.getGoalieId() + 1) {
+            _ui.goalieID->setCurrentIndex(
+                _processor->state()->gameState.getGoalieId() + 1);
         }
-    }
-    else{
+    } else {
         _ui.goalieID->setEnabled(true);
     }
 
@@ -1150,7 +1152,7 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
-    _autoExternalReferee=value;
+    _autoExternalReferee = value;
     _processor->externalReferee(value);
 }
 
