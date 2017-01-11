@@ -721,7 +721,8 @@ void MainWindow::updateStatus() {
     bool haveExternalReferee =
         (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
 
-    if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1){
+    std::vector<int> validIds = _processor->state()->ourValidIds();
+    if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1 && std::find(validIds.begin(), validIds.end(), _processor->state()->gameState.getGoalieId()) != validIds.end()){
         _ui.goalieID->setCurrentIndex(_processor->state()->gameState.getGoalieId()+1);
     }
 
