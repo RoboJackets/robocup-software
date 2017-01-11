@@ -10,3 +10,4 @@
 +| right arrow      | next frame             |
 +| shift/left arrow | reverse speed increase |
 +| shift/right arrow| play faster            |
++
