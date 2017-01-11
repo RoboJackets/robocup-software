@@ -185,11 +185,13 @@ def assign_roles(robots, role_reqs):
     # To do our calculations though, we need to have a flat list of RoleRequirements to match to our list of robots
     # The flatten_tree() method does this and keeps track of how to rebuild the tree so we can do so at the end
     def flatten_tree(tree, path_prefix=[]):
+        valid_shell_ids = [bot.shell_id() for bot in robots]
         for key, subtree in tree.items():
             if isinstance(subtree, dict):
                 flatten_tree(subtree, path_prefix + [key])
             elif isinstance(subtree, RoleRequirements):
-                role_reqs_list.append(subtree)
+                if subtree.required_shell_id == None or subtree.required_shell_id in valid_shell_ids:
+                    role_reqs_list.append(subtree)
                 tree_mapping[subtree] = path_prefix + [key]
             else:
                 raise AssertionError("Unknown node type in role_reqs tree: " +
