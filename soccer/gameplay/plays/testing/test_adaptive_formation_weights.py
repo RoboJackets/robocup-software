@@ -26,7 +26,7 @@ class TestAdaptiveFormationWeights(play.Play):
         self.add_state(TestAdaptiveFormationWeights.State.testBestPass, behavior.Behavior.State.running)
 
         # Enable which portion we want to test
-        mode = 2
+        mode = 1
         self.add_transition(behavior.Behavior.State.start,
                             TestAdaptiveFormationWeights.State.testPointCoeff, lambda: mode == 1,
                             'immediately')
