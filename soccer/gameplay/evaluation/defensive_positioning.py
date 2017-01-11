@@ -115,7 +115,7 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robot_pos[])
         for pos  in blocks:
             # Produce a number between -1 and 1
             # Find u based off of line_offset
-            # Scale output then based on distance
+            # Scale output then based on distance 
             u = line_offset * distance_scale
             chance += max((35/32)*pow((1-pow(u,2)), 3), 0)
 
