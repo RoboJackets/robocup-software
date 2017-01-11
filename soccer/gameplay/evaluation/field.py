@@ -6,9 +6,8 @@ import math
 ## Determines how much "space" there is at a pos
 #    "Space" is how empty an area of the field is
 # @param pos: point to evalute
-# @returns Number between 0 and ~1.3 representing the closeness of robots
+# @returns Number between 0 and 1 representing the closeness of robots
 # The higher the number, the more robots closer to the position
-# A triweight kernal function is used so the max is not quite 1
 def space_coeff_at_pos(pos, excluded_robots=[]):
     # TODO: Add in velocity prediction
 

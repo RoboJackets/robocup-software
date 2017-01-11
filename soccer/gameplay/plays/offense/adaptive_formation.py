@@ -11,6 +11,7 @@ import tactics.coordinated_pass
 import skills.moving_pass_receive
 
 # TODO: Copy-Paste notes document into here
+# TODO: Fix everything to follow standards
 
 class AdaptiveFormation(standard_play.StandardPlay):
     class State(enum.Enum):

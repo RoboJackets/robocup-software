@@ -1,3 +1,8 @@
+import main
+import robocup
+import math
+import constants
+import evaluations.ball
 # Defensive positioning
 # 2 main schools of thought
 # Man to man coverage
@@ -71,6 +76,53 @@
 # @param blocking_robot_pos[]: list of robots that we should estimate the block for
 # @return A percentage chance of block
 def estimate_kick_block_percent(kick_point, recieve_point, blocking_robot_pos[]):
+
+    # for each blocking robot pos
+    # take angle and distance
+    # Move through N different angles
+    # Producting a Keneral function for each blocking robot
+    # Invert
+    # Normalize (Using a square or some sort of thing)
+    # Produce percentage from this estimation
+
+    # Array of tuples of all possible blocks
+    blocks = []
+    kick_direction = (recieve_point - kick_point)
+    kick_angle = math.atan2(kick_direction.y, kick_direction.x)
+
+    for pos in blocking_robot_pos:
+        block_direction = (pos - kick_point)
+        dist = block_direction.mag()
+        angle = math.atan2(block_direction.y, block_direction.x) - kick_angle
+
+        if (math.abs(angle) < math.pi / 2 && dist > 0):
+
+        # Kill any that are over pi/2 away
+        blocks.extend([(angle, dist)])
+
+    # Standard deviation basically
+    half_kick_width = 0.1*math.pi
+    num_of_estimates = 10
+
+    total = 0
+
+    for line_offset in range(-half_kick_width, half_kick_width):
+        chance = 0
+        # How much to decrease with of kernel per distance away
+        # Inf @ 0 to 0 @ pi / 2
+        distance_scale = 1 / math.abs(math.tan(line_num))
+
+        for pos  in blocks:
+            # Produce a number between -1 and 1
+            # Find u based off of line_offset
+            # Scale output then based on distance
+            u = line_offset * distance_scale
+            chance += max((35/32)*pow((1-pow(u,2)), 3), 0)
+
+    # Invert
+    # Normalize
+    # Produce percentage
+
     pass
     # TODO: Figure out the math for this
     # Most likely project the blocking robots onto the kick_line
@@ -86,7 +138,25 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robot_pos[])
 # @param robot: The robot which we want to estimate
 # @return Angle of most likely kick
 def predict_kick_direction(robot):
-    pass
+    angle = robot.angle
+    pos = robot.pos
+    angle_vel = robot.angle_vel
+
+    # Find interception between robot and ball
+    # Use distance from bot to ball to predict time it takes to intercept
+    # Assumes their robot has about the same physical characteristics as our robots
+    # TODO: Predict this better time_to_ball assumes zero veloctiy
+    inst_ball_time = time_to_ball(robot)
+    future_ball_pos = predict(main.ball().pos, main.ball().vel, inst_ball_time)
+    direction = (future_ball_pos - pos).normalized()
+
+    robot_angle_predict = angle + angle_vel*inst_ball_time
+    # TODO: Make sure arctan produces the right rotation
+    ball_angle_predict = math.degrees(math.atan2(direction.y, direction.x))
+
+    c = 0.7
+    return c * robot_angle_predict + (1-c) * ball_angle_predict
+
     # TODO: Figure out the math for this
     # Take in the position / velocity / accel of the translation of the robot
     # Do a quick prediction based on interception in the furture
@@ -117,7 +187,7 @@ def create_area_defense_zones():
 ## Estimates how dangerous an enemy robot can be at a certain point
 #
 # @return Risk score at that point
-def estimate_risk_score(point)
+def estimate_risk_score(point):
     pass
     # Merge of a few different scores
     # Openness of pass / shot
