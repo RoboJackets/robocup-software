@@ -183,6 +183,8 @@ void MainWindow::initialize() {
     updateTimer.setSingleShot(true);
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
+
+    _autoExternalReferee=_processor->externalReferee();
 }
 
 void MainWindow::logFileChanged() {
@@ -393,23 +395,6 @@ void MainWindow::updateViews() {
         if (_ui.behaviorTree->toPlainText() != behaviorStr) {
             _ui.behaviorTree->setPlainText(behaviorStr);
         }
-    }
-
-    if (RJ::now() - _processor->refereeModule()->received_time >
-        RJ::Seconds(1)) {
-        _ui.fastHalt->setEnabled(true);
-        _ui.fastStop->setEnabled(true);
-        _ui.fastReady->setEnabled(true);
-        _ui.fastForceStart->setEnabled(true);
-        _ui.fastKickoffBlue->setEnabled(true);
-        _ui.fastKickoffYellow->setEnabled(true);
-    } else {
-        _ui.fastHalt->setEnabled(false);
-        _ui.fastStop->setEnabled(false);
-        _ui.fastReady->setEnabled(false);
-        _ui.fastForceStart->setEnabled(false);
-        _ui.fastKickoffBlue->setEnabled(false);
-        _ui.fastKickoffYellow->setEnabled(false);
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
@@ -719,11 +704,39 @@ void MainWindow::updateStatus() {
 
     // Determine if we are receiving packets from an external referee
     bool haveExternalReferee =
-        (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
+        (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
-    if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1 && std::find(validIds.begin(), validIds.end(), _processor->state()->gameState.getGoalieId()) != validIds.end()){
-        _ui.goalieID->setCurrentIndex(_processor->state()->gameState.getGoalieId()+1);
+
+
+    if (haveExternalReferee && _autoExternalReferee) {
+        //External Ref is connected and should be used
+        _ui.fastHalt->setEnabled(false);
+        _ui.fastStop->setEnabled(false);
+        _ui.fastReady->setEnabled(false);
+        _ui.fastForceStart->setEnabled(false);
+        _ui.fastKickoffBlue->setEnabled(false);
+        _ui.fastKickoffYellow->setEnabled(false);
+    } else {
+        _ui.fastHalt->setEnabled(true);
+        _ui.fastStop->setEnabled(true);
+        _ui.fastReady->setEnabled(true);
+        _ui.fastForceStart->setEnabled(true);
+        _ui.fastKickoffBlue->setEnabled(true);
+        _ui.fastKickoffYellow->setEnabled(true);
+    }
+
+    if(std::find(validIds.begin(), validIds.end(), _processor->state()->gameState.getGoalieId()) != validIds.end() && haveExternalReferee){
+        //The External Ref is connected and transmitting a valid goalie ID
+        _ui.goalieID->setEnabled(false);
+
+        //Changes the goalie INDEX which is 1 higher than the goalie ID
+        if(_ui.goalieID->currentIndex() != _processor->state()->gameState.getGoalieId()+1){
+            _ui.goalieID->setCurrentIndex(_processor->state()->gameState.getGoalieId()+1);
+        }
+    }
+    else{
+        _ui.goalieID->setEnabled(true);
     }
 
     /*if (_autoExternalReferee && haveExternalReferee &&
@@ -1137,7 +1150,8 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
-    _processor->refereeModule()->useExternalReferee(value);
+    _autoExternalReferee=value;
+    _processor->externalReferee(value);
 }
 
 ////////

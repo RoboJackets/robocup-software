@@ -242,9 +242,6 @@ private:
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
 
-    // True if we are using external referee packets
-    bool _externalReferee;
-
     /// Measured framerate
     float _framerate;
 
