@@ -94,9 +94,9 @@ public:
     bool joystickValid() const;
     JoystickControlValues getJoystickControlValues();
 
-    void externalReferee(bool value) { _externalReferee = value; }
+    void externalReferee(bool value) { _refereeModule->useExternalReferee(value); }
 
-    bool externalReferee() const { return _externalReferee; }
+    bool externalReferee() const { return _refereeModule->useExternalReferee(); }
 
     void manualID(int value);
     int manualID() const { return _manualID; }
