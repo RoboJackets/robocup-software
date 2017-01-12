@@ -709,7 +709,6 @@ void MainWindow::updateStatus() {
 
     for (int i = 1; i < 17; i++) {
         // This will need to change if the max number of robots changes
-        //.stdString()
         if (std::find(validIds.begin(), validIds.end(), i - 1) !=
             validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
@@ -717,7 +716,6 @@ void MainWindow::updateStatus() {
         } else {
             _ui.goalieID->setItemData(i, false, Qt::UserRole - 1);
         }
-        // std::cout<<_ui.goalieID->itemText(i).toStdString();
     }
 
     if (haveExternalReferee && _autoExternalReferee) {
