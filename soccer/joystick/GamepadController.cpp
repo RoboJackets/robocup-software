@@ -19,13 +19,6 @@ GamepadController::GamepadController()
         return;
     }
 
-    // Load extra controller mappings
-    SDL_GameControllerAddMapping(
-        "030000006d04000016c2000011010000,Logitech F310 Gamepad (DInput)\
-,platform:Linux,x:b0,a:b1,b:b2,y:b3,back:b8,start:b9,dpleft:h0.8,dpdown:h0.0,\
-dpdown:h0.4,dpright:h0.0,dpright:h0.2,dpup:h0.0,dpup:h0.1,leftshoulder:h0.0,\
-dpup:h0.1,leftshoulder:h0.0,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,\
-righttrigger:b7,leftstick:b10,rightstick:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,");
     // Attempt to add additional mappings (relative to run)
     if (SDL_GameControllerAddMappingsFromFile(
             "../external/sdlcontrollerdb/gamecontrollerdb.txt") == -1) {
