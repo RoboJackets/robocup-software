@@ -752,12 +752,6 @@ void MainWindow::updateStatus() {
         _ui.goalieID->setEnabled(true);
     }
 
-    /*if (_autoExternalReferee && haveExternalReferee &&
-    !_ui.externalReferee->isChecked())
-    {
-        _ui.externalReferee->setChecked(true);
-    }*/
-
     // Is the processing thread running?
     if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
         // Processing loop hasn't run recently.
