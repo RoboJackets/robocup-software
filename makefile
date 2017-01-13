@@ -16,7 +16,8 @@ run: all
 	cd run; ./soccer
 rs: run-sim
 run-sim: all
-	-pkill -f './simulator --headless'
+	# Kill simulator if running
+	-if [ -n "$$(ps -A -o args | grep './[s]imulator --headless')" ]; then kill "$$(ps -A -o pid,args | grep './[s]imulator --headless' | awk '{print $$1}')"; fi
 	cd run; ./simulator --headless &
 	cd run; ./soccer -sim -pbk example.pbk
 run-sim2play: all
