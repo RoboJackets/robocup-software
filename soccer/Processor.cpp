@@ -401,7 +401,8 @@ void Processor::run() {
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
-            curStatus.lastRefereeTime = std::max(curStatus.lastRefereeTime,packet->receivedTime);
+            curStatus.lastRefereeTime =
+                std::max(curStatus.lastRefereeTime, packet->receivedTime);
             delete packet;
         }
 
