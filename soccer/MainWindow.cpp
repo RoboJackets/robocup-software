@@ -734,10 +734,7 @@ void MainWindow::updateStatus() {
         _ui.fastKickoffYellow->setEnabled(true);
     }
 
-    if (std::find(validIds.begin(), validIds.end(),
-                  _processor->state()->gameState.getGoalieId()) !=
-            validIds.end() &&
-        haveExternalReferee) {
+    if (haveExternalReferee) {
         // The External Ref is connected and transmitting a valid goalie ID
         _ui.goalieID->setEnabled(false);
 
