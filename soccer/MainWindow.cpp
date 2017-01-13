@@ -707,8 +707,7 @@ void MainWindow::updateStatus() {
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
 
-    for (int i = 1; i < 17; i++) {
-        // This will need to change if the max number of robots changes
+    for (int i = 1; i <= Num_Shells; i++) {
         if (std::find(validIds.begin(), validIds.end(), i - 1) !=
             validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
