@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae82b98638e761114f7a6a4d27ca632d6":[12,0,5,15,8,2,0,13],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae900f7aee36a758ba629667f6eff8554":[12,0,5,15,8,2,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aef463806dab4c1f3e99a87c03b2ed0c9":[12,0,5,15,8,2,0,7],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html":[12,0,5,15,8,2,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html":[12,0,5,15,8,3,0],
@@ -126,8 +128,8 @@ var NAVTREEINDEX9 =
 "dir_cc132907b6047b9805f38c63e061574e.html":[13,0,1,5],
 "dir_cee59dbc20d175ba3d3ad00d9c6ec89c.html":[13,0,0,0,1,0],
 "files.html":[13,0],
-"functions.html":[12,3,0,0],
 "functions.html":[12,3,0],
+"functions.html":[12,3,0,0],
 "functions_a.html":[12,3,0,1],
 "functions_b.html":[12,3,0,2],
 "functions_c.html":[12,3,0,3],
@@ -192,10 +194,10 @@ var NAVTREEINDEX9 =
 "group__matrices.html":[10,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,4,0,2],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,0],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,4,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,4,0,13],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,2],
 "hierarchy.html":[12,2],
 "index.html":[],
 "md_doc_BuildSystems.html":[0],
@@ -210,8 +212,8 @@ var NAVTREEINDEX9 =
 "md_doc_training2016_training_2016.html":[7],
 "modules.html":[10],
 "multicast_8hpp_source.html":[13,0,0,6],
-"namespace_gameplay.html":[11,0,0],
 "namespace_gameplay.html":[12,0,4],
+"namespace_gameplay.html":[11,0,0],
 "namespaces.html":[11,0],
 "pages.html":[],
 "robocup-py_8hpp_source.html":[13,0,1,0,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX9 =
 "struct_field___dimensions.html#ac25b621e4a5e235f01e1c95f5bf642dd":[12,0,33,3],
 "struct_field___dimensions.html#ac847bf9ae2f6380d8b304484638a78b2":[12,0,33,5],
 "struct_field___dimensions.html#acb165fd38d1941fd7b978509d6d99227":[12,0,33,28],
-"struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f":[12,0,33,24],
-"struct_field___dimensions.html#ad85026691b7e262d2ea81a6268396c93":[12,0,33,1],
-"struct_field___dimensions.html#adbdb9ae4a772deeeb2f7d4a7a1d8b1d6":[12,0,33,25]
+"struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f":[12,0,33,24]
 };

@@ -27,6 +27,7 @@ var class_game_state =
     [ "canKick", "class_game_state.html#a868bbec72975daa13df37bba694a7126", null ],
     [ "direct", "class_game_state.html#a2f855d59e50c5adea23c141e564b1ca1", null ],
     [ "getBallPlacementPoint", "class_game_state.html#a2be4ce88438520651674c0fd512e5f46", null ],
+    [ "getGoalieId", "class_game_state.html#a9591fabfc52c96a0cfa909aac9a66858", null ],
     [ "halt", "class_game_state.html#aea416a4239013ee8ac5b0be8cc8ec68e", null ],
     [ "indirect", "class_game_state.html#ad11de2607de0b90995e4029b57adc03f", null ],
     [ "inReadyState", "class_game_state.html#a57ff21fd6e98cc983be56169ea941520", null ],

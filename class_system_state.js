@@ -15,6 +15,7 @@ var class_system_state =
     [ "drawShapeSet", "group__drawing__functions.html#gac421595f2a551228d2293bb0d8d89782", null ],
     [ "drawText", "group__drawing__functions.html#ga7aaafd2a33d891f2908b5c2d1eede831", null ],
     [ "findDebugLayer", "class_system_state.html#a812653eed4f23e3636ca4ebad24d6174", null ],
+    [ "ourValidIds", "class_system_state.html#a4f199334c604adcf802f74a9bf13a85e", null ],
     [ "timestamp", "class_system_state.html#a2f485e8762531bac6792384286fd6bc4", null ],
     [ "ball", "class_system_state.html#ab6177237598711857c66eb4a92cd8eb8", null ],
     [ "gameState", "class_system_state.html#a1babf5bd12c00f8fd35eb0cdf4ee1240", null ],
