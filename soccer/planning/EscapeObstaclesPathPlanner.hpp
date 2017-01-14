@@ -1,5 +1,7 @@
-#include "SingleRobotPathPlanner.hpp"
 #include <Geometry2d/Point.hpp>
+#include <functional>
+#include <rrt/Tree.hpp>
+#include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -12,7 +14,7 @@ class EscapeObstaclesPathPlanner : public SingleRobotPathPlanner {
 public:
     EscapeObstaclesPathPlanner() : SingleRobotPathPlanner(false){};
 
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     /// The MotionCommand type that this planner handles
     virtual MotionCommand::CommandType commandType() const override {
@@ -22,9 +24,12 @@ public:
     /// Uses an RRT to find a point near to @pt that isn't blocked by obstacles.
     /// If @prevPt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.
+    /// @param rrtLogger Optional callback to log the rrt tree after it's built
     static Geometry2d::Point findNonBlockedGoal(
         Geometry2d::Point pt, boost::optional<Geometry2d::Point> prevPt,
-        const Geometry2d::ShapeSet& obstacles, int maxItr = 300);
+        const Geometry2d::ShapeSet& obstacles, int maxItr = 300,
+        std::function<void(const RRT::Tree<Geometry2d::Point>&)> rrtLogger =
+            nullptr);
 
     static void createConfiguration(Configuration* cfg);
 

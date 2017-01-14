@@ -177,7 +177,7 @@ TEST(TrapezoidalMotion3, MoreTests) {
     float finalSpeed = 0;
 
     float result = Trapezoidal::getTime(2.03294, 2.03294, 2.2, 1, 0.176091, 0);
-    EXPECT_FALSE(isnan(result));
+    EXPECT_FALSE(std::isnan(result));
 }
 
 TEST(TrapezoidalMotion, TriangleRampUp) {

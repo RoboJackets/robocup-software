@@ -1,16 +1,19 @@
 #pragma once
 
-#include "SingleRobotPathPlanner.hpp"
-#include "Tree.hpp"
-#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
+#include "SingleRobotPathPlanner.hpp"
 
-#include <boost/optional.hpp>
+#include <rrt/BiRRT.hpp>
+
+#include "SystemState.hpp"
+
 #include <Eigen/Dense>
+#include <boost/optional.hpp>
 #include <list>
 
 namespace Planning {
@@ -65,7 +68,7 @@ public:
         return MotionCommand::PathTarget;
     }
 
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     int reusePathTries = 0;
 
@@ -76,7 +79,7 @@ protected:
 
     /// Check to see if the previous path (if any) should be discarded and
     /// replaced with a newly-planned one
-    bool shouldReplan(const SinglePlanRequest& planRequest,
+    bool shouldReplan(const PlanRequest& planRequest,
                       const std::vector<DynamicObstacle> dynamicObs,
                       std::string* debugOut = nullptr) const;
 
@@ -84,13 +87,15 @@ protected:
     std::vector<Geometry2d::Point> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles);
+        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        unsigned shellID);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> paths);
+        const std::vector<DynamicObstacle> paths, SystemState* state,
+        unsigned shellID);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
@@ -112,7 +117,6 @@ protected:
      */
     static void optimize(std::vector<Geometry2d::Point>& path,
                          const Geometry2d::ShapeSet& obstacles,
-                         const MotionConstraints& motionConstraints,
                          Geometry2d::Point vi, Geometry2d::Point vf);
 
     /**

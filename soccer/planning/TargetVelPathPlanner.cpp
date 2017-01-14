@@ -1,9 +1,9 @@
 #include "TargetVelPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include <cmath>
 #include <boost/range/irange.hpp>
+#include <cmath>
+#include "EscapeObstaclesPathPlanner.hpp"
+#include "TrapezoidalPath.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -46,9 +46,9 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     auto val = std::lower_bound(
         scaledDistRange.begin(), scaledDistRange.end(), obstacles,
         [start, dir, rangeScaleFactor](int scaledDist,
-                                       const Geometry2d::ShapeSet& obstacles) {
-            Geometry2d::Segment pathSegment(
-                start, start + dir * (scaledDist / rangeScaleFactor));
+                                       const ShapeSet& obstacles) {
+            Segment pathSegment(start,
+                                start + dir * (scaledDist / rangeScaleFactor));
             // Returns true if a path of the given distance doesn't hit
             // obstacles
             return !obstacles.hit(pathSegment);
@@ -58,16 +58,12 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     return start + dir * nonblockedPathLen;
 }
 
-bool TargetVelPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) const {
-    const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const Path* prevPath = planRequest.prevPath.get();
+    const ShapeSet& obstacles = planRequest.obstacles;
 
     const WorldVelTargetCommand& command =
-        static_cast<const WorldVelTargetCommand&>(planRequest.cmd);
+        static_cast<const WorldVelTargetCommand&>(*planRequest.motionCommand);
 
     if (SingleRobotPathPlanner::shouldReplan(planRequest)) return true;
 
@@ -82,6 +78,7 @@ bool TargetVelPathPlanner::shouldReplan(
 
     // Replan if the maxSpeed of the previous path differs too much from the
     // command velocity
+
     if (auto trapezoidalPath = dynamic_cast<const TrapezoidalPath*>(prevPath)) {
         const float velChange =
             command.worldVel.mag() - trapezoidalPath->maxSpeed();
@@ -98,11 +95,10 @@ bool TargetVelPathPlanner::shouldReplan(
 
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
-std::unique_ptr<Path> TargetVelPathPlanner::run(
-    SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const MotionCommand& cmd = planRequest.cmd;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
+std::unique_ptr<Path> TargetVelPathPlanner::run(PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const MotionCommand& cmd = *planRequest.motionCommand;
+    const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
@@ -128,7 +124,7 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
                                 endpoint, 0, moddedConstraints));
-        path->setStartTime(RJ::timestamp());
+        path->setStartTime(RJ::now());
         return std::move(path);
     } else {
         return std::move(prevPath);

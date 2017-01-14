@@ -3,6 +3,7 @@
 #include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Pid.hpp>
+#include <time.hpp>
 
 class OurRobot;
 
@@ -48,8 +49,8 @@ private:
     /// The last velocity command (in m/s) that we sent / to the robot
     Geometry2d::Point _lastVelCmd;
 
-    /// the time in microseconds when the last velocity command was sent
-    long _lastCmdTime;
+    /// the time when the last velocity command was sent
+    RJ::Time _lastCmdTime;
 
     Pid _positionXController;
     Pid _positionYController;

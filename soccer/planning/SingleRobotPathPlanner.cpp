@@ -1,11 +1,16 @@
 #include "SingleRobotPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "RRTPlanner.hpp"
-#include "PivotPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
+//#include "PivotPathPlanner.hpp"
+//#include "RRTPlanner.hpp"
+//#include "TargetVelPathPlanner.hpp"
+//#include "TargetVelPathPlanner.hpp"
+#include "PivotPathPlanner.hpp"
+#include "RRTPlanner.hpp"
+#include "TargetVelPathPlanner.hpp"
+
+using namespace std;
 
 namespace Planning {
 
@@ -100,11 +105,9 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
     }
 }
 
-bool SingleRobotPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) {
-    const auto currentInstant = planRequest.startInstant;
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
+bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
+    const auto currentInstant = planRequest.start;
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
@@ -112,16 +115,15 @@ bool SingleRobotPathPlanner::shouldReplan(
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    const RJ::Time kPathExpirationInterval =
-        RJ::SecsToTimestamp(replanTimeout());
-    if ((RJ::timestamp() - prevPath->startTime()) > kPathExpirationInterval) {
+    const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
+    if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
         return true;
     }
 
     // Evaluate where the path says the robot should be right now
-    float timeIntoPath =
-        RJ::TimestampToSecs((RJ::timestamp() - prevPath->startTime())) +
-        1.0f / 60.0f;
+    RJ::Seconds timeIntoPath =
+        (RJ::now() - prevPath->startTime()) + RJ::Seconds(1) / 60;
+
     boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
     MotionInstant target =
@@ -137,8 +139,8 @@ bool SingleRobotPathPlanner::shouldReplan(
     }
 
     // Replan if we enter new obstacles
-    float hitTime = 0;
-    if (prevPath->hit(obstacles, hitTime, timeIntoPath)) {
+    RJ::Seconds hitTime;
+    if (prevPath->hit(obstacles, timeIntoPath, &hitTime)) {
         return true;
     }
 
