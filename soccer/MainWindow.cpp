@@ -1041,14 +1041,15 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
 
 void MainWindow::on_actionChange_Light_Dark_Mode_triggered() {
     QFile file(ApplicationRunDirectory()
-        .filepath("..soccer/ui/QTDark.stylesheet"));
+        .filePath("../soccer/ui/QTDark.stylesheet"));
     file.open(QFile::ReadOnly);
     QString stylesheet = file.readAll();
-    if (this->stylesheet().length() < 0) {
+    if (this->styleSheet() != stylesheet) {
         this->setStyleSheet(stylesheet);
     } else {
         this->setStyleSheet(QString(""));
     }
+    file.close();
 
 }
 
