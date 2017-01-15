@@ -187,10 +187,6 @@ void MotionControl::run() {
     // the +y axis of the robot points forwards
     target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
 
-
-
-
-
     this->_targetBodyVel(target.vel);
 }
 
