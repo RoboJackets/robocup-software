@@ -154,13 +154,13 @@ int main(int argc, char* argv[]) {
 
     win->setUseRefChecked(!noref);
 
-    if (!QDir("logs").exists()) {
+    if (!QDir("./run/logs").exists()) {
         fprintf(stderr, "No logs/ directory - not writing log file\n");
     } else if (!log) {
         fprintf(stderr, "Not writing log file\n");
     } else {
         QString logFile =
-            QString("logs/") +
+            QString("./run/logs/") +
             QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
         if (!processor->openLog(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
