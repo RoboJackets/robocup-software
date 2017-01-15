@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['motion_20control',['Motion Control',['../md_doc_MotionControl.html',1,'']]]
+  ['keyboard_5fshortcuts',['Keyboard_Shortcuts',['../md_doc_Keyboard_Shortcuts.html',1,'']]]
 ];

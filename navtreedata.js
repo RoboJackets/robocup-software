@@ -5,6 +5,7 @@ var NAVTREE =
     [ "Contributing Guide", "md_doc_contributing.html", null ],
     [ "Documentation", "md_doc_Documentation.html", null ],
     [ "Gameplay", "md_doc_Gameplay.html", null ],
+    [ "Keyboard_Shortcuts", "md_doc_Keyboard_Shortcuts.html", null ],
     [ "Motion Control", "md_doc_MotionControl.html", null ],
     [ "Soccer", "md_doc_Soccer.html", null ],
     [ "Style", "md_doc_Style.html", null ],
@@ -44,7 +45,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html",
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa62dd4780a99740c5801460c7d2f1d8d",
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae82b98638e761114f7a6a4d27ca632d6",
-"struct_field___dimensions.html#ad85026691b7e262d2ea81a6268396c93"
+"struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
