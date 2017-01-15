@@ -10,7 +10,10 @@
 #include <stdio.h>
 #include <signal.h>
 
+
 using namespace std;
+
+
 
 void quit(int signal) {
     fprintf(stderr, "Exiting due to signal %d\n", signal);
@@ -20,13 +23,14 @@ void quit(int signal) {
 void usage(const char* prog) {
     fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
     fprintf(stderr, "\t--help       Show usage message\n");
-    fprintf(stderr, "\t--sv         Use shared vision multicast port\n");
     fprintf(
         stderr,
         "\t--headless   Run the simulator in headless mode (without a GUI)\n");
     fprintf(stderr,
             "\t--smallfield Run the simulator with the small/single field.\n");
 }
+
+
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -91,6 +95,8 @@ int main(int argc, char* argv[]) {
     // start up threads
     sim_thread.start();
     int ret = app.exec();
+
+    
 
     // shut down sim_thread
     sim_thread.stop();

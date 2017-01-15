@@ -19,6 +19,7 @@
 #include <iostream>
 #include <sys/time.h>
 
+
 using namespace std;
 using namespace Geometry2d;
 
@@ -26,6 +27,7 @@ static const QHostAddress LocalAddress(QHostAddress::LocalHost);
 static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 const int Oversample = 1;
+
 
 Environment::Environment(const QString& configFile, bool sendShared_,
                          SimEngine* engine)
@@ -43,6 +45,12 @@ Environment::Environment(const QString& configFile, bool sendShared_,
 }
 
 Environment::~Environment() { delete _field; }
+
+/*
+RJ::Time Environment::timeFromUpdate() {
+    return RJ::now() - lastUpdate;
+}
+*/
 
 void Environment::connectSockets() {
     // Bind sockets
@@ -72,6 +80,10 @@ void Environment::preStep(float deltaTime) {
 }
 
 void Environment::step() {
+    if (RJ::now() - lastUpdate >= timeout) {
+        exit(0);
+    }
+
     // Check for SimCommands
     while (_visionSocket.hasPendingDatagrams()) {
         Packet::SimCommand cmd;
@@ -349,6 +361,9 @@ Robot* Environment::robot(bool blue, int board_id) const {
 }
 
 void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
+    lastUpdate = RJ::now();
+    cout << "Radio transmitted" << endl;
+
     for (int i = 0; i < tx.robots_size(); ++i) {
         const Packet::Robot& cmd = tx.robots(i);
 

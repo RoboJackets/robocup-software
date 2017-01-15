@@ -20,6 +20,8 @@
 #include "FastTimer.hpp"
 #include "SimEngine.hpp"
 #include "GL_ShapeDrawer.h"
+#include <Utils.hpp>
+#include <time.hpp>
 
 class SSL_DetectionRobot;
 
@@ -28,6 +30,8 @@ class Environment : public QObject {
 
 public:
     typedef QMap<unsigned int, Robot*> RobotMap;
+    const RJ::Seconds timeout = 10000ms;
+    RJ::Time lastUpdate = RJ::now();
 
 private:
     // IF true, the next vision frame is dropped.
@@ -75,6 +79,8 @@ public:
     void connectSockets();
 
     void dropFrame() { _dropFrame = true; }
+
+    //RJ::Time timeFromUpdate();
 
     const QVector<Ball*>& balls() const { return _balls; }
 
