@@ -144,8 +144,10 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
-    // Get the item model from the goalieID boxes so we can disable them properly
-    goalieModel = qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
+    // Get the item model from the goalieID boxes so we can disable them
+    // properly
+    goalieModel =
+        qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
 
     // Append short Git hash to the main window title with an asterisk if the
     // current Git index is dirty
@@ -715,9 +717,11 @@ void MainWindow::updateStatus() {
         if (std::find(validIds.begin(), validIds.end(), i - 1) !=
             validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
-            item->setFlags(item->flags() | (Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+            item->setFlags(item->flags() |
+                           (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         } else {
-            item->setFlags(item->flags() & ~(Qt::ItemIsSelectable|Qt::ItemIsEnabled));
+            item->setFlags(item->flags() &
+                           ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         }
     }
 
