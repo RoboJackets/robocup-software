@@ -124,7 +124,8 @@ private Q_SLOTS:
     void on_actionStopRobots_triggered();
     void on_actionQuicksaveRobotLocations_triggered();
     void on_actionQuickloadRobotLocations_triggered();
-    void on_actionChange_Light_Dark_Mode_triggered();
+    void on_actionNone_triggered();
+    void on_actionDark_triggered();
 
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);

@@ -9,6 +9,7 @@
 #include "BatteryProfile.hpp"
 #include <Network.hpp>
 #include "git_version.hpp"
+#include <ui/StyleSheetManager.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -1039,18 +1040,21 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
     _ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
-void MainWindow::on_actionChange_Light_Dark_Mode_triggered() {
-    QFile file(ApplicationRunDirectory()
-        .filePath("../soccer/ui/QTDark.stylesheet"));
-    file.open(QFile::ReadOnly);
-    QString stylesheet = file.readAll();
-    if (this->styleSheet() != stylesheet) {
-        this->setStyleSheet(stylesheet);
-    } else {
-        this->setStyleSheet(QString(""));
-    }
-    file.close();
+void MainWindow::on_actionNone_triggered() {
+    StyleSheetManager manager(this);
+    // manager.changeStyleSheet("NONE");
+}
+ 
+void MainWindow::on_actionDark_triggered() {
+    // QFile file(ApplicationRunDirectory()
+    //     .filePath("../soccer/ui/QTDark.stylesheet"));
+    // file.open(QFile::ReadOnly);
+    // QString styleSheet = file.readAll();
+    // this->setStyleSheet(styleSheet);
+    // file.close();
 
+    // StyleSheetManager manager(this);
+    // manager.changeStyleSheet("DARK");
 }
 
 // Manual control commands

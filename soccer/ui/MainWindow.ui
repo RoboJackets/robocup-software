@@ -1904,6 +1904,13 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuChange_Style_Sheet">
+     <property name="title">
+      <string>Change Style Sheet</string>
+     </property>
+     <addaction name="actionNone"/>
+     <addaction name="actionDark"/>
+    </widget>
     <addaction name="action0"/>
     <addaction name="action90"/>
     <addaction name="action180"/>
@@ -1914,7 +1921,7 @@
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
     <addaction name="actionTeam_Names"/>
-    <addaction name="actionChange_Light_Dark_Mode"/>
+    <addaction name="menuChange_Style_Sheet"/>
    </widget>
    <widget class="QMenu" name="menu_Field">
     <property name="title">
@@ -2312,9 +2319,14 @@
     <string>Start Logging</string>
    </property>
   </action>
-  <action name="actionChange_Light_Dark_Mode">
+  <action name="actionNone">
    <property name="text">
-    <string>Change Light/Dark Mode</string>
+    <string>None</string>
+   </property>
+  </action>
+  <action name="actionDark">
+   <property name="text">
+    <string>Dark</string>
    </property>
   </action>
  </widget>
