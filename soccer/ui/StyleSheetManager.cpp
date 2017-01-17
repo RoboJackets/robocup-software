@@ -2,14 +2,12 @@
 #include "StyleSheetManager.hpp"
 #include <Utils.hpp>
 
-StyleSheetManager::StyleSheetManager(MainWindow* window) {
+StyleSheetManager::StyleSheetManager(QMainWindow* window) {
 	win =  window;
-	DARK = "../soccer/ui/QTDark.stylesheet";
-	NONE = "";
 }
 
 void StyleSheetManager::changeStyleSheet(QString name) {
-	if (name.compare("") == 0) {
+	if (name.compare("NONE") == 0) {
 		win->setStyleSheet(NONE);
 	}
 	else if (name.compare("DARK") == 0) {

@@ -1042,7 +1042,7 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
 
 void MainWindow::on_actionNone_triggered() {
     StyleSheetManager manager(this);
-    // manager.changeStyleSheet("NONE");
+    manager.changeStyleSheet("NONE");
 }
  
 void MainWindow::on_actionDark_triggered() {
@@ -1053,8 +1053,8 @@ void MainWindow::on_actionDark_triggered() {
     // this->setStyleSheet(styleSheet);
     // file.close();
 
-    // StyleSheetManager manager(this);
-    // manager.changeStyleSheet("DARK");
+    StyleSheetManager manager(this);
+    manager.changeStyleSheet("DARK");
 }
 
 // Manual control commands

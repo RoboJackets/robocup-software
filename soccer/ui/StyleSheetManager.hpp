@@ -3,11 +3,11 @@
 using namespace std;
 
 class StyleSheetManager {
-	const QString DARK;
-	const QString NONE;
+	const QString DARK= "../soccer/ui/QTDark.stylesheet";
+	const QString NONE = "";
 
 	public:
-		StyleSheetManager(MainWindow* window);
+		StyleSheetManager(QMainWindow* window);
 		QMainWindow* win;
 		void changeStyleSheet(QString name);
 };
