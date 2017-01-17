@@ -1,8 +1,8 @@
 #include "PivotPathPlanner.hpp"
-#include "EscapeObstaclesPathPlanner.hpp"
 #include <Configuration.hpp>
-#include "RRTPlanner.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
 #include "Geometry2d/Util.hpp"
+#include "RRTPlanner.hpp"
 using namespace std;
 using namespace Geometry2d;
 
@@ -19,14 +19,13 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
                          "RobotRadius * multiplier");
 }
 
-bool PivotPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) const {
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
+bool PivotPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
-    const auto& command = dynamic_cast<const PivotCommand&>(planRequest.cmd);
+    const auto& command =
+        dynamic_cast<const PivotCommand&>(*planRequest.motionCommand);
 
     if (!prevPath) {
         return true;
@@ -50,14 +49,15 @@ bool PivotPathPlanner::shouldReplan(
     return false;
 }
 
-std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
-    const auto& rotationConstraints = planRequest.robotConstraints.rot;
+std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const auto& motionConstraints = planRequest.constraints.mot;
+    const auto& rotationConstraints = planRequest.constraints.rot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
-    const auto& command = dynamic_cast<const PivotCommand&>(planRequest.cmd);
+    const auto& command =
+        dynamic_cast<const PivotCommand&>(*planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
         // float radius = command.radius;
@@ -69,9 +69,9 @@ std::unique_ptr<Path> PivotPathPlanner::run(SinglePlanRequest& planRequest) {
         vector<Point> points;
 
         // maxSpeed = maxRadians * radius
-        MotionConstraints newConstraints = planRequest.robotConstraints.mot;
+        MotionConstraints newConstraints = planRequest.constraints.mot;
         newConstraints.maxSpeed = std::min(
-            newConstraints.maxSpeed, rotationConstraints.maxSpeed / 2 * radius);
+            newConstraints.maxSpeed, rotationConstraints.maxSpeed * radius);
 
         float startAngle = pivotPoint.angleTo(startInstant.pos);
         float targetAngle = pivotPoint.angleTo(endTarget);

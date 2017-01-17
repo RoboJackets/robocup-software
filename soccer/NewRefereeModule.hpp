@@ -154,7 +154,7 @@ public:
 
     // The UNIX timestamp when the packet was sent, in microseconds.
     // Divide by 1,000,000 to get a time_t.
-    // RJ::Timestamp sent_time;
+    RJ::Time sent_time;
     RJ::Time received_time;
 
     // The number of microseconds left in the stage.
@@ -170,14 +170,14 @@ public:
     //
     // If the stage runs over its specified time, this value
     // becomes negative.
-    int stage_time_left = 0;
+    RJ::Seconds stage_time_left;
 
     // The number of commands issued since startup (mod 2^32).
-    // uint command_counter;
+    int64_t command_counter;
 
     // The UNIX timestamp when the command was issued, in microseconds.
     // This value changes only when a new command is issued, not on each packet.
-    // RJ::Timestamp command_timestamp;
+    RJ::Time command_timestamp;
 
     TeamInfo yellow_info;
     TeamInfo blue_info;
@@ -214,7 +214,7 @@ protected:
     NewRefereeModuleEnums::Command prev_command;
     NewRefereeModuleEnums::Stage prev_stage;
 
-    bool _useExternalRef = true;
+    bool _useExternalRef = false;
 
     float ballPlacementx;
     float ballPlacementy;

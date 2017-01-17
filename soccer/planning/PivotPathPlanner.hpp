@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SingleRobotPathPlanner.hpp"
 #include <Geometry2d/Point.hpp>
+#include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -12,7 +12,7 @@ namespace Planning {
 class PivotPathPlanner : public SingleRobotPathPlanner {
 public:
     PivotPathPlanner() : SingleRobotPathPlanner(false){};
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
         return MotionCommand::Pivot;
@@ -21,7 +21,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    bool shouldReplan(const SinglePlanRequest& planRequest) const;
+    bool shouldReplan(const PlanRequest& planRequest) const;
 
     static ConfigDouble* _pivotRadiusMultiplier;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SingleRobotPathPlanner.hpp"
 #include <Geometry2d/Point.hpp>
+#include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -14,7 +14,7 @@ class TargetVelPathPlanner : public SingleRobotPathPlanner {
 public:
     TargetVelPathPlanner() : SingleRobotPathPlanner(false){};
 
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
         return MotionCommand::WorldVel;
@@ -23,7 +23,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    bool shouldReplan(const SinglePlanRequest& planRequest) const;
+    bool shouldReplan(const PlanRequest& planRequest) const;
 
     Geometry2d::Point calculateNonblockedPathEndpoint(
         Geometry2d::Point start, Geometry2d::Point dir,

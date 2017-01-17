@@ -26,8 +26,9 @@ void Path::draw(SystemState* const state, const QColor& color,
     // Get the closest step size to a desired value that is divisible into the
     // duration
     const RJ::Seconds duration = getDuration();
-    const RJ::Seconds desiredStep(
-        0.25);  // draw the path by interpolating every x seconds
+    const RJ::Seconds desiredStep = 250ms;
+
+    // draw the path by interpolating every x seconds
     const float segmentCount = roundf(duration / desiredStep);
     const RJ::Seconds step = duration / segmentCount;
 

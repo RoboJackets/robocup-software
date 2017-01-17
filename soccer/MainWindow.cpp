@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <string>
 
 #include <google/protobuf/descriptor.h>
 
@@ -182,6 +183,8 @@ void MainWindow::initialize() {
     updateTimer.setSingleShot(true);
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
+
+    _autoExternalReferee = _processor->externalReferee();
 }
 
 void MainWindow::logFileChanged() {
@@ -202,6 +205,18 @@ void MainWindow::addLayer(int i, QString name, bool checked) {
     item->setData(Qt::UserRole, i);
     _ui.debugLayers->addItem(item);
     on_debugLayers_itemChanged(item);
+}
+
+string MainWindow::formatLabelBold(Side side, string label) {
+    string color;
+    // Colors match up with those statically defined in MainWindow.ui
+    if (side == Side::Yellow) {
+        color = "#ac9f2d";
+    } else if (side == Side::Blue) {
+        color = "#000064";
+    }
+    return "<html><head/><body><p><span style=\"color:" + color +
+           "; font-weight: bold;\">" + label + "</span></p></body></html>";
 }
 
 void MainWindow::updateViews() {
@@ -382,23 +397,6 @@ void MainWindow::updateViews() {
         }
     }
 
-    if (RJ::now() - _processor->refereeModule()->received_time >
-        RJ::Seconds(1)) {
-        _ui.fastHalt->setEnabled(true);
-        _ui.fastStop->setEnabled(true);
-        _ui.fastReady->setEnabled(true);
-        _ui.fastForceStart->setEnabled(true);
-        _ui.fastKickoffBlue->setEnabled(true);
-        _ui.fastKickoffYellow->setEnabled(true);
-    } else {
-        _ui.fastHalt->setEnabled(false);
-        _ui.fastStop->setEnabled(false);
-        _ui.fastReady->setEnabled(false);
-        _ui.fastForceStart->setEnabled(false);
-        _ui.fastKickoffBlue->setEnabled(false);
-        _ui.fastKickoffYellow->setEnabled(false);
-    }
-
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
                               _processor->refereeModule()->stage).c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
@@ -406,10 +404,12 @@ void MainWindow::updateViews() {
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
-        _processor->refereeModule()->stage_time_left / 1000.0f, 'f', 2)));
+        _processor->refereeModule()->stage_time_left.count(), 'f', 2)));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
-    _ui.refBlueName->setText(strlen(blueName) == 0 ? "<Blue Team>" : blueName);
+    string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
+    blueFormatted = formatLabelBold(Side::Blue, blueFormatted);
+    _ui.refBlueName->setText(QString::fromStdString(blueFormatted));
     _ui.refBlueScore->setText(
         tr("%1").arg(_processor->refereeModule()->blue_info.score));
     _ui.refBlueRedCards->setText(
@@ -423,8 +423,10 @@ void MainWindow::updateViews() {
 
     const char* yellowName =
         _processor->refereeModule()->yellow_info.name.c_str();
-    _ui.refYellowName->setText(strlen(yellowName) == 0 ? "<Yellow Team>"
-                                                       : yellowName);
+    string yellowFormatted =
+        strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
+    yellowFormatted = formatLabelBold(Side::Yellow, yellowFormatted);
+    _ui.refYellowName->setText(QString::fromStdString(yellowFormatted));
     _ui.refYellowScore->setText(
         tr("%1").arg(_processor->refereeModule()->yellow_info.score));
     _ui.refYellowRedCards->setText(
@@ -507,7 +509,7 @@ void MainWindow::updateViews() {
             statusWidget->setHasRadio(radio);
 
             // fake error text
-            QString error = "Kicker Fault, Hall Fault FR, Ball Sense Fault";
+            QString error = "Kicker Fault, Motor Fault FR, Ball Sense Fault";
             statusWidget->setErrorText(error);
 
             // fake ball status
@@ -580,7 +582,7 @@ void MainWindow::updateViews() {
                     switch (rx.motor_status(i)) {
                         case Packet::Hall_Failure:
                             errorList
-                                << QString("Hall Fault %1").arg(motorNames[i]);
+                                << QString("Motor Fault %1").arg(motorNames[i]);
                             break;
                         case Packet::Stalled:
                             errorList << QString("Stall %1").arg(motorNames[i]);
@@ -701,14 +703,50 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee =
-        (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
+    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
 
-    /*if (_autoExternalReferee && haveExternalReferee &&
-    !_ui.externalReferee->isChecked())
-    {
-        _ui.externalReferee->setChecked(true);
-    }*/
+    std::vector<int> validIds = _processor->state()->ourValidIds();
+
+    for (int i = 1; i <= Num_Shells; i++) {
+        if (std::find(validIds.begin(), validIds.end(), i - 1) !=
+            validIds.end()) {
+            // The list starts with None so i is 1 higher than the shell id
+            _ui.goalieID->setItemData(i, true, Qt::UserRole);
+        } else {
+            _ui.goalieID->setItemData(i, false, Qt::UserRole - 1);
+        }
+    }
+
+    if (haveExternalReferee && _autoExternalReferee) {
+        // External Ref is connected and should be used
+        _ui.fastHalt->setEnabled(false);
+        _ui.fastStop->setEnabled(false);
+        _ui.fastReady->setEnabled(false);
+        _ui.fastForceStart->setEnabled(false);
+        _ui.fastKickoffBlue->setEnabled(false);
+        _ui.fastKickoffYellow->setEnabled(false);
+    } else {
+        _ui.fastHalt->setEnabled(true);
+        _ui.fastStop->setEnabled(true);
+        _ui.fastReady->setEnabled(true);
+        _ui.fastForceStart->setEnabled(true);
+        _ui.fastKickoffBlue->setEnabled(true);
+        _ui.fastKickoffYellow->setEnabled(true);
+    }
+
+    if (haveExternalReferee) {
+        // The External Ref is connected and transmitting a valid goalie ID
+        _ui.goalieID->setEnabled(false);
+
+        // Changes the goalie INDEX which is 1 higher than the goalie ID
+        if (_ui.goalieID->currentIndex() !=
+            _processor->state()->gameState.getGoalieId() + 1) {
+            _ui.goalieID->setCurrentIndex(
+                _processor->state()->gameState.getGoalieId() + 1);
+        }
+    } else {
+        _ui.goalieID->setEnabled(true);
+    }
 
     // Is the processing thread running?
     if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
@@ -1115,7 +1153,8 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
-    _processor->refereeModule()->useExternalReferee(value);
+    _autoExternalReferee = value;
+    _processor->externalReferee(value);
 }
 
 ////////
@@ -1191,7 +1230,8 @@ void MainWindow::on_saveConfig_clicked() {
 
 void MainWindow::on_loadPlaybook_clicked() {
     QString filename = QFileDialog::getOpenFileName(
-        this, "Load Playbook", "../soccer/gameplay/playbooks/");
+        this, "Load Playbook",
+        ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
@@ -1205,7 +1245,8 @@ void MainWindow::on_loadPlaybook_clicked() {
 
 void MainWindow::on_savePlaybook_clicked() {
     QString filename = QFileDialog::getSaveFileName(
-        this, "Save Playbook", "../soccer/gameplay/playbooks/");
+        this, "Save Playbook",
+        ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),

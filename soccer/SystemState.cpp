@@ -230,3 +230,13 @@ void SystemState::drawSegment(const Geometry2d::Segment& line, const QColor& qc,
     *dbg->add_points() = line.pt[1];
     dbg->set_color(color(qc));
 }
+
+std::vector<int> SystemState::ourValidIds() {
+    std::vector<int> validIds;
+    for (int i = 0; i < self.size(); i++) {
+        if (self[i]->visible) {
+            validIds.push_back(self[i]->shell());
+        }
+    }
+    return validIds;
+}

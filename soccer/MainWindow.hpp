@@ -23,6 +23,8 @@ namespace {
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 };
+
+enum Side { Yellow, Blue };
 /**
  * main gui thread class
  */
@@ -172,6 +174,7 @@ signals:
 
 private:
     void updateStatus();
+    static std::string formatLabelBold(Side side, std::string label);
 
     typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
 

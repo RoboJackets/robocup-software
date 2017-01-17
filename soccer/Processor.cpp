@@ -14,9 +14,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <git_version.hpp>
-#include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
+#include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -58,7 +58,6 @@ Processor::Processor(bool sim) : _loopMutex() {
     _running = true;
     _manualID = -1;
     _defendPlusX = false;
-    _externalReferee = true;
     _framerate = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
@@ -68,9 +67,11 @@ Processor::Processor(bool sim) : _loopMutex() {
     _radio = nullptr;
 
     // joysticks
-    _joysticks.push_back(new GamepadJoystick());
     _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
+    // Enable this if you have issues with the new controller.
+    // _joysticks.push_back(new GamepadJoystick());
+
     _dampedTranslation = true;
     _dampedRotation = true;
 
@@ -316,9 +317,6 @@ void Processor::run() {
 
                 double rt =
                     RJ::numSeconds(packet->receivedTime.time_since_epoch());
-                //                double rt =
-                //                RJ::timestamp(packet->receivedTime) /
-                //                1000000.0;
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
                 det->set_t_sent(rt);
 
@@ -389,6 +387,7 @@ void Processor::run() {
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
+            if (joystick->valid()) break;
         }
 
         runModels(detectionFrames);
@@ -402,6 +401,8 @@ void Processor::run() {
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
+            curStatus.lastRefereeTime =
+                std::max(curStatus.lastRefereeTime, packet->receivedTime);
             delete packet;
         }
 
@@ -475,7 +476,7 @@ void Processor::run() {
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
-                        r->getPlanningPriority()));
+                        r->shell(), r->getPlanningPriority()));
             }
         }
 
@@ -777,6 +778,7 @@ JoystickControlValues Processor::getJoystickControlValues() {
             vals.dribblerPower =
                 max<double>(vals.dribblerPower, newVals.dribblerPower);
             vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
+            break;
         }
     }
 
