@@ -155,7 +155,7 @@ void Processor::blueTeam(bool value) {
     if (_blueTeam != value) {
         _blueTeam = value;
         if (_radio) _radio->switchTeam(_blueTeam);
-        //_refereeModule->blueTeam(value);
+        if (!externalReferee()) _refereeModule->blueTeam(value);
     }
 }
 

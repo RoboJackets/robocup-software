@@ -179,6 +179,13 @@ void NewRefereeModule::run() {
         ballPlacementx = packet->wrapper.designated_position().x();
         ballPlacementy = packet->wrapper.designated_position().y();
 
+        std::string blue_name = blue_info.name;
+        for(char& letter : blue_name){
+            letter=tolower(letter);
+        }
+
+        blueTeam(blue_name == "robojackets");
+
         _mutex.unlock();
     }
 }

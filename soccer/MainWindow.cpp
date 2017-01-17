@@ -219,6 +219,37 @@ string MainWindow::formatLabelBold(Side side, string label) {
            "; font-weight: bold;\">" + label + "</span></p></body></html>";
 }
 
+void MainWindow::updateFromRefPacket(bool haveExternalReferee){
+    //update goalie from Packet
+    if (haveExternalReferee) {
+        // The External Ref is connected
+        _ui.goalieID->setEnabled(false);
+        //disable Blue/Yellow team
+        qActionGroups[0]->setEnabled(false);
+
+        // Changes the goalie INDEX which is 1 higher than the goalie ID
+        if (_ui.goalieID->currentIndex() !=
+            _processor->state()->gameState.getGoalieId() + 1) {
+            _ui.goalieID->setCurrentIndex(
+                _processor->state()->gameState.getGoalieId() + 1);
+        }
+
+        bool blueTeam=_processor->refereeModule()->blueTeam();
+        if(_processor->blueTeam() != blueTeam){
+            blueTeam ? _ui.actionTeamBlue->trigger() : _ui.actionTeamYellow->trigger();
+
+
+        }
+    } else {
+        _ui.goalieID->setEnabled(true);
+        //enable Blue/Yellow team
+        qActionGroups[0]->setEnabled(true);
+    }
+
+    //update Yellow/Blue team from packet
+    //if()
+}
+
 void MainWindow::updateViews() {
     int manual = _processor->manualID();
     if ((manual >= 0 || _ui.manualID->isEnabled()) &&
@@ -734,19 +765,7 @@ void MainWindow::updateStatus() {
         _ui.fastKickoffYellow->setEnabled(true);
     }
 
-    if (haveExternalReferee) {
-        // The External Ref is connected and transmitting a valid goalie ID
-        _ui.goalieID->setEnabled(false);
-
-        // Changes the goalie INDEX which is 1 higher than the goalie ID
-        if (_ui.goalieID->currentIndex() !=
-            _processor->state()->gameState.getGoalieId() + 1) {
-            _ui.goalieID->setCurrentIndex(
-                _processor->state()->gameState.getGoalieId() + 1);
-        }
-    } else {
-        _ui.goalieID->setEnabled(true);
-    }
+    updateFromRefPacket(haveExternalReferee);
 
     // Is the processing thread running?
     if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {

@@ -174,6 +174,7 @@ signals:
 
 private:
     void updateStatus();
+    void updateFromRefPacket(bool haveExternalReferee);
     static std::string formatLabelBold(Side side, std::string label);
 
     typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
