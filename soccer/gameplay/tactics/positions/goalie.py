@@ -195,6 +195,11 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def execute_defend(self):
         dest_x = main.ball().pos.x / constants.Field.Width * Goalie.MaxX
+        if main.ball().pos.y <= constants.Field.Width / 8:
+            if main.ball().pos.x < 0:
+                dest_x = -Goalie.MaxX / (main.ball().pos.y + 1)
+            else:
+                dest_x = Goalie.MaxX / (main.ball().pos.y + 1)
         self.robot.move_to(robocup.Point(dest_x, constants.Robot.Radius))
 
     def role_requirements(self):
