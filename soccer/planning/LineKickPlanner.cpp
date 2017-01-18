@@ -116,7 +116,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             target.pos += target.vel.normalized(Robot_Radius);
             auto command = std::make_unique<PathTargetCommand>(target);
             auto request = PlanRequest(systemState,
-                                       startInstant, std::move(command), robotConstraints, std::move(prevPath), ballObstacles,
+                                       startInstant, std::move(command), robotConstraints, std::move(prevPath), obstacles,
                                        dynamicObstacles, planRequest.shellID);
             path = rrtPlanner.run(request);
         }
