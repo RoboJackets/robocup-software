@@ -47,7 +47,7 @@ private:
     OurRobot* _robot;
 
     /// The last velocity command (in m/s) that we sent / to the robot
-    Geometry2d::Point _lastVelCmd;
+    Geometry2d::Point _lastWorldVelCmd;
 
     /// the time when the last velocity command was sent
     RJ::Time _lastCmdTime;
