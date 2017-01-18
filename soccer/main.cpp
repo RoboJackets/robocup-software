@@ -69,8 +69,8 @@ int main(int argc, char* argv[]) {
     QString radioFreq;
     string playbookFile;
     bool noref = false;
-    bool defendPlus =  true;
-    int visionChannel = 1;
+    bool defendPlus =  false;
+    int visionChannel = 3;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -124,8 +124,8 @@ int main(int argc, char* argv[]) {
                 usage(argv[0]);
             }
             i++;
-            if (strcmp(argv[i],"minus") == 0) {
-                defendPlus = false;
+            if (strcmp(argv[i],"plus") == 0) {
+                defendPlus = true;
             }
         } else if (strcmp(var, "-vision") == 0){
             if (i + 1 >= argc) {
@@ -134,11 +134,11 @@ int main(int argc, char* argv[]) {
             }
             i++;
             //USE STRCMP
-            if (strcmp(argv[i],"2")==0) {
-                visionChannel = 2;
+            if (strcmp(argv[i],"1")==0) {
+                visionChannel = 1;
             }
-            else if (strcmp(argv[i],"full")==0) {
-                visionChannel = 3;
+            else if (strcmp(argv[i],"2")==0) {
+                visionChannel = 2;
             }
         } else {
             printf("Not a valid flag: %s\n", argv[i]);

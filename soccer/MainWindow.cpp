@@ -191,14 +191,24 @@ void MainWindow::initialize() {
 
     _autoExternalReferee = _processor->externalReferee();
 
-    _processor->defendPlusX() ? on_actionDefendPlusX_triggered() : on_actionDefendMinusX_triggered();
+    if(_processor->defendPlusX()){
+        on_actionDefendPlusX_triggered();
+        _ui.actionDefendPlusX->setChecked(true);
+    }
+    else{
+        on_actionDefendMinusX_triggered();
+        _ui.actionDefendMinusX->setChecked(true);
+    }
 
     switch(_processor->visionChannel()){
         case 1: on_actionVisionPrimary_Half_triggered();
+            _ui.actionVisionPrimary_Half->setChecked(true);
             break;
         case 2: on_actionVisionSecondary_Half_triggered();
+            _ui.actionVisionSecondary_Half->setChecked(true);
             break;
         case 3: on_actionVisionFull_Field_triggered();
+            _ui.actionVisionFull_Field->setChecked(true);
             break;
     }
 }
