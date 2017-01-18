@@ -27,7 +27,6 @@ static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 const int Oversample = 1;
 
-
 Environment::Environment(const QString& configFile, bool sendShared_,
                          SimEngine* engine, RJ::Seconds timeoutsimulator)
     : _dropFrame(false),

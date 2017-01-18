@@ -10,10 +10,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-
 using namespace std;
-
-
 
 void quit(int signal) {
     fprintf(stderr, "Exiting due to signal %d\n", signal);
@@ -29,8 +26,6 @@ void usage(const char* prog) {
     fprintf(stderr,
             "\t--smallfield Run the simulator with the small/single field.\n");
 }
-
-
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
@@ -69,7 +64,7 @@ int main(int argc, char* argv[]) {
             Field_Dimensions::Current_Dimensions =
                 Field_Dimensions::Single_Field_Dimensions * scaling;
         } else if (strcmp(argv[i], "--timeout") == 0) {
-        	timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
+            timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
             i++;
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
@@ -98,8 +93,6 @@ int main(int argc, char* argv[]) {
     // start up threads
     sim_thread.start();
     int ret = app.exec();
-
-    
 
     // shut down sim_thread
     sim_thread.stop();

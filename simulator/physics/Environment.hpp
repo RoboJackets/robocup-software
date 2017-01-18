@@ -71,7 +71,8 @@ public:
 
     int ballVisibility;
 
-    Environment(const QString& configFile, bool sendShared_, SimEngine* engine, RJ::Seconds timeoutsimulator);
+    Environment(const QString& configFile, bool sendShared_, SimEngine* engine,
+                RJ::Seconds timeoutsimulator);
 
     ~Environment();
 
@@ -80,7 +81,7 @@ public:
 
     void dropFrame() { _dropFrame = true; }
 
-    //RJ::Time timeFromUpdate();
+    // RJ::Time timeFromUpdate();
 
     const QVector<Ball*>& balls() const { return _balls; }
 
