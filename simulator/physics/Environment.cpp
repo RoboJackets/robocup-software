@@ -121,7 +121,9 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
             // added because physics engine was maintaining some state
             // related to velocity causing the ball to keep going even
             // when we send a command to set velocity to 0.
-            _balls[0]->resetScene();
+            if (cmd.ball_vel().x() == 0 && cmd.ball_vel().y() == 0) {
+                _balls[0]->resetScene();
+            }
             _balls[0]->velocity(cmd.ball_vel().x(), cmd.ball_vel().y());
         }
         if (cmd.has_ball_pos()) {
