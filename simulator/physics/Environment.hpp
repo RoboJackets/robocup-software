@@ -30,7 +30,7 @@ class Environment : public QObject {
 
 public:
     typedef QMap<unsigned int, Robot*> RobotMap;
-    const RJ::Seconds timeout = 10000ms;
+    const RJ::Seconds timeoutsimulator;
     RJ::Time lastUpdate = RJ::now();
 
 private:
@@ -71,7 +71,7 @@ public:
 
     int ballVisibility;
 
-    Environment(const QString& configFile, bool sendShared_, SimEngine* engine);
+    Environment(const QString& configFile, bool sendShared_, SimEngine* engine, RJ::Seconds timeoutsimulator);
 
     ~Environment();
 

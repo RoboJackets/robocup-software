@@ -47,7 +47,7 @@ public:
 
     /** need to pass arguments through to glut */
     SimulatorGLUTThread(int argc, char* argv[], const QString& configFile,
-                        bool sendShared, bool showWindow = true);
+                        bool sendShared, RJ::Seconds timeoutsimulator, bool showWindow = true);
 
     ~SimulatorGLUTThread();
 
@@ -96,7 +96,7 @@ public:
 
     void render();
 
-    void initialize(const QString& configFile, bool sendShared);
+    void initialize(const QString& configFile, bool sendShared, RJ::Seconds timeoutsimulator);
 
     /// glut callbacks
 

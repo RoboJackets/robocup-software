@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 
     bool sendShared = false;
     bool headless = false;
-
+    RJ::Seconds timeoutsimulator = RJ::Seconds::max();
     // loop arguments and look for config file
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--help") == 0) {
@@ -68,6 +68,9 @@ int main(int argc, char* argv[]) {
         } else if (strcmp(argv[i], "--smallfield") == 0) {
             Field_Dimensions::Current_Dimensions =
                 Field_Dimensions::Single_Field_Dimensions * scaling;
+        } else if (strcmp(argv[i], "--timeout") == 0) {
+        	timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
+            i++;
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
             return 1;
@@ -76,7 +79,7 @@ int main(int argc, char* argv[]) {
 
     // create the thread for simulation
     SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared,
-                                   !headless);
+                                   timeoutsimulator, !headless);
 
     struct sigaction act;
     memset(&act, 0, sizeof(act));

@@ -46,7 +46,7 @@ static void glutDisplayCallback(void) {
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[],
                                          const QString& configFile,
-                                         bool sendShared, bool showWindow)
+                                         bool sendShared, RJ::Seconds timeoutsimulator, bool showWindow)
     : _argv(argv),
       _argc(argc),
       _env(nullptr),
@@ -58,7 +58,7 @@ SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[],
       _maxCameraDistance(10.f),
       _showWindow(showWindow),
       _stopped(false) {
-    initialize(configFile, sendShared);
+    initialize(configFile, sendShared, timeoutsimulator);
 }
 
 SimulatorGLUTThread::~SimulatorGLUTThread() {
@@ -296,13 +296,13 @@ void SimulatorGLUTThread::setDebugMode(int mode) {
 }
 
 void SimulatorGLUTThread::initialize(const QString& configFile,
-                                     bool sendShared) {
+                                     bool sendShared, RJ::Seconds timeoutsimulator) {
     // set up the simulation
     _simEngine = new SimEngine();
     _simEngine->initPhysics();
 
     // Set up environment
-    _env = new Environment(configFile, sendShared, _simEngine);
+    _env = new Environment(configFile, sendShared, _simEngine, timeoutsimulator);
 
     _vehicle = _env->yellow().begin().value();
 

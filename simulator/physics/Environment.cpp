@@ -19,7 +19,6 @@
 #include <iostream>
 #include <sys/time.h>
 
-
 using namespace std;
 using namespace Geometry2d;
 
@@ -30,14 +29,15 @@ const int Oversample = 1;
 
 
 Environment::Environment(const QString& configFile, bool sendShared_,
-                         SimEngine* engine)
+                         SimEngine* engine, RJ::Seconds timeoutsimulator)
     : _dropFrame(false),
       _configFile(configFile),
       _frameNumber(0),
       _stepCount(0),
       _simEngine(engine),
       sendShared(sendShared_),
-      ballVisibility(100) {
+      ballVisibility(100),
+      timeoutsimulator(timeoutsimulator) {
     // NOTE: does not start simulation/thread until triggered
     _field = new Field(this);
     _field->initPhysics();
@@ -80,8 +80,8 @@ void Environment::preStep(float deltaTime) {
 }
 
 void Environment::step() {
-    if (RJ::now() - lastUpdate >= timeout) {
-        exit(0);
+    if (RJ::now() - lastUpdate >= timeoutsimulator) {
+        QApplication::quit();
     }
 
     // Check for SimCommands
@@ -362,7 +362,6 @@ Robot* Environment::robot(bool blue, int board_id) const {
 
 void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx) {
     lastUpdate = RJ::now();
-    cout << "Radio transmitted" << endl;
 
     for (int i = 0; i < tx.robots_size(); ++i) {
         const Packet::Robot& cmd = tx.robots(i);
