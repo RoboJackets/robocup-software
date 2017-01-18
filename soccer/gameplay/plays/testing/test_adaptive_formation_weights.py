@@ -3,11 +3,12 @@ import play
 import behavior
 import evaluation.field
 import evaluation.passing_positioning
+import evaluation.shooting
+import evaluation.defensive_positioning
 import constants
 import robocup
 import math
 import enum
-import evaluation.shooting
 
 class TestAdaptiveFormationWeights(play.Play):
     class State(enum.Enum):
@@ -37,8 +38,8 @@ class TestAdaptiveFormationWeights(play.Play):
 
     def execute_testPointCoeff(self):
         # Number of boxes width and length wise
-        num_width = 20
-        num_length = 25
+        num_width = 10
+        num_length = 10
 
         max_val = 0
         max_x = 0
@@ -67,14 +68,16 @@ class TestAdaptiveFormationWeights(play.Play):
                 #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.01, 3, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
                 #val = evaluation.shooting.eval_shot(robocup.Point(x_cent, y_cent))
-                val = 1-evaluation.field.ball_coeff_at_pos(robocup.Point(x_cent, y_cent))
-
+                #val = 1-evaluation.field.ball_coeff_at_pos(robocup.Point(x_cent, y_cent))
+                val = evaluation.defensive_positioning.estimate_kick_block_percent \
+                    (robocup.Point(x_cent, y_cent), robocup.Point(0, constants.Field.Length), main.their_robots())
+                
                 # Find max
                 if (val > max_val):
                     max_val = val
                     max_x = x_cent
                     max_y = y_cent
-
+                
                 # Force between 0 and 1
                 val = min(val, 1)
                 val = max(val, 0)

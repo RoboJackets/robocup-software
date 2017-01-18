@@ -2,7 +2,7 @@ import main
 import robocup
 import math
 import constants
-import evaluations.ball
+import evaluation.ball
 # Defensive positioning
 # 2 main schools of thought
 # Man to man coverage
@@ -69,70 +69,89 @@ import evaluations.ball
 # (4) create_area_defense_zones()
 # (5) esteimate_risk_score(pt)
 
-## Estimates the win_eval function so as to not slow down the execution
+## Estimates the chance a kick will be blocked
 #
 # @param kick_point: Point at which we will kick from
 # @param recieve_point: Point at which they are kicking to
-# @param blocking_robot_pos[]: list of robots that we should estimate the block for
+# @param blocking_robots[]: list of robots that we should estimate the block for
 # @return A percentage chance of block
-def estimate_kick_block_percent(kick_point, recieve_point, blocking_robot_pos[]):
+def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.their_robots()):
 
-    # for each blocking robot pos
-    # take angle and distance
-    # Move through N different angles
-    # Producting a Keneral function for each blocking robot
-    # Invert
-    # Normalize (Using a square or some sort of thing)
-    # Produce percentage from this estimation
+    # 1. For each robot, get their position in polar coords
+    #       in reference to the kicking point
+    # 2. Create a set of rays moving out from the kick point
+    # 3. Use a kernal function to estimate the chance it will
+    #       intercept the ball moving along that ray
+    # 4. Take the minimum interception estimate along that ray
+    # 5. Throw all the rays together scaled by their distance from the target angle
 
-    # Array of tuples of all possible blocks
     blocks = []
     kick_direction = (recieve_point - kick_point)
     kick_angle = math.atan2(kick_direction.y, kick_direction.x)
 
-    for pos in blocking_robot_pos:
-        block_direction = (pos - kick_point)
-        dist = block_direction.mag()
-        angle = math.atan2(block_direction.y, block_direction.x) - kick_angle
+    # Convert all robot positions to polar with zero being the kick direction
+    # TODO: Use velocity / accel with robots to predict where they will be based on
+    # their distance from the robot
+    for bot in blocking_robots:
+        if bot.visible and bot:
+            pos = bot.pos
+            block_direction = (pos - kick_point)
+            dist = block_direction.mag()
+            angle = math.atan2(block_direction.y, block_direction.x) - kick_angle
 
-        if (math.abs(angle) < math.pi / 2 && dist > 0):
+            # Kill any that are over pi/2 away
+            if (math.fabs(angle) < math.pi / 2 and dist > 0):
+                blocks.extend([(angle, dist)])
 
-        # Kill any that are over pi/2 away
-        blocks.extend([(angle, dist)])
+    # Quit early if there is nobody near to defend
+    if (len(blocks) == 0):
+        return 1
 
     # Standard deviation basically
     half_kick_width = 0.1*math.pi
-    num_of_estimates = 10
+    # Resolution of the estimation
+    num_of_estimates = 16
+    # controls distribution of values overall (Higher the number, the less sensitive)
+    overall_sens = 2
+    # Constrols how much to decrease for further away values (Lower the number, the more it decreases)
+    distance_sens = -1/7
+    # How much to scale the furtherest line by
+    min_offset_scale = .1
 
     total = 0
+    max_total = 0
+    line_offset = -half_kick_width
+    inc = 2 * half_kick_width / num_of_estimates
 
-    for line_offset in range(-half_kick_width, half_kick_width):
-        chance = 0
-        # How much to decrease with of kernel per distance away
-        # Inf @ 0 to 0 @ pi / 2
-        distance_scale = 1 / math.abs(math.tan(line_num))
+    # For each radial line (Multiplies by 1.01 because of float errors)
+    while line_offset <= half_kick_width*1.01:
+        subtotal = []
+        # For each blocking robot (Angle, Dist)
+        for bot  in blocks:
+            delta_angle = bot[0] - line_offset
 
-        for pos  in blocks:
-            # Produce a number between -1 and 1
-            # Find u based off of line_offset
-            # Scale output then based on distance 
-            u = line_offset * distance_scale
-            chance += max((35/32)*pow((1-pow(u,2)), 3), 0)
+            # Produces a u based on distance / angle
+            u = math.sin(delta_angle) * bot[1] * overall_sens * math.exp(bot[1] * distance_sens)
+            u = min(1, u)
+            u = max(-1, u)
 
-    # Invert
-    # Normalize
-    # Produce percentage
+            # Add the kernel estimate to the list
+            subtotal.extend([1 - max(pow((1-pow(u,2)), 3), 0)])
+   
+        # Uses the min because we only care about the closest robot to blocking
+        # Each line
 
-    pass
-    # TODO: Figure out the math for this
-    # Most likely project the blocking robots onto the kick_line
-    # Then use a delta distance and the distance down the kick_line to scale the robot shadow
-    # to the recieve_point
-    # (Each robot shadow will have a width and center)
-    # Unless there is an easy way to merge them
-    # Just down N points and see if they are contained in an area
+        line_offset_scale = 1 - (math.fabs(line_offset) / ( (1+min_offset_scale) * half_kick_width))
+        
+        total += min(subtotal) * line_offset_scale
+        max_total += line_offset_scale
+        line_offset += inc
 
-## Predicts the impending kick direction based on the angle of the robot and the
+    # TODO: Make the center be weighted higher
+    return total / max_total
+
+
+## Predicts the impending kick direction based on the orientation of the robot and the
 #  angle of approach
 #
 # @param robot: The robot which we want to estimate
@@ -157,16 +176,6 @@ def predict_kick_direction(robot):
     c = 0.7
     return c * robot_angle_predict + (1-c) * ball_angle_predict
 
-    # TODO: Figure out the math for this
-    # Take in the position / velocity / accel of the translation of the robot
-    # Do a quick prediction based on interception in the furture
-    # Estimate time of interception
-    # Take in the angle  / velocity / accel of the yaw of the robot
-    # Do a quick prediction in X seconds in the future based on time of interception
-    # (To allow our robot to move into place if we are off)
-    #
-    # Throw into a complementary filter as one will most likely be more accurate than
-    # the other one
 
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
@@ -192,6 +201,7 @@ def estimate_risk_score(point):
     # Merge of a few different scores
     # Openness of pass / shot
     # Time it will take before they are accitvated within the play (exponetial)
+    # Use max kick speed to predict motion, use perfect execution as a baseline
 
 ## Decides where to move the three robots
 #
