@@ -85,7 +85,7 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim);
+    Processor(bool sim, bool defendPlus, int visionChannel);
     virtual ~Processor();
 
     void stop();
@@ -144,6 +144,7 @@ public:
     bool simulation() const { return _simulation; }
 
     void defendPlusX(bool value);
+    bool defendPlusX() { return _defendPlusX; }
 
     Status status() {
         QMutexLocker lock(&_statusMutex);
@@ -168,6 +169,8 @@ public:
     Radio* radio() { return _radio; }
 
     void changeVisionChannel(int port);
+
+    int visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
 
@@ -272,6 +275,11 @@ private:
     bool _useFieldOrientedManualDrive = false;
 
     VisionReceiver vision;
+
+    //1 for Primary Half
+    //2 for Secondary Half
+    //3 for Full channel
+    int _visionChannel;
 
     bool _initialized;
 };

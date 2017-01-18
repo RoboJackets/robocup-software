@@ -51,7 +51,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _history(2 * 60),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
-
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
@@ -103,16 +102,19 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     _ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    //Action Group 0
     QActionGroup* teamGroup = new QActionGroup(this);
     teamGroup->addAction(_ui.actionTeamBlue);
     teamGroup->addAction(_ui.actionTeamYellow);
     qActionGroups.push_back(teamGroup);
 
+    //Action Group 1
     QActionGroup* goalGroup = new QActionGroup(this);
     goalGroup->addAction(_ui.actionDefendMinusX);
     goalGroup->addAction(_ui.actionDefendPlusX);
     qActionGroups.push_back(goalGroup);
 
+    //Action Group 2
     QActionGroup* rotateGroup = new QActionGroup(this);
     rotateGroup->addAction(_ui.action0);
     rotateGroup->addAction(_ui.action90);
@@ -120,12 +122,14 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     rotateGroup->addAction(_ui.action270);
     qActionGroups.push_back(rotateGroup);
 
+    //Action Group 3
     auto visionChannelGroup = new QActionGroup(this);
     visionChannelGroup->addAction(_ui.actionVisionPrimary_Half);
     visionChannelGroup->addAction(_ui.actionVisionSecondary_Half);
     visionChannelGroup->addAction(_ui.actionVisionFull_Field);
     qActionGroups.push_back(visionChannelGroup);
 
+    //Action Group 4
     auto radioGroup = new QActionGroup(this);
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
@@ -171,8 +175,9 @@ void MainWindow::initialize() {
 
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
-    for (const auto& qActionGroup : qActionGroups) {
-        qActionGroup->checkedAction()->trigger();
+    //Do not initialize DefendPlusX(Group 1) or Vision(Group 3)
+    for (int i : {0,2,4}) {
+        qActionGroups[i]->checkedAction()->trigger();
     }
 
     // Default to FullField on Simulator
@@ -185,6 +190,17 @@ void MainWindow::initialize() {
     updateTimer.start(30);
 
     _autoExternalReferee = _processor->externalReferee();
+
+    _processor->defendPlusX() ? on_actionDefendPlusX_triggered() : on_actionDefendMinusX_triggered();
+
+    switch(_processor->visionChannel()){
+        case 1: on_actionVisionPrimary_Half_triggered();
+            break;
+        case 2: on_actionVisionSecondary_Half_triggered();
+            break;
+        case 3: on_actionVisionFull_Field_triggered();
+            break;
+    }
 }
 
 void MainWindow::logFileChanged() {
