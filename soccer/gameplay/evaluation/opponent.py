@@ -41,9 +41,9 @@ def num_on_offense():
 ## Returns the closest opponent to the pos inclusive of the directional weight
 #
 # @param direction_weight: How much to weight the positive y direction
-#     If < 1, then robots in front are weighted higher
+#     If < 1, then robots < pos.y are weighted by direction_weight
 def get_closest_opponent(pos, direction_weight=1,excluded_robots=[]):
-    #TODO: Implement directional weight
+    
     closest_bot, closest_dist = None, float("inf")
     for bot in main.their_robots():
         if bot.visible:
