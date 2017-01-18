@@ -1043,15 +1043,11 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
 }
 
 void MainWindow::on_actionNone_triggered() {
-    if (strcmp(getenv("var"), "NONE") == 0) {
-        StyleSheetManager::changeStyleSheet(this, "NONE");
-    }
+    StyleSheetManager::changeStyleSheet(this, "NONE");
 }
  
 void MainWindow::on_actionDark_triggered() {
-    if (strcmp(getenv("var"), "DARK") == 0) {
-        StyleSheetManager::changeStyleSheet(this, "DARK");
-    }
+    StyleSheetManager::changeStyleSheet(this, "DARK");
 }
 
 // Manual control commands

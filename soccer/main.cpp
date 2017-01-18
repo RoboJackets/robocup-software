@@ -1,4 +1,5 @@
 #include <gameplay/GameplayModule.hpp>
+#include <ui/StyleSheetManager.hpp>
 
 #include <stdio.h>
 #include <string.h>
@@ -58,6 +59,7 @@ int main(int argc, char* argv[]) {
     }
 
     QApplication app(argc, argv);
+    StyleSheetManager::changeStyleSheet(&app, QString("DARK"));
 
     bool blueTeam = false;
     QString cfgFile;

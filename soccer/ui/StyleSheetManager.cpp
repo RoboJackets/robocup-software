@@ -17,3 +17,16 @@ void StyleSheetManager::changeStyleSheet(QMainWindow* window, QString name) {
 	    file.close();
 	}
 }
+
+void StyleSheetManager::changeStyleSheet(QApplication* app, QString name) {
+	if (name.compare("NONE") == 0) {
+		app->setStyleSheet(NONE);
+	}
+	else if (name.compare("DARK") == 0) {
+		QFile file(ApplicationRunDirectory().filePath(DARK));
+    	file.open(QFile::ReadOnly);
+  		QString styleSheet = file.readAll();
+  		app->setStyleSheet(styleSheet);
+	    file.close();
+	}
+}

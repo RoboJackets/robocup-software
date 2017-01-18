@@ -9,4 +9,5 @@ class StyleSheetManager {
 
 	public:
 		static void changeStyleSheet(QMainWindow* window, QString name);
+		static void changeStyleSheet(QApplication* app, QString name);
 };
