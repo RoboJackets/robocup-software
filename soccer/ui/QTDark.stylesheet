@@ -25,7 +25,6 @@
 * {
 	background: #191919;
 	color: #DDDDDD;
-	border: 1px solid #5A5A5A;
 }
 
 QWidget::item:selected {
@@ -163,12 +162,11 @@ QAbstractItemView {
 }
 
 QHeaderView {
-	border: 1px solid #5A5A5A;
+
 }
 
 QHeaderView::section {
 	background: #191919;
-	border: 1px solid #5A5A5A;
 	padding: 4px;
 }
 
@@ -264,7 +262,6 @@ QSlider::sub-page:vertical, QSlider::add-page:horizontal {
 }
 
 QLabel {
-	border: none;
 }
 
 QProgressBar {
