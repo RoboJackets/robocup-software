@@ -17,7 +17,7 @@ run: all
 rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
-	cd run; ./simulator --headless &
+	cd run; ./simulator --headless --timeout 5 &
 	cd run; ./soccer -sim -pbk example.pbk
 run-sim2play: all
 	-pkill -f './simulator --headless'
