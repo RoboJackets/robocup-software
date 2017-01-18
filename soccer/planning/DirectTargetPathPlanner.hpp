@@ -15,9 +15,9 @@ public:
         return MotionCommand::CommandType::DirectPathTarget;
     }
 
-    virtual std::unique_ptr<Path> run(SinglePlanRequest& planRequest) override;
+    virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
-    bool shouldReplan(const SinglePlanRequest& planRequest) const;
+    bool shouldReplan(const PlanRequest& planRequest) const;
 };
 
 }  // namespace Planning

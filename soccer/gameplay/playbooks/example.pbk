@@ -1,3 +1,12 @@
 offense/basic_122
 restarts/kick_penalty
-testing/two_side_attack
+testing/repeated_line_up
+restarts/defend_penalty
+restarts/our_corner_kick
+restarts/our_free_kick
+restarts/our_goal_kick
+restarts/our_kickoff
+restarts/placement
+restarts/their_kickoff
+restarts/their_restart
+restarts/two_side_corner_kick

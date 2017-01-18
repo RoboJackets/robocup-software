@@ -3,13 +3,15 @@
 using namespace std;
 
 namespace {
-constexpr RJ::Time Dribble_Step_Time = 125 * 1000;
-constexpr RJ::Time Kicker_Step_Time = 125 * 1000;
+constexpr auto Dribble_Step_Time = RJ::Seconds(0.125);
+constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 const float AXIS_MAX = 32768.0f;
+// cutoff for counting triggers as 'on'
+const float TRIGGER_CUTOFF = 0.9;
 }
 
 GamepadController::GamepadController()
-    : _controller(nullptr), _lastDribblerTime(0), _lastKickerTime(0) {
+    : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
         cerr << "ERROR: SDL could not initialize game controller system! SDL "
@@ -17,6 +19,29 @@ GamepadController::GamepadController()
         return;
     }
 
+    // Attempt to add additional mappings (relative to run)
+    if (SDL_GameControllerAddMappingsFromFile(
+            ApplicationRunDirectory()
+                .filePath("../external/sdlcontrollerdb/gamecontrollerdb.txt")
+                .toStdString()
+                .c_str()) == -1) {
+        cout << "Failed adding additional SDL Gamecontroller Mappings: "
+             << SDL_GetError() << endl;
+    }
+
+    // Controllers will be detected later if needed.
+    connected = false;
+    openJoystick();
+}
+
+GamepadController::~GamepadController() {
+    QMutexLocker(&mutex());
+    SDL_GameControllerClose(_controller);
+    _controller = nullptr;
+    SDL_Quit();
+}
+
+void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
         for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
@@ -24,6 +49,7 @@ GamepadController::GamepadController()
             if (SDL_IsGameController(i)) {
                 SDL_GameController* controller;
                 controller = SDL_GameControllerOpen(i);
+                connected = true;
 
                 if (controller != nullptr) {
                     _controller = controller;
@@ -34,18 +60,17 @@ GamepadController::GamepadController()
                     cerr << "ERROR: Could not open controller! SDL Error: "
                          << SDL_GetError() << endl;
                 }
+                // Only support one joystick for now.
+                return;
             }
         }
-    } else {
-        cout << "WARNING: No manual controllers connected" << endl;
     }
 }
 
-GamepadController::~GamepadController() {
-    QMutexLocker(&mutex());
+void GamepadController::closeJoystick() {
+    cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
-    _controller = nullptr;
-    SDL_Quit();
+    connected = false;
 }
 
 bool GamepadController::valid() const { return _controller != nullptr; }
@@ -54,30 +79,49 @@ void GamepadController::update() {
     QMutexLocker(&mutex());
     SDL_GameControllerUpdate();
 
-    RJ::Time now = RJ::timestamp();
+    RJ::Time now = RJ::now();
+
+    if (connected) {
+        // Check if dc
+        if (!SDL_GameControllerGetAttached(_controller)) {
+            closeJoystick();
+            return;
+        }
+    } else {
+        // Check if new controller found
+        // TODO use the SDL event API to only run this if we receive a connected
+        // event.
+        openJoystick();
+        if (!connected) {
+            return;
+        }
+    }
+
+    /*
+     *  DRIBBLER ON/OFF
+     */
+    if (SDL_GameControllerGetButton(_controller,
+                                    SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
+        _controls.dribble = true;
+    } else if (SDL_GameControllerGetAxis(_controller,
+                                         SDL_CONTROLLER_AXIS_TRIGGERLEFT) /
+                   AXIS_MAX >
+               TRIGGER_CUTOFF) {
+        _controls.dribble = false;
+    }
 
     /*
      *  DRIBBLER POWER
      */
-    if (SDL_GameControllerGetButton(_controller,
-                                    SDL_CONTROLLER_BUTTON_LEFTSTICK)) {
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
         }
     } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_RIGHTSTICK)) {
+                                           SDL_CONTROLLER_BUTTON_Y)) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
-            _lastDribblerTime = now;
-        }
-    } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_Y)) {
-        /*
-         *  DRIBBLER ON/OFF
-         */
-        if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
-            _controls.dribble = !_controls.dribble;
             _lastDribblerTime = now;
         }
     } else {
@@ -88,14 +132,13 @@ void GamepadController::update() {
     /*
      *  KICKER POWER
      */
-    if (SDL_GameControllerGetButton(_controller,
-                                    SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
-    } else if (SDL_GameControllerGetButton(
-                   _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)) {
+    } else if (SDL_GameControllerGetButton(_controller,
+                                           SDL_CONTROLLER_BUTTON_B)) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;
@@ -107,14 +150,16 @@ void GamepadController::update() {
     /*
      *  KICK TRUE/FALSE
      */
-    _controls.kick =
-        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A);
+    _controls.kick = SDL_GameControllerGetButton(
+        _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
 
     /*
      *  CHIP TRUE/FALSE
      */
-    _controls.chip =
-        SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X);
+    _controls.chip = SDL_GameControllerGetAxis(
+                         _controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) /
+                         AXIS_MAX >
+                     TRIGGER_CUTOFF;
 
     /*
      *  VELOCITY ROTATION

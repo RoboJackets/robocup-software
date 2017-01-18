@@ -111,6 +111,7 @@ pkg_search_module(SDL2 REQUIRED sdl2)
 # Several things depend on the headers in the 'common' directory
 include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
 include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf headers
+include_directories("${CMAKE_BINARY_DIR}/common") # for generated protobuf headers
 
 # setup ccache to speed up recompiles.  It's especially useful when switching back and forth
 # between branches where you'd normally have to recompile things many times.

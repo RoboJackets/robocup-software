@@ -4,22 +4,21 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "Utils.hpp"
 
 using namespace std;
 using namespace Packet;
 using namespace google::protobuf::io;
 
-Logger::Logger() {
+Logger::Logger(size_t logSize) : _history(logSize) {
     _fd = -1;
-    _history.resize(100000);
-    _nextFrameNumber = 0;
-    _spaceUsed = sizeof(_history[0]) * _history.size();
+    _spaceUsed = sizeof(shared_ptr<Packet::LogFrame>) * _history.size();
 }
 
 Logger::~Logger() { close(); }
 
 bool Logger::open(QString filename) {
-    QMutexLocker locker(&_mutex);
+    QWriteLocker locker(&_lock);
 
     if (_fd >= 0) {
         close();
@@ -37,7 +36,7 @@ bool Logger::open(QString filename) {
 }
 
 void Logger::close() {
-    QMutexLocker locker(&_mutex);
+    QWriteLocker locker(&_lock);
     if (_fd >= 0) {
         ::close(_fd);
         _fd = -1;
@@ -46,7 +45,11 @@ void Logger::close() {
 }
 
 void Logger::addFrame(shared_ptr<LogFrame> frame) {
-    QMutexLocker locker(&_mutex);
+    QWriteLocker locker(&_lock);
+
+    if (_history.empty()) {
+        _startTime = RJ::Time(chrono::microseconds(frame->timestamp()));
+    }
 
     // Write this from to the file
     if (_fd >= 0) {
@@ -65,54 +68,20 @@ void Logger::addFrame(shared_ptr<LogFrame> frame) {
         }
     }
 
-    // Get the place in the circular buffer where we will store this frame
-    int i = _nextFrameNumber % _history.size();
-
-    if (_history[i]) {
-        // Remove the space used by the old data
-        _spaceUsed -= _history[i]->SpaceUsed();
+    if (_history.full()) {
+        _spaceUsed -= _history.front()->SpaceUsed();
+        _history.pop_front();
     }
-
     // Create a new LogFrame
-    _history[i] = frame;
+
+    _history.push_back(frame);
 
     // Add space used by the new data
-    _spaceUsed += _history[i]->SpaceUsed();
-
-    // Go to the next frame
-    ++_nextFrameNumber;
+    _spaceUsed += frame->SpaceUsed();
+    _nextFrameNumber++;
 }
 
 shared_ptr<LogFrame> Logger::lastFrame() const {
-    QMutexLocker locker(&_mutex);
-    return _history[(_nextFrameNumber - 1) % _history.size()];
-}
-
-int Logger::getFrames(int start, vector<shared_ptr<LogFrame> >& frames) const {
-    QMutexLocker locker(&_mutex);
-
-    int minFrame = _nextFrameNumber - (int)_history.size();
-    if (minFrame < 0) {
-        minFrame = 0;
-    }
-
-    if (start < minFrame || start >= _nextFrameNumber) {
-        return 0;
-    }
-
-    int end = start - frames.size() + 1;
-    if (end < minFrame) {
-        end = minFrame;
-    }
-
-    int n = start - end + 1;
-    for (int i = 0; i < n; ++i) {
-        frames[i] = _history[(start - i) % _history.size()];
-    }
-
-    for (int i = n; i < (int)frames.size(); ++i) {
-        frames[i].reset();
-    }
-
-    return n;
+    QReadLocker locker(&_lock);
+    return _history.back();
 }

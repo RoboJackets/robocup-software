@@ -5,6 +5,24 @@ set(CMAKE_AUTOMOC ON)
 # include Eigen3 for linear algebra
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
+# use rrt library from external/ directory
+set(rrt_install_dir ${CMAKE_CURRENT_BINARY_DIR}/rrt)
+set(rrt_lib_path ${rrt_install_dir}/lib/libRRT.a)
+ExternalProject_Add(rrt_project
+    URL ${PROJECT_SOURCE_DIR}/external/rrt
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${rrt_install_dir}
+    BUILD_BYPRODUCTS ${rrt_lib_path}
+)
+set_target_properties(rrt_project PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+# add rrt library target.  IMPORTED means that it is created externally
+add_library(rrt STATIC IMPORTED)
+set_property(TARGET rrt PROPERTY IMPORTED_LOCATION ${rrt_lib_path})
+add_dependencies(rrt rrt_project)
+
+# include rrt library headers
+include_directories(${rrt_install_dir}/include/)
+
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
 set(ROBOCUP_LIB_SRC
@@ -36,13 +54,12 @@ set(ROBOCUP_LIB_SRC
     "planning/RotationConstraints.cpp"
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
+    "planning/RRTUtil.cpp"
     "planning/PivotPathPlanner.cpp"
     "planning/LineKickPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
     "planning/TrapezoidalPath.cpp"
-    "planning/Tree.cpp"
-    "planning/Util.cpp"
     "Processor.cpp"
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
@@ -86,8 +103,19 @@ find_package(Boost COMPONENTS system REQUIRED)
 # find boost python
 # This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
 set(FOUND_A_BOOST_PYTHON FALSE)
-foreach(possible_name python3 python-py32 python-py33 python-py34 python-py35 python)
-    find_package(Boost COMPONENTS ${possible_name})
+# Find the matching boost python implementation
+set(version ${PYTHONLIBS_VERSION_STRING})
+
+if(APPLE)
+    set(boost_py_version "")
+else()
+    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
+    # Get first two numbers of python string
+    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version ${boost_py_version} )
+endif()
+
+foreach(possible_name python3 python-py${boost_py_version} python)
+    find_package(Boost COMPONENTS ${possible_name} QUIET)
     if (Boost_FOUND)
         set(FOUND_A_BOOST_PYTHON TRUE)
         break()
@@ -117,6 +145,7 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL2_LIBRARIES})
+target_link_libraries(robocup rrt)
 
 # python
 # note: these are set in the root CMakeLists.txt file

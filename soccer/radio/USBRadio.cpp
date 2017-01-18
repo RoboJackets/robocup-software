@@ -233,7 +233,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
         libusb_bulk_transfer(_device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
                              sizeof(forward_packet), &sent, Control_Timeout);
     if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet)) {
-        fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %d\n",
+        fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %lu\n",
                 sent, sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
             fprintf(stderr, "  Error: '%s'\n",
@@ -265,15 +265,13 @@ void USBRadio::receive() {
 
 // Note: this method assumes that sizeof(buf) == rtp::Reverse_Size
 void USBRadio::handleRxData(uint8_t* buf) {
-    RJ::Time rx_time = RJ::timestamp();
-
     RadioRx packet = RadioRx();
 
     rtp::header_data* header = (rtp::header_data*)buf;
     rtp::RobotStatusMessage* msg =
         (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
 
-    packet.set_timestamp(rx_time);
+    packet.set_timestamp(RJ::timestamp());
     packet.set_robot_id(msg->uid);
 
     // Hardware version

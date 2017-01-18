@@ -9,8 +9,7 @@ class SystemState;
 
 class BallObservation {
 public:
-    BallObservation(Geometry2d::Point pos = Geometry2d::Point(),
-                    RJ::Time time = 0)
+    BallObservation(Geometry2d::Point pos, RJ::Time time)
         : pos(pos), time(time) {}
 
     Geometry2d::Point pos;
@@ -29,7 +28,6 @@ private:
 
     /// Possible balls that were not used on the last frame
     struct PossibleTrack {
-        PossibleTrack() : current(false), numFrames(0) {}
         PossibleTrack(const BallObservation& obs)
             : current(true), numFrames(1), obs(obs) {}
 

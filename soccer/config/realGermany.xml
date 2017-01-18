@@ -213,9 +213,9 @@
    <i value="0"/>
    <i_windup value="10"/>
    <accelMultiplier value="0"/>
-   <d value="0.05"/>
+   <d value="0.4"/>
    <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0.1"/>
+   <minEffectiveVelocity value="0.2"/>
   </translation>
   <rotation>
    <p value="7"/>
@@ -252,9 +252,9 @@
  </WindowEvaluator>
  <Joystick>
   <Max_Rotation_Speed value="12.5664"/>
-  <Max_Damped_Rotation_Speed value="1"/>
+  <Max_Damped_Rotation_Speed value="4"/>
   <Max_Translation_Speed value="3"/>
-  <Max_Damped_Translation_Speed value="1"/>
+  <Max_Damped_Translation_Speed value="0.7"/>
  </Joystick>
  <SpaceNavJoystick>
   <Positive_Dribbler_Deadzone value="100"/>
@@ -269,7 +269,7 @@
   <Max_Rotation_Acceleration value="4"/>
  </RotationConstraints>
  <Pivot>
-  <radius value="1"/>
+  <radius value="1.1"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>

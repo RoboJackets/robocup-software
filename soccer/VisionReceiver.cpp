@@ -9,15 +9,18 @@
 
 using namespace std;
 
-VisionReceiver::VisionReceiver(bool sim, int port) {
-    simulation = sim;
-    _running = false;
-    this->port = port;
-}
+VisionReceiver::VisionReceiver(bool sim, int port)
+    : simulation(sim), _running(false), port(port) {}
 
 void VisionReceiver::stop() {
-    _running = false;
-    wait();
+    if (isRunning()) {
+        // Handle Case where start has been called, but _running has not been
+        // set to true yet.
+        while (!_running) {
+        }
+        _running = false;
+        wait();
+    }
 }
 
 void VisionReceiver::getPackets(std::vector<VisionPacket*>& packets) {
@@ -28,6 +31,7 @@ void VisionReceiver::getPackets(std::vector<VisionPacket*>& packets) {
 }
 
 void VisionReceiver::run() {
+    _running = true;
     QUdpSocket socket;
 
     // Create vision socket
@@ -54,8 +58,6 @@ void VisionReceiver::run() {
     // frames, assuming some clock skew between this
     // computer and the vision computer.
     _packets.reserve(4);
-
-    _running = true;
     while (_running) {
         char buf[65536];
 
@@ -81,7 +83,7 @@ void VisionReceiver::run() {
 
         // Parse the protobuf message
         VisionPacket* packet = new VisionPacket;
-        packet->receivedTime = RJ::timestamp();
+        packet->receivedTime = RJ::now();
         if (!packet->wrapper.ParseFromArray(buf, size)) {
             fprintf(stderr,
                     "VisionReceiver: got bad packet of %d bytes from %s:%d\n",

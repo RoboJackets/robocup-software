@@ -16,12 +16,13 @@ using Planning::MotionInstant;
 class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
-    virtual boost::optional<RobotInstant> evaluate(float t) const {
-        return RobotInstant(ball.predict(startTime() + RJ::SecsToTimestamp(t)));
+    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
+        return RobotInstant(ball.predict(startTime() + t));
     }
 
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles, float& hitTime,
-                     float startTime) const {
+    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+                     RJ::Seconds startTimeIntoPath,
+                     RJ::Seconds* hitTime) const {
         throw new std::runtime_error("Unsupported Opperation");
     }
 
@@ -30,13 +31,10 @@ public:
         throw new std::runtime_error("Unsupported Opperation");
     }
 
-    virtual float getDuration() const {
-        return std::numeric_limits<float>::infinity();
-    }
+    virtual RJ::Seconds getDuration() const { return RJ::Seconds::max(); }
 
-    virtual std::unique_ptr<Path> subPath(
-        float startTime = 0,
-        float endTime = std::numeric_limits<float>::infinity()) const {
+    virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
+                                          RJ::Seconds endTime) const {
         throw new std::runtime_error("Unsupported Opperation");
     }
 
@@ -68,14 +66,14 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     }
 
     MotionInstant instant;
-    float t = RJ::TimestampToSecs(estimateTime - time);
+    auto t = RJ::Seconds(estimateTime - time);
 
     const auto s0 = vel.mag();
 
     // Based on sim ball
     // v = v0 * e^-0.2913t
     // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
-    auto part = std::exp(-0.2913f * t);
+    auto part = std::exp(-0.2913f * t.count());
     auto speed = s0 * part;
     auto distance = s0 * -3.43289f * (part - 1.0f);
 
@@ -93,11 +91,10 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
     // d = v0 * -3.43289 (-1 + e^(-0.2913 t))
     // (d + v0 * -3.43289) / (v0 * -3.43289)= e^(-0.2913 t))
     auto part = vel.mag() * -3.43289;
-    return time + RJ::SecsToTimestamp(std::log((dist + part) / part) / -0.2913);
+    return time + RJ::Seconds(std::log((dist + part) / part) / -0.2913);
 }
 
 SystemState::SystemState() {
-    timestamp = 0;
     _numDebugLayers = 0;
 
     // FIXME - boost::array?
@@ -230,4 +227,14 @@ void SystemState::drawSegment(const Geometry2d::Segment& line, const QColor& qc,
     *dbg->add_points() = line.pt[0];
     *dbg->add_points() = line.pt[1];
     dbg->set_color(color(qc));
+}
+
+std::vector<int> SystemState::ourValidIds() {
+    std::vector<int> validIds;
+    for (int i = 0; i < self.size(); i++) {
+        if (self[i]->visible) {
+            validIds.push_back(self[i]->shell());
+        }
+    }
+    return validIds;
 }

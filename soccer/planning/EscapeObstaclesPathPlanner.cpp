@@ -1,10 +1,11 @@
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
-#include "Tree.hpp"
-#include "Util.hpp"
 #include <Configuration.hpp>
+#include "RRTUtil.hpp"
+#include "RoboCupStateSpace.hpp"
+#include "TrapezoidalPath.hpp"
 
 using namespace Geometry2d;
+using namespace std;
 
 namespace Planning {
 
@@ -14,23 +15,28 @@ ConfigDouble* EscapeObstaclesPathPlanner::_stepSize;
 ConfigDouble* EscapeObstaclesPathPlanner::_goalChangeThreshold;
 
 void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
-    _stepSize =
-        new ConfigDouble(cfg, "EscapeObstaclesPathPlanner/stepSize", 0.1);
+    _stepSize = new ConfigDouble(
+        cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
     _goalChangeThreshold = new ConfigDouble(
         cfg, "EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
 }
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
-    SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
+    PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     boost::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
-    const Point unblocked =
-        findNonBlockedGoal(startInstant.pos, optPrevPt, obstacles);
+    const Point unblocked = findNonBlockedGoal(
+        startInstant.pos, optPrevPt, obstacles, 300,
+        [&](const RRT::Tree<Point>& rrt) {
+            if (*RRTConfig::EnableRRTDebugDrawing) {
+                DrawRRT(rrt, &planRequest.systemState, planRequest.shellID);
+            }
+        });
 
     // reuse path if there's not a significantly better spot to target
     if (prevPath && unblocked == prevPath->end().motion.pos) {
@@ -45,31 +51,37 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     auto path = std::unique_ptr<Path>(
         new TrapezoidalPath(startInstant.pos, motionConstraints.maxSpeed,
                             unblocked, 0, motionConstraints));
-    path->setStartTime(RJ::timestamp());
+    path->setStartTime(RJ::now());
     return std::move(path);
 }
 
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     Point goal, boost::optional<Point> prevGoal, const ShapeSet& obstacles,
-    int maxItr) {
+    int maxItr, std::function<void(const RRT::Tree<Point>&)> rrtLogger) {
     if (obstacles.hit(goal)) {
-        FixedStepTree goalTree;
-        goalTree.init(goal, &obstacles);
-        goalTree.step = stepSize();
+        auto stateSpace = make_shared<RoboCupStateSpace>(
+            Field_Dimensions::Current_Dimensions, obstacles);
+        RRT::Tree<Point> rrt(stateSpace);
+        rrt.setStartState(goal);
+        // note: we don't set goal state because we're not looking for a
+        // particular point, just something that isn't blocked
+        rrt.setStepSize(stepSize());
 
         // The starting point is in an obstacle, extend the tree until we find
         // an unobstructed point
         Point newGoal;
         for (int i = 0; i < maxItr; ++i) {
             // extend towards a random point
-            Tree::Point* newPoint = goalTree.extend(RandomFieldLocation());
+            RRT::Node<Point>* newNode = rrt.grow();
 
             // if the new point is not blocked, it becomes the new goal
-            if (newPoint && newPoint->hit.empty()) {
-                newGoal = newPoint->pos;
+            if (newNode && !obstacles.hit(newNode->state())) {
+                newGoal = newNode->state();
                 break;
             }
         }
+
+        if (rrtLogger) rrtLogger(rrt);
 
         if (!prevGoal || obstacles.hit(*prevGoal)) return newGoal;
 

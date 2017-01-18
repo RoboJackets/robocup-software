@@ -15,7 +15,8 @@ machine:
 checkout:
   post:
     # This is a hack, but it's the only thing that works at the moment :/
-    - git submodule sync && git submodule update --init || true && git submodule sync && git submodule update --init
+    - sudo apt-get update && sudo apt-get install git
+    - git submodule sync && git submodule update --init --recursive
 
 dependencies:
   pre:
@@ -32,7 +33,8 @@ dependencies:
 # The test phase dosen't actually run tests. We need the caching from the deploy step.
 test:
   override:
-    - ./external/DoCIF/commands/exit.sh
+    # Also run webhooks
+    - ./external/DoCIF/commands/exit.sh || ./util/docker/notify_fail.sh
 
 deployment:
   github:
@@ -40,8 +42,9 @@ deployment:
     commands:
       - ./external/DoCIF/commands/deploy.sh # This will run DEPLOY_COMMAND as well
 
-experimental:
-  notify:
-    branches:
-      only:
-        - master
+# experimental:
+#   notify:
+#     branches:
+#       only:
+#         - master
+

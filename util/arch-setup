@@ -1,5 +1,13 @@
 #!/bin/bash -e
 
+# The aur helper to use to install packages. We use the value of AUR_HELPER
+# specified in the environment if available, otherwise fallback to a default. To
+# run arch-setup with a different aur helper, do:
+#   AUR_HELPER=myprogram ./util/arch-setup
+# note that this only works with 'pacman-like' aur helpers.  See
+# https://wiki.archlinux.org/index.php/AUR_helpers#Comparison_table for more info
+AUR_HELPER=${AUR_HELPER:-yaourt}
+
 BASE=$(readlink -f $(dirname $0)/..)
 
 echo "-- Installing udev rules"
@@ -13,7 +21,7 @@ echo "-- Installing required AUR packages"
 for pkgname in $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-aur.txt); do
     echo "Checking for AUR package: $pkgname"
     if !(pacman -Q $pkgname > /dev/null); then
-        yaourt -S --noconfirm $pkgname
+        $AUR_HELPER -S --noconfirm $pkgname
     fi
 done
 
@@ -23,4 +31,4 @@ sudo pip2 install -r $BASE/util/requirements2.txt
 
 echo "-- Updating submodules"
 git submodule sync
-git submodule update --init
+git submodule update --init --recursive

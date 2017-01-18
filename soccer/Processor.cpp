@@ -14,9 +14,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <git_version.hpp>
-#include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
+#include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -33,7 +33,7 @@ using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
 
-static const uint64_t Command_Latency = 0;
+static const auto Command_Latency = 0ms;
 
 RobotConfig* Processor::robotConfig2008;
 RobotConfig* Processor::robotConfig2011;
@@ -54,14 +54,11 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
+Processor::Processor(bool sim) : _loopMutex() {
     _running = true;
-    _framePeriod = 1000000 / 60;
     _manualID = -1;
     _defendPlusX = false;
-    _externalReferee = true;
     _framerate = 0;
-    firstLogTime = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
     _initialized = false;
@@ -72,7 +69,9 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     // joysticks
     _joysticks.push_back(new GamepadController());
     _joysticks.push_back(new SpaceNavJoystick());
-    _joysticks.push_back(new GamepadJoystick());
+    // Enable this if you have issues with the new controller.
+    // _joysticks.push_back(new GamepadJoystick());
+
     _dampedTranslation = true;
     _dampedRotation = true;
 
@@ -88,6 +87,12 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
     vision.simulation = _simulation;
+
+    vision.start();
+
+    // Create radio socket
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+                         : static_cast<Radio*>(new USBRadio());
 }
 
 Processor::~Processor() {
@@ -154,8 +159,7 @@ void Processor::blueTeam(bool value) {
     }
 }
 
-bool Processor::joystickValid() {
-    QMutexLocker lock(&_loopMutex);
+bool Processor::joystickValid() const {
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) return true;
     }
@@ -167,7 +171,8 @@ void Processor::runModels(
     vector<BallObservation> ballObservations;
 
     for (const SSL_DetectionFrame* frame : detectionFrames) {
-        RJ::Time time = RJ::SecsToTimestamp(frame->t_capture());
+        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
+            RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
         ballObservations.reserve(ballObservations.size() +
@@ -210,11 +215,15 @@ void Processor::runModels(
     _ballTracker->run(ballObservations, &_state);
 
     for (Robot* robot : _state.self) {
-        robot->filter()->predict(_state.logFrame->command_time(), robot);
+        robot->filter()->predict(
+            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
+            robot);
     }
 
     for (Robot* robot : _state.opp) {
-        robot->filter()->predict(_state.logFrame->command_time(), robot);
+        robot->filter()->predict(
+            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
+            robot);
     }
 }
 
@@ -222,22 +231,16 @@ void Processor::runModels(
  * program loop
  */
 void Processor::run() {
-    vision.start();
-
-    // Create radio socket
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
-                         : static_cast<Radio*>(new USBRadio());
-
     Status curStatus;
 
     bool first = true;
     // main loop
     while (_running) {
-        RJ::Time startTime = RJ::timestamp();
-        int delta_us = startTime - curStatus.lastLoopTime;
-        _framerate = 1000000.0 / delta_us;
+        RJ::Time startTime = RJ::now();
+        auto deltaTime = startTime - curStatus.lastLoopTime;
+        _framerate = RJ::Seconds(1) / deltaTime;
         curStatus.lastLoopTime = startTime;
-        _state.timestamp = startTime;
+        _state.time = startTime;
 
         if (!firstLogTime) {
             firstLogTime = startTime;
@@ -249,7 +252,8 @@ void Processor::run() {
         // Make a new log frame
         _state.logFrame = std::make_shared<Packet::LogFrame>();
         _state.logFrame->set_timestamp(RJ::timestamp());
-        _state.logFrame->set_command_time(startTime + Command_Latency);
+        _state.logFrame->set_command_time(
+            RJ::timestamp(startTime + Command_Latency));
         _state.logFrame->set_use_our_half(_useOurHalf);
         _state.logFrame->set_use_opponent_half(_useOpponentHalf);
         _state.logFrame->set_manual_id(_manualID);
@@ -311,7 +315,8 @@ void Processor::run() {
             if (packet->wrapper.has_detection()) {
                 SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
-                double rt = packet->receivedTime / 1000000.0;
+                double rt =
+                    RJ::numSeconds(packet->receivedTime.time_since_epoch());
                 det->set_t_capture(rt - det->t_sent() + det->t_capture());
                 det->set_t_sent(rt);
 
@@ -362,11 +367,11 @@ void Processor::run() {
         // Read radio reverse packets
         _radio->receive();
 
-        _loopMutex.lock();
         for (const Packet::RadioRx& rx : _radio->reversePackets()) {
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
-            curStatus.lastRadioRxTime = rx.timestamp();
+            curStatus.lastRadioRxTime =
+                RJ::Time(chrono::microseconds(rx.timestamp()));
 
             // Store this packet in the appropriate robot
             unsigned int board = rx.robot_id();
@@ -374,7 +379,7 @@ void Processor::run() {
                 // We have to copy because the RX packet will survive past this
                 // frame but LogFrame will not (the RadioRx in LogFrame will be
                 // reused).
-                _state.self[board]->radioRx().CopyFrom(rx);
+                _state.self[board]->setRadioRx(rx);
                 _state.self[board]->radioRxUpdated();
             }
         }
@@ -382,6 +387,7 @@ void Processor::run() {
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
+            if (joystick->valid()) break;
         }
 
         runModels(detectionFrames);
@@ -395,6 +401,8 @@ void Processor::run() {
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
+            curStatus.lastRefereeTime =
+                std::max(curStatus.lastRefereeTime, packet->receivedTime);
             delete packet;
         }
 
@@ -468,7 +476,7 @@ void Processor::run() {
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
-                        r->getPlanningPriority()));
+                        r->shell(), r->getPlanningPriority()));
             }
         }
 
@@ -525,34 +533,30 @@ void Processor::run() {
                 // log->set_cmd_w(r->cmd_w);
                 log->set_shell(r->shell());
                 log->set_angle(r->angle);
-
-                if (r->radioRx().has_kicker_voltage()) {
-                    log->set_kicker_voltage(r->radioRx().kicker_voltage());
+                auto radioRx = r->radioRx();
+                if (radioRx.has_kicker_voltage()) {
+                    log->set_kicker_voltage(radioRx.kicker_voltage());
                 }
 
-                if (r->radioRx().has_kicker_status()) {
-                    log->set_charged(r->radioRx().kicker_status() & 0x01);
-                    log->set_kicker_works(
-                        !(r->radioRx().kicker_status() & 0x90));
+                if (radioRx.has_kicker_status()) {
+                    log->set_charged(radioRx.kicker_status() & 0x01);
+                    log->set_kicker_works(!(radioRx.kicker_status() & 0x90));
                 }
 
-                if (r->radioRx().has_ball_sense_status()) {
-                    log->set_ball_sense_status(
-                        r->radioRx().ball_sense_status());
+                if (radioRx.has_ball_sense_status()) {
+                    log->set_ball_sense_status(radioRx.ball_sense_status());
                 }
 
-                if (r->radioRx().has_battery()) {
-                    log->set_battery_voltage(r->radioRx().battery());
+                if (radioRx.has_battery()) {
+                    log->set_battery_voltage(radioRx.battery());
                 }
 
                 log->mutable_motor_status()->Clear();
-                log->mutable_motor_status()->MergeFrom(
-                    r->radioRx().motor_status());
+                log->mutable_motor_status()->MergeFrom(radioRx.motor_status());
 
-                if (r->radioRx().has_quaternion()) {
+                if (radioRx.has_quaternion()) {
                     log->mutable_quaternion()->Clear();
-                    log->mutable_quaternion()->MergeFrom(
-                        r->radioRx().quaternion());
+                    log->mutable_quaternion()->MergeFrom(radioRx.quaternion());
                 } else {
                     log->clear_quaternion();
                 }
@@ -591,8 +595,6 @@ void Processor::run() {
         // Write to the log
         _logger.addFrame(_state.logFrame);
 
-        _loopMutex.unlock();
-
         // Store processing loop status
         _statusMutex.lock();
         _status = curStatus;
@@ -604,15 +606,15 @@ void Processor::run() {
         ////////////////
         // Timing
 
-        RJ::Time endTime = RJ::timestamp();
-        int lastFrameTime = endTime - startTime;
-        if (lastFrameTime < _framePeriod) {
+        auto endTime = RJ::now();
+        auto timeLapse = endTime - startTime;
+        if (timeLapse < _framePeriod) {
             // Use system usleep, not QThread::usleep.
             //
             // QThread::usleep uses pthread_cond_wait which sometimes fails to
             // unblock.
             // This seems to depend on how many threads are blocked.
-            ::usleep(_framePeriod - lastFrameTime);
+            ::usleep(RJ::numMicroseconds(_framePeriod - timeLapse));
         } else {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
@@ -776,6 +778,7 @@ JoystickControlValues Processor::getJoystickControlValues() {
             vals.dribblerPower =
                 max<double>(vals.dribblerPower, newVals.dribblerPower);
             vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
+            break;
         }
     }
 
