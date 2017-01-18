@@ -2,19 +2,18 @@
 #include "StyleSheetManager.hpp"
 #include <Utils.hpp>
 
-StyleSheetManager::StyleSheetManager(QMainWindow* window) {
-	win =  window;
-}
+QString StyleSheetManager::DARK = "../soccer/ui/QTDark.stylesheet";
+QString StyleSheetManager::NONE = "";
 
-void StyleSheetManager::changeStyleSheet(QString name) {
+void StyleSheetManager::changeStyleSheet(QMainWindow* window, QString name) {
 	if (name.compare("NONE") == 0) {
-		win->setStyleSheet(NONE);
+		window->setStyleSheet(NONE);
 	}
 	else if (name.compare("DARK") == 0) {
 		QFile file(ApplicationRunDirectory().filePath(DARK));
     	file.open(QFile::ReadOnly);
   		QString styleSheet = file.readAll();
-  		win->setStyleSheet(styleSheet);
+  		window->setStyleSheet(styleSheet);
 	    file.close();
 	}
 }

@@ -25,6 +25,8 @@
 #include <ctime>
 #include <string>
 
+#include <stdio.h>
+
 #include <google/protobuf/descriptor.h>
 
 using namespace std;
@@ -1041,13 +1043,15 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
 }
 
 void MainWindow::on_actionNone_triggered() {
-    StyleSheetManager manager(this);
-    manager.changeStyleSheet("NONE");
+    if (strcmp(getenv("var"), "NONE") == 0) {
+        StyleSheetManager::changeStyleSheet(this, "NONE");
+    }
 }
  
 void MainWindow::on_actionDark_triggered() {
-    StyleSheetManager manager(this);
-    manager.changeStyleSheet("DARK");
+    if (strcmp(getenv("var"), "DARK") == 0) {
+        StyleSheetManager::changeStyleSheet(this, "DARK");
+    }
 }
 
 // Manual control commands

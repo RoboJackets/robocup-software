@@ -2,12 +2,11 @@
 #include <QtWidgets>
 using namespace std;
 
+
 class StyleSheetManager {
-	const QString DARK= "../soccer/ui/QTDark.stylesheet";
-	const QString NONE = "";
+	static QString DARK;
+	static QString NONE;
 
 	public:
-		StyleSheetManager(QMainWindow* window);
-		QMainWindow* win;
-		void changeStyleSheet(QString name);
+		static void changeStyleSheet(QMainWindow* window, QString name);
 };
