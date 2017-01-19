@@ -111,6 +111,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             self.remove_subbehavior('aim')
 
     def on_enter_capturing(self):
+        self.enable_shot_obstacle = False
         self.remove_aim_behavior()
         self.robot.unkick()
         capture = skills.capture.Capture()
@@ -133,6 +134,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         self.robot.set_planning_priority(planning_priority.PIVOT_KICK)
 
     def on_enter_aiming(self):
+        self.enable_shot_obstacle = True
         if not self.has_subbehavior_with_name('aim'):
             aim = skills.aim.Aim()
             self.add_subbehavior(aim, 'aim', required=True)
