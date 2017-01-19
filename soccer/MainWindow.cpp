@@ -102,19 +102,19 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     _ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    //Action Group 0
+    // Action Group 0
     QActionGroup* teamGroup = new QActionGroup(this);
     teamGroup->addAction(_ui.actionTeamBlue);
     teamGroup->addAction(_ui.actionTeamYellow);
     qActionGroups.push_back(teamGroup);
 
-    //Action Group 1
+    // Action Group 1
     QActionGroup* goalGroup = new QActionGroup(this);
     goalGroup->addAction(_ui.actionDefendMinusX);
     goalGroup->addAction(_ui.actionDefendPlusX);
     qActionGroups.push_back(goalGroup);
 
-    //Action Group 2
+    // Action Group 2
     QActionGroup* rotateGroup = new QActionGroup(this);
     rotateGroup->addAction(_ui.action0);
     rotateGroup->addAction(_ui.action90);
@@ -122,14 +122,14 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     rotateGroup->addAction(_ui.action270);
     qActionGroups.push_back(rotateGroup);
 
-    //Action Group 3
+    // Action Group 3
     auto visionChannelGroup = new QActionGroup(this);
     visionChannelGroup->addAction(_ui.actionVisionPrimary_Half);
     visionChannelGroup->addAction(_ui.actionVisionSecondary_Half);
     visionChannelGroup->addAction(_ui.actionVisionFull_Field);
     qActionGroups.push_back(visionChannelGroup);
 
-    //Action Group 4
+    // Action Group 4
     auto radioGroup = new QActionGroup(this);
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
@@ -175,8 +175,8 @@ void MainWindow::initialize() {
 
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
-    //Do not initialize DefendPlusX(Group 1) or Vision(Group 3)
-    for (int i : {0,2,4}) {
+    // Do not initialize DefendPlusX(Group 1) or Vision(Group 3)
+    for (int i : {0, 2, 4}) {
         qActionGroups[i]->checkedAction()->trigger();
     }
 
@@ -191,23 +191,25 @@ void MainWindow::initialize() {
 
     _autoExternalReferee = _processor->externalReferee();
 
-    if(_processor->defendPlusX()){
+    if (_processor->defendPlusX()) {
         on_actionDefendPlusX_triggered();
         _ui.actionDefendPlusX->setChecked(true);
-    }
-    else{
+    } else {
         on_actionDefendMinusX_triggered();
         _ui.actionDefendMinusX->setChecked(true);
     }
 
-    switch(_processor->visionChannel()){
-        case 1: on_actionVisionPrimary_Half_triggered();
+    switch (_processor->visionChannel()) {
+        case 1:
+            on_actionVisionPrimary_Half_triggered();
             _ui.actionVisionPrimary_Half->setChecked(true);
             break;
-        case 2: on_actionVisionSecondary_Half_triggered();
+        case 2:
+            on_actionVisionSecondary_Half_triggered();
             _ui.actionVisionSecondary_Half->setChecked(true);
             break;
-        case 3: on_actionVisionFull_Field_triggered();
+        case 3:
+            on_actionVisionFull_Field_triggered();
             _ui.actionVisionFull_Field->setChecked(true);
             break;
     }
@@ -245,12 +247,12 @@ string MainWindow::formatLabelBold(Side side, string label) {
            "; font-weight: bold;\">" + label + "</span></p></body></html>";
 }
 
-void MainWindow::updateFromRefPacket(bool haveExternalReferee){
-    //update goalie from Packet
+void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
+    // update goalie from Packet
     if (haveExternalReferee) {
         // The External Ref is connected
         _ui.goalieID->setEnabled(false);
-        //disable Blue/Yellow team
+        // disable Blue/Yellow team
         qActionGroups[0]->setEnabled(false);
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
@@ -260,20 +262,19 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee){
                 _processor->state()->gameState.getGoalieId() + 1);
         }
 
-        bool blueTeam=_processor->refereeModule()->blueTeam();
-        if(_processor->blueTeam() != blueTeam){
-            blueTeam ? _ui.actionTeamBlue->trigger() : _ui.actionTeamYellow->trigger();
-
-
+        bool blueTeam = _processor->refereeModule()->blueTeam();
+        if (_processor->blueTeam() != blueTeam) {
+            blueTeam ? _ui.actionTeamBlue->trigger()
+                     : _ui.actionTeamYellow->trigger();
         }
     } else {
         _ui.goalieID->setEnabled(true);
-        //enable Blue/Yellow team
+        // enable Blue/Yellow team
         qActionGroups[0]->setEnabled(true);
     }
 
-    //update Yellow/Blue team from packet
-    //if()
+    // update Yellow/Blue team from packet
+    // if()
 }
 
 void MainWindow::updateViews() {

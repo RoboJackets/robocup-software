@@ -36,8 +36,10 @@ void usage(const char* prog) {
     fprintf(stderr, "\t-freq:       specify radio frequency (918 or 916)\n");
     fprintf(stderr, "\t-nolog:      don't write log files\n");
     fprintf(stderr, "\t-noref:      don't use external referee commands\n");
-    fprintf(stderr, "\t-defend:     specify half of field to defend (plus or minus)\n");
-    fprintf(stderr, "\t-vision      specify the vision channel (1,2, or full)\n");
+    fprintf(stderr,
+            "\t-defend:     specify half of field to defend (plus or minus)\n");
+    fprintf(stderr,
+            "\t-vision      specify the vision channel (1,2, or full)\n");
     exit(0);
 }
 
@@ -69,7 +71,7 @@ int main(int argc, char* argv[]) {
     QString radioFreq;
     string playbookFile;
     bool noref = false;
-    bool defendPlus =  false;
+    bool defendPlus = false;
     int visionChannel = 3;
 
     for (int i = 1; i < argc; ++i) {
@@ -118,26 +120,25 @@ int main(int argc, char* argv[]) {
             playbookFile = argv[++i];
         } else if (strcmp(var, "-noref") == 0) {
             noref = true;
-        } else if (strcmp(var, "-defend") == 0){
+        } else if (strcmp(var, "-defend") == 0) {
             if (i + 1 >= argc) {
                 printf("Field half not specified after -defend\n");
                 usage(argv[0]);
             }
             i++;
-            if (strcmp(argv[i],"plus") == 0) {
+            if (strcmp(argv[i], "plus") == 0) {
                 defendPlus = true;
             }
-        } else if (strcmp(var, "-vision") == 0){
+        } else if (strcmp(var, "-vision") == 0) {
             if (i + 1 >= argc) {
                 printf("No vision channel specified after -vision\n");
                 usage(argv[0]);
             }
             i++;
-            //USE STRCMP
-            if (strcmp(argv[i],"1")==0) {
+            // USE STRCMP
+            if (strcmp(argv[i], "1") == 0) {
                 visionChannel = 1;
-            }
-            else if (strcmp(argv[i],"2")==0) {
+            } else if (strcmp(argv[i], "2") == 0) {
                 visionChannel = 2;
             }
         } else {
@@ -160,7 +161,8 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
-    auto processor = std::make_unique<Processor>(sim,defendPlus,visionChannel);
+    auto processor =
+        std::make_unique<Processor>(sim, defendPlus, visionChannel);
     processor->blueTeam(blueTeam);
     processor->refereeModule()->useExternalReferee(!noref);
 

@@ -54,7 +54,8 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim, bool defendPlus, int visionChannel) : _loopMutex() {
+Processor::Processor(bool sim, bool defendPlus, int visionChannel)
+    : _loopMutex() {
     _running = true;
     _manualID = -1;
     _framerate = 0;
@@ -88,7 +89,7 @@ Processor::Processor(bool sim, bool defendPlus, int visionChannel) : _loopMutex(
 
     vision.start();
 
-    _visionChannel=visionChannel;
+    _visionChannel = visionChannel;
 
     // Create radio socket
     _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))

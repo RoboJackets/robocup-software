@@ -276,9 +276,9 @@ private:
 
     VisionReceiver vision;
 
-    //1 for Primary Half
-    //2 for Secondary Half
-    //3 for Full channel
+    // 1 for Primary Half
+    // 2 for Secondary Half
+    // 3 for Full channel
     int _visionChannel;
 
     bool _initialized;
