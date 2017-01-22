@@ -54,7 +54,7 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim, bool defendPlus, int visionChannel)
+Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     : _loopMutex() {
     _running = true;
     _manualID = -1;

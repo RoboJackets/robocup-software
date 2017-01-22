@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     string playbookFile;
     bool noref = false;
     bool defendPlus = false;
-    int visionChannel = 3;
+    Processor::VisionChannel visionChannel = Processor::VisionChannel::full;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -128,6 +128,9 @@ int main(int argc, char* argv[]) {
             i++;
             if (strcmp(argv[i], "plus") == 0) {
                 defendPlus = true;
+            } else if (strcmp(argv[i], "minus") != 0) {
+                printf("Invalid option for defendX\n");
+                usage(argv[0]);
             }
         } else if (strcmp(var, "-vision") == 0) {
             if (i + 1 >= argc) {
@@ -135,11 +138,13 @@ int main(int argc, char* argv[]) {
                 usage(argv[0]);
             }
             i++;
-            // USE STRCMP
             if (strcmp(argv[i], "1") == 0) {
-                visionChannel = 1;
+                visionChannel = Processor::VisionChannel::primary;
             } else if (strcmp(argv[i], "2") == 0) {
-                visionChannel = 2;
+                visionChannel = Processor::VisionChannel::secondary;
+            } else if (strcmp(argv[i], "full") != 0) {
+                printf("Invalid option for vision channel\n");
+                usage(argv[0]);
             }
         } else {
             printf("Not a valid flag: %s\n", argv[i]);

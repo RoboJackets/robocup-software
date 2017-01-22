@@ -106,13 +106,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     QActionGroup* teamGroup = new QActionGroup(this);
     teamGroup->addAction(_ui.actionTeamBlue);
     teamGroup->addAction(_ui.actionTeamYellow);
-    qActionGroups.push_back(teamGroup);
+    qActionGroups["teamGroup"] = teamGroup;
 
     // Action Group 1
     QActionGroup* goalGroup = new QActionGroup(this);
     goalGroup->addAction(_ui.actionDefendMinusX);
     goalGroup->addAction(_ui.actionDefendPlusX);
-    qActionGroups.push_back(goalGroup);
+    qActionGroups["goalGroup"] = goalGroup;
 
     // Action Group 2
     QActionGroup* rotateGroup = new QActionGroup(this);
@@ -120,20 +120,20 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     rotateGroup->addAction(_ui.action90);
     rotateGroup->addAction(_ui.action180);
     rotateGroup->addAction(_ui.action270);
-    qActionGroups.push_back(rotateGroup);
+    qActionGroups["rotateGroup"] = rotateGroup;
 
     // Action Group 3
     auto visionChannelGroup = new QActionGroup(this);
     visionChannelGroup->addAction(_ui.actionVisionPrimary_Half);
     visionChannelGroup->addAction(_ui.actionVisionSecondary_Half);
     visionChannelGroup->addAction(_ui.actionVisionFull_Field);
-    qActionGroups.push_back(visionChannelGroup);
+    qActionGroups["visionChannelGroup"] = visionChannelGroup;
 
     // Action Group 4
     auto radioGroup = new QActionGroup(this);
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
-    qActionGroups.push_back(radioGroup);
+    qActionGroups["radioGroup"] = radioGroup;
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
@@ -175,10 +175,10 @@ void MainWindow::initialize() {
 
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
-    // Do not initialize DefendPlusX(Group 1) or Vision(Group 3)
-    for (int i : {0, 2, 4}) {
-        qActionGroups[i]->checkedAction()->trigger();
-    }
+
+    qActionGroups["teamGroup"]->checkedAction()->trigger();
+    qActionGroups["rotateGroup"]->checkedAction()->trigger();
+    qActionGroups["radioGroup"]->checkedAction()->trigger();
 
     // Default to FullField on Simulator
     if (_processor->simulation()) {
@@ -200,15 +200,15 @@ void MainWindow::initialize() {
     }
 
     switch (_processor->visionChannel()) {
-        case 1:
+        case 0:
             on_actionVisionPrimary_Half_triggered();
             _ui.actionVisionPrimary_Half->setChecked(true);
             break;
-        case 2:
+        case 1:
             on_actionVisionSecondary_Half_triggered();
             _ui.actionVisionSecondary_Half->setChecked(true);
             break;
-        case 3:
+        case 2:
             on_actionVisionFull_Field_triggered();
             _ui.actionVisionFull_Field->setChecked(true);
             break;
@@ -269,12 +269,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         }
     } else {
         _ui.goalieID->setEnabled(true);
-        // enable Blue/Yellow team
-        qActionGroups[0]->setEnabled(true);
     }
-
-    // update Yellow/Blue team from packet
-    // if()
 }
 
 void MainWindow::updateViews() {

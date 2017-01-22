@@ -83,9 +83,11 @@ public:
         RJ::Time lastRadioRxTime;
     };
 
+    enum VisionChannel { primary, secondary, full };
+
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim, bool defendPlus, int visionChannel);
+    Processor(bool sim, bool defendPlus, VisionChannel visionChannel);
     virtual ~Processor();
 
     void stop();
@@ -170,7 +172,7 @@ public:
 
     void changeVisionChannel(int port);
 
-    int visionChannel() { return _visionChannel; }
+    VisionChannel visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
 
@@ -276,10 +278,7 @@ private:
 
     VisionReceiver vision;
 
-    // 1 for Primary Half
-    // 2 for Secondary Half
-    // 3 for Full channel
-    int _visionChannel;
+    VisionChannel _visionChannel;
 
     bool _initialized;
 };

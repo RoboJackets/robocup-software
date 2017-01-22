@@ -14,6 +14,8 @@ all:
 
 run: all
 	./run/soccer
+run-comp:
+	./runcomp.sh
 rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
