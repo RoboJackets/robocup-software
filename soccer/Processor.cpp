@@ -58,7 +58,6 @@ Processor::Processor(bool sim) : _loopMutex() {
     _running = true;
     _manualID = -1;
     _defendPlusX = false;
-    _externalReferee = true;
     _framerate = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
@@ -402,6 +401,8 @@ void Processor::run() {
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
+            curStatus.lastRefereeTime =
+                std::max(curStatus.lastRefereeTime, packet->receivedTime);
             delete packet;
         }
 

@@ -144,6 +144,11 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
+    // Get the item model from the goalieID boxes so we can disable them
+    // properly
+    goalieModel =
+        qobject_cast<const QStandardItemModel*>(_ui.goalieID->model());
+
     // Append short Git hash to the main window title with an asterisk if the
     // current Git index is dirty
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
@@ -183,6 +188,8 @@ void MainWindow::initialize() {
     updateTimer.setSingleShot(true);
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
+
+    _autoExternalReferee = _processor->externalReferee();
 }
 
 void MainWindow::logFileChanged() {
@@ -393,23 +400,6 @@ void MainWindow::updateViews() {
         if (_ui.behaviorTree->toPlainText() != behaviorStr) {
             _ui.behaviorTree->setPlainText(behaviorStr);
         }
-    }
-
-    if (RJ::now() - _processor->refereeModule()->received_time >
-        RJ::Seconds(1)) {
-        _ui.fastHalt->setEnabled(true);
-        _ui.fastStop->setEnabled(true);
-        _ui.fastReady->setEnabled(true);
-        _ui.fastForceStart->setEnabled(true);
-        _ui.fastKickoffBlue->setEnabled(true);
-        _ui.fastKickoffYellow->setEnabled(true);
-    } else {
-        _ui.fastHalt->setEnabled(false);
-        _ui.fastStop->setEnabled(false);
-        _ui.fastReady->setEnabled(false);
-        _ui.fastForceStart->setEnabled(false);
-        _ui.fastKickoffBlue->setEnabled(false);
-        _ui.fastKickoffYellow->setEnabled(false);
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
@@ -718,14 +708,53 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee =
-        (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
+    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
 
-    /*if (_autoExternalReferee && haveExternalReferee &&
-    !_ui.externalReferee->isChecked())
-    {
-        _ui.externalReferee->setChecked(true);
-    }*/
+    std::vector<int> validIds = _processor->state()->ourValidIds();
+
+    for (int i = 1; i <= Num_Shells; i++) {
+        QStandardItem* item = goalieModel->item(i);
+        if (std::find(validIds.begin(), validIds.end(), i - 1) !=
+            validIds.end()) {
+            // The list starts with None so i is 1 higher than the shell id
+            item->setFlags(item->flags() |
+                           (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        } else {
+            item->setFlags(item->flags() &
+                           ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        }
+    }
+
+    if (haveExternalReferee && _autoExternalReferee) {
+        // External Ref is connected and should be used
+        _ui.fastHalt->setEnabled(false);
+        _ui.fastStop->setEnabled(false);
+        _ui.fastReady->setEnabled(false);
+        _ui.fastForceStart->setEnabled(false);
+        _ui.fastKickoffBlue->setEnabled(false);
+        _ui.fastKickoffYellow->setEnabled(false);
+    } else {
+        _ui.fastHalt->setEnabled(true);
+        _ui.fastStop->setEnabled(true);
+        _ui.fastReady->setEnabled(true);
+        _ui.fastForceStart->setEnabled(true);
+        _ui.fastKickoffBlue->setEnabled(true);
+        _ui.fastKickoffYellow->setEnabled(true);
+    }
+
+    if (haveExternalReferee) {
+        // The External Ref is connected and transmitting a valid goalie ID
+        _ui.goalieID->setEnabled(false);
+
+        // Changes the goalie INDEX which is 1 higher than the goalie ID
+        if (_ui.goalieID->currentIndex() !=
+            _processor->state()->gameState.getGoalieId() + 1) {
+            _ui.goalieID->setCurrentIndex(
+                _processor->state()->gameState.getGoalieId() + 1);
+        }
+    } else {
+        _ui.goalieID->setEnabled(true);
+    }
 
     // Is the processing thread running?
     if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
@@ -1132,7 +1161,8 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
-    _processor->refereeModule()->useExternalReferee(value);
+    _autoExternalReferee = value;
+    _processor->externalReferee(value);
 }
 
 ////////
@@ -1208,7 +1238,8 @@ void MainWindow::on_saveConfig_clicked() {
 
 void MainWindow::on_loadPlaybook_clicked() {
     QString filename = QFileDialog::getOpenFileName(
-        this, "Load Playbook", "../soccer/gameplay/playbooks/");
+        this, "Load Playbook",
+        ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
@@ -1222,7 +1253,8 @@ void MainWindow::on_loadPlaybook_clicked() {
 
 void MainWindow::on_savePlaybook_clicked() {
     QString filename = QFileDialog::getSaveFileName(
-        this, "Save Playbook", "../soccer/gameplay/playbooks/");
+        this, "Save Playbook",
+        ApplicationRunDirectory().filePath("../soccer/gameplay/playbooks/"));
     if (!filename.isNull()) {
         try {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),

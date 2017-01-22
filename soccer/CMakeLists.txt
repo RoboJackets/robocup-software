@@ -105,9 +105,15 @@ find_package(Boost COMPONENTS system REQUIRED)
 set(FOUND_A_BOOST_PYTHON FALSE)
 # Find the matching boost python implementation
 set(version ${PYTHONLIBS_VERSION_STRING})
-STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
-# Get first two numbers of python string
-STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version ${boost_py_version} )
+
+if(APPLE)
+    set(boost_py_version "")
+else()
+    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
+    # Get first two numbers of python string
+    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version ${boost_py_version} )
+endif()
+
 foreach(possible_name python3 python-py${boost_py_version} python)
     find_package(Boost COMPONENTS ${possible_name} QUIET)
     if (Boost_FOUND)

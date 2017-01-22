@@ -173,6 +173,16 @@ void MotionControl::run() {
     _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
                               "MotionControl");
 
+    // Clamp World Acceleration
+    auto dt = RJ::Seconds(RJ::now() - _lastCmdTime);
+    Point targetAccel = (target.vel - _lastWorldVelCmd) / dt.count();
+    targetAccel.clamp(*_max_acceleration);
+
+    target.vel = _lastWorldVelCmd + targetAccel * dt.count();
+
+    _lastWorldVelCmd = target.vel;
+    _lastCmdTime = RJ::now();
+
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
     target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
@@ -207,11 +217,6 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     targetVel.clamp(*_max_velocity);
 
     // Limit Acceleration
-    auto dt = RJ::Seconds(RJ::now() - _lastCmdTime);
-    Point targetAccel = (targetVel - _lastVelCmd) / dt.count();
-    targetAccel.clamp(*_max_acceleration);
-
-    targetVel = _lastVelCmd + targetAccel * dt.count();
 
     // make sure we don't send any bad values
     if (std::isnan(targetVel.x()) || std::isnan(targetVel.y())) {
@@ -220,8 +225,6 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // track these values so we can limit acceleration
-    _lastVelCmd = targetVel;
-    _lastCmdTime = RJ::now();
 
     // velocity multiplier
     targetVel *= *_robot->config->velMultiplier;
