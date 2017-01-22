@@ -91,7 +91,8 @@ class SubmissiveGoalie(
 
         self._move_target.x = min(
             max(self._move_target.x,
-                -SubmissiveGoalie.MaxX), SubmissiveGoalie.MaxX)
+                -SubmissiveGoalie.MaxX + 0.01), SubmissiveGoalie.MaxX - 0.01)
+        self._move_target.y = constants.Robot.Radius
 
     # The point we'll be going to in order to block the given block_line
     @property
