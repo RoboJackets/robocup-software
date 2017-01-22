@@ -61,7 +61,14 @@ int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     //Sets the default theme for soccer
-    StyleSheetManager::changeStyleSheet(&app, QString(getenv("SOCCER_THEME")));
+    // StyleSheetManager::changeStyleSheet(&app, QString(getenv("SOCCER_THEME")));
+    QMainWindow* m = NULL;
+    foreach(QWidget *widget, app->topLevelWidgets()) {
+        if(widget->inherits("QMainWindow")) { 
+            m = (QMainWindow*) widget; break; 
+        }
+    }
+    StyleSheetManager::changeStyleSheet(m, QString(getenv("SOCCER_THEME")));
 
     bool blueTeam = false;
     QString cfgFile;

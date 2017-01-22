@@ -25,8 +25,6 @@
 #include <ctime>
 #include <string>
 
-#include <stdio.h>
-
 #include <google/protobuf/descriptor.h>
 
 using namespace std;
