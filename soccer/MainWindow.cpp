@@ -189,6 +189,8 @@ void MainWindow::initialize() {
     updateTimer.setSingleShot(true);
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
+
+    _autoExternalReferee = _processor->externalReferee();
 }
 
 void MainWindow::logFileChanged() {
@@ -399,23 +401,6 @@ void MainWindow::updateViews() {
         if (_ui.behaviorTree->toPlainText() != behaviorStr) {
             _ui.behaviorTree->setPlainText(behaviorStr);
         }
-    }
-
-    if (RJ::now() - _processor->refereeModule()->received_time >
-        RJ::Seconds(1)) {
-        _ui.fastHalt->setEnabled(true);
-        _ui.fastStop->setEnabled(true);
-        _ui.fastReady->setEnabled(true);
-        _ui.fastForceStart->setEnabled(true);
-        _ui.fastKickoffBlue->setEnabled(true);
-        _ui.fastKickoffYellow->setEnabled(true);
-    } else {
-        _ui.fastHalt->setEnabled(false);
-        _ui.fastStop->setEnabled(false);
-        _ui.fastReady->setEnabled(false);
-        _ui.fastForceStart->setEnabled(false);
-        _ui.fastKickoffBlue->setEnabled(false);
-        _ui.fastKickoffYellow->setEnabled(false);
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
@@ -724,21 +709,17 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee =
-        (curTime - ps.lastRefereeTime) < RJ::Seconds(0.5);
+    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
 
     for (int i = 1; i <= Num_Shells; i++) {
-        QStandardItem* item = goalieModel->item(i);
         if (std::find(validIds.begin(), validIds.end(), i - 1) !=
             validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
-            item->setFlags(item->flags() |
-                           (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            _ui.goalieID->setItemData(i, true, Qt::UserRole);
         } else {
-            item->setFlags(item->flags() &
-                           ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            _ui.goalieID->setItemData(i, false, Qt::UserRole - 1);
         }
     }
 
@@ -1045,7 +1026,7 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
 void MainWindow::on_actionNone_triggered() {
     StyleSheetManager::changeStyleSheet(this, "NONE");
 }
- 
+
 void MainWindow::on_actionDark_triggered() {
     StyleSheetManager::changeStyleSheet(this, "DARK");
 }
@@ -1188,7 +1169,8 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
-    _processor->refereeModule()->useExternalReferee(value);
+    _autoExternalReferee = value;
+    _processor->externalReferee(value);
 }
 
 ////////
