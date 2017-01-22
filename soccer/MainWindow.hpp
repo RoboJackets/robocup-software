@@ -183,6 +183,7 @@ private:
     void channel(int n);
 
     Ui_MainWindow _ui;
+    const QStandardItemModel* goalieModel;
 
     Processor* const _processor;
     Configuration* _config;
