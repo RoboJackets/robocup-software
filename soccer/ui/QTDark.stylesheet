@@ -63,10 +63,10 @@ QGroupBox {
 	margin-top: 6px;
 }
 
-QGroupBox::title {
+/*QGroupBox::title {
 	top: -7px;
 	left: 7px;
-}
+}*/
 
 QScrollBar {
 	border: 1px solid #5A5A5A;
@@ -137,7 +137,7 @@ QScrollBar::sub-line:vertical {
 }
 
 QScrollBar:left-arrow, QScrollBar::right-arrow, QScrollBar::up-arrow, QScrollBar::down-arrow {
-	border: 1px solid #5A5A5A;
+	border: 1px solid /*#5A5A5A*/;
 	width: 3px;
 	height: 3px;
 }
@@ -167,7 +167,7 @@ QHeaderView {
 
 QHeaderView::section {
 	background: #191919;
-	padding: 4px;
+	/* padding: 4px; */
 }
 
 QHeaderView::section:selected, QHeaderView::section::checked {
@@ -185,7 +185,7 @@ QTabBar {
 QTabBar::tab {
 	border-radius: 0px;
 	padding: 4px;
-	margin: 4px;
+	/* margin: 4px;*/
 }
 
 QTabBar::tab:selected {
@@ -259,9 +259,6 @@ QSlider::add-page:vertical, QSlider::sub-page:horizontal {
 
 QSlider::sub-page:vertical, QSlider::add-page:horizontal {
 	background: #353535;
-}
-
-QLabel {
 }
 
 QProgressBar {
