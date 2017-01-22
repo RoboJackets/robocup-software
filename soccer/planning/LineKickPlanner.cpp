@@ -157,6 +157,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
 
     QString debug = "";
     for (auto t = RJ::Seconds(0); t < RJ::Seconds(6); t += RJ::Seconds(0.1)) {
+        auto tempObstacles = obstacles;
         MotionInstant ballNow = ball.predict(curTime + t);
         MotionInstant target(ballNow.pos);
         targetKickPos = target.pos;
@@ -169,11 +170,10 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             auto dist = target.pos.distTo(startInstant.pos);
             points = {startInstant.pos,
                       target.pos -
-                          target.vel.normalized(std::min(
-                              dist / 2, Robot_Radius * 2.0 + Ball_Radius * 2.0)),
+                          target.vel.normalized(Robot_Radius * 2.0 + Ball_Radius * 2.0),
                       target.pos};
 
-            obstacles.add(
+            tempObstacles.add(
                 make_shared<Circle>(ballNow.pos, Robot_Radius + Ball_Radius));
             debug = "additional ";
         }
@@ -183,13 +183,16 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             // break;
         }
         auto path = RRTPlanner::generatePath(
-            points, obstacles, motionConstraints, startInstant.vel, target.vel);
+            points, tempObstacles, motionConstraints, startInstant.vel, target.vel);
         RJ::Seconds hitTime;
 
         if (path) {
+            cout<<"asd:"<< t.count() <<" "<<path->getDuration()<<endl;
             if (path->getDuration() <= t) {
-                if (path->hit(obstacles, RJ::Seconds::zero(), &hitTime)) {
-                    continue;
+                if (path->hit(tempObstacles, RJ::Seconds::zero(), &hitTime)) {
+
+                    cout<<to_string(hitTime)<<endl;
+                    //continue;
                 }
                 float multiplier = t / path->getDuration();
                 path->setDebugText(

@@ -8,7 +8,7 @@ namespace Planning {
 CompositePath::CompositePath(unique_ptr<Path> path) { append(std::move(path)); }
 
 void CompositePath::append(unique_ptr<Path> path) {
-    cout<<"duration "<<duration<<endl;
+    //cout<<"duration "<<duration<<endl;
     if (duration < RJ::Seconds::max()) {
         auto pathDuration = path->getDuration();
         if (pathDuration > RJ::Seconds::zero()) {

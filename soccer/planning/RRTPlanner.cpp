@@ -509,7 +509,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             const auto maxCentripetalAcceleration = motionConstraints.maxCentripetalAcceleration;
             double constantMaxSpeed = std::sqrt(maxCentripetalAcceleration / curvature);
 //            constantMaxSpeed =std::max(constantMaxSpeed, 0.5f);
-            cout<<asd<< " " << constantMaxSpeed<<endl;
+            //cout<<asd<< " " << constantMaxSpeed<<endl;
             asd++;
             newPointsSpeed.push_back(std::min(constantMaxSpeed, maxSpeed));
         }
