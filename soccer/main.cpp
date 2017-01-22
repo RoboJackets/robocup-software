@@ -60,15 +60,6 @@ int main(int argc, char* argv[]) {
 
     QApplication app(argc, argv);
 
-    //Sets the default theme for soccer
-    // StyleSheetManager::changeStyleSheet(&app, QString(getenv("SOCCER_THEME")));
-    // QMainWindow* m = NULL;
-    // foreach(QWidget *widget, app.topLevelWidgets()) {
-    //     if(widget->inherits("QMainWindow")) { 
-    //         m = (QMainWindow*) widget; break; 
-    //     }
-    // }
-
     bool blueTeam = false;
     QString cfgFile;
     vector<const char*> playDirs;
@@ -198,6 +189,8 @@ int main(int argc, char* argv[]) {
     if (playbookFile.size() > 0)
         processor->gameplayModule()->loadPlaybook(playbookFile);
 
+    // Sets the initial stylesheet for the application
+    // based on the environment variable "SOCCER_THEME"
     StyleSheetManager::changeStyleSheet(win.get(), QString(getenv("SOCCER_THEME")));
 
     win->show();
