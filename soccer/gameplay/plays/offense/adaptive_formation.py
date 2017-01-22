@@ -147,21 +147,52 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.add_state(s, behavior.Behavior.State.running)
 
         # Min score to pass
-        self.dribbleToPassCutoff = 0.1
+        self.dribble_to_pass_cutoff = 0.1
         # Min score to shoot
-        self.dribbleToShootCutoff = 0.1
+        self.dribble_to_shoot_cutoff = 0.1
+        # Dribbling skill
+        self.dribbler = None
+        # Dribble start point
+        self.dribble_start_pt = robocup.Point(0,0)
+        # Max dribble distance per the rules with 10% wiggle room
+        self.max_dribble_dist = 1 * .9
 
         # Min field Y to clear
-        self.clearFieldCutoff = constants.Field.Length / 5 # in our 20%
+        self.clear_field_cutoff = constants.Field.Length / 5 # in our 20%
 
-        # Min onetouch score
-        self.oneTouchShotCutoff = 0.9
-
-        # Min distance to switch phases
-        self.passCollectingDist = 0.5
 
         # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
         self.IncreasingChancesCutoff = 0.05
+        # State Deciding Variables
+        self.shot_chance = 0
+        self.pass_score = 0        
+        # Prev State Deciding Variables
+        self.prev_shot_chance = 0
+        self.prev_pass_score = 0
+
+
+        # field_pos_weights: (Centerness, Distance to their goal, Angle off their goal)
+        # [type]_weights: (space, field_position, shot_chance, kick_proximity)
+        
+        # Weights for the field positioning
+        self.field_pos_weights = (0.01, 3, 0.02)
+        # Weights for finding best pass
+        self.passing_weights = (2, 2, 15, 1)
+        # Weights for finding where to dribble to
+        self.dribbling_weights = (4, 2, 15, 1)
+        # Weights to find where to chip the ball
+        self.chip_field_pos_weights = (0.1, .2, 0.02)
+        self.chip_pass_weights = (2, 10, 0, 10)
+
+        # Min onetouch score
+        self.one_touch_shot_cutoff = 0.9
+
+        # Min distance to switch phases
+        self.pass_collecting_dist = 0.5
+
+        # State Transition Variable
+        self.pass_target = None
+
 
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
@@ -241,27 +272,18 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             lambda: False,
                             'OneTouch: Ball Lost / Shot')
 
-        self.win_eval = robocup.WindowEvaluator(main.system_state())
-        self.dribbler = None
-        
-        # State Transition Variable
-        self.shot_location = None
-        self.pass_pos = None
-
-        # State Deciding Variables
-        self.shot_chance = 0
-        self.pass_score = 0
-        
-        # Prev State Deciding Variables
-        self.prev_shot_chance = 0
-        self.prev_pass_score = 0
 
     def should_pass_from_dribble(self):
 
         # If pass is above cutoff and we dont have a good shot
-        if (self.pass_score > self.dribbleToPassCutoff and \
-            self.shot_chance < self.dribbleToShootCutoff):
+        if (self.pass_score > self.dribble_to_pass_cutoff and \
+            self.shot_chance < self.dribble_to_shoot_cutoff):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(self.shot_chance))
+            return True
+
+        # Force pass if we are near our max dribble dist
+        dribble_dist = (main.ball().pos - self.dribble_start_pt).mag()
+        if (dribble_dist > max_dribble_dist):
             return True
 
         # Under cutoff
@@ -274,27 +296,28 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return False
 
         # If shot is above cutoff
-        if (self.shot_chance > self.dribbleToShootCutoff):
+        if (self.shot_chance > self.dribble_to_shoot_cutoff):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(self.shot_chance))
             return True
 
         # Decreasing and under cutoff
         return False
     
-    # TODO: See if there is space to dribble
+    
     def should_clear_from_dribble(self):
         # If outside clear zone
-        if (self.dribbler.pos.y > self.clearFieldCutoff):
+        if (self.dribbler.pos.y > self.clear_field_cutoff):
             return False
 
         # If pass chances are getting better, hold off
         if (self.prev_pass_score + IncreasingChancesCutoff < self.pass_score):
             return False
-
+        
+        # TODO: See if there is space to dribble
         return True
 
     def on_enter_collecting(self):
-        # Added defense to all bots
+        # TODO: Add defense to all bots
         # Do more advanced blocking etc
         # Once ball is contained, move onto next step
 
@@ -307,32 +330,26 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_enter_dribbling(self):
         self.dribbler = skills.dribble.Dribble()
+        self.dribble_start_pt = main.ball().pos
 
         # Dribbles toward the best receive point
-        # TODO: Change weights so it dribbles to open space more
-        # TODO: Further refine the weights and make them class variables
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
-                                                    (0.01, 3, 0.02), (2, 2, 15, 1), False)
+                                                    self.field_pos_weights, self.dribbling_weights, False)
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
     def execute_dribbling(self):
-        # Find closest bot
-        # Can be used to force a pass when they get too close
-        # Or even just change mouth angle of dribble
-        # TODO: Weight the ones in front higher
+        # Find the closest bot weighting the ones in front of the ball more
         closest_bot = evaluation.opponent.get_closest_opponent(main.ball().pos, 0.9)
         
         # Grab best pass
-        # TODO: Further refine the weights and make then class variables
-        self.pass_pos, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
+        self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
                                                     main.ball().pos, None, main.our_robots(),
-                                                    (0.01, 3, 0.02), (2, 2, 15, 1), False)
+                                                    self.field_pos_weights, self.passing_weights, False)
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
 
-        # Add some sort of dibble reset for the 1000cm limit in the rules
         # TODO: Check open space every once in a while and change dribble direction
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
@@ -372,16 +389,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
-        # Setup passer
-        # Setup reciever
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_pos, skills.moving_pass_receive.MovingPassReceive()), 'pass')
-
-    def execute_passing(self):
-        # Wait until the reciever will be able to get there in time
-        # Then kick the ball
-
-        # May not even be needed now due to how passing will be set up
-        pass
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_target, skills.moving_pass_receive.MovingPassReceive()), 'pass')
 
     def on_exit_passing(self):
         self.remove_all_subbehaviors()

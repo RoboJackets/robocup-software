@@ -78,7 +78,7 @@ import evaluation.ball
 def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.their_robots()):
 
     # 1. For each robot, get their position in polar coords
-    #       in reference to the kicking point
+    #       in reference to the kick_point -> recieve_point vector
     # 2. Create a set of rays moving out from the kick point
     # 3. Use a kernal function to estimate the chance it will
     #       intercept the ball moving along that ray
@@ -115,7 +115,7 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
     overall_sens = 2
     # Constrols how much to decrease for further away values (Lower the number, the more it decreases)
     distance_sens = -1/7
-    # How much to scale the furtherest line by
+    # How much to scale the outer lines by
     min_offset_scale = .1
 
     total = 0
@@ -138,16 +138,15 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
             # Add the kernel estimate to the list
             subtotal.extend([1 - max(pow((1-pow(u,2)), 3), 0)])
    
-        # Uses the min because we only care about the closest robot to blocking
-        # Each line
+        # Decrease the impact of lines further away from the center
+        line_offset_scale = 1 - (math.fabs(line_offset) / ( (1 + min_offset_scale) * half_kick_width))
 
-        line_offset_scale = 1 - (math.fabs(line_offset) / ( (1+min_offset_scale) * half_kick_width))
-        
+        # Uses the min because we only care about the closest robot to blocking
+        # Each line        
         total += min(subtotal) * line_offset_scale
         max_total += line_offset_scale
         line_offset += inc
 
-    # TODO: Make the center be weighted higher
     return total / max_total
 
 
@@ -161,20 +160,20 @@ def predict_kick_direction(robot):
     pos = robot.pos
     angle_vel = robot.angle_vel
 
-    # Find interception between robot and ball
     # Use distance from bot to ball to predict time it takes to intercept
-    # Assumes their robot has about the same physical characteristics as our robots
-    # TODO: Predict this better time_to_ball assumes zero veloctiy for the robot
+    # Calculates direct robot to future ball position
     inst_ball_time = time_to_ball(robot)
     future_ball_pos = predict(main.ball().pos, main.ball().vel, inst_ball_time)
     direction = (future_ball_pos - pos).normalized()
-
-    robot_angle_predict = angle + angle_vel*inst_ball_time
-    # TODO: Make sure angle produces the right rotation
+    # TODO: Make sure the angle is in  the correct direction
     ball_angle_predict = math.degrees(direction.angle)
 
-    c = 0.7
-    return c * robot_angle_predict + (1-c) * ball_angle_predict
+    # Predict the robot direction based on angular velocity and angle
+    robot_angle_predict = angle + angle_vel*inst_ball_time
+
+
+    filter_coeff = 0.7
+    return filter_coeff * robot_angle_predict + (1 - filter_coeff) * ball_angle_predict
 
 
 ## Creates a zone that may cause a risk in the future
@@ -199,19 +198,18 @@ def create_area_defense_zones():
 # @param pos: Position in which to estimate score at 
 # @return Risk score at that point
 def estimate_risk_score(pos):
-    # Estimate_kick_block_percent from pass and shot
-    # Estimate time for max kick speed and delta angle for kicking robot
     our_goal = robocup.Point(0, 0)
-    max_time = 1
+    max_time = 2
     # TODO: Double check this constant
     max_ball_vel = 8 # m/s per the rules IIRC
     est_turn_vel = 2 # rad/s per a random dice roll (Over estimates oppnents abilities)
 
     # Invert both scores as kick_block produces a percentage that it is blocked
-    # We want how likely to get by
+    # We want how likely to succed
     pass_score = 1 - estimate_kick_block_percent(main.ball().pos, pos)
     shot_score = 1 - estimate_kick_block_percent(pos, our_goal)
 
+    # Dist to ball
     ball_pos_vec = main.ball().pos - pos
     dist = ball_pos_vec.mag()
 
@@ -219,18 +217,16 @@ def estimate_risk_score(pos):
     closest_opp_bot = evaluation.opponent.get_closest_opponent(main.ball().pos)
     delta_angle = (predict_kick_direction(closest_opp_bot) - ball_pos_vec).angle
 
-    # Overcalculates max time to execute on ball
+    # Underestimates max time to execute on ball
     # Assumes perfect opponent
     time = dist/max_ball_vel + delta_angle/est_turn_vel
-    # Produces a max time so as to invert time scale later on
+    # Limits to max time so we can invert it later on
     time = min(time, max_time)
 
-    # TODO: Make sure this is the right style of combination of different scores
-
     # Shot only matters if its a good pass
-    # Add pass back in for checking if passes are good
+    # Add pass back in for checking if pass is good (while shot is not)
     # Multiple it all by time to scale closer robots to ball higher
-    return (shot_score + 1)*pass_score*(max_time-time)
+    return (shot_score * pass_score + pass_score) * (max_time - time)
     
 ## Decides where to move the three robots
 #

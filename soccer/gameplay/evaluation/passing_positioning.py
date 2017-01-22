@@ -25,10 +25,10 @@ import evaluation.shooting
 def generate_default_rectangle(pos):
     w = constants.Field.Width
     l = constants.Field.Length
-    offset_from_edge = w*0.1
+    offset_from_edge = w * 0.1
 
-    bot_left  = robocup.Point(-1*w/2 + offset_from_edge, min(l/2, pos.y))
-    top_right = robocup.Point(w/2 - offset_from_edge, min(l-offset_from_edge, bot_left.y + l/2))
+    bot_left  = robocup.Point(-1 * w / 2 + offset_from_edge, min( l / 2, pos.y ) )
+    top_right = robocup.Point( w / 2 - offset_from_edge, min( l - offset_from_edge, bot_left.y + l / 2 ) )
 
     return robocup.Rect(bot_left, top_right)
 
@@ -38,8 +38,8 @@ def generate_default_rectangle(pos):
 # @param pos: Position to pass from
 # @param rect: Rectangle to search through
 # @param min_dist: Minimum distance to check around our position
-# Returns a list of points in the rectangle to test
-def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
+# @return: Returns a list of points in the rectangle to test
+def get_points_from_rect(rect, pos, threshold=0.5, min_dist=1):
     outlist = []
     currentx = rect.min_x()
     currenty = rect.min_y()
@@ -50,10 +50,9 @@ def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
 
             # Check [X]% distance between this point and the goal line to remove "close" points to their goal zone
             goal_zone_thresh = (constants.Field.Length - currenty) * 0.25
+
             # If within the goalie area 
-            # TODO: Do a little math to see if the second check can ever fail while the first one succeds
-            if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty)) or \
-                constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty + goal_zone_thresh)):
+            if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty + goal_zone_thresh)):
                 currentx += threshold
                 continue
 
@@ -76,9 +75,9 @@ def get_points_from_rect(rect, pos, threshold=0.75, min_dist=1):
 # @param ignore_robots: Robots to ignore
 # @param field_weights: A tuple of the 3 difference weights to apply to field position 
 #               (Centerness, Distance to their goal, Angle off their goal)
-# @param weights: A tuple of the 4 different weights to apply to the evaulations overall (Weights are normalized)
+# @param weights: A tuple of the 4 different weights to apply to the evaulations overall
 #               (space, field_position, shot_chance, kick_proximty)
-# @return Returns a score between 0 and 1 on how good of pass it is
+# @return Returns a score between 0 and 1 on how good of pass would be
 def eval_singl_point(kick_point,
                      receive_point,
                      ignore_robots,
@@ -91,10 +90,8 @@ def eval_singl_point(kick_point,
         else:
             return None
 
-    # TODO: Create a caching mechanism so that bad values do not have to be
-    # re-evaluated every single cycle
-
     shotChance = 0
+
     # Dissallow shooting over midfield
     if (kick_point.y > constants.Field.Length / 2):
         shotChance = evaluation.shooting.eval_shot(receive_point)
@@ -105,17 +102,11 @@ def eval_singl_point(kick_point,
     fieldPos = evaluation.field.field_pos_coeff_at_pos(receive_point, field_weights[0], field_weights[1], field_weights[2])
     distance = math.exp(-1 * (kick_point - receive_point).mag() )
 
-    # TODO: Make this more advanced
-    # Make sure a robot can get to the position (Distance from our closet robot?)
-    # Use opponents usual movement response to predict open area?
-    # Use direction of ball from kicking robot to weight a certain direction more for quicker kicks
- 
     # All of the other scores are based on whether the pass will actually make it to it
     # Not worth returning a great position if we can even get a pass there
     totalChance = passChance * ( weights[0]*(1-space) + weights[1]*fieldPos + weights[2]*shotChance + weights[3]*(1-distance) )
-    totalChance /= math.fsum(weights)
     
-    return totalChance
+    return totalChance / math.fsum(weights)
 
 ## Finds the best position to pass to
 #
@@ -134,12 +125,6 @@ def eval_best_receive_point(kick_point,
                             field_weights=(0.1, 3.2, 0.1),
                             weights=(1, 4, 15, 1),
                             debug=False):
-    # TODO: Add motion of travel as an input to improve motion
-
-    win_eval = robocup.WindowEvaluator(main.system_state())
-    win_eval.debug = True
-    #for r in ignore_robots:
-    #    win_eval.add_excluded_robot(r)
 
     if evaluation_zone is None:
         evaluation_zone = generate_default_rectangle(kick_point)

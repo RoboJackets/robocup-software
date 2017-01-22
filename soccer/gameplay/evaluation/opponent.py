@@ -7,8 +7,8 @@ import constants
 # @return Num of robots on offense
 def num_on_offense():
 	# Complementary filter on...
-	#	Closeness to their goal
-	#	Closeness to the ball
+	#	Distance to their goal
+	#	Distance to the ball
 	goal_loc   = robocup.Point(0, constants.Field.Length)
 	corner_loc = robocup.Point(constants.Field.Width / 2, 0)
 	ball_loc   = main.ball().pos
@@ -18,7 +18,7 @@ def num_on_offense():
 	offense_ctr = 0
 
 	filter_coeff = 0.7
-	cutoff = .3
+	score_cutoff = .3
 
     # For each of their robots
 	for bot in main.their_robots():
@@ -30,9 +30,10 @@ def num_on_offense():
 			ball_coeff = 1 - (dist_to_ball / ball_to_goal)
 			ball_coeff = max(0, ball_coeff*ball_coeff)
 
-			coeff = filter_coeff * goal_coeff + (1 - filter_coeff) * ball_coeff
+			score = filter_coeff * goal_coeff + (1 - filter_coeff) * ball_coeff
 
-			if (coeff > cutoff):
+            # Only count if their score is above the cutoff
+			if (score > score_cutoff):
 				offense_ctr += 1
 
 	return offense_ctr
@@ -55,6 +56,7 @@ def get_closest_opponent(pos, direction_weight=1,excluded_robots=[]):
                 dist *= (1 - direction_weight)
 
             if dist < closest_dist:
-                closest_bot, closest_dist = bot, dist
+                closest_bot = bot
+                closest_dist = dist
 
     return closest_bot
