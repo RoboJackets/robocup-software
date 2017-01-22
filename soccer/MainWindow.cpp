@@ -102,19 +102,16 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     _ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    // Action Group 0
     QActionGroup* teamGroup = new QActionGroup(this);
     teamGroup->addAction(_ui.actionTeamBlue);
     teamGroup->addAction(_ui.actionTeamYellow);
     qActionGroups["teamGroup"] = teamGroup;
 
-    // Action Group 1
     QActionGroup* goalGroup = new QActionGroup(this);
     goalGroup->addAction(_ui.actionDefendMinusX);
     goalGroup->addAction(_ui.actionDefendPlusX);
     qActionGroups["goalGroup"] = goalGroup;
 
-    // Action Group 2
     QActionGroup* rotateGroup = new QActionGroup(this);
     rotateGroup->addAction(_ui.action0);
     rotateGroup->addAction(_ui.action90);
@@ -122,14 +119,12 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     rotateGroup->addAction(_ui.action270);
     qActionGroups["rotateGroup"] = rotateGroup;
 
-    // Action Group 3
     auto visionChannelGroup = new QActionGroup(this);
     visionChannelGroup->addAction(_ui.actionVisionPrimary_Half);
     visionChannelGroup->addAction(_ui.actionVisionSecondary_Half);
     visionChannelGroup->addAction(_ui.actionVisionFull_Field);
     qActionGroups["visionChannelGroup"] = visionChannelGroup;
 
-    // Action Group 4
     auto radioGroup = new QActionGroup(this);
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
@@ -137,8 +132,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
-
-    //    channel(0);
 
     // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
