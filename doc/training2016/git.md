@@ -1,5 +1,6 @@
 # Beginner Git {#t2016git}
 
+
 # Prerequisites
 
 -   Have `git` installed via:
@@ -15,12 +16,14 @@
 -   Have a text editor installed and be comfortable using it!
     -   Gui or terminal does not matter.
 
+
 # `git`
 
 > The Stupid Content Tracker
 
 -   `git` is *NOT* GitHub.
 -   GitHub is 'server git'
+
 
 ## Why `git` over another VCS?
 
@@ -29,12 +32,14 @@
 -   Powerful, and Flexible
 -   Free (as in freedom, and as in beer)
 
+
 ## Why `git` over another client?
 
 -   `git` is the 1st party front-end
 -   `git` is the way it was designed to be experienced.
 -   Learning `git` is the easiest way to understand what's going on.
 -   `git` gives you ultimate, uninhibited access to your repository.
+
 
 ## `git` Vocabulary
 
@@ -46,9 +51,11 @@
 | remote     | any other git repository             |
 | SHA/Hash   | Turns code into a random string      |
 
+
 # Basic `git` Commands
 
 -   Follow along on your own computer!
+
 
 ## Setting Up Git
 
@@ -57,6 +64,7 @@
 git config --global user.name "Jay Kamat"
 git config --global user.email "jaygkamat@gmail.com"
 ```
+
 
 ## Creating a `git` Repo
 
@@ -78,6 +86,7 @@ git status
 # Use cd .. to move up a directory
 ```
 
+
 ## Adding *Content*
 
 ```shell
@@ -97,9 +106,11 @@ git add file.txt
 git commit -m "Added a small amount of content"
 ```
 
+
 ## Staging Area
 
 ![img](https://i.imgur.com/4nql3LO.jpg)
+
 
 ## Viewing History
 
@@ -116,6 +127,7 @@ git show
 git log
 ```
 
+
 ## `git` History
 
 -   Every git version is linked to it's previous versions:
@@ -123,11 +135,13 @@ git log
 -   A version can have multiple previous versions
     -   Let's demonstrate this in&#x2026;
 
+
 # `git` Branching
 
 -   We'll discuss what we're doing in a bit
 -   Let's create a new feature, but we know it's going to be buggy
     -   Let's create it in an isolated environment, a branch!
+
 
 ## Create a feature branch
 
@@ -143,6 +157,7 @@ git status
 # > nothing to commit, working tree clean
 ```
 
+
 ## Add a new 'feature'
 
 ```shell
@@ -150,6 +165,7 @@ echo "My new feature!" >> file.txt
 git add file.txt
 git commit -m 'My new feature is very cool, but buggy!'
 ```
+
 
 ## There's a bug in the released version!
 
@@ -166,12 +182,14 @@ git add file.txt
 git commit -m "Critical bugfix number 1!"
 ```
 
+
 ## What just happened?
 
 -   We first created our test file, which is our 'release version'
 -   Then we created a feature branch, and made some 'buggy changes'
 -   We then realized we need to fix a bug in the 'release version'
     -   We switched back to release, and 'fixed the bug'
+
 
 ## Let's take a closer look
 
@@ -181,6 +199,7 @@ git log --oneline --graph --all
 
 git show <commit hash>
 ```
+
 
 ## Merging
 
@@ -205,10 +224,12 @@ git commit # Just save whatever pops up
 git status
 ```
 
+
 # `git` Remotes
 
 -   How do we share our code with others?
 -   Branching is great for me, but what if I want to let my friends work on a branch?
+
 
 ## Let's Play With Remotes
 
@@ -234,6 +255,7 @@ git log --oneline --abbrev --graph --all
 # * cbbd8d9 one small change
 ```
 
+
 ## Let's Make a Change On 'our computer'
 
 ```shell
@@ -248,6 +270,7 @@ git add file.txt
 git commit -m 'Added files from my computer.'
 ```
 
+
 ## Let's Give This Change To Our Friend
 
 ```shell
@@ -261,6 +284,7 @@ git pull ../repo master
 # >  file.txt | 1 +
 # >  1 file changed, 1 insertion(+)
 ```
+
 
 ## Shortcuts to make remotes faster
 
@@ -285,17 +309,20 @@ git remote -v
 # git remote show repo2
 ```
 
+
 ## A note about `git fetch`
 
 -   `git fetch` updates what we see in a remote without changing our files.
 -   `git pull` updates our files with changes
 -   `git fetch` stores those changes made without touching our state.
 
+
 # `git` refs
 
 -   `git` has a suite of commands for interacting with history.
     -   To use them, you will need to understand refs
 -   A ref is anything that identifies a commit&#x2026;
+
 
 ## Examples of Refs
 
@@ -311,6 +338,7 @@ git remote -v
 5.  Tags
     -   Aliases you can give to commits
 
+
 ## Ref Modifiers
 
 -   Using `HEAD` as an example.
@@ -318,6 +346,7 @@ git remote -v
 -   `HEAD~~`; Two commits before `HEAD`
 -   `HEAD~3`; Three commits before `HEAD`
 -   `HEAD^<N>`; Choose the <Nth> parent if we're on a merge.
+
 
 ## Using Refs
 
@@ -331,6 +360,7 @@ git show HEAD~
 # Shows the commit thats two commits older than repo2's master
 git show repo2/master~~
 ```
+
 
 ## Quickly See Files in a Ref
 
@@ -350,6 +380,7 @@ git checkout repo2/master~~
 # We also use checkout to switch branches (we can edit safely now)
 git checkout master
 ```
+
 
 ## Change Where a Branch 'Points To'
 
@@ -379,6 +410,7 @@ git reset --hard
 git pull repo2 master
 ```
 
+
 ## Find the Diff Between Two Commits
 
 ```shell
@@ -395,7 +427,9 @@ git diff
 git diff --staged
 ```
 
+
 # Neat Tricks
+
 
 ## Quickly Make a Branch
 
@@ -406,6 +440,7 @@ git checkout -b mynewbranch
 git branch mynewbranch
 git checkout mynewbranch
 ```
+
 
 ## Let Git Remember Your Remotes
 
@@ -424,6 +459,7 @@ git push
 # that you've paired with your local branch!
 ```
 
+
 ## Git Aliases
 
 ```shell
@@ -433,6 +469,7 @@ git s
 # is now the same as
 git status
 ```
+
 
 ## Tagging
 
@@ -448,10 +485,12 @@ git diff myrelease
 # Use git push --tags to push your tags as well.
 ```
 
+
 ## `git clean`
 
 -   Use `git clean -f` to remove all *unstaged* files from your repo.
     -   THIS WILL REMOVE FILES ON YOUR FILESYSTEM.
+
 
 # We Only Scratched The Surface
 
@@ -470,6 +509,7 @@ git diff myrelease
 -   `git archive`
 -   `git am`
 
+
 # Additional Resources
 
 -   `man git`
@@ -477,7 +517,9 @@ git diff myrelease
     -   eg: `man git-status`
 -   [Online `git` Tutorial](https://git-scm.com/doc)
 
+
 # BONUS: GitHub
+
 
 ## GitHub is just another remote!
 
@@ -491,6 +533,7 @@ git pull origin master
 git push origin master
 git show origin/master
 ```
+
 
 ## Pull Request
 

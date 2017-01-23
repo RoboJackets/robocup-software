@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <algorithm>
-#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
@@ -34,7 +33,6 @@ MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50) {
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
-    _lastCmdTime = -1;
 }
 
 void MotionControl::run() {
@@ -55,9 +53,8 @@ void MotionControl::run() {
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
 
-    float timeIntoPath =
-        RJ::TimestampToSecs(RJ::timestamp() - _robot->path().startTime()) +
-        1.0 / 60.0;
+    RJ::Seconds timeIntoPath =
+        (RJ::now() - _robot->path().startTime()) + RJ::Seconds(1.0 / 60);
 
     // evaluate path - where should we be right now?
     boost::optional<RobotInstant> optTarget =
@@ -156,7 +153,7 @@ void MotionControl::run() {
     // acceleration factor
     Point acceleration;
     boost::optional<RobotInstant> nextTarget =
-        _robot->path().evaluate(timeIntoPath + 1.0 / 60.0);
+        _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
         acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;
     } else {
@@ -175,6 +172,16 @@ void MotionControl::run() {
     _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
     _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
                               "MotionControl");
+
+    // Clamp World Acceleration
+    auto dt = RJ::Seconds(RJ::now() - _lastCmdTime);
+    Point targetAccel = (target.vel - _lastWorldVelCmd) / dt.count();
+    targetAccel.clamp(*_max_acceleration);
+
+    target.vel = _lastWorldVelCmd + targetAccel * dt.count();
+
+    _lastWorldVelCmd = target.vel;
+    _lastCmdTime = RJ::now();
 
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
@@ -210,24 +217,14 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     targetVel.clamp(*_max_velocity);
 
     // Limit Acceleration
-    if (_lastCmdTime == -1) {
-        targetVel.clamp(*_max_acceleration);
-    } else {
-        float dt = (float)((RJ::timestamp() - _lastCmdTime) / 1000000.0f);
-        Point targetAccel = (targetVel - _lastVelCmd) / dt;
-        targetAccel.clamp(*_max_acceleration);
-
-        targetVel = _lastVelCmd + targetAccel * dt;
-    }
 
     // make sure we don't send any bad values
-    if (isnan(targetVel.x()) || isnan(targetVel.y())) {
+    if (std::isnan(targetVel.x()) || std::isnan(targetVel.y())) {
         targetVel = Point(0, 0);
+        debugThrow("A bad value was calculated.");
     }
 
     // track these values so we can limit acceleration
-    _lastVelCmd = targetVel;
-    _lastCmdTime = RJ::timestamp();
 
     // velocity multiplier
     targetVel *= *_robot->config->velMultiplier;

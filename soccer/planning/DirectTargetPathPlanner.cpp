@@ -3,15 +3,15 @@
 
 namespace Planning {
 
-std::unique_ptr<Path> DirectTargetPathPlanner::run(
-    SinglePlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.startInstant;
-    const auto& motionConstraints = planRequest.robotConstraints.mot;
+std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
+    const MotionInstant& startInstant = planRequest.start;
+    const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     const Planning::DirectPathTargetCommand& command =
-        dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
+        dynamic_cast<const Planning::DirectPathTargetCommand&>(
+            *planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
         Geometry2d::Point endTarget = command.pathGoal.pos;
@@ -19,7 +19,7 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
         auto path = std::unique_ptr<Path>(
             new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
                                 endTarget, endSpeed, motionConstraints));
-        path->setStartTime(RJ::timestamp());
+        path->setStartTime(RJ::now());
         return std::move(path);
     } else {
         return std::move(prevPath);
@@ -27,14 +27,14 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(
 }
 
 bool DirectTargetPathPlanner::shouldReplan(
-    const SinglePlanRequest& planRequest) const {
-    const MotionConstraints& motionConstraints =
-        planRequest.robotConstraints.mot;
+    const PlanRequest& planRequest) const {
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const Planning::DirectPathTargetCommand& command =
-        dynamic_cast<const Planning::DirectPathTargetCommand&>(planRequest.cmd);
+        dynamic_cast<const Planning::DirectPathTargetCommand&>(
+            *planRequest.motionCommand);
 
     if (!prevPath) {
         return true;

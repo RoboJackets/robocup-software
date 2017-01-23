@@ -112,7 +112,7 @@ fi
 if $ADD_REPOS; then
     # add repo for backport of cmake3 from debian testing
     # TODO remove this once ubuntu ships cmake3
-    apt-add-repository -y ppa:packetlost/cmake
+    sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
 
     # for newer compilers
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -170,4 +170,4 @@ fi
 echo "-- Updating submodules"
 chown -R $SETUP_USER:$SETUP_USER $BASE/external
 su $SETUP_USER -c 'git submodule sync'
-su $SETUP_USER -c 'git submodule update --init'
+su $SETUP_USER -c 'git submodule update --init --recursive'

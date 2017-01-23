@@ -70,7 +70,7 @@ float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
         float root = sqrt(b * b - 4 * a * c);
         float temp1 = (-b + root) / (2 * a);
         float temp2 = (-b - root) / (2 * a);
-        if (isnan(root)) {
+        if (std::isnan(root)) {
             debugThrow(
                 "TrapezoidalMotion failed. Solution is imaginary");  // TODO
                                                                      // Handle
@@ -99,7 +99,7 @@ float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
         float root = sqrt(b * b - 4 * a * c);
         float temp1 = (-b + root) / (2 * a);
         float temp2 = (-b - root) / (2 * a);
-        if (isnan(root)) {
+        if (std::isnan(root)) {
             debugThrow(
                 "TrapezoidalMotion failed. Solution is imaginary");  // TODO
                                                                      // Handle

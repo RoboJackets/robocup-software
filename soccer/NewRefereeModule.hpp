@@ -170,10 +170,10 @@ public:
     //
     // If the stage runs over its specified time, this value
     // becomes negative.
-    int stage_time_left = 0;
+    RJ::Seconds stage_time_left;
 
     // The number of commands issued since startup (mod 2^32).
-    uint command_counter;
+    int64_t command_counter;
 
     // The UNIX timestamp when the command was issued, in microseconds.
     // This value changes only when a new command is issued, not on each packet.
@@ -214,7 +214,7 @@ protected:
     NewRefereeModuleEnums::Command prev_command;
     NewRefereeModuleEnums::Stage prev_stage;
 
-    bool _useExternalRef = true;
+    bool _useExternalRef = false;
 
     float ballPlacementx;
     float ballPlacementy;

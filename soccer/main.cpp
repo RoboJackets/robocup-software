@@ -1,4 +1,3 @@
-
 #include <gameplay/GameplayModule.hpp>
 
 #include <stdio.h>
@@ -135,7 +134,7 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
-    Processor* processor = new Processor(sim);
+    auto processor = std::make_unique<Processor>(sim);
     processor->blueTeam(blueTeam);
     processor->refereeModule()->useExternalReferee(!noref);
 
@@ -148,19 +147,19 @@ int main(int argc, char* argv[]) {
                 .arg(cfgFile, error));
     }
 
-    MainWindow* win = new MainWindow;
+    auto win = std::make_unique<MainWindow>(processor.get());
     win->configuration(config.get());
-    win->processor(processor);
+    win->initialize();
 
     win->setUseRefChecked(!noref);
 
-    if (!QDir("logs").exists()) {
-        fprintf(stderr, "No logs/ directory - not writing log file\n");
+    if (!ApplicationRunDirectory().exists("./logs")) {
+        cerr << "No ./run/logs/ directory - not writing log file" << endl;
     } else if (!log) {
-        fprintf(stderr, "Not writing log file\n");
+        cerr << "Not writing log file" << endl;
     } else {
         QString logFile =
-            QString("logs/") +
+            ApplicationRunDirectory().filePath("./logs/") +
             QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
         if (!processor->openLog(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
@@ -195,9 +194,6 @@ int main(int argc, char* argv[]) {
 
     int ret = app.exec();
     processor->stop();
-
-    delete win;
-    delete processor;
 
     return ret;
 }

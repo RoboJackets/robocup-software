@@ -75,12 +75,7 @@ public:
 class Processor : public QThread {
 public:
     struct Status {
-        Status() {
-            lastLoopTime = 0;
-            lastVisionTime = 0;
-            lastRefereeTime = 0;
-            lastRadioRxTime = 0;
-        }
+        Status() {}
 
         RJ::Time lastLoopTime;
         RJ::Time lastVisionTime;
@@ -96,18 +91,19 @@ public:
     void stop();
 
     bool autonomous();
-    bool joystickValid();
+    bool joystickValid() const;
     JoystickControlValues getJoystickControlValues();
 
-    void externalReferee(bool value) { _externalReferee = value; }
+    void externalReferee(bool value) {
+        _refereeModule->useExternalReferee(value);
+    }
 
-    bool externalReferee() const { return _externalReferee; }
+    bool externalReferee() const {
+        return _refereeModule->useExternalReferee();
+    }
 
     void manualID(int value);
-    int manualID() {
-        QMutexLocker lock(&_loopMutex);
-        return _manualID;
-    }
+    int manualID() const { return _manualID; }
 
     bool useFieldOrientedManualDrive() const {
         return _useFieldOrientedManualDrive;
@@ -184,7 +180,7 @@ public:
     ////////
 
     // Time of the first LogFrame
-    RJ::Time firstLogTime;
+    boost::optional<RJ::Time> firstLogTime;
 
 protected:
     void run() override;
@@ -229,7 +225,7 @@ private:
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
     // SystemState, etc.
-    DebugQMutex _loopMutex;
+    QMutex _loopMutex;
 
     /** global system state */
     SystemState _state;
@@ -248,10 +244,7 @@ private:
     bool _defendPlusX;
 
     // Processing period in microseconds
-    int _framePeriod;
-
-    // True if we are using external referee packets
-    bool _externalReferee;
+    RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
 
     /// Measured framerate
     float _framerate;

@@ -64,9 +64,9 @@ OurRobot::OurRobot(int shell, SystemState* state)
     robotPacket.set_allocated_control(ctl);
     control = ctl;
 
-    _lastChargedTime = 0;
+    //_lastChargedTime = 0;
     _lastKickerStatus = 0;
-    _lastKickTime = 0;
+    //_lastKickTime = 0;
 
     _motionControl = new MotionControl(this);
 
@@ -135,7 +135,7 @@ void OurRobot::resetForNextIteration() {
     robotPacket.set_uid(shell());
 
     if (charged()) {
-        _lastChargedTime = RJ::timestamp();
+        _lastChargedTime = RJ::now();
     }
 
     _local_obstacles.clear();
@@ -241,9 +241,7 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged())
-               ? 0.0
-               : RJ::TimestampToSecs((RJ::timestamp() - _lastChargedTime));
+    return (charged()) ? 0.0 : RJ::numSeconds(RJ::now() - _lastChargedTime);
 }
 
 void OurRobot::dribble(uint8_t speed) {
@@ -294,14 +292,14 @@ void OurRobot::_kick(uint8_t strength) {
     uint8_t max = *config->kicker.maxKick;
     control->set_kcstrength(strength > max ? max : strength);
     control->set_shootmode(Packet::Control::KICK);
-    control->set_triggermode(Packet::Control::IMMEDIATE);
+    control->set_triggermode(Packet::Control::ON_BREAK_BEAM);
 }
 
 void OurRobot::_chip(uint8_t strength) {
     uint8_t max = *config->kicker.maxChip;
     control->set_kcstrength(strength > max ? max : strength);
     control->set_shootmode(Packet::Control::CHIP);
-    control->set_triggermode(Packet::Control::IMMEDIATE);
+    control->set_triggermode(Packet::Control::ON_BREAK_BEAM);
 }
 
 void OurRobot::_unkick() {
@@ -532,7 +530,7 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const {
 }
 
 boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
-    if (_radioRx.has_quaternion() && rxIsFresh(RJ::SecsToTimestamp(0.05))) {
+    if (_radioRx.has_quaternion() && rxIsFresh(RJ::Seconds(0.05))) {
         return Eigen::Quaternionf(_radioRx.quaternion().q0() / 16384.0,
                                   _radioRx.quaternion().q1() / 16384.0,
                                   _radioRx.quaternion().q2() / 16384.0,
@@ -542,15 +540,18 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
     }
 }
 
-bool OurRobot::rxIsFresh(RJ::Time age) const {
-    return (RJ::timestamp() - _radioRx.timestamp()) < age;
+bool OurRobot::rxIsFresh(RJ::Seconds age) const {
+    return (RJ::now() - RJ::Time(chrono::microseconds(_radioRx.timestamp()))) <
+           age;
 }
 
-RJ::Time OurRobot::lastKickTime() const { return _lastKickTime; }
+RJ::Timestamp OurRobot::lastKickTime() const {
+    return RJ::timestamp(_lastKickTime);
+}
 
 void OurRobot::radioRxUpdated() {
     if (_radioRx.kicker_status() < _lastKickerStatus) {
-        _lastKickTime = RJ::timestamp();
+        _lastKickTime = RJ::now();
     }
     _lastKickerStatus = _radioRx.kicker_status();
 }
