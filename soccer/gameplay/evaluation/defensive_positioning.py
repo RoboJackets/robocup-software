@@ -100,7 +100,8 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
             angle = math.atan2(block_direction.y, block_direction.x) - kick_angle
 
             # Kill any that are over pi/2 away
-            if (math.fabs(angle) < math.pi / 2 and dist > 0):
+            # Kill any that are too far away (TOOD: Include this in the function)
+            if (math.fabs(angle) < math.pi / 2 and dist > 0 and dist < 2*kick_direction.mag()):
                 blocks.extend([(angle, dist)])
 
     # Quit early if there is nobody near to defend
@@ -162,17 +163,17 @@ def predict_kick_direction(robot):
 
     # Use distance from bot to ball to predict time it takes to intercept
     # Calculates direct robot to future ball position
-    inst_ball_time = time_to_ball(robot)
-    future_ball_pos = predict(main.ball().pos, main.ball().vel, inst_ball_time)
+    inst_ball_time = evaluation.ball.time_to_ball(robot)
+    future_ball_pos = evaluation.ball.predict(main.ball().pos, main.ball().vel, inst_ball_time)
     direction = (future_ball_pos - pos).normalized()
     # TODO: Make sure the angle is in  the correct direction
-    ball_angle_predict = math.degrees(direction.angle)
+    ball_angle_predict = direction.angle()
 
     # Predict the robot direction based on angular velocity and angle
     robot_angle_predict = angle + angle_vel*inst_ball_time
 
-
-    filter_coeff = 0.7
+    # TODO: Change to 0.7 before running outside of the test function
+    filter_coeff = 0
     return filter_coeff * robot_angle_predict + (1 - filter_coeff) * ball_angle_predict
 
 
@@ -199,27 +200,27 @@ def create_area_defense_zones():
 # @return Risk score at that point
 def estimate_risk_score(pos):
     our_goal = robocup.Point(0, 0)
-    max_time = 2
+    max_time = 1
     # TODO: Double check this constant
     max_ball_vel = 8 # m/s per the rules IIRC
-    est_turn_vel = 2 # rad/s per a random dice roll (Over estimates oppnents abilities)
+    est_turn_vel = 4 # rad/s per a random dice roll (Over estimates oppnents abilities)
 
     # Invert both scores as kick_block produces a percentage that it is blocked
     # We want how likely to succed
-    pass_score = 1 - estimate_kick_block_percent(main.ball().pos, pos)
-    shot_score = 1 - estimate_kick_block_percent(pos, our_goal)
+    pass_score = estimate_kick_block_percent(main.ball().pos, pos, main.our_robots())
+    shot_score = estimate_kick_block_percent(pos, our_goal, main.our_robots())
 
     # Dist to ball
-    ball_pos_vec = main.ball().pos - pos
+    ball_pos_vec = pos - main.ball().pos
     dist = ball_pos_vec.mag()
 
     # Closest opp robot
     closest_opp_bot = evaluation.opponent.get_closest_opponent(main.ball().pos)
-    delta_angle = (predict_kick_direction(closest_opp_bot) - ball_pos_vec).angle
-
+    delta_angle = (ball_pos_vec.angle() - predict_kick_direction(closest_opp_bot)) 
+    delta_angle = math.atan2(math.sin(delta_angle), math.cos(delta_angle))
     # Underestimates max time to execute on ball
     # Assumes perfect opponent
-    time = dist/max_ball_vel + delta_angle/est_turn_vel
+    time = dist/max_ball_vel + math.fabs(delta_angle)/est_turn_vel
     # Limits to max time so we can invert it later on
     time = min(time, max_time)
 
@@ -227,9 +228,9 @@ def estimate_risk_score(pos):
     # Add pass back in for checking if pass is good (while shot is not)
     # Multiple it all by time to scale closer robots to ball higher
     return (shot_score * pass_score + pass_score) * (max_time - time)
-    
+
 ## Decides where to move the three robots
-#
+#   
 # @return List of the 3 defensive positions
 def find_defense_positions():
     pass

@@ -27,7 +27,7 @@ class TestAdaptiveFormationWeights(play.Play):
         self.add_state(TestAdaptiveFormationWeights.State.testBestPass, behavior.Behavior.State.running)
 
         # Enable which portion we want to test
-        mode = 2
+        mode = 1
         self.add_transition(behavior.Behavior.State.start,
                             TestAdaptiveFormationWeights.State.testPointCoeff, lambda: mode == 1,
                             'immediately')
@@ -66,13 +66,16 @@ class TestAdaptiveFormationWeights(play.Play):
                 # 4: Ball Coeff
                 # 5: Estimate Chance to Block Kick
 
-                val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.1, .2, 0.02)
+                #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.1, .2, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
                 #val = evaluation.shooting.eval_shot(robocup.Point(x_cent, y_cent))
                 #val = 1-evaluation.field.ball_coeff_at_pos(robocup.Point(x_cent, y_cent))
                 #val = evaluation.defensive_positioning.estimate_kick_block_percent \
-                #    (robocup.Point(x_cent, y_cent), robocup.Point(0, constants.Field.Length), main.their_robots())
-                
+                #    (robocup.Point(x_cent, y_cent), robocup.Point(0, 0), main.our_robots())
+                #val = evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
+
+                val = (1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent), [], main.our_robots())) * \
+                        evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
                 # Find max
                 if (val > max_val):
                     max_val = val
@@ -91,7 +94,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 val_color = (round(val*255), 0, round((1-val)*255))
 
                 # Draw onto the Debug layer
-                main.system_state().draw_polygon(rect, val_color, "Debug")
+                main.system_state().draw_polygon(rect, val_color, "asdf")
 
         x_cent = max_x
         y_cent = max_y

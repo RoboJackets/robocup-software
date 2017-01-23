@@ -8,14 +8,14 @@ import math
 # @param pos: point to evalute
 # @returns Number between 0 and 1 representing the closeness of robots
 # The higher the number, the more robots closer to the position
-def space_coeff_at_pos(pos, excluded_robots=[]):
+def space_coeff_at_pos(pos, excluded_robots=[], robots=main.their_robots()):
     # TODO: Add in velocity prediction
 
     max_dist = robocup.Point(constants.Field.Width/2, constants.Field.Length).mag()
     total = 0
     sensitivity = 8
 
-    for bot in (main.their_robots()):
+    for bot in robots:
         if bot.visible and bot not in excluded_robots:
             u = sensitivity * (bot.pos - pos).mag() / max_dist;
 
