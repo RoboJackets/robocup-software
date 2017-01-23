@@ -94,7 +94,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 val_color = (round(val*255), 0, round((1-val)*255))
 
                 # Draw onto the Debug layer
-                main.system_state().draw_polygon(rect, val_color, "asdf")
+                main.system_state().draw_polygon(rect, val_color, "Density")
 
         x_cent = max_x
         y_cent = max_y
@@ -107,7 +107,7 @@ class TestAdaptiveFormationWeights(play.Play):
         val_color = (255, 255, 255)
 
         # Draw onto the Debug layer
-        main.system_state().draw_polygon(rect, val_color, "Debug")
+        main.system_state().draw_polygon(rect, val_color, "Max")
 
     def execute_testBestPass(self):
         # Use as a way to test the pass weights for the best pass position
