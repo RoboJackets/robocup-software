@@ -111,7 +111,10 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             self.remove_subbehavior('aim')
 
     def on_enter_capturing(self):
+        # We disable the shot obstacle in this step just in case we had a
+        # failure and we're restarting this play
         self.enable_shot_obstacle = False
+
         self.remove_aim_behavior()
         self.robot.unkick()
         capture = skills.capture.Capture()
