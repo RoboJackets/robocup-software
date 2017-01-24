@@ -26,6 +26,7 @@ var classgameplay_1_1skills_1_1__kick_1_1___kick =
     [ "aim_params", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#ae72906842cffeb35d09b2a2d20e824c3", null ],
     [ "chip_power", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a7915ea761cd5e592868ae725b2c3bd09", null ],
     [ "enable_kick", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a41aaf1cb840c3cf9c6cc601ac55c3ced", null ],
+    [ "enable_shot_obstacle", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a5c5028068cdef17616d1cc29cb0b9013", null ],
     [ "kick_power", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#afde24a4a86e4d0abd18a824ec0de6d7d", null ],
     [ "shot_obstacle_ignoring_robots", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a5b0bb5990a74037d18326262d48b876b", null ],
     [ "target", "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a8cf274835db19187ed9476f5705adc4a", null ],

@@ -20,5 +20,6 @@ var classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick =
     [ "role_requirements", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab77ee4a6b112dec34d52b9bfa23d3e8e", null ],
     [ "set_aim_params", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a20346411aea6dc9835489c129182f7bc", null ],
     [ "aim_params", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ad44b78f3b9afc3688abd6a4ab8869aaf", null ],
-    [ "dribbler_power", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a57a346217b84211109759df43c643459", null ]
+    [ "dribbler_power", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a57a346217b84211109759df43c643459", null ],
+    [ "enable_shot_obstacle", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab99df73ffb6a0647c6c4049a42767c88", null ]
 ];

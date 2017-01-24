@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a920a68121cec20447fcad9a1ebf6dc73":[13,0,5,13,10,0,11],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa62dd4780a99740c5801460c7d2f1d8d":[13,0,5,13,10,0,14],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa720efcd803f70960681f4ee2d44760e":[13,0,5,13,10,0,5],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aaa5e3d7ee452b920469232e29a7040bf":[13,0,5,13,10,0,9],
@@ -86,6 +87,7 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#aab88b01d1c4306556c5d097784fc736e":[13,0,5,13,15,0,4],
 "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab30c08630754c45322e00f209d6bd27c":[13,0,5,13,15,0,10],
 "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab77ee4a6b112dec34d52b9bfa23d3e8e":[13,0,5,13,15,0,17],
+"classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab99df73ffb6a0647c6c4049a42767c88":[13,0,5,13,15,0,21],
 "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ac78228f850d06955b20a06d0ace89c53":[13,0,5,13,15,0,8],
 "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ad44b78f3b9afc3688abd6a4ab8869aaf":[13,0,5,13,15,0,19],
 "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ada10a7b3dde19f91d89072454875bf28":[13,0,5,13,15,0,9],
@@ -247,7 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a972ebd69075c88cf11b827e947520d2d":[13,0,5,15,8,2,0,10],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a9b115b63d4ff6d319ff87d34e88767f4":[13,0,5,15,8,2,0,9],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94":[13,0,5,15,8,2,0,4],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa9ad97a852015aaac9dc81905ce8d051":[13,0,5,15,8,2,0,11],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab62a9a800364e65adf07eb279c6e81a9":[13,0,5,15,8,2,0,2],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#adc3fa408e515edb60ec235d6bfddf4d6":[13,0,5,15,8,2,0,12]
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa9ad97a852015aaac9dc81905ce8d051":[13,0,5,15,8,2,0,11]
 };
