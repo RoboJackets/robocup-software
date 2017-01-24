@@ -23,6 +23,10 @@
 #include <stdint.h>
 #include <vector>
 
+#include <QReadWriteLock>
+#include <QReadLocker>
+#include <QWriteLocker>
+
 class SystemState;
 class RobotConfig;
 class RobotStatus;
@@ -51,7 +55,7 @@ class RRTPlanner;
 class RobotPose {
 public:
     RobotPose()
-        : visible(false), angle(0), angleVel(0), time(0), visionFrame(0) {
+        : visible(false), angle(0), angleVel(0), time(), visionFrame(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }
@@ -288,12 +292,10 @@ public:
      */
     void unkick();
 
-    RJ::Time lastKickTime() const;
+    RJ::Timestamp lastKickTime() const;
 
     /// checks if the bot has kicked/chipped very recently.
-    bool justKicked() {
-        return RJ::timestamp() - lastKickTime() < RJ::SecsToTimestamp(0.25);
-    }
+    bool justKicked() { return RJ::now() - _lastKickTime < RJ::Seconds(0.25); }
 
     /**
      * Gets a string representing the series of commands called on the robot
@@ -386,8 +388,15 @@ public:
     float kickerVoltage() const;
     Packet::HardwareVersion hardwareVersion() const;
 
-    Packet::RadioRx& radioRx() { return _radioRx; }
-    const Packet::RadioRx& radioRx() const { return _radioRx; }
+    void setRadioRx(Packet::RadioRx packet) {
+        QWriteLocker locker(&radioRxMutex);
+        _radioRx = packet;
+    }
+
+    Packet::RadioRx radioRx() const {
+        QReadLocker locker(&radioRxMutex);
+        return _radioRx;
+    }
 
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
         return _motionCommand;
@@ -406,7 +415,7 @@ public:
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool rxIsFresh(RJ::Time age = 500000) const;
+    bool rxIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
     /**
      * @brief start the robot playing a song
@@ -519,6 +528,7 @@ protected:
     friend class MotionControl;
 
 private:
+    mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
     void _unkick();

@@ -8,9 +8,9 @@ namespace Planning {
 CompositePath::CompositePath(unique_ptr<Path> path) { append(std::move(path)); }
 
 void CompositePath::append(unique_ptr<Path> path) {
-    if (duration < numeric_limits<float>::infinity()) {
-        float pathDuration = path->getDuration();
-        if (pathDuration > 0) {
+    if (duration < RJ::Seconds::max()) {
+        auto pathDuration = path->getDuration();
+        if (pathDuration > RJ::Seconds::zero()) {
             duration += pathDuration;
             paths.push_back(std::move(path));
         } else {
@@ -22,8 +22,8 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-boost::optional<RobotInstant> CompositePath::evaluate(float t) const {
-    if (t < 0) {
+boost::optional<RobotInstant> CompositePath::evaluate(RJ::Seconds t) const {
+    if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
     }
@@ -32,9 +32,9 @@ boost::optional<RobotInstant> CompositePath::evaluate(float t) const {
         return boost::none;
     }
     for (const std::unique_ptr<Path>& subpath : paths) {
-        float timeLength = subpath->getDuration();
+        RJ::Seconds timeLength = subpath->getDuration();
         t -= timeLength;
-        if (t <= 0 || timeLength == -1) {
+        if (t <= RJ::Seconds::zero()) {
             t += timeLength;
             return subpath->evaluate(t);
         }
@@ -43,29 +43,34 @@ boost::optional<RobotInstant> CompositePath::evaluate(float t) const {
     return boost::none;
 }
 
-bool CompositePath::hit(const ShapeSet& obstacles, float& hitTime,
-                        float startTime) const {
+bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
+                        RJ::Seconds startTimeIntoPath,
+                        RJ::Seconds* hitTime) const {
     if (paths.empty()) {
         return false;
     }
     int start = 0;
-    float totalTime = 0;
+    RJ::Seconds totalTime(0);
     for (const std::unique_ptr<Path>& path : paths) {
         start++;
-        float timeLength = path->getDuration();
-        if (timeLength == std::numeric_limits<float>::infinity()) {
-            if (path->hit(obstacles, hitTime, startTime)) {
-                hitTime += totalTime;
+        RJ::Seconds timeLength = path->getDuration();
+        if (timeLength == RJ::Seconds::max()) {
+            if (path->hit(obstacles, startTimeIntoPath, hitTime)) {
+                if (hitTime) {
+                    *hitTime += totalTime;
+                }
                 return true;
             } else {
                 return false;
             }
         }
-        startTime -= timeLength;
-        if (startTime <= 0) {
-            startTime += timeLength;
-            if (path->hit(obstacles, hitTime, startTime)) {
-                hitTime += totalTime;
+        startTimeIntoPath -= timeLength;
+        if (startTimeIntoPath <= RJ::Seconds::zero()) {
+            startTimeIntoPath += timeLength;
+            if (path->hit(obstacles, startTimeIntoPath, hitTime)) {
+                if (hitTime) {
+                    *hitTime += totalTime;
+                }
                 return true;
             }
             totalTime += timeLength;
@@ -75,8 +80,10 @@ bool CompositePath::hit(const ShapeSet& obstacles, float& hitTime,
     }
 
     for (; start < paths.size(); start++) {
-        if (paths[start]->hit(obstacles, hitTime, 0)) {
-            hitTime += totalTime;
+        if (paths[start]->hit(obstacles, 0ms, hitTime)) {
+            if (hitTime) {
+                *hitTime += totalTime;
+            }
             return true;
         }
         totalTime += paths[start]->getDuration();
@@ -91,21 +98,22 @@ void CompositePath::draw(SystemState* const state, const QColor& color,
     }
 }
 
-float CompositePath::getDuration() const { return duration; }
+RJ::Seconds CompositePath::getDuration() const { return duration; }
 
 RobotInstant CompositePath::start() const { return paths.front()->start(); }
 
 RobotInstant CompositePath::end() const { return paths.back()->end(); }
 
-unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const {
+unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
+                                        RJ::Seconds endTime) const {
     // Check for valid arguments
-    if (startTime < 0) {
+    if (startTime < RJ::Seconds::zero()) {
         throw invalid_argument("CompositePath::subPath(): startTime(" +
                                to_string(startTime) +
                                ") can't be less than zero");
     }
 
-    if (endTime < 0) {
+    if (endTime < RJ::Seconds::zero()) {
         throw invalid_argument("CompositePath::subPath(): endTime(" +
                                to_string(endTime) +
                                ") can't be less than zero");
@@ -125,15 +133,15 @@ unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const {
         return unique_ptr<Path>(new CompositePath());
     }
 
-    if (startTime == 0 && endTime >= duration) {
+    if (startTime == RJ::Seconds::zero() && endTime >= duration) {
         return this->clone();
     }
 
     // Find the first Path in the vector of paths which will be included in the
     // subPath
     size_t start = 0;
-    float time = 0;
-    float lastTime = 0;
+    RJ::Seconds time(0);
+    RJ::Seconds lastTime(0);
     while (time <= startTime) {
         lastTime = paths[start]->getDuration();
         time += lastTime;
@@ -142,7 +150,7 @@ unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const {
 
     // Get the time into the Path in the vector of paths which the subPath will
     // start
-    float firstStartTime = (time - lastTime);
+    RJ::Seconds firstStartTime = (time - lastTime);
 
     // If the path will only contain that one Path just return a subPath of that
     // Path
@@ -169,7 +177,8 @@ unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const {
                 end++;
             }
             end--;
-            lastPath = paths[end]->subPath(0, endTime - (time - lastTime));
+            lastPath = paths[end]->subPath(RJ::Seconds(0),
+                                           endTime - (time - lastTime));
         }
 
         // Add the ones in the middle

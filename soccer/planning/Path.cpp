@@ -25,15 +25,16 @@ void Path::draw(SystemState* const state, const QColor& color,
 
     // Get the closest step size to a desired value that is divisible into the
     // duration
-    const float duration = getDuration();
-    const float desiredStep =
-        0.25;  // draw the path by interpolating every x seconds
+    const RJ::Seconds duration = getDuration();
+    const RJ::Seconds desiredStep = 250ms;
+
+    // draw the path by interpolating every x seconds
     const float segmentCount = roundf(duration / desiredStep);
-    const float step = duration / segmentCount;
+    const RJ::Seconds step = duration / segmentCount;
 
     // Draw points along the path except the last one
     for (int i = 0; i < segmentCount; ++i) {
-        float t = i * step;
+        RJ::Seconds t = i * step;
         addPoint(evaluate(t)->motion);
     }
 
@@ -49,15 +50,15 @@ void Path::drawDebugText(SystemState* state, const QColor& color,
 }
 
 std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
-                                                  float deltaT) const {
+                                                  RJ::Seconds deltaT) const {
     return std::move(
         std::make_unique<ConstPathIterator>(this, startTime, deltaT));
 }
 
 bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
-                          float* hitTime, Geometry2d::Point* hitLocation,
-                          RJ::Time startTime) const {
-    const float deltaT = 0.05;
+                          RJ::Time startTime, Geometry2d::Point* hitLocation,
+                          RJ::Seconds* hitTime) const {
+    const RJ::Seconds deltaT = RJ::Seconds(0.05);
 
     auto thisPathIterator = iterator(startTime, deltaT);
     vector<std::pair<unique_ptr<ConstPathIterator>, float>> pathIterators;
@@ -68,20 +69,13 @@ bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
         } else {
             ShapeSet set;
             set.add(obs.getStaticObstacle());
-            if (hitTime != nullptr) {
-                if (hit(set, *hitTime, startTime)) {
-                    return true;
-                }
-            } else {
-                float time;
-                if (hit(set, time, startTime)) {
-                    return true;
-                }
+            if (hit(set, startTime - this->startTime(), hitTime)) {
+                return true;
             }
         }
     }
 
-    float time = RJ::SecsToTimestamp(startTime - this->startTime());
+    RJ::Seconds time = startTime - this->startTime();
     for (; time < getDuration(); time += deltaT) {
         auto current = **thisPathIterator;
         for (auto& pair : pathIterators) {

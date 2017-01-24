@@ -34,8 +34,11 @@ Code for the RoboCup simulator is located here.  This allows us to quickly test 
 
 ### common/
 
-Code that's shared between the software and firmware sections of our codebase is stored here, as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+Code that's shared between the software and firmware sections of our codebase is stored here, as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). See RoboJackets/robocup-common.
 
+### external/
+
+External dependencies that our code relys on, stored as git submodules. To initialize these, please run `git submodule update --init --recursive`.
 
 ### run/
 

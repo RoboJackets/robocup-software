@@ -36,7 +36,7 @@ class Ball {
 public:
     Ball() {
         valid = false;
-        time = 0;
+        //        time();
     }
 
     Geometry2d::Point pos;
@@ -120,8 +120,10 @@ public:
     void drawShapeSet(const Geometry2d::ShapeSet& shapes,
                       const QColor& color = Qt::black,
                       const QString& layer = QString());
-    RJ::Time timestamp;
+    RJ::Time time;
     GameState gameState;
+
+    RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
 
     /// All possible robots.
     ///
@@ -144,6 +146,8 @@ public:
 
     /// Returns the number of a debug layer given its name
     int findDebugLayer(QString layer);
+
+    std::vector<int> ourValidIds();
 
 private:
     /// Map from debug layer name to ID

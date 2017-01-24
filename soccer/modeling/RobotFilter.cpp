@@ -5,9 +5,9 @@
 using namespace Geometry2d;
 
 // How long to coast a robot's position when it isn't visible
-static const float Coast_Time = 0.8;
+static const RJ::Seconds Coast_Time(0.8);
 static const float Velocity_Alpha = 0.2;
-static const float Min_Frame_Time = 0.014;
+static const RJ::Seconds Min_Frame_Time(0.014);
 
 RobotFilter::RobotFilter() { _camera = -1; }
 
@@ -18,18 +18,20 @@ void RobotFilter::update(const RobotObservation* obs) {
     }
 
     int s = obs->source;
-    double dtime = (obs->time - _estimate[s].time) / 1000000.0f;
-    bool reset = _estimate[s].time == 0 || (dtime > Coast_Time);
+    RJ::Seconds dtime = (obs->time - _estimate[s].time);
+    // bool reset = _currentEstimate[s].time == 0 || (dtime > Coast_Time);
 
+    bool reset = (dtime > Coast_Time);
     if (reset || dtime < Min_Frame_Time) {
         _estimate[s].vel = Point();
         _estimate[s].angleVel = 0;
     } else {
-        Point newVel = (obs->pos - _estimate[s].pos) / dtime;
+        Point newVel = (obs->pos - _estimate[s].pos) / dtime.count();
         _estimate[s].vel = newVel * Velocity_Alpha +
                            _estimate[s].vel * (1.0f - Velocity_Alpha);
 
-        double newW = fixAngleRadians(obs->angle - _estimate[s].angle) / dtime;
+        double newW =
+            fixAngleRadians(obs->angle - _estimate[s].angle) / dtime.count();
         _estimate[s].angleVel = newW * Velocity_Alpha +
                                 _estimate[s].angleVel * (1.0f - Velocity_Alpha);
     }
@@ -42,9 +44,9 @@ void RobotFilter::update(const RobotObservation* obs) {
 
 void RobotFilter::predict(RJ::Time time, RobotPose* robot) {
     int bestSource = -1;
-    double bestDTime = 0;
+    RJ::Seconds bestDTime = RJ::Seconds::min();
     for (int s = 0; s < Num_Cameras; ++s) {
-        double dtime = (time - _estimate[s].time) / 1000000.0f;
+        RJ::Seconds dtime = (time - _estimate[s].time);
         if (_estimate[s].visible && (bestSource < 0 || dtime < bestDTime)) {
             bestSource = s;
             bestDTime = dtime;
@@ -56,11 +58,12 @@ void RobotFilter::predict(RJ::Time time, RobotPose* robot) {
         return;
     }
 
-    robot->pos =
-        _estimate[bestSource].pos + _estimate[bestSource].vel * bestDTime;
+    robot->pos = _estimate[bestSource].pos +
+                 _estimate[bestSource].vel * bestDTime.count();
     robot->vel = _estimate[bestSource].vel;
-    robot->angle = fixAngleRadians(_estimate[bestSource].angle +
-                                   _estimate[bestSource].angleVel * bestDTime);
+    robot->angle =
+        fixAngleRadians(_estimate[bestSource].angle +
+                        _estimate[bestSource].angleVel * bestDTime.count());
     robot->angleVel = _estimate[bestSource].angleVel;
     robot->visible = _estimate[bestSource].visible && bestDTime < Coast_Time;
 }

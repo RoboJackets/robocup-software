@@ -13,16 +13,16 @@ all:
 	$(call cmake_build_target, all)
 
 run: all
-	cd run; ./soccer
+	./run/soccer
 rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
-	cd run; ./simulator --headless &
-	cd run; ./soccer -sim
+	./run/simulator --headless &
+	./run/soccer -sim -pbk example.pbk
 run-sim2play: all
 	-pkill -f './simulator --headless'
-	cd run; ./simulator --headless &
-	cd run; ./soccer -sim -y & ./soccer -sim -b
+	./run/simulator --headless &
+	./run/soccer -sim -y & ./soccer -sim -b
 
 debug: all
 ifeq ($(shell uname), Linux)
@@ -33,7 +33,7 @@ endif
 
 debug-sim: all
 	-pkill -f './simulator --headless'
-	cd run; ./simulator --headless &
+	./run/simulator --headless &
 ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else
