@@ -276,14 +276,10 @@ void FieldView::drawTeamSpace(QPainter& p) {
             if (!move) {
                 ballTrail.moveTo(pos);
                 move = true;
-            } 
-            else 
-            	ballTrail.lineTo(pos);    
-                   
+            } else
+                ballTrail.lineTo(pos);
         }
-
-          
-    } 
+    }
     QPen ballTrailPen(ballColor, 0.03);
     ballTrailPen.setCapStyle(Qt::RoundCap);
     p.setPen(ballTrailPen);
