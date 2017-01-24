@@ -267,25 +267,18 @@ void FieldView::drawTeamSpace(QPainter& p) {
     // History
     p.setBrush(Qt::NoBrush);
     QPainterPath ballTrail;
-    //ballTrail.moveTo(1,1);
     bool move = false;
     for (unsigned int i = 0; i < 200 && i < _history->size(); ++i) {
         const LogFrame* oldFrame = _history->at(i).get();
         if (oldFrame && oldFrame->has_ball()) {
             QPointF pos = qpointf(oldFrame->ball().pos());
 
-            if (pos.y() == 0.0) {
-            	cout << "y is 0"<< endl;
-            }
             if (!move) {
                 ballTrail.moveTo(pos);
                 move = true;
             } 
             else 
-            	ballTrail.lineTo(pos);
-            
-
-             
+            	ballTrail.lineTo(pos);    
                    
         }
 
