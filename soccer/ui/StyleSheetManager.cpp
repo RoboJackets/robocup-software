@@ -1,19 +1,21 @@
 
 #include "StyleSheetManager.hpp"
 #include <Utils.hpp>
+#include <map>
 
 // To add a new style sheet, declare the static variable 
-// in the header file and initialize the path here
-QString StyleSheetManager::DARK = "../soccer/ui/QTDark.stylesheet";
-QString StyleSheetManager::NONE = "";
+std::map<string, QString> filePaths = {
+        {"NONE", QString("")},
+        {"DARK", QString("../soccer/ui/QTDark.stylesheet")}
+};
 
 void StyleSheetManager::changeStyleSheet(QMainWindow* window, QString name) {
+	
 	// Add new cases here
-
-	if (name.compare("NONE") == 0) {
-		window->setStyleSheet(NONE);
-	} else if (name.compare("DARK") == 0) {
-		setStyleSheet(window, DARK);
+	if (name == "NONE") {
+		window->setStyleSheet("");
+	} else if (name == "DARK") {
+		setStyleSheet(window, filePaths["DARK"]);
 	}
 }
 
