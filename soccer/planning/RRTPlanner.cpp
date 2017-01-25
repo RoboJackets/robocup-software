@@ -138,69 +138,111 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 
     string debugOut;
 
-    // if the destination of the current path is greater than X m away
-    // from the target destination, we invalidate the path. This
-    // situation could arise if the path destination changed.
 
-    // Replan if needed, otherwise return the previous path unmodified
+    const auto partialReplanTime = RJ::Seconds(*_partialReplanLeadTime);
+
+    enum ReplanState {Reuse, FullReplan, PartialReplan, CheckBetter};
+
+    ReplanState replanState = Reuse;
+
     if (!prevPath || veeredOffPath(start.pos, *prevPath, motionConstraints)) {
-        std::unique_ptr<Path> path = generateRRTPath(start, goal, motionConstraints, obstacles,
-                                    actualDynamic, &planRequest.systemState, planRequest.shellID);
+        replanState = FullReplan;
+    }
 
-        if (!path) {
-            path = InterpolatedPath::emptyPath(start.pos);
-        }
-        path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
-        return std::move(path);
-    } else {
+    if (replanState == Reuse) {
         const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
 
-        bool partialReplan = false;
         RJ::Seconds invalidTime;
-        if(prevPath->hit(obstacles, timeIntoPrevPath, &invalidTime)) {
-            partialReplan = true;
+        if (prevPath->hit(obstacles, timeIntoPrevPath, &invalidTime)) {
+            replanState = PartialReplan;
+            debugOut = "hitObstacle";
         } else if (prevPath->pathsIntersect(actualDynamic, RJ::now(), nullptr, &invalidTime)) {
-            partialReplan = true;
+            replanState = PartialReplan;
+            debugOut = "pathsIntersect";
         } else if (goalChanged(goal, *prevPath)) {
-            invalidTime = prevPath->getDuration();
-            partialReplan = true;
+            replanState = PartialReplan;
+            debugOut = "goalChanged";
         }
 
-        if (partialReplan) {
+        if (replanState == PartialReplan) {
             const auto timeFromInvalid = invalidTime - timeIntoPrevPath;
-            const auto partialReplanTime = RJ::Seconds(*_partialReplanLeadTime);
-            if (timeFromInvalid > partialReplanTime * 2) {
-
-                auto subPath = prevPath->subPath(0ms, timeIntoPrevPath + partialReplanTime);
-                RobotInstant newStart = subPath->end();
-
-                auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,actualDynamic, &planRequest.systemState, planRequest.shellID);
-                if (newSubPath) {
-                    auto path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
-                    path->setStartTime(prevPath->startTime());
-                    path->setDebugText("partialReplan");
-                    return std::move(path);
-                }
+            if (timeFromInvalid < partialReplanTime * 2) {
+                replanState = FullReplan;
             }
         }
+    }
 
+    std::unique_ptr<Path> path;
+
+    if (replanState == Reuse) {
         if (reusePathTries >= maxContinue) {
             reusePathTries = 0;
-            auto path = generateRRTPath(
-                start, goal, motionConstraints, obstacles, actualDynamic,
-                &planRequest.systemState, planRequest.shellID);
-            if (path) {
+            const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
+            if (prevPath->getDuration() - timeIntoPrevPath > partialReplanTime * 2) {
+                replanState = CheckBetter;
+            }
+        }
+        reusePathTries++;
+    }
+
+    if (replanState == CheckBetter || replanState == PartialReplan) {
+        const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
+        auto subPath = prevPath->subPath(0ms, timeIntoPrevPath + partialReplanTime);
+        RobotInstant newStart = subPath->end();
+
+        auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,actualDynamic, &planRequest.systemState, planRequest.shellID);
+        if (path) {
+            path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
+            path->setStartTime(prevPath->startTime());
+            path->setDebugText(QString::fromStdString("partialReplan" + debugOut));
+
+            if (replanState == CheckBetter) {
                 RJ::Seconds remaining = prevPath->getDuration() -
                                         (RJ::now() - prevPath->startTime());
                 if (remaining > path->getDuration()) {
                     path->setDebugText("Found better path");
-                    return std::move(path);
+                    return path;
+                } else {
+                    replanState = Reuse;
                 }
             }
+        } else if (replanState == PartialReplan) {
+            replanState = FullReplan;
+        } else {
+            replanState = Reuse;
         }
-        reusePathTries++;
-        prevPath->setDebugText("reusing");
-        return std::move(prevPath);
+
+
+    }
+
+    if (replanState == Reuse) {
+        path = std::move(prevPath);
+        path->setDebugText("Reusing");
+        return path;
+    } else if (replanState == FullReplan) {
+        path = generateRRTPath(start, goal, motionConstraints, obstacles,
+                               actualDynamic, &planRequest.systemState, planRequest.shellID);
+        if (path) {
+            path->setDebugText("FullReplan.");
+        } else {
+            path = InterpolatedPath::emptyPath(start.pos);
+        }
+        return path;
+    } else {
+        string type = [replanState]() {
+            switch (replanState) {
+                case Reuse:
+                    return "Reuse";
+                case FullReplan:
+                    return "FullReplan";
+                case CheckBetter:
+                    return "CheckBetter";
+                default:
+                    return "No idea what replanState";
+            }
+        }();
+        debugThrow("Logic Error. Rip. State:" + type);
+        return InterpolatedPath::emptyPath(start.pos);
     }
 }
 

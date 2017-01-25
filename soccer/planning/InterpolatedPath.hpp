@@ -119,7 +119,9 @@ public:
     RJ::Seconds getTime(int index) const;
 
     static std::unique_ptr<Path> emptyPath(Geometry2d::Point pos) {
-        return std::make_unique<InterpolatedPath>(pos);
+        auto path = std::make_unique<InterpolatedPath>(pos);
+        path->setDebugText("Empty Path");
+        return std::move(path);
     }
 protected:
     virtual boost::optional<RobotInstant> eval(
