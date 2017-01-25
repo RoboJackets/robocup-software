@@ -147,8 +147,8 @@ QScrollBar::add-page, QScrollBar::sub-page {
 }
 
 QLabel {
-	background: none;	
-} 
+	background: none;
+}
 
 QAbstractButton:hover {
 	background: #353535;
@@ -171,7 +171,7 @@ QHeaderView {
 
 QHeaderView::section {
 	background: #191919;
-	padding: 4px; 
+	padding: 4px;
 }
 
 QHeaderView::section:selected, QHeaderView::section::checked {
@@ -184,12 +184,6 @@ QTableView {
 
 QTabBar {
 	margin-left: 2px;
-}
-
-QTabBar::tab {
-	order-radius: 0px;
-	padding: 4px;
-	margin: 4px;
 }
 
 QTabBar::tab:selected {
