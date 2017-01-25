@@ -128,6 +128,7 @@ private Q_SLOTS:
     /// Style Sheets
     void on_actionNoneStyle_triggered();
     void on_actionDarkStyle_triggered();
+    void on_actionDarculizedStyle_triggered();
 
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);

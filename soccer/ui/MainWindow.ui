@@ -1913,6 +1913,7 @@
      </property>
      <addaction name="actionNoneStyle"/>
      <addaction name="actionDarkStyle"/>
+     <addaction name="actionDarculizedStyle"/>
     </widget>
     <addaction name="action0"/>
     <addaction name="action90"/>
@@ -2339,6 +2340,14 @@
    </property>
    <property name="text">
     <string>Dark</string>
+   </property>
+  </action>
+  <action name="actionDarculizedStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Darculized</string>
    </property>
   </action>
  </widget>
