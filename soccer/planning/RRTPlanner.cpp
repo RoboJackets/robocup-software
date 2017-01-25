@@ -168,6 +168,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
             const auto timeFromInvalid = invalidTime - timeIntoPrevPath;
             if (timeFromInvalid < partialReplanTime * 2) {
                 replanState = FullReplan;
+                debugOut = "Too soon";
             }
         }
     }
@@ -191,7 +192,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         RobotInstant newStart = subPath->end();
 
         auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,actualDynamic, &planRequest.systemState, planRequest.shellID);
-        if (path) {
+        if (newSubPath) {
             path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
             path->setStartTime(prevPath->startTime());
             path->setDebugText(QString::fromStdString("partialReplan" + debugOut));
@@ -205,8 +206,11 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
                 } else {
                     replanState = Reuse;
                 }
+            } else {
+                return path;
             }
         } else if (replanState == PartialReplan) {
+            debugOut = "Partial Failed";
             replanState = FullReplan;
         } else {
             replanState = Reuse;
@@ -223,13 +227,13 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                actualDynamic, &planRequest.systemState, planRequest.shellID);
         if (path) {
-            path->setDebugText("FullReplan.");
+            path->setDebugText(QString::fromStdString("FullReplan." + debugOut));
         } else {
             path = InterpolatedPath::emptyPath(start.pos);
         }
         return path;
     } else {
-        string type = [replanState]() {
+        string type = [](auto replanState) {
             switch (replanState) {
                 case Reuse:
                     return "Reuse";
@@ -237,10 +241,12 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
                     return "FullReplan";
                 case CheckBetter:
                     return "CheckBetter";
+                case PartialReplan:
+                    return "PartialReplan";
                 default:
                     return "No idea what replanState";
             }
-        }();
+        }(replanState);
         debugThrow("Logic Error. Rip. State:" + type);
         return InterpolatedPath::emptyPath(start.pos);
     }
