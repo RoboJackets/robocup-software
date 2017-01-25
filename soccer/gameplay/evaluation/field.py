@@ -8,9 +8,10 @@ import math
 # @param pos: point to evalute
 # @returns Number between 0 and 1 representing the closeness of robots
 # The higher the number, the more robots closer to the position
-def space_coeff_at_pos(pos, excluded_robots=[], robots=main.their_robots()):
+def space_coeff_at_pos(pos, excluded_robots=[], robots=None):
     # TODO: Add in velocity prediction
-
+    if robots==None:
+        robots = main.their_robots()
     max_dist = robocup.Point(constants.Field.Width/2, constants.Field.Length).mag()
     total = 0
     sensitivity = 8
@@ -34,14 +35,14 @@ def space_coeff_at_pos(pos, excluded_robots=[], robots=main.their_robots()):
 # @param center: How much to weight being close to the 'center of the field'
 # @param dist: How much to weight being close to the opponents goal
 # @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
-# @return Returns a number between 0 and 1 representing how good the position is 
+# @return Returns a number between 0 and 1 representing how good the position is
 def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
     # Percent closeness to the center (Line between the two goals is the 'center line')
     centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2))
     # Pencent closeness to their goal
-    distValue = math.fabs(pos.y / constants.Field.Length) 
+    distValue = math.fabs(pos.y / constants.Field.Length)
     # Angle of pos onto the goal, centerline is 0 degrees
-    anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) 
+    anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2))
 
     # Normalize inputs
     total = center + dist + angl
