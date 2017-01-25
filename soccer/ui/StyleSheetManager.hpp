@@ -1,12 +1,11 @@
+#pragma once
 
 #include <QtWidgets>
-using namespace std;
-
 
 class StyleSheetManager {
+private:
+    static void setStyleSheet(QMainWindow* window, QString path);
 
-	static void setStyleSheet(QMainWindow* window, QString path);
-
-	public:
-		static void changeStyleSheet(QMainWindow* window, QString name);
+public:
+    static void changeStyleSheet(QMainWindow* window, QString name);
 };

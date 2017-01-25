@@ -4,21 +4,23 @@
 #include <map>
 
 // To add a new style sheet, declare the static variable
-std::map<string, QString> filePaths = {
-        {"NONE", QString("")},
-        {"DARK", QString("../soccer/ui/QTDark.stylesheet")}
+std::map<QString, QString> filePaths = {
+    // Add new entries here:
+    {"DARK", "../soccer/ui/QTDark.stylesheet"}
 };
 
 void StyleSheetManager::changeStyleSheet(QMainWindow* window, QString name) {
-	// Add new cases here
-	if (name == "NONE") {
+	if (filePaths.count(name)) {
+        // Found an element
+		setStyleSheet(window, filePaths[name]);
+	} else {
+        // Default to no style sheet if we didn't find anything
 		window->setStyleSheet("");
-	} else if (name == "DARK") {
-		setStyleSheet(window, filePaths["DARK"]);
-	}
+    }
 }
 
 void StyleSheetManager::setStyleSheet(QMainWindow* window, QString path) {
+    // Normalize file paths to work regardless of location of pwd
 	QFile file(ApplicationRunDirectory().filePath(path));
 	file.open(QFile::ReadOnly);
 	QString styleSheet = file.readAll();

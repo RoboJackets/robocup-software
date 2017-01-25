@@ -1911,8 +1911,8 @@
      <property name="title">
       <string>Change Style Sheet</string>
      </property>
-     <addaction name="actionNone"/>
-     <addaction name="actionDark"/>
+     <addaction name="actionNoneStyle"/>
+     <addaction name="actionDarkStyle"/>
     </widget>
     <addaction name="action0"/>
     <addaction name="action90"/>
@@ -2322,12 +2322,21 @@
     <string>Start Logging</string>
    </property>
   </action>
-  <action name="actionNone">
+  <action name="actionNoneStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>None</string>
    </property>
   </action>
-  <action name="actionDark">
+  <action name="actionDarkStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Dark</string>
    </property>

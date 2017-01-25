@@ -132,6 +132,11 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     radioGroup->addAction(_ui.action918MHz);
     qActionGroups.push_back(radioGroup);
 
+    auto styleGroup = new QActionGroup(this);
+    styleGroup->addAction(_ui.actionNoneStyle);
+    styleGroup->addAction(_ui.actionDarkStyle);
+    qActionGroups.push_back(styleGroup);
+
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
 
@@ -1021,13 +1026,13 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
     _ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
-// Style Sheets 
+// Style Sheets
 
-void MainWindow::on_actionNone_triggered() {
+void MainWindow::on_actionNoneStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "NONE");
 }
 
-void MainWindow::on_actionDark_triggered() {
+void MainWindow::on_actionDarkStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "DARK");
 }
 
