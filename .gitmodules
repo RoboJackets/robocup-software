@@ -19,3 +19,9 @@
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb
 	url = https://github.com/gabomdq/SDL_GameControllerDB.git
+[submodule "external/grSim"]
+	path = external/grSim
+	url = https://github.com/RoboJackets/grSim
+[submodule "external/vartypes"]
+	path = external/vartypes
+	url = https://github.com/szi/vartypes
