@@ -311,21 +311,25 @@
        <layout class="QVBoxLayout" name="verticalLayout_13">
         <item>
          <widget class="QLabel" name="frameNumLabel">
+          <property name="font">
+           <font>
+            <family>monospace</family>
+           </font>
+          </property>
           <property name="text">
            <string>00000</string>
-          </property>
-          <property name="font">
-           <string>monospace</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="logTime">
+          <property name="font">
+           <font>
+            <family>monospace</family>
+           </font>
+          </property>
           <property name="text">
            <string>00:00</string>
-          </property>
-          <property name="font">
-           <string>monospace</string>
           </property>
          </widget>
         </item>
@@ -1144,6 +1148,9 @@
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#1b6bd3;&quot;&gt;Score&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
@@ -1900,6 +1907,13 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
+    <widget class="QMenu" name="menuChange_Style_Sheet">
+     <property name="title">
+      <string>Change Style Sheet</string>
+     </property>
+     <addaction name="actionNone"/>
+     <addaction name="actionDark"/>
+    </widget>
     <addaction name="action0"/>
     <addaction name="action90"/>
     <addaction name="action180"/>
@@ -1910,6 +1924,7 @@
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
     <addaction name="actionTeam_Names"/>
+    <addaction name="menuChange_Style_Sheet"/>
    </widget>
    <widget class="QMenu" name="menu_Field">
     <property name="title">
@@ -2305,6 +2320,16 @@
   <action name="actionStart_Logging">
    <property name="text">
     <string>Start Logging</string>
+   </property>
+  </action>
+  <action name="actionNone">
+   <property name="text">
+    <string>None</string>
+   </property>
+  </action>
+  <action name="actionDark">
+   <property name="text">
+    <string>Dark</string>
    </property>
   </action>
  </widget>
