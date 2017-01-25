@@ -1021,7 +1021,7 @@ void MainWindow::on_actionQuickloadRobotLocations_triggered() {
     _ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
-// add new stylesheets here!
+// Style Sheets 
 
 void MainWindow::on_actionNone_triggered() {
     StyleSheetManager::changeStyleSheet(this, "NONE");

@@ -124,6 +124,8 @@ private Q_SLOTS:
     void on_actionStopRobots_triggered();
     void on_actionQuicksaveRobotLocations_triggered();
     void on_actionQuickloadRobotLocations_triggered();
+    
+    /// Style Sheets
     void on_actionNone_triggered();
     void on_actionDark_triggered();
 
