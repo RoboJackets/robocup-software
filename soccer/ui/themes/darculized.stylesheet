@@ -19,10 +19,11 @@
 	COLOR_DARK     = #262626
 	COLOR_MEDIUM   = #2e2e2e
     (borders)
-	COLOR_MEDLIGHT = #5e6263
+	COLOR_MEDLIGHT = black
     (text)
 	COLOR_LIGHT    = #909396
-	COLOR_ACCENT   = #a6aaab
+    (scroll bar and menu selection)
+	COLOR_ACCENT   = #5E6263
 */
 
 * {
@@ -30,9 +31,12 @@
 	color: #909396;
 }
 
-QWidget:selected {
-	background: #a6aaab;
+QWidget:selected, QMenu::item:selected, QMenuBar::item:selected, QMenuBar::item:pressed {
+    color: #262626;
+	background: #5E6263;
 }
+
+/* Don't change color of select QComboBoxes */
 QComboBox:selected {
 	background: none;
 }
@@ -46,8 +50,12 @@ QRadioButton::indicator, QCheckBox::indicator {
 	height: 13px;
 }
 
+QStatusBar::item {
+    border: none;
+}
+
 QScrollBar {
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 	background: #262626;
 }
 
@@ -63,7 +71,7 @@ QScrollBar:vertical {
 
 QScrollBar::handle {
 	background: #2e2e2e;
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 }
 
 QScrollBar::handle:horizontal {
@@ -84,7 +92,7 @@ QScrollBar::handle:vertical {
 
 QScrollBar::add-line, QScrollBar::sub-line {
 	background:#2e2e2e;
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 	subcontrol-origin: margin;
 }
 
@@ -115,7 +123,7 @@ QScrollBar::sub-line:vertical {
 }
 
 QScrollBar:left-arrow, QScrollBar::right-arrow, QScrollBar::up-arrow, QScrollBar::down-arrow {
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 	width: 3px;
 	height: 3px;
 }
@@ -125,7 +133,8 @@ QScrollBar::add-page, QScrollBar::sub-page {
 }
 
 QLabel {
-	background: none;
+    /* TODO find a good color for background of qlabel */
+	/* background: none; */
 }
 
 QAbstractButton:hover {
@@ -138,9 +147,19 @@ QAbstractButton:pressed {
 
 QAbstractItemView {
 	show-decoration-selected: 1;
-	selection-background-color: #a6aaab;
+	selection-background-color: #5E6263;
 	selection-color: #909396;
 	alternate-background-color: #2e2e2e;
+}
+
+QComboBox QAbstractItemView {
+    border: 1px solid black;
+}
+
+/* color uneditable items differently */
+QComboBox QAbstractItemView:!enabled, QComboBox:!enabled {
+	background: #2e2e2e;
+    color: #5e6263;
 }
 
 QHeaderView {
@@ -164,32 +183,16 @@ QTableView {
 /* 	margin-left: 2px; */
 /* } */
 
-QTabBar::tab:selected {
-	background: #2e2e2e;
-}
+/* QTabBar::tab:selected { */
+/* } */
 
-QComboBox::down-arrow {
-	border: 1px solid #5e6263;
-	background: #2e2e2e;
-}
-
-QComboBox::drop-down {
-	border: 1px solid #5e6263;
-	background: #2e2e2e;
-}
-
-QComboBox::down-arrow {
-	width: 3px;
-	height: 3px;
-	border: 1px solid #5e6263;
-}
 
 QAbstractSpinBox {
 	padding-right: 15px;
 }
 
 QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 	background: #2e2e2e;
 	subcontrol-origin: border;
 }
@@ -197,7 +200,7 @@ QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
 QAbstractSpinBox::up-arrow, QAbstractSpinBox::down-arrow {
 	width: 3px;
 	height: 3px;
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 }
 
 QSlider {
@@ -205,12 +208,12 @@ QSlider {
 }
 
 QSlider::handle {
-	border: 1px solid #5e6263;
+	border: 1px solid black;
 	background: #2e2e2e;
 }
 
 QSlider::add-page:vertical, QSlider::sub-page:horizontal {
-	background: #a6aaab;
+	background: #5E6263;
 }
 
 QSlider::sub-page:vertical, QSlider::add-page:horizontal {
@@ -223,15 +226,15 @@ QProgressBar {
 
 QProgressBar::chunk {
 	width: 1px;
-	background-color: #a6aaab;
+	background-color: #5E6263;
 }
 
 QMenu::separator {
 	background: #2e2e2e;
 }
 
-QMenu::item:selected, QMenuBar:selected, QComboBox:selected {
-    color: #262626;
+QMenu {
+    border: 1px solid black;
 }
 
 /* Field color */
