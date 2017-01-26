@@ -136,6 +136,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     styleGroup->addAction(_ui.actionNoneStyle);
     styleGroup->addAction(_ui.actionDarkStyle);
     styleGroup->addAction(_ui.actionDarculizedStyle);
+    styleGroup->addAction(_ui.action1337h4x0rStyle);
     qActionGroups.push_back(styleGroup);
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
@@ -1039,6 +1040,9 @@ void MainWindow::on_actionDarkStyle_triggered() {
 
 void MainWindow::on_actionDarculizedStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "DARCULIZED");
+}
+void MainWindow::on_action1337h4x0rStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
 
 

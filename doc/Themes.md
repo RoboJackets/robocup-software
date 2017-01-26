@@ -25,6 +25,7 @@ Adding your own theme to soccer takes a few steps:
    - Copy this stylesheet into the `./soccer/ui/themes` folder
 2. Edit `MainWindow.ui` to add an entry for your theme in the themes menu.
     - You can do this in qtcreator
-    - Also, you will need to add triggers in MainWindow.ui to actually trigger your theme.
+    - Also, you will need to add triggers in MainWindow.cpp to actually trigger your theme.
+    - In MainWindow.cpp add your new button to the radio group
 3. Edit `StyleSheetManager.cpp` and add your theme to the map of tables present there.
 4. You're set! See the existing themes for examples.
