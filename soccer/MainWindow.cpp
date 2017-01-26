@@ -153,6 +153,10 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     // current Git index is dirty
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
                    (git_version_dirty ? "*" : ""));
+
+    if (!_processor->simulation()) {
+        _ui.menu_Simulator->setEnabled(false);
+    }
 }
 
 void MainWindow::configuration(Configuration* config) {
