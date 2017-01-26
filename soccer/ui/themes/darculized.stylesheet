@@ -31,9 +31,18 @@
 	color: #909396;
 }
 
-QWidget:selected, QMenu::item:selected, QMenuBar::item:selected, QMenuBar::item:pressed {
+QWidget:selected, QMenu::item:selected, QMenuBar::item:selected, QMenuBar::item:pressed, QTreeWidget::item:selected{
     color: #262626;
 	background: #5E6263;
+}
+
+QAbstractScrollArea {
+    selection-color: #262626;
+    selection-background-color: #5E6263;
+}
+
+QListWidget::item {
+    border: 1px solid black;
 }
 
 /* Don't change color of select QComboBoxes */
@@ -179,16 +188,35 @@ QTableView {
 	gridline-color: #5e6263;
 }
 
-/* QTabBar { */
-/* 	margin-left: 2px; */
-/* } */
+QTabBar::tab {
+    border: 1px solid black;
+    padding: 5;
+}
 
-/* QTabBar::tab:selected { */
-/* } */
+QTabBar::tab:selected:left {
+    color: #262626;
+	background: #5E6263;
+
+    border: 1px solid black;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+QTabBar::tab:!selected:left {
+    margin-right: 2px;
+}
+
+QTabBar::tab:!enabled:left {
+	background: #2e2e2e;
+    color: #5e6263;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border: 1px solid black;
+}
 
 
 QAbstractSpinBox {
-	padding-right: 15px;
+    padding-right: 15px;
 }
 
 QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {
