@@ -30,8 +30,11 @@
 	color: #909396;
 }
 
-QWidget::item:selected {
+QWidget:selected {
 	background: #a6aaab;
+}
+QComboBox:selected {
+	background: none;
 }
 
 QCheckBox, QRadioButton {
@@ -41,34 +44,6 @@ QCheckBox, QRadioButton {
 QRadioButton::indicator, QCheckBox::indicator {
 	width: 13px;
 	height: 13px;
-}
-
-QRadioButton::indicator::unchecked, QCheckBox::indicator::unchecked {
-	border: 1px solid #5e6263;
-	background: none;
-}
-
-QRadioButton::indicator:unchecked:hover, QCheckBox::indicator:unchecked:hover {
-	border: 1px solid #909396;
-}
-
-QRadioButton::indicator::checked, QCheckBox::indicator::checked {
-	border: 1px solid #5e6263;
-	background: #5e6263;
-}
-
-QRadioButton::indicator:checked:hover, QCheckBox::indicator:checked:hover {
-	border: 1px solid #909396;
-	background: #909396;
-}
-
-QGroupBox {
-	margin-top: 6px;
-}
-
-QGroupBox::title {
-	top: -7px;
-	left: 7px;
 }
 
 QScrollBar {
@@ -185,9 +160,9 @@ QTableView {
 	gridline-color: #5e6263;
 }
 
-QTabBar {
-	margin-left: 2px;
-}
+/* QTabBar { */
+/* 	margin-left: 2px; */
+/* } */
 
 QTabBar::tab:selected {
 	background: #2e2e2e;
@@ -229,29 +204,9 @@ QSlider {
 	border: none;
 }
 
-QSlider::groove:horizontal {
-	height: 5px;
-	margin: 4px 0px 4px 0px;
-}
-
-QSlider::groove:vertical {
-	width: 5px;
-	margin: 0px 4px 0px 4px;
-}
-
 QSlider::handle {
 	border: 1px solid #5e6263;
 	background: #2e2e2e;
-}
-
-QSlider::handle:horizontal {
-	width: 15px;
-	margin: -4px 0px -4px 0px;
-}
-
-QSlider::handle:vertical {
-	height: 15px;
-	margin: 0px -4px 0px -4px;
 }
 
 QSlider::add-page:vertical, QSlider::sub-page:horizontal {
@@ -275,10 +230,11 @@ QMenu::separator {
 	background: #2e2e2e;
 }
 
-QMenu::item:selected {
+QMenu::item:selected, QMenuBar:selected, QComboBox:selected {
     color: #262626;
 }
 
-QMenuBar:selected {
-    color: #262626;
+/* Field color */
+FieldView, SimFieldView {
+    background: #598249;
 }
