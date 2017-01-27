@@ -111,6 +111,7 @@ $(document).ready(function(){initNavTree('class_processor.html','');});
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
@@ -129,11 +130,19 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_processor_1_1_status.html">Status</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a41c147c0c8301eca5a94798c9c31b463"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41c147c0c8301eca5a94798c9c31b463"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>VisionChannel</b> { <b>primary</b>, 
+<b>secondary</b>, 
+<b>full</b>
+ }</td></tr>
+<tr class="separator:a41c147c0c8301eca5a94798c9c31b463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ade4b410819be6fe3b6fe64086b2c8b8d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade4b410819be6fe3b6fe64086b2c8b8d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Processor</b> (bool sim)</td></tr>
-<tr class="separator:ade4b410819be6fe3b6fe64086b2c8b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb528e3d39de18a230af2a6dc7039594"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb528e3d39de18a230af2a6dc7039594"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Processor</b> (bool sim, bool defendPlus, VisionChannel visionChannel)</td></tr>
+<tr class="separator:aeb528e3d39de18a230af2a6dc7039594"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96c4902b3169f62c96383c24899bce56"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a96c4902b3169f62c96383c24899bce56"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>stop</b> ()</td></tr>
 <tr class="separator:a96c4902b3169f62c96383c24899bce56"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -198,6 +207,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>simulation</b> () con
 <tr class="memitem:abe3e25aed4cd5a0363621b4cf4664653"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe3e25aed4cd5a0363621b4cf4664653"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>defendPlusX</b> (bool value)</td></tr>
 <tr class="separator:abe3e25aed4cd5a0363621b4cf4664653"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0f9eedf20d238e8dfe046a276fb543"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b0f9eedf20d238e8dfe046a276fb543"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>defendPlusX</b> ()</td></tr>
+<tr class="separator:a0b0f9eedf20d238e8dfe046a276fb543"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a731ff4331aef13a8586d00a34024eb96"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a731ff4331aef13a8586d00a34024eb96"></a>
 <a class="el" href="struct_processor_1_1_status.html">Status</a>&#160;</td><td class="memItemRight" valign="bottom"><b>status</b> ()</td></tr>
 <tr class="separator:a731ff4331aef13a8586d00a34024eb96"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,6 +240,9 @@ QMutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>loopMutex</b>
 <tr class="memitem:afbefacf8023e7c804d0451ff1d5fde39"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afbefacf8023e7c804d0451ff1d5fde39"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>changeVisionChannel</b> (int port)</td></tr>
 <tr class="separator:afbefacf8023e7c804d0451ff1d5fde39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a192b0c7aecffcbe5043815b7de1d7246"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a192b0c7aecffcbe5043815b7de1d7246"></a>
+VisionChannel&#160;</td><td class="memItemRight" valign="bottom"><b>visionChannel</b> ()</td></tr>
+<tr class="separator:a192b0c7aecffcbe5043815b7de1d7246"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add33e0f19dc66bea894620087b6dd312"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add33e0f19dc66bea894620087b6dd312"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>recalculateWorldToTeamTransform</b> ()</td></tr>
 <tr class="separator:add33e0f19dc66bea894620087b6dd312"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -369,7 +384,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>applyJoystickControls
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_processor.html">Processor</a></li>
-    <li class="footer">Generated on Thu Jan 26 2017 06:35:25 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Jan 27 2017 05:39:45 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

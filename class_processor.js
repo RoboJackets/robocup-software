@@ -1,7 +1,12 @@
 var class_processor =
 [
     [ "Status", "struct_processor_1_1_status.html", "struct_processor_1_1_status" ],
-    [ "Processor", "class_processor.html#ade4b410819be6fe3b6fe64086b2c8b8d", null ],
+    [ "VisionChannel", "class_processor.html#a41c147c0c8301eca5a94798c9c31b463", [
+      [ "primary", "class_processor.html#a41c147c0c8301eca5a94798c9c31b463a2e4a6ab91161d92b4a1a2ce7a8a50529", null ],
+      [ "secondary", "class_processor.html#a41c147c0c8301eca5a94798c9c31b463a05ef87bad4618fa9288c9f75eed87926", null ],
+      [ "full", "class_processor.html#a41c147c0c8301eca5a94798c9c31b463a5b4ceb0a3978b74478c72ff056d40ef2", null ]
+    ] ],
+    [ "Processor", "class_processor.html#aeb528e3d39de18a230af2a6dc7039594", null ],
     [ "~Processor", "class_processor.html#acf37952c5b420d4e903a512571678692", null ],
     [ "applyJoystickControls", "class_processor.html#af9ab76bf7d2e52b90a9688a178cf4f05", null ],
     [ "autonomous", "class_processor.html#ae82d01435599d7ade385225832ef2bf2", null ],
@@ -12,6 +17,7 @@ var class_processor =
     [ "dampedRotation", "class_processor.html#a1b599d9aba834e8671ce1f65d5471e25", null ],
     [ "dampedTranslation", "class_processor.html#a72c28573c98b04824354ac13897dab84", null ],
     [ "defendPlusX", "class_processor.html#abe3e25aed4cd5a0363621b4cf4664653", null ],
+    [ "defendPlusX", "class_processor.html#a0b0f9eedf20d238e8dfe046a276fb543", null ],
     [ "externalReferee", "class_processor.html#a1bd20ff1de973eaac66c9349cea21dc6", null ],
     [ "externalReferee", "class_processor.html#ac5f41ff94fb553b9322dd756ebea688a", null ],
     [ "framerate", "class_processor.html#a88aec66a4f13376593cd44988529c030", null ],
@@ -40,5 +46,6 @@ var class_processor =
     [ "useFieldOrientedManualDrive", "class_processor.html#a53e5e4890e47a1c3b95c0119a15295e1", null ],
     [ "useOpponentHalf", "class_processor.html#abe2acdc734aece774c9dd262a217ba1a", null ],
     [ "useOurHalf", "class_processor.html#a761db266f4f8c46829387e50ec2a8c5a", null ],
+    [ "visionChannel", "class_processor.html#a192b0c7aecffcbe5043815b7de1d7246", null ],
     [ "firstLogTime", "class_processor.html#af4215878c42994c28925af6f4e091633", null ]
 ];
