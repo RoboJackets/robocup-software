@@ -246,7 +246,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         // The External Ref is connected
         _ui.goalieID->setEnabled(false);
         // disable Blue/Yellow team
-        qActionGroups[0]->setEnabled(false);
+        qActionGroups["teamGroup"]->setEnabled(false);
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() !=

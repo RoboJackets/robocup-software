@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     string playbookFile;
     bool noref = false;
     bool defendPlus = false;
-    Processor::VisionChannel visionChannel = Processor::VisionChannel::full;
+    Processor::VisionChannel visionChannel = Processor::VisionChannel::primary;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
