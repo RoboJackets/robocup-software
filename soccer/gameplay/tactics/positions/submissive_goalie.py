@@ -16,7 +16,7 @@ import planning_priority
 # This goalie lets someone else (the Defense tactic) handle calculations and blocks things based on that
 # TODO: merge this back into the regular goalie?
 class SubmissiveGoalie(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
+    single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     MaxX = constants.Field.GoalWidth / 2.0
     SegmentY = constants.Robot.Radius + 0.05
