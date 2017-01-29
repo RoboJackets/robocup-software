@@ -61,7 +61,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self._start_time = 0
         self.desperate_timeout = float("inf")
 
-        self.startBallLocation = main.ball().pos
+        self.startBallLocation = self.__get_ball_pos()
 
     # The target Point that we're aiming at
     # Default: the center of the opponent's goal segment
@@ -228,6 +228,11 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         if self.target_point != None:
             main.system_state().draw_circle(self.target_point, 0.02,
                                             constants.Colors.Blue, "Aim")
+    def __get_ball_pos(self):
+        #if main.ball():
+        return main.ball().pos
+        #else:
+        #    return None
 
     def __str__(self):
         desc = super().__str__()
