@@ -35,13 +35,20 @@ def space_coeff_at_pos(pos, excluded_robots=[], robots=main.their_robots()):
 # @param dist: How much to weight being close to the opponents goal
 # @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
 # @return Returns a number between 0 and 1 representing how good the position is 
-def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1):
+def field_pos_coeff_at_pos(pos, center = 0.2, dist = 1, angl = 1, to_their_goal=True):
     # Percent closeness to the center (Line between the two goals is the 'center line')
     centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2))
+
     # Pencent closeness to their goal
     distValue = math.fabs(pos.y / constants.Field.Length) 
+    if (not to_their_goal):
+        distValue = 1 - distValue
+
     # Angle of pos onto the goal, centerline is 0 degrees
-    anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) 
+    if (to_their_goal):
+        anglValue = 1  -  math.fabs(math.atan2(pos.x, constants.Field.Length - pos.y) / (math.pi/2)) 
+    else:
+        anglValue = 1  -  math.fabs(math.atan2(pos.x, pos.y) / (math.pi/2)) 
 
     # Normalize inputs
     total = center + dist + angl

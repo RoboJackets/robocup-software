@@ -35,11 +35,12 @@ def generate_default_rectangle(pos):
 
 ## Returns a list of robocup.Point objects that represent candidate recieve points
 #
-# @param pos: Position to pass from
 # @param rect: Rectangle to search through
+# @param pos: Position to pass from
+# @param step: Distance between points
 # @param min_dist: Minimum distance to check around our position
 # @return: Returns a list of points in the rectangle to test
-def get_points_from_rect(rect, pos, threshold=0.5, min_dist=1):
+def get_points_from_rect(rect, pos, step=0.5, min_dist=1):
     outlist = []
     currentx = rect.min_x()
     currenty = rect.min_y()
@@ -53,7 +54,7 @@ def get_points_from_rect(rect, pos, threshold=0.5, min_dist=1):
 
             # If within the goalie area 
             if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty + goal_zone_thresh)):
-                currentx += threshold
+                currentx += step
                 continue
 
             candidate = robocup.Point(currentx, currenty)
@@ -61,9 +62,9 @@ def get_points_from_rect(rect, pos, threshold=0.5, min_dist=1):
             # Force algorithm not to check within a min distance
             if ( (candidate - pos).mag() > min_dist ):
                 outlist.extend([candidate])
-            currentx += threshold
+            currentx += step
     
-        currenty += threshold
+        currenty += step
         currentx = rect.min_x()
 
     return outlist

@@ -36,6 +36,9 @@ class TestAdaptiveFormationWeights(play.Play):
                             'immediately')
 
 
+    def on_enter_testPointCoeff(self):
+        pass
+
     def execute_testPointCoeff(self):
         # Number of boxes width and length wise
         num_width = 10
@@ -48,8 +51,8 @@ class TestAdaptiveFormationWeights(play.Play):
         # 1/2 the Width/Length of the boxes
         x_half = 0.5 * constants.Field.Width / num_width
         y_half = 0.5 * constants.Field.Length / num_length
-        
 
+        
         for x in range(-1*round(num_width/2), round(num_width/2)):
             for y in range(0, num_length):
                 # X/Y for center of the boxes
@@ -65,6 +68,8 @@ class TestAdaptiveFormationWeights(play.Play):
                 # 3: Shot Eval %
                 # 4: Ball Coeff
                 # 5: Estimate Chance to Block Kick
+                # 6: Risk Score
+                # 
 
                 #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.1, .2, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
@@ -72,10 +77,12 @@ class TestAdaptiveFormationWeights(play.Play):
                 #val = 1-evaluation.field.ball_coeff_at_pos(robocup.Point(x_cent, y_cent))
                 #val = evaluation.defensive_positioning.estimate_kick_block_percent \
                 #    (robocup.Point(x_cent, y_cent), robocup.Point(0, 0), main.our_robots())
-                #val = evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
+                val = evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
+                #val = (1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent), [], main.our_robots())) * \
+                #        evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
 
-                val = (1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent), [], main.our_robots())) * \
-                        evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
+                #if val < .18:
+                #    val = 0
                 # Find max
                 if (val > max_val):
                     max_val = val
@@ -94,10 +101,11 @@ class TestAdaptiveFormationWeights(play.Play):
                 val_color = (round(val*255), 0, round((1-val)*255))
 
                 # Draw onto the Debug layer
-                main.system_state().draw_polygon(rect, val_color, "Density")
+                #main.system_state().draw_polygon(rect, val_color, "Density")
 
-        x_cent = max_x
-        y_cent = max_y
+        self.special_point = evaluation.defensive_positioning.create_area_defense_zones()
+        x_cent = self.special_point.x
+        y_cent = self.special_point.y
 
         rect = [robocup.Point(x_cent-x_half, y_cent-y_half),
                 robocup.Point(x_cent+x_half, y_cent-y_half),
