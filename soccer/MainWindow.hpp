@@ -174,6 +174,7 @@ signals:
 
 private:
     void updateStatus();
+    void updateFromRefPacket(bool haveExternalReferee);
     static std::string formatLabelBold(Side side, std::string label);
 
     typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
@@ -183,6 +184,7 @@ private:
     void channel(int n);
 
     Ui_MainWindow _ui;
+    const QStandardItemModel* goalieModel;
 
     Processor* const _processor;
     Configuration* _config;
@@ -221,7 +223,7 @@ private:
     QLabel* _logMemory;
 
     // QActionGroups for Radio Menu Actions
-    std::vector<QActionGroup*> qActionGroups;
+    std::map<std::string, QActionGroup*> qActionGroups;
 
     // maps robot shell IDs to items in the list
     std::map<int, QListWidgetItem*> _robotStatusItemMap;

@@ -23,6 +23,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._aim_target_point = None  # this is what our calculations on the given target boil down to
 
         self.shot_obstacle_ignoring_robots = []
+        self.enable_shot_obstacle = False
 
         self.aim_params = {}
 
@@ -184,4 +185,5 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
                     bot.add_local_obstacle(obs)
 
     def execute_running(self):
-        self.add_shot_obstacle(self.shot_obstacle_ignoring_robots)
+        if self.enable_shot_obstacle:
+            self.add_shot_obstacle(self.shot_obstacle_ignoring_robots)
