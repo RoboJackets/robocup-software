@@ -78,7 +78,7 @@ bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
     RJ::Seconds time = startTime - this->startTime();
     for (; time < getDuration(); time += deltaT) {
         auto current = **thisPathIterator;
-        for (auto& pair : pathIterators) {
+        for (auto& pair: pathIterators) {
             auto& it = pair.first;
             assert(it != nullptr);
             auto hitRadius = pair.second + Robot_Radius;

@@ -160,15 +160,16 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
             replanState = PartialReplan;
             debugOut = "pathsIntersect";
         } else if (goalChanged(goal, *prevPath)) {
+            invalidTime = prevPath->getDuration();
             replanState = PartialReplan;
-            debugOut = "goalChanged";
+            debugOut += "goalChanged";
         }
 
         if (replanState == PartialReplan) {
             const auto timeFromInvalid = invalidTime - timeIntoPrevPath;
             if (timeFromInvalid < partialReplanTime * 2) {
                 replanState = FullReplan;
-                debugOut = "Too soon";
+                debugOut += " Too soon";
             }
         }
     }
@@ -191,7 +192,26 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         auto subPath = prevPath->subPath(0ms, timeIntoPrevPath + partialReplanTime);
         RobotInstant newStart = subPath->end();
 
-        auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,actualDynamic, &planRequest.systemState, planRequest.shellID);
+        boost::optional<vector<Point>> biasWaypoints;
+        if (replanState == PartialReplan) {
+            biasWaypoints = vector<Point>();
+            biasWaypoints->push_back(start.pos + start.vel*0.2);
+//            if (auto point = prevPath->evaluate(300ms)) {
+//                biasWaypoints->push_back(point->motion.pos);
+//            }
+//            if (auto point = prevPath->evaluate(500ms)) {
+//                biasWaypoints->push_back(point->motion.pos);
+//            }
+//            if (auto point = prevPath->evaluate(1000ms)) {
+//                biasWaypoints->push_back(point->motion.pos);
+//            }
+            for (auto it = prevPath->iterator(RJ::now(), 100ms); it->operator*().motion.pos!=prevPath->end().motion.pos; it->operator++()) {
+                auto instant = it->operator*();
+                biasWaypoints->push_back(instant.motion.pos);
+            }
+        }
+
+        auto newSubPath = generateRRTPath(newStart.motion, goal, motionConstraints, obstacles,actualDynamic, &planRequest.systemState, planRequest.shellID, biasWaypoints);
         if (newSubPath) {
             path = make_unique<CompositePath>(std::move(subPath), std::move(newSubPath));
             path->setStartTime(prevPath->startTime());
@@ -256,14 +276,14 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
-    unsigned shellID) {
+    unsigned shellID, const boost::optional<vector<Point>>& biasWayPoints) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
         auto points =
-            runRRT(start, goal, motionConstraints, obstacles, state, shellID);
+                runRRT(start, goal, motionConstraints, obstacles, state, shellID, biasWayPoints);
 
         // Check if Planning or optimization failed
         if (points.size() < 2) {
@@ -290,10 +310,9 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     return lastPath;
 }
 
-vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
-                                 const MotionConstraints& motionConstraints,
-                                 const ShapeSet& obstacles, SystemState* state,
-                                 unsigned shellID) {
+vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal, const MotionConstraints &motionConstraints,
+                                 const ShapeSet &obstacles, SystemState *state, unsigned shellID,
+                                 const boost::optional<vector<Point>> &biasWaypoints) {
     // Initialize bi-directional RRT
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
@@ -302,7 +321,12 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     biRRT.setGoalState(goal.pos);
     biRRT.setStepSize(*RRTConfig::StepSize);
     biRRT.setMaxIterations(_maxIterations);
-    biRRT.setGoalBias(*RRTConfig::StepSize);
+    biRRT.setGoalBias(*RRTConfig::GoalBias);
+
+    if(biasWaypoints) {
+        biRRT.setWaypoints(*biasWaypoints);
+        biRRT.setWaypointBias(*RRTConfig::WaypointBias);
+    }
 
     bool success = biRRT.run();
     if (!success) return vector<Point>();
