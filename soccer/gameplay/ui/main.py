@@ -20,8 +20,10 @@ _defense_checkbox = None
 
 
 def defenseEnabled():
-    global _defense_checkbox
-    return _defense_checkbox.isChecked()
+    if _defense_checkbox is None:
+        return True
+    else:
+        return _defense_checkbox.isChecked()
 
 
 def setup():
