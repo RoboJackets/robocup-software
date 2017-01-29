@@ -218,7 +218,6 @@ def set_game_state(value):
 
 _ball = None
 
-
 def ball():
     global _ball
     return _ball
