@@ -11,7 +11,7 @@ import time
 class RepeatedLineUp(play.Play):
 
     Pause = 2.0
-    BUFFER = .5
+    BUFFER = .9
 
     class State(enum.Enum):
         left = 0
