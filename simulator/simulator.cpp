@@ -20,6 +20,7 @@ void quit(int signal) {
 void usage(const char* prog) {
     fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
     fprintf(stderr, "\t--help       Show usage message\n");
+    fprintf(stderr, "\t--sv         Use shared vision multicast port\n");
     fprintf(
         stderr,
         "\t--headless   Run the simulator in headless mode (without a GUI)\n");
@@ -64,8 +65,10 @@ int main(int argc, char* argv[]) {
             Field_Dimensions::Current_Dimensions =
                 Field_Dimensions::Single_Field_Dimensions * scaling;
         } else if (strcmp(argv[i], "--timeout") == 0) {
-            timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
-            i++;
+            if (i < argc - 1) {
+                timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
+                i++;
+            }
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
             return 1;
@@ -74,7 +77,7 @@ int main(int argc, char* argv[]) {
 
     // create the thread for simulation
     SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared,
-                                   timeoutsimulator, !headless);
+                                   !headless, timeoutsimulator);
 
     struct sigaction act;
     memset(&act, 0, sizeof(act));

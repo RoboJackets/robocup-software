@@ -45,12 +45,6 @@ Environment::Environment(const QString& configFile, bool sendShared_,
 
 Environment::~Environment() { delete _field; }
 
-/*
-RJ::Time Environment::timeFromUpdate() {
-    return RJ::now() - lastUpdate;
-}
-*/
-
 void Environment::connectSockets() {
     // Bind sockets
     bool success = (_visionSocket.bind(SimCommandPort) &&

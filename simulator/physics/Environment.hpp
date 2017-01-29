@@ -76,12 +76,10 @@ public:
 
     ~Environment();
 
-    /** initializes the timer, connects sockets */
-    void connectSockets();
-
     void dropFrame() { _dropFrame = true; }
 
-    // RJ::Time timeFromUpdate();
+    /** initializes the timer, connects sockets */
+    void connectSockets();
 
     const QVector<Ball*>& balls() const { return _balls; }
 
