@@ -62,7 +62,7 @@ import evaluation.ball
 ## Most likely needed functions
 ###############################
 #
-# 
+#
 # (1) estimate_kick_block_percent(point, our_pos[])
 # (2) predict_kick_direction(robot)
 # (3) best_defense_positions(ball_pt)
@@ -88,6 +88,7 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
     blocks = []
     kick_direction = (recieve_point - kick_point)
     kick_angle = math.atan2(kick_direction.y, kick_direction.x)
+    max_ball_vel = 8
 
     # Convert all robot positions to polar with zero being the kick direction
     # TODO: Use velocity / accel with robots to predict where they will be based on
@@ -98,6 +99,8 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
             block_direction = (pos - kick_point)
             dist = block_direction.mag()
             angle = math.atan2(block_direction.y, block_direction.x) - kick_angle
+            future_bot_pos = bot.pos + bot.vel * ((bot.pos - main.ball().pos).mag() / max_ball_vel)
+            pos = future_bot_pos
 
             # Kill any that are over pi/2 away
             # Kill any that are too far away (TOOD: Include this in the function)
@@ -138,12 +141,12 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
 
             # Add the kernel estimate to the list
             subtotal.extend([1 - max(pow((1-pow(u,2)), 3), 0)])
-   
+
         # Decrease the impact of lines further away from the center
         line_offset_scale = 1 - (math.fabs(line_offset) / ( (1 + min_offset_scale) * half_kick_width))
 
         # Uses the min because we only care about the closest robot to blocking
-        # Each line        
+        # Each line
         total += min(subtotal) * line_offset_scale
         max_total += line_offset_scale
         line_offset += inc
@@ -313,7 +316,7 @@ def create_area_defense_zones(ignore_robots=[]):
 ## Estimates how dangerous an enemy robot can be at a certain point
 #  Takes pass / shot and time to execute on ball into account
 #
-# @param pos: Position in which to estimate score at 
+# @param pos: Position in which to estimate score at
 # @return Risk score at that point
 def estimate_risk_score(pos, ignore_robots=[]):
     our_goal = robocup.Point(0, 0)
@@ -332,7 +335,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
 
     # Closest opp robot
     closest_opp_bot = evaluation.opponent.get_closest_opponent(main.ball().pos)
-    delta_angle = (ball_pos_vec.angle() - predict_kick_direction(closest_opp_bot)) 
+    delta_angle = (ball_pos_vec.angle() - predict_kick_direction(closest_opp_bot))
     delta_angle = math.atan2(math.sin(delta_angle), math.cos(delta_angle))
     
     # Underestimates max time to execute on ball
@@ -368,7 +371,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
     return score / sum(weights)
 
 ## Decides where to move the three robots
-#   
+#
 # @return List of the 3 defensive positions
 def find_defense_positions():
     pass
@@ -377,7 +380,7 @@ def find_defense_positions():
 
     # Take in a list of area defense zones (create_area_defense_zones)
     # Produce a list of the highest threat robots (estimate_risk_score(robot_pos))
-    
+
     # Grab the closest robot to the ball
     # Approach the ball slow-ish but be very sensitive to side to side movement
     # Block goal on approach

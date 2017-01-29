@@ -51,6 +51,10 @@ class TestAdaptiveFormationWeights(play.Play):
         # 1/2 the Width/Length of the boxes
         x_half = 0.5 * constants.Field.Width / num_width
         y_half = 0.5 * constants.Field.Length / num_length
+<<<<<<< HEAD
+=======
+
+>>>>>>> aeb7b75b7e472bd6e2a75f57bd16a555bcebb51b
 
         
         for x in range(-1*round(num_width/2), round(num_width/2)):
@@ -58,7 +62,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 # X/Y for center of the boxes
                 x_cent = x * constants.Field.Width / num_width + x_half
                 y_cent = y * constants.Field.Length / num_length + y_half
-                
+
                 if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(x_cent, y_cent)):
                     continue
 
@@ -81,14 +85,12 @@ class TestAdaptiveFormationWeights(play.Play):
                 #val = (1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent), [], main.our_robots())) * \
                 #        evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
 
-                #if val < .18:
-                #    val = 0
                 # Find max
                 if (val > max_val):
                     max_val = val
                     max_x = x_cent
                     max_y = y_cent
-                
+
                 # Force between 0 and 1
                 val = min(val, 1)
                 val = max(val, 0)
