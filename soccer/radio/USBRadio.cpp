@@ -234,7 +234,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
                              sizeof(forward_packet), &sent, Control_Timeout);
     if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet)) {
         fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %lu\n",
-                sent, sizeof(forward_packet));
+                sent, (int) sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
             fprintf(stderr, "  Error: '%s'\n",
                     libusb_error_name(transferRetCode));
