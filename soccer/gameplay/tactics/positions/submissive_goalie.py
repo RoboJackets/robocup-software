@@ -36,7 +36,6 @@ class SubmissiveGoalie(
         # It's right in front of the goal
         self.RobotSegment = robocup.Segment(
         robocup.Point(-self.MaxX, self.SegmentY), robocup.Point(self.MaxX, self.SegmentY))
-        print("test",self.RobotSegment)
 
         for substate in SubmissiveGoalie.State:
             self.add_state(substate, behavior.Behavior.State.running)
