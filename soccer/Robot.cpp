@@ -567,3 +567,9 @@ uint8_t OurRobot::chipPowerForDistance(double distance) {
     if (distance > distanceToChipLanding(255)) return 255;
     return 0.5 * distance + b;
 }
+
+void OurRobot::setPID(double p, double i, double d){
+    config->translation.p->setValueString(QString(std::to_string(p).c_str()));
+    config->translation.i->setValueString(QString(std::to_string(i).c_str()));
+    config->translation.d->setValueString(QString(std::to_string(d).c_str()));
+}

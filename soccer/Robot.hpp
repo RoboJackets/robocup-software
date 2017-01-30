@@ -448,6 +448,8 @@ public:
      */
     int8_t getPlanningPriority() { return _planningPriority; }
 
+    void setPID(double p, double i, double d);
+
 protected:
     MotionControl* _motionControl;
 

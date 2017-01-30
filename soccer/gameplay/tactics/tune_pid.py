@@ -52,6 +52,8 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             move= skills.move.Move(self.left_point)
             print("go left")
 
+        self.robot.set_pid(100,100,100)
+
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
     def execute_tune(self):
@@ -60,15 +62,13 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_exit_tune(self):
         print("EXIT")
-        print(self.positions)
+        print("LENGTH: ",len(self.positions))
+        #print(self.positions)
         self.remove_subbehavior('move')
 
     def on_enter_process(self):
         print("process stuff")
-
-    def on_exit_process(self):
-        print("uh")
-
+        self.positions=[]
 
     def role_requirements(self):
         reqs = super().role_requirements()
