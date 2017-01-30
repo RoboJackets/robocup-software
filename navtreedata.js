@@ -45,7 +45,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a52d6fae9a6d7f232a9008f3830eafc24",
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0aa997b345c2ec60a1992dc1aafc9c91",
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a13c2700f54da2b6add41d332a6f5e8f6",
-"struct_field___dimensions.html#a67b1ed80d494d8becb73d25d6258d757"
+"struct_field___dimensions.html#a4f7cf02df325fa74f1dfb87783b8eaae"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
