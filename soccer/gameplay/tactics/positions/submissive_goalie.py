@@ -17,7 +17,6 @@ import planning_priority
 # TODO: merge this back into the regular goalie?
 class SubmissiveGoalie(
     single_robot_composite_behavior.SingleRobotCompositeBehavior):
-
     class State(enum.Enum):
         "Actively blocking based on a given threat"
         block = 2
@@ -35,7 +34,8 @@ class SubmissiveGoalie(
         # The segment we stay on during the 'block' state
         # It's right in front of the goal
         self.RobotSegment = robocup.Segment(
-        robocup.Point(-self.MaxX, self.SegmentY), robocup.Point(self.MaxX, self.SegmentY))
+            robocup.Point(-self.MaxX, self.SegmentY),
+            robocup.Point(self.MaxX, self.SegmentY))
 
         for substate in SubmissiveGoalie.State:
             self.add_state(substate, behavior.Behavior.State.running)
@@ -90,8 +90,7 @@ class SubmissiveGoalie(
                 self.block_line)
 
         self._move_target.x = min(
-            max(self._move_target.x,
-                -self.MaxX + 0.01), self.MaxX - 0.01)
+            max(self._move_target.x, -self.MaxX + 0.01), self.MaxX - 0.01)
 
     # The point we'll be going to in order to block the given block_line
     @property
