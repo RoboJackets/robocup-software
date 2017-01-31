@@ -206,7 +206,7 @@ def get_points_from_rect(rect, step=0.5):
 #   Space in that area
 #
 # @param ignore_robots: Ignore these robots in defensive calculations
-# @return List of the top 2 rectangle zones and their scores
+# @return Returns the best position to cover an error
 def create_area_defense_zones(ignore_robots=[]):
     w = constants.Field.Width
     l = constants.Field.Length
@@ -372,27 +372,20 @@ def estimate_risk_score(pos, ignore_robots=[]):
 
 ## Decides where to move the three robots
 #
-# @return List of the 3 defensive positions
-def find_defense_positions():
-    pass
-    # The bread and butter of this whole thing
-    # Returns the list of best defense positions (TOP N Amounts)
+# @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
+def find_defense_positions(floating_defender=None):
 
-    # Take in a list of area defense zones (create_area_defense_zones)
-    # Produce a list of the highest threat robots (estimate_risk_score(robot_pos))
+    their_risk_scores = []
 
-    # Grab the closest robot to the ball
-    # Approach the ball slow-ish but be very sensitive to side to side movement
-    # Block goal on approach
+    for bot in main.their_robots():
+        their_risk_scores.extend([estimate_risk_score(bot.pos)])
 
-    # Move second robot to block pass / second robot shot
-    # TODO: Decide whether it is better to blcok pass or block shot
-    # Shot is lower risk to block
-    # Pass is higher reward to block
-    # Can base on score as well previous pass block success rates
-    # Can also position to be able to get both
-    # Mirror movements of other robot
+    # Sorts bot array based on their score
+    zipped_array = zip(their_risk_scores, main.their_robots())
+    sorted_array = sorted(zipped_array, reverse=True)
+    sorted_bot = [bot for (scores, bot) in sorted_array]
 
-    # Move third to defend the area defense
-    # or defend the pass / shot of the last robot
-    # Best would be to find best position to defend both
+    area_def_pos = create_area_defense_zones([floating_defender])
+
+
+    return area_def_pos, sorted_bot[0], sorted_bot[1]

@@ -37,7 +37,7 @@ class TestAdaptiveFormationWeights(play.Play):
 
 
     def on_enter_testPointCoeff(self):
-        pass
+        evaluation.defensive_positioning.find_defense_positions()
 
     def execute_testPointCoeff(self):
         # Number of boxes width and length wise
@@ -51,10 +51,6 @@ class TestAdaptiveFormationWeights(play.Play):
         # 1/2 the Width/Length of the boxes
         x_half = 0.5 * constants.Field.Width / num_width
         y_half = 0.5 * constants.Field.Length / num_length
-<<<<<<< HEAD
-=======
-
->>>>>>> aeb7b75b7e472bd6e2a75f57bd16a555bcebb51b
 
         
         for x in range(-1*round(num_width/2), round(num_width/2)):
