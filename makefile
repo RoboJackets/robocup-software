@@ -20,7 +20,7 @@ rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
 	./run/simulator --headless &
-	./run/soccer -sim -pbk example.pbk
+	./run/soccer -sim -pbk my_test.pbk
 run-sim2play: all
 	-pkill -f './simulator --headless'
 	./run/simulator --headless &
