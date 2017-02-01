@@ -18,14 +18,24 @@ class TestDefenseAndKicker(play.Play):
     def on_enter_running(self):
         b = tactics.defense.Defense()
         self.add_subbehavior(b, name='defense', required=True)
-
+        
         kick = skills.pivot_kick.PivotKick()
+
         kick.target = constants.Field.OurGoalSegment
         kick.aim_params['desperate_timeout'] = 3
         self.add_subbehavior(kick, 'kick', required=False)
 
     def execute_running(self):
         kick = self.subbehavior_with_name('kick')
+
+        sublist = self.subbehavior_with_name('defense').all_subbehaviors()
+        roblist = []
+        for behavior in sublist:
+            print(behavior)
+            roblist.append(behavior.robot)
+
+        kick.shot_obstacle_ignoring_robots = roblist
+        
         if kick.is_done_running():
             kick.restart()
 
