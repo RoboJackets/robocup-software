@@ -324,9 +324,12 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def on_enter_collecting(self):
-        # TODO: Add defense to all bots
-        # Do more advanced blocking etc
-        # Once ball is contained, move onto next step
+        offensive_defense = tactics.offensive_defense.OffensiveDefense()
+        self.add_subbehavior(offensive_defense, 'defend', required=True)
+        # TODO: Setup offense to be defenders
+        # One defense that zone point
+        # Two mark the robots
+        # Markers block the robots
 
         # For testing purposes only:
         capture = skills.capture.Capture()

@@ -370,10 +370,10 @@ def estimate_risk_score(pos, ignore_robots=[]):
     
     return score / sum(weights)
 
-## Decides where to move the three robots
+## Decides where the best positions for defense is
 #
 # @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
-def find_defense_positions(floating_defender=None):
+def find_defense_positions(floating_defender=[]]):
 
     their_risk_scores = []
 
@@ -385,7 +385,7 @@ def find_defense_positions(floating_defender=None):
     sorted_array = sorted(zipped_array, reverse=True)
     sorted_bot = [bot for (scores, bot) in sorted_array]
 
-    area_def_pos = create_area_defense_zones([floating_defender])
+    area_def_pos = create_area_defense_zones(floating_defender)
 
 
     return area_def_pos, sorted_bot[0], sorted_bot[1]
