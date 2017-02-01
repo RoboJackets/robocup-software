@@ -21,6 +21,7 @@ void usage(const char* prog) {
     fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
     fprintf(stderr, "\t--help       Show usage message\n");
     fprintf(stderr, "\t--sv         Use shared vision multicast port\n");
+    fprintf(stderr, "\t--timeout    Times out the simulator after closing soccer\n");
     fprintf(
         stderr,
         "\t--headless   Run the simulator in headless mode (without a GUI)\n");
@@ -69,7 +70,9 @@ int main(int argc, char* argv[]) {
                 timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
                 i++;
             } else {
-                printf("Expected number after --timeout parameter");
+                fprintf(stderr, "Expected number after --timeout parameter\n");
+                usage(argv[0]);
+                return 1;
             }
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
