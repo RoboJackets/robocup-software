@@ -11,10 +11,10 @@ import role_assignment
 class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                                    composite_behavior.CompositeBehavior):
 
-    def __init__(self, continuous = False, ):
+    def __init__(self, continuous = False, restart_behavior_on_switch_robot = True):
         single_robot_behavior.SingleRobotBehavior.__init__(self, continuous = continuous)
         composite_behavior.CompositeBehavior.__init__(self, continuous = continuous)
-        restart_behavior_on_switch_robot = True
+        self.restart_behavior_on_switch_robot = restart_behavior_on_switch_robot
 
     @property
     def restart_behavior_on_switch_robot(self):
