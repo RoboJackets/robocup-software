@@ -68,6 +68,8 @@ int main(int argc, char* argv[]) {
             if (i < argc - 1) {
                 timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
                 i++;
+            } else {
+                printf("Expected number after --timeout parameter");
             }
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
