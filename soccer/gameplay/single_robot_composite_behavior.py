@@ -10,7 +10,7 @@ import role_assignment
 # Note: The method-resolution-order in python dictates that as we have it listed below, SingleRobotBehavior methods take precedence over CompositeBehavior methods
 class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                                    composite_behavior.CompositeBehavior):
-
+    #If the behavior should not be restarted when it is assigned to a different robot, then restart_behavior_on_switch_robot must be false
     def __init__(self, continuous = False, restart_behavior_on_switch_robot = True):
         single_robot_behavior.SingleRobotBehavior.__init__(self, continuous = continuous)
         composite_behavior.CompositeBehavior.__init__(self, continuous = continuous)
@@ -23,7 +23,6 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     @restart_behavior_on_switch_robot.setter
     def restart_behavior_on_switch_robot(self, value):
         self._restart_behavior_on_switch_robot = value
-
 
     ## we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
