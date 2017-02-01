@@ -99,7 +99,6 @@ def init():
 
                     logging.info("reloaded module '" + '.'.join(module_path) +
                                  "'")
-
                     if is_play:
                         # re-register the new play class
                         # FIXME: this logic should go inside the play_registry
@@ -217,6 +216,7 @@ def set_game_state(value):
 
 
 _ball = None
+
 
 def ball():
     global _ball
