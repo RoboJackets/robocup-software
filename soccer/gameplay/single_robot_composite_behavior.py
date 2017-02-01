@@ -11,6 +11,20 @@ import role_assignment
 class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                                    composite_behavior.CompositeBehavior):
 
+    def __init__(self, continuous = False, ):
+        single_robot_behavior.SingleRobotBehavior.__init__(self, continuous = continuous)
+        composite_behavior.CompositeBehavior.__init__(self, continuous = continuous)
+        restart_behavior_on_switch_robot = True
+
+    @property
+    def restart_behavior_on_switch_robot(self):
+        return self._restart_behavior_on_switch_robot
+
+    @restart_behavior_on_switch_robot.setter
+    def restart_behavior_on_switch_robot(self, value):
+        self._restart_behavior_on_switch_robot = value
+
+
     ## we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
         if self.has_subbehaviors():
@@ -55,8 +69,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         # the Aim skill to do its stuff. It'd be pretty weird if the robot executing Aim
         # was different from the one that just ran Capture. Here we just restart the behavior
         # If it gets assigned a new robot.
-        if oldBot != None and self.robot != None and oldBot.shell_id(
-        ) != self.robot.shell_id():
+        if oldBot != None and self.robot != None and oldBot.shell_id() != self.robot.shell_id() and self.restart_behavior_on_switch_robot:
             logging.info(
                 "SingleRobotCompositeBehavior: robot changed, restarting behavior")
             self.restart()
