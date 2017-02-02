@@ -31,7 +31,6 @@ class TestDefenseAndKicker(play.Play):
         sublist = self.subbehavior_with_name('defense').all_subbehaviors()
         roblist = []
         for behavior in sublist:
-            print(behavior)
             roblist.append(behavior.robot)
 
         kick.shot_obstacle_ignoring_robots = roblist
