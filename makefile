@@ -22,6 +22,8 @@ all-release:
 
 run: all
 	./run/soccer
+run-comp:
+	./runcomp.sh
 r:	run
 rs: run-sim
 run-sim: all
