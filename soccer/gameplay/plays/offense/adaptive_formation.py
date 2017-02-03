@@ -1,14 +1,19 @@
+import main
 import robocup
-import standard_play
 import behavior
 import constants
-import main
+import enum
+
+import standard_play
+
+import evaluation.passing_positioning
+
+import tactics.coordinated_pass
+import tactics.offensive_defense
+
+import skills.moving_pass_receive
 import skills.move
 import skills.capture
-import enum
-import evaluation.passing_positioning
-import tactics.coordinated_pass
-import skills.moving_pass_receive
 
 # Offense:
 
@@ -205,7 +210,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.add_transition(AdaptiveFormation.State.collecting,
                             AdaptiveFormation.State.dribbling,
-                            lambda: self.subbehavior_with_name('capture').is_done_running(),
+                            lambda: False,#self.subbehavior_with_name('capture').is_done_running(),
                             'Ball Collected')
 
         self.add_transition(AdaptiveFormation.State.dribbling,
@@ -326,14 +331,15 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def on_enter_collecting(self):
         offensive_defense = tactics.offensive_defense.OffensiveDefense()
         self.add_subbehavior(offensive_defense, 'defend', required=True)
+
         # TODO: Setup offense to be defenders
         # One defense that zone point
         # Two mark the robots
         # Markers block the robots
 
         # For testing purposes only:
-        capture = skills.capture.Capture()
-        self.add_subbehavior(capture, 'capture', required=True)
+        #capture = skills.capture.Capture()
+        #self.add_subbehavior(capture, 'capture', required=True)
 
     def on_exit_collecting(self):
         self.remove_all_subbehaviors()

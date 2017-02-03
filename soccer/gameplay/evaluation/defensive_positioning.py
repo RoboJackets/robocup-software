@@ -75,7 +75,7 @@ import evaluation.ball
 # @param recieve_point: Point at which they are kicking to
 # @param blocking_robots[]: list of robots that we should estimate the block for
 # @return A percentage chance of block
-def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.their_robots(), ignore_robots=[]):
+def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots, ignore_robots=[]):
 
     # 1. For each robot, get their position in polar coords
     #       in reference to the kick_point -> recieve_point vector
@@ -94,7 +94,7 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots=main.
     # TODO: Use velocity / accel with robots to predict where they will be based on
     # their distance from the robot
     for bot in blocking_robots:
-        if bot.visible and bot and bot not in ignore_robots:
+        if bot and bot.visible and bot not in ignore_robots:
             pos = bot.pos
             block_direction = (pos - kick_point)
             dist = block_direction.mag()
@@ -208,24 +208,6 @@ def get_points_from_rect(rect, step=0.5):
 # @param ignore_robots: Ignore these robots in defensive calculations
 # @return Returns the best position to cover an error
 def create_area_defense_zones(ignore_robots=[]):
-    w = constants.Field.Width
-    l = constants.Field.Length
-    
-    #our_half = robocup.Rect(    \
-    #    robocup.Point(-1*w, 0), \
-    #    robocup.Point(w, l/2))
-
-    #points = get_points_from_rect(our_half, 0.5)
-    #scores = []
-
-    #for point in points:
-    #    score = estimate_risk_score(point, ignore_robots)
-    #    scores.extend([score])
-
-    #avg = sum(scores) / len(scores)
-
-    #print(avg)
-    
     # Create a 2D list [N][M] where N is the bucket
     # and M is the index along that point
     # The lists contains (robocup.Point, score)
@@ -346,7 +328,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
 
     # Center, Dist, Angle
     pos_score = evaluation.field.field_pos_coeff_at_pos(pos, 0.05, 0.3, 0.05, False)
-    space_coeff = evaluation.field.space_coeff_at_pos(pos, [], main.our_robots())
+    space_coeff = evaluation.field.space_coeff_at_pos(pos, ignore_robots, main.our_robots())
 
     # Delta angle between pass recieve and shot
     delta_angle = ball_pos_vec.angle() - (our_goal - pos).angle()
@@ -354,7 +336,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
     
     # Shot only matters if its a good pass
     # Add pass back in for checking if pass is good (while shot is not)
-    # 
+    #
     # Add in time to weight closer points higher
     #
     # Pos is weighted higher to remove bad positions from calculations
@@ -373,7 +355,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
 ## Decides where the best positions for defense is
 #
 # @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
-def find_defense_positions(floating_defender=[]]):
+def find_defense_positions(ignore_robots=[]):
 
     their_risk_scores = []
 
@@ -385,7 +367,7 @@ def find_defense_positions(floating_defender=[]]):
     sorted_array = sorted(zipped_array, reverse=True)
     sorted_bot = [bot for (scores, bot) in sorted_array]
 
-    area_def_pos = create_area_defense_zones(floating_defender)
+    area_def_pos = create_area_defense_zones(ignore_robots)
 
 
     return area_def_pos, sorted_bot[0], sorted_bot[1]
