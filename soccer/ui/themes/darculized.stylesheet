@@ -269,3 +269,9 @@ QMenu {
 FieldView, SimFieldView {
     background: #598249;
 }
+
+QPushButton:hover {
+    border-style: inset;
+	background: #5E6263;
+    border-width: 0px;
+}
