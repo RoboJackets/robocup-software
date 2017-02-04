@@ -22,8 +22,8 @@ TEST(KickEvaluator, eval_pt_to_pt) {
     }
     
     Point ourGoalCenter(0, 0);
-    int num_w = 500;
-    int num_l = 1000;
+    int num_w = 5000;
+    int num_l = 10000;
 
     for (float x = -w/2; x < w/2; x += w/num_w) {
         for (float y = 0; y < l; y += l/num_l) {
