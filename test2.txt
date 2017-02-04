@@ -10,10 +10,9 @@ cd build && cmake -GNinja -Wno-dev --target  test-soccer  .. && ninja  test-socc
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/vagrant/robocup-software/build
-[1/4] Generating git version c++ file
-[2/4] Automatic moc for target test-soccer
-[3/4] Automatic moc for target robocup
-[4/4] Linking CXX executable ../run/test-soccer
+[1/3] Generating git version c++ file
+[2/3] Automatic moc for target test-soccer
+[3/3] Automatic moc for target robocup
 run/test-soccer --gtest_filter=*
 [==========] Running 39 tests from 15 test cases.
 [----------] Global test environment set-up.
@@ -48,12 +47,12 @@ run/test-soccer --gtest_filter=*
 [ RUN      ] Point.distTo
 [       OK ] Point.distTo (0 ms)
 [ RUN      ] Point.nearPoint
-[       OK ] Point.nearPoint (82 ms)
+[       OK ] Point.nearPoint (86 ms)
 [ RUN      ] Point.normalized
 [       OK ] Point.normalized (0 ms)
 [ RUN      ] Point.nearlyEquals
 [       OK ] Point.nearlyEquals (0 ms)
-[----------] 11 tests from Point (82 ms total)
+[----------] 11 tests from Point (86 ms total)
 
 [----------] 2 tests from Rect
 [ RUN      ] Rect.hit
@@ -74,12 +73,12 @@ run/test-soccer --gtest_filter=*
 [----------] 1 test from BatteryProfile
 [ RUN      ] BatteryProfile.getChargeLevel
 [       OK ] BatteryProfile.getChargeLevel (0 ms)
-[----------] 1 test from BatteryProfile (0 ms total)
+[----------] 1 test from BatteryProfile (1 ms total)
 
 [----------] 1 test from KickEvaluator
 [ RUN      ] KickEvaluator.eval_pt_to_pt
-[       OK ] KickEvaluator.eval_pt_to_pt (1184 ms)
-[----------] 1 test from KickEvaluator (1185 ms total)
+[       OK ] KickEvaluator.eval_pt_to_pt (889 ms)
+[----------] 1 test from KickEvaluator (889 ms total)
 
 [----------] 4 tests from TrapezoidalMotion
 [ RUN      ] TrapezoidalMotion.PreStart
@@ -94,10 +93,10 @@ run/test-soccer --gtest_filter=*
 
 [----------] 2 tests from TrapezoidalMotion2
 [ RUN      ] TrapezoidalMotion2.MoreTests
-[       OK ] TrapezoidalMotion2.MoreTests (0 ms)
+[       OK ] TrapezoidalMotion2.MoreTests (1 ms)
 [ RUN      ] TrapezoidalMotion2.TriangleRampUp
 [       OK ] TrapezoidalMotion2.TriangleRampUp (0 ms)
-[----------] 2 tests from TrapezoidalMotion2 (0 ms total)
+[----------] 2 tests from TrapezoidalMotion2 (1 ms total)
 
 [----------] 2 tests from TrapezoidalMotion3
 [ RUN      ] TrapezoidalMotion3.MoreTests
@@ -109,21 +108,21 @@ run/test-soccer --gtest_filter=*
 [----------] 1 test from Path
 [ RUN      ] Path.nearestSegment
 [       OK ] Path.nearestSegment (0 ms)
-[----------] 1 test from Path (0 ms total)
+[----------] 1 test from Path (1 ms total)
 
 [----------] 3 tests from InterpolatedPath
 [ RUN      ] InterpolatedPath.evaluate
 [       OK ] InterpolatedPath.evaluate (0 ms)
 [ RUN      ] InterpolatedPath.subPath1
-[       OK ] InterpolatedPath.subPath1 (1 ms)
+[       OK ] InterpolatedPath.subPath1 (0 ms)
 [ RUN      ] InterpolatedPath.subpath2
 [       OK ] InterpolatedPath.subpath2 (10 ms)
-[----------] 3 tests from InterpolatedPath (11 ms total)
+[----------] 3 tests from InterpolatedPath (10 ms total)
 
 [----------] 1 test from CompositePath
 [ RUN      ] CompositePath.CompositeSubPath
-[       OK ] CompositePath.CompositeSubPath (12 ms)
-[----------] 1 test from CompositePath (12 ms total)
+[       OK ] CompositePath.CompositeSubPath (14 ms)
+[----------] 1 test from CompositePath (14 ms total)
 
 [----------] 1 test from EscapeObstaclesPathPlanner
 [ RUN      ] EscapeObstaclesPathPlanner.run
@@ -132,16 +131,16 @@ run/test-soccer --gtest_filter=*
 
 [----------] 1 test from TargetVelPathPlannerTest
 [ RUN      ] TargetVelPathPlannerTest.run
-[       OK ] TargetVelPathPlannerTest.run (1 ms)
-[----------] 1 test from TargetVelPathPlannerTest (1 ms total)
+[       OK ] TargetVelPathPlannerTest.run (0 ms)
+[----------] 1 test from TargetVelPathPlannerTest (0 ms total)
 
 [----------] 1 test from WindowEvaluator
 [ RUN      ] WindowEvaluator.eval_pt_to_pt
-[       OK ] WindowEvaluator.eval_pt_to_pt (1940 ms)
-[----------] 1 test from WindowEvaluator (1940 ms total)
+[       OK ] WindowEvaluator.eval_pt_to_pt (1969 ms)
+[----------] 1 test from WindowEvaluator (1969 ms total)
 
 [----------] Global test environment tear-down
-[==========] 39 tests from 15 test cases ran. (3232 ms total)
+[==========] 39 tests from 15 test cases ran. (2972 ms total)
 [  PASSED  ] 39 tests.
 mkdir -p build
 cd build && cmake -GNinja -Wno-dev --target  all  .. && ninja  all
@@ -155,17 +154,9 @@ cd build && cmake -GNinja -Wno-dev --target  all  .. && ninja  all
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/vagrant/robocup-software/build
-[1/13] Generating git version c++ file
-[2/13] Automatic moc for target soccer
-[3/13] Automatic moc for target log_viewer
-[4/13] Automatic moc for target robocup
-[5/13] Automatic moc for target simulator
-[6/13] Building CXX object common/CMakeFiles/common.dir/git_version.cpp.o
-[7/13] Linking CXX static library common/libcommon.a
-[8/13] Linking CXX shared library ../run/robocup.so
-[9/13] Linking CXX executable ../run/simulator
-[10/13] Linking CXX executable ../run/simple_logger
-[11/13] Linking CXX executable ../run/log_converter
-[12/13] Linking CXX executable ../run/soccer
-[13/13] Linking CXX executable ../run/log_viewer
+[1/5] Generating git version c++ file
+[2/5] Automatic moc for target soccer
+[3/5] Automatic moc for target robocup
+[4/5] Automatic moc for target log_viewer
+[5/5] Automatic moc for target simulator
 cd soccer/gameplay && ./run_tests.sh
