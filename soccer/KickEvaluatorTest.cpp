@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "KickEvaluator.hpp"
 #include "SystemState.hpp"
-#include "stdlib.h"
+#include <stdlib.h>
 
 using namespace Geometry2d;
 
