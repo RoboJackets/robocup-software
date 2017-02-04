@@ -10,20 +10,20 @@ using namespace Geometry2d;
 // the result.
 TEST(WindowEvaluator, eval_pt_to_pt) {
     SystemState state;
-    OurRobot* obstacleBot = state.self[0];
-    obstacleBot->visible = true;
 
     float w = Field_Dimensions::Current_Dimensions.Width();
     float l = Field_Dimensions::Current_Dimensions.Length();
 
     srand(10);
     for (int i = 0; i < 6; i++) {
-        obstacleBot->pos = Point(rand() * w - w/2, rand() * l);
+        state.self[i]->pos = Point(rand() * w - w/2, rand() * l);
+        state.self[i]->visible = true;
     }
+    
     
     Point ourGoalCenter(0, 0);
     int num_w = 5000;
-    int num_l = 10000;
+    int num_l = 1000;
 
     for (float x = -w/2; x < w/2; x += w/num_w) {
         for (float y = 0; y < l; y += l/num_l) {
