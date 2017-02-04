@@ -7,6 +7,7 @@
 
 using namespace boost::python;
 
+#include "KickEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "planning/MotionConstraints.hpp"
 #include "WindowEvaluator.hpp"
@@ -755,6 +756,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
+
+    class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
+        .def("eval_pt_to_pt", &KickEvaluator::eval_pt_to_pt);
 
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);
