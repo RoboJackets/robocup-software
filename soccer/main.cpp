@@ -225,7 +225,8 @@ int main(int argc, char* argv[]) {
     // Sets the initial stylesheet for the application
     // based on the environment variable "SOCCER_THEME"
     if (getenv("SOCCER_THEME")) {
-        StyleSheetManager::changeStyleSheet(win.get(), QString(getenv("SOCCER_THEME")));
+        StyleSheetManager::changeStyleSheet(win.get(),
+                                            QString(getenv("SOCCER_THEME")));
     }
 
     win->show();

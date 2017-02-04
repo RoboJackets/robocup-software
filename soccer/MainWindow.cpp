@@ -1083,7 +1083,6 @@ void MainWindow::on_action1337h4x0rStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
 
-
 // Manual control commands
 
 void MainWindow::on_actionDampedRotation_toggled(bool value) {
