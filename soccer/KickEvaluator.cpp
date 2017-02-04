@@ -52,7 +52,7 @@ double KickEvaluator::eval_pt_to_pt(Point origin,
     }
 
     double half_target_width = targetWidth / 2;
-    int num_rays = 32;
+    int num_rays = 16;
     double min_ray_weight = .1;
 
     double total = 0.0;
