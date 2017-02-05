@@ -29,6 +29,12 @@ void usage(const char* prog) {
             "\t--smallfield Run the simulator with the small/single field.\n");
 }
 
+int timeoutErrorMessage(char* argv[]) {
+    fprintf(stderr, "Expected number after --timeout parameter\n");
+    usage(argv[0]);
+    return 1;
+}
+
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
@@ -67,12 +73,15 @@ int main(int argc, char* argv[]) {
                 Field_Dimensions::Single_Field_Dimensions * scaling;
         } else if (strcmp(argv[i], "--timeout") == 0) {
             if (i < argc - 1) {
-                timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
-                i++;
+                try {
+                    timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
+                    i++;
+                } catch (std::invalid_argument) {
+                    return timeoutErrorMessage(argv);
+                }
+                
             } else {
-                fprintf(stderr, "Expected number after --timeout parameter\n");
-                usage(argv[0]);
-                return 1;
+                return timeoutErrorMessage(argv);
             }
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
