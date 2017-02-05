@@ -57,24 +57,25 @@ class OffensiveDefense(composite_behavior.CompositeBehavior):
             self.add_subbehavior(self.marks[i], names[i], required=True)
 
             self.marks[i].mark_robot = self.mark_bots[i]
-            point = self.get_block_pos(self.mark_bots[i])
-            self.marks[i].mark_point = point
+            #point = self.get_block_pos(self.mark_bots[i])
+            #self.marks[i].mark_point = point
 
         self.floating_def = skills.mark.Mark()
+        self.add_subbehavior(self.floating_def, 'mark_float', required=True)
         self.floating_def.mark_point = self.free_pos
 
     def execute_blocking(self):
         # Updates block pos
-        self.free_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions(self.mark_bots)
 
-        #for i in range(0, 2):
-        #    self.marks[i].mark_robot = self.mark_bots[i]
+        our_bots = [self.marks[0].robot, self.marks[1].robot, self.floating_def.robot]
+        self.free_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions(our_bots)
+
+        for i in range(0, 2):
+            self.marks[i].mark_robot = self.mark_bots[i]
             #point = self.get_block_pos(self.mark_bots[i])
             #self.marks[i].mark_point = point
 
         self.floating_def.mark_point = self.free_pos
-
-        pass
 
     def on_exit_blocking(self):
         self.remove_all_subbehaviors()
@@ -84,7 +85,7 @@ class OffensiveDefense(composite_behavior.CompositeBehavior):
         # Get goal to bot
         # Place point x dist away
         predicted = evaluation.defensive_positioning.predict_kick_direction(bot)
-        actual = bot.pos.angle()
+        actual = bot.angle()
 
         angle = self.block_angle_coeff*predicted + (1-self.block_angle_coeff)*actual
 

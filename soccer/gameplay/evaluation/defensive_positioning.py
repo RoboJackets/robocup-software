@@ -93,6 +93,7 @@ def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots, igno
     # Convert all robot positions to polar with zero being the kick direction
     # TODO: Use velocity / accel with robots to predict where they will be based on
     # their distance from the robot
+
     for bot in blocking_robots:
         if bot and bot.visible and bot not in ignore_robots:
             pos = bot.pos
@@ -360,7 +361,11 @@ def find_defense_positions(ignore_robots=[]):
     their_risk_scores = []
 
     for bot in main.their_robots():
-        their_risk_scores.extend([estimate_risk_score(bot.pos)])
+        score = estimate_risk_score(bot.pos, ignore_robots)
+        main.system_state().draw_text("Risk: " + str(int(score * 100)), \
+                                      bot.pos, constants.Colors.White,  \
+                                      "Defense")
+        their_risk_scores.extend([score])
 
     # Sorts bot array based on their score
     zipped_array = zip(their_risk_scores, main.their_robots())
