@@ -104,7 +104,7 @@ void StripChart::paintEvent(QPaintEvent* e) {
 
                     p.drawText(
                         mappedCursorPos + QPointF(15, 0 + fontHeight * 2 * x),
-                        ("V: " + std::to_string(v)).c_str());
+                        (" V: " + std::to_string(v)).c_str());
 
                     if (i > 0 && i < _history->size() - 1) {
                         float v1, v2;
@@ -112,15 +112,11 @@ void StripChart::paintEvent(QPaintEvent* e) {
                         function->value(*_history->at(i - 1).get(), v1);
                         function->value(*_history->at(i + 1).get(), v2);
 
-                        double t1 = 0.0;
-                        t1 += _history->at(i - 1)->timestamp();
-                        t1 = RJ::TimestampToSecs(t1);
-                        double t2 = 0.0;
-                        t2 += _history->at(i + 1)->timestamp();
-                        t2 = RJ::TimestampToSecs(t2);
+                        auto t1 = _history->at(i - 1)->timestamp();
+                        auto t2 = _history->at(i + 1)->timestamp();
+                        auto deltaTime = RJ::TimestampToSecs(t2 - t1);
 
-                        auto derivative = (v2 - v1) / (t2 - t1);
-
+                        auto derivative = (v2 - v1) / (deltaTime);
                         p.drawText(
                             mappedCursorPos +
                                 QPointF(15, fontHeight * (1 + x * 2)),
