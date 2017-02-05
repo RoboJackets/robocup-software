@@ -13,7 +13,7 @@ enable_testing()
 include(SetupGTest)
 
 # C++ version
-if ("${CMAKE_VERSION}" LESS "3.1")
+if ("${CMAKE_VERSION}" VERSION_LESS "3.1")
     # This is to support the CMake version backported to Ubuntu 14.04
     message("CMAKE_VERSION < 3.1, specifying c++14 flag.")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
