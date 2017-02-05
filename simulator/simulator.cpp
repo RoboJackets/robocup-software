@@ -21,7 +21,8 @@ void usage(const char* prog) {
     fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
     fprintf(stderr, "\t--help       Show usage message\n");
     fprintf(stderr, "\t--sv         Use shared vision multicast port\n");
-    fprintf(stderr, "\t--timeout    Times out the simulator after closing soccer\n");
+    fprintf(stderr,
+            "\t--timeout    Times out the simulator after closing soccer\n");
     fprintf(
         stderr,
         "\t--headless   Run the simulator in headless mode (without a GUI)\n");
@@ -79,7 +80,7 @@ int main(int argc, char* argv[]) {
                 } catch (std::invalid_argument) {
                     return timeoutErrorMessage(argv);
                 }
-                
+
             } else {
                 return timeoutErrorMessage(argv);
             }

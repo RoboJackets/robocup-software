@@ -46,8 +46,7 @@ static void glutDisplayCallback(void) {
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[],
                                          const QString& configFile,
-                                         bool sendShared,
-                                         bool showWindow,
+                                         bool sendShared, bool showWindow,
                                          RJ::Seconds timeoutsimulator)
     : _argv(argv),
       _argc(argc),

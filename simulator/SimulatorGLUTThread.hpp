@@ -47,8 +47,8 @@ public:
 
     /** need to pass arguments through to glut */
     SimulatorGLUTThread(int argc, char* argv[], const QString& configFile,
-                        bool sendShared,
-                        bool showWindow = true, RJ::Seconds timeoutsimulator = RJ::Seconds::max());
+                        bool sendShared, bool showWindow = true,
+                        RJ::Seconds timeoutsimulator = RJ::Seconds::max());
 
     ~SimulatorGLUTThread();
 
