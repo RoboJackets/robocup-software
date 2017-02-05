@@ -26,6 +26,9 @@
 #include <string>
 
 #include <google/protobuf/descriptor.h>
+#include <protobuf/grSim_Commands.pb.h>
+#include <protobuf/grSim_Packet.pb.h>
+#include <protobuf/grSim_Replacement.pb.h>
 
 using namespace std;
 using namespace boost;
@@ -974,25 +977,37 @@ void MainWindow::channel(int n) {
 // Simulator commands
 
 void MainWindow::on_actionCenterBall_triggered() {
-    SimCommand cmd;
-    cmd.mutable_ball_pos()->set_x(0);
-    cmd.mutable_ball_pos()->set_y(0);
-    cmd.mutable_ball_vel()->set_x(0);
-    cmd.mutable_ball_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(cmd);
+    grSim_Packet simPacket;
+    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+
+    ball_replace->set_x(0);
+    ball_replace->set_y(0);
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
+
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopBall_triggered() {
-    SimCommand cmd;
-    cmd.mutable_ball_vel()->set_x(0);
-    cmd.mutable_ball_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(cmd);
+    grSim_Packet simPacket;
+    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+
+    Geometry2d::Point ballPos =
+        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
+    ball_replace->set_x(ballPos.x());
+    ball_replace->set_y(ballPos.y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionResetField_triggered() {
-    SimCommand cmd;
-    cmd.set_reset(true);
-    _ui.fieldView->sendSimCommand(cmd);
+    //SimCommand cmd;
+    //cmd.set_reset(true);
+    // need to have a default position for robots and manually set all robots
+    // to correct position
+    //_ui.fieldView->sendSimCommand(cmd);
+    // TODO
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
@@ -1026,7 +1041,7 @@ void MainWindow::on_actionStopRobots_triggered() {
             r->set_w(0);
         }
     }
-    _ui.fieldView->sendSimCommand(cmd);
+    //_ui.fieldView->sendSimCommand(cmd);
 }
 
 void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
@@ -1070,7 +1085,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
 }
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
-    _ui.fieldView->sendSimCommand(_quickLoadCmd);
+    //_ui.fieldView->sendSimCommand(_quickLoadCmd);
 }
 
 // Style Sheets

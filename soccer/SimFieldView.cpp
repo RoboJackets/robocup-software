@@ -77,14 +77,16 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 
         case DRAG_PLACE:
             if (_dragRobot >= 0) {
-                SimCommand cmd;
-                SimCommand::Robot* r = cmd.add_robots();
-                r->set_shell(_dragRobot);
-                r->set_blue_team(_dragRobotBlue);
-                r->mutable_pos()->CopyFrom(_screenToWorld * me->pos());
-                r->mutable_vel()->set_x(0);
-                r->mutable_vel()->set_y(0);
-                sendSimCommand(cmd);
+                grSim_Packet simPacket;
+                grSim_RobotReplacement* robot_replace = simPacket.mutable_replacement()->add_robots();
+
+                robot_replace->set_x((_screenToWorld * me->pos()).x());
+                robot_replace->set_y((_screenToWorld * me->pos()).y());
+                robot_replace->set_id(_dragRobot);
+                robot_replace->set_yellowteam(!_dragRobotBlue);
+                robot_replace->set_dir(0.0);
+
+                sendSimCommand(simPacket);
             } else {
                 placeBall(me->pos());
             }
@@ -98,9 +100,12 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 
 void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
     if (_dragMode == DRAG_SHOOT) {
-        SimCommand cmd;
-        *cmd.mutable_ball_vel() = _teamToWorld.transformDirection(_shot);
-        sendSimCommand(cmd);
+        grSim_Packet simPacket;
+        grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+
+        ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
+        ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
+        sendSimCommand(simPacket);
 
         update();
     }
@@ -109,14 +114,18 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
 }
 
 void SimFieldView::placeBall(QPointF pos) {
-    SimCommand cmd;
-    cmd.mutable_ball_pos()->CopyFrom(_screenToWorld * pos);
-    cmd.mutable_ball_vel()->set_x(0);
-    cmd.mutable_ball_vel()->set_y(0);
-    sendSimCommand(cmd);
+    grSim_Packet simPacket;
+    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+
+    ball_replace->set_x((_screenToWorld * pos).x());
+    ball_replace->set_y((_screenToWorld * pos).y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
+
+    sendSimCommand(simPacket);
 }
 
-void SimFieldView::sendSimCommand(const Packet::SimCommand& cmd) {
+void SimFieldView::sendSimCommand(const grSim_Packet& cmd) {
     std::string out;
     cmd.SerializeToString(&out);
     _simCommandSocket.writeDatagram(&out[0], out.size(),

@@ -19,4 +19,5 @@ public:
 private:
     QUdpSocket _socket;
     int _channel;
+    bool blueTeam;
 };
