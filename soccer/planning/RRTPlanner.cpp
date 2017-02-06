@@ -19,8 +19,10 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-RRTPlanner::RRTPlanner(int maxIterations)
-    : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
+RRTPlanner::RRTPlanner(int minIterations, int maxIterations)
+    : _minIterations(minIterations),
+      _maxIterations(maxIterations),
+      SingleRobotPathPlanner(true) {}
 
 bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
                               const vector<DynamicObstacle> dynamicObs,
@@ -188,6 +190,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
     biRRT.setStepSize(*RRTConfig::StepSize);
+    biRRT.setMinIterations(_minIterations);
     biRRT.setMaxIterations(_maxIterations);
     biRRT.setGoalBias(*RRTConfig::StepSize);
 
