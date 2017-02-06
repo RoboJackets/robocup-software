@@ -1,4 +1,5 @@
 #include <gameplay/GameplayModule.hpp>
+#include <ui/StyleSheetManager.hpp>
 
 #include <stdio.h>
 #include <string.h>
@@ -220,6 +221,13 @@ int main(int argc, char* argv[]) {
 
     if (playbookFile.size() > 0)
         processor->gameplayModule()->loadPlaybook(playbookFile);
+
+    // Sets the initial stylesheet for the application
+    // based on the environment variable "SOCCER_THEME"
+    if (getenv("SOCCER_THEME")) {
+        StyleSheetManager::changeStyleSheet(win.get(),
+                                            QString(getenv("SOCCER_THEME")));
+    }
 
     win->show();
 

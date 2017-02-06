@@ -9,13 +9,22 @@ define cmake_build_target
 	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
 endef
 
+define cmake_build_target_release
+	mkdir -p build
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $1
+endef
+
 all:
 	$(call cmake_build_target, all)
+
+all-release:
+	$(call cmake_build_target_release, all)
 
 run: all
 	./run/soccer
 run-comp:
 	./runcomp.sh
+r:	run
 rs: run-sim
 run-sim: all
 	-pkill -f './simulator --headless'
@@ -25,6 +34,17 @@ run-sim2play: all
 	-pkill -f './simulator --headless'
 	./run/simulator --headless &
 	./run/soccer -sim -y & ./soccer -sim -b
+
+run-release: all-release
+	./run/soccer
+run-sim-release: all-release
+	-pkill -f './simulator --headless'
+	./run/simulator --headless &
+	./run/soccer -sim -pbk example.pbk
+rsr: run-sim-release
+rrs: rsr
+rr: run-release
+
 
 debug: all
 ifeq ($(shell uname), Linux)
@@ -104,4 +124,3 @@ pretty:
 checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
 	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
-

@@ -9,6 +9,7 @@
 #include "BatteryProfile.hpp"
 #include <Network.hpp>
 #include "git_version.hpp"
+#include <ui/StyleSheetManager.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -129,6 +130,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
     qActionGroups["radioGroup"] = radioGroup;
+
+    auto styleGroup = new QActionGroup(this);
+    styleGroup->addAction(_ui.actionNoneStyle);
+    styleGroup->addAction(_ui.actionDarkStyle);
+    styleGroup->addAction(_ui.actionDarculizedStyle);
+    styleGroup->addAction(_ui.action1337h4x0rStyle);
+    qActionGroups["styleGroup"] = styleGroup;
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
@@ -763,15 +771,12 @@ void MainWindow::updateStatus() {
     std::vector<int> validIds = _processor->state()->ourValidIds();
 
     for (int i = 1; i <= Num_Shells; i++) {
-        QStandardItem* item = goalieModel->item(i);
         if (std::find(validIds.begin(), validIds.end(), i - 1) !=
             validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
-            item->setFlags(item->flags() |
-                           (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            _ui.goalieID->setItemData(i, true, Qt::UserRole);
         } else {
-            item->setFlags(item->flags() &
-                           ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            _ui.goalieID->setItemData(i, false, Qt::UserRole - 1);
         }
     }
 
@@ -1059,6 +1064,23 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
     _ui.fieldView->sendSimCommand(_quickLoadCmd);
+}
+
+// Style Sheets
+
+void MainWindow::on_actionNoneStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "NONE");
+}
+
+void MainWindow::on_actionDarkStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARK");
+}
+
+void MainWindow::on_actionDarculizedStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARCULIZED");
+}
+void MainWindow::on_action1337h4x0rStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
 
 // Manual control commands
