@@ -3,6 +3,7 @@ var searchData=
   ['calculatefieldobstacles',['calculateFieldObstacles',['../class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d',1,'Gameplay::GameplayModule']]],
   ['centermatrix',['centerMatrix',['../group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02',1,'Gameplay::GameplayModule']]],
   ['centerradius',['CenterRadius',['../struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238',1,'Field_Dimensions']]],
+  ['changestylesheet',['changeStyleSheet',['../class_style_sheet_manager.html#a0669a31e8f3151bcea64ea40f6d835d4',1,'StyleSheetManager']]],
   ['charged',['charged',['../class_our_robot.html#a141c819500dd3fad0054ddc8a9aff964',1,'OurRobot']]],
   ['check_5ffailure',['check_failure',['../classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa720efcd803f70960681f4ee2d44760e',1,'gameplay.skills.line_kick_receive.LineKickReceive.check_failure()'],['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a2d02f795305efeb2ae1ee730ea8268a9',1,'gameplay.skills.pass_receive.PassReceive.check_failure()']]],
   ['chip',['chip',['../class_our_robot.html#a5db88cfc6b189c39fa00f192bdb8a2e6',1,'OurRobot']]],

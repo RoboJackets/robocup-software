@@ -418,6 +418,7 @@ var annotated_dup =
     [ "SimRadio", "class_sim_radio.html", "class_sim_radio" ],
     [ "SpaceNavJoystick", "class_space_nav_joystick.html", "class_space_nav_joystick" ],
     [ "StripChart", "class_strip_chart.html", "class_strip_chart" ],
+    [ "StyleSheetManager", "class_style_sheet_manager.html", null ],
     [ "SystemState", "class_system_state.html", "class_system_state" ],
     [ "TeamInfo", "class_team_info.html", "class_team_info" ],
     [ "Timeout", "class_timeout.html", "class_timeout" ],

@@ -9,6 +9,7 @@ var NAVTREE =
     [ "Motion Control", "md_doc_MotionControl.html", null ],
     [ "Soccer", "md_doc_Soccer.html", null ],
     [ "Style", "md_doc_Style.html", null ],
+    [ "Themes", "md_doc_Themes.html", null ],
     [ "Training 2016", "md_doc_training2016_training_2016.html", "md_doc_training2016_training_2016" ],
     [ "Testing & Continuous Integration", "md_doc_UnitTestsAndCI.html", null ],
     [ "Vision", "md_doc_Vision.html", null ],
@@ -36,16 +37,16 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_config_item.html",
-"class_geometry2d_1_1_line.html#a39c1165c80b834beb91fc47cdfe4cb7c",
-"class_new_referee_module.html#a9bfd7d12aa4d501e8528059c78ee9979",
-"class_planning_1_1_path.html#acfea7c029b477ed6e7525ae07c1768a4",
-"class_sim_radio.html#a2ea9f7ef0cc7383df07a3839ce446ab5",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a2c7c2d1ae26c1acab6b6bef55ea90add",
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a52d6fae9a6d7f232a9008f3830eafc24",
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0aa997b345c2ec60a1992dc1aafc9c91",
-"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a13c2700f54da2b6add41d332a6f5e8f6",
-"struct_field___dimensions.html#a4f7cf02df325fa74f1dfb87783b8eaae"
+"class_config_int.html#aef2d52620d80d35a8c926dfaf8ead9a0",
+"class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95",
+"class_new_referee_module.html#a98dfaf7d8456ee299f4f66898f5de3c8",
+"class_planning_1_1_path.html#acd9a84c632ba1d26111b20b31b9a5407",
+"class_sim_radio.html",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a1bdc00bb8624b3eae7baba4508695028",
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a393aa7800438b3ab3e56e0b2bd8274fc",
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html",
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html",
+"struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

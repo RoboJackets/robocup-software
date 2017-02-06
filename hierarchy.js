@@ -205,6 +205,9 @@ var hierarchy =
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -296,13 +299,11 @@ var hierarchy =
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
+    [ "StyleSheetManager", "class_style_sheet_manager.html", null ],
     [ "SystemState", "class_system_state.html", null ],
     [ "TeamInfo", "class_team_info.html", null ],
     [ "TestCase", null, [

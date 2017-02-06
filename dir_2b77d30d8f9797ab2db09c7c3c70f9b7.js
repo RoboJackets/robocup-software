@@ -6,6 +6,7 @@ var dir_2b77d30d8f9797ab2db09c7c3c70f9b7 =
     [ "motion", "dir_8222bd97931203553b912ea0ca9197bb.html", "dir_8222bd97931203553b912ea0ca9197bb" ],
     [ "planning", "dir_28df16f06401fa4b261f014c0f6bda1e.html", "dir_28df16f06401fa4b261f014c0f6bda1e" ],
     [ "radio", "dir_cc132907b6047b9805f38c63e061574e.html", "dir_cc132907b6047b9805f38c63e061574e" ],
+    [ "ui", "dir_d3b3c99e678dbdf8dea24fbaaffbebe5.html", "dir_d3b3c99e678dbdf8dea24fbaaffbebe5" ],
     [ "BatteryProfile.hpp", "_battery_profile_8hpp_source.html", null ],
     [ "BatteryWidget.hpp", "_battery_widget_8hpp_source.html", null ],
     [ "Configuration.hpp", "_configuration_8hpp_source.html", null ],
