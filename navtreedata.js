@@ -41,12 +41,12 @@ var NAVTREEINDEX =
 "class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95",
 "class_new_referee_module.html#a98dfaf7d8456ee299f4f66898f5de3c8",
 "class_planning_1_1_path.html#acd9a84c632ba1d26111b20b31b9a5407",
-"class_sim_radio.html",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#a1bdc00bb8624b3eae7baba4508695028",
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a393aa7800438b3ab3e56e0b2bd8274fc",
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html",
-"struct_field___dimensions.html#a1582fedd7e2b8c75ee560499beced10f"
+"class_sim_field_view.html#a9912216ea68b82c7303d7e794d0a9be9",
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#af23b50d7cd7e93de301b741694bb4839",
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a1829f61b494b166155ed89af0276007a",
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ad6fdcc73bfb9088c0ff7fd045bf3c222",
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668",
+"struct_field___dimensions.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

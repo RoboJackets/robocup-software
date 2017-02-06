@@ -1,5 +1,8 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ad6fdcc73bfb9088c0ff7fd045bf3c222":[14,0,5,13,9,0,1],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#aeea6f9c4d2f9196efaaf5ddecc799716":[14,0,5,13,9,0,8],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#afb0ef408854714a0bcc9ade91959ca33":[14,0,5,13,9,0,4],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html":[14,0,5,13,9,0,0],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html":[14,0,5,13,10,0],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a0aa997b345c2ec60a1992dc1aafc9c91":[14,0,5,13,10,0,17],
@@ -246,8 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a":[14,0,5,15,8,1,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac39756f614f1e53eb116ebda58c96ada":[14,0,5,15,8,1,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843":[14,0,5,15,8,1,0,3],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#acb7c7f9f71fc15e0f07452bc784d772f":[14,0,5,15,8,1,0,13],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668":[14,0,5,15,8,1,0,2],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aed8f5d432853ae9530bc075944ee2ed3":[14,0,5,15,8,1,0,8],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed5c39b6c8aff6b6dab240e7805c2a5":[14,0,5,15,8,1,0,15]
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#acb7c7f9f71fc15e0f07452bc784d772f":[14,0,5,15,8,1,0,13]
 };

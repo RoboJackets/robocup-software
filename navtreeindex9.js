@@ -1,5 +1,8 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668":[14,0,5,15,8,1,0,2],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aed8f5d432853ae9530bc075944ee2ed3":[14,0,5,15,8,1,0,8],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed5c39b6c8aff6b6dab240e7805c2a5":[14,0,5,15,8,1,0,15],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html":[14,0,5,15,8,1,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html":[14,0,5,15,8,2,0],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a13c2700f54da2b6add41d332a6f5e8f6":[14,0,5,15,8,2,0,5],
@@ -145,8 +148,8 @@ var NAVTREEINDEX9 =
 "dir_cee59dbc20d175ba3d3ad00d9c6ec89c.html":[15,0,0,0,1,0],
 "dir_d3b3c99e678dbdf8dea24fbaaffbebe5.html":[15,0,1,6],
 "files.html":[15,0],
-"functions.html":[14,3,0,0],
 "functions.html":[14,3,0],
+"functions.html":[14,3,0,0],
 "functions_a.html":[14,3,0,1],
 "functions_b.html":[14,3,0,2],
 "functions_c.html":[14,3,0,3],
@@ -209,8 +212,8 @@ var NAVTREEINDEX9 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[14,0,70,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[14,0,70,8],
 "group__matrices.html":[12,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,4,0,2],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,0],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,4,0,2],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,1],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[14,0,4,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,4,0,13],
@@ -246,8 +249,5 @@ var NAVTREEINDEX9 =
 "struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[14,0,1,1,0],
 "struct_chart_1_1_point_magnitude.html":[14,0,1,2],
 "struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f":[14,0,1,2,1],
-"struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[14,0,1,2,0],
-"struct_field___dimensions.html":[14,0,33],
-"struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f":[14,0,33,2],
-"struct_field___dimensions.html#a12e1adb8899f6b963e7e8f1d5d964d8d":[14,0,33,12]
+"struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[14,0,1,2,0]
 };
