@@ -20,9 +20,8 @@ TEST(WindowEvaluator, eval_pt_to_pt) {
         state.self[i]->visible = true;
     }
     
-    
     Point ourGoalCenter(0, 0);
-    int num_w = 5000;
+    int num_w = 500;
     int num_l = 1000;
 
     for (float x = -w/2; x < w/2; x += w/num_w) {
