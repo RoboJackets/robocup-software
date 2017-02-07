@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <Utils.hpp>
 
+#include "firmware-common/robot2015/cpu/status.h"
+
 using namespace std;
 using namespace Packet;
 
@@ -21,8 +23,7 @@ SimRadio::SimRadio(bool blueTeam) : blueTeam(blueTeam) {
 }
 
 bool SimRadio::isOpen() const {
-    // FIXME - check the socket
-    return true;
+    return _socket.isValid();
 }
 
 void SimRadio::send(Packet::RadioTx& packet) {
@@ -56,11 +57,6 @@ void SimRadio::send(Packet::RadioTx& packet) {
     simRobotCommands->set_isteamyellow(!blueTeam);
     simRobotCommands->set_timestamp(RJ::timestamp());
 
-    // simPacket.set_allocated_commands(&simRobotCommands);
-    //std::string out;
-    //simPacket.SerializeToString(&out);
-    //_socket.writeDatagram(&out[0], out.size(), LocalAddress,
-    //                      RadioTxPort + _channel);
     std::string out;
     simPacket.SerializeToString(&out);
     _socket.writeDatagram(&out[0], out.size(),
@@ -70,10 +66,18 @@ void SimRadio::send(Packet::RadioTx& packet) {
 
 void SimRadio::receive() {
     for (int x = 0; x < 6; x++) {
-        _reversePackets.push_back(RadioRx());
-        RadioRx& packet = _reversePackets.back();
+        RadioRx packet;
         packet.set_robot_id(x);
+        packet.set_hardware_version(RJ2015);
+        packet.set_battery(100);
+        
+        for (int i = 0; i < 5; i++) {
+            packet.add_motor_status(MotorStatus::Good);
+        }
+        packet.set_fpga_status(FpgaGood);
         packet.set_timestamp(RJ::timestamp());
+        packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+        _reversePackets.push_back(packet);
     }
 }
 
