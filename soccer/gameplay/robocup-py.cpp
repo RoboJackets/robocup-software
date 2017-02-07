@@ -758,7 +758,16 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
 
     class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
-        .def("eval_pt_to_pt", &KickEvaluator::eval_pt_to_pt);
+        .def_readwrite("number_of_rays", &KickEvaluator::number_of_rays)
+        .def_readwrite("max_delta_angle", &KickEvaluator::max_delta_angle)
+        .def_readwrite("excluded_robots", &KickEvaluator::excluded_robots)
+        .def_readwrite("hypothetical_robot_locations",
+                       &KickEvaluator::hypothetical_robot_locations)
+        .def("eval_pt_to_pt", &KickEvaluator::eval_pt_to_pt)
+        .def("eval_pt_to_robot", &KickEvaluator::eval_pt_to_robot)
+        .def("eval_pt_to_opp_goal", &KickEvaluator::eval_pt_to_opp_goal)
+        .def("eval_pt_to_our_goal", &KickEvaluator::eval_pt_to_our_goal)
+        .def("eval_pt_to_seg", &KickEvaluator::eval_pt_to_seg);
 
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);
