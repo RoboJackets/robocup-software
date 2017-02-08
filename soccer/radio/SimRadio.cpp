@@ -37,7 +37,9 @@ void SimRadio::send(Packet::RadioTx& packet) {
         simRobot->set_velnormal(-robot.control().xvelocity());
         simRobot->set_velangular(robot.control().avelocity() * 180.0 / M_PI_2);
 
-        uint kick_strength = robot.control().kcstrength();
+        simRobot->set_triggermode((grSim_Robot_Command_TriggerMode) robot.control().triggermode());
+
+        uint kick_strength = 4.0f * (robot.control().kcstrength() / 255);
         switch (robot.control().shootmode()) {
             case Packet::Control::KICK:
                 simRobot->set_kickspeedx(kick_strength);
@@ -68,8 +70,10 @@ void SimRadio::receive() {
     for (int x = 0; x < 6; x++) {
         RadioRx packet;
         packet.set_robot_id(x);
-        packet.set_hardware_version(RJ2015);
-        packet.set_battery(100);
+        //packet.set_hardware_version(RJ2015);
+        //packet.set_battery(100);
+
+        packet.set_ball_sense_status(HasBall);
         
         for (int i = 0; i < 5; i++) {
             packet.add_motor_status(MotorStatus::Good);
@@ -77,6 +81,7 @@ void SimRadio::receive() {
         packet.set_fpga_status(FpgaGood);
         packet.set_timestamp(RJ::timestamp());
         packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+        packet.set_kicker_voltage(200);
         _reversePackets.push_back(packet);
     }
 }
