@@ -181,7 +181,7 @@ float KickEvaluator::eval_pt_to_seg(Geometry2d::Point origin,
     double angle = abs(atan2(pt1.y(), pt1.x()) - 
                        atan2(pt2.y(), pt2.x()));
 
-    return eval_pt_to_pt(origin, target.center(), target_width);
+    return eval_pt_to_pt(origin, target.center(), angle);
 }
 
 tuple<float, float> KickEvaluator::rect_to_polar(Point origin,
