@@ -26,7 +26,7 @@ void KickEvaluator::createConfiguration(Configuration* cfg) {
     robot_angle_filter_limit = 
         new ConfigDouble(cfg, "KickEvaluator/robot_angle_filter_limit", 0.35 * M_PI);
     kick_std_dev = 
-        new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.2);
+        new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.08);
     num_rays = 
         new ConfigDouble(cfg, "KickEvaluator/num_rays", 16);
 
@@ -86,7 +86,7 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
 
     // Use rays between -3 * std_dev and 3 * std_dev
     float half_std_dev = 1.5f * *kick_std_dev;
-    float half_target_width = targetWidth; //fabs(atan2(targetWidth / 2, (target - origin).mag()));
+    float half_target_width = targetWidth;
 
     // No bots in the way
     if (bot_locations.size() == 0) {
@@ -176,12 +176,12 @@ float KickEvaluator::eval_pt_to_our_goal(Geometry2d::Point origin) {
 
 float KickEvaluator::eval_pt_to_seg(Geometry2d::Point origin,
                                     Geometry2d::Segment target) {
-    double angle = abs(atan2(target.pt[0].y(), target.pt[0].x()) - 
-                       atan2(target.pt[1].y(), target.pt[0].x()));
-    Point center = target.center();
-    double target_width = center.mag() * sin(angle / 2) * 2;
+    Point pt1 = target.pt[0] - origin;
+    Point pt2 = target.pt[1] - origin;
+    double angle = abs(atan2(pt1.y(), pt1.x()) - 
+                       atan2(pt2.y(), pt2.x()));
 
-    return eval_pt_to_pt(origin, center, target_width);
+    return eval_pt_to_pt(origin, target.center(), target_width);
 }
 
 tuple<float, float> KickEvaluator::rect_to_polar(Point origin,

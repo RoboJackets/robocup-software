@@ -23,7 +23,7 @@ public:
      * @brief Evalutes kick to target point
      * @param origin The starting point of the kick
      * @param target The end point of the kick
-     * @param targetWidth Width to apply to the target
+     * @param targetWidth Width to apply to the target in radians
      * @return Percent chance to succeed
      */
     float eval_pt_to_pt(Geometry2d::Point origin,
