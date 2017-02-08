@@ -23,32 +23,27 @@ ConfigDouble* KickEvaluator::kernal_width_coefficient;
 ConfigDouble* KickEvaluator::distance_coefficient;
 
 void KickEvaluator::createConfiguration(Configuration* cfg) {
-    robot_angle_filter_limit = 
-        new ConfigDouble(cfg, "KickEvaluator/robot_angle_filter_limit", 0.35 * M_PI);
-    kick_std_dev = 
-        new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.08);
-    num_rays = 
-        new ConfigDouble(cfg, "KickEvaluator/num_rays", 16);
+    robot_angle_filter_limit = new ConfigDouble(
+        cfg, "KickEvaluator/robot_angle_filter_limit", 0.35 * M_PI);
+    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.08);
+    num_rays = new ConfigDouble(cfg, "KickEvaluator/num_rays", 16);
 
-    kernal_width_coefficient = 
+    kernal_width_coefficient =
         new ConfigDouble(cfg, "KickEvaluator/kernal_width_coefficient", 2.0);
-    distance_coefficient = 
+    distance_coefficient =
         new ConfigDouble(cfg, "KickEvaluator/distance_coefficient", -1.0 / 7.0);
 }
 
-KickEvaluator::KickEvaluator(SystemState* systemState)
-    : system(systemState) {}
+KickEvaluator::KickEvaluator(SystemState* systemState) : system(systemState) {}
 
-float KickEvaluator::eval_pt_to_pt(Point origin,
-                                   Point target,
+float KickEvaluator::eval_pt_to_pt(Point origin, Point target,
                                    float targetWidth) {
-
     vector<Robot*> bots(system->self.size() + system->opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
         return bot != nullptr && bot->visible &&
                find(excluded_robots.begin(), excluded_robots.end(), bot) ==
-                    excluded_robots.end();
+                   excluded_robots.end();
     };
 
     auto end_it = copy_if(system->self.begin(), system->self.end(),
@@ -60,29 +55,32 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
     bots.resize(distance(bots.begin(), end_it));
 
     // < Dist, Angle >
-    vector< tuple<float, float> > bot_locations;
+    vector<tuple<float, float> > bot_locations;
 
     // Add robots as obstacles
-    for_each(bots.begin(), bots.end(), 
-            [&bot_locations, target, origin, this](Robot* bot) {
+    for_each(bots.begin(), bots.end(),
+             [&bot_locations, target, origin, this](Robot* bot) {
 
-        tuple<float, float> polar_coords = rect_to_polar(origin, target, bot->pos);
+                 tuple<float, float> polar_coords =
+                     rect_to_polar(origin, target, bot->pos);
 
-        if (fabs(get<1>(polar_coords)) < *robot_angle_filter_limit) {
-            bot_locations.push_back(polar_coords);
-        }
-    });
+                 if (fabs(get<1>(polar_coords)) < *robot_angle_filter_limit) {
+                     bot_locations.push_back(polar_coords);
+                 }
+             });
 
     // Add imaginary obstacles
-    for_each(hypothetical_robot_locations.begin(), hypothetical_robot_locations.end(),
+    for_each(hypothetical_robot_locations.begin(),
+             hypothetical_robot_locations.end(),
              [&bot_locations, target, origin, this](Point obstacle) {
 
-        tuple<float, float> polar_coords = rect_to_polar(origin, target, obstacle);
+                 tuple<float, float> polar_coords =
+                     rect_to_polar(origin, target, obstacle);
 
-        if (fabs(get<1>(polar_coords)) < *robot_angle_filter_limit) {
-            bot_locations.push_back(polar_coords);
-        }
-    });
+                 if (fabs(get<1>(polar_coords)) < *robot_angle_filter_limit) {
+                     bot_locations.push_back(polar_coords);
+                 }
+             });
 
     // Use rays between -3 * std_dev and 3 * std_dev
     float half_std_dev = 1.5f * *kick_std_dev;
@@ -92,9 +90,12 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
     if (bot_locations.size() == 0) {
         // CDF Estimation
         // The ray estimations are linearlly related to the true CDF probability
-        // These are found through testing the points and using the best fit line
+        // These are found through testing the points and using the best fit
+        // line
         // with R^2 = 0.998458
-        float score = 1.1219 * erf(half_target_width / (*kick_std_dev * sqrt(2))) + 0.0125;
+        float score =
+            1.1219 * erf(half_target_width / (*kick_std_dev * sqrt(2))) +
+            0.0125;
         return min(score, 1.0f);
     }
 
@@ -107,7 +108,6 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
     // For each ray
     while (cur_ray_angle < half_std_dev ||
            nearlyEqual(cur_ray_angle, half_std_dev)) {
-
         vector<float> scores;
 
         // For each robot
@@ -128,14 +128,17 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
             scores.push_back(1 - (float)max(pow((1 - pow(u, 2)), 3), 0.0));
         }
 
-        // Gets -1, 0, 1 depending on whether abs(cur_ray_angle) is > half_target_width
+        // Gets -1, 0, 1 depending on whether abs(cur_ray_angle) is >
+        // half_target_width
         float in_range = copysign(1.0, half_target_width - fabs(cur_ray_angle));
-        // Moves in_range to 0 if outside, 1 if inside the range, 0.5 if on the edge
+        // Moves in_range to 0 if outside, 1 if inside the range, 0.5 if on the
+        // edge
         in_range = in_range * 0.5 + 0.5;
 
         // PDF for Gaussian Distribution, Assume mean = 0
         float ray_offset_scale = M_1_SQRT_2_PI / *kick_std_dev;
-        ray_offset_scale *= fast_exp(-0.5 * pow(cur_ray_angle / *kick_std_dev, 2));
+        ray_offset_scale *=
+            fast_exp(-0.5 * pow(cur_ray_angle / *kick_std_dev, 2));
 
         float min_score = *min_element(begin(scores), end(scores));
 
@@ -159,8 +162,7 @@ float KickEvaluator::eval_pt_to_opp_goal(Geometry2d::Point origin) {
         Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
               Field_Dimensions::Current_Dimensions.Length()},
         Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()}
-    };
+              Field_Dimensions::Current_Dimensions.Length()}};
 
     return eval_pt_to_seg(origin, their_goal);
 }
@@ -168,8 +170,7 @@ float KickEvaluator::eval_pt_to_opp_goal(Geometry2d::Point origin) {
 float KickEvaluator::eval_pt_to_our_goal(Geometry2d::Point origin) {
     Segment our_goal{
         Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}
-    };
+        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}};
 
     return eval_pt_to_seg(origin, our_goal);
 }
@@ -178,21 +179,18 @@ float KickEvaluator::eval_pt_to_seg(Geometry2d::Point origin,
                                     Geometry2d::Segment target) {
     Point pt1 = target.pt[0] - origin;
     Point pt2 = target.pt[1] - origin;
-    double angle = abs(atan2(pt1.y(), pt1.x()) - 
-                       atan2(pt2.y(), pt2.x()));
+    double angle = abs(atan2(pt1.y(), pt1.x()) - atan2(pt2.y(), pt2.x()));
 
     return eval_pt_to_pt(origin, target.center(), angle);
 }
 
-tuple<float, float> KickEvaluator::rect_to_polar(Point origin,
-                                                 Point target,
+tuple<float, float> KickEvaluator::rect_to_polar(Point origin, Point target,
                                                  Point obstacle) {
     Point dir = obstacle - origin;
 
     return make_tuple(dir.mag(), dir.angleBetween(target - origin));
 }
 
-float KickEvaluator::fast_exp(float x)
-{
-    return (24+x*(24+x*(12+x*(4+x))))*0.041666666f;
+float KickEvaluator::fast_exp(float x) {
+    return (24 + x * (24 + x * (12 + x * (4 + x)))) * 0.041666666f;
 }

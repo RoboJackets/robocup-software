@@ -18,7 +18,7 @@ TEST(KickEvaluator, eval_pt_to_pt) {
     Segment ourGoalSegment(
         Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
         Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
-    
+
     KickEvaluator kickEval(&state);
     double pt_to_seg = kickEval.eval_pt_to_seg(Point(0, 2), ourGoalSegment);
     double pt_to_our_goal = kickEval.eval_pt_to_our_goal(Point(0, 2));
