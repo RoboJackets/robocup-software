@@ -91,7 +91,7 @@ private:
     float fast_exp(float x);
 
     bool good_robot_check(std::tuple<float, float> polar,
-                          Geometry2d::Point origin, Geometry2d::Point target);
+                          Geometry2d::Point target, Geometry2d::Point origin);
 
     static ConfigDouble* robot_angle_filter_limit;
     static ConfigDouble* kick_std_dev;
