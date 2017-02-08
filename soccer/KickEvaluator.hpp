@@ -91,6 +91,9 @@ private:
     // Max error of 0.05 at x = -1.5
     float fast_exp(float x);
 
+    bool good_robot_check(std::tuple<float, float> polar,
+                          Geometry2d::Point origin, Geometry2d::Point target);
+
     static ConfigDouble* robot_angle_filter_limit;
     static ConfigDouble* kick_std_dev;
     static ConfigDouble* num_rays;
