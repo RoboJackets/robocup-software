@@ -24,14 +24,14 @@ ConfigDouble* KickEvaluator::distance_coefficient;
 
 void KickEvaluator::createConfiguration(Configuration* cfg) {
     robot_angle_filter_limit = 
-        new ConfigDouble(cfg, "KickEvaluator/robot_angle_filter_limit", 0.35 * M_PI);
+        new ConfigDouble(cfg, "KickEvaluator/robot_angle_filter_limit", 0.2);
     kick_std_dev = 
         new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.2 * M_PI);
     num_rays = 
         new ConfigDouble(cfg, "KickEvaluator/num_rays", 16);
 
     kernal_width_coefficient = 
-        new ConfigDouble(cfg, "KickEvaluator/kernal_width_coefficient", 32.0);
+        new ConfigDouble(cfg, "KickEvaluator/kernal_width_coefficient", 2.0);
     distance_coefficient = 
         new ConfigDouble(cfg, "KickEvaluator/distance_coefficient", -1.0 / 7.0);
 }
@@ -68,7 +68,7 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
 
         tuple<float, float> polar_coords = rect_to_polar(origin, target, bot->pos);
 
-        if (fabs(get<1>(polar_coords)) < max_delta_angle) {
+        if (fabs(get<1>(polar_coords)) < *robot_angle_filter_limit) {
             bot_locations.push_back(polar_coords);
         }
     });
@@ -79,14 +79,14 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
 
         tuple<float, float> polar_coords = rect_to_polar(origin, target, obstacle);
 
-        if (fabs(get<1>(polar_coords)) < max_delta_angle) {
+        if (fabs(get<1>(polar_coords)) < *robot_angle_filter_limit) {
             bot_locations.push_back(polar_coords);
         }
     });
 
     // Use rays between -3 * std_dev and 3 * std_dev
     float half_std_dev = 1.5f * *kick_std_dev;
-    float half_target_width = fabs(atan2(targetWidth / 2, (target - origin).mag()));
+    float half_target_width = targetWidth; //fabs(atan2(targetWidth / 2, (target - origin).mag()));
 
     // No bots in the way
     if (bot_locations.size() == 0) {
@@ -94,14 +94,15 @@ float KickEvaluator::eval_pt_to_pt(Point origin,
         // The ray estimations are linearlly related to the true CDF probability
         // These are found through testing the points and using the best fit line
         // with R^2 = 0.998458
-        return 1.1219 * erf(half_target_width / (*kick_std_dev * sqrt(2))) + 0.0125;
+        float score = 1.1219 * erf(half_target_width / (*kick_std_dev * sqrt(2))) + 0.0125;
+        return min(score, 1.0f);
     }
 
     float total = 0.0f;
     float max_total = 0.0f;
 
     float cur_ray_angle = -1 * half_std_dev;
-    float ray_angle_inc = half_std_dev / number_of_rays;
+    float ray_angle_inc = 2 * half_std_dev / number_of_rays;
 
     // For each ray
     while (cur_ray_angle < half_std_dev ||
