@@ -22,11 +22,10 @@ public:
      * @brief Evalutes kick to target point
      * @param origin The starting point of the kick
      * @param target The end point of the kick
-     * @param targetWidth Width to apply to the target
+     * @param targetWidth Width to apply to the target in radians
      * @return Percent chance to succeed
      */
-    float eval_pt_to_pt(Geometry2d::Point origin,
-                        Geometry2d::Point target,
+    float eval_pt_to_pt(Geometry2d::Point origin, Geometry2d::Point target,
                         float targetWidth);
 
     /**
@@ -35,8 +34,7 @@ public:
      * @param target The end point of the kick
      * @return Percent chance to succeed
      */
-    float eval_pt_to_robot(Geometry2d::Point origin,
-                           Geometry2d::Point target);
+    float eval_pt_to_robot(Geometry2d::Point origin, Geometry2d::Point target);
 
     /**
      * @brief Evaluates kick to the center of the oponents goal
@@ -58,8 +56,7 @@ public:
      * @param target The target segment to aim at
      * @return Percent chance to succeed
      */
-    float eval_pt_to_seg(Geometry2d::Point origin,
-                         Geometry2d::Segment target);
+    float eval_pt_to_seg(Geometry2d::Point origin, Geometry2d::Segment target);
 
     /**
      * @brief Initializes configurable fields
