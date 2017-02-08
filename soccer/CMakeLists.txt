@@ -73,6 +73,7 @@ set(ROBOCUP_LIB_SRC
     "SimFieldView.cpp"
     "StripChart.cpp"
     "SystemState.cpp"
+    "ui/StyleSheetManager.cpp"
     "VisionReceiver.cpp"
     "WindowEvaluator.cpp"
 )

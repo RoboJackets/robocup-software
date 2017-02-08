@@ -32,9 +32,9 @@ void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
         QColor("red"),   QColor("purple"), QColor("orange")};
     QColor color = colors[shellID % colors.size()];
 
-    for (auto* node : rrt.allNodes()) {
-        if (node->parent()) {
-            state->drawLine(Segment(node->state(), node->parent()->state()),
+    for (auto& node : rrt.allNodes()) {
+        if (node.parent()) {
+            state->drawLine(Segment(node.state(), node.parent()->state()),
                             color, QString("RobotRRT%1").arg(shellID));
         }
     }

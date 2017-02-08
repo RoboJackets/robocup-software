@@ -59,10 +59,12 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     QRect rect =
         QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
     _posLabel->setMinimumWidth(rect.width());
-    _posLabel->setStyleSheet("QLabel { color : red; }");
+    _posLabel->setStyleSheet("QLabel { color: red; background: none;}");
 
     // enable mouse tracking so we can update position label
     setMouseTracking(true);
+
+    show();
 }
 
 void FieldView::leaveEvent(QEvent* event) { _posLabel->setVisible(false); }
@@ -98,6 +100,9 @@ void FieldView::rotate(int value) {
 
 void FieldView::paintEvent(QPaintEvent* e) {
     QPainter p(this);
+    QStyleOption opt;
+    opt.init(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
     // antialiasing drastically improves rendering quality
     p.setRenderHint(QPainter::Antialiasing);
@@ -267,14 +272,16 @@ void FieldView::drawTeamSpace(QPainter& p) {
     // History
     p.setBrush(Qt::NoBrush);
     QPainterPath ballTrail;
+    bool move = false;
     for (unsigned int i = 0; i < 200 && i < _history->size(); ++i) {
         const LogFrame* oldFrame = _history->at(i).get();
         if (oldFrame && oldFrame->has_ball()) {
             QPointF pos = qpointf(oldFrame->ball().pos());
 
-            if (i == 0)
+            if (!move) {
                 ballTrail.moveTo(pos);
-            else
+                move = true;
+            } else
                 ballTrail.lineTo(pos);
         }
     }
