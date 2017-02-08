@@ -24,9 +24,9 @@ ConfigDouble* KickEvaluator::distance_coefficient;
 
 void KickEvaluator::createConfiguration(Configuration* cfg) {
     robot_angle_filter_limit = 
-        new ConfigDouble(cfg, "KickEvaluator/robot_angle_filter_limit", 0.2);
+        new ConfigDouble(cfg, "KickEvaluator/robot_angle_filter_limit", 0.35 * M_PI);
     kick_std_dev = 
-        new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.2 * M_PI);
+        new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.2);
     num_rays = 
         new ConfigDouble(cfg, "KickEvaluator/num_rays", 16);
 
@@ -40,8 +40,8 @@ KickEvaluator::KickEvaluator(SystemState* systemState)
     : system(systemState) {}
 
 float KickEvaluator::eval_pt_to_pt(Point origin,
-                                      Point target,
-                                      float targetWidth) {
+                                   Point target,
+                                   float targetWidth) {
 
     vector<Robot*> bots(system->self.size() + system->opp.size());
 
