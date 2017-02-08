@@ -64,7 +64,7 @@ float KickEvaluator::eval_pt_to_pt(Point origin, Point target,
                  tuple<float, float> polar_coords =
                      rect_to_polar(origin, target, bot->pos);
 
-                 if (good_robot_check(polar_coords, target, bot->pos)) {
+                 if (good_robot_check(polar_coords, target, origin)) {
                      bot_locations.push_back(polar_coords);
                  }
              });
@@ -77,7 +77,7 @@ float KickEvaluator::eval_pt_to_pt(Point origin, Point target,
                  tuple<float, float> polar_coords =
                      rect_to_polar(origin, target, obstacle);
 
-                 if (good_robot_check(polar_coords, target, obstacle)) {
+                 if (good_robot_check(polar_coords, target, origin)) {
                      bot_locations.push_back(polar_coords);
                  }
              });
@@ -197,8 +197,8 @@ float KickEvaluator::fast_exp(float x) {
 
 bool KickEvaluator::good_robot_check(std::tuple<float, float> polar,
                                      Geometry2d::Point target,
-                                     Geometry2d::Point obstacle) {
-    float delta_dist = (obstacle - target).mag();
+                                     Geometry2d::Point origin) {
+    float delta_dist = get<0>(polar) - (target - origin).mag();
 
     // Checks that the robot is within the angle range in front
     // and not too far behind the target position
