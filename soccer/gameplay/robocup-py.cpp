@@ -459,6 +459,10 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
+void KickEval_add_excluded_robot(KickEvaluator* self, Robot* robot) {
+    self->excluded_robots.push_back(robot);
+}
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
@@ -759,10 +763,10 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
         .def_readwrite("number_of_rays", &KickEvaluator::number_of_rays)
-        .def_readwrite("max_delta_angle", &KickEvaluator::max_delta_angle)
         .def_readwrite("excluded_robots", &KickEvaluator::excluded_robots)
         .def_readwrite("hypothetical_robot_locations",
                        &KickEvaluator::hypothetical_robot_locations)
+        .def("add_excluded_robot", &KickEval_add_excluded_robot)
         .def("eval_pt_to_pt", &KickEvaluator::eval_pt_to_pt)
         .def("eval_pt_to_robot", &KickEvaluator::eval_pt_to_robot)
         .def("eval_pt_to_opp_goal", &KickEvaluator::eval_pt_to_opp_goal)

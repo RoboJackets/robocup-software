@@ -84,11 +84,6 @@ public:
      */
     float number_of_rays = 16;
 
-    /**
-     * @brief Removes any robots not within this angle of target
-     */
-    float max_delta_angle = 0.7f * M_PI_2;
-
 private:
     SystemState* system;
 
