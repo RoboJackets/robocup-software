@@ -86,19 +86,6 @@ float KickEvaluator::eval_pt_to_pt(Point origin, Point target,
     float half_std_dev = 1.5f * *kick_std_dev;
     float half_target_width = targetWidth;
 
-    // No bots in the way
-    if (bot_locations.size() == 0) {
-        // CDF Estimation
-        // The ray estimations are linearlly related to the true CDF probability
-        // These are found through testing the points and using the best fit
-        // line
-        // with R^2 = 0.998458
-        float score =
-            1.1219 * erf(half_target_width / (*kick_std_dev * sqrt(2))) +
-            0.0125;
-        return min(score, 1.0f);
-    }
-
     float total = 0.0f;
     float max_total = 0.0f;
 
@@ -109,6 +96,8 @@ float KickEvaluator::eval_pt_to_pt(Point origin, Point target,
     while (cur_ray_angle < half_std_dev ||
            nearlyEqual(cur_ray_angle, half_std_dev)) {
         vector<float> scores;
+        // Default to perfect score
+        scores.push_back(1);
 
         // For each robot
         for (tuple<float, float> bot_location : bot_locations) {
