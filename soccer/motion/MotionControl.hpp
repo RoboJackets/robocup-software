@@ -32,6 +32,11 @@ public:
      */
     void run();
 
+    /**
+     *This returns the PID controller denoted by the char passed in
+     */
+    Pid* getPid(char controller);
+
     static void createConfiguration(Configuration* cfg);
 
 private:

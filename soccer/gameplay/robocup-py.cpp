@@ -20,6 +20,8 @@ using namespace boost::python;
 #include <Geometry2d/Line.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
+#include <motion/MotionControl.hpp>
+#include <Pid.hpp>
 #include <SystemState.hpp>
 
 #include <boost/python/exception_translator.hpp>
@@ -140,6 +142,22 @@ void OurRobot_add_text(OurRobot* self, const std::string& text,
 
 void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
     self->avoidOpponents(value);
+}
+
+void OurRobot_initialize_pid(OurRobot* self, char controller){
+    self->motionControl()->getPid(controller)->initialize_tuner();
+}
+
+void OurRobot_start_pid(OurRobot* self, char controller){
+    self->motionControl()->getPid(controller)->start_cycle();
+}
+
+void OurRobot_run_pid(OurRobot* self, char controller){
+    self->motionControl()->getPid(controller)->run();
+}
+
+bool OurRobot_end_pid(OurRobot* self, char controller){
+    return self->motionControl()->getPid(controller)->end_cycle();
 }
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
@@ -651,7 +669,10 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("ball_sense_works", &OurRobot::ballSenseWorks)
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
-        .def("set_pid", &OurRobot::setPID)
+        .def("initialize_tuner", &OurRobot_initialize_pid)
+        .def("start_pid", &OurRobot_start_pid)
+        .def("run_pid", &OurRobot_run_pid)
+        .def("end_pid", &OurRobot_end_pid)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
     register_ptr_to_python<OurRobot*>();

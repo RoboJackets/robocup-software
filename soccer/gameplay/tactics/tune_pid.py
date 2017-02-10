@@ -29,9 +29,9 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(Tune_pid.State.tune, Tune_pid.State.process,lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,'finished moving')
 
 
-        self.add_transition(Tune_pid.State.process, Tune_pid.State.tune,lambda: not self.check_complete(),'continue tuning')
+        self.add_transition(Tune_pid.State.process, Tune_pid.State.tune,lambda: self.tune,'continue tuning')
 
-        self.add_transition(Tune_pid.State.process, behavior.Behavior.State.completed, lambda: self.check_complete(), 'done tuning')
+        self.add_transition(Tune_pid.State.process, behavior.Behavior.State.completed, lambda: not self.tune, 'done tuning')
 
         self.positions=[]
 
@@ -41,38 +41,40 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.right_point=robocup.Point(xsize,2)
         self.line = robocup.Segment(self.left_point,self.right_point)
 
-    def check_complete(self):
-        return False;
+        self.tune = True
+
+    def on_enter_running(self):
+        self.robot.initialize_tuner('x')
 
     def on_enter_tune(self):
-        if((self.robot.pos-self.left_point).mag() < .1):
+        if(self.robot.pos.x<0):
             move = skills.move.Move(self.right_point)
-            print("go right")
+            print("PYTHON: GO RIGHT")
         else:
             move= skills.move.Move(self.left_point)
-            print("go left")
+            print("PYTHON: GO LEFT")
 
-        self.robot.set_pid(100,100,100)
+        self.robot.start_pid('x')
 
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
     def execute_tune(self):
-        pos=self.robot.pos
-        self.positions.append(pos)
+        self.robot.run_pid('x')
 
     def on_exit_tune(self):
-        print("EXIT")
-        print("LENGTH: ",len(self.positions))
-        #print(self.positions)
+        print("PYTHON: EXIT_TUNING")
         self.remove_subbehavior('move')
+        self.tune = self.robot.end_pid('x')
 
-    def on_enter_process(self):
-        print("process stuff")
-        self.positions=[]
+    #def on_enter_process(self):
+        #this currently does nothing :/
 
+
+'''
     def role_requirements(self):
         reqs = super().role_requirements()
         if isinstance(reqs, role_assignment.RoleRequirements):
             reqs.required_shell_id = 0
 
         return reqs
+'''

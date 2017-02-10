@@ -44,6 +44,7 @@ class pid(play.Play):
         return False
 
     def on_enter_prep(self):
+        #INITIAL TEST IS SCREWY BECAUSE PATH PLANNING SMOOTHS OUT THE TURN AFTER EXITING PREP
         xsize = constants.Field.Width/2
         move = skills.move.Move(robocup.Point(-xsize+.1,2))
         self.add_subbehavior(move, 'move', required=True, priority=100)
@@ -52,11 +53,9 @@ class pid(play.Play):
         self.add_subbehavior(line_up, 'line_up', required=True, priority=80)
 
     def on_exit_prep(self):
-        print("exit prep")
         self.remove_subbehavior('move')
 
     def on_enter_testing(self):
-        print("enter")
         tune = tactics.tune_pid.Tune_pid()
         self.add_subbehavior(tune, 'tune', required=True, priority=100)
 
@@ -64,7 +63,6 @@ class pid(play.Play):
         main.system_state().draw_line(self.line, constants.Colors.Green,"tuning line")
 
     def on_exit_testing(self):
-        print("exit")
         self.remove_subbehavior('tune')
 
     @classmethod
