@@ -70,7 +70,7 @@ void SimRadio::receive() {
     for (int x = 0; x < 6; x++) {
         RadioRx packet;
         packet.set_robot_id(x);
-        //packet.set_hardware_version(RJ2015);
+        //packet.set_hardware_version(RJ2008);
         //packet.set_battery(100);
 
         packet.set_ball_sense_status(HasBall);

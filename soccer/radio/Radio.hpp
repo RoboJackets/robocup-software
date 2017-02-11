@@ -27,6 +27,10 @@ public:
         return _reversePackets;
     }
 
+    std::vector<Packet::RadioRx>& reversePackets() {
+        return _reversePackets;
+    }
+
     void clear() { _reversePackets.clear(); }
 
 protected:
