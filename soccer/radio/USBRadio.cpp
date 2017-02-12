@@ -289,7 +289,7 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
     // Report that everything is good b/c the bot currently has no way of
     // detecting kicker issues
-    packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+    packet.set_kicker_status(msg->kickStatus | Kicker_Enabled | Kicker_I2C_OK);
 
     // motor errors
     for (int i = 0; i < 5; i++) {

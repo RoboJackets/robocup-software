@@ -295,7 +295,7 @@ public:
     RJ::Timestamp lastKickTime() const;
 
     /// checks if the bot has kicked/chipped very recently.
-    bool justKicked() { return RJ::now() - _lastKickTime < RJ::Seconds(0.25); }
+    bool justKicked() { return !_radioRx.kicker_status(); }
 
     /**
      * Gets a string representing the series of commands called on the robot
