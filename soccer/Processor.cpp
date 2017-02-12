@@ -95,7 +95,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _visionChannel = visionChannel;
 
     // Create radio socket
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_state, _blueTeam))
                          : static_cast<Radio*>(new USBRadio());
 }
 
@@ -368,42 +368,10 @@ void Processor::run() {
             }
         }
 
-        const bool use_spoofed_ballsense = true;
-
         // Read radio reverse packets
         _radio->receive();
 
         for (Packet::RadioRx& rx : _radio->reversePackets()) {
-            if (use_spoofed_ballsense) {
-                // need to add ball sense flag based on ball position and
-                // robot position
-                
-                auto& robot_pos = _state.self[rx.robot_id()]->pos;
-                auto& ball_pos = _state.ball.pos;
-
-                double angleToBall = robot_pos.angleTo(ball_pos);
-                double distToBall = robot_pos.distTo(ball_pos);
-
-                float robotAngle = _state.self[rx.robot_id()]->angle;
-                
-                if (rx.robot_id() == 1) {
-                    std::cout << "Angle check: "
-                        << (std::fabs(angleToBall - robotAngle) < DegreesToRadians(10))
-                        << std::endl;
-                    std::cout << "Dist Check: "
-                        << (distToBall < Robot_Radius * 1.2)
-                        << std::endl;
-                }
-
-                if (std::fabs(angleToBall - robotAngle) < DegreesToRadians(10)
-                        && distToBall < Robot_Radius * 1.3) {
-                    rx.set_ball_sense_status(Packet::HasBall);
-                } else {
-                    rx.set_ball_sense_status(Packet::NoBall);
-                }
-            }
-
-
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
             curStatus.lastRadioRxTime =

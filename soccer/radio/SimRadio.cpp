@@ -5,6 +5,8 @@
 #include <Network.hpp>
 #include <stdexcept>
 #include <Utils.hpp>
+#include <Geometry2d/Util.hpp>
+#include <Robot.hpp>
 
 #include "firmware-common/robot2015/cpu/status.h"
 
@@ -13,7 +15,8 @@ using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
-SimRadio::SimRadio(bool blueTeam) : blueTeam(blueTeam) {
+SimRadio::SimRadio(SystemState& system_state, bool blueTeam)
+    : _state(system_state), blueTeam(blueTeam) {
     _channel = blueTeam ? 1 : 0;
     if (!_socket.bind(RadioRxPort + _channel)) {
         throw runtime_error(QString("Can't bind to the %1 team's radio port.")
@@ -29,17 +32,20 @@ bool SimRadio::isOpen() const {
 void SimRadio::send(Packet::RadioTx& packet) {
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
-    for (int x = 0; x < packet.robots_size(); x++) {
-        const Packet::Robot& robot = packet.robots(x);
+    for (int i = 0; i < packet.robots_size(); i++) {
+        const Packet::Robot& robot = packet.robots(i);
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(robot.uid());
         simRobot->set_veltangent(robot.control().yvelocity());
         simRobot->set_velnormal(-robot.control().xvelocity());
-        simRobot->set_velangular(robot.control().avelocity() * 180.0 / M_PI_2);
+        simRobot->set_velangular(RadiansToDegrees(robot.control().avelocity()));
 
         simRobot->set_triggermode((grSim_Robot_Command_TriggerMode) robot.control().triggermode());
 
-        uint kick_strength = 4.0f * (robot.control().kcstrength() / 255);
+        // rough approximation of kick strength assuming the max of 255
+        // corresponds to 8 m / s
+        const float kc_strength_to_ms = 8.0f / 255;
+        uint kick_strength = kc_strength_to_ms * robot.control().kcstrength();
         switch (robot.control().shootmode()) {
             case Packet::Control::KICK:
                 simRobot->set_kickspeedx(kick_strength);
@@ -67,22 +73,43 @@ void SimRadio::send(Packet::RadioTx& packet) {
 }
 
 void SimRadio::receive() {
-    for (int x = 0; x < 6; x++) {
-        RadioRx packet;
-        packet.set_robot_id(x);
-        //packet.set_hardware_version(RJ2008);
-        //packet.set_battery(100);
+    for (int i = 0; i < Robots_Per_Team; i++) {
+        RadioRx rx;
+        rx.set_robot_id(i);
+        //rx.set_hardware_version(RJ2008);
+        //rx.set_battery(100);
 
-        packet.set_ball_sense_status(HasBall);
+        // need to add ball sense flag based on ball position and
+        // robot position
+        auto& robot_pos = _state.self[i]->pos;
+        auto& ball_pos = _state.ball.pos;
+
+        double angleToBall = robot_pos.angleTo(ball_pos);
+        double distToBall = robot_pos.distTo(ball_pos);
+
+        float robotAngle = _state.self[i]->angle;
         
-        for (int i = 0; i < 5; i++) {
-            packet.add_motor_status(MotorStatus::Good);
+        // if the ball is very close to us, and within 25 degrees of the front
+        // of us, then activate our ball sense.
+        if (std::fabs(angleToBall - robotAngle) < DegreesToRadians(25)
+                && distToBall < Robot_Radius * 1.1) {
+            rx.set_ball_sense_status(Packet::HasBall);
+        } else {
+            rx.set_ball_sense_status(Packet::NoBall);
         }
-        packet.set_fpga_status(FpgaGood);
-        packet.set_timestamp(RJ::timestamp());
-        packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
-        packet.set_kicker_voltage(200);
-        _reversePackets.push_back(packet);
+        
+        const int num_motors = 5;
+        // 5 motors including dribbler
+        for (int i = 0; i < num_motors; i++) {
+            rx.add_motor_status(MotorStatus::Good);
+        }
+
+        // it's a sim rx, so just pretend like everything is good
+        rx.set_fpga_status(FpgaGood);
+        rx.set_timestamp(RJ::timestamp());
+        rx.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+        rx.set_kicker_voltage(200);
+        _reversePackets.push_back(rx);
     }
 }
 
