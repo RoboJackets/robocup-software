@@ -770,19 +770,17 @@ void MainWindow::updateStatus() {
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
 
-
-
     for (int i = 1; i <= Num_Shells; i++) {
-		QStandardItem* item = goalieModel->item(i);
+        QStandardItem* item = goalieModel->item(i);
         if (std::find(validIds.begin(), validIds.end(), i - 1) !=
-				validIds.end()) {
+            validIds.end()) {
             // The list starts with None so i is 1 higher than the shell id
-			item->setFlags(item->flags() |
-					(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            item->setFlags(item->flags() |
+                           (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
         } else {
-			item->setFlags(item->flags() &
-					~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
-		}
+            item->setFlags(item->flags() &
+                           ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+        }
     }
 
     if (haveExternalReferee && _autoExternalReferee) {
