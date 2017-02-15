@@ -54,15 +54,14 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim) : _loopMutex() {
+Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
+    : _loopMutex() {
     _running = true;
     _manualID = -1;
-    _defendPlusX = false;
     _framerate = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
     _initialized = false;
-
     _simulation = sim;
     _radio = nullptr;
 
@@ -76,7 +75,7 @@ Processor::Processor(bool sim) : _loopMutex() {
     _dampedRotation = true;
 
     // Initialize team-space transformation
-    defendPlusX(_defendPlusX);
+    defendPlusX(defendPlus);
 
     QMetaObject::connectSlotsByName(this);
 
@@ -89,6 +88,8 @@ Processor::Processor(bool sim) : _loopMutex() {
     vision.simulation = _simulation;
 
     vision.start();
+
+    _visionChannel = visionChannel;
 
     // Create radio socket
     _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
@@ -155,7 +156,7 @@ void Processor::blueTeam(bool value) {
     if (_blueTeam != value) {
         _blueTeam = value;
         if (_radio) _radio->switchTeam(_blueTeam);
-        //_refereeModule->blueTeam(value);
+        if (!externalReferee()) _refereeModule->blueTeam(value);
     }
 }
 

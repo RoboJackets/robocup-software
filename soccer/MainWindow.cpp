@@ -9,6 +9,7 @@
 #include "BatteryProfile.hpp"
 #include <Network.hpp>
 #include "git_version.hpp"
+#include <ui/StyleSheetManager.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -51,7 +52,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _history(2 * 60),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
-
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
@@ -106,35 +106,40 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     QActionGroup* teamGroup = new QActionGroup(this);
     teamGroup->addAction(_ui.actionTeamBlue);
     teamGroup->addAction(_ui.actionTeamYellow);
-    qActionGroups.push_back(teamGroup);
+    qActionGroups["teamGroup"] = teamGroup;
 
     QActionGroup* goalGroup = new QActionGroup(this);
     goalGroup->addAction(_ui.actionDefendMinusX);
     goalGroup->addAction(_ui.actionDefendPlusX);
-    qActionGroups.push_back(goalGroup);
+    qActionGroups["goalGroup"] = goalGroup;
 
     QActionGroup* rotateGroup = new QActionGroup(this);
     rotateGroup->addAction(_ui.action0);
     rotateGroup->addAction(_ui.action90);
     rotateGroup->addAction(_ui.action180);
     rotateGroup->addAction(_ui.action270);
-    qActionGroups.push_back(rotateGroup);
+    qActionGroups["rotateGroup"] = rotateGroup;
 
     auto visionChannelGroup = new QActionGroup(this);
     visionChannelGroup->addAction(_ui.actionVisionPrimary_Half);
     visionChannelGroup->addAction(_ui.actionVisionSecondary_Half);
     visionChannelGroup->addAction(_ui.actionVisionFull_Field);
-    qActionGroups.push_back(visionChannelGroup);
+    qActionGroups["visionChannelGroup"] = visionChannelGroup;
 
     auto radioGroup = new QActionGroup(this);
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
-    qActionGroups.push_back(radioGroup);
+    qActionGroups["radioGroup"] = radioGroup;
+
+    auto styleGroup = new QActionGroup(this);
+    styleGroup->addAction(_ui.actionNoneStyle);
+    styleGroup->addAction(_ui.actionDarkStyle);
+    styleGroup->addAction(_ui.actionDarculizedStyle);
+    styleGroup->addAction(_ui.action1337h4x0rStyle);
+    qActionGroups["styleGroup"] = styleGroup;
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
-
-    //    channel(0);
 
     // put all log playback buttons into a vector for easy access later
     _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
@@ -180,9 +185,10 @@ void MainWindow::initialize() {
 
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
-    for (const auto& qActionGroup : qActionGroups) {
-        qActionGroup->checkedAction()->trigger();
-    }
+
+    qActionGroups["teamGroup"]->checkedAction()->trigger();
+    qActionGroups["rotateGroup"]->checkedAction()->trigger();
+    qActionGroups["radioGroup"]->checkedAction()->trigger();
 
     // Default to FullField on Simulator
     if (_processor->simulation()) {
@@ -194,6 +200,29 @@ void MainWindow::initialize() {
     updateTimer.start(30);
 
     _autoExternalReferee = _processor->externalReferee();
+
+    if (_processor->defendPlusX()) {
+        on_actionDefendPlusX_triggered();
+        _ui.actionDefendPlusX->setChecked(true);
+    } else {
+        on_actionDefendMinusX_triggered();
+        _ui.actionDefendMinusX->setChecked(true);
+    }
+
+    switch (_processor->visionChannel()) {
+        case 0:
+            on_actionVisionPrimary_Half_triggered();
+            _ui.actionVisionPrimary_Half->setChecked(true);
+            break;
+        case 1:
+            on_actionVisionSecondary_Half_triggered();
+            _ui.actionVisionSecondary_Half->setChecked(true);
+            break;
+        case 2:
+            on_actionVisionFull_Field_triggered();
+            _ui.actionVisionFull_Field->setChecked(true);
+            break;
+    }
 }
 
 void MainWindow::logFileChanged() {
@@ -226,6 +255,31 @@ string MainWindow::formatLabelBold(Side side, string label) {
     }
     return "<html><head/><body><p><span style=\"color:" + color +
            "; font-weight: bold;\">" + label + "</span></p></body></html>";
+}
+
+void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
+    // update goalie from Packet
+    if (haveExternalReferee) {
+        // The External Ref is connected
+        _ui.goalieID->setEnabled(false);
+        // disable Blue/Yellow team
+        qActionGroups["teamGroup"]->setEnabled(false);
+
+        // Changes the goalie INDEX which is 1 higher than the goalie ID
+        if (_ui.goalieID->currentIndex() !=
+            _processor->state()->gameState.getGoalieId() + 1) {
+            _ui.goalieID->setCurrentIndex(
+                _processor->state()->gameState.getGoalieId() + 1);
+        }
+
+        bool blueTeam = _processor->refereeModule()->blueTeam();
+        if (_processor->blueTeam() != blueTeam) {
+            blueTeam ? _ui.actionTeamBlue->trigger()
+                     : _ui.actionTeamYellow->trigger();
+        }
+    } else {
+        _ui.goalieID->setEnabled(true);
+    }
 }
 
 void MainWindow::updateViews() {
@@ -746,19 +800,7 @@ void MainWindow::updateStatus() {
         _ui.fastKickoffYellow->setEnabled(true);
     }
 
-    if (haveExternalReferee) {
-        // The External Ref is connected and transmitting a valid goalie ID
-        _ui.goalieID->setEnabled(false);
-
-        // Changes the goalie INDEX which is 1 higher than the goalie ID
-        if (_ui.goalieID->currentIndex() !=
-            _processor->state()->gameState.getGoalieId() + 1) {
-            _ui.goalieID->setCurrentIndex(
-                _processor->state()->gameState.getGoalieId() + 1);
-        }
-    } else {
-        _ui.goalieID->setEnabled(true);
-    }
+    updateFromRefPacket(haveExternalReferee);
 
     // Is the processing thread running?
     if (curTime - ps.lastLoopTime > RJ::Seconds(0.1)) {
@@ -1025,6 +1067,23 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
     _ui.fieldView->sendSimCommand(_quickLoadCmd);
+}
+
+// Style Sheets
+
+void MainWindow::on_actionNoneStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "NONE");
+}
+
+void MainWindow::on_actionDarkStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARK");
+}
+
+void MainWindow::on_actionDarculizedStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARCULIZED");
+}
+void MainWindow::on_action1337h4x0rStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
 
 // Manual control commands
