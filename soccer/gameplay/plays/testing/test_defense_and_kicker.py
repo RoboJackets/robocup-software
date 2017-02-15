@@ -18,7 +18,7 @@ class TestDefenseAndKicker(play.Play):
     def on_enter_running(self):
         b = tactics.defense.Defense()
         self.add_subbehavior(b, name='defense', required=True)
-        
+
         kick = skills.pivot_kick.PivotKick()
 
         kick.target = constants.Field.OurGoalSegment
@@ -34,7 +34,7 @@ class TestDefenseAndKicker(play.Play):
             roblist.append(behavior.robot)
 
         kick.shot_obstacle_ignoring_robots = roblist
-        
+
         if kick.is_done_running():
             kick.restart()
 
