@@ -49,10 +49,10 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_enter_tune(self):
         if(self.robot.pos.x<0):
             move = skills.move.Move(self.right_point)
-            print("PYTHON: GO RIGHT")
+            #print("PYTHON: GO RIGHT")
         else:
             move= skills.move.Move(self.left_point)
-            print("PYTHON: GO LEFT")
+            #print("PYTHON: GO LEFT")
 
         self.robot.start_pid('x')
 
@@ -62,7 +62,7 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.run_pid('x')
 
     def on_exit_tune(self):
-        print("PYTHON: EXIT_TUNING")
+        #print("PYTHON: EXIT_TUNING")
         self.remove_subbehavior('move')
         self.tune = self.robot.end_pid('x')
 

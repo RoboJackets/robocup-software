@@ -25,7 +25,7 @@ class pid(play.Play):
                             pid.State.prep, lambda: True,
                             'immediately')
 
-        self.add_transition(pid.State.prep, pid.State.testing, lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,'finished moving')
+        self.add_transition(pid.State.prep, pid.State.testing, lambda: self.has_subbehavior_with_name('move2') and self.subbehavior_with_name('move2').state == behavior.Behavior.State.completed,'finished moving')
 
 
         self.add_transition(pid.State.testing, behavior.Behavior.State.completed,
@@ -46,21 +46,25 @@ class pid(play.Play):
     def on_enter_prep(self):
         #INITIAL TEST IS SCREWY BECAUSE PATH PLANNING SMOOTHS OUT THE TURN AFTER EXITING PREP
         xsize = constants.Field.Width/2
-        move = skills.move.Move(robocup.Point(-xsize+.1,2))
-        self.add_subbehavior(move, 'move', required=True, priority=100)
+        move = skills.move.Move(robocup.Point((-xsize/2)+.1,2))
+        self.add_subbehavior(move, 'move1', required=True, priority=100)
 
         line_up = tactics.line_up.LineUp(self.create_lineup())
         self.add_subbehavior(line_up, 'line_up', required=True, priority=80)
 
+    def execute_prep(self):
+        if self.has_subbehavior_with_name('move1') and self.subbehavior_with_name('move1').state == behavior.Behavior.State.completed:
+            self.remove_subbehavior('move1')
+            xsize = constants.Field.Width/2
+            move2 = skills.move.Move(robocup.Point(-xsize+.1,2))
+            self.add_subbehavior(move2, 'move2', required=True, priority=100)
+
     def on_exit_prep(self):
-        self.remove_subbehavior('move')
+        self.remove_subbehavior('move2')
 
     def on_enter_testing(self):
         tune = tactics.tune_pid.Tune_pid()
         self.add_subbehavior(tune, 'tune', required=True, priority=100)
-
-    def on_execute_testing(self):
-        main.system_state().draw_line(self.line, constants.Colors.Green,"tuning line")
 
     def on_exit_testing(self):
         self.remove_subbehavior('tune')
