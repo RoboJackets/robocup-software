@@ -10,6 +10,7 @@ class MoveDirect(single_robot_behavior.SingleRobotBehavior):
 
         self.threshold = 0.05
         self.pos = pos
+        self.check_velocity = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -17,7 +18,7 @@ class MoveDirect(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
-            lambda: self.pos != None and (self.robot.pos - self.pos).mag() < self.threshold,
+            lambda: (self.pos != None) and ((self.robot.pos - self.pos).mag() < self.threshold) and self.velocity_check(),
             'target pos reached')
         self.add_transition(
             behavior.Behavior.State.completed, behavior.Behavior.State.running,
@@ -41,6 +42,12 @@ class MoveDirect(single_robot_behavior.SingleRobotBehavior):
     @threshold.setter
     def threshold(self, value):
         self._threshold = value
+
+    def velocity_check(self):
+        if(self.check_velocity):
+            return self.robot.vel.mag() < .05
+        else:
+            return True
 
     def execute_running(self):
         if self.pos != None:

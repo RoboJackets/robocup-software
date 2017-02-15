@@ -7,6 +7,7 @@ import enum
 import robocup
 import skills
 import skills.move
+import skills.move_direct
 import time
 
 
@@ -48,12 +49,13 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_tune(self):
         if(self.robot.pos.x<0):
-            move = skills.move.Move(self.right_point)
+            move = skills.move_direct.MoveDirect(self.right_point)
             #print("PYTHON: GO RIGHT")
         else:
-            move= skills.move.Move(self.left_point)
+            move= skills.move_direct.MoveDirect(self.left_point)
             #print("PYTHON: GO LEFT")
 
+        move.check_velocity = True;
         self.robot.start_pid('x')
 
         self.add_subbehavior(move, 'move', required=True, priority=100)
