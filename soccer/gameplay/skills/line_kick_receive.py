@@ -109,6 +109,7 @@ class LineKickReceive(
 
     def on_enter_receiving(self):
         kick = skills.line_kick.LineKick()
+        kick.shell_id = self.robot.shell_id()
         kick.target = self.target
         self.add_subbehavior(kick, 'kick', required=True)
         self.kicked_time = time.time()

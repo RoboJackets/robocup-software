@@ -72,6 +72,8 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    static RJ::Seconds getPartialReplanLeadTime();
+
 private:
     int reusePathTries = 0;
 

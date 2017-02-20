@@ -5,21 +5,29 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-CompositePath::CompositePath(unique_ptr<Path> path) { append(std::move(path)); }
+CompositePath::CompositePath(unique_ptr<Path> path) {
+    setStartTime(path->startTime());
+    append(std::move(path));
+}
 
 void CompositePath::append(unique_ptr<Path> path) {
-    //cout<<"duration "<<duration<<endl;
-    if (duration < RJ::Seconds::max()) {
-        auto pathDuration = path->getDuration();
-        if (pathDuration > RJ::Seconds::zero()) {
-            duration += pathDuration;
-            paths.push_back(std::move(path));
-        } else {
-            debugThrow(invalid_argument("The path passed is invalid" + to_string(duration)));
+    if(CompositePath *p = dynamic_cast<CompositePath*>(path.get())) {
+        for (auto &path: p->paths) {
+            append(std::move(path));
         }
     } else {
-        debugThrow(runtime_error(
-            "You can't append to this path. It is already infinitely long."));
+        if (duration < RJ::Seconds::max()) {
+            auto pathDuration = path->getDuration();
+            if (pathDuration > RJ::Seconds::zero()) {
+                duration += pathDuration;
+                paths.push_back(std::move(path));
+            } else {
+                debugThrow(invalid_argument("The path passed is invalid" + to_string(duration)));
+            }
+        } else {
+            debugThrow(runtime_error(
+                    "You can't append to this path. It is already infinitely long."));
+        }
     }
 }
 
@@ -160,8 +168,11 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
                                          endTime - firstStartTime);
     } else {
         // Create a CompositePath initialized with only that first path.
-        CompositePath* path = new CompositePath(
+        auto path = make_unique<CompositePath>(
             paths.at(start - 1)->subPath(startTime - firstStartTime));
+
+        path->setStartTime(this->startTime() + startTime);
+
         unique_ptr<Path> lastPath;
         size_t end;
 
@@ -192,9 +203,9 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
         path->append(std::move(lastPath));
 
         debugThrowIf(to_string(path->getDuration()) + to_string(std::min(getDuration() - startTime, endTime-startTime)),
-                     (path->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.000001);
+                     (path->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.00001);
 
-        return unique_ptr<Path>(path);
+        return std::move(path);
     }
 }
 

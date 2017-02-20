@@ -32,6 +32,7 @@ private:
     RRTPlanner rrtPlanner;
     bool finalApproach = false;
     boost::optional<Geometry2d::Point> targetKickPos;
+    int reusePathCount = 0;
 };
 
 }  // namespace Planning

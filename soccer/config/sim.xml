@@ -173,7 +173,7 @@
   <Roll_Distance value="0.1"/>
  </ChipCalibration>
  <MotionControl>
-  <Max_Acceleration value="1.8"/>
+  <Max_Acceleration value="3.0"/>
   <Max_Velocity value="3.5"/>
   <PathJitterCompensationFactor value="5"/>
   <PathChangeBoost value="0.1"/>

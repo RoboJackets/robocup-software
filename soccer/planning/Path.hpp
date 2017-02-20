@@ -76,6 +76,10 @@ public:
      */
     virtual RJ::Seconds getDuration() const = 0;
 
+    RJ::Seconds getSlowedDuration() const {
+        return getDuration()/evalRate;
+    }
+
     /**
      * Returns a subPath
      *

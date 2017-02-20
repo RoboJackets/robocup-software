@@ -737,4 +737,8 @@ VectorXd RRTPlanner::cubicBezierCalc(double vi, double vf,
     }
 }
 
+    RJ::Seconds RRTPlanner::getPartialReplanLeadTime() {
+        return RJ::Seconds(*_partialReplanLeadTime);
+    }
+
 }  // namespace Planning
