@@ -21,11 +21,19 @@ void usage(const char* prog) {
     fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
     fprintf(stderr, "\t--help       Show usage message\n");
     fprintf(stderr, "\t--sv         Use shared vision multicast port\n");
+    fprintf(stderr,
+            "\t--timeout    Times out the simulator after closing soccer\n");
     fprintf(
         stderr,
         "\t--headless   Run the simulator in headless mode (without a GUI)\n");
     fprintf(stderr,
             "\t--smallfield Run the simulator with the small/single field.\n");
+}
+
+int timeoutErrorMessage(char* argv[]) {
+    fprintf(stderr, "Expected number after --timeout parameter\n");
+    usage(argv[0]);
+    return 1;
 }
 
 int main(int argc, char* argv[]) {
@@ -39,7 +47,7 @@ int main(int argc, char* argv[]) {
 
     bool sendShared = false;
     bool headless = false;
-
+    RJ::Seconds timeoutsimulator = RJ::Seconds::max();
     // loop arguments and look for config file
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--help") == 0) {
@@ -64,6 +72,18 @@ int main(int argc, char* argv[]) {
         } else if (strcmp(argv[i], "--smallfield") == 0) {
             Field_Dimensions::Current_Dimensions =
                 Field_Dimensions::Single_Field_Dimensions * scaling;
+        } else if (strcmp(argv[i], "--timeout") == 0) {
+            if (i < argc - 1) {
+                try {
+                    timeoutsimulator = RJ::Seconds(stoi(argv[i + 1]));
+                    i++;
+                } catch (std::invalid_argument) {
+                    return timeoutErrorMessage(argv);
+                }
+
+            } else {
+                return timeoutErrorMessage(argv);
+            }
         } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
             return 1;
@@ -72,7 +92,7 @@ int main(int argc, char* argv[]) {
 
     // create the thread for simulation
     SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared,
-                                   !headless);
+                                   !headless, timeoutsimulator);
 
     struct sigaction act;
     memset(&act, 0, sizeof(act));

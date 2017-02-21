@@ -29,8 +29,10 @@ void RRTPlanner::createConfiguration(Configuration* cfg) {
         cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
 }
 
-RRTPlanner::RRTPlanner(int maxIterations)
-    : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
+RRTPlanner::RRTPlanner(int minIterations, int maxIterations)
+    : _minIterations(minIterations),
+      _maxIterations(maxIterations),
+      SingleRobotPathPlanner(true) {}
 
 bool veeredOffPath(Point currentPos, const Path& path, MotionConstraints motionConstraints) {
 
@@ -320,6 +322,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal, const 
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
     biRRT.setStepSize(*RRTConfig::StepSize);
+    biRRT.setMinIterations(_minIterations);
     biRRT.setMaxIterations(_maxIterations);
     biRRT.setGoalBias(*RRTConfig::GoalBias);
 
