@@ -119,6 +119,8 @@ include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
 include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf headers
 include_directories("${CMAKE_BINARY_DIR}/common") # for generated protobuf headers
 
+include_directories("${PROJECT_SOURCE_DIR}/external/rrt/src") # rrt library TODO is there a better way to do this?
+
 # setup ccache to speed up recompiles.  It's especially useful when switching back and forth
 # between branches where you'd normally have to recompile things many times.
 # see http://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake
@@ -129,6 +131,7 @@ endif()
 
 # run all the other CMakeLists files
 add_subdirectory(common)
+add_subdirectory(external)
 add_subdirectory(soccer)
 add_subdirectory(simulator)
 add_subdirectory(logging)
