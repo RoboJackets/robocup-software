@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#ad42dc3792688ed261e18b360dda1a475":[14,0,5,7,0,0,8],
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#adfb922737cb2fe125f59bd24da220d23":[14,0,5,7,0,0,2],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#af23b50d7cd7e93de301b741694bb4839":[14,0,5,7,0,0,7],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#af6c1318bd01890050d8aba638fee3187":[14,0,5,7,0,0,6],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html":[14,0,5,7,0,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#a64386b90df368522ae728711f826a722":[14,0,5,8,5,0,0,2],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#ac5b8a6c9a73f951a4293437c7f2da548":[14,0,5,8,5,0,0,3],
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html#acce03ed390a28ee3d87fc3f435a20250":[14,0,5,8,5,0,0,1],
-"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html":[14,0,5,8,5,0,1],
-"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html#a8b463089d0beefcc882f19c4051927ae":[14,0,5,8,5,0,1,0],
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html":[14,0,5,8,5,1,0]
+"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html":[14,0,5,8,5,0,1]
 };

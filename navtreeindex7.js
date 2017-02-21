@@ -1,5 +1,7 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html#a8b463089d0beefcc882f19c4051927ae":[14,0,5,8,5,0,1,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html":[14,0,5,8,5,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a1829f61b494b166155ed89af0276007a":[14,0,5,8,5,1,0,4],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a224a44289b3619ac798e6d079d8d58f3":[14,0,5,8,5,1,0,12],
 "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer.html#a38c3e4eed008c65d4f20a6d233e2c436":[14,0,5,8,5,1,0,11],
@@ -247,7 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5f5e60e56394bd8d3316a1f0330980ce":[14,0,5,13,9,0,9],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b0094cf85340eb551c4a4a3c5f15878":[14,0,5,13,9,0,6],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b2426b433729c0490eea18ee2e3532c":[14,0,5,13,9,0,12],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a7c86f92caef914775eaed060ccf25054":[14,0,5,13,9,0,7],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274":[14,0,5,13,9,0,3],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ac9b826816fbd4ca30412c4acb2f8b12b":[14,0,5,13,9,0,2]
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a7c86f92caef914775eaed060ccf25054":[14,0,5,13,9,0,7]
 };

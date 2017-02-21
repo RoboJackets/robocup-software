@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843":[14,0,5,15,8,1,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#acb7c7f9f71fc15e0f07452bc784d772f":[14,0,5,15,8,1,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668":[14,0,5,15,8,1,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aed8f5d432853ae9530bc075944ee2ed3":[14,0,5,15,8,1,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed5c39b6c8aff6b6dab240e7805c2a5":[14,0,5,15,8,1,0,15],
@@ -212,10 +214,10 @@ var NAVTREEINDEX9 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[14,0,70,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[14,0,70,8],
 "group__matrices.html":[12,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,4,0,2],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,1],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[14,0,4,0,4],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,1],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,4,0,13],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,2],
 "hierarchy.html":[14,2],
@@ -247,7 +249,5 @@ var NAVTREEINDEX9 =
 "struct_chart_1_1_numeric_field.html":[14,0,1,1],
 "struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[14,0,1,1,1],
 "struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[14,0,1,1,0],
-"struct_chart_1_1_point_magnitude.html":[14,0,1,2],
-"struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f":[14,0,1,2,1],
-"struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[14,0,1,2,0]
+"struct_chart_1_1_point_magnitude.html":[14,0,1,2]
 };
