@@ -76,8 +76,8 @@ void SimRadio::receive() {
     for (int i = 0; i < Robots_Per_Team; i++) {
         RadioRx rx;
         rx.set_robot_id(i);
-        //rx.set_hardware_version(RJ2008);
-        //rx.set_battery(100);
+        rx.set_hardware_version(RJ2015);
+        rx.set_battery(100);
 
         // need to add ball sense flag based on ball position and
         // robot position
