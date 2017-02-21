@@ -674,7 +674,8 @@ void MainWindow::updateViews() {
             bool kickerFault =
                 rx.has_kicker_status() && (rx.kicker_status() & 0x80);
 
-            bool kicker_charging = rx.has_kicker_status() && rx.kicker_status() & 0x01;
+            bool kicker_charging =
+                rx.has_kicker_status() && rx.kicker_status() & 0x01;
             statusWidget->setKickerState(kicker_charging);
             bool ballSenseFault = rx.has_ball_sense_status() &&
                                   !(rx.ball_sense_status() == Packet::NoBall ||
