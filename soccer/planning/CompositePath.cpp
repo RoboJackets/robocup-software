@@ -146,6 +146,8 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
         return this->clone();
     }
 
+    endTime = std::min(endTime, getDuration());
+
     // Find the first Path in the vector of paths which will be included in the
     // subPath
     size_t start = 0;
@@ -202,9 +204,8 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
         // Add the last one
         path->append(std::move(lastPath));
 
-        debugThrowIf(to_string(path->getDuration()) + to_string(std::min(getDuration() - startTime, endTime-startTime)),
+        debugThrowIf("Subpath Duration doesn't match Expected Duration. Something went wrong",
                      (path->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.00001);
-
         return std::move(path);
     }
 }

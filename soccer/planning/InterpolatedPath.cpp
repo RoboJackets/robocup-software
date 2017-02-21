@@ -296,6 +296,8 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
         return this->clone();
     }
 
+    endTime = std::min(endTime, getDuration());
+
     auto subpath = make_unique<InterpolatedPath>();
 
     subpath->setStartTime(this->startTime() + startTime);
