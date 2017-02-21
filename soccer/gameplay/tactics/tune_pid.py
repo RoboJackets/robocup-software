@@ -30,7 +30,7 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(Tune_pid.State.tune, Tune_pid.State.process,lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,'finished moving')
 
 
-        self.add_transition(Tune_pid.State.process, Tune_pid.State.tune,lambda: self.tune,'continue tuning')
+        self.add_transition(Tune_pid.State.process, Tune_pid.State.tune,lambda: self.tune and time.time() - self.pause > 1,'continue tuning')
 
         self.add_transition(Tune_pid.State.process, behavior.Behavior.State.completed, lambda: not self.tune, 'done tuning')
 
@@ -44,16 +44,16 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.tune = True
 
+        self.pause = 0
+
     def on_enter_running(self):
         self.robot.initialize_tuner('x')
 
     def on_enter_tune(self):
         if(self.robot.pos.x<0):
             move = skills.move_direct.MoveDirect(self.right_point)
-            #print("PYTHON: GO RIGHT")
         else:
             move= skills.move_direct.MoveDirect(self.left_point)
-            #print("PYTHON: GO LEFT")
 
         move.check_velocity = True;
         self.robot.start_pid('x')
@@ -64,19 +64,8 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.run_pid('x')
 
     def on_exit_tune(self):
-        #print("PYTHON: EXIT_TUNING")
         self.remove_subbehavior('move')
         self.tune = self.robot.end_pid('x')
 
-    #def on_enter_process(self):
-        #this currently does nothing :/
-
-
-'''
-    def role_requirements(self):
-        reqs = super().role_requirements()
-        if isinstance(reqs, role_assignment.RoleRequirements):
-            reqs.required_shell_id = 0
-
-        return reqs
-'''
+    def on_enter_process(self):
+        self.pause = time.time()

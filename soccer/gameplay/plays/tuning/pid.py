@@ -25,7 +25,7 @@ class pid(play.Play):
                             pid.State.prep, lambda: True,
                             'immediately')
 
-        self.add_transition(pid.State.prep, pid.State.testing, lambda: self.has_subbehavior_with_name('move2') and self.subbehavior_with_name('move2').state == behavior.Behavior.State.completed,'finished moving')
+        self.add_transition(pid.State.prep, pid.State.testing, lambda: self.has_subbehavior_with_name('move2') and self.subbehavior_with_name('move2').state == behavior.Behavior.State.completed and self.subbehavior_with_name('move2').robot.vel.mag() < .05 ,'finished moving')
 
 
         self.add_transition(pid.State.testing, behavior.Behavior.State.completed,
@@ -44,7 +44,6 @@ class pid(play.Play):
         return False
 
     def on_enter_prep(self):
-        #INITIAL TEST IS SCREWY BECAUSE PATH PLANNING SMOOTHS OUT THE TURN AFTER EXITING PREP
         xsize = constants.Field.Width/2
         move = skills.move.Move(robocup.Point((-xsize/2)+.1,2))
         self.add_subbehavior(move, 'move1', required=True, priority=100)
