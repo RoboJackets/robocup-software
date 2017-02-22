@@ -14,7 +14,7 @@ import time
 class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
         tune = 1
-        process=2
+        process = 2
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -24,23 +24,29 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for substate in Tune_pid.State:
             self.add_state(substate, behavior.Behavior.State.running)
 
-        self.add_transition(behavior.Behavior.State.start, Tune_pid.State.tune, lambda: True,'immediately')
+        self.add_transition(behavior.Behavior.State.start, Tune_pid.State.tune,
+                            lambda: True, 'immediately')
 
+        self.add_transition(
+            Tune_pid.State.tune, Tune_pid.State.process,
+            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
+            'finished moving')
 
-        self.add_transition(Tune_pid.State.tune, Tune_pid.State.process,lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,'finished moving')
+        self.add_transition(Tune_pid.State.process, Tune_pid.State.tune,
+                            lambda: self.tune and time.time() - self.pause > 1,
+                            'continue tuning')
 
+        self.add_transition(Tune_pid.State.process,
+                            behavior.Behavior.State.completed,
+                            lambda: not self.tune, 'done tuning')
 
-        self.add_transition(Tune_pid.State.process, Tune_pid.State.tune,lambda: self.tune and time.time() - self.pause > 1,'continue tuning')
+        self.positions = []
 
-        self.add_transition(Tune_pid.State.process, behavior.Behavior.State.completed, lambda: not self.tune, 'done tuning')
+        xsize = constants.Field.Width / 2
 
-        self.positions=[]
-
-        xsize = constants.Field.Width/2
-
-        self.left_point=robocup.Point(-xsize,2)
-        self.right_point=robocup.Point(xsize,2)
-        self.line = robocup.Segment(self.left_point,self.right_point)
+        self.left_point = robocup.Point(-xsize, 2)
+        self.right_point = robocup.Point(xsize, 2)
+        self.line = robocup.Segment(self.left_point, self.right_point)
 
         self.tune = True
 
@@ -50,12 +56,12 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.initialize_tuner('x')
 
     def on_enter_tune(self):
-        if(self.robot.pos.x<0):
+        if (self.robot.pos.x < 0):
             move = skills.move_direct.MoveDirect(self.right_point)
         else:
-            move= skills.move_direct.MoveDirect(self.left_point)
+            move = skills.move_direct.MoveDirect(self.left_point)
 
-        move.check_velocity = True;
+        move.check_velocity = True
         self.robot.start_pid('x')
 
         self.add_subbehavior(move, 'move', required=True, priority=100)

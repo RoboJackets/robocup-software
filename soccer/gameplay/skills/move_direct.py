@@ -44,7 +44,7 @@ class MoveDirect(single_robot_behavior.SingleRobotBehavior):
         self._threshold = value
 
     def velocity_check(self):
-        if(self.check_velocity):
+        if (self.check_velocity):
             return self.robot.vel.mag() < .05
         else:
             return True

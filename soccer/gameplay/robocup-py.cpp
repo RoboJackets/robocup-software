@@ -144,19 +144,19 @@ void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
     self->avoidOpponents(value);
 }
 
-void OurRobot_initialize_pid(OurRobot* self, char controller){
+void OurRobot_initialize_pid(OurRobot* self, char controller) {
     self->motionControl()->getPid(controller)->initialize_tuner();
 }
 
-void OurRobot_start_pid(OurRobot* self, char controller){
+void OurRobot_start_pid(OurRobot* self, char controller) {
     self->motionControl()->getPid(controller)->start_cycle();
 }
 
-void OurRobot_run_pid(OurRobot* self, char controller){
+void OurRobot_run_pid(OurRobot* self, char controller) {
     self->motionControl()->getPid(controller)->run();
 }
 
-bool OurRobot_end_pid(OurRobot* self, char controller){
+bool OurRobot_end_pid(OurRobot* self, char controller) {
     return self->motionControl()->getPid(controller)->end_cycle();
 }
 
