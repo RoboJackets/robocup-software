@@ -46,7 +46,6 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.left_point = robocup.Point(-xsize, 2)
         self.right_point = robocup.Point(xsize, 2)
-        self.line = robocup.Segment(self.left_point, self.right_point)
 
         self.tune = True
 
