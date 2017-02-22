@@ -19,7 +19,7 @@ bool trapezoid1(double t, double& posOut, double& speedOut) {
 
     if (valid) {
         auto time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                          startSpeed, finalSpeed);
+                                         startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -37,7 +37,7 @@ bool trapezoid2(double t, double& posOut, double& speedOut) {
 
     if (valid) {
         double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                          startSpeed, finalSpeed);
+                                           startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -58,7 +58,7 @@ bool triangle1(double t, double& posOut, double& speedOut) {
 
     if (valid) {
         double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                          startSpeed, finalSpeed);
+                                           startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -79,7 +79,7 @@ bool triangle2(double t, double& posOut, double& speedOut) {
 
     if (valid) {
         double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                          startSpeed, finalSpeed);
+                                           startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -100,7 +100,7 @@ bool triangle3(double t, double& posOut, double& speedOut) {
 
     if (valid) {
         double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                          startSpeed, finalSpeed);
+                                           startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -121,7 +121,7 @@ bool triangle4(double t, double& posOut, double& speedOut) {
 
     if (valid) {
         double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                          startSpeed, finalSpeed);
+                                           startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;

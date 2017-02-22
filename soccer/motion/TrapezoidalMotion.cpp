@@ -6,7 +6,8 @@
 using namespace std;
 
 double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
-                           double maxAcc, double startSpeed, double finalSpeed) {
+                            double maxAcc, double startSpeed,
+                            double finalSpeed) {
     startSpeed = fmin(startSpeed, maxSpeed);
     finalSpeed = fmin(finalSpeed, maxSpeed);
     double rampUpTime = (maxSpeed - startSpeed) / maxAcc;

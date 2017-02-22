@@ -24,8 +24,10 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
         const auto direction = (endTarget - startInstant.pos).normalized();
 
         float endSpeed = command.pathGoal.vel.mag();
-        auto path = std::make_unique<TrapezoidalPath>(startInstant.pos, vectorInDirection(startInstant.vel, direction),
-                                endTarget, vectorInDirection(command.pathGoal.vel, direction), motionConstraints);
+        auto path = std::make_unique<TrapezoidalPath>(
+            startInstant.pos, vectorInDirection(startInstant.vel, direction),
+            endTarget, vectorInDirection(command.pathGoal.vel, direction),
+            motionConstraints);
         path->setStartTime(RJ::now());
         return std::move(path);
     } else {

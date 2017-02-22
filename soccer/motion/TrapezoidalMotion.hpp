@@ -34,7 +34,7 @@ namespace Trapezoidal {
  * @return The estimated time it would take for the robot to move that certain
  *     distance down the path
  */
-double getTime(double distance, double pathLength, double maxSpeed, double maxAcc,
-              double startSpeed, double finalSpeed);
+double getTime(double distance, double pathLength, double maxSpeed,
+               double maxAcc, double startSpeed, double finalSpeed);
 
 }  // namespace Trapezoidal
