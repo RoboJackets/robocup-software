@@ -24,17 +24,17 @@ class TrapezoidalPath : public Path {
 private:
     const Geometry2d::Point _startPos, _endPos;
     const Geometry2d::Point _pathDirection;
-    const float _startSpeed, _endSpeed;
+    const double _startSpeed, _endSpeed;
 
-    const float _pathLength;
-    const float _maxAcc;
-    const float _maxSpeed;
+    const double _pathLength;
+    const double _maxAcc;
+    const double _maxSpeed;
 
     const RJ::Seconds _duration;
 
 public:
-    TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
-                    Geometry2d::Point endPos, float endSpeed,
+    TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
+                    Geometry2d::Point endPos, double endSpeed,
                     const MotionConstraints& constraints);
 
     virtual boost::optional<RobotInstant> evaluate(
@@ -47,7 +47,7 @@ public:
 
     virtual RJ::Seconds getDuration() const override { return _duration; }
 
-    float maxSpeed() const { return _maxSpeed; }
+    double maxSpeed() const { return _maxSpeed; }
 
     virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
                                           RJ::Seconds endTime) const override;

@@ -22,8 +22,8 @@ struct MotionConstraints {
      * This is useful for going slower while carrying the ball or when trying to
      * do precise movements.
      */
-    float maxSpeed;
-    float maxAcceleration;
+    double maxSpeed;
+    double maxAcceleration;
 
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
