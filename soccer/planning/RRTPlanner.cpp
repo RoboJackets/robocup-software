@@ -54,8 +54,11 @@ bool veeredOffPath(Point currentPos, const Path& path, MotionConstraints motionC
 bool goalChanged(const MotionInstant& goal, const Path& prevPath) {
     double goalPosDiff = (prevPath.end().motion.pos - goal.pos).mag();
     double goalVelDiff = (prevPath.end().motion.vel - goal.vel).mag();
-    return goalPosDiff > SingleRobotPathPlanner::goalChangeThreshold() ||
-        goalVelDiff > SingleRobotPathPlanner::goalChangeThreshold();
+//cout<<"posDif"<<(prevPath.end().motion.pos - goal.pos)<<endl;
+//    cout<<"vel1Dif"<<(prevPath.end().motion.vel)<<endl;
+// cout<<"vel2Dif"<<goal.vel<<endl;
+    return goalPosDiff > SingleRobotPathPlanner::goalPosChangeThreshold() ||
+        goalVelDiff > SingleRobotPathPlanner::goalVelChangeThreshold();
 }
 
 bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
@@ -82,8 +85,8 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
     // situation could arise if the path destination changed.
     double goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
     double goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
-    if (goalPosDiff > goalChangeThreshold() ||
-        goalVelDiff > goalChangeThreshold()) {
+    if (goalPosDiff > goalPosChangeThreshold() ||
+        goalVelDiff > goalVelChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
         // is above
         if (debugOut) {

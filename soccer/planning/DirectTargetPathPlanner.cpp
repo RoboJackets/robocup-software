@@ -46,8 +46,8 @@ bool DirectTargetPathPlanner::shouldReplan(
         float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
         float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;
 
-        if (targetPosChange > SingleRobotPathPlanner::goalChangeThreshold() ||
-            targetVelChange > SingleRobotPathPlanner::goalChangeThreshold()) {
+        if (targetPosChange > SingleRobotPathPlanner::goalPosChangeThreshold() ||
+            targetVelChange > SingleRobotPathPlanner::goalPosChangeThreshold()) {
             // FIXME: goalChangeThreshold shouldn't be used for checking
             // speed differences as it is in the above 'if' statement
             return true;

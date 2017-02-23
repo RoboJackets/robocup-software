@@ -6,6 +6,7 @@
 #include "RRTPlanner.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "CompositePath.hpp"
+#include "MotionInstant.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -107,7 +108,16 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
         if (std::abs(target.vel.angleBetween((target.pos - startInstant.pos))) >
             DegreesToRadians(50)) {
             target.pos -=
-                target.vel.normalized(ballAvoidDistance*3 + Robot_Radius);
+                target.vel.normalized(ballAvoidDistance*2 + Robot_Radius);
+            if (prevPath &&
+                    target.pos.distTo(prevPath->end().motion.pos) < SingleRobotPathPlanner::goalPosChangeThreshold() &&
+                    reusePathCount < 20) {
+                target.vel = prevPath->end().motion.vel;
+                reusePathCount++;
+            } else {
+                reusePathCount = 0;
+            }
+
             auto command = std::make_unique<PathTargetCommand>(target);
             auto request = PlanRequest(systemState,
                 startInstant, std::move(command), robotConstraints, std::move(prevPath), ballObstacles,
@@ -157,7 +167,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             }
         }
 
-        if (!prevPath->hit(obstacles, timeInto) && timeLeft-1000ms<timeToHit && reusePathCount < 10) {
+        if (!prevPath->hit(obstacles, timeInto) && timeLeft-1000ms < timeToHit && reusePathCount < 10) {
             reusePathCount++;
             Point nearPoint;
             prevPath->setDebugText("Reuse prevPath");

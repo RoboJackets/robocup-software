@@ -72,7 +72,7 @@ bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const Point newEndpoint = calculateNonblockedPathEndpoint(
         prevPath->start().motion.pos, command.worldVel, obstacles);
     const float endChange = (newEndpoint - prevPath->end().motion.pos).mag();
-    if (endChange > SingleRobotPathPlanner::goalChangeThreshold()) {
+    if (endChange > SingleRobotPathPlanner::goalPosChangeThreshold()) {
         return true;
     }
 
@@ -82,7 +82,7 @@ bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     if (auto trapezoidalPath = dynamic_cast<const TrapezoidalPath*>(prevPath)) {
         const float velChange =
             command.worldVel.mag() - trapezoidalPath->maxSpeed();
-        if (velChange > *_targetVelChangeReplanThreshold) {
+        if (velChange > SingleRobotPathPlanner::goalVelChangeThreshold()) {
             return true;
         }
         return false;
