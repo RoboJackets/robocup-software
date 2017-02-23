@@ -29,8 +29,10 @@ void RRTPlanner::createConfiguration(Configuration* cfg) {
         cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
 }
 
-RRTPlanner::RRTPlanner(int maxIterations)
-    : _maxIterations(maxIterations), SingleRobotPathPlanner(true) {}
+RRTPlanner::RRTPlanner(int minIterations, int maxIterations)
+    : _minIterations(minIterations),
+      _maxIterations(maxIterations),
+      SingleRobotPathPlanner(true) {}
 
 bool veeredOffPath(Point currentPos, const Path& path, MotionConstraints motionConstraints) {
 
@@ -52,8 +54,11 @@ bool veeredOffPath(Point currentPos, const Path& path, MotionConstraints motionC
 bool goalChanged(const MotionInstant& goal, const Path& prevPath) {
     double goalPosDiff = (prevPath.end().motion.pos - goal.pos).mag();
     double goalVelDiff = (prevPath.end().motion.vel - goal.vel).mag();
-    return goalPosDiff > SingleRobotPathPlanner::goalChangeThreshold() ||
-        goalVelDiff > SingleRobotPathPlanner::goalChangeThreshold();
+//cout<<"posDif"<<(prevPath.end().motion.pos - goal.pos)<<endl;
+//    cout<<"vel1Dif"<<(prevPath.end().motion.vel)<<endl;
+// cout<<"vel2Dif"<<goal.vel<<endl;
+    return goalPosDiff > SingleRobotPathPlanner::goalPosChangeThreshold() ||
+        goalVelDiff > SingleRobotPathPlanner::goalVelChangeThreshold();
 }
 
 bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
@@ -80,8 +85,8 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
     // situation could arise if the path destination changed.
     double goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
     double goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
-    if (goalPosDiff > goalChangeThreshold() ||
-        goalVelDiff > goalChangeThreshold()) {
+    if (goalPosDiff > goalPosChangeThreshold() ||
+        goalVelDiff > goalVelChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
         // is above
         if (debugOut) {
@@ -320,6 +325,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal, const 
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
     biRRT.setStepSize(*RRTConfig::StepSize);
+    biRRT.setMinIterations(_minIterations);
     biRRT.setMaxIterations(_maxIterations);
     biRRT.setGoalBias(*RRTConfig::GoalBias);
 
@@ -736,5 +742,9 @@ VectorXd RRTPlanner::cubicBezierCalc(double vi, double vf,
         return solution;
     }
 }
+
+    RJ::Seconds RRTPlanner::getPartialReplanLeadTime() {
+        return RJ::Seconds(*_partialReplanLeadTime);
+    }
 
 }  // namespace Planning

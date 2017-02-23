@@ -20,6 +20,8 @@
 #include "FastTimer.hpp"
 #include "SimEngine.hpp"
 #include "GL_ShapeDrawer.h"
+#include <Utils.hpp>
+#include <time.hpp>
 
 class SSL_DetectionRobot;
 
@@ -28,6 +30,8 @@ class Environment : public QObject {
 
 public:
     typedef QMap<unsigned int, Robot*> RobotMap;
+    const RJ::Seconds timeoutsimulator;
+    RJ::Time lastUpdate = RJ::now();
 
 private:
     // IF true, the next vision frame is dropped.
@@ -67,14 +71,15 @@ public:
 
     int ballVisibility;
 
-    Environment(const QString& configFile, bool sendShared_, SimEngine* engine);
+    Environment(const QString& configFile, bool sendShared_, SimEngine* engine,
+                RJ::Seconds timeoutsimulator);
 
     ~Environment();
 
+    void dropFrame() { _dropFrame = true; }
+
     /** initializes the timer, connects sockets */
     void connectSockets();
-
-    void dropFrame() { _dropFrame = true; }
 
     const QVector<Ball*>& balls() const { return _balls; }
 

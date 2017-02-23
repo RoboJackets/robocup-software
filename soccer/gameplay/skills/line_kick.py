@@ -37,6 +37,7 @@ class LineKick(skills._kick._Kick):
             LineKick.State.kick, behavior.Behavior.State.completed,
             lambda: self.robot is not None and self._got_close and self.robot.just_kicked(),
             "robot kicked")
+        self.shell_id = None
 
     def on_enter_running(self):
         super().recalculate_aim_target_point()
@@ -64,4 +65,7 @@ class LineKick(skills._kick._Kick):
         reqs.require_kicking = True
         if self.use_chipper:
             reqs.chipper_preference_weight = role_assignment.PreferChipper
+
+        if self.shell_id:
+            reqs.required_shell_id = self.shell_id
         return reqs

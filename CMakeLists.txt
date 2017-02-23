@@ -12,8 +12,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 enable_testing()
 include(SetupGTest)
 
+message("${TARGET}")
 # C++ version
-if ("${CMAKE_VERSION}" LESS "3.1")
+if ("${CMAKE_VERSION}" VERSION_LESS "3.1")
     # This is to support the CMake version backported to Ubuntu 14.04
     message("CMAKE_VERSION < 3.1, specifying c++14 flag.")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
@@ -32,13 +33,18 @@ else()
 
 endif()
 
+# Use compiler optimization if we are making a release build.
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -march=native")
+
 # Build in debug mode
 # TODO: make this easier to specify when running `make` on the command-line
 # try using cmake's debug flag support? 'set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")'
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Og")
 
 # Turn some compiler warnings into errors
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=delete-non-virtual-dtor -Werror=uninitialized")
+# TODO determine if we want these flags in the release build
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Werror=return-type -Werror=delete-non-virtual-dtor -Werror=uninitialized")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Werror=delete-non-virtual-dtor -Werror=uninitialized")
 
 
 # Qt5

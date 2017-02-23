@@ -103,7 +103,7 @@ bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
 void Path::slow(float multiplier, RJ::Seconds timeInto) {
     evalRate *= multiplier;
 
-    RJ::Seconds newTimeInto = timeInto * multiplier;
+    RJ::Seconds newTimeInto = timeInto / multiplier;
     RJ::Time now = startTime() + timeInto;
     setStartTime(now - newTimeInto);
 }

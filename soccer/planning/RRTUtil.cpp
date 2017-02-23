@@ -20,7 +20,7 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
         cfg, "PathPlanner/RRT/GoalBias", 0.3,
         "Value from 0 to 1 that determines what proportion of the time the RRT "
         "will grow towards the goal rather than towards a random point");
-    WaypointBias = new ConfigDouble(cfg, "PathPlanner/RRT/GoalBias", 0.5,
+    WaypointBias = new ConfigDouble(cfg, "PathPlanner/RRT/WayPointBias", 0.5,
         "Value from 0 to 1 that determines the portion of the time that the RRT will"
         " grow towards given waypoints rather than towards a random point");
 }
@@ -36,9 +36,9 @@ void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
         QColor("red"),   QColor("purple"), QColor("orange")};
     QColor color = colors[shellID % colors.size()];
 
-    for (auto* node : rrt.allNodes()) {
-        if (node->parent()) {
-            state->drawLine(Segment(node->state(), node->parent()->state()),
+    for (auto& node : rrt.allNodes()) {
+        if (node.parent()) {
+            state->drawLine(Segment(node.state(), node.parent()->state()),
                             color, QString("RobotRRT%1").arg(shellID));
         }
     }

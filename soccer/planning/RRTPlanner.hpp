@@ -40,7 +40,7 @@ public:
     /**
      * Constructor taking in the max iterations the RRT planner should run
      */
-    RRTPlanner(int maxIterations);
+    RRTPlanner(int minIterations, int maxIterations);
 
     /**
      * gets the maximum number of iterations for the RRT algorithm
@@ -51,6 +51,9 @@ public:
      * sets the maximum number of iterations for th RRT algorithm
      */
     void maxIterations(int value) { _maxIterations = value; }
+
+    int minIterations() const { return _minIterations; }
+    void minIterations(int value) { _minIterations = value; }
 
     /**
      * Takes in a waypoints and returns a full InterpolatedPath with a generated
@@ -72,13 +75,15 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    static RJ::Seconds getPartialReplanLeadTime();
+
 private:
     int reusePathTries = 0;
 
 protected:
-    /// maximum number of rrt iterations to run
+    /// minimum and maximum number of rrt iterations to run
     /// this does not include connect attempts
-    unsigned int _maxIterations;
+    int _minIterations, _maxIterations;
 
     /// Check to see if the previous path (if any) should be discarded and
     /// replaced with a newly-planned one

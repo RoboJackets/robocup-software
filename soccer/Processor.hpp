@@ -83,9 +83,11 @@ public:
         RJ::Time lastRadioRxTime;
     };
 
+    enum VisionChannel { primary, secondary, full };
+
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim);
+    Processor(bool sim, bool defendPlus, VisionChannel visionChannel);
     virtual ~Processor();
 
     void stop();
@@ -144,6 +146,7 @@ public:
     bool simulation() const { return _simulation; }
 
     void defendPlusX(bool value);
+    bool defendPlusX() { return _defendPlusX; }
 
     Status status() {
         QMutexLocker lock(&_statusMutex);
@@ -168,6 +171,8 @@ public:
     Radio* radio() { return _radio; }
 
     void changeVisionChannel(int port);
+
+    VisionChannel visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
 
@@ -272,6 +277,8 @@ private:
     bool _useFieldOrientedManualDrive = false;
 
     VisionReceiver vision;
+
+    VisionChannel _visionChannel;
 
     bool _initialized;
 };

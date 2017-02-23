@@ -19,7 +19,7 @@ namespace Planning {
  */
 class LineKickPlanner : public SingleRobotPathPlanner {
 public:
-    LineKickPlanner() : SingleRobotPathPlanner(false), rrtPlanner(250){};
+    LineKickPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250){};
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
@@ -32,6 +32,7 @@ private:
     RRTPlanner rrtPlanner;
     bool finalApproach = false;
     boost::optional<Geometry2d::Point> targetKickPos;
+    int reusePathCount = 0;
 };
 
 }  // namespace Planning

@@ -30,8 +30,8 @@ public:
     CompositePath(std::unique_ptr<Path> path);
 
     template <typename... Args>
-    CompositePath(std::unique_ptr<Path> path, Args... args) {
-        append(std::move(path), std::forward<Args>(args)...);
+    CompositePath(std::unique_ptr<Path> path, Args... args) : CompositePath(std::move(path)) {
+        append(std::forward<Args>(args)...);
     }
 
     /**

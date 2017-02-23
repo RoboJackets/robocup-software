@@ -149,6 +149,10 @@ public:
 
     bool useExternalReferee() { return _useExternalRef; }
 
+    void blueTeam(bool value) { _blueTeam = value; }
+
+    bool blueTeam() { return _blueTeam; }
+
     NewRefereeModuleEnums::Stage stage;
     NewRefereeModuleEnums::Command command;
 
@@ -215,6 +219,8 @@ protected:
     NewRefereeModuleEnums::Stage prev_stage;
 
     bool _useExternalRef = false;
+
+    bool _blueTeam = false;
 
     float ballPlacementx;
     float ballPlacementy;

@@ -125,6 +125,12 @@ private Q_SLOTS:
     void on_actionQuicksaveRobotLocations_triggered();
     void on_actionQuickloadRobotLocations_triggered();
 
+    /// Style Sheets
+    void on_actionNoneStyle_triggered();
+    void on_actionDarkStyle_triggered();
+    void on_actionDarculizedStyle_triggered();
+    void on_action1337h4x0rStyle_triggered();
+
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);
     void on_actionDampedTranslation_toggled(bool value);
@@ -174,6 +180,7 @@ signals:
 
 private:
     void updateStatus();
+    void updateFromRefPacket(bool haveExternalReferee);
     static std::string formatLabelBold(Side side, std::string label);
 
     typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
@@ -222,7 +229,7 @@ private:
     QLabel* _logMemory;
 
     // QActionGroups for Radio Menu Actions
-    std::vector<QActionGroup*> qActionGroups;
+    std::map<std::string, QActionGroup*> qActionGroups;
 
     // maps robot shell IDs to items in the list
     std::map<int, QListWidgetItem*> _robotStatusItemMap;

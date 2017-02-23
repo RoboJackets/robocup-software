@@ -296,7 +296,11 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
         return this->clone();
     }
 
-    InterpolatedPath* subpath = new InterpolatedPath();
+    endTime = std::min(endTime, getDuration());
+
+    auto subpath = make_unique<InterpolatedPath>();
+
+    subpath->setStartTime(this->startTime() + startTime);
 
     // Bound the endTime to a reasonable time.
     endTime = min(endTime, getDuration());
@@ -359,7 +363,10 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
     subpath->waypoints.emplace_back(MotionInstant(endPos, vf),
                                     endTime - startTime);
 
-    return unique_ptr<Path>(subpath);
+    debugThrowIf(to_string(subpath->getDuration()) + to_string(std::min(getDuration() - startTime, endTime-startTime)),
+                 (subpath->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.00001);
+
+    return std::move(subpath);
 }
 
 unique_ptr<Path> InterpolatedPath::clone() const {
