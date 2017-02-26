@@ -15,7 +15,7 @@
 
 // Point along target segment to aim at
 // % Chance of success
-using KickResults = std::pair<Geometry2d::Point, boost::optional<double>>;
+using KickResults = std::pair<Geometry2d::Point, double>;
 
 class KickEvaluator {
 public:

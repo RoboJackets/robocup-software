@@ -209,6 +209,7 @@ set(SOCCER_TEST_SRC
     "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
     "WindowEvaluatorTest.cpp"
+    "KickEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)
