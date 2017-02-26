@@ -86,6 +86,9 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
     vector<DynamicObstacle> actualDynamic;
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
+    //Straight line path planning
+    
+
     // Simple case: no path
     if (start.pos == goal.pos) {
         InterpolatedPath* path = new InterpolatedPath();
