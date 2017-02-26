@@ -6,6 +6,7 @@ import sys
 import traceback
 
 sys.path.append('../../run')
+import robocup
 
 def mkdir_p(path):
     try:
@@ -23,16 +24,9 @@ import main
 import ui.main
 main.init()
 
-class moc_Point():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-class moc_Ball():
-    def __init__(self):
-        self.pos = moc_Point(0,0)
-
-main.set_ball(moc_Ball())
+# Creates a mock ball so that no error is thrown when a ball isn't found
+mock_ball = robocup.Ball()
+main.set_ball(mock_ball)
 
 for behavior_type in ['skills', 'tactics', 'plays']:
     entries = class_import.recursive_import_classes('.', [behavior_type],
