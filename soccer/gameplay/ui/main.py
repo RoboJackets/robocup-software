@@ -20,9 +20,9 @@ _defense_checkbox = None
 
 
 def defenseEnabled():
-    global _defense_checkbox
+    if _defense_checkbox is None:
+        return False
     return _defense_checkbox.isChecked()
-
 
 def setup():
     global _has_setup_ui

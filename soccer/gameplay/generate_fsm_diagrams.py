@@ -6,7 +6,7 @@ import sys
 import traceback
 
 sys.path.append('../../run')
-
+import robocup
 
 def mkdir_p(path):
     try:
@@ -21,7 +21,12 @@ def mkdir_p(path):
 logging.getLogger().setLevel(logging.INFO)
 
 import main
+import ui.main
 main.init()
+
+# Creates a mock ball so that no error is thrown when a ball isn't found
+mock_ball = robocup.Ball()
+main.set_ball(mock_ball)
 
 for behavior_type in ['skills', 'tactics', 'plays']:
     entries = class_import.recursive_import_classes('.', [behavior_type],
@@ -38,5 +43,5 @@ for behavior_type in ['skills', 'tactics', 'plays']:
             print("generated " + filepath)
         except Exception as e:
             logging.error("Error generating fsm diagram for behavior '" +
-                          klass.__name__ + "':" + str(e))
+                    klass.__name__ + "':" + str(e))
             traceback.print_exc()
