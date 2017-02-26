@@ -46,7 +46,8 @@ class TwoSideAttack(standard_play.StandardPlay):
 
         self.add_transition(
             TwoSideAttack.State.passing, TwoSideAttack.State.kicking,
-            lambda: not 'pass' in [self.subbehaviors_by_name] or self.self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
+            lambda: (not self.has_subbehavior_with_name('pass') or
+                     self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed),
             'Pass completed')
 
         self.add_transition(
