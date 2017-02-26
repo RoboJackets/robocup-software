@@ -128,11 +128,12 @@ if(NOT STATIC_ANALYSIS)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif()
 
-set(grsim_install_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-ExternalProject_Add(grsim
-    SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/grSim/
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${grsim_install_dir}
-)
+#set(grsim_install_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+#ExternalProject_Add(grsim
+#    SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/grSim/
+#    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${grsim_install_dir}
+#)
+add_subdirectory(external/grSim/)
 
 # run all the other CMakeLists files
 add_subdirectory(common)
