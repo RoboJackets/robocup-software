@@ -144,20 +144,20 @@ void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
     self->avoidOpponents(value);
 }
 
-void OurRobot_initialize_pid(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->initialize_tuner();
+void OurRobot_initialize_tuner(OurRobot* self, char controller) {
+    self->motionControl()->getPid(controller)->initializeTuner();
 }
 
-void OurRobot_start_pid(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->start_cycle();
+void OurRobot_start_pid_tuner(OurRobot* self, char controller) {
+    self->motionControl()->getPid(controller)->startTunerCycle();
 }
 
-void OurRobot_run_pid(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->run();
+void OurRobot_run_pid_tuner(OurRobot* self, char controller) {
+    self->motionControl()->getPid(controller)->runTuner();
 }
 
-bool OurRobot_end_pid(OurRobot* self, char controller) {
-    return self->motionControl()->getPid(controller)->end_cycle();
+bool OurRobot_end_pid_tuner(OurRobot* self, char controller) {
+    return self->motionControl()->getPid(controller)->endTunerCycle();
 }
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
@@ -669,10 +669,10 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("ball_sense_works", &OurRobot::ballSenseWorks)
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
-        .def("initialize_tuner", &OurRobot_initialize_pid)
-        .def("start_pid", &OurRobot_start_pid)
-        .def("run_pid", &OurRobot_run_pid)
-        .def("end_pid", &OurRobot_end_pid)
+        .def("initialize_tuner", &OurRobot_initialize_tuner)
+        .def("start_pid_tuner", &OurRobot_start_pid_tuner)
+        .def("run_pid_tuner", &OurRobot_run_pid_tuner)
+        .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
     register_ptr_to_python<OurRobot*>();

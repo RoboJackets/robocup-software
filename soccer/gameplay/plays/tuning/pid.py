@@ -29,20 +29,15 @@ class pid(play.Play):
             lambda: self.has_subbehavior_with_name('move2') and self.subbehavior_with_name('move2').state == behavior.Behavior.State.completed and self.subbehavior_with_name('move2').robot.vel.mag() < .05,
             'finished moving')
 
-        self.add_transition(pid.State.testing,
-                            behavior.Behavior.State.completed,
-                            lambda: self.check_continue(), 'command changed')
-
-        self.positions = []
+        self.add_transition(
+            pid.State.testing, behavior.Behavior.State.completed,
+            lambda: not self.subbehavior_with_name('tune').tune, 'Done tuning')
 
     def create_lineup(self):
         xsize = constants.Field.Width / 2 - .5
 
         return robocup.Segment(
             robocup.Point(xsize, .25), robocup.Point(xsize, 1.5))
-
-    def check_continue(self):
-        return False
 
     def on_enter_prep(self):
         xsize = constants.Field.Width / 2

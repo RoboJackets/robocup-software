@@ -19,7 +19,8 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def __init__(self):
         super().__init__(continuous=False)
 
-        self.pause_time = 0
+        #TODO: find a better way to do this so it can be a sub 1-second pause
+        self.pause = 0
 
         for substate in Tune_pid.State:
             self.add_state(substate, behavior.Behavior.State.running)
@@ -40,8 +41,6 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             behavior.Behavior.State.completed,
                             lambda: not self.tune, 'done tuning')
 
-        self.positions = []
-
         xsize = constants.Field.Width / 2
 
         self.left_point = robocup.Point(-xsize, 2)
@@ -61,16 +60,16 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             move = skills.move_direct.MoveDirect(self.left_point)
 
         move.check_velocity = True
-        self.robot.start_pid('x')
+        self.robot.start_pid_tuner('x')
 
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
     def execute_tune(self):
-        self.robot.run_pid('x')
+        self.robot.run_pid_tuner('x')
 
     def on_exit_tune(self):
         self.remove_subbehavior('move')
-        self.tune = self.robot.end_pid('x')
+        self.tune = self.robot.end_pid_tuner('x')
 
     def on_enter_process(self):
         self.pause = time.time()
