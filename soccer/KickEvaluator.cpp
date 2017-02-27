@@ -1,4 +1,6 @@
 #include "KickEvaluator.hpp"
+#include <Utils.hpp>
+#include <Geometry2d/Util.hpp>
 
 #include <algorithm>
 #include <vector>
@@ -118,29 +120,24 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     vector<double> maxXValues = optimizer.getMaxXValues();
     vector<double> maxValues = optimizer.getMaxValues();
 
-    // Find the segment out of the list
-    double maxX;
-    double maxChance;
+    // Default to a local max
+    int index = distance(maxValues.begin(), max_element(maxValues.begin(), maxValues.end()));
+    double maxX = maxXValues.at(index);
+    double maxChance = maxValues.at(index);
 
-    // More than one local max
+    // See if there is a segment which is longer
+    // Since local maxes stop on either side of the segment
     if (maxXValues.size() > 1) {
-        // This happens when there is a "flat" top
-        // Find the highest average between the two
-        maxX = 0;
-        maxChance = 0;
-
         for (int i = 0; i < maxXValues.size() - 1; i++) {
-            double midPoint = (maxXValues.at(i + 1) + maxXValues.at(i)) / 2;
+            // Finds the score at the average between two local maxes
+            double midPoint = (maxXValues.at(i) + maxXValues.at(i + 1)) / 2;
             double chance = get<0>(eval_calculation(midPoint, keArgs.get()));
 
-            if (chance > maxChance) {
+            if (chance > maxChance || nearlyEqual(chance, maxChance)) {
                 maxX = midPoint;
                 maxChance = chance;
             }
         }
-    } else {
-        maxX = maxXValues.at(0);
-        maxChance = maxValues.at(0);
     }
 
     // Angle in reference to the field
@@ -269,10 +266,7 @@ tuple<double, double> KickEvaluator::rect_to_polar(Point origin,
     Point targetDir = target - origin;
     double angle =  obstacleDir.angle() - targetDir.angle();
 
-    // Force between -pi and pi
-    angle = atan2(sin(angle), cos(angle));
-
-    return make_tuple(obstacleDir.mag(), angle);
+    return make_tuple(obstacleDir.mag(), fixAngleRadians(angle));
 }
 
 vector< tuple<double, double> > KickEvaluator::convert_robots_to_polar(Point origin, Point target) {
