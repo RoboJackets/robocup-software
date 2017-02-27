@@ -38,7 +38,7 @@ void ParallelGradientAscent1D::execute() {
             // This helps kill any GA1Ds that are going up the same hill
             if (fabs(lower.getXValue() - upper.getXValue()) < config.xCombineThresh)
             {
-                //GA1Ds.erase(GA1Ds.begin() + i + 1);
+                GA1Ds.erase(GA1Ds.begin() + i + 1);
             }
         }
     }
