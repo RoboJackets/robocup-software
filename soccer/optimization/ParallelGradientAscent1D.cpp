@@ -1,5 +1,6 @@
 #include "ParallelGradientAscent1D.hpp"
 #include <math.h>
+#include <iostream>
 
 ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig config) : config(config) {
     // Create list of GA1D's and their bools
@@ -37,7 +38,7 @@ void ParallelGradientAscent1D::execute() {
             // This helps kill any GA1Ds that are going up the same hill
             if (fabs(lower.getXValue() - upper.getXValue()) < config.xCombineThresh)
             {
-                GA1Ds.erase(GA1Ds.begin() + i + 1);
+                //GA1Ds.erase(GA1Ds.begin() + i + 1);
             }
         }
     }

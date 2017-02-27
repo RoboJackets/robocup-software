@@ -9,6 +9,7 @@ using namespace boost::python;
 
 #include "motion/TrapezoidalMotion.hpp"
 #include "planning/MotionConstraints.hpp"
+#include "KickEvaluator.hpp"
 #include "WindowEvaluator.hpp"
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
@@ -458,6 +459,82 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
+boost::python::tuple KickEval_eval_pt_to_seg(KickEvaluator* self,
+                                            const Geometry2d::Point* origin,
+                                            const Geometry2d::Segment* target) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_seg(*origin, *target);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+    
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_robot(KickEvaluator* self,
+                                              const Geometry2d::Point* origin,
+                                              const Geometry2d::Point* target) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_robot(*origin, *target);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+    
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
+                                           const Geometry2d::Point* origin,
+                                           const Geometry2d::Point* target,
+                                           float targetWidth) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+    
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_opp_goal(
+    KickEvaluator* self, const Geometry2d::Point* origin) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_opp_goal(*origin);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+    
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_our_goal(
+    KickEvaluator* self, const Geometry2d::Point* origin) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_our_goal(*origin);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+void KickEval_add_excluded_robot(KickEvaluator* self, Robot* robot) {
+    self->excluded_robots.push_back(robot);
+}
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
@@ -755,6 +832,17 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
+
+    class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
+        .def_readwrite("excluded_robots", &KickEvaluator::excluded_robots)
+        .def_readwrite("hypothetical_robot_locations",
+                       &KickEvaluator::hypothetical_robot_locations)
+        .def("add_excluded_robot", &KickEval_add_excluded_robot)
+        .def("eval_pt_to_pt", &KickEval_eval_pt_to_pt)
+        .def("eval_pt_to_robot", &KickEval_eval_pt_to_robot)
+        .def("eval_pt_to_opp_goal", &KickEval_eval_pt_to_opp_goal)
+        .def("eval_pt_to_our_goal", &KickEval_eval_pt_to_our_goal)
+        .def("eval_pt_to_seg", &KickEval_eval_pt_to_seg);
 
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);

@@ -20,7 +20,7 @@ public:
      * @note All arguements are in radians in reference to the center of
      *       the kick target segment (Unless otherwise specified)
      */
-    KickEvaluatorArgs(double kickMean, double kickStdDev, 
+    KickEvaluatorArgs(double kickMean, double kickStDev, 
                       std::vector<double> robotMeans,
                       std::vector<double> robotStDevs,
                       std::vector<double> robotVertScales,

@@ -104,6 +104,5 @@ private:
     static ConfigDouble* kick_std_dev;
     static ConfigDouble* kick_mean;
     static ConfigDouble* robot_std_dev;
-    static ConfigDouble* robot_dist_scale;
     static ConfigDouble* start_x_offset;
 };
