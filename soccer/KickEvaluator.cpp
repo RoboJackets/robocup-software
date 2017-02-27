@@ -97,9 +97,9 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     // No opponent robots on the field
     if (botMeans.size() == 0) {
-        botMeans.push_back(0);
+        botMeans.push_back(10);
         // Must be non-zero as 1 / botStDev is used
-        botStDevs.push_back(1);
+        botStDevs.push_back(0.001);
         botVertScales.push_back(0);
     }
 
