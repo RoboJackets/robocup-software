@@ -88,7 +88,7 @@ public:
 private:
     SystemState* system;
 
-    double get_reference_angle(Geometry2d::Point origin, Geometry2d::Segment target);
+    double get_target_angle(Geometry2d::Point origin, Geometry2d::Segment target);
 
     std::vector<Robot*> get_valid_robots();
 

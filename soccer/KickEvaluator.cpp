@@ -63,7 +63,7 @@ KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
 
 KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     Point center = target.center();
-    double targetWidth = get_reference_angle(origin, target);
+    double targetWidth = get_target_angle(origin, target);
 
     // Polar bot locations
     // <Dist, Angle>
@@ -91,6 +91,14 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         } else {
             botVertScales.push_back(1);
         }
+    }
+
+    // No opponent robots on the field
+    if (botMeans.size() == 0) {
+        botMeans.push_back(0);
+        // Must be non-zero as 1 / botStDev is used
+        botStDevs.push_back(1);
+        botVertScales.push_back(0);
     }
 
     // Create KickEvaluator Function parameters
@@ -122,7 +130,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         maxChance = 0;
 
         for (int i = 0; i < maxXValues.size() - 1; i++) {
-            double midPoint = (maxXValues.at(i + 1) - maxXValues.at(i)) / 2;
+            double midPoint = (maxXValues.at(i + 1) + maxXValues.at(i)) / 2;
             double chance = get<0>(eval_calculation(midPoint, keArgs.get()));
 
             if (chance > maxChance) {
@@ -136,7 +144,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     }
 
     // Angle in reference to the field
-    double realMaxAngle = maxX + get_reference_angle(origin, target);
+    double realMaxAngle = maxX + (center - origin).angle();
     Line bestKickLine(origin, Point{cos(realMaxAngle), sin(realMaxAngle)});
 
     // Return point on target segment and chance
@@ -226,11 +234,11 @@ tuple<double, double> KickEvaluator::eval_calculation(double x, FunctionArgs* fA
 }
 
 
-double KickEvaluator::get_reference_angle(Point origin, Segment target) {
+double KickEvaluator::get_target_angle(Point origin, Segment target) {
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
-    return abs(atan2(left.y(), left.x()) - atan2(right.y(), right.x()));
+    return abs(left.angle() - right.angle());
 }
 
 
@@ -259,7 +267,7 @@ tuple<double, double> KickEvaluator::rect_to_polar(Point origin,
                                                    Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
-    double angle =  atan2(obstacleDir.y(), obstacleDir.x()) - atan2(targetDir.y(), targetDir.x());
+    double angle =  obstacleDir.angle() - targetDir.angle();
 
     // Force between -pi and pi
     angle = atan2(sin(angle), cos(angle));

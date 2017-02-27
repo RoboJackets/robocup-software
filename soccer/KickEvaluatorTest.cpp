@@ -6,6 +6,22 @@
 
 using namespace Geometry2d;
 
+TEST(KickEvaluator, no_robots) {
+    SystemState state;
+
+    KickEvaluator kickEval(&state);
+    std::pair<Point, double> pt_to_our_goal;
+    std::pair<Point, double> expected = std::pair<Point, double>(Point{0,0}, 1.0);
+
+    // No opponent robot
+    pt_to_our_goal = kickEval.eval_pt_to_our_goal(Point(0, 0.3));
+
+    // Due to the search functions, these may be a little off sometimes
+    EXPECT_NEAR((std::get<0>(expected)).x(), (std::get<0>(pt_to_our_goal)).x(), 0.01);
+    EXPECT_NEAR((std::get<0>(expected)).y(), (std::get<0>(pt_to_our_goal)).y(), 0.01);
+    EXPECT_NEAR(std::get<1>(expected), std::get<1>(pt_to_our_goal), 0.01);
+}
+
 TEST(KickEvaluator, eval_pt_to_our_goal) {
     SystemState state;
     OurRobot* obstacleBot = state.self[0];
@@ -13,11 +29,24 @@ TEST(KickEvaluator, eval_pt_to_our_goal) {
     obstacleBot->pos = Point(1, 1);
 
     KickEvaluator kickEval(&state);
-    std::pair<Point, double> pt_to_our_goal = kickEval.eval_pt_to_our_goal(Point(0, 2));
+    std::pair<Point, double> pt_to_our_goal;
+    std::pair<Point, double> expected = std::pair<Point, double>(Point{0,0}, 0.56);
 
-    KickEvaluatorArgs test(0, 0.1, {0.1}, {0.1}, {1}, -2, 2);
+    pt_to_our_goal = kickEval.eval_pt_to_our_goal(Point(0, 2));
+
+    EXPECT_GT((std::get<0>(expected)).x(), (std::get<0>(pt_to_our_goal)).x());
+    EXPECT_NEAR((std::get<0>(expected)).y(), (std::get<0>(pt_to_our_goal)).y(), 0.01);
+    EXPECT_GT(std::get<1>(expected), 0);
+    EXPECT_LT(std::get<1>(expected), 1);
+}
+
+TEST(KickEvaluator, eval_calculation) {
+    // Kick mean, Kick stdev, Robot mean, robot stdev, robot scale, boundsLower, boundsUpper
+    KickEvaluatorArgs test(0, 0.1, {10}, {0.1}, {1}, -2, 2);
+
     std::tuple<double, double> res = KickEvaluator::eval_calculation(0, &test);
-    double c = std::get<0>(res);
-    double d = std::get<1>(res);
-    std::cout << c << " Value, Derivative " << d << std::endl;
+    std::tuple<double, double> expected = std::make_tuple(1, 0);
+
+    EXPECT_NEAR(std::get<0>(res), std::get<0>(res), 0.01); // Value
+    EXPECT_NEAR(std::get<1>(res), std::get<1>(res), 0.01); // Derivative
 }
