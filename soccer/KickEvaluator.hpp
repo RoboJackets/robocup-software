@@ -11,12 +11,13 @@
 #include "optimization/KickEvaluatorArgs.hpp"
 
 #include <vector>
-#include <memory>
 
-// Point along target segment to aim at
-// % Chance of success
+// < [Point along target segment to aim at], [% Chance of success] >
 using KickResults = std::pair<Geometry2d::Point, float>;
 
+/**
+ * @brief Finds the best position to kick to and the chance of success
+ */
 class KickEvaluator {
 public:
     /**
@@ -33,7 +34,7 @@ public:
      * @return Results of calculations
      */
     KickResults eval_pt_to_pt(Geometry2d::Point origin, Geometry2d::Point target,
-                        float targetWidth);
+                              float targetWidth);
 
     /**
      * @brief Evaluates kick to target robot
@@ -52,6 +53,7 @@ public:
 
     /**
      * @brief Evaluates kick to our goal
+     * @param origin, Starting point of the kick
      * @return Results of calculations
      */
     KickResults eval_pt_to_our_goal(Geometry2d::Point origin);
@@ -88,17 +90,33 @@ public:
 private:
     SystemState* system;
 
+    /**
+     * @return 1/2 the width of the target segment in radians
+     */
     float get_target_angle(Geometry2d::Point origin, Geometry2d::Segment target);
 
+    /**
+     * @return Vector of valid robots on the field
+     */
     std::vector<Robot*> get_valid_robots();
 
+    /** 
+     * @brief Converts Robot position to polar in reference to the goal vector
+     * @return R, Theta
+     */
     std::tuple<float, float> rect_to_polar(Geometry2d::Point origin,
                                              Geometry2d::Point target,
                                              Geometry2d::Point obstacle);
 
+    /**
+     * @return List of all robots positions in polar coordinates
+     */
     std::vector< std::tuple<float, float> > convert_robots_to_polar(Geometry2d::Point origin,
                                                                       Geometry2d::Point target);
 
+    /**
+     * @brief Initilizes ParallelGraident1DConfig based upon the robot locations etc
+     */
     void init_gradient_configs(ParallelGradient1DConfig* pConfig, KickEvaluatorArgs* keArgs);
 
     static ConfigDouble* kick_std_dev;

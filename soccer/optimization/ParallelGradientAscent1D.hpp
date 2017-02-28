@@ -8,6 +8,11 @@
  * Starts multiple "Gradient Ascent 1D" (GA1D) at various start points
  * Combines two single GA1D's together when they
  * are near the same X value
+ *
+ * Use Example:
+ * PralellGradientAscent1D pga(& [ParallelGradient1DConfig obj]  );
+ * pga.execute();
+ * results = pgs.getMaxValues();
  */
 class ParallelGradientAscent1D {
 public:

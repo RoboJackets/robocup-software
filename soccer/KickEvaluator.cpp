@@ -188,31 +188,44 @@ tuple<float, float> KickEvaluator::eval_calculation(float x, FunctionArgs* fArgs
 
     KickEvaluatorArgs* args = static_cast<KickEvaluatorArgs*>(fArgs);
 
-    // We want the worst chance of success
-    static float minResults; minResults = 1.0f;
-    static int minIndex; minIndex = 0;
+    // Note: Static is used as a time saver as this executes a few hundred times
+    // Estimated 5-10% reduction
 
+    // We want the worst chance of success
+    static float minResults;
+    static int minIndex;
+    minResults = 1.0f;
+    minIndex = 0;
 
     // Shortcuts for repeated operations
-    static float kmean; kmean = args->kickMean;
-    static float kstdev; kstdev = args->kickStDev;
-    static float kstdev2; kstdev2 = kstdev*kstdev;
+    static float kmean;
+    static float kstdev;
+    static float kstdev2;
+    kmean = args->kickMean;
+    kstdev = args->kickStDev;
+    kstdev2 = kstdev * kstdev;
 
     static float sqrt2pi = 2.50662827f; // sqrt(2*PI)
     static float sqrtpi_2 = 1.253314137f; // sqrt(PI/2)
-    static float sqrt2_kstdev; sqrt2_kstdev = (1.4142f * kstdev); // sqrt(2) * kstdev
-    static float sqrt1_kstdev2; sqrt1_kstdev2 = 1.0f / sqrt(1.0f / kstdev2);
+    static float sqrt2_kstdev;
+    static float sqrt1_kstdev2;
+    sqrt2_kstdev = (1.4142f * kstdev); // sqrt(2) * kstdev
+    sqrt1_kstdev2 = 1.0f / sqrt(1.0f / kstdev2);
 
     static float rmean;
     static float rstdev;
     static float rstdev2;
     static float robotV;
     
-    static float kx; kx = kmean - x;
+    static float kx;
+    kx = kmean - x;
 
     static float fterm; // First term,  Robot normal distribution
     static float sterm; // Second term, Left boundary
     static float tterm; // Third term,  Right Boundary
+
+    static float results;
+    static float derivative;
 
     sterm = sqrtpi_2 * (sqrt1_kstdev2 - kstdev * erf((kx + args->boundaryLower) / sqrt2_kstdev));
 
@@ -229,7 +242,7 @@ tuple<float, float> KickEvaluator::eval_calculation(float x, FunctionArgs* fArgs
         fterm = -1.0f * fast_exp(-0.5f * (kx + rmean)*(kx + rmean) / (kstdev2 + rstdev2)) * robotV * sqrt2pi;
         fterm = fterm / sqrt(1.0f / kstdev2 + 1.0f / rstdev2);
 
-        static float results; results = 1.0f / (kstdev * sqrt2pi) * (fterm + sterm - tterm);
+        results = 1.0f / (kstdev * sqrt2pi) * (fterm + sterm - tterm);
 
         if (results < minResults) {
             minResults = results;
@@ -250,7 +263,7 @@ tuple<float, float> KickEvaluator::eval_calculation(float x, FunctionArgs* fArgs
 
     tterm = fast_exp(-0.5f * (kx + args->boundaryUpper)*(kx + args->boundaryUpper) / kstdev2);
 
-    static float derivative; derivative = 1.0f / (kstdev * sqrt2pi) * (sterm - tterm - fterm);
+    derivative = 1.0f / (kstdev * sqrt2pi) * (sterm - tterm - fterm);
 
     return forward_as_tuple(minResults, derivative);
 }
@@ -320,7 +333,6 @@ vector< tuple<float, float> > KickEvaluator::convert_robots_to_polar(Point origi
 }
 
 void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig* pConfig, KickEvaluatorArgs* keArgs) {
-    // Create list of single configs
     pConfig->GA1DConfig.reserve(keArgs->robotStDevs.size());
 
     // Standard Gradient Configs
@@ -354,7 +366,7 @@ void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig* pConfig, Kic
         }
     }
 
-    // Force into ascending order to make things simpler
+    // Force into ascending order to make things simpler later on
     sort(xStarts.begin(), xStarts.end(), [&](tuple<float, float> a, tuple<float, float> b) {
         return get<1>(a) < get<1>(b);
     });
@@ -369,6 +381,5 @@ void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig* pConfig, Kic
     
     }
 
-    // Create config from all the singles and the min std_dev
     pConfig->xCombineThresh = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) * *start_x_offset / 2;
 }

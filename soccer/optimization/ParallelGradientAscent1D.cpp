@@ -3,7 +3,7 @@
 #include <iostream>
 
 ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig* config) : config(config) {
-    // Create list of GA1D's and their bools
+    // Create list of GA1Ds
     for (int i = 0; i < (config->GA1DConfig).size(); i++) {
         GA1Ds.push_back( GradientAscent1D( &((config->GA1DConfig).at(i)) ) );
     }

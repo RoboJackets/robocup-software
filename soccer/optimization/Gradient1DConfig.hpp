@@ -4,8 +4,19 @@
 #include <memory>
 #include <tuple>
 
+/**
+ * Config data for a Gradient Ascent 1D optimizer
+ * Can be intitialized through the constructor or through
+ * obj.attribute style initialization
+ */
 class Gradient1DConfig {
 public:
+    /**
+     * Creates a Gradient Ascent 1D config
+     * Default args: dxError, maxXMovement, temperatureDescent
+     *               temperatureMin, maxIterations, maxValue
+     *               maxThresh
+     */
     Gradient1DConfig() : dxError(0.1), maxXMovement(0.02), 
                      temperatureDescent(0.5), temperatureMin(0.01), 
                      maxIterations(100), maxValue(0), maxThresh(0){}

@@ -3,8 +3,12 @@
 #include "FunctionArgs.hpp"
 #include <vector>
 
+/**
+ * Contains the arguements for the KickEvaluator function used in optimization
+ */
 class KickEvaluatorArgs : public FunctionArgs {
 public:
+    KickEvaluatorArgs() {}
     /**
      * Contains the static args for F(x) and F'(X)
      *

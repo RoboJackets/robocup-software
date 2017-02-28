@@ -54,11 +54,12 @@ float GradientAscent1D::getValue() {
 
 bool GradientAscent1D::continueExecution() {
     // dx not low enough?
-    bool dx_invalid = fabs(currentdx) > config->dxError;
+    bool dx_cont = fabs(currentdx) > config->dxError;
     // temp not low enough?
-    bool temp_invalid = temperature > config->temperatureMin;
-    // Val not almost max?
-    bool max_invalid = (config->maxValue - currentVal) > config->maxThresh;
+    bool temp_cont = temperature > config->temperatureMin;
+    // Val under max? Max has valid config?
+    bool max_invalid = (config->maxValue == config->maxThresh) ||
+                       (config->maxValue - currentVal) > config->maxThresh;
     // Under iteration count?
     bool iter_invalid = iterationCount < config->maxIterations;
 

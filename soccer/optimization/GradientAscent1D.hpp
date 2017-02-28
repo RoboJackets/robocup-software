@@ -10,6 +10,11 @@
  *
  * Temperature controls X movement around discontinuity in the derivative function
  *      EX: X=0 when F(x) = abs(x)
+ *
+ * Use Example:
+ * GradientAscent1D ga(& [Gradient1DConfig]);
+ * ga.execute();
+ * ga.getValue();
  */
 class GradientAscent1D {
 public:
@@ -33,17 +38,17 @@ public:
     void execute();
 
     /**
-     * Returns a single X value of the current guess of the max
+     * @return the X value of the current guess of the max
      */
     float getXValue();
 
     /**
-     * Returns the current guess of the max value
+     * @return the current guess of the max value
      */
     float getValue();
 
     /**
-     * Should continue execution?
+     * @return Should continue execution?
      */
     bool continueExecution();
 
@@ -60,9 +65,13 @@ private:
 
     int iterationCount;
 
-    // Returns next x value
+    /**
+     * @return next x value based on derivative
+     */
     float nextX();
 
-    // Returns sign of value (-1, 0, 1)
+    /**
+     * @return sign of value (-1, 0, 1)
+     */
     int sign(float val);
 };

@@ -4,6 +4,11 @@
 #include <vector>
 #include <memory>
 
+/**
+ * Config data for a Parallel Gradient 1D optimizer
+ * Can be intitialized through the constructor or through
+ * obj.attribute style initialization
+ */
 class ParallelGradient1DConfig {
 public:
     ParallelGradient1DConfig() {}
