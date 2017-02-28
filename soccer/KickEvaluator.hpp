@@ -15,7 +15,7 @@
 
 // Point along target segment to aim at
 // % Chance of success
-using KickResults = std::pair<Geometry2d::Point, double>;
+using KickResults = std::pair<Geometry2d::Point, float>;
 
 class KickEvaluator {
 public:
@@ -68,7 +68,7 @@ public:
      * @brief Evaluates closed form solution of the KickEvaluation problem
      * @return F(X), F'(X)
      */
-    static std::tuple<double, double> eval_calculation(double x, FunctionArgs* fArgs);
+    static std::tuple<float, float> eval_calculation(float x, FunctionArgs* fArgs);
 
     /**
      * @brief Initializes configurable fields
@@ -88,15 +88,15 @@ public:
 private:
     SystemState* system;
 
-    double get_target_angle(Geometry2d::Point origin, Geometry2d::Segment target);
+    float get_target_angle(Geometry2d::Point origin, Geometry2d::Segment target);
 
     std::vector<Robot*> get_valid_robots();
 
-    std::tuple<double, double> rect_to_polar(Geometry2d::Point origin,
+    std::tuple<float, float> rect_to_polar(Geometry2d::Point origin,
                                              Geometry2d::Point target,
                                              Geometry2d::Point obstacle);
 
-    std::vector< std::tuple<double, double> > convert_robots_to_polar(Geometry2d::Point origin,
+    std::vector< std::tuple<float, float> > convert_robots_to_polar(Geometry2d::Point origin,
                                                                       Geometry2d::Point target);
 
     ParallelGradient1DConfig init_gradient_configs(KickEvaluatorArgs* keArgs);

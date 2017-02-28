@@ -1,4 +1,4 @@
-MAKE_FLAGS = --no-print-directory
+MAKE_FLAGS = --no-print-directory -g
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
 
@@ -6,7 +6,7 @@ FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-send
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -pg -g -ggdb --target $1 $2 .. && ninja $1
 endef
 
 define cmake_build_target_release

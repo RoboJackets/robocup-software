@@ -20,24 +20,24 @@ public:
      * @note All arguements are in radians in reference to the center of
      *       the kick target segment (Unless otherwise specified)
      */
-    KickEvaluatorArgs(double kickMean, double kickStDev, 
-                      std::vector<double> robotMeans,
-                      std::vector<double> robotStDevs,
-                      std::vector<double> robotVertScales,
-                      double boundaryLower, double boundaryUpper) :
+    KickEvaluatorArgs(float kickMean, float kickStDev, 
+                      std::vector<float> robotMeans,
+                      std::vector<float> robotStDevs,
+                      std::vector<float> robotVertScales,
+                      float boundaryLower, float boundaryUpper) :
                       kickMean(kickMean), kickStDev(kickStDev),
                       robotMeans(robotMeans), robotStDevs(robotStDevs),
                       robotVertScales(robotVertScales),
                       boundaryLower(boundaryLower), 
                       boundaryUpper(boundaryUpper) {}
 
-    double kickMean;
-    double kickStDev;
+    float kickMean;
+    float kickStDev;
 
-    std::vector<double> robotMeans;
-    std::vector<double> robotStDevs;
-    std::vector<double> robotVertScales;
+    std::vector<float> robotMeans;
+    std::vector<float> robotStDevs;
+    std::vector<float> robotVertScales;
 
-    double boundaryLower;
-    double boundaryUpper;
+    float boundaryLower;
+    float boundaryUpper;
 };

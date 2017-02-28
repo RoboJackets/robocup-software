@@ -11,7 +11,7 @@
  */
 class ParallelGradientAscent1D {
 public:
-    ParallelGradientAscent1D(ParallelGradient1DConfig config);
+    ParallelGradientAscent1D(ParallelGradient1DConfig* config);
 
     /**
      * Executes all GA1Ds until their max has been reached
@@ -21,15 +21,15 @@ public:
     /**
      * Returns a list of all X values for each max in ascending order
      */
-    std::vector<double> getMaxXValues();
+    std::vector<float> getMaxXValues();
 
     /**
      * Returns a list of all the values for each max in ascending X order
      */
-    std::vector<double> getMaxValues();
+    std::vector<float> getMaxValues();
 
 private:
-    ParallelGradient1DConfig config;
+    ParallelGradient1DConfig* config;
 
     std::vector<GradientAscent1D> GA1Ds;
 };

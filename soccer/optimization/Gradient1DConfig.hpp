@@ -31,25 +31,25 @@ public:
      * @note By default, the max value exit capabilities are not used
      * @note Only f, args, startX, and prevX are required
      */
-    Gradient1DConfig(std::tuple<double, double> (*f) (double, FunctionArgs*),  
-                     FunctionArgs* args, double startX, double prevX, 
-                     double dxError = 0.1, double maxXMovement = 0.02, 
-                     double temperatureDescent = 0.5, double temperatureMin = 0.01, 
-                     int maxIterations = 100, double maxValue = 0, double maxThresh = 0) : 
+    Gradient1DConfig(std::tuple<float, float> (*f) (float, FunctionArgs*),  
+                     FunctionArgs* args, float startX, float prevX, 
+                     float dxError = 0.1, float maxXMovement = 0.02, 
+                     float temperatureDescent = 0.5, float temperatureMin = 0.01, 
+                     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) : 
                      f(f), args(args), startX(startX), prevX(prevX), dxError(dxError), 
                      maxXMovement(maxXMovement), temperatureDescent(temperatureDescent),
                      temperatureMin(temperatureMin), maxIterations(maxIterations), 
                      maxValue(maxValue), maxThresh(maxThresh) {}
 
-    std::tuple<double, double> (*f) (double, FunctionArgs*);
+    std::tuple<float, float> (*f) (float, FunctionArgs*);
     FunctionArgs* args;
-    double startX;
-    double prevX;
-    double dxError;
-    double maxXMovement;
-    double temperatureDescent;
-    double temperatureMin;
+    float startX;
+    float prevX;
+    float dxError;
+    float maxXMovement;
+    float temperatureDescent;
+    float temperatureMin;
     int    maxIterations;
-    double maxValue;
-    double maxThresh;
+    float maxValue;
+    float maxThresh;
 };

@@ -7,6 +7,23 @@
 #include <math.h>
 #include <cmath>
 
+static union 
+{
+  float d;
+  struct {
+#ifdef LITTLE_ENDIAN
+    int j,i;
+#else 
+    int i,j;
+#endif
+  } n;
+} _eco;
+
+// Floating point magic
+#define EXP_A (1048576/0.69314718055994530942)
+#define EXP_C 60801
+#define fast_exp(y) (_eco.n.i = EXP_A*(y) + (1072693248 - EXP_C), _eco.d)
+
 REGISTER_CONFIGURABLE(KickEvaluator)
 
 using namespace std;
@@ -65,31 +82,37 @@ KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
 
 KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     Point center = target.center();
-    double targetWidth = get_target_angle(origin, target);
+    float targetWidth = get_target_angle(origin, target);
 
     // Polar bot locations
     // <Dist, Angle>
-    vector< tuple<double, double> > botLocations = 
+    vector< tuple<float, float> > botLocations = 
                             convert_robots_to_polar(origin, center);
 
     // Convert polar to mean / std_dev / Vertical Scales
-    vector<double> botMeans;
-    vector<double> botStDevs;
-    vector<double> botVertScales;
+    vector<float> botMeans;
+    vector<float> botStDevs;
+    vector<float> botVertScales;
 
-    for (tuple<double, double>& loc : botLocations){
+    botMeans.reserve(botLocations.size());
+    botStDevs.reserve(botLocations.size());
+    botVertScales.reserve(botLocations.size());
+
+    float distPastTarget;
+
+    for (tuple<float, float>& loc : botLocations){
         botMeans.push_back(get<1>(loc));
         // Want std_dev in radians, not XY distance
         botStDevs.push_back(atan(*robot_std_dev / get<0>(loc)));
 
         // Robot Past Target
-        double distPastTarget = get<0>(loc) - (origin - center).mag();
+        distPastTarget = get<0>(loc) - (origin - center).mag();
 
         // If robot is past target, only use the chance at the target segment
         if (distPastTarget > 0 && fabs(get<1>(loc)) < M_PI / 2) {
             // Evaluate a normal distribution at dist away and scale
-            double stdev2 = pow(*robot_std_dev, 2);
-            botVertScales.push_back(1 / stdev2 * exp(-0.5 * pow(distPastTarget, 2) / stdev2));
+            float stdev2 = pow(*robot_std_dev, 2);
+            botVertScales.push_back(1 / stdev2 * fast_exp(-0.5 * pow(distPastTarget, 2) / stdev2));
         } else {
             botVertScales.push_back(1);
         }
@@ -112,26 +135,26 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     ParallelGradient1DConfig parallelConfig = init_gradient_configs(keArgs.get());
 
     // Create Gradient Ascent Optimizer and run it
-    ParallelGradientAscent1D optimizer(parallelConfig);
+    ParallelGradientAscent1D optimizer(&parallelConfig);
 
     optimizer.execute();
 
     // Grab the lcoal max values and their X location
-    vector<double> maxXValues = optimizer.getMaxXValues();
-    vector<double> maxValues = optimizer.getMaxValues();
+    vector<float> maxXValues = optimizer.getMaxXValues();
+    vector<float> maxValues = optimizer.getMaxValues();
 
     // Default to a local max
     int index = distance(maxValues.begin(), max_element(maxValues.begin(), maxValues.end()));
-    double maxX = maxXValues.at(index);
-    double maxChance = maxValues.at(index);
+    float maxX = maxXValues.at(index);
+    float maxChance = maxValues.at(index);
 
     // See if there is a segment which is longer
     // Since local maxes stop on either side of the segment
     if (maxXValues.size() > 1) {
         for (int i = 0; i < maxXValues.size() - 1; i++) {
             // Finds the score at the average between two local maxes
-            double midPoint = (maxXValues.at(i) + maxXValues.at(i + 1)) / 2;
-            double chance = get<0>(eval_calculation(midPoint, keArgs.get()));
+            float midPoint = (maxXValues.at(i) + maxXValues.at(i + 1)) / 2;
+            float chance = get<0>(eval_calculation(midPoint, keArgs.get()));
 
             if (chance > maxChance || nearlyEqual(chance, maxChance)) {
                 maxX = midPoint;
@@ -141,14 +164,14 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     }
 
     // Angle in reference to the field
-    double realMaxAngle = maxX + (center - origin).angle();
+    float realMaxAngle = maxX + (center - origin).angle();
     Line bestKickLine(origin, Point{cos(realMaxAngle), sin(realMaxAngle)});
 
     // Return point on target segment and chance
-    return pair<Point, double>(target.nearestPoint(bestKickLine), maxChance);
+    return pair<Point, float>(target.nearestPoint(bestKickLine), maxChance);
 }
 
-tuple<double, double> KickEvaluator::eval_calculation(double x, FunctionArgs* fArgs) {
+tuple<float, float> KickEvaluator::eval_calculation(float x, FunctionArgs* fArgs) {
     // 3 Main distribution sets
     // Set #1 : A set of each normal distribution for the obstacles
     // Set #2 : A band pass style distribution that represents a valid target kick
@@ -165,46 +188,47 @@ tuple<double, double> KickEvaluator::eval_calculation(double x, FunctionArgs* fA
     KickEvaluatorArgs* args = static_cast<KickEvaluatorArgs*>(fArgs);
 
     // We want the worst chance of success
-    double minResults = 1;
-    double minIndex = 0;
+    static float minResults; minResults = 1.0f;
+    static int minIndex; minIndex = 0;
 
 
     // Shortcuts for repeated operations
-    double sqrt2pi = sqrt(2*M_PI);
-    double sqrtpi_2 = sqrt(M_PI / 2);
+    static float kmean; kmean = args->kickMean;
+    static float kstdev; kstdev = args->kickStDev;
+    static float kstdev2; kstdev2 = kstdev*kstdev;
 
-    double kmean = args->kickMean;
-    double kstdev = args->kickStDev;
-    double kstdev2 = pow(kstdev, 2);
+    static float sqrt2pi = 2.50662827f; // sqrt(2*PI)
+    static float sqrtpi_2 = 1.253314137f; // sqrt(PI/2)
+    static float sqrt2_kstdev; sqrt2_kstdev = (1.4142f * kstdev); // sqrt(2) * kstdev
+    static float sqrt1_kstdev2; sqrt1_kstdev2 = 1.0f / sqrt(1.0f / kstdev2);
 
-    double rmean;
-    double rstdev;
-    double rstdev2;
-    double robotV;
+    static float rmean;
+    static float rstdev;
+    static float rstdev2;
+    static float robotV;
     
-    double kx = kmean - x;
+    static float kx; kx = kmean - x;
 
-    double fterm; // First term,  Robot normal distribution
-    double sterm; // Second term, Left boundary
-    double tterm; // Third term,  Right Boundary
+    static float fterm; // First term,  Robot normal distribution
+    static float sterm; // Second term, Left boundary
+    static float tterm; // Third term,  Right Boundary
+
+    sterm = sqrtpi_2 * (sqrt1_kstdev2 - kstdev * erf((kx + args->boundaryLower) / sqrt2_kstdev));
+
+    tterm = sqrtpi_2 * (sqrt1_kstdev2 - kstdev * erf((kx + args->boundaryUpper) / sqrt2_kstdev));
 
     // For each robot distribution in Set #1
-    for (int i = 0; i < args->robotMeans.size(); i++) {
-        rmean   = args->robotMeans.at(i);
-        rstdev  = args->robotStDevs.at(i);
-        rstdev2 = pow(rstdev, 2);
-        robotV  = args->robotVertScales.at(i);
+    static int i;
+    for (i = 0; i < args->robotMeans.size(); i++) {
+        rmean   = args->robotMeans[i];
+        rstdev  = args->robotStDevs[i];
+        rstdev2 = rstdev*rstdev;
+        robotV  = args->robotVertScales[i];
 
-        fterm = -1 * exp(-0.5 * pow(kx + rmean, 2) / (kstdev2 + rstdev2)) * robotV * sqrt2pi;
-        fterm = fterm / sqrt(1 / kstdev2 + 1 / rstdev2);
+        fterm = -1.0f * fast_exp(-0.5f * (kx + rmean)*(kx + rmean) / (kstdev2 + rstdev2)) * robotV * sqrt2pi;
+        fterm = fterm / sqrt(1.0f / kstdev2 + 1.0f / rstdev2);
 
-        sterm = 1 / sqrt(1 / kstdev2) - kstdev * erf((kx + args->boundaryLower) / (sqrt(2) * kstdev));
-        sterm *= sqrtpi_2;
-
-        tterm = 1 / sqrt(1 / kstdev2) - kstdev * erf((kx + args->boundaryUpper) / (sqrt(2) * kstdev));
-        tterm *= sqrtpi_2;
-
-        double results = 1 / (kstdev * sqrt2pi) * (fterm + sterm - tterm);
+        static float results; results = 1.0f / (kstdev * sqrt2pi) * (fterm + sterm - tterm);
 
         if (results < minResults) {
             minResults = results;
@@ -213,25 +237,25 @@ tuple<double, double> KickEvaluator::eval_calculation(double x, FunctionArgs* fA
     }
 
     // Calculate derivative of the convolution
-    rmean   = args->robotMeans.at(minIndex);
-    rstdev  = args->robotStDevs.at(minIndex);
-    rstdev2 = pow(rstdev, 2);
-    robotV  = args->robotVertScales.at(minIndex);
+    rmean   = args->robotMeans[minIndex];
+    rstdev  = args->robotStDevs[minIndex];
+    rstdev2 = rstdev*rstdev;
+    robotV  = args->robotVertScales[minIndex];
 
-    fterm = exp(-0.5 * pow(kx + rmean, 2) / (kstdev2 + rstdev2)) * robotV * sqrt2pi * (kx + rmean);
-    fterm = fterm / (sqrt(1 / kstdev2 + 1 / rstdev2) * (kstdev2 + rstdev2));
+    fterm = fast_exp(-0.5f * (kx + rmean)*(kx + rmean) / (kstdev2 + rstdev2)) * robotV * sqrt2pi * (kx + rmean);
+    fterm = fterm / (sqrt(1.0f / kstdev2 + 1.0f / rstdev2) * (kstdev2 + rstdev2));
 
-    sterm = exp(-0.5 * pow(kx + args->boundaryLower, 2) / kstdev2);
+    sterm = fast_exp(-0.5f * (kx + args->boundaryLower)*(kx + args->boundaryLower) / kstdev2);
 
-    tterm = exp(-0.5 * pow(kx + args->boundaryUpper, 2) / kstdev2);
+    tterm = fast_exp(-0.5f * (kx + args->boundaryUpper)*(kx + args->boundaryUpper) / kstdev2);
 
-    double derivative = 1 / (kstdev * sqrt2pi) * (sterm - tterm - fterm);
+    static float derivative; derivative = 1.0f / (kstdev * sqrt2pi) * (sterm - tterm - fterm);
 
-    return make_tuple(minResults, derivative);
+    return forward_as_tuple(minResults, derivative);
 }
 
 
-double KickEvaluator::get_target_angle(Point origin, Segment target) {
+float KickEvaluator::get_target_angle(Point origin, Segment target) {
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
@@ -259,19 +283,20 @@ vector<Robot*> KickEvaluator::get_valid_robots() {
     return bots;
 }
 
-tuple<double, double> KickEvaluator::rect_to_polar(Point origin,
+tuple<float, float> KickEvaluator::rect_to_polar(Point origin,
                                                    Point target,
                                                    Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
-    double angle =  obstacleDir.angle() - targetDir.angle();
+    float angle =  obstacleDir.angle() - targetDir.angle();
 
-    return make_tuple(obstacleDir.mag(), fixAngleRadians(angle));
+    return forward_as_tuple(obstacleDir.mag(), fixAngleRadians(angle));
 }
 
-vector< tuple<double, double> > KickEvaluator::convert_robots_to_polar(Point origin, Point target) {
+vector< tuple<float, float> > KickEvaluator::convert_robots_to_polar(Point origin, Point target) {
     vector<Robot*> bots = get_valid_robots();
-    vector< tuple<double, double> > botLocations;
+    vector< tuple<float, float> > botLocations;
+    botLocations.reserve(bots.size() + botLocations.size());
 
     // Convert each bot position to polar
     for_each(bots.begin(), bots.end(),
@@ -296,26 +321,28 @@ vector< tuple<double, double> > KickEvaluator::convert_robots_to_polar(Point ori
 ParallelGradient1DConfig KickEvaluator::init_gradient_configs(KickEvaluatorArgs* keArgs) {
     // Create list of single configs
     vector<Gradient1DConfig> singleGradientConfigs;
+    singleGradientConfigs.reserve(keArgs->robotStDevs.size());
 
     // Standard Gradient Configs
-    double dxError = 0.01;
-    double maxXMovement = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) / 5;
-    double temperatureDescent = 0.5;
-    double temperatureMin = 0.01;
-    int maxIterations = 100;
-    double maxValue = 1;
-    double maxThresh = 0.01;
-    double boundaryLower = keArgs->boundaryLower;
-    double boundaryUpper = keArgs->boundaryUpper;
+    float dxError = 0.05;
+    float maxXMovement = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) * 2;
+    float temperatureDescent = 0.5;
+    float temperatureMin = 0.01;
+    int maxIterations = 20;
+    float maxValue = 1;
+    float maxThresh = 0.05;
+    float boundaryLower = keArgs->boundaryLower;
+    float boundaryUpper = keArgs->boundaryUpper;
 
     // PrevStart, Start
-    vector< tuple<double, double> > xStarts;
+    vector< tuple<float, float> > xStarts;
+    xStarts.reserve(keArgs->robotStDevs.size());
 
-    double startX = boundaryLower + *start_x_offset * keArgs->kickStDev;
-    xStarts.push_back(make_tuple(boundaryLower, startX));
+    float startX = boundaryLower + *start_x_offset * keArgs->kickStDev;
+    xStarts.push_back(forward_as_tuple(boundaryLower, startX));
 
     startX = boundaryUpper - *start_x_offset * keArgs->kickStDev;
-    xStarts.push_back(make_tuple(boundaryUpper, startX));
+    xStarts.push_back(forward_as_tuple(boundaryUpper, startX));
 
     // For each robot
     for (int i = 0; i < keArgs->robotMeans.size(); i++) {
@@ -323,28 +350,28 @@ ParallelGradient1DConfig KickEvaluator::init_gradient_configs(KickEvaluatorArgs*
         for (int side = -1; side <= 1; side += 2) {
             startX = keArgs->robotMeans.at(i) + side * *start_x_offset * keArgs->robotStDevs.at(i);
 
-            xStarts.push_back(make_tuple(keArgs->robotMeans.at(i), startX));
+            xStarts.push_back(forward_as_tuple(keArgs->robotMeans.at(i), startX));
         }
     }
 
     // Force into ascending order to make things simpler
-    sort(xStarts.begin(), xStarts.end(), [&](tuple<double, double> a, tuple<double, double> b) {
+    sort(xStarts.begin(), xStarts.end(), [&](tuple<float, float> a, tuple<float, float> b) {
         return get<1>(a) < get<1>(b);
     });
 
     // Create list of configs
-    for (tuple<double, double> xStart : xStarts) {
+    for (tuple<float, float> xStart : xStarts) {
         singleGradientConfigs.push_back(
-            Gradient1DConfig(&eval_calculation, keArgs,
+            move(Gradient1DConfig(&eval_calculation, keArgs,
                              get<1>(xStart), get<0>(xStart),
                              dxError, maxXMovement,
                              temperatureDescent, temperatureMin,
-                             maxIterations, maxValue, maxThresh));
+                             maxIterations, maxValue, maxThresh)));
     
     }
 
     // Create config from all the singles and the min std_dev
-    double xCombineThresh = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) * *start_x_offset / 2;
+    static float xCombineThresh; xCombineThresh = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) * *start_x_offset / 2;
 
     return ParallelGradient1DConfig(singleGradientConfigs, xCombineThresh);
 }

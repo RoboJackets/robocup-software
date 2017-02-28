@@ -2,10 +2,10 @@
 #include <math.h>
 #include <iostream>
 
-ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig config) : config(config) {
+ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig* config) : config(config) {
     // Create list of GA1D's and their bools
-    for (int i = 0; i < (config.GA1DConfig).size(); i++) {
-        GA1Ds.push_back( GradientAscent1D( (config.GA1DConfig).at(i) ) );
+    for (int i = 0; i < (config->GA1DConfig).size(); i++) {
+        GA1Ds.push_back( GradientAscent1D( &((config->GA1DConfig).at(i)) ) );
     }
 }
 
@@ -36,7 +36,7 @@ void ParallelGradientAscent1D::execute() {
 
             // Erase elements if they get too close
             // This helps kill any GA1Ds that are going up the same hill
-            if (fabs(lower.getXValue() - upper.getXValue()) < config.xCombineThresh)
+            if (fabs(lower.getXValue() - upper.getXValue()) < config->xCombineThresh)
             {
                 GA1Ds.erase(GA1Ds.begin() + i + 1);
             }
@@ -47,8 +47,9 @@ void ParallelGradientAscent1D::execute() {
 /**
  * Returns a list of all X values for each max in ascending order
  */
-std::vector<double> ParallelGradientAscent1D::getMaxXValues() {
-    std::vector<double> xVals;
+std::vector<float> ParallelGradientAscent1D::getMaxXValues() {
+    std::vector<float> xVals;
+    xVals.reserve(GA1Ds.size());
 
     for (auto &GA1D : GA1Ds) {
         xVals.push_back(GA1D.getXValue());
@@ -60,8 +61,9 @@ std::vector<double> ParallelGradientAscent1D::getMaxXValues() {
 /**
  * Returns a list of all X values for each max in ascending order
  */
-std::vector<double> ParallelGradientAscent1D::getMaxValues() {
-    std::vector<double> vals;
+std::vector<float> ParallelGradientAscent1D::getMaxValues() {
+    std::vector<float> vals;
+    vals.reserve(GA1Ds.size());
 
     for (auto &GA1D : GA1Ds) {
         vals.push_back(GA1D.getValue());

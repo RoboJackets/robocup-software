@@ -13,7 +13,7 @@
  */
 class GradientAscent1D {
 public:
-    GradientAscent1D(Gradient1DConfig config);
+    GradientAscent1D(Gradient1DConfig* config);
 
     /**
      * Runs a single step of the optimization algorithm
@@ -35,12 +35,12 @@ public:
     /**
      * Returns a single X value of the current guess of the max
      */
-    double getXValue();
+    float getXValue();
 
     /**
      * Returns the current guess of the max value
      */
-    double getValue();
+    float getValue();
 
     /**
      * Should continue execution?
@@ -48,21 +48,21 @@ public:
     bool continueExecution();
 
 private:
-    Gradient1DConfig config;
+    Gradient1DConfig* config;
 
-    double currentVal;
-    double currentx;
-    double currentdx;
-    double previousx;
-    double previousdx;
+    float currentVal;
+    float currentx;
+    float currentdx;
+    float previousx;
+    float previousdx;
 
-    double temperature;
+    float temperature;
 
     int iterationCount;
 
     // Returns next x value
-    double nextX();
+    float nextX();
 
     // Returns sign of value (-1, 0, 1)
-    int sign(double val);
+    int sign(float val);
 };

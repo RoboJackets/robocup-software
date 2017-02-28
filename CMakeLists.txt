@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 # put executables in the 'run' folder
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
-
+#set(CMAKE_BUILD_TYPE Debug)
 # Google test
 enable_testing()
 include(SetupGTest)
@@ -17,7 +17,7 @@ message("${TARGET}")
 if ("${CMAKE_VERSION}" VERSION_LESS "3.1")
     # This is to support the CMake version backported to Ubuntu 14.04
     message("CMAKE_VERSION < 3.1, specifying c++14 flag.")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -q -std=c++14")
 else()
     # This is the more modern way of setting our c++ version
     message("CMAKE_VERSION >= 3.1, setting CMAKE_CXX_STANDARD to 14.")
