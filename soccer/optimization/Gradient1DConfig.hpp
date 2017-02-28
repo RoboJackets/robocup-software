@@ -6,6 +6,10 @@
 
 class Gradient1DConfig {
 public:
+    Gradient1DConfig() : dxError(0.1), maxXMovement(0.02), 
+                     temperatureDescent(0.5), temperatureMin(0.01), 
+                     maxIterations(100), maxValue(0), maxThresh(0){}
+
     /**
      * Creates a Gradient Ascent 1D config
      *

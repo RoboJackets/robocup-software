@@ -132,7 +132,8 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
                                       botMeans, botStDevs, botVertScales,
                                       targetWidth / -2, targetWidth / 2));
 
-    ParallelGradient1DConfig parallelConfig = init_gradient_configs(keArgs.get());
+    ParallelGradient1DConfig parallelConfig;
+    init_gradient_configs(&parallelConfig, keArgs.get());
 
     // Create Gradient Ascent Optimizer and run it
     ParallelGradientAscent1D optimizer(&parallelConfig);
@@ -318,10 +319,9 @@ vector< tuple<float, float> > KickEvaluator::convert_robots_to_polar(Point origi
     return botLocations;
 }
 
-ParallelGradient1DConfig KickEvaluator::init_gradient_configs(KickEvaluatorArgs* keArgs) {
+void KickEvaluator::init_gradient_configs(ParallelGradient1DConfig* pConfig, KickEvaluatorArgs* keArgs) {
     // Create list of single configs
-    vector<Gradient1DConfig> singleGradientConfigs;
-    singleGradientConfigs.reserve(keArgs->robotStDevs.size());
+    pConfig->GA1DConfig.reserve(keArgs->robotStDevs.size());
 
     // Standard Gradient Configs
     float dxError = 0.05;
@@ -361,17 +361,14 @@ ParallelGradient1DConfig KickEvaluator::init_gradient_configs(KickEvaluatorArgs*
 
     // Create list of configs
     for (tuple<float, float> xStart : xStarts) {
-        singleGradientConfigs.push_back(
-            move(Gradient1DConfig(&eval_calculation, keArgs,
+        pConfig->GA1DConfig.emplace_back(&eval_calculation, keArgs,
                              get<1>(xStart), get<0>(xStart),
                              dxError, maxXMovement,
                              temperatureDescent, temperatureMin,
-                             maxIterations, maxValue, maxThresh)));
+                             maxIterations, maxValue, maxThresh);
     
     }
 
     // Create config from all the singles and the min std_dev
-    static float xCombineThresh; xCombineThresh = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) * *start_x_offset / 2;
-
-    return ParallelGradient1DConfig(singleGradientConfigs, xCombineThresh);
+    pConfig->xCombineThresh = *min_element(keArgs->robotStDevs.begin(), keArgs->robotStDevs.end()) * *start_x_offset / 2;
 }

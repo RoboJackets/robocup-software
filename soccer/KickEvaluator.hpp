@@ -99,7 +99,7 @@ private:
     std::vector< std::tuple<float, float> > convert_robots_to_polar(Geometry2d::Point origin,
                                                                       Geometry2d::Point target);
 
-    ParallelGradient1DConfig init_gradient_configs(KickEvaluatorArgs* keArgs);
+    void init_gradient_configs(ParallelGradient1DConfig* pConfig, KickEvaluatorArgs* keArgs);
 
     static ConfigDouble* kick_std_dev;
     static ConfigDouble* kick_mean;

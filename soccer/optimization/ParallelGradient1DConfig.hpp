@@ -6,6 +6,8 @@
 
 class ParallelGradient1DConfig {
 public:
+    ParallelGradient1DConfig() {}
+
     /**
      * Creates a Parallel Gradient Ascent 1D config
      *
