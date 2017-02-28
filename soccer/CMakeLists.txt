@@ -198,7 +198,17 @@ target_link_libraries(log_viewer robocup)
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
+    "BatteryProfileTest.cpp"
+    "motion/TrapezoidalMotionTest.cpp"
+    "planning/PathTest.cpp"
+    "planning/EscapeObstaclesPathPlannerTest.cpp"
+    "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
+    "WindowEvaluatorTest.cpp"
     "KickEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})

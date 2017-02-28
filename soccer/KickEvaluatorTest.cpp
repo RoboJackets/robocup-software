@@ -1,13 +1,10 @@
 #include <gtest/gtest.h>
 #include "KickEvaluator.hpp"
 #include "SystemState.hpp"
-#include "Configuration.hpp"
 
 #include <stdlib.h>
 
 using namespace Geometry2d;
-
-Configuration config;
 
 TEST(KickEvaluator, no_robots) {
     SystemState state;
