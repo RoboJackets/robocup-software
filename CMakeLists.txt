@@ -24,6 +24,7 @@ else()
     set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON) # Don't fall back to older versions
 endif()
+add_subdirectory(external/grSim)
 
 # Because we use ninja, we have to explicitly turn on color output for the compiler
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
@@ -104,6 +105,7 @@ else()
     find_package(PythonLibs 3.2 REQUIRED)
 endif()
 
+
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
 
@@ -128,16 +130,8 @@ if(NOT STATIC_ANALYSIS)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif()
 
-#set(grsim_install_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-#ExternalProject_Add(grsim
-#    SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/grSim/
-#    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${grsim_install_dir}
-#)
-add_subdirectory(external/grSim/)
-
 # run all the other CMakeLists files
 add_subdirectory(common)
 add_subdirectory(external)
 add_subdirectory(soccer)
-add_subdirectory(simulator)
 add_subdirectory(logging)
