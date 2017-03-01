@@ -24,6 +24,7 @@ def defenseEnabled():
         return False
     return _defense_checkbox.isChecked()
 
+
 def setup():
     global _has_setup_ui
     global _defense_checkbox

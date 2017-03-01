@@ -8,6 +8,7 @@ import traceback
 sys.path.append('../../run')
 import robocup
 
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
@@ -43,5 +44,5 @@ for behavior_type in ['skills', 'tactics', 'plays']:
             print("generated " + filepath)
         except Exception as e:
             logging.error("Error generating fsm diagram for behavior '" +
-                    klass.__name__ + "':" + str(e))
+                          klass.__name__ + "':" + str(e))
             traceback.print_exc()
