@@ -26,7 +26,7 @@ class pid(play.Play):
 
         self.add_transition(
             pid.State.prep, pid.State.testing,
-            lambda: self.has_subbehavior_with_name('move2') and self.subbehavior_with_name('move2').state == behavior.Behavior.State.completed and self.subbehavior_with_name('move2').robot.vel.mag() < .05,
+            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and self.subbehavior_with_name('move').robot.vel.mag() < .05,
             'finished moving')
 
         self.add_transition(
@@ -41,23 +41,14 @@ class pid(play.Play):
 
     def on_enter_prep(self):
         xsize = constants.Field.Width / 2
-        move = skills.move.Move(robocup.Point((-xsize / 2) + .1, 2))
-        self.add_subbehavior(move, 'move1', required=True, priority=100)
+        move = skills.move.Move(robocup.Point(-xsize + .1, 2))
+        self.add_subbehavior(move, 'move', required=True, priority=100)
 
         line_up = tactics.line_up.LineUp(self.create_lineup())
         self.add_subbehavior(line_up, 'line_up', required=True, priority=80)
 
-    def execute_prep(self):
-        if self.has_subbehavior_with_name(
-                'move1') and self.subbehavior_with_name(
-                    'move1').state == behavior.Behavior.State.completed:
-            self.remove_subbehavior('move1')
-            xsize = constants.Field.Width / 2
-            move2 = skills.move.Move(robocup.Point(-xsize + .1, 2))
-            self.add_subbehavior(move2, 'move2', required=True, priority=100)
-
     def on_exit_prep(self):
-        self.remove_subbehavior('move2')
+        self.remove_subbehavior('move')
 
     def on_enter_testing(self):
         tune = tactics.tune_pid.Tune_pid()
