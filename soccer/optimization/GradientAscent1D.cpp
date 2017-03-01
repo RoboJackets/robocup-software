@@ -58,12 +58,12 @@ bool GradientAscent1D::continueExecution() {
     // temp not low enough?
     bool temp_cont = temperature > config->temperatureMin;
     // Val under max? Max has valid config?
-    bool max_invalid = (config->maxValue == config->maxThresh) ||
+    bool max_cont = (config->maxValue == config->maxThresh) ||
                        (config->maxValue - currentVal) > config->maxThresh;
     // Under iteration count?
-    bool iter_invalid = iterationCount < config->maxIterations;
+    bool iter_cont = iterationCount < config->maxIterations;
 
-    return dx_invalid && temp_invalid && max_invalid && iter_invalid;
+    return dx_cont && temp_cont && max_cont && iter_cont;
 }
 
 float GradientAscent1D::nextX() {

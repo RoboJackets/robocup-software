@@ -204,6 +204,8 @@ set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
     "BatteryProfileTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
+    "optimization/GradientAscent1DTest.cpp"
+    "optimization/ParallelGradientAscent1DTest.cpp"
     "planning/PathTest.cpp"
     "planning/EscapeObstaclesPathPlannerTest.cpp"
     "planning/TargetVelPathPlannerTest.cpp"
