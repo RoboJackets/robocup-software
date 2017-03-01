@@ -53,6 +53,9 @@ public:
     // This chart owns the function and will destroy it when needed.
     void function(Chart::Function* function);
 
+    // Exports the contents of the chart to a file (file type tbd)
+    void xport();
+
     void minValue(float v) { _minValue = v; }
 
     void maxValue(float v) { _maxValue = v; }

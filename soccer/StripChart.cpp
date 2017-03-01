@@ -9,6 +9,8 @@
 #include <Geometry2d/Point.hpp>
 #include <Constants.hpp>
 #include <time.hpp>
+#include <iostream>
+#include <fstream>
 
 #include <google/protobuf/descriptor.h>
 
@@ -44,6 +46,30 @@ StripChart::~StripChart() {
 void StripChart::function(Chart::Function* function) {
     if (function) {
         _functions.append(function);
+    }
+}
+
+void StripChart::xport() {
+    float newMin = _minValue;
+    float newMax = _maxValue;
+    for (unsigned int x = 0; x < _functions.size(); x++) {
+        auto function = _functions[x];
+        
+        std::ofstream outfile("chartData.csv");
+        outfile << "Time,Value\n";
+
+        for (unsigned int i = 0; i < _history->size(); ++i) {
+            float v = 0;
+            if (_history->at(i) && function->value(*_history->at(i).get(), v)) {
+                if (autoRange) {
+                    newMin = min(newMin, v);
+                    newMax = max(newMax, v);
+                }
+                QPointF pt = dataPoint(i, v);
+                 outfile << pt.x() << "," << pt.y() << std::endl;
+            }
+        }
+        outfile.close();
     }
 }
 
