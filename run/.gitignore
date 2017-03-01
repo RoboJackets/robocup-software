@@ -1,4 +1,7 @@
-grSim/
+client
+vartype_example
+grsim
+lib/
 libprotobuf.so*
 soccsim
 simulator
