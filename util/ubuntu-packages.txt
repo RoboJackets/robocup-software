@@ -15,6 +15,7 @@ libqt5opengl5-dev
 libqt5svg5-dev
 qtdeclarative5-dev
 
+
 # required for compiling gcc
 libgmp3-dev
 libmpfr-dev
@@ -74,6 +75,11 @@ libboost-python-dev
 # for joystick
 libsdl2-dev
 libsdl1.2-dev
+
+# grSim
+libode-dev
+qt4-dev-tools
+
 
 # everything else...
 build-essential
