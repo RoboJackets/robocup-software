@@ -6,14 +6,16 @@
 
 using namespace std;
 
+// Inverted parabola
 static tuple<float, float> evalFunction(float x, FunctionArgs* args) {
-    return make_tuple(1 - x*x, -0.5 * x);
+    return make_tuple(1 - x * x, -0.5 * x);
 }
 
+// Tests general execution
 TEST(GradientAscent1D, execute) {
     FunctionArgs args;
-    Gradient1DConfig config(&evalFunction, &args, -1, -1.1,
-                            0.01, 0.01, 0.5, 0.01, 100, 1, 0.001);
+    Gradient1DConfig config(&evalFunction, &args, -1, -1.1, 0.01, 0.01, 0.5,
+                            0.01, 100, 1, 0.001);
 
     GradientAscent1D ga(&config);
 

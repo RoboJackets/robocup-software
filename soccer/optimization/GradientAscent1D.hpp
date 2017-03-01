@@ -5,10 +5,12 @@
 
 /**
  * Gradient Ascent in 1 Dimension with Temperature
- * Works for all functions that are continous with a specified derivative function
+ * Works for all functions that are continous with a specified derivative
+ * function
  * Only finds the closest local max
  *
- * Temperature controls X movement around discontinuity in the derivative function
+ * Temperature controls X movement around discontinuity in the derivative
+ * function
  *      EX: X=0 when F(x) = abs(x)
  *
  * Use Example:
@@ -22,16 +24,16 @@ public:
 
     /**
      * Runs a single step of the optimization algorithm
-     * 
-     * @note This is most likely not the function you are looking for to find the
-     *       max. This is used when executing multiple GradientAscent1D's in 
-     *       parallel
+     *
+     * @note This is most likely not the function you are looking for to find
+     *       the max. This is used when executing multiple GradientAscent1D's
+     *       in parallel
      */
     bool singleStep();
 
     /**
      * Executes the full optimization algorithm
-     * 
+     *
      * @note This function is used when there is no need to step through each
      *       iteration. Most uses of GradientAscent1D will call this function
      */

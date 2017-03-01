@@ -33,8 +33,8 @@ public:
      * @param targetWidth, Width of target in radians
      * @return Results of calculations
      */
-    KickResults eval_pt_to_pt(Geometry2d::Point origin, Geometry2d::Point target,
-                              float targetWidth);
+    KickResults eval_pt_to_pt(Geometry2d::Point origin,
+                              Geometry2d::Point target, float targetWidth);
 
     /**
      * @brief Evaluates kick to target robot
@@ -42,7 +42,8 @@ public:
      * @param target, Target robot location
      * @return Results of calculations
      */
-    KickResults eval_pt_to_robot(Geometry2d::Point origin, Geometry2d::Point target);
+    KickResults eval_pt_to_robot(Geometry2d::Point origin,
+                                 Geometry2d::Point target);
 
     /**
      * @brief Evaluates kick to opponent goal
@@ -64,13 +65,15 @@ public:
      * @param target, End segment of the kick
      * @return Results of calculations
      */
-    KickResults eval_pt_to_seg(Geometry2d::Point origin, Geometry2d::Segment target);
+    KickResults eval_pt_to_seg(Geometry2d::Point origin,
+                               Geometry2d::Segment target);
 
     /**
      * @brief Evaluates closed form solution of the KickEvaluation problem
      * @return F(X), F'(X)
      */
-    static std::tuple<float, float> eval_calculation(float x, FunctionArgs* fArgs);
+    static std::tuple<float, float> eval_calculation(float x,
+                                                     FunctionArgs* fArgs);
 
     /**
      * @brief Initializes configurable fields
@@ -87,37 +90,41 @@ public:
      * @brief Locations to pretend are robot obstacles during evaluation
      */
     std::vector<Geometry2d::Point> hypothetical_robot_locations;
+
 private:
     SystemState* system;
 
     /**
-     * @return 1/2 the width of the target segment in radians
+     * @return the width of the target segment in radians
      */
-    float get_target_angle(Geometry2d::Point origin, Geometry2d::Segment target);
+    float get_target_angle(Geometry2d::Point origin,
+                           Geometry2d::Segment target);
 
     /**
      * @return Vector of valid robots on the field
      */
     std::vector<Robot*> get_valid_robots();
 
-    /** 
+    /**
      * @brief Converts Robot position to polar in reference to the goal vector
-     * @return R, Theta
+     * @return <R, Theta>
      */
     std::tuple<float, float> rect_to_polar(Geometry2d::Point origin,
-                                             Geometry2d::Point target,
-                                             Geometry2d::Point obstacle);
+                                           Geometry2d::Point target,
+                                           Geometry2d::Point obstacle);
 
     /**
      * @return List of all robots positions in polar coordinates
      */
-    std::vector< std::tuple<float, float> > convert_robots_to_polar(Geometry2d::Point origin,
-                                                                      Geometry2d::Point target);
+    std::vector<std::tuple<float, float> > convert_robots_to_polar(
+        Geometry2d::Point origin, Geometry2d::Point target);
 
     /**
-     * @brief Initilizes ParallelGraident1DConfig based upon the robot locations etc
+     * @brief Initilizes ParallelGraident1DConfig based upon the robot locations
+     * etc
      */
-    void init_gradient_configs(ParallelGradient1DConfig* pConfig, KickEvaluatorArgs* keArgs);
+    void init_gradient_configs(ParallelGradient1DConfig* pConfig,
+                               KickEvaluatorArgs* keArgs);
 
     static ConfigDouble* kick_std_dev;
     static ConfigDouble* kick_mean;

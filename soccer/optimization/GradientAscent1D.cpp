@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <tuple>
 
-GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config){
-    currentx  = config->startX;
+GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
+    currentx = config->startX;
     previousx = config->prevX;
 
-    std::tuple<float, float> funcOutput = config->f(currentx,  config->args);
+    std::tuple<float, float> funcOutput = config->f(currentx, config->args);
     currentVal = std::get<0>(funcOutput);
-    currentdx  = std::get<1>(funcOutput);
+    currentdx = std::get<1>(funcOutput);
     previousdx = std::get<1>(config->f(previousx, config->args));
 
     temperature = 1;
@@ -21,15 +21,15 @@ bool GradientAscent1D::singleStep() {
     float newX = nextX();
     std::tuple<float, float> funcOutput = config->f(newX, config->args);
 
-    previousx  = currentx;
+    previousx = currentx;
     previousdx = currentdx;
 
     currentx = newX;
-    currentdx  = std::get<1>(funcOutput);
+    currentdx = std::get<1>(funcOutput);
     currentVal = std::get<0>(funcOutput);
 
     // Decrease temperature when derivative flips sign
-    if (sign(previousdx) == -1*sign(currentdx)) {
+    if (sign(previousdx) == -1 * sign(currentdx)) {
         temperature *= config->temperatureDescent;
     }
 
@@ -44,13 +44,9 @@ void GradientAscent1D::execute() {
     }
 }
 
-float GradientAscent1D::getXValue() {
-    return currentx;
-}
+float GradientAscent1D::getXValue() { return currentx; }
 
-float GradientAscent1D::getValue() {
-    return currentVal;
-}
+float GradientAscent1D::getValue() { return currentVal; }
 
 bool GradientAscent1D::continueExecution() {
     // dx not low enough?
@@ -59,7 +55,7 @@ bool GradientAscent1D::continueExecution() {
     bool temp_cont = temperature > config->temperatureMin;
     // Val under max? Max has valid config?
     bool max_cont = (config->maxValue == config->maxThresh) ||
-                       (config->maxValue - currentVal) > config->maxThresh;
+                    (config->maxValue - currentVal) > config->maxThresh;
     // Under iteration count?
     bool iter_cont = iterationCount < config->maxIterations;
 
@@ -69,7 +65,8 @@ bool GradientAscent1D::continueExecution() {
 float GradientAscent1D::nextX() {
     float delta_x = currentx - previousx;
     float delta_dx = currentdx - previousdx;
-    float gamma = fabs(temperature * delta_x * delta_dx / (delta_dx*delta_dx));
+    float gamma =
+        fabs(temperature * delta_x * delta_dx / (delta_dx * delta_dx));
 
     float x_offset = gamma * currentdx;
 
@@ -80,6 +77,4 @@ float GradientAscent1D::nextX() {
     return currentx + x_offset;
 }
 
-int GradientAscent1D::sign(float val) {
-    return (0.0 < val) - (val < 0.0);
-}
+int GradientAscent1D::sign(float val) { return (0.0 < val) - (val < 0.0); }

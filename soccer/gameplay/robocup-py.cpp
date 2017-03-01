@@ -459,9 +459,9 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
-boost::python::tuple KickEval_eval_pt_to_seg(KickEvaluator* self,
-                                            const Geometry2d::Point* origin,
-                                            const Geometry2d::Segment* target) {
+boost::python::tuple KickEval_eval_pt_to_seg(
+    KickEvaluator* self, const Geometry2d::Point* origin,
+    const Geometry2d::Segment* target) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -470,13 +470,13 @@ boost::python::tuple KickEval_eval_pt_to_seg(KickEvaluator* self,
 
     lst.append(kick_results.first);
     lst.append(kick_results.second);
-    
+
     return boost::python::tuple{lst};
 }
 
-boost::python::tuple KickEval_eval_pt_to_robot(KickEvaluator* self,
-                                              const Geometry2d::Point* origin,
-                                              const Geometry2d::Point* target) {
+boost::python::tuple KickEval_eval_pt_to_robot(
+    KickEvaluator* self, const Geometry2d::Point* origin,
+    const Geometry2d::Point* target) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -485,14 +485,14 @@ boost::python::tuple KickEval_eval_pt_to_robot(KickEvaluator* self,
 
     lst.append(kick_results.first);
     lst.append(kick_results.second);
-    
+
     return boost::python::tuple{lst};
 }
 
 boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
-                                           const Geometry2d::Point* origin,
-                                           const Geometry2d::Point* target,
-                                           float targetWidth) {
+                                            const Geometry2d::Point* origin,
+                                            const Geometry2d::Point* target,
+                                            float targetWidth) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -501,7 +501,7 @@ boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
 
     lst.append(kick_results.first);
     lst.append(kick_results.second);
-    
+
     return boost::python::tuple{lst};
 }
 
@@ -514,7 +514,7 @@ boost::python::tuple KickEval_eval_pt_to_opp_goal(
 
     lst.append(kick_results.first);
     lst.append(kick_results.second);
-    
+
     return boost::python::tuple{lst};
 }
 

@@ -37,22 +37,22 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     EXPECT_EQ(ourGoalSegment, windows[0].segment);
 }
 
-TEST(WindowEvaluator, speed) {
-    SystemState state;
-    OurRobot* obstacleBot = state.self[0];
-    obstacleBot->visible = true;
-    obstacleBot->pos = Point(1, 1);
+// TEST(WindowEvaluator, speed) {
+//     SystemState state;
+//     OurRobot* obstacleBot = state.self[0];
+//     obstacleBot->visible = true;
+//     obstacleBot->pos = Point(1, 1);
 
-    WindowEvaluator winEval(&state);
+//     WindowEvaluator winEval(&state);
 
-    for (double x = -Field_Dimensions::Current_Dimensions.Width() / 2; 
-                x < Field_Dimensions::Current_Dimensions.Width() / 2;
-                x += 0.01) {
-        for (double y = 0; 
-                    y < Field_Dimensions::Current_Dimensions.Length();
-                    y += 0.01) {
-            WindowingResult result =
-                winEval.eval_pt_to_our_goal(Point(x, y));
-        }
-    }
-}
+//     for (double x = -Field_Dimensions::Current_Dimensions.Width() / 2;
+//                 x < Field_Dimensions::Current_Dimensions.Width() / 2;
+//                 x += 0.01) {
+//         for (double y = 0;
+//                     y < Field_Dimensions::Current_Dimensions.Length();
+//                     y += 0.01) {
+//             WindowingResult result =
+//                 winEval.eval_pt_to_our_goal(Point(x, y));
+//         }
+//     }
+// }

@@ -6,8 +6,7 @@
 
 /**
  * Starts multiple "Gradient Ascent 1D" (GA1D) at various start points
- * Combines two single GA1D's together when they
- * are near the same X value
+ * Combines two single GA1D's together when they are near the same X value
  *
  * Use Example:
  * PralellGradientAscent1D pga(& [ParallelGradient1DConfig obj]  );
@@ -19,17 +18,17 @@ public:
     ParallelGradientAscent1D(ParallelGradient1DConfig* config);
 
     /**
-     * Executes all GA1Ds until their max has been reached
+     * @brief Executes all GA1Ds until their max has been reached
      */
     void execute();
 
     /**
-     * Returns a list of all X values for each max in ascending order
+     * @return a list of all X values for each max in ascending order
      */
     std::vector<float> getMaxXValues();
 
     /**
-     * Returns a list of all the values for each max in ascending X order
+     * @retunr a list of all the values for each max in ascending X order
      */
     std::vector<float> getMaxValues();
 
