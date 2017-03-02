@@ -125,11 +125,11 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // Rest are bound to constant values
     function<tuple<float, float>(float)> keFunc =
         bind(&eval_calculation, std::placeholders::_1, (*kick_mean),
-             (*kick_std_dev), ref(botMeans), ref(botStDevs), ref(botVertScales),
+             (*kick_std_dev), cref(botMeans), cref(botStDevs), cref(botVertScales),
              targetWidth / -2, targetWidth / 2);
 
     ParallelGradient1DConfig parallelConfig;
-    init_gradient_configs(&parallelConfig, &keFunc, &botMeans, &botStDevs,
+    init_gradient_configs(parallelConfig, keFunc, botMeans, botStDevs,
                           targetWidth / -2, targetWidth / 2);
 
     // Create Gradient Ascent Optimizer and run it
@@ -315,7 +315,7 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
     const Point origin, const Point target) {
-    vector<Robot*> bots = get_valid_robots();
+    vector<Robot*> bots = move(get_valid_robots());
     vector<tuple<float, float> > botLocations;
     botLocations.reserve(bots.size() + botLocations.size());
 
@@ -337,16 +337,16 @@ vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
 }
 
 void KickEvaluator::init_gradient_configs(
-    ParallelGradient1DConfig* pConfig,
-    function<tuple<float, float>(float)>* func, const vector<float>* robotMeans,
-    const vector<float>* robotStDevs, const float boundaryLower,
+    ParallelGradient1DConfig& pConfig,
+    function<tuple<float, float>(float)>& func, const vector<float>& robotMeans,
+    const vector<float>& robotStDevs, const float boundaryLower,
     const float boundaryUpper) {
-    pConfig->GA1DConfig.reserve(robotStDevs->size());
+    pConfig.GA1DConfig.reserve(robotStDevs.size());
 
     // Standard Gradient Configs
     const float dxError = 0.05;
     const float maxXMovement =
-        *min_element(robotStDevs->begin(), robotStDevs->end()) * 2;
+        *min_element(robotStDevs.begin(), robotStDevs.end()) * 2;
     const float temperatureDescent = 0.5;
     const float temperatureMin = 0.01;
     const int maxIterations = 20;
@@ -355,24 +355,24 @@ void KickEvaluator::init_gradient_configs(
 
     // <PrevStart, Start>
     vector<tuple<float, float> > xStarts;
-    xStarts.reserve(robotStDevs->size());
+    xStarts.reserve(robotStDevs.size());
 
     // Add left boundary
     float startX = boundaryLower + *start_x_offset * *kick_std_dev;
-    xStarts.push_back(forward_as_tuple(boundaryLower, startX));
+    xStarts.emplace_back(forward_as_tuple(boundaryLower, startX));
 
     // Add right boundary
     startX = boundaryUpper - *start_x_offset * *kick_std_dev;
-    xStarts.push_back(forward_as_tuple(boundaryUpper, startX));
+    xStarts.emplace_back(forward_as_tuple(boundaryUpper, startX));
 
     // For each robot
-    for (int i = 0; i < robotMeans->size(); i++) {
+    for (int i = 0; i < robotMeans.size(); i++) {
         // -1 or 1
         for (int side = -1; side <= 1; side += 2) {
             startX =
-                robotMeans->at(i) + side * *start_x_offset * robotStDevs->at(i);
+                robotMeans.at(i) + side * *start_x_offset * robotStDevs.at(i);
 
-            xStarts.push_back(forward_as_tuple(robotMeans->at(i), startX));
+            xStarts.emplace_back(forward_as_tuple(robotMeans.at(i), startX));
         }
     }
 
@@ -384,13 +384,13 @@ void KickEvaluator::init_gradient_configs(
 
     // Create list of configs
     for (tuple<float, float> xStart : xStarts) {
-        pConfig->GA1DConfig.emplace_back(func, get<1>(xStart), get<0>(xStart),
+        pConfig.GA1DConfig.emplace_back(&func, get<1>(xStart), get<0>(xStart),
                                          dxError, maxXMovement,
                                          temperatureDescent, temperatureMin,
                                          maxIterations, maxValue, maxThresh);
     }
 
-    pConfig->xCombineThresh =
-        *min_element(robotStDevs->begin(), robotStDevs->end()) *
+    pConfig.xCombineThresh =
+        *min_element(robotStDevs.begin(), robotStDevs.end()) *
         *start_x_offset / 2;
 }

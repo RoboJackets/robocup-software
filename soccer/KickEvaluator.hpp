@@ -135,10 +135,10 @@ private:
      * etc
      */
     void init_gradient_configs(
-        ParallelGradient1DConfig* pConfig,
-        std::function<std::tuple<float, float>(float)>* func,
-        const std::vector<float>* robotMeans,
-        const std::vector<float>* robotStDevs, const float boundaryLower,
+        ParallelGradient1DConfig& pConfig,
+        std::function<std::tuple<float, float>(float)>& func,
+        const std::vector<float>& robotMeans,
+        const std::vector<float>& robotStDevs, const float boundaryLower,
         const float boundaryUpper);
 
     static ConfigDouble* kick_std_dev;
