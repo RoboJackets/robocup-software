@@ -3,7 +3,6 @@
 #include "ParallelGradient1DConfig.hpp"
 #include "GradientAscent1D.hpp"
 #include "Gradient1DConfig.hpp"
-#include "FunctionArgs.hpp"
 #include <tuple>
 #include <vector>
 

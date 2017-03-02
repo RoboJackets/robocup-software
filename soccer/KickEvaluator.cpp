@@ -275,7 +275,8 @@ tuple<float, float> KickEvaluator::eval_calculation(
     return forward_as_tuple(minResults, derivative);
 }
 
-float KickEvaluator::get_target_angle(const Point origin, const Segment target) {
+float KickEvaluator::get_target_angle(const Point origin,
+                                      const Segment target) {
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 

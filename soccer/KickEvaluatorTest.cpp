@@ -54,7 +54,7 @@ TEST(KickEvaluator, eval_calculation) {
     std::tuple<double, double> res = KickEvaluator::eval_calculation(
         0, 0, 0.1, std::ref(robotMeans), std::ref(robotStdevs),
         std::ref(robotVertScores), -2, 2);
-    
+
     std::tuple<double, double> expected = std::make_tuple(1, 0);
 
     EXPECT_NEAR(std::get<0>(res), std::get<0>(res), 0.01);  // Value
