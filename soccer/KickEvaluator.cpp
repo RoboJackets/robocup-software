@@ -125,8 +125,8 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // Rest are bound to constant values
     function<tuple<float, float>(float)> keFunc =
         bind(&eval_calculation, std::placeholders::_1, (*kick_mean),
-             (*kick_std_dev), cref(botMeans), cref(botStDevs), cref(botVertScales),
-             targetWidth / -2, targetWidth / 2);
+             (*kick_std_dev), cref(botMeans), cref(botStDevs),
+             cref(botVertScales), targetWidth / -2, targetWidth / 2);
 
     ParallelGradient1DConfig parallelConfig;
     init_gradient_configs(parallelConfig, keFunc, botMeans, botStDevs,
@@ -385,12 +385,12 @@ void KickEvaluator::init_gradient_configs(
     // Create list of configs
     for (tuple<float, float> xStart : xStarts) {
         pConfig.GA1DConfig.emplace_back(&func, get<1>(xStart), get<0>(xStart),
-                                         dxError, maxXMovement,
-                                         temperatureDescent, temperatureMin,
-                                         maxIterations, maxValue, maxThresh);
+                                        dxError, maxXMovement,
+                                        temperatureDescent, temperatureMin,
+                                        maxIterations, maxValue, maxThresh);
     }
 
     pConfig.xCombineThresh =
-        *min_element(robotStDevs.begin(), robotStDevs.end()) *
-        *start_x_offset / 2;
+        *min_element(robotStDevs.begin(), robotStDevs.end()) * *start_x_offset /
+        2;
 }
