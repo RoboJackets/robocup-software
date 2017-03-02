@@ -7,10 +7,12 @@ GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     currentx = config->startX;
     previousx = config->prevX;
 
-    std::tuple<float, float> funcOutput = config->f(currentx, config->args);
+    // (*(config->f))
+    // value of the function pointer in the config which is also a pointer
+    std::tuple<float, float> funcOutput = (*(config->f))(currentx);
     currentVal = std::get<0>(funcOutput);
     currentdx = std::get<1>(funcOutput);
-    previousdx = std::get<1>(config->f(previousx, config->args));
+    previousdx = std::get<1>((*(config->f))(previousx));
 
     temperature = 1;
 
@@ -19,7 +21,7 @@ GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
 
 bool GradientAscent1D::singleStep() {
     float newX = nextX();
-    std::tuple<float, float> funcOutput = config->f(newX, config->args);
+    std::tuple<float, float> funcOutput = (*(config->f))(newX);
 
     previousx = currentx;
     previousdx = currentdx;

@@ -3,6 +3,7 @@
 #include "FunctionArgs.hpp"
 #include <memory>
 #include <tuple>
+#include <functional>
 
 /**
  * Config data for a Gradient Ascent 1D optimizer
@@ -29,9 +30,7 @@ public:
     /**
      * Creates a Gradient Ascent 1D config
      *
-     * @param f, function pointer which returns a tuple with <F(X), F'(X)>
-     * @param args, F(X) args, Pointer to class for the specific
-     *        F(X) and F'(X) arguements
+     * @param f, std function pointer which returns a tuple with <F(X), F'(X)>
      * @param startX, X value in which to start from
      * @param prevX, X value near startX which is not startX
      * @param dxError, threshold of F'(X) in reference
@@ -51,16 +50,14 @@ public:
      * @note By default, the max value exit capabilities are not used
      * @note Only f, args, startX, and prevX are required
      */
-    Gradient1DConfig(std::tuple<float, float>(*f)(float, FunctionArgs*),
-                     FunctionArgs* args, float startX, float prevX,
-                     float dxError = 0.1, float maxXMovement = 0.02,
-                     float temperatureDescent = 0.5,
+    Gradient1DConfig(std::function<std::tuple<float, float>(float)>* f,
+                     float startX, float prevX, float dxError = 0.1,
+                     float maxXMovement = 0.02, float temperatureDescent = 0.5,
                      float temperatureMin = 0.01, int maxIterations = 100,
                      float maxValue = 0, float maxThresh = 0)
         :
 
           f(f),
-          args(args),
           startX(startX),
           prevX(prevX),
           dxError(dxError),
@@ -71,8 +68,7 @@ public:
           maxValue(maxValue),
           maxThresh(maxThresh) {}
 
-    std::tuple<float, float>(*f)(float, FunctionArgs*);
-    FunctionArgs* args;
+    std::function<std::tuple<float, float>(float)>* f;
     float startX;
     float prevX;
     float dxError;

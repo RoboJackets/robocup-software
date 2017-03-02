@@ -45,11 +45,16 @@ TEST(KickEvaluator, eval_pt_to_our_goal) {
 }
 
 TEST(KickEvaluator, eval_calculation) {
+    std::vector<float> robotMeans = {10};
+    std::vector<float> robotStdevs = {.1};
+    std::vector<float> robotVertScores = {1};
+
     // Kick mean, Kick stdev, Robot mean, robot stdev, robot scale, boundsLower,
     // boundsUpper
-    KickEvaluatorArgs test(0, 0.1, {10}, {0.1}, {1}, -2, 2);
-
-    std::tuple<double, double> res = KickEvaluator::eval_calculation(0, &test);
+    std::tuple<double, double> res = KickEvaluator::eval_calculation(
+        0, 0, 0.1, std::ref(robotMeans), std::ref(robotStdevs),
+        std::ref(robotVertScores), -2, 2);
+    
     std::tuple<double, double> expected = std::make_tuple(1, 0);
 
     EXPECT_NEAR(std::get<0>(res), std::get<0>(res), 0.01);  // Value
