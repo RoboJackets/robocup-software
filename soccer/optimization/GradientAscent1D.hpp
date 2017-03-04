@@ -71,9 +71,4 @@ private:
      * @return next x value based on derivative
      */
     float nextX();
-
-    /**
-     * @return sign of value (-1, 0, 1)
-     */
-    int sign(float val);
 };

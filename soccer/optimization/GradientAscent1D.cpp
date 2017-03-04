@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <tuple>
 
+inline int sign(float val) { return (0.0 < val) - (val < 0.0); }
+
 GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     currentx = config->startX;
     previousx = config->prevX;
@@ -10,6 +12,7 @@ GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     // (*(config->f))
     // value of the function pointer in the config which is also a pointer
     std::tuple<float, float> funcOutput = (*(config->f))(currentx);
+
     currentVal = std::get<0>(funcOutput);
     currentdx = std::get<1>(funcOutput);
     previousdx = std::get<1>((*(config->f))(previousx));
@@ -78,5 +81,3 @@ float GradientAscent1D::nextX() {
 
     return currentx + x_offset;
 }
-
-int GradientAscent1D::sign(float val) { return (0.0 < val) - (val < 0.0); }
