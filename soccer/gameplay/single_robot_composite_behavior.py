@@ -14,9 +14,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     # If the behavior should not be restarted when it is assigned to a different robot, then autorestart must be false
     # @param continuous should the behavior runs until it is manually stopped
     # @param autorestart function governing the behavior's restarting itself when its robot is switched
-    def __init__(self,
-                 continuous=False,
-                 autorestart= lambda: True):
+    def __init__(self, continuous=False, autorestart=lambda: True):
         single_robot_behavior.SingleRobotBehavior.__init__(
             self,
             continuous=continuous)
@@ -74,7 +72,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         # Sometimes the robot executing a single_robot_composite_behavior changes in the
         # middle of the behavior. For some plays, this means we shouild restart the whole
         # behavior for the new robot (autorestart = True). For others, it is more important to continue the new
-        # robot where the old robot left off (autorestart = False). 
+        # robot where the old robot left off (autorestart = False).
         if oldBot != None and self.robot != None and oldBot.shell_id(
         ) != self.robot.shell_id() and self.autorestart():
             logging.info(

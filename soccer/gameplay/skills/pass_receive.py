@@ -46,8 +46,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         receiving = 3
 
     def __init__(self, captureFunction=(lambda: skills.capture.Capture())):
-        super().__init__(continuous=False,
-                         autorestart= self.autorestart)
+        super().__init__(continuous=False, autorestart=self.autorestart)
 
         self.ball_kicked = False
         self._target_pos = None
