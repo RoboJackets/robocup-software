@@ -148,19 +148,10 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 }
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
-    /*
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
     unsigned shellID) {
-    auto path = std::unique_ptr<Path>(new TrapezoidalPath(start.pos, start.vel, goal.pos, 
-            goal.vel, motionConstraints));
-
-    return dynamic_cast<const path;
-
-    dynamic_cast<const Planning::DirectPathTargetCommand&>(
-            *planRequest.motionCommand);
-            */
     
     const int tries = 10;
     ShapeSet obstacles = origional;
@@ -203,15 +194,17 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     
     vector<Point> straight = runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, true);
     if (straight.size() != 0) {
+        cout << "Straight path!" << endl;
         return straight;
     }
+    cout << "Regular RRT Planning" << endl;
     return runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, false);
 }
 
 vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles, SystemState* state,
-                                 unsigned shellID, boolean straightLine) {
+                                 unsigned shellID, bool straightLine) {
     // Initialize bi-directional RRT
 
     auto stateSpace = make_shared<RoboCupStateSpace>(
