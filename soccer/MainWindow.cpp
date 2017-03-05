@@ -9,6 +9,7 @@
 #include "BatteryProfile.hpp"
 #include <Network.hpp>
 #include "git_version.hpp"
+#include <ui/StyleSheetManager.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -129,6 +130,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     radioGroup->addAction(_ui.action916MHz);
     radioGroup->addAction(_ui.action918MHz);
     qActionGroups["radioGroup"] = radioGroup;
+
+    auto styleGroup = new QActionGroup(this);
+    styleGroup->addAction(_ui.actionNoneStyle);
+    styleGroup->addAction(_ui.actionDarkStyle);
+    styleGroup->addAction(_ui.actionDarculizedStyle);
+    styleGroup->addAction(_ui.action1337h4x0rStyle);
+    qActionGroups["styleGroup"] = styleGroup;
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
@@ -665,6 +673,10 @@ void MainWindow::updateViews() {
             // check for kicker error code
             bool kickerFault =
                 rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+
+            bool kicker_charging =
+                rx.has_kicker_status() && rx.kicker_status() & 0x01;
+            statusWidget->setKickerState(kicker_charging);
             bool ballSenseFault = rx.has_ball_sense_status() &&
                                   !(rx.ball_sense_status() == Packet::NoBall ||
                                     rx.ball_sense_status() == Packet::HasBall);
@@ -1059,6 +1071,23 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
     _ui.fieldView->sendSimCommand(_quickLoadCmd);
+}
+
+// Style Sheets
+
+void MainWindow::on_actionNoneStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "NONE");
+}
+
+void MainWindow::on_actionDarkStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARK");
+}
+
+void MainWindow::on_actionDarculizedStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARCULIZED");
+}
+void MainWindow::on_action1337h4x0rStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
 
 // Manual control commands

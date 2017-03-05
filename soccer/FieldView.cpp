@@ -59,10 +59,12 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     QRect rect =
         QFontMetrics(_posLabel->font()).boundingRect("X: -9.99, Y: -9.99");
     _posLabel->setMinimumWidth(rect.width());
-    _posLabel->setStyleSheet("QLabel { color : red; }");
+    _posLabel->setStyleSheet("QLabel { color: red; background: none;}");
 
     // enable mouse tracking so we can update position label
     setMouseTracking(true);
+
+    show();
 }
 
 void FieldView::leaveEvent(QEvent* event) { _posLabel->setVisible(false); }
@@ -98,6 +100,9 @@ void FieldView::rotate(int value) {
 
 void FieldView::paintEvent(QPaintEvent* e) {
     QPainter p(this);
+    QStyleOption opt;
+    opt.init(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
     // antialiasing drastically improves rendering quality
     p.setRenderHint(QPainter::Antialiasing);

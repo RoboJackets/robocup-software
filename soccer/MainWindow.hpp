@@ -125,6 +125,12 @@ private Q_SLOTS:
     void on_actionQuicksaveRobotLocations_triggered();
     void on_actionQuickloadRobotLocations_triggered();
 
+    /// Style Sheets
+    void on_actionNoneStyle_triggered();
+    void on_actionDarkStyle_triggered();
+    void on_actionDarculizedStyle_triggered();
+    void on_action1337h4x0rStyle_triggered();
+
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);
     void on_actionDampedTranslation_toggled(bool value);

@@ -234,7 +234,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
                              sizeof(forward_packet), &sent, Control_Timeout);
     if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet)) {
         fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %lu\n",
-                sent, sizeof(forward_packet));
+                sent, (unsigned long int)sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
             fprintf(stderr, "  Error: '%s'\n",
                     libusb_error_name(transferRetCode));
@@ -289,7 +289,8 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
     // Report that everything is good b/c the bot currently has no way of
     // detecting kicker issues
-    packet.set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
+    packet.set_kicker_status((msg->kickStatus ? Kicker_Charged : 0) |
+                             Kicker_Enabled | Kicker_I2C_OK);
 
     // motor errors
     for (int i = 0; i < 5; i++) {

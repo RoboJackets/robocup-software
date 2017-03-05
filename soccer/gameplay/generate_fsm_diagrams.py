@@ -6,6 +6,7 @@ import sys
 import traceback
 
 sys.path.append('../../run')
+import robocup
 
 
 def mkdir_p(path):
@@ -21,7 +22,12 @@ def mkdir_p(path):
 logging.getLogger().setLevel(logging.INFO)
 
 import main
+import ui.main
 main.init()
+
+# Creates a mock ball so that no error is thrown when a ball isn't found
+mock_ball = robocup.Ball()
+main.set_ball(mock_ball)
 
 for behavior_type in ['skills', 'tactics', 'plays']:
     entries = class_import.recursive_import_classes('.', [behavior_type],

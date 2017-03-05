@@ -56,6 +56,12 @@ public:
     void setBatteryLevel(float batteryLevel);
 
     /**
+     * @brief True: kicker is ready, False: kicker is charging
+     */
+    bool kickerState() const;
+    void setKickerState(bool kickerState);
+
+    /**
      * @brief Set to true to present this robot as being in critical
      * status and in need of removing from the field.
      */
@@ -70,5 +76,6 @@ private:
     bool _hasVision;
     float _batteryLevel;
     bool _showstopper;
+    bool _kickerState;
     QString _boardID;
 };

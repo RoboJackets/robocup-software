@@ -22,6 +22,10 @@ RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
     setBatteryLevel(0.5);
 
     _showstopper = false;
+
+    _ui.kickerIndicator->setText(QString("K"));
+    _kickerState = false;
+    setKickerState(false);
 }
 
 int RobotStatusWidget::shellID() const { return _shellID; }
@@ -108,6 +112,18 @@ void RobotStatusWidget::setBatteryLevel(float batteryLevel) {
     if (fabs(batteryLevel - _batteryLevel) > 0.01) {
         _batteryLevel = batteryLevel;
         _ui.batteryIndicator->setBatteryLevel(_batteryLevel);
+    }
+}
+
+bool RobotStatusWidget::kickerState() const { return _kickerState; }
+
+void RobotStatusWidget::setKickerState(bool kickerState) {
+    _kickerState = kickerState;
+
+    if (kickerState) {
+        _ui.kickerIndicator->setStyleSheet("QLabel { color : green; }");
+    } else {
+        _ui.kickerIndicator->setStyleSheet("QLabel { color : red; }");
     }
 }
 
