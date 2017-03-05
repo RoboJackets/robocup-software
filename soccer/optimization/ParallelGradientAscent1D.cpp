@@ -1,5 +1,6 @@
 #include "ParallelGradientAscent1D.hpp"
 #include <math.h>
+#include <algorithm>
 
 ParallelGradientAscent1D::ParallelGradientAscent1D(
     ParallelGradient1DConfig* config)
@@ -32,17 +33,15 @@ void ParallelGradientAscent1D::execute() {
         }
 
         // Assume ascending order for xStart
-        for (int i = 0; i < GA1Ds.size() - 1; i++) {
-            GradientAscent1D lower = GA1Ds.at(i);
-            GradientAscent1D upper = GA1Ds.at(i + 1);
-
-            // Erase elements if they get too close
-            // This helps kill any GA1Ds that are going up the same hill
-            if (fabs(lower.getXValue() - upper.getXValue()) <
-                config->xCombineThresh) {
-                GA1Ds.erase(GA1Ds.begin() + i + 1);
-            }
-        }
+        // Remove any that are too close
+        int i = 1;
+        GA1Ds.erase(
+            std::remove_if(GA1Ds.begin(), GA1Ds.end(), [this, &i](auto& value) {
+                auto& next = GA1Ds[i];
+                i++;
+                return fabs(value.getXValue() - next.getXValue()) <
+                       config->xCombineThresh;
+            }), GA1Ds.end());
     }
 }
 
