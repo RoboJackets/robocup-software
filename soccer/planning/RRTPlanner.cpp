@@ -202,6 +202,9 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  unsigned shellID) {
     
     vector<Point> straight = runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, true);
+    if (straight.size() != 0) {
+        return straight;
+    }
     return runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, false);
 }
 
