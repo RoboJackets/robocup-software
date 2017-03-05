@@ -10,6 +10,25 @@ import role_assignment
 # Note: The method-resolution-order in python dictates that as we have it listed below, SingleRobotBehavior methods take precedence over CompositeBehavior methods
 class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                                    composite_behavior.CompositeBehavior):
+    ## Constructor.
+    # If the behavior should not be restarted when it is assigned to a different robot, then autorestart must be false
+    # @param continuous should the behavior runs until it is manually stopped
+    # @param autorestart function governing the behavior's restarting itself when its robot is switched
+    def __init__(self, continuous=False, autorestart=lambda: True):
+        single_robot_behavior.SingleRobotBehavior.__init__(
+            self,
+            continuous=continuous)
+        composite_behavior.CompositeBehavior.__init__(self,
+                                                      continuous=continuous)
+        self.autorestart = autorestart
+
+    @property
+    def autorestart(self):
+        return self._autorestart
+
+    @autorestart.setter
+    def autorestart(self, value):
+        self._autorestart = value
 
     ## we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
@@ -27,7 +46,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
             reqs = composite_behavior.CompositeBehavior.role_requirements(self)
             if self.robot != None:
                 for req in role_assignment.iterate_role_requirements_tree_leaves(
-                        reqs):
+                    reqs):
                     req.previous_shell_id = self.robot.shell_id()
 
             return reqs
@@ -44,19 +63,18 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
             # extract robot from the one leaf in the tree
             # we don't know how deep the tree is, which is why we use the tree leaf iterator
             for assignment_tuple in role_assignment.iterate_role_requirements_tree_leaves(
-                    assignments):
+                assignments):
                 self.robot = assignment_tuple[1]
         else:
             single_robot_behavior.SingleRobotBehavior.assign_roles(self,
                                                                    assignments)
 
-        # Most single robot composite behaviors assume (rightly so) that the robot they're
-        # dealing with won't change. PivotKick for example runs the Capture skill, then
-        # the Aim skill to do its stuff. It'd be pretty weird if the robot executing Aim
-        # was different from the one that just ran Capture. Here we just restart the behavior
-        # If it gets assigned a new robot.
+        # Sometimes the robot executing a single_robot_composite_behavior changes in the
+        # middle of the behavior. For some plays, this means we shouild restart the whole
+        # behavior for the new robot (autorestart = True). For others, it is more important to continue the new
+        # robot where the old robot left off (autorestart = False).
         if oldBot != None and self.robot != None and oldBot.shell_id(
-        ) != self.robot.shell_id():
+        ) != self.robot.shell_id() and self.autorestart():
             logging.info(
                 "SingleRobotCompositeBehavior: robot changed, restarting behavior")
             self.restart()
