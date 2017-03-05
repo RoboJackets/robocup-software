@@ -62,6 +62,7 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         move.check_velocity = True
         self.robot.start_pid_tuner('x')
 
+        #this has reeeeaaaalllllyyy shitty reproducability
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
     def execute_tune(self):
