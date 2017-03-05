@@ -91,7 +91,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
     ## This function will detirmine how this behavior reacts to its robot changing. If the ball is kicked and the robot switches, restarting causes all sorts of hitches, so we prevent this.
     # Note: False means the behavior will not restart
-    def autorestart():
+    def autorestart(self):
         return not self.ball_kicked
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
