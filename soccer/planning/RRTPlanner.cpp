@@ -6,6 +6,7 @@
 #include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
+#include "DirectTargetPathPlanner.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,6 +70,8 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
 const int maxContinue = 10;
 
 std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
+    
+
     const MotionInstant& start = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
@@ -143,10 +146,20 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 }
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
+    /*
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
     unsigned shellID) {
+    auto path = std::unique_ptr<Path>(new TrapezoidalPath(start.pos, start.vel, goal.pos, 
+            goal.vel, motionConstraints));
+
+    return dynamic_cast<const path;
+
+    dynamic_cast<const Planning::DirectPathTargetCommand&>(
+            *planRequest.motionCommand);
+            */
+    
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
@@ -178,13 +191,24 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     }
     // debugLog("Generate Failed 10 times");
     return lastPath;
+    
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles, SystemState* state,
                                  unsigned shellID) {
+    
+    vector<Point> straight = runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, true);
+    return runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, false);
+}
+
+vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
+                                 const MotionConstraints& motionConstraints,
+                                 const ShapeSet& obstacles, SystemState* state,
+                                 unsigned shellID, boolean straightLine) {
     // Initialize bi-directional RRT
+
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(stateSpace);
@@ -192,7 +216,11 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     biRRT.setGoalState(goal.pos);
     biRRT.setStepSize(*RRTConfig::StepSize);
     biRRT.setMaxIterations(_maxIterations);
-    biRRT.setGoalBias(*RRTConfig::StepSize);
+    if (straightLine) {
+        biRRT.setGoalBias(1);
+    } else {
+        biRRT.setGoalBias(*RRTConfig::StepSize);
+    }
 
     bool success = biRRT.run();
     if (!success) return vector<Point>();
