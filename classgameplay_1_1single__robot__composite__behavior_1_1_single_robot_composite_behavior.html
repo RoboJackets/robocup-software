@@ -123,6 +123,15 @@ $(document).ready(function(){initNavTree('classgameplay_1_1single__robot__compos
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a9d8f066cb05168301a0b2a6f861fc103"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a9d8f066cb05168301a0b2a6f861fc103">__init__</a> (self, continuous=False, autorestart=lambda:True)</td></tr>
+<tr class="memdesc:a9d8f066cb05168301a0b2a6f861fc103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a9d8f066cb05168301a0b2a6f861fc103">More...</a><br /></td></tr>
+<tr class="separator:a9d8f066cb05168301a0b2a6f861fc103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab856cdedf3b5ef20c120481c88a7569c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab856cdedf3b5ef20c120481c88a7569c"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>autorestart</b> (self)</td></tr>
+<tr class="separator:ab856cdedf3b5ef20c120481c88a7569c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae78c1d38b5da3bbfa7108bd1e51d6726"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae78c1d38b5da3bbfa7108bd1e51d6726"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>autorestart</b> (self, value)</td></tr>
+<tr class="separator:ae78c1d38b5da3bbfa7108bd1e51d6726"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a568ee6399959bb89f72577b560e36a87"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a568ee6399959bb89f72577b560e36a87"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a568ee6399959bb89f72577b560e36a87">add_subbehavior</a> (self, bhvr, name, required=True, priority=100)</td></tr>
 <tr class="memdesc:a568ee6399959bb89f72577b560e36a87"><td class="mdescLeft">&#160;</td><td class="mdescRight">we over-ride this to enforce the rule that there can't be more than one subbehavior <br /></td></tr>
@@ -293,6 +302,9 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a3049fd416f01a2fec774b2325369b577"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3049fd416f01a2fec774b2325369b577"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>autorestart</b></td></tr>
+<tr class="separator:a3049fd416f01a2fec774b2325369b577"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a271c7a4d1b259880cb953ab9fe3f94ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a271c7a4d1b259880cb953ab9fe3f94ac"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>robot_shell_id</b></td></tr>
 <tr class="separator:a271c7a4d1b259880cb953ab9fe3f94ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -348,6 +360,48 @@ Public Attributes</h2></td></tr>
 <area shape="rect" id="node4" href="classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,46,211,73"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a9d8f066cb05168301a0b2a6f861fc103"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.single_robot_composite_behavior.SingleRobotCompositeBehavior.__init__ </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>continuous</em> = <code>False</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>autorestart</em> = <code>lambda:&#160;True</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<p>If the behavior should not be restarted when it is assigned to a different robot, then autorestart must be false </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">continuous</td><td>should the behavior runs until it is manually stopped </td></tr>
+    <tr><td class="paramname">autorestart</td><td>function governing the behavior's restarting itself when its robot is switched </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/gameplay/single_robot_composite_behavior.py</li>
 </ul>
@@ -357,7 +411,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>single_robot_composite_behavior</b></li><li class="navelem"><a class="el" href="classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html">SingleRobotCompositeBehavior</a></li>
-    <li class="footer">Generated on Wed Mar 1 2017 06:40:39 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 6 2017 00:07:47 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

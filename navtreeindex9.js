@@ -1,5 +1,10 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a79ae4273e4d17047eeb14da7309036c2":[14,0,5,15,8,1,0,4],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a85576b62ff4a9e365bef4063194bc290":[14,0,5,15,8,1,0,6],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aadac280d9d05f3d8b3f36230b5b7bb8e":[14,0,5,15,8,1,0,7],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a":[14,0,5,15,8,1,0,14],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac39756f614f1e53eb116ebda58c96ada":[14,0,5,15,8,1,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843":[14,0,5,15,8,1,0,3],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#acb7c7f9f71fc15e0f07452bc784d772f":[14,0,5,15,8,1,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668":[14,0,5,15,8,1,0,2],
@@ -158,8 +163,8 @@ var NAVTREEINDEX9 =
 "functions_d.html":[14,3,0,4],
 "functions_e.html":[14,3,0,5],
 "functions_f.html":[14,3,0,6],
-"functions_func.html":[14,3,1],
 "functions_func.html":[14,3,1,0],
+"functions_func.html":[14,3,1],
 "functions_func_a.html":[14,3,1,1],
 "functions_func_b.html":[14,3,1,2],
 "functions_func_c.html":[14,3,1,3],
@@ -214,12 +219,12 @@ var NAVTREEINDEX9 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[14,0,70,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[14,0,70,8],
 "group__matrices.html":[12,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,4,0,2],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,0],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[14,0,4,0,4],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,4,0,2],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,1],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,4,0,13],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[14,0,4,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,2],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,4,0,13],
 "hierarchy.html":[14,2],
 "index.html":[],
 "md_doc_BuildSystems.html":[0],
@@ -244,10 +249,5 @@ var NAVTREEINDEX9 =
 "rtp_8hpp_source.html":[15,0,0,0,1,0,0],
 "status_8h_source.html":[15,0,0,0,2,0,0],
 "struct_chart_1_1_function.html":[14,0,1,0],
-"struct_chart_1_1_function.html#a2e70025e9e8d2673e940741fef2a3d26":[14,0,1,0,0],
-"struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec":[14,0,1,0,1],
-"struct_chart_1_1_numeric_field.html":[14,0,1,1],
-"struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[14,0,1,1,1],
-"struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[14,0,1,1,0],
-"struct_chart_1_1_point_magnitude.html":[14,0,1,2]
+"struct_chart_1_1_function.html#a2e70025e9e8d2673e940741fef2a3d26":[14,0,1,0,0]
 };

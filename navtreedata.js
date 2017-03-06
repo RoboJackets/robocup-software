@@ -44,9 +44,9 @@ var NAVTREEINDEX =
 "class_sim_field_view.html#a3d33d94a1ea23cb36b5b914d2e63649d",
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html#ad42dc3792688ed261e18b360dda1a475",
 "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html#a8b463089d0beefcc882f19c4051927ae",
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843",
-"struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f"
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5f5e60e56394bd8d3316a1f0330980ce",
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a79ae4273e4d17047eeb14da7309036c2",
+"struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

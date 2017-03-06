@@ -1,5 +1,10 @@
 var NAVTREEINDEX10 =
 {
+"struct_chart_1_1_function.html#af5ebafeb2fff2a5d6edcdde1c97966ec":[14,0,1,0,1],
+"struct_chart_1_1_numeric_field.html":[14,0,1,1],
+"struct_chart_1_1_numeric_field.html#a2f36b318fe1fbdb536308496b7c3be84":[14,0,1,1,1],
+"struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[14,0,1,1,0],
+"struct_chart_1_1_point_magnitude.html":[14,0,1,2],
 "struct_chart_1_1_point_magnitude.html#a9d0709bc6358271cbd808caa5e00909f":[14,0,1,2,1],
 "struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[14,0,1,2,0],
 "struct_field___dimensions.html":[14,0,33],
