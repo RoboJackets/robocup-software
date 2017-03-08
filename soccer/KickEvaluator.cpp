@@ -184,9 +184,6 @@ tuple<float, float> KickEvaluator::eval_calculation(
     // The resulting F(X) represents the convolution of Set #12 and Set #3
     // All of this is calculated with Mathematica
 
-    // Note: Static is used as a time saver as this executes a few hundred times
-    // Estimated 5-10% reduction
-
     // We want the worst chance of success
     float minResults = 1.0f;
     int minIndex = 0;
