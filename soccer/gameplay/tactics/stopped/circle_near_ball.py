@@ -132,8 +132,9 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
 
         i = 0
         for pt in self.get_circle_points(6 if num_robots == 0 else num_robots):
-            if num_robots < 1 : 
-                pt = robocup.Point(-constants.Field.Width, -constants.Field.Length)
+            if num_robots < 1:
+                pt = robocup.Point(-constants.Field.Width, -
+                                   constants.Field.Length)
             self.subbehavior_with_name("robot" + str(i)).pos = pt
             i = i + 1
 
@@ -160,8 +161,9 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
 
         i = 0
         for pt in self.get_circle_points(6 if num_robots == 0 else num_robots):
-            if num_robots < 1 : 
-                pt = robocup.Point(-constants.Field.Width, -constants.Field.Length)
+            if num_robots < 1:
+                pt = robocup.Point(-constants.Field.Width, -
+                                   constants.Field.Length)
             self.subbehavior_with_name("robot" + str(i)).pos = pt
             i = i + 1
 
