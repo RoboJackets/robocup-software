@@ -38,8 +38,7 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
 
         for i in range(6):
             req = i < min_robots
-
-            pt = ball_pos + dirvec
+            pt = ball_pos + dirvec if min_robots > 0 else robocup.Point(-constants.Field.Width, -constants.Field.Length)
             self.add_subbehavior(
                 skills.move.Move(pt),
                 name="robot" + str(i),
@@ -65,7 +64,9 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         dirvec.rotate(robocup.Point(0, 0), -perRobot * ((num_robots - 1) / 2))
 
         for i in range(6):
-            pt = ball_pos + dirvec
+            pt = ball_pos + dirvec if num_robots > 0 else robocup.Point(-constants.Field.Width, -constants.Field.Length)
+            if num_robots < 1 :
+                pt = robocup.Point(-5, -5)
             self.subbehavior_with_name("robot" + str(i)).pos = pt
             dirvec.rotate(robocup.Point(0, 0), perRobot)
 
