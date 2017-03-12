@@ -9,7 +9,7 @@ import standard_play
 import evaluation.passing_positioning
 
 import tactics.coordinated_pass
-import tactics.offensive_defense
+import tactics.defensive_forward
 
 import skills.moving_pass_receive
 import skills.move
@@ -329,8 +329,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def on_enter_collecting(self):
-        offensive_defense = tactics.offensive_defense.OffensiveDefense()
-        self.add_subbehavior(offensive_defense, 'defend', required=True)
+        defensive_forward = tactics.defensive_forward.DefensiveForward()
+        self.add_subbehavior(defensive_forward, 'defend', required=True)
 
         # TODO: Setup offense to be defenders
         # One defense that zone point

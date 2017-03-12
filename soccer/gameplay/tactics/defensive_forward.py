@@ -7,16 +7,12 @@ import math
 
 import composite_behavior
 import evaluation.defensive_positioning
-import skills.mark
 
-class OffensiveDefense(composite_behavior.CompositeBehavior):
+# Finds the positions to place each defender
+class DefensiveForward(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
-        # Block shots/passes
-        blocking = 1
-        # Collect the ball when it is lost
-        collecting = 2
+        defending = 1
 
-    # defender_priorities should have a length of two and contains the priorities for the two defender
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -29,25 +25,15 @@ class OffensiveDefense(composite_behavior.CompositeBehavior):
         self.block_dist = 0.01
         self.block_angle_coeff = 0.5
 
-        for s in OffensiveDefense.State:
+        for s in DefensiveForward.State:
             self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            OffensiveDefense.State.blocking,
+                            DefensiveForward.State.blocking,
                             lambda: True,
                             'immediately')
 
-        self.add_transition(OffensiveDefense.State.blocking,
-                            OffensiveDefense.State.collecting,
-                            lambda: False,
-                            'Collect Ball')
-
-        self.add_transition(OffensiveDefense.State.collecting,
-                            OffensiveDefense.State.blocking,
-                            lambda: False,
-                            'Block again')
-
-    def on_enter_blocking(self):
+    def on_enter_defending(self):
         self.free_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions()
 
         names = ['mark_main', 'mark_sub']
@@ -64,7 +50,7 @@ class OffensiveDefense(composite_behavior.CompositeBehavior):
         self.add_subbehavior(self.floating_def, 'mark_float', required=True)
         self.floating_def.mark_point = self.free_pos
 
-    def execute_blocking(self):
+    def execute_defending(self):
         # Updates block pos
 
         our_bots = [self.marks[0].robot, self.marks[1].robot, self.floating_def.robot]
@@ -77,7 +63,7 @@ class OffensiveDefense(composite_behavior.CompositeBehavior):
 
         self.floating_def.mark_point = self.free_pos
 
-    def on_exit_blocking(self):
+    def on_exit_defending(self):
         self.remove_all_subbehaviors()
 
     def get_block_pos(self, bot):
