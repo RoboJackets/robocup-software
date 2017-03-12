@@ -77,12 +77,15 @@ var hierarchy =
     ] ],
     [ "Gameplay::GameplayModule", "class_gameplay_1_1_gameplay_module.html", null ],
     [ "GameState", "class_game_state.html", null ],
+    [ "Gradient1DConfig", "class_gradient1_d_config.html", null ],
+    [ "GradientAscent1D", "class_gradient_ascent1_d.html", null ],
     [ "rtp::header_data", "structrtp_1_1header__data.html", null ],
     [ "iterator", null, [
       [ "ExceptionIterator< T >", "class_exception_iterator.html", null ]
     ] ],
     [ "JoystickControlValues", "struct_joystick_control_values.html", null ],
     [ "RobotConfig::Kicker", "struct_robot_config_1_1_kicker.html", null ],
+    [ "KickEvaluator", "class_kick_evaluator.html", null ],
     [ "Geometry2d::Line", "class_geometry2d_1_1_line.html", null ],
     [ "Logger", "class_logger.html", null ],
     [ "Planning::MotionCommand", "class_planning_1_1_motion_command.html", [
@@ -112,6 +115,8 @@ var hierarchy =
       [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
     ] ],
     [ "rtp::packet", "classrtp_1_1packet.html", null ],
+    [ "ParallelGradient1DConfig", "class_parallel_gradient1_d_config.html", null ],
+    [ "ParallelGradientAscent1D", "class_parallel_gradient_ascent1_d.html", null ],
     [ "Planning::Path", "class_planning_1_1_path.html", [
       [ "Planning::AngleFunctionPath", "class_planning_1_1_angle_function_path.html", null ],
       [ "Planning::CompositePath", "class_planning_1_1_composite_path.html", null ],

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['parallelgradient1dconfig',['ParallelGradient1DConfig',['../class_parallel_gradient1_d_config.html#a0e9bfedecd1b1634bacef33aa747e62e',1,'ParallelGradient1DConfig::ParallelGradient1DConfig()'],['../class_parallel_gradient1_d_config.html#a5a44719438b3eb9b5c191d361a1362d3',1,'ParallelGradient1DConfig::ParallelGradient1DConfig(std::vector&lt; Gradient1DConfig &gt; GA1DConfig, float xCombineThresh)']]],
   ['path',['path',['../class_our_robot.html#a530fd127fdbbfcc1ae33b7458a21f416',1,'OurRobot']]],
   ['penaltydist',['PenaltyDist',['../struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f',1,'Field_Dimensions']]],
   ['perpccw',['perpCCW',['../class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049',1,'Geometry2d::Point']]],
