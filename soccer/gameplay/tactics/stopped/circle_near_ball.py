@@ -16,7 +16,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
     def __init__(self):
         super().__init__(continuous=True)
 
-        self.num_robots = 0;
+        self.num_robots = 0
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
@@ -32,11 +32,10 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         i = 0
         #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
         for pt in range(6):
-            self.add_subbehavior(
-                skills.move.Move(),
-                name="robot" + str(i),
-                required=False,
-                priority=6 - i)
+            self.add_subbehavior(skills.move.Move(),
+                                 name="robot" + str(i),
+                                 required=False,
+                                 priority=6 - i)
             i = i + 1
 
     def get_circle_points(self, num_of_points):
@@ -146,11 +145,10 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             self.remove_all_subbehaviors()
             i = 0
             for pt in range(6):
-                self.add_subbehavior(
-                    skills.move.Move(),
-                    name="robot" + str(i),
-                    required=False,
-                    priority=6 - i)
+                self.add_subbehavior(skills.move.Move(),
+                                     name="robot" + str(i),
+                                     required=False,
+                                     priority=6 - i)
                 i = i + 1
 
         i = 0
@@ -160,9 +158,8 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             i = i + 1
         #unassign destinations from behaviors without robots
         for i in range(num_robots, 6):
-            self.subbehavior_with_name("robot" + str(i)).pos = None;
+            self.subbehavior_with_name("robot" + str(i)).pos = None
             i = i + 1
-
 
         # set robot attributes
         for b in self.all_subbehaviors():

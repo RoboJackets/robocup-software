@@ -26,17 +26,16 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
                             "robots aren't lined up")
 
         self.min_robots = min_robots
-        self.num_robots = 0;
+        self.num_robots = 0
 
         #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
         for i in range(6):
             req = i < min_robots
-            self.add_subbehavior(
-                skills.move.Move(),
-                name="robot" + str(i),
-                required=req,
-                priority=6 - i)
-            
+            self.add_subbehavior(skills.move.Move(),
+                                 name="robot" + str(i),
+                                 required=req,
+                                 priority=6 - i)
+
     def goto_center(self):
         num_robots = 0
         for b in self.all_subbehaviors():
@@ -49,11 +48,10 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
             self.remove_all_subbehaviors()
             i = 0
             for pt in range(6):
-                self.add_subbehavior(
-                    skills.move.Move(),
-                    name="robot" + str(i),
-                    required=False,
-                    priority=6 - i)
+                self.add_subbehavior(skills.move.Move(),
+                                     name="robot" + str(i),
+                                     required=False,
+                                     priority=6 - i)
                 i = i + 1
 
         num_robots = max(self.min_robots, num_robots)
