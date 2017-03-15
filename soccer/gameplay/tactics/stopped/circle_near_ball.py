@@ -156,7 +156,6 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         i = 0
         #assign destinations for the number of robots we have
         for pt in self.get_circle_points(num_robots):
-            print("Robots: " + str(self.get_circle_points(num_robots)))
             self.subbehavior_with_name("robot" + str(i)).pos = pt
             i = i + 1
         #unassign destinations from behaviors without robots
