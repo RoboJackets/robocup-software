@@ -26,7 +26,7 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
                             "robots aren't lined up")
 
         self.min_robots = min_robots
-        self.num_robots = 0
+        self.num_robots = 0;
 
         #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
         for i in range(6):
