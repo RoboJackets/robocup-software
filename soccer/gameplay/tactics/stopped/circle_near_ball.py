@@ -140,6 +140,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         for b in self.all_subbehaviors():
             if b.robot is not None:
                 num_robots += 1
+        #if the number of robots has changed, recreate move behaviors to match new number of robots
         if (self.num_robots != num_robots):
             self.num_robots = num_robots
             self.remove_all_subbehaviors()
@@ -153,9 +154,14 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                 i = i + 1
 
         i = 0
+        #assign destinations for the number of robots we have
         for pt in self.get_circle_points(num_robots):
             print("Robots: " + str(self.get_circle_points(num_robots)))
             self.subbehavior_with_name("robot" + str(i)).pos = pt
+            i = i + 1
+        #unassign destinations from behaviors without robots
+        for i in range(num_robots, 6):
+            self.subbehavior_with_name("robot" + str(i)).pos = None;
             i = i + 1
 
 

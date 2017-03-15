@@ -26,6 +26,7 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
                             "robots aren't lined up")
 
         self.min_robots = min_robots
+        self.num_robots = 0
 
         #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
         for i in range(6):
@@ -41,6 +42,19 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         for b in self.all_subbehaviors():
             if b.robot is not None:
                 num_robots += 1
+
+        #if the number of robots has changed, recreate move behaviors to match new number of robots
+        if (self.num_robots != num_robots):
+            self.num_robots = num_robots
+            self.remove_all_subbehaviors()
+            i = 0
+            for pt in range(6):
+                self.add_subbehavior(
+                    skills.move.Move(),
+                    name="robot" + str(i),
+                    required=False,
+                    priority=6 - i)
+                i = i + 1
 
         num_robots = max(self.min_robots, num_robots)
 
@@ -64,9 +78,6 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
             if b.robot is not None:
                 b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
                 b.robot.face(main.ball().pos)
-
-    def execute_completed(self):
-        self.goto_center()
 
     def execute_running(self):
         self.goto_center()
