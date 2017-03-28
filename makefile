@@ -27,12 +27,12 @@ run-comp:
 r:	run
 rs: run-sim
 run-sim: all
-	-pkill -f './simulator --headless'
-	./run/simulator --headless --timeout 5 &
+	-pkill -f './grsim'
+	./run/grsim &
 	./run/soccer -sim
 run-sim2play: all
-	-pkill -f './simulator --headless'
-	./run/simulator --headless &
+	-pkill -f './grsim'
+	./run/grsim &
 	./run/soccer -sim -y & ./soccer -sim -b
 
 run-release: all-release
@@ -54,8 +54,8 @@ else
 endif
 
 debug-sim: all
-	-pkill -f './simulator --headless'
-	./run/simulator --headless &
+	-pkill -f './grsim'
+	./run/grsim &
 ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else
@@ -81,7 +81,6 @@ coverage:
 	run/test-soccer		# Kind of hacky, but w/e
 	-coveralls -b ${COV_BUILD_DIR} -r . \
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
-		-e ${COV_BUILD_DIR}/simulator/ \
 		-E '(^.*((moc_)|(automoc)|(ui_)|([Tt]est)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
 		--gcov-options '\-lp'
 
@@ -106,7 +105,7 @@ modernize:
 	# You can pass specific flags to clang-modernize if you want it to only run some types of
 	# transformations, rather than all transformations that it's capable of.
 	# See `clang-modernize --help` for more info.
-	clang-modernize -p build/modernize -include=common,logging,simulator,soccer
+	clang-modernize -p build/modernize -include=common,logging,soccer
 
 apidocs:
 	doxygen doc/Doxyfile
