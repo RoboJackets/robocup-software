@@ -36,6 +36,7 @@ set(ROBOCUP_LIB_SRC
     "joystick/GamepadController.cpp"
     "joystick/GamepadJoystick.cpp"
     "joystick/SpaceNavJoystick.cpp"
+    "KickEvaluator.cpp"
     "Logger.cpp"
     "MainWindow.cpp"
     "modeling/BallFilter.cpp"
@@ -44,6 +45,8 @@ set(ROBOCUP_LIB_SRC
     "motion/MotionControl.cpp"
     "motion/TrapezoidalMotion.cpp"
     "NewRefereeModule.cpp"
+    "optimization/GradientAscent1D.cpp"
+    "optimization/ParallelGradientAscent1D.cpp"
     "planning/CompositePath.cpp"
     "planning/DynamicObstacle.cpp"
     "planning/DirectTargetPathPlanner.cpp"
@@ -201,11 +204,14 @@ set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
     "BatteryProfileTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
+    "optimization/GradientAscent1DTest.cpp"
+    "optimization/ParallelGradientAscent1DTest.cpp"
     "planning/PathTest.cpp"
     "planning/EscapeObstaclesPathPlannerTest.cpp"
     "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
     "WindowEvaluatorTest.cpp"
+    "KickEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

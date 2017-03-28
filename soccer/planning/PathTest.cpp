@@ -89,14 +89,14 @@ TEST(InterpolatedPath, subpath2) {
     // Create 6 subPaths of length 1.5
     vector<unique_ptr<Path>> subPaths;
     RJ::Seconds diff = 1500ms;
-    for (RJ::Seconds i = 0s; i < 9s; i += diff) {
+    for (RJ::Seconds i = 0ms; i < 9s; i += diff) {
         subPaths.push_back(path.subPath(i, i + diff));
     }
 
     // Compare the subPaths to the origional path and check that the results of
     // evaluating the paths are close enough
     for (int i = 0; i < 6; i++) {
-        for (RJ::Seconds j = 0s; j < 1500ms; j += 1ms) {
+        for (auto j = 0ms; j < 1500ms; j += 1ms) {
             auto time = i * 1500ms + j;
             auto org = path.evaluate(time);
             auto sub = subPaths[i]->evaluate(j);
@@ -104,13 +104,13 @@ TEST(InterpolatedPath, subpath2) {
             ASSERT_TRUE(org);
             ASSERT_TRUE(sub);
             EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
-                << "i+j=" << time;
+                << "i+j=" << to_string(time);
             EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
-                << "i+j=" << time;
+                << "i+j=" << to_string(time);
             EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
-                << "i+j=" << time;
+                << "i+j=" << to_string(time);
             EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
-                << "i+j=" << time;
+                << "i+j=" << to_string(time);
         }
     }
 }
@@ -132,7 +132,7 @@ TEST(CompositePath, CompositeSubPath) {
     compositePath.append(path.subPath(7500ms));
 
     // Compare that the compositePath and origonal path are mostly equal
-    for (auto i = 0ms; i <= 10s; i += 1ms) {
+    for (RJ::Seconds i = 0ms; i <= 10s; i += 1ms) {
         auto org = path.evaluate(i);
         auto sub = compositePath.evaluate(i);
         if (!org && !sub) break;
@@ -140,13 +140,13 @@ TEST(CompositePath, CompositeSubPath) {
         ASSERT_TRUE(org);
         ASSERT_TRUE(sub);
         EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
-            << "i=" << i;
+            << "i=" << to_string(i);
         EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
-            << "i=" << i;
+            << "i=" << to_string(i);
         EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
-            << "i=" << i;
+            << "i=" << to_string(i);
         EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
-            << "i=" << i;
+            << "i=" << to_string(i);
     }
 
     // Create 9 subPaths from the compositePaths
@@ -167,13 +167,13 @@ TEST(CompositePath, CompositeSubPath) {
             ASSERT_TRUE(org);
             ASSERT_TRUE(sub);
             EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
-                << "newPathTime=" << time;
+                << "newPathTime=" << to_string(time);
             EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
-                << "newPathTime=" << time;
+                << "newPathTime=" << to_string(time);
             EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
-                << "newPathTime=" << time;
+                << "newPathTime=" << to_string(time);
             EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
-                << "newPathTime=" << time;
+                << "newPathTime=" << to_string(time);
         }
     }
 }

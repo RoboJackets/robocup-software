@@ -7,8 +7,8 @@ public:
     RotationConstraints()
         : maxSpeed(*_max_rotation_speed),
           maxAccel(*_max_rotation_acceleration) {}
-    float maxSpeed;
-    float maxAccel;
+    double maxSpeed;
+    double maxAccel;
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* _max_rotation_speed;
