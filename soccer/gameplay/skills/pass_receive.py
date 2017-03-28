@@ -46,7 +46,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         receiving = 3
 
     def __init__(self, captureFunction=(lambda: skills.capture.Capture())):
-        super().__init__(continuous=False)
+        super().__init__(continuous=False, autorestart=self.autorestart)
 
         self.ball_kicked = False
         self._target_pos = None
@@ -87,6 +87,11 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
             PassReceive.State.receiving, behavior.Behavior.State.failed,
             lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.failed or self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
+
+    ## This function will detirmine how this behavior reacts to its robot changing. If the ball is kicked and the robot switches, restarting causes all sorts of hitches, so we prevent this.
+    # Note: False means the behavior will not restart
+    def autorestart(self):
+        return not self.ball_kicked
 
     ## set this to True to let the receiver know that the pass has started and the ball's in motion
     # Default: False

@@ -1,7 +1,13 @@
 #include "DirectTargetPathPlanner.hpp"
 #include "MotionCommand.hpp"
 
+using namespace Geometry2d;
 namespace Planning {
+
+double vectorInDirection(Point point, Point direction) {
+    const auto vector = point.dot(direction.normalized());
+    return std::max(vector, 0.0);
+}
 
 std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
@@ -15,10 +21,13 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
 
     if (shouldReplan(planRequest)) {
         Geometry2d::Point endTarget = command.pathGoal.pos;
+        const auto direction = (endTarget - startInstant.pos).normalized();
+
         float endSpeed = command.pathGoal.vel.mag();
-        auto path = std::unique_ptr<Path>(
-            new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
-                                endTarget, endSpeed, motionConstraints));
+        auto path = std::make_unique<TrapezoidalPath>(
+            startInstant.pos, vectorInDirection(startInstant.vel, direction),
+            endTarget, vectorInDirection(command.pathGoal.vel, direction),
+            motionConstraints);
         path->setStartTime(RJ::now());
         return std::move(path);
     } else {
