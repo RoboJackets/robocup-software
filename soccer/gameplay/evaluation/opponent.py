@@ -6,7 +6,7 @@ import constants
 #
 # @return Num of robots on offense
 def num_on_offense():
-	# Complementary filter on...
+	# Complementary filter based on...
 	#	Distance to their goal
 	#	Distance to the ball
 	goal_loc   = robocup.Point(0, constants.Field.Length)

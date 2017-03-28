@@ -15,114 +15,6 @@ import skills.moving_pass_receive
 import skills.move
 import skills.capture
 
-# Offense:
-
-# Collect the ball / Defense
-#         2 Defending goal (1 Goalie)
-#         3 Left
-#         Defend another shot from additional strikers
-#         (User distance to goal / angle to figure out the chance)
-#         If < Cutoff, move said defending robot to block pass
-#         Left over ones defend pass
-
-#         Once ball is collected move to Dribble
-
-# Dribble
-#         Move all offensive robots up the field
-#         Test recieve positions and find best one
-#         Dribble if nothing good is found
-#             Find better definitions on when to dribble
-
-#         Calculate pass
-#             Chance to pass
-#                 Basic chance of intersection (Pass distance accounted for indirectly)
-#             pos_heuristic
-#                 Weight center (Linear coeff)
-#                 Weight space  (Triweight coff)
-#                 Weight proximity to ball location (N-Power)
-#                 Weight angle between goal post (linear coeff) (Angle between is already nonlinear)
-#                 Weight shot super high if one is availible (touchpassPositioning)
-#                 Change weight distribution based on their defense
-#                     Evaluate % time spent doing man on man vs zone (Add other defenses as created)
-#                     Man on man -> Space is higher
-#                     Zone       -> Zone is higher
-#                 Allow for pass back due to cornering
-#                     Back pass must be open  significantly
-#                     May be accounted for with space / center heuristic already
-#             Add some way to get longer pass being solved first when in the same direction
-
-#         Calculate shot (Use build-in for now)
-#             Basic motion prediction
-#                 Predict velocity (Then acceleration)
-#             Ball prediction
-#                 Predict along path to figure out closeness of interception
-#             Distance
-#                 Distance from goal (Indirectly weighted through other means, but allows for a quick cutoff if needed)
-#             Angle
-#                 Linearly decrease chance besed on normal distribution (Could be more advanced if needed)
-
-#         Calculate clear
-#             Dist_to_our_goal
-#                 Linear weight
-#             Chance to pass
-#                 Basic chance of intersection
-#             pos_heuristic
-#                 Maybe, sill haven't decided
-#                 Most likely like the one above (Maybe try inverse)
-
-
-# Passing
-#     We have chosen to pass
-#     Find the best robot to approach ball
-#         Look into weighting based on angle off of ball
-#         We want ball to be approached from opposite of goal
-#     Prepare other robots to move out of the way
-#         Drawing out the defense
-#         (Depends on the type of defense)
-
-# Shooting
-#     We have chosen to shoot
-#     Aim at best location and shoot
-#         Basic motion prediction
-#         Ball prediction
-#         Angle
-#         Largest section adviable
-
-# Clearing
-#     We have chosen to clear
-#     Aim of robot CHIP distance away
-#     Find most open robot
-#     if < cutoff & no open robots
-#     Just find most open area
-
-# These three may be tied into the basic passing logic and all that will change is the receive / collect object
-# PassinMotion
-#     Pass has been kicked (Until just about to be collected)
-#     Move robot into interception
-#     Have a robots move to block interception
-#         Direction of motion of intercepting robot
-#     Move other robots into Defensive->Offensive positions
-#         Based on the %pass completed
-
-# PassCollecting
-#     Pass is about to be collected
-#     Continue collection and predict whether to one hit touch or settle
-#         Based on openness of the player and path to goal
-#     Shot open?
-#         Take the one touch (evalPass)
-#     Teammate open with perfect shot?
-#         One touch pass (touchpassPositioning)
-#     Neither at a very good percentage
-#         Settle with dribble
-
-# Onetouch
-#     if shot
-#         Shoot
-#     if pass
-#         Pass
-
-
-
 # TODO: Fix everything to follow standards
 
 class AdaptiveFormation(standard_play.StandardPlay):
@@ -137,13 +29,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
         shooting = 4
         # Clear when pass / dribble is worse and we are in our own zone
         clearing = 5
-
-        # Pass is in motion, move to collect pass, other robots move into position
-        passInMotion = 6
-        # Check if one touch goal is better than settling
-        passCollecting = 7
-        # One touch shot
-        oneTouch = 8
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -179,7 +64,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.check_dribbling_timer_cutoff = 100
 
 
-        # field_pos_weights: (Centerness, Distance to their goal, Angle off their goal)
+        # [type_]field_pos_weights: (Centerness, Distance to their goal, Angle off their goal)
         # [type]_weights: (space, field_position, shot_chance, kick_proximity)
 
         # Weights for the field positioning
@@ -191,16 +76,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Weights to find where to chip the ball
         self.chip_field_pos_weights = (0.1, .2, 0.02)
         self.chip_pass_weights = (2, 10, 0, 10)
-
-        # Min onetouch score
-        self.one_touch_shot_cutoff = 0.9
-
-        # Min distance to switch phases
-        self.pass_collecting_dist = 0.5
-
-        # State Transition Variable
-        self.pass_target = None
-
 
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
@@ -230,24 +105,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Passing states
         self.add_transition(AdaptiveFormation.State.passing,
-                            AdaptiveFormation.State.passInMotion,
-                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
-                            'Pass Kicked')
-
-        self.add_transition(AdaptiveFormation.State.passInMotion,
-                            AdaptiveFormation.State.passCollecting,
-                            lambda: True,
-                            'Pass About to be Collected')
-
-        self.add_transition(AdaptiveFormation.State.passCollecting,
-                            AdaptiveFormation.State.oneTouch,
-                            lambda: False,
-                            'One Touch Shot')
-
-        self.add_transition(AdaptiveFormation.State.passCollecting,
                             AdaptiveFormation.State.dribbling,
-                            lambda: True,
-                            'Pass Settled')
+                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
+                            'Passed')
 
         # Reset to collecting when ball is lost at any stage
         self.add_transition(AdaptiveFormation.State.dribbling,
@@ -267,18 +127,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             AdaptiveFormation.State.collecting,
                             lambda: False,
                             'Clearing: Ball Lost')
-        self.add_transition(AdaptiveFormation.State.passInMotion,
-                            AdaptiveFormation.State.collecting,
-                            lambda: False,
-                            'PassInMotion: Ball Lost')
-        self.add_transition(AdaptiveFormation.State.passCollecting,
-                            AdaptiveFormation.State.collecting,
-                            lambda: False,
-                            'PassCollecting: Ball Lost')
-        self.add_transition(AdaptiveFormation.State.oneTouch,
-                            AdaptiveFormation.State.collecting,
-                            lambda: False,
-                            'OneTouch: Ball Lost / Shot')
 
 
     def should_pass_from_dribble(self):
@@ -329,17 +177,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def on_enter_collecting(self):
+        # 2 man to man defenders and 1 zone defender
         defensive_forward = tactics.defensive_forward.DefensiveForward()
         self.add_subbehavior(defensive_forward, 'defend', required=True)
-
-        # TODO: Setup offense to be defenders
-        # One defense that zone point
-        # Two mark the robots
-        # Markers block the robots
-
-        # For testing purposes only:
-        #capture = skills.capture.Capture()
-        #self.add_subbehavior(capture, 'capture', required=True)
 
     def on_exit_collecting(self):
         self.remove_all_subbehaviors()
@@ -366,6 +206,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
                                                     self.field_pos_weights, self.passing_weights, False)
 
         # Grab shot chance
+        # TODO: KickEval
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
 
         # Recalculate dribbler pos
@@ -417,22 +258,3 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_exit_passing(self):
         self.remove_all_subbehaviors()
-
-    # Move other robots out into position
-    # Check to see what type of reception we should do
-    # Begin moving robots who are out of position
-    # Update in real time
-    def on_enter_passInMotion(self):
-        pass
-
-    def execute_passInMotion(self):
-        pass
-
-    def on_exit_passInMotion(self):
-        self.remove_all_subbehaviors()
-
-    def on_enter_passCollecting(self):
-        pass
-
-    def on_enter_oneTouch(self):
-        pass

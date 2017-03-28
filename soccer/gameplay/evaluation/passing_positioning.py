@@ -14,8 +14,6 @@ import evaluation.shooting
 #
 # Example usage:
 # point, score = evaluation.passing.eval_best_receive_point(main.ball().pos)
-#
-# Which finds the best pass from the ball position
 
 ## Returns a robocup.Rect object that is the default location
 #
@@ -95,17 +93,22 @@ def eval_singl_point(kick_point,
 
     # Dissallow shooting over midfield
     if (kick_point.y > constants.Field.Length / 2):
+        # TODO: Replace with KickEval
         shotChance = evaluation.shooting.eval_shot(receive_point)
     
+    # TODO: Replace with KickEval
     passChance = evaluation.passing.eval_pass(kick_point, receive_point)
 
     space    = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
     fieldPos = evaluation.field.field_pos_coeff_at_pos(receive_point, field_weights[0], field_weights[1], field_weights[2])
-    distance = math.exp(-1 * (kick_point - receive_point).mag() )
+    distance = math.exp( -1 * (kick_point - receive_point).mag() )
 
     # All of the other scores are based on whether the pass will actually make it to it
-    # Not worth returning a great position if we can even get a pass there
-    totalChance = passChance * ( weights[0]*(1-space) + weights[1]*fieldPos + weights[2]*shotChance + weights[3]*(1-distance) )
+    # Not worth returning a great position if we cant even get a pass there
+    totalChance = passChance * ( weights[0] * (1 - space) + \
+                                 weights[1] * fieldPos + \
+                                 weights[2] * shotChance + \
+                                 weights[3] * (1 - distance) )
     
     return totalChance / math.fsum(weights)
 
@@ -134,7 +137,7 @@ def eval_best_receive_point(kick_point,
 
     if points is None or len(points) == 0:
         # Nothing can be done
-        return None
+        return None, 0
 
     # TODO: Setup to be a list of the top X points
     bestScore = None
@@ -146,7 +149,7 @@ def eval_best_receive_point(kick_point,
 
         if (debug):
             score_color = (round(currentScore*255), 0, round((1-currentScore)*255))
-            main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Debug")        
+            main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Score")
 
         if bestScore is None or currentScore > bestScore:
             bestScore = currentScore
@@ -157,6 +160,6 @@ def eval_best_receive_point(kick_point,
         return None, 0
 
     if (debug):
-        main.system_state().draw_line(robocup.Segment(kick_point, bestPoint), constants.Colors.Red, "Debug")
+        main.system_state().draw_line(robocup.Segment(kick_point, bestPoint), constants.Colors.Red, "Best Point")
 
     return bestPoint, bestScore

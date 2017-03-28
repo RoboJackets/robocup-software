@@ -44,6 +44,7 @@ class TestAdaptiveFormationWeights(play.Play):
         num_width = 10
         num_length = 10
 
+        val = 0
         max_val = 0
         max_x = 0
         max_y = 0
@@ -84,7 +85,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 kick_eval = robocup.KickEvaluator(main.system_state())
                 for bot in main.our_robots():
                     kick_eval.add_excluded_robot(bot)
-                val = kick_eval.eval_pt_to_pt(robocup.Point(x_cent, y_cent), robocup.Point(0, 3), 0.1)
+                #val = kick_eval.eval_pt_to_pt(robocup.Point(x_cent, y_cent), robocup.Point(0, 3), 0.1)
 
                 # Find max
                 if (val > max_val):

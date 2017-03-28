@@ -10,6 +10,8 @@ import math
 # @param excluded_robots A list of robots that shouldn't be counted as obstacles to this shot
 # @return a value from zero to one that estimates the probability of the shot succeeding
 def eval_shot(from_point, excluded_robots=[]):
+    #TODO: Replace with KickEval
+
     # Create a triangle between us and the two sides of the goal
     # Side along the goal is 'receive_seg'
     # The window evaluator is then used to see how open it is

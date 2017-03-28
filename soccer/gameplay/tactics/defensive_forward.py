@@ -7,6 +7,7 @@ import math
 
 import composite_behavior
 import evaluation.defensive_positioning
+import tactics.submissive_defensive_forward
 
 # Finds the positions to place each defender
 class DefensiveForward(composite_behavior.CompositeBehavior):
@@ -29,30 +30,30 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            DefensiveForward.State.blocking,
+                            DefensiveForward.State.defending,
                             lambda: True,
                             'immediately')
 
+    # Set the marking locations
     def on_enter_defending(self):
         self.free_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions()
 
         names = ['mark_main', 'mark_sub']
 
         for i in range(0, 2):
-            self.marks.extend([skills.mark.Mark()])
+            self.marks.extend([tactics.submissive_defensive_forward.SubmissiveDefensiveForward()])
             self.add_subbehavior(self.marks[i], names[i], required=True)
 
             self.marks[i].mark_robot = self.mark_bots[i]
-            #point = self.get_block_pos(self.mark_bots[i])
-            #self.marks[i].mark_point = point
+            point = self.get_block_pos(self.mark_bots[i])
+            self.marks[i].mark_point = point
 
-        self.floating_def = skills.mark.Mark()
+        self.floating_def = tactics.submissive_defensive_forward.SubmissiveDefensiveForward()
         self.add_subbehavior(self.floating_def, 'mark_float', required=True)
         self.floating_def.mark_point = self.free_pos
 
+    # Update marking positions
     def execute_defending(self):
-        # Updates block pos
-
         our_bots = [self.marks[0].robot, self.marks[1].robot, self.floating_def.robot]
         self.free_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions(our_bots)
 
@@ -66,12 +67,13 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
     def on_exit_defending(self):
         self.remove_all_subbehaviors()
 
+    # Uses their predicted kick direction to block
     def get_block_pos(self, bot):
         # Get predicted angle of shot
         # Get goal to bot
         # Place point x dist away
         predicted = evaluation.defensive_positioning.predict_kick_direction(bot)
-        actual = bot.angle()
+        actual = bot.angle
 
         angle = self.block_angle_coeff*predicted + (1-self.block_angle_coeff)*actual
 
