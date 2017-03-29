@@ -10,8 +10,6 @@
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 
-#include <protobuf/SimCommand.pb.h>
-
 class TestResultTab;
 class StripChart;
 class ConfigBool;
@@ -236,6 +234,4 @@ private:
 
     /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons;
-
-    Packet::SimCommand _quickLoadCmd;
 };

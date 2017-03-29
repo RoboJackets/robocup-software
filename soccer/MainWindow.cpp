@@ -1011,8 +1011,8 @@ void MainWindow::on_actionResetField_triggered() {
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
-    SimCommand cmd;
     // TODO: check that this handles threads properly
+    /*
     for (OurRobot* robot : state()->self) {
         if (robot->visible) {
             SimCommand::Robot* r = cmd.add_robots();
@@ -1041,10 +1041,12 @@ void MainWindow::on_actionStopRobots_triggered() {
             r->set_w(0);
         }
     }
+    */
     //_ui.fieldView->sendSimCommand(cmd);
 }
 
 void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
+    /*
     _ui.actionQuickloadRobotLocations->setEnabled(true);
     _quickLoadCmd.reset();
     for (OurRobot* robot : state()->self) {
@@ -1082,6 +1084,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
     _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y());
     _quickLoadCmd.mutable_ball_vel()->set_x(0);
     _quickLoadCmd.mutable_ball_vel()->set_y(0);
+    */
 }
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
