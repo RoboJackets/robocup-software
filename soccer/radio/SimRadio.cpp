@@ -16,7 +16,7 @@ using namespace Packet;
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
 SimRadio::SimRadio(SystemState& system_state, bool blueTeam)
-    : _state(system_state), blueTeam(blueTeam) {
+    : _state(system_state), _blueTeam(blueTeam) {
     _channel = blueTeam ? 1 : 0;
     if (!_socket.bind(RadioRxPort + _channel)) {
         throw runtime_error(QString("Can't bind to the %1 team's radio port.")
@@ -62,7 +62,7 @@ void SimRadio::send(Packet::RadioTx& packet) {
         simRobot->set_spinner(robot.control().dvelocity() > 0);
         simRobot->set_wheelsspeed(false);
     }
-    simRobotCommands->set_isteamyellow(!blueTeam);
+    simRobotCommands->set_isteamyellow(!_blueTeam);
     simRobotCommands->set_timestamp(RJ::timestamp());
 
     std::string out;
@@ -121,4 +121,5 @@ void SimRadio::switchTeam(bool blueTeam) {
                                 .arg(blueTeam ? "blue" : "yellow")
                                 .toStdString());
     }
+    _blueTeam = blueTeam;
 }

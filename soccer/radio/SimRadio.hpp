@@ -22,5 +22,5 @@ private:
 
     QUdpSocket _socket;
     int _channel;
-    bool blueTeam;
+    bool _blueTeam;
 };

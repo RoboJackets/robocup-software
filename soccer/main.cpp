@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 
     QApplication app(argc, argv);
 
-    bool blueTeam = false;
+    bool blueTeam = true;
     QString cfgFile;
     vector<const char*> playDirs;
     bool sim = false;
