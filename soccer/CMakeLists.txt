@@ -5,8 +5,6 @@ set(CMAKE_AUTOMOC ON)
 # include Eigen3 for linear algebra
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
-# RRT library is included via add_subdirectories above us.
-
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
 set(ROBOCUP_LIB_SRC
@@ -133,6 +131,11 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL2_LIBRARIES})
+
+
+# RRT
+include_directories(${RRT_INCLUDE_DIR})
+target_link_libraries(robocup RRT)
 
 
 # python

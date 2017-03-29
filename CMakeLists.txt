@@ -119,7 +119,6 @@ include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
 include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf headers
 include_directories("${CMAKE_BINARY_DIR}/common") # for generated protobuf headers
 
-include_directories("${PROJECT_SOURCE_DIR}/external/rrt/src") # rrt library TODO is there a better way to do this?
 
 # setup ccache to speed up recompiles.  It's especially useful when switching back and forth
 # between branches where you'd normally have to recompile things many times.
