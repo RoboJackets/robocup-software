@@ -13,6 +13,7 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <iostream>
+#include <sys/time.h>
 
 using namespace std;
 using namespace Eigen;
@@ -89,10 +90,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 
     MotionInstant goal = target.pathGoal;
     vector<DynamicObstacle> actualDynamic;
-    splitDynamic(obstacles, actualDynamic, dynamicObstacles);
-
-    //Straight line path planning
-    
+    splitDynamic(obstacles, actualDynamic, dynamicObstacles);    
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -187,19 +185,41 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     
 }
 
+void printTimeDifference(struct timeval after, struct timeval before) {
+    printf("%ld microseconds\n",
+            ((after.tv_sec - before.tv_sec)*1000000L
+           +after.tv_usec) - before.tv_usec
+          );
+}
+
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles, SystemState* state,
                                  unsigned shellID) {
-    
+    struct timeval tvalBefore, tvalAfter;
+    gettimeofday (&tvalBefore, NULL);
     vector<Point> straight = runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, true);
     if (straight.size() != 0) {
-        cout << "Straight path!" << endl;
+        gettimeofday (&tvalAfter, NULL);
+        cout << "Straight line path planning took: ";
+
+        printTimeDifference(tvalAfter, tvalBefore);
         return straight;
     }
-    cout << "Regular RRT Planning" << endl;
-    return runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, false);
+    struct timeval tvalBefore2;
+    gettimeofday (&tvalBefore2, NULL);
+    vector<Point> returnPath = runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, false);
+    gettimeofday (&tvalAfter, NULL);
+    cout << "Regular path planning took total time of: ";
+    printTimeDifference(tvalAfter, tvalBefore);
+    cout << "Regular path planning took this much time with straight path planning: ";
+    printTimeDifference(tvalBefore2, tvalBefore);
+    cout << "Regular path planning took this much time with regular path planning: ";
+    printTimeDifference(tvalAfter, tvalBefore2);
+        
+    return returnPath;
 }
+
 
 vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
@@ -212,12 +232,25 @@ vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
-    biRRT.setStepSize(*RRTConfig::StepSize);
-    biRRT.setMinIterations(_minIterations);
-    biRRT.setMaxIterations(_maxIterations);
+    
+    
     if (straightLine) {
+        cout << "Straight line" << endl;
+        
+        biRRT.setStepSize(stateSpace->distance(start.pos, goal.pos));
+        //biRRT.setStepSize(*RRTConfig::StepSize); Order of magnitude of 10^3 instead of 10^2.
         biRRT.setGoalBias(1);
+        //biRRT.setGoalBias(*RRTConfig::StepSize); Normal path planning used about twice as often.
+        biRRT.setMinIterations(0);
+        //biRRT.setMinIterations(_minIterations); Normal path planning used every time.
+        biRRT.setMaxIterations(10);
+        //biRRT.setMaxIterations(1); Normal path planning used a little bit more often.
+        
     } else {
+        cout << "Normal path planning" << endl;
+        biRRT.setStepSize(*RRTConfig::StepSize);
+        biRRT.setMinIterations(_minIterations);
+        biRRT.setMaxIterations(_maxIterations);
         biRRT.setGoalBias(*RRTConfig::StepSize);
     }
 
