@@ -201,7 +201,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
         DrawBiRRT(biRRT, state, shellID);
     }
 
-    vector<Point> points= biRRT.getPath();
+    vector<Point> points = biRRT.getPath();
 
     // Optimize out uneccesary waypoints
     RRT::SmoothPath(points, *stateSpace);
