@@ -200,6 +200,11 @@ private:
     // again from the Logger.
     std::vector<std::shared_ptr<Packet::LogFrame> > _history;
 
+    // Longer log history, copied from Logger.
+    // This is used specificially via StripChart and ProtobufTree
+    // To export a larger amount of data.
+    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory;
+
     // When true, External Referee is automatically set.
     // This is cleared by manually changing the checkbox or after the
     // first referee packet is seen and the box is automatically checked.

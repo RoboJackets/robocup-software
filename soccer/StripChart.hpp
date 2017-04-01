@@ -53,8 +53,8 @@ public:
     // This chart owns the function and will destroy it when needed.
     void function(Chart::Function* function);
 
-    // Exports the contents of the chart to a file (file type tbd)
-    void xport();
+    // Exports the contents of the chart to a .csv file
+    void exportChart();
 
     void minValue(float v) { _minValue = v; }
 
@@ -68,6 +68,9 @@ public:
     // If true, minValue and maxValue are automatically changed when
     // out-of-range values are found
     bool autoRange;
+
+    //Arbitrary value for width of the chart, must be <= history size
+    int chartSize = 1000;
 
 protected:
     void paintEvent(QPaintEvent* e) override;

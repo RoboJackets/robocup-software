@@ -50,12 +50,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _doubleFrameNumber(-1),
       _lastUpdateTime(RJ::now()),
       _history(2 * 60),
+      _longHistory(10000),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
-    _ui.logTree->history(&_history);
+    _ui.logTree->history(&_longHistory);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
 
@@ -366,6 +367,9 @@ void MainWindow::updateViews() {
     // Read recent history from the log
     _processor->logger().getFrames(frameNumber(), _history.size(),
                                    _history.begin());
+
+    _processor->logger().getFrames(frameNumber(), _longHistory.size(),
+                                   _longHistory.begin());
 
     // Update field view
     _ui.fieldView->update();
