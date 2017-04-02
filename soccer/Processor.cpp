@@ -794,7 +794,7 @@ JoystickControlValues Processor::getJoystickControlValues() {
         vals.translation *=
             Joystick::JoystickTranslationMaxDampedSpeed->value();
     } else {
-        vals.translation *= Joystick::JoystickRotationMaxSpeed->value();
+        vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
     }
     if (_dampedRotation) {
         vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
