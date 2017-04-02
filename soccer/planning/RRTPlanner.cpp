@@ -13,7 +13,6 @@
 #include <Eigen/Dense>
 #include <algorithm>
 #include <iostream>
-#include <sys/time.h>
 
 using namespace std;
 using namespace Eigen;
