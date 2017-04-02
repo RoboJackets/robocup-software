@@ -40,8 +40,8 @@ class pid(play.Play):
             robocup.Point(xsize, .25), robocup.Point(xsize, 1.5))
 
     def on_enter_prep(self):
-        xsize = constants.Field.Width / 2
-        move = skills.move.Move(robocup.Point(-xsize + .1, 2))
+        xsize = constants.Field.Width / 10
+        move = skills.move.Move(robocup.Point(-xsize, 2))
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
         line_up = tactics.line_up.LineUp(self.create_lineup())

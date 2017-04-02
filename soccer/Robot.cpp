@@ -176,6 +176,21 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
+void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
+    if (!visible) return;
+
+    // sets flags for future movement
+    if (verbose)
+        cout << " in OurRobot::moveTuning(goal): adding a goal (" << goal.x()
+             << ", " << goal.y() << ")" << endl;
+
+    _motionCommand = std::make_unique<Planning::TuningPathCommand>(
+        MotionInstant(goal, (goal - pos).normalized() * endSpeed));
+
+    *_cmdText << "moveTuning(" << goal << ")" << endl;
+    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
+}
+
 void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
     if (!visible) return;
 

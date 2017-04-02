@@ -1,5 +1,6 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
+#include "TuningPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
 //#include "PivotPathPlanner.hpp"
@@ -35,7 +36,10 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
         case MotionCommand::DirectPathTarget:
             planner = new DirectTargetPathPlanner();
             break;
-
+        case MotionCommand::TuningPath:
+            planner = new TuningPathPlanner();
+            break;
+            
         case MotionCommand::Pivot:
             planner = new PivotPathPlanner();
             break;

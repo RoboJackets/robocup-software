@@ -99,6 +99,11 @@ void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     self->moveDirect(*to);
 }
 
+void OurRobot_move_tuning(OurRobot* self, Geometry2d::Point* to) {
+    if (to == nullptr) throw NullArgumentException("to");
+    self->moveTuning(*to);
+}
+
 void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
                               Geometry2d::Point* vf) {
     if (endPos == nullptr || vf == nullptr) throw NullArgumentException();
@@ -639,6 +644,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("move_to", &OurRobot_move_to)
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
+        .def("move_tuning", &OurRobot_move_tuning)
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)

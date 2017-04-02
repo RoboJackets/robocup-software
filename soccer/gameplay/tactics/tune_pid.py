@@ -8,6 +8,7 @@ import robocup
 import skills
 import skills.move
 import skills.move_direct
+import skills.move_tuning
 import time
 
 
@@ -41,7 +42,7 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             behavior.Behavior.State.completed,
                             lambda: not self.tune, 'done tuning')
 
-        xsize = constants.Field.Width / 2
+        xsize = constants.Field.Width / 10
 
         self.left_point = robocup.Point(-xsize, 2)
         self.right_point = robocup.Point(xsize, 2)
@@ -55,9 +56,9 @@ class Tune_pid(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_tune(self):
         if (self.robot.pos.x < 0):
-            move = skills.move_direct.MoveDirect(self.right_point)
+            move = skills.move_tuning.MoveTuning(self.right_point)
         else:
-            move = skills.move_direct.MoveDirect(self.left_point)
+            move = skills.move_tuning.MoveTuning(self.left_point)
 
         move.check_velocity = True
         self.robot.start_pid_tuner('x')
