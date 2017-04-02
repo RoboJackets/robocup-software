@@ -9,6 +9,7 @@ soccer_tests
 simple_logger
 log_viewer
 log_converter
+rrt-viewer
 radio
 convert_tcpdump
 sslrefbox
