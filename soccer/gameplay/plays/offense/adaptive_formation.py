@@ -5,17 +5,11 @@ import constants
 import enum
 
 import standard_play
-
 import evaluation.passing_positioning
-
 import tactics.coordinated_pass
 import tactics.defensive_forward
-
-import skills.moving_pass_receive
 import skills.move
 import skills.capture
-
-# TODO: Fix everything to follow standards
 
 class AdaptiveFormation(standard_play.StandardPlay):
     class State(enum.Enum):
@@ -48,8 +42,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.max_dribble_dist = 1 * .9
 
         # Min field Y to clear
-        self.clear_field_cutoff = constants.Field.Length / 5 # in our 20%
-        self.clear_distance_cutoff = constants.Field.Length / 10 ## if closest robot is 10% of the field away, don't clear
+        self.clear_field_cutoff = constants.Field.Length * .2
+        # Min dist to opponent before clear
+        self.clear_distance_cutoff = constants.Field.Length * .1
 
 
         # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
@@ -67,7 +62,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # [type_]field_pos_weights: (Centerness, Distance to their goal, Angle off their goal)
         # [type]_weights: (space, field_position, shot_chance, kick_proximity)
 
-        # Weights for the field positioning
+        # Weights for the general field positioning
         self.field_pos_weights = (0.01, 3, 0.02)
         # Weights for finding best pass
         self.passing_weights = (2, 2, 15, 1)
@@ -103,7 +98,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             lambda: self.should_clear_from_dribble(),
                             'Clearing')
 
-        # Passing states
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.dribbling,
                             lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,

@@ -100,7 +100,7 @@ class SubmissiveDefensiveForward(composite_behavior.CompositeBehavior):
 
     def find_intersecting_robot(self, line, blocking_robots):
         for bot in blocking_robots:
-            if (line.dist_to(bot.pos )< self.dodge_dist):
+            if (line.dist_to(bot.pos) < self.dodge_dist):
                 return bot
 
         return None
