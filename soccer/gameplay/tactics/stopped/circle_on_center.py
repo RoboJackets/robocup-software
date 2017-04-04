@@ -46,13 +46,11 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         if (self.num_robots != num_robots):
             self.num_robots = num_robots
             self.remove_all_subbehaviors()
-            i = 0
             for pt in range(6):
                 self.add_subbehavior(skills.move.Move(),
-                                     name="robot" + str(i),
+                                     name="robot" + str(pt),
                                      required=False,
-                                     priority=6 - i)
-                i = i + 1
+                                     priority=6 - pt)
 
         num_robots = max(self.min_robots, num_robots)
 

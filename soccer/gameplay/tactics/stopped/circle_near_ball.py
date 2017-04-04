@@ -29,14 +29,12 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                             lambda: not self.all_subbehaviors_completed(),
                             "robots aren't lined up")
 
-        i = 0
         #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
-        for pt in range(6):
+        for i in range(6):
             self.add_subbehavior(skills.move.Move(),
                                  name="robot" + str(i),
                                  required=False,
                                  priority=6 - i)
-            i = i + 1
 
     def get_circle_points(self, num_of_points):
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
@@ -143,11 +141,11 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         if (self.num_robots != num_robots):
             self.num_robots = num_robots
             self.remove_all_subbehaviors()
-            for pt in range(6):
+            for i in range(6):
                 self.add_subbehavior(skills.move.Move(),
-                                     name="robot" + str(pt),
+                                     name="robot" + str(i),
                                      required=False,
-                                     priority=6 - pt)
+                                     priority=6 - i)
         #assign destinations for the number of robots we have
         for i, pt in enumerate(self.get_circle_points(num_robots)):
             self.subbehavior_with_name("robot" + str(i)).pos = pt
