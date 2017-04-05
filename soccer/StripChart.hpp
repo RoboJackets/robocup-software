@@ -53,6 +53,8 @@ public:
     // This chart owns the function and will destroy it when needed.
     void function(Chart::Function* function);
 
+    QList<Chart::Function*> getFunctions() { return _functions; }
+
     // Exports the contents of the chart to a .csv file
     void exportChart();
 

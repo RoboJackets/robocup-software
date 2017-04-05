@@ -490,27 +490,22 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         }
     } else if (exportAction && act == exportAction) {
         //If export button was pressed
-        QVector<int> path;
-        QStringList names;
-        for (QTreeWidgetItem* i = item; i; i = i->parent()) {
-            int tag = i->data(Column_Tag, Qt::DisplayRole).toInt();
-            path.push_back(tag);
-            names.append(i->text(Column_Field));
-        }
-        reverse(path.begin(), path.end());
-        reverse(names.begin(), names.end());
+
         StripChart* chart = new StripChart();
         chart->history(_history);
-        if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
-            Chart::PointMagnitude* f = new Chart::PointMagnitude;
-            f->path = path;
-            chart->function(f);
-        } else {
-            Chart::NumericField* f = new Chart::NumericField;
-            f->path = path;
-            chart->function(f);
+
+        //Loop through all open charts and add their data to one chart
+        for(int i = 0; i < dockWidgets.size(); i++){
+            StripChart* cChart = (StripChart*)dockWidgets[i]->widget();
+            QList<Chart::Function*> functions = cChart->getFunctions();
+            for(int j = 0; j < functions.size(); j++){
+                chart->function(functions[j]);
+            }
         }
+
+        //export that chart
         chart->exportChart();
+
     } else if (chartMenuActions.size() > 0) {
         int i = chartMenuActions.indexOf(act);
         if (i != -1) {

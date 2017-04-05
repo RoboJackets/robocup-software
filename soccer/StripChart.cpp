@@ -1,4 +1,5 @@
 #include "StripChart.hpp"
+#include "time.hpp"
 
 #include <QPainter>
 #include <QDateTime>
@@ -54,11 +55,16 @@ void StripChart::exportChart() {
 
     QString chartName = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
     std::ofstream outfile("ChartData/" + chartName.toStdString() + "-chart.csv");
-    outfile << "Frame" << std::endl;
+    std::cout<<"FUNCTION SIZE: "<<_functions.size()<<std::endl;
+    //_history has the most recent frame at 0, the most recent logframe should
+    //have its value at vert close to the time at export.
+
+    auto startTime = RJ::timestamp(); //get current time
+
     for (unsigned int i = 0; i < _history->size(); ++i) {
 
         if (_history->at(i)) {
-            outfile << i;
+            outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() - startTime);
 
             for (unsigned int x = 0; x < _functions.size(); x++) {
                 auto function = _functions[x];
