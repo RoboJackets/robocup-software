@@ -6,8 +6,8 @@ import enum
 import math
 
 import composite_behavior
+import evaluation.ball
 import evaluation.defensive_positioning
-import tactics.submissive_defensive_forward
 import skills.mark
 import skills.capture
 
@@ -51,8 +51,13 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
         self.add_transition(DefensiveForward.State.collecting,
                             DefensiveForward.State.blocking,
-                            lambda: not self.within_range() or self.subbehavior_with_name('collector').is_done_running(),
+                            lambda: not self.within_range(),
                             'Back to blocking')
+
+        self.add_transition(DefensiveForward.State.collecting,
+                            behavior.Behavior.State.completed,
+                            lambda: True,
+                            'Ball collected')
 
         # TODO: Finish play when ball is collected
 
@@ -71,7 +76,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         self.defenders[2].mark_point = self.zone_def_pos
 
     # Continue updating the mark positions
-    def execute_defending(self):
+    def execute_blocking(self):
         self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions()
 
         for i in range(0, 2):
@@ -80,12 +85,8 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
         self.defenders[2].mark_point = self.zone_def_pos
 
-    def on_exit_defending(self):
+    def on_exit_blocking(self):
         self.remove_all_subbehaviors()
-
-        # Reset "queue"
-        for i in range(0, 3):
-            self.defenders[i] = None
 
     # Create collector method and then
     def on_enter_collecting(self):
@@ -93,7 +94,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
         # Take closest robot to collect
         # Leave other two to move into primary blocking positions
-        self.collector = skills.caputre.Capture()
+        self.collector = skills.capture.Capture()
         self.add_subbehavior(self.collector, 'collector', required=True)
 
         for i in range(0, 2):
@@ -102,6 +103,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.defenders[i].mark_robot = self.mark_bots[i]
 
     def on_exit_collecting(self):
+        print('exit')
         self.remove_all_subbehaviors()
 
     # Uses their predicted kick direction to block
@@ -119,6 +121,12 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         pos = robocup.Point(x, y).normalized() + bot.pos
 
         return None # pos * self.block_dist
+
+    def we_have_ball(self):
+        has_ball = False
+        for bot in main.our_robots():
+            has_ball = has_ball or robot_has_ball(bot)
+        return has_ball
 
     # Wether any robot can collect the ball before the opponent
     def within_range(self):

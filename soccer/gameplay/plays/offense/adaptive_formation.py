@@ -80,7 +80,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.add_transition(AdaptiveFormation.State.collecting,
                             AdaptiveFormation.State.dribbling,
-                            lambda: False,#self.subbehavior_with_name('capture').is_done_running(),
+                            lambda: self.subbehavior_with_name('defend').state == behavior.Behavior.State.completed,
                             'Ball Collected')
 
         self.add_transition(AdaptiveFormation.State.dribbling,
@@ -248,7 +248,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_target, skills.moving_pass_receive.MovingPassReceive()), 'pass')
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')
 
     def on_exit_passing(self):
         self.remove_all_subbehaviors()
