@@ -5,6 +5,7 @@ import constants
 import enum
 
 import standard_play
+import evaluation.ball
 import evaluation.passing_positioning
 import tactics.coordinated_pass
 import tactics.defensive_forward
@@ -49,12 +50,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
         self.IncreasingChancesCutoff = 0.05
-        # State Deciding Variables
+        # State Decision Variables
         self.shot_chance = 0
         self.pass_score = 0
-        # Prev State Deciding Variables
+        # Prev State Decision Variables
         self.prev_shot_chance = 0
         self.prev_pass_score = 0
+        # Used to keep dribble within rules
         self.check_dribbling_timer = 0
         self.check_dribbling_timer_cutoff = 100
 
@@ -106,20 +108,21 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Reset to collecting when ball is lost at any stage
         self.add_transition(AdaptiveFormation.State.dribbling,
                             AdaptiveFormation.State.collecting,
-                            lambda: False,
+                            lambda: evaluation.ball.robot_has_ball(self.dribbler.robot),
                             'Dribble: Ball Lost')
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.collecting,
-                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
+                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.cancelled or \
+                                    self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
                             'Passing: Ball Lost')
         self.add_transition(AdaptiveFormation.State.shooting,
                             AdaptiveFormation.State.collecting,
-                            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed or \
-                                    self.subbehavior_with_name('kick').state == behavior.Behavior.State.failed,
+                            lambda: self.subbehavior_with_name('kick').is_done_running(),
                             'Shooting: Ball Lost / Shot')
         self.add_transition(AdaptiveFormation.State.clearing,
                             AdaptiveFormation.State.collecting,
-                            lambda: False,
+                            lambda: self.subbehavior_with_name('clear').state == behavior.Behavior.State.cancelled or \
+                                    self.subbehavior_with_name('clear').state == behavior.Behavior.State.failed,
                             'Clearing: Ball Lost')
 
 
@@ -241,13 +244,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Decrease weight on sides of field due to complexity of settling
         pass
 
-    def execute_clearing(self):
-        pass
-
     def on_exit_passing(self):
         self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
+        # TODO: Use the moving recieve when finished
         self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')
 
     def on_exit_passing(self):
