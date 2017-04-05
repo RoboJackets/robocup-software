@@ -188,6 +188,10 @@ def create_area_defense_zones(ignore_robots=[]):
         angle += angle_inc
         dist = dist_inc
 
+    # Bot outside field
+    if (point_cnt == 0):
+        return None
+
     avg = score_sum / point_cnt
     largest_bucket = 0
 

@@ -74,6 +74,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.chip_field_pos_weights = (0.1, .2, 0.02)
         self.chip_pass_weights = (2, 10, 0, 10)
 
+        self.kick_eval = robocup.KickEvaluator(main.system_state())
+
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
                             AdaptiveFormation.State.collecting,
@@ -121,8 +123,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
                             'Shooting: Ball Lost / Shot')
         self.add_transition(AdaptiveFormation.State.clearing,
                             AdaptiveFormation.State.collecting,
-                            lambda: self.subbehavior_with_name('clear').state == behavior.Behavior.State.cancelled or \
-                                    self.subbehavior_with_name('clear').state == behavior.Behavior.State.failed,
+                            lambda: self.subbehavior_with_name('clear').is_done_running(),
                             'Clearing: Ball Lost')
 
 
@@ -203,8 +204,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
                                                     self.field_pos_weights, self.passing_weights, False)
 
         # Grab shot chance
-        # TODO: KickEval
-        self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
+        _, self.shot_chance = self.kick_eval.eval_pt_to_opp_goal(main.ball().pos)
 
         # Recalculate dribbler pos
         self.check_dribbling_timer += 1
@@ -242,9 +242,17 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Line kick with chip
         # Choose most open area / Best pass, weight forward
         # Decrease weight on sides of field due to complexity of settling
-        pass
+        self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
+                                                    main.ball().pos, None, main.our_robots(),
+                                                    self.field_pos_weights, self.passing_weights, False)
 
-    def on_exit_passing(self):
+        clear = skills.pivot_kick.PivotKick()
+        clear.target = self.pass_target
+        clear.aim_params['desperate_timeout'] = 3
+        clear.use_chipper = True
+        self.add_subbehavior(chip, 'clear', required=False)
+
+    def on_exit_clearing(self):
         self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
