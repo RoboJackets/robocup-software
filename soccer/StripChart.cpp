@@ -54,13 +54,21 @@ void StripChart::function(Chart::Function* function) {
 void StripChart::exportChart() {
 
     QString chartName = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
-    std::ofstream outfile("ChartData/" + chartName.toStdString() + "-chart.csv");
-    std::cout<<"FUNCTION SIZE: "<<_functions.size()<<std::endl;
+    std::ofstream outfile("run/ChartData/" + chartName.toStdString() + "-chart.csv");
+
     //_history has the most recent frame at 0, the most recent logframe should
     //have its value at vert close to the time at export.
-
     auto startTime = RJ::timestamp(); //get current time
 
+    //output column names
+    outfile << "Time";
+    for (unsigned int x = 0; x < _functions.size(); x++) {
+        auto function = _functions[x];
+        outfile << "," << function->name(*_history->at(0).get());
+    }
+    outfile << std::endl;
+
+    //output data
     for (unsigned int i = 0; i < _history->size(); ++i) {
 
         if (_history->at(i)) {
@@ -180,6 +188,33 @@ void StripChart::paintEvent(QPaintEvent* e) {
 }
 
 ////////
+
+std::string Chart::Function::name(const Packet::LogFrame& frame){
+    std::string name = "";
+    const Message* msg = &frame;
+
+    for (int i = 0; i < path.size(); ++i) {
+        const Reflection* ref = msg->GetReflection();
+        const Descriptor* desc = msg->GetDescriptor();
+        int tag = path[i];
+
+        const FieldDescriptor* fd = desc->FindFieldByNumber(tag);
+        name += fd->name() + ".";
+
+        //check if next tag exists
+        if(i+1 < path.size()) {
+            if (fd->is_repeated()) {
+                msg = &ref->GetRepeatedMessage(*msg, fd, path[i+1]);
+            }
+            else if(ref->HasField(*msg, fd)){
+                msg = &ref->GetMessage(*msg, fd);
+            }
+        }
+    }
+    name.pop_back(); //remove trailing .
+
+    return name;
+}
 
 bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
                                   float& v) const {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <string.h>
 
 #include <vector>
 #include <memory>
@@ -19,24 +20,20 @@ namespace Chart {
 struct Function {
     virtual ~Function() {}
     virtual bool value(const Packet::LogFrame& frame, float& v) const = 0;
+    std::string name(const Packet::LogFrame& frame);
+
+    // Vector of tags from LogFrame to the float, double, or point field to be used.
+    // Each tag except the last one must identify a Message.
+    // A repeated field's tag is followed by the index of the item.
+    QVector<int> path;
 };
 
 struct PointMagnitude : public Function {
     virtual bool value(const Packet::LogFrame& frame, float& v) const override;
-
-    // Vector of tags from LogFrame to the Point to be used.
-    // Each tag except must identify a Message.
-    // A repeated field's tag is followed by the index of the item.
-    QVector<int> path;
 };
 
 struct NumericField : public Function {
     virtual bool value(const Packet::LogFrame& frame, float& v) const override;
-
-    // Vector of tags from LogFrame to the float or double field to be used.
-    // Each tag except the last one must identify a Message.
-    // A repeated field's tag is followed by the index of the item.
-    QVector<int> path;
 };
 }
 
