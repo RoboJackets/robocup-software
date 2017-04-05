@@ -208,9 +208,14 @@ vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
     
+    //If trying to plan a straight path, plan a straight path. Otherwise, run normal RRT.
     if (straightLine) {
+        //Set the step size to be the distance between the start and goal.
         biRRT.setStepSize(stateSpace->distance(start.pos, goal.pos));
+        //Plan straight toward the goal.
         biRRT.setGoalBias(1);
+        //Try up to five times. If unsuccessful after five tries, there probably doesn't exist
+        //a straight path.
         biRRT.setMinIterations(0);
         biRRT.setMaxIterations(5);
     } else {
