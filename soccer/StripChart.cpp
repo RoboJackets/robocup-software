@@ -55,16 +55,14 @@ void StripChart::exportChart() {
     QString chartName = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
     std::ofstream outfile("ChartData/" + chartName.toStdString() + "-chart.csv");
     outfile << "Frame" << std::endl;
-    std::cout << _functions.size() << std::endl;
     for (unsigned int i = 0; i < _history->size(); ++i) {
-                
+
         if (_history->at(i)) {
             outfile << i;
-            
+
             for (unsigned int x = 0; x < _functions.size(); x++) {
                 auto function = _functions[x];
                 float v = 0;
-                std::cout << x << std::endl;
 
                 if (function->value(*_history->at(i).get(), v)) {
                      outfile << "," << v ;
@@ -72,7 +70,7 @@ void StripChart::exportChart() {
             }
             outfile << std::endl;
         }
-        
+
     }
     outfile.close();
 }
