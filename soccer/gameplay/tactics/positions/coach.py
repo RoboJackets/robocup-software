@@ -143,7 +143,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         elif (current_plan == max_responses - 9):
             print("\n*coach slyly passes the player a pill*")
         elif (current_plan == max_responses - 10):
-            print("\nYes, the soup last night was delicious")
+            print("\nYes, the soup last night was Delicious")
 
 
 
