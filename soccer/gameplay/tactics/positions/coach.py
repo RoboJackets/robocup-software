@@ -20,14 +20,14 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         watching = 0
         celebrating = 1
         motivating = 2
+        strategizing = 3
 
     def __init__(self):
         super().__init__(continuous=True)
         self.spin_angle = 0
 
-        self.add_state(Coach.State.watching, behavior.Behavior.State.running)
-        self.add_state(Coach.State.celebrating, behavior.Behavior.State.running)
-        self.add_state(Coach.State.motivating, behavior.Behavior.State.running)
+        for state in Coach.State:
+            self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start, self.State.watching,
                             lambda: True, 'immediately')
@@ -42,6 +42,17 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             lambda: self.their_score_increased(), 'Let a goal through')
         self.add_transition(self.State.motivating, self.State.watching,
                             lambda: True, 'done talking')
+
+        self.add_transition(self.State.watching, self.State.strategizing,
+                            lambda: main.game_state().is_stopped(), 'Timeout')
+        self.add_transition(self.State.strategizing, self.State.watching,
+                            lambda: not main.game_state().is_stopped(), 'Timeout over')
+
+
+    #we definitely don't want this play running during comp
+    @classmethod
+    def score(cls):
+        return 9001
 
     def our_score_increased(self):
         if (Coach.OurScore < main.game_state().our_score):
@@ -61,7 +72,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                                    constants.Field.Length / 3)
 
         move = skills.move.Move(move_point)
-        self.add_subbehavior(move, 'coach')
+        self.add_subbehavior(move, 'coach', required = True)
 
     def on_exit_running(self):
         self.remove_all_subbehaviors()
@@ -98,6 +109,53 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         print("\n\nListen up:")
         print(Coach.fortune_wrapper())
+
+    def on_enter_strategizing(self):
+        #pick a robot to talk to
+        target_bot = random.randInt(0, (len(main.our_robots()) if (main.our_robots() is not None) else 0));
+        self.subbehavior_with_name('coach').pos = main.our_robots()[target_bot].pos
+        print("\n\n Alright Number " + str(target_bot) + " here is the plan:");
+
+    def execute_strategizing(self):
+        #Stops coach from talking too much
+        max_responses = 11
+        current_plan = random.randInt(0, max_responses)
+        
+        #because python is too cool for switch statements
+        if (current_plan == max_responses):
+            print("\n*incoherent mumbling*")
+        elif (current_plan == max_responses - 1):
+            print("\nThey'll never see it coming!")
+        elif (current_plan == max_responses - 2):
+            print("\n*wild robot appendage gestures*")
+        elif (current_plan == max_responses - 3):
+            print("\nAnd that's when we pull out the soldering irons")
+        elif (current_plan == max_responses - 4):
+            print("\n*coach violently hawks a loogie*")
+        elif (current_plan == max_responses - 5):
+            print("\nSweep the Leg")
+        elif (current_plan == max_responses - 6):
+            print("\nIs it necesarry for me to drink my own urine? No, but I do it anyway because its sterile and I like the taste")
+        elif (current_plan == max_responses - 7):
+            print("\nThere's nothing in the rules about golf clubs")
+        elif (current_plan == max_responses - 8):
+            print("\n*coach points violently at the ref*")
+        elif (current_plan == max_responses - 9):
+            print("\n*coach slyly passes the player a pill*")
+        elif (current_plan == max_responses - 10):
+            print("\nYes, the soup last night was delicious")
+
+
+
+
+
+    def on_exit_strategizing(self):
+        print("\n*coach gives the player an invigorating butt slap*\nGo get'em")
+
+
+
+
+
 
     @staticmethod
     ## Returns a fortune.
