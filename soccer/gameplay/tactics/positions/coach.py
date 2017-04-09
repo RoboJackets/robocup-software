@@ -1,16 +1,14 @@
 import robocup
 import constants
-import play
+import single_robot_composite_behavior
 import enum
 import behavior
 import main
 import skills.move
 import subprocess
 
-# TODO needs to be refactored into a tactic.
-
 ## Motivates, encourages, and directs the team.
-class Coach(play.Play):
+class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     MaxSpinAngle = 360
     SpinPerTick = 1
