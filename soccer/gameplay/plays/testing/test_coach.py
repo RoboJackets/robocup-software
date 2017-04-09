@@ -17,4 +17,4 @@ class TestCoach(play.Play):
         self.add_subbehavior(c, name='coach', required=True)
 
     def on_exit_running(self):
-        self.remove_subbehavior('mark')
+        self.remove_subbehavior('coach')
