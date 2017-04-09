@@ -28,6 +28,10 @@ using namespace boost::python;
 #include <boost/version.hpp>
 #include <exception>
 
+#include "RobotConfig.hpp"
+#include <Configuration.hpp>
+
+
 /**
  * These functions make sure errors on the c++
  * side get passed up through python.
@@ -155,6 +159,9 @@ void OurRobot_initialize_tuner(OurRobot* self, char controller) {
 
 void OurRobot_start_pid_tuner(OurRobot* self, char controller) {
     self->motionControl()->getPid(controller)->startTunerCycle();
+    self->config->translation.p->setValue(self->motionControl()->getPid(controller)->kp);
+    self->config->translation.i->setValue(self->motionControl()->getPid(controller)->ki);
+    self->config->translation.d->setValue(self->motionControl()->getPid(controller)->kd);
 }
 
 void OurRobot_run_pid_tuner(OurRobot* self, char controller) {
