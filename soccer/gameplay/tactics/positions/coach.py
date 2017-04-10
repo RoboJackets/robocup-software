@@ -6,6 +6,7 @@ import behavior
 import main
 import skills.move
 import subprocess
+import random
 
 ## Motivates, encourages, and directs the team.
 class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
@@ -23,7 +24,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         strategizing = 3
 
     def __init__(self):
-        super().__init__(continuous=True)
+        super().__init__(continuous=True, autorestart = lambda: self.State != self.State.strategizing)
         self.spin_angle = 0
 
         for state in Coach.State:
@@ -48,12 +49,6 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(self.State.strategizing, self.State.watching,
                             lambda: not main.game_state().is_stopped(), 'Timeout over')
 
-
-    #we definitely don't want this play running during comp
-    @classmethod
-    def score(cls):
-        return 9001
-
     def our_score_increased(self):
         if (Coach.OurScore < main.game_state().our_score):
             return True
@@ -72,7 +67,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                                    constants.Field.Length / 3)
 
         move = skills.move.Move(move_point)
-        self.add_subbehavior(move, 'coach', required = True)
+        self.add_subbehavior(move, 'coach')
 
     def on_exit_running(self):
         self.remove_all_subbehaviors()
@@ -112,14 +107,14 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_strategizing(self):
         #pick a robot to talk to
-        target_bot = random.randInt(0, (len(main.our_robots()) if (main.our_robots() is not None) else 0));
+        target_bot = random.randint(0, (len(main.our_robots() - 1) if (main.our_robots() is not None) else 0));
         self.subbehavior_with_name('coach').pos = main.our_robots()[target_bot].pos
         print("\n\n Alright Number " + str(target_bot) + " here is the plan:");
 
     def execute_strategizing(self):
         #Stops coach from talking too much
-        max_responses = 11
-        current_plan = random.randInt(0, max_responses)
+        max_responses = 5000
+        current_plan = random.randint(0, max_responses)
         
         #because python is too cool for switch statements
         if (current_plan == max_responses):

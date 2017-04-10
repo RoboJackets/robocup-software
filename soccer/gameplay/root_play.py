@@ -1,6 +1,7 @@
 from play import *
 from behavior import *
 import plays.stopped
+import plays.testing.test_coach
 import logging
 from PyQt5 import QtCore
 import main
@@ -46,7 +47,7 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = plays.restarts.placement.Placement()
                     self._currently_restarting = True
             else:
-                if not isinstance(self.play, plays.stopped.Stopped):
+                if (not isinstance(self.play, plays.stopped.Stopped)) and (not isinstance(self.play, plays.testing.test_coach.TestCoach)):
                     logging.info(
                         "Running 'Stopped' play due to game state change")
                     self.play = plays.stopped.Stopped()

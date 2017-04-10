@@ -18,3 +18,8 @@ class TestCoach(play.Play):
 
     def on_exit_running(self):
         self.remove_subbehavior('coach')
+
+    #we don't want this running in comp
+    @classmethod
+    def score(cls):
+        return 9001
