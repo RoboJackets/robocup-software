@@ -24,7 +24,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         strategizing = 3
 
     def __init__(self):
-        super().__init__(continuous=True, autorestart = lambda: self.State != self.State.strategizing)
+        super().__init__(continuous=True, autorestart = lambda: False)#self.State != self.State.strategizing)
         self.spin_angle = 0
 
         for state in Coach.State:
@@ -107,7 +107,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_strategizing(self):
         #pick a robot to talk to
-        target_bot = random.randint(0, (len(main.our_robots() - 1) if (main.our_robots() is not None) else 0));
+        target_bot = random.randint(0, ((len(main.our_robots()) - 1) if (main.our_robots() is not None) else 0));
         self.subbehavior_with_name('coach').pos = main.our_robots()[target_bot].pos
         print("\n\n Alright Number " + str(target_bot) + " here is the plan:");
 
