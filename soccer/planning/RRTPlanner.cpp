@@ -6,7 +6,6 @@
 #include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
-#include "DirectTargetPathPlanner.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -232,7 +231,8 @@ vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
         DrawBiRRT(biRRT, state, shellID);
     }
 
-    vector<Point> points = biRRT.getPath();
+    vector<Point> points; 
+    biRRT.getPath(points);
 
     // Optimize out uneccesary waypoints
     RRT::SmoothPath(points, *stateSpace);
