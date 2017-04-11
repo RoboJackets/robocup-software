@@ -156,9 +156,6 @@ class ImpossibleAssignmentError(RuntimeError):
 # the munkres library doesn't like infinity, so we use this instead
 MaxWeight = 10000000
 
-# how much penalty is there for switching robots mid-play
-# RobotChangeCost = 1.0
-
 # a default weight for preferring a chipper
 # this is tunable
 PreferChipper = 2.5
@@ -254,7 +251,7 @@ def assign_roles(robots, role_reqs):
                         robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id(
                 ):
-                    cost += robot_change_cost
+                cost += req.robot_change_cost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
 
