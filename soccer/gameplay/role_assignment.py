@@ -17,6 +17,7 @@ class RoleRequirements:
         self.required = False
         self.priority = 0
         self.require_kicking = False
+        self.robot_change_cost = 1.0
 
         # multiply this by the distance between two points to get the cost
         self.position_cost_multiplier = 1.0
@@ -156,7 +157,7 @@ class ImpossibleAssignmentError(RuntimeError):
 MaxWeight = 10000000
 
 # how much penalty is there for switching robots mid-play
-RobotChangeCost = 1.0
+# RobotChangeCost = 1.0
 
 # a default weight for preferring a chipper
 # this is tunable
@@ -253,7 +254,7 @@ def assign_roles(robots, role_reqs):
                         robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id(
                 ):
-                    cost += RobotChangeCost
+                    cost += robot_change_cost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
 
