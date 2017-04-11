@@ -10,6 +10,7 @@ import robocup
 import math
 import enum
 
+
 class TestAdaptiveFormationWeights(play.Play):
     class State(enum.Enum):
         # Draws 2D probabilty plot onto the field
@@ -23,18 +24,19 @@ class TestAdaptiveFormationWeights(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
-        self.add_state(TestAdaptiveFormationWeights.State.testPointCoeff, behavior.Behavior.State.running)
-        self.add_state(TestAdaptiveFormationWeights.State.testBestPass, behavior.Behavior.State.running)
+        self.add_state(TestAdaptiveFormationWeights.State.testPointCoeff,
+                       behavior.Behavior.State.running)
+        self.add_state(TestAdaptiveFormationWeights.State.testBestPass,
+                       behavior.Behavior.State.running)
 
         # Enable which portion we want to test
         mode = 1
         self.add_transition(behavior.Behavior.State.start,
-                            TestAdaptiveFormationWeights.State.testPointCoeff, lambda: mode == 1,
-                            'immediately')
+                            TestAdaptiveFormationWeights.State.testPointCoeff,
+                            lambda: mode == 1, 'immediately')
         self.add_transition(behavior.Behavior.State.start,
-                            TestAdaptiveFormationWeights.State.testBestPass, lambda: mode == 2,
-                            'immediately')
-
+                            TestAdaptiveFormationWeights.State.testBestPass,
+                            lambda: mode == 2, 'immediately')
 
     def on_enter_testPointCoeff(self):
         evaluation.defensive_positioning.find_defense_positions()
@@ -53,14 +55,14 @@ class TestAdaptiveFormationWeights(play.Play):
         x_half = 0.5 * constants.Field.Width / num_width
         y_half = 0.5 * constants.Field.Length / num_length
 
-        
-        for x in range(-1*round(num_width/2), round(num_width/2)):
+        for x in range(-1 * round(num_width / 2), round(num_width / 2)):
             for y in range(0, num_length):
                 # X/Y for center of the boxes
                 x_cent = x * constants.Field.Width / num_width + x_half
                 y_cent = y * constants.Field.Length / num_length + y_half
 
-                if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(x_cent, y_cent)):
+                if constants.Field.TheirGoalZoneShape.contains_point(
+                        robocup.Point(x_cent, y_cent)):
                     continue
 
                 # Uncomment which function we want graphed
@@ -70,7 +72,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 # 4: Ball Coeff
                 # 5: Estimate Chance to Block Kick
                 # 6: Risk Score
-                # 
+                #
 
                 #val = evaluation.field.field_pos_coeff_at_pos(robocup.Point(x_cent, y_cent), 0.1, .2, 0.02)
                 #val = 1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent))
@@ -97,24 +99,25 @@ class TestAdaptiveFormationWeights(play.Play):
                 val = min(val, 1)
                 val = max(val, 0)
 
-                rect = [robocup.Point(x_cent-x_half, y_cent-y_half),
-                        robocup.Point(x_cent+x_half, y_cent-y_half),
-                        robocup.Point(x_cent+x_half, y_cent+y_half),
-                        robocup.Point(x_cent-x_half, y_cent+y_half)]
+                rect = [robocup.Point(x_cent - x_half, y_cent - y_half),
+                        robocup.Point(x_cent + x_half, y_cent - y_half),
+                        robocup.Point(x_cent + x_half, y_cent + y_half),
+                        robocup.Point(x_cent - x_half, y_cent + y_half)]
                 # Linear interpolation between Red and Blue
-                val_color = (round(val*255), 0, round((1-val)*255))
+                val_color = (round(val * 255), 0, round((1 - val) * 255))
 
                 # Draw onto the Debug layer
                 main.system_state().draw_polygon(rect, val_color, "Density")
 
-        self.special_point = evaluation.defensive_positioning.create_area_defense_zones()
+        self.special_point = evaluation.defensive_positioning.create_area_defense_zones(
+        )
         x_cent = self.special_point.x
         y_cent = self.special_point.y
 
-        rect = [robocup.Point(x_cent-x_half, y_cent-y_half),
-                robocup.Point(x_cent+x_half, y_cent-y_half),
-                robocup.Point(x_cent+x_half, y_cent+y_half),
-                robocup.Point(x_cent-x_half, y_cent+y_half)]
+        rect = [robocup.Point(x_cent - x_half, y_cent - y_half),
+                robocup.Point(x_cent + x_half, y_cent - y_half),
+                robocup.Point(x_cent + x_half, y_cent + y_half),
+                robocup.Point(x_cent - x_half, y_cent + y_half)]
         # Make a white rect at the max value
         val_color = (255, 255, 255)
 
@@ -123,4 +126,5 @@ class TestAdaptiveFormationWeights(play.Play):
 
     def execute_testBestPass(self):
         # Use as a way to test the pass weights for the best pass position
-        evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, None, [], (0.1, .2, 0.02), (2, 10, 0, 10), True)
+        evaluation.passing_positioning.eval_best_receive_point(
+            main.ball().pos, None, [], (0.1, .2, 0.02), (2, 10, 0, 10), True)

@@ -115,7 +115,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.lastApproachTarget = pos
 
         # don't hit the ball on accident
-        if pos.dist_to(main.ball().pos) < Capture.CourseApproachAvoidBall + constants.Robot.Radius:
+        if pos.dist_to(main.ball(
+        ).pos) < Capture.CourseApproachAvoidBall + constants.Robot.Radius:
             self.robot.disable_avoid_ball()
         else:
             self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
@@ -137,7 +138,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # Multiplier is most likely too high
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
         multiplier = 1.5
-        aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball().vel
+        aproach = self.bot_to_ball(
+        ) * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(
+        ).vel
         if (aproach.mag() > 1):
             aproach = aproach.normalized() * 1
         self.robot.set_world_vel(aproach)

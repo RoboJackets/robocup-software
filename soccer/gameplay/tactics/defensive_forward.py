@@ -11,6 +11,7 @@ import evaluation.defensive_positioning
 import skills.mark
 import skills.capture
 
+
 # Finds the positions to place each defender
 class DefensiveForward(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
@@ -27,7 +28,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         # Single robot collecting
         self.collector = None
 
-        self.zone_def_pos = robocup.Point(0,0)
+        self.zone_def_pos = robocup.Point(0, 0)
         self.mark_bots = [None, None]
 
         self.block_dist = 0.01
@@ -40,34 +41,33 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            DefensiveForward.State.blocking,
-                            lambda: True,
+                            DefensiveForward.State.blocking, lambda: True,
                             'immediately')
 
         self.add_transition(DefensiveForward.State.blocking,
                             DefensiveForward.State.collecting,
-                            lambda: self.within_range(),
-                            'Collecting')
+                            lambda: self.within_range(), 'Collecting')
+
+        self.add_transition(
+            DefensiveForward.State.collecting, DefensiveForward.State.blocking,
+            lambda: not self.within_range(), 'Back to blocking')
 
         self.add_transition(DefensiveForward.State.collecting,
-                            DefensiveForward.State.blocking,
-                            lambda: not self.within_range(),
-                            'Back to blocking')
-
-        self.add_transition(DefensiveForward.State.collecting,
-                            behavior.Behavior.State.completed,
-                            lambda: True,
+                            behavior.Behavior.State.completed, lambda: True,
                             'Ball collected')
 
         # TODO: Finish play when ball is collected
 
-    # Create list of defenders and start the marking
+        # Create list of defenders and start the marking
     def on_enter_blocking(self):
-        self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions()
+        self.zone_def_pos, self.mark_bots[0], self.mark_bots[
+            1] = evaluation.defensive_positioning.find_defense_positions()
 
         for i in range(0, 2):
             self.defenders[i] = skills.mark.Mark()
-            self.add_subbehavior(self.defenders[i], self.names[i], required=True)
+            self.add_subbehavior(self.defenders[i],
+                                 self.names[i],
+                                 required=True)
             self.defenders[i].mark_robot = self.mark_bots[i]
             # TODO: Shift to mark point when "get_block_pos" is fixed
 
@@ -77,7 +77,8 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
     # Continue updating the mark positions
     def execute_blocking(self):
-        self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions()
+        self.zone_def_pos, self.mark_bots[0], self.mark_bots[
+            1] = evaluation.defensive_positioning.find_defense_positions()
 
         for i in range(0, 2):
             self.defenders[i].mark_robot = self.mark_bots[i]
@@ -90,7 +91,8 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
     # Create collector method and then
     def on_enter_collecting(self):
-        self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = evaluation.defensive_positioning.find_defense_positions()
+        self.zone_def_pos, self.mark_bots[0], self.mark_bots[
+            1] = evaluation.defensive_positioning.find_defense_positions()
 
         # Take closest robot to collect
         # Leave other two to move into primary blocking positions
@@ -99,7 +101,9 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
         for i in range(0, 2):
             self.defenders[i] = skills.mark.Mark()
-            self.add_subbehavior(self.defenders[i], self.names[i], required=True)
+            self.add_subbehavior(self.defenders[i],
+                                 self.names[i],
+                                 required=True)
             self.defenders[i].mark_robot = self.mark_bots[i]
 
     def on_exit_collecting(self):
@@ -111,16 +115,18 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         # Get predicted angle of shot
         # Get goal to bot
         # Place point x dist away
-        predicted = evaluation.defensive_positioning.predict_kick_direction(bot)
+        predicted = evaluation.defensive_positioning.predict_kick_direction(
+            bot)
         actual = bot.angle
 
-        angle = self.block_angle_coeff*predicted + (1-self.block_angle_coeff)*actual
+        angle = self.block_angle_coeff * predicted + (
+            1 - self.block_angle_coeff) * actual
 
         x = math.cos(angle)
         y = math.sin(angle)
         pos = robocup.Point(x, y).normalized() + bot.pos
 
-        return None # pos * self.block_dist
+        return None  # pos * self.block_dist
 
     def we_have_ball(self):
         has_ball = False
@@ -137,13 +143,15 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
         # Find closest opponent robot
         for bot in main.their_robots():
-            dist = self.estimate_path_length(bot.pos, target_pos, main.our_robots())
+            dist = self.estimate_path_length(bot.pos, target_pos,
+                                             main.our_robots())
             if (dist < shortest_opp_dist):
                 shortest_opp_dist = dist
 
         # Find closest robot on our team
         for bot in main.our_robots():
-            dist = self.estimate_path_length(bot.pos, target_pos, main.their_robots())
+            dist = self.estimate_path_length(bot.pos, target_pos,
+                                             main.their_robots())
             if (dist < shortest_our_dist):
                 shortest_our_dist = dist
 
@@ -166,10 +174,10 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             robot_vec = (blocking_robot.pos - next_pt)
             perp_vec = robot_vec.perp_cw().normalized()
 
-            pt1 = perp_vec * self.dodge_dist + blocking_robot.pos- next_pt
+            pt1 = perp_vec * self.dodge_dist + blocking_robot.pos - next_pt
             pt2 = perp_vec * -self.dodge_dist + blocking_robot.pos - next_pt
 
-            # Find shortest path            
+            # Find shortest path
             if (pt1.mag() < pt2.mag()):
                 next_pt = pt1
             else:
@@ -179,7 +187,8 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             total += (next_pt - start).mag()
 
             line = robocup.Segment(next_pt, end)
-            blocking_robot = self.find_intersecting_robot(line, blocking_robots)
+            blocking_robot = self.find_intersecting_robot(line,
+                                                          blocking_robots)
             iterations += 1
 
         total += (end - next_pt).mag()

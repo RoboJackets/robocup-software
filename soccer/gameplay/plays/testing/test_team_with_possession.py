@@ -8,6 +8,7 @@ import skills.capture
 import enum
 import evaluation
 
+
 class TestPossession(standard_play.StandardPlay):
     class State(enum.Enum):
         # Collect the ball / Full court defense
@@ -27,6 +28,7 @@ class TestPossession(standard_play.StandardPlay):
         passCollecting = 7
         # One touch shot
         oneTouch = 8
+
     def __init__(self):
         super().__init__(continuous=False)
 
@@ -45,90 +47,72 @@ class TestPossession(standard_play.StandardPlay):
         self.add_state(TestPossession.State.oneTouch,
                        behavior.Behavior.State.running)
 
-
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: True,
-                            'immediately')
+                            behavior.TestPossession.State.collecting,
+                            lambda: True, 'immediately')
 
         self.add_transition(behavior.TestPossession.State.collecting,
-                            behavior.TestPossession.State.dribbling, 
-                            lambda: False,
-                            'Ball Collected')
+                            behavior.TestPossession.State.dribbling,
+                            lambda: False, 'Ball Collected')
 
         self.add_transition(behavior.TestPossession.State.dribbling,
-                            behavior.TestPossession.State.passing, 
-                            lambda: False,
-                            'Passing')
+                            behavior.TestPossession.State.passing,
+                            lambda: False, 'Passing')
 
         self.add_transition(behavior.TestPossession.State.dribbling,
-                            behavior.TestPossession.State.shooting, 
-                            lambda: False,
-                            'Shooting')
+                            behavior.TestPossession.State.shooting,
+                            lambda: False, 'Shooting')
 
         self.add_transition(behavior.TestPossession.State.dribbling,
-                            behavior.TestPossession.State.clearing, 
-                            lambda: False,
-                            'Clearing')
+                            behavior.TestPossession.State.clearing,
+                            lambda: False, 'Clearing')
 
         # Passing states
         self.add_transition(behavior.TestPossession.State.passing,
-                            behavior.TestPossession.State.passInMotion, 
-                            lambda: False,
-                            'Pass Kicked')
+                            behavior.TestPossession.State.passInMotion,
+                            lambda: False, 'Pass Kicked')
 
         self.add_transition(behavior.TestPossession.State.passInMotion,
-                            behavior.TestPossession.State.passCollecting, 
-                            lambda: False,
-                            'Pass About to be Collected')
+                            behavior.TestPossession.State.passCollecting,
+                            lambda: False, 'Pass About to be Collected')
 
         self.add_transition(behavior.TestPossession.State.passCollecting,
-                            behavior.TestPossession.State.oneTouch, 
-                            lambda: False,
-                            'One Touch Shot')
+                            behavior.TestPossession.State.oneTouch,
+                            lambda: False, 'One Touch Shot')
 
         self.add_transition(behavior.TestPossession.State.passCollecting,
-                            behavior.TestPossession.State.dribbling, 
-                            lambda: False,
-                            'Pass Settled')
+                            behavior.TestPossession.State.dribbling,
+                            lambda: False, 'Pass Settled')
 
         # Reset to collecting when ball is lost at any stage
         self.add_transition(behavior.TestPossession.State.dribbling,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'Dribble: Ball Lost')
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'Dribble: Ball Lost')
 
         self.add_transition(behavior.TestPossession.State.passing,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'Passing: Ball Lost')
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'Passing: Ball Lost')
 
         self.add_transition(behavior.TestPossession.State.shooting,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'Shooting: Ball Lost / Shot')
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'Shooting: Ball Lost / Shot')
 
         self.add_transition(behavior.TestPossession.State.clearing,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'Clearing: Ball Lost')
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'Clearing: Ball Lost')
 
         self.add_transition(behavior.TestPossession.State.passInMotion,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'PassInMotion: Ball Lost')
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'PassInMotion: Ball Lost')
 
         self.add_transition(behavior.TestPossession.State.passCollecting,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'PassCollecting: Ball Lost')
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'PassCollecting: Ball Lost')
 
         self.add_transition(behavior.TestPossession.State.oneTouch,
-                            behavior.TestPossession.State.collecting, 
-                            lambda: False,
-                            'OneTouch: Ball Lost / Shot')
-
+                            behavior.TestPossession.State.collecting,
+                            lambda: False, 'OneTouch: Ball Lost / Shot')
 
     def on_enter_collecting(self):
         capture = skills.capture.Capture()

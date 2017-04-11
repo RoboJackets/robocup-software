@@ -136,5 +136,5 @@ def team_with_possession():
     #       Not needed to be constantly polled
     # Cons: Much more advanced and complex
     #       Relies on accurate ball and robot velocity estimations to predict interceptions
-    
+
     return 0.5

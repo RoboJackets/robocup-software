@@ -15,6 +15,7 @@ import evaluation.shooting
 # Example usage:
 # point, score = evaluation.passing.eval_best_receive_point(main.ball().pos)
 
+
 ## Returns a robocup.Rect object that is the default location
 #
 # @param pos: Passing position
@@ -25,8 +26,9 @@ def generate_default_rectangle(pos):
     l = constants.Field.Length
     offset_from_edge = w * 0.1
 
-    bot_left  = robocup.Point(-1 * w / 2 + offset_from_edge, min( l / 2, pos.y ) )
-    top_right = robocup.Point( w / 2 - offset_from_edge, min( l - offset_from_edge, bot_left.y + l / 2 ) )
+    bot_left = robocup.Point(-1 * w / 2 + offset_from_edge, min(l / 2, pos.y))
+    top_right = robocup.Point(w / 2 - offset_from_edge, min(
+        l - offset_from_edge, bot_left.y + l / 2))
 
     return robocup.Rect(bot_left, top_right)
 
@@ -50,22 +52,24 @@ def get_points_from_rect(rect, pos, step=0.5, min_dist=1):
             # Check [X]% distance between this point and the goal line to remove "close" points to their goal zone
             goal_zone_thresh = (constants.Field.Length - currenty) * 0.25
 
-            # If within the goalie area 
-            if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(currentx, currenty + goal_zone_thresh)):
+            # If within the goalie area
+            if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
+                    currentx, currenty + goal_zone_thresh)):
                 currentx += step
                 continue
 
             candidate = robocup.Point(currentx, currenty)
 
             # Force algorithm not to check within a min distance
-            if ( (candidate - pos).mag() > min_dist ):
+            if ((candidate - pos).mag() > min_dist):
                 outlist.extend([candidate])
             currentx += step
-    
+
         currenty += step
         currentx = rect.min_x()
 
     return outlist
+
 
 ## Evaluates a single point and returns the overall coefficient for the area
 #
@@ -77,12 +81,9 @@ def get_points_from_rect(rect, pos, step=0.5, min_dist=1):
 # @param weights: A tuple of the 4 different weights to apply to the evaulations overall
 #               (space, field_position, shot_chance, kick_proximty)
 # @return Returns a score between 0 and 1 on how good of pass would be
-def eval_singl_point(kick_point,
-                     receive_point,
-                     ignore_robots,
-                     field_weights,
+def eval_singl_point(kick_point, receive_point, ignore_robots, field_weights,
                      weights):
-    
+
     if kick_point is None:
         if main.ball().valid:
             kick_point = main.ball().pos
@@ -95,13 +96,14 @@ def eval_singl_point(kick_point,
     if (kick_point.y > constants.Field.Length / 2):
         # TODO: Replace with KickEval
         shotChance = evaluation.shooting.eval_shot(receive_point)
-    
+
     # TODO: Replace with KickEval
     passChance = evaluation.passing.eval_pass(kick_point, receive_point)
 
-    space    = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
-    fieldPos = evaluation.field.field_pos_coeff_at_pos(receive_point, field_weights[0], field_weights[1], field_weights[2])
-    distance = math.exp( -1 * (kick_point - receive_point).mag() )
+    space = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
+    fieldPos = evaluation.field.field_pos_coeff_at_pos(
+        receive_point, field_weights[0], field_weights[1], field_weights[2])
+    distance = math.exp(-1 * (kick_point - receive_point).mag())
 
     # All of the other scores are based on whether the pass will actually make it to it
     # Not worth returning a great position if we cant even get a pass there
@@ -109,8 +111,9 @@ def eval_singl_point(kick_point,
                                  weights[1] * fieldPos + \
                                  weights[2] * shotChance + \
                                  weights[3] * (1 - distance) )
-    
+
     return totalChance / math.fsum(weights)
+
 
 ## Finds the best position to pass to
 #
@@ -125,7 +128,7 @@ def eval_singl_point(kick_point,
 # @return bestPoint and bestScore in that order
 def eval_best_receive_point(kick_point,
                             evaluation_zone=None,
-                            ignore_robots=[], 
+                            ignore_robots=[],
                             field_weights=(0.1, 3.2, 0.1),
                             weights=(1, 4, 15, 1),
                             debug=False):
@@ -145,11 +148,15 @@ def eval_best_receive_point(kick_point,
 
     # Finds best score out of all the points
     for currentPoint in points:
-        currentScore = eval_singl_point(kick_point, currentPoint, ignore_robots, field_weights, weights)
+        currentScore = eval_singl_point(kick_point, currentPoint,
+                                        ignore_robots, field_weights, weights)
 
         if (debug):
-            score_color = (round(currentScore*255), 0, round((1-currentScore)*255))
-            main.system_state().draw_line(robocup.Segment(kick_point, currentPoint), score_color, "Score")
+            score_color = (round(currentScore * 255), 0, round(
+                (1 - currentScore) * 255))
+            main.system_state().draw_line(
+                robocup.Segment(kick_point,
+                                currentPoint), score_color, "Score")
 
         if bestScore is None or currentScore > bestScore:
             bestScore = currentScore
@@ -160,6 +167,8 @@ def eval_best_receive_point(kick_point,
         return None, 0
 
     if (debug):
-        main.system_state().draw_line(robocup.Segment(kick_point, bestPoint), constants.Colors.Red, "Best Point")
+        main.system_state().draw_line(
+            robocup.Segment(kick_point,
+                            bestPoint), constants.Colors.Red, "Best Point")
 
     return bestPoint, bestScore

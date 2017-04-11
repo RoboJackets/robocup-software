@@ -4,6 +4,7 @@ import math
 import constants
 import evaluation.ball
 
+
 ## Predicts the impending kick direction based on the orientation of the robot and the
 #  angle of approach
 #
@@ -17,16 +18,18 @@ def predict_kick_direction(robot):
     # Use distance from bot to ball to predict time it takes to intercept
     # Calculates direct robot to future ball position
     inst_ball_time = evaluation.ball.time_to_ball(robot)
-    future_ball_pos = evaluation.ball.predict(main.ball().pos, main.ball().vel, inst_ball_time)
+    future_ball_pos = evaluation.ball.predict(main.ball().pos, main.ball().vel,
+                                              inst_ball_time)
     direction = (future_ball_pos - pos).normalized()
     ball_angle_predict = direction.angle()
 
     # Predict the robot direction based on angular velocity and angle
-    robot_angle_predict = angle + angle_vel*inst_ball_time
+    robot_angle_predict = angle + angle_vel * inst_ball_time
 
     # TODO: Change to 0.7 before running outside of the test function
     filter_coeff = 0
-    return filter_coeff * robot_angle_predict + (1 - filter_coeff) * ball_angle_predict
+    return filter_coeff * robot_angle_predict + (
+        1 - filter_coeff) * ball_angle_predict
 
 
 def get_points_from_rect(rect, step=0.5):
@@ -36,7 +39,8 @@ def get_points_from_rect(rect, step=0.5):
 
     while currenty <= rect.max_y():
         while currentx <= rect.max_x():
-            if constants.Field.OurGoalZoneShape.contains_point(robocup.Point(currentx, currenty)):
+            if constants.Field.OurGoalZoneShape.contains_point(robocup.Point(
+                    currentx, currenty)):
                 currentx += step
                 continue
 
@@ -47,6 +51,7 @@ def get_points_from_rect(rect, step=0.5):
         currentx = rect.min_x()
 
     return outlist
+
 
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
@@ -71,14 +76,14 @@ def create_area_defense_zones(ignore_robots=[]):
     angle = 0
     # Holds the integer bucket based on angle
     angle_cnt = 0
-    # Holds dist 
+    # Holds dist
     dist = dist_inc
 
     score_sum = 0
     point_cnt = 0
 
     # Populates all the buckets with values
-    while angle < 2*math.pi:
+    while angle < 2 * math.pi:
 
         point = main.ball().pos
         while constants.Field.FieldRect.contains_point(point):
@@ -95,7 +100,7 @@ def create_area_defense_zones(ignore_robots=[]):
             point_cnt += 1
 
             dist += dist_inc
-            
+
         points.extend([[]])
         angle_cnt += 1
         angle += angle_inc
@@ -116,7 +121,6 @@ def create_area_defense_zones(ignore_robots=[]):
         if len(points[i]) > len(points[largest_bucket]):
             largest_bucket = i
 
-
     # Max amount to go in either direction (Total area covers ~PI/4)
     max_bucket_dist = round(1 / angle_inc * math.pi / 2)
     # Min amount in bucket to be counted in terms of % of max
@@ -130,17 +134,18 @@ def create_area_defense_zones(ignore_robots=[]):
     bucket_pt_sum = robocup.Point(0, 0)
     bucket_score_sum = 0
 
-    for i in range(-largest_bucket-1, max_bucket_dist+1):
+    for i in range(-largest_bucket - 1, max_bucket_dist + 1):
         index = (largest_bucket + i) % angle_cnt
         if len(points[index]) > min_bucket_amnt:
             bucket_list.extend(points[index])
 
     # Do a psudo-density centroid calculation to find where to defend
     for point in bucket_list:
-        bucket_pt_sum += point[0]*point[1]**2
+        bucket_pt_sum += point[0] * point[1]**2
         bucket_score_sum += point[1]**2
 
     return bucket_pt_sum / bucket_score_sum
+
 
 ## Estimates how dangerous an enemy robot can be at a certain point
 #  Takes pass / shot and time to execute on ball into account
@@ -149,11 +154,11 @@ def create_area_defense_zones(ignore_robots=[]):
 # @return Risk score at that point
 def estimate_risk_score(pos, ignore_robots=[]):
     max_time = 1
-    max_ball_vel = 8 # m/s per the rules
-    est_turn_vel = 8 # rad/s per a random dice roll (Over estimates oppnents abilities)
+    max_ball_vel = 8  # m/s per the rules
+    est_turn_vel = 8  # rad/s per a random dice roll (Over estimates oppnents abilities)
 
     kick_eval = robocup.KickEvaluator(main.system_state())
-    
+
     for r in ignore_robots:
         kick_eval.add_excluded_robot(r)
 
@@ -166,23 +171,27 @@ def estimate_risk_score(pos, ignore_robots=[]):
 
     # Closest opp robot
     closest_opp_bot = evaluation.opponent.get_closest_opponent(main.ball().pos)
-    delta_angle = (ball_pos_vec.angle() - predict_kick_direction(closest_opp_bot))
+    delta_angle = (
+        ball_pos_vec.angle() - predict_kick_direction(closest_opp_bot))
     delta_angle = math.atan2(math.sin(delta_angle), math.cos(delta_angle))
-    
+
     # Underestimates max time to execute on ball
     # Assumes perfect opponent
-    time = dist/max_ball_vel + math.fabs(delta_angle)/est_turn_vel
+    time = dist / max_ball_vel + math.fabs(delta_angle) / est_turn_vel
     # Limits to max time so we can invert it later on
     time = min(time, max_time)
 
     # Center, Dist, Angle
-    pos_score = evaluation.field.field_pos_coeff_at_pos(pos, 0.05, 0.3, 0.05, False)
-    space_coeff = evaluation.field.space_coeff_at_pos(pos, ignore_robots, main.our_robots())
+    pos_score = evaluation.field.field_pos_coeff_at_pos(pos, 0.05, 0.3, 0.05,
+                                                        False)
+    space_coeff = evaluation.field.space_coeff_at_pos(pos, ignore_robots,
+                                                      main.our_robots())
 
     # Delta angle between pass recieve and shot
     delta_angle = ball_pos_vec.angle() - (shot_pt - pos).angle()
-    angle_coeff = math.fabs(math.atan2(math.sin(delta_angle), math.cos(delta_angle)) / math.pi)
-    
+    angle_coeff = math.fabs(math.atan2(
+        math.sin(delta_angle), math.cos(delta_angle)) / math.pi)
+
     # Shot only matters if its a good pass
     # Add pass back in for checking if pass is good (while shot is not)
     #
@@ -201,8 +210,9 @@ def estimate_risk_score(pos, ignore_robots=[]):
             weights[2] * pos_score + \
             weights[3] * (1 - space_coeff) + \
             weights[4] * angle_coeff
-    
+
     return score / sum(weights)
+
 
 ## Decides where the best positions for defense is
 #
@@ -224,6 +234,5 @@ def find_defense_positions(ignore_robots=[]):
     sorted_bot = [bot for (scores, bot) in sorted_array]
 
     area_def_pos = create_area_defense_zones(ignore_robots)
-
 
     return area_def_pos, sorted_bot[0], sorted_bot[1]
