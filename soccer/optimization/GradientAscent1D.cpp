@@ -38,6 +38,7 @@ bool GradientAscent1D::singleStep() {
         temperature *= config->temperatureDescent;
     }
 
+    iterationCount++;
     return continueExecution();
 }
 
