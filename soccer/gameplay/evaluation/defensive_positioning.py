@@ -4,93 +4,6 @@ import math
 import constants
 import evaluation.ball
 
-## Estimates the chance a kick will be blocked
-#
-# @param kick_point: Point at which we will kick from
-# @param recieve_point: Point at which they are kicking to
-# @param blocking_robots[]: list of robots that we should estimate the block for
-# @return A percentage chance of block
-def estimate_kick_block_percent(kick_point, recieve_point, blocking_robots, ignore_robots=[]):
-    #TODO: Replace with Kick Eval
-
-    # 1. For each robot, get their position in polar coords
-    #       in reference to the kick_point -> recieve_point vector
-    # 2. Create a set of rays moving out from the kick point
-    # 3. Use a kernal function to estimate the chance it will
-    #       intercept the ball moving along that ray
-    # 4. Take the minimum interception estimate along that ray
-    # 5. Throw all the rays together scaled by their distance from the target angle
-
-    blocks = []
-    kick_direction = (recieve_point - kick_point)
-    kick_angle = math.atan2(kick_direction.y, kick_direction.x)
-    max_ball_vel = 8
-
-    # Convert all robot positions to polar with zero being the kick direction
-    # TODO: Use velocity / accel with robots to predict where they will be based on
-    # their distance from the robot
-
-    for bot in blocking_robots:
-        if bot and bot.visible and bot not in ignore_robots:
-            pos = bot.pos
-            block_direction = (pos - kick_point)
-            dist = block_direction.mag()
-            angle = math.atan2(block_direction.y, block_direction.x) - kick_angle
-            future_bot_pos = bot.pos + bot.vel * ((bot.pos - main.ball().pos).mag() / max_ball_vel)
-            pos = future_bot_pos
-
-            # Kill any that are over pi/2 away
-            # Kill any that are too far away (TOOD: Include this in the function)
-            if (math.fabs(angle) < math.pi / 2 and dist > 0 and dist < 2*kick_direction.mag()):
-                blocks.extend([(angle, dist)])
-
-    # Quit early if there is nobody near to defend
-    if (len(blocks) == 0):
-        return 1
-
-    # Standard deviation basically
-    half_kick_width = 0.1*math.pi
-    # Resolution of the estimation
-    num_of_estimates = 16
-    # controls distribution of values overall (Higher the number, the less sensitive)
-    overall_sens = 2
-    # Constrols how much to decrease for further away values (Lower the number, the more it decreases)
-    distance_sens = -1/7
-    # How much to scale the outer lines by
-    min_offset_scale = .1
-
-    total = 0
-    max_total = 0
-    line_offset = -half_kick_width
-    inc = 2 * half_kick_width / num_of_estimates
-
-    # For each radial line (Multiplies by 1.01 because of float errors)
-    while line_offset <= half_kick_width*1.01:
-        subtotal = []
-        # For each blocking robot (Angle, Dist)
-        for bot  in blocks:
-            delta_angle = bot[0] - line_offset
-
-            # Produces a u based on distance / angle
-            u = math.sin(delta_angle) * bot[1] * overall_sens * math.exp(bot[1] * distance_sens)
-            u = min(1, u)
-            u = max(-1, u)
-
-            # Add the kernel estimate to the list
-            subtotal.extend([1 - max(pow((1-pow(u,2)), 3), 0)])
-
-        # Decrease the impact of lines further away from the center
-        line_offset_scale = 1 - (math.fabs(line_offset) / ( (1 + min_offset_scale) * half_kick_width))
-
-        # Uses the min because we only care about the closest robot to blocking
-        # Each line
-        total += min(subtotal) * line_offset_scale
-        max_total += line_offset_scale
-        line_offset += inc
-
-    return total / max_total
-
-
 ## Predicts the impending kick direction based on the orientation of the robot and the
 #  angle of approach
 #
@@ -235,15 +148,17 @@ def create_area_defense_zones(ignore_robots=[]):
 # @param pos: Position in which to estimate score at
 # @return Risk score at that point
 def estimate_risk_score(pos, ignore_robots=[]):
-    our_goal = robocup.Point(0, 0)
     max_time = 1
     max_ball_vel = 8 # m/s per the rules
     est_turn_vel = 8 # rad/s per a random dice roll (Over estimates oppnents abilities)
 
-    # Invert both scores as kick_block produces a percentage that it is blocked
-    # We want how likely to succed
-    pass_score = estimate_kick_block_percent(main.ball().pos, pos, main.our_robots(), ignore_robots)
-    shot_score = estimate_kick_block_percent(pos, our_goal, main.our_robots(), ignore_robots)
+    kick_eval = robocup.KickEvaluator(main.system_state())
+    
+    for r in ignore_robots:
+        kick_eval.add_excluded_robot(r)
+
+    _, pass_score = kick_eval.eval_pt_to_robot(main.ball().pos, pos)
+    shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(pos)
 
     # Dist to ball
     ball_pos_vec = pos - main.ball().pos
@@ -265,7 +180,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
     space_coeff = evaluation.field.space_coeff_at_pos(pos, ignore_robots, main.our_robots())
 
     # Delta angle between pass recieve and shot
-    delta_angle = ball_pos_vec.angle() - (our_goal - pos).angle()
+    delta_angle = ball_pos_vec.angle() - (shot_pt - pos).angle()
     angle_coeff = math.fabs(math.atan2(math.sin(delta_angle), math.cos(delta_angle)) / math.pi)
     
     # Shot only matters if its a good pass
