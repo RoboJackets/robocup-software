@@ -71,8 +71,6 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
 const int maxContinue = 10;
 
 std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
-
-
     const MotionInstant& start = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
@@ -148,7 +146,6 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
     unsigned shellID) {
-
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
@@ -180,25 +177,25 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     }
     // debugLog("Generate Failed 10 times");
     return lastPath;
-
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
                                  const MotionConstraints& motionConstraints,
                                  const ShapeSet& obstacles, SystemState* state,
                                  unsigned shellID) {
-    vector<Point> straight = runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, true);
+    vector<Point> straight = runRRTHelper(start, goal, motionConstraints,
+                                          obstacles, state, shellID, true);
     if (straight.size() != 0) {
         return straight;
     }
-    return runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID, false);
+    return runRRTHelper(start, goal, motionConstraints, obstacles, state,
+                        shellID, false);
 }
 
-
-vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
-                                 const MotionConstraints& motionConstraints,
-                                 const ShapeSet& obstacles, SystemState* state,
-                                 unsigned shellID, bool straightLine) {
+vector<Point> RRTPlanner::runRRTHelper(
+    MotionInstant start, MotionInstant goal,
+    const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
+    SystemState* state, unsigned shellID, bool straightLine) {
     // Initialize bi-directional RRT
 
     auto stateSpace = make_shared<RoboCupStateSpace>(
@@ -207,14 +204,16 @@ vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
 
-    //If trying to plan a straight path, plan a straight path. Otherwise, run normal RRT.
+    // If trying to plan a straight path, plan a straight path. Otherwise, run
+    // normal RRT.
     if (straightLine) {
-        //Set the step size to be the distance between the start and goal.
+        // Set the step size to be the distance between the start and goal.
         biRRT.setStepSize(stateSpace->distance(start.pos, goal.pos));
-        //Plan straight toward the goal.
+        // Plan straight toward the goal.
         biRRT.setGoalBias(1);
-        //Try up to five times. If unsuccessful after five tries, there probably doesn't exist
-        //a straight path.
+        // Try up to five times. If unsuccessful after five tries, there
+        // probably doesn't exist
+        // a straight path.
         biRRT.setMinIterations(0);
         biRRT.setMaxIterations(5);
     } else {
