@@ -71,7 +71,7 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
 const int maxContinue = 10;
 
 std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
-    
+
 
     const MotionInstant& start = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
@@ -88,7 +88,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 
     MotionInstant goal = target.pathGoal;
     vector<DynamicObstacle> actualDynamic;
-    splitDynamic(obstacles, actualDynamic, dynamicObstacles);    
+    splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
     // Simple case: no path
     if (start.pos == goal.pos) {
@@ -148,7 +148,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
     unsigned shellID) {
-    
+
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
@@ -180,7 +180,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     }
     // debugLog("Generate Failed 10 times");
     return lastPath;
-    
+
 }
 
 vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
@@ -206,7 +206,7 @@ vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
-    
+
     //If trying to plan a straight path, plan a straight path. Otherwise, run normal RRT.
     if (straightLine) {
         //Set the step size to be the distance between the start and goal.
@@ -231,8 +231,7 @@ vector<Point> RRTPlanner::runRRTHelper(MotionInstant start, MotionInstant goal,
         DrawBiRRT(biRRT, state, shellID);
     }
 
-    vector<Point> points; 
-    biRRT.getPath(points);
+    vector<Point> points = biRRT.getPath();
 
     // Optimize out uneccesary waypoints
     RRT::SmoothPath(points, *stateSpace);
