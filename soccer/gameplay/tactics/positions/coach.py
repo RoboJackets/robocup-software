@@ -140,17 +140,8 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         elif (current_plan == max_responses - 10):
             print("\nYes, the soup last night was delicious")
 
-
-
-
-
     def on_exit_strategizing(self):
         print("\n*coach gives the player an invigorating butt slap*\nGo get'em")
-
-
-
-
-
 
     @staticmethod
     ## Returns a fortune.
@@ -168,3 +159,9 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 # We must be on Windows, give a sna... enlightening remark. (install fortune!)
                 fortune = '''"There is no such thing as a typical user, and if there were, it wouldn't be you" - #usability'''
         return fortune
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        reqs.robot_change_cost = 20.0
+        return reqs
+
