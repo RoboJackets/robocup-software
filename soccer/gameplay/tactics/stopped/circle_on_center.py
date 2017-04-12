@@ -26,32 +26,31 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
                             "robots aren't lined up")
 
         self.min_robots = min_robots
+        self.num_robots = 0
 
-        # Define circle to circle up on
-        radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
-
-        perRobot = (2 * constants.Robot.Radius * 1.25) / radius
-
-        ball_pos = robocup.Point(0, constants.Field.Length / 2)
-
-        dirvec = (robocup.Point(0, 0) - ball_pos).normalized() * radius
-
+        #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
         for i in range(6):
             req = i < min_robots
-
-            pt = ball_pos + dirvec
-            self.add_subbehavior(
-                skills.move.Move(pt),
-                name="robot" + str(i),
-                required=req,
-                priority=6 - i)
-            dirvec.rotate(robocup.Point(0, 0), perRobot)
+            self.add_subbehavior(skills.move.Move(),
+                                 name="robot" + str(i),
+                                 required=req,
+                                 priority=6 - i)
 
     def goto_center(self):
         num_robots = 0
         for b in self.all_subbehaviors():
             if b.robot is not None:
                 num_robots += 1
+
+        #if the number of robots has changed, recreate move behaviors to match new number of robots
+        if (self.num_robots != num_robots):
+            self.num_robots = num_robots
+            self.remove_all_subbehaviors()
+            for pt in range(6):
+                self.add_subbehavior(skills.move.Move(),
+                                     name="robot" + str(pt),
+                                     required=False,
+                                     priority=6 - pt)
 
         num_robots = max(self.min_robots, num_robots)
 
@@ -64,7 +63,8 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         dirvec = (robocup.Point(0, 0) - ball_pos).normalized() * radius
         dirvec.rotate(robocup.Point(0, 0), -perRobot * ((num_robots - 1) / 2))
 
-        for i in range(6):
+        #assign points to the behaviors with robots
+        for i in range(num_robots):
             pt = ball_pos + dirvec
             self.subbehavior_with_name("robot" + str(i)).pos = pt
             dirvec.rotate(robocup.Point(0, 0), perRobot)
@@ -74,9 +74,6 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
             if b.robot is not None:
                 b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
                 b.robot.face(main.ball().pos)
-
-    def execute_completed(self):
-        self.goto_center()
 
     def execute_running(self):
         self.goto_center()

@@ -16,6 +16,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
     def __init__(self):
         super().__init__(continuous=True)
 
+        self.num_robots = 0
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
@@ -28,14 +29,12 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                             lambda: not self.all_subbehaviors_completed(),
                             "robots aren't lined up")
 
-        i = 0
-        for pt in self.get_circle_points(6):
-            self.add_subbehavior(
-                skills.move.Move(pt),
-                name="robot" + str(i),
-                required=False,
-                priority=6 - i)
-            i = i + 1
+        #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
+        for i in range(6):
+            self.add_subbehavior(skills.move.Move(),
+                                 name="robot" + str(i),
+                                 required=False,
+                                 priority=6 - i)
 
     def get_circle_points(self, num_of_points):
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
@@ -124,23 +123,6 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
 
         return final_points
 
-    def execute_completed(self):
-        num_robots = 0
-        for b in self.all_subbehaviors():
-            if b.robot is not None:
-                num_robots += 1
-
-        i = 0
-        for pt in self.get_circle_points(num_robots):
-            self.subbehavior_with_name("robot" + str(i)).pos = pt
-            i = i + 1
-
-        # set robot attributes
-        for b in self.all_subbehaviors():
-            if b.robot is not None:
-                b.robot.set_avoid_ball_radius(constants.Field.CenterRadius)
-                b.robot.face(main.ball().pos)
-
     # Makes an angle > 0, < pi * 2
     def normalize_angle(self, angle):
         # TODO make this O(1) and move to cpp
@@ -155,11 +137,22 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         for b in self.all_subbehaviors():
             if b.robot is not None:
                 num_robots += 1
-
-        i = 0
-        for pt in self.get_circle_points(num_robots):
+        #if the number of robots has changed, recreate move behaviors to match new number of robots
+        if (self.num_robots != num_robots):
+            self.num_robots = num_robots
+            self.remove_all_subbehaviors()
+            for i in range(6):
+                self.add_subbehavior(skills.move.Move(),
+                                     name="robot" + str(i),
+                                     required=False,
+                                     priority=6 - i)
+        #assign destinations for the number of robots we have
+        for i, pt in enumerate(self.get_circle_points(num_robots)):
             self.subbehavior_with_name("robot" + str(i)).pos = pt
-            i = i + 1
+
+        #unassign destinations from behaviors without robots
+        for i in range(num_robots, 6):
+            self.subbehavior_with_name("robot" + str(i)).pos = None
 
         # set robot attributes
         for b in self.all_subbehaviors():
