@@ -82,11 +82,13 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
     # Continue updating the mark positions
     def execute_blocking(self):
-        self.zone_def_pos, self.mark_bots[0], self.mark_bots[
-            1] = evaluation.defensive_positioning.find_defense_positions()
+        self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = \
+            evaluation.defensive_positioning.find_defense_positions(
+                [self.defenders[0].robot, self.defenders[1].robot])
 
         for i in range(0, 2):
-            self.defenders[i].mark_robot = self.mark_bots[i]
+            if (self.defenders[i].mark_robot not in self.mark_bots):
+                self.defenders[i].mark_robot = self.mark_bots[i]
             # TODO: Shift to mark point when "get_block_pos" is fixed
 
         self.defenders[2].mark_point = self.zone_def_pos
@@ -96,8 +98,8 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
     # Create collector method and then
     def on_enter_collecting(self):
-        self.zone_def_pos, self.mark_bots[0], self.mark_bots[
-            1] = evaluation.defensive_positioning.find_defense_positions()
+        self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = \
+            evaluation.defensive_positioning.find_defense_positions()
 
         # Take closest robot to collect
         # Leave other two to move into primary blocking positions

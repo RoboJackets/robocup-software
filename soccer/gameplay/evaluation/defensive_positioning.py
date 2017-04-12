@@ -172,10 +172,10 @@ def estimate_risk_score(pos, ignore_robots=[]):
     for r in ignore_robots:
         kick_eval.add_excluded_robot(r)
 
-    cycle_size = 2
+    cycle_size = 4
     if (cache_timer % cycle_size == 0):
         _, pass_score = kick_eval.eval_pt_to_robot(main.ball().pos, pos)
-    elif (cache_timer % cycle_size == round(cycle_size / 2)):
+    if (cache_timer % cycle_size == round(cycle_size / 2)):
         shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(pos)
     cache_timer = (cache_timer + 1) % cycle_size
 
@@ -186,6 +186,8 @@ def estimate_risk_score(pos, ignore_robots=[]):
     # Dist to ball
     ball_pos_vec = pos - main.ball().pos
     dist = ball_pos_vec.mag()
+    max_dist = robocup.Point(constants.Field.Width,
+                             constants.Field.Length).mag()
 
     # Closest opp robot
     closest_opp_bot = evaluation.opponent.get_closest_opponent(main.ball().pos)
@@ -220,14 +222,17 @@ def estimate_risk_score(pos, ignore_robots=[]):
     # Space is weighted in so it is weighted towards lower density areas
     #
     # Delta angle for shot is weighted in so easier shots are weighted higher
+    #
+    # Distance to the ball squared
 
     #  Pass, Time, Pos, Space, Angle
-    weights = [0.1, 0.1, 2, 0.4, 0.3]
+    weights = [0.1, 0.1, 2, 0.4, 0.3, 1]
     score = weights[0] * (shot_score * pass_score + pass_score) / 2 + \
             weights[1] * (max_time - time) + \
             weights[2] * pos_score + \
             weights[3] * (1 - space_coeff) + \
-            weights[4] * angle_coeff
+            weights[4] * angle_coeff + \
+            weights[5] * (1 - dist / max_dist)**2
 
     return score / sum(weights)
 
