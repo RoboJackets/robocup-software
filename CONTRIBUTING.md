@@ -47,6 +47,8 @@ git submodule update --init --recursive
 
 Our ubuntu-setup script should do this for you as well.
 
+To automate this process, you can add [git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) for this repo to auto-refresh submodules. Instructions can be found [here](https://github.com/RoboJackets/robocup-software/tree/master/util/git-hooks) to do this.
+
 ## Contributing
 
 This picture should summarize the contribution workflow (after forking the repo to your own github repo, so you can push to it).
