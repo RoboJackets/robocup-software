@@ -35,7 +35,6 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
         case MotionCommand::DirectPathTarget:
             planner = new DirectTargetPathPlanner();
             break;
-
         case MotionCommand::Pivot:
             planner = new PivotPathPlanner();
             break;
