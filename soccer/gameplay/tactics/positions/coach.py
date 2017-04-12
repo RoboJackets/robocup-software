@@ -64,11 +64,12 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             return False
 
     def on_enter_running(self):
-        move_point = robocup.Point(-constants.Field.Width / 2 - constants.Robot.Radius * 2,
-                                   constants.Field.Length / 3)
-
-        move = skills.move.Move(move_point)
+        move = skills.move.Move()
         self.add_subbehavior(move, 'coach')
+
+    def on_enter_watching(self):
+        self.subbehavior_with_name('coach').pos = robocup.Point(-constants.Field.Width / 2 - constants.Robot.Radius * 2,
+                                   constants.Field.Length / 3)
 
     def on_exit_running(self):
         self.remove_all_subbehaviors()
@@ -109,15 +110,17 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_enter_strategizing(self):
         #pick a robot to talk to
         target_bot = random.randint(0, ((len(main.our_robots()) - 1) if (main.our_robots() is not None) else 0));
-        self.subbehavior_with_name('coach').pos = main.our_robots()[target_bot].pos
+        self.subbehavior_with_name('coach').pos = (main.our_robots()[target_bot].pos + robocup.Point(-constants.Robot.Radius * 2, constants.Robot.Radius * 2))
+        self.subbehavior_with_name('coach').threshold = constants.Robot.Radius * 2;
         print("\n\n Alright Number " + str(target_bot) + " here is the plan:");
 
     def execute_strategizing(self):
         #Stops coach from talking too much
-        max_responses = 5000
+        max_responses = 4000
         current_plan = random.randint(0, max_responses)
         
         #because python is too cool for switch statements
+        #TODO: Make this more concise, i.e. so it wouldn't be terrible if we had hundreds
         if (current_plan == max_responses):
             print("\n*incoherent mumbling*")
         elif (current_plan == max_responses - 1):
