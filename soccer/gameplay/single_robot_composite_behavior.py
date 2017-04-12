@@ -2,7 +2,6 @@ import single_robot_behavior
 import composite_behavior
 import role_assignment
 import logging
-import role_assignment
 
 
 ## Behavior that applies to a single ROBOT and may have up to one subbehavior at any time
@@ -21,6 +20,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         composite_behavior.CompositeBehavior.__init__(self,
                                                       continuous=continuous)
         self.autorestart = autorestart
+        
 
     @property
     def autorestart(self):

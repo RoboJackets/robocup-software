@@ -7,6 +7,7 @@ import main
 import skills.move
 import subprocess
 import random
+import role_assignment
 
 ## Motivates, encourages, and directs the team.
 class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
@@ -24,7 +25,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         strategizing = 3
 
     def __init__(self):
-        super().__init__(continuous=True, autorestart = lambda: False)#self.State != self.State.strategizing)
+        super().__init__(continuous=True)#self.State != self.State.strategizing)
         self.spin_angle = 0
 
         for state in Coach.State:
@@ -162,6 +163,9 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.robot_change_cost = 20.0
+        for req in role_assignment.iterate_role_requirements_tree_leaves(
+            reqs):
+            #There is only one coach! Not just any robot can be coach
+            req.robot_change_cost = 30.0
         return reqs
 
