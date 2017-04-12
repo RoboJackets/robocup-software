@@ -10,7 +10,6 @@ import main
 # @param excluded_robots A list of robots that shouldn't be counted as obstacles to this shot
 # @return a value from zero to one that estimates the probability of the pass succeeding
 def eval_pass(from_point, to_point, excluded_robots=[]):
-    # TODO: Replace with KickEval
     # we make a pass triangle with the far corner at the ball and the opposing side touching the receiver's mouth
     # the side along the receiver's mouth is the 'receive_seg'
     # we then use the window evaluator on this scenario to see if the pass is open
