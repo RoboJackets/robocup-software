@@ -1,13 +1,22 @@
-import tactics.behavior_sequence.BehaviorSequence
+import behavior_sequence
+import skills.move
 
-class MoveSequence(tactics.behavior_sequence.BehaviorSequence):
-    
-    def __init__(self):
+class MoveSequence(behavior_sequence.BehaviorSequence):
+    def __init__(self, positions = None):
         super().__init__()
-        
-        #Add test move behaviors
-        self.behaviors = [skills.move.Move(robocup.Point(0, 1)),
-         skills.move.Move(robocup.Point(0, 2)),
-         skills.move.Move(robocup.Point(0, 3)),
-         skills.move.Move(robocup.Point(-3, 0))]
+        self._positions = [] if positions == None else positions
 
+    def on_enter_start(self):
+        super().on_enter_start()
+        for pos in self.positions:
+            self.behaviors.append(skills.move.Move(pos))
+
+    @property
+    def positions(self):
+        return self._positions
+
+    #restarts sequence
+    @positions.setter
+    def positions(self, value):
+        self._positions = value
+        self.transition(behavior.Behavior.State.start) 
