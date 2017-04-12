@@ -29,5 +29,6 @@ var classgameplay_1_1role__assignment_1_1_role_requirements =
     [ "priority", "classgameplay_1_1role__assignment_1_1_role_requirements.html#ab6d35c4090e1290bbef8fbda5db20a40", null ],
     [ "require_kicking", "classgameplay_1_1role__assignment_1_1_role_requirements.html#ab6f7994d310416fd28140eabbbc9cc50", null ],
     [ "required", "classgameplay_1_1role__assignment_1_1_role_requirements.html#ae4bbb310f754506b101d685cbe4b2dd1", null ],
-    [ "required_shell_id", "classgameplay_1_1role__assignment_1_1_role_requirements.html#a97f1dcb127fbf90a9a89871a2ffb3882", null ]
+    [ "required_shell_id", "classgameplay_1_1role__assignment_1_1_role_requirements.html#a97f1dcb127fbf90a9a89871a2ffb3882", null ],
+    [ "robot_change_cost", "classgameplay_1_1role__assignment_1_1_role_requirements.html#aab7549d6d56c87ce383cb7b57490ef30", null ]
 ];

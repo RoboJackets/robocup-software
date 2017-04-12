@@ -92,6 +92,7 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a9ba464c2227c7350c627e644427e5a3a":[14,0,5,9,1,15],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a9db5564094bb3ddc4429497803393824":[14,0,5,9,1,4],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#aa9e65d999430ed226e1378b2c24dbb34":[14,0,5,9,1,20],
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#aab7549d6d56c87ce383cb7b57490ef30":[14,0,5,9,1,30],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#aaccc5797cf780d3beb5341695284c599":[14,0,5,9,1,9],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#ab0101905aa04162780ceb4f7e83154db":[14,0,5,9,1,2],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#ab6d35c4090e1290bbef8fbda5db20a40":[14,0,5,9,1,26],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1skills_1_1capture_1_1_capture.html#af4f40fc49fcc4557e8747df83b5ed43e":[14,0,5,13,4,0,13],
 "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html":[14,0,5,13,4,0,0],
 "classgameplay_1_1skills_1_1dribble_1_1_dribble.html":[14,0,5,13,5,0],
-"classgameplay_1_1skills_1_1dribble_1_1_dribble.html#a41c35d3ff77241aa1a83f1ad734e5ba3":[14,0,5,13,5,0,14],
-"classgameplay_1_1skills_1_1dribble_1_1_dribble.html#a4343abebd6c1b94a49ff5695f8c6781a":[14,0,5,13,5,0,5]
+"classgameplay_1_1skills_1_1dribble_1_1_dribble.html#a41c35d3ff77241aa1a83f1ad734e5ba3":[14,0,5,13,5,0,14]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"functions_w.html":[14,3,0,22],
 "git__version_8hpp_source.html":[15,0,0,5],
 "group__drawing__functions.html":[12,1],
 "group__drawing__functions.html#ga0e2cfd392209bc55a231a8f286c7436c":[14,0,75,5],
@@ -14,12 +15,12 @@ var NAVTREEINDEX10 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[14,0,75,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[14,0,75,8],
 "group__matrices.html":[12,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,4,0,2],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[12,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[12,0,1],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[14,0,4,0,4],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,4,0,13],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[12,0,2],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,4,0,13],
 "hierarchy.html":[14,2],
 "index.html":[],
 "md_doc_BuildSystems.html":[0],
