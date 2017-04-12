@@ -3,8 +3,8 @@
 using namespace Geometry2d;
 namespace Planning {
 
-TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
-                                 Geometry2d::Point endPos, float endSpeed,
+TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
+                                 Geometry2d::Point endPos, double endSpeed,
                                  const MotionConstraints& constraints)
     : _startPos(startPos),
       _startSpeed(std::min(startSpeed, constraints.maxSpeed)),
@@ -22,8 +22,8 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, float startSpeed,
 
 boost::optional<RobotInstant> TrapezoidalPath::evaluate(
     RJ::Seconds time) const {
-    float distance;
-    float speedOut;
+    double distance;
+    double speedOut;
     bool valid = TrapezoidalMotion(_pathLength,   // PathLength
                                    _maxSpeed,     // maxSpeed
                                    _maxAcc,       // maxAcc

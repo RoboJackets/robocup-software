@@ -5,17 +5,18 @@
 
 using namespace std;
 
-float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
-                           float maxAcc, float startSpeed, float finalSpeed) {
+double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
+                            double maxAcc, double startSpeed,
+                            double finalSpeed) {
     startSpeed = fmin(startSpeed, maxSpeed);
     finalSpeed = fmin(finalSpeed, maxSpeed);
-    float rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-    float plateauTime;
-    float rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+    double rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+    double plateauTime;
+    double rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
 
-    float rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
-    float plateauDist;
-    float rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
+    double rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
+    double plateauDist;
+    double rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
 
     if (rampUpDist + rampDownDist > pathLength) {
         // triangle case: we don't ever hit full speed
@@ -64,12 +65,12 @@ float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
             t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
 
         */
-        float b = startSpeed;
-        float a = maxAcc / 2.0;
-        float c = -distance;
-        float root = sqrt(b * b - 4 * a * c);
-        float temp1 = (-b + root) / (2 * a);
-        float temp2 = (-b - root) / (2 * a);
+        double b = startSpeed;
+        double a = maxAcc / 2.0;
+        double c = -distance;
+        double root = sqrt(b * b - 4 * a * c);
+        double temp1 = (-b + root) / (2 * a);
+        double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
             debugThrow(
                 "TrapezoidalMotion failed. Solution is imaginary");  // TODO
@@ -83,7 +84,7 @@ float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
             return temp2;
         }
     } else if (distance <= rampUpDist + plateauDist) {
-        float position = distance - rampUpDist;
+        double position = distance - rampUpDist;
         return rampUpTime + position / maxSpeed;
     } else if (distance < rampUpDist + plateauDist + rampDownDist) {
         // time calculations
@@ -92,13 +93,13 @@ float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
             t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
 
         */
-        float position = distance - rampUpDist - plateauDist;
-        float b = maxSpeed;
-        float a = -maxAcc / 2.0;
-        float c = -position;
-        float root = sqrt(b * b - 4 * a * c);
-        float temp1 = (-b + root) / (2 * a);
-        float temp2 = (-b - root) / (2 * a);
+        double position = distance - rampUpDist - plateauDist;
+        double b = maxSpeed;
+        double a = -maxAcc / 2.0;
+        double c = -position;
+        double root = sqrt(b * b - 4 * a * c);
+        double temp1 = (-b + root) / (2 * a);
+        double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
             debugThrow(
                 "TrapezoidalMotion failed. Solution is imaginary");  // TODO
@@ -116,9 +117,9 @@ float Trapezoidal::getTime(float distance, float pathLength, float maxSpeed,
     }
 }
 
-bool TrapezoidalMotion(float pathLength, float maxSpeed, float maxAcc,
-                       float timeIntoLap, float startSpeed, float finalSpeed,
-                       float& posOut, float& speedOut) {
+bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
+                       double timeIntoLap, double startSpeed, double finalSpeed,
+                       double& posOut, double& speedOut) {
     // begin by assuming that there's enough time to get up to full speed
     // we do this by calculating the full ramp-up and ramp-down, then seeing
     // if the distance travelled is too great.  If it's gone too far, this is
@@ -126,13 +127,13 @@ bool TrapezoidalMotion(float pathLength, float maxSpeed, float maxAcc,
 
     startSpeed = fmin(startSpeed, maxSpeed);
     finalSpeed = fmin(finalSpeed, maxSpeed);
-    float rampUpTime = (maxSpeed - startSpeed) / maxAcc;
-    float plateauTime;
-    float rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+    double rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+    double plateauTime;
+    double rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
 
-    float rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
-    float plateauDist;
-    float rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
+    double rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
+    double plateauDist;
+    double rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
 
     if (rampUpDist + rampDownDist > pathLength) {
         // triangle case: we don't ever hit full speed
@@ -184,7 +185,7 @@ bool TrapezoidalMotion(float pathLength, float maxSpeed, float maxAcc,
         return true;
     } else if (timeIntoLap < rampUpTime + plateauTime + rampDownTime) {
         /// we're on the ramp down
-        float timeIntoRampDown = timeIntoLap - (rampUpTime + plateauTime);
+        double timeIntoRampDown = timeIntoLap - (rampUpTime + plateauTime);
         posOut = 0.5 * (-maxAcc) * timeIntoRampDown * timeIntoRampDown +
                  maxSpeed * timeIntoRampDown + (rampUpDist + plateauDist);
         speedOut = maxSpeed - maxAcc * timeIntoRampDown;
