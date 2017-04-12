@@ -203,6 +203,10 @@ std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d:
 <tr class="memitem:a529f21d46688a162c8915bc6d1c3cddd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a529f21d46688a162c8915bc6d1c3cddd"></a>
 std::unique_ptr&lt; <a class="el" href="class_planning_1_1_interpolated_path.html">InterpolatedPath</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>generateRRTPath</b> (const <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &amp;start, const <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> &amp;goal, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, const std::vector&lt; <a class="el" href="class_planning_1_1_dynamic_obstacle.html">DynamicObstacle</a> &gt; paths, <a class="el" href="class_system_state.html">SystemState</a> *state, unsigned shellID)</td></tr>
 <tr class="separator:a529f21d46688a162c8915bc6d1c3cddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f740ad25ea28a22bf992cba4fdfd450"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f740ad25ea28a22bf992cba4fdfd450"></a>
+std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_r_r_t_planner.html#a6f740ad25ea28a22bf992cba4fdfd450">runRRTHelper</a> (<a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> start, <a class="el" href="struct_planning_1_1_motion_instant.html">MotionInstant</a> goal, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;motionConstraints, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, <a class="el" href="class_system_state.html">SystemState</a> *state, unsigned shellID, bool straightLine)</td></tr>
+<tr class="memdesc:a6f740ad25ea28a22bf992cba4fdfd450"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper method for runRRT(), which creates a vector of points representing the RRT path. <br /></td></tr>
+<tr class="separator:a6f740ad25ea28a22bf992cba4fdfd450"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_planning_1_1_single_robot_path_planner"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_planning_1_1_single_robot_path_planner')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_planning_1_1_single_robot_path_planner.html">Planning::SingleRobotPathPlanner</a></td></tr>
 <tr class="memitem:aba692b5e765ed86e4300f34f50d8a561 inherit pro_methods_class_planning_1_1_single_robot_path_planner"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aba692b5e765ed86e4300f34f50d8a561"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>SingleRobotPathPlanner</b> (bool handlesDynamic)</td></tr>
@@ -445,7 +449,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>_maxIterations</b></td
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_r_r_t_planner.html">RRTPlanner</a></li>
-    <li class="footer">Generated on Wed Apr 12 2017 00:05:28 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Apr 12 2017 00:15:07 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

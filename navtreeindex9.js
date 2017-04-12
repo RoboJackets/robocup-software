@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a2b4bb37f00197c8e118dc5db124cc230":[14,0,5,15,5,0,1],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a331df03903e9856d2383caf1c60789c7":[14,0,5,15,5,0,7],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a884d6dea3e97b4197ece6755222ccf34":[14,0,5,15,5,0,5],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a9cf8cda327163fcba5f4b9fc6664fd22":[14,0,5,15,5,0,6],
@@ -201,16 +202,16 @@ var NAVTREEINDEX9 =
 "dir_cee59dbc20d175ba3d3ad00d9c6ec89c.html":[15,0,0,0,1,0],
 "dir_d3b3c99e678dbdf8dea24fbaaffbebe5.html":[15,0,1,7],
 "files.html":[15,0],
-"functions.html":[14,3,0],
 "functions.html":[14,3,0,0],
+"functions.html":[14,3,0],
 "functions_a.html":[14,3,0,1],
 "functions_b.html":[14,3,0,2],
 "functions_c.html":[14,3,0,3],
 "functions_d.html":[14,3,0,4],
 "functions_e.html":[14,3,0,5],
 "functions_f.html":[14,3,0,6],
-"functions_func.html":[14,3,1,0],
 "functions_func.html":[14,3,1],
+"functions_func.html":[14,3,1,0],
 "functions_func_a.html":[14,3,1,1],
 "functions_func_b.html":[14,3,1,2],
 "functions_func_c.html":[14,3,1,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "functions_t.html":[14,3,0,19],
 "functions_type.html":[14,3,3],
 "functions_u.html":[14,3,0,20],
-"functions_v.html":[14,3,0,21],
-"functions_vars.html":[14,3,2]
+"functions_v.html":[14,3,0,21]
 };
