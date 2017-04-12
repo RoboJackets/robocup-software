@@ -121,7 +121,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_transition(
             AdaptiveFormation.State.shooting,
             AdaptiveFormation.State.collecting,
-            lambda: self.subbehavior_with_name('kick').is_done_running() or not self.near_ball(),
+            lambda: self.subbehavior_with_name('kick').is_done_running(),
             'Shooting: Ball Lost / Shot')
         self.add_transition(
             AdaptiveFormation.State.clearing,
@@ -182,13 +182,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return False
 
         return True
-
-    def near_ball(self):
-        min_dist = 100
-        for bot in main.our_robots():
-            min_dist = min(min_dist, (main.ball().pos - bot.pos).mag())
-
-        return min_dist < .5
 
     def on_enter_collecting(self):
         # 2 man to man defenders and 1 zone defender
@@ -256,6 +249,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_exit_shooting(self):
         self.remove_all_subbehaviors()
+        self.kick = None
 
     def on_enter_clearing(self):
         # Line kick with chip
