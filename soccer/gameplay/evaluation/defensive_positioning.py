@@ -26,10 +26,9 @@ def predict_kick_direction(robot):
     # Predict the robot direction based on angular velocity and angle
     robot_angle_predict = angle + angle_vel * inst_ball_time
 
-    # TODO: Change to 0.7 before running outside of the test function
-    filter_coeff = 0
-    return filter_coeff * robot_angle_predict + (
-        1 - filter_coeff) * ball_angle_predict
+    filter_coeff = 0.7
+    return filter_coeff * robot_angle_predict + \
+           (1 - filter_coeff) * ball_angle_predict
 
 
 def get_points_from_rect(rect, step=0.5):
@@ -146,13 +145,24 @@ def create_area_defense_zones(ignore_robots=[]):
 
     return bucket_pt_sum / bucket_score_sum
 
-
 ## Estimates how dangerous an enemy robot can be at a certain point
 #  Takes pass / shot and time to execute on ball into account
 #
 # @param pos: Position in which to estimate score at
 # @return Risk score at that point
+pass_score = 0
+shot_pt = robocup.Point(0, 0)
+shot_score = 0
+cache_timer = 0
+
+
 def estimate_risk_score(pos, ignore_robots=[]):
+    # Caches some kick eval functions
+    global pass_score
+    global shot_pt
+    global shot_score
+    global cache_timer
+
     max_time = 1
     max_ball_vel = 8  # m/s per the rules
     est_turn_vel = 8  # rad/s per a random dice roll (Over estimates oppnents abilities)
@@ -162,8 +172,16 @@ def estimate_risk_score(pos, ignore_robots=[]):
     for r in ignore_robots:
         kick_eval.add_excluded_robot(r)
 
-    _, pass_score = kick_eval.eval_pt_to_robot(main.ball().pos, pos)
-    shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(pos)
+    cycle_size = 2
+    if (cache_timer % cycle_size == 0):
+        _, pass_score = kick_eval.eval_pt_to_robot(main.ball().pos, pos)
+    elif (cache_timer % cycle_size == round(cycle_size / 2)):
+        shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(pos)
+    cache_timer = (cache_timer + 1) % cycle_size
+
+    pass_score = 0
+    shot_score = 0
+    shot_pt = robocup.Point(0, 0)
 
     # Dist to ball
     ball_pos_vec = pos - main.ball().pos
@@ -171,8 +189,8 @@ def estimate_risk_score(pos, ignore_robots=[]):
 
     # Closest opp robot
     closest_opp_bot = evaluation.opponent.get_closest_opponent(main.ball().pos)
-    delta_angle = (
-        ball_pos_vec.angle() - predict_kick_direction(closest_opp_bot))
+    delta_angle = ball_pos_vec.angle() - \
+                  predict_kick_direction(closest_opp_bot)
     delta_angle = math.atan2(math.sin(delta_angle), math.cos(delta_angle))
 
     # Underestimates max time to execute on ball
@@ -189,8 +207,8 @@ def estimate_risk_score(pos, ignore_robots=[]):
 
     # Delta angle between pass recieve and shot
     delta_angle = ball_pos_vec.angle() - (shot_pt - pos).angle()
-    angle_coeff = math.fabs(math.atan2(
-        math.sin(delta_angle), math.cos(delta_angle)) / math.pi)
+    delta_angle = math.atan2(math.sin(delta_angle), math.cos(delta_angle))
+    angle_coeff = math.fabs(delta_angle) / math.pi
 
     # Shot only matters if its a good pass
     # Add pass back in for checking if pass is good (while shot is not)
@@ -223,8 +241,8 @@ def find_defense_positions(ignore_robots=[]):
 
     for bot in main.their_robots():
         score = estimate_risk_score(bot.pos, ignore_robots)
-        main.system_state().draw_text("Risk: " + str(int(score * 100)), \
-                                      bot.pos, constants.Colors.White,  \
+        main.system_state().draw_text("Risk: " + str(int(score * 100)),
+                                      bot.pos, constants.Colors.White,
                                       "Defense")
         their_risk_scores.extend([score])
 

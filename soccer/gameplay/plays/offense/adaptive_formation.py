@@ -42,6 +42,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.dribble_start_pt = robocup.Point(0, 0)
         # Max dribble distance per the rules with 10% wiggle room
         self.max_dribble_dist = 1 * .9
+        # Kicker for a shot
+        self.kick = None
 
         # Min field Y to clear
         self.clear_field_cutoff = constants.Field.Length * .2
@@ -86,9 +88,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
             lambda: self.subbehavior_with_name('defend').state == behavior.Behavior.State.completed,
             'Ball Collected')
 
-        self.add_transition(AdaptiveFormation.State.dribbling,
-                            AdaptiveFormation.State.passing,
-                            lambda: self.should_pass_from_dribble(), 'Passing')
+        self.add_transition(
+            AdaptiveFormation.State.dribbling, AdaptiveFormation.State.passing,
+            lambda: self.should_pass_from_dribble() and not self.should_shoot_from_dribble(),
+            'Passing')
 
         self.add_transition(AdaptiveFormation.State.dribbling,
                             AdaptiveFormation.State.shooting,
@@ -106,11 +109,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
             'Passed')
 
         # Reset to collecting when ball is lost at any stage
-        self.add_transition(
-            AdaptiveFormation.State.dribbling,
-            AdaptiveFormation.State.collecting,
-            lambda: evaluation.ball.robot_has_ball(self.dribbler.robot),
-            'Dribble: Ball Lost')
+        self.add_transition(AdaptiveFormation.State.dribbling,
+                            AdaptiveFormation.State.collecting,
+                            lambda: False,  #evaluation.ball.robot_has_ball(self.dribbler.robot),
+                            'Dribble: Ball Lost')
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.collecting,
                             lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.cancelled or \
@@ -119,7 +121,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_transition(
             AdaptiveFormation.State.shooting,
             AdaptiveFormation.State.collecting,
-            lambda: self.subbehavior_with_name('kick').is_done_running(),
+            lambda: self.subbehavior_with_name('kick').is_done_running() or not self.near_ball(),
             'Shooting: Ball Lost / Shot')
         self.add_transition(
             AdaptiveFormation.State.clearing,
@@ -151,6 +153,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
                 self.shot_chance):
             return False
 
+        # Not in front of the half
+        if (main.ball().pos.y < constants.Field.Length / 2):
+            return False
+
         # If shot is above cutoff
         if (self.shot_chance > self.dribble_to_shoot_cutoff):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(
@@ -176,6 +182,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return False
 
         return True
+
+    def near_ball(self):
+        min_dist = 100
+        for bot in main.our_robots():
+            min_dist = min(min_dist, (main.ball().pos - bot.pos).mag())
+
+        return min_dist < .5
 
     def on_enter_collecting(self):
         # 2 man to man defenders and 1 zone defender
@@ -226,20 +239,20 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Setup previous values (Basic complementary filter)
         c = .8
-        self.prev_shot_chance = c * self.shot_chance + (
-            1 - c) * self.prev_shot_chance
-        self.prev_pass_score = c * self.pass_score + (1 -
-                                                      c) * self.prev_pass_score
+        self.prev_shot_chance = c * self.shot_chance + \
+                                (1 - c) * self.prev_shot_chance
+        self.prev_pass_score = c * self.pass_score + \
+                               (1 - c) * self.prev_pass_score
 
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()
 
     def on_enter_shooting(self):
         # TODO: Use moving kick when completed
-        kick = skills.pivot_kick.PivotKick()
-        kick.target = constants.Field.TheirGoalSegment
-        kick.aim_params['desperate_timeout'] = 3
-        self.add_subbehavior(kick, 'kick', required=False)
+        self.kick = skills.pivot_kick.PivotKick()
+        self.kick.target = constants.Field.TheirGoalSegment
+        self.kick.aim_params['desperate_timeout'] = 3
+        self.add_subbehavior(self.kick, 'kick', required=False)
 
     def on_exit_shooting(self):
         self.remove_all_subbehaviors()

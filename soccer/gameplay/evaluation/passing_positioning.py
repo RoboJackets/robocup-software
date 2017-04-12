@@ -27,8 +27,8 @@ def generate_default_rectangle(pos):
     offset_from_edge = w * 0.1
 
     bot_left = robocup.Point(-1 * w / 2 + offset_from_edge, min(l / 2, pos.y))
-    top_right = robocup.Point(w / 2 - offset_from_edge, min(
-        l - offset_from_edge, bot_left.y + l / 2))
+    top_right = robocup.Point(w / 2 - offset_from_edge,
+                              min(l - offset_from_edge, bot_left.y + l / 2))
 
     return robocup.Rect(bot_left, top_right)
 
@@ -55,6 +55,7 @@ def get_points_from_rect(rect, pos, step=0.5, min_dist=1):
             # If within the goalie area
             if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
                     currentx, currenty + goal_zone_thresh)):
+
                 currentx += step
                 continue
 
@@ -152,11 +153,11 @@ def eval_best_receive_point(kick_point,
                                         ignore_robots, field_weights, weights)
 
         if (debug):
-            score_color = (round(currentScore * 255), 0, round(
-                (1 - currentScore) * 255))
+            score_color = (round(currentScore * 255), 0,
+                           round((1 - currentScore) * 255))
             main.system_state().draw_line(
-                robocup.Segment(kick_point,
-                                currentPoint), score_color, "Score")
+                robocup.Segment(kick_point, currentPoint), score_color,
+                "Score")
 
         if bestScore is None or currentScore > bestScore:
             bestScore = currentScore
@@ -168,7 +169,7 @@ def eval_best_receive_point(kick_point,
 
     if (debug):
         main.system_state().draw_line(
-            robocup.Segment(kick_point,
-                            bestPoint), constants.Colors.Red, "Best Point")
+            robocup.Segment(kick_point, bestPoint), constants.Colors.Red,
+            "Best Point")
 
     return bestPoint, bestScore

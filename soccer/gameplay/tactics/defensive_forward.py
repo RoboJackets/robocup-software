@@ -53,10 +53,15 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             lambda: not self.within_range(), 'Back to blocking')
 
         self.add_transition(DefensiveForward.State.collecting,
-                            behavior.Behavior.State.completed, lambda: True,
-                            'Ball collected')
+                            behavior.Behavior.State.completed,
+                            lambda: self.near_ball(), 'Ball collected')
 
-        # TODO: Finish play when ball is collected
+    def near_ball(self):
+        min_dist = 100
+        for bot in main.our_robots():
+            min_dist = min(min_dist, (main.ball().pos - bot.pos).mag())
+
+        return min_dist < .5
 
         # Create list of defenders and start the marking
     def on_enter_blocking(self):
@@ -107,7 +112,6 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.defenders[i].mark_robot = self.mark_bots[i]
 
     def on_exit_collecting(self):
-        print('exit')
         self.remove_all_subbehaviors()
 
     # Uses their predicted kick direction to block

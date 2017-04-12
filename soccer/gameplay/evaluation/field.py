@@ -54,8 +54,8 @@ def field_pos_coeff_at_pos(pos,
 
     # Angle of pos onto the goal, centerline is 0 degrees
     if (attacking_their_goal):
-        anglValue = 1 - math.fabs(math.atan2(pos.x, constants.Field.Length -
-                                             pos.y) / (math.pi / 2))
+        angle = math.atan2(pos.x, constants.Field.Length - pos.y)
+        anglValue = 1 - math.fabs(angle / (math.pi / 2))
     else:
         anglValue = 1 - math.fabs(math.atan2(pos.x, pos.y) / (math.pi / 2))
 
