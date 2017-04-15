@@ -1,7 +1,7 @@
 # GT RoboJackets RoboCup SSL
 [![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![14.04 Build Status](https://semaphoreci.com/api/v1/jgkamat/robocup-software/branches/master/shields_badge.svg)](https://semaphoreci.com/jgkamat/robocup-software) [![OSX Build Status](https://travis-ci.org/RoboJackets/robocup-software.svg?branch=master)](https://travis-ci.org/RoboJackets/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
 
-[![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Riot](https://img.shields.io/badge/matrix-riot%20chat-blue.svg)](https://riot.im/app/#/room/%23robocup-software:matrix.org) [![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [documentation page](http://robojackets.github.io/robocup-software/), our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
