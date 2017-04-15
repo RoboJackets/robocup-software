@@ -1,11 +1,13 @@
 # Firmware {#t2016firmware}
 
+
 # Initialization
 
 -   Initialize Kicker(attiny) and FPGA using binary files stored on MBED
     -   Compilation for these files is separate from firmware MBED runs
 -   Initialize any other devices (radio, MPU, etc.)
 -   Start threads
+
 
 # RTOS (Threads)
 
@@ -16,11 +18,13 @@
 
 ![img](//developer.mbed.org/media/uploads/emilmont/xthreadstatus.png.pagespeed.ic.c21fE5uss-.jpg)
 
+
 ## Main
 
 -   Watchdog (reset MBED if it doesn't go back to main in certain time)
 -   Control LEDs (neopixel & LEDs connected to IO Expander)
 -   Respond to buttons/switches(rotary selector & dip switch)
+
 
 ## Other threads
 
@@ -32,10 +36,12 @@
 -   Radio
     -   Two RX threads, one TX thread (see Radio section)
 
+
 # Radio
 
 -   How commands are sent to robot (motor speeds, kick, etc.)
 -   How information is sent back to the base station (various robot statuses)
+
 
 ## CommLink
 
@@ -44,10 +50,12 @@
 -   Other radio drivers (cc1201 and decawave) are derived from this in order to implement the specific hardware communication
 -   Runs RX thread waiting for radio interrupts
 
+
 ## CommModule
 
 -   Used to handle packets being sent and received with radio
 -   RX/TX queues (as threads) waiting for other threads to put packets in the queue that are ready to be sent or have been received and need to be processed
+
 
 # Shared SPI
 
@@ -55,10 +63,12 @@
 -   Devices (slaves) currently used are radio, kicker (ATtiny), and FPGA
 -   This ensures multiple threads aren't trying to communicate on these shared lines all at once
 
+
 # Hardfault Handler
 
 -   Written in assembly to call function when the mbed hard faults (crashes)
 -   Used to print out information to console useful for debugging
+
 
 # FPGA (verilog)
 
@@ -75,6 +85,7 @@
         -   Adjusting the duty cycle allows us to control motor speeds
 -   Acts as SPI slave to receive motor speeds from MBED and has second SPI communication where it acts as SPI master to communicate with motor drivers
 -   Pin configurations found in robocup.ucf
+
 
 # Base Station
 

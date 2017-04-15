@@ -62,7 +62,7 @@
 ```shell
 # Let's git attribute your changes to you!
 git config --global user.name "Jay Kamat"
-git config --global user.email "jaygkamat@gmail.com"
+git config --global user.email "yourname@example.com"
 ```
 
 
@@ -457,6 +457,7 @@ git push
 
 # from now on, git will remember the remote and branch
 # that you've paired with your local branch!
+# See the push.default config option for more info
 ```
 
 
@@ -483,6 +484,7 @@ git diff myrelease
 
 # where myrelease refrences the commit you were on.
 # Use git push --tags to push your tags as well.
+# Tags give a name to A SPECIFIC COMMIT, not to a branch.
 ```
 
 
@@ -542,3 +544,57 @@ git show origin/master
 -   Then clone your fork (you will now be able to commit/push to this fork)
 -   Submit a PR from your fork into the target repo
 -   Once accepted, the maintainer pulls code from your github fork to the main github repo.
+
+
+## (Advanced) Pull Requests
+
+-   When you make a PR, you can specify some advanced options, such as where you want the maintainer to pull to
+-   For example, you might want to have your code pulled into a feature branch, instead of master
+-   The '`base`' is the branch you want to merge into (usually master)
+
+
+## Example
+
+![img](https://i.imgur.com/Ed8hRhA.png)
+
+
+# BONUS: Commit Messages
+
+
+## `git` commit
+
+```shell
+# What we were using before
+git commit -m "Fix memory leak when spacebar was held"
+
+# How do I add more information, like the cause of the leak?
+git commit
+# This will launch an editor (you can change this with the $EDITOR variable)
+# Add your commit message, save, and quit the editor
+```
+
+
+## Commit Message Conventions
+
+![img](https://imgs.xkcd.com/comics/git_commit.png)
+
+
+## Commit Message Conventions
+
+1.  Separate body and subject with a blank line
+2.  Subject line should not be more than 50 chars
+3.  Capitalize the subject line
+4.  No period at the end of the subject line
+5.  Use 'imperative' Language in subject
+    -   Good: `Fix memory leak`
+    -   Bad: `Fixed memory leak`
+6.  Wrap the body at 72 chars
+7.  Use the body to explain what/why vs how
+
+
+## Commit Message Conventions
+
+-   Following these guides help maintainers to find where things went wrong and why
+-   It makes the output of `git log --oneline` pretty!
+-   Good integration with all git tools
+-   Makes your repo look professional
