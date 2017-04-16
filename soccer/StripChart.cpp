@@ -2,6 +2,7 @@
 #include "time.hpp"
 
 #include <QPainter>
+#include <QFileDialog>
 #include <QDateTime>
 
 #include <stdio.h>
@@ -52,9 +53,8 @@ void StripChart::function(Chart::Function* function) {
 }
 
 void StripChart::exportChart() {
-
-    QString chartName = QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss");
-    std::ofstream outfile("run/ChartData/" + chartName.toStdString() + "-chart.csv");
+    QString chartName = QFileDialog::getSaveFileName(this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
+    std::ofstream outfile(chartName.toStdString());
 
     //_history has the most recent frame at 0, the most recent logframe should
     //have its value at vert close to the time at export.
