@@ -256,6 +256,11 @@ public:
      */
     void pivot(Geometry2d::Point pivotTarget);
 
+    /**
+     * Overload to pivot a variable radius around a given point
+     */
+    void pivotAroundCenter(Geometry2d::Point pivotPoint, Geometry2d::Point pivotTarget, float radius);
+
     /*
      * Enable dribbler (0 to 127)
      */
