@@ -35,7 +35,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Min score to pass
         self.dribble_to_pass_cutoff = 0.1
         # Min score to shoot
-        self.dribble_to_shoot_cutoff = 0.1
+        self.dribble_to_shoot_cutoff = 0.07
         # Dribbling skill
         self.dribbler = None
         # Dribble start point
@@ -214,8 +214,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.passing_weights, False)
 
         # Grab shot chance
-        _, self.shot_chance = self.kick_eval.eval_pt_to_opp_goal(main.ball(
-        ).pos)
+        self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
 
         # Recalculate dribbler pos
         self.check_dribbling_timer += 1

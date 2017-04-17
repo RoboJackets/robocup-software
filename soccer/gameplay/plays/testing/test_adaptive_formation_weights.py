@@ -43,8 +43,8 @@ class TestAdaptiveFormationWeights(play.Play):
 
     def execute_testPointCoeff(self):
         # Number of boxes width and length wise
-        num_width = 10
-        num_length = 10
+        num_width = 20
+        num_length = 20
 
         val = 0
         max_val = 0
@@ -87,7 +87,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 kick_eval = robocup.KickEvaluator(main.system_state())
                 for bot in main.our_robots():
                     kick_eval.add_excluded_robot(bot)
-                #val = kick_eval.eval_pt_to_pt(robocup.Point(x_cent, y_cent), robocup.Point(0, 3), 0.1)
+                _, val = kick_eval.eval_pt_to_opp_goal(robocup.Point(x_cent, y_cent))
 
                 # Find max
                 if (val > max_val):
@@ -109,10 +109,6 @@ class TestAdaptiveFormationWeights(play.Play):
                 # Draw onto the Debug layer
                 main.system_state().draw_polygon(rect, val_color, "Density")
 
-        self.special_point = evaluation.defensive_positioning.create_area_defense_zones(
-        )
-        x_cent = self.special_point.x
-        y_cent = self.special_point.y
 
         rect = [robocup.Point(x_cent - x_half, y_cent - y_half),
                 robocup.Point(x_cent + x_half, y_cent - y_half),

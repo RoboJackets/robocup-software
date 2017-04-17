@@ -137,7 +137,7 @@ def eval_best_receive_point(kick_point,
     if evaluation_zone is None:
         evaluation_zone = generate_default_rectangle(kick_point)
 
-    points = get_points_from_rect(evaluation_zone, kick_point, 0.5, 0.5)
+    points = get_points_from_rect(evaluation_zone, kick_point, 0.6, 0.5)
 
     if points is None or len(points) == 0:
         # Nothing can be done
