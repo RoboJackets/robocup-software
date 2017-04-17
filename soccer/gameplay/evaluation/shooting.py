@@ -14,7 +14,6 @@ def eval_shot(from_point, excluded_robots=[]):
         kick_eval.add_excluded_robot(r)
     point, chance = kick_eval.eval_pt_to_opp_goal(from_point)
 
-
     if from_point.y > (constants.Field.Length / 2):
 
         return chance

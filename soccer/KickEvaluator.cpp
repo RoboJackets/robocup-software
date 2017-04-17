@@ -330,7 +330,7 @@ void KickEvaluator::init_gradient_configs(
         *min_element(robotStDevs.begin(), robotStDevs.end()) * 2;
     const float temperatureDescent = 0.5;
     const float temperatureMin = 0.01;
-    const int maxIterations = 1000;
+    const int maxIterations = 20;
     const float maxValue = 1;
     const float maxThresh = 0.05;
 
