@@ -67,9 +67,9 @@ def create_area_defense_zones(ignore_robots=[]):
     points = [[]]
 
     # Amnt each bucket holds
-    angle_inc = math.pi / 16
+    angle_inc = math.pi / 10
     # Amnt to inc each value by
-    dist_inc = 1.5
+    dist_inc = 2.5
 
     # Holds the float angle (Radians)
     angle = 0
@@ -145,24 +145,14 @@ def create_area_defense_zones(ignore_robots=[]):
 
     return bucket_pt_sum / bucket_score_sum
 
+
 ## Estimates how dangerous an enemy robot can be at a certain point
 #  Takes pass / shot and time to execute on ball into account
 #
 # @param pos: Position in which to estimate score at
 # @return Risk score at that point
-pass_score = 0
-shot_pt = robocup.Point(0, 0)
-shot_score = 0
-cache_timer = 0
-
-
 def estimate_risk_score(pos, ignore_robots=[]):
     # Caches some kick eval functions
-    global pass_score
-    global shot_pt
-    global shot_score
-    global cache_timer
-
     max_time = 1
     max_ball_vel = 8  # m/s per the rules
     est_turn_vel = 8  # rad/s per a random dice roll (Over estimates oppnents abilities)
@@ -172,16 +162,8 @@ def estimate_risk_score(pos, ignore_robots=[]):
     for r in ignore_robots:
         kick_eval.add_excluded_robot(r)
 
-    cycle_size = 4
-    if (cache_timer % cycle_size == 0):
-        _, pass_score = kick_eval.eval_pt_to_robot(main.ball().pos, pos)
-    if (cache_timer % cycle_size == round(cycle_size / 2)):
-        shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(pos)
-    cache_timer = (cache_timer + 1) % cycle_size
-
-    pass_score = 0
-    shot_score = 0
-    shot_pt = robocup.Point(0, 0)
+    _, pass_score = kick_eval.eval_pt_to_robot(main.ball().pos, pos)
+    shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(pos)
 
     # Dist to ball
     ball_pos_vec = pos - main.ball().pos

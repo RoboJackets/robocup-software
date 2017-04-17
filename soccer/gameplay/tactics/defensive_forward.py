@@ -37,6 +37,10 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         # Distance offset for path estimation
         self.dodge_dist = .2
 
+        self.time_since_call = 0
+        # Estimates defensive positions every X ticks
+        self.cache_amnt = 5
+
         for s in DefensiveForward.State:
             self.add_state(s, behavior.Behavior.State.running)
 
@@ -75,18 +79,25 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         self.add_subbehavior(self.defenders[2], self.names[2], required=True)
         self.defenders[2].mark_point = self.zone_def_pos
 
+        # Reset time since call
+        self.time_since_call = 0
+
     # Continue updating the mark positions
     def execute_blocking(self):
-        self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = \
-            evaluation.defensive_positioning.find_defense_positions(
-                [self.defenders[0].robot, self.defenders[1].robot])
+        self.time_since_call += 1
 
-        for i in range(0, 2):
-            if (self.defenders[i].mark_robot not in self.mark_bots):
-                self.defenders[i].mark_robot = self.mark_bots[i]
-            # TODO: Shift to mark point when "get_block_pos" is fixed
+        # You don't want to test if its 0 because it would execute instantly
+        if (self.time_since_call % self.cache_amnt == self.cache_amnt - 1):
+            self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = \
+                evaluation.defensive_positioning.find_defense_positions(
+                    [self.defenders[0].robot, self.defenders[1].robot])
 
-        self.defenders[2].mark_point = self.zone_def_pos
+            for i in range(0, 2):
+                if (self.defenders[i].mark_robot not in self.mark_bots):
+                    self.defenders[i].mark_robot = self.mark_bots[i]
+                # TODO: Shift to mark point when "get_block_pos" is fixed
+
+            self.defenders[2].mark_point = self.zone_def_pos
 
     def on_exit_blocking(self):
         self.remove_all_subbehaviors()
