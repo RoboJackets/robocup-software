@@ -84,7 +84,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
     # Continue updating the mark positions
     def execute_blocking(self):
-        self.time_since_call += 1
+        self.time_since_call = (self.time_since_call + 1) % self.cache_amnt
 
         # You don't want to test if its 0 because it would execute instantly
         if (self.time_since_call % self.cache_amnt == self.cache_amnt - 1):
