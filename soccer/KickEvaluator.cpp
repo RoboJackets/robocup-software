@@ -26,7 +26,7 @@ inline double fast_exp(double x) {
 }
 
 void KickEvaluator::createConfiguration(Configuration* cfg) {
-    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.08);
+    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.04);
     kick_mean = new ConfigDouble(cfg, "KickEvaluator/kick_mean", 0);
     robot_std_dev = new ConfigDouble(cfg, "KickEvaluator/robot_std_dev", 0.3);
     start_x_offset = new ConfigDouble(cfg, "KickEvaluator/start_x_offset", 0.1);
