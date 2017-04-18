@@ -983,7 +983,8 @@ void MainWindow::channel(int n) {
 
 void MainWindow::on_actionCenterBall_triggered() {
     grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+    grSim_BallReplacement* ball_replace =
+        simPacket.mutable_replacement()->mutable_ball();
 
     ball_replace->set_x(0);
     ball_replace->set_y(0);
@@ -995,7 +996,8 @@ void MainWindow::on_actionCenterBall_triggered() {
 
 void MainWindow::on_actionStopBall_triggered() {
     grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+    grSim_BallReplacement* ball_replace =
+        simPacket.mutable_replacement()->mutable_ball();
 
     Geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
@@ -1007,8 +1009,8 @@ void MainWindow::on_actionStopBall_triggered() {
 }
 
 void MainWindow::on_actionResetField_triggered() {
-    //SimCommand cmd;
-    //cmd.set_reset(true);
+    // SimCommand cmd;
+    // cmd.set_reset(true);
     // need to have a default position for robots and manually set all robots
     // to correct position
     //_ui.fieldView->sendSimCommand(cmd);
@@ -1016,7 +1018,6 @@ void MainWindow::on_actionResetField_triggered() {
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
-    
     // TODO: check that this handles threads properly
     /*
     for (OurRobot* robot : state()->self) {

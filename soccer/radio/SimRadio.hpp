@@ -18,7 +18,8 @@ public:
     virtual void switchTeam(bool blueTeam) override;
 
 private:
-    SystemState& _state;;
+    SystemState& _state;
+    ;
 
     QUdpSocket _socket;
     int _channel;

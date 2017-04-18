@@ -25,9 +25,7 @@ SimRadio::SimRadio(SystemState& system_state, bool blueTeam)
     }
 }
 
-bool SimRadio::isOpen() const {
-    return _socket.isValid();
-}
+bool SimRadio::isOpen() const { return _socket.isValid(); }
 
 void SimRadio::send(Packet::RadioTx& packet) {
     grSim_Packet simPacket;
@@ -40,7 +38,8 @@ void SimRadio::send(Packet::RadioTx& packet) {
         simRobot->set_velnormal(-robot.control().xvelocity());
         simRobot->set_velangular(RadiansToDegrees(robot.control().avelocity()));
 
-        simRobot->set_triggermode((grSim_Robot_Command_TriggerMode) robot.control().triggermode());
+        simRobot->set_triggermode(
+            (grSim_Robot_Command_TriggerMode)robot.control().triggermode());
 
         // rough approximation of kick strength assuming the max of 255
         // corresponds to 8 m / s
@@ -68,8 +67,8 @@ void SimRadio::send(Packet::RadioTx& packet) {
     std::string out;
     simPacket.SerializeToString(&out);
     _socket.writeDatagram(&out[0], out.size(),
-                                   QHostAddress(QHostAddress::LocalHost),
-                                   SimCommandPort);
+                          QHostAddress(QHostAddress::LocalHost),
+                          SimCommandPort);
 }
 
 void SimRadio::receive() {
@@ -88,16 +87,16 @@ void SimRadio::receive() {
         double distToBall = robot_pos.distTo(ball_pos);
 
         float robotAngle = _state.self[i]->angle;
-        
+
         // if the ball is very close to us, and within 25 degrees of the front
         // of us, then activate our ball sense.
-        if (std::fabs(angleToBall - robotAngle) < DegreesToRadians(25)
-                && distToBall < Robot_Radius * 1.1) {
+        if (std::fabs(angleToBall - robotAngle) < DegreesToRadians(25) &&
+            distToBall < Robot_Radius * 1.1) {
             rx.set_ball_sense_status(Packet::HasBall);
         } else {
             rx.set_ball_sense_status(Packet::NoBall);
         }
-        
+
         const int num_motors = 5;
         // 5 motors including dribbler
         for (int i = 0; i < num_motors; i++) {

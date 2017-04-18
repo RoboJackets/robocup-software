@@ -78,7 +78,8 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
         case DRAG_PLACE:
             if (_dragRobot >= 0) {
                 grSim_Packet simPacket;
-                grSim_RobotReplacement* robot_replace = simPacket.mutable_replacement()->add_robots();
+                grSim_RobotReplacement* robot_replace =
+                    simPacket.mutable_replacement()->add_robots();
 
                 robot_replace->set_x((_screenToWorld * me->pos()).x());
                 robot_replace->set_y((_screenToWorld * me->pos()).y());
@@ -101,7 +102,8 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
     if (_dragMode == DRAG_SHOOT) {
         grSim_Packet simPacket;
-        grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+        grSim_BallReplacement* ball_replace =
+            simPacket.mutable_replacement()->mutable_ball();
 
         ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
         ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
@@ -115,7 +117,8 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
 
 void SimFieldView::placeBall(QPointF pos) {
     grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
+    grSim_BallReplacement* ball_replace =
+        simPacket.mutable_replacement()->mutable_ball();
 
     ball_replace->set_x((_screenToWorld * pos).x());
     ball_replace->set_y((_screenToWorld * pos).y());
