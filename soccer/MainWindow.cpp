@@ -165,6 +165,11 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
     }
+
+    _ui.actionQuickloadRobotLocations->setEnabled(false);
+    _ui.actionQuicksaveRobotLocations->setEnabled(false);
+    _ui.actionResetField->setEnabled(false);
+    _ui.actionStopRobots->setEnabled(false);
 }
 
 void MainWindow::configuration(Configuration* config) {
@@ -1011,6 +1016,7 @@ void MainWindow::on_actionResetField_triggered() {
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
+    
     // TODO: check that this handles threads properly
     /*
     for (OurRobot* robot : state()->self) {
