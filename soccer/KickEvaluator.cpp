@@ -104,21 +104,24 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         }
     }
 
-    // No opponent robots on the field
-    if (botMeans.size() == 0) {
-        // Push it off to the side
-        botMeans.push_back(4);
-        // Must be non-zero as 1 / botStDev is used
-        botStDevs.push_back(0.01);
-        botVertScales.push_back(0.5);
-    }
-
     // Create function with only 1 input
     // Rest are bound to constant values
     function<tuple<float, float>(float)> keFunc =
         bind(&eval_calculation, std::placeholders::_1, (*kick_mean),
              (*kick_std_dev), cref(botMeans), cref(botStDevs),
              cref(botVertScales), targetWidth / -2, targetWidth / 2);
+
+    // No opponent robots on the field
+    if (botMeans.size() == 0) {
+        // Push it off to the side
+        botMeans.push_back(3);
+        // Must be non-zero as 1 / botStDev is used
+        botStDevs.push_back(0.1);
+        botVertScales.push_back(0.01);
+
+        // Center will always be the best target X with no robots
+        return pair<Point, float>(center, get<0>(keFunc(0)));
+    }
 
     ParallelGradient1DConfig parallelConfig;
     init_gradient_configs(parallelConfig, keFunc, botMeans, botStDevs,
