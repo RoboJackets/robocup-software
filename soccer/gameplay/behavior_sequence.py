@@ -6,7 +6,7 @@ import behavior
 # If one of these sub-behaviors fails, then the sequence fails and doesn't execute anything more
 # The sequence moves onto the next behavior as soon as the current behavior completes
 class BehaviorSequence(composite_behavior.CompositeBehavior):
-    def __init__(self, behaviors=None):
+    def __init__(self, behaviors= []):
         super().__init__(
             continuous=True
         )  # Note: we don't know if the sequence will be continuous or not, so we assume it is to be safe
@@ -17,7 +17,7 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             behavior.Behavior.State.start, behavior.Behavior.State.running,
-            lambda: self.behaviors != None, 'has subbehavior sequence')
+            lambda: len(self.behaviors) > 0, 'has subbehavior sequence')
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
@@ -37,20 +37,9 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
         self._terminate_subbehaviors()
 
     def execute_running(self):
-        should_advance = False
-
-        if len(self.behaviors) > 0 and self.current_behavior_index == -1:
-            # start up our first behavior
-            should_advance = True
-
-        if self.current_behavior != None and self.current_behavior.is_done_running(
-        ):
-            # this behavior finished, move onto the next
-            should_advance = True
-
-        if should_advance:
+        if self.should_advance():
             if self.current_behavior != None:
-                self.remove_behavior_with_name('current')
+                self.remove_subbehavior('current')
 
             self._current_behavior_index += 1
             if self.current_behavior_index < len(self.behaviors):
@@ -58,6 +47,18 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
                     self.behaviors[self.current_behavior_index],
                     'current',
                     required=True)
+
+    def should_advance(self):
+        if len(self.behaviors) == self.current_behavior_index:
+            #All behaviors completed
+            return False
+        if len(self.behaviors) > 0 and self.current_behavior_index == -1:
+            # start up our first behavior
+            return True
+        if self.current_behavior != None and self.current_behavior.is_done_running():
+            # this behavior finished, move onto the next
+            return True
+        return False
 
     def _terminate_subbehaviors(self):
         self.remove_all_subbehaviors()
