@@ -13,9 +13,8 @@ class TestMoveSequence(play.Play):
                     'immediately')
 
         sequence = plays.sequences.move_sequence.MoveSequence()
-        positions = [robocup.Point(0, 1), robocup.Point(2, 0), robocup.Point(0, 3), robocup.Point(-3, 0)]
-        sequence.positions = positions;
-
+        positions = [robocup.Point(0, 1.5), robocup.Point(2, 0), robocup.Point(0, 3), robocup.Point(-3, 0)]
+        sequence.positions_that_are_in_sequence = positions;
         self.add_subbehavior(sequence, 'sequence', required = False)
 
     def execute_running(self):

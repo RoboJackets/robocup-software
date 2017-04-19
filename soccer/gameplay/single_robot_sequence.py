@@ -1,5 +1,6 @@
 import behavior_sequence
 import single_robot_behavior
+import role_assignment
 
 #A sequence to be carried out by a single robot, attempting to add non-single robot behaviors will raise exceptons
 class SingleRobotSequence(behavior_sequence.BehaviorSequence):
@@ -7,6 +8,7 @@ class SingleRobotSequence(behavior_sequence.BehaviorSequence):
         super().__init__()
         self.behaviors = behaviors
         self.autorestart = autorestart
+        self._robot = None
 
 
     @property
@@ -46,7 +48,7 @@ class SingleRobotSequence(behavior_sequence.BehaviorSequence):
 
     def assign_roles(self, assignments):
         oldBot = self.robot
-        super().assign_roles(self,assignments)
+        super().assign_roles(assignments)
         if (len(self.behaviors) > 0):
             # extract robot from the one leaf in the tree
             # we don't know how deep the tree is, which is why we use the tree leaf iterator
