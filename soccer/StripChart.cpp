@@ -64,7 +64,7 @@ void StripChart::exportChart() {
     outfile << "Time";
     for (unsigned int x = 0; x < _functions.size(); x++) {
         auto function = _functions[x];
-        outfile << "," << function->name.toStdString();
+        outfile << ", " << function->name.toStdString();
     }
     outfile << std::endl;
 

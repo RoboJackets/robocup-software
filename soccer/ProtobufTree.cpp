@@ -530,10 +530,12 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
             if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
                 Chart::PointMagnitude* f = new Chart::PointMagnitude;
                 f->path = path;
+                f->name = names.join(".");
                 chart->function(f);
             } else {
                 Chart::NumericField* f = new Chart::NumericField;
                 f->path = path;
+                f->name = names.join(".");
                 chart->function(f);
             }
 
