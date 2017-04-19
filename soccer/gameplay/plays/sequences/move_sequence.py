@@ -1,22 +1,25 @@
-import behavior_sequence
+import single_robot_sequence
+import role_assignment
 import skills.move
+import behavior
 
-class MoveSequence(behavior_sequence.BehaviorSequence):
-    def __init__(self, positions = None):
+#Moves a SINGLE robot in a sequence of points
+class MoveSequence(single_robot_sequence.SingleRobotSequence):
+    def __init__(self, positions_that_are_in_sequence = []):
         super().__init__()
-        self._positions = [] if positions == None else positions
+        self.positions_that_are_in_sequence = positions_that_are_in_sequence
 
-    def on_enter_start(self):
+    def execute_start(self):
         super().on_enter_start()
-        for pos in self.positions:
-            self.behaviors.append(skills.move.Move(pos))
+        if len(self.positions_that_are_in_sequence) > 0:
+            self.behaviors = list(map(lambda pos: skills.move.Move(pos), self.positions_that_are_in_sequence))
 
     @property
-    def positions(self):
-        return self._positions
+    def positions_that_are_in_sequence(self):
+        return self._positions_that_are_in_sequence
 
-    #restarts sequence
-    @positions.setter
-    def positions(self, value):
-        self._positions = value
-        self.transition(behavior.Behavior.State.start) 
+    #Note: restarts sequence when called
+    @positions_that_are_in_sequence.setter
+    def positions_that_are_in_sequence(self, value):
+        self._positions_that_are_in_sequence = value
+        self.transition(behavior.Behavior.State.start)
