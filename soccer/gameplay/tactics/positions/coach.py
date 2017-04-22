@@ -18,6 +18,21 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     OurScore = 0
     TheirScore = 0
 
+    STRATEGIZING_IDEAS = [
+        "*incoherent mumbling*",
+        "They'll never see it coming!",
+        "*wild robot appendage gestures*",
+        "And that's when we pull out the soldering irons",
+        "*coach violently hawks a loogie*",
+        "Sweep the Leg",
+        "Is it necesarry for me to drink my own urine? No, but I do it anyway because its sterile and I like the taste",
+        "There's nothing in the rules about golf clubs",
+        "*coach points violently at the ref*",
+        "*coach slyly passes the player an extra battery*",
+        "Yes, the soup last night was delicious",
+        "Time for another rule in our name...",
+        "THIS... STATEMENT... IS... FALSE"]
+
     class State(enum.Enum):
         watching = 0
         celebrating = 1
@@ -117,32 +132,11 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_strategizing(self):
         #Stops coach from talking too much
         max_responses = 4000
-        current_plan = random.randint(0, max_responses)
-        
-        #because python is too cool for switch statements
-        #TODO: Make this more concise, i.e. so it wouldn't be terrible if we had hundreds
-        if (current_plan == max_responses):
-            print("\n*incoherent mumbling*")
-        elif (current_plan == max_responses - 1):
-            print("\nThey'll never see it coming!")
-        elif (current_plan == max_responses - 2):
-            print("\n*wild robot appendage gestures*")
-        elif (current_plan == max_responses - 3):
-            print("\nAnd that's when we pull out the soldering irons")
-        elif (current_plan == max_responses - 4):
-            print("\n*coach violently hawks a loogie*")
-        elif (current_plan == max_responses - 5):
-            print("\nSweep the Leg")
-        elif (current_plan == max_responses - 6):
-            print("\nIs it necesarry for me to drink my own urine? No, but I do it anyway because its sterile and I like the taste")
-        elif (current_plan == max_responses - 7):
-            print("\nThere's nothing in the rules about golf clubs")
-        elif (current_plan == max_responses - 8):
-            print("\n*coach points violently at the ref*")
-        elif (current_plan == max_responses - 9):
-            print("\n*coach slyly passes the player a pill*")
-        elif (current_plan == max_responses - 10):
-            print("\nYes, the soup last night was delicious")
+
+        # Don't talk all the time
+        if random.randint(0, max_responses) < 10:
+            print()
+            print(random.choice(Coach.STRATEGIZING_IDEAS))
 
     def on_exit_strategizing(self):
         print("\n*coach gives the player an invigorating butt slap*\nGo get'em")
@@ -171,4 +165,3 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             #There is only one coach! Not just any robot can be coach
             req.robot_change_cost = 30.0
         return reqs
-
