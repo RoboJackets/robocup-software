@@ -37,6 +37,10 @@ For Ubuntu, we provide an [automated setup script](https://github.com/RoboJacket
 
 Once the setup is completed, you should be able to run `make` to compile our project. For robocup-software, you can then run `make run-sim` to run our simulator and soccer, and play around with the running program.
 
+### Alternate Machine Setup
+
+We also provide an alternate setup path, for those who prefer working in a VM. [See the robocup-images landing page for more information](https://github.com/RoboJackets/robojackets-images/tree/master/robocup). Please open an issue on that repository if you find problems or run into issues.
+
 ### Note about Submodules
 
 RoboCup projects make extensive use of [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules). Before making a commit (and before compiling), make sure your submodules are up to date by running:
