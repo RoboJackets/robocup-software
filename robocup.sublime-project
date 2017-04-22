@@ -2,6 +2,7 @@
     "folders":
     [
         {
+            "name": "Robocup Software",
             "follow_symlinks": true,
             "path": ".",
             "folder_exclude_patterns": [
@@ -10,12 +11,56 @@
                 "api_docs",
                 "build",
                 "downloads",
-                "firmware/external",
+                "firmware",
                 "old",
                 "soccer/gameplay/cpp-old",
                 "sslrefbox",
                 "external",
+                "doc"
+            ],
+            "file_exclude_patterns": [
+                ".*",
+                "run/*.nib",
+                "run/*.bin"
+            ]
+        }, {
+            "name": "Firmware",
+            "follow_symlinks": true,
+            "path": "firmware",
+            "folder_exclude_patterns": [
+                "build",
+                "external",
+                "external",
                 "watchdog"
+            ],
+            "file_exclude_patterns": [
+                ".*",
+                "SConstruct",
+                "SConscript",
+                "avr.scons",
+                "arm.scons",
+                "packets-2008.txt",
+                "radio_timing.xls",
+                "urjtag.scons",
+                "xilinx.scons"
+            ]
+        }, {
+            "name": "Docs",
+            "follow_symlinks": false,
+            "path": "doc",
+            "folder_exclude_patterns": [
+                "*."
+            ],
+            "file_exclude_patterns": [
+                ".*"
+            ]
+        }, {
+            "name": "External",
+            "follow_symlinks": false,
+            "path": "external",
+            "folder_exclude_patterns": [
+                "__pycache__",
+                "build",
             ],
             "file_exclude_patterns": [
                 ".*"
