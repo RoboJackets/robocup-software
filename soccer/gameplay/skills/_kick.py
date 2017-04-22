@@ -181,7 +181,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
             # tell the bots to not go there
             for bot in main.our_robots():
-                if bot not in excluded_robots + [self.robot]:
+                if bot not in excluded_robots + [self.robot] and bot.shell_id()!=main.root_play().goalie_id:
                     bot.add_local_obstacle(obs)
 
     def execute_running(self):
