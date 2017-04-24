@@ -21,7 +21,8 @@ struct Function {
     virtual ~Function() {}
     virtual bool value(const Packet::LogFrame& frame, float& v) const = 0;
 
-    // Vector of tags from LogFrame to the float, double, or point field to be used.
+    // Vector of tags from LogFrame to the float, double, or point field to be
+    // used.
     // Each tag except the last one must identify a Message.
     // A repeated field's tag is followed by the index of the item.
     QVector<int> path;
@@ -68,7 +69,7 @@ public:
     // out-of-range values are found
     bool autoRange;
 
-    //Arbitrary value for width of the chart, must be <= history size
+    // Arbitrary value for width of the chart, must be <= history size
     int chartSize = 1000;
 
 protected:

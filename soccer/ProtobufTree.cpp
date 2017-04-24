@@ -491,21 +491,21 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
             connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
         }
     } else if (exportAction && act == exportAction) {
-        //If export button was pressed
+        // If export button was pressed
 
         StripChart* chart = new StripChart();
         chart->history(_history);
 
-        //Loop through all open charts and add their data to one chart
-        for(int i = 0; i < dockWidgets.size(); i++){
+        // Loop through all open charts and add their data to one chart
+        for (int i = 0; i < dockWidgets.size(); i++) {
             StripChart* cChart = (StripChart*)dockWidgets[i]->widget();
             QList<Chart::Function*> functions = cChart->getFunctions();
-            for(int j = 0; j < functions.size(); j++){
+            for (int j = 0; j < functions.size(); j++) {
                 chart->function(functions[j]);
             }
         }
 
-        //export that chart
+        // export that chart
         chart->exportChart();
 
     } else if (chartMenuActions.size() > 0) {

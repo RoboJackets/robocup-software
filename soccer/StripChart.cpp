@@ -53,14 +53,15 @@ void StripChart::function(Chart::Function* function) {
 }
 
 void StripChart::exportChart() {
-    QString chartName = QFileDialog::getSaveFileName(this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
+    QString chartName = QFileDialog::getSaveFileName(
+        this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
     std::ofstream outfile(chartName.toStdString());
 
     //_history has the most recent frame at 0, the most recent logframe should
-    //have its value at vert close to the time at export.
-    auto startTime = RJ::timestamp(); //get current time
+    // have its value at vert close to the time at export.
+    auto startTime = RJ::timestamp();  // get current time
 
-    //output column names
+    // output column names
     outfile << "Time";
     for (unsigned int x = 0; x < _functions.size(); x++) {
         auto function = _functions[x];
@@ -68,23 +69,22 @@ void StripChart::exportChart() {
     }
     outfile << std::endl;
 
-    //output data
+    // output data
     for (unsigned int i = 0; i < _history->size(); ++i) {
-
         if (_history->at(i)) {
-            outfile << RJ::TimestampToSecs(startTime - _history->at(i).get()->timestamp());
+            outfile << RJ::TimestampToSecs(startTime -
+                                           _history->at(i).get()->timestamp());
 
             for (unsigned int x = 0; x < _functions.size(); x++) {
                 auto function = _functions[x];
                 float v = 0;
 
                 if (function->value(*_history->at(i).get(), v)) {
-                     outfile << "," << v ;
+                    outfile << "," << v;
                 }
             }
             outfile << std::endl;
         }
-
     }
     outfile.close();
 }
@@ -131,7 +131,7 @@ void StripChart::paintEvent(QPaintEvent* e) {
         } else {
             p.setPen(Qt::red);
         }
-        //for (unsigned int i = 0; i < _history->size(); ++i) {
+        // for (unsigned int i = 0; i < _history->size(); ++i) {
         for (unsigned int i = 0; i < chartSize; ++i) {
             float v = 0;
             if (_history->at(i) && function->value(*_history->at(i).get(), v)) {

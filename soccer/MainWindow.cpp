@@ -369,7 +369,8 @@ void MainWindow::updateViews() {
                                    _longHistory.begin());
 
     // Set the original history vector
-    _history.assign(_longHistory.begin(), _longHistory.begin() + _history.size());
+    _history.assign(_longHistory.begin(),
+                    _longHistory.begin() + _history.size());
 
     // Update field view
     _ui.fieldView->update();
