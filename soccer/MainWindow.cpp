@@ -365,11 +365,11 @@ void MainWindow::updateViews() {
     // update history slider in ui
 
     // Read recent history from the log
-    _processor->logger().getFrames(frameNumber(), _history.size(),
-                                   _history.begin());
-
     _processor->logger().getFrames(frameNumber(), _longHistory.size(),
                                    _longHistory.begin());
+
+    // Set the original history vector
+    _history.assign(_longHistory.begin(), _longHistory.begin() + _history.size());
 
     // Update field view
     _ui.fieldView->update();

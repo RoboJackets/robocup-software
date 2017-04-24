@@ -72,7 +72,7 @@ void StripChart::exportChart() {
     for (unsigned int i = 0; i < _history->size(); ++i) {
 
         if (_history->at(i)) {
-            outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() - startTime);
+            outfile << RJ::TimestampToSecs(startTime - _history->at(i).get()->timestamp());
 
             for (unsigned int x = 0; x < _functions.size(); x++) {
                 auto function = _functions[x];
@@ -90,7 +90,6 @@ void StripChart::exportChart() {
 }
 
 QPointF StripChart::dataPoint(int i, float value) {
-    //float x = width() - (i * width() / _history->size());
     float x = width() - (i * width() / chartSize);
     int h = height();
     float y = h - (value - _minValue) * h / (_maxValue - _minValue);
@@ -98,7 +97,6 @@ QPointF StripChart::dataPoint(int i, float value) {
 }
 
 int StripChart::indexAtPoint(const QPoint& point) {
-    //return (width() - point.x()) * _history->size() / width();
     return (width() - point.x()) * chartSize / width();
 }
 
