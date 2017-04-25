@@ -38,9 +38,10 @@ run-sim2play: all
 run-release: all-release
 	./run/soccer
 run-sim-release: all-release
-	-pkill -f './simulator --headless'
-	./run/simulator --headless &
-	./run/soccer -sim -pbk example.pbk
+	-pkill -f './grsim'
+	./run/grsim &
+	./run/soccer -sim
+	./run/soccer -sim
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
