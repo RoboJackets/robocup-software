@@ -166,6 +166,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
         _ui.menu_Simulator->setEnabled(false);
     }
 
+    // disabled because of lack of grSim support
     _ui.actionQuickloadRobotLocations->setEnabled(false);
     _ui.actionQuicksaveRobotLocations->setEnabled(false);
     _ui.actionResetField->setEnabled(false);

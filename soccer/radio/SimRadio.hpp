@@ -19,7 +19,6 @@ public:
 
 private:
     SystemState& _state;
-    ;
 
     QUdpSocket _socket;
     int _channel;
