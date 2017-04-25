@@ -59,7 +59,9 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         self.add_transition(
             DefensiveForward.State.collecting,
             behavior.Behavior.State.completed,
-            lambda: self.collector is not None and evaluation.ball.robot_has_ball(self.collector.robot),
+            lambda: self.collector is not None and \
+                    self.collector.robot is not None and \
+                    evaluation.ball.robot_has_ball(self.collector.robot),
             'Ball collected')
 
         # Create list of defenders and start the marking
@@ -67,13 +69,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         self.zone_def_pos, self.mark_bots[0], self.mark_bots[
             1] = evaluation.defensive_positioning.find_defense_positions()
 
-        for i in range(0, 2):
-            self.defenders[i] = skills.mark.Mark()
-            self.add_subbehavior(self.defenders[i],
-                                 self.names[i],
-                                 required=True)
-            self.defenders[i].mark_robot = self.mark_bots[i]
-            # TODO: Shift to mark point when "get_block_pos" is fixed
+        self.set_mark_targets()
 
         self.defenders[2] = skills.mark.Mark()
         self.add_subbehavior(self.defenders[2], self.names[2], required=True)
@@ -87,15 +83,14 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         self.time_since_call = (self.time_since_call + 1) % self.cache_amnt
 
         # You don't want to test if its 0 because it would execute instantly
-        if (self.time_since_call % self.cache_amnt == self.cache_amnt - 1):
+        if (self.time_since_call == self.cache_amnt - 1):
             self.zone_def_pos, self.mark_bots[0], self.mark_bots[1] = \
                 evaluation.defensive_positioning.find_defense_positions(
                     [self.defenders[0].robot, self.defenders[1].robot])
 
             for i in range(0, 2):
-                if (self.defenders[i].mark_robot not in self.mark_bots):
+                if (self.defenders[i].mark_robot is not self.mark_bots[i]):
                     self.defenders[i].mark_robot = self.mark_bots[i]
-                # TODO: Shift to mark point when "get_block_pos" is fixed
 
             self.defenders[2].mark_point = self.zone_def_pos
 
@@ -112,16 +107,20 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
         self.collector = skills.capture.Capture()
         self.add_subbehavior(self.collector, 'collector', required=True)
 
-        for i in range(0, 2):
-            self.defenders[i] = skills.mark.Mark()
-            self.add_subbehavior(self.defenders[i],
-                                 self.names[i],
-                                 required=True)
-            self.defenders[i].mark_robot = self.mark_bots[i]
+        self.set_mark_targets()
 
     def on_exit_collecting(self):
         self.remove_all_subbehaviors()
         self.collector = None
+
+    def set_mark_targets(self):
+        for i in range(0, 2):
+            self.defenders[i] = skills.mark.Mark()
+            self.add_subbehavior(self.defenders[i],
+                                 self.names[i],
+                                 required=False,
+                                 priority=20 - 5 * i)
+            self.defenders[i].mark_robot = self.mark_bots[i]
 
     # Uses their predicted kick direction to block
     def get_block_pos(self, bot):
@@ -169,7 +168,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
                 shortest_our_dist = dist
 
         # Greater than 1 when we are further away
-        return shortest_our_dist / shortest_opp_dist < 1.05
+        return shortest_our_dist < shortest_opp_dist * 1.05
 
     # Estimates the length of a path given a robot
     def estimate_path_length(self, start, end, blocking_robots):

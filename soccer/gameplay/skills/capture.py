@@ -134,8 +134,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
 
         # TODO(ashaw596): explain this math a bit
-        # TODO: Play with this value to improve ball capture
-        # Multiplier is most likely too high
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
         multiplier = 1.5
         aproach = self.bot_to_ball(

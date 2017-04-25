@@ -86,9 +86,6 @@ def opponent_with_ball():
 
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
-    if robot is None:
-        return False
-
     def angle_btw_three_pts(a, b, vertex):
         VA = math.sqrt((vertex.x - a.x)**2 + (vertex.y - a.y)**2)
         VB = math.sqrt((vertex.x - b.x)**2 + (vertex.y - b.y)**2)

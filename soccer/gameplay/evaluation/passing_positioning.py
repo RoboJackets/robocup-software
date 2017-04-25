@@ -145,7 +145,7 @@ def eval_best_receive_point(kick_point,
 
     # TODO: Setup to be a list of the top X points
     bestScore = None
-    bestPointt = None
+    bestPoint = None
 
     # Finds best score out of all the points
     for currentPoint in points:

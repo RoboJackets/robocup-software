@@ -9,6 +9,7 @@ import evaluation.ball
 import evaluation.passing_positioning
 import tactics.coordinated_pass
 import tactics.defensive_forward
+import tactics.midfielder
 import skills.move
 import skills.capture
 
@@ -44,6 +45,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.max_dribble_dist = 1 * .9
         # Kicker for a shot
         self.kick = None
+        # Controls robots while passes are being set up
+        self.midfielders = None
 
         # Min field Y to clear
         self.clear_field_cutoff = constants.Field.Length * .2
@@ -184,6 +187,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def on_enter_collecting(self):
+        self.remove_all_subbehaviors()
+
         # 2 man to man defenders and 1 zone defender
         defensive_forward = tactics.defensive_forward.DefensiveForward()
         self.add_subbehavior(defensive_forward, 'defend', required=True)
@@ -202,6 +207,12 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
         self.check_dribbling_timer = 0
+
+        self.midfielders = tactics.midfielder.Midfielder()
+        self.add_subbehavior(self.midfielders,
+                             'midfielders',
+                             required=False,
+                             priority=10)
 
     def execute_dribbling(self):
         # Find the closest bot weighting the ones in front of the ball more
@@ -237,7 +248,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
                                (1 - c) * self.prev_pass_score
 
     def on_exit_dribbling(self):
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior('dribble')
 
     def on_enter_shooting(self):
         # TODO: Use moving kick when completed
@@ -247,7 +258,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_subbehavior(self.kick, 'kick', required=False)
 
     def on_exit_shooting(self):
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior('kick')
         self.kick = None
 
     def on_enter_clearing(self):
@@ -265,7 +276,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_subbehavior(chip, 'clear', required=False)
 
     def on_exit_clearing(self):
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior('clear')
 
     def on_enter_passing(self):
         # TODO: Use the moving recieve when finished
@@ -273,4 +284,4 @@ class AdaptiveFormation(standard_play.StandardPlay):
             tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')
 
     def on_exit_passing(self):
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior('pass')
