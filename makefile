@@ -41,7 +41,6 @@ run-sim-release: all-release
 	-pkill -f './grsim'
 	./run/grsim &
 	./run/soccer -sim
-	./run/soccer -sim
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
