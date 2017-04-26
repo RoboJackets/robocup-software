@@ -987,10 +987,10 @@ void MainWindow::on_actionCenterBall_triggered() {
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    ball_replace->set_x(0);
-    ball_replace->set_y(0);
-    ball_replace->set_vx(0);
-    ball_replace->set_vy(0);
+    ball_replace->mutable_pos()->set_x(0);
+    ball_replace->mutable_pos()->set_y(0);
+    ball_replace->mutable_vel()->set_x(0);
+    ball_replace->mutable_vel()->set_y(0);
 
     _ui.fieldView->sendSimCommand(simPacket);
 }
@@ -1002,10 +1002,10 @@ void MainWindow::on_actionStopBall_triggered() {
 
     Geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    ball_replace->set_x(ballPos.x());
-    ball_replace->set_y(ballPos.y());
-    ball_replace->set_vx(0);
-    ball_replace->set_vy(0);
+    ball_replace->mutable_pos()->set_x(ballPos.x());
+    ball_replace->mutable_pos()->set_y(ballPos.y());
+    ball_replace->mutable_vel()->set_x(0);
+    ball_replace->mutable_vel()->set_y(0);
     _ui.fieldView->sendSimCommand(simPacket);
 }
 
