@@ -208,7 +208,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.check_dribbling_timer = 0
 
-        self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder()
+        self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
+        )
         self.add_subbehavior(self.midfielders,
                              'midfielders',
                              required=False,

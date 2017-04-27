@@ -28,7 +28,8 @@ class SimpleZoneMidfielder(composite_behavior.CompositeBehavior):
             self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            SimpleZoneMidfielder.State.hold, lambda: True, 'immediately')
+                            SimpleZoneMidfielder.State.hold, lambda: True,
+                            'immediately')
 
     # Continue updating the mark positions
     def execute_hold(self):
