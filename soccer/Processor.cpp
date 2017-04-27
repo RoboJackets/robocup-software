@@ -86,7 +86,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-    vision.simulation = true;
+    vision.simulation = _simulation;
     if (sim) {
         vision.port = SimVisionPort;
     }
