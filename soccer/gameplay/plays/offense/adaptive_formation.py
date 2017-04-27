@@ -9,7 +9,7 @@ import evaluation.ball
 import evaluation.passing_positioning
 import tactics.coordinated_pass
 import tactics.defensive_forward
-import tactics.midfielder
+import tactics.simple_zone_midfielder
 import skills.move
 import skills.capture
 
@@ -208,7 +208,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.check_dribbling_timer = 0
 
-        self.midfielders = tactics.midfielder.Midfielder()
+        self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder()
         self.add_subbehavior(self.midfielders,
                              'midfielders',
                              required=False,

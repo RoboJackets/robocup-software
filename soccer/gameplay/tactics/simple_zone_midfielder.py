@@ -10,7 +10,7 @@ import skills.move
 
 
 # 2 offenders stay at X% of the Y coordinate of the ball
-class Midfielder(composite_behavior.CompositeBehavior):
+class SimpleZoneMidfielder(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
         hold = 1
 
@@ -24,11 +24,11 @@ class Midfielder(composite_behavior.CompositeBehavior):
 
         self.moves = [None, None]
 
-        for s in Midfielder.State:
+        for s in SimpleZoneMidfielder.State:
             self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            Midfielder.State.hold, lambda: True, 'immediately')
+                            SimpleZoneMidfielder.State.hold, lambda: True, 'immediately')
 
     # Continue updating the mark positions
     def execute_hold(self):
