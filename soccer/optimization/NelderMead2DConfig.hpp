@@ -1,0 +1,61 @@
+#pragma once
+
+#include <Geometry2d/Util.hpp>
+#include <fucntional>
+
+class NelderMead2DConfig {
+public:
+    /**
+     * Creates a Nelder-Mead 2D Config
+     *
+     * @param f std function pointer which returns F(X, Y)
+     * @param start starting point of the simplex (Triangle in 2D Case)
+     * @param step starting step magnitudes in X, Y directions
+     * @param minStep minimum step size for both variables before exit
+     * @param reflectionCoeff perecent to reflect by in the oposite direction
+     *           Must be greater than 0
+     * @param expensionCoeff percent to extend single point by
+     *           Must be greater than 1
+     * @param contractionCoeff percent to contract single point by
+     *           Must be greater than 0 and less than or equal to 0.5
+     * @param shrinkCoeff percent to shrink all points by
+     *           Must be between 0 and 1
+     * @param maxIterations maximum number of iterations to reach before end
+     * @param maxValue max value to exit early at
+     * @param maxThresh threshold for the max vlaue before exit
+     */
+    NelderMead2DConfig(std::function<float(Geometry2d::Point)>* f,
+                       Geometry2d::Point start,
+                       Geometry2d::Point step,
+                       Geometry2d::Point minStep,
+                       float reflectionCoeff,
+                       float expensionCoeff,
+                       float contractionCoeff,
+                       float shrinkCoeff,
+                       int maxIterations,
+                       float maxValue, float maxThresh)
+        :
+            f(f),
+            start(start),
+            step(step),
+            minStep(minStep),
+            reflectionCoeff(reflectionCoeff),
+            expensionCoeff(expensionCoeff),
+            contractionCoeff(contractionCoeff),
+            shrinkCoeff(shrinkCoeff),
+            maxIterations(maxIterations),
+            maxValue(maxValue),
+            maxThresh(maxThresh) {}
+
+    std::function<float(float, float)>* f;
+    Geometry2d::Point start;
+    Geometry2d::Point step;
+    Geometry2d::Point minStep;
+    float reflectionCoeff;
+    float expensionCoeff;
+    float contractionCoeff;
+    float shrinkCoeff;
+    int maxIterations;
+    float maxValue;
+    float maxTrhesh;
+}
