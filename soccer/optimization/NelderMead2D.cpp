@@ -37,7 +37,6 @@ bool NelderMead2D::singleStep() {
         config->reflectionCoeff * (centroid - std::get<1>(vertices.at(2)));
     float reflectedScore = (*(config->f))(reflected);
 
-
     // If reflected is better than second but not the first, replace last
     if (reflectedScore > std::get<0>(vertices.at(1)) &&
         reflectedScore < bestScore) {
@@ -48,7 +47,7 @@ bool NelderMead2D::singleStep() {
     // If best point so far, expand in that reflected direction
     if (reflectedScore > bestScore) {
         Geometry2d::Point expanded = centroid + 
-            config->expensionCoeff * (reflected - centroid);
+            config->expansionCoeff * (reflected - centroid);
         float expandedScore = (*(config->f))(expanded);
 
         // If expanded is better than reflected, replace worst

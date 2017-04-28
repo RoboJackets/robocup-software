@@ -14,7 +14,7 @@ public:
      * @param minDist minimum distance of bounding box before exit
      * @param reflectionCoeff perecent to reflect by in the oposite direction
      *           Must be greater than 0
-     * @param expensionCoeff percent to extend single point by
+     * @param expansionCoeff percent to extend single point by
      *           Must be greater than 1
      * @param contractionCoeff percent to contract single point by
      *           Must be greater than 0 and less than or equal to 0.5
@@ -29,7 +29,7 @@ public:
                        Geometry2d::Point step,
                        Geometry2d::Point minDist,
                        float reflectionCoeff,
-                       float expensionCoeff,
+                       float expansionCoeff,
                        float contractionCoeff,
                        float shrinkCoeff,
                        int maxIterations,
@@ -40,19 +40,33 @@ public:
             step(step),
             minDist(minDist),
             reflectionCoeff(reflectionCoeff),
-            expensionCoeff(expensionCoeff),
+            expansionCoeff(expansionCoeff),
             contractionCoeff(contractionCoeff),
             shrinkCoeff(shrinkCoeff),
             maxIterations(maxIterations),
             maxValue(maxValue),
             maxThresh(maxThresh) {}
 
+    // NelderMead2DConfig(const NelderMead2DConfig*& other) {
+    //     f = other->f;
+    //     start = other->start;
+    //     step = other->step;
+    //     minDist = other->minDist;
+    //     reflectionCoeff = other->reflectionCoeff;
+    //     expansionCoeff = other->expansionCoeff;
+    //     contractionCoeff = other->contractionCoeff;
+    //     shrinkCoeff = other->shrinkCoeff;
+    //     maxIterations = other->maxIterations;
+    //     maxValue = other->maxValue;
+    //     maxThresh = other->maxThresh;
+    // }
+
     std::function<float(Geometry2d::Point)>* f;
     Geometry2d::Point start;
     Geometry2d::Point step;
     Geometry2d::Point minDist;
     float reflectionCoeff;
-    float expensionCoeff;
+    float expansionCoeff;
     float contractionCoeff;
     float shrinkCoeff;
     int maxIterations;

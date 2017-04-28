@@ -53,7 +53,6 @@ public:
 
 private:
     NelderMead2DConfig* config;
-
     int iterationCount;
     std::vector<std::tuple<float, Geometry2d::Point>> vertices;
 

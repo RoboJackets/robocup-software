@@ -10,6 +10,8 @@ import robocup
 import math
 import enum
 
+def test_function(x, y):
+    return -1 * (x*x + y*y)
 
 class TestAdaptiveFormationWeights(play.Play):
     class State(enum.Enum):
@@ -40,6 +42,17 @@ class TestAdaptiveFormationWeights(play.Play):
 
     def on_enter_testPointCoeff(self):
         evaluation.defensive_positioning.find_defense_positions()
+        f = test_function
+        a = robocup.stdfunction(f)
+        b = robocup.NelderMead2DConfig(a, \
+                                     robocup.Point(1,1), \
+                                     robocup.Point(1,1), \
+                                     robocup.Point(0.001,0.001), \
+                                     1, 2, 0.5, 0.5, 100, 1, 0)
+        c = robocup.NelderMead2D(b)
+        c.execute()
+        print(c.getValue())
+        print(c.getPoint())
 
     def execute_testPointCoeff(self):
         # Number of boxes width and length wise

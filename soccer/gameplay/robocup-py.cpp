@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <functional>
 
 using namespace boost::python;
 
@@ -11,6 +12,8 @@ using namespace boost::python;
 #include "planning/MotionConstraints.hpp"
 #include "KickEvaluator.hpp"
 #include "WindowEvaluator.hpp"
+#include "optimization/NelderMead2D.hpp"
+#include "optimization/NelderMead2DConfig.hpp"
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
@@ -542,6 +545,51 @@ float Point_get_y(const Geometry2d::Point* self) { return self->y(); }
 void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
 
+float inverted_parabola_callback(Geometry2d::Point p) {
+    return -1 * sqrt(p.x()*p.x() + p.y()*p.y());
+}
+
+float test_python_callback(Geometry2d::Point p, PyObject *pyfun){
+    PyObject* pyresult = PyObject_CallObject(pyfun, Py_BuildValue("ff", p.x(), p.y()));
+    return PyFloat_AsDouble(pyresult);
+}
+
+float evaluate_passing_positioning_callback(Geometry2d::Point p) {
+
+}
+
+boost::shared_ptr<std::function<float(Geometry2d::Point)>> stdfunction_constructor(PyObject *function) {
+    Py_INCREF(function);
+    // Create aliased function
+    std::function<float(Geometry2d::Point)> f = std::bind(&test_python_callback, std::placeholders::_1, function);
+    // Copy into shared ptr
+    return boost::shared_ptr<std::function<float(Geometry2d::Point)>>(
+        new std::function<float(Geometry2d::Point)>(f));
+}
+
+boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
+                                            std::function<float(Geometry2d::Point)>* function,
+                                            Geometry2d::Point start,
+                                            Geometry2d::Point step,
+                                            Geometry2d::Point minDist,
+                                            float reflectionCoeff,
+                                            float expansionCoeff,
+                                            float contractionCoeff,
+                                            float shrinkCoeff,
+                                            int maxIterations,
+                                            float maxValue, float maxThresh) {
+    return boost::shared_ptr<NelderMead2DConfig>(
+        new NelderMead2DConfig(
+            function, 
+            start, step, minDist,
+            reflectionCoeff, expansionCoeff,
+            contractionCoeff, shrinkCoeff,
+            maxIterations, maxValue, maxThresh));
+}
+
+boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(NelderMead2DConfig* config) {
+    return boost::shared_ptr<NelderMead2D>(new NelderMead2D(config));
+}
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -843,6 +891,20 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_opp_goal", &KickEval_eval_pt_to_opp_goal)
         .def("eval_pt_to_our_goal", &KickEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &KickEval_eval_pt_to_seg);
+
+    class_<std::function<float(Geometry2d::Point)>,
+           std::function<float(Geometry2d::Point)>*>("stdfunction", no_init)
+        .def("__init__", make_constructor(&stdfunction_constructor));
+
+    class_<NelderMead2DConfig>("NelderMead2DConfig", no_init)
+        .def("__init__", make_constructor(&NelderMead2DConfig_constructor));
+
+    class_<NelderMead2D>("NelderMead2D", no_init)
+        .def("__init__", make_constructor(&NelderMead2D_constructor))
+        .def("execute", &NelderMead2D::execute)
+        .def("singleStep", &NelderMead2D::singleStep)
+        .def("getValue", &NelderMead2D::getValue)
+        .def("getPoint", &NelderMead2D::getPoint);
 
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);
