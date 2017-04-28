@@ -1,9 +1,18 @@
 #include "NelderMead2D.hpp"
 #include <algorithm>
+#include <cmath>
+#include <iostream>
 
 
+NelderMead2D::NelderMead2D(NelderMead2DConfig* config) : config(config), iterationCount(0) {
+    // Creates starting points at [start], [start] + [x, y], [start] + [x, -y]
+    for (int i = -1; i < 2; i++) {
+        Geometry2d::Point p = config->start +
+            i * Geometry2d::Point(config->step.x() * i, config->step.y());
 
-NelderMead2D::NelderMead2D(NelderMead2DConfig* config) : config(config), iterationCount(0) {}
+        vertices.push_back(std::make_tuple((*(config->f))(p), p));
+    }
+}
 
 /**
  * Runs a single step of the optimization algorithm
@@ -15,10 +24,7 @@ NelderMead2D::NelderMead2D(NelderMead2DConfig* config) : config(config), iterati
  */
 bool NelderMead2D::singleStep() {
     // Order vectors by score descending
-    vertices = std::sort(vertices.begin() vertices.end(), 
-        [](const auto& a, const auto& b) -> bool {
-            return std::get<0>(a) > std::get<0>(b);
-        });
+    sortVertices();
 
     auto& bestPoint = std::get<1>(vertices.at(0));
     auto& bestScore = std::get<0>(vertices.at(0));
@@ -45,7 +51,7 @@ bool NelderMead2D::singleStep() {
             config->expensionCoeff * (reflected - centroid);
         float expandedScore = (*(config->f))(expanded);
 
-        // If expanded is better than reflected, repace worst
+        // If expanded is better than reflected, replace worst
         if (expandedScore > reflectedScore) {
             return replaceWorst(expandedScore, expanded);
         } else {
@@ -55,7 +61,7 @@ bool NelderMead2D::singleStep() {
 
     // reflectedScore > second worst
     Geometry2d::Point contracted = centroid +
-        config->contractionScore * (std::get<1>(vertices.at(2) - centroid));
+        config->contractionCoeff * (std::get<1>(vertices.at(2)) - centroid);
     float contractedScore = (*(config->f))(contracted);
 
     // If contracted is better than last
@@ -89,10 +95,7 @@ void NelderMead2D::execute() {
  * @return the XY coordinate of the current guess of the max
  */
 Geometry2d::Point NelderMead2D::getPoint() {
-    vertices = std::sort(vertices.begin() vertices.end(), 
-        [](const auto& a, const auto& b) -> bool {
-            return std::get<0>(a) > std::get<0>(b);
-        });
+    sortVertices();
 
     return std::get<1>(vertices.at(0));
 }
@@ -101,10 +104,7 @@ Geometry2d::Point NelderMead2D::getPoint() {
  * @return the current guess of the max value
  */
 float NelderMead2D::getValue() {
-    vertices = std::sort(vertices.begin() vertices.end(), 
-        [](const auto& a, const auto& b) -> bool {
-            return std::get<0>(a) > std::get<0>(b);
-        });
+    sortVertices();
 
     return std::get<0>(vertices.at(0));
 }
@@ -113,15 +113,37 @@ float NelderMead2D::getValue() {
  * @return Should continue execution?
  */
 bool NelderMead2D::continueExecution() {
-    
+    sortVertices();
+
+    // Allow for floating point errors
+    float maxX = 0;
+    float maxY = 0;
+    for (int i = 0; i < vertices.size(); i++) {
+        float dx = (std::get<1>(vertices.at(i)) - std::get<1>(vertices.at((i  + 1) % 3))).x();
+        float dy = (std::get<1>(vertices.at(i)) - std::get<1>(vertices.at((i  + 1) % 3))).y();
+
+        dx = (float)fabs(dx);
+        dy = (float)fabs(dy);
+
+        maxX = std::max(dx, maxX);
+        maxY = std::max(dy, maxY);
+    }
+
+    bool over_min = (maxX > config->minDist.x()) &&
+                    (maxY > config->minDist.y());
+    bool not_near_max = (config->maxValue == config->maxThresh) ||
+        (config->maxValue - std::get<0>(vertices.at(0)) > config->maxThresh);
+    bool under_iter = iterationCount < config->maxIterations;
+
+    return over_min && not_near_max && under_iter;
 }
 
-// private:
-//     NelderMead2DConfig* config;
-
-//     // Need two other points
-//     std::vector<std::tuple<float, Geometry2d::Point>> vertices;
-// }
+void NelderMead2D::sortVertices() {
+    std::sort(vertices.begin(), vertices.end(), 
+        [](const auto& a, const auto& b) -> bool {
+            return std::get<0>(a) > std::get<0>(b);
+        });
+}
 
 bool NelderMead2D::replaceWorst(float newScore, Geometry2d::Point newPoint) {
     vertices.at(2) = std::make_tuple(newScore, newPoint);

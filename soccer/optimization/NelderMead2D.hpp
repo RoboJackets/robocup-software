@@ -1,7 +1,7 @@
 #pragma once
 
 #include "NelderMead2DConfig.hpp"
-#include <Geometry2d/Util.hpp>
+#include <Geometry2d/Point.hpp>
 #include <vector>
 #include <tuple>
 
@@ -57,5 +57,6 @@ private:
     int iterationCount;
     std::vector<std::tuple<float, Geometry2d::Point>> vertices;
 
+    void sortVertices();
     bool replaceWorst(float newScore, Geometry2d::Point newPoint);
-}
+};

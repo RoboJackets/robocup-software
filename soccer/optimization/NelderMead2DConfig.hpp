@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Util.hpp>
-#include <fucntional>
+#include <Geometry2d/Point.hpp>
+#include <functional>
 
 class NelderMead2DConfig {
 public:
@@ -11,7 +11,7 @@ public:
      * @param f std function pointer which returns F(X, Y)
      * @param start starting point of the simplex (Triangle in 2D Case)
      * @param step starting step magnitudes in X, Y directions
-     * @param minStep minimum step size for both variables before exit
+     * @param minDist minimum distance of bounding box before exit
      * @param reflectionCoeff perecent to reflect by in the oposite direction
      *           Must be greater than 0
      * @param expensionCoeff percent to extend single point by
@@ -27,7 +27,7 @@ public:
     NelderMead2DConfig(std::function<float(Geometry2d::Point)>* f,
                        Geometry2d::Point start,
                        Geometry2d::Point step,
-                       Geometry2d::Point minStep,
+                       Geometry2d::Point minDist,
                        float reflectionCoeff,
                        float expensionCoeff,
                        float contractionCoeff,
@@ -38,7 +38,7 @@ public:
             f(f),
             start(start),
             step(step),
-            minStep(minStep),
+            minDist(minDist),
             reflectionCoeff(reflectionCoeff),
             expensionCoeff(expensionCoeff),
             contractionCoeff(contractionCoeff),
@@ -47,15 +47,15 @@ public:
             maxValue(maxValue),
             maxThresh(maxThresh) {}
 
-    std::function<float(float, float)>* f;
+    std::function<float(Geometry2d::Point)>* f;
     Geometry2d::Point start;
     Geometry2d::Point step;
-    Geometry2d::Point minStep;
+    Geometry2d::Point minDist;
     float reflectionCoeff;
     float expensionCoeff;
     float contractionCoeff;
     float shrinkCoeff;
     int maxIterations;
     float maxValue;
-    float maxTrhesh;
-}
+    float maxThresh;
+};
