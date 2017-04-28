@@ -36,6 +36,9 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
     def on_enter_failed(self):
         self._terminate_subbehaviors()
 
+    ## While we haven't gone through every behavior in the sequence, we
+    #  Execute each individual behavior. When it finishes we increment 
+    #  the current_behavior index to the next behavior 
     def execute_running(self):
         if self.should_advance():
             if self.current_behavior != None:
@@ -48,6 +51,7 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
                     'current',
                     required=True)
 
+    #advances if the current behavior is done running, or if 
     def should_advance(self):
         if len(self.behaviors) == self.current_behavior_index:
             #All behaviors completed

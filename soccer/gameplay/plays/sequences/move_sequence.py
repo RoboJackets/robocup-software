@@ -5,6 +5,7 @@ import behavior
 
 #Moves a SINGLE robot in a sequence of points
 class MoveSequence(single_robot_sequence.SingleRobotSequence):
+    # @param positions_that_are_in_sequence list of positions to move to, in order 
     def __init__(self, positions_that_are_in_sequence = []):
         super().__init__()
         self.positions_that_are_in_sequence = positions_that_are_in_sequence
@@ -12,6 +13,7 @@ class MoveSequence(single_robot_sequence.SingleRobotSequence):
     def execute_start(self):
         super().on_enter_start()
         if len(self.positions_that_are_in_sequence) > 0:
+            #translate pos list into behaviors list
             self.behaviors = list(map(lambda pos: skills.move.Move(pos), self.positions_that_are_in_sequence))
 
     @property
