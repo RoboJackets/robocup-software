@@ -164,12 +164,16 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
+    } else {
+        // reset the field initially, grSim will start out in some weird
+        // pattern and we want to keep it consistent
+        on_actionResetField_triggered();
     }
 
     // disabled because of lack of grSim support
     _ui.actionQuickloadRobotLocations->setEnabled(false);
     _ui.actionQuicksaveRobotLocations->setEnabled(false);
-    _ui.actionResetField->setEnabled(false);
+    //_ui.actionResetField->setEnabled(false);
     _ui.actionStopRobots->setEnabled(false);
 }
 
@@ -1010,12 +1014,48 @@ void MainWindow::on_actionStopBall_triggered() {
 }
 
 void MainWindow::on_actionResetField_triggered() {
-    // SimCommand cmd;
-    // cmd.set_reset(true);
-    // need to have a default position for robots and manually set all robots
-    // to correct position
-    //_ui.fieldView->sendSimCommand(cmd);
-    // TODO
+    grSim_Packet simPacket;
+
+    grSim_Replacement* replacement = simPacket.mutable_replacement();
+    for (int i = 0; i < Robots_Per_Team; ++i) {
+        auto rob = replacement->add_robots();
+
+        const int NUM_COLS = 2;
+        const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+
+        double x_pos = -2.5 + i / ROBOTS_PER_COL;
+        double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+
+        rob->set_x(x_pos);
+        rob->set_y(y_pos);
+        rob->set_dir(0);
+        rob->set_id(i);
+        rob->set_yellowteam(false);
+    }
+
+    for (int i = 0; i < Robots_Per_Team; ++i) {
+        auto rob = replacement->add_robots();
+
+        const int NUM_COLS = 2;
+        const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+
+        double x_pos = +2.5 - i / ROBOTS_PER_COL;
+        double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+
+        rob->set_x(x_pos);
+        rob->set_y(y_pos);
+        rob->set_dir(180);
+        rob->set_id(i);
+        rob->set_yellowteam(true);
+    }
+
+    auto ball_replace = replacement->mutable_ball();
+    ball_replace->mutable_pos()->set_x(0.0);
+    ball_replace->mutable_pos()->set_y(0.0);
+    ball_replace->mutable_vel()->set_x(0.0);
+    ball_replace->mutable_vel()->set_y(0.0);
+
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
