@@ -112,10 +112,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
             'Passed')
 
         # Reset to collecting when ball is lost at any stage
-        self.add_transition(AdaptiveFormation.State.dribbling,
-                            AdaptiveFormation.State.collecting,
-                            lambda: False,  #evaluation.ball.robot_has_ball(self.dribbler.robot),
-                            'Dribble: Ball Lost')
+        self.add_transition(
+            AdaptiveFormation.State.dribbling,
+            AdaptiveFormation.State.collecting,
+            lambda: self.dribbler is not None and self.dribbler.robot is not None and evaluation.ball.robot_has_ball(self.dribbler.robot),
+            'Dribble: Ball Lost')
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.collecting,
                             lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.cancelled or \
@@ -208,12 +209,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.check_dribbling_timer = 0
 
-        self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
-        )
-        self.add_subbehavior(self.midfielders,
-                             'midfielders',
-                             required=False,
-                             priority=10)
+        if (self.has_subbehavior_with_name('midfielders')):
+            self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
+            )
+            self.add_subbehavior(self.midfielders,
+                                 'midfielders',
+                                 required=False,
+                                 priority=10)
 
     def execute_dribbling(self):
         # Find the closest bot weighting the ones in front of the ball more
