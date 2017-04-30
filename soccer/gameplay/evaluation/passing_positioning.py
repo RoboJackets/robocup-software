@@ -58,11 +58,9 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
 
     # Dissallow shooting over midfield
     if (kick_point.y > constants.Field.Length / 2):
-        # TODO: Replace with KickEval
         shotChance = evaluation.shooting.eval_shot(receive_point,
                                                    ignore_robots)
 
-    # TODO: Replace with KickEval
     passChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                               ignore_robots)
 
@@ -99,7 +97,7 @@ def eval_best_receive_point(kick_point,
     cppfunc = robocup.stdfunction(pythfunc)
     nmConfig = robocup.NelderMead2DConfig(cppfunc, \
                                         kick_point, \
-                                        robocup.Point(0.5,2), \
+                                        robocup.Point(0.5, 2), \
                                         robocup.Point(0.01, 0.01), \
                                         1, 2, 0.75, 0.5, 50, 1, 0.1)
     nm = robocup.NelderMead2D(nmConfig)

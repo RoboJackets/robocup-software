@@ -100,6 +100,7 @@ class TestAdaptiveFormationWeights(play.Play):
                 # Draw onto the Debug layer
                 main.system_state().draw_polygon(rect, val_color, "Density")
 
+        # Draw calculated max with white
         max_pt, max_val = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos, main.our_robots(), (0.01, 3, 0.02), (2, 2, 15, 1))
         x_cent = max_pt.x

@@ -5,7 +5,7 @@
 
 NelderMead2D::NelderMead2D(NelderMead2DConfig* config)
     : config(config), iterationCount(0) {
-    // Creates starting points at [start], [start] + [x, y], [start] + [x, -y]
+    // Creates starting points at [start], [start] + [-x, y], [start] + [x, y]
     for (int i = -1; i < 2; i++) {
         Geometry2d::Point p =
             config->start +
@@ -117,7 +117,7 @@ float NelderMead2D::getValue() {
 bool NelderMead2D::continueExecution() {
     sortVertices();
 
-    // Allow for floating point errors
+    // Fit bounding box
     float maxX = 0;
     float maxY = 0;
     for (int i = 0; i < vertices.size(); i++) {
