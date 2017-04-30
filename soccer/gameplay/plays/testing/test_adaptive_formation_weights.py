@@ -10,6 +10,7 @@ import robocup
 import math
 import enum
 
+
 class TestAdaptiveFormationWeights(play.Play):
     class State(enum.Enum):
         # Draws 2D probabilty plot onto the field
@@ -69,7 +70,9 @@ class TestAdaptiveFormationWeights(play.Play):
                 #val = evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
                 #val = (1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent), [], main.our_robots())) * \
                 #        evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
-                val = 5*evaluation.passing_positioning.eval_single_point(main.ball().pos, main.our_robots(), (0.01, 3, 0.02), (2, 2, 15, 1), x_cent, y_cent)
+                val = 5 * evaluation.passing_positioning.eval_single_point(
+                    main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
+                    (2, 2, 15, 1), x_cent, y_cent)
 
                 # kick_eval = robocup.KickEvaluator(main.system_state())
                 # for bot in main.our_robots():
@@ -97,7 +100,8 @@ class TestAdaptiveFormationWeights(play.Play):
                 # Draw onto the Debug layer
                 main.system_state().draw_polygon(rect, val_color, "Density")
 
-        max_pt, max_val = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, main.our_robots(), (0.01, 3, 0.02), (2, 2, 15, 1))
+        max_pt, max_val = evaluation.passing_positioning.eval_best_receive_point(
+            main.ball().pos, main.our_robots(), (0.01, 3, 0.02), (2, 2, 15, 1))
         x_cent = max_pt.x
         y_cent = max_pt.y
 

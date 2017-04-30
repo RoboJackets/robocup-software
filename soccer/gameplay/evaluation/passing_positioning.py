@@ -29,8 +29,8 @@ from functools import partial
 # @param recieve_x: X position of the receive point
 # @param recieve_y: Y position of the receive point
 # @return Returns a score between 0 and 1 on how good of pass would be
-def eval_single_point(kick_point, ignore_robots, field_weights,
-                     weights, recieve_x, recieve_y):
+def eval_single_point(kick_point, ignore_robots, field_weights, weights,
+                      recieve_x, recieve_y):
 
     receive_point = robocup.Point(recieve_x, recieve_y)
 
@@ -47,11 +47,11 @@ def eval_single_point(kick_point, ignore_robots, field_weights,
 
     # Check bounderies
     if (receive_point.x - x_offset < w / -2 or
-        receive_point.x + x_offset > w / 2 or
-        receive_point.y - y_offset < 0 or
-        receive_point.y + y_offset > constants.Field.Length or
-        constants.Field.TheirGoalZoneShape.contains_point(
-            receive_point + robocup.Point(0, y_offset))):
+            receive_point.x + x_offset > w / 2 or
+            receive_point.y - y_offset < 0 or
+            receive_point.y + y_offset > constants.Field.Length or
+            constants.Field.TheirGoalZoneShape.contains_point(
+                receive_point + robocup.Point(0, y_offset))):
         return 0
 
     shotChance = 0
@@ -59,10 +59,12 @@ def eval_single_point(kick_point, ignore_robots, field_weights,
     # Dissallow shooting over midfield
     if (kick_point.y > constants.Field.Length / 2):
         # TODO: Replace with KickEval
-        shotChance = evaluation.shooting.eval_shot(receive_point, ignore_robots)
+        shotChance = evaluation.shooting.eval_shot(receive_point,
+                                                   ignore_robots)
 
     # TODO: Replace with KickEval
-    passChance = evaluation.passing.eval_pass(kick_point, receive_point, ignore_robots)
+    passChance = evaluation.passing.eval_pass(kick_point, receive_point,
+                                              ignore_robots)
 
     space = evaluation.field.space_coeff_at_pos(receive_point, ignore_robots)
     fieldPos = evaluation.field.field_pos_coeff_at_pos(
@@ -78,6 +80,7 @@ def eval_single_point(kick_point, ignore_robots, field_weights,
 
     return totalChance / math.fsum(weights)
 
+
 ## Finds the best position to pass to
 #
 # @param kick_point: Point that we are passing from
@@ -88,9 +91,9 @@ def eval_single_point(kick_point, ignore_robots, field_weights,
 #               (space, field_position, shot_chance, kick_proximity)
 # @return bestPoint and bestScore in that order
 def eval_best_receive_point(kick_point,
-                                      ignore_robots=[],
-                                      field_weights=(0.1, 3.2, 0.1),
-                                      weights=(1, 4, 15, 1)):
+                            ignore_robots=[],
+                            field_weights=(0.1, 3.2, 0.1),
+                            weights=(1, 4, 15, 1)):
     pythfunc = partial(eval_single_point, kick_point, ignore_robots, \
                 field_weights, weights)
     cppfunc = robocup.stdfunction(pythfunc)

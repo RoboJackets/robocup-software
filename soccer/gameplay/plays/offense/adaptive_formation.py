@@ -170,8 +170,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return False
 
     def should_clear_from_dribble(self):
-        if (self.dribbler is not None and
-            self.dribbler.pos is None):
+        if (self.dribbler is not None and self.dribbler.pos is None):
             return False
 
         # If outside clear zone
@@ -238,8 +237,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         if (self.check_dribbling_timer > self.check_dribbling_timer_cutoff):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-                main.ball().pos, main.our_robots(),
-                self.field_pos_weights, self.dribbling_weights)
+                main.ball().pos, main.our_robots(), self.field_pos_weights,
+                self.dribbling_weights)
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
         # Good positions can be definied by offensive / defensive costs

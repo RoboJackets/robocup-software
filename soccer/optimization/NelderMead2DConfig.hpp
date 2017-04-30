@@ -28,26 +28,23 @@ public:
     NelderMead2DConfig(std::function<float(Geometry2d::Point)>* f,
                        Geometry2d::Point start = Geometry2d::Point(0, 0),
                        Geometry2d::Point step = Geometry2d::Point(1, 1),
-                       Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
-                       float reflectionCoeff = 1,
-                       float expansionCoeff = 2,
-                       float contractionCoeff = 0.5,
-                       float shrinkCoeff = 0.5,
-                       int maxIterations = 100,
-                       float maxValue = 0,
+                       Geometry2d::Point minDist = Geometry2d::Point(0.001,
+                                                                     0.001),
+                       float reflectionCoeff = 1, float expansionCoeff = 2,
+                       float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
+                       int maxIterations = 100, float maxValue = 0,
                        float maxThresh = 0)
-        :
-            f(f),
-            start(start),
-            step(step),
-            minDist(minDist),
-            reflectionCoeff(reflectionCoeff),
-            expansionCoeff(expansionCoeff),
-            contractionCoeff(contractionCoeff),
-            shrinkCoeff(shrinkCoeff),
-            maxIterations(maxIterations),
-            maxValue(maxValue),
-            maxThresh(maxThresh) {}
+        : f(f),
+          start(start),
+          step(step),
+          minDist(minDist),
+          reflectionCoeff(reflectionCoeff),
+          expansionCoeff(expansionCoeff),
+          contractionCoeff(contractionCoeff),
+          shrinkCoeff(shrinkCoeff),
+          maxIterations(maxIterations),
+          maxValue(maxValue),
+          maxThresh(maxThresh) {}
 
     std::function<float(Geometry2d::Point)>* f;
     Geometry2d::Point start;

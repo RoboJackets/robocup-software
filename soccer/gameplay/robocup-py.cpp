@@ -546,11 +546,13 @@ void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
 
 /**
- * Given python function must take 2 float arguements, x and y, at the end of it's arguement
+ * Given python function must take 2 float arguements, x and y, at the end of
+ * it's arguement
  * declaration and must return a double / float
  */
-float point_python_callback(Geometry2d::Point p, PyObject *pyfun){
-    PyObject* pyresult = PyObject_CallObject(pyfun, Py_BuildValue("ff", p.x(), p.y()));
+float point_python_callback(Geometry2d::Point p, PyObject* pyfun) {
+    PyObject* pyresult =
+        PyObject_CallObject(pyfun, Py_BuildValue("ff", p.x(), p.y()));
 
     if (pyresult == NULL) {
         std::cerr << "Python callback function returned a bad value with args ";
@@ -561,36 +563,31 @@ float point_python_callback(Geometry2d::Point p, PyObject *pyfun){
     return PyFloat_AsDouble(pyresult);
 }
 
-boost::shared_ptr<std::function<float(Geometry2d::Point)>> stdfunction_constructor(PyObject *function) {
+boost::shared_ptr<std::function<float(Geometry2d::Point)>>
+stdfunction_constructor(PyObject* function) {
     // Create aliased function to hid python function args
-    std::function<float(Geometry2d::Point)> f = std::bind(&point_python_callback, std::placeholders::_1, function);
-    
+    std::function<float(Geometry2d::Point)> f =
+        std::bind(&point_python_callback, std::placeholders::_1, function);
+
     return boost::shared_ptr<std::function<float(Geometry2d::Point)>>(
         new std::function<float(Geometry2d::Point)>(f));
 }
 
 boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
-                                            std::function<float(Geometry2d::Point)>* function,
-                                            Geometry2d::Point start = Geometry2d::Point(0, 0),
-                                            Geometry2d::Point step = Geometry2d::Point(1, 1),
-                                            Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
-                                            float reflectionCoeff = 1,
-                                            float expansionCoeff = 2,
-                                            float contractionCoeff = 0.5,
-                                            float shrinkCoeff = 0.5,
-                                            int maxIterations = 100,
-                                            float maxValue = 0,
-                                            float maxThresh = 0) {
-    return boost::shared_ptr<NelderMead2DConfig>(
-        new NelderMead2DConfig(
-            function, 
-            start, step, minDist,
-            reflectionCoeff, expansionCoeff,
-            contractionCoeff, shrinkCoeff,
-            maxIterations, maxValue, maxThresh));
+    std::function<float(Geometry2d::Point)>* function,
+    Geometry2d::Point start = Geometry2d::Point(0, 0),
+    Geometry2d::Point step = Geometry2d::Point(1, 1),
+    Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
+    float reflectionCoeff = 1, float expansionCoeff = 2,
+    float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
+    int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
+    return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
+        function, start, step, minDist, reflectionCoeff, expansionCoeff,
+        contractionCoeff, shrinkCoeff, maxIterations, maxValue, maxThresh));
 }
 
-boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(NelderMead2DConfig* config) {
+boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(
+    NelderMead2DConfig* config) {
     return boost::shared_ptr<NelderMead2D>(new NelderMead2D(config));
 }
 
@@ -743,7 +740,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
-    
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
         "OurRobot", init<int, SystemState*>())
@@ -782,17 +778,14 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
-    
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
-  
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
-   
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -823,7 +816,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
-  
 
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
@@ -902,13 +894,14 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<NelderMead2DConfig>("NelderMead2DConfig", no_init)
         .def("__init__", make_constructor(&NelderMead2DConfig_constructor),
-            "function is required")
+             "function is required")
         .def_readwrite("start", &NelderMead2DConfig::start)
         .def_readwrite("step", &NelderMead2DConfig::step)
         .def_readwrite("minDist", &NelderMead2DConfig::minDist)
         .def_readwrite("reflectionCoeff", &NelderMead2DConfig::reflectionCoeff)
         .def_readwrite("expansionCoeff", &NelderMead2DConfig::expansionCoeff)
-        .def_readwrite("contractionCoeff", &NelderMead2DConfig::contractionCoeff)
+        .def_readwrite("contractionCoeff",
+                       &NelderMead2DConfig::contractionCoeff)
         .def_readwrite("shrinkCoeff", &NelderMead2DConfig::shrinkCoeff)
         .def_readwrite("maxIterations", &NelderMead2DConfig::maxIterations)
         .def_readwrite("maxValue", &NelderMead2DConfig::maxValue)
@@ -917,7 +910,8 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<NelderMead2D>("NelderMead2D", no_init)
         .def("__init__", make_constructor(&NelderMead2D_constructor))
         .def("execute", &NelderMead2D::execute, "returns max value")
-        .def("singleStep", &NelderMead2D::singleStep, "single run of optimization")
+        .def("singleStep", &NelderMead2D::singleStep,
+             "single run of optimization")
         .def("getValue", &NelderMead2D::getValue, "returns max value")
         .def("getPoint", &NelderMead2D::getPoint, "returns max point");
 
@@ -931,24 +925,20 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("nameLookup", &Configuration::nameLookup,
              return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
-  
 
     // Add wrappers for ConfigItem subclasses
     class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
-  
 
     class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
                                                            no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
-  
 
     class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
- 
 
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
